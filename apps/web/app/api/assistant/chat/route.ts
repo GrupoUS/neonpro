@@ -1,14 +1,14 @@
-import { anthropic } from "@ai-sdk/anthropic";
-import { openai } from "@ai-sdk/openai";
-import { streamText } from "ai";
-import { type NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/app/utils/supabase/server";
+import { anthropic } from '@ai-sdk/anthropic';
+import { openai } from '@ai-sdk/openai';
+import { streamText } from 'ai';
+import { type NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/app/utils/supabase/server';
 
 // Configuração dos modelos
 const MODELS = {
-  gpt4: openai("gpt-4o"),
-  claude: anthropic("claude-3-5-sonnet-20241022"),
-  gpt35: openai("gpt-3.5-turbo"),
+  gpt4: openai('gpt-4o'),
+  claude: anthropic('claude-3-5-sonnet-20241022'),
+  gpt35: openai('gpt-3.5-turbo'),
 } as const;
 
 type ModelType = keyof typeof MODELS;
@@ -21,37 +21,40 @@ export async function POST(request: NextRequest) {
       error: authError,
     } = await supabase.auth.getUser();
     if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { messages, conversationId, model = "gpt4" } = await request.json();
+    const { messages, conversationId, model = 'gpt4' } = await request.json();
 
     // Validar modelo
     if (!MODELS[model as ModelType]) {
-      return NextResponse.json({ error: "Invalid model" }, { status: 400 });
+      return NextResponse.json({ error: 'Invalid model' }, { status: 400 });
     }
 
     // Buscar ou criar conversa
     let conversation;
     if (conversationId) {
       const { data: existingConversation, error: convError } = await supabase
-        .from("assistant_conversations")
-        .select("*")
-        .eq("id", conversationId)
-        .eq("user_id", user.id)
+        .from('assistant_conversations')
+        .select('*')
+        .eq('id', conversationId)
+        .eq('user_id', user.id)
         .single();
 
       if (convError || !existingConversation) {
-        return NextResponse.json({ error: "Conversation not found" }, { status: 404 });
+        return NextResponse.json(
+          { error: 'Conversation not found' },
+          { status: 404 }
+        );
       }
       conversation = existingConversation;
     } else {
       // Criar nova conversa
       const { data: newConversation, error: createError } = await supabase
-        .from("assistant_conversations")
+        .from('assistant_conversations')
         .insert({
           user_id: user.id,
-          title: messages[0]?.content?.substring(0, 50) || "Nova Conversa",
+          title: messages[0]?.content?.substring(0, 50) || 'Nova Conversa',
           model_used: model,
           is_active: true,
         })
@@ -59,28 +62,31 @@ export async function POST(request: NextRequest) {
         .single();
 
       if (createError || !newConversation) {
-        return NextResponse.json({ error: "Failed to create conversation" }, { status: 500 });
+        return NextResponse.json(
+          { error: 'Failed to create conversation' },
+          { status: 500 }
+        );
       }
       conversation = newConversation;
     }
 
     // Buscar contexto das preferências do usuário
     const { data: preferences } = await supabase
-      .from("assistant_preferences")
-      .select("*")
-      .eq("user_id", user.id)
+      .from('assistant_preferences')
+      .select('*')
+      .eq('user_id', user.id)
       .single();
 
     // Buscar contexto do perfil do usuário
     const { data: profile } = await supabase
-      .from("profiles")
-      .select("full_name, role, specialty, clinic_name")
-      .eq("id", user.id)
+      .from('profiles')
+      .select('full_name, role, specialty, clinic_name')
+      .eq('id', user.id)
       .single();
 
     // Buscar contexto relevante da clínica (últimos 5 agendamentos, por exemplo)
     const { data: recentAppointments } = await supabase
-      .from("appointments")
+      .from('appointments')
       .select(
         `
         id,
@@ -89,33 +95,36 @@ export async function POST(request: NextRequest) {
         service,
         notes,
         patients(name, phone)
-      `,
+      `
       )
-      .eq("user_id", user.id)
-      .order("date_time", { ascending: false })
+      .eq('user_id', user.id)
+      .order('date_time', { ascending: false })
       .limit(5);
 
     // Construir prompt do sistema com contexto personalizado
     const systemPrompt = `Você é o Assistente Virtual do NeonPro, uma plataforma de gestão para clínicas de estética e beleza.
 
 CONTEXTO DO USUÁRIO:
-- Nome: ${profile?.full_name || "Usuário"}
-- Cargo: ${profile?.role || "Profissional"}
-- Especialidade: ${profile?.specialty || "Não informada"}
-- Clínica: ${profile?.clinic_name || "Não informada"}
+- Nome: ${profile?.full_name || 'Usuário'}
+- Cargo: ${profile?.role || 'Profissional'}
+- Especialidade: ${profile?.specialty || 'Não informada'}
+- Clínica: ${profile?.clinic_name || 'Não informada'}
 
 PREFERÊNCIAS DO ASSISTENTE:
-- Personalidade: ${preferences?.personality || "profissional e amigável"}
+- Personalidade: ${preferences?.personality || 'profissional e amigável'}
 - Temperatura: ${preferences?.temperature || 0.7}
-- Idioma: ${preferences?.language || "pt-BR"}
+- Idioma: ${preferences?.language || 'pt-BR'}
 
 CONTEXTO RECENTE: ${
       recentAppointments && recentAppointments.length > 0
         ? `Últimos agendamentos:
 ${recentAppointments
-  .map((apt) => `- ${apt.date_time}: ${apt.patients?.name} - ${apt.service} (${apt.status})`)
-  .join("\n")}`
-        : "Nenhum agendamento recente encontrado."
+  .map(
+    (apt) =>
+      `- ${apt.date_time}: ${apt.patients?.name} - ${apt.service} (${apt.status})`
+  )
+  .join('\n')}`
+        : 'Nenhum agendamento recente encontrado.'
     }
 
 INSTRUÇÕES:
@@ -132,10 +141,10 @@ Seja sempre útil, preciso e contextualmente relevante para a gestão de clínic
     // Converter mensagens para o formato do AI SDK    const coreMessages = convertToCoreMessages(messages);
 
     // Salvar mensagem do usuário    const userMessage = messages.at(-1);
-    await (await supabase).from("assistant_messages").insert({
+    await (await supabase).from('assistant_messages').insert({
       conversation_id: conversation.id,
       user_id: user.id,
-      role: "user",
+      role: 'user',
       content: userMessage.content,
       model_used: model,
     });
@@ -150,10 +159,10 @@ Seja sempre útil, preciso e contextualmente relevante para a gestão de clínic
     });
 
     // Log da interação
-    await (await supabase).from("assistant_logs").insert({
+    await (await supabase).from('assistant_logs').insert({
       user_id: user.id,
       conversation_id: conversation.id,
-      action: "chat_request",
+      action: 'chat_request',
       details: {
         model,
         message_count: messages.length,
@@ -167,7 +176,10 @@ Seja sempre útil, preciso e contextualmente relevante para a gestão de clínic
 
     return result.toDataStreamResponse();
   } catch (_error) {
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
 

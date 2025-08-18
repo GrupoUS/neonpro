@@ -141,8 +141,8 @@ export const createMockSubscriptionHook = (
   }> = {}
 ) => ({
   data: overrides.data || createMockSubscription(),
-  isLoading: overrides.isLoading || false,
-  isError: overrides.isError || false,
+  isLoading: overrides.isLoading,
+  isError: overrides.isError,
   error: overrides.error || null,
   refetch: overrides.refetch || vi.fn(),
 });

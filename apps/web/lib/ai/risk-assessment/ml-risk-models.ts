@@ -1,12 +1,12 @@
 import type {
   RiskAssessmentInput,
   RiskScoreBreakdown,
-} from "@/app/types/risk-assessment-automation";
+} from '@/app/types/risk-assessment-automation';
 import {
   EscalationPriority,
   RiskFactorCategory,
   RiskLevel,
-} from "@/app/types/risk-assessment-automation";
+} from '@/app/types/risk-assessment-automation';
 
 // ============================================================================
 // ML RISK MODELS - CONSTITUTIONAL HEALTHCARE COMPLIANCE (≥98% ACCURACY)
@@ -111,7 +111,9 @@ const RISK_THRESHOLDS = {
  * Demographic Risk Scoring Algorithm
  * Age, BMI, and lifestyle factors analysis
  */
-export function calculateDemographicRisk(demographic: RiskAssessmentInput["demographicFactors"]): {
+export function calculateDemographicRisk(
+  demographic: RiskAssessmentInput['demographicFactors']
+): {
   score: number;
   factors: Array<{ factor: string; impact: number; explanation: string }>;
 } {
@@ -127,23 +129,23 @@ export function calculateDemographicRisk(demographic: RiskAssessmentInput["demog
   if (demographic.age < 18) {
     ageScore = 15; // Pediatric considerations
     factors.push({
-      factor: "Idade pediátrica",
+      factor: 'Idade pediátrica',
       impact: 15,
-      explanation: "Pacientes pediátricos requerem cuidados especializados",
+      explanation: 'Pacientes pediátricos requerem cuidados especializados',
     });
   } else if (demographic.age >= 65) {
     ageScore = Math.min(30 + (demographic.age - 65) * 2, 50); // Elderly risk escalation
     factors.push({
-      factor: "Idade avançada",
+      factor: 'Idade avançada',
       impact: ageScore,
       explanation: `Pacientes idosos (${demographic.age} anos) apresentam maior risco de complicações`,
     });
   } else if (demographic.age >= 50) {
     ageScore = 10; // Middle-age considerations
     factors.push({
-      factor: "Meia-idade",
+      factor: 'Meia-idade',
       impact: 10,
-      explanation: "Idade intermediária com fatores de risco moderados",
+      explanation: 'Idade intermediária com fatores de risco moderados',
     });
   }
 
@@ -152,21 +154,21 @@ export function calculateDemographicRisk(demographic: RiskAssessmentInput["demog
   if (demographic.bmi < 18.5) {
     bmiScore = 20; // Underweight
     factors.push({
-      factor: "Baixo peso",
+      factor: 'Baixo peso',
       impact: 20,
       explanation: `IMC baixo (${demographic.bmi}) pode indicar desnutrição`,
     });
   } else if (demographic.bmi >= 30) {
     bmiScore = Math.min(25 + (demographic.bmi - 30) * 2, 40); // Obesity
     factors.push({
-      factor: "Obesidade",
+      factor: 'Obesidade',
       impact: bmiScore,
       explanation: `IMC elevado (${demographic.bmi}) aumenta riscos cirúrgicos e de complicações`,
     });
   } else if (demographic.bmi >= 25) {
     bmiScore = 10; // Overweight
     factors.push({
-      factor: "Sobrepeso",
+      factor: 'Sobrepeso',
       impact: 10,
       explanation: `IMC ligeiramente elevado (${demographic.bmi})`,
     });
@@ -174,74 +176,75 @@ export function calculateDemographicRisk(demographic: RiskAssessmentInput["demog
 
   // Smoking Risk Assessment (critical factor in Brazilian healthcare)
   let smokingScore = 0;
-  if (demographic.smokingStatus === "CURRENT") {
+  if (demographic.smokingStatus === 'CURRENT') {
     smokingScore = 45; // Very high risk - increased from 35
     factors.push({
-      factor: "Tabagismo atual",
+      factor: 'Tabagismo atual',
       impact: 45,
       explanation:
-        "Tabagismo ativo aumenta significativamente riscos de complicações respiratórias, circulatórias e de cicatrização",
+        'Tabagismo ativo aumenta significativamente riscos de complicações respiratórias, circulatórias e de cicatrização',
     });
-  } else if (demographic.smokingStatus === "FORMER") {
+  } else if (demographic.smokingStatus === 'FORMER') {
     smokingScore = 15; // Residual risk
     factors.push({
-      factor: "Ex-tabagista",
+      factor: 'Ex-tabagista',
       impact: 15,
-      explanation: "Histórico de tabagismo mantém risco residual",
+      explanation: 'Histórico de tabagismo mantém risco residual',
     });
   }
 
   // Alcohol Consumption Risk
   let alcoholScore = 0;
-  if (demographic.alcoholConsumption === "HEAVY") {
+  if (demographic.alcoholConsumption === 'HEAVY') {
     alcoholScore = 25;
     factors.push({
-      factor: "Consumo excessivo de álcool",
+      factor: 'Consumo excessivo de álcool',
       impact: 25,
-      explanation: "Consumo pesado de álcool afeta cicatrização e metabolismo",
+      explanation: 'Consumo pesado de álcool afeta cicatrização e metabolismo',
     });
-  } else if (demographic.alcoholConsumption === "MODERATE") {
+  } else if (demographic.alcoholConsumption === 'MODERATE') {
     alcoholScore = 10;
     factors.push({
-      factor: "Consumo moderado de álcool",
+      factor: 'Consumo moderado de álcool',
       impact: 10,
-      explanation: "Consumo moderado de álcool pode afetar procedimentos",
+      explanation: 'Consumo moderado de álcool pode afetar procedimentos',
     });
   }
 
   // Physical Activity Assessment
   let activityScore = 0;
-  if (demographic.physicalActivityLevel === "SEDENTARY") {
+  if (demographic.physicalActivityLevel === 'SEDENTARY') {
     activityScore = 15;
     factors.push({
-      factor: "Sedentarismo",
+      factor: 'Sedentarismo',
       impact: 15,
-      explanation: "Falta de atividade física reduz capacidade de recuperação",
+      explanation: 'Falta de atividade física reduz capacidade de recuperação',
     });
-  } else if (demographic.physicalActivityLevel === "INTENSE") {
+  } else if (demographic.physicalActivityLevel === 'INTENSE') {
     activityScore = -5; // Protective factor
     factors.push({
-      factor: "Atividade física intensa",
+      factor: 'Atividade física intensa',
       impact: -5,
-      explanation: "Boa condição física melhora prognóstico",
+      explanation: 'Boa condição física melhora prognóstico',
     });
   }
 
   // Pregnancy Considerations
   let pregnancyScore = 0;
-  if (demographic.pregnancyStatus === "PREGNANT") {
+  if (demographic.pregnancyStatus === 'PREGNANT') {
     pregnancyScore = 20;
     factors.push({
-      factor: "Gravidez",
+      factor: 'Gravidez',
       impact: 20,
-      explanation: "Gravidez requer cuidados especializados e protocolos específicos",
+      explanation:
+        'Gravidez requer cuidados especializados e protocolos específicos',
     });
-  } else if (demographic.pregnancyStatus === "BREASTFEEDING") {
+  } else if (demographic.pregnancyStatus === 'BREASTFEEDING') {
     pregnancyScore = 10;
     factors.push({
-      factor: "Amamentação",
+      factor: 'Amamentação',
       impact: 10,
-      explanation: "Amamentação afeta escolha de medicamentos e procedimentos",
+      explanation: 'Amamentação afeta escolha de medicamentos e procedimentos',
     });
   }
 
@@ -250,7 +253,7 @@ export function calculateDemographicRisk(demographic: RiskAssessmentInput["demog
   const geneticScore = geneticPredispositions.length * 5;
   if (geneticScore > 0) {
     factors.push({
-      factor: "Predisposições genéticas",
+      factor: 'Predisposições genéticas',
       impact: geneticScore,
       explanation: `${geneticPredispositions.length} predisposições genéticas identificadas`,
     });
@@ -274,7 +277,7 @@ export function calculateDemographicRisk(demographic: RiskAssessmentInput["demog
  * Comprehensive analysis of patient medical background
  */
 export function calculateMedicalHistoryRisk(
-  medicalHistory: RiskAssessmentInput["medicalHistory"],
+  medicalHistory: RiskAssessmentInput['medicalHistory']
 ): {
   score: number;
   factors: Array<{ factor: string; impact: number; explanation: string }>;
@@ -288,14 +291,14 @@ export function calculateMedicalHistoryRisk(
 
   // Chronic Conditions Risk Assessment
   const highRiskConditions = [
-    "diabetes",
-    "hipertensão",
-    "cardiopatia",
-    "insuficiência renal",
-    "doença hepática",
-    "câncer",
-    "doença autoimune",
-    "coagulopatia",
+    'diabetes',
+    'hipertensão',
+    'cardiopatia',
+    'insuficiência renal',
+    'doença hepática',
+    'câncer',
+    'doença autoimune',
+    'coagulopatia',
   ];
 
   let chronicScore = 0;
@@ -303,21 +306,24 @@ export function calculateMedicalHistoryRisk(
   const conditionCount = chronicConditions.length;
 
   chronicConditions.forEach((condition) => {
-    const isHighRisk = highRiskConditions.some((risk) => condition.toLowerCase().includes(risk));
+    const isHighRisk = highRiskConditions.some((risk) =>
+      condition.toLowerCase().includes(risk)
+    );
 
     if (isHighRisk) {
       chronicScore += 15;
       factors.push({
         factor: `Condição crônica de alto risco: ${condition}`,
         impact: 15,
-        explanation: "Condição crônica que aumenta significativamente o risco de complicações",
+        explanation:
+          'Condição crônica que aumenta significativamente o risco de complicações',
       });
     } else {
       chronicScore += 5;
       factors.push({
         factor: `Condição crônica: ${condition}`,
         impact: 5,
-        explanation: "Condição crônica que requer monitoramento especializado",
+        explanation: 'Condição crônica que requer monitoramento especializado',
       });
     }
   });
@@ -327,7 +333,7 @@ export function calculateMedicalHistoryRisk(
     const multiplier = Math.min(conditionCount * 8, 40); // Exponential scaling, capped at 40
     chronicScore += multiplier;
     factors.push({
-      factor: "Múltiplas condições crônicas",
+      factor: 'Múltiplas condições crônicas',
       impact: multiplier,
       explanation: `${conditionCount} condições crônicas simultaneas aumentam complexidade exponencialmente`,
     });
@@ -335,7 +341,7 @@ export function calculateMedicalHistoryRisk(
     const multiplier = conditionCount * 3;
     chronicScore += multiplier;
     factors.push({
-      factor: "Múltiplas condições crônicas",
+      factor: 'Múltiplas condições crônicas',
       impact: multiplier,
       explanation: `${conditionCount} condições crônicas simultaneas aumentam risco`,
     });
@@ -345,13 +351,14 @@ export function calculateMedicalHistoryRisk(
   let surgicalScore = 0;
   const previousSurgeries = medicalHistory.previousSurgeries || [];
   const complicatedSurgeries = previousSurgeries.filter(
-    (surgery) => surgery.outcome === "COMPLICATED" || surgery.outcome === "FAILED",
+    (surgery) =>
+      surgery.outcome === 'COMPLICATED' || surgery.outcome === 'FAILED'
   );
 
   if (complicatedSurgeries.length > 0) {
     surgicalScore = complicatedSurgeries.length * 20;
     factors.push({
-      factor: "Histórico de complicações cirúrgicas",
+      factor: 'Histórico de complicações cirúrgicas',
       impact: surgicalScore,
       explanation: `${complicatedSurgeries.length} cirurgia(s) com complicações anteriores`,
     });
@@ -362,7 +369,7 @@ export function calculateMedicalHistoryRisk(
     const additionalScore = 10;
     surgicalScore += additionalScore;
     factors.push({
-      factor: "Múltiplas cirurgias anteriores",
+      factor: 'Múltiplas cirurgias anteriores',
       impact: additionalScore,
       explanation: `${previousSurgeries.length} cirurgias anteriores indicam complexidade`,
     });
@@ -372,13 +379,14 @@ export function calculateMedicalHistoryRisk(
   let allergyScore = 0;
   const allergies = medicalHistory.allergies || [];
   const severeAllergies = allergies.filter(
-    (allergy) => allergy.severity === "SEVERE" || allergy.severity === "ANAPHYLACTIC",
+    (allergy) =>
+      allergy.severity === 'SEVERE' || allergy.severity === 'ANAPHYLACTIC'
   );
 
   if (severeAllergies.length > 0) {
     allergyScore = severeAllergies.length * 15;
     factors.push({
-      factor: "Alergias graves",
+      factor: 'Alergias graves',
       impact: allergyScore,
       explanation: `${severeAllergies.length} alergia(s) grave(s) ou anafilática(s)`,
     });
@@ -387,16 +395,16 @@ export function calculateMedicalHistoryRisk(
   // Drug allergies special consideration
   const drugAllergies = allergies.filter(
     (allergy) =>
-      allergy.allergen.toLowerCase().includes("medicamento") ||
-      allergy.allergen.toLowerCase().includes("anestesia") ||
-      allergy.allergen.toLowerCase().includes("antibiótico"),
+      allergy.allergen.toLowerCase().includes('medicamento') ||
+      allergy.allergen.toLowerCase().includes('anestesia') ||
+      allergy.allergen.toLowerCase().includes('antibiótico')
   );
 
   if (drugAllergies.length > 0) {
     const drugAllergyScore = drugAllergies.length * 10;
     allergyScore += drugAllergyScore;
     factors.push({
-      factor: "Alergias medicamentosas",
+      factor: 'Alergias medicamentosas',
       impact: drugAllergyScore,
       explanation: `${drugAllergies.length} alergia(s) a medicamentos/anestésicos`,
     });
@@ -411,7 +419,7 @@ export function calculateMedicalHistoryRisk(
   if (medicationCount > 5) {
     medicationScore = (medicationCount - 5) * 3;
     factors.push({
-      factor: "Polifarmácia",
+      factor: 'Polifarmácia',
       impact: medicationScore,
       explanation: `${medicationCount} medicamentos simultâneos aumentam risco de interações`,
     });
@@ -419,25 +427,27 @@ export function calculateMedicalHistoryRisk(
 
   // High-risk medications assessment
   const highRiskMeds = [
-    "anticoagulante",
-    "corticoide",
-    "imunossupressor",
-    "quimioterápico",
-    "varfarina",
-    "heparina",
-    "insulina",
-    "digoxina",
+    'anticoagulante',
+    'corticoide',
+    'imunossupressor',
+    'quimioterápico',
+    'varfarina',
+    'heparina',
+    'insulina',
+    'digoxina',
   ];
 
   currentMedications.forEach((medication) => {
-    const isHighRisk = highRiskMeds.some((risk) => medication.name.toLowerCase().includes(risk));
+    const isHighRisk = highRiskMeds.some((risk) =>
+      medication.name.toLowerCase().includes(risk)
+    );
 
     if (isHighRisk) {
       medicationScore += 10;
       factors.push({
         factor: `Medicamento de alto risco: ${medication.name}`,
         impact: 10,
-        explanation: "Medicamento que requer monitoramento especializado",
+        explanation: 'Medicamento que requer monitoramento especializado',
       });
     }
   });
@@ -445,18 +455,18 @@ export function calculateMedicalHistoryRisk(
   // Family History Risk Assessment
   let familyScore = 0;
   const highRiskFamilyConditions = [
-    "cardíaca",
-    "cancer",
-    "diabetes",
-    "hipertensão",
-    "trombose",
-    "anestesia",
+    'cardíaca',
+    'cancer',
+    'diabetes',
+    'hipertensão',
+    'trombose',
+    'anestesia',
   ];
 
   const familyHistory = medicalHistory.familyHistory || [];
   familyHistory.forEach((history) => {
     const isHighRisk = highRiskFamilyConditions.some((risk) =>
-      history.condition.toLowerCase().includes(risk),
+      history.condition.toLowerCase().includes(risk)
     );
 
     if (isHighRisk) {
@@ -494,7 +504,7 @@ export function calculateMedicalHistoryRisk(
  * Real-time assessment of patient's current health status
  */
 export function calculateCurrentConditionRisk(
-  currentCondition: RiskAssessmentInput["currentCondition"],
+  currentCondition: RiskAssessmentInput['currentCondition']
 ): {
   score: number;
   factors: Array<{ factor: string; impact: number; explanation: string }>;
@@ -517,21 +527,21 @@ export function calculateCurrentConditionRisk(
   if (systolic > 180 || diastolic > 110) {
     vitalSignsScore += 50; // Hypertensive crisis - medical emergency
     factors.push({
-      factor: "Crise hipertensiva",
+      factor: 'Crise hipertensiva',
       impact: 50,
       explanation: `Pressão arterial crítica: ${systolic}/${diastolic} mmHg`,
     });
   } else if (systolic > 160 || diastolic > 100) {
     vitalSignsScore += 20; // Stage 2 hypertension
     factors.push({
-      factor: "Hipertensão severa",
+      factor: 'Hipertensão severa',
       impact: 20,
       explanation: `Pressão arterial elevada: ${systolic}/${diastolic} mmHg`,
     });
   } else if (systolic < 90 || diastolic < 60) {
     vitalSignsScore += 60; // Hypotension - drastically increased
     factors.push({
-      factor: "Hipotensão",
+      factor: 'Hipotensão',
       impact: 60,
       explanation: `Pressão arterial baixa: ${systolic}/${diastolic} mmHg`,
     });
@@ -542,26 +552,26 @@ export function calculateCurrentConditionRisk(
   if (heartRate > 120) {
     vitalSignsScore += 50; // Tachycardia - drastically increased
     factors.push({
-      factor: "Taquicardia",
+      factor: 'Taquicardia',
       impact: 50,
       explanation: `Frequência cardíaca elevada: ${heartRate} bpm`,
     });
   } else if (heartRate < 50) {
     vitalSignsScore += 15; // Bradycardia
     factors.push({
-      factor: "Bradicardia",
+      factor: 'Bradicardia',
       impact: 15,
       explanation: `Frequência cardíaca baixa: ${heartRate} bpm`,
     });
   }
 
   // Irregular rhythm assessment
-  if (vitals.heartRate.rhythm === "IRREGULAR") {
+  if (vitals.heartRate.rhythm === 'IRREGULAR') {
     vitalSignsScore += 15;
     factors.push({
-      factor: "Ritmo cardíaco irregular",
+      factor: 'Ritmo cardíaco irregular',
       impact: 15,
-      explanation: "Arritmia cardíaca detectada",
+      explanation: 'Arritmia cardíaca detectada',
     });
   }
 
@@ -570,14 +580,14 @@ export function calculateCurrentConditionRisk(
   if (temp > 39) {
     vitalSignsScore += 20; // High fever
     factors.push({
-      factor: "Febre alta",
+      factor: 'Febre alta',
       impact: 20,
       explanation: `Temperatura elevada: ${temp}°C`,
     });
   } else if (temp < 35) {
     vitalSignsScore += 25; // Hypothermia
     factors.push({
-      factor: "Hipotermia",
+      factor: 'Hipotermia',
       impact: 25,
       explanation: `Temperatura baixa: ${temp}°C`,
     });
@@ -588,14 +598,14 @@ export function calculateCurrentConditionRisk(
   if (respRate > 24) {
     vitalSignsScore += 15; // Tachypnea
     factors.push({
-      factor: "Taquipneia",
+      factor: 'Taquipneia',
       impact: 15,
       explanation: `Frequência respiratória elevada: ${respRate} irpm`,
     });
   } else if (respRate < 12) {
     vitalSignsScore += 20; // Bradypnea
     factors.push({
-      factor: "Bradipneia",
+      factor: 'Bradipneia',
       impact: 20,
       explanation: `Frequência respiratória baixa: ${respRate} irpm`,
     });
@@ -606,14 +616,14 @@ export function calculateCurrentConditionRisk(
   if (saturation < 90) {
     vitalSignsScore += 60; // Critical hypoxemia - life threatening
     factors.push({
-      factor: "Hipoxemia crítica",
+      factor: 'Hipoxemia crítica',
       impact: 60,
       explanation: `Saturação de oxigênio crítica: ${saturation}%`,
     });
   } else if (saturation < 95) {
     vitalSignsScore += 30; // Mild hypoxemia
     factors.push({
-      factor: "Hipoxemia leve",
+      factor: 'Hipoxemia leve',
       impact: 30,
       explanation: `Saturação de oxigênio baixa: ${saturation}%`,
     });
@@ -621,13 +631,17 @@ export function calculateCurrentConditionRisk(
 
   // Current Symptoms Assessment
   let symptomsScore = 0;
-  const severeSymptoms = currentCondition.currentSymptoms.filter((s) => s.severity >= 4);
-  const criticalSymptoms = currentCondition.currentSymptoms.filter((s) => s.severity === 5);
+  const severeSymptoms = currentCondition.currentSymptoms.filter(
+    (s) => s.severity >= 4
+  );
+  const criticalSymptoms = currentCondition.currentSymptoms.filter(
+    (s) => s.severity === 5
+  );
 
   if (criticalSymptoms.length > 0) {
     symptomsScore += criticalSymptoms.length * 15;
     factors.push({
-      factor: "Sintomas críticos",
+      factor: 'Sintomas críticos',
       impact: criticalSymptoms.length * 15,
       explanation: `${criticalSymptoms.length} sintoma(s) de severidade máxima`,
     });
@@ -636,7 +650,7 @@ export function calculateCurrentConditionRisk(
   if (severeSymptoms.length > 0) {
     symptomsScore += severeSymptoms.length * 8;
     factors.push({
-      factor: "Sintomas severos",
+      factor: 'Sintomas severos',
       impact: severeSymptoms.length * 8,
       explanation: `${severeSymptoms.length} sintoma(s) severo(s) presente(s)`,
     });
@@ -647,14 +661,14 @@ export function calculateCurrentConditionRisk(
   if (currentCondition.painLevel >= 8) {
     painScore = 20; // Severe pain
     factors.push({
-      factor: "Dor severa",
+      factor: 'Dor severa',
       impact: 20,
       explanation: `Nível de dor crítico: ${currentCondition.painLevel}/10`,
     });
   } else if (currentCondition.painLevel >= 6) {
     painScore = 10; // Moderate pain
     factors.push({
-      factor: "Dor moderada a severa",
+      factor: 'Dor moderada a severa',
       impact: 10,
       explanation: `Nível de dor elevado: ${currentCondition.painLevel}/10`,
     });
@@ -663,28 +677,28 @@ export function calculateCurrentConditionRisk(
   // Mental Status Assessment
   let mentalScore = 0;
   switch (currentCondition.mentalStatus) {
-    case "UNCONSCIOUS":
+    case 'UNCONSCIOUS':
       mentalScore = 78;
       factors.push({
-        factor: "Inconsciência",
+        factor: 'Inconsciência',
         impact: 78,
-        explanation: "Paciente inconsciente - risco crítico",
+        explanation: 'Paciente inconsciente - risco crítico',
       });
       break;
-    case "DROWSY":
+    case 'DROWSY':
       mentalScore = 20;
       factors.push({
-        factor: "Sonolência",
+        factor: 'Sonolência',
         impact: 20,
-        explanation: "Nível de consciência reduzido",
+        explanation: 'Nível de consciência reduzido',
       });
       break;
-    case "CONFUSED":
+    case 'CONFUSED':
       mentalScore = 15;
       factors.push({
-        factor: "Confusão mental",
+        factor: 'Confusão mental',
         impact: 15,
-        explanation: "Estado confusional presente",
+        explanation: 'Estado confusional presente',
       });
       break;
   }
@@ -692,28 +706,28 @@ export function calculateCurrentConditionRisk(
   // Mobility Status Assessment
   let mobilityScore = 0;
   switch (currentCondition.mobilityStatus) {
-    case "BEDRIDDEN":
+    case 'BEDRIDDEN':
       mobilityScore = 20;
       factors.push({
-        factor: "Acamado",
+        factor: 'Acamado',
         impact: 20,
-        explanation: "Paciente restrito ao leito",
+        explanation: 'Paciente restrito ao leito',
       });
       break;
-    case "WHEELCHAIR":
+    case 'WHEELCHAIR':
       mobilityScore = 10;
       factors.push({
-        factor: "Cadeira de rodas",
+        factor: 'Cadeira de rodas',
         impact: 10,
-        explanation: "Mobilidade limitada",
+        explanation: 'Mobilidade limitada',
       });
       break;
-    case "ASSISTED":
+    case 'ASSISTED':
       mobilityScore = 5;
       factors.push({
-        factor: "Mobilidade assistida",
+        factor: 'Mobilidade assistida',
         impact: 5,
-        explanation: "Requer assistência para mobilização",
+        explanation: 'Requer assistência para mobilização',
       });
       break;
   }
@@ -735,7 +749,7 @@ export function calculateCurrentConditionRisk(
  * ANVISA compliance for medical device and procedure assessment
  */
 export function calculateProcedureSpecificRisk(
-  procedureSpecific?: RiskAssessmentInput["procedureSpecific"],
+  procedureSpecific?: RiskAssessmentInput['procedureSpecific']
 ): {
   score: number;
   factors: Array<{ factor: string; impact: number; explanation: string }>;
@@ -757,31 +771,31 @@ export function calculateProcedureSpecificRisk(
   const procedure = procedureSpecific.plannedProcedure;
 
   switch (procedure.complexity) {
-    case "COMPLEX":
+    case 'COMPLEX':
       complexityScore = 40;
       factors.push({
-        factor: "Procedimento de alta complexidade",
+        factor: 'Procedimento de alta complexidade',
         impact: 40,
         explanation: `Procedimento complexo: ${procedure.name}`,
       });
       break;
-    case "HIGH":
+    case 'HIGH':
       complexityScore = 25;
       factors.push({
-        factor: "Procedimento de complexidade elevada",
+        factor: 'Procedimento de complexidade elevada',
         impact: 25,
         explanation: `Procedimento de alto risco: ${procedure.name}`,
       });
       break;
-    case "MEDIUM":
+    case 'MEDIUM':
       complexityScore = 10;
       factors.push({
-        factor: "Procedimento de complexidade moderada",
+        factor: 'Procedimento de complexidade moderada',
         impact: 10,
         explanation: `Procedimento padrão: ${procedure.name}`,
       });
       break;
-    case "LOW":
+    case 'LOW':
       complexityScore = 2;
       break;
   }
@@ -789,26 +803,26 @@ export function calculateProcedureSpecificRisk(
   // Procedure Type Assessment
   let typeScore = 0;
   switch (procedure.type) {
-    case "SURGICAL":
+    case 'SURGICAL':
       typeScore = 20;
       factors.push({
-        factor: "Procedimento cirúrgico",
+        factor: 'Procedimento cirúrgico',
         impact: 20,
-        explanation: "Cirurgia envolve riscos anestésicos e de infecção",
+        explanation: 'Cirurgia envolve riscos anestésicos e de infecção',
       });
       break;
-    case "MINIMALLY_INVASIVE":
+    case 'MINIMALLY_INVASIVE':
       typeScore = 8;
       factors.push({
-        factor: "Procedimento minimamente invasivo",
+        factor: 'Procedimento minimamente invasivo',
         impact: 8,
-        explanation: "Procedimento com menor invasividade",
+        explanation: 'Procedimento com menor invasividade',
       });
       break;
-    case "COSMETIC":
+    case 'COSMETIC':
       typeScore = 5;
       break;
-    case "NON_SURGICAL":
+    case 'NON_SURGICAL':
       typeScore = 2;
       break;
   }
@@ -819,7 +833,7 @@ export function calculateProcedureSpecificRisk(
     // > 4 hours
     durationScore = 20;
     factors.push({
-      factor: "Procedimento prolongado",
+      factor: 'Procedimento prolongado',
       impact: 20,
       explanation: `Duração estendida: ${procedure.duration} minutos`,
     });
@@ -827,7 +841,7 @@ export function calculateProcedureSpecificRisk(
     // > 2 hours
     durationScore = 10;
     factors.push({
-      factor: "Procedimento de duração moderada",
+      factor: 'Procedimento de duração moderada',
       impact: 10,
       explanation: `Duração: ${procedure.duration} minutos`,
     });
@@ -837,31 +851,31 @@ export function calculateProcedureSpecificRisk(
   let anesthesiaScore = 0;
   if (procedure.anesthesiaRequired) {
     switch (procedure.anesthesiaType) {
-      case "GENERAL":
+      case 'GENERAL':
         anesthesiaScore = 25;
         factors.push({
-          factor: "Anestesia geral",
+          factor: 'Anestesia geral',
           impact: 25,
-          explanation: "Anestesia geral apresenta riscos sistêmicos",
+          explanation: 'Anestesia geral apresenta riscos sistêmicos',
         });
         break;
-      case "REGIONAL":
+      case 'REGIONAL':
         anesthesiaScore = 15;
         factors.push({
-          factor: "Anestesia regional",
+          factor: 'Anestesia regional',
           impact: 15,
-          explanation: "Anestesia regional com riscos específicos",
+          explanation: 'Anestesia regional com riscos específicos',
         });
         break;
-      case "SEDATION":
+      case 'SEDATION':
         anesthesiaScore = 10;
         factors.push({
-          factor: "Sedação",
+          factor: 'Sedação',
           impact: 10,
-          explanation: "Sedação com monitoramento requerido",
+          explanation: 'Sedação com monitoramento requerido',
         });
         break;
-      case "LOCAL":
+      case 'LOCAL':
         anesthesiaScore = 3;
         break;
     }
@@ -872,31 +886,31 @@ export function calculateProcedureSpecificRisk(
   procedureSpecific.equipmentRequired.forEach((equipment) => {
     let deviceScore = 0;
     switch (equipment.riskClass) {
-      case "IV":
+      case 'IV':
         deviceScore = 15;
         factors.push({
           factor: `Equipamento Classe IV: ${equipment.device}`,
           impact: 15,
-          explanation: "Equipamento de altíssimo risco (ANVISA Classe IV)",
+          explanation: 'Equipamento de altíssimo risco (ANVISA Classe IV)',
         });
         break;
-      case "III":
+      case 'III':
         deviceScore = 10;
         factors.push({
           factor: `Equipamento Classe III: ${equipment.device}`,
           impact: 10,
-          explanation: "Equipamento de alto risco (ANVISA Classe III)",
+          explanation: 'Equipamento de alto risco (ANVISA Classe III)',
         });
         break;
-      case "II":
+      case 'II':
         deviceScore = 5;
         factors.push({
           factor: `Equipamento Classe II: ${equipment.device}`,
           impact: 5,
-          explanation: "Equipamento de risco moderado (ANVISA Classe II)",
+          explanation: 'Equipamento de risco moderado (ANVISA Classe II)',
         });
         break;
-      case "I":
+      case 'I':
         deviceScore = 1;
         break;
     }
@@ -906,9 +920,10 @@ export function calculateProcedureSpecificRisk(
   // Contraindications Assessment
   let contraindicationScore = 0;
   if (procedureSpecific.contraindicationsPresent.length > 0) {
-    contraindicationScore = procedureSpecific.contraindicationsPresent.length * 12;
+    contraindicationScore =
+      procedureSpecific.contraindicationsPresent.length * 12;
     factors.push({
-      factor: "Contraindicações presentes",
+      factor: 'Contraindicações presentes',
       impact: contraindicationScore,
       explanation: `${procedureSpecific.contraindicationsPresent.length} contraindicação(ões) identificada(s)`,
     });
@@ -917,27 +932,29 @@ export function calculateProcedureSpecificRisk(
   // Drug Interactions Assessment
   let interactionScore = 0;
   const severeInteractions = procedureSpecific.drugInteractions.filter(
-    (interaction) => interaction.severity === "MAJOR" || interaction.severity === "CONTRAINDICATED",
+    (interaction) =>
+      interaction.severity === 'MAJOR' ||
+      interaction.severity === 'CONTRAINDICATED'
   );
 
   if (severeInteractions.length > 0) {
     interactionScore = severeInteractions.length * 15;
     factors.push({
-      factor: "Interações medicamentosas graves",
+      factor: 'Interações medicamentosas graves',
       impact: interactionScore,
       explanation: `${severeInteractions.length} interação(ões) medicamentosa(s) grave(s)`,
     });
   }
 
   const moderateInteractions = procedureSpecific.drugInteractions.filter(
-    (interaction) => interaction.severity === "MODERATE",
+    (interaction) => interaction.severity === 'MODERATE'
   );
 
   if (moderateInteractions.length > 0) {
     const moderateScore = moderateInteractions.length * 5;
     interactionScore += moderateScore;
     factors.push({
-      factor: "Interações medicamentosas moderadas",
+      factor: 'Interações medicamentosas moderadas',
       impact: moderateScore,
       explanation: `${moderateInteractions.length} interação(ões) medicamentosa(s) moderada(s)`,
     });
@@ -959,7 +976,9 @@ export function calculateProcedureSpecificRisk(
  * Environmental and Psychosocial Risk Scoring Algorithm
  * Social determinants of health and support system assessment
  */
-export function calculateEnvironmentalRisk(environmental: RiskAssessmentInput["environmental"]): {
+export function calculateEnvironmentalRisk(
+  environmental: RiskAssessmentInput['environmental']
+): {
   score: number;
   factors: Array<{ factor: string; impact: number; explanation: string }>;
 } {
@@ -975,30 +994,30 @@ export function calculateEnvironmentalRisk(environmental: RiskAssessmentInput["e
   if (!environmental.supportSystem.hasCaregiver) {
     supportScore += 15;
     factors.push({
-      factor: "Ausência de cuidador",
+      factor: 'Ausência de cuidador',
       impact: 15,
-      explanation: "Falta de suporte para cuidados pós-procedimento",
+      explanation: 'Falta de suporte para cuidados pós-procedimento',
     });
   }
 
   switch (environmental.supportSystem.familySupport) {
-    case "NONE":
+    case 'NONE':
       supportScore += 20;
       factors.push({
-        factor: "Ausência de suporte familiar",
+        factor: 'Ausência de suporte familiar',
         impact: 20,
-        explanation: "Falta de rede de apoio familiar",
+        explanation: 'Falta de rede de apoio familiar',
       });
       break;
-    case "WEAK":
+    case 'WEAK':
       supportScore += 10;
       factors.push({
-        factor: "Suporte familiar limitado",
+        factor: 'Suporte familiar limitado',
         impact: 10,
-        explanation: "Rede de apoio familiar inadequada",
+        explanation: 'Rede de apoio familiar inadequada',
       });
       break;
-    case "MODERATE":
+    case 'MODERATE':
       supportScore += 3;
       break;
   }
@@ -1006,18 +1025,18 @@ export function calculateEnvironmentalRisk(environmental: RiskAssessmentInput["e
   if (environmental.supportSystem.socialIsolation) {
     supportScore += 12;
     factors.push({
-      factor: "Isolamento social",
+      factor: 'Isolamento social',
       impact: 12,
-      explanation: "Isolamento social impacta recuperação",
+      explanation: 'Isolamento social impacta recuperação',
     });
   }
 
   if (environmental.supportSystem.languageBarriers) {
     supportScore += 8;
     factors.push({
-      factor: "Barreiras linguísticas",
+      factor: 'Barreiras linguísticas',
       impact: 8,
-      explanation: "Dificuldades de comunicação podem afetar cuidados",
+      explanation: 'Dificuldades de comunicação podem afetar cuidados',
     });
   }
 
@@ -1026,9 +1045,9 @@ export function calculateEnvironmentalRisk(environmental: RiskAssessmentInput["e
   if (!environmental.accessibilityFactors.transportationAvailable) {
     accessibilityScore += 15;
     factors.push({
-      factor: "Transporte indisponível",
+      factor: 'Transporte indisponível',
       impact: 15,
-      explanation: "Dificuldades de acesso para seguimento",
+      explanation: 'Dificuldades de acesso para seguimento',
     });
   }
 
@@ -1037,14 +1056,14 @@ export function calculateEnvironmentalRisk(environmental: RiskAssessmentInput["e
   if (distance > 50) {
     accessibilityScore += 12;
     factors.push({
-      factor: "Distância elevada da clínica",
+      factor: 'Distância elevada da clínica',
       impact: 12,
       explanation: `Distância de ${distance}km dificulta seguimento`,
     });
   } else if (distance > 20) {
     accessibilityScore += 5;
     factors.push({
-      factor: "Distância moderada da clínica",
+      factor: 'Distância moderada da clínica',
       impact: 5,
       explanation: `Distância de ${distance}km pode impactar seguimento`,
     });
@@ -1053,80 +1072,82 @@ export function calculateEnvironmentalRisk(environmental: RiskAssessmentInput["e
   if (environmental.accessibilityFactors.financialConstraints) {
     accessibilityScore += 10;
     factors.push({
-      factor: "Limitações financeiras",
+      factor: 'Limitações financeiras',
       impact: 10,
-      explanation: "Restrições financeiras podem afetar aderência ao tratamento",
+      explanation:
+        'Restrições financeiras podem afetar aderência ao tratamento',
     });
   }
 
   switch (environmental.accessibilityFactors.insuranceCoverage) {
-    case "NONE":
+    case 'NONE':
       accessibilityScore += 15;
       factors.push({
-        factor: "Ausência de cobertura de seguro",
+        factor: 'Ausência de cobertura de seguro',
         impact: 15,
-        explanation: "Falta de cobertura de seguro para cuidados",
+        explanation: 'Falta de cobertura de seguro para cuidados',
       });
       break;
-    case "PARTIAL":
+    case 'PARTIAL':
       accessibilityScore += 8;
       factors.push({
-        factor: "Cobertura parcial de seguro",
+        factor: 'Cobertura parcial de seguro',
         impact: 8,
-        explanation: "Cobertura limitada pode impactar cuidados",
+        explanation: 'Cobertura limitada pode impactar cuidados',
       });
       break;
   }
 
   // Compliance History Assessment
   let complianceScore = 0;
-  const appointmentAttendance = environmental.complianceHistory.previousAppointmentAttendance;
+  const appointmentAttendance =
+    environmental.complianceHistory.previousAppointmentAttendance;
 
   if (appointmentAttendance < 60) {
     complianceScore += 20;
     factors.push({
-      factor: "Baixa aderência a consultas",
+      factor: 'Baixa aderência a consultas',
       impact: 20,
       explanation: `${appointmentAttendance}% de comparecimento às consultas`,
     });
   } else if (appointmentAttendance < 80) {
     complianceScore += 10;
     factors.push({
-      factor: "Aderência moderada a consultas",
+      factor: 'Aderência moderada a consultas',
       impact: 10,
       explanation: `${appointmentAttendance}% de comparecimento às consultas`,
     });
   }
 
-  if (environmental.complianceHistory.medicationCompliance === "POOR") {
+  if (environmental.complianceHistory.medicationCompliance === 'POOR') {
     complianceScore += 15;
     factors.push({
-      factor: "Baixa aderência medicamentosa",
+      factor: 'Baixa aderência medicamentosa',
       impact: 15,
-      explanation: "Histórico de má aderência aos medicamentos",
+      explanation: 'Histórico de má aderência aos medicamentos',
     });
-  } else if (environmental.complianceHistory.medicationCompliance === "FAIR") {
+  } else if (environmental.complianceHistory.medicationCompliance === 'FAIR') {
     complianceScore += 8;
     factors.push({
-      factor: "Aderência medicamentosa irregular",
+      factor: 'Aderência medicamentosa irregular',
       impact: 8,
-      explanation: "Aderência medicamentosa inconsistente",
+      explanation: 'Aderência medicamentosa inconsistente',
     });
   }
 
-  if (environmental.complianceHistory.followUpCompliance === "POOR") {
+  if (environmental.complianceHistory.followUpCompliance === 'POOR') {
     complianceScore += 12;
     factors.push({
-      factor: "Baixa aderência ao seguimento",
+      factor: 'Baixa aderência ao seguimento',
       impact: 12,
-      explanation: "Histórico de má aderência ao acompanhamento",
+      explanation: 'Histórico de má aderência ao acompanhamento',
     });
-  } else if (environmental.complianceHistory.followUpCompliance === "FAIR") {
+  } else if (environmental.complianceHistory.followUpCompliance === 'FAIR') {
     complianceScore += 6;
     factors.push({
-      factor: "Aderência irregular ao seguimento",
+      factor: 'Aderência irregular ao seguimento',
       impact: 6,
-      explanation: "Seguimento inconsistente",
+      explanation: 'Seguimento inconsistente',
     });
   }
 
@@ -1147,13 +1168,19 @@ export function calculateEnvironmentalRisk(environmental: RiskAssessmentInput["e
  */
 export function calculateComprehensiveRiskAssessment(
   input: RiskAssessmentInput,
-  customWeights?: Partial<Record<keyof typeof DEFAULT_RISK_WEIGHTS, number>>,
+  customWeights?: Partial<Record<keyof typeof DEFAULT_RISK_WEIGHTS, number>>
 ): RiskScoreBreakdown {
   // Calculate individual category scores
   const demographicResult = calculateDemographicRisk(input.demographicFactors);
-  const medicalHistoryResult = calculateMedicalHistoryRisk(input.medicalHistory);
-  const currentConditionResult = calculateCurrentConditionRisk(input.currentCondition);
-  const procedureSpecificResult = calculateProcedureSpecificRisk(input.procedureSpecific);
+  const medicalHistoryResult = calculateMedicalHistoryRisk(
+    input.medicalHistory
+  );
+  const currentConditionResult = calculateCurrentConditionRisk(
+    input.currentCondition
+  );
+  const procedureSpecificResult = calculateProcedureSpecificRisk(
+    input.procedureSpecific
+  );
   const environmentalResult = calculateEnvironmentalRisk(input.environmental);
 
   // Psychosocial assessment (simplified for now, can be expanded)
@@ -1189,8 +1216,8 @@ export function calculateComprehensiveRiskAssessment(
         categoryScores.currentCondition * mainWeights.currentCondition +
         categoryScores.procedureSpecific * mainWeights.procedureSpecific +
         categoryScores.environmental * mainWeights.environmental +
-        categoryScores.psychosocial * mainWeights.psychosocial,
-    ),
+        categoryScores.psychosocial * mainWeights.psychosocial
+    )
   );
 
   // Determine risk level based on thresholds
@@ -1237,7 +1264,10 @@ export function calculateComprehensiveRiskAssessment(
 
   // Calculate confidence interval (simplified statistical model)
   const dataQuality = calculateDataQuality(input);
-  const modelUncertainty = calculateModelUncertainty(overallScore, criticalFactors.length);
+  const modelUncertainty = calculateModelUncertainty(
+    overallScore,
+    criticalFactors.length
+  );
 
   const confidenceInterval = {
     lower: Math.max(0, overallScore - modelUncertainty),
@@ -1262,8 +1292,10 @@ function calculateDataQuality(input: RiskAssessmentInput): number {
   let qualityScore = 100;
 
   // Demographic data completeness
-  if (!input.demographicFactors.age || input.demographicFactors.age === 0) qualityScore -= 5;
-  if (!input.demographicFactors.bmi || input.demographicFactors.bmi === 0) qualityScore -= 5;
+  if (!input.demographicFactors.age || input.demographicFactors.age === 0)
+    qualityScore -= 5;
+  if (!input.demographicFactors.bmi || input.demographicFactors.bmi === 0)
+    qualityScore -= 5;
   if (
     !input.demographicFactors.geneticPredispositions ||
     input.demographicFactors.geneticPredispositions.length === 0
@@ -1281,13 +1313,17 @@ function calculateDataQuality(input: RiskAssessmentInput): number {
     input.medicalHistory.currentMedications.length === 0
   )
     qualityScore -= 2;
-  if (!input.medicalHistory.allergies || input.medicalHistory.allergies.length === 0)
+  if (
+    !input.medicalHistory.allergies ||
+    input.medicalHistory.allergies.length === 0
+  )
     qualityScore -= 2;
 
   // Current condition data freshness (vital signs should be recent)
   const now = new Date();
   const vitalSignsAge =
-    now.getTime() - input.currentCondition.vitalSigns.bloodPressure.timestamp.getTime();
+    now.getTime() -
+    input.currentCondition.vitalSigns.bloodPressure.timestamp.getTime();
   const hoursOld = vitalSignsAge / (1000 * 60 * 60);
 
   if (hoursOld > 24)
@@ -1351,9 +1387,10 @@ function getEscalationPriorityLevel(priority: EscalationPriority): number {
  */
 function getHigherPriority(
   priority1: EscalationPriority,
-  priority2: EscalationPriority,
+  priority2: EscalationPriority
 ): EscalationPriority {
-  return getEscalationPriorityLevel(priority1) > getEscalationPriorityLevel(priority2)
+  return getEscalationPriorityLevel(priority1) >
+    getEscalationPriorityLevel(priority2)
     ? priority1
     : priority2;
 }
@@ -1364,7 +1401,7 @@ function getHigherPriority(
  */
 export function determineEmergencyEscalation(
   scoreBreakdown: RiskScoreBreakdown,
-  input: RiskAssessmentInput,
+  input: RiskAssessmentInput
 ): {
   requiresEscalation: boolean;
   escalationPriority: EscalationPriority;
@@ -1383,22 +1420,25 @@ export function determineEmergencyEscalation(
 
   // Critical vital signs
   const vitals = input.currentCondition.vitalSigns;
-  if (vitals.bloodPressure.systolic > 180 || vitals.bloodPressure.diastolic > 110) {
+  if (
+    vitals.bloodPressure.systolic > 180 ||
+    vitals.bloodPressure.diastolic > 110
+  ) {
     requiresEscalation = true;
     escalationPriority = EscalationPriority.IMMEDIATE;
-    reasons.push("Crise hipertensiva detectada");
+    reasons.push('Crise hipertensiva detectada');
   }
 
   if (vitals.oxygenSaturation.percentage < 90) {
     requiresEscalation = true;
     escalationPriority = EscalationPriority.IMMEDIATE;
-    reasons.push("Hipoxemia crítica");
+    reasons.push('Hipoxemia crítica');
   }
 
-  if (input.currentCondition.mentalStatus === "UNCONSCIOUS") {
+  if (input.currentCondition.mentalStatus === 'UNCONSCIOUS') {
     requiresEscalation = true;
     escalationPriority = EscalationPriority.EMERGENCY;
-    reasons.push("Paciente inconsciente");
+    reasons.push('Paciente inconsciente');
   }
 
   // High-risk combinations
@@ -1407,15 +1447,25 @@ export function determineEmergencyEscalation(
     scoreBreakdown.categoryScores.medicalHistory > 60
   ) {
     requiresEscalation = true;
-    escalationPriority = getHigherPriority(escalationPriority, EscalationPriority.URGENT);
-    reasons.push("Combinação de alto risco: condição atual crítica + histórico médico complexo");
+    escalationPriority = getHigherPriority(
+      escalationPriority,
+      EscalationPriority.URGENT
+    );
+    reasons.push(
+      'Combinação de alto risco: condição atual crítica + histórico médico complexo'
+    );
   }
 
   // Multiple critical factors
-  const criticalFactors = scoreBreakdown.criticalFactors.filter((f) => f.impact >= 20);
+  const criticalFactors = scoreBreakdown.criticalFactors.filter(
+    (f) => f.impact >= 20
+  );
   if (criticalFactors.length >= 3) {
     requiresEscalation = true;
-    escalationPriority = getHigherPriority(escalationPriority, EscalationPriority.URGENT);
+    escalationPriority = getHigherPriority(
+      escalationPriority,
+      EscalationPriority.URGENT
+    );
     reasons.push(`${criticalFactors.length} fatores críticos identificados`);
   }
 
@@ -1442,7 +1492,7 @@ export function validateModelAccuracy(): {
     currentAccuracy: 98.7, // Exceeds ≥98% requirement
     meetsRequirement: true,
     lastValidation: new Date(),
-    validationMethod: "Cross-validation with Brazilian healthcare dataset",
+    validationMethod: 'Cross-validation with Brazilian healthcare dataset',
   };
 }
 

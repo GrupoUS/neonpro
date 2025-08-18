@@ -527,8 +527,11 @@ class QualityReportGenerator {
     console.log(`✅ Quality Gates Passed: ${summary.passedGates}/${summary.totalGates}`);
     console.log(`⏱️  Report Generation Time: ${duration.toFixed(2)}s`);
     console.log('\n📋 Key Metrics:');
+    // biome-ignore lint/suspicious/noConsole: Required for quality report output
     console.log(`   • Coverage: ${Math.round((this.metrics.coverage!.statements + this.metrics.coverage!.branches + this.metrics.coverage!.functions + this.metrics.coverage!.lines) / 4)}%`);
+    // biome-ignore lint/suspicious/noConsole: Required for quality report output
     console.log(`   • Security Score: ${this.metrics.security!.securityScore.toFixed(1)}/10`);
+    // biome-ignore lint/suspicious/noConsole: Required for quality report output
     console.log(`   • Bundle Size: ${this.metrics.performance!.bundleSize.toFixed(1)}MB`);
     console.log(`   • Accessibility: ${this.metrics.accessibility!.score}/100`);
     console.log(`   • Compliance: ${this.metrics.compliance!.overallScore}%`);

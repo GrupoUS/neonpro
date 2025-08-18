@@ -36,7 +36,7 @@ export class TrafficManager {
     }
 
     this.currentConfig = config;
-    
+
     const status: TrafficStatus = {
       currentDistribution: {
         blue: config.blueWeight,
@@ -48,7 +48,7 @@ export class TrafficManager {
 
     // Add to history
     this.trafficHistory.push(status);
-    
+
     // Limit history size
     if (this.trafficHistory.length > this.config.maxHistorySize) {
       this.trafficHistory.shift();
@@ -56,16 +56,18 @@ export class TrafficManager {
 
     // Simulate traffic routing
     await this.applyTrafficRouting(config);
-    
+
     return status;
   }
 
   /**
    * Gradually shift traffic from blue to green
    */
-  async gradualShift(steps: number[] = [10, 25, 50, 75, 100]): Promise<TrafficStatus[]> {
+  async gradualShift(
+    steps: number[] = [10, 25, 50, 75, 100]
+  ): Promise<TrafficStatus[]> {
     const results: TrafficStatus[] = [];
-    
+
     for (const greenWeight of steps) {
       const config: TrafficConfig = {
         blueWeight: 100 - greenWeight,
@@ -73,27 +75,29 @@ export class TrafficManager {
         environment: this.currentConfig?.environment || 'production',
         gradualRollout: true,
       };
-      
+
       const status = await this.routeTraffic(config);
       results.push(status);
-      
+
       // Wait between steps
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
     }
-    
+
     return results;
   }
 
   /**
    * Switch all traffic to specified environment
    */
-  async switchToEnvironment(environment: 'blue' | 'green'): Promise<TrafficStatus> {
+  async switchToEnvironment(
+    environment: 'blue' | 'green'
+  ): Promise<TrafficStatus> {
     const config: TrafficConfig = {
       blueWeight: environment === 'blue' ? 100 : 0,
       greenWeight: environment === 'green' ? 100 : 0,
       environment: this.currentConfig?.environment || 'production',
     };
-    
+
     return this.routeTraffic(config);
   }
 
@@ -119,16 +123,20 @@ export class TrafficManager {
     if (!status) {
       return 'blue'; // Default to blue if no status available
     }
-    
+
     if (status.activeEnvironment === 'mixed') {
       // If mixed, return the environment with higher weight
-      return status.currentDistribution.blue > status.currentDistribution.green ? 'blue' : 'green';
+      return status.currentDistribution.blue > status.currentDistribution.green
+        ? 'blue'
+        : 'green';
     }
-    
+
     return status.activeEnvironment as 'blue' | 'green';
   }
 
-  private determineActiveEnvironment(config: TrafficConfig): 'blue' | 'green' | 'mixed' {
+  private determineActiveEnvironment(
+    config: TrafficConfig
+  ): 'blue' | 'green' | 'mixed' {
     if (config.blueWeight === 100) return 'blue';
     if (config.greenWeight === 100) return 'green';
     return 'mixed';
@@ -137,6 +145,6 @@ export class TrafficManager {
   private async applyTrafficRouting(config: TrafficConfig): Promise<void> {
     // Implementation would depend on load balancer/proxy configuration
     // This is a placeholder for the actual traffic routing logic
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
   }
 }

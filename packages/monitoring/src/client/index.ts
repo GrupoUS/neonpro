@@ -8,12 +8,12 @@
 'use client';
 
 import {
-  getCLS,
-  getFCP,
-  getFID,
-  getINP,
-  getLCP,
-  getTTFB,
+  onCLS,
+  onFCP,
+  onFID,
+  onINP,
+  onLCP,
+  onTTFB,
   type Metric,
 } from 'web-vitals';
 import type {
@@ -264,12 +264,12 @@ export class PerformanceMonitor {
       this.hooks.onMetric?.(metric);
     };
 
-    getCLS(sendToAnalytics);
-    getFCP(sendToAnalytics);
-    getFID(sendToAnalytics);
-    getINP(sendToAnalytics);
-    getLCP(sendToAnalytics);
-    getTTFB(sendToAnalytics);
+    onCLS(sendToAnalytics);
+    onFCP(sendToAnalytics);
+    onFID(sendToAnalytics);
+    onLCP(sendToAnalytics);
+    onTTFB(sendToAnalytics);
+    onINP(sendToAnalytics);
   }
 
   /**
@@ -328,7 +328,7 @@ export class PerformanceMonitor {
       ttfb: entry.responseStart - entry.requestStart,
       download: entry.responseEnd - entry.responseStart,
       dom_processing: entry.domContentLoadedEventEnd - entry.responseEnd,
-      total_load_time: entry.loadEventEnd - entry.navigationStart,
+      total_load_time: entry.loadEventEnd - (entry as any).navigationStart,
     };
 
     this.sendNavigationMetrics(metrics);
@@ -364,7 +364,7 @@ export class PerformanceMonitor {
       timestamp: new Date(),
       url: window.location.href,
       userAgent: navigator.userAgent,
-      context: this.context,
+      context: this.getCompleteContext(),
       severity: 'error' as const,
       fingerprint: this.generateErrorFingerprint(errorInfo),
       tags: this.getErrorTags(),
@@ -560,13 +560,25 @@ export class PerformanceMonitor {
   }
 
   /**
+   * Get complete healthcare context with defaults
+   */
+  private getCompleteContext(): HealthcareContext {
+    return {
+      feature: this.context.feature || 'patient-management',
+      sensitivity: this.context.sensitivity || 'medium',
+      complianceLevel: this.context.complianceLevel || 'basic',
+      userRole: this.context.userRole || 'patient',
+    };
+  }
+
+  /**
    * Get error tags for categorization
    */
   private getErrorTags(): Record<string, string> {
     return {
       environment: process.env.NODE_ENV || 'unknown',
-      feature: this.context.feature || 'unknown',
-      userRole: this.context.userRole || 'unknown',
+      feature: (this.context.feature as string) || 'unknown',
+      userRole: (this.context.userRole as string) || 'unknown',
     };
   }
 

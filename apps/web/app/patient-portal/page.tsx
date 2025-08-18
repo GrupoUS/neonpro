@@ -1,52 +1,51 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
-import { useUser } from "@clerk/nextjs";
+import { useUser } from '@clerk/nextjs';
 import {
+  Alert,
+  AlertDescription,
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Badge,
+  Button,
+  Calendar,
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-  Button,
-  Badge,
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-  Calendar,
-  Alert,
-  AlertDescription,
+  Progress,
+  Separator,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-  Separator,
-  Progress,
-} from "@neonpro/ui";
-
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@neonpro/ui';
 import {
-  Heart,
-  Calendar as CalendarIcon,
-  FileText,
-  Pill,
   Activity,
+  AlertCircle,
+  Calendar as CalendarIcon,
+  CheckCircle,
   Clock,
-  MapPin,
-  Phone,
-  Mail,
   Download,
   Eye,
-  AlertCircle,
-  CheckCircle,
-  User,
+  FileText,
+  Heart,
+  Mail,
+  MapPin,
+  Phone,
+  Pill,
   Stethoscope,
-} from "lucide-react";
+  User,
+} from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 
 interface Appointment {
   id: string;
@@ -54,7 +53,7 @@ interface Appointment {
   time: string;
   doctor: string;
   specialty: string;
-  status: "scheduled" | "completed" | "cancelled";
+  status: 'scheduled' | 'completed' | 'cancelled';
   location: string;
   notes?: string;
 }
@@ -74,100 +73,109 @@ interface TestResult {
   date: string;
   type: string;
   result: string;
-  status: "normal" | "abnormal" | "pending";
+  status: 'normal' | 'abnormal' | 'pending';
   doctor: string;
   notes?: string;
 }
 
 const MOCK_APPOINTMENTS: Appointment[] = [
   {
-    id: "1",
-    date: "2024-02-15",
-    time: "14:30",
-    doctor: "Dr. Ana Silva",
-    specialty: "Cardiologia",
-    status: "scheduled",
-    location: "Consultório 201",
-    notes: "Consulta de rotina - retorno",
+    id: '1',
+    date: '2024-02-15',
+    time: '14:30',
+    doctor: 'Dr. Ana Silva',
+    specialty: 'Cardiologia',
+    status: 'scheduled',
+    location: 'Consultório 201',
+    notes: 'Consulta de rotina - retorno',
   },
   {
-    id: "2",
-    date: "2024-01-20",
-    time: "09:00",
-    doctor: "Dr. João Santos",
-    specialty: "Clínica Geral",
-    status: "completed",
-    location: "Consultório 105",
+    id: '2',
+    date: '2024-01-20',
+    time: '09:00',
+    doctor: 'Dr. João Santos',
+    specialty: 'Clínica Geral',
+    status: 'completed',
+    location: 'Consultório 105',
   },
 ];
 
 const MOCK_RECORDS: MedicalRecord[] = [
   {
-    id: "1",
-    date: "2024-01-20",
-    doctor: "Dr. João Santos",
-    diagnosis: "Hipertensão Arterial Leve",
-    prescription: ["Losartana 50mg - 1x ao dia", "Dieta com redução de sódio"],
+    id: '1',
+    date: '2024-01-20',
+    doctor: 'Dr. João Santos',
+    diagnosis: 'Hipertensão Arterial Leve',
+    prescription: ['Losartana 50mg - 1x ao dia', 'Dieta com redução de sódio'],
     notes:
-      "Paciente apresenta pressão arterial levemente elevada. Iniciar tratamento medicamentoso e mudanças no estilo de vida.",
-    attachments: ["receita_20240120.pdf"],
+      'Paciente apresenta pressão arterial levemente elevada. Iniciar tratamento medicamentoso e mudanças no estilo de vida.',
+    attachments: ['receita_20240120.pdf'],
   },
 ];
 
 const MOCK_TEST_RESULTS: TestResult[] = [
   {
-    id: "1",
-    date: "2024-01-18",
-    type: "Hemograma Completo",
-    result: "Normal",
-    status: "normal",
-    doctor: "Dr. João Santos",
+    id: '1',
+    date: '2024-01-18',
+    type: 'Hemograma Completo',
+    result: 'Normal',
+    status: 'normal',
+    doctor: 'Dr. João Santos',
   },
   {
-    id: "2",
-    date: "2024-01-18",
-    type: "Colesterol Total",
-    result: "245 mg/dL",
-    status: "abnormal",
-    doctor: "Dr. João Santos",
-    notes: "Valor acima do recomendado. Orientações dietéticas necessárias.",
+    id: '2',
+    date: '2024-01-18',
+    type: 'Colesterol Total',
+    result: '245 mg/dL',
+    status: 'abnormal',
+    doctor: 'Dr. João Santos',
+    notes: 'Valor acima do recomendado. Orientações dietéticas necessárias.',
   },
 ];
 
 export default function PatientPortalPage() {
   const { user, isLoaded } = useUser();
-  const [appointments, setAppointments] = useState<Appointment[]>(MOCK_APPOINTMENTS);
+  const [appointments, setAppointments] =
+    useState<Appointment[]>(MOCK_APPOINTMENTS);
   const [records, setRecords] = useState<MedicalRecord[]>(MOCK_RECORDS);
-  const [testResults, setTestResults] = useState<TestResult[]>(MOCK_TEST_RESULTS);
+  const [testResults, setTestResults] =
+    useState<TestResult[]>(MOCK_TEST_RESULTS);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
   const getStatusBadge = (status: string) => {
     const variants = {
-      scheduled: "bg-blue-100 text-blue-800",
-      completed: "bg-green-100 text-green-800",
-      cancelled: "bg-red-100 text-red-800",
-      normal: "bg-green-100 text-green-800",
-      abnormal: "bg-red-100 text-red-800",
-      pending: "bg-yellow-100 text-yellow-800",
+      scheduled: 'bg-blue-100 text-blue-800',
+      completed: 'bg-green-100 text-green-800',
+      cancelled: 'bg-red-100 text-red-800',
+      normal: 'bg-green-100 text-green-800',
+      abnormal: 'bg-red-100 text-red-800',
+      pending: 'bg-yellow-100 text-yellow-800',
     };
 
     const labels = {
-      scheduled: "Agendado",
-      completed: "Concluído",
-      cancelled: "Cancelado",
-      normal: "Normal",
-      abnormal: "Alterado",
-      pending: "Pendente",
+      scheduled: 'Agendado',
+      completed: 'Concluído',
+      cancelled: 'Cancelado',
+      normal: 'Normal',
+      abnormal: 'Alterado',
+      pending: 'Pendente',
     };
 
     return (
-      <Badge className={variants[status as keyof typeof variants] || "bg-gray-100 text-gray-800"}>
+      <Badge
+        className={
+          variants[status as keyof typeof variants] ||
+          'bg-gray-100 text-gray-800'
+        }
+      >
         {labels[status as keyof typeof labels] || status}
       </Badge>
     );
   };
 
-  const nextAppointment = appointments.find((apt) => apt.status === "scheduled");
+  const nextAppointment = appointments.find(
+    (apt) => apt.status === 'scheduled'
+  );
 
   if (!isLoaded) {
     return (
@@ -182,7 +190,9 @@ export default function PatientPortalPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-bold text-3xl tracking-tight">Portal do Paciente</h1>
+          <h1 className="font-bold text-3xl tracking-tight">
+            Portal do Paciente
+          </h1>
           <p className="text-muted-foreground">
             Bem-vindo, {user?.firstName}! Gerencie sua saúde de forma digital.
           </p>
@@ -208,8 +218,8 @@ export default function PatientPortalPage() {
                 <p className="font-medium text-sm">Próxima Consulta</p>
                 <p className="text-muted-foreground text-xs">
                   {nextAppointment
-                    ? `${new Date(nextAppointment.date).toLocaleDateString("pt-BR")} às ${nextAppointment.time}`
-                    : "Nenhuma agendada"}
+                    ? `${new Date(nextAppointment.date).toLocaleDateString('pt-BR')} às ${nextAppointment.time}`
+                    : 'Nenhuma agendada'}
                 </p>
               </div>
             </div>
@@ -224,7 +234,9 @@ export default function PatientPortalPage() {
               </div>
               <div>
                 <p className="font-medium text-sm">Prontuários</p>
-                <p className="text-muted-foreground text-xs">{records.length} registro(s)</p>
+                <p className="text-muted-foreground text-xs">
+                  {records.length} registro(s)
+                </p>
               </div>
             </div>
           </CardContent>
@@ -238,7 +250,9 @@ export default function PatientPortalPage() {
               </div>
               <div>
                 <p className="font-medium text-sm">Exames</p>
-                <p className="text-muted-foreground text-xs">{testResults.length} resultado(s)</p>
+                <p className="text-muted-foreground text-xs">
+                  {testResults.length} resultado(s)
+                </p>
               </div>
             </div>
           </CardContent>
@@ -264,17 +278,18 @@ export default function PatientPortalPage() {
         <Alert>
           <CalendarIcon className="h-4 w-4" />
           <AlertDescription>
-            <strong>Próxima consulta:</strong> {nextAppointment.doctor} ({nextAppointment.specialty}
-            ) - {new Date(nextAppointment.date).toLocaleDateString("pt-BR")} às{" "}
+            <strong>Próxima consulta:</strong> {nextAppointment.doctor} (
+            {nextAppointment.specialty}) -{' '}
+            {new Date(nextAppointment.date).toLocaleDateString('pt-BR')} às{' '}
             {nextAppointment.time}
-            <Button variant="link" className="ml-2 h-auto p-0">
+            <Button className="ml-2 h-auto p-0" variant="link">
               Ver detalhes
             </Button>
           </AlertDescription>
         </Alert>
       )}
 
-      <Tabs defaultValue="appointments" className="space-y-6">
+      <Tabs className="space-y-6" defaultValue="appointments">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="appointments">Consultas</TabsTrigger>
           <TabsTrigger value="records">Prontuários</TabsTrigger>
@@ -283,18 +298,20 @@ export default function PatientPortalPage() {
         </TabsList>
 
         {/* Appointments */}
-        <TabsContent value="appointments" className="space-y-6">
+        <TabsContent className="space-y-6" value="appointments">
           <Card>
             <CardHeader>
               <CardTitle>Minhas Consultas</CardTitle>
-              <CardDescription>Histórico e agendamentos de consultas médicas</CardDescription>
+              <CardDescription>
+                Histórico e agendamentos de consultas médicas
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {appointments.map((appointment) => (
                   <div
-                    key={appointment.id}
                     className="flex items-center justify-between rounded-lg border p-4"
+                    key={appointment.id}
                   >
                     <div className="flex items-center space-x-4">
                       <div className="rounded-full bg-blue-100 p-2">
@@ -302,11 +319,15 @@ export default function PatientPortalPage() {
                       </div>
                       <div>
                         <h4 className="font-medium">{appointment.doctor}</h4>
-                        <p className="text-muted-foreground text-sm">{appointment.specialty}</p>
+                        <p className="text-muted-foreground text-sm">
+                          {appointment.specialty}
+                        </p>
                         <div className="mt-1 flex items-center space-x-4">
                           <div className="flex items-center text-muted-foreground text-xs">
                             <CalendarIcon className="mr-1 h-3 w-3" />
-                            {new Date(appointment.date).toLocaleDateString("pt-BR")}
+                            {new Date(appointment.date).toLocaleDateString(
+                              'pt-BR'
+                            )}
                           </div>
                           <div className="flex items-center text-muted-foreground text-xs">
                             <Clock className="mr-1 h-3 w-3" />
@@ -321,7 +342,7 @@ export default function PatientPortalPage() {
                     </div>
                     <div className="flex items-center space-x-2">
                       {getStatusBadge(appointment.status)}
-                      <Button variant="outline" size="sm">
+                      <Button size="sm" variant="outline">
                         <Eye className="mr-1 h-4 w-4" />
                         Detalhes
                       </Button>
@@ -334,24 +355,26 @@ export default function PatientPortalPage() {
         </TabsContent>
 
         {/* Medical Records */}
-        <TabsContent value="records" className="space-y-6">
+        <TabsContent className="space-y-6" value="records">
           <Card>
             <CardHeader>
               <CardTitle>Prontuários Médicos</CardTitle>
-              <CardDescription>Histórico de consultas e diagnósticos</CardDescription>
+              <CardDescription>
+                Histórico de consultas e diagnósticos
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {records.map((record) => (
-                  <div key={record.id} className="rounded-lg border p-4">
+                  <div className="rounded-lg border p-4" key={record.id}>
                     <div className="mb-3 flex items-center justify-between">
                       <div>
                         <h4 className="font-medium">{record.doctor}</h4>
                         <p className="text-muted-foreground text-sm">
-                          {new Date(record.date).toLocaleDateString("pt-BR")}
+                          {new Date(record.date).toLocaleDateString('pt-BR')}
                         </p>
                       </div>
-                      <Button variant="outline" size="sm">
+                      <Button size="sm" variant="outline">
                         <Download className="mr-1 h-4 w-4" />
                         Baixar
                       </Button>
@@ -359,7 +382,9 @@ export default function PatientPortalPage() {
 
                     <div className="space-y-2">
                       <div>
-                        <span className="font-medium text-sm">Diagnóstico:</span>
+                        <span className="font-medium text-sm">
+                          Diagnóstico:
+                        </span>
                         <p className="text-sm">{record.diagnosis}</p>
                       </div>
 
@@ -374,7 +399,9 @@ export default function PatientPortalPage() {
 
                       {record.notes && (
                         <div>
-                          <span className="font-medium text-sm">Observações:</span>
+                          <span className="font-medium text-sm">
+                            Observações:
+                          </span>
                           <p className="text-sm">{record.notes}</p>
                         </div>
                       )}
@@ -384,7 +411,7 @@ export default function PatientPortalPage() {
                           <span className="font-medium text-sm">Anexos:</span>
                           <div className="mt-1 flex space-x-2">
                             {record.attachments.map((attachment, index) => (
-                              <Button key={index} variant="outline" size="sm">
+                              <Button key={index} size="sm" variant="outline">
                                 <FileText className="mr-1 h-4 w-4" />
                                 {attachment}
                               </Button>
@@ -401,11 +428,13 @@ export default function PatientPortalPage() {
         </TabsContent>
 
         {/* Test Results */}
-        <TabsContent value="tests" className="space-y-6">
+        <TabsContent className="space-y-6" value="tests">
           <Card>
             <CardHeader>
               <CardTitle>Resultados de Exames</CardTitle>
-              <CardDescription>Histórico de exames e resultados laboratoriais</CardDescription>
+              <CardDescription>
+                Histórico de exames e resultados laboratoriais
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <Table>
@@ -422,13 +451,15 @@ export default function PatientPortalPage() {
                 <TableBody>
                   {testResults.map((test) => (
                     <TableRow key={test.id}>
-                      <TableCell>{new Date(test.date).toLocaleDateString("pt-BR")}</TableCell>
+                      <TableCell>
+                        {new Date(test.date).toLocaleDateString('pt-BR')}
+                      </TableCell>
                       <TableCell className="font-medium">{test.type}</TableCell>
                       <TableCell>{test.result}</TableCell>
                       <TableCell>{getStatusBadge(test.status)}</TableCell>
                       <TableCell>{test.doctor}</TableCell>
                       <TableCell>
-                        <Button variant="outline" size="sm">
+                        <Button size="sm" variant="outline">
                           <Eye className="mr-1 h-4 w-4" />
                           Ver
                         </Button>
@@ -442,11 +473,13 @@ export default function PatientPortalPage() {
         </TabsContent>
 
         {/* Medications */}
-        <TabsContent value="medications" className="space-y-6">
+        <TabsContent className="space-y-6" value="medications">
           <Card>
             <CardHeader>
               <CardTitle>Medicações Atuais</CardTitle>
-              <CardDescription>Medicamentos prescritos e em uso</CardDescription>
+              <CardDescription>
+                Medicamentos prescritos e em uso
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -457,13 +490,19 @@ export default function PatientPortalPage() {
                     </div>
                     <div>
                       <h4 className="font-medium">Losartana 50mg</h4>
-                      <p className="text-muted-foreground text-sm">1 comprimido ao dia - Manhã</p>
-                      <p className="text-muted-foreground text-xs">Prescrito por Dr. João Santos</p>
+                      <p className="text-muted-foreground text-sm">
+                        1 comprimido ao dia - Manhã
+                      </p>
+                      <p className="text-muted-foreground text-xs">
+                        Prescrito por Dr. João Santos
+                      </p>
                     </div>
                   </div>
                   <div className="text-right">
                     <Badge className="bg-green-100 text-green-800">Ativo</Badge>
-                    <p className="mt-1 text-muted-foreground text-xs">Próxima dose: 08:00</p>
+                    <p className="mt-1 text-muted-foreground text-xs">
+                      Próxima dose: 08:00
+                    </p>
                   </div>
                 </div>
 
@@ -477,12 +516,16 @@ export default function PatientPortalPage() {
                       <p className="text-muted-foreground text-sm">
                         1 cápsula ao dia - Após café da manhã
                       </p>
-                      <p className="text-muted-foreground text-xs">Prescrição própria</p>
+                      <p className="text-muted-foreground text-xs">
+                        Prescrição própria
+                      </p>
                     </div>
                   </div>
                   <div className="text-right">
                     <Badge className="bg-green-100 text-green-800">Ativo</Badge>
-                    <p className="mt-1 text-muted-foreground text-xs">Próxima dose: 09:00</p>
+                    <p className="mt-1 text-muted-foreground text-xs">
+                      Próxima dose: 09:00
+                    </p>
                   </div>
                 </div>
               </div>
@@ -490,8 +533,8 @@ export default function PatientPortalPage() {
               <Alert>
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
-                  <strong>Lembrete:</strong> Sempre consulte seu médico antes de alterar ou
-                  interromper medicações.
+                  <strong>Lembrete:</strong> Sempre consulte seu médico antes de
+                  alterar ou interromper medicações.
                 </AlertDescription>
               </Alert>
             </CardContent>

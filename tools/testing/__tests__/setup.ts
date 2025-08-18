@@ -4,7 +4,7 @@
  */
 
 import { config } from 'dotenv';
-import { vi, beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, vi } from 'vitest';
 
 // Load environment variables for testing
 config({ path: '.env.test' });

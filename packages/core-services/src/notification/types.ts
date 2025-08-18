@@ -1,5 +1,12 @@
 import { z } from 'zod';
-import { BaseEntity, NotificationType, UUIDSchema, DateSchema, EmailSchema, PhoneSchema } from '../types';
+import {
+  type BaseEntity,
+  DateSchema,
+  EmailSchema,
+  NotificationType,
+  PhoneSchema,
+  UUIDSchema,
+} from '../types';
 
 // Notification interfaces for aesthetic clinic communications
 export interface Notification extends BaseEntity {
@@ -73,7 +80,8 @@ export interface NotificationCampaign extends BaseEntity {
   isRecurring: boolean;
   recurringConfig?: RecurringConfig;
   abTestConfig?: ABTestConfig;
-}export interface AudienceFilter {
+}
+export interface AudienceFilter {
   patientIds?: string[];
   tags?: string[];
   ageRange?: { min: number; max: number };
@@ -145,13 +153,13 @@ export interface NotificationLog extends BaseEntity {
   ipAddress?: string;
   userAgent?: string;
   location?: string;
-}// Enums
+} // Enums
 export enum NotificationChannel {
   EMAIL = 'email',
   SMS = 'sms',
   WHATSAPP = 'whatsapp',
   PUSH = 'push',
-  IN_APP = 'in_app'
+  IN_APP = 'in_app',
 }
 
 export enum NotificationStatus {
@@ -166,14 +174,14 @@ export enum NotificationStatus {
   FAILED = 'failed',
   BOUNCED = 'bounced',
   SPAM = 'spam',
-  UNSUBSCRIBED = 'unsubscribed'
+  UNSUBSCRIBED = 'unsubscribed',
 }
 
 export enum NotificationPriority {
   LOW = 'low',
   NORMAL = 'normal',
   HIGH = 'high',
-  URGENT = 'urgent'
+  URGENT = 'urgent',
 }
 
 export enum CampaignType {
@@ -182,7 +190,7 @@ export enum CampaignType {
   REMINDER = 'reminder',
   FOLLOWUP = 'followup',
   EDUCATIONAL = 'educational',
-  ANNOUNCEMENT = 'announcement'
+  ANNOUNCEMENT = 'announcement',
 }
 
 export enum CampaignStatus {
@@ -192,7 +200,7 @@ export enum CampaignStatus {
   PAUSED = 'paused',
   COMPLETED = 'completed',
   CANCELLED = 'cancelled',
-  FAILED = 'failed'
+  FAILED = 'failed',
 }
 
 export enum RecurringFrequency {
@@ -200,7 +208,7 @@ export enum RecurringFrequency {
   WEEKLY = 'weekly',
   MONTHLY = 'monthly',
   QUARTERLY = 'quarterly',
-  YEARLY = 'yearly'
+  YEARLY = 'yearly',
 }
 
 export enum VariableType {
@@ -210,7 +218,7 @@ export enum VariableType {
   BOOLEAN = 'boolean',
   URL = 'url',
   EMAIL = 'email',
-  PHONE = 'phone'
+  PHONE = 'phone',
 }
 
 export enum NotificationEvent {
@@ -223,15 +231,15 @@ export enum NotificationEvent {
   BOUNCED = 'bounced',
   FAILED = 'failed',
   UNSUBSCRIBED = 'unsubscribed',
-  SPAM_REPORTED = 'spam_reported'
-}// Validation schemas
+  SPAM_REPORTED = 'spam_reported',
+} // Validation schemas
 export const TemplateVariableSchema = z.object({
   name: z.string().min(1),
   type: z.nativeEnum(VariableType),
   description: z.string().min(1),
   required: z.boolean(),
   defaultValue: z.string().optional(),
-  validation: z.string().optional()
+  validation: z.string().optional(),
 });
 
 export const CreateNotificationTemplateSchema = z.object({
@@ -244,7 +252,7 @@ export const CreateNotificationTemplateSchema = z.object({
   isActive: z.boolean().default(true),
   language: z.string().default('pt-BR'),
   previewText: z.string().optional(),
-  tags: z.array(z.string()).default([])
+  tags: z.array(z.string()).default([]),
 });
 
 export const CreateNotificationSchema = z.object({
@@ -258,34 +266,42 @@ export const CreateNotificationSchema = z.object({
   templateId: UUIDSchema.optional(),
   templateData: z.record(z.any()).optional(),
   scheduledAt: DateSchema.optional(),
-  priority: z.nativeEnum(NotificationPriority).default(NotificationPriority.NORMAL),
+  priority: z
+    .nativeEnum(NotificationPriority)
+    .default(NotificationPriority.NORMAL),
   maxRetries: z.number().min(0).max(5).default(3),
   metadata: z.record(z.any()).optional(),
   campaignId: UUIDSchema.optional(),
   automationId: UUIDSchema.optional(),
-  isAutomated: z.boolean().default(false)
+  isAutomated: z.boolean().default(false),
 });
 
 export const AudienceFilterSchema = z.object({
   patientIds: z.array(UUIDSchema).optional(),
   tags: z.array(z.string()).optional(),
-  ageRange: z.object({
-    min: z.number().min(0).max(120),
-    max: z.number().min(0).max(120)
-  }).optional(),
+  ageRange: z
+    .object({
+      min: z.number().min(0).max(120),
+      max: z.number().min(0).max(120),
+    })
+    .optional(),
   gender: z.string().optional(),
   treatmentHistory: z.array(z.string()).optional(),
-  lastVisitDate: z.object({
-    from: DateSchema,
-    to: DateSchema
-  }).optional(),
-  totalSpent: z.object({
-    min: z.number().min(0),
-    max: z.number().min(0)
-  }).optional(),
+  lastVisitDate: z
+    .object({
+      from: DateSchema,
+      to: DateSchema,
+    })
+    .optional(),
+  totalSpent: z
+    .object({
+      min: z.number().min(0),
+      max: z.number().min(0),
+    })
+    .optional(),
   city: z.array(z.string()).optional(),
   marketingConsent: z.boolean(),
-  excludePatientIds: z.array(UUIDSchema).optional()
+  excludePatientIds: z.array(UUIDSchema).optional(),
 });
 
 export const CreateNotificationCampaignSchema = z.object({
@@ -296,7 +312,7 @@ export const CreateNotificationCampaignSchema = z.object({
   channel: z.nativeEnum(NotificationChannel),
   targetAudience: AudienceFilterSchema,
   scheduledAt: DateSchema.optional(),
-  isRecurring: z.boolean().default(false)
+  isRecurring: z.boolean().default(false),
 });
 
 export const NotificationPreferenceSchema = z.object({
@@ -315,14 +331,20 @@ export const NotificationPreferenceSchema = z.object({
     morning: z.boolean().default(true),
     afternoon: z.boolean().default(true),
     evening: z.boolean().default(false),
-    weekend: z.boolean().default(false)
+    weekend: z.boolean().default(false),
   }),
   timezone: z.string().default('America/Sao_Paulo'),
-  language: z.string().default('pt-BR')
+  language: z.string().default('pt-BR'),
 });
 
-export type CreateNotificationTemplateData = z.infer<typeof CreateNotificationTemplateSchema>;
+export type CreateNotificationTemplateData = z.infer<
+  typeof CreateNotificationTemplateSchema
+>;
 export type CreateNotificationData = z.infer<typeof CreateNotificationSchema>;
-export type CreateNotificationCampaignData = z.infer<typeof CreateNotificationCampaignSchema>;
-export type NotificationPreferenceData = z.infer<typeof NotificationPreferenceSchema>;
+export type CreateNotificationCampaignData = z.infer<
+  typeof CreateNotificationCampaignSchema
+>;
+export type NotificationPreferenceData = z.infer<
+  typeof NotificationPreferenceSchema
+>;
 export type AudienceFilterData = z.infer<typeof AudienceFilterSchema>;

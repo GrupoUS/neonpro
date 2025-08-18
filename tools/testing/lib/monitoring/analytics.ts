@@ -11,14 +11,18 @@ export class AnalyticsService {
     console.log('Analytics event tracked:', event);
   }
 
-  static trackUserAction(action: string, userId: string, metadata?: Record<string, any>): void {
-    this.track({
+  static trackUserAction(
+    action: string,
+    userId: string,
+    metadata?: Record<string, any>
+  ): void {
+    AnalyticsService.track({
       name: 'user_action',
       properties: {
         action,
         userId,
-        ...metadata
-      }
+        ...metadata,
+      },
     });
   }
 }

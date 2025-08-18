@@ -1,6 +1,6 @@
-import { createClient } from '@/lib/supabase/server';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { createClient } from '@/lib/supabase/server';
 
 const acknowledgeAlertSchema = z.object({
   alertId: z.string().uuid(),
@@ -13,10 +13,13 @@ const acknowledgeAlertSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Get current user session
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession();
+
     if (sessionError || !session) {
       return NextResponse.json(
         { success: false, error: 'Unauthorized' },
@@ -41,7 +44,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (existingAlert.status === 'acknowledged' || existingAlert.status === 'resolved') {
+    if (
+      existingAlert.status === 'acknowledged' ||
+      existingAlert.status === 'resolved'
+    ) {
       return NextResponse.json(
         { success: false, error: 'Alert already acknowledged or resolved' },
         { status: 409 }
@@ -74,13 +80,16 @@ export async function POST(request: NextRequest) {
       success: true,
       data: updatedAlert,
     });
-
   } catch (error) {
     console.error('POST /api/stock/alerts/acknowledge error:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { success: false, error: 'Invalid request data', details: error.errors },
+        {
+          success: false,
+          error: 'Invalid request data',
+          details: error.errors,
+        },
         { status: 400 }
       );
     }

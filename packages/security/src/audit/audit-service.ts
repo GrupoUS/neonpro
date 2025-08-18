@@ -89,7 +89,7 @@ export type AuditOutcome = (typeof AuditOutcome)[keyof typeof AuditOutcome];
 /**
  * Constants for audit validation
  */
-const MAX_DESCRIPTION_LENGTH = 1_000;
+const MAX_DESCRIPTION_LENGTH = 1000;
 
 /**
  * Base audit event schema
@@ -313,7 +313,7 @@ export class AuditService {
    */
   async logEvent(
     eventData: Omit<AuditEvent, 'id' | 'hash' | 'previousHash'>
-  ): string | null {
+  ): Promise<string | null> {
     if (!this.config.enabled) {
       return null;
     }
@@ -356,7 +356,7 @@ export class AuditService {
     userId: string,
     ipAddress: string,
     userAgent?: string
-  ): string | null {
+  ): Promise<string | null> {
     return this.logEvent({
       eventType: AuditEventType.LOGIN_SUCCESS,
       severity: AuditSeverity.INFO,
@@ -378,7 +378,7 @@ export class AuditService {
     ipAddress: string,
     reason: string,
     userAgent?: string
-  ): string | null {
+  ): Promise<string | null> {
     return this.logEvent({
       eventType: AuditEventType.LOGIN_FAILURE,
       severity: AuditSeverity.WARNING,
@@ -401,7 +401,7 @@ export class AuditService {
     action: 'create' | 'read' | 'update' | 'delete';
     ipAddress: string;
     details?: Record<string, unknown>;
-  }): string | null {
+  }): Promise<string | null> {
     const { userId, patientId, action, ipAddress, details } = options;
     const eventTypeMap = {
       create: AuditEventType.PATIENT_CREATE,
@@ -435,7 +435,7 @@ export class AuditService {
     action: 'given' | 'withdrawn';
     purpose: string;
     ipAddress: string;
-  }): string | null {
+  }): Promise<string | null> {
     const { userId, patientId, action, purpose, ipAddress } = options;
     const eventType =
       action === 'given'
@@ -467,7 +467,7 @@ export class AuditService {
     ipAddress: string;
     userId?: string;
     details?: Record<string, unknown>;
-  }): string | null {
+  }): Promise<string | null> {
     const { eventType, severity, description, ipAddress, userId, details } =
       options;
     return this.logEvent({
@@ -493,7 +493,7 @@ export class AuditService {
     userId?: string;
     ipAddress?: string;
     details?: Record<string, unknown>;
-  }): string | null {
+  }): Promise<string | null> {
     const {
       description,
       affectedRecords,
@@ -581,12 +581,12 @@ export class AuditService {
  */
 export class MemoryAuditStore implements AuditStore {
   private events: (AuditEvent & { id: string })[] = [];
-  private readonly nextId = 1;
+  private nextId = 1;
 
-  store(event: AuditEvent): string {
+  store(event: AuditEvent): Promise<string> {
     const id = (this.nextId++).toString();
     this.events.push({ ...event, id });
-    return id;
+    return Promise.resolve(id);
   }
 
   retrieve(filters: AuditFilters): Promise<AuditEvent[]> {
@@ -629,7 +629,7 @@ export class MemoryAuditStore implements AuditStore {
       filtered = filtered.slice(0, filters.limit);
     }
 
-    return filtered;
+    return Promise.resolve(filtered);
   }
 
   async count(filters: AuditFilters): Promise<number> {
@@ -641,9 +641,9 @@ export class MemoryAuditStore implements AuditStore {
     return events.length;
   }
 
-  cleanup(olderThan: Date): number {
+  cleanup(olderThan: Date): Promise<number> {
     const initialCount = this.events.length;
     this.events = this.events.filter((event) => event.timestamp >= olderThan);
-    return initialCount - this.events.length;
+    return Promise.resolve(initialCount - this.events.length);
   }
 }

@@ -4,7 +4,7 @@
  * Constitutional AI-First Edge-Native Monitoring
  */
 
-import { Alert, MonitoringReport } from './types/monitoring-types';
+import type { Alert, MonitoringReport, MonitoringConfig, AlertThresholds } from './types/monitoring-types';
 
 export type HealthcareMetrics = {
   // System Health Metrics
@@ -294,10 +294,18 @@ export class HealthcareMonitoringDashboard {
     };
 
     // Calculate average scores for each compliance area
-    const lgpdScore = Object.values(compliance.lgpd).reduce((sum, val) => sum + val, 0) / Object.values(compliance.lgpd).length;
-    const anvisaScore = Object.values(compliance.anvisa).reduce((sum, val) => sum + val, 0) / Object.values(compliance.anvisa).length;
-    const cfmScore = Object.values(compliance.cfm).reduce((sum, val) => sum + val, 0) / Object.values(compliance.cfm).length;
-    const iso27001Score = Object.values(compliance.iso27001).reduce((sum, val) => sum + val, 0) / Object.values(compliance.iso27001).length;
+    const lgpdScore =
+      Object.values(compliance.lgpd).reduce((sum, val) => sum + val, 0) /
+      Object.values(compliance.lgpd).length;
+    const anvisaScore =
+      Object.values(compliance.anvisa).reduce((sum, val) => sum + val, 0) /
+      Object.values(compliance.anvisa).length;
+    const cfmScore =
+      Object.values(compliance.cfm).reduce((sum, val) => sum + val, 0) /
+      Object.values(compliance.cfm).length;
+    const iso27001Score =
+      Object.values(compliance.iso27001).reduce((sum, val) => sum + val, 0) /
+      Object.values(compliance.iso27001).length;
 
     return (
       lgpdScore * weights.lgpd +
@@ -321,10 +329,14 @@ export class HealthcareMonitoringDashboard {
 
     // Calculate scores based on available metrics
     const threatScore = security.threatDetection.securityScore;
-    const authScore = (security.auth.loginAttempts > 0 ? 
-      (1 - security.auth.failedLogins / security.auth.loginAttempts) * 10 : 10);
-    const dataProtectionScore = (security.dataProtection.encryptionCoverage + 
-      (10 - security.dataProtection.accessViolations)) / 2;
+    const authScore =
+      security.auth.loginAttempts > 0
+        ? (1 - security.auth.failedLogins / security.auth.loginAttempts) * 10
+        : 10;
+    const dataProtectionScore =
+      (security.dataProtection.encryptionCoverage +
+        (10 - security.dataProtection.accessViolations)) /
+      2;
     const complianceScore = security.dataProtection.auditTrailCompleteness;
 
     return (
@@ -348,12 +360,18 @@ export class HealthcareMonitoringDashboard {
     const lcpScore = webVitals.lcp <= 2500 ? 10 : webVitals.lcp <= 4000 ? 7 : 4;
     const fidScore = webVitals.fid <= 100 ? 10 : webVitals.fid <= 300 ? 7 : 4;
     const clsScore = webVitals.cls <= 0.1 ? 10 : webVitals.cls <= 0.25 ? 7 : 4;
-    
+
     // API performance scoring
-    const apiScore = api.averageResponseTime <= 100 ? 10 : api.averageResponseTime <= 500 ? 7 : 4;
-    
+    const apiScore =
+      api.averageResponseTime <= 100
+        ? 10
+        : api.averageResponseTime <= 500
+          ? 7
+          : 4;
+
     // Database performance scoring
-    const dbScore = db.queryResponseTime <= 50 ? 10 : db.queryResponseTime <= 200 ? 7 : 4;
+    const dbScore =
+      db.queryResponseTime <= 50 ? 10 : db.queryResponseTime <= 200 ? 7 : 4;
 
     const weights = {
       webVitals: 0.4,
@@ -362,7 +380,7 @@ export class HealthcareMonitoringDashboard {
     };
 
     const webVitalsAvg = (lcpScore + fidScore + clsScore) / 3;
-    
+
     return (
       webVitalsAvg * weights.webVitals +
       apiScore * weights.api +
@@ -385,29 +403,29 @@ export class HealthcareMonitoringDashboard {
       safety: 0.25,
     };
 
-    const constitutionalAvg = (
-      constitutional.ethicsScore +
-      constitutional.biasDetection +
-      constitutional.fairnessMetrics +
-      constitutional.transparencyIndex +
-      constitutional.accountabilityScore
-    ) / 5;
+    const constitutionalAvg =
+      (constitutional.ethicsScore +
+        constitutional.biasDetection +
+        constitutional.fairnessMetrics +
+        constitutional.transparencyIndex +
+        constitutional.accountabilityScore) /
+      5;
 
-    const performanceAvg = (
-      modelPerf.accuracy +
-      modelPerf.precision +
-      modelPerf.recall +
-      modelPerf.f1Score +
-      (10 - modelPerf.modelDrift) // Lower drift is better
-    ) / 5;
+    const performanceAvg =
+      (modelPerf.accuracy +
+        modelPerf.precision +
+        modelPerf.recall +
+        modelPerf.f1Score +
+        (10 - modelPerf.modelDrift)) / // Lower drift is better
+      5;
 
-    const safetyAvg = (
-      safety.adversarialRobustness +
-      safety.explainabilityScore +
-      safety.humanOversight +
-      safety.fallbackMechanisms +
-      safety.errorRecovery
-    ) / 5;
+    const safetyAvg =
+      (safety.adversarialRobustness +
+        safety.explainabilityScore +
+        safety.humanOversight +
+        safety.fallbackMechanisms +
+        safety.errorRecovery) /
+      5;
 
     return (
       constitutionalAvg * weights.constitutional +
@@ -429,26 +447,23 @@ export class HealthcareMonitoringDashboard {
       deployment: 0.4,
     };
 
-    const codeScore = (
-      codeQuality.overallScore +
-      (codeQuality.testCoverage / 10) + // Convert percentage to 0-10 scale
-      (10 - codeQuality.codeComplexity) + // Lower complexity is better
-      (10 - codeQuality.technicalDebt) + // Lower debt is better
-      codeQuality.maintainabilityIndex
-    ) / 5;
+    const codeScore =
+      (codeQuality.overallScore +
+        codeQuality.testCoverage / 10 + // Convert percentage to 0-10 scale
+        (10 - codeQuality.codeComplexity) + // Lower complexity is better
+        (10 - codeQuality.technicalDebt) + // Lower debt is better
+        codeQuality.maintainabilityIndex) /
+      5;
 
-    const deploymentScore = (
-      deploymentQuality.deploymentSuccess +
-      (10 - deploymentQuality.rollbackRate) + // Lower rollback rate is better
-      (10 - deploymentQuality.hotfixRate) + // Lower hotfix rate is better
-      (10 - deploymentQuality.downtime) + // Lower downtime is better
-      (10 - deploymentQuality.meanTimeToRecovery) // Lower MTTR is better
-    ) / 5;
+    const deploymentScore =
+      (deploymentQuality.deploymentSuccess +
+        (10 - deploymentQuality.rollbackRate) + // Lower rollback rate is better
+        (10 - deploymentQuality.hotfixRate) + // Lower hotfix rate is better
+        (10 - deploymentQuality.downtime) + // Lower downtime is better
+        (10 - deploymentQuality.meanTimeToRecovery)) / // Lower MTTR is better
+      5;
 
-    return (
-      codeScore * weights.code +
-      deploymentScore * weights.deployment
-    );
+    return codeScore * weights.code + deploymentScore * weights.deployment;
   }
 
   /**
@@ -490,35 +505,142 @@ export class HealthcareMonitoringDashboard {
 
     // Overall health recommendations
     if (overallScore < 9.9) {
-      recommendations.push('Sistema requer atenção imediata para atingir padrão de excelência (≥9.9/10)');
+      recommendations.push(
+        'Sistema requer atenção imediata para atingir padrão de excelência (≥9.9/10)'
+      );
     }
 
     // Compliance recommendations
     if (complianceScore < 9.5) {
-      recommendations.push('Revisar conformidade com regulamentações de saúde (LGPD, ANVISA, CFM)');
+      recommendations.push(
+        'Revisar conformidade com regulamentações de saúde (LGPD, ANVISA, CFM)'
+      );
     }
 
     // Security recommendations
     if (securityScore < 9.5) {
-      recommendations.push('Fortalecer medidas de segurança e proteção de dados de pacientes');
+      recommendations.push(
+        'Fortalecer medidas de segurança e proteção de dados de pacientes'
+      );
     }
 
     // Performance recommendations
     if (performanceScore < 9.0) {
-      recommendations.push('Otimizar performance do sistema para melhor experiência do usuário');
+      recommendations.push(
+        'Otimizar performance do sistema para melhor experiência do usuário'
+      );
     }
 
     // Error rate recommendations
     if (this.metrics.systemHealth.errorRate > 0.1) {
-      recommendations.push('Investigar e corrigir alta taxa de erros no sistema');
+      recommendations.push(
+        'Investigar e corrigir alta taxa de erros no sistema'
+      );
     }
 
     // Response time recommendations
     if (this.metrics.systemHealth.responseTime > 200) {
-      recommendations.push('Otimizar tempo de resposta do sistema (meta: <200ms)');
+      recommendations.push(
+        'Otimizar tempo de resposta do sistema (meta: <200ms)'
+      );
     }
 
     return recommendations;
+  }
+
+  /**
+   * Collect security metrics
+   */
+  private async collectSecurityMetrics(): Promise<SecurityMetrics> {
+    // In a real implementation, this would collect from security monitoring tools
+    return {
+      threatDetection: {
+        suspiciousActivities: 3,
+        blockedAttacks: 12,
+        vulnerabilityScans: 24,
+        securityScore: 95.2,
+      },
+      auth: {
+        loginAttempts: 1250,
+        failedLogins: 8,
+        sessionDuration: 45.6,
+        mfaUsage: 98.5,
+      },
+      dataProtection: {
+        encryptionCoverage: 100.0,
+        dataLeakPrevention: 99.8,
+        accessViolations: 0,
+        auditTrailCompleteness: 100.0,
+      },
+    };
+  }
+
+  /**
+   * Collect compliance metrics
+   */
+  private async collectComplianceMetrics(): Promise<ComplianceMetrics> {
+    // In a real implementation, this would collect from compliance monitoring tools
+    return {
+      lgpd: {
+        consentManagement: 98.5,
+        dataPortability: 95.2,
+        rightOfErasure: 97.8,
+        breachNotification: 100.0,
+        privacyByDesign: 92.3,
+        dpoCompliance: 96.7,
+      },
+      anvisa: {
+        deviceRegistration: 100.0,
+        adverseEventReporting: 98.9,
+        qualityManagement: 94.5,
+        regulatoryDocumentation: 97.2,
+        postMarketSurveillance: 93.8,
+      },
+      cfm: {
+        medicalLicensing: 100.0,
+        professionalEthics: 98.7,
+        telemedicineCompliance: 96.4,
+        medicalRecords: 99.1,
+        digitalSignature: 97.8,
+      },
+      iso27001: {
+        informationSecurity: 95.6,
+        riskManagement: 94.2,
+        businessContinuity: 96.8,
+        incidentManagement: 98.3,
+        auditCompliance: 97.5,
+      },
+    };
+  }
+
+  /**
+   * Collect AI governance metrics
+   */
+  private async collectAIGovernanceMetrics(): Promise<AIGovernanceMetrics> {
+    // In a real implementation, this would collect from AI monitoring tools
+    return {
+      constitutionalAI: {
+        ethicsScore: 96.8,
+        biasDetection: 94.2,
+        fairnessMetrics: 95.7,
+        transparencyIndex: 92.4,
+        accountabilityScore: 97.1,
+      },
+      modelPerformance: {
+        accuracy: 94.8,
+        precision: 93.6,
+        recall: 95.2,
+        f1Score: 94.4,
+        modelDrift: 2.1,
+      },
+      aiSafety: {
+        adversarialRobustness: 91.7,
+        explainabilityScore: 88.9,
+        humanOversight: 98.5,
+        fallbackMechanisms: 96.3,
+        errorRecovery: 94.7,
+      },
+    };
   }
 
   /**
@@ -528,28 +650,19 @@ export class HealthcareMonitoringDashboard {
     // In a real implementation, this would collect from various quality monitoring tools
     return {
       codeQuality: {
-        coverage: 85.5,
-        complexity: 2.3,
-        duplication: 1.2,
-        maintainabilityIndex: 78.9,
+        overallScore: 85.5,
+        testCoverage: 88.2,
+        codeComplexity: 2.3,
         technicalDebt: 12.5,
-        vulnerabilities: 0,
-        bugs: 2,
-        codeSmells: 8
-      },
-      testQuality: {
-        unitTestCoverage: 88.2,
-        integrationTestCoverage: 75.6,
-        e2eTestCoverage: 65.4,
-        testReliability: 96.8,
-        testExecutionTime: 45.2
+        maintainabilityIndex: 78.9,
       },
       deploymentQuality: {
-        deploymentFrequency: 12,
-        leadTime: 2.5,
-        changeFailureRate: 0.8,
-        recoveryTime: 15.3
-      }
+        deploymentSuccess: 98.5,
+        rollbackRate: 0.8,
+        hotfixRate: 2.1,
+        downtime: 0.05,
+        meanTimeToRecovery: 15.3,
+      },
     };
   }
 
@@ -558,13 +671,13 @@ export class HealthcareMonitoringDashboard {
    */
   private sendAlerts(alerts: Alert[]): void {
     // In a real implementation, this would send alerts via email, Slack, etc.
-    alerts.forEach(alert => {
+    alerts.forEach((alert) => {
       console.log('ALERT:', {
         type: alert.type,
         category: alert.category,
         message: alert.message,
         timestamp: alert.timestamp,
-        severity: alert.severity
+        severity: alert.severity,
       });
     });
 
@@ -584,10 +697,212 @@ export class HealthcareMonitoringDashboard {
       complianceScore: report.complianceScore,
       securityScore: report.securityScore,
       performanceScore: report.performanceScore,
-      recommendationsCount: report.recommendations.length
+      recommendationsCount: report.recommendations.length,
     });
 
     // TODO: Implement actual database storage
     // await this.database.insert('monitoring_reports', report);
+  }
+
+  /**
+   * Initialize metrics with default values
+   */
+  private initializeMetrics(): HealthcareMetrics {
+    return {
+      systemHealth: {
+        uptime: 0,
+        responseTime: 0,
+        errorRate: 0,
+        throughput: 0,
+        activeUsers: 0,
+        systemLoad: 0,
+        memoryUsage: 0,
+        diskUsage: 0,
+        networkLatency: 0,
+        databaseConnections: 0,
+        queueHealth: {
+          pending: 0,
+          processing: 0,
+          failed: 0,
+        },
+      },
+      performance: {
+        webVitals: {
+          lcp: 0,
+          fid: 0,
+          cls: 0,
+          fcp: 0,
+          ttfb: 0,
+        },
+        apiMetrics: {
+          averageResponseTime: 150,
+          p95ResponseTime: 250,
+          p99ResponseTime: 500,
+          requestsPerSecond: 100,
+          errorRate: 0.01
+        },
+        databaseMetrics: {
+          queryResponseTime: 50,
+          connectionPoolUtilization: 0.75,
+          slowQueries: 2,
+          lockWaitTime: 10
+        },
+        bundleMetrics: {
+          size: 1024000,
+          loadTime: 2000,
+          compressionRatio: 0.65,
+          cacheHitRate: 0.85
+        }
+      },
+      security: {
+        threatDetection: {
+          suspiciousActivities: 0,
+          blockedAttacks: 0,
+          vulnerabilityScans: 0,
+          securityScore: 0,
+        },
+        auth: {
+          loginAttempts: 100,
+          failedLogins: 0,
+          sessionDuration: 30,
+          mfaUsage: 95,
+        },
+        dataProtection: {
+          encryptionCoverage: 100,
+          dataLeakPrevention: 100,
+          accessViolations: 0,
+          auditTrailCompleteness: 100,
+        },
+      },
+      compliance: {
+        lgpd: {
+          consentManagement: 100,
+          dataPortability: 100,
+          rightOfErasure: 100,
+          breachNotification: 100,
+          privacyByDesign: 100,
+          dpoCompliance: 100,
+        },
+        anvisa: {
+          deviceRegistration: 100,
+          adverseEventReporting: 100,
+          qualityManagement: 100,
+          regulatoryDocumentation: 100,
+          postMarketSurveillance: 100,
+        },
+        cfm: {
+          medicalLicensing: 100,
+          professionalEthics: 100,
+          telemedicineCompliance: 100,
+          medicalRecords: 100,
+          digitalSignature: 100,
+        },
+        iso27001: {
+           informationSecurity: 100,
+           riskManagement: 100,
+           businessContinuity: 100,
+           incidentManagement: 100,
+           auditCompliance: 100,
+         },
+      },
+      aiGovernance: {
+        constitutionalAI: {
+          ethicsScore: 100,
+          biasDetection: 0,
+          fairnessMetrics: 100,
+          transparencyIndex: 100,
+          accountabilityScore: 100,
+        },
+        modelPerformance: {
+          accuracy: 95,
+          precision: 95,
+          recall: 95,
+          f1Score: 95,
+          modelDrift: 0,
+        },
+        aiSafety: {
+          adversarialRobustness: 100,
+          explainabilityScore: 100,
+          humanOversight: 100,
+          fallbackMechanisms: 100,
+          errorRecovery: 100,
+        },
+      },
+      quality: {
+        codeQuality: {
+          overallScore: 95,
+          testCoverage: 90,
+          codeComplexity: 5,
+          technicalDebt: 10,
+          maintainabilityIndex: 85,
+        },
+        deploymentQuality: {
+          deploymentSuccess: 98,
+          rollbackRate: 2,
+          hotfixRate: 1,
+          downtime: 0.1,
+          meanTimeToRecovery: 15,
+        },
+      },
+    };
+  }
+
+  /**
+   * Collect system health metrics
+   */
+  private async collectSystemHealth(): Promise<SystemHealthMetrics> {
+    // TODO: Implement actual system health collection
+    return {
+      uptime: process.uptime(),
+      responseTime: Math.random() * 100 + 50,
+      errorRate: Math.random() * 5,
+      throughput: Math.random() * 1000 + 500,
+      activeUsers: Math.floor(Math.random() * 100) + 10,
+      systemLoad: Math.random() * 100,
+      memoryUsage: Math.random() * 100,
+      diskUsage: Math.random() * 100,
+      networkLatency: Math.random() * 50 + 10,
+      databaseConnections: Math.floor(Math.random() * 50) + 5,
+      queueHealth: {
+        pending: Math.floor(Math.random() * 10),
+        processing: Math.floor(Math.random() * 5),
+        failed: Math.floor(Math.random() * 2),
+      },
+    };
+  }
+
+  /**
+   * Collect performance metrics
+   */
+  private async collectPerformanceMetrics(): Promise<PerformanceMetrics> {
+    // TODO: Implement actual performance metrics collection
+    return {
+      webVitals: {
+        lcp: Math.random() * 2500 + 1000, // Largest Contentful Paint
+        fid: Math.random() * 100 + 50, // First Input Delay
+        cls: Math.random() * 0.25, // Cumulative Layout Shift
+        fcp: Math.random() * 1800 + 800, // First Contentful Paint
+        ttfb: Math.random() * 600 + 200, // Time to First Byte
+      },
+      apiMetrics: {
+        averageResponseTime: Math.random() * 200 + 100,
+        p95ResponseTime: Math.random() * 500 + 300,
+        p99ResponseTime: Math.random() * 1000 + 800,
+        requestsPerSecond: Math.random() * 1000 + 500,
+        errorRate: Math.random() * 5,
+      },
+      databaseMetrics: {
+        queryResponseTime: Math.random() * 100 + 50,
+        connectionPoolUtilization: Math.random() * 100,
+        slowQueries: Math.floor(Math.random() * 10),
+        lockWaitTime: Math.random() * 50,
+      },
+      bundleMetrics: {
+        size: Math.random() * 1000 + 500, // KB
+        loadTime: Math.random() * 3000 + 1000, // ms
+        compressionRatio: Math.random() * 0.5 + 0.5,
+        cacheHitRate: Math.random() * 100,
+      },
+    };
   }
 }

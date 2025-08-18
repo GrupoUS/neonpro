@@ -1,13 +1,19 @@
-"use client";
+'use client';
 
-import { AlertTriangle, Check, Clock, Shield, X } from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
-import { Alert, AlertDescription } from "../Alert";
-import { Badge } from "../Badge";
-import { Button } from "../Button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../Card";
-import { Switch } from "../Switch";
+import { AlertTriangle, Check, Clock, Shield, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import { Alert, AlertDescription } from '../Alert';
+import { Badge } from '../Badge';
+import { Button } from '../Button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '../Card';
+import { Switch } from '../Switch';
 
 // ============================================================================
 // TYPES
@@ -38,15 +44,15 @@ export function ConsentManager() {
 
   const loadConsentStatus = async () => {
     try {
-      const response = await fetch("/api/lgpd/consent/status");
+      const response = await fetch('/api/lgpd/consent/status');
       if (!response.ok) {
-        throw new Error("Failed to load consent status");
+        throw new Error('Failed to load consent status');
       }
 
       const data: ConsentData = await response.json();
       setConsents(data.consents);
     } catch (_error) {
-      toast.error("Erro ao carregar status de consentimento");
+      toast.error('Erro ao carregar status de consentimento');
     } finally {
       setLoading(false);
     }
@@ -60,10 +66,10 @@ export function ConsentManager() {
     setUpdating(purposeName);
 
     try {
-      const response = await fetch("/api/lgpd/consent/grant", {
-        method: "POST",
+      const response = await fetch('/api/lgpd/consent/grant', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           purposeName,
@@ -73,7 +79,7 @@ export function ConsentManager() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to update consent");
+        throw new Error(errorData.error || 'Failed to update consent');
       }
 
       // Reload consent status
@@ -82,10 +88,10 @@ export function ConsentManager() {
       toast.success(
         granted
           ? `Consentimento concedido para ${purposeName}`
-          : `Consentimento negado para ${purposeName}`,
+          : `Consentimento negado para ${purposeName}`
       );
     } catch (_error) {
-      toast.error("Erro ao atualizar consentimento");
+      toast.error('Erro ao atualizar consentimento');
     } finally {
       setUpdating(null);
     }
@@ -93,38 +99,38 @@ export function ConsentManager() {
 
   const withdrawConsent = async (purposeName: string) => {
     try {
-      const response = await fetch("/api/lgpd/consent/withdraw", {
-        method: "POST",
+      const response = await fetch('/api/lgpd/consent/withdraw', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           purposeName,
-          reason: "User withdrawal via interface",
+          reason: 'User withdrawal via interface',
         }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to withdraw consent");
+        throw new Error(errorData.error || 'Failed to withdraw consent');
       }
 
       await loadConsentStatus();
       toast.success(`Consentimento retirado para ${purposeName}`);
     } catch (_error) {
-      toast.error("Erro ao retirar consentimento");
+      toast.error('Erro ao retirar consentimento');
     }
   };
 
   const _getCategoryIcon = (category: string) => {
     switch (category.toLowerCase()) {
-      case "essential":
+      case 'essential':
         return <Shield className="h-4 w-4 text-green-600" />;
-      case "functional":
+      case 'functional':
         return <Check className="h-4 w-4 text-blue-600" />;
-      case "analytics":
+      case 'analytics':
         return <Clock className="h-4 w-4 text-yellow-600" />;
-      case "marketing":
+      case 'marketing':
         return <AlertTriangle className="h-4 w-4 text-orange-600" />;
       default:
         return <Shield className="h-4 w-4 text-gray-600" />;
@@ -133,16 +139,16 @@ export function ConsentManager() {
 
   const _getCategoryColor = (category: string) => {
     switch (category.toLowerCase()) {
-      case "essential":
-        return "bg-green-100 text-green-800";
-      case "functional":
-        return "bg-blue-100 text-blue-800";
-      case "analytics":
-        return "bg-yellow-100 text-yellow-800";
-      case "marketing":
-        return "bg-orange-100 text-orange-800";
+      case 'essential':
+        return 'bg-green-100 text-green-800';
+      case 'functional':
+        return 'bg-blue-100 text-blue-800';
+      case 'analytics':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'marketing':
+        return 'bg-orange-100 text-orange-800';
       default:
-        return "bg-gray-100 text-gray-800";
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -154,7 +160,9 @@ export function ConsentManager() {
             <Shield className="h-5 w-5" />
             Gerenciamento de Consentimento
           </CardTitle>
-          <CardDescription>Carregando suas preferências de privacidade...</CardDescription>
+          <CardDescription>
+            Carregando suas preferências de privacidade...
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="animate-pulse space-y-4">
@@ -180,7 +188,8 @@ export function ConsentManager() {
             Gerenciamento de Consentimento - LGPD
           </CardTitle>
           <CardDescription>
-            Gerencie suas preferências de privacidade e consentimentos de acordo com a LGPD
+            Gerencie suas preferências de privacidade e consentimentos de acordo
+            com a LGPD
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -188,8 +197,8 @@ export function ConsentManager() {
             <Alert className="mb-6">
               <AlertTriangle className="h-4 w-4" />
               <AlertDescription>
-                Alguns consentimentos obrigatórios não foram concedidos. Isso pode afetar o
-                funcionamento completo da plataforma.
+                Alguns consentimentos obrigatórios não foram concedidos. Isso
+                pode afetar o funcionamento completo da plataforma.
               </AlertDescription>
             </Alert>
           )}
@@ -217,7 +226,9 @@ export function ConsentManager() {
           {/* Optional Consents */}
           {optionalConsents.length > 0 && (
             <div>
-              <h3 className="mb-4 font-semibold text-blue-600 text-lg">Consentimentos Opcionais</h3>
+              <h3 className="mb-4 font-semibold text-blue-600 text-lg">
+                Consentimentos Opcionais
+              </h3>
               <div className="space-y-4">
                 {optionalConsents.map((consent) => (
                   <ConsentCard
@@ -248,11 +259,16 @@ type ConsentCardProps = {
   onWithdraw: (purposeName: string) => Promise<void>;
 };
 
-function ConsentCard({ consent, updating, onUpdate, onWithdraw }: ConsentCardProps) {
+function ConsentCard({
+  consent,
+  updating,
+  onUpdate,
+  onWithdraw,
+}: ConsentCardProps) {
   return (
     <Card
       className={`transition-all duration-200 ${
-        consent.granted ? "border-green-200 bg-green-50" : "border-gray-200"
+        consent.granted ? 'border-green-200 bg-green-50' : 'border-gray-200'
       }`}
     >
       <CardContent className="p-4">
@@ -267,7 +283,9 @@ function ConsentCard({ consent, updating, onUpdate, onWithdraw }: ConsentCardPro
                 )}
                 <h4 className="font-medium">{consent.purpose}</h4>
               </div>
-              <Badge className={getCategoryColor(consent.category)}>{consent.category}</Badge>
+              <Badge className={getCategoryColor(consent.category)}>
+                {consent.category}
+              </Badge>
               {consent.required && (
                 <Badge className="text-xs" variant="destructive">
                   Obrigatório
@@ -279,7 +297,8 @@ function ConsentCard({ consent, updating, onUpdate, onWithdraw }: ConsentCardPro
 
             {consent.granted && consent.grantedAt && (
               <p className="text-gray-500 text-xs">
-                Consentido em: {new Date(consent.grantedAt).toLocaleString("pt-BR")}
+                Consentido em:{' '}
+                {new Date(consent.grantedAt).toLocaleString('pt-BR')}
                 {consent.version && ` (v${consent.version})`}
               </p>
             )}
@@ -289,7 +308,9 @@ function ConsentCard({ consent, updating, onUpdate, onWithdraw }: ConsentCardPro
             <Switch
               checked={consent.granted}
               disabled={updating}
-              onCheckedChange={(checked: boolean) => onUpdate(consent.purpose, checked)}
+              onCheckedChange={(checked: boolean) =>
+                onUpdate(consent.purpose, checked)
+              }
             />
 
             {consent.granted && !consent.required && (
@@ -312,15 +333,15 @@ function ConsentCard({ consent, updating, onUpdate, onWithdraw }: ConsentCardPro
 
 function getCategoryColor(category: string): string {
   switch (category.toLowerCase()) {
-    case "essential":
-      return "bg-green-100 text-green-800";
-    case "functional":
-      return "bg-blue-100 text-blue-800";
-    case "analytics":
-      return "bg-yellow-100 text-yellow-800";
-    case "marketing":
-      return "bg-orange-100 text-orange-800";
+    case 'essential':
+      return 'bg-green-100 text-green-800';
+    case 'functional':
+      return 'bg-blue-100 text-blue-800';
+    case 'analytics':
+      return 'bg-yellow-100 text-yellow-800';
+    case 'marketing':
+      return 'bg-orange-100 text-orange-800';
     default:
-      return "bg-gray-100 text-gray-800";
+      return 'bg-gray-100 text-gray-800';
   }
 }

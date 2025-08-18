@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import React from "react";
-import { AestheticClinicManagementSystem } from "./lib/aesthetic-clinic-ui";
+import React from 'react';
+import { AestheticClinicManagementSystem } from './lib/aesthetic-clinic-ui';
 
 // Main Aesthetic Clinic Page Component
 export default function AestheticClinicPage() {

@@ -293,26 +293,27 @@ export function useNotifications({
   // Update notification preferences
   const updatePreferences = useCallback(
     async (newPreferences: Partial<NotificationPreferences>) => {
-      const { error } = await supabase
-        .from('notification_preferences')
-        .upsert(
-          {
-            user_id: userId,
-            ...preferences,
-            ...newPreferences,
-            updated_at: new Date().toISOString(),
-          },
-          { onConflict: 'user_id' }
-        );
+      const { error } = await supabase.from('notification_preferences').upsert(
+        {
+          user_id: userId,
+          ...preferences,
+          ...newPreferences,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: 'user_id' }
+      );
 
       if (error) {
         throw new Error(`Failed to update preferences: ${error.message}`);
       }
 
-      setPreferences((prev) => ({
-        ...(prev || { user_id: userId }),
-        ...newPreferences,
-      } as NotificationPreferences));
+      setPreferences(
+        (prev) =>
+          ({
+            ...(prev || { user_id: userId }),
+            ...newPreferences,
+          }) as NotificationPreferences
+      );
     },
     [userId, supabase, preferences]
   );

@@ -7,8 +7,8 @@
  * Used by VS Code tasks for intelligent context detection
  */
 
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 
 class ConditionalInstructionsLoader {
   constructor() {
@@ -157,6 +157,7 @@ class ConditionalInstructionsLoader {
       switch (command) {
         case 'analyze': {
           const detectedContext = this.analyzeContext(contextArg);
+          // biome-ignore lint/suspicious/noConsole: CLI script needs console output
           console.log(`🔍 Detected context: ${detectedContext}`);
           return this.loadInstructions(detectedContext);
         }
@@ -168,20 +169,28 @@ class ConditionalInstructionsLoader {
           return this.runTests();
 
         default:
+          // biome-ignore lint/suspicious/noConsole: CLI script needs console output
           console.log('📖 Usage:');
+          // biome-ignore lint/suspicious/noConsole: CLI script needs console output
           console.log(
             '  node conditional-instructions-loader.js analyze [context]'
           );
+          // biome-ignore lint/suspicious/noConsole: CLI script needs console output
           console.log('  node conditional-instructions-loader.js reset');
+          // biome-ignore lint/suspicious/noConsole: CLI script needs console output
           console.log('  node conditional-instructions-loader.js test');
+          // biome-ignore lint/suspicious/noConsole: CLI script needs console output
           console.log('');
+          // biome-ignore lint/suspicious/noConsole: CLI script needs console output
           console.log('📝 Available contexts:');
-          Object.keys(this.contexts).forEach((ctx) => {
+          for (const ctx of Object.keys(this.contexts)) {
+            // biome-ignore lint/suspicious/noConsole: CLI script needs console output
             console.log(`  - ${ctx}: ${this.contexts[ctx].name}`);
-          });
+          }
           break;
       }
     } catch (error) {
+      // biome-ignore lint/suspicious/noConsole: CLI script needs console output for errors
       console.error(`❌ Error: ${error.message}`);
       process.exit(1);
     }
@@ -191,6 +200,7 @@ class ConditionalInstructionsLoader {
    * Run self-tests
    */
   runTests() {
+    // biome-ignore lint/suspicious/noConsole: CLI script needs console output
     console.log('🧪 Running self-tests...');
 
     const tests = [
@@ -224,26 +234,32 @@ class ConditionalInstructionsLoader {
     let passed = 0;
     const total = tests.length;
 
-    tests.forEach((test) => {
+    for (const test of tests) {
       try {
         const result = test.test();
         if (result) {
+          // biome-ignore lint/suspicious/noConsole: CLI test output
           console.log(`✅ ${test.name}: PASSED`);
           passed++;
         } else {
+          // biome-ignore lint/suspicious/noConsole: CLI test output
           console.log(`❌ ${test.name}: FAILED`);
         }
       } catch (error) {
+        // biome-ignore lint/suspicious/noConsole: CLI test output
         console.log(`❌ ${test.name}: ERROR - ${error.message}`);
       }
-    });
+    }
 
+    // biome-ignore lint/suspicious/noConsole: CLI test output
     console.log(`\n📊 Test Results: ${passed}/${total} passed`);
 
     if (passed === total) {
+      // biome-ignore lint/suspicious/noConsole: CLI test output
       console.log('🎉 All tests passed!');
       return true;
     }
+    // biome-ignore lint/suspicious/noConsole: CLI test output
     console.log('⚠️ Some tests failed!');
     process.exit(1);
   }

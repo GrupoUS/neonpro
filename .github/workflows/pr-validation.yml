@@ -95,13 +95,13 @@ jobs:
       - name: 🎯 Format Check (Biome + Ultracite)
         run: |
           echo "🎯 Running Format Check with Biome + Ultracite..."
-          pnpm exec biome format --check .
+          pnpm format:check
           echo "✅ Format check completed"
 
       - name: 🔍 Lint Check (Biome + Ultracite)
         run: |
           echo "🔍 Running Lint Check with Biome + Ultracite..."
-          pnpm exec biome lint .
+          pnpm lint:biome
           echo "✅ Lint check completed"
 
       - name: 🔧 TypeScript Check

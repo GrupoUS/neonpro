@@ -169,7 +169,9 @@ export class ADRGenerator {
           title: String(answers.title || 'Untitled'),
           status: (answers.status || 'Proposed') as ADRMetadata['status'],
           author: String(answers.author || 'Unknown'),
-          date: new Date().toISOString().split('T')[0] || new Date().toISOString().substring(0, 10),
+          date:
+            new Date().toISOString().split('T')[0] ||
+            new Date().toISOString().substring(0, 10),
         },
         context: (answers.context || '') as string,
         decision: (answers.decision || '') as string,
@@ -338,8 +340,11 @@ export class ADRGenerator {
 
       // Extract metadata from content
       const extractedTitle = this.extractTitle(content);
-      const title = extractedTitle ?? (safeTitleSlug ? String(safeTitleSlug).replace(/-/g, ' ') : 'Untitled');
-      const status = (this.extractStatus(content) as ADRMetadata['status']) || 'Proposed';
+      const title =
+        extractedTitle ??
+        (safeTitleSlug ? String(safeTitleSlug).replace(/-/g, ' ') : 'Untitled');
+      const status =
+        (this.extractStatus(content) as ADRMetadata['status']) || 'Proposed';
       const date = this.extractDate(content) ?? '1970-01-01';
       const author = this.extractAuthor(content) ?? 'Unknown';
       const supersededBy = this.extractSupersededBy(content);
@@ -555,7 +560,9 @@ if (require.main === module) {
       generator.generateIndex();
       break;
     case 'update': {
-      const adrNumber = process.argv[3] ? Number.parseInt(process.argv[3], 10) : 0;
+      const adrNumber = process.argv[3]
+        ? Number.parseInt(process.argv[3], 10)
+        : 0;
       const newStatus = process.argv[4] as ADRMetadata['status'];
       const supersededBy = process.argv[5]
         ? Number.parseInt(process.argv[5], 10)

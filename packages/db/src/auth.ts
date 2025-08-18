@@ -20,8 +20,8 @@ export const getUser = cache(async (): Promise<User | null> => {
     const cookieStore = await cookies();
     const supabase = createServerClient({
       getAll: () => cookieStore.getAll(),
-      setAll: (cookies) => {
-        cookies.forEach(({ name, value, options }) => {
+      setAll: (cookieList) => {
+        cookieList.forEach(({ name, value, options }) => {
           cookieStore.set(name, value, options);
         });
       },
@@ -56,8 +56,8 @@ export const getSession = cache(async (): Promise<Session | null> => {
     const cookieStore = await cookies();
     const supabase = createServerClient({
       getAll: () => cookieStore.getAll(),
-      setAll: (cookies) => {
-        cookies.forEach(({ name, value, options }) => {
+      setAll: (cookieList) => {
+        cookieList.forEach(({ name, value, options }) => {
           cookieStore.set(name, value, options);
         });
       },
@@ -143,8 +143,8 @@ async function logHealthcareAccess(
     const cookieStore = await cookies();
     const supabase = createServerClient({
       getAll: () => cookieStore.getAll(),
-      setAll: (cookies) => {
-        cookies.forEach(({ name, value, options }) => {
+      setAll: (cookieList) => {
+        cookieList.forEach(({ name, value, options }) => {
           cookieStore.set(name, value, options);
         });
       },

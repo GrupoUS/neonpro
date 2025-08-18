@@ -4,13 +4,13 @@ import {
   QueryClientProvider,
   QueryClientProvider,
 } from '@tanstack/react-query';
-import { renderHook, waitFor } from '@testing-library/react';
-import React from 'react';
-import { vi } from 'vitest';
 import {
   mockAnalyticsData,
   mockErrorResponse,
 } from '@test/__tests__/utils/mockData';
+import { renderHook, waitFor } from '@testing-library/react';
+import React from 'react';
+import { vi } from 'vitest';
 import { useAnalyticsData } from '@/hooks/analytics/useAnalyticsData';
 
 // Mock Supabase client

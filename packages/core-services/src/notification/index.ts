@@ -1,44 +1,42 @@
 // Notification module exports
-export * from './types';
-export * from './service';
 
+export type {
+  ExternalNotificationProvider,
+  NotificationRepository,
+} from './service';
+export * from './service';
+export { NotificationService } from './service';
 // Re-export commonly used types
 export type {
-  Notification,
-  NotificationTemplate,
-  NotificationCampaign,
-  NotificationPreference,
-  NotificationLog,
-  TemplateVariable,
-  AudienceFilter,
-  RecurringConfig,
   ABTestConfig,
-  TimePreference,
+  AppointmentInfo,
+  AudienceFilter,
+  AudienceFilterData,
+  CreateNotificationCampaignData,
   CreateNotificationData,
   CreateNotificationTemplateData,
-  CreateNotificationCampaignData,
+  Notification,
+  NotificationCampaign,
+  NotificationLog,
+  NotificationPreference,
   NotificationPreferenceData,
-  AudienceFilterData,
-  PatientInfo,
-  AppointmentInfo,
-  TreatmentPlanInfo,
   NotificationStats,
-  TemplateFilters
+  NotificationTemplate,
+  PatientInfo,
+  RecurringConfig,
+  TemplateFilters,
+  TemplateVariable,
+  TimePreference,
+  TreatmentPlanInfo,
 } from './types';
-
-export { NotificationService } from './service';
-export { 
-  NotificationChannel,
-  NotificationStatus,
-  NotificationPriority,
-  CampaignType,
+export * from './types';
+export {
   CampaignStatus,
+  CampaignType,
+  NotificationChannel,
+  NotificationEvent,
+  NotificationPriority,
+  NotificationStatus,
   RecurringFrequency,
   VariableType,
-  NotificationEvent
 } from './types';
-
-export type { 
-  NotificationRepository,
-  ExternalNotificationProvider
-} from './service';

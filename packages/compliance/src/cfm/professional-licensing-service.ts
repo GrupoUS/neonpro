@@ -448,7 +448,7 @@ export class ProfessionalLicensingService {
         specializations: ['Dermatologia', 'Medicina Estética'],
         expiry_date: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year from now
         constitutional_compliance: true,
-        warnings: [],
+        warnings: [] as string[],
       };
 
       // Add warning if license expires within 90 days
@@ -478,17 +478,21 @@ export class ProfessionalLicensingService {
     cfmNumber: string,
     verificationData: LicenseVerificationResponse['license_details']
   ): Promise<void> {
+    if (!verificationData) {
+      return; // Skip update if no verification data
+    }
+
     try {
       const timestamp = new Date();
 
       await this.supabase
         .from('cfm_professional_licenses')
         .update({
-          license_status: verificationData?.status,
-          specializations: verificationData?.specializations,
-          license_expiry: verificationData?.expiry_date?.toISOString(),
+          license_status: verificationData.status,
+          specializations: verificationData.specializations,
+          license_expiry: verificationData.expiry_date.toISOString(),
           constitutional_compliance:
-            verificationData?.constitutional_compliance,
+            verificationData.constitutional_compliance,
           updated_at: timestamp.toISOString(),
         })
         .eq('cfm_number', cfmNumber);
@@ -503,6 +507,10 @@ export class ProfessionalLicensingService {
     verificationData: LicenseVerificationResponse['license_details'],
     params: LicenseVerificationParams
   ): Promise<void> {
+    if (!verificationData) {
+      throw new Error('Verification data is required for license creation');
+    }
+
     try {
       const timestamp = new Date();
       const licenseId = crypto.randomUUID();

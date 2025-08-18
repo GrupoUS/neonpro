@@ -3,11 +3,21 @@
  * Story 3.2: Comprehensive testing for ≥9.9/10 healthcare standard
  */
 
-import { describe, expect, test } from "vitest";
+import { describe, expect, test } from 'vitest';
 
-describe("Enhanced DevOps Workflow Validation", () => {
-  describe("Quality Gates Validation", () => {
-    test("should enforce healthcare quality standards ≥9.9/10", async () => {
+// Test constants to avoid magic numbers
+const LGPD_COMPLIANCE_THRESHOLD = 98;
+const ANVISA_COMPLIANCE_THRESHOLD = 95; 
+const AUDIT_TRAIL_THRESHOLD = 99;
+const MAX_LCP_TIME = 2500; // 2.5 seconds in milliseconds
+const MAX_FID_TIME = 100; // 100 milliseconds
+const MAX_CLS_SCORE = 0.1; // 0.1 CLS threshold
+const P95_RESPONSE_TIME_THRESHOLD = 100; // 100ms
+const MAX_ERROR_RATE = 0.1; // 10% error rate threshold
+
+describe('Enhanced DevOps Workflow Validation', () => {
+  describe('Quality Gates Validation', () => {
+    test('should enforce healthcare quality standards ≥9.9/10', async () => {
       // Test quality gates configuration
       const qualityThreshold = 9.9;
       const currentQualityScore = await simulateQualityAssessment();
@@ -16,7 +26,7 @@ describe("Enhanced DevOps Workflow Validation", () => {
       expect(currentQualityScore).toBeLessThanOrEqual(10);
     });
 
-    test("should validate CI/CD pipeline quality gates", async () => {
+    test('should validate CI/CD pipeline quality gates', async () => {
       const qualityGates = {
         coverage: { threshold: 95, current: 97 },
         security: { threshold: 9.5, current: 9.8 },
@@ -24,12 +34,12 @@ describe("Enhanced DevOps Workflow Validation", () => {
         compliance: { threshold: 98, current: 99 },
       };
 
-      Object.entries(qualityGates).forEach(([_gate, metrics]) => {
+      for (const [_gate, metrics] of Object.entries(qualityGates)) {
         expect(metrics.current).toBeGreaterThanOrEqual(metrics.threshold);
-      });
+      }
     });
 
-    test("should validate Constitutional AI governance", async () => {
+    test('should validate Constitutional AI governance', async () => {
       const aiGovernanceMetrics = {
         ethicsScore: 96,
         biasDetection: 98,
@@ -44,39 +54,39 @@ describe("Enhanced DevOps Workflow Validation", () => {
     });
   });
 
-  describe("Healthcare Compliance Validation", () => {
-    test("should validate LGPD compliance ≥98%", async () => {
+  describe('Healthcare Compliance Validation', () => {
+    test('should validate LGPD compliance ≥98%', async () => {
       const lgpdScore = await validateLGPDCompliance();
-      expect(lgpdScore).toBeGreaterThanOrEqual(98);
+      expect(lgpdScore).toBeGreaterThanOrEqual(LGPD_COMPLIANCE_THRESHOLD);
     });
 
-    test("should validate ANVISA compliance ≥95%", async () => {
+    test('should validate ANVISA compliance ≥95%', async () => {
       const anvisaScore = await validateANVISACompliance();
       expect(anvisaScore).toBeGreaterThanOrEqual(95);
     });
 
-    test("should validate audit trail completeness", async () => {
+    test('should validate audit trail completeness', async () => {
       const auditTrailCompleteness = await validateAuditTrail();
       expect(auditTrailCompleteness).toBeGreaterThanOrEqual(99);
     });
   });
-  describe("Performance Monitoring Validation", () => {
-    test("should validate Core Web Vitals meet healthcare standards", async () => {
+  describe('Performance Monitoring Validation', () => {
+    test('should validate Core Web Vitals meet healthcare standards', async () => {
       const webVitals = await measureCoreWebVitals();
 
-      expect(webVitals.lcp).toBeLessThanOrEqual(2500); // LCP ≤ 2.5s
-      expect(webVitals.fid).toBeLessThanOrEqual(100); // FID ≤ 100ms
-      expect(webVitals.cls).toBeLessThanOrEqual(0.1); // CLS ≤ 0.1
+      expect(webVitals.lcp).toBeLessThanOrEqual(MAX_LCP_TIME); // LCP ≤ 2.5s
+      expect(webVitals.fid).toBeLessThanOrEqual(MAX_FID_TIME); // FID ≤ 100ms
+      expect(webVitals.cls).toBeLessThanOrEqual(MAX_CLS_SCORE); // CLS ≤ 0.1
     });
 
-    test("should validate API response times <100ms P95", async () => {
+    test('should validate API response times <100ms P95', async () => {
       const apiPerformance = await measureAPIPerformance();
 
-      expect(apiPerformance.p95ResponseTime).toBeLessThanOrEqual(100);
-      expect(apiPerformance.errorRate).toBeLessThanOrEqual(0.1);
+      expect(apiPerformance.p95ResponseTime).toBeLessThanOrEqual(P95_RESPONSE_TIME_THRESHOLD);
+      expect(apiPerformance.errorRate).toBeLessThanOrEqual(MAX_ERROR_RATE);
     });
 
-    test("should validate monitoring dashboard functionality", async () => {
+    test('should validate monitoring dashboard functionality', async () => {
       const dashboardHealth = await validateMonitoringDashboard();
 
       expect(dashboardHealth.isOperational).toBe(true);
@@ -85,8 +95,8 @@ describe("Enhanced DevOps Workflow Validation", () => {
     });
   });
 
-  describe("Security Validation", () => {
-    test("should validate zero critical vulnerabilities", async () => {
+  describe('Security Validation', () => {
+    test('should validate zero critical vulnerabilities', async () => {
       const securityScan = await runSecurityScan();
 
       expect(securityScan.criticalVulnerabilities).toBe(0);
@@ -94,7 +104,7 @@ describe("Enhanced DevOps Workflow Validation", () => {
       expect(securityScan.securityScore).toBeGreaterThanOrEqual(9.5);
     });
 
-    test("should validate encryption coverage", async () => {
+    test('should validate encryption coverage', async () => {
       const encryptionCoverage = await validateEncryption();
 
       expect(encryptionCoverage.dataAtRest).toBe(100);

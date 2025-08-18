@@ -12,9 +12,13 @@ export class ErrorTrackingService {
     console.error('Error captured:', error.message, context);
   }
 
-  static captureException(exception: unknown, context?: Record<string, any>): void {
-    const error = exception instanceof Error ? exception : new Error(String(exception));
-    this.captureError(error, context);
+  static captureException(
+    exception: unknown,
+    context?: Record<string, any>
+  ): void {
+    const error =
+      exception instanceof Error ? exception : new Error(String(exception));
+    ErrorTrackingService.captureError(error, context);
   }
 
   static setContext(key: string, value: any): void {

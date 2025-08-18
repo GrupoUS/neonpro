@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { AlertTriangle, Eye, RefreshCw, Search } from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
-import { Badge } from "../../ui/badge";
-import { Button } from "../../ui/button";
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { AlertTriangle, Eye, RefreshCw, Search } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import { Badge } from '../../ui/badge';
+import { Button } from '../../ui/button';
 import {
   Dialog,
   DialogContent,
@@ -14,16 +14,29 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../../ui/dialog";
-import { Input } from "../../ui/input";
-import { Label } from "../../ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../ui/table";
+} from '../../ui/dialog';
+import { Input } from '../../ui/input';
+import { Label } from '../../ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../../ui/select';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '../../ui/table';
 
 type SecurityEvent = {
   id: string;
   event_type: string;
-  severity: "info" | "warning" | "error" | "critical";
+  severity: 'info' | 'warning' | 'error' | 'critical';
   title: string;
   description?: string;
   source_ip?: string;
@@ -31,7 +44,7 @@ type SecurityEvent = {
   session_id?: string;
   event_data?: Record<string, any>;
   affected_resources?: Record<string, any>;
-  status: "open" | "investigating" | "resolved" | "false_positive";
+  status: 'open' | 'investigating' | 'resolved' | 'false_positive';
   response_time_minutes?: number;
   assigned_to?: string;
   detected_at: string;
@@ -43,29 +56,31 @@ type SecurityEvent = {
 export function SecurityEventsTable() {
   const [events, setEvents] = useState<SecurityEvent[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [severityFilter, setSeverityFilter] = useState<string>("all");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [selectedEvent, setSelectedEvent] = useState<SecurityEvent | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [severityFilter, setSeverityFilter] = useState<string>('all');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [selectedEvent, setSelectedEvent] = useState<SecurityEvent | null>(
+    null
+  );
 
   const fetchEvents = async () => {
     try {
       setLoading(true);
-      const response = await fetch("/api/security/events", {
-        method: "GET",
+      const response = await fetch('/api/security/events', {
+        method: 'GET',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
       });
 
       if (!response.ok) {
-        throw new Error("Failed to fetch security events");
+        throw new Error('Failed to fetch security events');
       }
 
       const data = await response.json();
       setEvents(data.events || []);
     } catch (_error) {
-      toast.error("Erro ao carregar eventos de segurança");
+      toast.error('Erro ao carregar eventos de segurança');
     } finally {
       setLoading(false);
     }
@@ -78,60 +93,60 @@ export function SecurityEventsTable() {
   const handleUpdateStatus = async (eventId: string, newStatus: string) => {
     try {
       const response = await fetch(`/api/security/events/${eventId}`, {
-        method: "PATCH",
+        method: 'PATCH',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ status: newStatus }),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to update event status");
+        throw new Error('Failed to update event status');
       }
 
       await fetchEvents();
-      toast.success("Status do evento atualizado com sucesso");
+      toast.success('Status do evento atualizado com sucesso');
     } catch (_error) {
-      toast.error("Erro ao atualizar status do evento");
+      toast.error('Erro ao atualizar status do evento');
     }
   };
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case "critical":
-        return "destructive";
-      case "error":
-        return "destructive";
-      case "warning":
-        return "secondary";
-      case "info":
-        return "outline";
+      case 'critical':
+        return 'destructive';
+      case 'error':
+        return 'destructive';
+      case 'warning':
+        return 'secondary';
+      case 'info':
+        return 'outline';
       default:
-        return "outline";
+        return 'outline';
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "open":
-        return "destructive";
-      case "investigating":
-        return "secondary";
-      case "resolved":
-        return "default";
-      case "false_positive":
-        return "outline";
+      case 'open':
+        return 'destructive';
+      case 'investigating':
+        return 'secondary';
+      case 'resolved':
+        return 'default';
+      case 'false_positive':
+        return 'outline';
       default:
-        return "outline";
+        return 'outline';
     }
   };
 
   const getSeverityIcon = (severity: string) => {
     switch (severity) {
-      case "critical":
-      case "error":
+      case 'critical':
+      case 'error':
         return <AlertTriangle className="h-4 w-4 text-red-500" />;
-      case "warning":
+      case 'warning':
         return <AlertTriangle className="h-4 w-4 text-yellow-500" />;
       default:
         return <AlertTriangle className="h-4 w-4 text-blue-500" />;
@@ -145,8 +160,10 @@ export function SecurityEventsTable() {
       event.event_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
       event.source_ip?.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesSeverity = severityFilter === "all" || event.severity === severityFilter;
-    const matchesStatus = statusFilter === "all" || event.status === statusFilter;
+    const matchesSeverity =
+      severityFilter === 'all' || event.severity === severityFilter;
+    const matchesStatus =
+      statusFilter === 'all' || event.status === statusFilter;
 
     return matchesSearch && matchesSeverity && matchesStatus;
   });
@@ -232,7 +249,10 @@ export function SecurityEventsTable() {
           <TableBody>
             {filteredEvents.length === 0 ? (
               <TableRow>
-                <TableCell className="py-8 text-center text-muted-foreground" colSpan={7}>
+                <TableCell
+                  className="py-8 text-center text-muted-foreground"
+                  colSpan={7}
+                >
                   Nenhum evento de segurança encontrado
                 </TableCell>
               </TableRow>
@@ -264,20 +284,20 @@ export function SecurityEventsTable() {
                   </TableCell>
                   <TableCell>
                     <code className="rounded bg-muted px-1 py-0.5 text-sm">
-                      {event.source_ip || "N/A"}
+                      {event.source_ip || 'N/A'}
                     </code>
                   </TableCell>
                   <TableCell>
                     <Badge variant={getStatusColor(event.status)}>
-                      {event.status === "open" && "Aberto"}
-                      {event.status === "investigating" && "Investigando"}
-                      {event.status === "resolved" && "Resolvido"}
-                      {event.status === "false_positive" && "Falso Positivo"}
+                      {event.status === 'open' && 'Aberto'}
+                      {event.status === 'investigating' && 'Investigando'}
+                      {event.status === 'resolved' && 'Resolvido'}
+                      {event.status === 'false_positive' && 'Falso Positivo'}
                     </Badge>
                   </TableCell>
                   <TableCell>
                     <div className="text-sm">
-                      {format(new Date(event.detected_at), "dd/MM/yyyy HH:mm", {
+                      {format(new Date(event.detected_at), 'dd/MM/yyyy HH:mm', {
                         locale: ptBR,
                       })}
                     </div>
@@ -286,7 +306,11 @@ export function SecurityEventsTable() {
                     <div className="flex items-center justify-end space-x-2">
                       <Dialog>
                         <DialogTrigger asChild>
-                          <Button onClick={() => setSelectedEvent(event)} size="sm" variant="ghost">
+                          <Button
+                            onClick={() => setSelectedEvent(event)}
+                            size="sm"
+                            variant="ghost"
+                          >
                             <Eye className="h-4 w-4" />
                           </Button>
                         </DialogTrigger>
@@ -306,13 +330,19 @@ export function SecurityEventsTable() {
                                 <div>
                                   <Label>Tipo de Evento</Label>
                                   <div className="mt-1">
-                                    <Badge variant="outline">{selectedEvent.event_type}</Badge>
+                                    <Badge variant="outline">
+                                      {selectedEvent.event_type}
+                                    </Badge>
                                   </div>
                                 </div>
                                 <div>
                                   <Label>Severidade</Label>
                                   <div className="mt-1">
-                                    <Badge variant={getSeverityColor(selectedEvent.severity)}>
+                                    <Badge
+                                      variant={getSeverityColor(
+                                        selectedEvent.severity
+                                      )}
+                                    >
                                       {selectedEvent.severity.toUpperCase()}
                                     </Badge>
                                   </div>
@@ -320,12 +350,19 @@ export function SecurityEventsTable() {
                                 <div>
                                   <Label>Status</Label>
                                   <div className="mt-1">
-                                    <Badge variant={getStatusColor(selectedEvent.status)}>
-                                      {selectedEvent.status === "open" && "Aberto"}
-                                      {selectedEvent.status === "investigating" && "Investigando"}
-                                      {selectedEvent.status === "resolved" && "Resolvido"}
-                                      {selectedEvent.status === "false_positive" &&
-                                        "Falso Positivo"}
+                                    <Badge
+                                      variant={getStatusColor(
+                                        selectedEvent.status
+                                      )}
+                                    >
+                                      {selectedEvent.status === 'open' &&
+                                        'Aberto'}
+                                      {selectedEvent.status ===
+                                        'investigating' && 'Investigando'}
+                                      {selectedEvent.status === 'resolved' &&
+                                        'Resolvido'}
+                                      {selectedEvent.status ===
+                                        'false_positive' && 'Falso Positivo'}
                                     </Badge>
                                   </div>
                                 </div>
@@ -333,7 +370,7 @@ export function SecurityEventsTable() {
                                   <Label>IP de Origem</Label>
                                   <div className="mt-1">
                                     <code className="rounded bg-muted px-2 py-1 text-sm">
-                                      {selectedEvent.source_ip || "N/A"}
+                                      {selectedEvent.source_ip || 'N/A'}
                                     </code>
                                   </div>
                                 </div>
@@ -342,8 +379,8 @@ export function SecurityEventsTable() {
                                   <div className="mt-1 text-sm">
                                     {format(
                                       new Date(selectedEvent.detected_at),
-                                      "dd/MM/yyyy HH:mm:ss",
-                                      { locale: ptBR },
+                                      'dd/MM/yyyy HH:mm:ss',
+                                      { locale: ptBR }
                                     )}
                                   </div>
                                 </div>
@@ -353,8 +390,8 @@ export function SecurityEventsTable() {
                                     <div className="mt-1 text-sm">
                                       {format(
                                         new Date(selectedEvent.resolved_at),
-                                        "dd/MM/yyyy HH:mm:ss",
-                                        { locale: ptBR },
+                                        'dd/MM/yyyy HH:mm:ss',
+                                        { locale: ptBR }
                                       )}
                                     </div>
                                   </div>
@@ -371,24 +408,34 @@ export function SecurityEventsTable() {
                               )}
 
                               {selectedEvent.event_data &&
-                                Object.keys(selectedEvent.event_data).length > 0 && (
+                                Object.keys(selectedEvent.event_data).length >
+                                  0 && (
                                   <div>
                                     <Label>Dados do Evento</Label>
                                     <div className="mt-1">
                                       <pre className="max-h-40 overflow-auto rounded bg-muted p-3 text-xs">
-                                        {JSON.stringify(selectedEvent.event_data, null, 2)}
+                                        {JSON.stringify(
+                                          selectedEvent.event_data,
+                                          null,
+                                          2
+                                        )}
                                       </pre>
                                     </div>
                                   </div>
                                 )}
 
                               {selectedEvent.affected_resources &&
-                                Object.keys(selectedEvent.affected_resources).length > 0 && (
+                                Object.keys(selectedEvent.affected_resources)
+                                  .length > 0 && (
                                   <div>
                                     <Label>Recursos Afetados</Label>
                                     <div className="mt-1">
                                       <pre className="max-h-40 overflow-auto rounded bg-muted p-3 text-xs">
-                                        {JSON.stringify(selectedEvent.affected_resources, null, 2)}
+                                        {JSON.stringify(
+                                          selectedEvent.affected_resources,
+                                          null,
+                                          2
+                                        )}
                                       </pre>
                                     </div>
                                   </div>
@@ -411,9 +458,15 @@ export function SecurityEventsTable() {
                                   </SelectTrigger>
                                   <SelectContent>
                                     <SelectItem value="open">Aberto</SelectItem>
-                                    <SelectItem value="investigating">Investigando</SelectItem>
-                                    <SelectItem value="resolved">Resolvido</SelectItem>
-                                    <SelectItem value="false_positive">Falso Positivo</SelectItem>
+                                    <SelectItem value="investigating">
+                                      Investigando
+                                    </SelectItem>
+                                    <SelectItem value="resolved">
+                                      Resolvido
+                                    </SelectItem>
+                                    <SelectItem value="false_positive">
+                                      Falso Positivo
+                                    </SelectItem>
                                   </SelectContent>
                                 </Select>
                               </div>
@@ -432,7 +485,8 @@ export function SecurityEventsTable() {
 
       {/* Summary */}
       <div className="text-muted-foreground text-sm">
-        Mostrando {filteredEvents.length} de {events.length} eventos de segurança
+        Mostrando {filteredEvents.length} de {events.length} eventos de
+        segurança
       </div>
     </div>
   );

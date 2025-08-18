@@ -93,7 +93,16 @@
       "command": "cmd",
       "args": ["/C", "npx", "-y", "@21st-dev/magic@latest"],
       "env": {
-        "MAGIC_API_KEY": "2c5c6b6e07d502a308d18336327de5985e4f130e5cc6a7e3c9832760fa519986",
+        {
+  "mcpServers": {
+    "@21st-dev/magic": {
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx",
+        "-y",
+        "@21st-dev/magic@latest",
+        "API_KEY=\"2c5c6b6e07d502a308d18336327de5985e4f130e5cc6a7e3c9832760fa519986\""
         "MAGIC_TIMEOUT": "25000"
       }
     },

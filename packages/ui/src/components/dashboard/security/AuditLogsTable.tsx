@@ -1,12 +1,20 @@
-"use client";
+'use client';
 
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { Database, Download, Eye, RefreshCw, Search, Shield, User } from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
-import { Badge } from "../../ui/badge";
-import { Button } from "../../ui/button";
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import {
+  Database,
+  Download,
+  Eye,
+  RefreshCw,
+  Search,
+  Shield,
+  User,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import { Badge } from '../../ui/badge';
+import { Button } from '../../ui/button';
 import {
   Dialog,
   DialogContent,
@@ -14,11 +22,24 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../../ui/dialog";
-import { Input } from "../../ui/input";
-import { Label } from "../../ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../ui/table";
+} from '../../ui/dialog';
+import { Input } from '../../ui/input';
+import { Label } from '../../ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../../ui/select';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '../../ui/table';
 
 type AuditLog = {
   id: string;
@@ -37,7 +58,7 @@ type AuditLog = {
   changed_fields?: string[];
   compliance_flags: string[];
   compliance_context?: Record<string, any>;
-  risk_level: "low" | "medium" | "high" | "critical";
+  risk_level: 'low' | 'medium' | 'high' | 'critical';
   security_flags: string[];
   created_at: string;
   metadata?: Record<string, any>;
@@ -48,30 +69,30 @@ type AuditLog = {
 export function AuditLogsTable() {
   const [logs, setLogs] = useState<AuditLog[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [actionFilter, setActionFilter] = useState<string>("all");
-  const [resourceFilter, setResourceFilter] = useState<string>("all");
-  const [riskFilter, setRiskFilter] = useState<string>("all");
+  const [searchTerm, setSearchTerm] = useState('');
+  const [actionFilter, setActionFilter] = useState<string>('all');
+  const [resourceFilter, setResourceFilter] = useState<string>('all');
+  const [riskFilter, setRiskFilter] = useState<string>('all');
   const [selectedLog, setSelectedLog] = useState<AuditLog | null>(null);
 
   const fetchLogs = async () => {
     try {
       setLoading(true);
-      const response = await fetch("/api/security/audit-logs", {
-        method: "GET",
+      const response = await fetch('/api/security/audit-logs', {
+        method: 'GET',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
       });
 
       if (!response.ok) {
-        throw new Error("Failed to fetch audit logs");
+        throw new Error('Failed to fetch audit logs');
       }
 
       const data = await response.json();
       setLogs(data.logs || []);
     } catch (_error) {
-      toast.error("Erro ao carregar logs de auditoria");
+      toast.error('Erro ao carregar logs de auditoria');
     } finally {
       setLoading(false);
     }
@@ -83,62 +104,62 @@ export function AuditLogsTable() {
 
   const handleExportLogs = async () => {
     try {
-      const response = await fetch("/api/security/audit-logs/export", {
-        method: "GET",
+      const response = await fetch('/api/security/audit-logs/export', {
+        method: 'GET',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
       });
 
       if (!response.ok) {
-        throw new Error("Failed to export audit logs");
+        throw new Error('Failed to export audit logs');
       }
 
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.style.display = "none";
+      const a = document.createElement('a');
+      a.style.display = 'none';
       a.href = url;
-      a.download = `audit-logs-${format(new Date(), "yyyy-MM-dd")}.csv`;
+      a.download = `audit-logs-${format(new Date(), 'yyyy-MM-dd')}.csv`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
 
-      toast.success("Logs de auditoria exportados com sucesso");
+      toast.success('Logs de auditoria exportados com sucesso');
     } catch (_error) {
-      toast.error("Erro ao exportar logs de auditoria");
+      toast.error('Erro ao exportar logs de auditoria');
     }
   };
 
   const getRiskColor = (riskLevel: string) => {
     switch (riskLevel) {
-      case "critical":
-        return "destructive";
-      case "high":
-        return "destructive";
-      case "medium":
-        return "secondary";
-      case "low":
-        return "outline";
+      case 'critical':
+        return 'destructive';
+      case 'high':
+        return 'destructive';
+      case 'medium':
+        return 'secondary';
+      case 'low':
+        return 'outline';
       default:
-        return "outline";
+        return 'outline';
     }
   };
 
   const getActionIcon = (action: string) => {
-    if (action.includes("create") || action.includes("insert")) {
+    if (action.includes('create') || action.includes('insert')) {
       return <Database className="h-4 w-4 text-green-500" />;
     }
-    if (action.includes("update") || action.includes("modify")) {
+    if (action.includes('update') || action.includes('modify')) {
       return <Database className="h-4 w-4 text-blue-500" />;
     }
-    if (action.includes("delete") || action.includes("remove")) {
+    if (action.includes('delete') || action.includes('remove')) {
       return <Database className="h-4 w-4 text-red-500" />;
     }
-    if (action.includes("login") || action.includes("auth")) {
+    if (action.includes('login') || action.includes('auth')) {
       return <User className="h-4 w-4 text-purple-500" />;
     }
-    if (action.includes("security") || action.includes("permission")) {
+    if (action.includes('security') || action.includes('permission')) {
       return <Shield className="h-4 w-4 text-orange-500" />;
     }
     return <Database className="h-4 w-4 text-gray-500" />;
@@ -152,9 +173,11 @@ export function AuditLogsTable() {
       log.ip_address?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       log.table_name?.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesAction = actionFilter === "all" || log.action.toLowerCase().includes(actionFilter);
-    const matchesResource = resourceFilter === "all" || log.resource_type === resourceFilter;
-    const matchesRisk = riskFilter === "all" || log.risk_level === riskFilter;
+    const matchesAction =
+      actionFilter === 'all' || log.action.toLowerCase().includes(actionFilter);
+    const matchesResource =
+      resourceFilter === 'all' || log.resource_type === resourceFilter;
+    const matchesRisk = riskFilter === 'all' || log.risk_level === riskFilter;
 
     return matchesSearch && matchesAction && matchesResource && matchesRisk;
   });
@@ -176,7 +199,9 @@ export function AuditLogsTable() {
           <div className="flex items-center space-x-2">
             <Database className="h-5 w-5 text-blue-600" />
             <div>
-              <div className="font-bold text-2xl text-blue-600">{logs.length}</div>
+              <div className="font-bold text-2xl text-blue-600">
+                {logs.length}
+              </div>
               <div className="text-blue-600 text-sm">Total de Logs</div>
             </div>
           </div>
@@ -197,7 +222,12 @@ export function AuditLogsTable() {
             <Shield className="h-5 w-5 text-yellow-600" />
             <div>
               <div className="font-bold text-2xl text-yellow-600">
-                {logs.filter((l) => l.risk_level === "high" || l.risk_level === "critical").length}
+                {
+                  logs.filter(
+                    (l) =>
+                      l.risk_level === 'high' || l.risk_level === 'critical'
+                  ).length
+                }
               </div>
               <div className="text-sm text-yellow-600">Alto Risco</div>
             </div>
@@ -308,7 +338,10 @@ export function AuditLogsTable() {
           <TableBody>
             {filteredLogs.length === 0 ? (
               <TableRow>
-                <TableCell className="py-8 text-center text-muted-foreground" colSpan={8}>
+                <TableCell
+                  className="py-8 text-center text-muted-foreground"
+                  colSpan={8}
+                >
                   Nenhum log de auditoria encontrado
                 </TableCell>
               </TableRow>
@@ -332,7 +365,9 @@ export function AuditLogsTable() {
                     <div>
                       <div className="font-medium">{log.resource_type}</div>
                       {log.table_name && (
-                        <div className="text-muted-foreground text-sm">{log.table_name}</div>
+                        <div className="text-muted-foreground text-sm">
+                          {log.table_name}
+                        </div>
                       )}
                       {log.resource_id && (
                         <code className="rounded bg-muted px-1 py-0.5 text-xs">
@@ -344,7 +379,9 @@ export function AuditLogsTable() {
                   <TableCell>
                     <div className="text-sm">
                       {log.user_id ? (
-                        <code className="rounded bg-muted px-1 py-0.5">{log.user_id}</code>
+                        <code className="rounded bg-muted px-1 py-0.5">
+                          {log.user_id}
+                        </code>
                       ) : (
                         <span className="text-muted-foreground">Sistema</span>
                       )}
@@ -352,21 +389,25 @@ export function AuditLogsTable() {
                   </TableCell>
                   <TableCell>
                     <code className="rounded bg-muted px-1 py-0.5 text-sm">
-                      {log.ip_address || "N/A"}
+                      {log.ip_address || 'N/A'}
                     </code>
                   </TableCell>
                   <TableCell>
                     <Badge variant={getRiskColor(log.risk_level)}>
-                      {log.risk_level === "critical" && "CRÍTICO"}
-                      {log.risk_level === "high" && "ALTO"}
-                      {log.risk_level === "medium" && "MÉDIO"}
-                      {log.risk_level === "low" && "BAIXO"}
+                      {log.risk_level === 'critical' && 'CRÍTICO'}
+                      {log.risk_level === 'high' && 'ALTO'}
+                      {log.risk_level === 'medium' && 'MÉDIO'}
+                      {log.risk_level === 'low' && 'BAIXO'}
                     </Badge>
                   </TableCell>
                   <TableCell>
                     <div className="flex flex-wrap gap-1">
                       {log.compliance_flags.slice(0, 2).map((flag, index) => (
-                        <Badge className="text-xs" key={index} variant="outline">
+                        <Badge
+                          className="text-xs"
+                          key={index}
+                          variant="outline"
+                        >
                           {flag}
                         </Badge>
                       ))}
@@ -379,7 +420,7 @@ export function AuditLogsTable() {
                   </TableCell>
                   <TableCell>
                     <div className="text-sm">
-                      {format(new Date(log.created_at), "dd/MM HH:mm:ss", {
+                      {format(new Date(log.created_at), 'dd/MM HH:mm:ss', {
                         locale: ptBR,
                       })}
                     </div>
@@ -387,7 +428,11 @@ export function AuditLogsTable() {
                   <TableCell className="text-right">
                     <Dialog>
                       <DialogTrigger asChild>
-                        <Button onClick={() => setSelectedLog(log)} size="sm" variant="ghost">
+                        <Button
+                          onClick={() => setSelectedLog(log)}
+                          size="sm"
+                          variant="ghost"
+                        >
                           <Eye className="h-4 w-4" />
                         </Button>
                       </DialogTrigger>
@@ -400,38 +445,44 @@ export function AuditLogsTable() {
                               {log.risk_level.toUpperCase()}
                             </Badge>
                           </DialogTitle>
-                          <DialogDescription>Detalhes completos do log #{log.id}</DialogDescription>
+                          <DialogDescription>
+                            Detalhes completos do log #{log.id}
+                          </DialogDescription>
                         </DialogHeader>
                         {selectedLog && (
                           <div className="space-y-4">
                             <div className="grid grid-cols-2 gap-4">
                               <div>
                                 <Label>Ação</Label>
-                                <div className="mt-1 text-sm">{selectedLog.action}</div>
+                                <div className="mt-1 text-sm">
+                                  {selectedLog.action}
+                                </div>
                               </div>
                               <div>
                                 <Label>Tipo de Recurso</Label>
-                                <div className="mt-1 text-sm">{selectedLog.resource_type}</div>
+                                <div className="mt-1 text-sm">
+                                  {selectedLog.resource_type}
+                                </div>
                               </div>
                               <div>
                                 <Label>ID do Recurso</Label>
                                 <div className="mt-1">
                                   <code className="rounded bg-muted px-2 py-1 text-sm">
-                                    {selectedLog.resource_id || "N/A"}
+                                    {selectedLog.resource_id || 'N/A'}
                                   </code>
                                 </div>
                               </div>
                               <div>
                                 <Label>Tabela</Label>
                                 <div className="mt-1 text-sm">
-                                  {selectedLog.table_name || "N/A"}
+                                  {selectedLog.table_name || 'N/A'}
                                 </div>
                               </div>
                               <div>
                                 <Label>Usuário</Label>
                                 <div className="mt-1">
                                   <code className="rounded bg-muted px-2 py-1 text-sm">
-                                    {selectedLog.user_id || "Sistema"}
+                                    {selectedLog.user_id || 'Sistema'}
                                   </code>
                                 </div>
                               </div>
@@ -439,26 +490,32 @@ export function AuditLogsTable() {
                                 <Label>IP Address</Label>
                                 <div className="mt-1">
                                   <code className="rounded bg-muted px-2 py-1 text-sm">
-                                    {selectedLog.ip_address || "N/A"}
+                                    {selectedLog.ip_address || 'N/A'}
                                   </code>
                                 </div>
                               </div>
                               <div>
                                 <Label>Endpoint</Label>
-                                <div className="mt-1 text-sm">{selectedLog.endpoint || "N/A"}</div>
+                                <div className="mt-1 text-sm">
+                                  {selectedLog.endpoint || 'N/A'}
+                                </div>
                               </div>
                               <div>
                                 <Label>Método HTTP</Label>
                                 <div className="mt-1">
                                   <Badge variant="outline">
-                                    {selectedLog.http_method || "N/A"}
+                                    {selectedLog.http_method || 'N/A'}
                                   </Badge>
                                 </div>
                               </div>
                               <div>
                                 <Label>Nível de Risco</Label>
                                 <div className="mt-1">
-                                  <Badge variant={getRiskColor(selectedLog.risk_level)}>
+                                  <Badge
+                                    variant={getRiskColor(
+                                      selectedLog.risk_level
+                                    )}
+                                  >
                                     {selectedLog.risk_level.toUpperCase()}
                                   </Badge>
                                 </div>
@@ -466,9 +523,13 @@ export function AuditLogsTable() {
                               <div>
                                 <Label>Data/Hora</Label>
                                 <div className="mt-1 text-sm">
-                                  {format(new Date(selectedLog.created_at), "dd/MM/yyyy HH:mm:ss", {
-                                    locale: ptBR,
-                                  })}
+                                  {format(
+                                    new Date(selectedLog.created_at),
+                                    'dd/MM/yyyy HH:mm:ss',
+                                    {
+                                      locale: ptBR,
+                                    }
+                                  )}
                                 </div>
                               </div>
                             </div>
@@ -478,11 +539,13 @@ export function AuditLogsTable() {
                                 <div>
                                   <Label>Flags de Compliance</Label>
                                   <div className="mt-1 flex flex-wrap gap-2">
-                                    {selectedLog.compliance_flags.map((flag, index) => (
-                                      <Badge key={index} variant="outline">
-                                        {flag}
-                                      </Badge>
-                                    ))}
+                                    {selectedLog.compliance_flags.map(
+                                      (flag, index) => (
+                                        <Badge key={index} variant="outline">
+                                          {flag}
+                                        </Badge>
+                                      )
+                                    )}
                                   </div>
                                 </div>
                               )}
@@ -492,11 +555,13 @@ export function AuditLogsTable() {
                                 <div>
                                   <Label>Flags de Segurança</Label>
                                   <div className="mt-1 flex flex-wrap gap-2">
-                                    {selectedLog.security_flags.map((flag, index) => (
-                                      <Badge key={index} variant="outline">
-                                        {flag}
-                                      </Badge>
-                                    ))}
+                                    {selectedLog.security_flags.map(
+                                      (flag, index) => (
+                                        <Badge key={index} variant="outline">
+                                          {flag}
+                                        </Badge>
+                                      )
+                                    )}
                                   </div>
                                 </div>
                               )}
@@ -506,35 +571,47 @@ export function AuditLogsTable() {
                                 <div>
                                   <Label>Campos Alterados</Label>
                                   <div className="mt-1 flex flex-wrap gap-2">
-                                    {selectedLog.changed_fields.map((field, index) => (
-                                      <Badge key={index} variant="secondary">
-                                        {field}
-                                      </Badge>
-                                    ))}
+                                    {selectedLog.changed_fields.map(
+                                      (field, index) => (
+                                        <Badge key={index} variant="secondary">
+                                          {field}
+                                        </Badge>
+                                      )
+                                    )}
                                   </div>
                                 </div>
                               )}
 
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                               {selectedLog.old_values &&
-                                Object.keys(selectedLog.old_values).length > 0 && (
+                                Object.keys(selectedLog.old_values).length >
+                                  0 && (
                                   <div>
                                     <Label>Valores Anteriores</Label>
                                     <div className="mt-1">
                                       <pre className="max-h-40 overflow-auto rounded bg-muted p-3 text-xs">
-                                        {JSON.stringify(selectedLog.old_values, null, 2)}
+                                        {JSON.stringify(
+                                          selectedLog.old_values,
+                                          null,
+                                          2
+                                        )}
                                       </pre>
                                     </div>
                                   </div>
                                 )}
 
                               {selectedLog.new_values &&
-                                Object.keys(selectedLog.new_values).length > 0 && (
+                                Object.keys(selectedLog.new_values).length >
+                                  0 && (
                                   <div>
                                     <Label>Valores Novos</Label>
                                     <div className="mt-1">
                                       <pre className="max-h-40 overflow-auto rounded bg-muted p-3 text-xs">
-                                        {JSON.stringify(selectedLog.new_values, null, 2)}
+                                        {JSON.stringify(
+                                          selectedLog.new_values,
+                                          null,
+                                          2
+                                        )}
                                       </pre>
                                     </div>
                                   </div>
@@ -542,12 +619,17 @@ export function AuditLogsTable() {
                             </div>
 
                             {selectedLog.compliance_context &&
-                              Object.keys(selectedLog.compliance_context).length > 0 && (
+                              Object.keys(selectedLog.compliance_context)
+                                .length > 0 && (
                                 <div>
                                   <Label>Contexto de Compliance</Label>
                                   <div className="mt-1">
                                     <pre className="max-h-40 overflow-auto rounded bg-muted p-3 text-xs">
-                                      {JSON.stringify(selectedLog.compliance_context, null, 2)}
+                                      {JSON.stringify(
+                                        selectedLog.compliance_context,
+                                        null,
+                                        2
+                                      )}
                                     </pre>
                                   </div>
                                 </div>
@@ -559,7 +641,11 @@ export function AuditLogsTable() {
                                   <Label>Metadados</Label>
                                   <div className="mt-1">
                                     <pre className="max-h-40 overflow-auto rounded bg-muted p-3 text-xs">
-                                      {JSON.stringify(selectedLog.metadata, null, 2)}
+                                      {JSON.stringify(
+                                        selectedLog.metadata,
+                                        null,
+                                        2
+                                      )}
                                     </pre>
                                   </div>
                                 </div>
@@ -574,7 +660,8 @@ export function AuditLogsTable() {
                               </div>
                             )}
 
-                            {(selectedLog.checksum || selectedLog.signature) && (
+                            {(selectedLog.checksum ||
+                              selectedLog.signature) && (
                               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 {selectedLog.checksum && (
                                   <div>

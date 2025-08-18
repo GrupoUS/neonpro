@@ -256,7 +256,11 @@ export class HealthcareEncryption {
       classification,
       dataSize,
       timestamp: new Date().toISOString(),
-      error: error ? error.message : undefined,
+      error: error
+        ? error instanceof Error
+          ? error.message
+          : String(error)
+        : undefined,
     };
   }
 }

@@ -54,8 +54,7 @@ jobs:
       - name: 🎯 Quality Validation (Biome + Ultracite)
         run: |
           echo "🎯 Running Biome + Ultracite Quality Validation..."
-          pnpm exec biome format --check .
-          pnpm exec biome lint .
+          pnpm ci
           echo "✅ Code quality validation passed"
 
       - name: 🔧 TypeScript Check

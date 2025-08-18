@@ -1,34 +1,32 @@
 // Billing module exports
-export * from './types';
-export * from './service';
 
+export type { BillingRepository } from './service';
+export * from './service';
+export { BillingService } from './service';
 // Re-export commonly used types
 export type {
-  Invoice,
-  Payment,
-  PaymentPlan,
-  TreatmentPackage,
-  Discount,
-  Refund,
-  Installment,
-  InvoiceItem,
+  BillingStats,
+  CreateDiscountData,
   CreateInvoiceData,
   CreatePaymentData,
   CreatePaymentPlanData,
   CreateTreatmentPackageData,
-  CreateDiscountData,
-  BillingStats
+  Discount,
+  Installment,
+  Invoice,
+  InvoiceItem,
+  Payment,
+  PaymentPlan,
+  Refund,
+  TreatmentPackage,
 } from './types';
-
-export { BillingService } from './service';
-export { 
-  PaymentMethod,
-  PaymentStatus,
-  PaymentPlanStatus,
-  InstallmentStatus,
-  InstallmentFrequency,
+export * from './types';
+export {
   DiscountType,
-  RefundStatus
+  InstallmentFrequency,
+  InstallmentStatus,
+  PaymentMethod,
+  PaymentPlanStatus,
+  PaymentStatus,
+  RefundStatus,
 } from './types';
-
-export type { BillingRepository } from './service';

@@ -10,9 +10,9 @@ export interface EmergencyEvent {
 export class EmergencyResponseService {
   static triggerEmergencyAlert(event: EmergencyEvent): void {
     console.log('Emergency alert triggered:', event);
-    
+
     if (event.severity >= 4) {
-      this.escalateToOnCall(event);
+      EmergencyResponseService.escalateToOnCall(event);
     }
   }
 
@@ -29,7 +29,7 @@ export class EmergencyResponseService {
       'patient_critical_care',
       'system_disaster_recovery',
       'security_incident_response',
-      'data_breach_protocol'
+      'data_breach_protocol',
     ];
   }
 }

@@ -1,6 +1,6 @@
-import { neonproAIIntegration } from "@neonpro/ai/prediction/integrations/neonpro-integration";
-import { type NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
+import { neonproAIIntegration } from '@neonpro/ai/prediction/integrations/neonpro-integration';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 /**
  * AI Prediction API Routes for NeonPro
@@ -9,26 +9,30 @@ import { z } from "zod";
 
 // Validation schemas
 const treatmentPredictionSchema = z.object({
-  patientId: z.string().min(1, "Patient ID is required"),
+  patientId: z.string().min(1, 'Patient ID is required'),
   treatmentType: z.enum([
-    "botox",
-    "dermal-fillers",
-    "laser-resurfacing",
-    "laser-hair-removal",
-    "chemical-peel",
-    "microneedling",
-    "coolsculpting",
-    "radiofrequency",
-    "photofacial",
-    "thread-lift",
+    'botox',
+    'dermal-fillers',
+    'laser-resurfacing',
+    'laser-hair-removal',
+    'chemical-peel',
+    'microneedling',
+    'coolsculpting',
+    'radiofrequency',
+    'photofacial',
+    'thread-lift',
   ]),
-  targetAreas: z.array(z.string()).min(1, "At least one target area is required"),
+  targetAreas: z
+    .array(z.string())
+    .min(1, 'At least one target area is required'),
   additionalParams: z.record(z.any()).optional(),
 });
 
 const botoxOptimizationSchema = z.object({
-  patientId: z.string().min(1, "Patient ID is required"),
-  targetAreas: z.array(z.string()).min(1, "At least one target area is required"),
+  patientId: z.string().min(1, 'Patient ID is required'),
+  targetAreas: z
+    .array(z.string())
+    .min(1, 'At least one target area is required'),
   desiredIntensity: z.number().min(1).max(10).optional().default(5),
 });
 
@@ -44,41 +48,41 @@ export async function POST(request: NextRequest) {
     const action = body.action;
 
     switch (action) {
-      case "treatment-recommendation":
+      case 'treatment-recommendation':
         return handleTreatmentRecommendation(body);
 
-      case "botox-optimization":
+      case 'botox-optimization':
         return handleBotoxOptimization(body);
 
-      case "risk-assessment":
+      case 'risk-assessment':
         return handleRiskAssessment(body);
 
-      case "system-health":
+      case 'system-health':
         return handleSystemHealth();
 
       default:
         return NextResponse.json(
           {
             success: false,
-            error: "Invalid action specified",
+            error: 'Invalid action specified',
             availableActions: [
-              "treatment-recommendation",
-              "botox-optimization",
-              "risk-assessment",
-              "system-health",
+              'treatment-recommendation',
+              'botox-optimization',
+              'risk-assessment',
+              'system-health',
             ],
           },
-          { status: 400 },
+          { status: 400 }
         );
     }
   } catch (error) {
     return NextResponse.json(
       {
         success: false,
-        error: "Internal server error",
-        message: error instanceof Error ? error.message : "Unknown error",
+        error: 'Internal server error',
+        message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 },
+      { status: 500 }
     );
   }
 } /**
@@ -99,19 +103,19 @@ export async function GET() {
         performance: health.performance,
         recommendations: health.recommendations,
         systemInfo: {
-          version: "1.0.0",
+          version: '1.0.0',
           models: [
-            "treatment-outcome (87% accuracy)",
-            "risk-assessment (93% accuracy)",
-            "botox-optimization (88% accuracy)",
-            "filler-volume (86% accuracy)",
-            "laser-settings (92% accuracy)",
-            "duration-estimation (91% accuracy)",
-            "success-probability (89% accuracy)",
+            'treatment-outcome (87% accuracy)',
+            'risk-assessment (93% accuracy)',
+            'botox-optimization (88% accuracy)',
+            'filler-volume (86% accuracy)',
+            'laser-settings (92% accuracy)',
+            'duration-estimation (91% accuracy)',
+            'success-probability (89% accuracy)',
           ],
-          targetAccuracy: "85%+",
-          responseTime: "<2s",
-          compliance: "LGPD compliant",
+          targetAccuracy: '85%+',
+          responseTime: '<2s',
+          compliance: 'LGPD compliant',
         },
       },
     });
@@ -119,10 +123,10 @@ export async function GET() {
     return NextResponse.json(
       {
         success: false,
-        error: "System health check failed",
-        status: "unhealthy",
+        error: 'System health check failed',
+        status: 'unhealthy',
       },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
@@ -137,7 +141,7 @@ async function handleTreatmentRecommendation(body: unknown) {
       validatedData.patientId,
       validatedData.treatmentType,
       validatedData.targetAreas,
-      validatedData.additionalParams,
+      validatedData.additionalParams
     );
 
     if (result.success) {
@@ -148,35 +152,35 @@ async function handleTreatmentRecommendation(body: unknown) {
           metadata: {
             ...result.metadata,
             timestamp: new Date().toISOString(),
-            version: "1.0.0",
+            version: '1.0.0',
           },
         },
       });
     }
-      return NextResponse.json(
-        {
-          success: false,
-          error: result.error || "Treatment recommendation failed",
-        },
-        { status: 400 },
-      );
+    return NextResponse.json(
+      {
+        success: false,
+        error: result.error || 'Treatment recommendation failed',
+      },
+      { status: 400 }
+    );
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
           success: false,
-          error: "Validation failed",
+          error: 'Validation failed',
           details: error.errors,
         },
-        { status: 400 },
+        { status: 400 }
       );
     }
     return NextResponse.json(
       {
         success: false,
-        error: "Treatment recommendation failed",
+        error: 'Treatment recommendation failed',
       },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
@@ -188,7 +192,7 @@ async function handleBotoxOptimization(body: unknown) {
     const result = await neonproAIIntegration.getBotoxOptimization(
       validatedData.patientId,
       validatedData.targetAreas,
-      validatedData.desiredIntensity,
+      validatedData.desiredIntensity
     );
 
     if (result.success) {
@@ -199,35 +203,35 @@ async function handleBotoxOptimization(body: unknown) {
           metadata: {
             ...result.metadata,
             timestamp: new Date().toISOString(),
-            version: "1.1.0",
+            version: '1.1.0',
           },
         },
       });
     }
-      return NextResponse.json(
-        {
-          success: false,
-          error: result.error || "Botox optimization failed",
-        },
-        { status: 400 },
-      );
+    return NextResponse.json(
+      {
+        success: false,
+        error: result.error || 'Botox optimization failed',
+      },
+      { status: 400 }
+    );
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
           success: false,
-          error: "Validation failed",
+          error: 'Validation failed',
           details: error.errors,
         },
-        { status: 400 },
+        { status: 400 }
       );
     }
     return NextResponse.json(
       {
         success: false,
-        error: "Botox optimization failed",
+        error: 'Botox optimization failed',
       },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
@@ -251,7 +255,7 @@ async function handleRiskAssessment(body: unknown) {
         medicalHistory: validatedData.medicalHistory || [],
         currentMedications: validatedData.currentMedications || [],
         allergyHistory: validatedData.allergyHistory || [],
-      },
+      }
     );
 
     if (result.success) {
@@ -263,35 +267,35 @@ async function handleRiskAssessment(body: unknown) {
           metadata: {
             ...result.metadata,
             timestamp: new Date().toISOString(),
-            version: "1.1.0",
+            version: '1.1.0',
           },
         },
       });
     }
-      return NextResponse.json(
-        {
-          success: false,
-          error: result.error || "Risk assessment failed",
-        },
-        { status: 400 },
-      );
+    return NextResponse.json(
+      {
+        success: false,
+        error: result.error || 'Risk assessment failed',
+      },
+      { status: 400 }
+    );
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
           success: false,
-          error: "Validation failed",
+          error: 'Validation failed',
           details: error.errors,
         },
-        { status: 400 },
+        { status: 400 }
       );
     }
     return NextResponse.json(
       {
         success: false,
-        error: "Risk assessment failed",
+        error: 'Risk assessment failed',
       },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
@@ -318,9 +322,9 @@ async function handleSystemHealth() {
     return NextResponse.json(
       {
         success: false,
-        error: "System health check failed",
+        error: 'System health check failed',
       },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

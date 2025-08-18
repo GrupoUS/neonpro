@@ -10,19 +10,19 @@ export class FeatureFlagsService {
     ['webauthn_enabled', true],
     ['advanced_monitoring', true],
     ['ml_risk_assessment', true],
-    ['real_time_notifications', true]
+    ['real_time_notifications', true],
   ]);
 
   static isEnabled(flagName: string): boolean {
-    return this.flags.get(flagName) ?? false;
+    return FeatureFlagsService.flags.get(flagName) ?? false;
   }
 
   static setFlag(flagName: string, enabled: boolean): void {
-    this.flags.set(flagName, enabled);
+    FeatureFlagsService.flags.set(flagName, enabled);
   }
 
   static getAllFlags(): Record<string, boolean> {
-    return Object.fromEntries(this.flags);
+    return Object.fromEntries(FeatureFlagsService.flags);
   }
 }
 

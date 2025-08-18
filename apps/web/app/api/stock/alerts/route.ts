@@ -1,6 +1,6 @@
-import { createClient } from '@/lib/supabase/server';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { createClient } from '@/lib/supabase/server';
 
 // Validation schemas
 const stockAlertQuerySchema = z.object({
@@ -8,13 +8,16 @@ const stockAlertQuerySchema = z.object({
   offset: z.coerce.number().int().min(0).optional().default(0),
   status: z.enum(['active', 'acknowledged', 'resolved']).optional(),
   severity: z.enum(['low', 'medium', 'high', 'critical']).optional(),
-  sortBy: z.enum(['created_at', 'severity', 'status']).optional().default('created_at'),
+  sortBy: z
+    .enum(['created_at', 'severity', 'status'])
+    .optional()
+    .default('created_at'),
   sortOrder: z.enum(['asc', 'desc']).optional().default('desc'),
 });
 
 const createStockAlertSchema = z.object({
   productId: z.string().uuid().optional(),
-  categoryId: z.string().uuid().optional(), 
+  categoryId: z.string().uuid().optional(),
   alertType: z.enum(['low_stock', 'out_of_stock', 'expiring']),
   threshold: z.number().int().min(0),
   notificationChannels: z.array(z.enum(['email', 'sms', 'app'])).min(1),
@@ -26,43 +29,62 @@ const createStockAlertSchema = z.object({
  */
 export async function GET(request: NextRequest) {
   try {
+    console.log('GET /api/stock/alerts - Starting request');
+    
     const supabase = await createClient();
-    
+    console.log('Supabase client created:', !!supabase);
+
     // Get current user session
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-    
+    console.log('Getting session...');
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession();
+
+    console.log('Session result:', { session: !!session, sessionError });
+
     if (sessionError || !session) {
+      console.log('Session check failed:', { sessionError, hasSession: !!session });
       return NextResponse.json(
         { success: false, error: 'Unauthorized' },
         { status: 401 }
       );
     }
 
+    console.log('Session validated, parsing URL...');
     const { searchParams } = new URL(request.url);
     const queryParams = Object.fromEntries(searchParams.entries());
-    
+    console.log('Query params:', queryParams);
+
     const validatedParams = stockAlertQuerySchema.parse(queryParams);
-    
+    console.log('Validated params:', validatedParams);
+
     // Build query with filters
-    let query = supabase
-      .from('stock_alerts')
-      .select('*', { count: 'exact' });
+    console.log('Building database query...');
+    let query = supabase.from('stock_alerts').select('*', { count: 'exact' });
 
     // Apply filters
     if (validatedParams.status) {
       query = query.eq('status', validatedParams.status);
     }
-    
+
     if (validatedParams.severity) {
       query = query.eq('severity', validatedParams.severity);
     }
 
     // Apply sorting and pagination
     query = query
-      .order(validatedParams.sortBy, { ascending: validatedParams.sortOrder === 'asc' })
-      .range(validatedParams.offset, validatedParams.offset + validatedParams.limit - 1);
+      .order(validatedParams.sortBy, {
+        ascending: validatedParams.sortOrder === 'asc',
+      })
+      .range(
+        validatedParams.offset,
+        validatedParams.offset + validatedParams.limit - 1
+      );
 
+    console.log('Executing database query...');
     const { data: alerts, error, count } = await query;
+    console.log('Query result:', { alerts: alerts?.length, error, count });
 
     if (error) {
       console.error('Database error:', error);
@@ -72,6 +94,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    console.log('Returning successful response');
     return NextResponse.json({
       success: true,
       data: alerts || [],
@@ -81,13 +104,21 @@ export async function GET(request: NextRequest) {
         offset: validatedParams.offset,
       },
     });
-
   } catch (error) {
     console.error('GET /api/stock/alerts error:', error);
-    
+    console.error('Error details:', { 
+      message: error?.message, 
+      stack: error?.stack,
+      name: error?.name 
+    });
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { success: false, error: 'Invalid query parameters', details: error.errors },
+        {
+          success: false,
+          error: 'Invalid query parameters',
+          details: error.errors,
+        },
         { status: 400 }
       );
     }
@@ -97,16 +128,19 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     );
   }
-}/**
+} /**
  * POST /api/stock/alerts - Create new stock alert configuration
  */
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Get current user session
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession();
+
     if (sessionError || !session) {
       return NextResponse.json(
         { success: false, error: 'Unauthorized' },
@@ -120,7 +154,10 @@ export async function POST(request: NextRequest) {
     // Validate that either productId or categoryId is provided
     if (!(validatedData.productId || validatedData.categoryId)) {
       return NextResponse.json(
-        { success: false, error: 'Either productId or categoryId must be provided' },
+        {
+          success: false,
+          error: 'Either productId or categoryId must be provided',
+        },
         { status: 400 }
       );
     }
@@ -135,9 +172,12 @@ export async function POST(request: NextRequest) {
     if (validatedData.productId) {
       duplicateQuery = duplicateQuery.eq('product_id', validatedData.productId);
     }
-    
+
     if (validatedData.categoryId) {
-      duplicateQuery = duplicateQuery.eq('category_id', validatedData.categoryId);
+      duplicateQuery = duplicateQuery.eq(
+        'category_id',
+        validatedData.categoryId
+      );
     }
 
     const { data: existingConfig } = await duplicateQuery;
@@ -168,17 +208,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return NextResponse.json({
-      success: true,
-      data: newConfig,
-    }, { status: 201 });
-
+    return NextResponse.json(
+      {
+        success: true,
+        data: newConfig,
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error('POST /api/stock/alerts error:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { success: false, error: 'Invalid request data', details: error.errors },
+        {
+          success: false,
+          error: 'Invalid request data',
+          details: error.errors,
+        },
         { status: 400 }
       );
     }

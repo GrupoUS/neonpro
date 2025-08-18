@@ -94,7 +94,12 @@ export class HealthcarePerformanceMonitor {
    * Set healthcare context for monitoring
    */
   setHealthcareContext(context: {
-    workflowType?: 'patient-registration' | 'medical-form' | 'procedure-scheduling' | 'medical-history' | 'real-time-update';
+    workflowType?:
+      | 'patient-registration'
+      | 'medical-form'
+      | 'procedure-scheduling'
+      | 'medical-history'
+      | 'real-time-update';
     clinicId?: string;
     userId?: string;
   }): void {

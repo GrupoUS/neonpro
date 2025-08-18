@@ -1,7 +1,12 @@
 // WebAuthn service - CommonJS/ESM compatible export
 // This module provides a unified interface for both CommonJS and ESM imports
 
-import { generateAuthenticationOptions, generateRegistrationOptions, verifyAuthenticationResponse, verifyRegistrationResponse } from '@simplewebauthn/server';
+import {
+  generateAuthenticationOptions,
+  generateRegistrationOptions,
+  verifyAuthenticationResponse,
+  verifyRegistrationResponse,
+} from '@simplewebauthn/server';
 
 export interface WebAuthnConfig {
   rpName: string;

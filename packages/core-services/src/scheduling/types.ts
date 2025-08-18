@@ -123,7 +123,11 @@ export interface SchedulingResult {
 }
 
 export interface Conflict {
-  type: 'staff_unavailable' | 'room_occupied' | 'equipment_conflict' | 'patient_conflict';
+  type:
+    | 'staff_unavailable'
+    | 'room_occupied'
+    | 'equipment_conflict'
+    | 'patient_conflict';
   severity: 'low' | 'medium' | 'high';
   description: string;
   affectedResource: string;
@@ -131,8 +135,16 @@ export interface Conflict {
 }
 
 export interface OptimizationRecommendation {
-  type: 'time_adjustment' | 'staff_change' | 'room_change' | 'treatment_grouping';
-  impact: 'efficiency' | 'patient_satisfaction' | 'revenue' | 'resource_utilization';
+  type:
+    | 'time_adjustment'
+    | 'staff_change'
+    | 'room_change'
+    | 'treatment_grouping';
+  impact:
+    | 'efficiency'
+    | 'patient_satisfaction'
+    | 'revenue'
+    | 'resource_utilization';
   description: string;
   expectedImprovement: number; // percentage improvement
 }
@@ -199,14 +211,24 @@ export interface RiskAssessment {
 
 // Real-time optimization types
 export interface DynamicSchedulingEvent {
-  type: 'cancellation' | 'no_show' | 'walk_in' | 'emergency' | 'staff_unavailable';
+  type:
+    | 'cancellation'
+    | 'no_show'
+    | 'walk_in'
+    | 'emergency'
+    | 'staff_unavailable';
   timestamp: Date;
   affectedAppointments: string[];
   availableActions: SchedulingAction[];
 }
 
 export interface SchedulingAction {
-  type: 'reschedule' | 'reassign_staff' | 'change_room' | 'adjust_duration' | 'add_buffer';
+  type:
+    | 'reschedule'
+    | 'reassign_staff'
+    | 'change_room'
+    | 'adjust_duration'
+    | 'add_buffer';
   description: string;
   impact: ActionImpact;
   executionTime: number; // seconds to execute

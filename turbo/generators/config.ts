@@ -1,5 +1,9 @@
 import type { PlopTypes } from '@turbo/gen';
 
+// Regex patterns for validation (defined at top level for performance)
+const PASCAL_CASE_REGEX = /^[A-Z][a-zA-Z0-9]*$/;
+const KEBAB_CASE_REGEX = /^[a-z][a-z0-9-]*$/;
+
 export default function generator(plop: PlopTypes.NodePlopAPI): void {
   // Healthcare Component Generator
   plop.setGenerator('healthcare-component', {
@@ -11,7 +15,7 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
         message: 'Component name:',
         validate: (input) => {
           if (!input) return 'Component name is required';
-          if (!/^[A-Z][a-zA-Z0-9]*$/.test(input)) {
+          if (!PASCAL_CASE_REGEX.test(input)) {
             return 'Component name must be PascalCase';
           }
           return true;
@@ -91,8 +95,10 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
         name: 'name',
         message: 'Package name:',
         validate: (input) => {
-          if (!input) return 'Package name is required';
-          if (!/^[a-z][a-z0-9-]*$/.test(input)) {
+          if (!input) {
+            return 'Package name is required';
+          }
+          if (!KEBAB_CASE_REGEX.test(input)) {
             return 'Package name must be kebab-case';
           }
           return true;
@@ -144,7 +150,9 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
         name: 'name',
         message: 'Migration name:',
         validate: (input) => {
-          if (!input) return 'Migration name is required';
+          if (!input) {
+            return 'Migration name is required';
+          }
           return true;
         },
       },

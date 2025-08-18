@@ -8,27 +8,37 @@ import {
   Unlock,
   User,
   Zap,
-} from "lucide-react";
-import * as React from "react";
-import { cn } from "../utils/cn";
-import { Badge } from "./Badge";
-import { Button } from "./Button";
-import { Input } from "./Input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./Select";
-import { Textarea } from "./Textarea";
+} from 'lucide-react';
+import * as React from 'react';
+import { cn } from '../utils/cn';
+import { Badge } from './Badge';
+import { Button } from './Button';
+import { Input } from './Input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from './Select';
+import { Textarea } from './Textarea';
 
-export type EmergencyAccessLevel = "basic" | "standard" | "critical" | "life_threatening";
+export type EmergencyAccessLevel =
+  | 'basic'
+  | 'standard'
+  | 'critical'
+  | 'life_threatening';
 
 export type EmergencyAccessReason =
-  | "cardiac_arrest"
-  | "allergic_reaction"
-  | "trauma"
-  | "respiratory_distress"
-  | "neurological_emergency"
-  | "hemorrhage"
-  | "poisoning"
-  | "psychiatric_emergency"
-  | "other_medical_emergency";
+  | 'cardiac_arrest'
+  | 'allergic_reaction'
+  | 'trauma'
+  | 'respiratory_distress'
+  | 'neurological_emergency'
+  | 'hemorrhage'
+  | 'poisoning'
+  | 'psychiatric_emergency'
+  | 'other_medical_emergency';
 
 export type EmergencyAccessRequest = {
   id?: string;
@@ -137,55 +147,58 @@ export type EmergencyAccessPanelProps = {
 };
 
 const emergencyReasons: Record<EmergencyAccessReason, string> = {
-  cardiac_arrest: "Parada Cardíaca",
-  allergic_reaction: "Reação Alérgica Grave",
-  trauma: "Trauma/Acidente",
-  respiratory_distress: "Insuficiência Respiratória",
-  neurological_emergency: "Emergência Neurológica",
-  hemorrhage: "Hemorragia Grave",
-  poisoning: "Intoxicação",
-  psychiatric_emergency: "Emergência Psiquiátrica",
-  other_medical_emergency: "Outra Emergência Médica",
+  cardiac_arrest: 'Parada Cardíaca',
+  allergic_reaction: 'Reação Alérgica Grave',
+  trauma: 'Trauma/Acidente',
+  respiratory_distress: 'Insuficiência Respiratória',
+  neurological_emergency: 'Emergência Neurológica',
+  hemorrhage: 'Hemorragia Grave',
+  poisoning: 'Intoxicação',
+  psychiatric_emergency: 'Emergência Psiquiátrica',
+  other_medical_emergency: 'Outra Emergência Médica',
 };
 
 const accessLevelLabels: Record<EmergencyAccessLevel, string> = {
-  basic: "Básico - Dados de Contato",
-  standard: "Padrão - Histórico Recente",
-  critical: "Crítico - Histórico Completo",
-  life_threatening: "Risco de Vida - Acesso Total",
+  basic: 'Básico - Dados de Contato',
+  standard: 'Padrão - Histórico Recente',
+  critical: 'Crítico - Histórico Completo',
+  life_threatening: 'Risco de Vida - Acesso Total',
 };
 
 const getAccessLevelVariant = (level: EmergencyAccessLevel) => {
   switch (level) {
-    case "basic":
-      return "confirmed";
-    case "standard":
-      return "medium";
-    case "critical":
-      return "high";
-    case "life_threatening":
-      return "urgent";
+    case 'basic':
+      return 'confirmed';
+    case 'standard':
+      return 'medium';
+    case 'critical':
+      return 'high';
+    case 'life_threatening':
+      return 'urgent';
     default:
-      return "default";
+      return 'default';
   }
 };
 
 const getTimeoutOptions = (level: EmergencyAccessLevel): number[] => {
   switch (level) {
-    case "basic":
+    case 'basic':
       return [15, 30, 60];
-    case "standard":
+    case 'standard':
       return [30, 60, 120];
-    case "critical":
+    case 'critical':
       return [60, 120, 240];
-    case "life_threatening":
+    case 'life_threatening':
       return [120, 240, 480];
     default:
       return [30, 60, 120];
   }
 };
 
-export const EmergencyAccessPanel = React.forwardRef<HTMLDivElement, EmergencyAccessPanelProps>(
+export const EmergencyAccessPanel = React.forwardRef<
+  HTMLDivElement,
+  EmergencyAccessPanelProps
+>(
   (
     {
       request,
@@ -202,15 +215,17 @@ export const EmergencyAccessPanel = React.forwardRef<HTMLDivElement, EmergencyAc
       className,
       ...props
     },
-    ref,
+    ref
   ) => {
-    const [formData, setFormData] = React.useState<Partial<EmergencyAccessRequest>>({
-      patientId: patientInfo?.id || "",
-      patientName: patientInfo?.name || "",
-      accessLevel: "standard",
-      reason: "other_medical_emergency",
+    const [formData, setFormData] = React.useState<
+      Partial<EmergencyAccessRequest>
+    >({
+      patientId: patientInfo?.id || '',
+      patientName: patientInfo?.name || '',
+      accessLevel: 'standard',
+      reason: 'other_medical_emergency',
       timeoutMinutes: 60,
-      justification: "",
+      justification: '',
       requestingPhysician: currentUser?.crm
         ? {
             id: currentUser.id,
@@ -220,27 +235,33 @@ export const EmergencyAccessPanel = React.forwardRef<HTMLDivElement, EmergencyAc
         : undefined,
     });
 
-    const [denyReason, setDenyReason] = React.useState("");
+    const [denyReason, setDenyReason] = React.useState('');
     const [showDenyForm, setShowDenyForm] = React.useState(false);
 
     const updateFormData = <K extends keyof EmergencyAccessRequest>(
       key: K,
-      value: EmergencyAccessRequest[K],
+      value: EmergencyAccessRequest[K]
     ) => {
       setFormData((prev) => ({ ...prev, [key]: value }));
     };
 
     const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault();
-      if (!(onRequestEmergencyAccess && formData.patientId && formData.justification)) {
+      if (
+        !(
+          onRequestEmergencyAccess &&
+          formData.patientId &&
+          formData.justification
+        )
+      ) {
         return;
       }
 
       const completeRequest: EmergencyAccessRequest = {
         patientId: formData.patientId,
         patientName: formData.patientName,
-        accessLevel: formData.accessLevel || "standard",
-        reason: formData.reason || "other_medical_emergency",
+        accessLevel: formData.accessLevel || 'standard',
+        reason: formData.reason || 'other_medical_emergency',
         customReason: formData.customReason,
         requestingPhysician: formData.requestingPhysician!,
         timeoutMinutes: formData.timeoutMinutes || 60,
@@ -263,17 +284,22 @@ export const EmergencyAccessPanel = React.forwardRef<HTMLDivElement, EmergencyAc
       if (request?.id && onDenyAccess && denyReason.trim()) {
         onDenyAccess(request.id, denyReason);
         setShowDenyForm(false);
-        setDenyReason("");
+        setDenyReason('');
       }
     };
 
-    const timeoutOptions = getTimeoutOptions(formData.accessLevel || "standard");
+    const timeoutOptions = getTimeoutOptions(
+      formData.accessLevel || 'standard'
+    );
 
     // If showing approval interface
     if (showApprovalInterface && request) {
       return (
         <div
-          className={cn("rounded-lg border border-red-200 bg-red-50 p-6 text-red-900", className)}
+          className={cn(
+            'rounded-lg border border-red-200 bg-red-50 p-6 text-red-900',
+            className
+          )}
           ref={ref}
           {...props}
           aria-describedby="emergency-approval-description"
@@ -286,10 +312,16 @@ export const EmergencyAccessPanel = React.forwardRef<HTMLDivElement, EmergencyAc
             </div>
 
             <div className="flex-1">
-              <h3 className="font-semibold text-lg" id="emergency-approval-title">
+              <h3
+                className="font-semibold text-lg"
+                id="emergency-approval-title"
+              >
                 Solicitação de Acesso de Emergência
               </h3>
-              <p className="mt-1 text-red-700 text-sm" id="emergency-approval-description">
+              <p
+                className="mt-1 text-red-700 text-sm"
+                id="emergency-approval-description"
+              >
                 Aprovação necessária para acesso constitucional de emergência
               </p>
 
@@ -300,16 +332,21 @@ export const EmergencyAccessPanel = React.forwardRef<HTMLDivElement, EmergencyAc
                     <p className="text-sm">{request.patientName}</p>
                   </div>
                   <div>
-                    <span className="font-medium text-sm">Médico Solicitante:</span>
+                    <span className="font-medium text-sm">
+                      Médico Solicitante:
+                    </span>
                     <p className="text-sm">
-                      {request.requestingPhysician.name} (CRM: {request.requestingPhysician.crm})
+                      {request.requestingPhysician.name} (CRM:{' '}
+                      {request.requestingPhysician.crm})
                     </p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <span className="font-medium text-sm">Nível de Acesso:</span>
+                    <span className="font-medium text-sm">
+                      Nível de Acesso:
+                    </span>
                     <Badge
                       className="ml-2"
                       size="sm"
@@ -320,7 +357,9 @@ export const EmergencyAccessPanel = React.forwardRef<HTMLDivElement, EmergencyAc
                   </div>
                   <div>
                     <span className="font-medium text-sm">Motivo:</span>
-                    <p className="text-sm">{emergencyReasons[request.reason]}</p>
+                    <p className="text-sm">
+                      {emergencyReasons[request.reason]}
+                    </p>
                   </div>
                 </div>
 
@@ -340,14 +379,14 @@ export const EmergencyAccessPanel = React.forwardRef<HTMLDivElement, EmergencyAc
                     <span className="font-medium text-sm">Solicitado em:</span>
                     <p className="text-sm">
                       {request.timestamp
-                        ? new Intl.DateTimeFormat("pt-BR", {
-                            day: "2-digit",
-                            month: "2-digit",
-                            year: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
+                        ? new Intl.DateTimeFormat('pt-BR', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
                           }).format(request.timestamp)
-                        : "N/A"}
+                        : 'N/A'}
                     </p>
                   </div>
                 </div>
@@ -381,7 +420,9 @@ export const EmergencyAccessPanel = React.forwardRef<HTMLDivElement, EmergencyAc
 
               {showDenyForm && (
                 <div className="mt-4 rounded border bg-white p-4">
-                  <label className="mb-2 block font-medium text-sm">Motivo da negação:</label>
+                  <label className="mb-2 block font-medium text-sm">
+                    Motivo da negação:
+                  </label>
                   <Textarea
                     className="mb-3"
                     onChange={(e) => setDenyReason(e.target.value)}
@@ -398,7 +439,11 @@ export const EmergencyAccessPanel = React.forwardRef<HTMLDivElement, EmergencyAc
                     >
                       Confirmar Negação
                     </Button>
-                    <Button onClick={() => setShowDenyForm(false)} size="sm" variant="outline">
+                    <Button
+                      onClick={() => setShowDenyForm(false)}
+                      size="sm"
+                      variant="outline"
+                    >
                       Cancelar
                     </Button>
                   </div>
@@ -412,7 +457,10 @@ export const EmergencyAccessPanel = React.forwardRef<HTMLDivElement, EmergencyAc
 
     return (
       <div
-        className={cn("rounded-lg border border-orange-200 bg-orange-50 p-6", className)}
+        className={cn(
+          'rounded-lg border border-orange-200 bg-orange-50 p-6',
+          className
+        )}
         ref={ref}
         {...props}
         aria-describedby="emergency-access-description"
@@ -425,11 +473,18 @@ export const EmergencyAccessPanel = React.forwardRef<HTMLDivElement, EmergencyAc
           </div>
 
           <div>
-            <h3 className="font-semibold text-lg text-orange-900" id="emergency-access-title">
+            <h3
+              className="font-semibold text-lg text-orange-900"
+              id="emergency-access-title"
+            >
               Acesso de Emergência Médica
             </h3>
-            <p className="text-orange-700 text-sm" id="emergency-access-description">
-              Protocolo constitucional para acesso emergencial a dados do paciente
+            <p
+              className="text-orange-700 text-sm"
+              id="emergency-access-description"
+            >
+              Protocolo constitucional para acesso emergencial a dados do
+              paciente
             </p>
           </div>
         </div>
@@ -457,9 +512,11 @@ export const EmergencyAccessPanel = React.forwardRef<HTMLDivElement, EmergencyAc
               {patientInfo.emergencyContact && (
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="font-medium text-sm">Contato de Emergência: </span>
-                    {patientInfo.emergencyContact.name} ({patientInfo.emergencyContact.relationship}
-                    )
+                    <span className="font-medium text-sm">
+                      Contato de Emergência:{' '}
+                    </span>
+                    {patientInfo.emergencyContact.name} (
+                    {patientInfo.emergencyContact.relationship})
                   </div>
                   {onCallEmergencyContact && (
                     <Button
@@ -479,44 +536,55 @@ export const EmergencyAccessPanel = React.forwardRef<HTMLDivElement, EmergencyAc
                 </div>
               )}
 
-              {patientInfo.criticalAllergies && patientInfo.criticalAllergies.length > 0 && (
-                <div>
-                  <span className="font-medium text-red-700 text-sm">Alergias Críticas: </span>
-                  <div className="mt-1 flex flex-wrap gap-1">
-                    {patientInfo.criticalAllergies.map((allergy, index) => (
-                      <Badge key={index} size="sm" variant="urgent">
-                        {allergy}
-                      </Badge>
-                    ))}
+              {patientInfo.criticalAllergies &&
+                patientInfo.criticalAllergies.length > 0 && (
+                  <div>
+                    <span className="font-medium text-red-700 text-sm">
+                      Alergias Críticas:{' '}
+                    </span>
+                    <div className="mt-1 flex flex-wrap gap-1">
+                      {patientInfo.criticalAllergies.map((allergy, index) => (
+                        <Badge key={index} size="sm" variant="urgent">
+                          {allergy}
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              {patientInfo.criticalMedications && patientInfo.criticalMedications.length > 0 && (
-                <div>
-                  <span className="font-medium text-blue-700 text-sm">Medicações Críticas: </span>
-                  <div className="mt-1 flex flex-wrap gap-1">
-                    {patientInfo.criticalMedications.map((medication, index) => (
-                      <Badge key={index} size="sm" variant="medium">
-                        {medication}
-                      </Badge>
-                    ))}
+              {patientInfo.criticalMedications &&
+                patientInfo.criticalMedications.length > 0 && (
+                  <div>
+                    <span className="font-medium text-blue-700 text-sm">
+                      Medicações Críticas:{' '}
+                    </span>
+                    <div className="mt-1 flex flex-wrap gap-1">
+                      {patientInfo.criticalMedications.map(
+                        (medication, index) => (
+                          <Badge key={index} size="sm" variant="medium">
+                            {medication}
+                          </Badge>
+                        )
+                      )}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              {patientInfo.medicalAlerts && patientInfo.medicalAlerts.length > 0 && (
-                <div>
-                  <span className="font-medium text-orange-700 text-sm">Alertas Médicos: </span>
-                  <div className="mt-1 flex flex-wrap gap-1">
-                    {patientInfo.medicalAlerts.map((alert, index) => (
-                      <Badge key={index} size="sm" variant="high">
-                        {alert}
-                      </Badge>
-                    ))}
+              {patientInfo.medicalAlerts &&
+                patientInfo.medicalAlerts.length > 0 && (
+                  <div>
+                    <span className="font-medium text-orange-700 text-sm">
+                      Alertas Médicos:{' '}
+                    </span>
+                    <div className="mt-1 flex flex-wrap gap-1">
+                      {patientInfo.medicalAlerts.map((alert, index) => (
+                        <Badge key={index} size="sm" variant="high">
+                          {alert}
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
             </div>
           </div>
         )}
@@ -525,10 +593,12 @@ export const EmergencyAccessPanel = React.forwardRef<HTMLDivElement, EmergencyAc
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="mb-2 block font-medium text-sm">Nível de Acesso Solicitado</label>
+              <label className="mb-2 block font-medium text-sm">
+                Nível de Acesso Solicitado
+              </label>
               <Select
                 onValueChange={(value: EmergencyAccessLevel) =>
-                  updateFormData("accessLevel", value)
+                  updateFormData('accessLevel', value)
                 }
                 value={formData.accessLevel}
               >
@@ -546,9 +616,13 @@ export const EmergencyAccessPanel = React.forwardRef<HTMLDivElement, EmergencyAc
             </div>
 
             <div>
-              <label className="mb-2 block font-medium text-sm">Motivo da Emergência</label>
+              <label className="mb-2 block font-medium text-sm">
+                Motivo da Emergência
+              </label>
               <Select
-                onValueChange={(value: EmergencyAccessReason) => updateFormData("reason", value)}
+                onValueChange={(value: EmergencyAccessReason) =>
+                  updateFormData('reason', value)
+                }
                 value={formData.reason}
               >
                 <SelectTrigger>
@@ -565,23 +639,27 @@ export const EmergencyAccessPanel = React.forwardRef<HTMLDivElement, EmergencyAc
             </div>
           </div>
 
-          {formData.reason === "other_medical_emergency" && (
+          {formData.reason === 'other_medical_emergency' && (
             <div>
-              <label className="mb-2 block font-medium text-sm">Especificar Motivo</label>
+              <label className="mb-2 block font-medium text-sm">
+                Especificar Motivo
+              </label>
               <Input
-                onChange={(e) => updateFormData("customReason", e.target.value)}
+                onChange={(e) => updateFormData('customReason', e.target.value)}
                 placeholder="Descreva a emergência médica..."
                 required
-                value={formData.customReason || ""}
+                value={formData.customReason || ''}
               />
             </div>
           )}
 
           <div>
-            <label className="mb-2 block font-medium text-sm">Duração do Acesso (minutos)</label>
+            <label className="mb-2 block font-medium text-sm">
+              Duração do Acesso (minutos)
+            </label>
             <Select
               onValueChange={(value) =>
-                updateFormData("timeoutMinutes", Number.parseInt(value, 10))
+                updateFormData('timeoutMinutes', Number.parseInt(value, 10))
               }
               value={formData.timeoutMinutes?.toString()}
             >
@@ -603,29 +681,33 @@ export const EmergencyAccessPanel = React.forwardRef<HTMLDivElement, EmergencyAc
               Justificativa Médica (Obrigatória)
             </label>
             <Textarea
-              onChange={(e) => updateFormData("justification", e.target.value)}
+              onChange={(e) => updateFormData('justification', e.target.value)}
               placeholder="Descreva detalhadamente a necessidade médica para acesso emergencial aos dados do paciente..."
               required
               rows={4}
-              value={formData.justification || ""}
+              value={formData.justification || ''}
             />
           </div>
 
           {availablePhysicians.length > 0 && (
             <div>
-              <label className="mb-2 block font-medium text-sm">Médico Testemunha (Opcional)</label>
+              <label className="mb-2 block font-medium text-sm">
+                Médico Testemunha (Opcional)
+              </label>
               <Select
                 onValueChange={(value) => {
-                  const physician = availablePhysicians.find((p) => p.id === value);
+                  const physician = availablePhysicians.find(
+                    (p) => p.id === value
+                  );
                   if (physician) {
-                    updateFormData("witnessPhysician", {
+                    updateFormData('witnessPhysician', {
                       id: physician.id,
                       name: physician.name,
                       crm: physician.crm,
                     });
                   }
                 }}
-                value={formData.witnessPhysician?.id || ""}
+                value={formData.witnessPhysician?.id || ''}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Selecionar médico testemunha" />
@@ -636,7 +718,8 @@ export const EmergencyAccessPanel = React.forwardRef<HTMLDivElement, EmergencyAc
                     .map((physician) => (
                       <SelectItem key={physician.id} value={physician.id}>
                         {physician.name} - CRM: {physician.crm}
-                        {physician.specialization && ` (${physician.specialization})`}
+                        {physician.specialization &&
+                          ` (${physician.specialization})`}
                       </SelectItem>
                     ))}
                 </SelectContent>
@@ -649,9 +732,11 @@ export const EmergencyAccessPanel = React.forwardRef<HTMLDivElement, EmergencyAc
               Protocolo Institucional (Opcional)
             </label>
             <Input
-              onChange={(e) => updateFormData("institutionProtocol", e.target.value)}
+              onChange={(e) =>
+                updateFormData('institutionProtocol', e.target.value)
+              }
               placeholder="Número do protocolo institucional de emergência..."
-              value={formData.institutionProtocol || ""}
+              value={formData.institutionProtocol || ''}
             />
           </div>
 
@@ -663,7 +748,11 @@ export const EmergencyAccessPanel = React.forwardRef<HTMLDivElement, EmergencyAc
 
             <Button
               className="bg-orange-600 hover:bg-orange-700"
-              disabled={loading || !formData.justification || !formData.requestingPhysician}
+              disabled={
+                loading ||
+                !formData.justification ||
+                !formData.requestingPhysician
+              }
               type="submit"
             >
               {loading ? (
@@ -677,7 +766,7 @@ export const EmergencyAccessPanel = React.forwardRef<HTMLDivElement, EmergencyAc
         </form>
       </div>
     );
-  },
+  }
 );
 
-EmergencyAccessPanel.displayName = "EmergencyAccessPanel";
+EmergencyAccessPanel.displayName = 'EmergencyAccessPanel';

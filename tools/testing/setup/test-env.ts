@@ -27,26 +27,20 @@ const mockAsyncLocalStorage = {
 };
 
 // Mock Next.js server context to prevent "outside request scope" errors
-vi.mock(
-  'next/dist/server/app-render/work-unit-async-storage.external',
-  () => ({
-    workUnitAsyncStorage: mockAsyncLocalStorage,
-  })
-);
+vi.mock('next/dist/server/app-render/work-unit-async-storage.external', () => ({
+  workUnitAsyncStorage: mockAsyncLocalStorage,
+}));
 
-vi.mock(
-  'next/dist/server/web/spec-extension/adapters/request-cookies',
-  () => ({
-    RequestCookies: vi.fn().mockImplementation(() => ({
-      get: vi.fn(() => ({ name: 'test', value: 'test-value' })),
-      set: vi.fn(),
-      delete: vi.fn(),
-      has: vi.fn(() => false),
-      getAll: vi.fn(() => []),
-      toString: vi.fn(() => ''),
-    })),
-  })
-);
+vi.mock('next/dist/server/web/spec-extension/adapters/request-cookies', () => ({
+  RequestCookies: vi.fn().mockImplementation(() => ({
+    get: vi.fn(() => ({ name: 'test', value: 'test-value' })),
+    set: vi.fn(),
+    delete: vi.fn(),
+    has: vi.fn(() => false),
+    getAll: vi.fn(() => []),
+    toString: vi.fn(() => ''),
+  })),
+}));
 
 // Mock the entire Next.js cache system
 vi.mock('next/cache', () => ({

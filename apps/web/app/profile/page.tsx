@@ -1,67 +1,66 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import { useUser } from "@clerk/nextjs";
+import { useUser } from '@clerk/nextjs';
 import {
+  Alert,
+  AlertDescription,
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Badge,
+  Button,
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-  Button,
   Input,
   Label,
-  Textarea,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
+  Separator,
+  Switch,
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-  Separator,
-  Alert,
-  AlertDescription,
-  Switch,
-  Badge,
-} from "@neonpro/ui";
-
+  Textarea,
+} from '@neonpro/ui';
 import {
-  User,
-  Mail,
-  Phone,
-  MapPin,
-  Shield,
-  Bell,
-  Lock,
-  CreditCard,
   Activity,
-  Settings,
-  Save,
-  Edit,
+  Bell,
   Camera,
-} from "lucide-react";
+  CreditCard,
+  Edit,
+  Lock,
+  Mail,
+  MapPin,
+  Phone,
+  Save,
+  Settings,
+  Shield,
+  User,
+} from 'lucide-react';
+import React, { useState } from 'react';
 
 export default function ProfilePage() {
   const { user, isLoaded } = useUser();
   const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState({
-    firstName: user?.firstName || "",
-    lastName: user?.lastName || "",
-    email: user?.emailAddresses?.[0]?.emailAddress || "",
-    phone: user?.phoneNumbers?.[0]?.phoneNumber || "",
-    bio: "",
-    specialty: "",
-    crm: "",
-    address: "",
-    city: "",
-    state: "",
-    zipCode: "",
+    firstName: user?.firstName || '',
+    lastName: user?.lastName || '',
+    email: user?.emailAddresses?.[0]?.emailAddress || '',
+    phone: user?.phoneNumbers?.[0]?.phoneNumber || '',
+    bio: '',
+    specialty: '',
+    crm: '',
+    address: '',
+    city: '',
+    state: '',
+    zipCode: '',
   });
 
   const [preferences, setPreferences] = useState({
@@ -70,7 +69,7 @@ export default function ProfilePage() {
     marketingEmails: false,
     twoFactorAuth: false,
     darkMode: false,
-    language: "pt-BR",
+    language: 'pt-BR',
   });
 
   const handleSave = async () => {
@@ -100,11 +99,13 @@ export default function ProfilePage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-bold text-3xl tracking-tight">Perfil</h1>
-          <p className="text-muted-foreground">Gerencie suas informações pessoais e preferências</p>
+          <p className="text-muted-foreground">
+            Gerencie suas informações pessoais e preferências
+          </p>
         </div>
         <Button
           onClick={() => setIsEditing(!isEditing)}
-          variant={isEditing ? "outline" : "default"}
+          variant={isEditing ? 'outline' : 'default'}
         >
           {isEditing ? (
             <>
@@ -120,7 +121,7 @@ export default function ProfilePage() {
         </Button>
       </div>
 
-      <Tabs defaultValue="personal" className="space-y-6">
+      <Tabs className="space-y-6" defaultValue="personal">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="personal">Dados Pessoais</TabsTrigger>
           <TabsTrigger value="professional">Profissional</TabsTrigger>
@@ -129,11 +130,13 @@ export default function ProfilePage() {
         </TabsList>
 
         {/* Personal Information */}
-        <TabsContent value="personal" className="space-y-6">
+        <TabsContent className="space-y-6" value="personal">
           <Card>
             <CardHeader>
               <CardTitle>Informações Pessoais</CardTitle>
-              <CardDescription>Suas informações básicas de perfil</CardDescription>
+              <CardDescription>
+                Suas informações básicas de perfil
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Avatar Section */}
@@ -152,7 +155,7 @@ export default function ProfilePage() {
                   <p className="text-muted-foreground text-sm">
                     {user?.emailAddresses?.[0]?.emailAddress}
                   </p>
-                  <Button variant="outline" size="sm" className="mt-2">
+                  <Button className="mt-2" size="sm" variant="outline">
                     <Camera className="mr-2 h-4 w-4" />
                     Alterar Foto
                   </Button>
@@ -166,33 +169,39 @@ export default function ProfilePage() {
                 <div className="space-y-2">
                   <Label htmlFor="firstName">Nome</Label>
                   <Input
-                    id="firstName"
-                    value={profileData.firstName}
-                    onChange={(e) =>
-                      setProfileData((prev) => ({ ...prev, firstName: e.target.value }))
-                    }
                     disabled={!isEditing}
+                    id="firstName"
+                    onChange={(e) =>
+                      setProfileData((prev) => ({
+                        ...prev,
+                        firstName: e.target.value,
+                      }))
+                    }
+                    value={profileData.firstName}
                   />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="lastName">Sobrenome</Label>
                   <Input
-                    id="lastName"
-                    value={profileData.lastName}
-                    onChange={(e) =>
-                      setProfileData((prev) => ({ ...prev, lastName: e.target.value }))
-                    }
                     disabled={!isEditing}
+                    id="lastName"
+                    onChange={(e) =>
+                      setProfileData((prev) => ({
+                        ...prev,
+                        lastName: e.target.value,
+                      }))
+                    }
+                    value={profileData.lastName}
                   />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
                   <Input
+                    className="bg-muted"
+                    disabled
                     id="email"
                     type="email"
                     value={profileData.email}
-                    disabled
-                    className="bg-muted"
                   />
                   <p className="text-muted-foreground text-xs">
                     Para alterar o email, use as configurações de conta
@@ -201,10 +210,15 @@ export default function ProfilePage() {
                 <div className="space-y-2">
                   <Label htmlFor="phone">Telefone</Label>
                   <Input
-                    id="phone"
-                    value={profileData.phone}
-                    onChange={(e) => setProfileData((prev) => ({ ...prev, phone: e.target.value }))}
                     disabled={!isEditing}
+                    id="phone"
+                    onChange={(e) =>
+                      setProfileData((prev) => ({
+                        ...prev,
+                        phone: e.target.value,
+                      }))
+                    }
+                    value={profileData.phone}
                   />
                 </div>
               </div>
@@ -212,12 +226,14 @@ export default function ProfilePage() {
               <div className="space-y-2">
                 <Label htmlFor="bio">Biografia</Label>
                 <Textarea
-                  id="bio"
-                  placeholder="Conte um pouco sobre você..."
-                  value={profileData.bio}
-                  onChange={(e) => setProfileData((prev) => ({ ...prev, bio: e.target.value }))}
                   disabled={!isEditing}
+                  id="bio"
+                  onChange={(e) =>
+                    setProfileData((prev) => ({ ...prev, bio: e.target.value }))
+                  }
+                  placeholder="Conte um pouco sobre você..."
                   rows={3}
+                  value={profileData.bio}
                 />
               </div>
 
@@ -225,30 +241,43 @@ export default function ProfilePage() {
                 <div className="space-y-2">
                   <Label htmlFor="city">Cidade</Label>
                   <Input
-                    id="city"
-                    value={profileData.city}
-                    onChange={(e) => setProfileData((prev) => ({ ...prev, city: e.target.value }))}
                     disabled={!isEditing}
+                    id="city"
+                    onChange={(e) =>
+                      setProfileData((prev) => ({
+                        ...prev,
+                        city: e.target.value,
+                      }))
+                    }
+                    value={profileData.city}
                   />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="state">Estado</Label>
                   <Input
-                    id="state"
-                    value={profileData.state}
-                    onChange={(e) => setProfileData((prev) => ({ ...prev, state: e.target.value }))}
                     disabled={!isEditing}
+                    id="state"
+                    onChange={(e) =>
+                      setProfileData((prev) => ({
+                        ...prev,
+                        state: e.target.value,
+                      }))
+                    }
+                    value={profileData.state}
                   />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="zipCode">CEP</Label>
                   <Input
-                    id="zipCode"
-                    value={profileData.zipCode}
-                    onChange={(e) =>
-                      setProfileData((prev) => ({ ...prev, zipCode: e.target.value }))
-                    }
                     disabled={!isEditing}
+                    id="zipCode"
+                    onChange={(e) =>
+                      setProfileData((prev) => ({
+                        ...prev,
+                        zipCode: e.target.value,
+                      }))
+                    }
+                    value={profileData.zipCode}
                   />
                 </div>
               </div>
@@ -257,17 +286,19 @@ export default function ProfilePage() {
         </TabsContent>
 
         {/* Professional Information */}
-        <TabsContent value="professional" className="space-y-6">
+        <TabsContent className="space-y-6" value="professional">
           <Card>
             <CardHeader>
               <CardTitle>Informações Profissionais</CardTitle>
-              <CardDescription>Dados relacionados à sua atividade profissional</CardDescription>
+              <CardDescription>
+                Dados relacionados à sua atividade profissional
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="specialty">Especialidade</Label>
-                  <Select value={profileData.specialty} disabled={!isEditing}>
+                  <Select disabled={!isEditing} value={profileData.specialty}>
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione sua especialidade" />
                     </SelectTrigger>
@@ -285,11 +316,16 @@ export default function ProfilePage() {
                 <div className="space-y-2">
                   <Label htmlFor="crm">CRM</Label>
                   <Input
+                    disabled={!isEditing}
                     id="crm"
+                    onChange={(e) =>
+                      setProfileData((prev) => ({
+                        ...prev,
+                        crm: e.target.value,
+                      }))
+                    }
                     placeholder="CRM/SP 123456"
                     value={profileData.crm}
-                    onChange={(e) => setProfileData((prev) => ({ ...prev, crm: e.target.value }))}
-                    disabled={!isEditing}
                   />
                 </div>
               </div>
@@ -297,19 +333,25 @@ export default function ProfilePage() {
               <div className="space-y-2">
                 <Label htmlFor="address">Endereço do Consultório</Label>
                 <Textarea
-                  id="address"
-                  placeholder="Endereço completo do consultório..."
-                  value={profileData.address}
-                  onChange={(e) => setProfileData((prev) => ({ ...prev, address: e.target.value }))}
                   disabled={!isEditing}
+                  id="address"
+                  onChange={(e) =>
+                    setProfileData((prev) => ({
+                      ...prev,
+                      address: e.target.value,
+                    }))
+                  }
+                  placeholder="Endereço completo do consultório..."
                   rows={2}
+                  value={profileData.address}
                 />
               </div>
 
               <Alert>
                 <Shield className="h-4 w-4" />
                 <AlertDescription>
-                  Suas informações profissionais são verificadas e protegidas conforme LGPD.
+                  Suas informações profissionais são verificadas e protegidas
+                  conforme LGPD.
                 </AlertDescription>
               </Alert>
             </CardContent>
@@ -317,11 +359,13 @@ export default function ProfilePage() {
         </TabsContent>
 
         {/* Preferences */}
-        <TabsContent value="preferences" className="space-y-6">
+        <TabsContent className="space-y-6" value="preferences">
           <Card>
             <CardHeader>
               <CardTitle>Notificações</CardTitle>
-              <CardDescription>Configure como você quer receber notificações</CardDescription>
+              <CardDescription>
+                Configure como você quer receber notificações
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
@@ -334,7 +378,7 @@ export default function ProfilePage() {
                 <Switch
                   checked={preferences.emailNotifications}
                   onCheckedChange={(checked) =>
-                    handlePreferenceChange("emailNotifications", checked)
+                    handlePreferenceChange('emailNotifications', checked)
                   }
                 />
               </div>
@@ -348,7 +392,9 @@ export default function ProfilePage() {
                 </div>
                 <Switch
                   checked={preferences.smsNotifications}
-                  onCheckedChange={(checked) => handlePreferenceChange("smsNotifications", checked)}
+                  onCheckedChange={(checked) =>
+                    handlePreferenceChange('smsNotifications', checked)
+                  }
                 />
               </div>
 
@@ -361,7 +407,9 @@ export default function ProfilePage() {
                 </div>
                 <Switch
                   checked={preferences.marketingEmails}
-                  onCheckedChange={(checked) => handlePreferenceChange("marketingEmails", checked)}
+                  onCheckedChange={(checked) =>
+                    handlePreferenceChange('marketingEmails', checked)
+                  }
                 />
               </div>
             </CardContent>
@@ -370,17 +418,23 @@ export default function ProfilePage() {
           <Card>
             <CardHeader>
               <CardTitle>Aparência</CardTitle>
-              <CardDescription>Personalize a aparência da plataforma</CardDescription>
+              <CardDescription>
+                Personalize a aparência da plataforma
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <Label>Modo Escuro</Label>
-                  <p className="text-muted-foreground text-sm">Usar tema escuro na interface</p>
+                  <p className="text-muted-foreground text-sm">
+                    Usar tema escuro na interface
+                  </p>
                 </div>
                 <Switch
                   checked={preferences.darkMode}
-                  onCheckedChange={(checked) => handlePreferenceChange("darkMode", checked)}
+                  onCheckedChange={(checked) =>
+                    handlePreferenceChange('darkMode', checked)
+                  }
                 />
               </div>
 
@@ -401,11 +455,13 @@ export default function ProfilePage() {
         </TabsContent>
 
         {/* Security */}
-        <TabsContent value="security" className="space-y-6">
+        <TabsContent className="space-y-6" value="security">
           <Card>
             <CardHeader>
               <CardTitle>Segurança da Conta</CardTitle>
-              <CardDescription>Gerencie a segurança da sua conta</CardDescription>
+              <CardDescription>
+                Gerencie a segurança da sua conta
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
@@ -417,13 +473,15 @@ export default function ProfilePage() {
                 </div>
                 <div className="flex items-center space-x-2">
                   {preferences.twoFactorAuth && (
-                    <Badge variant="outline" className="text-green-600">
+                    <Badge className="text-green-600" variant="outline">
                       Ativo
                     </Badge>
                   )}
                   <Switch
                     checked={preferences.twoFactorAuth}
-                    onCheckedChange={(checked) => handlePreferenceChange("twoFactorAuth", checked)}
+                    onCheckedChange={(checked) =>
+                      handlePreferenceChange('twoFactorAuth', checked)
+                    }
                   />
                 </div>
               </div>
@@ -434,7 +492,9 @@ export default function ProfilePage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <Label>Senha</Label>
-                    <p className="text-muted-foreground text-sm">Última alteração: há 2 meses</p>
+                    <p className="text-muted-foreground text-sm">
+                      Última alteração: há 2 meses
+                    </p>
                   </div>
                   <Button variant="outline">
                     <Lock className="mr-2 h-4 w-4" />
@@ -459,7 +519,8 @@ export default function ProfilePage() {
               <Alert>
                 <Shield className="h-4 w-4" />
                 <AlertDescription>
-                  Sua conta está protegida com criptografia de ponta a ponta e conformidade LGPD.
+                  Sua conta está protegida com criptografia de ponta a ponta e
+                  conformidade LGPD.
                 </AlertDescription>
               </Alert>
             </CardContent>

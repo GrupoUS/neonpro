@@ -300,14 +300,8 @@ test('should handle large dataset with healthcare performance standards', async 
   // Validate patient data protection with large dataset
   await HealthcareWorkflowHelper.validatePatientDataProtection(page);
 });
-})
 
-test('should maintain healthcare audit trail with constitutional compliance', async (
-{
-  page;
-}
-) =>
-{
+test('should maintain healthcare audit trail with constitutional compliance', async ({ page }) => {
   // Perform operations to generate audit entries
   await page.getByTestId('import-statement-button').click();
   await page
@@ -357,12 +351,7 @@ test('should maintain healthcare audit trail with constitutional compliance', as
 }
 )
 
-test('should handle errors gracefully with healthcare standards', async (
-{
-  page;
-}
-) =>
-{
+test('should handle errors gracefully with healthcare standards', async ({ page }) => {
   // Test file format error with healthcare error handling
   await page.getByTestId('import-statement-button').click();
   await page
@@ -411,16 +400,9 @@ test('should handle errors gracefully with healthcare standards', async (
   // Validate error recovery maintains data protection
   await HealthcareWorkflowHelper.validatePatientDataProtection(page);
 }
-)
-})
-('n')
-n
-test('should validate LGPD compliance features in financial operations', async (
-{
-  page;
-}
-) =>
-{
+});
+
+test('should validate LGPD compliance features in financial operations', async ({ page }) => {
   // Navigate to privacy settings with healthcare compliance
   await page.getByTestId('privacy-settings-tab').click();
 
@@ -458,12 +440,7 @@ test('should validate LGPD compliance features in financial operations', async (
 }
 )
 
-test('should handle mobile responsive design with healthcare accessibility', async (
-{
-  page;
-}
-) =>
-{
+test('should handle mobile responsive design with healthcare accessibility', async ({ page }) => {
   // Set mobile viewport for patient accessibility
   await page.setViewportSize({ width: 375, height: 667 });
 
@@ -553,12 +530,7 @@ test('should maintain security throughout reconciliation with healthcare standar
 }
 )
 
-test('should validate healthcare performance benchmarks', async (
-{
-  page;
-}
-) =>
-{
+test('should validate healthcare performance benchmarks', async ({ page }) => {
   // Test Core Web Vitals for healthcare interfaces (≥95% requirement)
   await HealthcarePerformanceHelper.validatePerformanceRequirements(page);
 
@@ -588,6 +560,4 @@ test('should validate healthcare performance benchmarks', async (
 
   // Validate anxiety reduction patterns for financial interfaces
   await HealthcareAccessibilityHelper.validateAnxietyReduction(page);
-}
-)
-})
+});

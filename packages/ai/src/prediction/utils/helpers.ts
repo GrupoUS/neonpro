@@ -1,6 +1,6 @@
-import type { PatientProfile, TreatmentRequest, SkinType } from '../types';
-import { neonproAIIntegration } from '../integrations/neonpro-integration';
 import { aestheticInferenceAPI } from '../api/inference-api';
+import { neonproAIIntegration } from '../integrations/neonpro-integration';
+import type { PatientProfile, SkinType, TreatmentRequest } from '../types';
 
 /**
  * Utility Helper Functions for NeonPro AI Prediction Engine
@@ -25,7 +25,9 @@ export async function initializeAIPredictionEngine(): Promise<void> {
  * Create a patient profile with sensible defaults
  * Useful for testing and rapid prototyping
  */
-export function createPatientProfile(overrides: Partial<PatientProfile> = {}): PatientProfile {
+export function createPatientProfile(
+  overrides: Partial<PatientProfile> = {}
+): PatientProfile {
   const defaultProfile: PatientProfile = {
     id: overrides.id || `patient_${Date.now()}`,
     age: 35,
@@ -37,7 +39,7 @@ export function createPatientProfile(overrides: Partial<PatientProfile> = {}): P
       conditions: [],
       autoimmuneDiseases: [],
       bloodThinnersUse: false,
-      keloidProneness: false
+      keloidProneness: false,
     },
     lifestyle: {
       smoking: false,
@@ -52,8 +54,8 @@ export function createPatientProfile(overrides: Partial<PatientProfile> = {}): P
         sunscreenUse: true,
         retinoidUse: false,
         exfoliation: true,
-        professionalTreatments: []
-      }
+        professionalTreatments: [],
+      },
     },
     previousTreatments: [],
     goals: {
@@ -61,7 +63,7 @@ export function createPatientProfile(overrides: Partial<PatientProfile> = {}): P
       secondary: ['Preventive care'],
       expectations: 'moderate',
       maintenance: true,
-      naturalLook: true
+      naturalLook: true,
     },
     consentStatus: {
       dataProcessingConsent: true,
@@ -69,8 +71,8 @@ export function createPatientProfile(overrides: Partial<PatientProfile> = {}): P
       consentDate: new Date(),
       consentVersion: '1.0',
       dataRetentionPeriod: 365,
-      anonymizationRequested: false
-    }
+      anonymizationRequested: false,
+    },
   };
 
   return { ...defaultProfile, ...overrides };
@@ -88,33 +90,33 @@ export function createTreatmentRequest(
   const defaultRequest: TreatmentRequest = {
     patientId,
     treatmentType: treatmentType as any,
-    targetAreas: targetAreas.map(area => ({
+    targetAreas: targetAreas.map((area) => ({
       region: area as any,
       concern: 'wrinkles' as any,
       severity: 5,
-      priority: 1
+      priority: 1,
     })),
     goals: {
       primary: 'Aesthetic improvement',
       secondary: [],
       expectations: 'moderate' as any,
       maintenance: false,
-      naturalLook: true
+      naturalLook: true,
     },
     urgency: 'moderate' as any,
     budgetRange: {
       min: 1000,
       max: 5000,
       currency: 'BRL',
-      flexibility: 'moderate'
+      flexibility: 'moderate',
     },
     timeframe: {
       earliestStart: new Date(),
       latestCompletion: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
       flexibility: 'moderate',
       preferredDays: [1, 2, 3, 4, 5],
-      preferredTimes: [{ start: '09:00', end: '17:00' }]
-    }
+      preferredTimes: [{ start: '09:00', end: '17:00' }],
+    },
   };
 
   return { ...defaultRequest, ...overrides };
@@ -143,19 +145,25 @@ export function validatePatientData(patient: PatientProfile): {
 
   // Warnings for data quality
   if (patient.previousTreatments.length === 0) {
-    warnings.push('No previous treatment history - predictions may be less accurate');
+    warnings.push(
+      'No previous treatment history - predictions may be less accurate'
+    );
   }
   if (!patient.medicalHistory.medications) {
-    warnings.push('No medication history provided - risk assessment may be incomplete');
+    warnings.push(
+      'No medication history provided - risk assessment may be incomplete'
+    );
   }
   if (patient.lifestyle.smoking) {
-    warnings.push('Smoking detected - may affect treatment outcomes and healing');
+    warnings.push(
+      'Smoking detected - may affect treatment outcomes and healing'
+    );
   }
 
   return {
     isValid: errors.length === 0,
     errors,
-    warnings
+    warnings,
   };
 }
 
@@ -170,31 +178,39 @@ export function formatSkinType(skinType: string | number): SkinType {
       3: 'fitzpatrick-3',
       4: 'fitzpatrick-4',
       5: 'fitzpatrick-5',
-      6: 'fitzpatrick-6'
+      6: 'fitzpatrick-6',
     };
     return typeMap[skinType] || 'fitzpatrick-3';
   }
-  
+
   if (skinType.includes('fitzpatrick')) {
     return skinType as SkinType;
   }
-  
+
   // Handle common variations
   const normalizedType = skinType.toLowerCase();
-  if (normalizedType.includes('very fair') || normalizedType.includes('type 1')) {
+  if (
+    normalizedType.includes('very fair') ||
+    normalizedType.includes('type 1')
+  ) {
     return 'fitzpatrick-1';
-  } else if (normalizedType.includes('fair') || normalizedType.includes('type 2')) {
+  }
+  if (normalizedType.includes('fair') || normalizedType.includes('type 2')) {
     return 'fitzpatrick-2';
-  } else if (normalizedType.includes('medium') || normalizedType.includes('type 3')) {
+  }
+  if (normalizedType.includes('medium') || normalizedType.includes('type 3')) {
     return 'fitzpatrick-3';
-  } else if (normalizedType.includes('olive') || normalizedType.includes('type 4')) {
+  }
+  if (normalizedType.includes('olive') || normalizedType.includes('type 4')) {
     return 'fitzpatrick-4';
-  } else if (normalizedType.includes('brown') || normalizedType.includes('type 5')) {
+  }
+  if (normalizedType.includes('brown') || normalizedType.includes('type 5')) {
     return 'fitzpatrick-5';
-  } else if (normalizedType.includes('dark') || normalizedType.includes('type 6')) {
+  }
+  if (normalizedType.includes('dark') || normalizedType.includes('type 6')) {
     return 'fitzpatrick-6';
   }
-  
+
   return 'fitzpatrick-3'; // Default to medium skin type
 }
 
@@ -204,12 +220,12 @@ export function formatSkinType(skinType: string | number): SkinType {
 export function calculateRiskScore(riskLevel: string): number {
   const riskMap: Record<string, number> = {
     'very-low': 0.1,
-    'low': 0.25,
-    'moderate': 0.5,
-    'high': 0.75,
-    'very-high': 0.9
+    low: 0.25,
+    moderate: 0.5,
+    high: 0.75,
+    'very-high': 0.9,
   };
-  
+
   return riskMap[riskLevel] || 0.5;
 }
 
@@ -221,22 +237,24 @@ export function formatRecommendations(recommendations: string[]): {
   important: string[];
   general: string[];
 } {
-  const critical = recommendations.filter(rec => 
-    rec.toLowerCase().includes('urgent') || 
-    rec.toLowerCase().includes('contraindication') ||
-    rec.toLowerCase().includes('immediate')
+  const critical = recommendations.filter(
+    (rec) =>
+      rec.toLowerCase().includes('urgent') ||
+      rec.toLowerCase().includes('contraindication') ||
+      rec.toLowerCase().includes('immediate')
   );
-  
-  const important = recommendations.filter(rec => 
-    rec.toLowerCase().includes('consider') || 
-    rec.toLowerCase().includes('recommend') ||
-    rec.toLowerCase().includes('significant')
+
+  const important = recommendations.filter(
+    (rec) =>
+      rec.toLowerCase().includes('consider') ||
+      rec.toLowerCase().includes('recommend') ||
+      rec.toLowerCase().includes('significant')
   );
-  
-  const general = recommendations.filter(rec => 
-    !critical.includes(rec) && !important.includes(rec)
+
+  const general = recommendations.filter(
+    (rec) => !(critical.includes(rec) || important.includes(rec))
   );
-  
+
   return { critical, important, general };
 }
 
@@ -250,37 +268,45 @@ export async function checkAccuracyTargets(): Promise<{
 }> {
   try {
     const health = await neonproAIIntegration.getSystemHealth();
-    
+
     const targetAccuracy = 0.85;
     const individualTargets: Record<string, boolean> = {};
     const recommendations: string[] = [];
-    
+
     for (const [model, accuracy] of Object.entries(health.accuracy)) {
       individualTargets[model] = accuracy >= targetAccuracy;
-      
+
       if (accuracy < targetAccuracy) {
-        recommendations.push(`Model ${model} accuracy (${(accuracy * 100).toFixed(1)}%) below target (85%)`);
+        recommendations.push(
+          `Model ${model} accuracy (${(accuracy * 100).toFixed(1)}%) below target (85%)`
+        );
       }
     }
-    
-    const overallAccuracy = Object.values(health.accuracy).reduce((sum, acc) => sum + acc, 0) / Object.values(health.accuracy).length;
+
+    const overallAccuracy =
+      Object.values(health.accuracy).reduce((sum, acc) => sum + acc, 0) /
+      Object.values(health.accuracy).length;
     const overallTarget = overallAccuracy >= targetAccuracy;
-    
+
     if (!overallTarget) {
-      recommendations.push('Overall system accuracy below target - consider model retraining');
+      recommendations.push(
+        'Overall system accuracy below target - consider model retraining'
+      );
     }
-    
+
     return {
       overallTarget,
       individualTargets,
-      recommendations
+      recommendations,
     };
   } catch (error) {
     console.error('❌ Accuracy check failed:', error);
     return {
       overallTarget: false,
       individualTargets: {},
-      recommendations: ['Unable to check accuracy targets - system may be offline']
+      recommendations: [
+        'Unable to check accuracy targets - system may be offline',
+      ],
     };
   }
 }
@@ -290,33 +316,58 @@ export async function checkAccuracyTargets(): Promise<{
  */
 export const AESTHETIC_CONSTANTS = {
   TREATMENT_TYPES: [
-    'botox', 'dermal-fillers', 'laser-resurfacing', 'laser-hair-removal',
-    'chemical-peel', 'microneedling', 'coolsculpting', 'radiofrequency',
-    'photofacial', 'thread-lift'
+    'botox',
+    'dermal-fillers',
+    'laser-resurfacing',
+    'laser-hair-removal',
+    'chemical-peel',
+    'microneedling',
+    'coolsculpting',
+    'radiofrequency',
+    'photofacial',
+    'thread-lift',
   ] as const,
-  
+
   FACIAL_REGIONS: [
-    'forehead', 'glabella', 'crows-feet', 'under-eyes', 'cheeks',
-    'nasolabial-folds', 'marionette-lines', 'lips', 'jawline', 'neck'
+    'forehead',
+    'glabella',
+    'crows-feet',
+    'under-eyes',
+    'cheeks',
+    'nasolabial-folds',
+    'marionette-lines',
+    'lips',
+    'jawline',
+    'neck',
   ] as const,
-  
+
   BODY_REGIONS: [
-    'abdomen', 'thighs', 'arms', 'back', 'chest', 'flanks', 'buttocks'
+    'abdomen',
+    'thighs',
+    'arms',
+    'back',
+    'chest',
+    'flanks',
+    'buttocks',
   ] as const,
-  
+
   SKIN_TYPES: [
-    'fitzpatrick-1', 'fitzpatrick-2', 'fitzpatrick-3',
-    'fitzpatrick-4', 'fitzpatrick-5', 'fitzpatrick-6'
+    'fitzpatrick-1',
+    'fitzpatrick-2',
+    'fitzpatrick-3',
+    'fitzpatrick-4',
+    'fitzpatrick-5',
+    'fitzpatrick-6',
   ] as const,
-  
+
   ACCURACY_TARGET: 0.85,
   RESPONSE_TIME_TARGET: 2000, // milliseconds
-  
+
   RISK_LEVELS: {
     VERY_LOW: 'very-low',
     LOW: 'low',
     MODERATE: 'moderate',
     HIGH: 'high',
-    VERY_HIGH: 'very-high'
-  } as const
+    VERY_HIGH: 'very-high',
+  } as const,
 };

@@ -1,17 +1,17 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
+  AppointmentStatus,
+  BillingService,
+  InventoryService,
+  NotificationChannel,
+  NotificationService,
+  PatientService,
+  PatientStatus,
+  PaymentMethod,
+  ProductCategory,
   SchedulingService,
   TreatmentService,
-  PatientService,
-  InventoryService,
-  BillingService,
-  NotificationService,
-  AppointmentStatus,
   TreatmentType,
-  PatientStatus,
-  ProductCategory,
-  PaymentMethod,
-  NotificationChannel
 } from '../src';
 
 // Mock repositories for testing
@@ -27,7 +27,7 @@ const mockSchedulingRepo = {
   updateProvider: vi.fn(),
   getProvider: vi.fn(),
   getProviders: vi.fn(),
-  getActiveProviders: vi.fn()
+  getActiveProviders: vi.fn(),
 };
 
 const mockTreatmentRepo = {
@@ -40,7 +40,7 @@ const mockTreatmentRepo = {
   updateTreatmentSession: vi.fn(),
   getTreatmentSession: vi.fn(),
   getTreatmentSessionsByPlan: vi.fn(),
-  completeTreatmentSession: vi.fn()
+  completeTreatmentSession: vi.fn(),
 };
 
 const mockPatientRepo = {
@@ -56,7 +56,7 @@ const mockPatientRepo = {
   addConsentForm: vi.fn(),
   getConsentForms: vi.fn(),
   searchPatients: vi.fn(),
-  getPatientStats: vi.fn()
+  getPatientStats: vi.fn(),
 };
 
 const mockInventoryRepo = {
@@ -81,8 +81,9 @@ const mockInventoryRepo = {
   getPurchaseOrders: vi.fn(),
   createAlert: vi.fn(),
   getAlerts: vi.fn(),
-  acknowledgeAlert: vi.fn()
-};const mockBillingRepo = {
+  acknowledgeAlert: vi.fn(),
+};
+const mockBillingRepo = {
   createInvoice: vi.fn(),
   updateInvoice: vi.fn(),
   getInvoice: vi.fn(),
@@ -110,7 +111,7 @@ const mockInventoryRepo = {
   createRefund: vi.fn(),
   updateRefund: vi.fn(),
   getRefund: vi.fn(),
-  getRefundsByPatient: vi.fn()
+  getRefundsByPatient: vi.fn(),
 };
 
 const mockNotificationRepo = {
@@ -135,14 +136,14 @@ const mockNotificationRepo = {
   getPatients: vi.fn(),
   getPatient: vi.fn(),
   getAppointment: vi.fn(),
-  getTreatmentPlan: vi.fn()
+  getTreatmentPlan: vi.fn(),
 };
 
 const mockExternalProvider = {
   sendEmail: vi.fn().mockResolvedValue('email-123'),
   sendSMS: vi.fn().mockResolvedValue('sms-456'),
   sendWhatsApp: vi.fn().mockResolvedValue('wa-789'),
-  sendPush: vi.fn().mockResolvedValue('push-000')
+  sendPush: vi.fn().mockResolvedValue('push-000'),
 };
 
 describe('Core Services Integration', () => {
@@ -155,13 +156,16 @@ describe('Core Services Integration', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     schedulingService = new SchedulingService(mockSchedulingRepo);
     treatmentService = new TreatmentService(mockTreatmentRepo);
     patientService = new PatientService(mockPatientRepo);
     inventoryService = new InventoryService(mockInventoryRepo);
     billingService = new BillingService(mockBillingRepo);
-    notificationService = new NotificationService(mockNotificationRepo, mockExternalProvider);
+    notificationService = new NotificationService(
+      mockNotificationRepo,
+      mockExternalProvider
+    );
   });
 
   describe('Service Initialization', () => {
@@ -190,7 +194,7 @@ describe('Core Services Integration', () => {
     it('should support typical aesthetic clinic workflow', async () => {
       // This is a basic workflow test - in real implementation,
       // services would interact through shared data layer
-      
+
       // 1. Patient creation
       const patientData = {
         firstName: 'Maria',
@@ -204,19 +208,19 @@ describe('Core Services Integration', () => {
           city: 'São Paulo',
           state: 'SP',
           zipCode: '01000-000',
-          country: 'Brasil'
+          country: 'Brasil',
         },
         emergencyContact: {
           name: 'João Silva',
           relationship: 'Spouse',
-          phone: '+5511888888888'
+          phone: '+5511888888888',
         },
         allergies: [],
         medications: [],
         photoConsent: true,
         marketingConsent: true,
         lgpdConsent: true,
-        tags: ['new-patient']
+        tags: ['new-patient'],
       };
 
       mockPatientRepo.createPatient.mockResolvedValue({
@@ -224,7 +228,7 @@ describe('Core Services Integration', () => {
         ...patientData,
         status: PatientStatus.ACTIVE,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
 
       const patient = await patientService.createPatient(patientData);

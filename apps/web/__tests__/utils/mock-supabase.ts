@@ -31,11 +31,11 @@ export function createMockSupabaseClient(): MockSupabaseClient {
     rpc: jest.fn().mockResolvedValue({ data: null, error: null }),
     auth: {
       getUser: jest.fn().mockResolvedValue({
-        data: { user: { id: "test-user-id" } },
+        data: { user: { id: 'test-user-id' } },
         error: null,
       }),
       signInWithPassword: jest.fn().mockResolvedValue({
-        data: { user: { id: "test-user-id" } },
+        data: { user: { id: 'test-user-id' } },
         error: null,
       }),
       signOut: jest.fn().mockResolvedValue({ error: null }),
@@ -116,7 +116,9 @@ export function createMockSupabaseClient(): MockSupabaseClient {
 /**
  * Creates a mock Supabase client with preset successful responses
  */
-export function createSuccessfulMockSupabaseClient(data: any = []): MockSupabaseClient {
+export function createSuccessfulMockSupabaseClient(
+  data: any = []
+): MockSupabaseClient {
   const client = createMockSupabaseClient();
 
   // Override with successful responses
@@ -189,48 +191,48 @@ export { createMockSupabaseClient as createMockSupabaseC };
 
 export function createMockPatientData(overrides: any = {}) {
   return {
-    id: "patient-12345",
-    name: "João Silva",
+    id: 'patient-12345',
+    name: 'João Silva',
     age: 45,
-    cpf: "123.456.789-00",
-    email: "joao.silva@email.com",
-    phone: "+55 11 99999-9999",
+    cpf: '123.456.789-00',
+    email: 'joao.silva@email.com',
+    phone: '+55 11 99999-9999',
     demographicFactors: {
-      gender: "masculino",
-      ethnicity: "pardo",
-      socioeconomicStatus: "media",
-      region: "sudeste",
-      urbanRural: "urbano",
+      gender: 'masculino',
+      ethnicity: 'pardo',
+      socioeconomicStatus: 'media',
+      region: 'sudeste',
+      urbanRural: 'urbano',
     },
     medicalHistory: {
-      chronicConditions: ["hipertensão"],
+      chronicConditions: ['hipertensão'],
       previousSurgeries: [],
       allergies: [],
-      medications: ["losartana"],
-      familyHistory: ["diabetes", "hipertensão"],
+      medications: ['losartana'],
+      familyHistory: ['diabetes', 'hipertensão'],
     },
     vitalSigns: {
       heartRate: 75,
-      bloodPressure: "130/85",
+      bloodPressure: '130/85',
       temperature: 36.5,
       respiratoryRate: 16,
       oxygenSaturation: 98,
     },
     riskFactors: {
       smoking: false,
-      alcoholConsumption: "moderado",
-      physicalActivity: "regular",
-      diet: "balanceada",
+      alcoholConsumption: 'moderado',
+      physicalActivity: 'regular',
+      diet: 'balanceada',
     },
     insuranceInfo: {
-      provider: "SUS",
-      policyNumber: "SUS-12345",
-      coverage: "completa",
+      provider: 'SUS',
+      policyNumber: 'SUS-12345',
+      coverage: 'completa',
     },
     emergencyContact: {
-      name: "Maria Silva",
-      relationship: "esposa",
-      phone: "+55 11 88888-8888",
+      name: 'Maria Silva',
+      relationship: 'esposa',
+      phone: '+55 11 88888-8888',
     },
     consent: {
       dataProcessing: true,
@@ -254,16 +256,16 @@ export function createLowRiskPatientData() {
     },
     vitalSigns: {
       heartRate: 70,
-      bloodPressure: "120/80",
+      bloodPressure: '120/80',
       temperature: 36.5,
       respiratoryRate: 16,
       oxygenSaturation: 99,
     },
     riskFactors: {
       smoking: false,
-      alcoholConsumption: "nenhum",
-      physicalActivity: "regular",
-      diet: "balanceada",
+      alcoholConsumption: 'nenhum',
+      physicalActivity: 'regular',
+      diet: 'balanceada',
     },
   });
 }
@@ -272,24 +274,24 @@ export function createHighRiskPatientData() {
   return createMockPatientData({
     age: 70,
     medicalHistory: {
-      chronicConditions: ["diabetes", "hipertensão", "doença cardíaca"],
-      previousSurgeries: ["bypass", "angioplastia"],
-      allergies: ["penicilina"],
-      medications: ["metformina", "losartana", "atorvastatina"],
-      familyHistory: ["diabetes", "hipertensão", "doença cardíaca", "avc"],
+      chronicConditions: ['diabetes', 'hipertensão', 'doença cardíaca'],
+      previousSurgeries: ['bypass', 'angioplastia'],
+      allergies: ['penicilina'],
+      medications: ['metformina', 'losartana', 'atorvastatina'],
+      familyHistory: ['diabetes', 'hipertensão', 'doença cardíaca', 'avc'],
     },
     vitalSigns: {
       heartRate: 95,
-      bloodPressure: "160/95",
+      bloodPressure: '160/95',
       temperature: 37.0,
       respiratoryRate: 20,
       oxygenSaturation: 94,
     },
     riskFactors: {
       smoking: true,
-      alcoholConsumption: "alto",
-      physicalActivity: "sedentário",
-      diet: "inadequada",
+      alcoholConsumption: 'alto',
+      physicalActivity: 'sedentário',
+      diet: 'inadequada',
     },
   });
 }
@@ -299,29 +301,41 @@ export function createCriticalPatientData() {
     age: 85,
     medicalHistory: {
       chronicConditions: [
-        "diabetes",
-        "hipertensão",
-        "doença cardíaca",
-        "insuficiência renal",
-        "DPOC",
+        'diabetes',
+        'hipertensão',
+        'doença cardíaca',
+        'insuficiência renal',
+        'DPOC',
       ],
-      previousSurgeries: ["bypass", "angioplastia", "marca-passo"],
-      allergies: ["penicilina", "sulfa"],
-      medications: ["metformina", "losartana", "atorvastatina", "furosemida", "digoxina"],
-      familyHistory: ["diabetes", "hipertensão", "doença cardíaca", "avc", "câncer"],
+      previousSurgeries: ['bypass', 'angioplastia', 'marca-passo'],
+      allergies: ['penicilina', 'sulfa'],
+      medications: [
+        'metformina',
+        'losartana',
+        'atorvastatina',
+        'furosemida',
+        'digoxina',
+      ],
+      familyHistory: [
+        'diabetes',
+        'hipertensão',
+        'doença cardíaca',
+        'avc',
+        'câncer',
+      ],
     },
     vitalSigns: {
       heartRate: 110,
-      bloodPressure: "180/100",
+      bloodPressure: '180/100',
       temperature: 38.5,
       respiratoryRate: 24,
       oxygenSaturation: 88,
     },
     riskFactors: {
       smoking: true,
-      alcoholConsumption: "alto",
-      physicalActivity: "sedentário",
-      diet: "inadequada",
+      alcoholConsumption: 'alto',
+      physicalActivity: 'sedentário',
+      diet: 'inadequada',
     },
     emergencyFlags: {
       criticalRisk: true,

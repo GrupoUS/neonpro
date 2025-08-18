@@ -697,7 +697,8 @@ export class AestheticPredictionEngine {
 
     return { status, details };
   }
-}  // ==================== ADDITIONAL FEATURE EXTRACTION METHODS ====================
+
+  // ==================== ADDITIONAL FEATURE EXTRACTION METHODS ====================
 
   private async extractRiskAssessmentFeatures(
     patient: PatientProfile,

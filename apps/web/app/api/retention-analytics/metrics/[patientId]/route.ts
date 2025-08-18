@@ -4,23 +4,23 @@
 // API endpoints for patient-specific retention metrics
 // =====================================================================================
 
-import { type NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
-import { RetentionAnalyticsService } from "@/app/lib/services/retention-analytics-service";
-import { createClient } from "@/app/utils/supabase/server";
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+import { RetentionAnalyticsService } from '@/app/lib/services/retention-analytics-service';
+import { createClient } from '@/app/utils/supabase/server';
 
 // =====================================================================================
 // VALIDATION SCHEMAS
 // =====================================================================================
 
 const PatientMetricsParamsSchema = z.object({
-  patientId: z.string().uuid("Invalid patient ID format"),
-  clinicId: z.string().uuid("Invalid clinic ID format"),
+  patientId: z.string().uuid('Invalid patient ID format'),
+  clinicId: z.string().uuid('Invalid clinic ID format'),
 });
 
 const CalculateMetricsSchema = z.object({
-  patientId: z.string().uuid("Invalid patient ID format"),
-  clinicId: z.string().uuid("Invalid clinic ID format"),
+  patientId: z.string().uuid('Invalid patient ID format'),
+  clinicId: z.string().uuid('Invalid clinic ID format'),
 });
 
 // =====================================================================================
@@ -29,13 +29,13 @@ const CalculateMetricsSchema = z.object({
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ patientId: string }> },
+  { params }: { params: Promise<{ patientId: string }> }
 ) {
   try {
     const resolvedParams = await params;
     // Extract clinic ID from query parameters
     const { searchParams } = new URL(request.url);
-    const clinicId = searchParams.get("clinicId");
+    const clinicId = searchParams.get('clinicId');
 
     // Validate parameters
     const validation = PatientMetricsParamsSchema.safeParse({
@@ -46,10 +46,10 @@ export async function GET(
     if (!validation.success) {
       return NextResponse.json(
         {
-          error: "Invalid parameters",
+          error: 'Invalid parameters',
           details: validation.error.issues,
         },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -63,42 +63,51 @@ export async function GET(
     } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Verify clinic access (user must belong to the clinic)
     const { data: userProfile, error: profileError } = await supabase
-      .from("profiles")
-      .select("clinic_id, role")
-      .eq("id", user.id)
+      .from('profiles')
+      .select('clinic_id, role')
+      .eq('id', user.id)
       .single();
 
     if (profileError || !userProfile) {
-      return NextResponse.json({ error: "User profile not found" }, { status: 403 });
+      return NextResponse.json(
+        { error: 'User profile not found' },
+        { status: 403 }
+      );
     }
 
     if (userProfile.clinic_id !== validatedClinicId) {
-      return NextResponse.json({ error: "Access denied to clinic data" }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Access denied to clinic data' },
+        { status: 403 }
+      );
     }
 
     // Verify patient belongs to clinic
     const { data: patient, error: patientError } = await supabase
-      .from("patients")
-      .select("id, clinic_id")
-      .eq("id", patientId)
-      .eq("clinic_id", validatedClinicId)
+      .from('patients')
+      .select('id, clinic_id')
+      .eq('id', patientId)
+      .eq('clinic_id', validatedClinicId)
       .single();
 
     if (patientError || !patient) {
       return NextResponse.json(
-        { error: "Patient not found or does not belong to clinic" },
-        { status: 404 },
+        { error: 'Patient not found or does not belong to clinic' },
+        { status: 404 }
       );
     }
 
     // Get retention metrics
     const retentionService = new RetentionAnalyticsService();
-    const metrics = await retentionService.getPatientRetentionMetrics(patientId, validatedClinicId);
+    const metrics = await retentionService.getPatientRetentionMetrics(
+      patientId,
+      validatedClinicId
+    );
 
     return NextResponse.json({
       success: true,
@@ -108,10 +117,10 @@ export async function GET(
   } catch (error) {
     return NextResponse.json(
       {
-        error: "Internal server error",
-        message: error instanceof Error ? error.message : "Unknown error",
+        error: 'Internal server error',
+        message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
@@ -122,7 +131,7 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ patientId: string }> },
+  { params }: { params: Promise<{ patientId: string }> }
 ) {
   try {
     const resolvedParams = await params;
@@ -138,10 +147,10 @@ export async function POST(
     if (!validation.success) {
       return NextResponse.json(
         {
-          error: "Invalid request data",
+          error: 'Invalid request data',
           details: validation.error.issues,
         },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -155,65 +164,74 @@ export async function POST(
     } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Verify clinic access
     const { data: userProfile, error: profileError } = await supabase
-      .from("profiles")
-      .select("clinic_id, role")
-      .eq("id", user.id)
+      .from('profiles')
+      .select('clinic_id, role')
+      .eq('id', user.id)
       .single();
 
     if (profileError || !userProfile) {
-      return NextResponse.json({ error: "User profile not found" }, { status: 403 });
+      return NextResponse.json(
+        { error: 'User profile not found' },
+        { status: 403 }
+      );
     }
 
     if (userProfile.clinic_id !== clinicId) {
-      return NextResponse.json({ error: "Access denied to clinic data" }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Access denied to clinic data' },
+        { status: 403 }
+      );
     }
 
     // Verify patient belongs to clinic
     const { data: patient, error: patientError } = await supabase
-      .from("patients")
-      .select("id, clinic_id")
-      .eq("id", patientId)
-      .eq("clinic_id", clinicId)
+      .from('patients')
+      .select('id, clinic_id')
+      .eq('id', patientId)
+      .eq('clinic_id', clinicId)
       .single();
 
     if (patientError || !patient) {
       return NextResponse.json(
-        { error: "Patient not found or does not belong to clinic" },
-        { status: 404 },
+        { error: 'Patient not found or does not belong to clinic' },
+        { status: 404 }
       );
     }
 
     // Check if user has permission to calculate metrics
-    const allowedRoles = ["admin", "manager", "analyst"];
+    const allowedRoles = ['admin', 'manager', 'analyst'];
     if (!allowedRoles.includes(userProfile.role)) {
       return NextResponse.json(
-        { error: "Insufficient permissions to calculate metrics" },
-        { status: 403 },
+        { error: 'Insufficient permissions to calculate metrics' },
+        { status: 403 }
       );
     }
 
     // Calculate retention metrics
     const retentionService = new RetentionAnalyticsService();
-    const metrics = await retentionService.calculatePatientRetentionMetrics(patientId, clinicId);
+    const metrics = await retentionService.calculatePatientRetentionMetrics(
+      patientId,
+      clinicId
+    );
 
     return NextResponse.json({
       success: true,
       data: metrics,
-      message: "Retention metrics calculated successfully",
+      message: 'Retention metrics calculated successfully',
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
     return NextResponse.json(
       {
-        error: "Internal server error",
-        message: error instanceof Error ? error.message : "Unknown error",
+        error: 'Internal server error',
+        message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

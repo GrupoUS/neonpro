@@ -1,7 +1,7 @@
 // AI Scheduling Types for NeonPro Aesthetic Clinic
 // Enhanced types supporting AI-powered intelligent scheduling
 
-import { BaseEntity } from '@neonpro/core-services';
+import type { BaseEntity } from '@neonpro/core-services';
 
 // Core AI Scheduling Interfaces
 export interface AISchedulingConfig {
@@ -56,7 +56,7 @@ export interface AIAppointment extends BaseEntity {
   actualDuration?: number;
   status: AppointmentStatus;
   priority: AppointmentPriority;
-  
+
   // AI-specific fields
   aiScheduledAt: Date;
   confidenceScore: number;
@@ -64,34 +64,39 @@ export interface AIAppointment extends BaseEntity {
   noShowPrediction: NoShowPrediction;
   optimizationMetrics: SchedulingMetrics;
   reschedulingHistory: ReschedulingEvent[];
-  
+
   // Treatment-specific
   treatmentType: string;
   equipmentRequired: string[];
   preparationTime: number;
   cleanupTime: number;
-  
+
   // Patient context
   patientPreferences: PatientPreferences;
   patientHistory: PatientHistory;
-  
+
   // Compliance and notes
   notes?: string;
   specialRequirements?: string[];
   followUpRequired: boolean;
 }
 
-export type AppointmentStatus = 
-  | 'scheduled' 
-  | 'confirmed' 
-  | 'checked_in' 
-  | 'in_progress' 
-  | 'completed' 
-  | 'cancelled' 
-  | 'no_show' 
+export type AppointmentStatus =
+  | 'scheduled'
+  | 'confirmed'
+  | 'checked_in'
+  | 'in_progress'
+  | 'completed'
+  | 'cancelled'
+  | 'no_show'
   | 'rescheduled';
 
-export type AppointmentPriority = 'low' | 'normal' | 'high' | 'urgent' | 'emergency';
+export type AppointmentPriority =
+  | 'low'
+  | 'normal'
+  | 'high'
+  | 'urgent'
+  | 'emergency';
 
 // AI Prediction Interfaces
 export interface NoShowPrediction {
@@ -129,14 +134,14 @@ export interface SchedulingConflict {
   autoResolvable: boolean;
 }
 
-export type ConflictType = 
-  | 'double_booking' 
-  | 'resource_unavailable' 
-  | 'staff_conflict' 
-  | 'room_conflict' 
-  | 'equipment_conflict' 
-  | 'treatment_sequence' 
-  | 'patient_availability' 
+export type ConflictType =
+  | 'double_booking'
+  | 'resource_unavailable'
+  | 'staff_conflict'
+  | 'room_conflict'
+  | 'equipment_conflict'
+  | 'treatment_sequence'
+  | 'patient_availability'
   | 'business_hours';
 
 export interface ConflictResolution {
@@ -149,13 +154,13 @@ export interface ConflictResolution {
   success?: boolean;
 }
 
-export type ResolutionType = 
-  | 'reschedule' 
-  | 'reassign_staff' 
-  | 'reassign_room' 
-  | 'adjust_duration' 
-  | 'emergency_slot' 
-  | 'patient_notification' 
+export type ResolutionType =
+  | 'reschedule'
+  | 'reassign_staff'
+  | 'reassign_room'
+  | 'adjust_duration'
+  | 'emergency_slot'
+  | 'patient_notification'
   | 'manual_intervention';
 
 export interface ResolutionImpact {
@@ -266,13 +271,13 @@ export interface ReschedulingEvent {
   impact: ResolutionImpact;
 }
 
-export type ReschedulingReason = 
-  | 'patient_request' 
-  | 'staff_unavailable' 
-  | 'equipment_maintenance' 
-  | 'emergency' 
-  | 'optimization' 
-  | 'no_show' 
+export type ReschedulingReason =
+  | 'patient_request'
+  | 'staff_unavailable'
+  | 'equipment_maintenance'
+  | 'emergency'
+  | 'optimization'
+  | 'no_show'
   | 'cancellation';
 
 // AI Scheduling Request and Response
@@ -332,15 +337,4 @@ export interface AISchedulingAudit {
 }
 
 // Export types for external use
-export type {
-  AISchedulingConfig,
-  TreatmentDuration,
-  AIAppointment,
-  NoShowPrediction,
-  ConflictDetection,
-  SchedulingOptimization,
-  PatientPreferences,
-  SchedulingRequest,
-  SchedulingResponse,
-  PerformanceMetrics
-};
+// Types are already exported individually above

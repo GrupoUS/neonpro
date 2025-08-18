@@ -1,5 +1,5 @@
 // Monitoring alerts API endpoint
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   try {
@@ -10,15 +10,15 @@ export async function GET(request: NextRequest) {
         type: 'performance',
         severity: 'warning',
         message: 'Response time elevated',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       },
       {
         id: 'alert-2',
         type: 'security',
         severity: 'info',
         message: 'Unusual login pattern detected',
-        timestamp: new Date().toISOString()
-      }
+        timestamp: new Date().toISOString(),
+      },
     ];
 
     return NextResponse.json({ alerts });
@@ -33,14 +33,14 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const alert = await request.json();
-    
+
     // Mock creating alert
     console.log('Alert created:', alert);
-    
-    return NextResponse.json({ 
-      success: true, 
+
+    return NextResponse.json({
+      success: true,
       id: `alert-${Date.now()}`,
-      alert
+      alert,
     });
   } catch (error) {
     return NextResponse.json(

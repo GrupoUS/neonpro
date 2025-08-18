@@ -1,6 +1,6 @@
 // Teste de conexão Prisma + Supabase
-const { PrismaClient } = require("@prisma/client");
-require("dotenv").config({ path: "./.env.local" });
+const { PrismaClient } = require('@prisma/client');
+require('dotenv').config({ path: './.env.local' });
 
 async function testPrismaSupabaseConnection() {
   // Verificar variáveis de ambiente
@@ -8,13 +8,13 @@ async function testPrismaSupabaseConnection() {
   const _directUrl = process.env.DIRECT_URL;
   const dbPassword = process.env.SUPABASE_DB_PASSWORD;
 
-  if (!(dbUrl && dbPassword) || dbPassword === "your_database_password_here") {
+  if (!(dbUrl && dbPassword) || dbPassword === 'your_database_password_here') {
     return;
   }
 
   // Criar cliente Prisma
   const prisma = new PrismaClient({
-    log: ["info", "warn", "error"],
+    log: ['info', 'warn', 'error'],
   });
 
   try {
@@ -38,10 +38,10 @@ async function testPrismaSupabaseConnection() {
       result.forEach((_row, _i) => {});
     } catch (_e) {}
   } catch (error) {
-    if (error.message.includes("password authentication failed")) {
+    if (error.message.includes('password authentication failed')) {
     }
 
-    if (error.message.includes("connection refused")) {
+    if (error.message.includes('connection refused')) {
     }
   } finally {
     await prisma.$disconnect();

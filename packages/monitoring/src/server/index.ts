@@ -83,7 +83,7 @@ export class InMemoryMetricsStorage implements MetricsStorage {
 
     if (filters.startDate) {
       filtered = filtered.filter(
-        (m) => (m.timestamp || 0) >= filters.startDate?.getTime()
+        (m) => (m.timestamp || 0) >= (filters.startDate?.getTime() || 0)
       );
     }
 

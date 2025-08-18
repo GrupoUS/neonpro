@@ -18,4 +18,5 @@ process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
 // Mock global fetch
 global.fetch = vi.fn();
 
+// biome-ignore lint/suspicious/noConsole: Test setup log needed for debugging
 console.log('🏥 Minimal setup for healthcare compliance tests ready');

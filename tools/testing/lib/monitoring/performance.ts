@@ -19,13 +19,13 @@ export class PerformanceService {
     return {
       end: () => {
         const duration = performance.now() - start;
-        this.recordMetric({
+        PerformanceService.recordMetric({
           name,
           value: duration,
-          unit: 'ms'
+          unit: 'ms',
         });
         return duration;
-      }
+      },
     };
   }
 

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 // Constants for byte conversions
-const BYTES_PER_KB = BYTES_PER_KB;
+const BYTES_PER_KB = 1024;
 
 // ========================================
 // VALIDATION CONSTANTS
@@ -153,14 +153,14 @@ export const phoneSchema = z
     `Phone must be at least ${MIN_PHONE_LENGTH} characters`
   )
   .max(MAX_PHONE_LENGTH, `Phone must not exceed ${MAX_PHONE_LENGTH} characters`)
-  .regex(/^\+?[\d\s\-\(\)\.]+$/, 'Invalid phone number format');
+  .regex(/^\+?[\d\s\-().]+$/, 'Invalid phone number format');
 
 export const nameSchema = z
   .string()
   .min(MIN_NAME_LENGTH, `Name must be at least ${MIN_NAME_LENGTH} characters`)
   .max(MAX_NAME_LENGTH, `Name must not exceed ${MAX_NAME_LENGTH} characters`)
   .regex(
-    /^[a-zA-ZÀ-ÿ\u00f1\u00d1\s\-\.\']+$/,
+    /^[a-zA-ZÀ-ÿ\u00f1\u00d1\s\-.']+$/,
     'Name contains invalid characters'
   );
 
@@ -884,8 +884,7 @@ export const notificationPreferencesSchema = z.object({
 // VALIDATION MIDDLEWARE FUNCTIONS
 // ========================================
 
-import { NextRequest, NextResponse } from 'next/server';
-import type { z } from 'zod';
+import { type NextRequest, NextResponse } from 'next/server';
 
 export interface ValidationResult<T> {
   success: boolean;
@@ -964,7 +963,7 @@ export function validateQueryParams<T>(
   for (const [key, value] of searchParams.entries()) {
     // Try to parse numbers
     if (/^\d+$/.test(value)) {
-      params[key] = parseInt(value, 10);
+      params[key] = Number.parseInt(value, 10);
     }
     // Try to parse booleans
     else if (value === 'true' || value === 'false') {

@@ -1,5 +1,5 @@
-import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { type ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -8,7 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 // Mock SecurityMetrics type - Complete interface
 export type SecurityMetrics = {
   id: number;
-  threat_level: "low" | "medium" | "high" | "critical";
+  threat_level: 'low' | 'medium' | 'high' | 'critical';
   unresolved_alerts: number;
   active_sessions: number;
   high_risk_sessions: number;
@@ -35,7 +35,7 @@ export type SecurityMetrics = {
 // Mock compliance hooks
 export const useComplianceScore = () => ({
   overall_score: 85,
-  overall_status: "compliant",
+  overall_status: 'compliant',
   lgpd_score: 90,
   anvisa_score: 80,
   cfm_score: 88,
@@ -48,11 +48,11 @@ export const useComplianceScore = () => ({
 export const useComplianceAlerts = () => [
   {
     id: 1,
-    severity: "high" as const,
-    alert_type: "lgpd_violation",
+    severity: 'high' as const,
+    alert_type: 'lgpd_violation',
     created_at: new Date().toISOString(),
-    description: "Mock alert for testing",
-    affected_systems: ["web", "api"],
+    description: 'Mock alert for testing',
+    affected_systems: ['web', 'api'],
   },
 ];
 

@@ -4,18 +4,21 @@
 // API endpoints for churn prediction generation and management
 // =====================================================================================
 
-import { type NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
-import { RetentionAnalyticsService } from "@/app/lib/services/retention-analytics-service";
-import { ChurnModelType, ChurnRiskLevel } from "@/app/types/retention-analytics";
-import { createClient } from "@/app/utils/supabase/server";
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+import { RetentionAnalyticsService } from '@/app/lib/services/retention-analytics-service';
+import {
+  ChurnModelType,
+  ChurnRiskLevel,
+} from '@/app/types/retention-analytics';
+import { createClient } from '@/app/utils/supabase/server';
 
 // =====================================================================================
 // VALIDATION SCHEMAS
 // =====================================================================================
 
 const PredictionsParamsSchema = z.object({
-  clinicId: z.string().uuid("Invalid clinic ID format"),
+  clinicId: z.string().uuid('Invalid clinic ID format'),
 });
 
 const PredictionsQuerySchema = z.object({
@@ -24,20 +27,25 @@ const PredictionsQuerySchema = z.object({
   offset: z.coerce.number().min(0).default(0),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
-  sortBy: z.enum(["prediction_date", "churn_probability", "risk_level"]).default("prediction_date"),
-  sortOrder: z.enum(["asc", "desc"]).default("desc"),
+  sortBy: z
+    .enum(['prediction_date', 'churn_probability', 'risk_level'])
+    .default('prediction_date'),
+  sortOrder: z.enum(['asc', 'desc']).default('desc'),
 });
 
 const GeneratePredictionSchema = z
   .object({
-    patientId: z.string().uuid("Invalid patient ID format").optional(),
+    patientId: z.string().uuid('Invalid patient ID format').optional(),
     patientIds: z.array(z.string().uuid()).optional(),
     modelType: z.nativeEnum(ChurnModelType).default(ChurnModelType.ENSEMBLE),
     forceRegenerate: z.boolean().default(false),
   })
-  .refine((data) => data.patientId || (data.patientIds && data.patientIds.length > 0), {
-    message: "Either patientId or patientIds must be provided",
-  });
+  .refine(
+    (data) => data.patientId || (data.patientIds && data.patientIds.length > 0),
+    {
+      message: 'Either patientId or patientIds must be provided',
+    }
+  );
 
 // =====================================================================================
 // GET CHURN PREDICTIONS
@@ -45,7 +53,7 @@ const GeneratePredictionSchema = z
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ clinicId: string }> },
+  { params }: { params: Promise<{ clinicId: string }> }
 ) {
   try {
     const resolvedParams = await params;
@@ -57,10 +65,10 @@ export async function GET(
     if (!clinicValidation.success) {
       return NextResponse.json(
         {
-          error: "Invalid clinic ID",
+          error: 'Invalid clinic ID',
           details: clinicValidation.error.issues,
         },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -69,22 +77,22 @@ export async function GET(
     // Parse query parameters
     const { searchParams } = new URL(request.url);
     const queryValidation = PredictionsQuerySchema.safeParse({
-      riskLevel: searchParams.get("riskLevel"),
-      limit: searchParams.get("limit"),
-      offset: searchParams.get("offset"),
-      startDate: searchParams.get("startDate"),
-      endDate: searchParams.get("endDate"),
-      sortBy: searchParams.get("sortBy"),
-      sortOrder: searchParams.get("sortOrder"),
+      riskLevel: searchParams.get('riskLevel'),
+      limit: searchParams.get('limit'),
+      offset: searchParams.get('offset'),
+      startDate: searchParams.get('startDate'),
+      endDate: searchParams.get('endDate'),
+      sortBy: searchParams.get('sortBy'),
+      sortOrder: searchParams.get('sortOrder'),
     });
 
     if (!queryValidation.success) {
       return NextResponse.json(
         {
-          error: "Invalid query parameters",
+          error: 'Invalid query parameters',
           details: queryValidation.error.issues,
         },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -99,22 +107,28 @@ export async function GET(
     } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Verify clinic access
     const { data: userProfile, error: profileError } = await supabase
-      .from("profiles")
-      .select("clinic_id, role")
-      .eq("id", user.id)
+      .from('profiles')
+      .select('clinic_id, role')
+      .eq('id', user.id)
       .single();
 
     if (profileError || !userProfile) {
-      return NextResponse.json({ error: "User profile not found" }, { status: 403 });
+      return NextResponse.json(
+        { error: 'User profile not found' },
+        { status: 403 }
+      );
     }
 
     if (userProfile.clinic_id !== clinicId) {
-      return NextResponse.json({ error: "Access denied to clinic data" }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Access denied to clinic data' },
+        { status: 403 }
+      );
     }
 
     // Get churn predictions
@@ -123,7 +137,7 @@ export async function GET(
       clinicId,
       riskLevel,
       limit,
-      offset,
+      offset
     );
 
     // Apply additional filters and sorting
@@ -148,15 +162,15 @@ export async function GET(
       let valueA: any, valueB: any;
 
       switch (sortBy) {
-        case "prediction_date":
+        case 'prediction_date':
           valueA = new Date(a.prediction_date);
           valueB = new Date(b.prediction_date);
           break;
-        case "churn_probability":
+        case 'churn_probability':
           valueA = a.churn_probability;
           valueB = b.churn_probability;
           break;
-        case "risk_level": {
+        case 'risk_level': {
           const riskOrder = { low: 1, medium: 2, high: 3, critical: 4 };
           valueA = riskOrder[a.risk_level];
           valueB = riskOrder[b.risk_level];
@@ -167,30 +181,40 @@ export async function GET(
           valueB = b.prediction_date;
       }
 
-      if (sortOrder === "desc") {
+      if (sortOrder === 'desc') {
         return valueA > valueB ? -1 : valueA < valueB ? 1 : 0;
       }
       return valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
     });
 
     // Pagination
-    const paginatedPredictions = filteredPredictions.slice(offset, offset + limit);
+    const paginatedPredictions = filteredPredictions.slice(
+      offset,
+      offset + limit
+    );
 
     // Calculate summary statistics
     const summary = {
       total_predictions: filteredPredictions.length,
       risk_distribution: {
-        low: filteredPredictions.filter((p) => p.risk_level === ChurnRiskLevel.LOW).length,
-        medium: filteredPredictions.filter((p) => p.risk_level === ChurnRiskLevel.MEDIUM).length,
-        high: filteredPredictions.filter((p) => p.risk_level === ChurnRiskLevel.HIGH).length,
-        critical: filteredPredictions.filter((p) => p.risk_level === ChurnRiskLevel.CRITICAL)
-          .length,
+        low: filteredPredictions.filter(
+          (p) => p.risk_level === ChurnRiskLevel.LOW
+        ).length,
+        medium: filteredPredictions.filter(
+          (p) => p.risk_level === ChurnRiskLevel.MEDIUM
+        ).length,
+        high: filteredPredictions.filter(
+          (p) => p.risk_level === ChurnRiskLevel.HIGH
+        ).length,
+        critical: filteredPredictions.filter(
+          (p) => p.risk_level === ChurnRiskLevel.CRITICAL
+        ).length,
       },
       average_churn_probability:
         filteredPredictions.reduce((sum, p) => sum + p.churn_probability, 0) /
           filteredPredictions.length || 0,
       high_risk_patients: filteredPredictions.filter((p) =>
-        ["high", "critical"].includes(p.risk_level),
+        ['high', 'critical'].includes(p.risk_level)
       ).length,
       recent_predictions: filteredPredictions.filter((p) => {
         const predictionDate = new Date(p.prediction_date);
@@ -223,10 +247,10 @@ export async function GET(
   } catch (error) {
     return NextResponse.json(
       {
-        error: "Internal server error",
-        message: error instanceof Error ? error.message : "Unknown error",
+        error: 'Internal server error',
+        message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
@@ -237,7 +261,7 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ clinicId: string }> },
+  { params }: { params: Promise<{ clinicId: string }> }
 ) {
   try {
     const resolvedParams = await params;
@@ -249,10 +273,10 @@ export async function POST(
     if (!clinicValidation.success) {
       return NextResponse.json(
         {
-          error: "Invalid clinic ID",
+          error: 'Invalid clinic ID',
           details: clinicValidation.error.issues,
         },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -265,14 +289,15 @@ export async function POST(
     if (!validation.success) {
       return NextResponse.json(
         {
-          error: "Invalid request data",
+          error: 'Invalid request data',
           details: validation.error.issues,
         },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
-    const { patientId, patientIds, modelType, forceRegenerate } = validation.data;
+    const { patientId, patientIds, modelType, forceRegenerate } =
+      validation.data;
 
     // Verify authentication
     const supabase = await createClient();
@@ -282,30 +307,36 @@ export async function POST(
     } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Verify clinic access and permissions
     const { data: userProfile, error: profileError } = await supabase
-      .from("profiles")
-      .select("clinic_id, role")
-      .eq("id", user.id)
+      .from('profiles')
+      .select('clinic_id, role')
+      .eq('id', user.id)
       .single();
 
     if (profileError || !userProfile) {
-      return NextResponse.json({ error: "User profile not found" }, { status: 403 });
+      return NextResponse.json(
+        { error: 'User profile not found' },
+        { status: 403 }
+      );
     }
 
     if (userProfile.clinic_id !== clinicId) {
-      return NextResponse.json({ error: "Access denied to clinic data" }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Access denied to clinic data' },
+        { status: 403 }
+      );
     }
 
     // Check permissions for generating predictions
-    const allowedRoles = ["admin", "manager", "analyst", "professional"];
+    const allowedRoles = ['admin', 'manager', 'analyst', 'professional'];
     if (!allowedRoles.includes(userProfile.role)) {
       return NextResponse.json(
-        { error: "Insufficient permissions to generate predictions" },
-        { status: 403 },
+        { error: 'Insufficient permissions to generate predictions' },
+        { status: 403 }
       );
     }
 
@@ -314,23 +345,27 @@ export async function POST(
 
     // Validate that all patients belong to the clinic
     const { data: validPatients, error: validationError } = await supabase
-      .from("patients")
-      .select("id, name")
-      .eq("clinic_id", clinicId)
-      .in("id", targetPatientIds);
+      .from('patients')
+      .select('id, name')
+      .eq('clinic_id', clinicId)
+      .in('id', targetPatientIds);
 
     if (validationError) {
-      throw new Error(`Failed to validate patients: ${validationError.message}`);
+      throw new Error(
+        `Failed to validate patients: ${validationError.message}`
+      );
     }
 
     if (validPatients.length !== targetPatientIds.length) {
-      const invalidIds = targetPatientIds.filter((id) => !validPatients.some((p) => p.id === id));
+      const invalidIds = targetPatientIds.filter(
+        (id) => !validPatients.some((p) => p.id === id)
+      );
       return NextResponse.json(
         {
-          error: "Some patients do not belong to the specified clinic",
+          error: 'Some patients do not belong to the specified clinic',
           invalidPatientIds: invalidIds,
         },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -350,13 +385,13 @@ export async function POST(
           const prediction = await retentionService.generateChurnPrediction(
             patientId,
             clinicId,
-            modelType,
+            modelType
           );
           return { patientId, prediction, success: true };
         } catch (error) {
           return {
             patientId,
-            error: error instanceof Error ? error.message : "Unknown error",
+            error: error instanceof Error ? error.message : 'Unknown error',
             success: false,
           };
         }
@@ -365,7 +400,7 @@ export async function POST(
       const batchResults = await Promise.allSettled(batchPromises);
 
       batchResults.forEach((result) => {
-        if (result.status === "fulfilled") {
+        if (result.status === 'fulfilled') {
           if (result.value.success) {
             results.push(result.value);
           } else {
@@ -373,8 +408,8 @@ export async function POST(
           }
         } else {
           errors.push({
-            patientId: "unknown",
-            error: result.reason?.message || "Promise rejected",
+            patientId: 'unknown',
+            error: result.reason?.message || 'Promise rejected',
             success: false,
           });
         }
@@ -389,7 +424,7 @@ export async function POST(
       success_rate: results.length / targetPatientIds.length,
       model_type: modelType,
       high_risk_detected: results.filter((r) =>
-        ["high", "critical"].includes(r.prediction.risk_level),
+        ['high', 'critical'].includes(r.prediction.risk_level)
       ).length,
     };
 
@@ -406,10 +441,10 @@ export async function POST(
   } catch (error) {
     return NextResponse.json(
       {
-        error: "Internal server error",
-        message: error instanceof Error ? error.message : "Unknown error",
+        error: 'Internal server error',
+        message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

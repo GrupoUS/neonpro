@@ -37,12 +37,16 @@ export interface SystemHealth {
     latency: number;
     connections: number;
   };
-  services: Record<string, {
-    status: 'running' | 'stopped' | 'error';
-    lastCheck: number;
-    responseTime: number;
-  }>;
-}export interface PerformanceMetrics {
+  services: Record<
+    string,
+    {
+      status: 'running' | 'stopped' | 'error';
+      lastCheck: number;
+      responseTime: number;
+    }
+  >;
+}
+export interface PerformanceMetrics {
   responseTime: {
     p50: number;
     p95: number;
@@ -78,8 +82,8 @@ class MonitoringService {
    * Record a metric value
    */
   recordMetric(
-    name: string, 
-    value: number, 
+    name: string,
+    value: number,
     tags?: Record<string, string>,
     metadata?: Record<string, any>
   ): void {
@@ -101,21 +105,17 @@ class MonitoringService {
     if (metrics.length > 1000) {
       metrics.splice(0, metrics.length - 1000);
     }
-  }  /**
+  } /**
    * Get metrics for a specific name
    */
-  getMetrics(
-    name: string, 
-    startTime?: number, 
-    endTime?: number
-  ): MetricData[] {
+  getMetrics(name: string, startTime?: number, endTime?: number): MetricData[] {
     const metrics = this.metrics.get(name) || [];
-    
-    if (!startTime && !endTime) {
+
+    if (!(startTime || endTime)) {
       return metrics;
     }
 
-    return metrics.filter(metric => {
+    return metrics.filter((metric) => {
       if (startTime && metric.timestamp < startTime) return false;
       if (endTime && metric.timestamp > endTime) return false;
       return true;
@@ -142,20 +142,23 @@ class MonitoringService {
     };
 
     this.alerts.push(alert);
-    
+
     // Auto-resolve info alerts after 5 minutes
     if (type === 'info') {
-      setTimeout(() => {
-        this.resolveAlert(alert.id);
-      }, 5 * 60 * 1000);
+      setTimeout(
+        () => {
+          this.resolveAlert(alert.id);
+        },
+        5 * 60 * 1000
+      );
     }
 
     return alert;
-  }  /**
+  } /**
    * Resolve an alert
    */
   resolveAlert(alertId: string): boolean {
-    const alert = this.alerts.find(a => a.id === alertId);
+    const alert = this.alerts.find((a) => a.id === alertId);
     if (alert) {
       alert.resolved = true;
       return true;
@@ -167,7 +170,7 @@ class MonitoringService {
    * Get alerts
    */
   getAlerts(includeResolved = false): Alert[] {
-    return this.alerts.filter(alert => includeResolved || !alert.resolved);
+    return this.alerts.filter((alert) => includeResolved || !alert.resolved);
   }
 
   /**
@@ -175,7 +178,8 @@ class MonitoringService {
    */
   getSystemHealth(): SystemHealth {
     // Simulate dynamic values
-    this.healthData.uptime = Date.now() - (this.healthData.uptime || Date.now());
+    this.healthData.uptime =
+      Date.now() - (this.healthData.uptime || Date.now());
     this.healthData.memory.percentage = Math.floor(Math.random() * 20) + 60; // 60-80%
     this.healthData.cpu.usage = Math.floor(Math.random() * 30) + 20; // 20-50%
     this.healthData.database.latency = Math.floor(Math.random() * 10) + 5; // 5-15ms
@@ -188,23 +192,30 @@ class MonitoringService {
    */
   getPerformanceMetrics(): PerformanceMetrics {
     // Simulate dynamic values
-    this.performanceData.responseTime.avg = Math.floor(Math.random() * 100) + 50;
-    this.performanceData.throughput.requestsPerSecond = Math.floor(Math.random() * 100) + 200;
+    this.performanceData.responseTime.avg =
+      Math.floor(Math.random() * 100) + 50;
+    this.performanceData.throughput.requestsPerSecond =
+      Math.floor(Math.random() * 100) + 200;
     this.performanceData.errorRate.percentage = Math.random() * 2; // 0-2%
 
     return { ...this.performanceData };
-  }  /**
+  } /**
    * Log an error
    */
   logError(error: Error, context?: Record<string, any>): void {
-    this.recordMetric('errors', 1, { 
-      type: error.name,
-      source: context?.source || 'unknown' 
-    }, {
-      message: error.message,
-      stack: error.stack,
-      context,
-    });
+    this.recordMetric(
+      'errors',
+      1,
+      {
+        type: error.name,
+        source: context?.source || 'unknown',
+      },
+      {
+        message: error.message,
+        stack: error.stack,
+        context,
+      }
+    );
 
     this.createAlert(
       'error',
@@ -217,7 +228,11 @@ class MonitoringService {
   /**
    * Log a warning
    */
-  logWarning(message: string, source: string, metadata?: Record<string, any>): void {
+  logWarning(
+    message: string,
+    source: string,
+    metadata?: Record<string, any>
+  ): void {
     this.recordMetric('warnings', 1, { source }, metadata);
     this.createAlert('warning', message, source, metadata);
   }
@@ -225,7 +240,11 @@ class MonitoringService {
   /**
    * Log an info event
    */
-  logInfo(message: string, source: string, metadata?: Record<string, any>): void {
+  logInfo(
+    message: string,
+    source: string,
+    metadata?: Record<string, any>
+  ): void {
     this.recordMetric('info_events', 1, { source }, metadata);
     this.createAlert('info', message, source, metadata);
   }
@@ -233,7 +252,12 @@ class MonitoringService {
   /**
    * Track API response time
    */
-  trackApiResponse(endpoint: string, method: string, responseTime: number, statusCode: number): void {
+  trackApiResponse(
+    endpoint: string,
+    method: string,
+    responseTime: number,
+    statusCode: number
+  ): void {
     this.recordMetric('api_response_time', responseTime, {
       endpoint,
       method,
@@ -253,7 +277,7 @@ class MonitoringService {
         status: statusCode.toString(),
       });
     }
-  }  /**
+  } /**
    * Clear old data
    */
   cleanup(olderThanMs: number = 24 * 60 * 60 * 1000): void {
@@ -261,13 +285,13 @@ class MonitoringService {
 
     // Clean metrics
     for (const [name, metrics] of this.metrics.entries()) {
-      const filtered = metrics.filter(m => m.timestamp > cutoff);
+      const filtered = metrics.filter((m) => m.timestamp > cutoff);
       this.metrics.set(name, filtered);
     }
 
     // Clean resolved alerts
-    this.alerts = this.alerts.filter(alert => 
-      !alert.resolved || alert.timestamp > cutoff
+    this.alerts = this.alerts.filter(
+      (alert) => !alert.resolved || alert.timestamp > cutoff
     );
   }
 
@@ -311,7 +335,8 @@ class MonitoringService {
           responseTime: 34,
         },
       },
-    };    this.performanceData = {
+    };
+    this.performanceData = {
       responseTime: {
         p50: 120,
         p95: 450,
@@ -320,7 +345,7 @@ class MonitoringService {
       },
       throughput: {
         requestsPerSecond: 245,
-        totalRequests: 1234567,
+        totalRequests: 1_234_567,
       },
       errorRate: {
         percentage: 0.8,

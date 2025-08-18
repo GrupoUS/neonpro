@@ -9,11 +9,11 @@ try {
   if (fs.existsSync(webAuthnServicePath)) {
     webAuthnService = {
       validateCredential: () => ({ valid: true }),
-      getCredentials: () => ([]),
+      getCredentials: () => [],
       createCredential: () => ({ id: 'test-credential' }),
       validateChallenge: () => true,
       getPublicKeyCredentialRequestOptions: () => ({}),
-      getPublicKeyCredentialCreationOptions: () => ({})
+      getPublicKeyCredentialCreationOptions: () => ({}),
     };
   }
 } catch (error) {
@@ -29,14 +29,14 @@ try {
     getPerformanceThresholds: () => ({
       registration: 5000,
       authentication: 2000,
-      validation: 1000
+      validation: 1000,
     }),
     recordMetric: () => true,
     getMetrics: () => ({
       averageRegistrationTime: 2500,
       averageAuthenticationTime: 1500,
-      successRate: 0.95
-    })
+      successRate: 0.95,
+    }),
   };
 } catch (error) {
   console.warn('Performance tracker not available:', error.message);
@@ -44,5 +44,5 @@ try {
 
 module.exports = {
   webAuthnService,
-  authPerformanceTracker
+  authPerformanceTracker,
 };

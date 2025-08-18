@@ -7,7 +7,7 @@
 import { exec } from 'child_process';
 import ora from 'ora';
 import { promisify } from 'util';
-import { DeploymentMonitor, MonitorConfig } from './deployment-monitor';
+import { DeploymentMonitor, type MonitorConfig } from './deployment-monitor';
 import { HealthChecker } from './health-checker';
 import { RollbackManager } from './rollback-manager';
 import { TrafficManager } from './traffic-manager';
@@ -78,10 +78,16 @@ export class BlueGreenDeployer {
 
   constructor(config: DeploymentConfig) {
     this.config = config;
-    this.healthChecker = new HealthChecker({ maxHistoryPerEndpoint: 100, baseUrl: config.environments.production.url || 'http://localhost:3000' });
+    this.healthChecker = new HealthChecker({
+      maxHistoryPerEndpoint: 100,
+      baseUrl: config.environments.production.url || 'http://localhost:3000',
+    });
     this.trafficManager = new TrafficManager({ maxHistorySize: 100 });
     this.rollbackManager = new RollbackManager({ maxRollbackHistory: 50 });
-    this.monitor = new DeploymentMonitor({ maxDeploymentHistory: 100, metricsInterval: 5000 } as MonitorConfig);
+    this.monitor = new DeploymentMonitor({
+      maxDeploymentHistory: 100,
+      metricsInterval: 5000,
+    } as MonitorConfig);
     this.spinner = ora('Blue-Green Deployment');
   }
 
@@ -169,7 +175,7 @@ export class BlueGreenDeployer {
             version: this.config.version,
             environment: result.targetEnvironment,
             reason: 'Deployment failure',
-            timestamp: new Date()
+            timestamp: new Date(),
           });
           result.rollbackExecuted = true;
           this.spinner.succeed('Rollback completed successfully');

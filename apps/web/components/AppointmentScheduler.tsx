@@ -1,21 +1,19 @@
-"use client";
+'use client';
 
-import React, { useState, useCallback } from "react";
 import {
+  Alert,
+  AlertDescription,
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Badge,
+  Button,
+  Calendar,
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-  Button,
-  Input,
-  Label,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  Calendar,
   Dialog,
   DialogContent,
   DialogDescription,
@@ -23,32 +21,33 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  Badge,
-  Alert,
-  AlertDescription,
+  Input,
+  Label,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@neonpro/ui";
-
+} from '@neonpro/ui';
 import {
+  AlertCircle,
   Calendar as CalendarIcon,
+  CheckCircle,
   Clock,
-  User,
-  Phone,
+  Edit,
   Mail,
   MapPin,
+  Phone,
   Plus,
-  Edit,
   Trash2,
-  CheckCircle,
+  User,
   XCircle,
-  AlertCircle,
-} from "lucide-react";
+} from 'lucide-react';
+import React, { useCallback, useState } from 'react';
 
 interface Appointment {
   id: string;
@@ -58,10 +57,10 @@ interface Appointment {
   date: Date;
   time: string;
   duration: number;
-  type: "consultation" | "followup" | "procedure" | "emergency";
+  type: 'consultation' | 'followup' | 'procedure' | 'emergency';
   doctor: string;
   specialty: string;
-  status: "scheduled" | "confirmed" | "completed" | "cancelled" | "no-show";
+  status: 'scheduled' | 'confirmed' | 'completed' | 'cancelled' | 'no-show';
   notes?: string;
   room?: string;
 }
@@ -78,52 +77,53 @@ interface Doctor {
 
 const MOCK_DOCTORS: Doctor[] = [
   {
-    id: "1",
-    name: "Dr. Ana Silva",
-    specialty: "Cardiologia",
+    id: '1',
+    name: 'Dr. Ana Silva',
+    specialty: 'Cardiologia',
     availability: {
-      monday: ["09:00", "10:00", "11:00", "14:00", "15:00", "16:00"],
-      tuesday: ["09:00", "10:00", "11:00", "14:00", "15:00"],
-      wednesday: ["09:00", "10:00", "14:00", "15:00", "16:00"],
-      thursday: ["09:00", "10:00", "11:00", "14:00", "15:00", "16:00"],
-      friday: ["09:00", "10:00", "11:00", "14:00", "15:00"],
+      monday: ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'],
+      tuesday: ['09:00', '10:00', '11:00', '14:00', '15:00'],
+      wednesday: ['09:00', '10:00', '14:00', '15:00', '16:00'],
+      thursday: ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'],
+      friday: ['09:00', '10:00', '11:00', '14:00', '15:00'],
     },
   },
   {
-    id: "2",
-    name: "Dr. João Santos",
-    specialty: "Clínica Geral",
+    id: '2',
+    name: 'Dr. João Santos',
+    specialty: 'Clínica Geral',
     availability: {
-      monday: ["08:00", "09:00", "10:00", "14:00", "15:00", "16:00", "17:00"],
-      tuesday: ["08:00", "09:00", "10:00", "14:00", "15:00", "16:00"],
-      wednesday: ["08:00", "09:00", "14:00", "15:00", "16:00", "17:00"],
-      thursday: ["08:00", "09:00", "10:00", "14:00", "15:00", "16:00"],
-      friday: ["08:00", "09:00", "10:00", "14:00", "15:00", "16:00"],
+      monday: ['08:00', '09:00', '10:00', '14:00', '15:00', '16:00', '17:00'],
+      tuesday: ['08:00', '09:00', '10:00', '14:00', '15:00', '16:00'],
+      wednesday: ['08:00', '09:00', '14:00', '15:00', '16:00', '17:00'],
+      thursday: ['08:00', '09:00', '10:00', '14:00', '15:00', '16:00'],
+      friday: ['08:00', '09:00', '10:00', '14:00', '15:00', '16:00'],
     },
   },
 ];
 
 const APPOINTMENT_TYPES = [
-  { value: "consultation", label: "Consulta", duration: 30 },
-  { value: "followup", label: "Retorno", duration: 20 },
-  { value: "procedure", label: "Procedimento", duration: 60 },
-  { value: "emergency", label: "Emergência", duration: 45 },
+  { value: 'consultation', label: 'Consulta', duration: 30 },
+  { value: 'followup', label: 'Retorno', duration: 20 },
+  { value: 'procedure', label: 'Procedimento', duration: 60 },
+  { value: 'emergency', label: 'Emergência', duration: 45 },
 ];
 
 export default function AppointmentScheduler() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+  const [selectedAppointment, setSelectedAppointment] =
+    useState<Appointment | null>(null);
   const [formData, setFormData] = useState({
-    patientName: "",
-    patientEmail: "",
-    patientPhone: "",
+    patientName: '',
+    patientEmail: '',
+    patientPhone: '',
     date: new Date(),
-    time: "",
-    type: "consultation" as Appointment["type"],
-    doctor: "",
-    notes: "",
+    time: '',
+    type: 'consultation' as Appointment['type'],
+    doctor: '',
+    notes: '',
   });
 
   const handleDateSelect = useCallback((date: Date | undefined) => {
@@ -135,7 +135,9 @@ export default function AppointmentScheduler() {
 
   const handleScheduleAppointment = () => {
     const selectedDoctor = MOCK_DOCTORS.find((d) => d.id === formData.doctor);
-    const appointmentType = APPOINTMENT_TYPES.find((t) => t.value === formData.type);
+    const appointmentType = APPOINTMENT_TYPES.find(
+      (t) => t.value === formData.type
+    );
 
     if (!(selectedDoctor && appointmentType)) return;
 
@@ -150,7 +152,7 @@ export default function AppointmentScheduler() {
       type: formData.type,
       doctor: selectedDoctor.name,
       specialty: selectedDoctor.specialty,
-      status: "scheduled",
+      status: 'scheduled',
       notes: formData.notes,
     };
 
@@ -161,50 +163,55 @@ export default function AppointmentScheduler() {
 
   const resetForm = () => {
     setFormData({
-      patientName: "",
-      patientEmail: "",
-      patientPhone: "",
+      patientName: '',
+      patientEmail: '',
+      patientPhone: '',
       date: new Date(),
-      time: "",
-      type: "consultation",
-      doctor: "",
-      notes: "",
+      time: '',
+      type: 'consultation',
+      doctor: '',
+      notes: '',
     });
   };
 
-  const handleStatusChange = (appointmentId: string, newStatus: Appointment["status"]) => {
+  const handleStatusChange = (
+    appointmentId: string,
+    newStatus: Appointment['status']
+  ) => {
     setAppointments((prev) =>
-      prev.map((apt) => (apt.id === appointmentId ? { ...apt, status: newStatus } : apt)),
+      prev.map((apt) =>
+        apt.id === appointmentId ? { ...apt, status: newStatus } : apt
+      )
     );
   };
 
-  const getStatusBadge = (status: Appointment["status"]) => {
+  const getStatusBadge = (status: Appointment['status']) => {
     const variants = {
-      scheduled: "bg-blue-100 text-blue-800",
-      confirmed: "bg-green-100 text-green-800",
-      completed: "bg-gray-100 text-gray-800",
-      cancelled: "bg-red-100 text-red-800",
-      "no-show": "bg-orange-100 text-orange-800",
+      scheduled: 'bg-blue-100 text-blue-800',
+      confirmed: 'bg-green-100 text-green-800',
+      completed: 'bg-gray-100 text-gray-800',
+      cancelled: 'bg-red-100 text-red-800',
+      'no-show': 'bg-orange-100 text-orange-800',
     };
 
     const labels = {
-      scheduled: "Agendado",
-      confirmed: "Confirmado",
-      completed: "Concluído",
-      cancelled: "Cancelado",
-      "no-show": "Faltou",
+      scheduled: 'Agendado',
+      confirmed: 'Confirmado',
+      completed: 'Concluído',
+      cancelled: 'Cancelado',
+      'no-show': 'Faltou',
     };
 
     return <Badge className={variants[status]}>{labels[status]}</Badge>;
   };
 
-  const getStatusIcon = (status: Appointment["status"]) => {
+  const getStatusIcon = (status: Appointment['status']) => {
     switch (status) {
-      case "confirmed":
+      case 'confirmed':
         return <CheckCircle className="h-4 w-4 text-green-600" />;
-      case "cancelled":
+      case 'cancelled':
         return <XCircle className="h-4 w-4 text-red-600" />;
-      case "no-show":
+      case 'no-show':
         return <AlertCircle className="h-4 w-4 text-orange-600" />;
       default:
         return <Clock className="h-4 w-4 text-blue-600" />;
@@ -215,12 +222,12 @@ export default function AppointmentScheduler() {
     const doctor = MOCK_DOCTORS.find((d) => d.id === doctorId);
     if (!doctor) return [];
 
-    const dayName = date.toLocaleDateString("en-US", { weekday: "lowercase" });
+    const dayName = date.toLocaleDateString('en-US', { weekday: 'lowercase' });
     return doctor.availability[dayName] || [];
   };
 
   const filteredAppointments = appointments.filter(
-    (apt) => apt.date.toDateString() === selectedDate.toDateString(),
+    (apt) => apt.date.toDateString() === selectedDate.toDateString()
   );
 
   return (
@@ -228,9 +235,11 @@ export default function AppointmentScheduler() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-bold text-3xl tracking-tight">Agendamentos</h1>
-          <p className="text-muted-foreground">Gerencie consultas e horários disponíveis</p>
+          <p className="text-muted-foreground">
+            Gerencie consultas e horários disponíveis
+          </p>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <Dialog onOpenChange={setIsDialogOpen} open={isDialogOpen}>
           <DialogTrigger asChild>
             <Button>
               <Plus className="mr-2 h-4 w-4" />
@@ -250,41 +259,52 @@ export default function AppointmentScheduler() {
                 <Label htmlFor="patientName">Nome do Paciente</Label>
                 <Input
                   id="patientName"
-                  value={formData.patientName}
                   onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, patientName: e.target.value }))
+                    setFormData((prev) => ({
+                      ...prev,
+                      patientName: e.target.value,
+                    }))
                   }
                   placeholder="Nome completo"
+                  value={formData.patientName}
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="patientEmail">Email</Label>
                 <Input
                   id="patientEmail"
-                  type="email"
-                  value={formData.patientEmail}
                   onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, patientEmail: e.target.value }))
+                    setFormData((prev) => ({
+                      ...prev,
+                      patientEmail: e.target.value,
+                    }))
                   }
                   placeholder="email@exemplo.com"
+                  type="email"
+                  value={formData.patientEmail}
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="patientPhone">Telefone</Label>
                 <Input
                   id="patientPhone"
-                  value={formData.patientPhone}
                   onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, patientPhone: e.target.value }))
+                    setFormData((prev) => ({
+                      ...prev,
+                      patientPhone: e.target.value,
+                    }))
                   }
                   placeholder="(11) 99999-9999"
+                  value={formData.patientPhone}
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="doctor">Médico</Label>
                 <Select
+                  onValueChange={(value) =>
+                    setFormData((prev) => ({ ...prev, doctor: value }))
+                  }
                   value={formData.doctor}
-                  onValueChange={(value) => setFormData((prev) => ({ ...prev, doctor: value }))}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione o médico" />
@@ -301,10 +321,13 @@ export default function AppointmentScheduler() {
               <div className="space-y-2">
                 <Label htmlFor="type">Tipo de Consulta</Label>
                 <Select
-                  value={formData.type}
                   onValueChange={(value) =>
-                    setFormData((prev) => ({ ...prev, type: value as Appointment["type"] }))
+                    setFormData((prev) => ({
+                      ...prev,
+                      type: value as Appointment['type'],
+                    }))
                   }
+                  value={formData.type}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione o tipo" />
@@ -321,18 +344,22 @@ export default function AppointmentScheduler() {
               <div className="space-y-2">
                 <Label htmlFor="time">Horário</Label>
                 <Select
+                  onValueChange={(value) =>
+                    setFormData((prev) => ({ ...prev, time: value }))
+                  }
                   value={formData.time}
-                  onValueChange={(value) => setFormData((prev) => ({ ...prev, time: value }))}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione o horário" />
                   </SelectTrigger>
                   <SelectContent>
-                    {getAvailableTimes(formData.doctor, formData.date).map((time) => (
-                      <SelectItem key={time} value={time}>
-                        {time}
-                      </SelectItem>
-                    ))}
+                    {getAvailableTimes(formData.doctor, formData.date).map(
+                      (time) => (
+                        <SelectItem key={time} value={time}>
+                          {time}
+                        </SelectItem>
+                      )
+                    )}
                   </SelectContent>
                 </Select>
               </div>
@@ -341,11 +368,11 @@ export default function AppointmentScheduler() {
             <div className="space-y-2">
               <Label htmlFor="date">Data</Label>
               <Calendar
-                mode="single"
-                selected={formData.date}
-                onSelect={handleDateSelect}
-                disabled={(date) => date < new Date()}
                 className="rounded-md border"
+                disabled={(date) => date < new Date()}
+                mode="single"
+                onSelect={handleDateSelect}
+                selected={formData.date}
               />
             </div>
 
@@ -353,14 +380,16 @@ export default function AppointmentScheduler() {
               <Label htmlFor="notes">Observações</Label>
               <Input
                 id="notes"
-                value={formData.notes}
-                onChange={(e) => setFormData((prev) => ({ ...prev, notes: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, notes: e.target.value }))
+                }
                 placeholder="Observações adicionais..."
+                value={formData.notes}
               />
             </div>
 
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+              <Button onClick={() => setIsDialogOpen(false)} variant="outline">
                 Cancelar
               </Button>
               <Button onClick={handleScheduleAppointment}>Agendar</Button>
@@ -374,14 +403,16 @@ export default function AppointmentScheduler() {
         <Card>
           <CardHeader>
             <CardTitle>Calendário</CardTitle>
-            <CardDescription>Selecione uma data para ver os agendamentos</CardDescription>
+            <CardDescription>
+              Selecione uma data para ver os agendamentos
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <Calendar
-              mode="single"
-              selected={selectedDate}
-              onSelect={handleDateSelect}
               className="rounded-md border"
+              mode="single"
+              onSelect={handleDateSelect}
+              selected={selectedDate}
             />
           </CardContent>
         </Card>
@@ -389,7 +420,9 @@ export default function AppointmentScheduler() {
         {/* Appointments List */}
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle>Agendamentos - {selectedDate.toLocaleDateString("pt-BR")}</CardTitle>
+            <CardTitle>
+              Agendamentos - {selectedDate.toLocaleDateString('pt-BR')}
+            </CardTitle>
             <CardDescription>
               {filteredAppointments.length} agendamento(s) para esta data
             </CardDescription>
@@ -398,7 +431,9 @@ export default function AppointmentScheduler() {
             {filteredAppointments.length === 0 ? (
               <div className="py-8 text-center">
                 <CalendarIcon className="mx-auto h-12 w-12 text-gray-400" />
-                <h3 className="mt-2 font-medium text-gray-900 text-sm">Nenhum agendamento</h3>
+                <h3 className="mt-2 font-medium text-gray-900 text-sm">
+                  Nenhum agendamento
+                </h3>
                 <p className="mt-1 text-gray-500 text-sm">
                   Não há consultas agendadas para esta data.
                 </p>
@@ -407,14 +442,16 @@ export default function AppointmentScheduler() {
               <div className="space-y-4">
                 {filteredAppointments.map((appointment) => (
                   <div
-                    key={appointment.id}
                     className="flex items-center justify-between rounded-lg border p-4"
+                    key={appointment.id}
                   >
                     <div className="flex items-center space-x-4">
                       <div className="flex items-center space-x-2">
                         {getStatusIcon(appointment.status)}
                         <div>
-                          <h4 className="font-medium">{appointment.patientName}</h4>
+                          <h4 className="font-medium">
+                            {appointment.patientName}
+                          </h4>
                           <div className="flex items-center space-x-4 text-muted-foreground text-sm">
                             <span className="flex items-center">
                               <Clock className="mr-1 h-3 w-3" />
@@ -433,10 +470,13 @@ export default function AppointmentScheduler() {
                     <div className="flex items-center space-x-2">
                       {getStatusBadge(appointment.status)}
                       <Select
-                        value={appointment.status}
                         onValueChange={(value) =>
-                          handleStatusChange(appointment.id, value as Appointment["status"])
+                          handleStatusChange(
+                            appointment.id,
+                            value as Appointment['status']
+                          )
                         }
+                        value={appointment.status}
                       >
                         <SelectTrigger className="w-32">
                           <SelectValue />
@@ -449,7 +489,7 @@ export default function AppointmentScheduler() {
                           <SelectItem value="no-show">Faltou</SelectItem>
                         </SelectContent>
                       </Select>
-                      <Button variant="outline" size="sm">
+                      <Button size="sm" variant="outline">
                         <Edit className="h-4 w-4" />
                       </Button>
                     </div>
@@ -472,7 +512,8 @@ export default function AppointmentScheduler() {
                 <p className="font-bold text-2xl">
                   {
                     appointments.filter(
-                      (apt) => apt.date.toDateString() === new Date().toDateString(),
+                      (apt) =>
+                        apt.date.toDateString() === new Date().toDateString()
                     ).length
                   }
                 </p>
@@ -488,7 +529,10 @@ export default function AppointmentScheduler() {
               <div>
                 <p className="font-medium text-sm">Confirmados</p>
                 <p className="font-bold text-2xl">
-                  {appointments.filter((apt) => apt.status === "confirmed").length}
+                  {
+                    appointments.filter((apt) => apt.status === 'confirmed')
+                      .length
+                  }
                 </p>
               </div>
             </div>
@@ -502,7 +546,10 @@ export default function AppointmentScheduler() {
               <div>
                 <p className="font-medium text-sm">Cancelados</p>
                 <p className="font-bold text-2xl">
-                  {appointments.filter((apt) => apt.status === "cancelled").length}
+                  {
+                    appointments.filter((apt) => apt.status === 'cancelled')
+                      .length
+                  }
                 </p>
               </div>
             </div>
@@ -516,7 +563,10 @@ export default function AppointmentScheduler() {
               <div>
                 <p className="font-medium text-sm">Faltas</p>
                 <p className="font-bold text-2xl">
-                  {appointments.filter((apt) => apt.status === "no-show").length}
+                  {
+                    appointments.filter((apt) => apt.status === 'no-show')
+                      .length
+                  }
                 </p>
               </div>
             </div>

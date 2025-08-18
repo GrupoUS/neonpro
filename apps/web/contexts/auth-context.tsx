@@ -1,13 +1,18 @@
 'use client';
 
-import React, { 
-  createContext, 
-  useContext, 
-  useEffect, 
-  useState, 
-  type ReactNode 
+import type {
+  AuthError,
+  Session,
+  SupabaseClient,
+  User,
+} from '@supabase/supabase-js';
+import React, {
+  createContext,
+  type ReactNode,
+  useContext,
+  useEffect,
+  useState,
 } from 'react';
-import type { SupabaseClient, User, Session, AuthError } from '@supabase/supabase-js';
 import { createClient } from '@/app/utils/supabase/client';
 
 // Types
@@ -15,11 +20,18 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signIn: (email: string, password: string) => Promise<{
+  signIn: (
+    email: string,
+    password: string
+  ) => Promise<{
     user: User | null;
     error: AuthError | null;
   }>;
-  signUp: (email: string, password: string, name?: string) => Promise<{
+  signUp: (
+    email: string,
+    password: string,
+    name?: string
+  ) => Promise<{
     user: User | null;
     error: AuthError | null;
   }>;
@@ -43,7 +55,10 @@ interface AuthProviderProps {
 }
 
 // Provider component
-export function AuthProvider({ children, supabase: customSupabase }: AuthProviderProps) {
+export function AuthProvider({
+  children,
+  supabase: customSupabase,
+}: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
@@ -54,7 +69,10 @@ export function AuthProvider({ children, supabase: customSupabase }: AuthProvide
     // Get initial session
     const getInitialSession = async () => {
       try {
-        const { data: { session }, error } = await client.auth.getSession();
+        const {
+          data: { session },
+          error,
+        } = await client.auth.getSession();
         if (error) {
           console.error('Error getting session:', error);
         } else {
@@ -71,13 +89,13 @@ export function AuthProvider({ children, supabase: customSupabase }: AuthProvide
     getInitialSession();
 
     // Listen for auth changes
-    const { data: { subscription } } = client.auth.onAuthStateChange(
-      async (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
-      }
-    );
+    const {
+      data: { subscription },
+    } = client.auth.onAuthStateChange(async (event, session) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
 
     return () => subscription.unsubscribe();
   }, [client]);
@@ -142,11 +160,7 @@ export function AuthProvider({ children, supabase: customSupabase }: AuthProvide
     signInWithGoogle,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 // Hook to use auth context

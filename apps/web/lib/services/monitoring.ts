@@ -1,5 +1,5 @@
 // Migrated from src/services/monitoring.ts
-import { supabase } from "@/lib/supabase";
+import { supabase } from '@/lib/supabase';
 
 export interface SystemMetric {
   id?: string;
@@ -7,7 +7,7 @@ export interface SystemMetric {
   metric_name: string;
   metric_value: number;
   metric_unit: string;
-  category: "performance" | "security" | "compliance" | "business" | "system";
+  category: 'performance' | 'security' | 'compliance' | 'business' | 'system';
   tags?: Record<string, string>;
   timestamp: string;
   created_at?: string;
@@ -25,8 +25,12 @@ export interface PerformanceMetrics {
 export interface SecurityEvent {
   id?: string;
   tenant_id: string;
-  event_type: "login_attempt" | "data_access" | "permission_change" | "suspicious_activity";
-  severity: "low" | "medium" | "high" | "critical";
+  event_type:
+    | 'login_attempt'
+    | 'data_access'
+    | 'permission_change'
+    | 'suspicious_activity';
+  severity: 'low' | 'medium' | 'high' | 'critical';
   user_id?: string;
   ip_address?: string;
   user_agent?: string;
@@ -39,24 +43,28 @@ export interface SecurityEvent {
 export interface ComplianceAlert {
   id?: string;
   tenant_id: string;
-  alert_type: "lgpd_violation" | "anvisa_violation" | "cfm_violation" | "data_breach";
-  severity: "low" | "medium" | "high" | "critical";
+  alert_type:
+    | 'lgpd_violation'
+    | 'anvisa_violation'
+    | 'cfm_violation'
+    | 'data_breach';
+  severity: 'low' | 'medium' | 'high' | 'critical';
   description: string;
   affected_records?: number;
   action_required: string;
   due_date?: string;
-  status: "open" | "in_progress" | "resolved" | "dismissed";
+  status: 'open' | 'in_progress' | 'resolved' | 'dismissed';
   created_at?: string;
   resolved_at?: string;
 }
 
 export class MonitoringService {
   async recordMetric(
-    metric: Omit<SystemMetric, "id" | "created_at">,
+    metric: Omit<SystemMetric, 'id' | 'created_at'>
   ): Promise<{ metric?: SystemMetric; error?: string }> {
     try {
       const { data, error } = await supabase
-        .from("system_metrics")
+        .from('system_metrics')
         .insert({
           ...metric,
           created_at: new Date().toISOString(),
@@ -71,7 +79,8 @@ export class MonitoringService {
       return { metric: data };
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : "Failed to record metric",
+        error:
+          error instanceof Error ? error.message : 'Failed to record metric',
       };
     }
   }
@@ -79,34 +88,34 @@ export class MonitoringService {
   async getMetrics(
     tenantId: string,
     filters?: {
-      category?: SystemMetric["category"];
+      category?: SystemMetric['category'];
       metricName?: string;
       startDate?: string;
       endDate?: string;
       limit?: number;
-    },
+    }
   ): Promise<{ metrics?: SystemMetric[]; error?: string }> {
     try {
       let query = supabase
-        .from("system_metrics")
-        .select("*")
-        .eq("tenant_id", tenantId)
-        .order("timestamp", { ascending: false });
+        .from('system_metrics')
+        .select('*')
+        .eq('tenant_id', tenantId)
+        .order('timestamp', { ascending: false });
 
       if (filters?.category) {
-        query = query.eq("category", filters.category);
+        query = query.eq('category', filters.category);
       }
 
       if (filters?.metricName) {
-        query = query.eq("metric_name", filters.metricName);
+        query = query.eq('metric_name', filters.metricName);
       }
 
       if (filters?.startDate) {
-        query = query.gte("timestamp", filters.startDate);
+        query = query.gte('timestamp', filters.startDate);
       }
 
       if (filters?.endDate) {
-        query = query.lte("timestamp", filters.endDate);
+        query = query.lte('timestamp', filters.endDate);
       }
 
       if (filters?.limit) {
@@ -122,17 +131,17 @@ export class MonitoringService {
       return { metrics: data };
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : "Failed to get metrics",
+        error: error instanceof Error ? error.message : 'Failed to get metrics',
       };
     }
   }
 
   async recordSecurityEvent(
-    event: Omit<SecurityEvent, "id" | "created_at">,
+    event: Omit<SecurityEvent, 'id' | 'created_at'>
   ): Promise<{ event?: SecurityEvent; error?: string }> {
     try {
       const { data, error } = await supabase
-        .from("security_events")
+        .from('security_events')
         .insert({
           ...event,
           created_at: new Date().toISOString(),
@@ -145,14 +154,17 @@ export class MonitoringService {
       }
 
       // Check if this is a high/critical security event that needs immediate attention
-      if (event.severity === "high" || event.severity === "critical") {
+      if (event.severity === 'high' || event.severity === 'critical') {
         await this.triggerSecurityAlert(data);
       }
 
       return { event: data };
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : "Failed to record security event",
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to record security event',
       };
     }
   }
@@ -160,39 +172,39 @@ export class MonitoringService {
   async getSecurityEvents(
     tenantId: string,
     filters?: {
-      eventType?: SecurityEvent["event_type"];
-      severity?: SecurityEvent["severity"];
+      eventType?: SecurityEvent['event_type'];
+      severity?: SecurityEvent['severity'];
       userId?: string;
       startDate?: string;
       endDate?: string;
       limit?: number;
-    },
+    }
   ): Promise<{ events?: SecurityEvent[]; error?: string }> {
     try {
       let query = supabase
-        .from("security_events")
-        .select("*")
-        .eq("tenant_id", tenantId)
-        .order("timestamp", { ascending: false });
+        .from('security_events')
+        .select('*')
+        .eq('tenant_id', tenantId)
+        .order('timestamp', { ascending: false });
 
       if (filters?.eventType) {
-        query = query.eq("event_type", filters.eventType);
+        query = query.eq('event_type', filters.eventType);
       }
 
       if (filters?.severity) {
-        query = query.eq("severity", filters.severity);
+        query = query.eq('severity', filters.severity);
       }
 
       if (filters?.userId) {
-        query = query.eq("user_id", filters.userId);
+        query = query.eq('user_id', filters.userId);
       }
 
       if (filters?.startDate) {
-        query = query.gte("timestamp", filters.startDate);
+        query = query.gte('timestamp', filters.startDate);
       }
 
       if (filters?.endDate) {
-        query = query.lte("timestamp", filters.endDate);
+        query = query.lte('timestamp', filters.endDate);
       }
 
       if (filters?.limit) {
@@ -208,17 +220,20 @@ export class MonitoringService {
       return { events: data };
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : "Failed to get security events",
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to get security events',
       };
     }
   }
 
   async createComplianceAlert(
-    alert: Omit<ComplianceAlert, "id" | "created_at">,
+    alert: Omit<ComplianceAlert, 'id' | 'created_at'>
   ): Promise<{ alert?: ComplianceAlert; error?: string }> {
     try {
       const { data, error } = await supabase
-        .from("compliance_alerts")
+        .from('compliance_alerts')
         .insert({
           ...alert,
           created_at: new Date().toISOString(),
@@ -231,14 +246,17 @@ export class MonitoringService {
       }
 
       // Send notification for high/critical compliance alerts
-      if (alert.severity === "high" || alert.severity === "critical") {
+      if (alert.severity === 'high' || alert.severity === 'critical') {
         await this.triggerComplianceNotification(data);
       }
 
       return { alert: data };
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : "Failed to create compliance alert",
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to create compliance alert',
       };
     }
   }
@@ -246,29 +264,29 @@ export class MonitoringService {
   async getComplianceAlerts(
     tenantId: string,
     filters?: {
-      alertType?: ComplianceAlert["alert_type"];
-      severity?: ComplianceAlert["severity"];
-      status?: ComplianceAlert["status"];
+      alertType?: ComplianceAlert['alert_type'];
+      severity?: ComplianceAlert['severity'];
+      status?: ComplianceAlert['status'];
       limit?: number;
-    },
+    }
   ): Promise<{ alerts?: ComplianceAlert[]; error?: string }> {
     try {
       let query = supabase
-        .from("compliance_alerts")
-        .select("*")
-        .eq("tenant_id", tenantId)
-        .order("created_at", { ascending: false });
+        .from('compliance_alerts')
+        .select('*')
+        .eq('tenant_id', tenantId)
+        .order('created_at', { ascending: false });
 
       if (filters?.alertType) {
-        query = query.eq("alert_type", filters.alertType);
+        query = query.eq('alert_type', filters.alertType);
       }
 
       if (filters?.severity) {
-        query = query.eq("severity", filters.severity);
+        query = query.eq('severity', filters.severity);
       }
 
       if (filters?.status) {
-        query = query.eq("status", filters.status);
+        query = query.eq('status', filters.status);
       }
 
       if (filters?.limit) {
@@ -284,13 +302,16 @@ export class MonitoringService {
       return { alerts: data };
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : "Failed to get compliance alerts",
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to get compliance alerts',
       };
     }
   }
 
   async getPerformanceMetrics(
-    tenantId: string,
+    tenantId: string
   ): Promise<{ metrics?: PerformanceMetrics; error?: string }> {
     try {
       const currentTime = new Date();
@@ -298,12 +319,12 @@ export class MonitoringService {
 
       // Get recent performance metrics
       const { data, error } = await supabase
-        .from("system_metrics")
-        .select("metric_name, metric_value")
-        .eq("tenant_id", tenantId)
-        .eq("category", "performance")
-        .gte("timestamp", oneHourAgo.toISOString())
-        .order("timestamp", { ascending: false });
+        .from('system_metrics')
+        .select('metric_name, metric_value')
+        .eq('tenant_id', tenantId)
+        .eq('category', 'performance')
+        .gte('timestamp', oneHourAgo.toISOString())
+        .order('timestamp', { ascending: false });
 
       if (error) {
         return { error: error.message };
@@ -319,21 +340,26 @@ export class MonitoringService {
       });
 
       const getAverage = (values: number[]) =>
-        values.length > 0 ? values.reduce((a, b) => a + b, 0) / values.length : 0;
+        values.length > 0
+          ? values.reduce((a, b) => a + b, 0) / values.length
+          : 0;
 
       const metrics: PerformanceMetrics = {
-        response_time: getAverage(metricsMap.get("response_time") || []),
-        throughput: getAverage(metricsMap.get("throughput") || []),
-        error_rate: getAverage(metricsMap.get("error_rate") || []),
-        cpu_usage: getAverage(metricsMap.get("cpu_usage") || []),
-        memory_usage: getAverage(metricsMap.get("memory_usage") || []),
-        active_users: getAverage(metricsMap.get("active_users") || []),
+        response_time: getAverage(metricsMap.get('response_time') || []),
+        throughput: getAverage(metricsMap.get('throughput') || []),
+        error_rate: getAverage(metricsMap.get('error_rate') || []),
+        cpu_usage: getAverage(metricsMap.get('cpu_usage') || []),
+        memory_usage: getAverage(metricsMap.get('memory_usage') || []),
+        active_users: getAverage(metricsMap.get('active_users') || []),
       };
 
       return { metrics };
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : "Failed to get performance metrics",
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to get performance metrics',
       };
     }
   }
@@ -342,13 +368,13 @@ export class MonitoringService {
     tenantId: string,
     eventType: string,
     patientId?: string,
-    details?: Record<string, unknown>,
+    details?: Record<string, unknown>
   ): Promise<{ success?: boolean; error?: string }> {
     try {
-      const securityEvent: Omit<SecurityEvent, "id" | "created_at"> = {
+      const securityEvent: Omit<SecurityEvent, 'id' | 'created_at'> = {
         tenant_id: tenantId,
-        event_type: "data_access",
-        severity: "low",
+        event_type: 'data_access',
+        severity: 'low',
         user_id: patientId,
         details: {
           event_type: eventType,
@@ -366,7 +392,10 @@ export class MonitoringService {
       return { success: true };
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : "Failed to record healthcare event",
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to record healthcare event',
       };
     }
   }
@@ -374,26 +403,29 @@ export class MonitoringService {
   private async triggerSecurityAlert(event: SecurityEvent): Promise<void> {
     // Implementation for triggering security alerts
     // This could send notifications, create incidents, etc.
-    console.log("Security alert triggered:", event);
+    console.log('Security alert triggered:', event);
   }
 
-  private async triggerComplianceNotification(alert: ComplianceAlert): Promise<void> {
+  private async triggerComplianceNotification(
+    alert: ComplianceAlert
+  ): Promise<void> {
     // Implementation for triggering compliance notifications
     // This could send emails, create tasks, etc.
-    console.log("Compliance notification triggered:", alert);
+    console.log('Compliance notification triggered:', alert);
   }
 
   async generateMonitoringReport(
     tenantId: string,
     startDate: string,
-    endDate: string,
+    endDate: string
   ): Promise<{ report?: Record<string, unknown>; error?: string }> {
     try {
-      const [performanceResult, securityResult, complianceResult] = await Promise.all([
-        this.getPerformanceMetrics(tenantId),
-        this.getSecurityEvents(tenantId, { startDate, endDate }),
-        this.getComplianceAlerts(tenantId, { status: "open" }),
-      ]);
+      const [performanceResult, securityResult, complianceResult] =
+        await Promise.all([
+          this.getPerformanceMetrics(tenantId),
+          this.getSecurityEvents(tenantId, { startDate, endDate }),
+          this.getComplianceAlerts(tenantId, { status: 'open' }),
+        ]);
 
       const report = {
         period: { start: startDate, end: endDate },
@@ -401,13 +433,15 @@ export class MonitoringService {
         security: {
           total_events: securityResult.events?.length || 0,
           high_severity_events:
-            securityResult.events?.filter((e) => e.severity === "high" || e.severity === "critical")
-              .length || 0,
+            securityResult.events?.filter(
+              (e) => e.severity === 'high' || e.severity === 'critical'
+            ).length || 0,
         },
         compliance: {
           open_alerts: complianceResult.alerts?.length || 0,
           critical_alerts:
-            complianceResult.alerts?.filter((a) => a.severity === "critical").length || 0,
+            complianceResult.alerts?.filter((a) => a.severity === 'critical')
+              .length || 0,
         },
         generated_at: new Date().toISOString(),
       };
@@ -415,7 +449,10 @@ export class MonitoringService {
       return { report };
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : "Failed to generate monitoring report",
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to generate monitoring report',
       };
     }
   }

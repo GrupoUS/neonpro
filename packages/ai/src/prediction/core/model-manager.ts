@@ -1,5 +1,5 @@
-import * as tf from '@tensorflow/tfjs';
 import type { GraphModel, LayersModel } from '@tensorflow/tfjs';
+import * as tf from '@tensorflow/tfjs';
 import type { ModelMetadata, ModelType, PredictionConfig } from '../types';
 
 /**
@@ -10,9 +10,12 @@ import type { ModelMetadata, ModelType, PredictionConfig } from '../types';
 export class AIModelManager {
   private models = new Map<string, GraphModel | LayersModel>();
   private modelMetadata = new Map<string, ModelMetadata>();
-  private loadingPromises = new Map<string, Promise<GraphModel | LayersModel>>();
+  private loadingPromises = new Map<
+    string,
+    Promise<GraphModel | LayersModel>
+  >();
   private isInitialized = false;
-  
+
   // Model configuration for aesthetic treatments
   private readonly MODEL_CONFIGS: Record<ModelType, PredictionConfig> = {
     'treatment-outcome': {
@@ -20,50 +23,50 @@ export class AIModelManager {
       inputShape: [1, 24], // Patient features: age, skin type, medical history, etc.
       outputShape: [1, 3], // Outcome probability, confidence, timeline
       accuracy: 0.87,
-      version: '2.1.0'
+      version: '2.1.0',
     },
     'duration-estimation': {
       modelPath: '/models/duration-estimation-v1.json',
       inputShape: [1, 18], // Treatment type, patient factors, complexity
       outputShape: [1, 2], // Session duration, recovery time
       accuracy: 0.91,
-      version: '1.3.0'
+      version: '1.3.0',
     },
     'success-probability': {
       modelPath: '/models/success-probability-v3.json',
       inputShape: [1, 32], // Comprehensive patient and treatment features
       outputShape: [1, 4], // Success probability, confidence, risk factors, timeline
       accuracy: 0.89,
-      version: '3.0.1'
+      version: '3.0.1',
     },
     'risk-assessment': {
       modelPath: '/models/risk-assessment-v2.json',
       inputShape: [1, 28], // Medical history, contraindications, patient factors
       outputShape: [1, 5], // Risk levels for different complication types
       accuracy: 0.93,
-      version: '2.2.0'
+      version: '2.2.0',
     },
     'botox-optimization': {
       modelPath: '/models/botox-optimization-v1.json',
       inputShape: [1, 20], // Muscle activity, patient characteristics, target areas
       outputShape: [1, 3], // Optimal units, injection pattern, expected results
       accuracy: 0.88,
-      version: '1.1.0'
+      version: '1.1.0',
     },
     'filler-volume': {
       modelPath: '/models/filler-volume-v1.json',
       inputShape: [1, 22], // Facial analysis, patient goals, skin properties
       outputShape: [1, 4], // Volume per area, injection technique, timeline, longevity
       accuracy: 0.86,
-      version: '1.0.2'
+      version: '1.0.2',
     },
     'laser-settings': {
       modelPath: '/models/laser-settings-v2.json',
       inputShape: [1, 26], // Skin type, condition, previous treatments, sensitivity
       outputShape: [1, 6], // Energy, pulse duration, spot size, passes, cooling, recovery
       accuracy: 0.92,
-      version: '2.1.1'
-    }
+      version: '2.1.1',
+    },
   };
 
   /**
@@ -78,7 +81,7 @@ export class AIModelManager {
     try {
       // Configure TensorFlow.js for optimal browser performance
       await tf.ready();
-      
+
       // Set backend preference for best performance
       if (tf.env().platform.has('webgl')) {
         await tf.setBackend('webgl');
@@ -90,11 +93,11 @@ export class AIModelManager {
       const criticalModels: ModelType[] = [
         'treatment-outcome',
         'risk-assessment',
-        'success-probability'
+        'success-probability',
       ];
 
       await Promise.all(
-        criticalModels.map(modelType => this.preloadModel(modelType))
+        criticalModels.map((modelType) => this.preloadModel(modelType))
       );
 
       this.isInitialized = true;
@@ -137,37 +140,39 @@ export class AIModelManager {
         accuracy: config.accuracy,
         loadedAt: new Date(),
         inputShape: config.inputShape,
-        outputShape: config.outputShape
+        outputShape: config.outputShape,
       });
-      
+
       return model;
     } finally {
       this.loadingPromises.delete(modelType);
     }
-  }  /**
+  } /**
    * Perform actual model loading with comprehensive error handling
    */
   private async performModelLoad(
-    modelType: ModelType, 
+    modelType: ModelType,
     config: PredictionConfig
   ): Promise<GraphModel | LayersModel> {
     const startTime = performance.now();
-    
+
     try {
       // Load model with timeout protection
       const modelPromise = tf.loadLayersModel(config.modelPath);
       const timeoutPromise = new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error('Model loading timeout')), 30000)
+        setTimeout(() => reject(new Error('Model loading timeout')), 30_000)
       );
 
       const model = await Promise.race([modelPromise, timeoutPromise]);
-      
+
       // Validate model structure
       this.validateModelStructure(model, config);
-      
+
       const loadTime = performance.now() - startTime;
-      console.log(`✅ Model ${modelType} loaded successfully in ${loadTime.toFixed(2)}ms`);
-      
+      console.log(
+        `✅ Model ${modelType} loaded successfully in ${loadTime.toFixed(2)}ms`
+      );
+
       return model;
     } catch (error) {
       console.error(`❌ Failed to load model ${modelType}:`, error);
@@ -179,13 +184,13 @@ export class AIModelManager {
    * Validate model structure matches expected configuration
    */
   private validateModelStructure(
-    model: GraphModel | LayersModel, 
+    model: GraphModel | LayersModel,
     config: PredictionConfig
   ): void {
     if ('inputs' in model && model.inputs) {
       const inputShape = model.inputs[0].shape;
       const expectedInput = config.inputShape;
-      
+
       if (inputShape && !this.shapesMatch(inputShape, expectedInput)) {
         throw new Error(
           `Model input shape mismatch. Expected: ${expectedInput}, Got: ${inputShape}`
@@ -199,9 +204,10 @@ export class AIModelManager {
    */
   private shapesMatch(actual: number[], expected: number[]): boolean {
     if (actual.length !== expected.length) return false;
-    
-    return actual.every((dim, index) => 
-      dim === expected[index] || dim === null || expected[index] === null
+
+    return actual.every(
+      (dim, index) =>
+        dim === expected[index] || dim === null || expected[index] === null
     );
   }
 
@@ -230,11 +236,11 @@ export class AIModelManager {
    */
   getLoadedModelsStatus(): Record<ModelType, boolean> {
     const status: Partial<Record<ModelType, boolean>> = {};
-    
-    Object.keys(this.MODEL_CONFIGS).forEach(modelType => {
+
+    Object.keys(this.MODEL_CONFIGS).forEach((modelType) => {
       status[modelType as ModelType] = this.models.has(modelType);
     });
-    
+
     return status as Record<ModelType, boolean>;
   }
 
@@ -258,11 +264,11 @@ export class AIModelManager {
     for (const [modelType, model] of this.models) {
       model.dispose();
     }
-    
+
     this.models.clear();
     this.modelMetadata.clear();
     this.loadingPromises.clear();
-    
+
     console.log('🧹 All models cleared');
   }
 
@@ -278,7 +284,7 @@ export class AIModelManager {
       modelsLoaded: this.models.size,
       totalModels: Object.keys(this.MODEL_CONFIGS).length,
       memoryUsage: tf.memory(),
-      backend: tf.getBackend()
+      backend: tf.getBackend(),
     };
 
     const loadedCount = this.models.size;

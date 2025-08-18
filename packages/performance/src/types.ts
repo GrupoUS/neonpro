@@ -9,7 +9,13 @@ export type WebVitalsMetric = {
   delta: number;
   rating: 'good' | 'needs-improvement' | 'poor';
   id: string;
-  navigationType: 'navigate' | 'reload' | 'back-forward' | 'back-forward-cache' | 'prerender' | 'restore';
+  navigationType:
+    | 'navigate'
+    | 'reload'
+    | 'back-forward'
+    | 'back-forward-cache'
+    | 'prerender'
+    | 'restore';
   timestamp: number;
   url: string;
   userAgent: string;

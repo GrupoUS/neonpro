@@ -17,9 +17,9 @@ export class AuthPerformanceTracker {
   private metrics: Map<string, number[]> = new Map();
   private thresholds: PerformanceThresholds = {
     authentication: 200, // ms
-    registration: 500,   // ms
-    databaseQuery: 100,  // ms
-    apiResponse: 150,    // ms
+    registration: 500, // ms
+    databaseQuery: 100, // ms
+    apiResponse: 150, // ms
   };
 
   recordAuthenticationTime(duration: number): void {

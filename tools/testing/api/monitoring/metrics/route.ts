@@ -1,5 +1,5 @@
 // Monitoring metrics API endpoint
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   try {
@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
       throughput: Math.random() * 1000 + 500,
       cpuUsage: Math.random() * 80 + 10,
       memoryUsage: Math.random() * 70 + 20,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     return NextResponse.json(metrics);
@@ -25,13 +25,13 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    
+
     // Mock recording metric
     console.log('Metric recorded:', body);
-    
-    return NextResponse.json({ 
-      success: true, 
-      id: `metric-${Date.now()}` 
+
+    return NextResponse.json({
+      success: true,
+      id: `metric-${Date.now()}`,
     });
   } catch (error) {
     return NextResponse.json(

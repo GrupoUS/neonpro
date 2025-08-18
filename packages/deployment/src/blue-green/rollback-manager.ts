@@ -28,11 +28,11 @@ export class RollbackManager {
    */
   async rollback(config: RollbackConfig): Promise<RollbackResult> {
     const startTime = Date.now();
-    
+
     try {
       // Add to rollback history
       this.rollbackHistory.push(config);
-      
+
       // Limit history size
       if (this.rollbackHistory.length > this.config.maxRollbackHistory) {
         this.rollbackHistory.shift();
@@ -40,9 +40,9 @@ export class RollbackManager {
 
       // Simulate rollback process
       await this.performRollback(config);
-      
+
       const rollbackTime = Date.now() - startTime;
-      
+
       return {
         success: true,
         previousVersion: config.version,
@@ -71,12 +71,12 @@ export class RollbackManager {
    * Check if rollback is possible
    */
   canRollback(environment: string): boolean {
-    return this.rollbackHistory.some(r => r.environment === environment);
+    return this.rollbackHistory.some((r) => r.environment === environment);
   }
 
   private async performRollback(config: RollbackConfig): Promise<void> {
     // Implementation would depend on deployment platform
     // This is a placeholder for the actual rollback logic
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
   }
 }

@@ -6,7 +6,7 @@
 
 // ==================== CORE MODEL TYPES ====================
 
-export type ModelType = 
+export type ModelType =
   | 'treatment-outcome'
   | 'duration-estimation'
   | 'success-probability'
@@ -30,7 +30,7 @@ export interface ModelMetadata {
   loadedAt: Date;
   inputShape: number[];
   outputShape: number[];
-}// ==================== PATIENT DATA TYPES ====================
+} // ==================== PATIENT DATA TYPES ====================
 
 export interface PatientProfile {
   id: string;
@@ -44,7 +44,7 @@ export interface PatientProfile {
   consentStatus: LGPDConsent;
 }
 
-export type SkinType = 
+export type SkinType =
   | 'fitzpatrick-1' // Very fair, always burns
   | 'fitzpatrick-2' // Fair, usually burns
   | 'fitzpatrick-3' // Medium, sometimes burns
@@ -69,7 +69,8 @@ export interface Medication {
   frequency: string;
   isBloodThinner: boolean;
   affectsHealing: boolean;
-}export interface MedicalCondition {
+}
+export interface MedicalCondition {
   name: string;
   severity: 'mild' | 'moderate' | 'severe';
   treatmentRelevant: boolean;
@@ -107,7 +108,8 @@ export interface TreatmentRequest {
   urgency: 'low' | 'moderate' | 'high';
   budgetRange: BudgetRange;
   timeframe: TimeframePreference;
-}export type TreatmentType = 
+}
+export type TreatmentType =
   | 'botox'
   | 'dermal-fillers'
   | 'laser-resurfacing'
@@ -126,7 +128,7 @@ export interface TargetArea {
   priority: number; // 1-5 scale
 }
 
-export type FacialRegion = 
+export type FacialRegion =
   | 'forehead'
   | 'glabella'
   | 'crows-feet'
@@ -138,7 +140,7 @@ export type FacialRegion =
   | 'jawline'
   | 'neck';
 
-export type BodyRegion = 
+export type BodyRegion =
   | 'abdomen'
   | 'thighs'
   | 'arms'
@@ -147,7 +149,7 @@ export type BodyRegion =
   | 'flanks'
   | 'buttocks';
 
-export type AestheticConcern = 
+export type AestheticConcern =
   | 'wrinkles'
   | 'fine-lines'
   | 'volume-loss'

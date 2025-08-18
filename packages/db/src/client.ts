@@ -4,7 +4,10 @@
  * Healthcare compliance: LGPD + ANVISA + CFM + Multi-tenant isolation
  */
 
-import { createBrowserClient, createServerClient as createSSRServerClient } from '@supabase/ssr';
+import {
+  createBrowserClient,
+  createServerClient as createSSRServerClient,
+} from '@supabase/ssr';
 import type { Database } from './types';
 
 // Healthcare environment validation

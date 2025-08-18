@@ -1,5 +1,5 @@
-import { z } from "zod";
-import { riskAssessmentInputSchema } from "@/app/lib/validations/risk-assessment-automation";
+import { z } from 'zod';
+import { riskAssessmentInputSchema } from '@/app/lib/validations/risk-assessment-automation';
 import type {
   EmergencyEscalation,
   EscalationPriority,
@@ -8,12 +8,12 @@ import type {
   RiskAssessmentResult,
   RiskLevel,
   RiskScoreBreakdown,
-} from "@/app/types/risk-assessment-automation";
+} from '@/app/types/risk-assessment-automation';
 import {
   calculateComprehensiveRiskAssessment,
   determineEmergencyEscalation,
   validateModelAccuracy,
-} from "./ml-risk-models";
+} from './ml-risk-models';
 
 // ============================================================================
 // RISK SCORING ALGORITHM - REAL-TIME CONSTITUTIONAL HEALTHCARE COMPLIANCE
@@ -54,7 +54,7 @@ interface ProfessionalOversightConfig {
     [K in RiskLevel]: {
       required: boolean;
       timeframeMinutes: number;
-      reviewLevel: "NURSE" | "PHYSICIAN" | "SPECIALIST" | "SENIOR_PHYSICIAN";
+      reviewLevel: 'NURSE' | 'PHYSICIAN' | 'SPECIALIST' | 'SENIOR_PHYSICIAN';
     };
   };
   escalationRules: Array<{
@@ -73,39 +73,39 @@ const DEFAULT_OVERSIGHT_CONFIG: ProfessionalOversightConfig = {
     [RiskLevel.LOW]: {
       required: false,
       timeframeMinutes: 60,
-      reviewLevel: "NURSE",
+      reviewLevel: 'NURSE',
     },
     [RiskLevel.MEDIUM]: {
       required: true,
       timeframeMinutes: 30,
-      reviewLevel: "NURSE",
+      reviewLevel: 'NURSE',
     },
     [RiskLevel.HIGH]: {
       required: true,
       timeframeMinutes: 15,
-      reviewLevel: "PHYSICIAN",
+      reviewLevel: 'PHYSICIAN',
     },
     [RiskLevel.CRITICAL]: {
       required: true,
       timeframeMinutes: 5,
-      reviewLevel: "SENIOR_PHYSICIAN",
+      reviewLevel: 'SENIOR_PHYSICIAN',
     },
   },
   escalationRules: [
     {
       condition: (score) => score.overallScore >= 95,
       priority: EscalationPriority.EMERGENCY,
-      action: "immediate_physician_notification",
+      action: 'immediate_physician_notification',
     },
     {
       condition: (score) => score.categoryScores.currentCondition >= 80,
       priority: EscalationPriority.IMMEDIATE,
-      action: "vital_signs_monitoring",
+      action: 'vital_signs_monitoring',
     },
     {
       condition: (score) => score.criticalFactors.length >= 5,
       priority: EscalationPriority.URGENT,
-      action: "comprehensive_review",
+      action: 'comprehensive_review',
     },
   ],
 }; /**
@@ -131,7 +131,7 @@ export class RiskScoringEngine {
   async executeRiskAssessment(
     input: RiskAssessmentInput,
     requestId: string,
-    performedBy: string,
+    performedBy: string
   ): Promise<RiskAssessmentResult> {
     const startTime = performance.now();
 
@@ -142,7 +142,11 @@ export class RiskScoringEngine {
       // Check cache for performance optimization
       const cachedResult = this.getCachedResult(validatedInput);
       if (cachedResult) {
-        return this.updateAuditTrail(cachedResult, "CACHED_RESULT", performedBy);
+        return this.updateAuditTrail(
+          cachedResult,
+          'CACHED_RESULT',
+          performedBy
+        );
       }
 
       // Execute core risk assessment
@@ -151,14 +155,20 @@ export class RiskScoringEngine {
       // Determine professional oversight requirements
       const professionalOversight = this.determineProfessionalOversight(
         scoreBreakdown,
-        validatedInput,
+        validatedInput
       );
 
       // Check for emergency escalation
-      const emergencyEscalation = this.evaluateEmergencyEscalation(scoreBreakdown, validatedInput);
+      const emergencyEscalation = this.evaluateEmergencyEscalation(
+        scoreBreakdown,
+        validatedInput
+      );
 
       // Generate recommendations
-      const recommendations = this.generateRecommendations(scoreBreakdown, validatedInput);
+      const recommendations = this.generateRecommendations(
+        scoreBreakdown,
+        validatedInput
+      );
 
       // Create complete assessment result
       const result: RiskAssessmentResult = {
@@ -175,9 +185,9 @@ export class RiskScoringEngine {
         recommendations,
 
         // Model Information for Explainable AI
-        modelVersion: "1.0.0",
-        algorithmUsed: "Multi-Factor Weighted Risk Assessment",
-        trainingDataDate: new Date("2024-01-01"),
+        modelVersion: '1.0.0',
+        algorithmUsed: 'Multi-Factor Weighted Risk Assessment',
+        trainingDataDate: new Date('2024-01-01'),
         accuracy: validateModelAccuracy().currentAccuracy,
 
         // Audit Trail
@@ -190,14 +200,23 @@ export class RiskScoringEngine {
       this.cacheResult(validatedInput, result);
 
       // Record performance metrics
-      this.recordPerformanceMetrics(startTime, result, validatedInput.patientId);
+      this.recordPerformanceMetrics(
+        startTime,
+        result,
+        validatedInput.patientId
+      );
 
       // Generate audit trail entry
-      await this.generateAuditTrail(result, "CREATED", performedBy);
+      await this.generateAuditTrail(result, 'CREATED', performedBy);
 
       return result;
     } catch (error) {
-      const errorResult = this.handleError(error, input, requestId, performedBy);
+      const errorResult = this.handleError(
+        error,
+        input,
+        requestId,
+        performedBy
+      );
       this.recordPerformanceMetrics(startTime, errorResult, input.patientId);
       throw error;
     }
@@ -207,7 +226,9 @@ export class RiskScoringEngine {
    * Validate Input Data
    * Constitutional healthcare data validation with LGPD compliance
    */
-  private async validateInput(input: RiskAssessmentInput): Promise<RiskAssessmentInput> {
+  private async validateInput(
+    input: RiskAssessmentInput
+  ): Promise<RiskAssessmentInput> {
     try {
       // Zod validation with healthcare standards
       const validatedInput = riskAssessmentInputSchema.parse(input);
@@ -218,7 +239,7 @@ export class RiskScoringEngine {
       return validatedInput;
     } catch (error) {
       throw new Error(
-        `Validação de dados falhou: ${error instanceof z.ZodError ? error.errors.map((e) => e.message).join(", ") : error}`,
+        `Validação de dados falhou: ${error instanceof z.ZodError ? error.errors.map((e) => e.message).join(', ') : error}`
       );
     }
   }
@@ -227,20 +248,27 @@ export class RiskScoringEngine {
    * Business Rules Validation
    * Healthcare-specific validation beyond schema
    */
-  private async validateBusinessRules(input: RiskAssessmentInput): Promise<void> {
+  private async validateBusinessRules(
+    input: RiskAssessmentInput
+  ): Promise<void> {
     // LGPD consent validation
     if (!input.consentGiven) {
-      throw new Error("Consentimento LGPD é obrigatório para processamento de dados de saúde");
+      throw new Error(
+        'Consentimento LGPD é obrigatório para processamento de dados de saúde'
+      );
     }
 
     // Data freshness validation for real-time assessment
     const now = new Date();
     const vitalSignsAge =
-      now.getTime() - input.currentCondition.vitalSigns.bloodPressure.timestamp.getTime();
+      now.getTime() -
+      input.currentCondition.vitalSigns.bloodPressure.timestamp.getTime();
     const maxAge = 24 * 60 * 60 * 1000; // 24 hours
 
     if (vitalSignsAge > maxAge) {
-      throw new Error("Sinais vitais muito antigos para avaliação de risco em tempo real");
+      throw new Error(
+        'Sinais vitais muito antigos para avaliação de risco em tempo real'
+      );
     }
 
     // Age validation for procedure compatibility
@@ -248,20 +276,23 @@ export class RiskScoringEngine {
       const age = input.demographicFactors.age;
       const procedureType = input.procedureSpecific.plannedProcedure.type;
 
-      if (age < 18 && procedureType === "COSMETIC") {
-        throw new Error("Procedimentos estéticos não são permitidos para menores de 18 anos");
+      if (age < 18 && procedureType === 'COSMETIC') {
+        throw new Error(
+          'Procedimentos estéticos não são permitidos para menores de 18 anos'
+        );
       }
     }
 
     // Medication interaction validation
     if (input.procedureSpecific?.drugInteractions) {
-      const contraindicatedInteractions = input.procedureSpecific.drugInteractions.filter(
-        (interaction) => interaction.severity === "CONTRAINDICATED",
-      );
+      const contraindicatedInteractions =
+        input.procedureSpecific.drugInteractions.filter(
+          (interaction) => interaction.severity === 'CONTRAINDICATED'
+        );
 
       if (contraindicatedInteractions.length > 0) {
         throw new Error(
-          `Interações medicamentosas contraindicadas detectadas: ${contraindicatedInteractions.map((i) => `${i.medication1} + ${i.medication2}`).join(", ")}`,
+          `Interações medicamentosas contraindicadas detectadas: ${contraindicatedInteractions.map((i) => `${i.medication1} + ${i.medication2}`).join(', ')}`
         );
       }
     }
@@ -283,7 +314,7 @@ export class RiskScoringEngine {
    */
   private determineProfessionalOversight(
     scoreBreakdown: RiskScoreBreakdown,
-    input: RiskAssessmentInput,
+    input: RiskAssessmentInput
   ): ProfessionalOversight {
     const riskLevel = scoreBreakdown.riskLevel;
     const thresholds = this.oversightConfig.autoReviewThresholds[riskLevel];
@@ -292,23 +323,27 @@ export class RiskScoringEngine {
     let specialistConsultation;
 
     // High-risk conditions requiring specialist consultation
-    const highRiskConditions = input.medicalHistory.chronicConditions.filter((condition) =>
-      ["cardiopatia", "diabetes", "insuficiência renal", "câncer"].some((risk) =>
-        condition.toLowerCase().includes(risk),
-      ),
+    const highRiskConditions = input.medicalHistory.chronicConditions.filter(
+      (condition) =>
+        ['cardiopatia', 'diabetes', 'insuficiência renal', 'câncer'].some(
+          (risk) => condition.toLowerCase().includes(risk)
+        )
     );
 
     if (highRiskConditions.length > 0 && scoreBreakdown.overallScore > 70) {
       specialistConsultation = {
         specialty: this.determineRequiredSpecialty(highRiskConditions, input),
-        urgency: scoreBreakdown.overallScore > 85 ? ("URGENT" as const) : ("ROUTINE" as const),
-        reason: `Condições de alto risco: ${highRiskConditions.join(", ")}`,
+        urgency:
+          scoreBreakdown.overallScore > 85
+            ? ('URGENT' as const)
+            : ('ROUTINE' as const),
+        reason: `Condições de alto risco: ${highRiskConditions.join(', ')}`,
       };
     }
 
     // Check escalation rules
-    const escalationRequired = this.oversightConfig.escalationRules.some((rule) =>
-      rule.condition(scoreBreakdown),
+    const escalationRequired = this.oversightConfig.escalationRules.some(
+      (rule) => rule.condition(scoreBreakdown)
     );
 
     return {
@@ -327,7 +362,7 @@ export class RiskScoringEngine {
    */
   private evaluateEmergencyEscalation(
     scoreBreakdown: RiskScoreBreakdown,
-    input: RiskAssessmentInput,
+    input: RiskAssessmentInput
   ): EmergencyEscalation & {
     requiresEscalation: boolean;
     escalationPriority: EscalationPriority;
@@ -340,27 +375,27 @@ export class RiskScoringEngine {
         ...escalationData,
         triggered: false,
         triggerReason: [],
-        alertLevel: "YELLOW" as const,
+        alertLevel: 'YELLOW' as const,
         notificationsSent: [],
         actionsTaken: [],
-        resolutionStatus: "RESOLVED" as const,
+        resolutionStatus: 'RESOLVED' as const,
       };
     }
 
     // Determine alert level based on escalation priority
-    let alertLevel: "YELLOW" | "ORANGE" | "RED" | "BLACK";
+    let alertLevel: 'YELLOW' | 'ORANGE' | 'RED' | 'BLACK';
     switch (escalationData.escalationPriority) {
       case EscalationPriority.EMERGENCY:
-        alertLevel = "BLACK";
+        alertLevel = 'BLACK';
         break;
       case EscalationPriority.IMMEDIATE:
-        alertLevel = "RED";
+        alertLevel = 'RED';
         break;
       case EscalationPriority.URGENT:
-        alertLevel = "ORANGE";
+        alertLevel = 'ORANGE';
         break;
       default:
-        alertLevel = "YELLOW";
+        alertLevel = 'YELLOW';
     }
 
     return {
@@ -370,7 +405,7 @@ export class RiskScoringEngine {
       alertLevel,
       notificationsSent: [], // Will be populated by notification service
       actionsTaken: [],
-      resolutionStatus: "PENDING" as const,
+      resolutionStatus: 'PENDING' as const,
     };
   }
 
@@ -380,17 +415,17 @@ export class RiskScoringEngine {
    */
   private generateRecommendations(
     scoreBreakdown: RiskScoreBreakdown,
-    input: RiskAssessmentInput,
+    input: RiskAssessmentInput
   ): Array<{
     category: string;
-    priority: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+    priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
     action: string;
     rationale: string;
     timeframe: string;
   }> {
     const recommendations: Array<{
       category: string;
-      priority: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+      priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
       action: string;
       rationale: string;
       timeframe: string;
@@ -399,66 +434,73 @@ export class RiskScoringEngine {
     // Critical score recommendations
     if (scoreBreakdown.overallScore >= 86) {
       recommendations.push({
-        category: "Risco Crítico",
-        priority: "CRITICAL",
-        action: "Revisão médica imediata e monitoramento contínuo",
+        category: 'Risco Crítico',
+        priority: 'CRITICAL',
+        action: 'Revisão médica imediata e monitoramento contínuo',
         rationale: `Score de risco crítico (${scoreBreakdown.overallScore}/100) requer intervenção imediata`,
-        timeframe: "Imediato",
+        timeframe: 'Imediato',
       });
     }
 
     // Vital signs recommendations
     const vitals = input.currentCondition.vitalSigns;
-    if (vitals.bloodPressure.systolic > 160 || vitals.bloodPressure.diastolic > 100) {
+    if (
+      vitals.bloodPressure.systolic > 160 ||
+      vitals.bloodPressure.diastolic > 100
+    ) {
       recommendations.push({
-        category: "Pressão Arterial",
-        priority: "HIGH",
-        action: "Monitoramento de pressão arterial e ajuste medicamentoso",
+        category: 'Pressão Arterial',
+        priority: 'HIGH',
+        action: 'Monitoramento de pressão arterial e ajuste medicamentoso',
         rationale: `Pressão arterial elevada: ${vitals.bloodPressure.systolic}/${vitals.bloodPressure.diastolic} mmHg`,
-        timeframe: "2-4 horas",
+        timeframe: '2-4 horas',
       });
     }
 
     if (vitals.oxygenSaturation.percentage < 95) {
       recommendations.push({
-        category: "Oxigenação",
-        priority: vitals.oxygenSaturation.percentage < 90 ? "CRITICAL" : "HIGH",
-        action: "Avaliação respiratória e suporte de oxigênio se necessário",
+        category: 'Oxigenação',
+        priority: vitals.oxygenSaturation.percentage < 90 ? 'CRITICAL' : 'HIGH',
+        action: 'Avaliação respiratória e suporte de oxigênio se necessário',
         rationale: `Saturação de oxigênio baixa: ${vitals.oxygenSaturation.percentage}%`,
-        timeframe: vitals.oxygenSaturation.percentage < 90 ? "Imediato" : "1 hora",
+        timeframe:
+          vitals.oxygenSaturation.percentage < 90 ? 'Imediato' : '1 hora',
       });
     }
 
     // Medical history recommendations
     if (scoreBreakdown.categoryScores.medicalHistory > 60) {
       recommendations.push({
-        category: "Histórico Médico",
-        priority: "MEDIUM",
-        action: "Revisão completa do histórico médico e medicações atuais",
-        rationale: "Histórico médico complexo requer revisão detalhada",
-        timeframe: "24 horas",
+        category: 'Histórico Médico',
+        priority: 'MEDIUM',
+        action: 'Revisão completa do histórico médico e medicações atuais',
+        rationale: 'Histórico médico complexo requer revisão detalhada',
+        timeframe: '24 horas',
       });
     }
 
     // Procedure-specific recommendations
-    if (input.procedureSpecific && scoreBreakdown.categoryScores.procedureSpecific > 50) {
+    if (
+      input.procedureSpecific &&
+      scoreBreakdown.categoryScores.procedureSpecific > 50
+    ) {
       recommendations.push({
-        category: "Procedimento",
-        priority: "HIGH",
-        action: "Avaliação de riscos/benefícios do procedimento planejado",
-        rationale: "Riscos específicos do procedimento identificados",
-        timeframe: "Antes do procedimento",
+        category: 'Procedimento',
+        priority: 'HIGH',
+        action: 'Avaliação de riscos/benefícios do procedimento planejado',
+        rationale: 'Riscos específicos do procedimento identificados',
+        timeframe: 'Antes do procedimento',
       });
     }
 
     // Environmental support recommendations
     if (scoreBreakdown.categoryScores.environmental > 40) {
       recommendations.push({
-        category: "Suporte Social",
-        priority: "MEDIUM",
-        action: "Avaliação do suporte social e planejamento de alta",
-        rationale: "Fatores ambientais podem impactar recuperação",
-        timeframe: "48 horas",
+        category: 'Suporte Social',
+        priority: 'MEDIUM',
+        action: 'Avaliação do suporte social e planejamento de alta',
+        rationale: 'Fatores ambientais podem impactar recuperação',
+        timeframe: '48 horas',
       });
     }
 
@@ -466,11 +508,12 @@ export class RiskScoringEngine {
     const medicationCount = input.medicalHistory.currentMedications.length;
     if (medicationCount > 5) {
       recommendations.push({
-        category: "Medicações",
-        priority: "MEDIUM",
-        action: "Revisão farmacêutica para identificar interações e simplificar regime",
+        category: 'Medicações',
+        priority: 'MEDIUM',
+        action:
+          'Revisão farmacêutica para identificar interações e simplificar regime',
         rationale: `Polifarmácia detectada: ${medicationCount} medicações simultâneas`,
-        timeframe: "72 horas",
+        timeframe: '72 horas',
       });
     }
 
@@ -478,29 +521,29 @@ export class RiskScoringEngine {
     switch (scoreBreakdown.riskLevel) {
       case RiskLevel.CRITICAL:
         recommendations.push({
-          category: "Seguimento",
-          priority: "CRITICAL",
-          action: "Monitoramento contínuo com reavaliação a cada 4 horas",
-          rationale: "Risco crítico requer monitoramento intensivo",
-          timeframe: "Contínuo",
+          category: 'Seguimento',
+          priority: 'CRITICAL',
+          action: 'Monitoramento contínuo com reavaliação a cada 4 horas',
+          rationale: 'Risco crítico requer monitoramento intensivo',
+          timeframe: 'Contínuo',
         });
         break;
       case RiskLevel.HIGH:
         recommendations.push({
-          category: "Seguimento",
-          priority: "HIGH",
-          action: "Reavaliação em 12 horas e seguimento em 24 horas",
-          rationale: "Alto risco requer seguimento próximo",
-          timeframe: "12-24 horas",
+          category: 'Seguimento',
+          priority: 'HIGH',
+          action: 'Reavaliação em 12 horas e seguimento em 24 horas',
+          rationale: 'Alto risco requer seguimento próximo',
+          timeframe: '12-24 horas',
         });
         break;
       case RiskLevel.MEDIUM:
         recommendations.push({
-          category: "Seguimento",
-          priority: "MEDIUM",
-          action: "Reavaliação em 48 horas ou conforme sintomas",
-          rationale: "Risco moderado requer seguimento padrão",
-          timeframe: "48 horas",
+          category: 'Seguimento',
+          priority: 'MEDIUM',
+          action: 'Reavaliação em 48 horas ou conforme sintomas',
+          rationale: 'Risco moderado requer seguimento padrão',
+          timeframe: '48 horas',
         });
         break;
     }
@@ -513,16 +556,19 @@ export class RiskScoringEngine {
    * Utility Methods for Risk Assessment
    */
 
-  private determineRequiredSpecialty(conditions: string[], _input: RiskAssessmentInput): string {
+  private determineRequiredSpecialty(
+    conditions: string[],
+    _input: RiskAssessmentInput
+  ): string {
     // Map conditions to medical specialties
     const specialtyMap: Record<string, string> = {
-      cardiopatia: "Cardiologia",
-      diabetes: "Endocrinologia",
-      "insuficiência renal": "Nefrologia",
-      câncer: "Oncologia",
-      "doença hepática": "Gastroenterologia",
-      "doença pulmonar": "Pneumologia",
-      "doença neurológica": "Neurologia",
+      cardiopatia: 'Cardiologia',
+      diabetes: 'Endocrinologia',
+      'insuficiência renal': 'Nefrologia',
+      câncer: 'Oncologia',
+      'doença hepática': 'Gastroenterologia',
+      'doença pulmonar': 'Pneumologia',
+      'doença neurológica': 'Neurologia',
     };
 
     for (const condition of conditions) {
@@ -534,10 +580,12 @@ export class RiskScoringEngine {
     }
 
     // Default to internal medicine for complex cases
-    return "Clínica Médica";
+    return 'Clínica Médica';
   }
 
-  private determineEscalationPriority(scoreBreakdown: RiskScoreBreakdown): EscalationPriority {
+  private determineEscalationPriority(
+    scoreBreakdown: RiskScoreBreakdown
+  ): EscalationPriority {
     if (scoreBreakdown.overallScore >= 95) return EscalationPriority.EMERGENCY;
     if (scoreBreakdown.overallScore >= 85) return EscalationPriority.IMMEDIATE;
     if (scoreBreakdown.overallScore >= 70) return EscalationPriority.URGENT;
@@ -559,10 +607,19 @@ export class RiskScoringEngine {
       smokingStatus: input.demographicFactors.smokingStatus,
       // Include vital signs (rounded to reduce cache misses)
       vitalSigns: {
-        systolic: Math.round(input.currentCondition.vitalSigns.bloodPressure.systolic / 5) * 5,
-        diastolic: Math.round(input.currentCondition.vitalSigns.bloodPressure.diastolic / 5) * 5,
-        heartRate: Math.round(input.currentCondition.vitalSigns.heartRate.bpm / 5) * 5,
-        oxygenSat: Math.round(input.currentCondition.vitalSigns.oxygenSaturation.percentage),
+        systolic:
+          Math.round(
+            input.currentCondition.vitalSigns.bloodPressure.systolic / 5
+          ) * 5,
+        diastolic:
+          Math.round(
+            input.currentCondition.vitalSigns.bloodPressure.diastolic / 5
+          ) * 5,
+        heartRate:
+          Math.round(input.currentCondition.vitalSigns.heartRate.bpm / 5) * 5,
+        oxygenSat: Math.round(
+          input.currentCondition.vitalSigns.oxygenSaturation.percentage
+        ),
       },
       // Include chronic conditions count
       chronicConditionsCount: input.medicalHistory.chronicConditions.length,
@@ -573,7 +630,9 @@ export class RiskScoringEngine {
     return btoa(JSON.stringify(hashInput));
   }
 
-  private getCachedResult(input: RiskAssessmentInput): RiskAssessmentResult | null {
+  private getCachedResult(
+    input: RiskAssessmentInput
+  ): RiskAssessmentResult | null {
     const hash = this.generateInputHash(input);
     const cached = this.cache.get(input.patientId + hash);
 
@@ -590,7 +649,10 @@ export class RiskScoringEngine {
     return null;
   }
 
-  private cacheResult(input: RiskAssessmentInput, result: RiskAssessmentResult): void {
+  private cacheResult(
+    input: RiskAssessmentInput,
+    result: RiskAssessmentResult
+  ): void {
     const hash = this.generateInputHash(input);
     const expiresAt = new Date();
     expiresAt.setMinutes(expiresAt.getMinutes() + 15); // 15-minute cache
@@ -618,7 +680,7 @@ export class RiskScoringEngine {
   private recordPerformanceMetrics(
     startTime: number,
     result: RiskAssessmentResult,
-    patientId: string,
+    patientId: string
   ): void {
     const processingTime = performance.now() - startTime;
 
@@ -641,7 +703,7 @@ export class RiskScoringEngine {
     // Log warning if processing time exceeds target
     if (processingTime > 100) {
       console.warn(
-        `Risk assessment processing time exceeded target: ${processingTime}ms (target: <100ms)`,
+        `Risk assessment processing time exceeded target: ${processingTime}ms (target: <100ms)`
       );
     }
   }
@@ -652,8 +714,8 @@ export class RiskScoringEngine {
 
   private async generateAuditTrail(
     result: RiskAssessmentResult,
-    action: "CREATED" | "VIEWED" | "MODIFIED" | "CACHED_RESULT",
-    performedBy: string,
+    action: 'CREATED' | 'VIEWED' | 'MODIFIED' | 'CACHED_RESULT',
+    performedBy: string
   ): Promise<void> {
     // This would integrate with the audit trail service
     const auditEntry = {
@@ -663,25 +725,25 @@ export class RiskScoringEngine {
       action,
       performedBy,
       performedAt: new Date(),
-      ipAddress: "127.0.0.1", // Would be actual IP
-      userAgent: "RiskScoringEngine",
-      dataAccessed: ["risk_score", "recommendations"],
-      dataModified: action === "CREATED" ? ["risk_assessment"] : [],
-      justification: "Risk assessment calculation for patient care",
-      digitalSignature: "digital_signature_placeholder",
-      legalBasis: "VITAL_INTEREST" as const,
+      ipAddress: '127.0.0.1', // Would be actual IP
+      userAgent: 'RiskScoringEngine',
+      dataAccessed: ['risk_score', 'recommendations'],
+      dataModified: action === 'CREATED' ? ['risk_assessment'] : [],
+      justification: 'Risk assessment calculation for patient care',
+      digitalSignature: 'digital_signature_placeholder',
+      legalBasis: 'VITAL_INTEREST' as const,
       dataSubjectNotified: false,
       retentionExpiry: new Date(Date.now() + 7 * 365 * 24 * 60 * 60 * 1000), // 7 years
     };
 
     // Store audit entry (would integrate with database)
-    console.log("Audit trail entry created:", auditEntry);
+    console.log('Audit trail entry created:', auditEntry);
   }
 
   private updateAuditTrail(
     result: RiskAssessmentResult,
-    action: "CACHED_RESULT",
-    performedBy: string,
+    action: 'CACHED_RESULT',
+    performedBy: string
   ): RiskAssessmentResult {
     // Update audit trail for cached result access
     this.generateAuditTrail(result, action, performedBy);
@@ -692,7 +754,7 @@ export class RiskScoringEngine {
     _error: unknown,
     input: RiskAssessmentInput,
     requestId: string,
-    performedBy: string,
+    performedBy: string
   ): RiskAssessmentResult {
     // Create minimal error result for audit purposes
     const errorResult: RiskAssessmentResult = {
@@ -717,22 +779,24 @@ export class RiskScoringEngine {
       },
       professionalOversight: {
         requiredReview: true,
-        reviewLevel: "PHYSICIAN",
+        reviewLevel: 'PHYSICIAN',
         timeframe: 15,
         escalationRequired: true,
         escalationPriority: EscalationPriority.URGENT,
       },
       recommendations: [
         {
-          category: "Erro do Sistema",
-          priority: "CRITICAL",
-          action: "Revisão médica manual imediata devido a falha no sistema de avaliação de risco",
-          rationale: "Sistema de avaliação de risco falhou - revisão manual necessária",
-          timeframe: "Imediato",
+          category: 'Erro do Sistema',
+          priority: 'CRITICAL',
+          action:
+            'Revisão médica manual imediata devido a falha no sistema de avaliação de risco',
+          rationale:
+            'Sistema de avaliação de risco falhou - revisão manual necessária',
+          timeframe: 'Imediato',
         },
       ],
-      modelVersion: "ERROR",
-      algorithmUsed: "Manual Fallback",
+      modelVersion: 'ERROR',
+      algorithmUsed: 'Manual Fallback',
       trainingDataDate: new Date(),
       accuracy: 0,
       createdBy: performedBy,
@@ -764,19 +828,28 @@ export class RiskScoringEngine {
 
     const totalProcessingTime = this.performanceMetrics.reduce(
       (sum, m) => sum + m.processingTime,
-      0,
+      0
     );
-    const totalAccuracy = this.performanceMetrics.reduce((sum, m) => sum + m.accuracy, 0);
+    const totalAccuracy = this.performanceMetrics.reduce(
+      (sum, m) => sum + m.accuracy,
+      0
+    );
 
     const cacheEntries = Array.from(this.cache.values());
-    const totalCacheRequests = cacheEntries.reduce((sum, entry) => sum + entry.hitCount, 0);
+    const totalCacheRequests = cacheEntries.reduce(
+      (sum, entry) => sum + entry.hitCount,
+      0
+    );
     const cacheHitRate =
       cacheEntries.length > 0
-        ? (totalCacheRequests / (this.performanceMetrics.length + totalCacheRequests)) * 100
+        ? (totalCacheRequests /
+            (this.performanceMetrics.length + totalCacheRequests)) *
+          100
         : 0;
 
     return {
-      averageProcessingTime: totalProcessingTime / this.performanceMetrics.length,
+      averageProcessingTime:
+        totalProcessingTime / this.performanceMetrics.length,
       averageAccuracy: totalAccuracy / this.performanceMetrics.length,
       totalAssessments: this.performanceMetrics.length,
       cacheHitRate,

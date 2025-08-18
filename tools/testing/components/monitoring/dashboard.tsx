@@ -1,5 +1,5 @@
 // Monitoring dashboard component for NeonPro Healthcare System
-import React from 'react';
+import type React from 'react';
 
 interface MonitoringDashboardProps {
   metrics?: Record<string, number>;
@@ -8,15 +8,15 @@ interface MonitoringDashboardProps {
 
 export const MonitoringDashboard: React.FC<MonitoringDashboardProps> = ({
   metrics = {},
-  alerts = []
+  alerts = [],
 }) => {
   return (
     <div className="monitoring-dashboard">
       <h2>System Monitoring Dashboard</h2>
-      
+
       <div className="metrics-grid">
         {Object.entries(metrics).map(([key, value]) => (
-          <div key={key} className="metric-card">
+          <div className="metric-card" key={key}>
             <span className="metric-name">{key}</span>
             <span className="metric-value">{value}</span>
           </div>
@@ -27,7 +27,7 @@ export const MonitoringDashboard: React.FC<MonitoringDashboardProps> = ({
         <div className="alerts-section">
           <h3>Active Alerts</h3>
           {alerts.map((alert, index) => (
-            <div key={index} className="alert-item">
+            <div className="alert-item" key={index}>
               {alert}
             </div>
           ))}

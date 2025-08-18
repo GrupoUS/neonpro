@@ -3,7 +3,7 @@
  * Mock implementation for WebAuthn client-side functionality
  */
 
-export interface WebAuthnCredential {
+export type WebAuthnCredential = {
   id: string;
   rawId: ArrayBuffer;
   type: 'public-key';
@@ -14,9 +14,9 @@ export interface WebAuthnCredential {
     signature?: ArrayBuffer;
     userHandle?: ArrayBuffer;
   };
-}
+};
 
-export interface WebAuthnRegistrationOptions {
+export type WebAuthnRegistrationOptions = {
   challenge: string;
   rp: {
     name: string;
@@ -42,9 +42,9 @@ export interface WebAuthnRegistrationOptions {
     type: 'public-key';
     transports?: Array<'usb' | 'nfc' | 'ble' | 'internal'>;
   }>;
-}
+};
 
-export interface WebAuthnAuthenticationOptions {
+export type WebAuthnAuthenticationOptions = {
   challenge: string;
   timeout?: number;
   rpId?: string;
@@ -62,9 +62,10 @@ export class WebAuthnClient {
 
   constructor() {
     // Mock browser support detection
-    this.isSupported = typeof window !== 'undefined' && 
-                      'credentials' in navigator && 
-                      'create' in navigator.credentials;
+    this.isSupported =
+      typeof window !== 'undefined' &&
+      'credentials' in navigator &&
+      'create' in navigator.credentials;
   }
 
   static getInstance(): WebAuthnClient {
@@ -78,7 +79,9 @@ export class WebAuthnClient {
     return this.isSupported;
   }
 
-  async register(options: WebAuthnRegistrationOptions): Promise<WebAuthnCredential> {
+  async register(
+    options: WebAuthnRegistrationOptions
+  ): Promise<WebAuthnCredential> {
     if (!this.isSupported) {
       throw new Error('WebAuthn is not supported in this environment');
     }
@@ -90,12 +93,14 @@ export class WebAuthnClient {
       type: 'public-key',
       response: {
         clientDataJSON: new ArrayBuffer(128),
-        attestationObject: new ArrayBuffer(256)
-      }
+        attestationObject: new ArrayBuffer(256),
+      },
     };
   }
 
-  async authenticate(options: WebAuthnAuthenticationOptions): Promise<WebAuthnCredential> {
+  async authenticate(
+    options: WebAuthnAuthenticationOptions
+  ): Promise<WebAuthnCredential> {
     if (!this.isSupported) {
       throw new Error('WebAuthn is not supported in this environment');
     }
@@ -109,12 +114,12 @@ export class WebAuthnClient {
         clientDataJSON: new ArrayBuffer(128),
         authenticatorData: new ArrayBuffer(256),
         signature: new ArrayBuffer(64),
-        userHandle: new ArrayBuffer(32)
-      }
+        userHandle: new ArrayBuffer(32),
+      },
     };
   }
 
-  async getStoredCredentials(): Promise<WebAuthnCredential[]> {
+  getStoredCredentials(): Promise<WebAuthnCredential[]> {
     // Mock stored credentials
     return [
       {
@@ -122,9 +127,9 @@ export class WebAuthnClient {
         rawId: new ArrayBuffer(32),
         type: 'public-key',
         response: {
-          clientDataJSON: new ArrayBuffer(128)
-        }
-      }
+          clientDataJSON: new ArrayBuffer(128),
+        },
+      },
     ];
   }
 
@@ -138,7 +143,7 @@ export class WebAuthnClient {
       supportsUserVerification: true,
       supportsResidentKeys: true,
       supportedTransports: ['usb', 'nfc', 'ble', 'internal'],
-      maxCredentials: 10
+      maxCredentials: 10,
     };
   }
 }

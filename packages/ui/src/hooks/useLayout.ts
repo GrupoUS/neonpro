@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from 'react';
 
 type LayoutState = {
   sidebarCollapsed: boolean;
@@ -10,7 +10,9 @@ type LayoutActions = {
   setSidebarCollapsed: (collapsed: boolean) => void;
   toggleSidebar: () => void;
   setActiveMenuItem: (itemId: string | null) => void;
-  setBreadcrumbs: (breadcrumbs: Array<{ title: string; href?: string }>) => void;
+  setBreadcrumbs: (
+    breadcrumbs: Array<{ title: string; href?: string }>
+  ) => void;
   addBreadcrumb: (breadcrumb: { title: string; href?: string }) => void;
   clearBreadcrumbs: () => void;
 };
@@ -38,15 +40,18 @@ export function useLayout(): LayoutState & LayoutActions {
     (breadcrumbs: Array<{ title: string; href?: string }>) => {
       setState((prev) => ({ ...prev, breadcrumbs }));
     },
-    [],
+    []
   );
 
-  const addBreadcrumb = React.useCallback((breadcrumb: { title: string; href?: string }) => {
-    setState((prev) => ({
-      ...prev,
-      breadcrumbs: [...prev.breadcrumbs, breadcrumb],
-    }));
-  }, []);
+  const addBreadcrumb = React.useCallback(
+    (breadcrumb: { title: string; href?: string }) => {
+      setState((prev) => ({
+        ...prev,
+        breadcrumbs: [...prev.breadcrumbs, breadcrumb],
+      }));
+    },
+    []
+  );
 
   const clearBreadcrumbs = React.useCallback(() => {
     setState((prev) => ({ ...prev, breadcrumbs: [] }));

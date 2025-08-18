@@ -1,14 +1,14 @@
 import { addYears, differenceInYears } from 'date-fns';
-import type {
-  Patient,
-  CreatePatientData,
-  UpdatePatientData,
-  SkinAssessment,
-  ConsentForm,
-  MedicalHistory,
-  AestheticHistory
-} from './types';
 import { PatientStatus } from '../types';
+import type {
+  AestheticHistory,
+  ConsentForm,
+  CreatePatientData,
+  MedicalHistory,
+  Patient,
+  SkinAssessment,
+  UpdatePatientData,
+} from './types';
 
 export interface PatientRepository {
   // Patient CRUD operations
@@ -18,16 +18,25 @@ export interface PatientRepository {
   getPatientByEmail(email: string): Promise<Patient | null>;
   getPatients(filters?: PatientFilters): Promise<Patient[]>;
   deletePatient(id: string): Promise<void>;
-  
+
   // Medical history operations
-  updateMedicalHistory(patientId: string, history: MedicalHistory): Promise<void>;
-  updateAestheticHistory(patientId: string, history: AestheticHistory): Promise<void>;
-  updateSkinAssessment(patientId: string, assessment: SkinAssessment): Promise<void>;
-  
+  updateMedicalHistory(
+    patientId: string,
+    history: MedicalHistory
+  ): Promise<void>;
+  updateAestheticHistory(
+    patientId: string,
+    history: AestheticHistory
+  ): Promise<void>;
+  updateSkinAssessment(
+    patientId: string,
+    assessment: SkinAssessment
+  ): Promise<void>;
+
   // Consent form operations
   addConsentForm(patientId: string, form: ConsentForm): Promise<void>;
   getConsentForms(patientId: string): Promise<ConsentForm[]>;
-  
+
   // Search and analytics
   searchPatients(query: string): Promise<Patient[]>;
   getPatientStats(): Promise<PatientStats>;
@@ -41,7 +50,8 @@ export interface PatientFilters {
   city?: string;
   limit?: number;
   offset?: number;
-}export interface PatientStats {
+}
+export interface PatientStats {
   totalPatients: number;
   activePatients: number;
   newPatientsThisMonth: number;
@@ -58,7 +68,9 @@ export class PatientService {
   async createPatient(data: CreatePatientData): Promise<Patient> {
     try {
       // Check if patient already exists
-      const existingPatient = await this.repository.getPatientByEmail(data.email);
+      const existingPatient = await this.repository.getPatientByEmail(
+        data.email
+      );
       if (existingPatient) {
         throw new Error('Patient with this email already exists');
       }
@@ -66,7 +78,9 @@ export class PatientService {
       // Validate age (must be 18+ for aesthetic treatments)
       const age = differenceInYears(new Date(), data.dateOfBirth);
       if (age < 18) {
-        throw new Error('Patient must be 18 years or older for aesthetic treatments');
+        throw new Error(
+          'Patient must be 18 years or older for aesthetic treatments'
+        );
       }
 
       const patient = await this.repository.createPatient(data);
@@ -98,7 +112,8 @@ export class PatientService {
       console.error('Error updating patient:', error);
       throw error;
     }
-  }  async getPatient(id: string): Promise<Patient | null> {
+  }
+  async getPatient(id: string): Promise<Patient | null> {
     return this.repository.getPatient(id);
   }
 
@@ -114,7 +129,7 @@ export class PatientService {
     await this.repository.updatePatient(id, {
       id,
       status: PatientStatus.INACTIVE,
-      notes: reason ? `Deactivated: ${reason}` : 'Patient deactivated'
+      notes: reason ? `Deactivated: ${reason}` : 'Patient deactivated',
     });
   }
 
@@ -122,12 +137,15 @@ export class PatientService {
     await this.repository.updatePatient(id, {
       id,
       status: PatientStatus.BLOCKED,
-      notes: `Blocked: ${reason}`
+      notes: `Blocked: ${reason}`,
     });
   }
 
   // Medical history management
-  async updateMedicalHistory(patientId: string, history: MedicalHistory): Promise<void> {
+  async updateMedicalHistory(
+    patientId: string,
+    history: MedicalHistory
+  ): Promise<void> {
     const patient = await this.repository.getPatient(patientId);
     if (!patient) {
       throw new Error('Patient not found');
@@ -136,7 +154,10 @@ export class PatientService {
     await this.repository.updateMedicalHistory(patientId, history);
   }
 
-  async updateAestheticHistory(patientId: string, history: AestheticHistory): Promise<void> {
+  async updateAestheticHistory(
+    patientId: string,
+    history: AestheticHistory
+  ): Promise<void> {
     const patient = await this.repository.getPatient(patientId);
     if (!patient) {
       throw new Error('Patient not found');
@@ -145,14 +166,17 @@ export class PatientService {
     await this.repository.updateAestheticHistory(patientId, history);
   }
 
-  async updateSkinAssessment(patientId: string, assessment: SkinAssessment): Promise<void> {
+  async updateSkinAssessment(
+    patientId: string,
+    assessment: SkinAssessment
+  ): Promise<void> {
     const patient = await this.repository.getPatient(patientId);
     if (!patient) {
       throw new Error('Patient not found');
     }
 
     await this.repository.updateSkinAssessment(patientId, assessment);
-  }  // Consent form management
+  } // Consent form management
   async addConsentForm(patientId: string, form: ConsentForm): Promise<void> {
     const patient = await this.repository.getPatient(patientId);
     if (!patient) {
@@ -166,12 +190,14 @@ export class PatientService {
     return this.repository.getConsentForms(patientId);
   }
 
-  async hasValidConsent(patientId: string, treatmentType: string): Promise<boolean> {
+  async hasValidConsent(
+    patientId: string,
+    treatmentType: string
+  ): Promise<boolean> {
     const consentForms = await this.repository.getConsentForms(patientId);
-    return consentForms.some(form => 
-      form.treatmentType === treatmentType && 
-      form.isActive &&
-      form.signedDate
+    return consentForms.some(
+      (form) =>
+        form.treatmentType === treatmentType && form.isActive && form.signedDate
     );
   }
 
@@ -195,7 +221,7 @@ export class PatientService {
 
   async getPatientsByAge(minAge: number, maxAge: number): Promise<Patient[]> {
     const patients = await this.repository.getPatients();
-    return patients.filter(patient => {
+    return patients.filter((patient) => {
       const age = differenceInYears(new Date(), patient.dateOfBirth);
       return age >= minAge && age <= maxAge;
     });
@@ -215,7 +241,7 @@ export class PatientService {
       const updatedTags = [...patient.tags, tag];
       await this.repository.updatePatient(patientId, {
         id: patientId,
-        tags: updatedTags
+        tags: updatedTags,
       });
     }
   }
@@ -226,10 +252,10 @@ export class PatientService {
       throw new Error('Patient not found');
     }
 
-    const updatedTags = patient.tags.filter(t => t !== tag);
+    const updatedTags = patient.tags.filter((t) => t !== tag);
     await this.repository.updatePatient(patientId, {
       id: patientId,
-      tags: updatedTags
+      tags: updatedTags,
     });
   }
 }

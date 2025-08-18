@@ -1,4 +1,13 @@
 import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@neonpro/ui';
+import {
   BarChart3,
   Calendar,
   FileText,
@@ -7,19 +16,10 @@ import {
   Star,
   Stethoscope,
   Users,
-} from "lucide-react";
-import Image, { type ImageProps } from "next/image";
-import {
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@neonpro/ui";
+} from 'lucide-react';
+import Image, { type ImageProps } from 'next/image';
 
-type Props = Omit<ImageProps, "src"> & {
+type Props = Omit<ImageProps, 'src'> & {
   srcLight: string;
   srcDark: string;
 };
@@ -29,8 +29,8 @@ const _ThemeImage = (props: Props) => {
 
   return (
     <>
-      <Image {...rest} src={srcLight} className="block dark:hidden" />
-      <Image {...rest} src={srcDark} className="hidden dark:block" />
+      <Image {...rest} className="block dark:hidden" src={srcLight} />
+      <Image {...rest} className="hidden dark:block" src={srcDark} />
     </>
   );
 };
@@ -50,34 +50,37 @@ export default function HomePage() {
 
           <h2 className="mx-auto max-w-4xl font-bold text-3xl text-gray-900 md:text-5xl dark:text-white">
             Sistema Completo de Gestão para
-            <span className="block text-blue-600 dark:text-blue-400">Clínicas de Estética</span>
+            <span className="block text-blue-600 dark:text-blue-400">
+              Clínicas de Estética
+            </span>
           </h2>
 
           <p className="mx-auto max-w-2xl text-gray-600 text-xl dark:text-gray-300">
-            Transforme sua clínica com tecnologia moderna. Agendamentos inteligentes, prontuários
-            eletrônicos e compliance total com LGPD, ANVISA e CFM.
+            Transforme sua clínica com tecnologia moderna. Agendamentos
+            inteligentes, prontuários eletrônicos e compliance total com LGPD,
+            ANVISA e CFM.
           </p>
 
           <div className="mt-6 flex flex-wrap justify-center gap-2">
-            <Badge variant="secondary" className="flex items-center gap-1">
+            <Badge className="flex items-center gap-1" variant="secondary">
               <Shield className="h-3 w-3" />
               LGPD Compliant
             </Badge>
-            <Badge variant="secondary" className="flex items-center gap-1">
+            <Badge className="flex items-center gap-1" variant="secondary">
               <Stethoscope className="h-3 w-3" />
               ANVISA
             </Badge>
-            <Badge variant="secondary" className="flex items-center gap-1">
+            <Badge className="flex items-center gap-1" variant="secondary">
               <FileText className="h-3 w-3" />
               CFM
             </Badge>
           </div>
 
           <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
-            <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
+            <Button className="bg-blue-600 hover:bg-blue-700" size="lg">
               Iniciar Demonstração
             </Button>
-            <Button variant="outline" size="lg">
+            <Button size="lg" variant="outline">
               Ver Documentação
             </Button>
           </div>
@@ -100,8 +103,8 @@ export default function HomePage() {
             </CardHeader>
             <CardContent>
               <CardDescription>
-                Sistema avançado de agendamentos com lembretes automáticos, gestão de filas de
-                espera e integração com calendários.
+                Sistema avançado de agendamentos com lembretes automáticos,
+                gestão de filas de espera e integração com calendários.
               </CardDescription>
             </CardContent>
           </Card>
@@ -115,8 +118,8 @@ export default function HomePage() {
             </CardHeader>
             <CardContent>
               <CardDescription>
-                Prontuários digitais seguros com histórico completo, anexos de imagens e total
-                compliance com regulamentações médicas.
+                Prontuários digitais seguros com histórico completo, anexos de
+                imagens e total compliance com regulamentações médicas.
               </CardDescription>
             </CardContent>
           </Card>
@@ -130,8 +133,8 @@ export default function HomePage() {
             </CardHeader>
             <CardContent>
               <CardDescription>
-                Conformidade completa com LGPD, ANVISA e CFM. Auditoria automática e relatórios de
-                conformidade.
+                Conformidade completa com LGPD, ANVISA e CFM. Auditoria
+                automática e relatórios de conformidade.
               </CardDescription>
             </CardContent>
           </Card>
@@ -145,8 +148,8 @@ export default function HomePage() {
             </CardHeader>
             <CardContent>
               <CardDescription>
-                Cadastro completo de pacientes com histórico médico, preferências e sistema de
-                comunicação integrado.
+                Cadastro completo de pacientes com histórico médico,
+                preferências e sistema de comunicação integrado.
               </CardDescription>
             </CardContent>
           </Card>
@@ -160,8 +163,8 @@ export default function HomePage() {
             </CardHeader>
             <CardContent>
               <CardDescription>
-                Relatórios financeiros, análise de performance e insights para otimização da sua
-                clínica.
+                Relatórios financeiros, análise de performance e insights para
+                otimização da sua clínica.
               </CardDescription>
             </CardContent>
           </Card>
@@ -175,7 +178,8 @@ export default function HomePage() {
             </CardHeader>
             <CardContent>
               <CardDescription>
-                Interface moderna e intuitiva, otimizada para profissionais da saúde e estética.
+                Interface moderna e intuitiva, otimizada para profissionais da
+                saúde e estética.
               </CardDescription>
             </CardContent>
           </Card>
@@ -190,8 +194,8 @@ export default function HomePage() {
               Portal do Paciente
             </h3>
             <p className="mx-auto max-w-2xl text-gray-600 text-lg dark:text-gray-300">
-              Experiência completa para pacientes de estética com acompanhamento de tratamentos,
-              agendamentos e evolução visual
+              Experiência completa para pacientes de estética com acompanhamento
+              de tratamentos, agendamentos e evolução visual
             </p>
           </div>
 
@@ -206,8 +210,8 @@ export default function HomePage() {
             Pronto para Transformar sua Clínica?
           </h3>
           <p className="mx-auto mb-8 max-w-2xl text-blue-100 text-lg">
-            Junte-se a centenas de clínicas que já confiam no NeonPro para gerenciar seus negócios
-            com eficiência e segurança.
+            Junte-se a centenas de clínicas que já confiam no NeonPro para
+            gerenciar seus negócios com eficiência e segurança.
           </p>
           <Button size="lg" variant="secondary">
             Começar Gratuitamente
@@ -262,8 +266,12 @@ function PatientPortalDemo() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-600 text-sm dark:text-gray-400">Próxima Consulta</p>
-                    <p className="font-bold text-gray-900 text-xl dark:text-white">25/08</p>
+                    <p className="text-gray-600 text-sm dark:text-gray-400">
+                      Próxima Consulta
+                    </p>
+                    <p className="font-bold text-gray-900 text-xl dark:text-white">
+                      25/08
+                    </p>
                     <p className="text-gray-500 text-xs">Botox - 14:30</p>
                   </div>
                   <Calendar className="h-8 w-8 text-pink-500" />
@@ -275,8 +283,12 @@ function PatientPortalDemo() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-600 text-sm dark:text-gray-400">Tratamentos Ativos</p>
-                    <p className="font-bold text-gray-900 text-xl dark:text-white">2</p>
+                    <p className="text-gray-600 text-sm dark:text-gray-400">
+                      Tratamentos Ativos
+                    </p>
+                    <p className="font-bold text-gray-900 text-xl dark:text-white">
+                      2
+                    </p>
                     <p className="text-gray-500 text-xs">Em andamento</p>
                   </div>
                   <Heart className="h-8 w-8 text-blue-500" />
@@ -288,8 +300,12 @@ function PatientPortalDemo() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-600 text-sm dark:text-gray-400">Progresso</p>
-                    <p className="font-bold text-gray-900 text-xl dark:text-white">75%</p>
+                    <p className="text-gray-600 text-sm dark:text-gray-400">
+                      Progresso
+                    </p>
+                    <p className="font-bold text-gray-900 text-xl dark:text-white">
+                      75%
+                    </p>
                     <p className="text-gray-500 text-xs">Concluído</p>
                   </div>
                   <BarChart3 className="h-8 w-8 text-green-500" />
@@ -301,9 +317,13 @@ function PatientPortalDemo() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-600 text-sm dark:text-gray-400">Avaliação</p>
+                    <p className="text-gray-600 text-sm dark:text-gray-400">
+                      Avaliação
+                    </p>
                     <div className="flex items-center space-x-1">
-                      <p className="font-bold text-gray-900 text-xl dark:text-white">5</p>
+                      <p className="font-bold text-gray-900 text-xl dark:text-white">
+                        5
+                      </p>
                       <Star className="h-4 w-4 fill-orange-400 text-orange-400" />
                     </div>
                     <p className="text-gray-500 text-xs">Excelente</p>
@@ -341,7 +361,10 @@ function PatientPortalDemo() {
                       <span>75%</span>
                     </div>
                     <div className="h-2 w-full rounded-full bg-gray-200">
-                      <div className="h-2 rounded-full bg-pink-600" style={{ width: "75%" }} />
+                      <div
+                        className="h-2 rounded-full bg-pink-600"
+                        style={{ width: '75%' }}
+                      />
                     </div>
                     <div className="flex justify-between text-gray-500 text-xs">
                       <span>3 de 4 sessões</span>
@@ -354,7 +377,9 @@ function PatientPortalDemo() {
                   <div className="flex items-start justify-between">
                     <div>
                       <h4 className="font-medium">Tratamento Corporal</h4>
-                      <p className="text-gray-600 text-sm dark:text-gray-400">Criolipólise</p>
+                      <p className="text-gray-600 text-sm dark:text-gray-400">
+                        Criolipólise
+                      </p>
                     </div>
                     <Badge variant="secondary">Em andamento</Badge>
                   </div>
@@ -365,7 +390,10 @@ function PatientPortalDemo() {
                       <span>50%</span>
                     </div>
                     <div className="h-2 w-full rounded-full bg-gray-200">
-                      <div className="h-2 rounded-full bg-blue-600" style={{ width: "50%" }} />
+                      <div
+                        className="h-2 rounded-full bg-blue-600"
+                        style={{ width: '50%' }}
+                      />
                     </div>
                     <div className="flex justify-between text-gray-500 text-xs">
                       <span>2 de 4 sessões</span>
@@ -388,7 +416,9 @@ function PatientPortalDemo() {
                   <div className="mt-0.5 h-2 w-2 rounded-full bg-red-500" />
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
-                      <h4 className="font-medium text-sm">Evitar exercícios intensos</h4>
+                      <h4 className="font-medium text-sm">
+                        Evitar exercícios intensos
+                      </h4>
                       <span className="text-gray-500 text-xs">Hoje</span>
                     </div>
                     <p className="text-gray-600 text-xs dark:text-gray-400">
@@ -401,7 +431,9 @@ function PatientPortalDemo() {
                   <div className="mt-0.5 h-2 w-2 rounded-full bg-yellow-500" />
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
-                      <h4 className="font-medium text-sm">Aplicar protetor solar</h4>
+                      <h4 className="font-medium text-sm">
+                        Aplicar protetor solar
+                      </h4>
                       <span className="text-gray-500 text-xs">Diário</span>
                     </div>
                     <p className="text-gray-600 text-xs dark:text-gray-400">
@@ -414,7 +446,9 @@ function PatientPortalDemo() {
                   <div className="mt-0.5 h-2 w-2 rounded-full bg-green-500" />
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
-                      <h4 className="font-medium text-sm">Hidratação da pele</h4>
+                      <h4 className="font-medium text-sm">
+                        Hidratação da pele
+                      </h4>
                       <span className="text-gray-500 text-xs">2x/dia</span>
                     </div>
                     <p className="text-gray-600 text-xs dark:text-gray-400">
@@ -433,7 +467,9 @@ function PatientPortalDemo() {
                 <Users className="h-5 w-5 text-purple-600" />
                 <span>Evolução dos Tratamentos</span>
               </CardTitle>
-              <CardDescription>Acompanhe visualmente seus resultados</CardDescription>
+              <CardDescription>
+                Acompanhe visualmente seus resultados
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
@@ -466,11 +502,11 @@ function PatientPortalDemo() {
               <Calendar className="h-4 w-4" />
               Agendar Nova Consulta
             </Button>
-            <Button variant="outline" className="flex-1">
+            <Button className="flex-1" variant="outline">
               <Users className="h-4 w-4" />
               Enviar Mensagem
             </Button>
-            <Button variant="outline" className="flex-1">
+            <Button className="flex-1" variant="outline">
               <FileText className="h-4 w-4" />
               Ver Histórico Completo
             </Button>
@@ -486,7 +522,8 @@ function PatientPortalDemo() {
           </div>
           <h4 className="mb-2 font-semibold">Agendamento Inteligente</h4>
           <p className="text-gray-600 text-sm dark:text-gray-400">
-            Sistema de agendamento com IA, lembretes automáticos e gestão de filas de espera
+            Sistema de agendamento com IA, lembretes automáticos e gestão de
+            filas de espera
           </p>
         </Card>
 
@@ -496,7 +533,8 @@ function PatientPortalDemo() {
           </div>
           <h4 className="mb-2 font-semibold">Jornada de Tratamento</h4>
           <p className="text-gray-600 text-sm dark:text-gray-400">
-            Acompanhamento completo com fotos antes/depois, marcos de progresso e evolução visual
+            Acompanhamento completo com fotos antes/depois, marcos de progresso
+            e evolução visual
           </p>
         </Card>
 
@@ -516,7 +554,8 @@ function PatientPortalDemo() {
           </div>
           <h4 className="mb-2 font-semibold">Educação e Cuidados</h4>
           <p className="text-gray-600 text-sm dark:text-gray-400">
-            Conteúdo educativo, instruções de cuidados pós-tratamento e vídeos tutoriais
+            Conteúdo educativo, instruções de cuidados pós-tratamento e vídeos
+            tutoriais
           </p>
         </Card>
 
@@ -526,7 +565,8 @@ function PatientPortalDemo() {
           </div>
           <h4 className="mb-2 font-semibold">Pagamentos Brasileiros</h4>
           <p className="text-gray-600 text-sm dark:text-gray-400">
-            Integração com PIX, cartões e parcelamento com gestão financeira completa
+            Integração com PIX, cartões e parcelamento com gestão financeira
+            completa
           </p>
         </Card>
 

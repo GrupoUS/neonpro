@@ -3,29 +3,29 @@
 // Story 4.3: Patient Portal & Self-Service
 // ===============================================
 
-const CACHE_NAME = "neonpro-portal-v1.0";
-const OFFLINE_URL = "/portal/offline";
+const CACHE_NAME = 'neonpro-portal-v1.0';
+const OFFLINE_URL = '/portal/offline';
 
 // Resources to cache on install
 const STATIC_RESOURCES = [
-  "/portal/",
-  "/portal/login",
-  "/portal/offline",
-  "/portal/manifest.json",
-  "/portal/icons/icon-192x192.png",
-  "/portal/icons/icon-512x512.png",
+  '/portal/',
+  '/portal/login',
+  '/portal/offline',
+  '/portal/manifest.json',
+  '/portal/icons/icon-192x192.png',
+  '/portal/icons/icon-512x512.png',
   // Core CSS and JS will be added automatically by Next.js
 ];
 
 // API routes that should be cached
 const API_CACHE_PATTERNS = [
-  "/api/portal/auth/validate",
-  "/api/portal/dashboard/stats",
-  "/api/portal/notifications",
+  '/api/portal/auth/validate',
+  '/api/portal/dashboard/stats',
+  '/api/portal/notifications',
 ];
 
 // Install event - cache static resources
-self.addEventListener("install", (event) => {
+self.addEventListener('install', (event) => {
   event.waitUntil(
     caches
       .open(CACHE_NAME)
@@ -35,12 +35,12 @@ self.addEventListener("install", (event) => {
       .then(() => {
         // Force the new service worker to activate immediately
         return self.skipWaiting();
-      }),
+      })
   );
 });
 
 // Activate event - clean up old caches
-self.addEventListener("activate", (event) => {
+self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches
       .keys()
@@ -51,18 +51,18 @@ self.addEventListener("activate", (event) => {
               return caches.delete(cacheName);
             }
             return Promise.resolve();
-          }),
+          })
         );
       })
       .then(() => {
         // Take control of all pages immediately
         return self.clients.claim();
-      }),
+      })
   );
 });
 
 // Fetch event - serve from cache with network fallback
-self.addEventListener("fetch", (event) => {
+self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
@@ -72,13 +72,13 @@ self.addEventListener("fetch", (event) => {
   }
 
   // Handle portal routes
-  if (url.pathname.startsWith("/portal/")) {
+  if (url.pathname.startsWith('/portal/')) {
     event.respondWith(handlePortalRequest(request));
     return;
   }
 
   // Handle API requests
-  if (url.pathname.startsWith("/api/portal/")) {
+  if (url.pathname.startsWith('/api/portal/')) {
     event.respondWith(handleAPIRequest(request));
     return;
   }
@@ -90,7 +90,7 @@ async function handlePortalRequest(request) {
 
   try {
     // Try network first for HTML pages
-    if (request.mode === "navigate") {
+    if (request.mode === 'navigate') {
       const networkResponse = await fetch(request);
 
       // Cache successful responses
@@ -126,7 +126,7 @@ async function handlePortalRequest(request) {
     }
 
     // If it's a navigation request and we can't serve it, show offline page
-    if (request.mode === "navigate") {
+    if (request.mode === 'navigate') {
       const offlineResponse = await caches.match(OFFLINE_URL);
       if (offlineResponse) {
         return offlineResponse;
@@ -134,11 +134,11 @@ async function handlePortalRequest(request) {
     }
 
     // Return a basic offline response
-    return new Response("Offline - Portal não disponível", {
+    return new Response('Offline - Portal não disponível', {
       status: 503,
-      statusText: "Service Unavailable",
+      statusText: 'Service Unavailable',
       headers: {
-        "Content-Type": "text/plain",
+        'Content-Type': 'text/plain',
       },
     });
   }
@@ -151,7 +151,7 @@ async function handleAPIRequest(request) {
 
   try {
     // For GET requests to cacheable endpoints
-    if (request.method === "GET" && shouldCacheAPI(url.pathname)) {
+    if (request.method === 'GET' && shouldCacheAPI(url.pathname)) {
       // Try cache first for faster response
       const cachedResponse = await caches.match(cacheKey);
 
@@ -177,7 +177,7 @@ async function handleAPIRequest(request) {
     return fetch(request);
   } catch (_error) {
     // For GET requests, try to serve from cache
-    if (request.method === "GET") {
+    if (request.method === 'GET') {
       const cachedResponse = await caches.match(cacheKey);
       if (cachedResponse) {
         return cachedResponse;
@@ -189,16 +189,16 @@ async function handleAPIRequest(request) {
       JSON.stringify({
         success: false,
         error: {
-          code: "OFFLINE_ERROR",
-          message: "Sem conexão com o servidor",
+          code: 'OFFLINE_ERROR',
+          message: 'Sem conexão com o servidor',
         },
       }),
       {
         status: 503,
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
-      },
+      }
     );
   }
 }
@@ -209,8 +209,8 @@ function shouldCacheAPI(pathname) {
 }
 
 // Background sync for offline actions
-self.addEventListener("sync", (event) => {
-  if (event.tag === "portal-sync") {
+self.addEventListener('sync', (event) => {
+  if (event.tag === 'portal-sync') {
     event.waitUntil(syncOfflineActions());
   }
 });
@@ -227,7 +227,7 @@ async function syncOfflineActions() {
     const clients = await self.clients.matchAll();
     clients.forEach((client) => {
       client.postMessage({
-        type: "SYNC_COMPLETE",
+        type: 'SYNC_COMPLETE',
         data: { success: true },
       });
     });
@@ -235,7 +235,7 @@ async function syncOfflineActions() {
     const clients = await self.clients.matchAll();
     clients.forEach((client) => {
       client.postMessage({
-        type: "SYNC_FAILED",
+        type: 'SYNC_FAILED',
         data: { error: error.message },
       });
     });
@@ -243,7 +243,7 @@ async function syncOfflineActions() {
 }
 
 // Push notification handling
-self.addEventListener("push", (event) => {
+self.addEventListener('push', (event) => {
   if (!event.data) {
     return;
   }
@@ -252,61 +252,68 @@ self.addEventListener("push", (event) => {
     const data = event.data.json();
 
     const options = {
-      body: data.body || "Nova notificação do portal",
-      icon: "/portal/icons/icon-192x192.png",
-      badge: "/portal/icons/icon-72x72.png",
+      body: data.body || 'Nova notificação do portal',
+      icon: '/portal/icons/icon-192x192.png',
+      badge: '/portal/icons/icon-72x72.png',
       data: data.data || {},
       actions: data.actions || [],
-      tag: data.tag || "portal-notification",
+      tag: data.tag || 'portal-notification',
       requireInteraction: data.requireInteraction,
     };
 
-    event.waitUntil(self.registration.showNotification(data.title || "Portal NeonPro", options));
+    event.waitUntil(
+      self.registration.showNotification(
+        data.title || 'Portal NeonPro',
+        options
+      )
+    );
   } catch (_error) {}
 });
 
 // Notification click handling
-self.addEventListener("notificationclick", (event) => {
+self.addEventListener('notificationclick', (event) => {
   event.notification.close();
 
   const data = event.notification.data || {};
-  let targetUrl = "/portal/";
+  let targetUrl = '/portal/';
 
   // Handle different notification types
-  if (data.type === "appointment") {
-    targetUrl = "/portal/appointments";
-  } else if (data.type === "message") {
-    targetUrl = "/portal/messages";
+  if (data.type === 'appointment') {
+    targetUrl = '/portal/appointments';
+  } else if (data.type === 'message') {
+    targetUrl = '/portal/messages';
   } else if (data.url) {
     targetUrl = data.url;
   }
 
   event.waitUntil(
-    clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {
-      // Check if portal is already open
-      for (const client of clientList) {
-        const clientUrl = new URL(client.url);
-        if (clientUrl.pathname.startsWith("/portal/") && "focus" in client) {
-          client.focus();
-          client.postMessage({
-            type: "NOTIFICATION_CLICK",
-            data: { url: targetUrl },
-          });
-          return;
+    clients
+      .matchAll({ type: 'window', includeUncontrolled: true })
+      .then((clientList) => {
+        // Check if portal is already open
+        for (const client of clientList) {
+          const clientUrl = new URL(client.url);
+          if (clientUrl.pathname.startsWith('/portal/') && 'focus' in client) {
+            client.focus();
+            client.postMessage({
+              type: 'NOTIFICATION_CLICK',
+              data: { url: targetUrl },
+            });
+            return;
+          }
         }
-      }
 
-      // Open new window if portal not open
-      if (clients.openWindow) {
-        return clients.openWindow(targetUrl);
-      }
-    }),
+        // Open new window if portal not open
+        if (clients.openWindow) {
+          return clients.openWindow(targetUrl);
+        }
+      })
   );
 });
 
 // Message handling from client
-self.addEventListener("message", (event) => {
-  if (event.data && event.data.type === "SKIP_WAITING") {
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
 });

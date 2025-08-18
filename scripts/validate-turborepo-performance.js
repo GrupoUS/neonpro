@@ -13,14 +13,14 @@ const PERFORMANCE_TARGETS = {
   BUILD_TIME_REDUCTION: 0.6, // 60% reduction target
   CACHE_HIT_RATE: 0.8, // 80% cache hit rate target
   COMPLIANCE_TASKS_PARALLEL: true,
-  AI_MODEL_BUILD_OPTIMIZATION: true
+  AI_MODEL_BUILD_OPTIMIZATION: true,
 };
 
 const HEALTHCARE_COMPLIANCE_REQUIREMENTS = [
   'compliance:lgpd',
-  'compliance:anvisa', 
+  'compliance:anvisa',
   'compliance:cfm',
-  'security:audit'
+  'security:audit',
 ];
 
 async function validatePerformance() {
@@ -32,45 +32,47 @@ async function validatePerformance() {
     cacheOptimization: false,
     complianceMaintained: false,
     aiOptimization: false,
-    overall: false
+    overall: false,
   };
 
   try {
     // 1. Validate build time improvement
     console.log('📊 Testing build time performance...');
     const buildStart = Date.now();
-    
+
     execSync('pnpm run build', { stdio: 'inherit' });
-    
+
     const buildTime = Date.now() - buildStart;
-    const baselineBuildTime = 120000; // 2 minutes baseline
+    const baselineBuildTime = 120_000; // 2 minutes baseline
     const improvement = (baselineBuildTime - buildTime) / baselineBuildTime;
-    
-    results.buildTimeImprovement = improvement >= PERFORMANCE_TARGETS.BUILD_TIME_REDUCTION;
-    
+
+    results.buildTimeImprovement =
+      improvement >= PERFORMANCE_TARGETS.BUILD_TIME_REDUCTION;
+
     console.log(`Build time: ${buildTime}ms`);
     console.log(`Improvement: ${(improvement * 100).toFixed(1)}%`);
     console.log(`Target met: ${results.buildTimeImprovement ? '✅' : '❌'}\n`);
 
     // 2. Validate cache optimization
     console.log('🚀 Testing cache optimization...');
-    
+
     // Run build twice to test cache
     execSync('pnpm run build', { stdio: 'pipe' });
     const cacheStart = Date.now();
     execSync('pnpm run build', { stdio: 'pipe' });
     const cacheTime = Date.now() - cacheStart;
-    
+
     const cacheImprovement = (buildTime - cacheTime) / buildTime;
-    results.cacheOptimization = cacheImprovement >= PERFORMANCE_TARGETS.CACHE_HIT_RATE;
-    
+    results.cacheOptimization =
+      cacheImprovement >= PERFORMANCE_TARGETS.CACHE_HIT_RATE;
+
     console.log(`Cached build time: ${cacheTime}ms`);
     console.log(`Cache improvement: ${(cacheImprovement * 100).toFixed(1)}%`);
     console.log(`Target met: ${results.cacheOptimization ? '✅' : '❌'}\n`);
 
     // 3. Validate healthcare compliance maintenance
     console.log('🏥 Testing healthcare compliance maintenance...');
-    
+
     for (const task of HEALTHCARE_COMPLIANCE_REQUIREMENTS) {
       try {
         execSync(`pnpm run ${task}`, { stdio: 'pipe' });
@@ -81,24 +83,26 @@ async function validatePerformance() {
         break;
       }
     }
-    
+
     if (results.complianceMaintained !== false) {
       results.complianceMaintained = true;
     }
-    
-    console.log(`Compliance maintained: ${results.complianceMaintained ? '✅' : '❌'}\n`);
+
+    console.log(
+      `Compliance maintained: ${results.complianceMaintained ? '✅' : '❌'}\n`
+    );
 
     // 4. Validate AI/ML optimization
     console.log('🤖 Testing AI/ML build optimization...');
-    
+
     try {
       const aiStart = Date.now();
       execSync('pnpm run ai:build-models', { stdio: 'pipe' });
       const aiTime = Date.now() - aiStart;
-      
+
       // AI builds should be under 30 seconds with optimization
-      results.aiOptimization = aiTime < 30000;
-      
+      results.aiOptimization = aiTime < 30_000;
+
       console.log(`AI model build time: ${aiTime}ms`);
       console.log(`Target met: ${results.aiOptimization ? '✅' : '❌'}\n`);
     } catch (error) {
@@ -106,30 +110,39 @@ async function validatePerformance() {
     }
 
     // 5. Overall validation
-    results.overall = Object.values(results).every(result => result === true);
+    results.overall = Object.values(results).every((result) => result === true);
 
     // Generate report
     generatePerformanceReport(results, {
       buildTime,
       cacheTime,
       improvement,
-      cacheImprovement
+      cacheImprovement,
     });
 
     console.log('📊 PERFORMANCE VALIDATION SUMMARY');
     console.log('================================');
-    console.log(`Build Time Improvement: ${results.buildTimeImprovement ? '✅' : '❌'}`);
-    console.log(`Cache Optimization: ${results.cacheOptimization ? '✅' : '❌'}`);
-    console.log(`Compliance Maintained: ${results.complianceMaintained ? '✅' : '❌'}`);
+    console.log(
+      `Build Time Improvement: ${results.buildTimeImprovement ? '✅' : '❌'}`
+    );
+    console.log(
+      `Cache Optimization: ${results.cacheOptimization ? '✅' : '❌'}`
+    );
+    console.log(
+      `Compliance Maintained: ${results.complianceMaintained ? '✅' : '❌'}`
+    );
     console.log(`AI Optimization: ${results.aiOptimization ? '✅' : '❌'}`);
     console.log(`Overall Success: ${results.overall ? '✅' : '❌'}\n`);
 
     if (results.overall) {
-      console.log('🎉 Turborepo optimization successful! Healthcare SaaS performance targets met.');
+      console.log(
+        '🎉 Turborepo optimization successful! Healthcare SaaS performance targets met.'
+      );
     } else {
-      console.log('⚠️  Some optimization targets not met. Review performance report for details.');
+      console.log(
+        '⚠️  Some optimization targets not met. Review performance report for details.'
+      );
     }
-
   } catch (error) {
     console.error('❌ Performance validation failed:', error.message);
     process.exit(1);
@@ -144,15 +157,15 @@ function generatePerformanceReport(results, metrics) {
       buildTimeImprovement: `${(metrics.improvement * 100).toFixed(1)}%`,
       cacheImprovement: `${(metrics.cacheImprovement * 100).toFixed(1)}%`,
       targets: PERFORMANCE_TARGETS,
-      results
+      results,
     },
     healthcareCompliance: {
       lgpd: results.complianceMaintained,
       anvisa: results.complianceMaintained,
       cfm: results.complianceMaintained,
-      security: results.complianceMaintained
+      security: results.complianceMaintained,
     },
-    recommendations: generateRecommendations(results)
+    recommendations: generateRecommendations(results),
   };
 
   fs.writeFileSync(
@@ -167,7 +180,9 @@ function generateRecommendations(results) {
   const recommendations = [];
 
   if (!results.buildTimeImprovement) {
-    recommendations.push('Consider additional input optimization and dependency analysis');
+    recommendations.push(
+      'Consider additional input optimization and dependency analysis'
+    );
   }
 
   if (!results.cacheOptimization) {
@@ -175,11 +190,15 @@ function generateRecommendations(results) {
   }
 
   if (!results.complianceMaintained) {
-    recommendations.push('CRITICAL: Healthcare compliance validation failed - immediate review required');
+    recommendations.push(
+      'CRITICAL: Healthcare compliance validation failed - immediate review required'
+    );
   }
 
   if (!results.aiOptimization) {
-    recommendations.push('Optimize AI model build process and caching strategy');
+    recommendations.push(
+      'Optimize AI model build process and caching strategy'
+    );
   }
 
   return recommendations;

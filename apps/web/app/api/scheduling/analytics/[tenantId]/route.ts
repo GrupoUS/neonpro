@@ -1,12 +1,17 @@
-import { type NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
-import type { SchedulingAnalytics, TimeSlotEfficiency } from "@neonpro/core-services/scheduling";
+import type {
+  SchedulingAnalytics,
+  TimeSlotEfficiency,
+} from '@neonpro/core-services/scheduling';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 const analyticsQuerySchema = z.object({
   startDate: z.string().datetime().optional(),
   endDate: z.string().datetime().optional(),
-  granularity: z.enum(["hour", "day", "week", "month"]).default("day"),
-  metrics: z.array(z.enum(["utilization", "noshow", "satisfaction", "revenue"])).optional(),
+  granularity: z.enum(['hour', 'day', 'week', 'month']).default('day'),
+  metrics: z
+    .array(z.enum(['utilization', 'noshow', 'satisfaction', 'revenue']))
+    .optional(),
 });
 
 /**
@@ -15,16 +20,19 @@ const analyticsQuerySchema = z.object({
  *
  * Returns comprehensive scheduling performance metrics and AI insights
  */
-export async function GET(request: NextRequest, { params }: { params: { tenantId: string } }) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { tenantId: string } }
+) {
   const startTime = performance.now();
 
   try {
     const { searchParams } = new URL(request.url);
     const query = analyticsQuerySchema.parse({
-      startDate: searchParams.get("startDate"),
-      endDate: searchParams.get("endDate"),
-      granularity: searchParams.get("granularity") || "day",
-      metrics: searchParams.get("metrics")?.split(","),
+      startDate: searchParams.get('startDate'),
+      endDate: searchParams.get('endDate'),
+      granularity: searchParams.get('granularity') || 'day',
+      metrics: searchParams.get('metrics')?.split(','),
     });
 
     const { tenantId } = params;
@@ -36,7 +44,11 @@ export async function GET(request: NextRequest, { params }: { params: { tenantId
       : new Date(endDate.getTime() - 30 * 24 * 60 * 60 * 1000); // 30 days ago
 
     // Fetch analytics data (mock implementation)
-    const analytics = await getSchedulingAnalytics(tenantId, startDate, endDate);
+    const analytics = await getSchedulingAnalytics(
+      tenantId,
+      startDate,
+      endDate
+    );
 
     // Calculate trends and improvements
     const trends = await calculateTrends(analytics, tenantId);
@@ -61,25 +73,28 @@ export async function GET(request: NextRequest, { params }: { params: { tenantId
       processingTime,
     });
   } catch (error) {
-    console.error("Analytics Error:", error);
+    console.error('Analytics Error:', error);
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { success: false, error: "Invalid query parameters" },
-        { status: 400 },
+        { success: false, error: 'Invalid query parameters' },
+        { status: 400 }
       );
     }
 
     return NextResponse.json(
-      { success: false, error: "Failed to fetch analytics" },
-      { status: 500 },
+      { success: false, error: 'Failed to fetch analytics' },
+      { status: 500 }
     );
   }
 } /**
  * Record scheduling analytics data
  * POST /api/scheduling/analytics/[tenantId]/record
  */
-export async function POST(request: NextRequest, { params }: { params: { tenantId: string } }) {
+export async function POST(
+  request: NextRequest,
+  { params }: { params: { tenantId: string } }
+) {
   try {
     const { tenantId } = params;
     const body = await request.json();
@@ -89,13 +104,13 @@ export async function POST(request: NextRequest, { params }: { params: { tenantI
 
     return NextResponse.json({
       success: true,
-      message: "Analytics recorded successfully",
+      message: 'Analytics recorded successfully',
     });
   } catch (error) {
-    console.error("Analytics Recording Error:", error);
+    console.error('Analytics Recording Error:', error);
     return NextResponse.json(
-      { success: false, error: "Failed to record analytics" },
-      { status: 500 },
+      { success: false, error: 'Failed to record analytics' },
+      { status: 500 }
     );
   }
 }
@@ -104,7 +119,7 @@ export async function POST(request: NextRequest, { params }: { params: { tenantI
 async function getSchedulingAnalytics(
   tenantId: string,
   startDate: Date,
-  endDate: Date,
+  endDate: Date
 ): Promise<SchedulingAnalytics> {
   // Mock implementation - would fetch from database
   const analytics: SchedulingAnalytics = {
@@ -155,7 +170,10 @@ function generateTimeSlotEfficiency(): TimeSlotEfficiency[] {
   ];
 }
 
-async function calculateTrends(analytics: SchedulingAnalytics, tenantId: string): Promise<any> {
+async function calculateTrends(
+  analytics: SchedulingAnalytics,
+  tenantId: string
+): Promise<any> {
   // Calculate improvement trends
   return {
     schedulingTimeReduction: 62.3, // 62.3% improvement
@@ -165,10 +183,10 @@ async function calculateTrends(analytics: SchedulingAnalytics, tenantId: string)
     revenueGrowth: 18.0, // 18% revenue growth
 
     weeklyTrends: [
-      { week: "Week 1", schedulingTime: 45, noShowRate: 13.2, utilization: 72 },
-      { week: "Week 2", schedulingTime: 38, noShowRate: 11.8, utilization: 76 },
-      { week: "Week 3", schedulingTime: 28, noShowRate: 10.1, utilization: 81 },
-      { week: "Week 4", schedulingTime: 23, noShowRate: 9.5, utilization: 85 },
+      { week: 'Week 1', schedulingTime: 45, noShowRate: 13.2, utilization: 72 },
+      { week: 'Week 2', schedulingTime: 38, noShowRate: 11.8, utilization: 76 },
+      { week: 'Week 3', schedulingTime: 28, noShowRate: 10.1, utilization: 81 },
+      { week: 'Week 4', schedulingTime: 23, noShowRate: 9.5, utilization: 85 },
     ],
 
     targetAchievement: {
@@ -180,43 +198,46 @@ async function calculateTrends(analytics: SchedulingAnalytics, tenantId: string)
   };
 }
 
-async function generateAIInsights(analytics: SchedulingAnalytics, trends: any): Promise<any> {
+async function generateAIInsights(
+  analytics: SchedulingAnalytics,
+  trends: any
+): Promise<any> {
   return {
     keyAchievements: [
-      "Successfully achieved 60% scheduling time reduction target",
-      "Exceeded no-show reduction target by 0.4%",
-      "Maintained 95%+ scheduling efficiency consistently",
-      "Average decision time under 500ms (sub-second target achieved)",
+      'Successfully achieved 60% scheduling time reduction target',
+      'Exceeded no-show reduction target by 0.4%',
+      'Maintained 95%+ scheduling efficiency consistently',
+      'Average decision time under 500ms (sub-second target achieved)',
     ],
 
     optimizationOpportunities: [
       {
-        area: "Evening Slots",
-        potential: "12% utilization increase",
-        recommendation: "Implement dynamic pricing for 5-7 PM slots",
-        impact: "Medium",
+        area: 'Evening Slots',
+        potential: '12% utilization increase',
+        recommendation: 'Implement dynamic pricing for 5-7 PM slots',
+        impact: 'Medium',
       },
       {
-        area: "Friday Appointments",
-        potential: "8% no-show reduction",
-        recommendation: "Increase reminder frequency for Friday slots",
-        impact: "High",
+        area: 'Friday Appointments',
+        potential: '8% no-show reduction',
+        recommendation: 'Increase reminder frequency for Friday slots',
+        impact: 'High',
       },
       {
-        area: "Staff Efficiency",
-        potential: "5% productivity gain",
-        recommendation: "Optimize treatment sequencing for Dr. Silva",
-        impact: "Medium",
+        area: 'Staff Efficiency',
+        potential: '5% productivity gain',
+        recommendation: 'Optimize treatment sequencing for Dr. Silva',
+        impact: 'Medium',
       },
     ],
 
     predictions: {
       nextWeekDemand: 127,
-      peakDays: ["Tuesday", "Thursday"],
+      peakDays: ['Tuesday', 'Thursday'],
       recommendedActions: [
-        "Increase Tuesday afternoon capacity by 20%",
-        "Offer incentives for Friday morning slots",
-        "Review Thursday evening staff allocation",
+        'Increase Tuesday afternoon capacity by 20%',
+        'Offer incentives for Friday morning slots',
+        'Review Thursday evening staff allocation',
       ],
     },
 
@@ -230,7 +251,10 @@ async function generateAIInsights(analytics: SchedulingAnalytics, trends: any): 
   };
 }
 
-async function recordSchedulingEvent(tenantId: string, eventData: any): Promise<void> {
+async function recordSchedulingEvent(
+  tenantId: string,
+  eventData: any
+): Promise<void> {
   // Record event for analytics and ML training
   // In production, this would write to a database or analytics service
   console.log(`Recording scheduling event for tenant ${tenantId}:`, eventData);

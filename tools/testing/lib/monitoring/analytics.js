@@ -5,36 +5,36 @@ const analyticsService = {
       event,
       properties,
       timestamp: Date.now(),
-      sessionId: 'test-session'
+      sessionId: 'test-session',
     };
   },
-  
+
   trackWebAuthn: (action, result) => {
     return {
       action,
       result,
       timestamp: Date.now(),
-      category: 'webauthn'
+      category: 'webauthn',
     };
   },
-  
+
   trackPerformance: (operation, duration) => {
     return {
       operation,
       duration,
       timestamp: Date.now(),
-      category: 'performance'
+      category: 'performance',
     };
   },
-  
+
   getAnalytics: (filter = {}) => {
     return {
       totalEvents: 1000,
       uniqueUsers: 150,
       conversionRate: 0.85,
-      averageSessionDuration: 300000
+      averageSessionDuration: 300_000,
     };
-  }
+  },
 };
 
 module.exports = { analyticsService };

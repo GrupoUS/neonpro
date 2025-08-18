@@ -136,18 +136,18 @@ export function getPerformanceInsights(metrics: CustomMetric[]): {
   // Group metrics by name
   const metricGroups: Record<string, CustomMetric[]> = {};
   metrics.forEach((metric) => {
-    if (metric?.name && !metricGroups[metric.name]) {
-      metricGroups[metric.name] = [];
-    }
     if (metric?.name) {
-      metricGroups[metric.name].push(metric);
+      if (!metricGroups[metric.name]) {
+        metricGroups[metric.name] = [];
+      }
+      metricGroups[metric.name]!.push(metric);
     }
   });
 
   // Analyze each metric type
   Object.entries(metricGroups).forEach(([name, values]) => {
     if (!values || values.length === 0) return;
-    
+
     const avgValue =
       values.reduce((sum, m) => sum + m.value, 0) / values.length;
     const poorCount = values.filter((m) => m.rating === 'poor').length;
@@ -318,11 +318,11 @@ export function detectAnomalies(
 
   // Group values by metric name
   metrics.forEach((metric) => {
-    if (metric?.name && !metricGroups[metric.name]) {
-      metricGroups[metric.name] = [];
-    }
     if (metric?.name) {
-      metricGroups[metric.name].push(metric.value);
+      if (!metricGroups[metric.name]) {
+        metricGroups[metric.name] = [];
+      }
+      metricGroups[metric.name]!.push(metric.value);
     }
   });
 

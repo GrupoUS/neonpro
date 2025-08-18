@@ -406,8 +406,7 @@ async function updatePerformanceMetrics(supabase: any, clinicIds: string[]) {
  * To schedule this function (add to supabase/functions/_cron/cron.ts):
  * {
  *   name: 'stock-alerts-processor',
- *   cron: '0 */ 6 * * *', // Every 6 hours
+ *   cron: '0 * /6 * * *', // Every 6 hours
  *   function: 'stock-alerts-processor'
- *
-}
+ * }
  */

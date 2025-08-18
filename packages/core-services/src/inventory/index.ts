@@ -1,36 +1,34 @@
 // Inventory module exports
-export * from './types';
-export * from './service';
 
+export type { InventoryRepository } from './service';
+export * from './service';
+export { InventoryService } from './service';
 // Re-export commonly used types
 export type {
-  Product,
-  StockItem,
-  StockMovement,
-  Supplier,
-  PurchaseOrder,
-  InventoryAlert,
+  AlertFilters,
   CreateProductData,
   CreateStockItemData,
   CreateSupplierData,
+  InventoryAlert,
+  InventoryStats,
+  Product,
+  ProductFilters,
+  PurchaseOrder,
+  PurchaseOrderFilters,
+  RegulatoryInfo,
+  StockItem,
+  StockMovement,
   StorageLocation,
   StorageRequirements,
-  RegulatoryInfo,
-  ProductFilters,
-  PurchaseOrderFilters,
-  AlertFilters,
-  InventoryStats
+  Supplier,
 } from './types';
-
-export { InventoryService } from './service';
-export { 
+export * from './types';
+export {
+  AlertSeverity,
+  AlertType,
+  MovementType,
+  OrderStatus,
   ProductCategory,
   ProductType,
   UnitOfMeasure,
-  MovementType,
-  OrderStatus,
-  AlertType,
-  AlertSeverity
 } from './types';
-
-export type { InventoryRepository } from './service';

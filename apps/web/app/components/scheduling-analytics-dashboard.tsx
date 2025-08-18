@@ -1,8 +1,11 @@
-"use client";
+'use client';
 
-import type React from "react";
-import { useState, useEffect, useMemo } from "react";
-import type { SchedulingAnalytics, TimeSlotEfficiency } from "@neonpro/core-services/scheduling";
+import type {
+  SchedulingAnalytics,
+  TimeSlotEfficiency,
+} from '@neonpro/core-services/scheduling';
+import type React from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 interface SchedulingAnalyticsDashboardProps {
   tenantId: string;
@@ -15,7 +18,7 @@ interface MetricCardProps {
   value: string | number;
   trend?: number;
   suffix?: string;
-  color?: "green" | "blue" | "yellow" | "red" | "purple";
+  color?: 'green' | 'blue' | 'yellow' | 'red' | 'purple';
   icon?: React.ReactNode;
 }
 
@@ -23,16 +26,16 @@ const MetricCard: React.FC<MetricCardProps> = ({
   title,
   value,
   trend,
-  suffix = "",
-  color = "blue",
+  suffix = '',
+  color = 'blue',
   icon,
 }) => {
   const colorClasses = {
-    green: "bg-green-50 text-green-700 border-green-200",
-    blue: "bg-blue-50 text-blue-700 border-blue-200",
-    yellow: "bg-yellow-50 text-yellow-700 border-yellow-200",
-    red: "bg-red-50 text-red-700 border-red-200",
-    purple: "bg-purple-50 text-purple-700 border-purple-200",
+    green: 'bg-green-50 text-green-700 border-green-200',
+    blue: 'bg-blue-50 text-blue-700 border-blue-200',
+    yellow: 'bg-yellow-50 text-yellow-700 border-yellow-200',
+    red: 'bg-red-50 text-red-700 border-red-200',
+    purple: 'bg-purple-50 text-purple-700 border-purple-200',
   };
 
   return (
@@ -41,16 +44,22 @@ const MetricCard: React.FC<MetricCardProps> = ({
         <div>
           <p className="font-medium text-sm opacity-80">{title}</p>
           <p className="font-bold text-2xl">
-            {typeof value === "number" ? value.toFixed(1) : value}
+            {typeof value === 'number' ? value.toFixed(1) : value}
             {suffix}
           </p>
           {trend !== undefined && (
             <div
               className={`mt-2 flex items-center text-sm ${
-                trend > 0 ? "text-green-600" : trend < 0 ? "text-red-600" : "text-gray-600"
+                trend > 0
+                  ? 'text-green-600'
+                  : trend < 0
+                    ? 'text-red-600'
+                    : 'text-gray-600'
               }`}
             >
-              <span className="mr-1">{trend > 0 ? "↗" : trend < 0 ? "↘" : "→"}</span>
+              <span className="mr-1">
+                {trend > 0 ? '↗' : trend < 0 ? '↘' : '→'}
+              </span>
               {Math.abs(trend).toFixed(1)}% vs last period
             </div>
           )}
@@ -65,16 +74,14 @@ const MetricCard: React.FC<MetricCardProps> = ({
  * Advanced Analytics Dashboard for AI-Powered Scheduling
  * Displays comprehensive scheduling metrics and AI insights
  */
-export const SchedulingAnalyticsDashboard: React.FC<SchedulingAnalyticsDashboardProps> = ({
-  tenantId,
-  timeRange,
-  onTimeRangeChange,
-}) => {
+export const SchedulingAnalyticsDashboard: React.FC<
+  SchedulingAnalyticsDashboardProps
+> = ({ tenantId, timeRange, onTimeRangeChange }) => {
   const [analytics, setAnalytics] = useState<SchedulingAnalytics | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedView, setSelectedView] = useState<
-    "overview" | "efficiency" | "staff" | "predictions"
-  >("overview");
+    'overview' | 'efficiency' | 'staff' | 'predictions'
+  >('overview');
 
   // Mock analytics data - would be fetched from API
   const mockAnalytics: SchedulingAnalytics = {
@@ -86,21 +93,30 @@ export const SchedulingAnalyticsDashboard: React.FC<SchedulingAnalyticsDashboard
     revenueOptimization: 0.18, // 18% revenue increase
     timeSlotEfficiency: [
       {
-        timeRange: { start: new Date(2024, 0, 1, 9, 0), end: new Date(2024, 0, 1, 12, 0) },
+        timeRange: {
+          start: new Date(2024, 0, 1, 9, 0),
+          end: new Date(2024, 0, 1, 12, 0),
+        },
         utilizationRate: 0.92,
         demandScore: 0.85,
         staffEfficiency: 0.88,
         revenuePerHour: 420,
       },
       {
-        timeRange: { start: new Date(2024, 0, 1, 13, 0), end: new Date(2024, 0, 1, 17, 0) },
+        timeRange: {
+          start: new Date(2024, 0, 1, 13, 0),
+          end: new Date(2024, 0, 1, 17, 0),
+        },
         utilizationRate: 0.87,
         demandScore: 0.9,
         staffEfficiency: 0.85,
         revenuePerHour: 450,
       },
       {
-        timeRange: { start: new Date(2024, 0, 1, 17, 0), end: new Date(2024, 0, 1, 19, 0) },
+        timeRange: {
+          start: new Date(2024, 0, 1, 17, 0),
+          end: new Date(2024, 0, 1, 19, 0),
+        },
         utilizationRate: 0.73,
         demandScore: 0.65,
         staffEfficiency: 0.8,
@@ -112,17 +128,17 @@ export const SchedulingAnalyticsDashboard: React.FC<SchedulingAnalyticsDashboard
   // Simulated AI predictions
   const aiPredictions = {
     nextWeekDemand: 127, // predicted appointments
-    peakDays: ["Tuesday", "Thursday"],
+    peakDays: ['Tuesday', 'Thursday'],
     optimalStaffing: {
       morning: 4,
       afternoon: 5,
       evening: 2,
     },
     recommendedActions: [
-      "Increase Tuesday afternoon capacity by 20%",
-      "Offer incentives for Friday morning slots",
-      "Review Thursday evening staff allocation",
-      "Implement dynamic pricing for peak hours",
+      'Increase Tuesday afternoon capacity by 20%',
+      'Offer incentives for Friday morning slots',
+      'Review Thursday evening staff allocation',
+      'Implement dynamic pricing for peak hours',
     ],
   };
 
@@ -150,9 +166,24 @@ export const SchedulingAnalyticsDashboard: React.FC<SchedulingAnalyticsDashboard
         efficiency: slot.staffEfficiency * 100,
       })),
       trendsData: [
-        { period: "Last Week", bookingTime: 38, noShowRate: 12.5, satisfaction: 4.2 },
-        { period: "This Week", bookingTime: 23, noShowRate: 9.5, satisfaction: 4.6 },
-        { period: "Projected", bookingTime: 18, noShowRate: 7.2, satisfaction: 4.8 },
+        {
+          period: 'Last Week',
+          bookingTime: 38,
+          noShowRate: 12.5,
+          satisfaction: 4.2,
+        },
+        {
+          period: 'This Week',
+          bookingTime: 23,
+          noShowRate: 9.5,
+          satisfaction: 4.6,
+        },
+        {
+          period: 'Projected',
+          bookingTime: 18,
+          noShowRate: 7.2,
+          satisfaction: 4.8,
+        },
       ],
     };
   }, [analytics]);
@@ -163,7 +194,7 @@ export const SchedulingAnalyticsDashboard: React.FC<SchedulingAnalyticsDashboard
         <div className="mb-6 h-8 rounded bg-gray-200" />
         <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-32 rounded-lg bg-gray-200" />
+            <div className="h-32 rounded-lg bg-gray-200" key={i} />
           ))}
         </div>
         <div className="h-64 rounded-lg bg-gray-200" />
@@ -178,13 +209,15 @@ export const SchedulingAnalyticsDashboard: React.FC<SchedulingAnalyticsDashboard
       {/* Header */}
       <div className="mb-6 border-b pb-4">
         <div className="flex items-center justify-between">
-          <h2 className="font-bold text-2xl text-gray-900">Scheduling Analytics Dashboard</h2>
+          <h2 className="font-bold text-2xl text-gray-900">
+            Scheduling Analytics Dashboard
+          </h2>
           <div className="flex items-center space-x-4">
             {/* Time Range Selector */}
             <select
-              value={selectedView}
-              onChange={(e) => setSelectedView(e.target.value as any)}
               className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              onChange={(e) => setSelectedView(e.target.value as any)}
+              value={selectedView}
             >
               <option value="overview">Overview</option>
               <option value="efficiency">Efficiency</option>
@@ -194,27 +227,27 @@ export const SchedulingAnalyticsDashboard: React.FC<SchedulingAnalyticsDashboard
 
             <div className="flex items-center space-x-2 text-sm">
               <input
-                type="date"
-                value={timeRange.start.toISOString().split("T")[0]}
+                className="rounded border border-gray-300 px-2 py-1"
                 onChange={(e) =>
                   onTimeRangeChange({
                     start: new Date(e.target.value),
                     end: timeRange.end,
                   })
                 }
-                className="rounded border border-gray-300 px-2 py-1"
+                type="date"
+                value={timeRange.start.toISOString().split('T')[0]}
               />
               <span>to</span>
               <input
-                type="date"
-                value={timeRange.end.toISOString().split("T")[0]}
+                className="rounded border border-gray-300 px-2 py-1"
                 onChange={(e) =>
                   onTimeRangeChange({
                     start: timeRange.start,
                     end: new Date(e.target.value),
                   })
                 }
-                className="rounded border border-gray-300 px-2 py-1"
+                type="date"
+                value={timeRange.end.toISOString().split('T')[0]}
               />
             </div>
           </div>
@@ -224,81 +257,81 @@ export const SchedulingAnalyticsDashboard: React.FC<SchedulingAnalyticsDashboard
       {/* Key Performance Indicators */}
       <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
         <MetricCard
-          title="Scheduling Time Reduction"
-          value={(1 - analytics.averageBookingTime / 60) * 100}
-          suffix="%"
-          trend={15.2}
           color="green"
           icon={<div className="text-2xl">⚡</div>}
+          suffix="%"
+          title="Scheduling Time Reduction"
+          trend={15.2}
+          value={(1 - analytics.averageBookingTime / 60) * 100}
         />
 
         <MetricCard
-          title="No-Show Rate"
-          value={analytics.noShowRate * 100}
-          suffix="%"
-          trend={-25.4}
           color="blue"
           icon={<div className="text-2xl">📅</div>}
+          suffix="%"
+          title="No-Show Rate"
+          trend={-25.4}
+          value={analytics.noShowRate * 100}
         />
 
         <MetricCard
-          title="Utilization Rate"
-          value={analytics.utilizationRate * 100}
-          suffix="%"
-          trend={8.7}
           color="purple"
           icon={<div className="text-2xl">📊</div>}
+          suffix="%"
+          title="Utilization Rate"
+          trend={8.7}
+          value={analytics.utilizationRate * 100}
         />
 
         <MetricCard
-          title="Revenue Optimization"
-          value={analytics.revenueOptimization * 100}
-          suffix="%"
-          trend={12.3}
           color="green"
           icon={<div className="text-2xl">💰</div>}
+          suffix="%"
+          title="Revenue Optimization"
+          trend={12.3}
+          value={analytics.revenueOptimization * 100}
         />
       </div>
 
       {/* Secondary Metrics */}
       <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
         <MetricCard
-          title="Average Booking Time"
-          value={analytics.averageBookingTime}
-          suffix="s"
-          trend={-62.1}
           color="blue"
           icon={<div className="text-2xl">⏱️</div>}
+          suffix="s"
+          title="Average Booking Time"
+          trend={-62.1}
+          value={analytics.averageBookingTime}
         />
 
         <MetricCard
-          title="Patient Satisfaction"
-          value={analytics.patientSatisfactionScore}
-          suffix="/5"
-          trend={9.5}
           color="green"
           icon={<div className="text-2xl">😊</div>}
+          suffix="/5"
+          title="Patient Satisfaction"
+          trend={9.5}
+          value={analytics.patientSatisfactionScore}
         />
 
         <MetricCard
-          title="Cancellation Rate"
-          value={analytics.cancellationRate * 100}
-          suffix="%"
-          trend={-18.2}
           color="yellow"
           icon={<div className="text-2xl">📋</div>}
+          suffix="%"
+          title="Cancellation Rate"
+          trend={-18.2}
+          value={analytics.cancellationRate * 100}
         />
       </div>
 
       {/* Detailed Analytics Based on Selected View */}
-      {selectedView === "overview" && (
+      {selectedView === 'overview' && (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           {/* Utilization Chart */}
           <div className="rounded-lg bg-gray-50 p-6">
             <h3 className="mb-4 font-semibold text-lg">Hourly Utilization</h3>
             <div className="space-y-3">
               {chartData?.utilizationByHour.map((data, index) => (
-                <div key={index} className="flex items-center justify-between">
+                <div className="flex items-center justify-between" key={index}>
                   <span className="w-16 font-medium text-sm">{data.hour}</span>
                   <div className="mx-4 flex-1">
                     <div className="h-3 rounded-full bg-gray-200">
@@ -321,7 +354,7 @@ export const SchedulingAnalyticsDashboard: React.FC<SchedulingAnalyticsDashboard
             <h3 className="mb-4 font-semibold text-lg">Revenue per Hour</h3>
             <div className="space-y-3">
               {chartData?.utilizationByHour.map((data, index) => (
-                <div key={index} className="flex items-center justify-between">
+                <div className="flex items-center justify-between" key={index}>
                   <span className="w-16 font-medium text-sm">{data.hour}</span>
                   <div className="mx-4 flex-1">
                     <div className="h-3 rounded-full bg-gray-200">
@@ -331,7 +364,9 @@ export const SchedulingAnalyticsDashboard: React.FC<SchedulingAnalyticsDashboard
                       />
                     </div>
                   </div>
-                  <span className="w-16 text-right text-gray-600 text-sm">${data.revenue}</span>
+                  <span className="w-16 text-right text-gray-600 text-sm">
+                    ${data.revenue}
+                  </span>
                 </div>
               ))}
             </div>
@@ -339,7 +374,7 @@ export const SchedulingAnalyticsDashboard: React.FC<SchedulingAnalyticsDashboard
         </div>
       )}
 
-      {selectedView === "predictions" && (
+      {selectedView === 'predictions' && (
         <div className="space-y-6">
           {/* AI Predictions Section */}
           <div className="rounded-lg bg-gradient-to-r from-blue-50 to-purple-50 p-6">
@@ -349,18 +384,27 @@ export const SchedulingAnalyticsDashboard: React.FC<SchedulingAnalyticsDashboard
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
               <div className="rounded-lg bg-white p-4">
-                <h4 className="mb-2 font-medium text-gray-800">Next Week Forecast</h4>
+                <h4 className="mb-2 font-medium text-gray-800">
+                  Next Week Forecast
+                </h4>
                 <div className="mb-1 font-bold text-2xl text-blue-600">
                   {aiPredictions.nextWeekDemand}
                 </div>
-                <div className="text-gray-600 text-sm">Predicted appointments</div>
+                <div className="text-gray-600 text-sm">
+                  Predicted appointments
+                </div>
               </div>
 
               <div className="rounded-lg bg-white p-4">
-                <h4 className="mb-2 font-medium text-gray-800">Peak Demand Days</h4>
+                <h4 className="mb-2 font-medium text-gray-800">
+                  Peak Demand Days
+                </h4>
                 <div className="space-y-1">
                   {aiPredictions.peakDays.map((day) => (
-                    <div key={day} className="font-medium text-purple-700 text-sm">
+                    <div
+                      className="font-medium text-purple-700 text-sm"
+                      key={day}
+                    >
                       • {day}
                     </div>
                   ))}
@@ -368,20 +412,30 @@ export const SchedulingAnalyticsDashboard: React.FC<SchedulingAnalyticsDashboard
               </div>
 
               <div className="rounded-lg bg-white p-4">
-                <h4 className="mb-2 font-medium text-gray-800">Optimal Staffing</h4>
+                <h4 className="mb-2 font-medium text-gray-800">
+                  Optimal Staffing
+                </h4>
                 <div className="space-y-1 text-sm">
-                  <div>Morning: {aiPredictions.optimalStaffing.morning} staff</div>
-                  <div>Afternoon: {aiPredictions.optimalStaffing.afternoon} staff</div>
-                  <div>Evening: {aiPredictions.optimalStaffing.evening} staff</div>
+                  <div>
+                    Morning: {aiPredictions.optimalStaffing.morning} staff
+                  </div>
+                  <div>
+                    Afternoon: {aiPredictions.optimalStaffing.afternoon} staff
+                  </div>
+                  <div>
+                    Evening: {aiPredictions.optimalStaffing.evening} staff
+                  </div>
                 </div>
               </div>
             </div>
 
             <div className="mt-6">
-              <h4 className="mb-3 font-medium text-gray-800">Recommended Actions</h4>
+              <h4 className="mb-3 font-medium text-gray-800">
+                Recommended Actions
+              </h4>
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                 {aiPredictions.recommendedActions.map((action, index) => (
-                  <div key={index} className="rounded-lg bg-white p-3 text-sm">
+                  <div className="rounded-lg bg-white p-3 text-sm" key={index}>
                     {action}
                   </div>
                 ))}
@@ -406,14 +460,14 @@ export const SchedulingAnalyticsDashboard: React.FC<SchedulingAnalyticsDashboard
             </thead>
             <tbody>
               {chartData?.trendsData.map((trend, index) => (
-                <tr key={index} className="border-gray-100 border-b">
+                <tr className="border-gray-100 border-b" key={index}>
                   <td className="py-2 font-medium">{trend.period}</td>
                   <td className="py-2 text-center">
                     <span
                       className={`rounded px-2 py-1 text-xs ${
                         trend.bookingTime < 30
-                          ? "bg-green-100 text-green-800"
-                          : "bg-yellow-100 text-yellow-800"
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-yellow-100 text-yellow-800'
                       }`}
                     >
                       {trend.bookingTime}s
@@ -423,8 +477,8 @@ export const SchedulingAnalyticsDashboard: React.FC<SchedulingAnalyticsDashboard
                     <span
                       className={`rounded px-2 py-1 text-xs ${
                         trend.noShowRate < 10
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-red-100 text-red-800'
                       }`}
                     >
                       {trend.noShowRate}%
@@ -447,7 +501,9 @@ export const SchedulingAnalyticsDashboard: React.FC<SchedulingAnalyticsDashboard
         <div className="flex items-center justify-center space-x-8 text-center">
           <div>
             <div className="font-bold text-2xl text-green-700">60%</div>
-            <div className="text-green-600 text-sm">Scheduling Time Reduction</div>
+            <div className="text-green-600 text-sm">
+              Scheduling Time Reduction
+            </div>
             <div className="text-green-500 text-xs">TARGET ACHIEVED ✓</div>
           </div>
           <div>

@@ -1,22 +1,21 @@
 // Treatment module exports
-export * from './types';
-export * from './service';
 
+export type { TreatmentRepository } from './service';
+export * from './service';
+export { TreatmentService } from './service';
 // Re-export commonly used types
 export type {
-  TreatmentPlan,
-  TreatmentSession,
-  TreatmentDetails,
-  CreateTreatmentPlanData,
-  UpdateTreatmentPlanData,
-  CreateTreatmentSessionData,
   CompleteTreatmentSessionData,
+  CreateTreatmentPlanData,
+  CreateTreatmentSessionData,
   InjectionSite,
   LaserSettings,
   ProductUsage,
-  TreatmentPhoto
+  TreatmentDetails,
+  TreatmentPhoto,
+  TreatmentPlan,
+  TreatmentSession,
+  UpdateTreatmentPlanData,
 } from './types';
-
-export { TreatmentService } from './service';
-export type { TreatmentRepository } from './service';
-export { TreatmentStatus, AnesthesiaType } from './types';
+export * from './types';
+export { AnesthesiaType, TreatmentStatus } from './types';

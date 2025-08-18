@@ -30,19 +30,19 @@ export function createMockSupabaseClient(): MockSupabaseClient {
     from: jest.fn().mockReturnThis(),
     rpc: jest.fn().mockResolvedValue({ data: null, error: null }),
     auth: {
-      getUser: jest.fn().mockResolvedValue({ 
-        data: { user: { id: 'test-user-id' } }, 
-        error: null 
+      getUser: jest.fn().mockResolvedValue({
+        data: { user: { id: 'test-user-id' } },
+        error: null,
       }),
-      signInWithPassword: jest.fn().mockResolvedValue({ 
-        data: { user: { id: 'test-user-id' } }, 
-        error: null 
+      signInWithPassword: jest.fn().mockResolvedValue({
+        data: { user: { id: 'test-user-id' } },
+        error: null,
       }),
-      signOut: jest.fn().mockResolvedValue({ error: null })
+      signOut: jest.fn().mockResolvedValue({ error: null }),
     },
     storage: {
-      from: jest.fn().mockReturnThis()
-    }
+      from: jest.fn().mockReturnThis(),
+    },
   };
 
   // Chain-able query methods
@@ -84,7 +84,7 @@ export function createMockSupabaseClient(): MockSupabaseClient {
     csv: jest.fn().mockReturnThis(),
     explain: jest.fn().mockReturnThis(),
     rollback: jest.fn().mockReturnThis(),
-    returns: jest.fn().mockReturnThis()
+    returns: jest.fn().mockReturnThis(),
   };
 
   // Apply chainable methods to the client
@@ -92,31 +92,33 @@ export function createMockSupabaseClient(): MockSupabaseClient {
     Object.defineProperty(mockClient, method, {
       value: mock,
       writable: true,
-      configurable: true
+      configurable: true,
     });
   });
 
   // Add chainable methods to from() return value
   mockClient.from.mockImplementation(() => {
     const queryBuilder = { ...chainableMethods };
-    
+
     // Default successful responses for common operations
     queryBuilder.select.mockResolvedValue({ data: [], error: null });
     queryBuilder.insert.mockResolvedValue({ data: [], error: null });
     queryBuilder.update.mockResolvedValue({ data: [], error: null });
     queryBuilder.delete.mockResolvedValue({ data: [], error: null });
     queryBuilder.upsert.mockResolvedValue({ data: [], error: null });
-    
+
     return queryBuilder;
   });
 
   return mockClient;
-}/**
+} /**
  * Creates a mock Supabase client with preset successful responses
  */
-export function createSuccessfulMockSupabaseClient(data: any = []): MockSupabaseClient {
+export function createSuccessfulMockSupabaseClient(
+  data: any = []
+): MockSupabaseClient {
   const client = createMockSupabaseClient();
-  
+
   // Override with successful responses
   client.from.mockImplementation(() => ({
     select: jest.fn().mockResolvedValue({ data, error: null }),
@@ -138,9 +140,9 @@ export function createSuccessfulMockSupabaseClient(data: any = []): MockSupabase
     limit: jest.fn().mockReturnThis(),
     range: jest.fn().mockReturnThis(),
     single: jest.fn().mockReturnThis(),
-    maybeSingle: jest.fn().mockReturnThis()
+    maybeSingle: jest.fn().mockReturnThis(),
   }));
-  
+
   return client;
 }
 
@@ -149,7 +151,7 @@ export function createSuccessfulMockSupabaseClient(data: any = []): MockSupabase
  */
 export function createErrorMockSupabaseClient(error: any): MockSupabaseClient {
   const client = createMockSupabaseClient();
-  
+
   // Override with error responses
   client.from.mockImplementation(() => ({
     select: jest.fn().mockResolvedValue({ data: null, error }),
@@ -171,14 +173,14 @@ export function createErrorMockSupabaseClient(error: any): MockSupabaseClient {
     limit: jest.fn().mockReturnThis(),
     range: jest.fn().mockReturnThis(),
     single: jest.fn().mockReturnThis(),
-    maybeSingle: jest.fn().mockReturnThis()
+    maybeSingle: jest.fn().mockReturnThis(),
   }));
-  
+
   return client;
 }
 
 // Export for backward compatibility
-export { createMockSupabaseClient as createMockSupabaseC };/**
+export { createMockSupabaseClient as createMockSupabaseC }; /**
  * Mock Patient Data Generators
  * These functions create realistic patient data for testing scenarios
  */
@@ -217,7 +219,8 @@ export function createMockPatientData(overrides: any = {}) {
       alcoholConsumption: 'moderado',
       physicalActivity: 'regular',
       diet: 'balanceada',
-    },    insuranceInfo: {
+    },
+    insuranceInfo: {
       provider: 'SUS',
       policyNumber: 'SUS-12345',
       coverage: 'completa',
@@ -253,7 +256,8 @@ export function createLowRiskPatientData() {
       temperature: 36.5,
       respiratoryRate: 16,
       oxygenSaturation: 99,
-    },    riskFactors: {
+    },
+    riskFactors: {
       smoking: false,
       alcoholConsumption: 'nenhum',
       physicalActivity: 'regular',
@@ -286,7 +290,8 @@ export function createHighRiskPatientData() {
       diet: 'inadequada',
     },
   });
-}export function createCriticalPatientData() {
+}
+export function createCriticalPatientData() {
   return createMockPatientData({
     age: 85,
     medicalHistory: {
@@ -320,7 +325,8 @@ export function createHighRiskPatientData() {
       temperature: 38.5,
       respiratoryRate: 24,
       oxygenSaturation: 88,
-    },    riskFactors: {
+    },
+    riskFactors: {
       smoking: true,
       alcoholConsumption: 'alto',
       physicalActivity: 'sedentário',

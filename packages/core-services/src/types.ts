@@ -8,7 +8,7 @@ export enum AppointmentStatus {
   COMPLETED = 'completed',
   CANCELLED = 'cancelled',
   NO_SHOW = 'no_show',
-  RESCHEDULED = 'rescheduled'
+  RESCHEDULED = 'rescheduled',
 }
 
 export enum TreatmentType {
@@ -20,14 +20,14 @@ export enum TreatmentType {
   HYDRAFACIAL = 'hydrafacial',
   LASER_RESURFACING = 'laser_resurfacing',
   BODY_CONTOURING = 'body_contouring',
-  CONSULTATION = 'consultation'
+  CONSULTATION = 'consultation',
 }
 
 export enum PatientStatus {
   ACTIVE = 'active',
   INACTIVE = 'inactive',
   PROSPECT = 'prospect',
-  BLOCKED = 'blocked'
+  BLOCKED = 'blocked',
 }
 
 export enum BillingStatus {
@@ -35,7 +35,7 @@ export enum BillingStatus {
   PAID = 'paid',
   OVERDUE = 'overdue',
   CANCELLED = 'cancelled',
-  REFUNDED = 'refunded'
+  REFUNDED = 'refunded',
 }
 
 export enum NotificationType {
@@ -45,7 +45,7 @@ export enum NotificationType {
   PAYMENT_REMINDER = 'payment_reminder',
   PROMOTION = 'promotion',
   BIRTHDAY = 'birthday',
-  REVIEW_REQUEST = 'review_request'
+  REVIEW_REQUEST = 'review_request',
 }
 
 export enum InventoryStatus {
@@ -53,7 +53,7 @@ export enum InventoryStatus {
   LOW_STOCK = 'low_stock',
   OUT_OF_STOCK = 'out_of_stock',
   DISCONTINUED = 'discontinued',
-  EXPIRED = 'expired'
+  EXPIRED = 'expired',
 }
 
 // Common validation schemas

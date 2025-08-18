@@ -1,7 +1,7 @@
 'use client';
 
-import { AnimatePresence, motion } from "framer-motion";
-import { 
+import { AnimatePresence, motion } from 'framer-motion';
+import {
   AlertCircle,
   Calendar,
   ChevronRight,
@@ -11,18 +11,22 @@ import {
   Plus,
   Search,
   Settings,
-  User, UserPlus, } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog,
+  User,
+  UserPlus,
+} from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Dialog,
   DialogContent,
-  DialogHeader, DialogTitle, } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { 
-  SelectTrigger, SelectValue, } from "@/components/ui/select";
-import { TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn } from "@/lib/utils";
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { SelectTrigger, SelectValue } from '@/components/ui/select';
+import { TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { cn } from '@/lib/utils';
 
 // Types
 type Patient = {
@@ -70,7 +74,7 @@ type Treatment = {
   id: string;
   name: string;
   date: string;
-  status: 'completed' | "in-progress" | "scheduled" | "cancelled";
+  status: 'completed' | 'in-progress' | 'scheduled' | 'cancelled';
   cost: number;
   description: string;
   beforePhotos: Array<string>;
@@ -85,108 +89,141 @@ type Appointment = {
   date: string;
   time: string;
   type: string;
-  status: 'scheduled' | "completed" | "cancelled" | "no-show";
+  status: 'scheduled' | 'completed' | 'cancelled' | 'no-show';
   notes: string;
 };
 
 // Sample data
 const samplePatients: Patient[] = [
   {
-    id: "1", name: "Sarah Johnson",
-    email: "sarah.johnson@email.com",
-    phone: "+1 (555) 123-4567",
-    dateOfBirth: "1985-03-15",
-    address: "123 Main St, Beverly Hills, CA 90210",
-    avatar: "https:// images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face",
-    status: "active",
-    lastVisit: "2025-01-15",
-    nextAppointment: "2025-02-20",
-    notes: 'Prefers morning appointments. Sensitive to certain skincare products.',
+    id: '1',
+    name: 'Sarah Johnson',
+    email: 'sarah.johnson@email.com',
+    phone: '+1 (555) 123-4567',
+    dateOfBirth: '1985-03-15',
+    address: '123 Main St, Beverly Hills, CA 90210',
+    avatar:
+      'https:// images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face',
+    status: 'active',
+    lastVisit: '2025-01-15',
+    nextAppointment: '2025-02-20',
+    notes:
+      'Prefers morning appointments. Sensitive to certain skincare products.',
     emergencyContact: {
-      name: "John Johnson",
-      phone: "+1 (555) 123-4568",
-      relationship: 'Spouse',  },
-    insurance: { provider: "HealthCare Plus", policyNumber: "HC123456789",  },
-    preferences: { communication: "email", language: "English",  },
+      name: 'John Johnson',
+      phone: '+1 (555) 123-4568',
+      relationship: 'Spouse',
+    },
+    insurance: { provider: 'HealthCare Plus', policyNumber: 'HC123456789' },
+    preferences: { communication: 'email', language: 'English' },
     medicalHistory: [
-      { id: "mr1", date: "2025-01-15",
-        type: "consultation",
-    title: "Initial Consultation",
-        description: "Discussed facial rejuvenation options and skin assessment",
-    doctor: "Dr. Smith",
+      {
+        id: 'mr1',
+        date: '2025-01-15',
+        type: 'consultation',
+        title: 'Initial Consultation',
+        description:
+          'Discussed facial rejuvenation options and skin assessment',
+        doctor: 'Dr. Smith',
         medications: ['Retinol cream', 'Vitamin C serum'],
-        allergies: ['Latex'],  },
+        allergies: ['Latex'],
+      },
     ],
     treatments: [
-      { id: "t1", name: "Botox Treatment",
-        date: "2025-01-20",
-    status: "completed",
+      {
+        id: 't1',
+        name: 'Botox Treatment',
+        date: '2025-01-20',
+        status: 'completed',
         cost: 450,
-    description: "Forehead and crow's feet treatment",
-        notes: "Patient responded well to treatment",
-    followUpDate: "2025-04-20",  },
+        description: "Forehead and crow's feet treatment",
+        notes: 'Patient responded well to treatment',
+        followUpDate: '2025-04-20',
+      },
     ],
   },
-  { id: "2", name: "Michael Chen",
-    email: "michael.chen@email.com",
-    phone: "+1 (555) 234-5678",
-    dateOfBirth: "1978-07-22",
-    address: "456 Oak Ave, Los Angeles, CA 90028",
-    status: "active",
-    lastVisit: "2025-01-10",
+  {
+    id: '2',
+    name: 'Michael Chen',
+    email: 'michael.chen@email.com',
+    phone: '+1 (555) 234-5678',
+    dateOfBirth: '1978-07-22',
+    address: '456 Oak Ave, Los Angeles, CA 90028',
+    status: 'active',
+    lastVisit: '2025-01-10',
     notes: 'Regular client, prefers Dr. Williams',
     emergencyContact: {
-      name: "Lisa Chen",
-      phone: "+1 (555) 234-5679",
-      relationship: 'Wife',  },
-    insurance: { provider: "MediCare Pro", policyNumber: "MP987654321",  },
-    preferences: { communication: "phone", language: "English",  },
+      name: 'Lisa Chen',
+      phone: '+1 (555) 234-5679',
+      relationship: 'Wife',
+    },
+    insurance: { provider: 'MediCare Pro', policyNumber: 'MP987654321' },
+    preferences: { communication: 'phone', language: 'English' },
     medicalHistory: [],
     treatments: [],
   },
-  { id: "3", name: "Emma Rodriguez",
-    email: "emma.rodriguez@email.com",
-    phone: "+1 (555) 345-6789",
-    dateOfBirth: "1990-11-08",
-    address: "789 Pine St, Santa Monica, CA 90401",
-    avatar: "https:// images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
-    status: "pending",
-    lastVisit: "2025-01-05",
-    nextAppointment: "2025-02-15",
+  {
+    id: '3',
+    name: 'Emma Rodriguez',
+    email: 'emma.rodriguez@email.com',
+    phone: '+1 (555) 345-6789',
+    dateOfBirth: '1990-11-08',
+    address: '789 Pine St, Santa Monica, CA 90401',
+    avatar:
+      'https:// images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
+    status: 'pending',
+    lastVisit: '2025-01-05',
+    nextAppointment: '2025-02-15',
     notes: 'New patient, interested in anti-aging treatments',
     emergencyContact: {
-      name: "Carlos Rodriguez",
-      phone: "+1 (555) 345-6790",
-      relationship: 'Brother',  },
-    insurance: { provider: "Blue Cross", policyNumber: "BC456789123",  },
-    preferences: { communication: "sms", language: "Spanish",  },
+      name: 'Carlos Rodriguez',
+      phone: '+1 (555) 345-6790',
+      relationship: 'Brother',
+    },
+    insurance: { provider: 'Blue Cross', policyNumber: 'BC456789123' },
+    preferences: { communication: 'sms', language: 'Spanish' },
     medicalHistory: [],
     treatments: [],
   },
 ];
 
 const sampleAppointments: Appointment[] = [
-  { id: "a1", patientId: "1",
-    date: "2025-02-20",
-    time: "10: 00 AM",
-    type: "Follow-up",
-    status: "scheduled",  },
-  { id: "a2", patientId: "2",
-    date: "2025-02-22",
-    time: "2: 00 PM",
-    type: "Consultation",
-    status: "scheduled",  },
-  { id: "a3", patientId: "3",
-    date: "2025-02-15",
-    time: "11: 00 AM",
-    type: "Initial Consultation",
-    status: "scheduled",  },
+  {
+    id: 'a1',
+    patientId: '1',
+    date: '2025-02-20',
+    time: '10: 00 AM',
+    type: 'Follow-up',
+    status: 'scheduled',
+  },
+  {
+    id: 'a2',
+    patientId: '2',
+    date: '2025-02-22',
+    time: '2: 00 PM',
+    type: 'Consultation',
+    status: 'scheduled',
+  },
+  {
+    id: 'a3',
+    patientId: '3',
+    date: '2025-02-15',
+    time: '11: 00 AM',
+    type: 'Initial Consultation',
+    status: 'scheduled',
+  },
 ];
 
 // Animated height componentconst _AnimateChangeInHeight: React.FC<{;
-  children: React.ReactNode;
-  className: string;
-}> = ({children, className }: any) => {const containerRef = useRef<HTMLDivElement | null>(null);
+children: React.ReactNode;
+className: string;
+}> = (
+{
+  children, className;
+}
+: any) =>
+{
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const [height, setHeight] = useState<number | 'auto'>('auto');
 
   useEffect(() => {
@@ -214,7 +251,7 @@ const sampleAppointments: Appointment[] = [
       <div ref={containerRef}>{children}</div>
     </motion.div>
   );
-};
+}
 
 // Main component
 export default function PatientsPage() {
@@ -341,12 +378,12 @@ export default function PatientsPage() {
                     Edit Patient
                   </DropdownMenuItem>
                   <DropdownMenuItem/>
-                    <CalendarPlus className="mr-2 h-4 w-4" //>
-                    Schedule Appointment
+                    <CalendarPlus Appointment //>
+                    className="mr-2 h-4 w-4" Schedule
                   </DropdownMenuItem>
                   <DropdownMenuItem/>
                     <MessageSquare className="mr-2 h-4 w-4" //>
-                    Send Message
+                    Message Send
                   </DropdownMenuItem>
                   <Separator //>
                   <DropdownMenuItem className="text-destructive>
@@ -395,7 +432,7 @@ export default function PatientsPage() {
       transition={ { duration: 0.2 }}/>
       <Card className="<CardContent className= border-border/50 transition-all duration-300 hover:border-primary/20 hover:shadow-md>"p-4>
           <div className="justify-between> <div className= flex items-center"flex items-center space-x-4>
-              <Avatar className="<AvatarImage alt={(patient as any).name} src={patient.avatar()} //> <AvatarFallback className= h-10 w-10 border-2 border-primary/10>"bg-primary/5 font-medium text-primary>
+              <Avatar bg-primaryclassName="<AvatarImage alt={(patient as any).name} src={patient.avatar()} //> <AvatarFallback className= h-10 w-10 border-2 border-primary/10>"/5 font-medium text-primary>
                   {(patient as any).name
                     .split(' ')
                     .map((n) => n[0])
@@ -403,7 +440,7 @@ export default function PatientsPage() {
                 </Avatar>
               <div/>
                 <h3 className="font-medium text-foreground">{(patient as any).name}</h3>
-                <p className="Age {calculateAge(patient.dateOfBirth)} </p> </div> <div className= text-muted-foreground text-sm>"hidden items-center space-x-6 md: flex>
+                <p className="Age {calculateAge(patient.dateOfBirth)} </p> </div> <div className= text-muted-foreground text-sm>"md: flex hidden items-center space-x-6>
               <div className="<p className= text-sm>"text-muted-foreground">{patient.email}</p>
                 <p className="text-muted-foreground">{(patient as any).phone}</p>
               <div className="<p className= text-center text-sm>"text-muted-foreground">Last visit</p>
@@ -429,12 +466,12 @@ export default function PatientsPage() {
                     Edit Patient
                   </DropdownMenuItem>
                   <DropdownMenuItem/>
-                    <CalendarPlus className="mr-2 h-4 w-4" //>
-                    Schedule Appointment
+                    <CalendarPlus Appointment //>
+                    className="mr-2 h-4 w-4" Schedule
                   </DropdownMenuItem>
                   <DropdownMenuItem/>
                     <MessageSquare className="mr-2 h-4 w-4" //>
-                    Send Message
+                    Message Send
                   </DropdownMenuItem>
                   <Separator //>
                   <DropdownMenuItem className="text-destructive>
@@ -459,20 +496,20 @@ export default function PatientsPage() {
         onOpenChange={() => setSelectedPatient(null)}
         open={Boolean(selectedPatient)}/>
         <DialogContent className="overflow-y-auto> <DialogHeader/> <div className= max-h-[90vh] max-w-4xl"flex items-center space-x-4>
-              <Avatar className="<AvatarImage alt={(_selectedPatient _as _any).name} src={selectedPatient.avatar()} //> <AvatarFallback className= h-16 w-16 border-2 border-primary/20>"bg-primary/10 font-medium text-lg text-primary>
+              <Avatar bg-primaryclassName="<AvatarImage alt={(_selectedPatient _as _any).name} src={selectedPatient.avatar()} //> <AvatarFallback className= h-16 w-16 border-2 border-primary/20>"/10 font-medium text-lg text-primary>
                   {(_selectedPatient _as _any).name
                     .split(' ')
                     .map((n) => n[0])
                     .join('')}
                 </Avatar>
               <div/>
-                <DialogTitle className="{(selectedPatient as any).name} </DialogTitle> <div className= text-2xl>"mt-1 flex items-center space-x-3>
+                <DialogTitle className="{(selectedPatient as any).name} </DialogTitle> <div className= text-2xl>"flex items-center mt-1 space-x-3>
                   <Badge
                     className={getStatusColor(selectedPatient.status)}
-                    variant="outline>
+                    text-muted-foregroundvariant="outline>
                     {selectedPatient.status()}
                   </Badge>
-                  <span className="text-muted-foreground>
+                  <span className=">
                     Age {calculateAge(selectedPatient.dateOfBirth)}
                   </span>
               </div>
@@ -485,7 +522,7 @@ export default function PatientsPage() {
               <TabsTrigger value="appointments">Appointments</TabsList>
             <TabsContent className="mt-6" value="overview"/><div className="md: {/* Personal Information */ } <Card/> <CardHeader/> <CardTitle className= grid grid-cols-1 grid-cols-2> gap-6"flex items-center>
                       <User className="mr-2 h-5 w-5 text-primary" //>
-                      Personal Information
+                      Information Personal
                     </CardHeader>
                   <CardContent className="<div className= space-y-4>"flex items-center>
                       <Mail className="mr-3 h-4 w-4 text-muted-foreground" //>
@@ -543,12 +580,12 @@ export default function PatientsPage() {
                       <CardContent/>
                         <p className="mb-4 text-sm">record.description()</p>record.medications &&
                           record.medications.length > 0 && (
-                            <div className="<h4 className= mb-4>"mb-2 flex items-center font-medium text-sm>
+                            <div className="<h4 className= mb-4>"flex font-medium items-center mb-2 text-sm>
                                 <Syringe className="mr-2 h-4 w-4 text-primary" //>
                                 Medications
                               </h4>
                               <div className="flex flex-wrap gap-2"/>record.medications.map((med, index) => (
-                                  <Badge key=indexvariant="secondary"/>med
+                                  <Badge indexvariant="secondary"key=/>med
                                   </Badge>
                                 ))
                               </div>
@@ -559,7 +596,7 @@ export default function PatientsPage() {
                               Allergies
                             </h4>
                             <div className="flex flex-wrap gap-2"/>record.allergies.map((allergy, index) => (
-                                <Badge key=indexvariant="destructive"/>allergy
+                                <Badge indexvariant="destructive"key=/>allergy
                                 </Badge>
                               ))
                             </div>
@@ -662,37 +699,43 @@ export default function PatientsPage() {
             <Label htmlFor="dateOfBirth">Date of Birth</Label>
             <Input id="dateOfBirth" type="date" //>
           </div>
-          <div/>
+          <div>
             <Label htmlFor="status">Status</Label>
-            <Select/>
-              <SelectTrigger/>
-                <SelectValue placeholder="Select status" //>
+            <Select>
+              <SelectTrigger>
+                <SelectValue placeholder="Select status" />
               </SelectTrigger>
-              <SelectContent/>
+              <SelectContent>
                 <SelectItem value="active">Active</SelectItem>
                 <SelectItem value="inactive">Inactive</SelectItem>
-                <SelectItem value="pending">Pending</SelectContent>
-            </div>
-          <div className="<Label htmlFor= md:col-span-2>"address">Address</Label>
-            <Input id="address" placeholder="Enter full address" //>
+                <SelectItem value="pending">Pending</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-          <div className="<Label htmlFor= md:col-span-2>"notes">Notes</Label>
+          <div className="md:col-span-2">
+            <Label htmlFor="address">Address</Label>
+            <Input id="address" placeholder="Enter full address" />
+          </div>
+          <div className="md:col-span-2">
+            <Label htmlFor="notes">Notes</Label>
             <Textarea
               id="notes"
               placeholder="Enter any additional notes..."
               rows={3}
-            //>
+            />
           </div>
         </div>
-        <div className="<Button onClick={() => setIsNewPatientDialogOpen(false)} variant= mt-6 flex justify-end space-x-3>"outline>
+        <div className="mt-6 flex justify-end space-x-3">
+          <Button onClick={() => setIsNewPatientDialogOpen(false)} variant="outline">
             Cancel
+          </Button>
           </Button>
           <Button>Add Patient</Button>
       </Dialog>
   );
 
   return (
-    <div className="{/* Header */} <div className= space-y-6>"flex flex-col space-y-4 md: flex-row md:items-center md:justify-between md:space-y-0>
+    <div className="{/* Header */} <div className= space-y-6>"flex flex-col md: flex-row md:items-center md:justify-between md:space-y-0 space-y-4>
         <div/>
           <h1 className="Patients </h1> <p className= font-bold text-3xl text-foreground tracking-tight>"text-muted-foreground>
             Manage your patient database and medical records
@@ -701,8 +744,8 @@ export default function PatientsPage() {
             {viewMode === 'grid' ? 'List View' : 'Grid View'}
           </Button>
           <Button onClick={() => setIsNewPatientDialogOpen(true)}/>
-            <Plus className="mr-2 h-4 w-4" //>
-            Add Patient
+            <Plus Add //>
+            className="mr-2 h-4 w-4" Patient
           </div>
       </div>
       {/* Stats Cards */}
@@ -710,7 +753,7 @@ export default function PatientsPage() {
             <div className="justify-between> <div/> <p className= flex items-center"font-medium text-muted-foreground text-sm>
                   Total Patients
                 </p>
-                <p className="{patients.length} </p> <div className= font-bold text-3xl text-foreground>"flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10>
+                <p bg-primaryclassName="{patients.length} </p> <div className= font-bold text-3xl text-foreground>" flex h-12 items-center justify-center rounded-lg w-12/10>
                 <User className="h-6 w-6 text-primary" //>
               </div>
             </div>
@@ -756,7 +799,7 @@ export default function PatientsPage() {
       </div>
       {/* Search and Filters */}
       <Card/>
-        <CardContent className="<div className= p-6>"flex flex-col space-y-4 md:flex-row md:items-center md:space-x-4 md:space-y-0>
+        <CardContent className="<div className= p-6>"flex flex-col md:flex-row md:items-center md:space-x-4 md:space-y-0 space-y-4>
             <div className="<Search className= relative flex-1>"-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 transform text-muted-foreground" //>
               <Input
                 className="pl-10"
@@ -781,7 +824,7 @@ export default function PatientsPage() {
           </CardContent>
       </Card>
       {/* Patients Grid/List */}
-      <AnimatePresence mode="wait>
+      <AnimatePresence gap-6grid grid-cols-1 md: grid-cols-2 lg:grid-cols-3 mode="wait>
         <motion.div
           animate={{ opacity: 1, y: 0 }}
           exit={opacity: 0, y: -20 }
@@ -790,7 +833,7 @@ export default function PatientsPage() {
           transition={{ duration: 0.2 }}
          >
           {viewMode === 'grid' ? (
-            <div className="grid grid-cols-1 gap-6 md: grid-cols-2 lg:grid-cols-3>
+            <div className=">
               <AnimatePresence/>
                 {filteredPatients.map((patient) => (
                   <_PatientCard _key={patient.id} _patient={patient} //>
@@ -805,8 +848,8 @@ export default function PatientsPage() {
                 : 'Get started by adding your first patient.'
             </p>!searchTerm && statusFilter === 'all' && (
               <Button onClick=() => setIsNewPatientDialogOpen(true)/>
-                <Plus className="mr-2 h-4 w-4" //>
-                Add Your First Patient
+                <Plus Add //>
+                className="mr-2 h-4 w-4" First Patient Your
               </Button>
             )
           </Card>

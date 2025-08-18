@@ -30,18 +30,20 @@ export interface HealthStatus {
 export class HealthChecker {
   private healthHistory: Map<string, HealthCheckResult[]> = new Map();
 
-  constructor(private config: { maxHistoryPerEndpoint: number; baseUrl: string }) {}
+  constructor(
+    private config: { maxHistoryPerEndpoint: number; baseUrl: string }
+  ) {}
 
   /**
    * Perform health check on a single endpoint
    */
   async checkHealth(config: HealthCheckConfig): Promise<HealthCheckResult> {
     const startTime = Date.now();
-    
+
     try {
       const result = await this.performHealthCheck(config);
       const responseTime = Date.now() - startTime;
-      
+
       const healthResult: HealthCheckResult = {
         healthy: result.healthy,
         responseTime,
@@ -51,7 +53,7 @@ export class HealthChecker {
 
       // Store in history
       this.addToHistory(config.url, healthResult);
-      
+
       return healthResult;
     } catch (error) {
       const healthResult: HealthCheckResult = {
@@ -75,42 +77,42 @@ export class HealthChecker {
   ): Promise<HealthCheckResult[]> {
     const results: HealthCheckResult[] = [];
     const endTime = Date.now() + duration;
-    
+
     while (Date.now() < endTime) {
       const result = await this.checkHealth(config);
       results.push(result);
-      
+
       if (!result.healthy && config.retries > 0) {
         // Retry logic
         for (let i = 0; i < config.retries; i++) {
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          await new Promise((resolve) => setTimeout(resolve, 1000));
           const retryResult = await this.checkHealth(config);
           results.push(retryResult);
-          
+
           if (retryResult.healthy) break;
         }
       }
-      
-      await new Promise(resolve => setTimeout(resolve, config.interval));
+
+      await new Promise((resolve) => setTimeout(resolve, config.interval));
     }
-    
+
     return results;
   }
 
   /**
    * Check if environment is healthy based on recent checks
    */
-  isEnvironmentHealthy(url: string, lookbackMinutes: number = 5): boolean {
+  isEnvironmentHealthy(url: string, lookbackMinutes = 5): boolean {
     const history = this.healthHistory.get(url) || [];
     const cutoff = new Date(Date.now() - lookbackMinutes * 60 * 1000);
-    
-    const recentChecks = history.filter(check => check.timestamp > cutoff);
-    
+
+    const recentChecks = history.filter((check) => check.timestamp > cutoff);
+
     if (recentChecks.length === 0) return false;
-    
-    const healthyChecks = recentChecks.filter(check => check.healthy);
+
+    const healthyChecks = recentChecks.filter((check) => check.healthy);
     const healthRatio = healthyChecks.length / recentChecks.length;
-    
+
     return healthRatio >= 0.8; // 80% success rate
   }
 
@@ -127,15 +129,21 @@ export class HealthChecker {
   async checkComplianceServices(): Promise<boolean> {
     try {
       // Check LGPD compliance service
-      const lgpdResponse = await fetch(`${this.config.baseUrl}/compliance/lgpd/status`);
+      const lgpdResponse = await fetch(
+        `${this.config.baseUrl}/compliance/lgpd/status`
+      );
       if (!lgpdResponse.ok) return false;
 
       // Check ANVISA compliance service
-      const anvisaResponse = await fetch(`${this.config.baseUrl}/compliance/anvisa/status`);
+      const anvisaResponse = await fetch(
+        `${this.config.baseUrl}/compliance/anvisa/status`
+      );
       if (!anvisaResponse.ok) return false;
 
       // Check audit compliance
-      const auditResponse = await fetch(`${this.config.baseUrl}/compliance/audit/status`);
+      const auditResponse = await fetch(
+        `${this.config.baseUrl}/compliance/audit/status`
+      );
       if (!auditResponse.ok) return false;
 
       return true;
@@ -150,7 +158,9 @@ export class HealthChecker {
    */
   async checkEncryptionService(): Promise<boolean> {
     try {
-      const response = await fetch(`${this.config.baseUrl}/api/security/encryption/status`);
+      const response = await fetch(
+        `${this.config.baseUrl}/api/security/encryption/status`
+      );
       return response.ok;
     } catch (error) {
       return false;
@@ -162,7 +172,9 @@ export class HealthChecker {
    */
   async checkAuditLogging(): Promise<boolean> {
     try {
-      const response = await fetch(`${this.config.baseUrl}/api/audit/logging/status`);
+      const response = await fetch(
+        `${this.config.baseUrl}/api/audit/logging/status`
+      );
       return response.ok;
     } catch (error) {
       return false;
@@ -186,7 +198,9 @@ export class HealthChecker {
    */
   async checkDatabaseHealth(): Promise<boolean> {
     try {
-      const response = await fetch(`${this.config.baseUrl}/api/health/database`);
+      const response = await fetch(
+        `${this.config.baseUrl}/api/health/database`
+      );
       return response.ok;
     } catch (error) {
       return false;
@@ -211,11 +225,11 @@ export class HealthChecker {
   getOverallStatus(urls: string[]): HealthStatus {
     const allChecks: HealthCheckResult[] = [];
     let lastCheck = new Date(0);
-    
+
     for (const url of urls) {
       const history = this.healthHistory.get(url) || [];
       allChecks.push(...history);
-      
+
       if (history.length > 0) {
         const lastResult = history[history.length - 1];
         if (lastResult && lastResult.timestamp > lastCheck) {
@@ -223,9 +237,9 @@ export class HealthChecker {
         }
       }
     }
-    
-    const overallHealth = urls.every(url => this.isEnvironmentHealthy(url));
-    
+
+    const overallHealth = urls.every((url) => this.isEnvironmentHealthy(url));
+
     return {
       environment: 'mixed',
       checks: allChecks,
@@ -239,11 +253,11 @@ export class HealthChecker {
     statusCode?: number;
   }> {
     // Simulate health check - in real implementation, this would make HTTP requests
-    await new Promise(resolve => setTimeout(resolve, Math.random() * 100));
-    
+    await new Promise((resolve) => setTimeout(resolve, Math.random() * 100));
+
     // Simulate occasional failures
     const isHealthy = Math.random() > 0.1; // 90% success rate
-    
+
     return {
       healthy: isHealthy,
       statusCode: isHealthy ? 200 : 500,
@@ -254,10 +268,10 @@ export class HealthChecker {
     if (!this.healthHistory.has(url)) {
       this.healthHistory.set(url, []);
     }
-    
+
     const history = this.healthHistory.get(url)!;
     history.push(result);
-    
+
     // Limit history size
     if (history.length > this.config.maxHistoryPerEndpoint) {
       history.shift();

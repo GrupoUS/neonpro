@@ -1,24 +1,27 @@
-import { type NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
-import { AISchedulingEngine } from "@/lib/ai-scheduling";
-import { AISchedulingService } from "@neonpro/core-services/scheduling";
-import type { SchedulingRequest, SchedulingResult } from "@neonpro/core-services/scheduling";
+import type {
+  SchedulingRequest,
+  SchedulingResult,
+} from '@neonpro/core-services/scheduling';
+import { AISchedulingService } from '@neonpro/core-services/scheduling';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+import { AISchedulingEngine } from '@/lib/ai-scheduling';
 
 // Validation schema for AI scheduling requests
 const aiSchedulingRequestSchema = z.object({
-  patientId: z.string().uuid("Invalid patient ID"),
-  treatmentTypeId: z.string().uuid("Invalid treatment type ID"),
+  patientId: z.string().uuid('Invalid patient ID'),
+  treatmentTypeId: z.string().uuid('Invalid treatment type ID'),
   preferredDate: z.string().datetime().optional(),
   preferredTimeRanges: z
     .array(
       z.object({
         start: z.string().datetime(),
         end: z.string().datetime(),
-      }),
+      })
     )
     .optional(),
   staffPreference: z.array(z.string()).optional(),
-  urgency: z.enum(["low", "medium", "high", "emergency"]).default("medium"),
+  urgency: z.enum(['low', 'medium', 'high', 'emergency']).default('medium'),
   flexibilityWindow: z.number().min(0).max(30).default(7),
 });
 
@@ -51,11 +54,11 @@ export async function POST(request: NextRequest) {
 
   try {
     // Extract tenant ID from headers
-    const tenantId = request.headers.get("x-tenant-id");
+    const tenantId = request.headers.get('x-tenant-id');
     if (!tenantId) {
       return NextResponse.json<AISchedulingResponse>(
-        { success: false, error: "Tenant ID required in headers" },
-        { status: 400 },
+        { success: false, error: 'Tenant ID required in headers' },
+        { status: 400 }
       );
     }
 
@@ -93,17 +96,22 @@ export async function POST(request: NextRequest) {
       preferredDate: validatedRequest.preferredDate
         ? new Date(validatedRequest.preferredDate)
         : undefined,
-      preferredTimeRanges: validatedRequest.preferredTimeRanges?.map((range) => ({
-        start: new Date(range.start),
-        end: new Date(range.end),
-      })),
+      preferredTimeRanges: validatedRequest.preferredTimeRanges?.map(
+        (range) => ({
+          start: new Date(range.start),
+          end: new Date(range.end),
+        })
+      ),
       staffPreference: validatedRequest.staffPreference,
       urgency: validatedRequest.urgency,
       flexibilityWindow: validatedRequest.flexibilityWindow,
     };
 
     // Execute AI-powered scheduling
-    const result = await schedulingService.scheduleAppointment(schedulingRequest, tenantId);
+    const result = await schedulingService.scheduleAppointment(
+      schedulingRequest,
+      tenantId
+    );
 
     // Calculate processing time
     const processingTime = performance.now() - startTime;
@@ -128,17 +136,17 @@ export async function POST(request: NextRequest) {
         aiInsights,
       });
     }
-      // Failed scheduling with detailed feedback
-      return NextResponse.json<AISchedulingResponse>(
-        {
-          success: false,
-          error: "Unable to find suitable appointment slot",
-          data: result,
-          processingTime,
-          aiInsights,
-        },
-        { status: 422 },
-      );
+    // Failed scheduling with detailed feedback
+    return NextResponse.json<AISchedulingResponse>(
+      {
+        success: false,
+        error: 'Unable to find suitable appointment slot',
+        data: result,
+        processingTime,
+        aiInsights,
+      },
+      { status: 422 }
+    );
   } catch (error) {
     const processingTime = performance.now() - startTime;
 
@@ -147,22 +155,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json<AISchedulingResponse>(
         {
           success: false,
-          error: "Invalid request data",
+          error: 'Invalid request data',
           processingTime,
         },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
     // Handle other errors
-    console.error("AI Scheduling Error:", error);
+    console.error('AI Scheduling Error:', error);
     return NextResponse.json<AISchedulingResponse>(
       {
         success: false,
-        error: "Internal scheduling service error",
+        error: 'Internal scheduling service error',
         processingTime,
       },
-      { status: 500 },
+      { status: 500 }
     );
   }
 } /**
@@ -174,14 +182,14 @@ export async function GET(request: NextRequest) {
 
   try {
     const { searchParams } = new URL(request.url);
-    const tenantId = request.headers.get("x-tenant-id");
-    const patientId = searchParams.get("patientId");
-    const treatmentTypeId = searchParams.get("treatmentTypeId");
+    const tenantId = request.headers.get('x-tenant-id');
+    const patientId = searchParams.get('patientId');
+    const treatmentTypeId = searchParams.get('treatmentTypeId');
 
-    if (!((tenantId && patientId ) && treatmentTypeId)) {
+    if (!(tenantId && patientId && treatmentTypeId)) {
       return NextResponse.json(
-        { success: false, error: "Missing required parameters" },
-        { status: 400 },
+        { success: false, error: 'Missing required parameters' },
+        { status: 400 }
       );
     }
 
@@ -211,7 +219,7 @@ export async function GET(request: NextRequest) {
       patientId,
       treatmentTypeId,
       tenantId,
-      aiEngine,
+      aiEngine
     );
 
     const processingTime = performance.now() - startTime;
@@ -222,10 +230,10 @@ export async function GET(request: NextRequest) {
       processingTime,
     });
   } catch (error) {
-    console.error("AI Recommendations Error:", error);
+    console.error('AI Recommendations Error:', error);
     return NextResponse.json(
-      { success: false, error: "Failed to get AI recommendations" },
-      { status: 500 },
+      { success: false, error: 'Failed to get AI recommendations' },
+      { status: 500 }
     );
   }
 }
@@ -233,13 +241,13 @@ export async function GET(request: NextRequest) {
 // Helper function to trigger real-time optimization
 async function triggerRealtimeOptimization(
   result: SchedulingResult,
-  tenantId: string,
+  tenantId: string
 ): Promise<void> {
   try {
     if (result.appointmentSlot) {
       // Trigger background optimization processes
       const optimizationEvent = {
-        type: "appointment_scheduled",
+        type: 'appointment_scheduled',
         appointmentId: result.appointmentSlot.id,
         tenantId,
         timestamp: new Date().toISOString(),
@@ -247,13 +255,13 @@ async function triggerRealtimeOptimization(
 
       // Send to optimization queue (would integrate with actual queue system)
       await fetch(`${process.env.INTERNAL_API_URL}/optimization/schedule`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(optimizationEvent),
-      }).catch((err) => console.warn("Optimization trigger failed:", err));
+      }).catch((err) => console.warn('Optimization trigger failed:', err));
     }
   } catch (error) {
-    console.warn("Real-time optimization trigger failed:", error);
+    console.warn('Real-time optimization trigger failed:', error);
   }
 }
 
@@ -262,18 +270,28 @@ async function getAIRecommendations(
   patientId: string,
   treatmentTypeId: string,
   tenantId: string,
-  aiEngine: AISchedulingEngine,
+  aiEngine: AISchedulingEngine
 ): Promise<any> {
   // This would integrate with actual data sources
   const mockRecommendations = {
     optimalTimeSlots: [
-      { time: "10:00 AM", score: 0.95, reason: "Peak staff efficiency period" },
-      { time: "2:00 PM", score: 0.88, reason: "Low conflict probability" },
-      { time: "11:00 AM", score: 0.82, reason: "Patient preference match" },
+      { time: '10:00 AM', score: 0.95, reason: 'Peak staff efficiency period' },
+      { time: '2:00 PM', score: 0.88, reason: 'Low conflict probability' },
+      { time: '11:00 AM', score: 0.82, reason: 'Patient preference match' },
     ],
     staffRecommendations: [
-      { staffId: "staff-1", name: "Dr. Silva", score: 0.92, specialization: "Botox" },
-      { staffId: "staff-2", name: "Dr. Santos", score: 0.87, specialization: "Fillers" },
+      {
+        staffId: 'staff-1',
+        name: 'Dr. Silva',
+        score: 0.92,
+        specialization: 'Botox',
+      },
+      {
+        staffId: 'staff-2',
+        name: 'Dr. Santos',
+        score: 0.87,
+        specialization: 'Fillers',
+      },
     ],
     riskFactors: {
       noShowProbability: 0.12,
@@ -281,9 +299,9 @@ async function getAIRecommendations(
       complexityScore: 0.3,
     },
     optimizationTips: [
-      "Morning appointments have 15% lower no-show rates",
-      "This patient prefers Tuesday/Thursday slots",
-      "Consider combining with complementary treatments",
+      'Morning appointments have 15% lower no-show rates',
+      'This patient prefers Tuesday/Thursday slots',
+      'Consider combining with complementary treatments',
     ],
   };
 

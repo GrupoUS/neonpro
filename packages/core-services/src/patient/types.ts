@@ -1,5 +1,12 @@
 import { z } from 'zod';
-import { BaseEntity, PatientStatus, UUIDSchema, EmailSchema, PhoneSchema, DateSchema } from '../types';
+import {
+  type BaseEntity,
+  DateSchema,
+  EmailSchema,
+  PatientStatus,
+  PhoneSchema,
+  UUIDSchema,
+} from '../types';
 
 // Patient interfaces for aesthetic clinic
 export interface Patient extends BaseEntity {
@@ -39,7 +46,8 @@ export interface EmergencyContact {
   relationship: string;
   phone: string;
   email?: string;
-}export interface MedicalHistory {
+}
+export interface MedicalHistory {
   pregnancyStatus?: PregnancyStatus;
   isBreastfeeding?: boolean;
   hasHeartCondition: boolean;
@@ -88,7 +96,8 @@ export interface Medication {
   prescribedBy?: string;
   relevantToTreatment: boolean;
   notes?: string;
-}export interface SkinAssessment {
+}
+export interface SkinAssessment {
   skinType: SkinType;
   skinTone: string;
   skinCondition: SkinCondition[];
@@ -128,28 +137,29 @@ export enum Gender {
   MALE = 'male',
   FEMALE = 'female',
   OTHER = 'other',
-  PREFER_NOT_TO_SAY = 'prefer_not_to_say'
+  PREFER_NOT_TO_SAY = 'prefer_not_to_say',
 }
 
 export enum PregnancyStatus {
   NOT_PREGNANT = 'not_pregnant',
   PREGNANT = 'pregnant',
   TRYING_TO_CONCEIVE = 'trying_to_conceive',
-  NOT_APPLICABLE = 'not_applicable'
+  NOT_APPLICABLE = 'not_applicable',
 }
 
 export enum AllergySeverity {
   MILD = 'mild',
   MODERATE = 'moderate',
   SEVERE = 'severe',
-  ANAPHYLACTIC = 'anaphylactic'
-}export enum SkinType {
-  TYPE_I = 'type_i',   // Very fair, always burns, never tans
+  ANAPHYLACTIC = 'anaphylactic',
+}
+export enum SkinType {
+  TYPE_I = 'type_i', // Very fair, always burns, never tans
   TYPE_II = 'type_ii', // Fair, usually burns, tans minimally
   TYPE_III = 'type_iii', // Medium, sometimes burns, tans gradually
-  TYPE_IV = 'type_iv',  // Olive, rarely burns, tans easily
-  TYPE_V = 'type_v',    // Brown, very rarely burns, tans very easily
-  TYPE_VI = 'type_vi'   // Dark brown/black, never burns, tans very easily
+  TYPE_IV = 'type_iv', // Olive, rarely burns, tans easily
+  TYPE_V = 'type_v', // Brown, very rarely burns, tans very easily
+  TYPE_VI = 'type_vi', // Dark brown/black, never burns, tans very easily
 }
 
 export enum SkinCondition {
@@ -162,28 +172,28 @@ export enum SkinCondition {
   MATURE = 'mature',
   ROSACEA = 'rosacea',
   HYPERPIGMENTATION = 'hyperpigmentation',
-  MELASMA = 'melasma'
+  MELASMA = 'melasma',
 }
 
 export enum HydrationLevel {
   VERY_DRY = 'very_dry',
   DRY = 'dry',
   NORMAL = 'normal',
-  WELL_HYDRATED = 'well_hydrated'
+  WELL_HYDRATED = 'well_hydrated',
 }
 
 export enum ElasticityLevel {
   POOR = 'poor',
   FAIR = 'fair',
   GOOD = 'good',
-  EXCELLENT = 'excellent'
+  EXCELLENT = 'excellent',
 }
 
 export enum SensitivityLevel {
   LOW = 'low',
   MODERATE = 'moderate',
   HIGH = 'high',
-  VERY_HIGH = 'very_high'
+  VERY_HIGH = 'very_high',
 }
 
 export enum AcneGrade {
@@ -191,7 +201,7 @@ export enum AcneGrade {
   GRADE_1 = 'grade_1', // Mild
   GRADE_2 = 'grade_2', // Moderate
   GRADE_3 = 'grade_3', // Moderately severe
-  GRADE_4 = 'grade_4'  // Severe
+  GRADE_4 = 'grade_4', // Severe
 }
 
 export enum WrinkleGrade {
@@ -199,28 +209,28 @@ export enum WrinkleGrade {
   GRADE_1 = 'grade_1', // Fine wrinkles
   GRADE_2 = 'grade_2', // Moderate wrinkles
   GRADE_3 = 'grade_3', // Deep wrinkles
-  GRADE_4 = 'grade_4'  // Very deep wrinkles
-}// Validation schemas
+  GRADE_4 = 'grade_4', // Very deep wrinkles
+} // Validation schemas
 export const AddressSchema = z.object({
   street: z.string().min(1),
   city: z.string().min(1),
   state: z.string().min(1),
   zipCode: z.string().min(1),
-  country: z.string().min(1)
+  country: z.string().min(1),
 });
 
 export const EmergencyContactSchema = z.object({
   name: z.string().min(2),
   relationship: z.string().min(1),
   phone: PhoneSchema,
-  email: EmailSchema.optional()
+  email: EmailSchema.optional(),
 });
 
 export const AllergySchema = z.object({
   allergen: z.string().min(1),
   severity: z.nativeEnum(AllergySeverity),
   reaction: z.string().min(1),
-  notes: z.string().optional()
+  notes: z.string().optional(),
 });
 
 export const MedicationSchema = z.object({
@@ -229,7 +239,7 @@ export const MedicationSchema = z.object({
   frequency: z.string().min(1),
   prescribedBy: z.string().optional(),
   relevantToTreatment: z.boolean(),
-  notes: z.string().optional()
+  notes: z.string().optional(),
 });
 
 export const CreatePatientSchema = z.object({
@@ -247,13 +257,15 @@ export const CreatePatientSchema = z.object({
   notes: z.string().default(''),
   photoConsent: z.boolean(),
   marketingConsent: z.boolean(),
-  lgpdConsent: z.boolean().refine(val => val === true, 'LGPD consent is required'),
-  tags: z.array(z.string()).default([])
+  lgpdConsent: z
+    .boolean()
+    .refine((val) => val === true, 'LGPD consent is required'),
+  tags: z.array(z.string()).default([]),
 });
 
 export const UpdatePatientSchema = CreatePatientSchema.partial().extend({
   id: UUIDSchema,
-  status: z.nativeEnum(PatientStatus).optional()
+  status: z.nativeEnum(PatientStatus).optional(),
 });
 
 export type CreatePatientData = z.infer<typeof CreatePatientSchema>;

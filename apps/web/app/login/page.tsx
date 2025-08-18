@@ -1,10 +1,10 @@
-import React from "react";
-import type { Metadata } from "next";
-import { LoginForm } from "./login-form";
+import type { Metadata } from 'next';
+import React from 'react';
+import { LoginForm } from './login-form';
 
 export const metadata: Metadata = {
-  title: "Login - NeonPro",
-  description: "Acesse sua conta NeonPro",
+  title: 'Login - NeonPro',
+  description: 'Acesse sua conta NeonPro',
 };
 
 export default function LoginPage() {
@@ -14,14 +14,14 @@ export default function LoginPage() {
         <div className="absolute inset-0 bg-zinc-900" />
         <div className="relative z-20 flex items-center font-medium text-lg">
           <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
+            className="mr-2 h-6 w-6"
             fill="none"
             stroke="currentColor"
-            strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="mr-2 h-6 w-6"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
           >
             <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
           </svg>
@@ -30,7 +30,8 @@ export default function LoginPage() {
         <div className="relative z-20 mt-auto">
           <blockquote className="space-y-2">
             <p className="text-lg">
-              &ldquo;Sistema completo de gestão empresarial com foco em saúde e compliance.&rdquo;
+              &ldquo;Sistema completo de gestão empresarial com foco em saúde e
+              compliance.&rdquo;
             </p>
             <footer className="text-sm">Equipe NeonPro</footer>
           </blockquote>
@@ -39,17 +40,27 @@ export default function LoginPage() {
       <div className="lg:p-8">
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
           <div className="flex flex-col space-y-2 text-center">
-            <h1 className="font-semibold text-2xl tracking-tight">Acesse sua conta</h1>
-            <p className="text-muted-foreground text-sm">Digite suas credenciais para continuar</p>
+            <h1 className="font-semibold text-2xl tracking-tight">
+              Acesse sua conta
+            </h1>
+            <p className="text-muted-foreground text-sm">
+              Digite suas credenciais para continuar
+            </p>
           </div>
           <LoginForm />
           <p className="px-8 text-center text-muted-foreground text-sm">
-            Ao clicar em continuar, você concorda com nossos{" "}
-            <a href="/terms" className="underline underline-offset-4 hover:text-primary">
+            Ao clicar em continuar, você concorda com nossos{' '}
+            <a
+              className="underline underline-offset-4 hover:text-primary"
+              href="/terms"
+            >
               Termos de Serviço
-            </a>{" "}
-            e{" "}
-            <a href="/privacy" className="underline underline-offset-4 hover:text-primary">
+            </a>{' '}
+            e{' '}
+            <a
+              className="underline underline-offset-4 hover:text-primary"
+              href="/privacy"
+            >
               Política de Privacidade
             </a>
             .

@@ -7,30 +7,38 @@ console.log('🚀 BIOME AUTO-FIXES COMPLETION SCRIPT');
 console.log('=====================================\n');
 
 console.log('Manual fixes already applied:');
-console.log('✅ Numeric separators (10_000, 3_600_000, 999_999, 1_000, 31_536_000)');
+console.log(
+  '✅ Numeric separators (10_000, 3_600_000, 999_999, 1_000, 31_536_000)'
+);
 console.log('✅ Magic number constants (BYTES_PER_KB = 1024)');
 console.log('✅ Constant replacements (1024 → BYTES_PER_KB)\n');
 
 console.log('🔍 Running initial Biome check...\n');
 
 try {
-  const initialCheck = execSync('npx @biomejs/biome check packages/security/src --verbose', { 
-    encoding: 'utf8',
-    cwd: __dirname 
-  });
+  const initialCheck = execSync(
+    'npx @biomejs/biome check packages/security/src --verbose',
+    {
+      encoding: 'utf8',
+      cwd: __dirname,
+    }
+  );
   console.log('✅ No issues found in initial check!');
   console.log(initialCheck);
 } catch (error) {
   console.log('📋 Issues found - applying auto-fixes...');
   console.log(error.stdout);
-  
+
   console.log('\n🛠️  Applying Biome auto-fixes...\n');
-  
+
   try {
-    const fixResult = execSync('npx @biomejs/biome check packages/security/src --apply', { 
-      encoding: 'utf8',
-      cwd: __dirname 
-    });
+    const fixResult = execSync(
+      'npx @biomejs/biome check packages/security/src --apply',
+      {
+        encoding: 'utf8',
+        cwd: __dirname,
+      }
+    );
     console.log('✅ Auto-fixes applied successfully!');
     console.log(fixResult);
   } catch (fixError) {
@@ -42,10 +50,13 @@ try {
 console.log('\n🔍 Final verification check...\n');
 
 try {
-  const finalCheck = execSync('npx @biomejs/biome check packages/security/src --verbose', { 
-    encoding: 'utf8',
-    cwd: __dirname 
-  });
+  const finalCheck = execSync(
+    'npx @biomejs/biome check packages/security/src --verbose',
+    {
+      encoding: 'utf8',
+      cwd: __dirname,
+    }
+  );
   console.log('🎉 ALL BIOME FIXES COMPLETED SUCCESSFULLY!');
   console.log('✅ No remaining issues found');
   console.log(finalCheck);

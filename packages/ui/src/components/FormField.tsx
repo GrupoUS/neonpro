@@ -1,5 +1,5 @@
-import * as React from "react";
-import { cn } from "../utils/cn";
+import * as React from 'react';
+import { cn } from '../utils/cn';
 
 export type FormFieldProps = {
   label?: string;
@@ -12,11 +12,14 @@ export type FormFieldProps = {
 };
 
 const FormField = React.forwardRef<HTMLDivElement, FormFieldProps>(
-  ({ label, description, error, required, children, className, htmlFor }, ref) => {
+  (
+    { label, description, error, required, children, className, htmlFor },
+    ref
+  ) => {
     const generatedId = React.useId();
     const fieldId = htmlFor || generatedId;
     return (
-      <div className={cn("space-y-2", className)} ref={ref}>
+      <div className={cn('space-y-2', className)} ref={ref}>
         {label && (
           <label
             className="font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -29,14 +32,16 @@ const FormField = React.forwardRef<HTMLDivElement, FormFieldProps>(
 
         {children}
 
-        {description && <p className="text-muted-foreground text-sm">{description}</p>}
+        {description && (
+          <p className="text-muted-foreground text-sm">{description}</p>
+        )}
 
         {error && <p className="text-red-600 text-sm">{error}</p>}
       </div>
     );
-  },
+  }
 );
 
-FormField.displayName = "FormField";
+FormField.displayName = 'FormField';
 
 export { FormField };

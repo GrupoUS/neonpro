@@ -1,6 +1,6 @@
-import { createClient } from '@/lib/supabase/server';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { createClient } from '@/lib/supabase/server';
 
 const resolveAlertSchema = z.object({
   alertId: z.string().uuid(),
@@ -13,10 +13,13 @@ const resolveAlertSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Get current user session
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-    
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession();
+
     if (sessionError || !session) {
       return NextResponse.json(
         { success: false, error: 'Unauthorized' },
@@ -74,13 +77,16 @@ export async function POST(request: NextRequest) {
       success: true,
       data: updatedAlert,
     });
-
   } catch (error) {
     console.error('POST /api/stock/alerts/resolve error:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { success: false, error: 'Invalid request data', details: error.errors },
+        {
+          success: false,
+          error: 'Invalid request data',
+          details: error.errors,
+        },
         { status: 400 }
       );
     }

@@ -249,7 +249,7 @@ export async function validateCfmResolutions(
         await services.medicalRecords.getMedicalRecordValidations(tenantId);
       const compliantRecords =
         recordValidations?.filter(
-          (r) => r.validation_results.cfm_resolution_2227_compliant
+          (r: any) => r.validation_results.cfm_resolution_2227_compliant
         ) || [];
       const totalRecords = recordValidations?.length || 0;
 

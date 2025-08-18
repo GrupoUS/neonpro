@@ -442,7 +442,7 @@ describe('Stock Performance Metrics Schema Validation', () => {
       end: new Date('2024-01-31'),
     },
     metrics: {
-      totalValue: 15000.0,
+      totalValue: 15_000.0,
       totalQuantity: 500,
       turnoverRate: 2.5,
       averageStockLevel: 100,
@@ -466,16 +466,18 @@ describe('Stock Performance Metrics Schema Validation', () => {
   });
 
   it('should reject negative values where inappropriate', () => {
-    const negativeMetrics = { ...validMetrics, 
-      metrics: { ...validMetrics.metrics, totalValue: -100 }
+    const negativeMetrics = {
+      ...validMetrics,
+      metrics: { ...validMetrics.metrics, totalValue: -100 },
     };
     const result = stockPerformanceMetricsSchema.safeParse(negativeMetrics);
     expect(result.success).toBe(false);
   });
 
   it('should reject invalid percentage values', () => {
-    const invalidPercentage = { ...validMetrics, 
-      metrics: { ...validMetrics.metrics, expirationRate: 150 }
+    const invalidPercentage = {
+      ...validMetrics,
+      metrics: { ...validMetrics.metrics, expirationRate: 150 },
     };
     const result = stockPerformanceMetricsSchema.safeParse(invalidPercentage);
     expect(result.success).toBe(false);
@@ -489,7 +491,7 @@ describe('Stock Performance Metrics Schema Validation', () => {
         end: new Date('2024-01-31'),
       },
       metrics: {
-        totalValue: 15000.0,
+        totalValue: 15_000.0,
         totalQuantity: 500,
         turnoverRate: 2.5,
         averageStockLevel: 100,
@@ -514,7 +516,7 @@ describe('Stock Dashboard Data Schema Validation', () => {
       lowStockItems: 25,
       expiredItems: 3,
       expiringItems: 8,
-      totalValue: 45000.0,
+      totalValue: 45_000.0,
       activeAlerts: 15,
     },
     alerts: [
@@ -722,7 +724,7 @@ describe('Performance and Scalability', () => {
         lowStockItems: 100,
         expiredItems: 10,
         expiringItems: 25,
-        totalValue: 50000.0,
+        totalValue: 50_000.0,
         activeAlerts: 150,
       },
       alerts: [],

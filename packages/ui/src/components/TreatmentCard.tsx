@@ -1,12 +1,20 @@
-import { AlertCircle, Calendar, CheckCircle, Clock, FileText, MapPin, XCircle } from "lucide-react";
-import * as React from "react";
-import type { PractitionerData, TreatmentData } from "../types";
-import { cn } from "../utils/cn";
-import { formatters } from "../utils/formatters";
-import { Avatar, AvatarFallback, AvatarImage } from "./Avatar";
-import { Badge } from "./Badge";
-import { Button } from "./Button";
-import { ProgressBar } from "./ProgressBar";
+import {
+  AlertCircle,
+  Calendar,
+  CheckCircle,
+  Clock,
+  FileText,
+  MapPin,
+  XCircle,
+} from 'lucide-react';
+import * as React from 'react';
+import type { PractitionerData, TreatmentData } from '../types';
+import { cn } from '../utils/cn';
+import { formatters } from '../utils/formatters';
+import { Avatar, AvatarFallback, AvatarImage } from './Avatar';
+import { Badge } from './Badge';
+import { Button } from './Button';
+import { ProgressBar } from './ProgressBar';
 
 type TreatmentCardProps = {
   treatment: TreatmentData;
@@ -31,11 +39,11 @@ const statusIcons = {
 };
 
 const statusColors = {
-  planned: "text-blue-600",
-  active: "text-green-600",
-  completed: "text-emerald-600",
-  cancelled: "text-red-600",
-  on_hold: "text-yellow-600",
+  planned: 'text-blue-600',
+  active: 'text-green-600',
+  completed: 'text-emerald-600',
+  cancelled: 'text-red-600',
+  on_hold: 'text-yellow-600',
 };
 
 const TreatmentCard = React.forwardRef<HTMLDivElement, TreatmentCardProps>(
@@ -54,22 +62,24 @@ const TreatmentCard = React.forwardRef<HTMLDivElement, TreatmentCardProps>(
       className,
       ...props
     },
-    ref,
+    ref
   ) => {
     const StatusIcon = statusIcons[treatment.status];
     const _statusColor = statusColors[treatment.status];
 
     const progress =
-      treatment.sessions && treatment.totalSessions && treatment.completedSessions
+      treatment.sessions &&
+      treatment.totalSessions &&
+      treatment.completedSessions
         ? (treatment.completedSessions / treatment.totalSessions) * 100
         : 0;
 
     return (
       <div
         className={cn(
-          "space-y-4 rounded-lg border bg-card p-6 transition-colors hover:bg-accent/50",
-          onClick && "cursor-pointer",
-          className,
+          'space-y-4 rounded-lg border bg-card p-6 transition-colors hover:bg-accent/50',
+          onClick && 'cursor-pointer',
+          className
         )}
         onClick={onClick}
         ref={ref}
@@ -82,13 +92,13 @@ const TreatmentCard = React.forwardRef<HTMLDivElement, TreatmentCardProps>(
               <h3 className="font-semibold text-lg">{treatment.name}</h3>
               <Badge
                 variant={
-                  treatment.status === "completed"
-                    ? "confirmed"
-                    : treatment.status === "active"
-                      ? "default"
-                      : treatment.status === "cancelled"
-                        ? "destructive"
-                        : "secondary"
+                  treatment.status === 'completed'
+                    ? 'confirmed'
+                    : treatment.status === 'active'
+                      ? 'default'
+                      : treatment.status === 'cancelled'
+                        ? 'destructive'
+                        : 'secondary'
                 }
               >
                 <StatusIcon className="mr-1 h-3 w-3" />
@@ -97,16 +107,22 @@ const TreatmentCard = React.forwardRef<HTMLDivElement, TreatmentCardProps>(
             </div>
 
             {treatment.category && (
-              <p className="text-muted-foreground text-sm">{treatment.category}</p>
+              <p className="text-muted-foreground text-sm">
+                {treatment.category}
+              </p>
             )}
           </div>
 
-          {treatment.priority && treatment.priority !== "normal" && (
-            <Badge variant={treatment.priority === "high" ? "destructive" : "pending"}>
-              {treatment.priority === "high" ? "Alta Prioridade" : "Moderada"}
+          {treatment.priority && treatment.priority !== 'normal' && (
+            <Badge
+              variant={
+                treatment.priority === 'high' ? 'destructive' : 'pending'
+              }
+            >
+              {treatment.priority === 'high' ? 'Alta Prioridade' : 'Moderada'}
             </Badge>
           )}
-        </div>{" "}
+        </div>{' '}
         {/* Treatment Details */}
         <div className="space-y-3">
           {/* Sessions Progress */}
@@ -116,7 +132,9 @@ const TreatmentCard = React.forwardRef<HTMLDivElement, TreatmentCardProps>(
             treatment.completedSessions !== undefined && (
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Progresso das Sessões</span>
+                  <span className="text-muted-foreground">
+                    Progresso das Sessões
+                  </span>
                   <span className="font-medium">
                     {treatment.completedSessions} de {treatment.totalSessions}
                   </span>
@@ -124,7 +142,7 @@ const TreatmentCard = React.forwardRef<HTMLDivElement, TreatmentCardProps>(
                 <ProgressBar
                   className="h-2"
                   value={progress}
-                  variant={progress === 100 ? "success" : "default"}
+                  variant={progress === 100 ? 'success' : 'default'}
                 />
               </div>
             )}
@@ -164,12 +182,19 @@ const TreatmentCard = React.forwardRef<HTMLDivElement, TreatmentCardProps>(
           {practitioner && (
             <div className="flex items-center gap-3 rounded-md bg-muted/50 p-3">
               <Avatar size="sm">
-                <AvatarImage alt={practitioner.name} src={practitioner.avatar} />
-                <AvatarFallback>{formatters.initials(practitioner.name)}</AvatarFallback>
+                <AvatarImage
+                  alt={practitioner.name}
+                  src={practitioner.avatar}
+                />
+                <AvatarFallback>
+                  {formatters.initials(practitioner.name)}
+                </AvatarFallback>
               </Avatar>
               <div>
                 <div className="font-medium text-sm">{practitioner.name}</div>
-                <div className="text-muted-foreground text-xs">{practitioner.specialization}</div>
+                <div className="text-muted-foreground text-xs">
+                  {practitioner.specialization}
+                </div>
               </div>
             </div>
           )}
@@ -188,9 +213,11 @@ const TreatmentCard = React.forwardRef<HTMLDivElement, TreatmentCardProps>(
           )}
 
           {/* Treatment Outcomes (if completed) */}
-          {treatment.status === "completed" && treatment.outcomes && (
+          {treatment.status === 'completed' && treatment.outcomes && (
             <div className="space-y-2">
-              <div className="font-medium text-green-700 text-sm">Resultados do Tratamento</div>
+              <div className="font-medium text-green-700 text-sm">
+                Resultados do Tratamento
+              </div>
               <div className="space-y-1">
                 {treatment.outcomes.map((outcome, index) => (
                   <div className="flex items-center gap-2 text-sm" key={index}>
@@ -201,7 +228,7 @@ const TreatmentCard = React.forwardRef<HTMLDivElement, TreatmentCardProps>(
               </div>
             </div>
           )}
-        </div>{" "}
+        </div>{' '}
         {/* Actions */}
         {showActions && (
           <div className="flex items-center gap-2 border-t pt-2">
@@ -219,7 +246,7 @@ const TreatmentCard = React.forwardRef<HTMLDivElement, TreatmentCardProps>(
               </Button>
             )}
 
-            {treatment.status === "active" && onScheduleNext && (
+            {treatment.status === 'active' && onScheduleNext && (
               <Button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -233,7 +260,7 @@ const TreatmentCard = React.forwardRef<HTMLDivElement, TreatmentCardProps>(
               </Button>
             )}
 
-            {treatment.status === "active" && onComplete && (
+            {treatment.status === 'active' && onComplete && (
               <Button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -260,26 +287,28 @@ const TreatmentCard = React.forwardRef<HTMLDivElement, TreatmentCardProps>(
               </Button>
             )}
 
-            {treatment.status !== "completed" && treatment.status !== "cancelled" && onCancel && (
-              <Button
-                className="text-red-600 hover:text-red-700"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onCancel();
-                }}
-                size="sm"
-                variant="ghost"
-              >
-                Cancelar
-              </Button>
-            )}
+            {treatment.status !== 'completed' &&
+              treatment.status !== 'cancelled' &&
+              onCancel && (
+                <Button
+                  className="text-red-600 hover:text-red-700"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onCancel();
+                  }}
+                  size="sm"
+                  variant="ghost"
+                >
+                  Cancelar
+                </Button>
+              )}
           </div>
         )}
       </div>
     );
-  },
+  }
 );
 
-TreatmentCard.displayName = "TreatmentCard";
+TreatmentCard.displayName = 'TreatmentCard';
 
 export { TreatmentCard };

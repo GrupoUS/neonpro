@@ -145,7 +145,7 @@ export class ComplianceDashboardService {
   private currentMetrics: ComplianceDashboardMetrics | null = null;
   private readonly activeAlerts: ComplianceAlert[] = [];
   private readonly auditTrail: ComplianceDashboardAudit[] = [];
-  private readonly monitoringInterval: NodeJS.Timeout | null = null;
+  private monitoringInterval: NodeJS.Timeout | null = null;
 
   constructor(config: ComplianceDashboardConfig) {
     this.config = ComplianceDashboardConfigSchema.parse(config);
@@ -311,9 +311,16 @@ export class ComplianceDashboardService {
       this.activeAlerts.push(...newAlerts);
 
       // Remove resolved alerts
-      this.activeAlerts = this.activeAlerts.filter(
-        (alert) => !alert.resolved_at
-      );
+      const resolvedIndices: number[] = [];
+      this.activeAlerts.forEach((alert, index) => {
+        if (alert.resolved_at) {
+          resolvedIndices.push(index);
+        }
+      });
+      // Remove from end to start to maintain indices
+      for (let i = resolvedIndices.length - 1; i >= 0; i--) {
+        this.activeAlerts.splice(resolvedIndices[i], 1);
+      }
 
       // Update metrics
       this.currentMetrics = metrics;

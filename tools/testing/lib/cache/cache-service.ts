@@ -22,16 +22,17 @@ class CacheService {
    * Set a value in cache
    */
   async set<T = any>(
-    key: string, 
-    value: T, 
+    key: string,
+    value: T,
     options: CacheOptions = {}
   ): Promise<void> {
     const ttl = options.ttl ?? this.defaultTtl;
     const expires = ttl > 0 ? Date.now() + ttl : Number.MAX_SAFE_INTEGER;
-    
-    const serializedValue = options.serialize !== false 
-      ? JSON.parse(JSON.stringify(value)) // Deep clone
-      : value;
+
+    const serializedValue =
+      options.serialize !== false
+        ? JSON.parse(JSON.stringify(value)) // Deep clone
+        : value;
 
     this.cache.set(key, {
       value: serializedValue,
@@ -48,7 +49,7 @@ class CacheService {
    */
   async get<T = any>(key: string): Promise<T | null> {
     const entry = this.cache.get(key);
-    
+
     if (!entry) {
       return null;
     }
@@ -66,12 +67,12 @@ class CacheService {
     }
 
     return entry.value as T;
-  }  /**
+  } /**
    * Check if key exists in cache
    */
   async has(key: string): Promise<boolean> {
     const entry = this.cache.get(key);
-    
+
     if (!entry) {
       return false;
     }
@@ -104,13 +105,13 @@ class CacheService {
    */
   async mget<T = any>(keys: string[]): Promise<(T | null)[]> {
     const results: (T | null)[] = [];
-    
+
     for (const key of keys) {
       results.push(await this.get<T>(key));
     }
-    
+
     return results;
-  }  /**
+  } /**
    * Set multiple values at once
    */
   async mset<T = any>(
@@ -124,7 +125,7 @@ class CacheService {
   /**
    * Increment a numeric value
    */
-  async increment(key: string, amount: number = 1): Promise<number> {
+  async increment(key: string, amount = 1): Promise<number> {
     const current = await this.get<number>(key);
     const newValue = (current || 0) + amount;
     await this.set(key, newValue);
@@ -134,7 +135,7 @@ class CacheService {
   /**
    * Decrement a numeric value
    */
-  async decrement(key: string, amount: number = 1): Promise<number> {
+  async decrement(key: string, amount = 1): Promise<number> {
     return this.increment(key, -amount);
   }
 
@@ -154,7 +155,7 @@ class CacheService {
       if (entry.metadata?.accessed) {
         totalAccesses += entry.metadata.accessed;
       }
-      
+
       // Rough memory calculation
       memoryUsage += key.length * 2; // String chars are 2 bytes
       memoryUsage += JSON.stringify(entry.value).length * 2;
@@ -162,11 +163,14 @@ class CacheService {
 
     return {
       size: this.cache.size,
-      hitRate: totalAccesses > 0 ? totalAccesses / (totalAccesses + this.cache.size) : 0,
+      hitRate:
+        totalAccesses > 0
+          ? totalAccesses / (totalAccesses + this.cache.size)
+          : 0,
       totalAccesses,
       memoryUsage,
     };
-  }  /**
+  } /**
    * Clean up expired entries
    */
   cleanup(): number {
@@ -188,7 +192,7 @@ class CacheService {
    */
   getKeys(pattern?: string): string[] {
     const keys = Array.from(this.cache.keys());
-    
+
     if (!pattern) {
       return keys;
     }
@@ -199,7 +203,7 @@ class CacheService {
       'i'
     );
 
-    return keys.filter(key => regex.test(key));
+    return keys.filter((key) => regex.test(key));
   }
 
   /**
@@ -214,7 +218,7 @@ class CacheService {
    */
   async ttl(key: string): Promise<number> {
     const entry = this.cache.get(key);
-    
+
     if (!entry) {
       return -2; // Key doesn't exist
     }

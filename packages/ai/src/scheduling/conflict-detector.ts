@@ -2,18 +2,18 @@
 // Real-time conflict detection with automatic resolution for aesthetic clinic scheduling
 
 import {
-  SchedulingConflict,
-  ConflictDetection,
-  ConflictResolution,
+  type AIAppointment,
+  type AlternativeSlot,
+  type ConflictDetection,
+  type ConflictResolution,
   ConflictType,
-  ResolutionType,
-  ResolutionImpact,
-  AIAppointment,
-  AlternativeSlot,
-  StaffAvailability,
-  RoomType,
-  TimeSlot,
-  TreatmentDuration
+  type ResolutionImpact,
+  type ResolutionType,
+  type RoomType,
+  type SchedulingConflict,
+  type StaffAvailability,
+  type TimeSlot,
+  type TreatmentDuration,
 } from './types';
 
 export class ConflictDetector {
@@ -38,14 +38,14 @@ export class ConflictDetector {
     try {
       // 1. Double booking detection
       const doubleBookingConflicts = await this.detectDoubleBooking(
-        appointmentSlot, 
+        appointmentSlot,
         existingAppointments
       );
       conflicts.push(...doubleBookingConflicts);
 
       // 2. Staff availability conflicts
       const staffConflicts = await this.detectStaffConflicts(
-        appointmentSlot, 
+        appointmentSlot,
         treatmentDuration,
         existingAppointments
       );
@@ -93,19 +93,23 @@ export class ConflictDetector {
       conflicts.push(...sequenceConflicts);
 
       // Generate resolutions for detected conflicts
-      const resolutions = await this.generateConflictResolutions(conflicts, appointmentSlot);
+      const resolutions = await this.generateConflictResolutions(
+        conflicts,
+        appointmentSlot
+      );
 
       // Determine if conflicts are auto-resolvable
-      const autoResolvable = conflicts.every(conflict => conflict.autoResolvable);
+      const autoResolvable = conflicts.every(
+        (conflict) => conflict.autoResolvable
+      );
       const criticalLevel = this.calculateCriticalLevel(conflicts);
 
       return {
         conflicts,
         resolutions,
         autoResolvable,
-        criticalLevel
+        criticalLevel,
       };
-
     } catch (error) {
       console.error('Conflict detection failed:', error);
       throw new Error('Failed to detect scheduling conflicts');
@@ -123,14 +127,20 @@ export class ConflictDetector {
     const { start, end } = slot.slot;
 
     // Check for overlapping appointments
-    const overlappingAppointments = existingAppointments.filter(appointment => {
-      const apptStart = new Date(appointment.scheduledStart);
-      const apptEnd = new Date(appointment.scheduledEnd);
-      
-      // Check for time overlap
-      return (start < apptEnd && end > apptStart) && 
-             (appointment.staffId === slot.staffId || appointment.roomId === slot.roomId);
-    });
+    const overlappingAppointments = existingAppointments.filter(
+      (appointment) => {
+        const apptStart = new Date(appointment.scheduledStart);
+        const apptEnd = new Date(appointment.scheduledEnd);
+
+        // Check for time overlap
+        return (
+          start < apptEnd &&
+          end > apptStart &&
+          (appointment.staffId === slot.staffId ||
+            appointment.roomId === slot.roomId)
+        );
+      }
+    );
 
     if (overlappingAppointments.length > 0) {
       conflicts.push({
@@ -138,10 +148,10 @@ export class ConflictDetector {
         type: 'double_booking',
         severity: 'critical',
         description: `Double booking detected: ${overlappingAppointments.length} overlapping appointment(s)`,
-        affectedAppointments: overlappingAppointments.map(a => a.id),
+        affectedAppointments: overlappingAppointments.map((a) => a.id),
         affectedResources: [slot.staffId, slot.roomId],
         detectedAt: new Date(),
-        autoResolvable: overlappingAppointments.length === 1 // Can auto-resolve single conflicts
+        autoResolvable: overlappingAppointments.length === 1, // Can auto-resolve single conflicts
       });
     }
 
@@ -157,10 +167,13 @@ export class ConflictDetector {
     existingAppointments: AIAppointment[]
   ): Promise<SchedulingConflict[]> {
     const conflicts: SchedulingConflict[] = [];
-    
+
     // Check staff availability
-    const staffAvailability = await this.getStaffAvailability(slot.staffId, slot.slot.start);
-    
+    const staffAvailability = await this.getStaffAvailability(
+      slot.staffId,
+      slot.slot.start
+    );
+
     if (!staffAvailability) {
       conflicts.push({
         id: this.generateConflictId(),
@@ -170,13 +183,16 @@ export class ConflictDetector {
         affectedAppointments: [],
         affectedResources: [slot.staffId],
         detectedAt: new Date(),
-        autoResolvable: true // Can reassign to available staff
+        autoResolvable: true, // Can reassign to available staff
       });
       return conflicts;
     }
 
     // Check if staff has required skills
-    const hasRequiredSkills = this.checkStaffSkills(staffAvailability, treatmentDuration.staffRequired);
+    const hasRequiredSkills = this.checkStaffSkills(
+      staffAvailability,
+      treatmentDuration.staffRequired
+    );
     if (!hasRequiredSkills) {
       conflicts.push({
         id: this.generateConflictId(),
@@ -186,12 +202,16 @@ export class ConflictDetector {
         affectedAppointments: [],
         affectedResources: [slot.staffId],
         detectedAt: new Date(),
-        autoResolvable: true
+        autoResolvable: true,
       });
     }
 
     // Check staff workload limits
-    const staffWorkload = this.calculateStaffWorkload(slot.staffId, slot.slot.start, existingAppointments);
+    const staffWorkload = this.calculateStaffWorkload(
+      slot.staffId,
+      slot.slot.start,
+      existingAppointments
+    );
     if (staffWorkload.concurrent >= staffAvailability.maxConcurrentPatients) {
       conflicts.push({
         id: this.generateConflictId(),
@@ -201,12 +221,15 @@ export class ConflictDetector {
         affectedAppointments: [],
         affectedResources: [slot.staffId],
         detectedAt: new Date(),
-        autoResolvable: true
+        autoResolvable: true,
       });
     }
 
     // Check for break time conflicts
-    const conflictsWithBreaks = this.checkBreakTimeConflicts(staffAvailability, slot.slot);
+    const conflictsWithBreaks = this.checkBreakTimeConflicts(
+      staffAvailability,
+      slot.slot
+    );
     conflicts.push(...conflictsWithBreaks);
 
     return conflicts;
@@ -233,13 +256,15 @@ export class ConflictDetector {
         affectedAppointments: [],
         affectedResources: [slot.roomId],
         detectedAt: new Date(),
-        autoResolvable: true
+        autoResolvable: true,
       });
       return conflicts;
     }
 
     // Check room suitability for treatment
-    const isSuitable = roomDetails.suitableFor.includes(treatmentDuration.treatmentType);
+    const isSuitable = roomDetails.suitableFor.includes(
+      treatmentDuration.treatmentType
+    );
     if (!isSuitable) {
       conflicts.push({
         id: this.generateConflictId(),
@@ -249,7 +274,7 @@ export class ConflictDetector {
         affectedAppointments: [],
         affectedResources: [slot.roomId],
         detectedAt: new Date(),
-        autoResolvable: true
+        autoResolvable: true,
       });
     }
 
@@ -263,14 +288,14 @@ export class ConflictDetector {
         affectedAppointments: [],
         affectedResources: [slot.roomId],
         detectedAt: new Date(),
-        autoResolvable: true
+        autoResolvable: true,
       });
     }
 
     // Check for room cleaning/preparation time
     const roomPreparationConflict = this.checkRoomPreparationTime(
-      slot, 
-      treatmentDuration, 
+      slot,
+      treatmentDuration,
       existingAppointments
     );
     if (roomPreparationConflict) {
@@ -293,7 +318,7 @@ export class ConflictDetector {
     // Check each required equipment
     for (const equipment of treatmentDuration.equipmentRequired) {
       const equipmentAvailability = await this.checkEquipmentAvailability(
-        equipment, 
+        equipment,
         slot.slot,
         existingAppointments
       );
@@ -307,7 +332,7 @@ export class ConflictDetector {
           affectedAppointments: equipmentAvailability.conflictingAppointments,
           affectedResources: [equipment],
           detectedAt: new Date(),
-          autoResolvable: !equipmentAvailability.critical
+          autoResolvable: !equipmentAvailability.critical,
         });
       }
     }
@@ -336,7 +361,7 @@ export class ConflictDetector {
         affectedAppointments: [],
         affectedResources: [],
         detectedAt: new Date(),
-        autoResolvable: true
+        autoResolvable: true,
       });
     }
 
@@ -351,14 +376,14 @@ export class ConflictDetector {
         affectedAppointments: [],
         affectedResources: [],
         detectedAt: new Date(),
-        autoResolvable: true
+        autoResolvable: true,
       });
     }
 
     // Check treatment-specific business rules
     const treatmentRuleConflicts = await this.checkTreatmentSpecificRules(
-      treatmentDuration, 
-      patientId, 
+      treatmentDuration,
+      patientId,
       slot
     );
     conflicts.push(...treatmentRuleConflicts);
@@ -377,9 +402,10 @@ export class ConflictDetector {
     const conflicts: SchedulingConflict[] = [];
 
     // Check for existing patient appointments on the same day
-    const sameDay = existingAppointments.filter(appointment => 
-      appointment.patientId === patientId &&
-      this.isSameDay(new Date(appointment.scheduledStart), slot.slot.start)
+    const sameDay = existingAppointments.filter(
+      (appointment) =>
+        appointment.patientId === patientId &&
+        this.isSameDay(new Date(appointment.scheduledStart), slot.slot.start)
     );
 
     if (sameDay.length > 0) {
@@ -388,16 +414,19 @@ export class ConflictDetector {
         type: 'patient_availability',
         severity: 'medium',
         description: `Patient already has ${sameDay.length} appointment(s) on the same day`,
-        affectedAppointments: sameDay.map(a => a.id),
+        affectedAppointments: sameDay.map((a) => a.id),
         affectedResources: [],
         detectedAt: new Date(),
-        autoResolvable: true
+        autoResolvable: true,
       });
     }
 
     // Check patient preferences and restrictions
     const patientPreferences = await this.getPatientPreferences(patientId);
-    const preferenceConflicts = this.checkPatientPreferenceConflicts(slot, patientPreferences);
+    const preferenceConflicts = this.checkPatientPreferenceConflicts(
+      slot,
+      patientPreferences
+    );
     conflicts.push(...preferenceConflicts);
 
     return conflicts;
@@ -415,22 +444,34 @@ export class ConflictDetector {
     const conflicts: SchedulingConflict[] = [];
 
     // Get treatment sequence rules
-    const sequenceRules = await this.getTreatmentSequenceRules(treatmentDuration.treatmentType);
-    
+    const sequenceRules = await this.getTreatmentSequenceRules(
+      treatmentDuration.treatmentType
+    );
+
     if (sequenceRules.length === 0) {
       return conflicts; // No sequence restrictions
     }
 
     // Check for required waiting periods between treatments
-    const recentAppointments = existingAppointments.filter(appointment =>
-      appointment.patientId === patientId &&
-      this.isWithinDays(new Date(appointment.scheduledStart), slot.slot.start, 30)
+    const recentAppointments = existingAppointments.filter(
+      (appointment) =>
+        appointment.patientId === patientId &&
+        this.isWithinDays(
+          new Date(appointment.scheduledStart),
+          slot.slot.start,
+          30
+        )
     );
 
     for (const rule of sequenceRules) {
-      const violatingAppointments = recentAppointments.filter(appointment =>
-        rule.conflictingTreatments.includes(appointment.treatmentType) &&
-        this.isWithinDays(new Date(appointment.scheduledStart), slot.slot.start, rule.minimumDaysBetween)
+      const violatingAppointments = recentAppointments.filter(
+        (appointment) =>
+          rule.conflictingTreatments.includes(appointment.treatmentType) &&
+          this.isWithinDays(
+            new Date(appointment.scheduledStart),
+            slot.slot.start,
+            rule.minimumDaysBetween
+          )
       );
 
       if (violatingAppointments.length > 0) {
@@ -439,10 +480,10 @@ export class ConflictDetector {
           type: 'treatment_sequence',
           severity: rule.severity as 'low' | 'medium' | 'high' | 'critical',
           description: `Treatment sequence violation: minimum ${rule.minimumDaysBetween} days required between treatments`,
-          affectedAppointments: violatingAppointments.map(a => a.id),
+          affectedAppointments: violatingAppointments.map((a) => a.id),
           affectedResources: [],
           detectedAt: new Date(),
-          autoResolvable: true
+          autoResolvable: true,
         });
       }
     }
@@ -460,7 +501,10 @@ export class ConflictDetector {
     const resolutions: ConflictResolution[] = [];
 
     for (const conflict of conflicts) {
-      const resolution = await this.generateSingleConflictResolution(conflict, originalSlot);
+      const resolution = await this.generateSingleConflictResolution(
+        conflict,
+        originalSlot
+      );
       if (resolution) {
         resolutions.push(resolution);
       }
@@ -481,21 +525,25 @@ export class ConflictDetector {
     let confidence = 0;
 
     switch (conflict.type) {
-      case 'double_booking':
+      case 'double_booking': {
         resolutionType = 'reschedule';
-        const alternativeSlot = await this.findAlternativeSlot(originalSlot, 30); // 30 min buffer
+        const alternativeSlot = await this.findAlternativeSlot(
+          originalSlot,
+          30
+        ); // 30 min buffer
         if (alternativeSlot) {
           newScheduling = {
             scheduledStart: alternativeSlot.slot.start,
             scheduledEnd: alternativeSlot.slot.end,
             staffId: alternativeSlot.staffId,
-            roomId: alternativeSlot.roomId
+            roomId: alternativeSlot.roomId,
           };
           confidence = 0.9;
         }
         break;
+      }
 
-      case 'staff_conflict':
+      case 'staff_conflict': {
         resolutionType = 'reassign_staff';
         const alternativeStaff = await this.findAlternativeStaff(originalSlot);
         if (alternativeStaff) {
@@ -503,8 +551,9 @@ export class ConflictDetector {
           confidence = 0.85;
         }
         break;
+      }
 
-      case 'room_conflict':
+      case 'room_conflict': {
         resolutionType = 'reassign_room';
         const alternativeRoom = await this.findAlternativeRoom(originalSlot);
         if (alternativeRoom) {
@@ -512,30 +561,34 @@ export class ConflictDetector {
           confidence = 0.8;
         }
         break;
+      }
 
-      case 'equipment_conflict':
+      case 'equipment_conflict': {
         resolutionType = 'reschedule';
         const equipmentSlot = await this.findSlotWithEquipment(originalSlot);
         if (equipmentSlot) {
           newScheduling = {
             scheduledStart: equipmentSlot.slot.start,
-            scheduledEnd: equipmentSlot.slot.end
+            scheduledEnd: equipmentSlot.slot.end,
           };
           confidence = 0.75;
         }
         break;
+      }
 
-      case 'business_hours':
+      case 'business_hours': {
         resolutionType = 'reschedule';
-        const businessHoursSlot = await this.findBusinessHoursSlot(originalSlot);
+        const businessHoursSlot =
+          await this.findBusinessHoursSlot(originalSlot);
         if (businessHoursSlot) {
           newScheduling = {
             scheduledStart: businessHoursSlot.slot.start,
-            scheduledEnd: businessHoursSlot.slot.end
+            scheduledEnd: businessHoursSlot.slot.end,
           };
           confidence = 0.95;
         }
         break;
+      }
 
       default:
         return null;
@@ -545,14 +598,17 @@ export class ConflictDetector {
       return null;
     }
 
-    const impact = await this.calculateResolutionImpact(conflict, newScheduling);
+    const impact = await this.calculateResolutionImpact(
+      conflict,
+      newScheduling
+    );
 
     return {
       conflictId: conflict.id,
       resolutionType,
       newScheduling,
       impact,
-      confidence
+      confidence,
     };
   }
 
@@ -563,10 +619,12 @@ export class ConflictDetector {
 
   private calculateCriticalLevel(conflicts: SchedulingConflict[]): number {
     if (conflicts.length === 0) return 0;
-    
+
     const severityLevels = { low: 1, medium: 2, high: 3, critical: 4 };
-    const maxSeverity = Math.max(...conflicts.map(c => severityLevels[c.severity]));
-    
+    const maxSeverity = Math.max(
+      ...conflicts.map((c) => severityLevels[c.severity])
+    );
+
     return maxSeverity;
   }
 
@@ -579,20 +637,33 @@ export class ConflictDetector {
   }
 
   // Placeholder methods for external service integration
-  private async getStaffAvailability(staffId: string, date: Date): Promise<StaffAvailability | null> {
+  private async getStaffAvailability(
+    staffId: string,
+    date: Date
+  ): Promise<StaffAvailability | null> {
     // Implementation would fetch from staff service
     return null;
   }
 
-  private checkStaffSkills(staff: StaffAvailability, requiredSkills: string[]): boolean {
-    return requiredSkills.every(skill => staff.skills.includes(skill));
+  private checkStaffSkills(
+    staff: StaffAvailability,
+    requiredSkills: string[]
+  ): boolean {
+    return requiredSkills.every((skill) => staff.skills.includes(skill));
   }
 
-  private calculateStaffWorkload(staffId: string, date: Date, appointments: AIAppointment[]): { concurrent: number } {
+  private calculateStaffWorkload(
+    staffId: string,
+    date: Date,
+    appointments: AIAppointment[]
+  ): { concurrent: number } {
     return { concurrent: 0 };
   }
 
-  private checkBreakTimeConflicts(staff: StaffAvailability, slot: TimeSlot): SchedulingConflict[] {
+  private checkBreakTimeConflicts(
+    staff: StaffAvailability,
+    slot: TimeSlot
+  ): SchedulingConflict[] {
     return [];
   }
 
@@ -601,19 +672,29 @@ export class ConflictDetector {
   }
 
   private checkRoomPreparationTime(
-    slot: AlternativeSlot, 
-    duration: TreatmentDuration, 
+    slot: AlternativeSlot,
+    duration: TreatmentDuration,
     appointments: AIAppointment[]
   ): SchedulingConflict | null {
     return null;
   }
 
   private async checkEquipmentAvailability(
-    equipment: string, 
-    slot: TimeSlot, 
+    equipment: string,
+    slot: TimeSlot,
     appointments: AIAppointment[]
-  ): Promise<{ available: boolean; critical: boolean; reason: string; conflictingAppointments: string[] }> {
-    return { available: true, critical: false, reason: '', conflictingAppointments: [] };
+  ): Promise<{
+    available: boolean;
+    critical: boolean;
+    reason: string;
+    conflictingAppointments: string[];
+  }> {
+    return {
+      available: true,
+      critical: false,
+      reason: '',
+      conflictingAppointments: [],
+    };
   }
 
   private checkBusinessHours(slot: TimeSlot): boolean {
@@ -624,12 +705,15 @@ export class ConflictDetector {
   private checkMinimumAdvanceTime(appointmentTime: Date): boolean {
     const now = new Date();
     const minAdvanceHours = 2;
-    return appointmentTime.getTime() - now.getTime() >= minAdvanceHours * 60 * 60 * 1000;
+    return (
+      appointmentTime.getTime() - now.getTime() >=
+      minAdvanceHours * 60 * 60 * 1000
+    );
   }
 
   private async checkTreatmentSpecificRules(
-    duration: TreatmentDuration, 
-    patientId: string, 
+    duration: TreatmentDuration,
+    patientId: string,
     slot: AlternativeSlot
   ): Promise<SchedulingConflict[]> {
     return [];
@@ -649,36 +733,52 @@ export class ConflictDetector {
     return {};
   }
 
-  private checkPatientPreferenceConflicts(slot: AlternativeSlot, preferences: any): SchedulingConflict[] {
+  private checkPatientPreferenceConflicts(
+    slot: AlternativeSlot,
+    preferences: any
+  ): SchedulingConflict[] {
     return [];
   }
 
-  private async getTreatmentSequenceRules(treatmentType: string): Promise<any[]> {
+  private async getTreatmentSequenceRules(
+    treatmentType: string
+  ): Promise<any[]> {
     return [];
   }
 
-  private async findAlternativeSlot(originalSlot: AlternativeSlot, bufferMinutes: number): Promise<AlternativeSlot | null> {
+  private async findAlternativeSlot(
+    originalSlot: AlternativeSlot,
+    bufferMinutes: number
+  ): Promise<AlternativeSlot | null> {
     return null;
   }
 
-  private async findAlternativeStaff(originalSlot: AlternativeSlot): Promise<string | null> {
+  private async findAlternativeStaff(
+    originalSlot: AlternativeSlot
+  ): Promise<string | null> {
     return null;
   }
 
-  private async findAlternativeRoom(originalSlot: AlternativeSlot): Promise<string | null> {
+  private async findAlternativeRoom(
+    originalSlot: AlternativeSlot
+  ): Promise<string | null> {
     return null;
   }
 
-  private async findSlotWithEquipment(originalSlot: AlternativeSlot): Promise<AlternativeSlot | null> {
+  private async findSlotWithEquipment(
+    originalSlot: AlternativeSlot
+  ): Promise<AlternativeSlot | null> {
     return null;
   }
 
-  private async findBusinessHoursSlot(originalSlot: AlternativeSlot): Promise<AlternativeSlot | null> {
+  private async findBusinessHoursSlot(
+    originalSlot: AlternativeSlot
+  ): Promise<AlternativeSlot | null> {
     return null;
   }
 
   private async calculateResolutionImpact(
-    conflict: SchedulingConflict, 
+    conflict: SchedulingConflict,
     newScheduling: Partial<AIAppointment>
   ): Promise<ResolutionImpact> {
     return {
@@ -686,7 +786,7 @@ export class ConflictDetector {
       staffAffected: 1,
       revenueImpact: 0,
       patientSatisfactionImpact: -5,
-      operationalImpact: 10
+      operationalImpact: 10,
     };
   }
 }

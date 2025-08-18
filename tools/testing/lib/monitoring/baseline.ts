@@ -15,15 +15,15 @@ export class BaselineMonitoringService {
         value: 45,
         baseline: 50,
         threshold: 100,
-        status: 'healthy'
+        status: 'healthy',
       },
       {
         name: 'error_rate',
         value: 0.1,
         baseline: 0.5,
         threshold: 1.0,
-        status: 'healthy'
-      }
+        status: 'healthy',
+      },
     ];
   }
 

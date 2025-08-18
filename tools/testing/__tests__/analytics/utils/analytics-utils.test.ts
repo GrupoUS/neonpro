@@ -1,11 +1,4 @@
 import {
-  beforeEach,
-  describe,
-  expect,
-  test,
-  vi,
-} from 'vitest';
-import {
   aggregateMetricsByPeriod,
   calculateARR,
   calculateChurnRate,
@@ -21,6 +14,7 @@ import {
   parseAnalyticsFilters,
   validateDateRange,
 } from '@neonpro/utils/analytics/utils';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 // Mock date-fns
 vi.mock('date-fns', () => ({

@@ -14,13 +14,13 @@ export default defineConfig({
         '**/*.spec.ts',
         'tests/',
         'vitest.config.ts',
-        'tsup.config.ts'
-      ]
-    }
+        'tsup.config.ts',
+      ],
+    },
   },
   resolve: {
     alias: {
-      '@': './src'
-    }
-  }
+      '@': './src',
+    },
+  },
 });

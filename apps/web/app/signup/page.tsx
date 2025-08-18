@@ -1,47 +1,47 @@
-"use client";
+'use client';
 
-import type React from "react";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useSignUp } from "@clerk/nextjs";
+import { useSignUp } from '@clerk/nextjs';
 import {
+  Alert,
+  AlertDescription,
   Button,
-  Input,
-  Label,
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-  Alert,
-  AlertDescription,
   Checkbox,
+  Input,
+  Label,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
   Separator,
-} from "@neonpro/ui";
-import { Eye, EyeOff, Loader2, Shield, Check } from "lucide-react";
+} from '@neonpro/ui';
+import { Check, Eye, EyeOff, Loader2, Shield } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import type React from 'react';
+import { useState } from 'react';
 
 export default function SignUpPage() {
   const { isLoaded, signUp, setActive } = useSignUp();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [companyName, setCompanyName] = useState("");
-  const [plan, setPlan] = useState("basic");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [companyName, setCompanyName] = useState('');
+  const [plan, setPlan] = useState('basic');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [lgpdConsent, setLgpdConsent] = useState(false);
   const [pendingVerification, setPendingVerification] = useState(false);
-  const [code, setCode] = useState("");
+  const [code, setCode] = useState('');
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -50,23 +50,23 @@ export default function SignUpPage() {
     if (!isLoaded) return;
 
     setIsLoading(true);
-    setError("");
+    setError('');
 
     // Validations
     if (password !== confirmPassword) {
-      setError("As senhas não coincidem.");
+      setError('As senhas não coincidem.');
       setIsLoading(false);
       return;
     }
 
     if (!termsAccepted) {
-      setError("Você deve aceitar os termos de serviço.");
+      setError('Você deve aceitar os termos de serviço.');
       setIsLoading(false);
       return;
     }
 
     if (!lgpdConsent) {
-      setError("Você deve consentir com o tratamento de dados conforme LGPD.");
+      setError('Você deve consentir com o tratamento de dados conforme LGPD.');
       setIsLoading(false);
       return;
     }
@@ -85,10 +85,12 @@ export default function SignUpPage() {
         },
       });
 
-      await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
+      await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
       setPendingVerification(true);
     } catch (err: any) {
-      setError(err.errors?.[0]?.message || "Erro ao criar conta. Tente novamente.");
+      setError(
+        err.errors?.[0]?.message || 'Erro ao criar conta. Tente novamente.'
+      );
     } finally {
       setIsLoading(false);
     }
@@ -100,19 +102,19 @@ export default function SignUpPage() {
     if (!isLoaded) return;
 
     setIsLoading(true);
-    setError("");
+    setError('');
 
     try {
       const completeSignUp = await signUp.attemptEmailAddressVerification({
         code,
       });
 
-      if (completeSignUp.status === "complete") {
+      if (completeSignUp.status === 'complete') {
         await setActive({ session: completeSignUp.createdSessionId });
-        router.push("/dashboard");
+        router.push('/dashboard');
       }
     } catch (err: any) {
-      setError(err.errors?.[0]?.message || "Código de verificação inválido.");
+      setError(err.errors?.[0]?.message || 'Código de verificação inválido.');
     } finally {
       setIsLoading(false);
     }
@@ -125,10 +127,12 @@ export default function SignUpPage() {
           <Card>
             <CardHeader>
               <CardTitle>Verificar Email</CardTitle>
-              <CardDescription>Enviamos um código de verificação para {email}</CardDescription>
+              <CardDescription>
+                Enviamos um código de verificação para {email}
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleVerify} className="space-y-4">
+              <form className="space-y-4" onSubmit={handleVerify}>
                 {error && (
                   <Alert variant="destructive">
                     <AlertDescription>{error}</AlertDescription>
@@ -138,18 +142,20 @@ export default function SignUpPage() {
                 <div className="space-y-2">
                   <Label htmlFor="code">Código de Verificação</Label>
                   <Input
-                    id="code"
-                    placeholder="Digite o código de 6 dígitos"
-                    value={code}
-                    onChange={(e) => setCode(e.target.value)}
-                    required
                     disabled={isLoading}
+                    id="code"
+                    onChange={(e) => setCode(e.target.value)}
+                    placeholder="Digite o código de 6 dígitos"
+                    required
+                    value={code}
                   />
                 </div>
 
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {isLoading ? "Verificando..." : "Verificar Email"}
+                <Button className="w-full" disabled={isLoading} type="submit">
+                  {isLoading && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  {isLoading ? 'Verificando...' : 'Verificar Email'}
                 </Button>
               </form>
             </CardContent>
@@ -165,14 +171,14 @@ export default function SignUpPage() {
         <div className="absolute inset-0 bg-zinc-900" />
         <div className="relative z-20 flex items-center font-medium text-lg">
           <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
+            className="mr-2 h-6 w-6"
             fill="none"
             stroke="currentColor"
-            strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="mr-2 h-6 w-6"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
           >
             <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
           </svg>
@@ -181,8 +187,8 @@ export default function SignUpPage() {
         <div className="relative z-20 mt-auto">
           <blockquote className="space-y-2">
             <p className="text-lg">
-              &ldquo;Plataforma completa de gestão empresarial com foco em saúde, compliance e
-              experiência do usuário.&rdquo;
+              &ldquo;Plataforma completa de gestão empresarial com foco em
+              saúde, compliance e experiência do usuário.&rdquo;
             </p>
             <footer className="text-sm">Equipe NeonPro</footer>
           </blockquote>
@@ -192,8 +198,12 @@ export default function SignUpPage() {
       <div className="lg:p-8">
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[400px]">
           <div className="flex flex-col space-y-2 text-center">
-            <h1 className="font-semibold text-2xl tracking-tight">Criar conta</h1>
-            <p className="text-muted-foreground text-sm">Preencha os dados para começar</p>
+            <h1 className="font-semibold text-2xl tracking-tight">
+              Criar conta
+            </h1>
+            <p className="text-muted-foreground text-sm">
+              Preencha os dados para começar
+            </p>
           </div>
 
           <Card>
@@ -202,7 +212,7 @@ export default function SignUpPage() {
               <CardDescription>Crie sua conta NeonPro</CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form className="space-y-4" onSubmit={handleSubmit}>
                 {error && (
                   <Alert variant="destructive">
                     <AlertDescription>{error}</AlertDescription>
@@ -213,23 +223,23 @@ export default function SignUpPage() {
                   <div className="space-y-2">
                     <Label htmlFor="firstName">Nome</Label>
                     <Input
-                      id="firstName"
-                      placeholder="João"
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
-                      required
                       disabled={isLoading}
+                      id="firstName"
+                      onChange={(e) => setFirstName(e.target.value)}
+                      placeholder="João"
+                      required
+                      value={firstName}
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="lastName">Sobrenome</Label>
                     <Input
-                      id="lastName"
-                      placeholder="Silva"
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
-                      required
                       disabled={isLoading}
+                      id="lastName"
+                      onChange={(e) => setLastName(e.target.value)}
+                      placeholder="Silva"
+                      required
+                      value={lastName}
                     />
                   </div>
                 </div>
@@ -237,38 +247,46 @@ export default function SignUpPage() {
                 <div className="space-y-2">
                   <Label htmlFor="companyName">Nome da Empresa</Label>
                   <Input
-                    id="companyName"
-                    placeholder="Minha Empresa Ltda"
-                    value={companyName}
-                    onChange={(e) => setCompanyName(e.target.value)}
-                    required
                     disabled={isLoading}
+                    id="companyName"
+                    onChange={(e) => setCompanyName(e.target.value)}
+                    placeholder="Minha Empresa Ltda"
+                    required
+                    value={companyName}
                   />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
                   <Input
-                    id="email"
-                    type="email"
-                    placeholder="seu@email.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
                     disabled={isLoading}
+                    id="email"
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="seu@email.com"
+                    required
+                    type="email"
+                    value={email}
                   />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="plan">Plano</Label>
-                  <Select value={plan} onValueChange={setPlan} disabled={isLoading}>
+                  <Select
+                    disabled={isLoading}
+                    onValueChange={setPlan}
+                    value={plan}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione um plano" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="basic">Básico - R$ 99/mês</SelectItem>
-                      <SelectItem value="professional">Profissional - R$ 199/mês</SelectItem>
-                      <SelectItem value="enterprise">Enterprise - R$ 399/mês</SelectItem>
+                      <SelectItem value="professional">
+                        Profissional - R$ 199/mês
+                      </SelectItem>
+                      <SelectItem value="enterprise">
+                        Enterprise - R$ 399/mês
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -277,23 +295,27 @@ export default function SignUpPage() {
                   <Label htmlFor="password">Senha</Label>
                   <div className="relative">
                     <Input
-                      id="password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Digite uma senha forte"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
                       disabled={isLoading}
+                      id="password"
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Digite uma senha forte"
+                      required
+                      type={showPassword ? 'text' : 'password'}
+                      value={password}
                     />
                     <Button
+                      className="absolute top-0 right-0 h-full px-3 py-2 hover:bg-transparent"
+                      disabled={isLoading}
+                      onClick={() => setShowPassword(!showPassword)}
+                      size="sm"
                       type="button"
                       variant="ghost"
-                      size="sm"
-                      className="absolute top-0 right-0 h-full px-3 py-2 hover:bg-transparent"
-                      onClick={() => setShowPassword(!showPassword)}
-                      disabled={isLoading}
                     >
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
                     </Button>
                   </div>
                 </div>
@@ -302,21 +324,23 @@ export default function SignUpPage() {
                   <Label htmlFor="confirmPassword">Confirmar Senha</Label>
                   <div className="relative">
                     <Input
-                      id="confirmPassword"
-                      type={showConfirmPassword ? "text" : "password"}
-                      placeholder="Digite a senha novamente"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      required
                       disabled={isLoading}
+                      id="confirmPassword"
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="Digite a senha novamente"
+                      required
+                      type={showConfirmPassword ? 'text' : 'password'}
+                      value={confirmPassword}
                     />
                     <Button
+                      className="absolute top-0 right-0 h-full px-3 py-2 hover:bg-transparent"
+                      disabled={isLoading}
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                      size="sm"
                       type="button"
                       variant="ghost"
-                      size="sm"
-                      className="absolute top-0 right-0 h-full px-3 py-2 hover:bg-transparent"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      disabled={isLoading}
                     >
                       {showConfirmPassword ? (
                         <EyeOff className="h-4 w-4" />
@@ -332,19 +356,25 @@ export default function SignUpPage() {
                 <div className="space-y-3">
                   <div className="flex items-start space-x-2">
                     <Checkbox
-                      id="terms"
                       checked={termsAccepted}
-                      onCheckedChange={setTermsAccepted}
                       disabled={isLoading}
+                      id="terms"
+                      onCheckedChange={setTermsAccepted}
                     />
                     <div className="text-sm">
-                      <Label htmlFor="terms" className="cursor-pointer">
-                        Aceito os{" "}
-                        <a href="/terms" className="underline hover:text-primary">
+                      <Label className="cursor-pointer" htmlFor="terms">
+                        Aceito os{' '}
+                        <a
+                          className="underline hover:text-primary"
+                          href="/terms"
+                        >
                           Termos de Serviço
-                        </a>{" "}
-                        e{" "}
-                        <a href="/privacy" className="underline hover:text-primary">
+                        </a>{' '}
+                        e{' '}
+                        <a
+                          className="underline hover:text-primary"
+                          href="/privacy"
+                        >
                           Política de Privacidade
                         </a>
                       </Label>
@@ -353,16 +383,20 @@ export default function SignUpPage() {
 
                   <div className="flex items-start space-x-2">
                     <Checkbox
-                      id="lgpd"
                       checked={lgpdConsent}
-                      onCheckedChange={setLgpdConsent}
                       disabled={isLoading}
+                      id="lgpd"
+                      onCheckedChange={setLgpdConsent}
                     />
                     <div className="text-sm">
-                      <Label htmlFor="lgpd" className="cursor-pointer">
+                      <Label className="cursor-pointer" htmlFor="lgpd">
                         <Shield className="mr-1 inline h-4 w-4" />
-                        Consinto com o tratamento dos meus dados pessoais conforme a{" "}
-                        <a href="/lgpd" className="underline hover:text-primary">
+                        Consinto com o tratamento dos meus dados pessoais
+                        conforme a{' '}
+                        <a
+                          className="underline hover:text-primary"
+                          href="/lgpd"
+                        >
                           Lei Geral de Proteção de Dados (LGPD)
                         </a>
                       </Label>
@@ -371,18 +405,20 @@ export default function SignUpPage() {
                 </div>
 
                 <Button
-                  type="submit"
                   className="w-full"
                   disabled={isLoading || !termsAccepted || !lgpdConsent}
+                  type="submit"
                 >
-                  {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {isLoading ? "Criando conta..." : "Criar conta"}
+                  {isLoading && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  {isLoading ? 'Criando conta...' : 'Criar conta'}
                 </Button>
 
                 <div className="text-center">
                   <a
-                    href="/login"
                     className="text-muted-foreground text-sm underline underline-offset-4 hover:text-primary"
+                    href="/login"
                   >
                     Já tem uma conta? Entre aqui
                   </a>
@@ -394,7 +430,9 @@ export default function SignUpPage() {
           <div className="rounded-lg border border-green-200 bg-green-50 p-3">
             <div className="flex items-center space-x-2 text-green-800">
               <Check className="h-4 w-4" />
-              <span className="font-medium text-sm">Ambiente seguro e compatível com LGPD</span>
+              <span className="font-medium text-sm">
+                Ambiente seguro e compatível com LGPD
+              </span>
             </div>
           </div>
         </div>

@@ -1,6 +1,10 @@
-import type { PatientProfile, TreatmentRequest, PredictionResponse } from '../types';
-import { aestheticInferenceAPI } from '../api/inference-api';
 import { predictionPerformanceMonitor } from '../analytics/performance-monitor';
+import { aestheticInferenceAPI } from '../api/inference-api';
+import type {
+  PatientProfile,
+  PredictionResponse,
+  TreatmentRequest,
+} from '../types';
 
 /**
  * NeonPro Core Services Integration Layer
@@ -20,7 +24,7 @@ export class NeonProAIIntegration {
     try {
       // Initialize the inference API
       await aestheticInferenceAPI.initialize();
-      
+
       this.isInitialized = true;
       console.log('✅ NeonPro AI Integration initialized');
     } catch (error) {
@@ -52,38 +56,38 @@ export class NeonProAIIntegration {
     try {
       // Fetch patient data from NeonPro core services
       const patient = await this.getPatientProfile(patientId);
-      
+
       // Create treatment request
       const treatmentRequest: TreatmentRequest = {
         patientId,
         treatmentType: treatmentType as any,
-        targetAreas: targetAreas.map(area => ({
+        targetAreas: targetAreas.map((area) => ({
           region: area as any,
           concern: 'wrinkles' as any, // Default, would be specified
           severity: 5, // Default, would be assessed
-          priority: 1 // Default
+          priority: 1, // Default
         })),
         goals: {
           primary: 'Aesthetic improvement',
           secondary: [],
           expectations: 'moderate' as any,
           maintenance: false,
-          naturalLook: true
+          naturalLook: true,
         },
         urgency: 'moderate' as any,
         budgetRange: {
           min: 1000,
           max: 5000,
           currency: 'BRL',
-          flexibility: 'moderate'
+          flexibility: 'moderate',
         },
         timeframe: {
           earliestStart: new Date(),
           latestCompletion: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
           flexibility: 'moderate',
           preferredDays: [1, 2, 3, 4, 5],
-          preferredTimes: [{ start: '09:00', end: '17:00' }]
-        }
+          preferredTimes: [{ start: '09:00', end: '17:00' }],
+        },
       };
 
       // Get comprehensive AI prediction
@@ -106,7 +110,10 @@ export class NeonProAIIntegration {
       );
 
       // Format recommendation for NeonPro services
-      const recommendation = this.formatTreatmentRecommendation(prediction.data, treatmentRequest);
+      const recommendation = this.formatTreatmentRecommendation(
+        prediction.data,
+        treatmentRequest
+      );
 
       return {
         success: true,
@@ -114,13 +121,12 @@ export class NeonProAIIntegration {
         metadata: {
           processingTime: performance.now() - startTime,
           confidence: this.calculateOverallConfidence(prediction.data),
-          accuracyScore: prediction.metadata.accuracyScore
-        }
+          accuracyScore: prediction.metadata.accuracyScore,
+        },
       };
-
     } catch (error) {
       console.error('❌ Treatment recommendation failed:', error);
-      
+
       // Log error for monitoring
       predictionPerformanceMonitor.logPrediction(
         'treatment-outcome',
@@ -136,21 +142,21 @@ export class NeonProAIIntegration {
         metadata: {
           processingTime: performance.now() - startTime,
           confidence: 0,
-          accuracyScore: 0
-        }
+          accuracyScore: 0,
+        },
       };
     }
-  }  /**
+  } /**
    * Get optimized Botox treatment plan
    */
   async getBotoxOptimization(
     patientId: string,
     targetAreas: string[],
-    desiredIntensity: number = 5
+    desiredIntensity = 5
   ) {
     try {
       const patient = await this.getPatientProfile(patientId);
-      
+
       const result = await aestheticInferenceAPI.optimizeBotoxTreatment(
         patientId,
         patient,
@@ -167,9 +173,9 @@ export class NeonProAIIntegration {
             expectedDuration: result.data.outputs.expectedDuration,
             onsetTime: result.data.outputs.onsetTime,
             confidence: result.data.outputs.confidence,
-            recommendations: result.data.metadata.recommendations
+            recommendations: result.data.metadata.recommendations,
           },
-          metadata: result.metadata
+          metadata: result.metadata,
         };
       }
 
@@ -178,7 +184,7 @@ export class NeonProAIIntegration {
       console.error('❌ Botox optimization failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -198,31 +204,47 @@ export class NeonProAIIntegration {
 
       // Check accuracy targets for all models
       const accuracyChecks = [
-        'treatment-outcome', 'risk-assessment', 'botox-optimization',
-        'filler-volume', 'laser-settings', 'duration-estimation', 'success-probability'
-      ].map(modelType => {
-        const check = predictionPerformanceMonitor.checkAccuracyTarget(modelType as any);
+        'treatment-outcome',
+        'risk-assessment',
+        'botox-optimization',
+        'filler-volume',
+        'laser-settings',
+        'duration-estimation',
+        'success-probability',
+      ].map((modelType) => {
+        const check = predictionPerformanceMonitor.checkAccuracyTarget(
+          modelType as any
+        );
         return { [modelType]: check };
       });
 
-      const accuracy = Object.assign({}, ...accuracyChecks.map(check => {
-        const [key, value] = Object.entries(check)[0];
-        return { [key]: (value as any).currentAccuracy };
-      }));
+      const accuracy = Object.assign(
+        {},
+        ...accuracyChecks.map((check) => {
+          const [key, value] = Object.entries(check)[0];
+          return { [key]: (value as any).currentAccuracy };
+        })
+      );
 
       const recommendations: string[] = [];
-      
+
       // Generate recommendations based on health status
       if (healthCheck.status !== 'healthy') {
-        recommendations.push('AI system health degraded - check model performance');
+        recommendations.push(
+          'AI system health degraded - check model performance'
+        );
       }
 
       if (dashboard.successRate < 0.95) {
-        recommendations.push('High error rate detected - review system stability');
+        recommendations.push(
+          'High error rate detected - review system stability'
+        );
       }
 
       if (dashboard.averageResponseTime > 2000) {
-        recommendations.push('Response time above 2s target - optimize inference pipeline');
+        recommendations.push(
+          'Response time above 2s target - optimize inference pipeline'
+        );
       }
 
       return {
@@ -231,9 +253,9 @@ export class NeonProAIIntegration {
         performance: {
           responseTime: dashboard.averageResponseTime,
           successRate: dashboard.successRate,
-          cacheHitRate: dashboard.averageResponseTime < 500 ? 0.8 : 0.3 // Estimated
+          cacheHitRate: dashboard.averageResponseTime < 500 ? 0.8 : 0.3, // Estimated
         },
-        recommendations
+        recommendations,
       };
     } catch (error) {
       console.error('❌ System health check failed:', error);
@@ -241,7 +263,9 @@ export class NeonProAIIntegration {
         status: 'unhealthy',
         accuracy: {},
         performance: {},
-        recommendations: ['System health check failed - investigate immediately']
+        recommendations: [
+          'System health check failed - investigate immediately',
+        ],
       };
     }
   }
@@ -255,7 +279,7 @@ export class NeonProAIIntegration {
   private async getPatientProfile(patientId: string): Promise<PatientProfile> {
     // This is a mock implementation
     // In production, integrate with @neonpro/core-services patient API
-    
+
     return {
       id: patientId,
       age: 35,
@@ -267,7 +291,7 @@ export class NeonProAIIntegration {
         conditions: [],
         autoimmuneDiseases: [],
         bloodThinnersUse: false,
-        keloidProneness: false
+        keloidProneness: false,
       },
       lifestyle: {
         smoking: false,
@@ -282,8 +306,8 @@ export class NeonProAIIntegration {
           sunscreenUse: true,
           retinoidUse: false,
           exfoliation: true,
-          professionalTreatments: []
-        }
+          professionalTreatments: [],
+        },
       },
       previousTreatments: [],
       goals: {
@@ -291,7 +315,7 @@ export class NeonProAIIntegration {
         secondary: ['Preventive care'],
         expectations: 'moderate',
         maintenance: true,
-        naturalLook: true
+        naturalLook: true,
       },
       consentStatus: {
         dataProcessingConsent: true,
@@ -299,43 +323,46 @@ export class NeonProAIIntegration {
         consentDate: new Date(),
         consentVersion: '1.0',
         dataRetentionPeriod: 365,
-        anonymizationRequested: false
-      }
+        anonymizationRequested: false,
+      },
     };
   }
 
   /**
    * Format AI prediction into NeonPro treatment recommendation
    */
-  private formatTreatmentRecommendation(prediction: any, request: TreatmentRequest) {
+  private formatTreatmentRecommendation(
+    prediction: any,
+    request: TreatmentRequest
+  ) {
     return {
       treatmentPlan: {
         type: request.treatmentType,
-        areas: request.targetAreas.map(area => area.region),
+        areas: request.targetAreas.map((area) => area.region),
         expectedOutcome: prediction.outcome.outputs.outcomeScore,
         confidence: prediction.outcome.outputs.confidence,
         timeline: prediction.outcome.outputs.expectedTimeline,
-        durability: prediction.outcome.outputs.durability
+        durability: prediction.outcome.outputs.durability,
       },
       riskProfile: {
         overallRisk: prediction.risk.outputs.overallRisk,
         specificRisks: prediction.risk.outputs.specificRisks.slice(0, 3), // Top 3 risks
-        contraindications: prediction.risk.outputs.contraindications
+        contraindications: prediction.risk.outputs.contraindications,
       },
       scheduling: {
         estimatedDuration: prediction.duration.outputs.sessionDuration,
         recoveryTime: prediction.duration.outputs.recoveryTime,
-        factors: prediction.duration.outputs.factors
+        factors: prediction.duration.outputs.factors,
       },
       successProbability: {
         probability: prediction.success.outputs.successProbability,
         confidence: prediction.success.outputs.confidence,
-        optimizationTips: prediction.success.outputs.recommendations
+        optimizationTips: prediction.success.outputs.recommendations,
       },
       clinicalRecommendations: [
         ...prediction.outcome.metadata.recommendations,
-        ...prediction.risk.outputs.recommendations
-      ].slice(0, 5) // Top 5 recommendations
+        ...prediction.risk.outputs.recommendations,
+      ].slice(0, 5), // Top 5 recommendations
     };
   }
 
@@ -347,10 +374,12 @@ export class NeonProAIIntegration {
       predictions.outcome.outputs.confidence,
       predictions.risk.outputs.confidence,
       predictions.duration.outputs.confidence,
-      predictions.success.outputs.confidence
+      predictions.success.outputs.confidence,
     ];
 
-    return confidences.reduce((sum, conf) => sum + conf, 0) / confidences.length;
+    return (
+      confidences.reduce((sum, conf) => sum + conf, 0) / confidences.length
+    );
   }
 }
 

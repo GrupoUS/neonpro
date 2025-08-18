@@ -28,7 +28,11 @@ export class DeploymentMonitor {
   /**
    * Start monitoring a new deployment
    */
-  startDeployment(deploymentId: string, environment: 'blue' | 'green', version: string): void {
+  startDeployment(
+    deploymentId: string,
+    environment: 'blue' | 'green',
+    version: string
+  ): void {
     this.currentDeployment = {
       deploymentId,
       environment,
@@ -98,16 +102,21 @@ export class DeploymentMonitor {
     lastDeployment?: DeploymentMetrics;
   } {
     const total = this.deploymentHistory.length;
-    const successful = this.deploymentHistory.filter(d => d.status === 'completed').length;
+    const successful = this.deploymentHistory.filter(
+      (d) => d.status === 'completed'
+    ).length;
     const successRate = total > 0 ? (successful / total) * 100 : 0;
 
-    const completedDeployments = this.deploymentHistory.filter(d => d.endTime);
-    const averageTime = completedDeployments.length > 0
-      ? completedDeployments.reduce((sum, d) => {
-          const duration = d.endTime!.getTime() - d.startTime.getTime();
-          return sum + duration;
-        }, 0) / completedDeployments.length
-      : 0;
+    const completedDeployments = this.deploymentHistory.filter(
+      (d) => d.endTime
+    );
+    const averageTime =
+      completedDeployments.length > 0
+        ? completedDeployments.reduce((sum, d) => {
+            const duration = d.endTime!.getTime() - d.startTime.getTime();
+            return sum + duration;
+          }, 0) / completedDeployments.length
+        : 0;
 
     return {
       totalDeployments: total,

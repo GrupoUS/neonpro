@@ -1,18 +1,17 @@
 export { AISchedulingService } from './service';
-export * from './types';
-
 // Re-export for convenience
 export type {
+  AISchedulingConfig,
   AppointmentSlot,
+  Conflict,
+  DynamicSchedulingEvent,
+  OptimizationRecommendation,
+  Patient,
+  SchedulingAction,
+  SchedulingAnalytics,
   SchedulingRequest,
   SchedulingResult,
-  TreatmentType,
   Staff,
-  Patient,
-  SchedulingAnalytics,
-  DynamicSchedulingEvent,
-  SchedulingAction,
-  AISchedulingConfig,
-  Conflict,
-  OptimizationRecommendation
+  TreatmentType,
 } from './types';
+export * from './types';

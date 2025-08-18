@@ -3,15 +3,15 @@
  * Optimized for clinical workflows and medical data handling
  */
 
-import { getCLS, getFCP, getFID, getLCP, getTTFB, onINP } from 'web-vitals';
 import type {
   CLSMetric,
   FCPMetric,
   FIDMetric,
+  INPMetric,
   LCPMetric,
   TTFBMetric,
-  INPMetric,
 } from 'web-vitals';
+import { getCLS, getFCP, getFID, getLCP, getTTFB, onINP } from 'web-vitals';
 import type {
   HealthcareVitalsMetric,
   PerformanceEventHandler,
@@ -40,7 +40,12 @@ class HealthcareWebVitals {
   private readonly handlers: PerformanceEventHandler[] = [];
   private readonly thresholds: PerformanceThresholds;
   private healthcareContext: {
-    workflowType?: 'patient-registration' | 'medical-form' | 'procedure-scheduling' | 'medical-history' | 'real-time-update';
+    workflowType?:
+      | 'patient-registration'
+      | 'medical-form'
+      | 'procedure-scheduling'
+      | 'medical-history'
+      | 'real-time-update';
     clinicId?: string;
     userId?: string;
     deviceType?: 'desktop' | 'tablet' | 'mobile';

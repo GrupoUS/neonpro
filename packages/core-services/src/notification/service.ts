@@ -1,61 +1,79 @@
-import { addDays, addHours, format, isBefore, isAfter } from 'date-fns';
+import { addDays, addHours, format, isAfter, isBefore } from 'date-fns';
+import { NotificationType } from '../types';
 import type {
-  Notification,
-  NotificationTemplate,
-  NotificationCampaign,
-  NotificationPreference,
-  NotificationLog,
+  AudienceFilterData,
+  CreateNotificationCampaignData,
   CreateNotificationData,
   CreateNotificationTemplateData,
-  CreateNotificationCampaignData,
+  Notification,
+  NotificationCampaign,
+  NotificationLog,
+  NotificationPreference,
   NotificationPreferenceData,
-  AudienceFilterData
+  NotificationTemplate,
 } from './types';
-import { 
-  NotificationChannel,
-  NotificationStatus,
-  NotificationPriority,
+import {
   CampaignStatus,
+  NotificationChannel,
   NotificationEvent,
-  VariableType
+  NotificationPriority,
+  NotificationStatus,
+  VariableType,
 } from './types';
-import { NotificationType } from '../types';
 
 export interface NotificationRepository {
   // Notification operations
   createNotification(data: CreateNotificationData): Promise<Notification>;
-  updateNotification(id: string, data: Partial<Notification>): Promise<Notification>;
+  updateNotification(
+    id: string,
+    data: Partial<Notification>
+  ): Promise<Notification>;
   getNotification(id: string): Promise<Notification | null>;
   getNotificationsByRecipient(recipientId: string): Promise<Notification[]>;
   getNotificationsByStatus(status: NotificationStatus): Promise<Notification[]>;
   getScheduledNotifications(beforeDate: Date): Promise<Notification[]>;
-  
+
   // Template operations
-  createTemplate(data: CreateNotificationTemplateData): Promise<NotificationTemplate>;
-  updateTemplate(id: string, data: Partial<NotificationTemplate>): Promise<NotificationTemplate>;
+  createTemplate(
+    data: CreateNotificationTemplateData
+  ): Promise<NotificationTemplate>;
+  updateTemplate(
+    id: string,
+    data: Partial<NotificationTemplate>
+  ): Promise<NotificationTemplate>;
   getTemplate(id: string): Promise<NotificationTemplate | null>;
   getTemplates(filters?: TemplateFilters): Promise<NotificationTemplate[]>;
-  
+
   // Campaign operations
-  createCampaign(data: CreateNotificationCampaignData): Promise<NotificationCampaign>;
-  updateCampaign(id: string, data: Partial<NotificationCampaign>): Promise<NotificationCampaign>;
+  createCampaign(
+    data: CreateNotificationCampaignData
+  ): Promise<NotificationCampaign>;
+  updateCampaign(
+    id: string,
+    data: Partial<NotificationCampaign>
+  ): Promise<NotificationCampaign>;
   getCampaign(id: string): Promise<NotificationCampaign | null>;
   getCampaigns(status?: CampaignStatus): Promise<NotificationCampaign[]>;
-  
+
   // Preference operations
-  createOrUpdatePreferences(data: NotificationPreferenceData): Promise<NotificationPreference>;
+  createOrUpdatePreferences(
+    data: NotificationPreferenceData
+  ): Promise<NotificationPreference>;
   getPreferences(patientId: string): Promise<NotificationPreference | null>;
-  
+
   // Log operations
-  createLog(data: Omit<NotificationLog, 'id' | 'createdAt' | 'updatedAt'>): Promise<NotificationLog>;
+  createLog(
+    data: Omit<NotificationLog, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<NotificationLog>;
   getLogs(notificationId: string): Promise<NotificationLog[]>;
-  
+
   // Patient operations (from other services)
   getPatients(filters: AudienceFilterData): Promise<PatientInfo[]>;
   getPatient(id: string): Promise<PatientInfo | null>;
   getAppointment(id: string): Promise<AppointmentInfo | null>;
   getTreatmentPlan(id: string): Promise<TreatmentPlanInfo | null>;
-}export interface TemplateFilters {
+}
+export interface TemplateFilters {
   type?: NotificationType;
   channel?: NotificationChannel;
   isActive?: boolean;
@@ -104,10 +122,20 @@ export interface NotificationStats {
 }
 
 export interface ExternalNotificationProvider {
-  sendEmail(to: string, subject: string, content: string, metadata?: any): Promise<string>;
+  sendEmail(
+    to: string,
+    subject: string,
+    content: string,
+    metadata?: any
+  ): Promise<string>;
   sendSMS(to: string, message: string, metadata?: any): Promise<string>;
   sendWhatsApp(to: string, message: string, metadata?: any): Promise<string>;
-  sendPush(deviceToken: string, title: string, message: string, metadata?: any): Promise<string>;
+  sendPush(
+    deviceToken: string,
+    title: string,
+    message: string,
+    metadata?: any
+  ): Promise<string>;
 }
 
 export class NotificationService {
@@ -120,8 +148,10 @@ export class NotificationService {
   async sendNotification(data: CreateNotificationData): Promise<Notification> {
     try {
       // Get recipient preferences
-      const preferences = await this.repository.getPreferences(data.recipientId);
-      
+      const preferences = await this.repository.getPreferences(
+        data.recipientId
+      );
+
       // Check if recipient has opted in for this type of notification
       if (!this.canSendNotification(data, preferences)) {
         throw new Error('Recipient has opted out of this notification type');
@@ -130,8 +160,10 @@ export class NotificationService {
       // Create notification record
       const notification = await this.repository.createNotification({
         ...data,
-        status: data.scheduledAt ? NotificationStatus.SCHEDULED : NotificationStatus.QUEUED,
-        retryCount: 0
+        status: data.scheduledAt
+          ? NotificationStatus.SCHEDULED
+          : NotificationStatus.QUEUED,
+        retryCount: 0,
       });
 
       // If not scheduled, send immediately
@@ -144,14 +176,15 @@ export class NotificationService {
       console.error('Error sending notification:', error);
       throw error;
     }
-  }  private async deliverNotification(notification: Notification): Promise<void> {
+  }
+  private async deliverNotification(notification: Notification): Promise<void> {
     try {
       await this.repository.updateNotification(notification.id, {
-        status: NotificationStatus.SENDING
+        status: NotificationStatus.SENDING,
       });
 
       let externalId: string;
-      
+
       switch (notification.channel) {
         case NotificationChannel.EMAIL:
           if (!notification.recipientEmail) {
@@ -164,7 +197,7 @@ export class NotificationService {
             notification.metadata
           );
           break;
-          
+
         case NotificationChannel.SMS:
           if (!notification.recipientPhone) {
             throw new Error('Phone number required for SMS notifications');
@@ -175,7 +208,7 @@ export class NotificationService {
             notification.metadata
           );
           break;
-          
+
         case NotificationChannel.WHATSAPP:
           if (!notification.recipientPhone) {
             throw new Error('Phone number required for WhatsApp notifications');
@@ -186,42 +219,45 @@ export class NotificationService {
             notification.metadata
           );
           break;
-          
+
         default:
-          throw new Error(`Unsupported notification channel: ${notification.channel}`);
+          throw new Error(
+            `Unsupported notification channel: ${notification.channel}`
+          );
       }
 
       await this.repository.updateNotification(notification.id, {
         status: NotificationStatus.SENT,
         sentAt: new Date(),
-        externalId
+        externalId,
       });
 
       await this.repository.createLog({
         notificationId: notification.id,
         event: NotificationEvent.SENT,
         timestamp: new Date(),
-        details: { externalId, channel: notification.channel }
+        details: { externalId, channel: notification.channel },
       });
-
     } catch (error) {
       console.error(`Error delivering notification ${notification.id}:`, error);
-      
+
       const retryCount = notification.retryCount + 1;
       const shouldRetry = retryCount <= notification.maxRetries;
-      
+
       await this.repository.updateNotification(notification.id, {
-        status: shouldRetry ? NotificationStatus.QUEUED : NotificationStatus.FAILED,
+        status: shouldRetry
+          ? NotificationStatus.QUEUED
+          : NotificationStatus.FAILED,
         retryCount,
-        errorMessage: error instanceof Error ? error.message : 'Unknown error'
+        errorMessage: error instanceof Error ? error.message : 'Unknown error',
       });
 
       if (shouldRetry) {
         // Schedule retry (implement exponential backoff)
-        const retryDelay = Math.pow(2, retryCount) * 60; // Minutes
+        const retryDelay = 2 ** retryCount * 60; // Minutes
         const retryAt = addHours(new Date(), retryDelay / 60);
         await this.repository.updateNotification(notification.id, {
-          scheduledAt: retryAt
+          scheduledAt: retryAt,
         });
       }
 
@@ -229,11 +265,17 @@ export class NotificationService {
         notificationId: notification.id,
         event: NotificationEvent.FAILED,
         timestamp: new Date(),
-        details: { error: error instanceof Error ? error.message : 'Unknown error', retryCount }
+        details: {
+          error: error instanceof Error ? error.message : 'Unknown error',
+          retryCount,
+        },
       });
     }
-  }  // Appointment-specific notifications
-  async sendAppointmentReminder(appointmentId: string, hoursBeforeAppointment = 24): Promise<Notification> {
+  } // Appointment-specific notifications
+  async sendAppointmentReminder(
+    appointmentId: string,
+    hoursBeforeAppointment = 24
+  ): Promise<Notification> {
     const appointment = await this.repository.getAppointment(appointmentId);
     if (!appointment) {
       throw new Error('Appointment not found');
@@ -244,8 +286,11 @@ export class NotificationService {
       throw new Error('Patient not found');
     }
 
-    const scheduledAt = addHours(appointment.scheduledDate, -hoursBeforeAppointment);
-    
+    const scheduledAt = addHours(
+      appointment.scheduledDate,
+      -hoursBeforeAppointment
+    );
+
     // Don't schedule if it's in the past
     if (isBefore(scheduledAt, new Date())) {
       throw new Error('Cannot schedule reminder for past appointments');
@@ -256,7 +301,7 @@ export class NotificationService {
       appointmentDate: format(appointment.scheduledDate, 'dd/MM/yyyy'),
       appointmentTime: format(appointment.scheduledDate, 'HH:mm'),
       treatmentType: appointment.treatmentType,
-      duration: appointment.duration
+      duration: appointment.duration,
     };
 
     return this.sendNotification({
@@ -270,11 +315,13 @@ export class NotificationService {
       scheduledAt,
       priority: NotificationPriority.HIGH,
       templateData,
-      isAutomated: true
+      isAutomated: true,
     });
   }
 
-  async sendAppointmentConfirmation(appointmentId: string): Promise<Notification> {
+  async sendAppointmentConfirmation(
+    appointmentId: string
+  ): Promise<Notification> {
     const appointment = await this.repository.getAppointment(appointmentId);
     if (!appointment) {
       throw new Error('Appointment not found');
@@ -289,7 +336,7 @@ export class NotificationService {
       patientName: `${patient.firstName} ${patient.lastName}`,
       appointmentDate: format(appointment.scheduledDate, 'dd/MM/yyyy'),
       appointmentTime: format(appointment.scheduledDate, 'HH:mm'),
-      treatmentType: appointment.treatmentType
+      treatmentType: appointment.treatmentType,
     };
 
     return this.sendNotification({
@@ -302,12 +349,16 @@ export class NotificationService {
       message: this.buildAppointmentConfirmationMessage(templateData),
       priority: NotificationPriority.NORMAL,
       templateData,
-      isAutomated: true
+      isAutomated: true,
     });
   }
 
-  async sendTreatmentFollowUp(treatmentPlanId: string, sessionNumber: number): Promise<Notification> {
-    const treatmentPlan = await this.repository.getTreatmentPlan(treatmentPlanId);
+  async sendTreatmentFollowUp(
+    treatmentPlanId: string,
+    sessionNumber: number
+  ): Promise<Notification> {
+    const treatmentPlan =
+      await this.repository.getTreatmentPlan(treatmentPlanId);
     if (!treatmentPlan) {
       throw new Error('Treatment plan not found');
     }
@@ -324,7 +375,7 @@ export class NotificationService {
       patientName: `${patient.firstName} ${patient.lastName}`,
       treatmentType: treatmentPlan.treatmentType,
       sessionNumber,
-      totalSessions: treatmentPlan.totalSessions
+      totalSessions: treatmentPlan.totalSessions,
     };
 
     return this.sendNotification({
@@ -338,20 +389,25 @@ export class NotificationService {
       scheduledAt,
       priority: NotificationPriority.NORMAL,
       templateData,
-      isAutomated: true
+      isAutomated: true,
     });
-  }  // Template management
-  async createTemplate(data: CreateNotificationTemplateData): Promise<NotificationTemplate> {
+  } // Template management
+  async createTemplate(
+    data: CreateNotificationTemplateData
+  ): Promise<NotificationTemplate> {
     const templateData = {
       ...data,
       version: 1,
-      usedCount: 0
+      usedCount: 0,
     };
 
     return this.repository.createTemplate(templateData);
   }
 
-  async renderTemplate(templateId: string, variables: Record<string, any>): Promise<string> {
+  async renderTemplate(
+    templateId: string,
+    variables: Record<string, any>
+  ): Promise<string> {
     const template = await this.repository.getTemplate(templateId);
     if (!template) {
       throw new Error('Template not found');
@@ -393,7 +449,7 @@ export class NotificationService {
       case VariableType.NUMBER:
         return Number(value).toString();
       case VariableType.BOOLEAN:
-        return Boolean(value) ? 'Sim' : 'Não';
+        return value ? 'Sim' : 'Não';
       default:
         return String(value);
     }
@@ -401,7 +457,9 @@ export class NotificationService {
   }
 
   // Campaign management
-  async createCampaign(data: CreateNotificationCampaignData): Promise<NotificationCampaign> {
+  async createCampaign(
+    data: CreateNotificationCampaignData
+  ): Promise<NotificationCampaign> {
     const template = await this.repository.getTemplate(data.templateId);
     if (!template) {
       throw new Error('Template not found');
@@ -409,7 +467,7 @@ export class NotificationService {
 
     // Get target audience
     const recipients = await this.repository.getPatients(data.targetAudience);
-    
+
     const campaign = await this.repository.createCampaign({
       ...data,
       totalRecipients: recipients.length,
@@ -419,7 +477,9 @@ export class NotificationService {
       clickedCount: 0,
       unsubscribedCount: 0,
       failedCount: 0,
-      status: data.scheduledAt ? CampaignStatus.SCHEDULED : CampaignStatus.DRAFT
+      status: data.scheduledAt
+        ? CampaignStatus.SCHEDULED
+        : CampaignStatus.DRAFT,
     });
 
     return campaign;
@@ -431,19 +491,24 @@ export class NotificationService {
       throw new Error('Campaign not found');
     }
 
-    if (campaign.status !== CampaignStatus.SCHEDULED && campaign.status !== CampaignStatus.DRAFT) {
+    if (
+      campaign.status !== CampaignStatus.SCHEDULED &&
+      campaign.status !== CampaignStatus.DRAFT
+    ) {
       throw new Error('Can only launch scheduled or draft campaigns');
     }
 
     await this.repository.updateCampaign(campaignId, {
       status: CampaignStatus.RUNNING,
-      startedAt: new Date()
+      startedAt: new Date(),
     });
 
     // Get recipients and template
-    const recipients = await this.repository.getPatients(campaign.targetAudience);
+    const recipients = await this.repository.getPatients(
+      campaign.targetAudience
+    );
     const template = await this.repository.getTemplate(campaign.templateId);
-    
+
     if (!template) {
       throw new Error('Campaign template not found');
     }
@@ -453,7 +518,9 @@ export class NotificationService {
       try {
         // Check recipient preferences
         const preferences = await this.repository.getPreferences(recipient.id);
-        if (!this.canSendCampaignToRecipient(campaign, recipient, preferences)) {
+        if (
+          !this.canSendCampaignToRecipient(campaign, recipient, preferences)
+        ) {
           continue;
         }
 
@@ -462,10 +529,13 @@ export class NotificationService {
           firstName: recipient.firstName,
           lastName: recipient.lastName,
           email: recipient.email,
-          phone: recipient.phone
+          phone: recipient.phone,
         };
 
-        const renderedContent = await this.renderTemplate(template.id, templateData);
+        const renderedContent = await this.renderTemplate(
+          template.id,
+          templateData
+        );
 
         await this.sendNotification({
           type: campaign.type as NotificationType,
@@ -479,19 +549,21 @@ export class NotificationService {
           templateData,
           campaignId: campaign.id,
           priority: NotificationPriority.NORMAL,
-          isAutomated: true
+          isAutomated: true,
         });
 
         // Update campaign stats
         await this.repository.updateCampaign(campaignId, {
-          sentCount: campaign.sentCount + 1
+          sentCount: campaign.sentCount + 1,
         });
-
       } catch (error) {
-        console.error(`Error sending campaign notification to ${recipient.id}:`, error);
-        
+        console.error(
+          `Error sending campaign notification to ${recipient.id}:`,
+          error
+        );
+
         await this.repository.updateCampaign(campaignId, {
-          failedCount: campaign.failedCount + 1
+          failedCount: campaign.failedCount + 1,
         });
       }
     }
@@ -499,10 +571,13 @@ export class NotificationService {
     // Mark campaign as completed
     await this.repository.updateCampaign(campaignId, {
       status: CampaignStatus.COMPLETED,
-      completedAt: new Date()
+      completedAt: new Date(),
     });
-  }  // Preference checking and utility methods
-  private canSendNotification(notification: CreateNotificationData, preferences?: NotificationPreference): boolean {
+  } // Preference checking and utility methods
+  private canSendNotification(
+    notification: CreateNotificationData,
+    preferences?: NotificationPreference
+  ): boolean {
     if (!preferences) {
       return true; // Default to allowing notifications if no preferences set
     }
@@ -542,8 +617,8 @@ export class NotificationService {
   }
 
   private canSendCampaignToRecipient(
-    campaign: NotificationCampaign, 
-    recipient: PatientInfo, 
+    campaign: NotificationCampaign,
+    recipient: PatientInfo,
     preferences?: NotificationPreference
   ): boolean {
     // Check if recipient has marketing consent
@@ -557,7 +632,7 @@ export class NotificationService {
       recipientId: recipient.id,
       channel: campaign.channel,
       title: '',
-      message: ''
+      message: '',
     };
 
     return this.canSendNotification(mockNotification, preferences);
@@ -578,47 +653,69 @@ export class NotificationService {
 
   // Scheduled notification processing
   async processScheduledNotifications(): Promise<void> {
-    const scheduledNotifications = await this.repository.getScheduledNotifications(new Date());
-    
+    const scheduledNotifications =
+      await this.repository.getScheduledNotifications(new Date());
+
     for (const notification of scheduledNotifications) {
       try {
         await this.deliverNotification(notification);
       } catch (error) {
-        console.error(`Error processing scheduled notification ${notification.id}:`, error);
+        console.error(
+          `Error processing scheduled notification ${notification.id}:`,
+          error
+        );
       }
     }
   }
 
   // Analytics and reporting
-  async getNotificationStats(startDate?: Date, endDate?: Date): Promise<NotificationStats> {
+  async getNotificationStats(
+    startDate?: Date,
+    endDate?: Date
+  ): Promise<NotificationStats> {
     // This would need to be implemented based on the repository methods
     // For now, returning a placeholder implementation
-    
-    const allNotifications = await this.repository.getNotificationsByStatus(NotificationStatus.SENT);
-    
+
+    const allNotifications = await this.repository.getNotificationsByStatus(
+      NotificationStatus.SENT
+    );
+
     // Filter by date range if provided
-    const filteredNotifications = startDate && endDate 
-      ? allNotifications.filter(n => n.sentAt && n.sentAt >= startDate && n.sentAt <= endDate)
-      : allNotifications;
+    const filteredNotifications =
+      startDate && endDate
+        ? allNotifications.filter(
+            (n) => n.sentAt && n.sentAt >= startDate && n.sentAt <= endDate
+          )
+        : allNotifications;
 
     const totalSent = filteredNotifications.length;
-    const totalDelivered = filteredNotifications.filter(n => n.status === NotificationStatus.DELIVERED).length;
-    const totalOpened = filteredNotifications.filter(n => n.status === NotificationStatus.OPENED).length;
-    const totalClicked = filteredNotifications.filter(n => n.status === NotificationStatus.CLICKED).length;
-    const totalFailed = filteredNotifications.filter(n => n.status === NotificationStatus.FAILED).length;
+    const totalDelivered = filteredNotifications.filter(
+      (n) => n.status === NotificationStatus.DELIVERED
+    ).length;
+    const totalOpened = filteredNotifications.filter(
+      (n) => n.status === NotificationStatus.OPENED
+    ).length;
+    const totalClicked = filteredNotifications.filter(
+      (n) => n.status === NotificationStatus.CLICKED
+    ).length;
+    const totalFailed = filteredNotifications.filter(
+      (n) => n.status === NotificationStatus.FAILED
+    ).length;
 
     const deliveryRate = totalSent > 0 ? (totalDelivered / totalSent) * 100 : 0;
-    const openRate = totalDelivered > 0 ? (totalOpened / totalDelivered) * 100 : 0;
+    const openRate =
+      totalDelivered > 0 ? (totalOpened / totalDelivered) * 100 : 0;
     const clickRate = totalOpened > 0 ? (totalClicked / totalOpened) * 100 : 0;
 
     // Channel distribution
     const channelMap = new Map<NotificationChannel, number>();
-    filteredNotifications.forEach(n => {
+    filteredNotifications.forEach((n) => {
       channelMap.set(n.channel, (channelMap.get(n.channel) || 0) + 1);
     });
 
-    const channelDistribution = Array.from(channelMap.entries())
-      .map(([channel, count]) => ({ channel, count }));
+    const channelDistribution = Array.from(channelMap.entries()).map(
+      ([channel, count]) => ({ channel, count })
+    );
 
     return {
       totalSent,
@@ -629,23 +726,27 @@ export class NotificationService {
       deliveryRate,
       openRate,
       clickRate,
-      channelDistribution
+      channelDistribution,
     };
   }
 
   // Preference management
-  async updateNotificationPreferences(data: NotificationPreferenceData): Promise<NotificationPreference> {
+  async updateNotificationPreferences(
+    data: NotificationPreferenceData
+  ): Promise<NotificationPreference> {
     return this.repository.createOrUpdatePreferences(data);
   }
 
-  async getNotificationPreferences(patientId: string): Promise<NotificationPreference | null> {
+  async getNotificationPreferences(
+    patientId: string
+  ): Promise<NotificationPreference | null> {
     return this.repository.getPreferences(patientId);
   }
 
   // Unsubscribe handling
   async unsubscribePatient(patientId: string, reason?: string): Promise<void> {
     const preferences = await this.repository.getPreferences(patientId);
-    
+
     const updatedPreferences: NotificationPreferenceData = {
       patientId,
       emailNotifications: false,
@@ -662,10 +763,10 @@ export class NotificationService {
         morning: true,
         afternoon: true,
         evening: false,
-        weekend: false
+        weekend: false,
       },
       timezone: preferences?.timezone || 'America/Sao_Paulo',
-      language: preferences?.language || 'pt-BR'
+      language: preferences?.language || 'pt-BR',
     };
 
     await this.repository.createOrUpdatePreferences(updatedPreferences);

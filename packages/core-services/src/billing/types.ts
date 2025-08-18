@@ -1,5 +1,13 @@
 import { z } from 'zod';
-import { BaseEntity, BillingStatus, UUIDSchema, DateSchema, PositiveNumberSchema, NonNegativeNumberSchema, EmailSchema } from '../types';
+import {
+  type BaseEntity,
+  type BillingStatus,
+  DateSchema,
+  EmailSchema,
+  NonNegativeNumberSchema,
+  PositiveNumberSchema,
+  UUIDSchema,
+} from '../types';
 
 // Invoice and billing interfaces for aesthetic clinic
 export interface Invoice extends BaseEntity {
@@ -54,7 +62,8 @@ export interface Payment extends BaseEntity {
   refundAmount?: number;
   refundDate?: Date;
   refundReason?: string;
-}export interface TreatmentPackage extends BaseEntity {
+}
+export interface TreatmentPackage extends BaseEntity {
   name: string;
   description: string;
   treatmentTypes: string[];
@@ -118,7 +127,8 @@ export interface Discount extends BaseEntity {
   isFirstTimePatient: boolean;
   isBirthday: boolean;
   isReferral: boolean;
-}export interface Refund extends BaseEntity {
+}
+export interface Refund extends BaseEntity {
   paymentId: string;
   invoiceId: string;
   patientId: string;
@@ -142,7 +152,7 @@ export enum PaymentMethod {
   CHECK = 'check',
   FINANCING = 'financing',
   INSURANCE = 'insurance',
-  GIFT_CARD = 'gift_card'
+  GIFT_CARD = 'gift_card',
 }
 
 export enum PaymentStatus {
@@ -152,14 +162,14 @@ export enum PaymentStatus {
   FAILED = 'failed',
   CANCELLED = 'cancelled',
   REFUNDED = 'refunded',
-  PARTIALLY_REFUNDED = 'partially_refunded'
+  PARTIALLY_REFUNDED = 'partially_refunded',
 }
 
 export enum InstallmentFrequency {
   WEEKLY = 'weekly',
   BIWEEKLY = 'biweekly',
   MONTHLY = 'monthly',
-  QUARTERLY = 'quarterly'
+  QUARTERLY = 'quarterly',
 }
 
 export enum PaymentPlanStatus {
@@ -167,7 +177,7 @@ export enum PaymentPlanStatus {
   COMPLETED = 'completed',
   DEFAULTED = 'defaulted',
   CANCELLED = 'cancelled',
-  PAUSED = 'paused'
+  PAUSED = 'paused',
 }
 
 export enum InstallmentStatus {
@@ -175,14 +185,14 @@ export enum InstallmentStatus {
   PAID = 'paid',
   OVERDUE = 'overdue',
   LATE = 'late',
-  WAIVED = 'waived'
+  WAIVED = 'waived',
 }
 
 export enum DiscountType {
   PERCENTAGE = 'percentage',
   FIXED_AMOUNT = 'fixed_amount',
   BUY_ONE_GET_ONE = 'buy_one_get_one',
-  PACKAGE_DEAL = 'package_deal'
+  PACKAGE_DEAL = 'package_deal',
 }
 
 export enum RefundStatus {
@@ -190,8 +200,8 @@ export enum RefundStatus {
   APPROVED = 'approved',
   PROCESSED = 'processed',
   REJECTED = 'rejected',
-  FAILED = 'failed'
-}// Validation schemas
+  FAILED = 'failed',
+} // Validation schemas
 export const InvoiceItemSchema = z.object({
   productId: UUIDSchema.optional(),
   treatmentType: z.string().optional(),
@@ -199,7 +209,7 @@ export const InvoiceItemSchema = z.object({
   quantity: PositiveNumberSchema,
   unitPrice: PositiveNumberSchema,
   discountAmount: NonNegativeNumberSchema.default(0),
-  taxable: z.boolean().default(true)
+  taxable: z.boolean().default(true),
 });
 
 export const CreateInvoiceSchema = z.object({
@@ -213,7 +223,7 @@ export const CreateInvoiceSchema = z.object({
   discountPercentage: z.number().min(0).max(100).default(0),
   paymentTerms: z.string().default('Net 30'),
   notes: z.string().optional(),
-  isRecurring: z.boolean().default(false)
+  isRecurring: z.boolean().default(false),
 });
 
 export const CreatePaymentSchema = z.object({
@@ -224,7 +234,7 @@ export const CreatePaymentSchema = z.object({
   transactionId: z.string().optional(),
   reference: z.string().optional(),
   notes: z.string().optional(),
-  processedBy: UUIDSchema
+  processedBy: UUIDSchema,
 });
 
 export const CreatePaymentPlanSchema = z.object({
@@ -237,7 +247,7 @@ export const CreatePaymentPlanSchema = z.object({
   interestRate: z.number().min(0).max(50).default(0),
   lateFeeAmount: NonNegativeNumberSchema.default(0),
   autoDebit: z.boolean().default(false),
-  paymentMethodId: UUIDSchema.optional()
+  paymentMethodId: UUIDSchema.optional(),
 });
 
 export const CreateTreatmentPackageSchema = z.object({
@@ -252,7 +262,7 @@ export const CreateTreatmentPackageSchema = z.object({
   termsAndConditions: z.string().min(1),
   transferable: z.boolean().default(false),
   refundable: z.boolean().default(true),
-  cancellationPolicy: z.string().min(1)
+  cancellationPolicy: z.string().min(1),
 });
 
 export const CreateDiscountSchema = z.object({
@@ -270,11 +280,13 @@ export const CreateDiscountSchema = z.object({
   isActive: z.boolean().default(true),
   isFirstTimePatient: z.boolean().default(false),
   isBirthday: z.boolean().default(false),
-  isReferral: z.boolean().default(false)
+  isReferral: z.boolean().default(false),
 });
 
 export type CreateInvoiceData = z.infer<typeof CreateInvoiceSchema>;
 export type CreatePaymentData = z.infer<typeof CreatePaymentSchema>;
 export type CreatePaymentPlanData = z.infer<typeof CreatePaymentPlanSchema>;
-export type CreateTreatmentPackageData = z.infer<typeof CreateTreatmentPackageSchema>;
+export type CreateTreatmentPackageData = z.infer<
+  typeof CreateTreatmentPackageSchema
+>;
 export type CreateDiscountData = z.infer<typeof CreateDiscountSchema>;

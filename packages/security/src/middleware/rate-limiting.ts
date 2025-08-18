@@ -124,7 +124,7 @@ export const RATE_LIMIT_CONFIGS = {
 
   // General API endpoints - generous limits
   api: {
-    maxRequests: 1_000,
+    maxRequests: 1000,
     windowSeconds: 60, // 1 minute
     includeUserId: true,
     keySuffix: 'api',

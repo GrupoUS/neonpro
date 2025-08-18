@@ -1,5 +1,11 @@
 import { z } from 'zod';
-import { BaseEntity, TreatmentType, UUIDSchema, DateSchema, PositiveNumberSchema } from '../types';
+import {
+  type BaseEntity,
+  DateSchema,
+  PositiveNumberSchema,
+  TreatmentType,
+  UUIDSchema,
+} from '../types';
 
 // Treatment plan and session interfaces
 export interface TreatmentPlan extends BaseEntity {
@@ -37,24 +43,25 @@ export interface TreatmentSession extends BaseEntity {
   beforePhotos: string[];
   afterPhotos: string[];
   isCompleted: boolean;
-}export interface TreatmentDetails {
+}
+export interface TreatmentDetails {
   treatmentType: TreatmentType;
   areas: string[];
   // Botox specific
   unitsUsed?: number;
   injectionSites?: InjectionSite[];
-  
+
   // Dermal filler specific
   fillerType?: string;
   volumeUsed?: number; // in ml
-  
+
   // Laser specific
   laserSettings?: LaserSettings;
-  
+
   // Chemical peel specific
   peelType?: string;
   concentration?: number;
-  
+
   // General
   duration: number; // minutes
   anesthesia?: AnesthesiaType;
@@ -96,7 +103,7 @@ export enum AnesthesiaType {
   NONE = 'none',
   TOPICAL = 'topical',
   LOCAL = 'local',
-  CONSCIOUS_SEDATION = 'conscious_sedation'
+  CONSCIOUS_SEDATION = 'conscious_sedation',
 }
 
 export enum TreatmentStatus {
@@ -104,8 +111,8 @@ export enum TreatmentStatus {
   IN_PROGRESS = 'in_progress',
   COMPLETED = 'completed',
   PAUSED = 'paused',
-  CANCELLED = 'cancelled'
-}// Validation schemas
+  CANCELLED = 'cancelled',
+} // Validation schemas
 export const CreateTreatmentPlanSchema = z.object({
   patientId: UUIDSchema,
   treatmentType: z.nativeEnum(TreatmentType),
@@ -118,15 +125,18 @@ export const CreateTreatmentPlanSchema = z.object({
   contraindications: z.array(z.string()).optional(),
   expectedResults: z.string().min(1),
   price: PositiveNumberSchema,
-  consentFormSigned: z.boolean().refine(val => val === true, 'Consent form must be signed'),
-  beforePhotos: z.array(z.string()).default([])
+  consentFormSigned: z
+    .boolean()
+    .refine((val) => val === true, 'Consent form must be signed'),
+  beforePhotos: z.array(z.string()).default([]),
 });
 
-export const UpdateTreatmentPlanSchema = CreateTreatmentPlanSchema.partial().extend({
-  id: UUIDSchema,
-  isActive: z.boolean().optional(),
-  endDate: DateSchema.optional()
-});
+export const UpdateTreatmentPlanSchema =
+  CreateTreatmentPlanSchema.partial().extend({
+    id: UUIDSchema,
+    isActive: z.boolean().optional(),
+    endDate: DateSchema.optional(),
+  });
 
 export const CreateTreatmentSessionSchema = z.object({
   treatmentPlanId: UUIDSchema,
@@ -142,15 +152,19 @@ export const CreateTreatmentSessionSchema = z.object({
     volumeUsed: z.number().optional(),
     duration: z.number().min(1),
     anesthesia: z.nativeEnum(AnesthesiaType).default(AnesthesiaType.NONE),
-    products: z.array(z.object({
-      productId: UUIDSchema,
-      productName: z.string(),
-      quantityUsed: z.number().min(0),
-      batchNumber: z.string().optional(),
-      expiryDate: DateSchema.optional()
-    })).default([])
+    products: z
+      .array(
+        z.object({
+          productId: UUIDSchema,
+          productName: z.string(),
+          quantityUsed: z.number().min(0),
+          batchNumber: z.string().optional(),
+          expiryDate: DateSchema.optional(),
+        })
+      )
+      .default([]),
   }),
-  beforePhotos: z.array(z.string()).default([])
+  beforePhotos: z.array(z.string()).default([]),
 });
 
 export const CompleteTreatmentSessionSchema = z.object({
@@ -159,10 +173,14 @@ export const CompleteTreatmentSessionSchema = z.object({
   sideEffects: z.array(z.string()).optional(),
   patientFeedback: z.string().optional(),
   nextSessionDate: DateSchema.optional(),
-  afterPhotos: z.array(z.string()).default([])
+  afterPhotos: z.array(z.string()).default([]),
 });
 
 export type CreateTreatmentPlanData = z.infer<typeof CreateTreatmentPlanSchema>;
 export type UpdateTreatmentPlanData = z.infer<typeof UpdateTreatmentPlanSchema>;
-export type CreateTreatmentSessionData = z.infer<typeof CreateTreatmentSessionSchema>;
-export type CompleteTreatmentSessionData = z.infer<typeof CompleteTreatmentSessionSchema>;
+export type CreateTreatmentSessionData = z.infer<
+  typeof CreateTreatmentSessionSchema
+>;
+export type CompleteTreatmentSessionData = z.infer<
+  typeof CompleteTreatmentSessionSchema
+>;

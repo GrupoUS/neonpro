@@ -15,36 +15,36 @@ import {
   UserCheck,
   X,
   Zap,
-} from "lucide-react";
-import * as React from "react";
-import { cn } from "../utils/cn";
-import { formatDate } from "../utils/formatters";
-import { Avatar, AvatarFallback, AvatarImage } from "./Avatar";
-import { Badge } from "./Badge";
-import { Button } from "./Button";
+} from 'lucide-react';
+import * as React from 'react';
+import { cn } from '../utils/cn';
+import { formatDate } from '../utils/formatters';
+import { Avatar, AvatarFallback, AvatarImage } from './Avatar';
+import { Badge } from './Badge';
+import { Button } from './Button';
 
 export type NotificationType =
-  | "appointment_reminder"
-  | "appointment_confirmed"
-  | "appointment_cancelled"
-  | "appointment_rescheduled"
-  | "patient_arrived"
-  | "patient_checked_in"
-  | "treatment_completed"
-  | "document_ready"
-  | "consent_required"
-  | "emergency_alert"
-  | "system_maintenance"
-  | "compliance_alert"
-  | "staff_message"
-  | "general_info";
+  | 'appointment_reminder'
+  | 'appointment_confirmed'
+  | 'appointment_cancelled'
+  | 'appointment_rescheduled'
+  | 'patient_arrived'
+  | 'patient_checked_in'
+  | 'treatment_completed'
+  | 'document_ready'
+  | 'consent_required'
+  | 'emergency_alert'
+  | 'system_maintenance'
+  | 'compliance_alert'
+  | 'staff_message'
+  | 'general_info';
 
-export type NotificationPriority = "low" | "medium" | "high" | "critical";
+export type NotificationPriority = 'low' | 'medium' | 'high' | 'critical';
 
 export type NotificationAction = {
   id: string;
   label: string;
-  variant?: "default" | "outline" | "destructive";
+  variant?: 'default' | 'outline' | 'destructive';
   onClick: () => void;
 };
 
@@ -83,7 +83,12 @@ export type RealTimeNotificationsProps = {
   /**
    * Position of notifications on screen
    */
-  position?: "top-right" | "top-left" | "bottom-right" | "bottom-left" | "top-center";
+  position?:
+    | 'top-right'
+    | 'top-left'
+    | 'bottom-right'
+    | 'bottom-left'
+    | 'top-center';
   /**
    * Show notification badge/counter
    */
@@ -149,50 +154,50 @@ const notificationIcons: Record<NotificationType, React.ElementType> = {
 
 const getPriorityVariant = (priority: NotificationPriority) => {
   switch (priority) {
-    case "low":
-      return "confirmed";
-    case "medium":
-      return "medium";
-    case "high":
-      return "high";
-    case "critical":
-      return "urgent";
+    case 'low':
+      return 'confirmed';
+    case 'medium':
+      return 'medium';
+    case 'high':
+      return 'high';
+    case 'critical':
+      return 'urgent';
     default:
-      return "default";
+      return 'default';
   }
 };
 
 const getPriorityColor = (priority: NotificationPriority) => {
   switch (priority) {
-    case "low":
-      return "border-green-200 bg-green-50";
-    case "medium":
-      return "border-yellow-200 bg-yellow-50";
-    case "high":
-      return "border-orange-200 bg-orange-50";
-    case "critical":
-      return "border-red-200 bg-red-50";
+    case 'low':
+      return 'border-green-200 bg-green-50';
+    case 'medium':
+      return 'border-yellow-200 bg-yellow-50';
+    case 'high':
+      return 'border-orange-200 bg-orange-50';
+    case 'critical':
+      return 'border-red-200 bg-red-50';
     default:
-      return "border-gray-200 bg-gray-50";
+      return 'border-gray-200 bg-gray-50';
   }
 };
 
 const getTypeLabel = (type: NotificationType): string => {
   const labels: Record<NotificationType, string> = {
-    appointment_reminder: "Lembrete de Consulta",
-    appointment_confirmed: "Consulta Confirmada",
-    appointment_cancelled: "Consulta Cancelada",
-    appointment_rescheduled: "Consulta Reagendada",
-    patient_arrived: "Paciente Chegou",
-    patient_checked_in: "Check-in Realizado",
-    treatment_completed: "Tratamento Concluído",
-    document_ready: "Documento Disponível",
-    consent_required: "Consentimento Necessário",
-    emergency_alert: "Alerta de Emergência",
-    system_maintenance: "Manutenção do Sistema",
-    compliance_alert: "Alerta de Conformidade",
-    staff_message: "Mensagem da Equipe",
-    general_info: "Informação Geral",
+    appointment_reminder: 'Lembrete de Consulta',
+    appointment_confirmed: 'Consulta Confirmada',
+    appointment_cancelled: 'Consulta Cancelada',
+    appointment_rescheduled: 'Consulta Reagendada',
+    patient_arrived: 'Paciente Chegou',
+    patient_checked_in: 'Check-in Realizado',
+    treatment_completed: 'Tratamento Concluído',
+    document_ready: 'Documento Disponível',
+    consent_required: 'Consentimento Necessário',
+    emergency_alert: 'Alerta de Emergência',
+    system_maintenance: 'Manutenção do Sistema',
+    compliance_alert: 'Alerta de Conformidade',
+    staff_message: 'Mensagem da Equipe',
+    general_info: 'Informação Geral',
   };
   return labels[type];
 };
@@ -204,7 +209,14 @@ const NotificationCard: React.FC<{
   onAction?: (notificationId: string, actionId: string) => void;
   allowDismiss?: boolean;
   showAvatar?: boolean;
-}> = ({ notification, onDismiss, onClick, onAction, allowDismiss = true, showAvatar = true }) => {
+}> = ({
+  notification,
+  onDismiss,
+  onClick,
+  onAction,
+  allowDismiss = true,
+  showAvatar = true,
+}) => {
   const Icon = notificationIcons[notification.type];
   const [isVisible, setIsVisible] = React.useState(true);
 
@@ -238,11 +250,13 @@ const NotificationCard: React.FC<{
       aria-describedby={`notification-${notification.id}-message`}
       aria-labelledby={`notification-${notification.id}-title`}
       className={cn(
-        "cursor-pointer rounded-lg border p-4 shadow-lg transition-all duration-300",
+        'cursor-pointer rounded-lg border p-4 shadow-lg transition-all duration-300',
         getPriorityColor(notification.priority),
-        !notification.read && "ring-2 ring-primary/20",
-        isVisible ? "translate-x-0 transform opacity-100" : "translate-x-full transform opacity-0",
-        onClick && "hover:shadow-xl",
+        !notification.read && 'ring-2 ring-primary/20',
+        isVisible
+          ? 'translate-x-0 transform opacity-100'
+          : 'translate-x-full transform opacity-0',
+        onClick && 'hover:shadow-xl'
       )}
       onClick={handleClick}
       role="alert"
@@ -250,17 +264,20 @@ const NotificationCard: React.FC<{
       <div className="flex items-start gap-3">
         {/* Icon/Avatar */}
         <div className="flex-shrink-0">
-          {showAvatar && (notification.patientAvatar || notification.staffAvatar) ? (
+          {showAvatar &&
+          (notification.patientAvatar || notification.staffAvatar) ? (
             <Avatar size="sm">
               <AvatarImage
-                alt={notification.patientName || notification.staffName || "User"}
+                alt={
+                  notification.patientName || notification.staffName || 'User'
+                }
                 src={notification.patientAvatar || notification.staffAvatar}
               />
               <AvatarFallback>
-                {(notification.patientName || notification.staffName || "U")
-                  .split(" ")
+                {(notification.patientName || notification.staffName || 'U')
+                  .split(' ')
                   .map((n) => n[0])
-                  .join("")
+                  .join('')
                   .toUpperCase()
                   .slice(0, 2)}
               </AvatarFallback>
@@ -268,11 +285,14 @@ const NotificationCard: React.FC<{
           ) : (
             <div
               className={cn(
-                "flex h-8 w-8 items-center justify-center rounded-full",
-                notification.priority === "critical" && "bg-red-100 text-red-700",
-                notification.priority === "high" && "bg-orange-100 text-orange-700",
-                notification.priority === "medium" && "bg-yellow-100 text-yellow-700",
-                notification.priority === "low" && "bg-green-100 text-green-700",
+                'flex h-8 w-8 items-center justify-center rounded-full',
+                notification.priority === 'critical' &&
+                  'bg-red-100 text-red-700',
+                notification.priority === 'high' &&
+                  'bg-orange-100 text-orange-700',
+                notification.priority === 'medium' &&
+                  'bg-yellow-100 text-yellow-700',
+                notification.priority === 'low' && 'bg-green-100 text-green-700'
               )}
             >
               <Icon className="h-4 w-4" />
@@ -291,7 +311,10 @@ const NotificationCard: React.FC<{
                 >
                   {notification.title}
                 </h4>
-                <Badge size="sm" variant={getPriorityVariant(notification.priority)}>
+                <Badge
+                  size="sm"
+                  variant={getPriorityVariant(notification.priority)}
+                >
                   {getTypeLabel(notification.type)}
                 </Badge>
               </div>
@@ -306,8 +329,9 @@ const NotificationCard: React.FC<{
               {/* Patient/Staff Info */}
               {(notification.patientName || notification.staffName) && (
                 <p className="mt-1 text-muted-foreground text-xs">
-                  {notification.patientName && `Paciente: ${notification.patientName}`}
-                  {notification.patientName && notification.staffName && " • "}
+                  {notification.patientName &&
+                    `Paciente: ${notification.patientName}`}
+                  {notification.patientName && notification.staffName && ' • '}
                   {notification.staffName && `Staff: ${notification.staffName}`}
                 </p>
               )}
@@ -316,7 +340,9 @@ const NotificationCard: React.FC<{
               {notification.lgpdRelevant && (
                 <div className="mt-2 flex items-center gap-1">
                   <Shield className="h-3 w-3 text-blue-600" />
-                  <span className="text-blue-600 text-xs">Dados protegidos pela LGPD</span>
+                  <span className="text-blue-600 text-xs">
+                    Dados protegidos pela LGPD
+                  </span>
                 </div>
               )}
 
@@ -351,7 +377,7 @@ const NotificationCard: React.FC<{
                     handleAction(action.id);
                   }}
                   size="sm"
-                  variant={action.variant || "outline"}
+                  variant={action.variant || 'outline'}
                 >
                   {action.label}
                 </Button>
@@ -382,7 +408,7 @@ const NotificationBell: React.FC<{
   return (
     <div className="relative">
       <Button
-        aria-label={`Notificações ${unreadCount > 0 ? `(${unreadCount} não lidas)` : ""}`}
+        aria-label={`Notificações ${unreadCount > 0 ? `(${unreadCount} não lidas)` : ''}`}
         className="relative"
         onClick={onTogglePanel}
         size="icon"
@@ -395,7 +421,7 @@ const NotificationBell: React.FC<{
             size="sm"
             variant="urgent"
           >
-            {unreadCount > 99 ? "99+" : unreadCount}
+            {unreadCount > 99 ? '99+' : unreadCount}
           </Badge>
         )}
       </Button>
@@ -414,7 +440,7 @@ const NotificationBell: React.FC<{
             ) : (
               <BellOff className="mr-2 h-4 w-4" />
             )}
-            {soundEnabled ? "Desativar Som" : "Ativar Som"}
+            {soundEnabled ? 'Desativar Som' : 'Ativar Som'}
           </Button>
 
           {onMarkAllRead && unreadCount > 0 && (
@@ -446,12 +472,15 @@ const NotificationBell: React.FC<{
   );
 };
 
-export const RealTimeNotifications = React.forwardRef<HTMLDivElement, RealTimeNotificationsProps>(
+export const RealTimeNotifications = React.forwardRef<
+  HTMLDivElement,
+  RealTimeNotificationsProps
+>(
   (
     {
       notifications,
       maxVisible = 5,
-      position = "top-right",
+      position = 'top-right',
       showBadge = true,
       allowDismiss = true,
       soundEnabled = true,
@@ -465,35 +494,42 @@ export const RealTimeNotifications = React.forwardRef<HTMLDivElement, RealTimeNo
       className,
       ...props
     },
-    ref,
+    ref
   ) => {
-    const [localSoundEnabled, setLocalSoundEnabled] = React.useState(soundEnabled);
-    const [visibleNotifications, setVisibleNotifications] = React.useState<string[]>([]);
+    const [localSoundEnabled, setLocalSoundEnabled] =
+      React.useState(soundEnabled);
+    const [visibleNotifications, setVisibleNotifications] = React.useState<
+      string[]
+    >([]);
 
     const unreadNotifications = notifications.filter((n) => !n.read);
     const unreadCount = unreadNotifications.length;
 
     const positionClasses = {
-      "top-right": "top-4 right-4",
-      "top-left": "top-4 left-4",
-      "bottom-right": "bottom-4 right-4",
-      "bottom-left": "bottom-4 left-4",
-      "top-center": "top-4 left-1/2 transform -translate-x-1/2",
+      'top-right': 'top-4 right-4',
+      'top-left': 'top-4 left-4',
+      'bottom-right': 'bottom-4 right-4',
+      'bottom-left': 'bottom-4 left-4',
+      'top-center': 'top-4 left-1/2 transform -translate-x-1/2',
     };
 
     // Handle new notifications
     React.useEffect(() => {
       const newNotifications = notifications.filter(
-        (n) => !(visibleNotifications.includes(n.id) || n.read),
+        (n) => !(visibleNotifications.includes(n.id) || n.read)
       );
 
       if (newNotifications.length > 0) {
         const newIds = newNotifications.slice(0, maxVisible).map((n) => n.id);
-        setVisibleNotifications((prev) => [...prev, ...newIds].slice(-maxVisible));
+        setVisibleNotifications((prev) =>
+          [...prev, ...newIds].slice(-maxVisible)
+        );
 
         // Play sound for critical notifications if enabled
         if (localSoundEnabled) {
-          const criticalNotifications = newNotifications.filter((n) => n.priority === "critical");
+          const criticalNotifications = newNotifications.filter(
+            (n) => n.priority === 'critical'
+          );
           if (criticalNotifications.length > 0) {
           }
         }
@@ -505,7 +541,9 @@ export const RealTimeNotifications = React.forwardRef<HTMLDivElement, RealTimeNo
     };
 
     const handleDismiss = (notificationId: string) => {
-      setVisibleNotifications((prev) => prev.filter((id) => id !== notificationId));
+      setVisibleNotifications((prev) =>
+        prev.filter((id) => id !== notificationId)
+      );
       onNotificationDismiss?.(notificationId);
     };
 
@@ -533,8 +571,8 @@ export const RealTimeNotifications = React.forwardRef<HTMLDivElement, RealTimeNo
         {showPanel && (
           <div
             className={cn(
-              "fixed inset-y-0 right-0 z-50 w-96 transform border-l bg-card shadow-xl transition-transform",
-              showPanel ? "translate-x-0" : "translate-x-full",
+              'fixed inset-y-0 right-0 z-50 w-96 transform border-l bg-card shadow-xl transition-transform',
+              showPanel ? 'translate-x-0' : 'translate-x-full'
             )}
           >
             <div className="flex items-center justify-between border-b p-4">
@@ -569,7 +607,11 @@ export const RealTimeNotifications = React.forwardRef<HTMLDivElement, RealTimeNo
 
         {/* Floating Notifications */}
         <div
-          className={cn("pointer-events-none fixed z-40", positionClasses[position], className)}
+          className={cn(
+            'pointer-events-none fixed z-40',
+            positionClasses[position],
+            className
+          )}
           ref={ref}
           {...props}
         >
@@ -589,7 +631,7 @@ export const RealTimeNotifications = React.forwardRef<HTMLDivElement, RealTimeNo
         </div>
       </>
     );
-  },
+  }
 );
 
-RealTimeNotifications.displayName = "RealTimeNotifications";
+RealTimeNotifications.displayName = 'RealTimeNotifications';

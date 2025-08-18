@@ -1,7 +1,7 @@
 /// <reference types="vitest" />
 
 import react from '@vitejs/plugin-react';
-import path from 'path';
+import path from 'node:path';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
@@ -55,7 +55,7 @@ export default defineConfig({
       '@/utils': path.resolve(__dirname, './packages/utils/src'),
       '@/types': path.resolve(__dirname, './packages/types/src'),
       '@test': path.resolve(__dirname, './tools/testing'),
-      '@/test': path.resolve(__dirname, './tools/testing'), 
+      '@/test': path.resolve(__dirname, './tools/testing'),
       '@neonpro/ui': path.resolve(__dirname, './packages/ui/src'),
       '@neonpro/utils': path.resolve(__dirname, './packages/utils/src'),
       '@neonpro/types': path.resolve(__dirname, './packages/types/src'),
@@ -82,7 +82,7 @@ export default defineConfig({
     // Otimização de deps simplificada
     deps: {
       // Remove optimizer para evitar problemas de resolução
-      external: ['@testing-library/react', '@testing-library/jest-dom']
+      external: ['@testing-library/react', '@testing-library/jest-dom'],
     },
 
     // Configuração de coverage apenas para arquivos válidos
@@ -118,7 +118,7 @@ export default defineConfig({
       '@neonpro/ui': path.resolve(__dirname, './packages/ui/src'),
       '@neonpro/utils': path.resolve(__dirname, './packages/utils/src'),
       '@neonpro/types': path.resolve(__dirname, './packages/types/src'),
-      'zod': path.resolve(__dirname, './node_modules/zod'),
+      zod: path.resolve(__dirname, './node_modules/zod'),
     },
   },
 

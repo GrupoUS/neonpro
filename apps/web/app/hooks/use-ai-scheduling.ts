@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useCallback, useRef } from "react";
-import { AISchedulingEngine } from "@/lib/ai-scheduling";
 import type {
-  SchedulingRequest,
-  SchedulingResult,
   AppointmentSlot,
   DynamicSchedulingEvent,
+  Patient,
   SchedulingAction,
   SchedulingAnalytics,
-  TreatmentType,
+  SchedulingRequest,
+  SchedulingResult,
   Staff,
-  Patient,
-} from "@neonpro/core-services/scheduling";
+  TreatmentType,
+} from '@neonpro/core-services/scheduling';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { AISchedulingEngine } from '@/lib/ai-scheduling';
 
 interface UseAISchedulingOptions {
   tenantId: string;
@@ -23,9 +23,15 @@ interface UseAISchedulingOptions {
 
 interface UseAISchedulingReturn {
   // Core scheduling functions
-  scheduleAppointment: (request: SchedulingRequest) => Promise<SchedulingResult>;
-  getAvailableSlots: (request: Partial<SchedulingRequest>) => Promise<AppointmentSlot[]>;
-  handleRealtimeEvent: (event: DynamicSchedulingEvent) => Promise<SchedulingAction[]>;
+  scheduleAppointment: (
+    request: SchedulingRequest
+  ) => Promise<SchedulingResult>;
+  getAvailableSlots: (
+    request: Partial<SchedulingRequest>
+  ) => Promise<AppointmentSlot[]>;
+  handleRealtimeEvent: (
+    event: DynamicSchedulingEvent
+  ) => Promise<SchedulingAction[]>;
 
   // State management
   isLoading: boolean;
@@ -54,7 +60,9 @@ interface UseAISchedulingReturn {
  * Advanced React Hook for AI-Powered Scheduling
  * Provides comprehensive scheduling capabilities with real-time optimization
  */
-export const useAIScheduling = (options: UseAISchedulingOptions): UseAISchedulingReturn => {
+export const useAIScheduling = (
+  options: UseAISchedulingOptions
+): UseAISchedulingReturn => {
   const {
     tenantId,
     autoOptimize = true,
@@ -69,7 +77,9 @@ export const useAIScheduling = (options: UseAISchedulingOptions): UseAISchedulin
 
   // Optimization state
   const [optimizationScore, setOptimizationScore] = useState(0.8);
-  const [activeOptimizations, setActiveOptimizations] = useState<SchedulingAction[]>([]);
+  const [activeOptimizations, setActiveOptimizations] = useState<
+    SchedulingAction[]
+  >([]);
 
   // Analytics state
   const [analytics, setAnalytics] = useState<SchedulingAnalytics | null>(null);
@@ -108,11 +118,11 @@ export const useAIScheduling = (options: UseAISchedulingOptions): UseAISchedulin
 
     const connectWebSocket = () => {
       try {
-        const wsUrl = `${process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:3001"}/scheduling/${tenantId}`;
+        const wsUrl = `${process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:3001'}/scheduling/${tenantId}`;
         wsConnectionRef.current = new WebSocket(wsUrl);
 
         wsConnectionRef.current.onopen = () => {
-          console.log("Real-time scheduling connection established");
+          console.log('Real-time scheduling connection established');
         };
 
         wsConnectionRef.current.onmessage = (event) => {
@@ -121,15 +131,17 @@ export const useAIScheduling = (options: UseAISchedulingOptions): UseAISchedulin
         };
 
         wsConnectionRef.current.onclose = () => {
-          console.log("Real-time connection closed, attempting to reconnect...");
+          console.log(
+            'Real-time connection closed, attempting to reconnect...'
+          );
           setTimeout(connectWebSocket, 5000);
         };
 
         wsConnectionRef.current.onerror = (error) => {
-          console.error("WebSocket error:", error);
+          console.error('WebSocket error:', error);
         };
       } catch (error) {
-        console.error("Failed to establish WebSocket connection:", error);
+        console.error('Failed to establish WebSocket connection:', error);
       }
     };
 
@@ -154,7 +166,7 @@ export const useAIScheduling = (options: UseAISchedulingOptions): UseAISchedulin
           setAnalytics(analyticsData);
         }
       } catch (error) {
-        console.error("Failed to load analytics:", error);
+        console.error('Failed to load analytics:', error);
       }
     };
 
@@ -168,7 +180,7 @@ export const useAIScheduling = (options: UseAISchedulingOptions): UseAISchedulin
   const scheduleAppointment = useCallback(
     async (request: SchedulingRequest): Promise<SchedulingResult> => {
       if (!aiEngineRef.current) {
-        throw new Error("AI Scheduling Engine not initialized");
+        throw new Error('AI Scheduling Engine not initialized');
       }
 
       setIsLoading(true);
@@ -177,13 +189,19 @@ export const useAIScheduling = (options: UseAISchedulingOptions): UseAISchedulin
 
       try {
         // Fetch required data
-        const [slotsResponse, staffResponse, patientsResponse, treatmentsResponse] =
-          await Promise.all([
-            fetch(`/api/scheduling/slots/${tenantId}?treatmentType=${request.treatmentTypeId}`),
-            fetch(`/api/staff/${tenantId}`),
-            fetch(`/api/patients/${tenantId}/${request.patientId}`),
-            fetch(`/api/treatments/${tenantId}`),
-          ]);
+        const [
+          slotsResponse,
+          staffResponse,
+          patientsResponse,
+          treatmentsResponse,
+        ] = await Promise.all([
+          fetch(
+            `/api/scheduling/slots/${tenantId}?treatmentType=${request.treatmentTypeId}`
+          ),
+          fetch(`/api/staff/${tenantId}`),
+          fetch(`/api/patients/${tenantId}/${request.patientId}`),
+          fetch(`/api/treatments/${tenantId}`),
+        ]);
 
         const [slots, staff, patient, treatments] = await Promise.all([
           slotsResponse.json(),
@@ -198,7 +216,7 @@ export const useAIScheduling = (options: UseAISchedulingOptions): UseAISchedulin
           slots.data || [],
           staff.data || [],
           [patient.data],
-          treatments.data || [],
+          treatments.data || []
         );
 
         setLastResult(result);
@@ -206,8 +224,8 @@ export const useAIScheduling = (options: UseAISchedulingOptions): UseAISchedulin
         // Store result for analytics
         if (result.success) {
           await fetch(`/api/scheduling/analytics/${tenantId}/record`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               request,
               result,
@@ -218,7 +236,8 @@ export const useAIScheduling = (options: UseAISchedulingOptions): UseAISchedulin
 
         return result;
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : "Scheduling failed";
+        const errorMessage =
+          err instanceof Error ? err.message : 'Scheduling failed';
         setError(errorMessage);
         throw new Error(errorMessage);
       } finally {
@@ -226,7 +245,7 @@ export const useAIScheduling = (options: UseAISchedulingOptions): UseAISchedulin
         setProcessingTime(performance.now() - startTime);
       }
     },
-    [tenantId],
+    [tenantId]
   );
 
   // Get available slots with AI pre-filtering
@@ -237,8 +256,8 @@ export const useAIScheduling = (options: UseAISchedulingOptions): UseAISchedulin
       setIsLoading(true);
       try {
         const response = await fetch(`/api/scheduling/slots/${tenantId}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(request),
         });
 
@@ -249,25 +268,27 @@ export const useAIScheduling = (options: UseAISchedulingOptions): UseAISchedulin
           const treatmentsResponse = await fetch(`/api/treatments/${tenantId}`);
           const { data: treatments } = await treatmentsResponse.json();
 
-          const treatment = treatments.find((t: TreatmentType) => t.id === request.treatmentTypeId);
+          const treatment = treatments.find(
+            (t: TreatmentType) => t.id === request.treatmentTypeId
+          );
           if (treatment) {
             return await aiEngineRef.current.intelligentSlotFiltering(
               slots,
               request as SchedulingRequest,
-              [treatment],
+              [treatment]
             );
           }
         }
 
         return slots;
       } catch (error) {
-        console.error("Failed to get available slots:", error);
+        console.error('Failed to get available slots:', error);
         return [];
       } finally {
         setIsLoading(false);
       }
     },
-    [tenantId],
+    [tenantId]
   );
 
   // Handle real-time scheduling events
@@ -289,7 +310,7 @@ export const useAIScheduling = (options: UseAISchedulingOptions): UseAISchedulin
         const actions = await aiEngineRef.current.handleDynamicEvent(
           event,
           currentSchedule.data || [],
-          staff.data || [],
+          staff.data || []
         );
 
         setActiveOptimizations(actions);
@@ -300,7 +321,7 @@ export const useAIScheduling = (options: UseAISchedulingOptions): UseAISchedulin
             (action) =>
               action.impact.efficiencyChange > 10 &&
               action.executionTime < 60 &&
-              action.impact.patientSatisfactionChange >= 0,
+              action.impact.patientSatisfactionChange >= 0
           );
 
           for (const action of autoActions) {
@@ -310,44 +331,52 @@ export const useAIScheduling = (options: UseAISchedulingOptions): UseAISchedulin
 
         return actions;
       } catch (error) {
-        console.error("Failed to handle real-time event:", error);
+        console.error('Failed to handle real-time event:', error);
         return [];
       }
     },
-    [tenantId, autoOptimize],
+    [tenantId, autoOptimize]
   );
 
   // Predict no-show risk for specific patient/slot combination
   const predictNoShowRisk = useCallback(
     async (patientId: string, slotId: string): Promise<number> => {
       try {
-        const response = await fetch(`/api/scheduling/predict-noshow/${tenantId}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ patientId, slotId }),
-        });
+        const response = await fetch(
+          `/api/scheduling/predict-noshow/${tenantId}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ patientId, slotId }),
+          }
+        );
 
         const { risk } = await response.json();
         return risk;
       } catch (error) {
-        console.error("Failed to predict no-show risk:", error);
+        console.error('Failed to predict no-show risk:', error);
         return 0.1; // Default low risk
       }
     },
-    [tenantId],
+    [tenantId]
   );
 
   // Optimize staff workload distribution
-  const optimizeStaffWorkload = useCallback(async (): Promise<SchedulingAction[]> => {
+  const optimizeStaffWorkload = useCallback(async (): Promise<
+    SchedulingAction[]
+  > => {
     try {
-      const response = await fetch(`/api/scheduling/optimize-workload/${tenantId}`, {
-        method: "POST",
-      });
+      const response = await fetch(
+        `/api/scheduling/optimize-workload/${tenantId}`,
+        {
+          method: 'POST',
+        }
+      );
 
       const { actions } = await response.json();
       return actions;
     } catch (error) {
-      console.error("Failed to optimize staff workload:", error);
+      console.error('Failed to optimize staff workload:', error);
       return [];
     }
   }, [tenantId]);
@@ -356,21 +385,23 @@ export const useAIScheduling = (options: UseAISchedulingOptions): UseAISchedulin
   const forecastDemand = useCallback(
     async (days = 14) => {
       try {
-        const response = await fetch(`/api/scheduling/forecast/${tenantId}?days=${days}`);
+        const response = await fetch(
+          `/api/scheduling/forecast/${tenantId}?days=${days}`
+        );
         return await response.json();
       } catch (error) {
-        console.error("Failed to forecast demand:", error);
+        console.error('Failed to forecast demand:', error);
         return null;
       }
     },
-    [tenantId],
+    [tenantId]
   );
 
   // Update AI engine configuration
   const updateConfig = useCallback((config: Partial<any>) => {
     if (aiEngineRef.current) {
       // Update configuration (would need to implement in AI engine)
-      console.log("Updating AI configuration:", config);
+      console.log('Updating AI configuration:', config);
     }
   }, []);
 
@@ -385,25 +416,25 @@ export const useAIScheduling = (options: UseAISchedulingOptions): UseAISchedulin
   // Handle real-time updates from WebSocket
   const handleRealtimeUpdate = useCallback((data: any) => {
     switch (data.type) {
-      case "schedule_change":
+      case 'schedule_change':
         // Refresh available slots
         if (data.affectedSlots) {
-          console.log("Schedule change detected, refreshing slots");
+          console.log('Schedule change detected, refreshing slots');
         }
         break;
 
-      case "optimization_opportunity":
+      case 'optimization_opportunity':
         // New optimization opportunity detected
         setOptimizationScore(data.score);
         break;
 
-      case "analytics_update":
+      case 'analytics_update':
         // Real-time analytics update
         setAnalytics((prev) => ({ ...prev, ...data.analytics }));
         break;
 
       default:
-        console.log("Unknown real-time update:", data);
+        console.log('Unknown real-time update:', data);
     }
   }, []);
 
@@ -411,20 +442,23 @@ export const useAIScheduling = (options: UseAISchedulingOptions): UseAISchedulin
   const executeAction = useCallback(
     async (action: SchedulingAction) => {
       try {
-        const response = await fetch(`/api/scheduling/execute-action/${tenantId}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(action),
-        });
+        const response = await fetch(
+          `/api/scheduling/execute-action/${tenantId}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(action),
+          }
+        );
 
         if (response.ok) {
-          console.log("Action executed successfully:", action.description);
+          console.log('Action executed successfully:', action.description);
         }
       } catch (error) {
-        console.error("Failed to execute action:", error);
+        console.error('Failed to execute action:', error);
       }
     },
-    [tenantId],
+    [tenantId]
   );
 
   return {

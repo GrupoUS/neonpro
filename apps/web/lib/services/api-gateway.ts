@@ -3,9 +3,9 @@
 // Enterprise-grade API gateway with authentication, rate limiting, and routing
 // ================================================
 
-import rateLimit from "express-rate-limit";
-import slowDown from "express-slow-down";
-import { type NextRequest, NextResponse } from "next/server";
+import rateLimit from 'express-rate-limit';
+import slowDown from 'express-slow-down';
+import { type NextRequest, NextResponse } from 'next/server';
 
 // ================================================
 // TYPES AND INTERFACES
@@ -50,8 +50,8 @@ const SERVICE_ROUTES: ServiceRoute[] = [
   // Authentication Service
   {
     pattern: /^\/api\/auth\/.*/,
-    service: "auth",
-    baseUrl: process.env.AUTH_SERVICE_URL || "http://localhost:3001",
+    service: 'auth',
+    baseUrl: process.env.AUTH_SERVICE_URL || 'http://localhost:3001',
     requiresAuth: false,
     rateLimit: { windowMs: 15 * 60 * 1000, max: 100 }, // 100 requests per 15 minutes
     timeout: 5000,
@@ -60,8 +60,8 @@ const SERVICE_ROUTES: ServiceRoute[] = [
   // Patient Management Service
   {
     pattern: /^\/api\/patients\/.*/,
-    service: "patients",
-    baseUrl: process.env.PATIENTS_SERVICE_URL || "http://localhost:3002",
+    service: 'patients',
+    baseUrl: process.env.PATIENTS_SERVICE_URL || 'http://localhost:3002',
     requiresAuth: true,
     rateLimit: { windowMs: 60 * 1000, max: 1000 }, // 1000 requests per minute
     timeout: 10_000,
@@ -70,8 +70,8 @@ const SERVICE_ROUTES: ServiceRoute[] = [
   // Financial Service
   {
     pattern: /^\/api\/financial\/.*/,
-    service: "financial",
-    baseUrl: process.env.FINANCIAL_SERVICE_URL || "http://localhost:3003",
+    service: 'financial',
+    baseUrl: process.env.FINANCIAL_SERVICE_URL || 'http://localhost:3003',
     requiresAuth: true,
     rateLimit: { windowMs: 60 * 1000, max: 500 }, // 500 requests per minute
     timeout: 15_000,
@@ -80,8 +80,8 @@ const SERVICE_ROUTES: ServiceRoute[] = [
   // Compliance Service
   {
     pattern: /^\/api\/compliance\/.*/,
-    service: "compliance",
-    baseUrl: process.env.COMPLIANCE_SERVICE_URL || "http://localhost:3004",
+    service: 'compliance',
+    baseUrl: process.env.COMPLIANCE_SERVICE_URL || 'http://localhost:3004',
     requiresAuth: true,
     rateLimit: { windowMs: 60 * 1000, max: 200 }, // 200 requests per minute
     timeout: 20_000,
@@ -90,8 +90,8 @@ const SERVICE_ROUTES: ServiceRoute[] = [
   // Notification Service
   {
     pattern: /^\/api\/notifications\/.*/,
-    service: "notifications",
-    baseUrl: process.env.NOTIFICATIONS_SERVICE_URL || "http://localhost:3005",
+    service: 'notifications',
+    baseUrl: process.env.NOTIFICATIONS_SERVICE_URL || 'http://localhost:3005',
     requiresAuth: true,
     rateLimit: { windowMs: 60 * 1000, max: 300 }, // 300 requests per minute
     timeout: 8000,
@@ -100,8 +100,8 @@ const SERVICE_ROUTES: ServiceRoute[] = [
   // Analytics Service
   {
     pattern: /^\/api\/analytics\/.*/,
-    service: "analytics",
-    baseUrl: process.env.ANALYTICS_SERVICE_URL || "http://localhost:3006",
+    service: 'analytics',
+    baseUrl: process.env.ANALYTICS_SERVICE_URL || 'http://localhost:3006',
     requiresAuth: true,
     rateLimit: { windowMs: 60 * 1000, max: 100 }, // 100 requests per minute
     timeout: 30_000,
@@ -117,8 +117,8 @@ const createRateLimiter = (windowMs: number, max: number) => {
     windowMs,
     max,
     message: {
-      error: "Too Many Requests",
-      message: "Rate limit exceeded, please try again later.",
+      error: 'Too Many Requests',
+      message: 'Rate limit exceeded, please try again later.',
       retryAfter: Math.ceil(windowMs / 1000),
     },
     standardHeaders: true,
@@ -156,9 +156,9 @@ export class AuthenticationService {
   async validateToken(token: string): Promise<AuthContext | null> {
     try {
       const response = await fetch(`${process.env.AUTH_SERVICE_URL}/validate`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
         timeout: 5000,
@@ -171,7 +171,7 @@ export class AuthenticationService {
       const data = await response.json();
       return data.authContext;
     } catch (error) {
-      console.error("Token validation failed:", error);
+      console.error('Token validation failed:', error);
       return null;
     }
   }
@@ -179,9 +179,9 @@ export class AuthenticationService {
   async refreshToken(refreshToken: string): Promise<string | null> {
     try {
       const response = await fetch(`${process.env.AUTH_SERVICE_URL}/refresh`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ refreshToken }),
         timeout: 5000,
@@ -194,7 +194,7 @@ export class AuthenticationService {
       const data = await response.json();
       return data.accessToken;
     } catch (error) {
-      console.error("Token refresh failed:", error);
+      console.error('Token refresh failed:', error);
       return null;
     }
   }
@@ -207,7 +207,7 @@ export class AuthenticationService {
 interface CircuitBreakerState {
   failures: number;
   nextAttempt: number;
-  state: "CLOSED" | "OPEN" | "HALF_OPEN";
+  state: 'CLOSED' | 'OPEN' | 'HALF_OPEN';
 }
 
 export class CircuitBreaker {
@@ -216,15 +216,18 @@ export class CircuitBreaker {
   private readonly timeout = 60_000; // 1 minute
   private readonly retryTimeout = 30_000; // 30 seconds
 
-  async execute<T>(serviceKey: string, operation: () => Promise<T>): Promise<T> {
+  async execute<T>(
+    serviceKey: string,
+    operation: () => Promise<T>
+  ): Promise<T> {
     const state = this.getState(serviceKey);
 
-    if (state.state === "OPEN") {
+    if (state.state === 'OPEN') {
       if (Date.now() < state.nextAttempt) {
         throw new Error(`Circuit breaker is OPEN for service ${serviceKey}`);
       }
       // Try to half-open
-      state.state = "HALF_OPEN";
+      state.state = 'HALF_OPEN';
     }
 
     try {
@@ -242,7 +245,7 @@ export class CircuitBreaker {
       this.states.set(serviceKey, {
         failures: 0,
         nextAttempt: 0,
-        state: "CLOSED",
+        state: 'CLOSED',
       });
     }
     return this.states.get(serviceKey)!;
@@ -251,7 +254,7 @@ export class CircuitBreaker {
   private onSuccess(serviceKey: string): void {
     const state = this.getState(serviceKey);
     state.failures = 0;
-    state.state = "CLOSED";
+    state.state = 'CLOSED';
   }
 
   private onFailure(serviceKey: string): void {
@@ -259,7 +262,7 @@ export class CircuitBreaker {
     state.failures++;
 
     if (state.failures >= this.failureThreshold) {
-      state.state = "OPEN";
+      state.state = 'OPEN';
       state.nextAttempt = Date.now() + this.retryTimeout;
     }
   }
@@ -281,7 +284,10 @@ export class RequestRouter {
       // Find matching service route
       const route = this.findRoute(path);
       if (!route) {
-        return NextResponse.json({ error: "Service not found", path }, { status: 404 });
+        return NextResponse.json(
+          { error: 'Service not found', path },
+          { status: 404 }
+        );
       }
 
       // Rate limiting
@@ -304,7 +310,7 @@ export class RequestRouter {
 
       // Route to service
       const response = await this.circuitBreaker.execute(route.service, () =>
-        this.forwardRequest(request, route, authContext),
+        this.forwardRequest(request, route, authContext)
       );
 
       // Record metrics
@@ -321,13 +327,13 @@ export class RequestRouter {
 
       return response;
     } catch (error) {
-      console.error("Request routing failed:", error);
+      console.error('Request routing failed:', error);
 
       // Record error metrics
       await this.recordMetrics({
         method: request.method,
         path,
-        service: "unknown",
+        service: 'unknown',
         statusCode: 500,
         responseTime: Date.now() - startTime,
         timestamp: new Date(),
@@ -335,11 +341,11 @@ export class RequestRouter {
 
       return NextResponse.json(
         {
-          error: "Internal Server Error",
-          message: "Service temporarily unavailable",
+          error: 'Internal Server Error',
+          message: 'Service temporarily unavailable',
           requestId: crypto.randomUUID(),
         },
-        { status: 500 },
+        { status: 500 }
       );
     }
   }
@@ -350,7 +356,7 @@ export class RequestRouter {
 
   private async checkRateLimit(
     request: NextRequest,
-    route: ServiceRoute,
+    route: ServiceRoute
   ): Promise<NextResponse | null> {
     if (!route.rateLimit) return null;
 
@@ -359,17 +365,25 @@ export class RequestRouter {
     return null;
   }
 
-  private async authenticate(request: NextRequest): Promise<AuthContext | NextResponse> {
-    const authHeader = request.headers.get("Authorization");
-    if (!(authHeader && authHeader.startsWith("Bearer "))) {
-      return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+  private async authenticate(
+    request: NextRequest
+  ): Promise<AuthContext | NextResponse> {
+    const authHeader = request.headers.get('Authorization');
+    if (!(authHeader && authHeader.startsWith('Bearer '))) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      );
     }
 
     const token = authHeader.substring(7);
     const authContext = await this.authService.validateToken(token);
 
     if (!authContext) {
-      return NextResponse.json({ error: "Invalid or expired token" }, { status: 401 });
+      return NextResponse.json(
+        { error: 'Invalid or expired token' },
+        { status: 401 }
+      );
     }
 
     return authContext;
@@ -378,24 +392,27 @@ export class RequestRouter {
   private async forwardRequest(
     request: NextRequest,
     route: ServiceRoute,
-    authContext: AuthContext | null,
+    authContext: AuthContext | null
   ): Promise<NextResponse> {
-    const url = new URL(request.nextUrl.pathname + request.nextUrl.search, route.baseUrl);
+    const url = new URL(
+      request.nextUrl.pathname + request.nextUrl.search,
+      route.baseUrl
+    );
 
     const headers = new Headers(request.headers);
 
     // Add authentication context
     if (authContext) {
-      headers.set("X-User-ID", authContext.userId);
-      headers.set("X-Tenant-ID", authContext.tenantId);
-      headers.set("X-User-Roles", authContext.roles.join(","));
-      headers.set("X-Session-ID", authContext.sessionId);
+      headers.set('X-User-ID', authContext.userId);
+      headers.set('X-Tenant-ID', authContext.tenantId);
+      headers.set('X-User-Roles', authContext.roles.join(','));
+      headers.set('X-Session-ID', authContext.sessionId);
     }
 
     // Add request ID for tracing
     const requestId = crypto.randomUUID();
-    headers.set("X-Request-ID", requestId);
-    headers.set("X-Forwarded-For", request.ip || "unknown");
+    headers.set('X-Request-ID', requestId);
+    headers.set('X-Forwarded-For', request.ip || 'unknown');
 
     try {
       const response = await fetch(url.toString(), {
@@ -407,8 +424,8 @@ export class RequestRouter {
 
       // Copy response headers
       const responseHeaders = new Headers(response.headers);
-      responseHeaders.set("X-Request-ID", requestId);
-      responseHeaders.set("X-Service", route.service);
+      responseHeaders.set('X-Request-ID', requestId);
+      responseHeaders.set('X-Service', route.service);
 
       return new NextResponse(response.body, {
         status: response.status,
@@ -416,14 +433,14 @@ export class RequestRouter {
         headers: responseHeaders,
       });
     } catch (error) {
-      if (error.name === "AbortError") {
+      if (error.name === 'AbortError') {
         return NextResponse.json(
           {
-            error: "Service Timeout",
+            error: 'Service Timeout',
             message: `Service ${route.service} took too long to respond`,
             requestId,
           },
-          { status: 504 },
+          { status: 504 }
         );
       }
 
@@ -435,17 +452,17 @@ export class RequestRouter {
     try {
       // Send metrics to monitoring service (async, don't block)
       fetch(`${process.env.MONITORING_SERVICE_URL}/metrics`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(metrics),
       }).catch((error) => {
-        console.error("Failed to record metrics:", error);
+        console.error('Failed to record metrics:', error);
       });
     } catch (error) {
       // Silently ignore metrics errors
-      console.error("Metrics recording failed:", error);
+      console.error('Metrics recording failed:', error);
     }
   }
 }
@@ -459,7 +476,7 @@ export function createApiGatewayMiddleware() {
 
   return async function apiGatewayMiddleware(request: NextRequest) {
     // Skip non-API requests
-    if (!request.nextUrl.pathname.startsWith("/api/")) {
+    if (!request.nextUrl.pathname.startsWith('/api/')) {
       return NextResponse.next();
     }
 
@@ -472,11 +489,11 @@ export function createApiGatewayMiddleware() {
 // ================================================
 
 export async function healthCheck(): Promise<{
-  status: "healthy" | "unhealthy";
-  services: Record<string, "up" | "down">;
+  status: 'healthy' | 'unhealthy';
+  services: Record<string, 'up' | 'down'>;
   timestamp: string;
 }> {
-  const services: Record<string, "up" | "down"> = {};
+  const services: Record<string, 'up' | 'down'> = {};
 
   await Promise.allSettled(
     SERVICE_ROUTES.map(async (route) => {
@@ -484,17 +501,19 @@ export async function healthCheck(): Promise<{
         const response = await fetch(`${route.baseUrl}/health`, {
           timeout: 5000,
         });
-        services[route.service] = response.ok ? "up" : "down";
+        services[route.service] = response.ok ? 'up' : 'down';
       } catch {
-        services[route.service] = "down";
+        services[route.service] = 'down';
       }
-    }),
+    })
   );
 
-  const allServicesUp = Object.values(services).every((status) => status === "up");
+  const allServicesUp = Object.values(services).every(
+    (status) => status === 'up'
+  );
 
   return {
-    status: allServicesUp ? "healthy" : "unhealthy",
+    status: allServicesUp ? 'healthy' : 'unhealthy',
     services,
     timestamp: new Date().toISOString(),
   };

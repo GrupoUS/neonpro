@@ -1,12 +1,22 @@
-import { format, differenceInDays, differenceInMonths, startOfMonth, endOfMonth, subDays, subMonths, isValid, parseISO } from 'date-fns';
+import {
+  differenceInDays,
+  differenceInMonths,
+  endOfMonth,
+  format,
+  isValid,
+  parseISO,
+  startOfMonth,
+  subDays,
+  subMonths,
+} from 'date-fns';
 
 /**
  * Format currency values with proper locale formatting
  */
 export function formatAnalyticsCurrency(
   amount: number,
-  currency: string = 'USD',
-  precision: number = 2
+  currency = 'USD',
+  precision = 2
 ): string {
   if (!amount || isNaN(amount) || amount === null || amount === undefined) {
     return '$0.00';
@@ -14,7 +24,7 @@ export function formatAnalyticsCurrency(
 
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: currency,
+    currency,
     minimumFractionDigits: precision,
     maximumFractionDigits: precision,
   });
@@ -25,7 +35,10 @@ export function formatAnalyticsCurrency(
 /**
  * Format percentage values
  */
-export function formatAnalyticsPercentage(value: number, precision: number = 2): string {
+export function formatAnalyticsPercentage(
+  value: number,
+  precision = 2
+): string {
   if (!value || isNaN(value) || !isFinite(value)) {
     return '0.00%';
   }
@@ -38,7 +51,7 @@ export function formatAnalyticsPercentage(value: number, precision: number = 2):
  */
 export function calculateGrowthRate(previous: number, current: number): number {
   if (isNaN(current) || isNaN(previous)) {
-    return NaN;
+    return Number.NaN;
   }
 
   if (previous === 0) {
@@ -55,11 +68,14 @@ export function calculateGrowthRate(previous: number, current: number): number {
 /**
  * Calculate churn rate
  */
-export function calculateChurnRate(churned: number, startCustomers: number): number {
+export function calculateChurnRate(
+  churned: number,
+  startCustomers: number
+): number {
   if (isNaN(churned) || isNaN(startCustomers)) {
-    return NaN;
+    return Number.NaN;
   }
-  
+
   if (churned < 0) {
     return 0;
   }
@@ -76,9 +92,9 @@ export function calculateChurnRate(churned: number, startCustomers: number): num
  */
 export function calculateLTV(arpu: number, churnRate: number): number {
   if (isNaN(arpu) || isNaN(churnRate)) {
-    return NaN;
+    return Number.NaN;
   }
-  
+
   if (arpu < 0) {
     return 0;
   }
@@ -99,14 +115,15 @@ export function calculateMRR(subscriptions: any[]): number {
   }
 
   return subscriptions
-    .filter(sub => 
-      sub && 
-      sub.status === 'active' && 
-      typeof sub.amount === 'number' && 
-      !isNaN(sub.amount) && 
-      isFinite(sub.amount)
+    .filter(
+      (sub) =>
+        sub &&
+        sub.status === 'active' &&
+        typeof sub.amount === 'number' &&
+        !isNaN(sub.amount) &&
+        isFinite(sub.amount)
     )
-    .reduce((total, sub) => total + (sub.amount / 100), 0); // Convert from cents
+    .reduce((total, sub) => total + sub.amount / 100, 0); // Convert from cents
 }
 
 /**
@@ -116,30 +133,7 @@ export function calculateARR(mrr: number): number {
   return mrr * 12;
 }
 
-/**
- * Simple date utility functions
- */
-function parseISO(dateString: string): Date {
-  // Simple parsing without timezone issues for tests
-  return new Date(dateString + 'T00:00:00.000Z');
-}
-
-function isValid(date: Date): boolean {
-  return date instanceof Date && !isNaN(date.getTime());
-}
-
-/**
- * Simple date formatting function
- */
-function format(date: Date, formatString: string): string {
-  if (formatString === 'MMM yyyy') {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    return `${months[date.getMonth()]} ${date.getFullYear()}`;
-  } else if (formatString === 'yyyy-MM-dd') {
-    return date.toISOString().split('T')[0];
-  }
-  return date.toISOString();
-}
+// Removed local date utility functions to avoid conflicts with date-fns imports
 
 /**
  * Aggregate metrics by period
@@ -154,14 +148,14 @@ export function aggregateMetricsByPeriod<T>(
   }
 
   const formatString = period === 'month' ? 'MMM yyyy' : 'yyyy-MM-dd';
-  
+
   // Simple groupBy implementation instead of lodash
   const grouped: Record<string, T[]> = {};
   for (const item of data) {
     // Parse date properly to avoid timezone issues
     const dateStr = (item as any).date;
     let date: Date;
-    
+
     // For YYYY-MM-DD format, parse as local date to match test expectations
     if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
       const [year, month, day] = dateStr.split('-').map(Number);
@@ -169,7 +163,7 @@ export function aggregateMetricsByPeriod<T>(
     } else {
       date = new Date(dateStr);
     }
-    
+
     const key = format(date, formatString);
     if (!grouped[key]) {
       grouped[key] = [];
@@ -177,14 +171,27 @@ export function aggregateMetricsByPeriod<T>(
     grouped[key].push(item);
   }
 
-  // Sort results by period chronologically 
+  // Sort results by period chronologically
   const sortedEntries = Object.entries(grouped).sort(([a], [b]) => {
     // For month format like "Jan 2024", sort chronologically
     if (formatString === 'MMM yyyy') {
-      const monthOrder = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const monthOrder = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
+      ];
       const [monthA, yearA] = a.split(' ');
       const [monthB, yearB] = b.split(' ');
-      const yearDiff = parseInt(yearA) - parseInt(yearB);
+      const yearDiff = Number.parseInt(yearA) - Number.parseInt(yearB);
       if (yearDiff !== 0) return yearDiff;
       return monthOrder.indexOf(monthA) - monthOrder.indexOf(monthB);
     }
@@ -221,7 +228,7 @@ export function generateDateRange(start: Date, end: Date): Date[] {
  * Validate date range
  */
 export function validateDateRange(start: Date, end: Date): boolean {
-  if (!isValid(start) || !isValid(end)) {
+  if (!(isValid(start) && isValid(end))) {
     return false;
   }
 
@@ -249,7 +256,7 @@ export function parseAnalyticsFilters(params: URLSearchParams): {
   const validPeriods = ['last_7_days', 'last_30_days', 'last_month', 'custom'];
   const validMetrics = ['all', 'subscriptions', 'revenue', 'users'];
 
-  if (!validPeriods.includes(period) || !validMetrics.includes(metric)) {
+  if (!(validPeriods.includes(period) && validMetrics.includes(metric))) {
     throw new Error('Invalid filter parameters');
   }
 
@@ -261,7 +268,7 @@ export function parseAnalyticsFilters(params: URLSearchParams): {
     startDate = parseISO(startDateStr);
     endDate = parseISO(endDateStr);
 
-    if (!isValid(startDate) || !isValid(endDate)) {
+    if (!(isValid(startDate) && isValid(endDate))) {
       throw new Error('Invalid filter parameters');
     }
   } else {
@@ -318,10 +325,11 @@ export function exportToPDF(
 
   // Add data (simplified implementation)
   data.forEach((item, index) => {
-    if (index > 50) { // Pagination check
+    if (index > 50) {
+      // Pagination check
       doc.addPage();
     }
-    doc.text(JSON.stringify(item), 20, 30 + (index * 10));
+    doc.text(JSON.stringify(item), 20, 30 + index * 10);
   });
 
   return doc.output();

@@ -1,43 +1,42 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Button,
-  Badge,
-  Progress,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
   Alert,
   AlertDescription,
   Avatar,
   AvatarFallback,
   AvatarImage,
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Progress,
   Separator,
-} from "@neonpro/ui";
-
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@neonpro/ui';
 import {
   Activity,
-  Users,
+  AlertCircle,
+  BarChart3,
   Calendar,
-  TrendingUp,
-  TrendingDown,
+  CheckCircle,
   Clock,
-  Heart,
   DollarSign,
   FileText,
-  AlertCircle,
-  CheckCircle,
-  Star,
-  BarChart3,
+  Heart,
   PieChart,
-} from "lucide-react";
+  Star,
+  TrendingDown,
+  TrendingUp,
+  Users,
+} from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 
 interface ClinicMetrics {
   totalPatients: number;
@@ -52,10 +51,10 @@ interface ClinicMetrics {
 
 interface RecentActivity {
   id: string;
-  type: "appointment" | "result" | "payment" | "registration";
+  type: 'appointment' | 'result' | 'payment' | 'registration';
   description: string;
   timestamp: Date;
-  status: "success" | "warning" | "error" | "info";
+  status: 'success' | 'warning' | 'error' | 'info';
 }
 
 interface DoctorStats {
@@ -65,7 +64,7 @@ interface DoctorStats {
   appointmentsToday: number;
   patientsSeen: number;
   rating: number;
-  availability: "available" | "busy" | "offline";
+  availability: 'available' | 'busy' | 'offline';
   avatar?: string;
 }
 
@@ -82,121 +81,124 @@ const MOCK_METRICS: ClinicMetrics = {
 
 const MOCK_ACTIVITIES: RecentActivity[] = [
   {
-    id: "1",
-    type: "appointment",
-    description: "Nova consulta agendada - Maria Silva (Cardiologia)",
+    id: '1',
+    type: 'appointment',
+    description: 'Nova consulta agendada - Maria Silva (Cardiologia)',
     timestamp: new Date(Date.now() - 1000 * 60 * 15),
-    status: "success",
+    status: 'success',
   },
   {
-    id: "2",
-    type: "result",
-    description: "Resultado de exame disponível - João Santos",
+    id: '2',
+    type: 'result',
+    description: 'Resultado de exame disponível - João Santos',
     timestamp: new Date(Date.now() - 1000 * 60 * 30),
-    status: "info",
+    status: 'info',
   },
   {
-    id: "3",
-    type: "payment",
-    description: "Pagamento recebido - Consulta #1234",
+    id: '3',
+    type: 'payment',
+    description: 'Pagamento recebido - Consulta #1234',
     timestamp: new Date(Date.now() - 1000 * 60 * 45),
-    status: "success",
+    status: 'success',
   },
   {
-    id: "4",
-    type: "appointment",
-    description: "Consulta cancelada - Pedro Costa",
+    id: '4',
+    type: 'appointment',
+    description: 'Consulta cancelada - Pedro Costa',
     timestamp: new Date(Date.now() - 1000 * 60 * 60),
-    status: "warning",
+    status: 'warning',
   },
 ];
 
 const MOCK_DOCTORS: DoctorStats[] = [
   {
-    id: "1",
-    name: "Dr. Ana Silva",
-    specialty: "Cardiologia",
+    id: '1',
+    name: 'Dr. Ana Silva',
+    specialty: 'Cardiologia',
     appointmentsToday: 8,
     patientsSeen: 156,
     rating: 4.9,
-    availability: "available",
+    availability: 'available',
   },
   {
-    id: "2",
-    name: "Dr. João Santos",
-    specialty: "Clínica Geral",
+    id: '2',
+    name: 'Dr. João Santos',
+    specialty: 'Clínica Geral',
     appointmentsToday: 12,
     patientsSeen: 234,
     rating: 4.7,
-    availability: "busy",
+    availability: 'busy',
   },
   {
-    id: "3",
-    name: "Dr. Maria Costa",
-    specialty: "Pediatria",
+    id: '3',
+    name: 'Dr. Maria Costa',
+    specialty: 'Pediatria',
     appointmentsToday: 6,
     patientsSeen: 89,
     rating: 4.8,
-    availability: "available",
+    availability: 'available',
   },
 ];
 
 export default function ClinicDashboard() {
   const [metrics, setMetrics] = useState<ClinicMetrics>(MOCK_METRICS);
-  const [activities, setActivities] = useState<RecentActivity[]>(MOCK_ACTIVITIES);
+  const [activities, setActivities] =
+    useState<RecentActivity[]>(MOCK_ACTIVITIES);
   const [doctors, setDoctors] = useState<DoctorStats[]>(MOCK_DOCTORS);
-  const [timeRange, setTimeRange] = useState("today");
+  const [timeRange, setTimeRange] = useState('today');
 
-  const getActivityIcon = (type: RecentActivity["type"]) => {
+  const getActivityIcon = (type: RecentActivity['type']) => {
     switch (type) {
-      case "appointment":
+      case 'appointment':
         return <Calendar className="h-4 w-4" />;
-      case "result":
+      case 'result':
         return <FileText className="h-4 w-4" />;
-      case "payment":
+      case 'payment':
         return <DollarSign className="h-4 w-4" />;
-      case "registration":
+      case 'registration':
         return <Users className="h-4 w-4" />;
       default:
         return <Activity className="h-4 w-4" />;
     }
   };
 
-  const getActivityStatusColor = (status: RecentActivity["status"]) => {
+  const getActivityStatusColor = (status: RecentActivity['status']) => {
     switch (status) {
-      case "success":
-        return "text-green-600";
-      case "warning":
-        return "text-yellow-600";
-      case "error":
-        return "text-red-600";
-      case "info":
-        return "text-blue-600";
+      case 'success':
+        return 'text-green-600';
+      case 'warning':
+        return 'text-yellow-600';
+      case 'error':
+        return 'text-red-600';
+      case 'info':
+        return 'text-blue-600';
       default:
-        return "text-gray-600";
+        return 'text-gray-600';
     }
   };
 
-  const getAvailabilityBadge = (availability: DoctorStats["availability"]) => {
+  const getAvailabilityBadge = (availability: DoctorStats['availability']) => {
     const variants = {
-      available: "bg-green-100 text-green-800",
-      busy: "bg-orange-100 text-orange-800",
-      offline: "bg-gray-100 text-gray-800",
+      available: 'bg-green-100 text-green-800',
+      busy: 'bg-orange-100 text-orange-800',
+      offline: 'bg-gray-100 text-gray-800',
     };
 
     const labels = {
-      available: "Disponível",
-      busy: "Ocupado",
-      offline: "Offline",
+      available: 'Disponível',
+      busy: 'Ocupado',
+      offline: 'Offline',
     };
 
-    return <Badge className={variants[availability]}>{labels[availability]}</Badge>;
+    return (
+      <Badge className={variants[availability]}>{labels[availability]}</Badge>
+    );
   };
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
     }).format(value);
   };
 
@@ -205,7 +207,7 @@ export default function ClinicDashboard() {
     const diff = now.getTime() - date.getTime();
     const minutes = Math.floor(diff / (1000 * 60));
 
-    if (minutes < 1) return "agora";
+    if (minutes < 1) return 'agora';
     if (minutes < 60) return `${minutes}m atrás`;
 
     const hours = Math.floor(minutes / 60);
@@ -220,7 +222,9 @@ export default function ClinicDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-bold text-3xl tracking-tight">Dashboard da Clínica</h1>
+          <h1 className="font-bold text-3xl tracking-tight">
+            Dashboard da Clínica
+          </h1>
           <p className="text-muted-foreground">
             Visão geral das operações e métricas em tempo real
           </p>
@@ -235,11 +239,15 @@ export default function ClinicDashboard() {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="font-medium text-sm">Pacientes Total</CardTitle>
+            <CardTitle className="font-medium text-sm">
+              Pacientes Total
+            </CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="font-bold text-2xl">{metrics.totalPatients.toLocaleString()}</div>
+            <div className="font-bold text-2xl">
+              {metrics.totalPatients.toLocaleString()}
+            </div>
             <p className="text-muted-foreground text-xs">
               <TrendingUp className="mr-1 inline h-3 w-3" />
               +12% desde o mês passado
@@ -249,11 +257,15 @@ export default function ClinicDashboard() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="font-medium text-sm">Consultas Hoje</CardTitle>
+            <CardTitle className="font-medium text-sm">
+              Consultas Hoje
+            </CardTitle>
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="font-bold text-2xl">{metrics.appointmentsToday}</div>
+            <div className="font-bold text-2xl">
+              {metrics.appointmentsToday}
+            </div>
             <p className="text-muted-foreground text-xs">
               {metrics.completedAppointments} concluídas este mês
             </p>
@@ -262,11 +274,15 @@ export default function ClinicDashboard() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="font-medium text-sm">Receita Mensal</CardTitle>
+            <CardTitle className="font-medium text-sm">
+              Receita Mensal
+            </CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="font-bold text-2xl">{formatCurrency(metrics.revenue)}</div>
+            <div className="font-bold text-2xl">
+              {formatCurrency(metrics.revenue)}
+            </div>
             <p className="text-muted-foreground text-xs">
               <TrendingUp className="mr-1 inline h-3 w-3" />
               +8% desde o mês passado
@@ -280,8 +296,12 @@ export default function ClinicDashboard() {
             <Star className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="font-bold text-2xl">{metrics.patientSatisfaction}/5.0</div>
-            <p className="text-muted-foreground text-xs">Baseado em 127 avaliações</p>
+            <div className="font-bold text-2xl">
+              {metrics.patientSatisfaction}/5.0
+            </div>
+            <p className="text-muted-foreground text-xs">
+              Baseado em 127 avaliações
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -291,15 +311,19 @@ export default function ClinicDashboard() {
         <Card>
           <CardHeader>
             <CardTitle>Ocupação da Clínica</CardTitle>
-            <CardDescription>Taxa de ocupação e tempo médio de espera</CardDescription>
+            <CardDescription>
+              Taxa de ocupação e tempo médio de espera
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
               <div className="mb-2 flex items-center justify-between">
                 <span className="font-medium text-sm">Taxa de Ocupação</span>
-                <span className="text-muted-foreground text-sm">{metrics.occupancyRate}%</span>
+                <span className="text-muted-foreground text-sm">
+                  {metrics.occupancyRate}%
+                </span>
               </div>
-              <Progress value={metrics.occupancyRate} className="h-2" />
+              <Progress className="h-2" value={metrics.occupancyRate} />
             </div>
 
             <div className="flex items-center justify-between">
@@ -307,15 +331,17 @@ export default function ClinicDashboard() {
                 <Clock className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm">Tempo médio de espera</span>
               </div>
-              <span className="font-medium text-sm">{metrics.averageWaitTime} min</span>
+              <span className="font-medium text-sm">
+                {metrics.averageWaitTime} min
+              </span>
             </div>
 
             <Alert>
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
                 {metrics.occupancyRate > 85
-                  ? "Alta ocupação - considere otimizar os agendamentos"
-                  : "Ocupação normal - fluxo de pacientes adequado"}
+                  ? 'Alta ocupação - considere otimizar os agendamentos'
+                  : 'Ocupação normal - fluxo de pacientes adequado'}
               </AlertDescription>
             </Alert>
           </CardContent>
@@ -331,8 +357,10 @@ export default function ClinicDashboard() {
               <div className="mb-2 font-bold text-3xl text-orange-600">
                 {metrics.pendingResults}
               </div>
-              <p className="mb-4 text-muted-foreground text-sm">exames pendentes de análise</p>
-              <Button variant="outline" className="w-full">
+              <p className="mb-4 text-muted-foreground text-sm">
+                exames pendentes de análise
+              </p>
+              <Button className="w-full" variant="outline">
                 <FileText className="mr-2 h-4 w-4" />
                 Ver Todos os Resultados
               </Button>
@@ -341,7 +369,7 @@ export default function ClinicDashboard() {
         </Card>
       </div>
 
-      <Tabs defaultValue="doctors" className="space-y-6">
+      <Tabs className="space-y-6" defaultValue="doctors">
         <TabsList>
           <TabsTrigger value="doctors">Equipe Médica</TabsTrigger>
           <TabsTrigger value="activities">Atividades Recentes</TabsTrigger>
@@ -349,32 +377,36 @@ export default function ClinicDashboard() {
         </TabsList>
 
         {/* Doctors Tab */}
-        <TabsContent value="doctors" className="space-y-6">
+        <TabsContent className="space-y-6" value="doctors">
           <Card>
             <CardHeader>
               <CardTitle>Status da Equipe Médica</CardTitle>
-              <CardDescription>Disponibilidade e performance dos médicos</CardDescription>
+              <CardDescription>
+                Disponibilidade e performance dos médicos
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {doctors.map((doctor) => (
                   <div
-                    key={doctor.id}
                     className="flex items-center justify-between rounded-lg border p-4"
+                    key={doctor.id}
                   >
                     <div className="flex items-center space-x-4">
                       <Avatar>
                         <AvatarImage src={doctor.avatar} />
                         <AvatarFallback>
                           {doctor.name
-                            .split(" ")
+                            .split(' ')
                             .map((n) => n[0])
-                            .join("")}
+                            .join('')}
                         </AvatarFallback>
                       </Avatar>
                       <div>
                         <h4 className="font-medium">{doctor.name}</h4>
-                        <p className="text-muted-foreground text-sm">{doctor.specialty}</p>
+                        <p className="text-muted-foreground text-sm">
+                          {doctor.specialty}
+                        </p>
                         <div className="mt-1 flex items-center space-x-4">
                           <span className="text-muted-foreground text-xs">
                             {doctor.appointmentsToday} consultas hoje
@@ -391,7 +423,7 @@ export default function ClinicDashboard() {
                     </div>
                     <div className="flex items-center space-x-2">
                       {getAvailabilityBadge(doctor.availability)}
-                      <Button variant="outline" size="sm">
+                      <Button size="sm" variant="outline">
                         Ver Agenda
                       </Button>
                     </div>
@@ -403,16 +435,18 @@ export default function ClinicDashboard() {
         </TabsContent>
 
         {/* Activities Tab */}
-        <TabsContent value="activities" className="space-y-6">
+        <TabsContent className="space-y-6" value="activities">
           <Card>
             <CardHeader>
               <CardTitle>Atividades Recentes</CardTitle>
-              <CardDescription>Últimas ações e eventos na clínica</CardDescription>
+              <CardDescription>
+                Últimas ações e eventos na clínica
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {activities.map((activity) => (
-                  <div key={activity.id} className="flex items-start space-x-4">
+                  <div className="flex items-start space-x-4" key={activity.id}>
                     <div
                       className={`rounded-full p-2 ${getActivityStatusColor(activity.status)} bg-opacity-10`}
                     >
@@ -432,7 +466,7 @@ export default function ClinicDashboard() {
         </TabsContent>
 
         {/* Analytics Tab */}
-        <TabsContent value="analytics" className="space-y-6">
+        <TabsContent className="space-y-6" value="analytics">
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             <Card>
               <CardHeader>

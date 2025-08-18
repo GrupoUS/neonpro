@@ -1,43 +1,42 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Button,
-  Badge,
-  Progress,
   Alert,
   AlertDescription,
   Avatar,
   AvatarFallback,
   AvatarImage,
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Progress,
   Separator,
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@neonpro/ui";
-
+} from '@neonpro/ui';
 import {
-  Heart,
-  Calendar,
   Activity,
-  FileText,
-  Pill,
-  Clock,
-  CheckCircle,
   AlertCircle,
-  TrendingUp,
-  User,
-  Phone,
+  Calendar,
+  CheckCircle,
+  Clock,
+  FileText,
+  Heart,
   Mail,
   MapPin,
+  Phone,
+  Pill,
   Star,
-} from "lucide-react";
+  TrendingUp,
+  User,
+} from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 
 interface PatientInfo {
   id: string;
@@ -56,21 +55,21 @@ interface HealthMetrics {
     systolic: number;
     diastolic: number;
     date: Date;
-    status: "normal" | "high" | "low";
+    status: 'normal' | 'high' | 'low';
   };
   heartRate: {
     value: number;
     date: Date;
-    status: "normal" | "high" | "low";
+    status: 'normal' | 'high' | 'low';
   };
   weight: {
     value: number;
     date: Date;
-    trend: "up" | "down" | "stable";
+    trend: 'up' | 'down' | 'stable';
   };
   bmi: {
     value: number;
-    category: "underweight" | "normal" | "overweight" | "obese";
+    category: 'underweight' | 'normal' | 'overweight' | 'obese';
   };
 }
 
@@ -81,7 +80,7 @@ interface Appointment {
   doctor: string;
   specialty: string;
   type: string;
-  status: "scheduled" | "completed" | "cancelled";
+  status: 'scheduled' | 'completed' | 'cancelled';
 }
 
 interface Medication {
@@ -92,18 +91,18 @@ interface Medication {
   startDate: Date;
   endDate?: Date;
   prescribedBy: string;
-  status: "active" | "completed" | "paused";
+  status: 'active' | 'completed' | 'paused';
 }
 
 const MOCK_PATIENT: PatientInfo = {
-  id: "1",
-  name: "Maria Silva Santos",
-  email: "maria.santos@email.com",
-  phone: "(11) 99999-9999",
-  dateOfBirth: "1985-03-15",
-  address: "Rua das Flores, 123 - São Paulo, SP",
-  emergencyContact: "João Santos",
-  emergencyPhone: "(11) 88888-8888",
+  id: '1',
+  name: 'Maria Silva Santos',
+  email: 'maria.santos@email.com',
+  phone: '(11) 99999-9999',
+  dateOfBirth: '1985-03-15',
+  address: 'Rua das Flores, 123 - São Paulo, SP',
+  emergencyContact: 'João Santos',
+  emergencyPhone: '(11) 88888-8888',
 };
 
 const MOCK_HEALTH_METRICS: HealthMetrics = {
@@ -111,63 +110,63 @@ const MOCK_HEALTH_METRICS: HealthMetrics = {
     systolic: 125,
     diastolic: 80,
     date: new Date(),
-    status: "normal",
+    status: 'normal',
   },
   heartRate: {
     value: 72,
     date: new Date(),
-    status: "normal",
+    status: 'normal',
   },
   weight: {
     value: 65.2,
     date: new Date(),
-    trend: "stable",
+    trend: 'stable',
   },
   bmi: {
     value: 23.4,
-    category: "normal",
+    category: 'normal',
   },
 };
 
 const MOCK_APPOINTMENTS: Appointment[] = [
   {
-    id: "1",
+    id: '1',
     date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-    time: "14:30",
-    doctor: "Dr. Ana Silva",
-    specialty: "Cardiologia",
-    type: "Consulta de retorno",
-    status: "scheduled",
+    time: '14:30',
+    doctor: 'Dr. Ana Silva',
+    specialty: 'Cardiologia',
+    type: 'Consulta de retorno',
+    status: 'scheduled',
   },
   {
-    id: "2",
+    id: '2',
     date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-    time: "09:00",
-    doctor: "Dr. João Santos",
-    specialty: "Clínica Geral",
-    type: "Consulta de rotina",
-    status: "completed",
+    time: '09:00',
+    doctor: 'Dr. João Santos',
+    specialty: 'Clínica Geral',
+    type: 'Consulta de rotina',
+    status: 'completed',
   },
 ];
 
 const MOCK_MEDICATIONS: Medication[] = [
   {
-    id: "1",
-    name: "Losartana",
-    dosage: "50mg",
-    frequency: "1x ao dia",
+    id: '1',
+    name: 'Losartana',
+    dosage: '50mg',
+    frequency: '1x ao dia',
     startDate: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000),
-    prescribedBy: "Dr. Ana Silva",
-    status: "active",
+    prescribedBy: 'Dr. Ana Silva',
+    status: 'active',
   },
   {
-    id: "2",
-    name: "Vitamina D",
-    dosage: "2000 UI",
-    frequency: "1x ao dia",
+    id: '2',
+    name: 'Vitamina D',
+    dosage: '2000 UI',
+    frequency: '1x ao dia',
     startDate: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000),
-    prescribedBy: "Dr. João Santos",
-    status: "active",
+    prescribedBy: 'Dr. João Santos',
+    status: 'active',
   },
 ];
 
@@ -183,7 +182,10 @@ export default function PatientDashboard() {
     let age = today.getFullYear() - birth.getFullYear();
     const monthDiff = today.getMonth() - birth.getMonth();
 
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birth.getDate())
+    ) {
       age--;
     }
 
@@ -192,30 +194,35 @@ export default function PatientDashboard() {
 
   const getStatusBadge = (status: string) => {
     const variants = {
-      normal: "bg-green-100 text-green-800",
-      high: "bg-red-100 text-red-800",
-      low: "bg-blue-100 text-blue-800",
-      scheduled: "bg-blue-100 text-blue-800",
-      completed: "bg-green-100 text-green-800",
-      cancelled: "bg-red-100 text-red-800",
-      active: "bg-green-100 text-green-800",
-      paused: "bg-yellow-100 text-yellow-800",
-      completed: "bg-gray-100 text-gray-800",
+      normal: 'bg-green-100 text-green-800',
+      high: 'bg-red-100 text-red-800',
+      low: 'bg-blue-100 text-blue-800',
+      scheduled: 'bg-blue-100 text-blue-800',
+      completed: 'bg-green-100 text-green-800',
+      cancelled: 'bg-red-100 text-red-800',
+      active: 'bg-green-100 text-green-800',
+      paused: 'bg-yellow-100 text-yellow-800',
+      completed: 'bg-gray-100 text-gray-800',
     };
 
     const labels = {
-      normal: "Normal",
-      high: "Alto",
-      low: "Baixo",
-      scheduled: "Agendado",
-      completed: "Concluído",
-      cancelled: "Cancelado",
-      active: "Ativo",
-      paused: "Pausado",
+      normal: 'Normal',
+      high: 'Alto',
+      low: 'Baixo',
+      scheduled: 'Agendado',
+      completed: 'Concluído',
+      cancelled: 'Cancelado',
+      active: 'Ativo',
+      paused: 'Pausado',
     };
 
     return (
-      <Badge className={variants[status as keyof typeof variants] || "bg-gray-100 text-gray-800"}>
+      <Badge
+        className={
+          variants[status as keyof typeof variants] ||
+          'bg-gray-100 text-gray-800'
+        }
+      >
         {labels[status as keyof typeof labels] || status}
       </Badge>
     );
@@ -223,35 +230,37 @@ export default function PatientDashboard() {
 
   const getBMIColor = (category: string) => {
     switch (category) {
-      case "underweight":
-        return "text-blue-600";
-      case "normal":
-        return "text-green-600";
-      case "overweight":
-        return "text-yellow-600";
-      case "obese":
-        return "text-red-600";
+      case 'underweight':
+        return 'text-blue-600';
+      case 'normal':
+        return 'text-green-600';
+      case 'overweight':
+        return 'text-yellow-600';
+      case 'obese':
+        return 'text-red-600';
       default:
-        return "text-gray-600";
+        return 'text-gray-600';
     }
   };
 
   const getBMILabel = (category: string) => {
     switch (category) {
-      case "underweight":
-        return "Abaixo do peso";
-      case "normal":
-        return "Peso normal";
-      case "overweight":
-        return "Sobrepeso";
-      case "obese":
-        return "Obesidade";
+      case 'underweight':
+        return 'Abaixo do peso';
+      case 'normal':
+        return 'Peso normal';
+      case 'overweight':
+        return 'Sobrepeso';
+      case 'obese':
+        return 'Obesidade';
       default:
-        return "Não classificado";
+        return 'Não classificado';
     }
   };
 
-  const upcomingAppointment = appointments.find((apt) => apt.status === "scheduled");
+  const upcomingAppointment = appointments.find(
+    (apt) => apt.status === 'scheduled'
+  );
 
   return (
     <div className="space-y-6">
@@ -259,15 +268,17 @@ export default function PatientDashboard() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-bold text-3xl tracking-tight">Meu Dashboard</h1>
-          <p className="text-muted-foreground">Bem-vindo de volta, {patient.name.split(" ")[0]}!</p>
+          <p className="text-muted-foreground">
+            Bem-vindo de volta, {patient.name.split(' ')[0]}!
+          </p>
         </div>
         <Avatar className="h-16 w-16">
           <AvatarImage src={patient.avatar} />
           <AvatarFallback className="text-lg">
             {patient.name
-              .split(" ")
+              .split(' ')
               .map((n) => n[0])
-              .join("")}
+              .join('')}
           </AvatarFallback>
         </Avatar>
       </div>
@@ -282,7 +293,9 @@ export default function PatientDashboard() {
               </div>
               <div>
                 <p className="font-medium text-sm">Idade</p>
-                <p className="font-bold text-xl">{calculateAge(patient.dateOfBirth)} anos</p>
+                <p className="font-bold text-xl">
+                  {calculateAge(patient.dateOfBirth)} anos
+                </p>
               </div>
             </div>
           </CardContent>
@@ -297,7 +310,8 @@ export default function PatientDashboard() {
               <div>
                 <p className="font-medium text-sm">Pressão Arterial</p>
                 <p className="font-bold text-xl">
-                  {healthMetrics.bloodPressure.systolic}/{healthMetrics.bloodPressure.diastolic}
+                  {healthMetrics.bloodPressure.systolic}/
+                  {healthMetrics.bloodPressure.diastolic}
                 </p>
               </div>
             </div>
@@ -312,7 +326,9 @@ export default function PatientDashboard() {
               </div>
               <div>
                 <p className="font-medium text-sm">Frequência Cardíaca</p>
-                <p className="font-bold text-xl">{healthMetrics.heartRate.value} bpm</p>
+                <p className="font-bold text-xl">
+                  {healthMetrics.heartRate.value} bpm
+                </p>
               </div>
             </div>
           </CardContent>
@@ -326,7 +342,9 @@ export default function PatientDashboard() {
               </div>
               <div>
                 <p className="font-medium text-sm">IMC</p>
-                <p className={`font-bold text-xl ${getBMIColor(healthMetrics.bmi.category)}`}>
+                <p
+                  className={`font-bold text-xl ${getBMIColor(healthMetrics.bmi.category)}`}
+                >
                   {healthMetrics.bmi.value}
                 </p>
               </div>
@@ -341,13 +359,14 @@ export default function PatientDashboard() {
           <Calendar className="h-4 w-4" />
           <AlertDescription>
             <strong>Próxima consulta:</strong> {upcomingAppointment.doctor} (
-            {upcomingAppointment.specialty}) -{" "}
-            {upcomingAppointment.date.toLocaleDateString("pt-BR")} às {upcomingAppointment.time}
+            {upcomingAppointment.specialty}) -{' '}
+            {upcomingAppointment.date.toLocaleDateString('pt-BR')} às{' '}
+            {upcomingAppointment.time}
           </AlertDescription>
         </Alert>
       )}
 
-      <Tabs defaultValue="health" className="space-y-6">
+      <Tabs className="space-y-6" defaultValue="health">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="health">Saúde</TabsTrigger>
           <TabsTrigger value="appointments">Consultas</TabsTrigger>
@@ -356,23 +375,27 @@ export default function PatientDashboard() {
         </TabsList>
 
         {/* Health Tab */}
-        <TabsContent value="health" className="space-y-6">
+        <TabsContent className="space-y-6" value="health">
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             <Card>
               <CardHeader>
                 <CardTitle>Métricas de Saúde</CardTitle>
-                <CardDescription>Seus indicadores vitais atuais</CardDescription>
+                <CardDescription>
+                  Seus indicadores vitais atuais
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
                     <Heart className="h-4 w-4 text-red-500" />
-                    <span className="font-medium text-sm">Pressão Arterial</span>
+                    <span className="font-medium text-sm">
+                      Pressão Arterial
+                    </span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <span className="font-medium">
-                      {healthMetrics.bloodPressure.systolic}/{healthMetrics.bloodPressure.diastolic}{" "}
-                      mmHg
+                      {healthMetrics.bloodPressure.systolic}/
+                      {healthMetrics.bloodPressure.diastolic} mmHg
                     </span>
                     {getStatusBadge(healthMetrics.bloodPressure.status)}
                   </div>
@@ -381,10 +404,14 @@ export default function PatientDashboard() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
                     <Activity className="h-4 w-4 text-blue-500" />
-                    <span className="font-medium text-sm">Frequência Cardíaca</span>
+                    <span className="font-medium text-sm">
+                      Frequência Cardíaca
+                    </span>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <span className="font-medium">{healthMetrics.heartRate.value} bpm</span>
+                    <span className="font-medium">
+                      {healthMetrics.heartRate.value} bpm
+                    </span>
                     {getStatusBadge(healthMetrics.heartRate.status)}
                   </div>
                 </div>
@@ -395,13 +422,15 @@ export default function PatientDashboard() {
                     <span className="font-medium text-sm">Peso</span>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <span className="font-medium">{healthMetrics.weight.value} kg</span>
+                    <span className="font-medium">
+                      {healthMetrics.weight.value} kg
+                    </span>
                     <Badge variant="outline">
-                      {healthMetrics.weight.trend === "stable"
-                        ? "Estável"
-                        : healthMetrics.weight.trend === "up"
-                          ? "Subindo"
-                          : "Descendo"}
+                      {healthMetrics.weight.trend === 'stable'
+                        ? 'Estável'
+                        : healthMetrics.weight.trend === 'up'
+                          ? 'Subindo'
+                          : 'Descendo'}
                     </Badge>
                   </div>
                 </div>
@@ -410,14 +439,22 @@ export default function PatientDashboard() {
 
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="font-medium text-sm">Índice de Massa Corporal (IMC)</span>
-                    <span className={`font-bold ${getBMIColor(healthMetrics.bmi.category)}`}>
+                    <span className="font-medium text-sm">
+                      Índice de Massa Corporal (IMC)
+                    </span>
+                    <span
+                      className={`font-bold ${getBMIColor(healthMetrics.bmi.category)}`}
+                    >
                       {healthMetrics.bmi.value}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground text-xs">Classificação</span>
-                    <span className={`text-sm ${getBMIColor(healthMetrics.bmi.category)}`}>
+                    <span className="text-muted-foreground text-xs">
+                      Classificação
+                    </span>
+                    <span
+                      className={`text-sm ${getBMIColor(healthMetrics.bmi.category)}`}
+                    >
                       {getBMILabel(healthMetrics.bmi.category)}
                     </span>
                   </div>
@@ -441,18 +478,20 @@ export default function PatientDashboard() {
         </TabsContent>
 
         {/* Appointments Tab */}
-        <TabsContent value="appointments" className="space-y-6">
+        <TabsContent className="space-y-6" value="appointments">
           <Card>
             <CardHeader>
               <CardTitle>Minhas Consultas</CardTitle>
-              <CardDescription>Histórico e próximos agendamentos</CardDescription>
+              <CardDescription>
+                Histórico e próximos agendamentos
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {appointments.map((appointment) => (
                   <div
-                    key={appointment.id}
                     className="flex items-center justify-between rounded-lg border p-4"
+                    key={appointment.id}
                   >
                     <div className="flex items-center space-x-4">
                       <div className="rounded-full bg-blue-100 p-2">
@@ -460,19 +499,25 @@ export default function PatientDashboard() {
                       </div>
                       <div>
                         <h4 className="font-medium">{appointment.doctor}</h4>
-                        <p className="text-muted-foreground text-sm">{appointment.specialty}</p>
-                        <p className="text-muted-foreground text-sm">{appointment.type}</p>
+                        <p className="text-muted-foreground text-sm">
+                          {appointment.specialty}
+                        </p>
+                        <p className="text-muted-foreground text-sm">
+                          {appointment.type}
+                        </p>
                         <div className="mt-1 flex items-center space-x-4">
                           <span className="text-muted-foreground text-xs">
-                            {appointment.date.toLocaleDateString("pt-BR")}
+                            {appointment.date.toLocaleDateString('pt-BR')}
                           </span>
-                          <span className="text-muted-foreground text-xs">{appointment.time}</span>
+                          <span className="text-muted-foreground text-xs">
+                            {appointment.time}
+                          </span>
                         </div>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
                       {getStatusBadge(appointment.status)}
-                      <Button variant="outline" size="sm">
+                      <Button size="sm" variant="outline">
                         Detalhes
                       </Button>
                     </div>
@@ -484,18 +529,20 @@ export default function PatientDashboard() {
         </TabsContent>
 
         {/* Medications Tab */}
-        <TabsContent value="medications" className="space-y-6">
+        <TabsContent className="space-y-6" value="medications">
           <Card>
             <CardHeader>
               <CardTitle>Medicações Atuais</CardTitle>
-              <CardDescription>Medicamentos prescritos e em uso</CardDescription>
+              <CardDescription>
+                Medicamentos prescritos e em uso
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {medications.map((medication) => (
                   <div
-                    key={medication.id}
                     className="flex items-center justify-between rounded-lg border p-4"
+                    key={medication.id}
                   >
                     <div className="flex items-center space-x-4">
                       <div className="rounded-full bg-green-100 p-2">
@@ -505,18 +552,21 @@ export default function PatientDashboard() {
                         <h4 className="font-medium">
                           {medication.name} {medication.dosage}
                         </h4>
-                        <p className="text-muted-foreground text-sm">{medication.frequency}</p>
+                        <p className="text-muted-foreground text-sm">
+                          {medication.frequency}
+                        </p>
                         <p className="text-muted-foreground text-xs">
                           Prescrito por {medication.prescribedBy}
                         </p>
                         <p className="text-muted-foreground text-xs">
-                          Desde {medication.startDate.toLocaleDateString("pt-BR")}
+                          Desde{' '}
+                          {medication.startDate.toLocaleDateString('pt-BR')}
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
                       {getStatusBadge(medication.status)}
-                      <Button variant="outline" size="sm">
+                      <Button size="sm" variant="outline">
                         Detalhes
                       </Button>
                     </div>
@@ -527,8 +577,8 @@ export default function PatientDashboard() {
               <Alert>
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
-                  <strong>Lembre-se:</strong> Sempre consulte seu médico antes de alterar ou
-                  interromper medicações.
+                  <strong>Lembre-se:</strong> Sempre consulte seu médico antes
+                  de alterar ou interromper medicações.
                 </AlertDescription>
               </Alert>
             </CardContent>
@@ -536,7 +586,7 @@ export default function PatientDashboard() {
         </TabsContent>
 
         {/* Profile Tab */}
-        <TabsContent value="profile" className="space-y-6">
+        <TabsContent className="space-y-6" value="profile">
           <Card>
             <CardHeader>
               <CardTitle>Informações Pessoais</CardTitle>
@@ -548,21 +598,27 @@ export default function PatientDashboard() {
                   <User className="h-4 w-4 text-muted-foreground" />
                   <div>
                     <p className="font-medium text-sm">Nome</p>
-                    <p className="text-muted-foreground text-sm">{patient.name}</p>
+                    <p className="text-muted-foreground text-sm">
+                      {patient.name}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Mail className="h-4 w-4 text-muted-foreground" />
                   <div>
                     <p className="font-medium text-sm">Email</p>
-                    <p className="text-muted-foreground text-sm">{patient.email}</p>
+                    <p className="text-muted-foreground text-sm">
+                      {patient.email}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Phone className="h-4 w-4 text-muted-foreground" />
                   <div>
                     <p className="font-medium text-sm">Telefone</p>
-                    <p className="text-muted-foreground text-sm">{patient.phone}</p>
+                    <p className="text-muted-foreground text-sm">
+                      {patient.phone}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -570,7 +626,9 @@ export default function PatientDashboard() {
                   <div>
                     <p className="font-medium text-sm">Data de Nascimento</p>
                     <p className="text-muted-foreground text-sm">
-                      {new Date(patient.dateOfBirth).toLocaleDateString("pt-BR")}
+                      {new Date(patient.dateOfBirth).toLocaleDateString(
+                        'pt-BR'
+                      )}
                     </p>
                   </div>
                 </div>
@@ -583,7 +641,9 @@ export default function PatientDashboard() {
                   <MapPin className="mt-0.5 h-4 w-4 text-muted-foreground" />
                   <div>
                     <p className="font-medium text-sm">Endereço</p>
-                    <p className="text-muted-foreground text-sm">{patient.address}</p>
+                    <p className="text-muted-foreground text-sm">
+                      {patient.address}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -597,14 +657,18 @@ export default function PatientDashboard() {
                     <User className="h-4 w-4 text-muted-foreground" />
                     <div>
                       <p className="font-medium text-sm">Nome</p>
-                      <p className="text-muted-foreground text-sm">{patient.emergencyContact}</p>
+                      <p className="text-muted-foreground text-sm">
+                        {patient.emergencyContact}
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Phone className="h-4 w-4 text-muted-foreground" />
                     <div>
                       <p className="font-medium text-sm">Telefone</p>
-                      <p className="text-muted-foreground text-sm">{patient.emergencyPhone}</p>
+                      <p className="text-muted-foreground text-sm">
+                        {patient.emergencyPhone}
+                      </p>
                     </div>
                   </div>
                 </div>

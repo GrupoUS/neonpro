@@ -166,7 +166,7 @@ export class OpenAPIGenerator {
     while ((match = interfaceRegex.exec(content)) !== null) {
       const [, interfaceName, interfaceBody] = match;
 
-      if (!interfaceName || !interfaceBody) {
+      if (!(interfaceName && interfaceBody)) {
         continue;
       }
 
@@ -196,7 +196,7 @@ export class OpenAPIGenerator {
     while ((match = propertyRegex.exec(interfaceBody)) !== null) {
       const [, propName, optional, propType] = match;
 
-      if (!propName || !propType) {
+      if (!(propName && propType)) {
         continue;
       }
 

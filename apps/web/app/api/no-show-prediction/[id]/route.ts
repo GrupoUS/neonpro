@@ -1,10 +1,10 @@
 // Story 11.2: Individual No-Show Prediction API Routes
 // CRUD operations for specific predictions
 
-import { type NextRequest, NextResponse } from "next/server";
-import { noShowPredictionEngine } from "@/app/lib/services/no-show-prediction";
-import { UpdatePredictionInputSchema } from "@/app/lib/validations/no-show-prediction";
-import { createClient } from "@/app/utils/supabase/server";
+import { type NextRequest, NextResponse } from 'next/server';
+import { noShowPredictionEngine } from '@/app/lib/services/no-show-prediction';
+import { UpdatePredictionInputSchema } from '@/app/lib/validations/no-show-prediction';
+import { createClient } from '@/app/utils/supabase/server';
 
 type RouteParams = {
   params: Promise<{
@@ -21,13 +21,16 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     } = await supabase.auth.getSession();
 
     if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const prediction = await noShowPredictionEngine.getPrediction(id);
 
     if (!prediction) {
-      return NextResponse.json({ error: "Prediction not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Prediction not found' },
+        { status: 404 }
+      );
     }
 
     // Get related data
@@ -38,7 +41,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
 
     // Get appointment details
     const { data: appointment } = await supabase
-      .from("appointments")
+      .from('appointments')
       .select(
         `
         *,
@@ -59,9 +62,9 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
           full_name,
           professional_title
         )
-      `,
+      `
       )
-      .eq("id", prediction.appointment_id)
+      .eq('id', prediction.appointment_id)
       .single();
 
     return NextResponse.json({
@@ -72,7 +75,10 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
       confidence_breakdown: prediction.factors_analyzed,
     });
   } catch (_error) {
-    return NextResponse.json({ error: "Failed to fetch prediction" }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch prediction' },
+      { status: 500 }
+    );
   }
 }
 
@@ -85,7 +91,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     } = await supabase.auth.getSession();
 
     if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
@@ -94,11 +100,17 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     // Check if prediction exists
     const existingPrediction = await noShowPredictionEngine.getPrediction(id);
     if (!existingPrediction) {
-      return NextResponse.json({ error: "Prediction not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Prediction not found' },
+        { status: 404 }
+      );
     }
 
     // Update the prediction
-    const updatedPrediction = await noShowPredictionEngine.updatePrediction(id, validatedInput);
+    const updatedPrediction = await noShowPredictionEngine.updatePrediction(
+      id,
+      validatedInput
+    );
 
     // If actual outcome was provided, update model performance metrics
     if (validatedInput.actual_outcome && !existingPrediction.actual_outcome) {
@@ -108,7 +120,9 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     // Get updated related data
     const [riskFactors, interventions] = await Promise.all([
-      noShowPredictionEngine.getRiskFactorsByPatient(updatedPrediction.patient_id),
+      noShowPredictionEngine.getRiskFactorsByPatient(
+        updatedPrediction.patient_id
+      ),
       noShowPredictionEngine.getRecommendedInterventions(updatedPrediction.id),
     ]);
 
@@ -116,17 +130,20 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       prediction: updatedPrediction,
       risk_factors: riskFactors,
       interventions,
-      message: "Prediction updated successfully",
+      message: 'Prediction updated successfully',
     });
   } catch (error) {
-    if (error instanceof Error && error.message.includes("validation")) {
+    if (error instanceof Error && error.message.includes('validation')) {
       return NextResponse.json(
-        { error: "Invalid input data", details: error.message },
-        { status: 400 },
+        { error: 'Invalid input data', details: error.message },
+        { status: 400 }
       );
     }
 
-    return NextResponse.json({ error: "Failed to update prediction" }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to update prediction' },
+      { status: 500 }
+    );
   }
 }
 
@@ -139,26 +156,38 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
     } = await supabase.auth.getSession();
 
     if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Check if prediction exists
     const existingPrediction = await noShowPredictionEngine.getPrediction(id);
     if (!existingPrediction) {
-      return NextResponse.json({ error: "Prediction not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Prediction not found' },
+        { status: 404 }
+      );
     }
 
     // Delete the prediction (cascade will handle related interventions)
-    const { error } = await supabase.from("no_show_predictions").delete().eq("id", id);
+    const { error } = await supabase
+      .from('no_show_predictions')
+      .delete()
+      .eq('id', id);
 
     if (error) {
-      return NextResponse.json({ error: "Failed to delete prediction" }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to delete prediction' },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({
-      message: "Prediction deleted successfully",
+      message: 'Prediction deleted successfully',
     });
   } catch (_error) {
-    return NextResponse.json({ error: "Failed to delete prediction" }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to delete prediction' },
+      { status: 500 }
+    );
   }
 }

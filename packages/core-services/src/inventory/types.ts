@@ -1,5 +1,12 @@
 import { z } from 'zod';
-import { BaseEntity, InventoryStatus, UUIDSchema, DateSchema, PositiveNumberSchema, NonNegativeNumberSchema } from '../types';
+import {
+  type BaseEntity,
+  DateSchema,
+  type InventoryStatus,
+  NonNegativeNumberSchema,
+  PositiveNumberSchema,
+  UUIDSchema,
+} from '../types';
 
 // Product and inventory interfaces for aesthetic clinic
 export interface Product extends BaseEntity {
@@ -50,7 +57,8 @@ export interface StockMovement extends BaseEntity {
   reason: string;
   reference?: string; // appointment ID, treatment session ID, etc.
   performedBy: string;
-}export interface Supplier extends BaseEntity {
+}
+export interface Supplier extends BaseEntity {
   name: string;
   contactPerson: string;
   email: string;
@@ -115,7 +123,8 @@ export interface StorageRequirements {
   requiresRefrigeration: boolean;
   requiresFreezing: boolean;
   specialInstructions?: string;
-}export interface RegulatoryInfo {
+}
+export interface RegulatoryInfo {
   fdaApproved: boolean;
   anvisaApproved: boolean;
   ceMarking: boolean;
@@ -157,7 +166,7 @@ export enum ProductCategory {
   MEDICAL_DEVICES = 'medical_devices',
   SAFETY_EQUIPMENT = 'safety_equipment',
   CLEANING_SUPPLIES = 'cleaning_supplies',
-  OFFICE_SUPPLIES = 'office_supplies'
+  OFFICE_SUPPLIES = 'office_supplies',
 }
 
 export enum ProductType {
@@ -166,24 +175,24 @@ export enum ProductType {
   HYALURONIC_ACID = 'hyaluronic_acid',
   CALCIUM_HYDROXYLAPATITE = 'calcium_hydroxylapatite',
   POLY_L_LACTIC_ACID = 'poly_l_lactic_acid',
-  
+
   // Skincare
   CLEANSER = 'cleanser',
   MOISTURIZER = 'moisturizer',
   SERUM = 'serum',
   SUNSCREEN = 'sunscreen',
   CHEMICAL_PEEL = 'chemical_peel',
-  
+
   // Equipment
   LASER_TIP = 'laser_tip',
   CANNULA = 'cannula',
   NEEDLE = 'needle',
   SYRINGE = 'syringe',
-  
+
   // Other
   CONSUMABLE = 'consumable',
   EQUIPMENT = 'equipment',
-  MEDICATION = 'medication'
+  MEDICATION = 'medication',
 }
 
 export enum UnitOfMeasure {
@@ -194,8 +203,9 @@ export enum UnitOfMeasure {
   PIECES = 'pieces',
   BOTTLES = 'bottles',
   BOXES = 'boxes',
-  VIALS = 'vials'
-}export enum MovementType {
+  VIALS = 'vials',
+}
+export enum MovementType {
   RECEIVED = 'received',
   USED = 'used',
   EXPIRED = 'expired',
@@ -203,7 +213,7 @@ export enum UnitOfMeasure {
   RETURNED = 'returned',
   TRANSFERRED = 'transferred',
   ADJUSTMENT = 'adjustment',
-  DISPOSED = 'disposed'
+  DISPOSED = 'disposed',
 }
 
 export enum OrderStatus {
@@ -213,7 +223,7 @@ export enum OrderStatus {
   SENT = 'sent',
   PARTIALLY_RECEIVED = 'partially_received',
   RECEIVED = 'received',
-  CANCELLED = 'cancelled'
+  CANCELLED = 'cancelled',
 }
 
 export enum AlertType {
@@ -222,14 +232,14 @@ export enum AlertType {
   EXPIRING_SOON = 'expiring_soon',
   EXPIRED = 'expired',
   TEMPERATURE_ALERT = 'temperature_alert',
-  HUMIDITY_ALERT = 'humidity_alert'
+  HUMIDITY_ALERT = 'humidity_alert',
 }
 
 export enum AlertSeverity {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
-  CRITICAL = 'critical'
+  CRITICAL = 'critical',
 }
 
 // Validation schemas
@@ -250,7 +260,7 @@ export const CreateProductSchema = z.object({
   shelfLifeDays: PositiveNumberSchema,
   requiresBatch: z.boolean().default(false),
   requiresSerial: z.boolean().default(false),
-  isActive: z.boolean().default(true)
+  isActive: z.boolean().default(true),
 });
 
 export const CreateStockItemSchema = z.object({
@@ -263,7 +273,7 @@ export const CreateStockItemSchema = z.object({
   receivedDate: DateSchema,
   supplierId: UUIDSchema,
   locationId: z.string(),
-  notes: z.string().optional()
+  notes: z.string().optional(),
 });
 
 export const CreateSupplierSchema = z.object({
@@ -276,14 +286,14 @@ export const CreateSupplierSchema = z.object({
     city: z.string().min(1),
     state: z.string().min(1),
     zipCode: z.string().min(1),
-    country: z.string().min(1)
+    country: z.string().min(1),
   }),
   paymentTerms: z.string().min(1),
   deliveryDays: z.number().min(1).max(365),
   minimumOrder: PositiveNumberSchema.optional(),
   isActive: z.boolean().default(true),
   rating: z.number().min(1).max(5).default(3),
-  notes: z.string().optional()
+  notes: z.string().optional(),
 });
 
 export type CreateProductData = z.infer<typeof CreateProductSchema>;

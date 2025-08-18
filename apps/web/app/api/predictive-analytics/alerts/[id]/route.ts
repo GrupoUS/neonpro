@@ -1,9 +1,12 @@
-import { type NextRequest, NextResponse } from "next/server";
-import { PredictiveAnalyticsService } from "@/app/lib/services/predictive-analytics";
+import { type NextRequest, NextResponse } from 'next/server';
+import { PredictiveAnalyticsService } from '@/app/lib/services/predictive-analytics';
 
 const service = new PredictiveAnalyticsService();
 
-export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     const { id } = await params;
     const body = await request.json();
@@ -12,13 +15,16 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
     return NextResponse.json(alert);
   } catch (_error) {
-    return NextResponse.json({ error: "Erro ao atualizar alerta" }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Erro ao atualizar alerta' },
+      { status: 400 }
+    );
   }
 }
 
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;
@@ -26,6 +32,9 @@ export async function DELETE(
 
     return NextResponse.json({ success: true });
   } catch (_error) {
-    return NextResponse.json({ error: "Erro ao deletar alerta" }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Erro ao deletar alerta' },
+      { status: 400 }
+    );
   }
 }

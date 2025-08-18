@@ -1,17 +1,17 @@
 // Predictive Analytics System for AI Scheduling
 // Advanced analytics for no-show prediction, duration forecasting, and optimization
 
-import {
-  NoShowPrediction,
-  NoShowFactor,
-  PatientHistory,
+import type {
   AIAppointment,
-  TreatmentDuration,
-  SchedulingOptimization,
-  SchedulingMetrics,
+  AlternativeSlot,
+  NoShowFactor,
+  NoShowPrediction,
   OptimizationImprovement,
+  PatientHistory,
+  SchedulingMetrics,
+  SchedulingOptimization,
   TimeSlot,
-  AlternativeSlot
+  TreatmentDuration,
 } from './types';
 
 export interface PredictionModel {
@@ -83,7 +83,10 @@ export class PredictiveAnalytics {
       const probability = this.calculateNoShowProbability(factors);
       const confidence = this.calculatePredictionConfidence(factors);
       const riskLevel = this.categorizeRiskLevel(probability);
-      const recommendedActions = this.generateNoShowMitigationActions(probability, factors);
+      const recommendedActions = this.generateNoShowMitigationActions(
+        probability,
+        factors
+      );
 
       return {
         probability,
@@ -91,19 +94,18 @@ export class PredictiveAnalytics {
         factors,
         riskLevel,
         recommendedActions,
-        lastUpdated: new Date()
+        lastUpdated: new Date(),
       };
-
     } catch (error) {
       console.error('No-show prediction failed:', error);
       // Return conservative prediction on error
       return {
         probability: 0.15, // Default 15% probability
-        confidence: 0.5,   // Low confidence
+        confidence: 0.5, // Low confidence
         factors: [],
         riskLevel: 'medium',
         recommendedActions: ['Send standard reminders'],
-        lastUpdated: new Date()
+        lastUpdated: new Date(),
       };
     }
   }
@@ -126,16 +128,24 @@ export class PredictiveAnalytics {
       );
 
       const durationMultiplier = this.calculateDurationMultiplier(factors);
-      const estimatedMinutes = Math.round(baseDuration.estimatedMinutes * durationMultiplier);
+      const estimatedMinutes = Math.round(
+        baseDuration.estimatedMinutes * durationMultiplier
+      );
       const confidence = this.calculateDurationConfidence(factors);
 
       // Calculate min/max with confidence intervals
       const varianceMinutes = Math.round(estimatedMinutes * 0.2); // ±20% variance
-      const minDuration = Math.max(estimatedMinutes - varianceMinutes, baseDuration.minDuration);
+      const minDuration = Math.max(
+        estimatedMinutes - varianceMinutes,
+        baseDuration.minDuration
+      );
       const maxDuration = estimatedMinutes + varianceMinutes;
 
       // Buffer recommendation based on uncertainty
-      const bufferRecommendation = this.calculateBufferRecommendation(confidence, varianceMinutes);
+      const bufferRecommendation = this.calculateBufferRecommendation(
+        confidence,
+        varianceMinutes
+      );
 
       return {
         estimatedMinutes,
@@ -143,9 +153,8 @@ export class PredictiveAnalytics {
         minDuration,
         maxDuration,
         factors,
-        bufferRecommendation
+        bufferRecommendation,
       };
-
     } catch (error) {
       console.error('Duration prediction failed:', error);
       // Return base duration on error
@@ -155,7 +164,7 @@ export class PredictiveAnalytics {
         minDuration: baseDuration.minDuration,
         maxDuration: baseDuration.maxDuration,
         factors: [],
-        bufferRecommendation: baseDuration.bufferTime
+        bufferRecommendation: baseDuration.bufferTime,
       };
     }
   }
@@ -173,7 +182,7 @@ export class PredictiveAnalytics {
     try {
       // Analyze current schedule performance
       const currentMetrics = this.calculateCurrentMetrics(currentSchedule);
-      
+
       // Identify optimization opportunities
       const timeSlotOptimizations = await this.analyzeTimeSlotOptimizations(
         currentSchedule,
@@ -196,16 +205,18 @@ export class PredictiveAnalytics {
       );
       recommendations.push(...roomOptimizations);
 
-      const sequenceOptimizations = await this.analyzeTreatmentSequenceOptimizations(
-        currentSchedule,
-        currentMetrics,
-        targetMetrics
-      );
+      const sequenceOptimizations =
+        await this.analyzeTreatmentSequenceOptimizations(
+          currentSchedule,
+          currentMetrics,
+          targetMetrics
+        );
       recommendations.push(...sequenceOptimizations);
 
       // Sort by expected impact
-      return recommendations.sort((a, b) => b.expectedImpact - a.expectedImpact);
-
+      return recommendations.sort(
+        (a, b) => b.expectedImpact - a.expectedImpact
+      );
     } catch (error) {
       console.error('Optimization analysis failed:', error);
       return [];
@@ -239,12 +250,11 @@ export class PredictiveAnalytics {
       patterns.push(...staffPatterns);
 
       // Update pattern cache
-      patterns.forEach(pattern => {
+      patterns.forEach((pattern) => {
         this.patterns.set(pattern.patternId, pattern);
       });
 
       return patterns;
-
     } catch (error) {
       console.error('Pattern analysis failed:', error);
       return [];
@@ -261,20 +271,26 @@ export class PredictiveAnalytics {
   ): Promise<SchedulingOptimization> {
     try {
       const originalMetrics = this.calculateCurrentMetrics(currentSchedule);
-      const optimizedMetrics = this.simulateOptimizedMetrics(currentSchedule, proposedChanges);
-      
-      const improvements = this.calculateImprovements(originalMetrics, optimizedMetrics);
+      const optimizedMetrics = this.simulateOptimizedMetrics(
+        currentSchedule,
+        proposedChanges
+      );
+
+      const improvements = this.calculateImprovements(
+        originalMetrics,
+        optimizedMetrics
+      );
       const timeToImplement = this.estimateImplementationTime(proposedChanges);
-      const confidenceLevel = this.calculateOptimizationConfidence(improvements);
+      const confidenceLevel =
+        this.calculateOptimizationConfidence(improvements);
 
       return {
         originalMetrics,
         optimizedMetrics,
         improvements,
         timeToImplement,
-        confidenceLevel
+        confidenceLevel,
       };
-
     } catch (error) {
       console.error('Optimization calculation failed:', error);
       throw new Error('Failed to calculate scheduling optimization');
@@ -293,12 +309,14 @@ export class PredictiveAnalytics {
     const factors: NoShowFactor[] = [];
 
     // Historical no-show rate
-    const historicalRate = patientHistory.noShowCount / Math.max(patientHistory.totalAppointments, 1);
+    const historicalRate =
+      patientHistory.noShowCount /
+      Math.max(patientHistory.totalAppointments, 1);
     factors.push({
       factor: 'historical_no_show_rate',
       weight: 0.3,
       value: historicalRate,
-      impact: historicalRate > 0.2 ? 'negative' : 'positive'
+      impact: historicalRate > 0.2 ? 'negative' : 'positive',
     });
 
     // Punctuality score
@@ -306,7 +324,7 @@ export class PredictiveAnalytics {
       factor: 'punctuality_score',
       weight: 0.25,
       value: patientHistory.punctualityScore / 100,
-      impact: patientHistory.punctualityScore > 80 ? 'positive' : 'negative'
+      impact: patientHistory.punctualityScore > 80 ? 'positive' : 'negative',
     });
 
     // Appointment time factors
@@ -320,16 +338,20 @@ export class PredictiveAnalytics {
     }
 
     // Booking advance time
-    const advanceTime = (appointmentSlot.slot.start.getTime() - Date.now()) / (1000 * 60 * 60 * 24);
+    const advanceTime =
+      (appointmentSlot.slot.start.getTime() - Date.now()) /
+      (1000 * 60 * 60 * 24);
     factors.push({
       factor: 'booking_advance_days',
       weight: 0.15,
       value: Math.min(advanceTime / 14, 1), // Normalize to 14 days
-      impact: advanceTime > 3 && advanceTime < 14 ? 'positive' : 'negative'
+      impact: advanceTime > 3 && advanceTime < 14 ? 'positive' : 'negative',
     });
 
     // Weather factor (if available)
-    const weatherFactor = await this.getWeatherFactor(appointmentSlot.slot.start);
+    const weatherFactor = await this.getWeatherFactor(
+      appointmentSlot.slot.start
+    );
     if (weatherFactor) {
       factors.push(weatherFactor);
     }
@@ -345,7 +367,12 @@ export class PredictiveAnalytics {
     let totalWeight = 0;
 
     for (const factor of factors) {
-      const impactMultiplier = factor.impact === 'negative' ? 1 : factor.impact === 'positive' ? -0.5 : 0;
+      const impactMultiplier =
+        factor.impact === 'negative'
+          ? 1
+          : factor.impact === 'positive'
+            ? -0.5
+            : 0;
       weightedSum += factor.weight * factor.value * impactMultiplier;
       totalWeight += factor.weight;
     }
@@ -353,7 +380,7 @@ export class PredictiveAnalytics {
     // Base probability + weighted adjustments
     const baseProbability = 0.15; // 15% base no-show rate
     const adjustment = weightedSum / totalWeight;
-    
+
     // Ensure probability stays within reasonable bounds
     return Math.max(0.02, Math.min(0.8, baseProbability + adjustment));
   }
@@ -371,21 +398,22 @@ export class PredictiveAnalytics {
 
     // Patient experience factor
     const treatmentCount = patientHistory.treatmentHistory.filter(
-      t => t.treatmentId === treatmentId
+      (t) => t.treatmentId === treatmentId
     ).length;
     factors.push({
       factor: 'patient_experience',
       impact: treatmentCount > 3 ? -0.1 : 0.15, // Experienced patients are faster
-      confidence: 0.8
+      confidence: 0.8,
     });
 
     // Average duration history
     if (patientHistory.averageTreatmentDuration > 0) {
-      const historyRatio = patientHistory.averageTreatmentDuration / baseDuration.estimatedMinutes;
+      const historyRatio =
+        patientHistory.averageTreatmentDuration / baseDuration.estimatedMinutes;
       factors.push({
         factor: 'historical_duration',
         impact: historyRatio - 1, // Deviation from base duration
-        confidence: 0.9
+        confidence: 0.9,
       });
     }
 
@@ -394,7 +422,7 @@ export class PredictiveAnalytics {
     factors.push({
       factor: 'treatment_complexity',
       impact: complexityImpact,
-      confidence: 0.85
+      confidence: 0.85,
     });
 
     // Time of day factor
@@ -402,7 +430,7 @@ export class PredictiveAnalytics {
     factors.push({
       factor: 'time_of_day',
       impact: timeImpact,
-      confidence: 0.7
+      confidence: 0.7,
     });
 
     return factors;
@@ -422,7 +450,7 @@ export class PredictiveAnalytics {
       factor: 'day_of_week',
       weight: 0.1,
       value: Math.abs(weekendFactor),
-      impact: weekendFactor > 0 ? 'negative' : 'positive'
+      impact: weekendFactor > 0 ? 'negative' : 'positive',
     });
 
     // Time of day factor
@@ -432,7 +460,7 @@ export class PredictiveAnalytics {
       factor: 'time_of_day',
       weight: 0.15,
       value: isOptimalTime ? 0.1 : 0.05,
-      impact: isOptimalTime ? 'positive' : 'negative'
+      impact: isOptimalTime ? 'positive' : 'negative',
     });
 
     return factors;
@@ -468,7 +496,9 @@ export class PredictiveAnalytics {
     }
 
     // Factor-specific actions
-    const highRiskFactors = factors.filter(f => f.impact === 'negative' && f.value > 0.5);
+    const highRiskFactors = factors.filter(
+      (f) => f.impact === 'negative' && f.value > 0.5
+    );
     for (const factor of highRiskFactors) {
       switch (factor.factor) {
         case 'booking_advance_days':
@@ -487,7 +517,9 @@ export class PredictiveAnalytics {
   }
 
   // Analytics helper methods
-  private calculateCurrentMetrics(appointments: AIAppointment[]): SchedulingMetrics {
+  private calculateCurrentMetrics(
+    appointments: AIAppointment[]
+  ): SchedulingMetrics {
     // Implementation would calculate actual metrics from appointments
     return {
       utilizationRate: 0.85,
@@ -498,7 +530,7 @@ export class PredictiveAnalytics {
       overbookingRate: 0.05,
       cancellationRate: 0.08,
       noShowRate: 0.12,
-      revenueOptimization: 0.89
+      revenueOptimization: 0.89,
     };
   }
 
@@ -508,14 +540,14 @@ export class PredictiveAnalytics {
   ): SchedulingMetrics {
     // Simulate the impact of proposed changes
     const current = this.calculateCurrentMetrics(currentSchedule);
-    
+
     // Apply optimization factors
     return {
       ...current,
       utilizationRate: Math.min(current.utilizationRate + 0.05, 1.0),
       efficiency: Math.min(current.efficiency + 0.03, 1.0),
       patientWaitTime: Math.max(current.patientWaitTime - 2, 0),
-      noShowRate: Math.max(current.noShowRate - 0.03, 0)
+      noShowRate: Math.max(current.noShowRate - 0.03, 0),
     };
   }
 
@@ -527,13 +559,15 @@ export class PredictiveAnalytics {
 
     const metrics = Object.keys(original) as (keyof SchedulingMetrics)[];
     for (const metric of metrics) {
-      const improvement = ((optimized[metric] - original[metric]) / original[metric]) * 100;
-      if (Math.abs(improvement) > 1) { // Only include significant improvements
+      const improvement =
+        ((optimized[metric] - original[metric]) / original[metric]) * 100;
+      if (Math.abs(improvement) > 1) {
+        // Only include significant improvements
         improvements.push({
           metric,
           improvement,
           impact: this.getMetricImpactDescription(metric, improvement),
-          implementation: this.getImplementationSteps(metric)
+          implementation: this.getImplementationSteps(metric),
         });
       }
     }
@@ -542,22 +576,30 @@ export class PredictiveAnalytics {
   }
 
   // Pattern analysis methods
-  private analyzeTimePatterns(appointments: AIAppointment[]): SchedulingPattern[] {
+  private analyzeTimePatterns(
+    appointments: AIAppointment[]
+  ): SchedulingPattern[] {
     // Analyze time-based patterns
     return [];
   }
 
-  private analyzeNoShowPatterns(appointments: AIAppointment[]): SchedulingPattern[] {
+  private analyzeNoShowPatterns(
+    appointments: AIAppointment[]
+  ): SchedulingPattern[] {
     // Analyze no-show patterns
     return [];
   }
 
-  private analyzeTreatmentPatterns(appointments: AIAppointment[]): SchedulingPattern[] {
+  private analyzeTreatmentPatterns(
+    appointments: AIAppointment[]
+  ): SchedulingPattern[] {
     // Analyze treatment-specific patterns
     return [];
   }
 
-  private analyzeStaffPatterns(appointments: AIAppointment[]): SchedulingPattern[] {
+  private analyzeStaffPatterns(
+    appointments: AIAppointment[]
+  ): SchedulingPattern[] {
     // Analyze staff efficiency patterns
     return [];
   }
@@ -602,7 +644,7 @@ export class PredictiveAnalytics {
       modelType: 'no_show',
       accuracy: 0.87,
       lastTrained: new Date(),
-      version: '1.0.0'
+      version: '1.0.0',
     });
   }
 
@@ -611,11 +653,14 @@ export class PredictiveAnalytics {
   }
 
   private calculatePredictionConfidence(factors: NoShowFactor[]): number {
-    const avgWeight = factors.reduce((sum, f) => sum + f.weight, 0) / factors.length;
+    const avgWeight =
+      factors.reduce((sum, f) => sum + f.weight, 0) / factors.length;
     return Math.min(avgWeight * 1.2, 0.95);
   }
 
-  private categorizeRiskLevel(probability: number): 'low' | 'medium' | 'high' | 'critical' {
+  private categorizeRiskLevel(
+    probability: number
+  ): 'low' | 'medium' | 'high' | 'critical' {
     if (probability < 0.15) return 'low';
     if (probability < 0.35) return 'medium';
     if (probability < 0.6) return 'high';
@@ -634,15 +679,20 @@ export class PredictiveAnalytics {
     return factors.reduce((sum, f) => sum + f.confidence, 0) / factors.length;
   }
 
-  private calculateBufferRecommendation(confidence: number, variance: number): number {
+  private calculateBufferRecommendation(
+    confidence: number,
+    variance: number
+  ): number {
     const baseBuffer = 10; // 10 minutes base buffer
     const confidenceAdjustment = (1 - confidence) * 15; // Up to 15 min for low confidence
     const varianceAdjustment = variance * 0.5; // Half of variance as buffer
-    
+
     return Math.round(baseBuffer + confidenceAdjustment + varianceAdjustment);
   }
 
-  private async getTreatmentNoShowFactor(treatmentType: string): Promise<NoShowFactor | null> {
+  private async getTreatmentNoShowFactor(
+    treatmentType: string
+  ): Promise<NoShowFactor | null> {
     // Get treatment-specific no-show factors
     return null;
   }
@@ -664,22 +714,33 @@ export class PredictiveAnalytics {
     return 0;
   }
 
-  private estimateImplementationTime(changes: Partial<AIAppointment>[]): number {
+  private estimateImplementationTime(
+    changes: Partial<AIAppointment>[]
+  ): number {
     return changes.length * 5; // 5 minutes per change
   }
 
-  private calculateOptimizationConfidence(improvements: OptimizationImprovement[]): number {
+  private calculateOptimizationConfidence(
+    improvements: OptimizationImprovement[]
+  ): number {
     return 0.85; // Default confidence
   }
 
-  private getMetricImpactDescription(metric: keyof SchedulingMetrics, improvement: number): string {
+  private getMetricImpactDescription(
+    metric: keyof SchedulingMetrics,
+    improvement: number
+  ): string {
     const direction = improvement > 0 ? 'increase' : 'decrease';
     return `${Math.abs(improvement).toFixed(1)}% ${direction} in ${metric.replace(/([A-Z])/g, ' $1').toLowerCase()}`;
   }
 
   private getImplementationSteps(metric: keyof SchedulingMetrics): string[] {
     // Return implementation steps for each metric
-    return ['Review current scheduling', 'Apply optimization rules', 'Monitor results'];
+    return [
+      'Review current scheduling',
+      'Apply optimization rules',
+      'Monitor results',
+    ];
   }
 }
 

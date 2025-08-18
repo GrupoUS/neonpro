@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
-import { vi } from 'vitest';
 import React from 'react';
+import { vi } from 'vitest';
 
 // Make React available globally in tests
 Object.defineProperty(globalThis, 'React', {
@@ -30,7 +30,7 @@ process.env = {
 Object.defineProperty(global, 'crypto', {
   value: {
     randomUUID: () => 'test-uuid',
-    getRandomValues: (arr: any) => arr,
+    getRandomValues: (arr: Uint8Array) => arr,
   },
 });
 

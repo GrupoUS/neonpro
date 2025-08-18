@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import React from "react";
-import { motion } from "framer-motion";
-import { Heart, Activity, Stethoscope, Shield } from "lucide-react";
-import { Card, CardContent, Progress } from "@neonpro/ui";
+import { Card, CardContent, Progress } from '@neonpro/ui';
+import { motion } from 'framer-motion';
+import { Activity, Heart, Shield, Stethoscope } from 'lucide-react';
+import React from 'react';
 
 interface HealthcareLoadingProps {
   message?: string;
@@ -18,7 +18,7 @@ const iconVariants = {
     transition: {
       duration: 2,
       repeat: Number.POSITIVE_INFINITY,
-      ease: "easeInOut",
+      ease: 'easeInOut',
     },
   },
 };
@@ -30,13 +30,13 @@ const pulseVariants = {
     transition: {
       duration: 1.5,
       repeat: Number.POSITIVE_INFINITY,
-      ease: "easeInOut",
+      ease: 'easeInOut',
     },
   },
 };
 
 export default function HealthcareLoading({
-  message = "Carregando sistema de saúde...",
+  message = 'Carregando sistema de saúde...',
   progress,
   showProgress = false,
 }: HealthcareLoadingProps) {
@@ -47,14 +47,14 @@ export default function HealthcareLoading({
           {/* Medical Icons Animation */}
           <div className="relative">
             <motion.div
-              variants={pulseVariants}
               animate="animate"
               className="absolute inset-0 h-24 w-24 rounded-full bg-blue-100"
+              variants={pulseVariants}
             />
             <motion.div
-              variants={iconVariants}
               animate="animate"
               className="relative z-10 flex h-24 w-24 items-center justify-center rounded-full bg-blue-600"
+              variants={iconVariants}
             >
               <Heart className="h-12 w-12 text-white" />
             </motion.div>
@@ -65,7 +65,11 @@ export default function HealthcareLoading({
             <motion.div
               animate={{
                 y: [-10, 10, -10],
-                transition: { duration: 2, repeat: Number.POSITIVE_INFINITY, delay: 0 },
+                transition: {
+                  duration: 2,
+                  repeat: Number.POSITIVE_INFINITY,
+                  delay: 0,
+                },
               }}
               className="text-green-600"
             >
@@ -74,7 +78,11 @@ export default function HealthcareLoading({
             <motion.div
               animate={{
                 y: [-10, 10, -10],
-                transition: { duration: 2, repeat: Number.POSITIVE_INFINITY, delay: 0.5 },
+                transition: {
+                  duration: 2,
+                  repeat: Number.POSITIVE_INFINITY,
+                  delay: 0.5,
+                },
               }}
               className="text-blue-600"
             >
@@ -83,7 +91,11 @@ export default function HealthcareLoading({
             <motion.div
               animate={{
                 y: [-10, 10, -10],
-                transition: { duration: 2, repeat: Number.POSITIVE_INFINITY, delay: 1 },
+                transition: {
+                  duration: 2,
+                  repeat: Number.POSITIVE_INFINITY,
+                  delay: 1,
+                },
               }}
               className="text-purple-600"
             >
@@ -93,15 +105,19 @@ export default function HealthcareLoading({
 
           {/* Loading Message */}
           <div className="text-center">
-            <h3 className="mb-2 font-semibold text-gray-800 text-xl">Sistema NeonPro Health</h3>
+            <h3 className="mb-2 font-semibold text-gray-800 text-xl">
+              Sistema NeonPro Health
+            </h3>
             <p className="text-gray-600">{message}</p>
           </div>
 
           {/* Progress Bar */}
-          {showProgress && typeof progress === "number" && (
+          {showProgress && typeof progress === 'number' && (
             <div className="w-full space-y-2">
-              <Progress value={progress} className="h-2" />
-              <p className="text-center text-gray-500 text-sm">{progress.toFixed(0)}% concluído</p>
+              <Progress className="h-2" value={progress} />
+              <p className="text-center text-gray-500 text-sm">
+                {progress.toFixed(0)}% concluído
+              </p>
             </div>
           )}
 
@@ -109,17 +125,17 @@ export default function HealthcareLoading({
           <div className="flex space-x-1">
             {[0, 1, 2].map((i) => (
               <motion.div
-                key={i}
                 animate={{
                   scale: [1, 1.5, 1],
                   opacity: [0.5, 1, 0.5],
                 }}
+                className="h-2 w-2 rounded-full bg-blue-600"
+                key={i}
                 transition={{
                   duration: 1,
                   repeat: Number.POSITIVE_INFINITY,
                   delay: i * 0.3,
                 }}
-                className="h-2 w-2 rounded-full bg-blue-600"
               />
             ))}
           </div>
@@ -128,7 +144,9 @@ export default function HealthcareLoading({
           <div className="w-full rounded-lg border border-green-200 bg-green-50 p-3">
             <div className="flex items-center space-x-2">
               <Shield className="h-4 w-4 text-green-600" />
-              <span className="text-green-800 text-sm">Conexão segura e compatível com LGPD</span>
+              <span className="text-green-800 text-sm">
+                Conexão segura e compatível com LGPD
+              </span>
             </div>
           </div>
         </CardContent>

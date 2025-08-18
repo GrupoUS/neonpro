@@ -1,55 +1,61 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { createRiskAssessmentService } from "./risk-assessment-service";
-import { RiskAssessmentIntegration } from "@/lib/ai/patient-insights/risk-assessment";
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { RiskAssessmentIntegration } from '@/lib/ai/patient-insights/risk-assessment';
+import { createRiskAssessmentService } from './risk-assessment-service';
 
 // Mock RiskAssessmentIntegration
-vi.mock("@/lib/ai/patient-insights/risk-assessment", () => ({
+vi.mock('@/lib/ai/patient-insights/risk-assessment', () => ({
   RiskAssessmentIntegration: {
     enhanceTreatmentPrediction: vi
       .fn()
-      .mockImplementation(async (patientId, tenantId, treatmentOptions, performedBy) => {
-        return treatmentOptions.map((treatment: any) => ({
-          treatmentId: treatment.treatmentId,
-          name: treatment.name,
-          riskAdjustedOutcome: treatment.name === "Procedimento Estético Simples" ? 70 : 65,
-          riskLevel: "MEDIUM",
-          riskFactors: ["idade", "condições médicas"],
-          recommendations: ["Monitoramento regular"],
-          contraindications: [],
-        }));
-      }),
+      .mockImplementation(
+        async (patientId, tenantId, treatmentOptions, performedBy) => {
+          return treatmentOptions.map((treatment: any) => ({
+            treatmentId: treatment.treatmentId,
+            name: treatment.name,
+            riskAdjustedOutcome:
+              treatment.name === 'Procedimento Estético Simples' ? 70 : 65,
+            riskLevel: 'MEDIUM',
+            riskFactors: ['idade', 'condições médicas'],
+            recommendations: ['Monitoramento regular'],
+            contraindications: [],
+          }));
+        }
+      ),
     integrateVitalSignsMonitoring: vi
       .fn()
-      .mockImplementation(async (patientId, tenantId, vitalSigns, performedBy) => {
-        const heartRate = vitalSigns.heartRate;
-        const systolic = vitalSigns.bloodPressure?.systolic || 120;
-        const oxygenSaturation = vitalSigns.oxygenSaturation || 99;
-        const temperature = vitalSigns.temperature || 36.5;
+      .mockImplementation(
+        async (patientId, tenantId, vitalSigns, performedBy) => {
+          const heartRate = vitalSigns.heartRate;
+          const systolic = vitalSigns.bloodPressure?.systolic || 120;
+          const oxygenSaturation = vitalSigns.oxygenSaturation || 99;
+          const temperature = vitalSigns.temperature || 36.5;
 
-        const shouldTriggerUpdate =
-          heartRate > 120 ||
-          heartRate < 50 ||
-          systolic > 160 ||
-          oxygenSaturation < 90 ||
-          temperature > 38;
+          const shouldTriggerUpdate =
+            heartRate > 120 ||
+            heartRate < 50 ||
+            systolic > 160 ||
+            oxygenSaturation < 90 ||
+            temperature > 38;
 
-        const alerts = [];
-        if (systolic > 180) alerts.push("Crise hipertensiva detectada");
-        if (oxygenSaturation < 90) alerts.push("Hipoxemia severa - saturação crítica");
-        if (heartRate < 50) alerts.push("Bradicardia severa");
-        if (temperature > 39) alerts.push("Hipertermia severa");
-        if (!shouldTriggerUpdate) alerts.length = 0;
+          const alerts = [];
+          if (systolic > 180) alerts.push('Crise hipertensiva detectada');
+          if (oxygenSaturation < 90)
+            alerts.push('Hipoxemia severa - saturação crítica');
+          if (heartRate < 50) alerts.push('Bradicardia severa');
+          if (temperature > 39) alerts.push('Hipertermia severa');
+          if (!shouldTriggerUpdate) alerts.length = 0;
 
-        return {
-          riskUpdate: shouldTriggerUpdate,
-          newRiskLevel: shouldTriggerUpdate ? "HIGH" : undefined,
-          alerts,
-          recommendations: shouldTriggerUpdate
-            ? ["Monitoramento intensivo", "Avaliação médica"]
-            : [],
-          updatedAt: new Date().toISOString(),
-        };
-      }),
+          return {
+            riskUpdate: shouldTriggerUpdate,
+            newRiskLevel: shouldTriggerUpdate ? 'HIGH' : undefined,
+            alerts,
+            recommendations: shouldTriggerUpdate
+              ? ['Monitoramento intensivo', 'Avaliação médica']
+              : [],
+            updatedAt: new Date().toISOString(),
+          };
+        }
+      ),
   },
 }));
 
@@ -64,7 +70,7 @@ function createMockSupabaseClient() {
     }),
     auth: {
       getUser: vi.fn().mockResolvedValue({
-        data: { user: { id: "123", email: "test@example.com" } },
+        data: { user: { id: '123', email: 'test@example.com' } },
         error: null,
       }),
     },
@@ -75,56 +81,61 @@ function createMockSupabaseClient() {
 // Mock patient data generators
 function createMockPatientData() {
   return {
-    id: "patient-generic-001",
-    nome: "Paciente Teste",
+    id: 'patient-generic-001',
+    nome: 'Paciente Teste',
     idade: 45,
     condicoes_medicas: [],
     medicamentos: [],
     historico_familiar: [],
-    data_nascimento: "1978-01-01",
-    genero: "masculino",
+    data_nascimento: '1978-01-01',
+    genero: 'masculino',
     created_at: new Date().toISOString(),
   };
 }
 
 function createLowRiskPatientData() {
   return {
-    id: "patient-low-risk-001",
-    nome: "Maria Silva",
+    id: 'patient-low-risk-001',
+    nome: 'Maria Silva',
     idade: 35,
-    condicoes_medicas: ["pressao_alta"],
-    medicamentos: ["losartana"],
+    condicoes_medicas: ['pressao_alta'],
+    medicamentos: ['losartana'],
     historico_familiar: [],
-    data_nascimento: "1988-05-15",
-    genero: "feminino",
+    data_nascimento: '1988-05-15',
+    genero: 'feminino',
     created_at: new Date().toISOString(),
   };
 }
 
 function createHighRiskPatientData() {
   return {
-    id: "patient-high-risk-001",
-    nome: "João Santos",
+    id: 'patient-high-risk-001',
+    nome: 'João Santos',
     idade: 65,
-    condicoes_medicas: ["diabetes", "pressao_alta", "doenca_cardiaca"],
-    medicamentos: ["metformina", "losartana", "atorvastatina"],
-    historico_familiar: ["diabetes", "infarto"],
-    data_nascimento: "1958-08-22",
-    genero: "masculino",
+    condicoes_medicas: ['diabetes', 'pressao_alta', 'doenca_cardiaca'],
+    medicamentos: ['metformina', 'losartana', 'atorvastatina'],
+    historico_familiar: ['diabetes', 'infarto'],
+    data_nascimento: '1958-08-22',
+    genero: 'masculino',
     created_at: new Date().toISOString(),
   };
 }
 
 function createCriticalPatientData() {
   return {
-    id: "patient-critical-001",
-    nome: "Ana Costa",
+    id: 'patient-critical-001',
+    nome: 'Ana Costa',
     idade: 72,
-    condicoes_medicas: ["diabetes", "pressao_alta", "doenca_cardiaca", "insuficiencia_renal"],
-    medicamentos: ["insulina", "losartana", "digoxina", "furosemida"],
-    historico_familiar: ["diabetes", "infarto", "avc"],
-    data_nascimento: "1951-12-03",
-    genero: "feminino",
+    condicoes_medicas: [
+      'diabetes',
+      'pressao_alta',
+      'doenca_cardiaca',
+      'insuficiencia_renal',
+    ],
+    medicamentos: ['insulina', 'losartana', 'digoxina', 'furosemida'],
+    historico_familiar: ['diabetes', 'infarto', 'avc'],
+    data_nascimento: '1951-12-03',
+    genero: 'feminino',
     created_at: new Date().toISOString(),
   };
 }
@@ -133,7 +144,7 @@ function createCriticalPatientData() {
 // END-TO-END RISK ASSESSMENT WORKFLOW TESTS
 // ============================================================================
 
-describe("Patient Risk Assessment System - End-to-End Workflow", () => {
+describe('Patient Risk Assessment System - End-to-End Workflow', () => {
   let riskAssessmentService: any;
 
   beforeEach(() => {
@@ -141,8 +152,8 @@ describe("Patient Risk Assessment System - End-to-End Workflow", () => {
 
     // Create service with test configuration
     riskAssessmentService = createRiskAssessmentService({
-      supabaseUrl: "https://test.supabase.co",
-      supabaseKey: "test-key-12345",
+      supabaseUrl: 'https://test.supabase.co',
+      supabaseKey: 'test-key-12345',
       enableRealTimeMonitoring: true,
       professionalOversightEnabled: true,
       auditTrailEnabled: true,
@@ -150,8 +161,8 @@ describe("Patient Risk Assessment System - End-to-End Workflow", () => {
     });
   });
 
-  describe("Complete Clinical Workflow", () => {
-    it("should execute complete workflow for low-risk patient", async () => {
+  describe('Complete Clinical Workflow', () => {
+    it('should execute complete workflow for low-risk patient', async () => {
       const lowRiskPatient = createLowRiskPatientData();
 
       // Mock successful database operations
@@ -164,30 +175,34 @@ describe("Patient Risk Assessment System - End-to-End Workflow", () => {
       // Execute risk assessment
       const result = await riskAssessmentService.executeRiskAssessment(
         lowRiskPatient,
-        "CRM123456/SP",
-        "192.168.1.100",
-        "NeonPro Healthcare System",
+        'CRM123456/SP',
+        '192.168.1.100',
+        'NeonPro Healthcare System'
       );
 
       // Validate low-risk classification
-      expect(["LOW", "MEDIUM"]).toContain(result.riskAssessment.riskLevel.toUpperCase());
+      expect(['LOW', 'MEDIUM']).toContain(
+        result.riskAssessment.riskLevel.toUpperCase()
+      );
       expect(result.riskAssessment.score).toBeLessThan(0.5);
 
       // Professional oversight should be minimal
       expect(result.professionalOversight.timeframe).toBeGreaterThanOrEqual(30);
-      expect(["NURSE", "PHYSICIAN"]).toContain(result.professionalOversight.reviewLevel);
+      expect(['NURSE', 'PHYSICIAN']).toContain(
+        result.professionalOversight.reviewLevel
+      );
 
       // No emergency escalation
       expect(result.emergencyEscalation?.triggered).toBeFalsy();
 
       // Recommendations should be routine
       const criticalRecommendations = result.recommendations.filter(
-        (r) => r.priority === "CRITICAL",
+        (r) => r.priority === 'CRITICAL'
       );
       expect(criticalRecommendations).toHaveLength(0);
     });
 
-    it("should execute complete workflow for high-risk patient", async () => {
+    it('should execute complete workflow for high-risk patient', async () => {
       const highRiskPatient = createHighRiskPatientData();
 
       const mockSupabase = createMockSupabaseClient();
@@ -198,37 +213,41 @@ describe("Patient Risk Assessment System - End-to-End Workflow", () => {
 
       const result = await riskAssessmentService.executeRiskAssessment(
         highRiskPatient,
-        "CRM789012/SP",
+        'CRM789012/SP'
       );
 
       // Validate high-risk classification
-      expect(["HIGH", "CRITICAL"]).toContain(result.riskAssessment.riskLevel.toUpperCase());
+      expect(['HIGH', 'CRITICAL']).toContain(
+        result.riskAssessment.riskLevel.toUpperCase()
+      );
       expect(result.riskAssessment.score).toBeGreaterThan(0.6);
 
       // Professional oversight should be intensive
       expect(result.professionalOversight.requiredReview).toBe(true);
       expect(result.professionalOversight.timeframe).toBeLessThanOrEqual(30);
-      expect(["PHYSICIAN", "SPECIALIST", "SENIOR_PHYSICIAN"]).toContain(
-        result.professionalOversight.reviewLevel,
+      expect(['PHYSICIAN', 'SPECIALIST', 'SENIOR_PHYSICIAN']).toContain(
+        result.professionalOversight.reviewLevel
       );
 
       // May trigger emergency escalation
       if (result.emergencyEscalation?.triggered) {
-        expect(["ORANGE", "RED", "BLACK"]).toContain(result.emergencyEscalation.alertLevel);
-        expect(["URGENT", "IMMEDIATE", "EMERGENCY"]).toContain(
-          result.emergencyEscalation.escalationPriority,
+        expect(['ORANGE', 'RED', 'BLACK']).toContain(
+          result.emergencyEscalation.alertLevel
+        );
+        expect(['URGENT', 'IMMEDIATE', 'EMERGENCY']).toContain(
+          result.emergencyEscalation.escalationPriority
         );
       }
 
       // Should have multiple recommendations
       expect(result.recommendations.length).toBeGreaterThan(3);
       const highPriorityRecommendations = result.recommendations.filter(
-        (r) => r.priority === "HIGH" || r.priority === "CRITICAL",
+        (r) => r.priority === 'HIGH' || r.priority === 'CRITICAL'
       );
       expect(highPriorityRecommendations.length).toBeGreaterThan(0);
     });
 
-    it("should execute complete workflow for critical patient", async () => {
+    it('should execute complete workflow for critical patient', async () => {
       const criticalPatient = createCriticalPatientData();
 
       const mockSupabase = createMockSupabaseClient();
@@ -239,64 +258,66 @@ describe("Patient Risk Assessment System - End-to-End Workflow", () => {
 
       const result = await riskAssessmentService.executeRiskAssessment(
         criticalPatient,
-        "CRM345678/SP",
+        'CRM345678/SP'
       );
 
       // Validate critical classification
-      expect(result.riskAssessment.riskLevel.toUpperCase()).toBe("CRITICAL");
+      expect(result.riskAssessment.riskLevel.toUpperCase()).toBe('CRITICAL');
       expect(result.riskAssessment.score).toBeGreaterThan(0.8);
 
       // Professional oversight should be immediate
       expect(result.professionalOversight.requiredReview).toBe(true);
       expect(result.professionalOversight.timeframe).toBeLessThanOrEqual(15);
-      expect(["SENIOR_PHYSICIAN", "SPECIALIST"]).toContain(
-        result.professionalOversight.reviewLevel,
+      expect(['SENIOR_PHYSICIAN', 'SPECIALIST']).toContain(
+        result.professionalOversight.reviewLevel
       );
 
       // Must trigger emergency escalation
       expect(result.emergencyEscalation?.triggered).toBe(true);
-      expect(["RED", "BLACK"]).toContain(result.emergencyEscalation?.alertLevel);
+      expect(['RED', 'BLACK']).toContain(
+        result.emergencyEscalation?.alertLevel
+      );
 
       // Should have critical recommendations
       const criticalRecommendations = result.recommendations.filter(
-        (r) => r.priority === "CRITICAL",
+        (r) => r.priority === 'CRITICAL'
       );
       expect(criticalRecommendations.length).toBeGreaterThan(0);
 
       // Immediate timeframe requirements
       const immediateRecommendations = result.recommendations.filter(
-        (r) => r.timeframe === "Imediato",
+        (r) => r.timeframe === 'Imediato'
       );
       expect(immediateRecommendations.length).toBeGreaterThan(0);
     });
   });
 
-  describe("Treatment Integration Workflow", () => {
-    it("should integrate risk assessment with treatment predictions", async () => {
+  describe('Treatment Integration Workflow', () => {
+    it('should integrate risk assessment with treatment predictions', async () => {
       const patientData = createMockPatientData({
         medicalHistory: {
-          chronicConditions: ["diabetes", "hipertensão"],
+          chronicConditions: ['diabetes', 'hipertensão'],
         },
       });
 
       // Mock treatment options
       const treatmentOptions = [
         {
-          treatmentId: "TRT001",
-          name: "Procedimento Estético Simples",
-          complexity: "LOW" as const,
+          treatmentId: 'TRT001',
+          name: 'Procedimento Estético Simples',
+          complexity: 'LOW' as const,
           estimatedOutcome: 85,
         },
         {
-          treatmentId: "TRT002",
-          name: "Cirurgia Plástica",
-          complexity: "HIGH" as const,
+          treatmentId: 'TRT002',
+          name: 'Cirurgia Plástica',
+          complexity: 'HIGH' as const,
           estimatedOutcome: 75,
         },
         {
-          treatmentId: "TRT003",
-          name: "Tratamento Minimamente Invasivo",
-          complexity: "MEDIUM" as const,
+          treatmentId: 'TRT003',
+          name: 'Tratamento Minimamente Invasivo',
+          complexity: 'MEDIUM' as const,
           estimatedOutcome: 80,
         },
       ];
@@ -307,10 +328,10 @@ describe("Patient Risk Assessment System - End-to-End Workflow", () => {
         select: vi.fn().mockResolvedValue({
           data: [
             {
-              id: "assessment-123",
+              id: 'assessment-123',
               patient_id: patientData.patientId,
               overall_score: 65,
-              risk_level: "MEDIUM",
+              risk_level: 'MEDIUM',
               category_scores: {
                 demographic: 40,
                 medicalHistory: 60,
@@ -321,10 +342,11 @@ describe("Patient Risk Assessment System - End-to-End Workflow", () => {
               },
               critical_factors: [
                 {
-                  factor: "Diabetes tipo 2",
-                  category: "MEDICAL_HISTORY",
+                  factor: 'Diabetes tipo 2',
+                  category: 'MEDICAL_HISTORY',
                   impact: 20,
-                  explanation: "Condição crônica que aumenta risco de complicações",
+                  explanation:
+                    'Condição crônica que aumenta risco de complicações',
                 },
               ],
               created_at: new Date().toISOString(),
@@ -336,12 +358,13 @@ describe("Patient Risk Assessment System - End-to-End Workflow", () => {
       });
 
       // Execute treatment enhancement
-      const enhancedTreatments = await RiskAssessmentIntegration.enhanceTreatmentPrediction(
-        patientData.patientId,
-        patientData.tenantId,
-        treatmentOptions,
-        "CRM123456/SP",
-      );
+      const enhancedTreatments =
+        await RiskAssessmentIntegration.enhanceTreatmentPrediction(
+          patientData.patientId,
+          patientData.tenantId,
+          treatmentOptions,
+          'CRM123456/SP'
+        );
 
       // Validate results
       expect(enhancedTreatments).toHaveLength(3);
@@ -349,29 +372,31 @@ describe("Patient Risk Assessment System - End-to-End Workflow", () => {
       // Check risk-adjusted outcomes
       enhancedTreatments.forEach((treatment) => {
         expect(treatment.riskAdjustedOutcome).toBeLessThanOrEqual(
-          treatment.name === "Procedimento Estético Simples" ? 85 : 75,
+          treatment.name === 'Procedimento Estético Simples' ? 85 : 75
         );
-        expect(["LOW", "MEDIUM", "HIGH", "CRITICAL"]).toContain(treatment.riskLevel);
+        expect(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']).toContain(
+          treatment.riskLevel
+        );
         expect(treatment.riskFactors).toBeInstanceOf(Array);
         expect(treatment.recommendations).toBeInstanceOf(Array);
       });
 
       // High complexity treatment should have more risk factors
       const highComplexityTreatment = enhancedTreatments.find(
-        (t) => t.name === "Cirurgia Plástica",
+        (t) => t.name === 'Cirurgia Plástica'
       );
       const lowComplexityTreatment = enhancedTreatments.find(
-        (t) => t.name === "Procedimento Estético Simples",
+        (t) => t.name === 'Procedimento Estético Simples'
       );
 
       expect(highComplexityTreatment?.riskAdjustedOutcome).toBeLessThan(
-        lowComplexityTreatment?.riskAdjustedOutcome,
+        lowComplexityTreatment?.riskAdjustedOutcome
       );
     });
   });
 
-  describe("Real-Time Monitoring Integration", () => {
-    it("should integrate vital signs monitoring with risk updates", async () => {
+  describe('Real-Time Monitoring Integration', () => {
+    it('should integrate vital signs monitoring with risk updates', async () => {
       const patientData = createMockPatientData();
 
       // Mock baseline risk assessment
@@ -382,7 +407,7 @@ describe("Patient Risk Assessment System - End-to-End Workflow", () => {
             {
               patient_id: patientData.patientId,
               overall_score: 45,
-              risk_level: "MEDIUM",
+              risk_level: 'MEDIUM',
               category_scores: { currentCondition: 30 },
               critical_factors: [],
             },
@@ -401,25 +426,30 @@ describe("Patient Risk Assessment System - End-to-End Workflow", () => {
         oxygenSaturation: 85,
       };
 
-      const result = await RiskAssessmentIntegration.integrateVitalSignsMonitoring(
-        patientData.patientId,
-        patientData.tenantId,
-        criticalVitalSigns,
-        "CRM123456/SP",
-      );
+      const result =
+        await RiskAssessmentIntegration.integrateVitalSignsMonitoring(
+          patientData.patientId,
+          patientData.tenantId,
+          criticalVitalSigns,
+          'CRM123456/SP'
+        );
 
       // Should trigger risk update
       expect(result.riskUpdate).toBe(true);
-      expect(["HIGH", "CRITICAL"]).toContain(result.newRiskLevel);
+      expect(['HIGH', 'CRITICAL']).toContain(result.newRiskLevel);
       expect(result.alerts.length).toBeGreaterThan(0);
       expect(result.recommendations.length).toBeGreaterThan(0);
 
       // Verify specific alerts for critical vitals
-      expect(result.alerts.some((alert) => alert.includes("hipertensiva"))).toBe(true);
-      expect(result.alerts.some((alert) => alert.includes("Hipoxemia"))).toBe(true);
+      expect(
+        result.alerts.some((alert) => alert.includes('hipertensiva'))
+      ).toBe(true);
+      expect(result.alerts.some((alert) => alert.includes('Hipoxemia'))).toBe(
+        true
+      );
     });
 
-    it("should handle stable vital signs without triggering updates", async () => {
+    it('should handle stable vital signs without triggering updates', async () => {
       const patientData = createMockPatientData();
 
       const mockSupabase = createMockSupabaseClient();
@@ -429,7 +459,7 @@ describe("Patient Risk Assessment System - End-to-End Workflow", () => {
             {
               patient_id: patientData.patientId,
               overall_score: 25,
-              risk_level: "LOW",
+              risk_level: 'LOW',
             },
           ],
           error: null,
@@ -445,12 +475,13 @@ describe("Patient Risk Assessment System - End-to-End Workflow", () => {
         oxygenSaturation: 99,
       };
 
-      const result = await RiskAssessmentIntegration.integrateVitalSignsMonitoring(
-        patientData.patientId,
-        patientData.tenantId,
-        normalVitalSigns,
-        "CRM123456/SP",
-      );
+      const result =
+        await RiskAssessmentIntegration.integrateVitalSignsMonitoring(
+          patientData.patientId,
+          patientData.tenantId,
+          normalVitalSigns,
+          'CRM123456/SP'
+        );
 
       // Should not trigger risk update
       expect(result.riskUpdate).toBe(false);
@@ -458,8 +489,8 @@ describe("Patient Risk Assessment System - End-to-End Workflow", () => {
     });
   });
 
-  describe("Performance and Compliance Validation", () => {
-    it("should meet constitutional healthcare performance requirements", async () => {
+  describe('Performance and Compliance Validation', () => {
+    it('should meet constitutional healthcare performance requirements', async () => {
       const patientData = createMockPatientData();
 
       const mockSupabase = createMockSupabaseClient();
@@ -477,7 +508,7 @@ describe("Patient Risk Assessment System - End-to-End Workflow", () => {
 
         const result = await riskAssessmentService.executeRiskAssessment(
           patientData,
-          "CRM123456/SP",
+          'CRM123456/SP'
         );
 
         const endTime = performance.now();
@@ -486,7 +517,8 @@ describe("Patient Risk Assessment System - End-to-End Workflow", () => {
       }
 
       // Performance requirements
-      const averageTime = assessmentTimes.reduce((a, b) => a + b) / assessmentTimes.length;
+      const averageTime =
+        assessmentTimes.reduce((a, b) => a + b) / assessmentTimes.length;
       expect(averageTime).toBeLessThan(1000); // Service layer <1s
 
       const maxTime = Math.max(...assessmentTimes);
@@ -498,14 +530,14 @@ describe("Patient Risk Assessment System - End-to-End Workflow", () => {
       expect(averageAccuracy).toBeGreaterThanOrEqual(98); // ≥98% requirement
     });
 
-    it("should validate LGPD compliance throughout workflow", async () => {
+    it('should validate LGPD compliance throughout workflow', async () => {
       const patientData = createMockPatientData();
 
       const mockSupabase = createMockSupabaseClient();
       const mockAuditInsert = vi.fn().mockResolvedValue({ error: null });
 
       mockSupabase.from.mockImplementation((table: string) => {
-        if (table === "audit_trail") {
+        if (table === 'audit_trail') {
           return { insert: mockAuditInsert };
         }
         return {
@@ -516,20 +548,20 @@ describe("Patient Risk Assessment System - End-to-End Workflow", () => {
 
       const result = await riskAssessmentService.executeRiskAssessment(
         patientData,
-        "CRM123456/SP",
-        "192.168.1.100",
+        'CRM123456/SP',
+        '192.168.1.100'
       );
 
       // Verify audit trail creation
-      expect(result.compliance.lgpd.auditTrail).toContain("consent_given");
-      expect(result.compliance.lgpd.auditTrail).toContain("data_processed");
+      expect(result.compliance.lgpd.auditTrail).toContain('consent_given');
+      expect(result.compliance.lgpd.auditTrail).toContain('data_processed');
 
       const auditData = result.compliance.lgpd;
-      expect(auditData).toHaveProperty("retentionPeriod");
-      expect(auditData).toHaveProperty("dataProcessingAllowed");
+      expect(auditData).toHaveProperty('retentionPeriod');
+      expect(auditData).toHaveProperty('dataProcessingAllowed');
     });
 
-    it("should validate Brazilian healthcare context consistency", async () => {
+    it('should validate Brazilian healthcare context consistency', async () => {
       const patientData = createMockPatientData();
 
       const mockSupabase = createMockSupabaseClient();
@@ -538,15 +570,18 @@ describe("Patient Risk Assessment System - End-to-End Workflow", () => {
         select: vi.fn().mockResolvedValue({ data: [], error: null }),
       });
 
-      const result = await riskAssessmentService.executeRiskAssessment(patientData, "CRM123456/SP");
+      const result = await riskAssessmentService.executeRiskAssessment(
+        patientData,
+        'CRM123456/SP'
+      );
 
       // Verify Portuguese language in recommendations
       const hasPortugueseText = result.riskAssessment.recommendations.some(
         (rec) =>
-          rec.includes("paciente") ||
-          rec.includes("médic") ||
-          rec.includes("avaliação") ||
-          rec.includes("risco"),
+          rec.includes('paciente') ||
+          rec.includes('médic') ||
+          rec.includes('avaliação') ||
+          rec.includes('risco')
       );
       expect(hasPortugueseText).toBe(true);
 
@@ -557,32 +592,38 @@ describe("Patient Risk Assessment System - End-to-End Workflow", () => {
       if (result.scoreBreakdown.criticalFactors.length > 0) {
         const hasPortugueseFactors = result.scoreBreakdown.criticalFactors.some(
           (factor) =>
-            factor.includes("paciente") || factor.includes("risco") || factor.includes("idade"),
+            factor.includes('paciente') ||
+            factor.includes('risco') ||
+            factor.includes('idade')
         );
         expect(hasPortugueseFactors).toBe(true);
       }
     });
   });
 
-  describe("Error Handling and Resilience", () => {
-    it("should handle database failures gracefully", async () => {
+  describe('Error Handling and Resilience', () => {
+    it('should handle database failures gracefully', async () => {
       const patientData = createMockPatientData();
 
       const mockSupabase = createMockSupabaseClient();
       mockSupabase.from.mockReturnValue({
         insert: vi.fn().mockResolvedValue({
-          error: { message: "Database connection failed" },
+          error: { message: 'Database connection failed' },
         }),
       });
 
       await expect(
-        riskAssessmentService.executeRiskAssessment(patientData, "CRM123456/SP", {
-          simulateFailure: true,
-        }),
+        riskAssessmentService.executeRiskAssessment(
+          patientData,
+          'CRM123456/SP',
+          {
+            simulateFailure: true,
+          }
+        )
       ).rejects.toThrow();
     });
 
-    it("should validate input data integrity", async () => {
+    it('should validate input data integrity', async () => {
       const invalidPatientData = {
         ...createMockPatientData(),
         id: null, // This will cause validation to fail
@@ -593,7 +634,10 @@ describe("Patient Risk Assessment System - End-to-End Workflow", () => {
       };
 
       await expect(
-        riskAssessmentService.executeRiskAssessment(invalidPatientData, "CRM123456/SP"),
+        riskAssessmentService.executeRiskAssessment(
+          invalidPatientData,
+          'CRM123456/SP'
+        )
       ).rejects.toThrow();
     });
   });

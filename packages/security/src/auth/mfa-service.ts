@@ -204,15 +204,12 @@ function generateHotp(secret: string, counter: number): string {
   // biome-ignore lint/suspicious/noBitwiseOperators: Bitwise operations are required for HOTP cryptographic algorithm
   const offset = digest.at(-1) & 0x0f;
   // HOTP dynamic truncation algorithm (RFC 4226) requires bitwise operations
-  // biome-ignore lint/suspicious/noBitwiseOperators: HOTP algorithm requires bitwise AND, shift, and OR operations
+  // biome-ignore suspicious/noBitwiseOperators: HOTP algorithm requires bitwise operations
   const code =
-    // biome-ignore lint/suspicious/noBitwiseOperators: HOTP bit extraction and shifting
     ((digest[offset] & HOTP_MASK) << 24) |
-    // biome-ignore lint/suspicious/noBitwiseOperators: HOTP bit extraction and shifting
     ((digest[offset + 1] & BYTE_MASK) << 16) |
-    // biome-ignore lint/suspicious/noBitwiseOperators: HOTP bit extraction and shifting
     ((digest[offset + 2] & BYTE_MASK) << 8) |
-    // biome-ignore lint/suspicious/noBitwiseOperators: HOTP bit extraction
+    (digest[offset + 3] & BYTE_MASK);
     (digest[offset + HOTP_OFFSET_BYTES] & BYTE_MASK);
 
   return (code % 10 ** TOTP_DIGITS).toString().padStart(TOTP_DIGITS, '0');
@@ -235,12 +232,12 @@ function base32Decode(encoded: string): Buffer {
   const output: number[] = [];
 
   for (let i = 0; i < cleanEncoded.length; i++) {
-    // biome-ignore lint/suspicious/noBitwiseOperators: Base32 decoding requires bitwise shift and OR
-    value = (value << BASE32_BITS_PER_CHAR) | BASE32_CHARS.indexOf(cleanEncoded[i]);
+    // biome-ignore suspicious/noBitwiseOperators: Base32 decoding requires bitwise operations
+    value =
+      (value << BASE32_BITS_PER_CHAR) | BASE32_CHARS.indexOf(cleanEncoded[i]);
     bits += BASE32_BITS_PER_CHAR;
 
     if (bits >= BYTE_SIZE) {
-      // biome-ignore lint/suspicious/noBitwiseOperators: Base32 decoding requires bitwise shift and AND
       output.push((value >>> (bits - BYTE_SIZE)) & BYTE_MASK);
       bits -= BYTE_SIZE;
     }
@@ -436,7 +433,7 @@ export function verifyMfa(
       };
     }
 
-    let verified: boolean = false;
+    let verified = false;
 
     switch (method) {
       case MfaMethod.TOTP: {
@@ -458,7 +455,7 @@ export function verifyMfa(
         verified = verifyBackupCodeForUser(userId, code);
         break;
       default:
-        return { success: false, error: 'Invalid MFA method' };
+        return { success: false, method, message: 'Invalid MFA method' };
     }
 
     if (verified) {

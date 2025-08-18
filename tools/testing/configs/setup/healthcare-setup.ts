@@ -137,7 +137,6 @@ vi.mock('next/navigation', () => ({
   useSearchParams: () => new URLSearchParams(),
   usePathname: () => '/test-path',
 }));
-})
 
 afterEach(() =>
 {

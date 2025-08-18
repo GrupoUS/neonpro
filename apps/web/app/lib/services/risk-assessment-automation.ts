@@ -1,5 +1,5 @@
 // Risk Assessment Service
-import { vi } from "vitest";
+import { vi } from 'vitest';
 
 export interface RiskAssessmentConfig {
   supabaseUrl: string;
@@ -20,48 +20,62 @@ export interface RiskAssessmentService {
   validateContextConsistency: () => Promise<any>;
   handleDatabaseFailure: () => Promise<any>;
   validateInputIntegrity: (input: any) => Promise<any>;
-  executeRiskAssessment: (patientData: any, doctorId: string, options?: any) => Promise<any>;
+  executeRiskAssessment: (
+    patientData: any,
+    doctorId: string,
+    options?: any
+  ) => Promise<any>;
 }
 
-export function createRiskAssessmentService(config: RiskAssessmentConfig): RiskAssessmentService {
+export function createRiskAssessmentService(
+  config: RiskAssessmentConfig
+): RiskAssessmentService {
   const service = {
     assessPatientRisk: vi.fn().mockImplementation(async (patientData: any) => {
       // Mock implementation for testing
-      const riskLevel = patientData.age > 65 ? "high" : "low";
+      const riskLevel = patientData.age > 65 ? 'high' : 'low';
       return {
         patientId: patientData.id,
         riskLevel,
-        score: riskLevel === "high" ? 0.8 : 0.3,
-        factors: ["age", "medical_history"],
-        recommendations: ["monitor closely", "regular checkups"],
+        score: riskLevel === 'high' ? 0.8 : 0.3,
+        factors: ['age', 'medical_history'],
+        recommendations: ['monitor closely', 'regular checkups'],
         timestamp: new Date().toISOString(),
       };
     }),
 
-    createTreatmentPrediction: vi.fn().mockImplementation(async (riskData: any) => {
-      return {
-        treatmentId: "treatment-" + Math.random().toString(36).substr(2, 9),
-        predictedOutcome: riskData.riskLevel === "high" ? "requires monitoring" : "standard care",
-        confidence: 0.85,
-        timeline: "2-4 weeks",
-      };
-    }),
+    createTreatmentPrediction: vi
+      .fn()
+      .mockImplementation(async (riskData: any) => {
+        return {
+          treatmentId: 'treatment-' + Math.random().toString(36).substr(2, 9),
+          predictedOutcome:
+            riskData.riskLevel === 'high'
+              ? 'requires monitoring'
+              : 'standard care',
+          confidence: 0.85,
+          timeline: '2-4 weeks',
+        };
+      }),
 
-    startRealTimeMonitoring: vi.fn().mockImplementation(async (patientId: string) => {
-      return {
-        monitoringId: "monitor-" + Math.random().toString(36).substr(2, 9),
-        patientId,
-        status: "active",
-        interval: 300, // 5 minutes
-      };
-    }),
+    startRealTimeMonitoring: vi
+      .fn()
+      .mockImplementation(async (patientId: string) => {
+        return {
+          monitoringId: 'monitor-' + Math.random().toString(36).substr(2, 9),
+          patientId,
+          status: 'active',
+          interval: 300, // 5 minutes
+        };
+      }),
 
     processVitalSigns: vi.fn().mockImplementation(async (vitalSigns: any) => {
-      const isStable = vitalSigns.heartRate >= 60 && vitalSigns.heartRate <= 100;
+      const isStable =
+        vitalSigns.heartRate >= 60 && vitalSigns.heartRate <= 100;
       return {
         processedAt: new Date().toISOString(),
-        status: isStable ? "stable" : "requires_attention",
-        alerts: isStable ? [] : ["irregular_heart_rate"],
+        status: isStable ? 'stable' : 'requires_attention',
+        alerts: isStable ? [] : ['irregular_heart_rate'],
       };
     }),
 
@@ -74,15 +88,17 @@ export function createRiskAssessmentService(config: RiskAssessmentConfig): RiskA
       };
     }),
 
-    validateLGPDCompliance: vi.fn().mockImplementation(async (patientId: string) => {
-      return {
-        patientId,
-        consentStatus: "valid",
-        dataProcessingAllowed: true,
-        retentionPeriod: "5 years",
-        auditTrail: ["consent_given", "data_processed"],
-      };
-    }),
+    validateLGPDCompliance: vi
+      .fn()
+      .mockImplementation(async (patientId: string) => {
+        return {
+          patientId,
+          consentStatus: 'valid',
+          dataProcessingAllowed: true,
+          retentionPeriod: '5 years',
+          auditTrail: ['consent_given', 'data_processed'],
+        };
+      }),
 
     validateContextConsistency: vi.fn().mockImplementation(async () => {
       return {
@@ -97,52 +113,58 @@ export function createRiskAssessmentService(config: RiskAssessmentConfig): RiskA
       return {
         failureHandled: true,
         fallbackActivated: true,
-        dataIntegrity: "preserved",
-        recoveryTime: "2 minutes",
+        dataIntegrity: 'preserved',
+        recoveryTime: '2 minutes',
       };
     }),
 
     validateInputIntegrity: vi.fn().mockImplementation(async (input: any) => {
-      const isValid = input && typeof input === "object" && input.id;
+      const isValid = input && typeof input === 'object' && input.id;
       return {
         valid: isValid,
-        errors: isValid ? [] : ["missing_required_fields"],
+        errors: isValid ? [] : ['missing_required_fields'],
         sanitized: input,
       };
     }),
 
     executeRiskAssessment: vi
       .fn()
-      .mockImplementation(async (patientData: any, doctorId: string, options?: any) => {
-        // Validate input integrity first
-        if (!(patientData && patientData.id)) {
-          throw new Error("Invalid patient data: missing required fields");
+      .mockImplementation(
+        async (patientData: any, doctorId: string, options?: any) => {
+          // Validate input integrity first
+          if (!(patientData && patientData.id)) {
+            throw new Error('Invalid patient data: missing required fields');
+          }
+
+          // Comprehensive risk assessment execution
+          const riskAssessment = await service.assessPatientRisk(patientData);
+          const treatmentPrediction =
+            await service.createTreatmentPrediction(riskAssessment);
+
+          // Performance and compliance checks
+          const performanceResult = await service.checkPerformanceCompliance();
+          const lgpdCompliance = await service.validateLGPDCompliance(
+            patientData.id
+          );
+          const contextConsistency = await service.validateContextConsistency();
+
+          return {
+            assessmentId:
+              'assessment-' + Math.random().toString(36).substr(2, 9),
+            patientId: patientData.id,
+            doctorId,
+            riskAssessment,
+            treatmentPrediction,
+            compliance: {
+              performance: performanceResult,
+              lgpd: lgpdCompliance,
+              context: contextConsistency,
+            },
+            executedAt: new Date().toISOString(),
+            status: 'completed',
+          };
         }
-
-        // Comprehensive risk assessment execution
-        const riskAssessment = await service.assessPatientRisk(patientData);
-        const treatmentPrediction = await service.createTreatmentPrediction(riskAssessment);
-
-        // Performance and compliance checks
-        const performanceResult = await service.checkPerformanceCompliance();
-        const lgpdCompliance = await service.validateLGPDCompliance(patientData.id);
-        const contextConsistency = await service.validateContextConsistency();
-
-        return {
-          assessmentId: "assessment-" + Math.random().toString(36).substr(2, 9),
-          patientId: patientData.id,
-          doctorId,
-          riskAssessment,
-          treatmentPrediction,
-          compliance: {
-            performance: performanceResult,
-            lgpd: lgpdCompliance,
-            context: contextConsistency,
-          },
-          executedAt: new Date().toISOString(),
-          status: "completed",
-        };
-      }),
+      ),
   };
 
   return service;
@@ -150,7 +172,7 @@ export function createRiskAssessmentService(config: RiskAssessmentConfig): RiskA
 
 // Legacy exports for backwards compatibility
 export async function getData() {
-  return { message: "Risk assessment service operational" };
+  return { message: 'Risk assessment service operational' };
 }
 
 export async function saveData(data: unknown) {

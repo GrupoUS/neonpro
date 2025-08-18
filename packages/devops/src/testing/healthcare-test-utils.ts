@@ -85,7 +85,7 @@ export function renderWithHealthcareContext(
 
   // Mock healthcare context providers
   const HealthcareWrapper = ({ children }: { children: React.ReactNode }) =>
-    (<div data-testid = { children } < 'healthcare-context' < />div);
+    (<div data-testid="healthcare-context">{children}</div>);
 
   return {
     user: userEvent.setup(),

@@ -250,8 +250,8 @@ export class TelemedicineComplianceService {
         },
         technical_compliance: {
           platform_approved: platformValidation.compliant,
-          security_requirements_met: platformValidation.security_compliant,
-          quality_standards_met: platformValidation.quality_compliant,
+          security_requirements_met: platformValidation.security_compliant ?? false,
+          quality_standards_met: platformValidation.quality_compliant ?? false,
         },
         compliance_issues: [
           ...(cfmValidation.issues || []),

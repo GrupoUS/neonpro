@@ -1,5 +1,5 @@
 // Performance charts component
-import React from 'react';
+import type React from 'react';
 
 interface PerformanceChartsProps {
   data?: Array<{ timestamp: Date; value: number }>;
@@ -8,7 +8,7 @@ interface PerformanceChartsProps {
 
 export const PerformanceCharts: React.FC<PerformanceChartsProps> = ({
   data = [],
-  title = 'Performance Metrics'
+  title = 'Performance Metrics',
 }) => {
   return (
     <div className="performance-charts">

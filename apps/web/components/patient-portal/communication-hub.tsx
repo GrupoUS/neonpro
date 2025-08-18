@@ -1,40 +1,7 @@
-"use client";
+'use client';
 
-import { useState } from "react";
 import {
-  MessageCircle,
-  Send,
-  Phone,
-  Video,
-  Mail,
-  Calendar,
-  Clock,
-  User,
-  Paperclip,
-  Image as ImageIcon,
-  Mic,
-  MoreVertical,
-  Search,
-  Filter,
-  AlertTriangle,
-  CheckCircle,
-  Star,
-  Archive,
-  Pin,
-  Trash2,
-  Reply,
-  Forward,
-  Download,
-  VolumeX,
-  Volume2,
-  Bell,
-  BellOff,
-  Shield,
-  Heart,
-  MapPin,
-  VideoOff,
-} from "lucide-react";
-import {
+  Avatar,
   Badge,
   Button,
   Card,
@@ -47,210 +14,253 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-  Avatar,
-} from "@neonpro/ui";
-import { cn } from "@neonpro/utils";
+} from '@neonpro/ui';
+import { cn } from '@neonpro/utils';
+import {
+  AlertTriangle,
+  Archive,
+  Bell,
+  BellOff,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Download,
+  Filter,
+  Forward,
+  Heart,
+  Image as ImageIcon,
+  Mail,
+  MapPin,
+  MessageCircle,
+  Mic,
+  MoreVertical,
+  Paperclip,
+  Phone,
+  Pin,
+  Reply,
+  Search,
+  Send,
+  Shield,
+  Star,
+  Trash2,
+  User,
+  Video,
+  VideoOff,
+  Volume2,
+  VolumeX,
+} from 'lucide-react';
+import { useState } from 'react';
 
 // Mock data for communications
 const mockCommunications = {
   conversations: [
     {
       id: 1,
-      type: "chat",
+      type: 'chat',
       participant: {
-        name: "Dra. Ana Santos",
-        role: "Dermatologista",
-        avatar: "/doctor-avatar-1.jpg",
+        name: 'Dra. Ana Santos',
+        role: 'Dermatologista',
+        avatar: '/doctor-avatar-1.jpg',
         isOnline: true,
-        clinic: "NeonPro Clínica Ipanema",
+        clinic: 'NeonPro Clínica Ipanema',
       },
       lastMessage: {
-        text: "Como está se sentindo após o procedimento? Algum desconforto?",
-        timestamp: "2024-08-18T14:30:00Z",
-        from: "doctor",
-        type: "text",
+        text: 'Como está se sentindo após o procedimento? Algum desconforto?',
+        timestamp: '2024-08-18T14:30:00Z',
+        from: 'doctor',
+        type: 'text',
       },
       unreadCount: 2,
       isPinned: true,
-      priority: "high",
-      status: "active",
+      priority: 'high',
+      status: 'active',
     },
     {
       id: 2,
-      type: "chat",
+      type: 'chat',
       participant: {
-        name: "Enfermeira Carol",
-        role: "Enfermeira Especialista",
-        avatar: "/nurse-avatar-1.jpg",
+        name: 'Enfermeira Carol',
+        role: 'Enfermeira Especialista',
+        avatar: '/nurse-avatar-1.jpg',
         isOnline: false,
-        clinic: "NeonPro Clínica Ipanema",
+        clinic: 'NeonPro Clínica Ipanema',
       },
       lastMessage: {
-        text: "Lembre-se de aplicar o creme hidratante 2x ao dia",
-        timestamp: "2024-08-17T16:45:00Z",
-        from: "nurse",
-        type: "text",
+        text: 'Lembre-se de aplicar o creme hidratante 2x ao dia',
+        timestamp: '2024-08-17T16:45:00Z',
+        from: 'nurse',
+        type: 'text',
       },
       unreadCount: 0,
       isPinned: false,
-      priority: "medium",
-      status: "active",
+      priority: 'medium',
+      status: 'active',
     },
     {
       id: 3,
-      type: "support",
+      type: 'support',
       participant: {
-        name: "Suporte NeonPro",
-        role: "Atendimento ao Cliente",
-        avatar: "/support-avatar.jpg",
+        name: 'Suporte NeonPro',
+        role: 'Atendimento ao Cliente',
+        avatar: '/support-avatar.jpg',
         isOnline: true,
-        clinic: "NeonPro",
+        clinic: 'NeonPro',
       },
       lastMessage: {
-        text: "Seu agendamento foi confirmado para 25/08 às 14:30",
-        timestamp: "2024-08-17T10:20:00Z",
-        from: "support",
-        type: "appointment",
+        text: 'Seu agendamento foi confirmado para 25/08 às 14:30',
+        timestamp: '2024-08-17T10:20:00Z',
+        from: 'support',
+        type: 'appointment',
       },
       unreadCount: 1,
       isPinned: false,
-      priority: "low",
-      status: "active",
+      priority: 'low',
+      status: 'active',
     },
   ],
   currentConversation: {
     id: 1,
     participant: {
-      name: "Dra. Ana Santos",
-      role: "Dermatologista",
-      avatar: "/doctor-avatar-1.jpg",
+      name: 'Dra. Ana Santos',
+      role: 'Dermatologista',
+      avatar: '/doctor-avatar-1.jpg',
       isOnline: true,
-      clinic: "NeonPro Clínica Ipanema",
-      phone: "+55 (21) 99999-9999",
-      email: "ana.santos@neonpro.com",
+      clinic: 'NeonPro Clínica Ipanema',
+      phone: '+55 (21) 99999-9999',
+      email: 'ana.santos@neonpro.com',
     },
     messages: [
       {
         id: 1,
-        text: "Olá Maria! Como foi sua experiência com o Botox ontem?",
-        timestamp: "2024-08-18T09:00:00Z",
-        from: "doctor",
-        type: "text",
-        status: "read",
+        text: 'Olá Maria! Como foi sua experiência com o Botox ontem?',
+        timestamp: '2024-08-18T09:00:00Z',
+        from: 'doctor',
+        type: 'text',
+        status: 'read',
       },
       {
         id: 2,
-        text: "Oi Doutora! Foi tranquilo, senti apenas um pequeno desconforto durante a aplicação.",
-        timestamp: "2024-08-18T09:15:00Z",
-        from: "patient",
-        type: "text",
-        status: "read",
+        text: 'Oi Doutora! Foi tranquilo, senti apenas um pequeno desconforto durante a aplicação.',
+        timestamp: '2024-08-18T09:15:00Z',
+        from: 'patient',
+        type: 'text',
+        status: 'read',
       },
       {
         id: 3,
-        text: "Que bom! Isso é normal. Está sentindo algum inchaço ou vermelhidão hoje?",
-        timestamp: "2024-08-18T09:20:00Z",
-        from: "doctor",
-        type: "text",
-        status: "read",
+        text: 'Que bom! Isso é normal. Está sentindo algum inchaço ou vermelhidão hoje?',
+        timestamp: '2024-08-18T09:20:00Z',
+        from: 'doctor',
+        type: 'text',
+        status: 'read',
       },
       {
         id: 4,
-        text: "Um pouquinho de inchaço no local das aplicações, mas nada demais.",
-        timestamp: "2024-08-18T13:45:00Z",
-        from: "patient",
-        type: "text",
-        status: "read",
+        text: 'Um pouquinho de inchaço no local das aplicações, mas nada demais.',
+        timestamp: '2024-08-18T13:45:00Z',
+        from: 'patient',
+        type: 'text',
+        status: 'read',
       },
       {
         id: 5,
-        text: "Perfeito! Isso é esperado nas primeiras 24-48h. Continue com os cuidados que orientei.",
-        timestamp: "2024-08-18T14:00:00Z",
-        from: "doctor",
-        type: "text",
-        status: "read",
+        text: 'Perfeito! Isso é esperado nas primeiras 24-48h. Continue com os cuidados que orientei.',
+        timestamp: '2024-08-18T14:00:00Z',
+        from: 'doctor',
+        type: 'text',
+        status: 'read',
       },
       {
         id: 6,
-        text: "Como está se sentindo após o procedimento? Algum desconforto?",
-        timestamp: "2024-08-18T14:30:00Z",
-        from: "doctor",
-        type: "text",
-        status: "delivered",
+        text: 'Como está se sentindo após o procedimento? Algum desconforto?',
+        timestamp: '2024-08-18T14:30:00Z',
+        from: 'doctor',
+        type: 'text',
+        status: 'delivered',
       },
     ],
   },
   emergencyContacts: [
     {
       id: 1,
-      name: "Emergência 24h",
-      phone: "+55 (21) 99999-9999",
-      description: "Para emergências médicas relacionadas aos tratamentos",
-      available: "24/7",
-      type: "emergency",
+      name: 'Emergência 24h',
+      phone: '+55 (21) 99999-9999',
+      description: 'Para emergências médicas relacionadas aos tratamentos',
+      available: '24/7',
+      type: 'emergency',
     },
     {
       id: 2,
-      name: "Plantão Médico",
-      phone: "+55 (21) 98888-8888",
-      description: "Médico de plantão para dúvidas urgentes",
-      available: "Noites e fins de semana",
-      type: "urgent",
+      name: 'Plantão Médico',
+      phone: '+55 (21) 98888-8888',
+      description: 'Médico de plantão para dúvidas urgentes',
+      available: 'Noites e fins de semana',
+      type: 'urgent',
     },
   ],
   notifications: [
     {
       id: 1,
-      title: "Lembrete de Consulta",
-      message: "Sua consulta é amanhã às 14:30 com Dra. Ana Santos",
-      type: "appointment",
-      timestamp: "2024-08-18T08:00:00Z",
+      title: 'Lembrete de Consulta',
+      message: 'Sua consulta é amanhã às 14:30 com Dra. Ana Santos',
+      type: 'appointment',
+      timestamp: '2024-08-18T08:00:00Z',
       read: false,
-      priority: "high",
+      priority: 'high',
     },
     {
       id: 2,
-      title: "Resultado Disponível",
-      message: "Seus resultados da avaliação estão prontos",
-      type: "result",
-      timestamp: "2024-08-17T15:30:00Z",
+      title: 'Resultado Disponível',
+      message: 'Seus resultados da avaliação estão prontos',
+      type: 'result',
+      timestamp: '2024-08-17T15:30:00Z',
       read: false,
-      priority: "medium",
+      priority: 'medium',
     },
     {
       id: 3,
-      title: "Cuidado Pós-Procedimento",
-      message: "Lembre-se: evite exercícios por mais 12 horas",
-      type: "care",
-      timestamp: "2024-08-18T12:00:00Z",
+      title: 'Cuidado Pós-Procedimento',
+      message: 'Lembre-se: evite exercícios por mais 12 horas',
+      type: 'care',
+      timestamp: '2024-08-18T12:00:00Z',
       read: true,
-      priority: "medium",
+      priority: 'medium',
     },
   ],
 };
 
-function ConversationList({ conversations, onSelectConversation, selectedId }: any) {
+function ConversationList({
+  conversations,
+  onSelectConversation,
+  selectedId,
+}: any) {
   const formatTime = (timestamp: string) => {
     const date = new Date(timestamp);
     const now = new Date();
     const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
 
     if (diffInHours < 24) {
-      return date.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+      return date.toLocaleTimeString('pt-BR', {
+        hour: '2-digit',
+        minute: '2-digit',
+      });
     }
-      return date.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
+    return date.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+    });
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case "high":
-        return "border-l-red-500";
-      case "medium":
-        return "border-l-yellow-500";
-      case "low":
-        return "border-l-green-500";
+      case 'high':
+        return 'border-l-red-500';
+      case 'medium':
+        return 'border-l-yellow-500';
+      case 'low':
+        return 'border-l-green-500';
       default:
-        return "border-l-gray-300";
+        return 'border-l-gray-300';
     }
   };
 
@@ -258,13 +268,13 @@ function ConversationList({ conversations, onSelectConversation, selectedId }: a
     <div className="space-y-2">
       {conversations.map((conversation: any) => (
         <Card
-          key={conversation.id}
           className={cn(
-            "cursor-pointer border-l-4 transition-all hover:shadow-md",
+            'cursor-pointer border-l-4 transition-all hover:shadow-md',
             selectedId === conversation.id
-              ? "border-pink-500 bg-pink-50"
-              : getPriorityColor(conversation.priority),
+              ? 'border-pink-500 bg-pink-50'
+              : getPriorityColor(conversation.priority)
           )}
+          key={conversation.id}
           onClick={() => onSelectConversation(conversation)}
         >
           <CardContent className="p-4">
@@ -286,7 +296,9 @@ function ConversationList({ conversations, onSelectConversation, selectedId }: a
                     <h3 className="truncate font-medium text-sm">
                       {conversation.participant.name}
                     </h3>
-                    {conversation.isPinned && <Pin className="h-3 w-3 text-muted-foreground" />}
+                    {conversation.isPinned && (
+                      <Pin className="h-3 w-3 text-muted-foreground" />
+                    )}
                   </div>
                   <div className="flex items-center space-x-1">
                     <span className="text-muted-foreground text-xs">
@@ -300,7 +312,9 @@ function ConversationList({ conversations, onSelectConversation, selectedId }: a
                   </div>
                 </div>
 
-                <p className="text-muted-foreground text-xs">{conversation.participant.role}</p>
+                <p className="text-muted-foreground text-xs">
+                  {conversation.participant.role}
+                </p>
                 <p className="mt-1 truncate text-muted-foreground text-sm">
                   {conversation.lastMessage.text}
                 </p>
@@ -314,23 +328,23 @@ function ConversationList({ conversations, onSelectConversation, selectedId }: a
 }
 
 function ChatWindow({ conversation }: any) {
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState('');
   const [showCallOptions, setShowCallOptions] = useState(false);
 
   const formatMessageTime = (timestamp: string) => {
-    return new Date(timestamp).toLocaleTimeString("pt-BR", {
-      hour: "2-digit",
-      minute: "2-digit",
+    return new Date(timestamp).toLocaleTimeString('pt-BR', {
+      hour: '2-digit',
+      minute: '2-digit',
     });
   };
 
   const getMessageStatus = (status: string) => {
     switch (status) {
-      case "sent":
+      case 'sent':
         return <Clock className="h-3 w-3 text-gray-400" />;
-      case "delivered":
+      case 'delivered':
         return <CheckCircle className="h-3 w-3 text-gray-400" />;
-      case "read":
+      case 'read':
         return <CheckCircle className="h-3 w-3 text-pink-600" />;
       default:
         return null;
@@ -340,7 +354,7 @@ function ChatWindow({ conversation }: any) {
   const handleSendMessage = () => {
     if (message.trim()) {
       // Logic to send message would go here
-      setMessage("");
+      setMessage('');
     }
   };
 
@@ -362,22 +376,23 @@ function ChatWindow({ conversation }: any) {
             <div>
               <h3 className="font-medium">{conversation.participant.name}</h3>
               <p className="text-muted-foreground text-sm">
-                {conversation.participant.role} • {conversation.participant.clinic}
+                {conversation.participant.role} •{' '}
+                {conversation.participant.clinic}
               </p>
               <p className="text-green-600 text-xs">
-                {conversation.participant.isOnline ? "Online" : "Offline"}
+                {conversation.participant.isOnline ? 'Online' : 'Offline'}
               </p>
             </div>
           </div>
 
           <div className="flex items-center space-x-2">
-            <Button variant="outline" size="sm">
+            <Button size="sm" variant="outline">
               <Phone className="h-4 w-4" />
             </Button>
-            <Button variant="outline" size="sm">
+            <Button size="sm" variant="outline">
               <Video className="h-4 w-4" />
             </Button>
-            <Button variant="outline" size="sm">
+            <Button size="sm" variant="outline">
               <MoreVertical className="h-4 w-4" />
             </Button>
           </div>
@@ -388,24 +403,31 @@ function ChatWindow({ conversation }: any) {
       <div className="flex-1 space-y-4 overflow-y-auto p-4">
         {conversation.messages.map((msg: any) => (
           <div
+            className={cn(
+              'flex',
+              msg.from === 'patient' ? 'justify-end' : 'justify-start'
+            )}
             key={msg.id}
-            className={cn("flex", msg.from === "patient" ? "justify-end" : "justify-start")}
           >
             <div
               className={cn(
-                "max-w-xs space-y-1 rounded-lg px-4 py-2 lg:max-w-md",
-                msg.from === "patient" ? "bg-pink-600 text-white" : "bg-gray-100 dark:bg-gray-800",
+                'max-w-xs space-y-1 rounded-lg px-4 py-2 lg:max-w-md',
+                msg.from === 'patient'
+                  ? 'bg-pink-600 text-white'
+                  : 'bg-gray-100 dark:bg-gray-800'
               )}
             >
               <p className="text-sm">{msg.text}</p>
               <div
                 className={cn(
-                  "flex items-center justify-end space-x-1 text-xs",
-                  msg.from === "patient" ? "text-pink-100" : "text-muted-foreground",
+                  'flex items-center justify-end space-x-1 text-xs',
+                  msg.from === 'patient'
+                    ? 'text-pink-100'
+                    : 'text-muted-foreground'
                 )}
               >
                 <span>{formatMessageTime(msg.timestamp)}</span>
-                {msg.from === "patient" && getMessageStatus(msg.status)}
+                {msg.from === 'patient' && getMessageStatus(msg.status)}
               </div>
             </div>
           </div>
@@ -416,29 +438,29 @@ function ChatWindow({ conversation }: any) {
       <div className="border-t p-4">
         <div className="flex items-center space-x-2">
           <div className="flex space-x-1">
-            <Button variant="outline" size="sm">
+            <Button size="sm" variant="outline">
               <Paperclip className="h-4 w-4" />
             </Button>
-            <Button variant="outline" size="sm">
+            <Button size="sm" variant="outline">
               <ImageIcon className="h-4 w-4" />
             </Button>
-            <Button variant="outline" size="sm">
+            <Button size="sm" variant="outline">
               <Mic className="h-4 w-4" />
             </Button>
           </div>
 
           <div className="flex flex-1 space-x-2">
             <Input
+              className="flex-1"
+              onChange={(e) => setMessage(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
               placeholder="Digite sua mensagem..."
               value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-              className="flex-1"
             />
             <Button
-              onClick={handleSendMessage}
-              disabled={!message.trim()}
               className="bg-pink-600 hover:bg-pink-700"
+              disabled={!message.trim()}
+              onClick={handleSendMessage}
             >
               <Send className="h-4 w-4" />
             </Button>
@@ -452,13 +474,13 @@ function ChatWindow({ conversation }: any) {
 function NotificationsList({ notifications }: any) {
   const getNotificationIcon = (type: string) => {
     switch (type) {
-      case "appointment":
+      case 'appointment':
         return <Calendar className="h-5 w-5 text-blue-600" />;
-      case "result":
+      case 'result':
         return <Star className="h-5 w-5 text-yellow-600" />;
-      case "care":
+      case 'care':
         return <Heart className="h-5 w-5 text-pink-600" />;
-      case "emergency":
+      case 'emergency':
         return <AlertTriangle className="h-5 w-5 text-red-600" />;
       default:
         return <Bell className="h-5 w-5 text-gray-600" />;
@@ -472,30 +494,38 @@ function NotificationsList({ notifications }: any) {
 
     if (diffInMinutes < 60) {
       return `${Math.floor(diffInMinutes)} min atrás`;
-    }if (diffInMinutes < 1440) {
+    }
+    if (diffInMinutes < 1440) {
       return `${Math.floor(diffInMinutes / 60)} horas atrás`;
     }
-      return date.toLocaleDateString("pt-BR");
+    return date.toLocaleDateString('pt-BR');
   };
 
   return (
     <div className="space-y-3">
       {notifications.map((notification: any) => (
         <Card
-          key={notification.id}
           className={cn(
-            "cursor-pointer transition-all hover:shadow-md",
-            notification.read ? "" : "border-l-4 border-l-pink-500 bg-pink-50/50",
+            'cursor-pointer transition-all hover:shadow-md',
+            notification.read
+              ? ''
+              : 'border-l-4 border-l-pink-500 bg-pink-50/50'
           )}
+          key={notification.id}
         >
           <CardContent className="p-4">
             <div className="flex items-start space-x-3">
-              <div className="flex-shrink-0">{getNotificationIcon(notification.type)}</div>
+              <div className="flex-shrink-0">
+                {getNotificationIcon(notification.type)}
+              </div>
 
               <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between">
                   <h3
-                    className={cn("font-medium text-sm", notification.read ? "" : "font-semibold")}
+                    className={cn(
+                      'font-medium text-sm',
+                      notification.read ? '' : 'font-semibold'
+                    )}
                   >
                     {notification.title}
                   </h3>
@@ -503,18 +533,25 @@ function NotificationsList({ notifications }: any) {
                     {formatNotificationTime(notification.timestamp)}
                   </span>
                 </div>
-                <p className="mt-1 text-muted-foreground text-sm">{notification.message}</p>
+                <p className="mt-1 text-muted-foreground text-sm">
+                  {notification.message}
+                </p>
 
-                {notification.priority === "high" && (
-                  <Badge variant="secondary" className="mt-2 bg-red-100 text-red-800">
+                {notification.priority === 'high' && (
+                  <Badge
+                    className="mt-2 bg-red-100 text-red-800"
+                    variant="secondary"
+                  >
                     Urgente
                   </Badge>
                 )}
               </div>
 
               <div className="flex items-center space-x-1">
-                {!notification.read && <div className="h-2 w-2 rounded-full bg-pink-600" />}
-                <Button variant="ghost" size="sm">
+                {!notification.read && (
+                  <div className="h-2 w-2 rounded-full bg-pink-600" />
+                )}
+                <Button size="sm" variant="ghost">
                   <MoreVertical className="h-4 w-4" />
                 </Button>
               </div>
@@ -530,7 +567,7 @@ function EmergencyContacts({ contacts }: any) {
   return (
     <div className="space-y-4">
       {contacts.map((contact: any) => (
-        <Card key={contact.id} className="border-l-4 border-l-red-500">
+        <Card className="border-l-4 border-l-red-500" key={contact.id}>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
@@ -538,16 +575,20 @@ function EmergencyContacts({ contacts }: any) {
                   <AlertTriangle className="h-4 w-4 text-red-600" />
                   <span>{contact.name}</span>
                 </h3>
-                <p className="text-muted-foreground text-xs">{contact.description}</p>
-                <p className="font-medium text-red-600 text-xs">{contact.available}</p>
+                <p className="text-muted-foreground text-xs">
+                  {contact.description}
+                </p>
+                <p className="font-medium text-red-600 text-xs">
+                  {contact.available}
+                </p>
               </div>
 
               <div className="flex space-x-2">
-                <Button size="sm" className="bg-red-600 hover:bg-red-700">
+                <Button className="bg-red-600 hover:bg-red-700" size="sm">
                   <Phone className="h-4 w-4" />
                   Ligar
                 </Button>
-                <Button variant="outline" size="sm">
+                <Button size="sm" variant="outline">
                   <MessageCircle className="h-4 w-4" />
                   Chat
                 </Button>
@@ -561,19 +602,23 @@ function EmergencyContacts({ contacts }: any) {
 }
 
 export function CommunicationHub() {
-  const [activeTab, setActiveTab] = useState("messages");
+  const [activeTab, setActiveTab] = useState('messages');
   const [selectedConversation, setSelectedConversation] = useState(
-    mockCommunications.currentConversation,
+    mockCommunications.currentConversation
   );
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
         <div>
-          <h1 className="font-bold text-2xl tracking-tight lg:text-3xl">Central de Comunicação</h1>
-          <p className="text-muted-foreground">Mantenha-se conectado com sua equipe médica</p>
+          <h1 className="font-bold text-2xl tracking-tight lg:text-3xl">
+            Central de Comunicação
+          </h1>
+          <p className="text-muted-foreground">
+            Mantenha-se conectado com sua equipe médica
+          </p>
         </div>
 
         <div className="flex space-x-2">
@@ -594,7 +639,9 @@ export function CommunicationHub() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-muted-foreground text-sm">Mensagens Não Lidas</p>
+                <p className="text-muted-foreground text-sm">
+                  Mensagens Não Lidas
+                </p>
                 <p className="font-bold text-2xl">3</p>
               </div>
               <MessageCircle className="h-8 w-8 text-blue-500" />
@@ -640,13 +687,14 @@ export function CommunicationHub() {
       </div>
 
       {/* Main Communication Interface */}
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
+      <Tabs onValueChange={setActiveTab} value={activeTab}>
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="messages">
             Mensagens ({mockCommunications.conversations.length})
           </TabsTrigger>
           <TabsTrigger value="notifications">
-            Notificações ({mockCommunications.notifications.filter((n) => !n.read).length})
+            Notificações (
+            {mockCommunications.notifications.filter((n) => !n.read).length})
           </TabsTrigger>
           <TabsTrigger value="emergency">Emergência</TabsTrigger>
         </TabsList>
@@ -661,10 +709,10 @@ export function CommunicationHub() {
                   <div className="relative">
                     <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 text-muted-foreground" />
                     <Input
+                      className="pl-10"
+                      onChange={(e) => setSearchTerm(e.target.value)}
                       placeholder="Buscar conversas..."
                       value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10"
                     />
                   </div>
                 </CardHeader>
@@ -705,7 +753,9 @@ export function CommunicationHub() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <NotificationsList notifications={mockCommunications.notifications} />
+              <NotificationsList
+                notifications={mockCommunications.notifications}
+              />
             </CardContent>
           </Card>
         </TabsContent>
@@ -723,7 +773,9 @@ export function CommunicationHub() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <EmergencyContacts contacts={mockCommunications.emergencyContacts} />
+                <EmergencyContacts
+                  contacts={mockCommunications.emergencyContacts}
+                />
               </CardContent>
             </Card>
 
@@ -740,7 +792,9 @@ export function CommunicationHub() {
                     </h4>
                     <ul className="space-y-1 text-red-600 text-sm">
                       <li>• Dificuldade para respirar ou engolir</li>
-                      <li>• Reação alérgica grave (urticária, inchaço facial)</li>
+                      <li>
+                        • Reação alérgica grave (urticária, inchaço facial)
+                      </li>
                       <li>• Dor intensa e persistente</li>
                       <li>• Sangramento excessivo</li>
                     </ul>

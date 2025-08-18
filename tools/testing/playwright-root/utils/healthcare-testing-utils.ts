@@ -110,9 +110,7 @@ export class HealthcareWorkflowHelper {
 } /**
  * Test emergency access patterns (<100ms requirement)
  */
-static
-async;
-validateEmergencyAccess(page: Page, patientId: string)
+static async validateEmergencyAccess(page: Page, patientId: string)
 {
   const startTime = Date.now();
 
