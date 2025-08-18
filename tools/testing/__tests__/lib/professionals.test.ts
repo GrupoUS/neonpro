@@ -39,8 +39,8 @@ const mockSupabaseClient = {
   })),
 };
 
-vi.Mock('@/app/utils/supabase/server', () => ({
-  createClient: jest.fn(() => mockSupabaseClient),
+vi.mock('@/app/utils/supabase/server', () => ({
+  createClient: vi.fn(() => mockSupabaseClient),
 }));
 
 // Mock data
@@ -864,7 +864,7 @@ describe('Professional Supabase Functions', () => {
   describe('Error Handling', () => {
     it('should handle database connection errors', async () => {
       const mockError = new Error('Connection failed');
-      (createClient as vi.Mock).mockImplementation(() => {
+      (createClient as vi.MockedFunction<any>).mockImplementation(() => {
         throw mockError;
       });
 

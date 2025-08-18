@@ -4,17 +4,17 @@
 // API endpoints for clinic-wide retention metrics and analytics
 // =====================================================================================
 
-import { type NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
-import { RetentionAnalyticsService } from '@/app/lib/services/retention-analytics-service';
-import { createClient } from '@/app/utils/supabase/server';
+import { type NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+import { RetentionAnalyticsService } from "@/app/lib/services/retention-analytics-service";
+import { createClient } from "@/app/utils/supabase/server";
 
 // =====================================================================================
 // VALIDATION SCHEMAS
 // =====================================================================================
 
 const ClinicMetricsParamsSchema = z.object({
-  clinicId: z.string().uuid('Invalid clinic ID format'),
+  clinicId: z.string().uuid("Invalid clinic ID format"),
 });
 
 const ClinicMetricsQuerySchema = z.object({
@@ -22,7 +22,7 @@ const ClinicMetricsQuerySchema = z.object({
   offset: z.coerce.number().min(0).default(0),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
-  riskLevel: z.enum(['low', 'medium', 'high', 'critical']).optional(),
+  riskLevel: z.enum(["low", "medium", "high", "critical"]).optional(),
 });
 
 // =====================================================================================
@@ -43,7 +43,7 @@ export async function GET(
     if (!clinicValidation.success) {
       return NextResponse.json(
         {
-          error: 'Invalid clinic ID',
+          error: "Invalid clinic ID",
           details: clinicValidation.error.issues,
         },
         { status: 400 },
@@ -55,25 +55,24 @@ export async function GET(
     // Parse query parameters
     const { searchParams } = new URL(request.url);
     const queryValidation = ClinicMetricsQuerySchema.safeParse({
-      limit: searchParams.get('limit'),
-      offset: searchParams.get('offset'),
-      startDate: searchParams.get('startDate'),
-      endDate: searchParams.get('endDate'),
-      riskLevel: searchParams.get('riskLevel'),
+      limit: searchParams.get("limit"),
+      offset: searchParams.get("offset"),
+      startDate: searchParams.get("startDate"),
+      endDate: searchParams.get("endDate"),
+      riskLevel: searchParams.get("riskLevel"),
     });
 
     if (!queryValidation.success) {
       return NextResponse.json(
         {
-          error: 'Invalid query parameters',
+          error: "Invalid query parameters",
           details: queryValidation.error.issues,
         },
         { status: 400 },
       );
     }
 
-    const { limit, offset, startDate, endDate, riskLevel } =
-      queryValidation.data;
+    const { limit, offset, startDate, endDate, riskLevel } = queryValidation.data;
 
     // Verify authentication
     const supabase = await createClient();
@@ -83,48 +82,38 @@ export async function GET(
     } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Verify clinic access
     const { data: userProfile, error: profileError } = await supabase
-      .from('profiles')
-      .select('clinic_id, role')
-      .eq('id', user.id)
+      .from("profiles")
+      .select("clinic_id, role")
+      .eq("id", user.id)
       .single();
 
     if (profileError || !userProfile) {
-      return NextResponse.json(
-        { error: 'User profile not found' },
-        { status: 403 },
-      );
+      return NextResponse.json({ error: "User profile not found" }, { status: 403 });
     }
 
     if (userProfile.clinic_id !== clinicId) {
-      return NextResponse.json(
-        { error: 'Access denied to clinic data' },
-        { status: 403 },
-      );
+      return NextResponse.json({ error: "Access denied to clinic data" }, { status: 403 });
     }
 
     // Verify clinic exists
     const { data: clinic, error: clinicError } = await supabase
-      .from('clinics')
-      .select('id, name')
-      .eq('id', clinicId)
+      .from("clinics")
+      .select("id, name")
+      .eq("id", clinicId)
       .single();
 
     if (clinicError || !clinic) {
-      return NextResponse.json({ error: 'Clinic not found' }, { status: 404 });
+      return NextResponse.json({ error: "Clinic not found" }, { status: 404 });
     }
 
     // Get clinic retention metrics
     const retentionService = new RetentionAnalyticsService();
-    const metrics = await retentionService.getClinicRetentionMetrics(
-      clinicId,
-      limit,
-      offset,
-    );
+    const metrics = await retentionService.getClinicRetentionMetrics(clinicId, limit, offset);
 
     // Apply additional filters if provided
     let filteredMetrics = metrics;
@@ -132,16 +121,10 @@ export async function GET(
     if (startDate || endDate || riskLevel) {
       filteredMetrics = metrics.filter((metric) => {
         // Filter by date range
-        if (
-          startDate &&
-          new Date(metric.last_appointment_date) < new Date(startDate)
-        ) {
+        if (startDate && new Date(metric.last_appointment_date) < new Date(startDate)) {
           return false;
         }
-        if (
-          endDate &&
-          new Date(metric.last_appointment_date) > new Date(endDate)
-        ) {
+        if (endDate && new Date(metric.last_appointment_date) > new Date(endDate)) {
           return false;
         }
 
@@ -158,27 +141,19 @@ export async function GET(
     const summary = {
       total_patients: filteredMetrics.length,
       average_retention_rate:
-        filteredMetrics.reduce((sum, m) => sum + m.retention_rate, 0) /
-          filteredMetrics.length || 0,
+        filteredMetrics.reduce((sum, m) => sum + m.retention_rate, 0) / filteredMetrics.length || 0,
       average_churn_risk:
-        filteredMetrics.reduce((sum, m) => sum + m.churn_risk_score, 0) /
-          filteredMetrics.length || 0,
-      risk_distribution: {
-        low: filteredMetrics.filter((m) => m.churn_risk_level === 'low').length,
-        medium: filteredMetrics.filter((m) => m.churn_risk_level === 'medium')
-          .length,
-        high: filteredMetrics.filter((m) => m.churn_risk_level === 'high')
-          .length,
-        critical: filteredMetrics.filter(
-          (m) => m.churn_risk_level === 'critical',
-        ).length,
-      },
-      total_lifetime_value: filteredMetrics.reduce(
-        (sum, m) => sum + m.lifetime_value,
+        filteredMetrics.reduce((sum, m) => sum + m.churn_risk_score, 0) / filteredMetrics.length ||
         0,
-      ),
+      risk_distribution: {
+        low: filteredMetrics.filter((m) => m.churn_risk_level === "low").length,
+        medium: filteredMetrics.filter((m) => m.churn_risk_level === "medium").length,
+        high: filteredMetrics.filter((m) => m.churn_risk_level === "high").length,
+        critical: filteredMetrics.filter((m) => m.churn_risk_level === "critical").length,
+      },
+      total_lifetime_value: filteredMetrics.reduce((sum, m) => sum + m.lifetime_value, 0),
       patients_at_risk: filteredMetrics.filter((m) =>
-        ['high', 'critical'].includes(m.churn_risk_level),
+        ["high", "critical"].includes(m.churn_risk_level),
       ).length,
     };
 
@@ -204,8 +179,8 @@ export async function GET(
   } catch (error) {
     return NextResponse.json(
       {
-        error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Internal server error",
+        message: error instanceof Error ? error.message : "Unknown error",
       },
       { status: 500 },
     );
@@ -230,7 +205,7 @@ export async function POST(
     if (!clinicValidation.success) {
       return NextResponse.json(
         {
-          error: 'Invalid clinic ID',
+          error: "Invalid clinic ID",
           details: clinicValidation.error.issues,
         },
         { status: 400 },
@@ -251,35 +226,29 @@ export async function POST(
     } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Verify clinic access and permissions
     const { data: userProfile, error: profileError } = await supabase
-      .from('profiles')
-      .select('clinic_id, role')
-      .eq('id', user.id)
+      .from("profiles")
+      .select("clinic_id, role")
+      .eq("id", user.id)
       .single();
 
     if (profileError || !userProfile) {
-      return NextResponse.json(
-        { error: 'User profile not found' },
-        { status: 403 },
-      );
+      return NextResponse.json({ error: "User profile not found" }, { status: 403 });
     }
 
     if (userProfile.clinic_id !== clinicId) {
-      return NextResponse.json(
-        { error: 'Access denied to clinic data' },
-        { status: 403 },
-      );
+      return NextResponse.json({ error: "Access denied to clinic data" }, { status: 403 });
     }
 
     // Check permissions for bulk calculations
-    const allowedRoles = ['admin', 'manager', 'analyst'];
+    const allowedRoles = ["admin", "manager", "analyst"];
     if (!allowedRoles.includes(userProfile.role)) {
       return NextResponse.json(
-        { error: 'Insufficient permissions for bulk calculations' },
+        { error: "Insufficient permissions for bulk calculations" },
         { status: 403 },
       );
     }
@@ -290,10 +259,10 @@ export async function POST(
     if (!targetPatientIds || targetPatientIds.length === 0) {
       // Get all patients for the clinic
       const { data: patients, error: patientsError } = await supabase
-        .from('patients')
-        .select('id')
-        .eq('clinic_id', clinicId)
-        .eq('active', true);
+        .from("patients")
+        .select("id")
+        .eq("clinic_id", clinicId)
+        .eq("active", true);
 
       if (patientsError) {
         throw new Error(`Failed to get patients: ${patientsError.message}`);
@@ -304,14 +273,14 @@ export async function POST(
 
     // Validate that all patients belong to the clinic
     const { data: validPatients, error: validationError } = await supabase
-      .from('patients')
-      .select('id')
-      .eq('clinic_id', clinicId)
-      .in('id', targetPatientIds);
+      .from("patients")
+      .select("id")
+      .eq("clinic_id", clinicId)
+      .in("id", targetPatientIds);
 
     if (validationError || validPatients.length !== targetPatientIds.length) {
       return NextResponse.json(
-        { error: 'Some patients do not belong to the specified clinic' },
+        { error: "Some patients do not belong to the specified clinic" },
         { status: 400 },
       );
     }
@@ -328,16 +297,15 @@ export async function POST(
 
       const batchPromises = batch.map(async (patientId) => {
         try {
-          const metrics =
-            await retentionService.calculatePatientRetentionMetrics(
-              patientId,
-              clinicId,
-            );
+          const metrics = await retentionService.calculatePatientRetentionMetrics(
+            patientId,
+            clinicId,
+          );
           return { patientId, metrics, success: true };
         } catch (error) {
           return {
             patientId,
-            error: error instanceof Error ? error.message : 'Unknown error',
+            error: error instanceof Error ? error.message : "Unknown error",
             success: false,
           };
         }
@@ -346,7 +314,7 @@ export async function POST(
       const batchResults = await Promise.allSettled(batchPromises);
 
       batchResults.forEach((result) => {
-        if (result.status === 'fulfilled') {
+        if (result.status === "fulfilled") {
           if (result.value.success) {
             results.push(result.value);
           } else {
@@ -354,8 +322,8 @@ export async function POST(
           }
         } else {
           errors.push({
-            patientId: 'unknown',
-            error: result.reason?.message || 'Promise rejected',
+            patientId: "unknown",
+            error: result.reason?.message || "Promise rejected",
             success: false,
           });
         }
@@ -383,8 +351,8 @@ export async function POST(
   } catch (error) {
     return NextResponse.json(
       {
-        error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Internal server error",
+        message: error instanceof Error ? error.message : "Unknown error",
       },
       { status: 500 },
     );

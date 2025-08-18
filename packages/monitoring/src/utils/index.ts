@@ -284,7 +284,7 @@ export function calculatePercentile(
   const sorted = [...values].sort((a, b) => a - b);
   const index = Math.ceil((percentile / 100) * sorted.length) - 1;
 
-  return sorted[Math.max(0, index)];
+  return sorted[Math.max(0, index)] ?? 0;
 }
 
 /**
@@ -325,7 +325,7 @@ export function detectAnomalies(
   // Check each metric for anomalies
   metrics.forEach((metric) => {
     const values = metricGroups[metric.name];
-    if (values.length < 10) {
+    if (!values || values.length < 10) {
       return; // Need sufficient data
     }
 

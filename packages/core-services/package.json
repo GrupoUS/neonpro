@@ -1,32 +1,75 @@
 {
   "name": "@neonpro/core-services",
-  "version": "1.0.0",
-  "description": "Core services and hooks for NeonPro healthcare platform",
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Core business services for NeonPro aesthetic clinic SaaS",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./src/index.ts",
-    "./services": "./src/services/index.ts",
-    "./hooks": "./src/hooks/index.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./scheduling": {
+      "types": "./dist/scheduling/index.d.ts",
+      "import": "./dist/scheduling/index.mjs",
+      "require": "./dist/scheduling/index.js"
+    },
+    "./treatment": {
+      "types": "./dist/treatment/index.d.ts",
+      "import": "./dist/treatment/index.mjs",
+      "require": "./dist/treatment/index.js"
+    },
+    "./patient": {
+      "types": "./dist/patient/index.d.ts",
+      "import": "./dist/patient/index.mjs",
+      "require": "./dist/patient/index.js"
+    },
+    "./inventory": {
+      "types": "./dist/inventory/index.d.ts",
+      "import": "./dist/inventory/index.mjs",
+      "require": "./dist/inventory/index.js"
+    },
+    "./billing": {
+      "types": "./dist/billing/index.d.ts",
+      "import": "./dist/billing/index.mjs",
+      "require": "./dist/billing/index.js"
+    },
+    "./notification": {
+      "types": "./dist/notification/index.d.ts",
+      "import": "./dist/notification/index.mjs",
+      "require": "./dist/notification/index.js"
+    }
   },
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
-    "lint": "biome lint ./src",
-    "format": "biome format --write ./src",
-    "type-check": "tsc --noEmit"
+    "build": "tsup",
+    "clean": "rm -rf dist",
+    "dev": "tsup --watch",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@supabase/supabase-js": "workspace:*",
-    "react": "^18.3.1",
-    "react-hook-form": "^7.52.1",
-    "zod": "^3.23.8"
+    "@neonpro/db": "workspace:*",
+    "@neonpro/domain": "workspace:*",
+    "@neonpro/utils": "workspace:*",
+    "date-fns": "^3.6.0",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@types/react": "^18.3.3",
-    "typescript": "^5.5.4"
+    "@neonpro/eslint-config-healthcare": "workspace:*",
+    "@neonpro/typescript-config": "workspace:*",
+    "@types/node": "^20.11.0",
+    "eslint": "^8.56.0",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.0"
   },
   "peerDependencies": {
-    "react": "^18.3.1"
+    "typescript": ">=5.0.0"
   }
 }

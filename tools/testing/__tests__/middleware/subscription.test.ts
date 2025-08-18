@@ -12,7 +12,7 @@ import { afterEach, beforeEach, describe, expect, it, jest, vi } from 'vitest';
 import { createMockResponse, createMockSubscription } from '../utils/testUtils';
 
 // Mock Next.js modules
-vi.Mock('next/headers', () => ({
+vi.mock('next/headers', () => ({
   cookies: jest.fn(() => ({
     get: vi.fn(),
     set: vi.fn(),
@@ -20,7 +20,7 @@ vi.Mock('next/headers', () => ({
   })),
 }));
 
-vi.Mock('next/navigation', () => ({
+vi.mock('next/navigation', () => ({
   redirect: vi.fn(),
   permanentRedirect: vi.fn(),
 }));

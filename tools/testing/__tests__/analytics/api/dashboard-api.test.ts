@@ -16,11 +16,11 @@ import { GET, POST } from '@/app/api/analytics/dashboard/route';
 import { createClient } from '@/utils/supabase/server';
 
 // Mock Supabase client
-vi.Mock('@/utils/supabase/server');
+vi.mock('@/utils/supabase/server');
 const mockCreateClient = createClient as vi.MockedFunction<typeof createClient>;
 
 // Mock analytics service
-vi.Mock('@/lib/analytics/service');
+vi.mock('@/lib/analytics/service');
 
 describe('Analytics Dashboard API Routes', () => {
   let mockSupabase: any;

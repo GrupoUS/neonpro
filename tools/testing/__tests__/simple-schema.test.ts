@@ -2,6 +2,7 @@
 // Story 11.4: Basic validation testing for implemented schemas
 
 import { describe, expect, it } from 'vitest';
+// Direct import to avoid dependency issues during testing
 import { z } from 'zod';
 
 // Simple schema definitions for testing (mimicking our main schemas)

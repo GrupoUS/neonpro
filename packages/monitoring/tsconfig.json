@@ -1,5 +1,5 @@
 {
-  "extends": "@neonpro/typescript-config/base.json",
+  "extends": "../typescript-config/base.json",
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": "src",

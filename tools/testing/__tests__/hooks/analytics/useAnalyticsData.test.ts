@@ -10,11 +10,11 @@ import { vi } from 'vitest';
 import {
   mockAnalyticsData,
   mockErrorResponse,
-} from '@/../../__tests__/utils/mockData';
+} from '@test/__tests__/utils/mockData';
 import { useAnalyticsData } from '@/hooks/analytics/useAnalyticsData';
 
 // Mock Supabase client
-vi.Mock('@/utils/supabase/client', () => ({
+vi.mock('@/utils/supabase/client', () => ({
   createSupabaseClient: () => ({
     from: vi.fn().mockReturnThis(),
     select: vi.fn().mockReturnThis(),

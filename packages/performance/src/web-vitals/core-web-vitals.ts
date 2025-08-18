@@ -5,6 +5,14 @@
 
 import { getCLS, getFCP, getFID, getLCP, getTTFB, onINP } from 'web-vitals';
 import type {
+  CLSMetric,
+  FCPMetric,
+  FIDMetric,
+  LCPMetric,
+  TTFBMetric,
+  INPMetric,
+} from 'web-vitals';
+import type {
   HealthcareVitalsMetric,
   PerformanceEventHandler,
   PerformanceThresholds,
@@ -32,11 +40,11 @@ class HealthcareWebVitals {
   private readonly handlers: PerformanceEventHandler[] = [];
   private readonly thresholds: PerformanceThresholds;
   private healthcareContext: {
-    workflowType?: string;
+    workflowType?: 'patient-registration' | 'medical-form' | 'procedure-scheduling' | 'medical-history' | 'real-time-update';
     clinicId?: string;
     userId?: string;
-    deviceType?: string;
-    networkConnection?: string;
+    deviceType?: 'desktop' | 'tablet' | 'mobile';
+    networkConnection?: 'fast' | 'slow' | 'offline';
   } = {};
 
   constructor(thresholds: PerformanceThresholds = HEALTHCARE_THRESHOLDS) {
@@ -51,9 +59,9 @@ class HealthcareWebVitals {
   setHealthcareContext(context: Partial<HealthcareVitalsMetric>): void {
     this.healthcareContext = {
       ...this.healthcareContext,
-      workflowType: context.workflowType,
-      clinicId: context.clinicId,
-      userId: context.userId,
+      ...(context.workflowType && { workflowType: context.workflowType }),
+      ...(context.clinicId && { clinicId: context.clinicId }),
+      ...(context.userId && { userId: context.userId }),
     };
   }
 
@@ -68,13 +76,13 @@ class HealthcareWebVitals {
    * Start monitoring Web Vitals
    */
   startMonitoring(): void {
-    // Core Web Vitals
-    getCLS(this.handleMetric.bind(this));
-    getFCP(this.handleMetric.bind(this));
-    getFID(this.handleMetric.bind(this));
-    getLCP(this.handleMetric.bind(this));
-    getTTFB(this.handleMetric.bind(this));
-    onINP(this.handleMetric.bind(this));
+    // Core Web Vitals with type-safe wrappers
+    getCLS(this.handleCLSMetric.bind(this));
+    getFCP(this.handleFCPMetric.bind(this));
+    getFID(this.handleFIDMetric.bind(this));
+    getLCP(this.handleLCPMetric.bind(this));
+    getTTFB(this.handleTTFBMetric.bind(this));
+    onINP(this.handleINPMetric.bind(this));
 
     // Healthcare-specific monitoring
     this.monitorHealthcareWorkflows();
@@ -99,6 +107,84 @@ class HealthcareWebVitals {
     // Log critical performance issues
     if (healthcareMetric.rating === 'poor' && healthcareMetric.criticalPath) {
     }
+  }
+
+  /**
+   * Type-safe wrapper for CLS metrics
+   */
+  private handleCLSMetric(metric: CLSMetric): void {
+    const webVitalsMetric: WebVitalsMetric = {
+      ...metric,
+      timestamp: Date.now(),
+      url: window.location.href,
+      userAgent: navigator.userAgent,
+    };
+    this.handleMetric(webVitalsMetric);
+  }
+
+  /**
+   * Type-safe wrapper for FCP metrics
+   */
+  private handleFCPMetric(metric: FCPMetric): void {
+    const webVitalsMetric: WebVitalsMetric = {
+      ...metric,
+      timestamp: Date.now(),
+      url: window.location.href,
+      userAgent: navigator.userAgent,
+    };
+    this.handleMetric(webVitalsMetric);
+  }
+
+  /**
+   * Type-safe wrapper for FID metrics
+   */
+  private handleFIDMetric(metric: FIDMetric): void {
+    const webVitalsMetric: WebVitalsMetric = {
+      ...metric,
+      timestamp: Date.now(),
+      url: window.location.href,
+      userAgent: navigator.userAgent,
+    };
+    this.handleMetric(webVitalsMetric);
+  }
+
+  /**
+   * Type-safe wrapper for LCP metrics
+   */
+  private handleLCPMetric(metric: LCPMetric): void {
+    const webVitalsMetric: WebVitalsMetric = {
+      ...metric,
+      timestamp: Date.now(),
+      url: window.location.href,
+      userAgent: navigator.userAgent,
+    };
+    this.handleMetric(webVitalsMetric);
+  }
+
+  /**
+   * Type-safe wrapper for TTFB metrics
+   */
+  private handleTTFBMetric(metric: TTFBMetric): void {
+    const webVitalsMetric: WebVitalsMetric = {
+      ...metric,
+      timestamp: Date.now(),
+      url: window.location.href,
+      userAgent: navigator.userAgent,
+    };
+    this.handleMetric(webVitalsMetric);
+  }
+
+  /**
+   * Type-safe wrapper for INP metrics
+   */
+  private handleINPMetric(metric: INPMetric): void {
+    const webVitalsMetric: WebVitalsMetric = {
+      ...metric,
+      timestamp: Date.now(),
+      url: window.location.href,
+      userAgent: navigator.userAgent,
+    };
+    this.handleMetric(webVitalsMetric);
   }
 
   /**
@@ -178,7 +264,7 @@ class HealthcareWebVitals {
             timestamp: Date.now(),
             url: window.location.href,
             userAgent: navigator.userAgent,
-            workflowType: 'patient-registration',
+            workflowType: 'patient-registration' as const,
             ...this.healthcareContext,
             criticalPath: true,
           };
@@ -222,7 +308,7 @@ class HealthcareWebVitals {
                   timestamp: Date.now(),
                   url: window.location.href,
                   userAgent: navigator.userAgent,
-                  workflowType: 'medical-form',
+                  workflowType: 'medical-form' as const,
                   ...this.healthcareContext,
                   criticalPath: true,
                 };
@@ -265,7 +351,7 @@ class HealthcareWebVitals {
         timestamp: Date.now(),
         url: window.location.href,
         userAgent: navigator.userAgent,
-        workflowType: 'real-time-update',
+        workflowType: 'real-time-update' as const,
         ...this.healthcareContext,
         criticalPath: true,
       };
@@ -305,7 +391,7 @@ class HealthcareWebVitals {
             timestamp: Date.now(),
             url: window.location.href,
             userAgent: navigator.userAgent,
-            workflowType: 'procedure-scheduling',
+            workflowType: 'procedure-scheduling' as const,
             ...this.healthcareContext,
             criticalPath: false,
           };

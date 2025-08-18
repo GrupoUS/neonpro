@@ -39,10 +39,12 @@ export type CustomMetric = {
   timestamp?: number;
   context?: {
     userId?: string;
+    sessionId?: string;
     patientId?: string;
     procedureId?: string;
     feature?: string;
     environment?: string;
+    userRole?: 'patient' | 'doctor' | 'nurse' | 'admin' | 'receptionist';
   };
 };
 

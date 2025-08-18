@@ -9,20 +9,15 @@ import {
   Wifi,
   WifiOff,
   Zap,
-} from 'lucide-react';
-import * as React from 'react';
-import { cn } from '../utils/cn';
-import { Badge } from './Badge';
-import { Button } from './Button';
+} from "lucide-react";
+import * as React from "react";
+import { cn } from "../utils/cn";
+import { Badge } from "./Badge";
+import { Button } from "./Button";
 
-export type ConnectionStatus =
-  | 'online'
-  | 'offline'
-  | 'unstable'
-  | 'reconnecting'
-  | 'error';
+export type ConnectionStatus = "online" | "offline" | "unstable" | "reconnecting" | "error";
 
-export type OfflineCapability = 'full' | 'limited' | 'emergency_only' | 'none';
+export type OfflineCapability = "full" | "limited" | "emergency_only" | "none";
 
 export type OfflineData = {
   /** Number of items pending sync */
@@ -76,16 +71,11 @@ export type OfflineIndicatorProps = {
   /**
    * Position of the indicator
    */
-  position?:
-    | 'top-left'
-    | 'top-right'
-    | 'bottom-left'
-    | 'bottom-right'
-    | 'inline';
+  position?: "top-left" | "top-right" | "bottom-left" | "bottom-right" | "inline";
   /**
    * Size of the indicator
    */
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
   /**
    * Callback when user requests manual sync
    */
@@ -119,78 +109,78 @@ export type OfflineIndicatorProps = {
 
 const connectionStatusInfo = {
   online: {
-    label: 'Online',
-    description: 'Sistema conectado e funcionando normalmente',
+    label: "Online",
+    description: "Sistema conectado e funcionando normalmente",
     icon: Wifi,
-    color: 'text-green-600',
-    bgColor: 'bg-green-100',
-    borderColor: 'border-green-200',
-    variant: 'confirmed' as const,
+    color: "text-green-600",
+    bgColor: "bg-green-100",
+    borderColor: "border-green-200",
+    variant: "confirmed" as const,
   },
   offline: {
-    label: 'Offline',
-    description: 'Sistema em modo offline - funcionalidades limitadas',
+    label: "Offline",
+    description: "Sistema em modo offline - funcionalidades limitadas",
     icon: WifiOff,
-    color: 'text-red-600',
-    bgColor: 'bg-red-100',
-    borderColor: 'border-red-200',
-    variant: 'urgent' as const,
+    color: "text-red-600",
+    bgColor: "bg-red-100",
+    borderColor: "border-red-200",
+    variant: "urgent" as const,
   },
   unstable: {
-    label: 'Instável',
-    description: 'Conexão instável - pode afetar sincronização',
+    label: "Instável",
+    description: "Conexão instável - pode afetar sincronização",
     icon: AlertTriangle,
-    color: 'text-yellow-600',
-    bgColor: 'bg-yellow-100',
-    borderColor: 'border-yellow-200',
-    variant: 'medium' as const,
+    color: "text-yellow-600",
+    bgColor: "bg-yellow-100",
+    borderColor: "border-yellow-200",
+    variant: "medium" as const,
   },
   reconnecting: {
-    label: 'Reconectando',
-    description: 'Tentando restabelecer conexão',
+    label: "Reconectando",
+    description: "Tentando restabelecer conexão",
     icon: RefreshCw,
-    color: 'text-blue-600',
-    bgColor: 'bg-blue-100',
-    borderColor: 'border-blue-200',
-    variant: 'processing' as const,
+    color: "text-blue-600",
+    bgColor: "bg-blue-100",
+    borderColor: "border-blue-200",
+    variant: "processing" as const,
   },
   error: {
-    label: 'Erro',
-    description: 'Erro de conexão - verificar rede',
+    label: "Erro",
+    description: "Erro de conexão - verificar rede",
     icon: AlertTriangle,
-    color: 'text-red-600',
-    bgColor: 'bg-red-100',
-    borderColor: 'border-red-200',
-    variant: 'urgent' as const,
+    color: "text-red-600",
+    bgColor: "bg-red-100",
+    borderColor: "border-red-200",
+    variant: "urgent" as const,
   },
 };
 
 const offlineCapabilityInfo = {
   full: {
-    label: 'Total',
-    description: 'Todas as funcionalidades disponíveis offline',
-    color: 'text-green-600',
+    label: "Total",
+    description: "Todas as funcionalidades disponíveis offline",
+    color: "text-green-600",
   },
   limited: {
-    label: 'Limitado',
-    description: 'Funcionalidades básicas disponíveis offline',
-    color: 'text-yellow-600',
+    label: "Limitado",
+    description: "Funcionalidades básicas disponíveis offline",
+    color: "text-yellow-600",
   },
   emergency_only: {
-    label: 'Emergência',
-    description: 'Apenas funcionalidades críticas de emergência',
-    color: 'text-orange-600',
+    label: "Emergência",
+    description: "Apenas funcionalidades críticas de emergência",
+    color: "text-orange-600",
   },
   none: {
-    label: 'Nenhum',
-    description: 'Requer conexão para funcionamento',
-    color: 'text-red-600',
+    label: "Nenhum",
+    description: "Requer conexão para funcionamento",
+    color: "text-red-600",
   },
 };
 
 const formatBytes = (bytes: number): string => {
   if (bytes === 0) {
-    return '0 MB';
+    return "0 MB";
   }
   const mb = bytes / (1024 * 1024);
   return `${mb.toFixed(1)} MB`;
@@ -198,7 +188,7 @@ const formatBytes = (bytes: number): string => {
 
 const formatLastSync = (date?: Date): string => {
   if (!date) {
-    return 'Nunca';
+    return "Nunca";
   }
 
   const now = new Date();
@@ -207,7 +197,7 @@ const formatLastSync = (date?: Date): string => {
   const diffHours = Math.floor(diffMinutes / 60);
 
   if (diffMinutes < 1) {
-    return 'Agora mesmo';
+    return "Agora mesmo";
   }
   if (diffMinutes < 60) {
     return `${diffMinutes}min atrás`;
@@ -216,11 +206,11 @@ const formatLastSync = (date?: Date): string => {
     return `${diffHours}h atrás`;
   }
 
-  return new Intl.DateTimeFormat('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
+  return new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
   }).format(date);
 };
 
@@ -229,24 +219,24 @@ const SystemHealthIndicator: React.FC<{
   onViewSystemStatus?: () => void;
 }> = ({ systemHealth, onViewSystemStatus }) => {
   const healthItems = [
-    { label: 'Banco de Dados', status: systemHealth.database, icon: Shield },
+    { label: "Banco de Dados", status: systemHealth.database, icon: Shield },
     {
-      label: 'Serviços Cloud',
+      label: "Serviços Cloud",
       status: systemHealth.cloudServices,
       icon: Cloud,
     },
     {
-      label: 'Sistemas Backup',
+      label: "Sistemas Backup",
       status: systemHealth.backupSystems,
       icon: CheckCircle,
     },
   ];
 
-  const overallHealth = healthItems.every((item) => item.status === 'online')
-    ? 'online'
-    : healthItems.some((item) => item.status === 'error')
-      ? 'error'
-      : 'unstable';
+  const overallHealth = healthItems.every((item) => item.status === "online")
+    ? "online"
+    : healthItems.some((item) => item.status === "error")
+      ? "error"
+      : "unstable";
 
   return (
     <div className="space-y-3">
@@ -263,12 +253,9 @@ const SystemHealthIndicator: React.FC<{
           const status = connectionStatusInfo[item.status];
 
           return (
-            <div
-              className="flex items-center justify-between text-sm"
-              key={item.label}
-            >
+            <div className="flex items-center justify-between text-sm" key={item.label}>
               <div className="flex items-center gap-2">
-                <Icon className={cn('h-4 w-4', status.color)} />
+                <Icon className={cn("h-4 w-4", status.color)} />
                 <span>{item.label}</span>
               </div>
               <Badge size="sm" variant={status.variant}>
@@ -291,12 +278,7 @@ const SystemHealthIndicator: React.FC<{
       </div>
 
       {onViewSystemStatus && (
-        <Button
-          className="w-full"
-          onClick={onViewSystemStatus}
-          size="sm"
-          variant="outline"
-        >
+        <Button className="w-full" onClick={onViewSystemStatus} size="sm" variant="outline">
           Ver Status Completo
         </Button>
       )}
@@ -314,24 +296,24 @@ const ConstitutionalResilienceInfo: React.FC<{
 }> = ({ constitutionalInfo }) => {
   const items = [
     {
-      key: 'emergencyProtocols',
-      label: 'Protocolos de Emergência',
-      description: 'Acesso a dados críticos garantido',
+      key: "emergencyProtocols",
+      label: "Protocolos de Emergência",
+      description: "Acesso a dados críticos garantido",
     },
     {
-      key: 'patientSafetyMaintained',
-      label: 'Segurança do Paciente',
-      description: 'Continuidade dos cuidados assegurada',
+      key: "patientSafetyMaintained",
+      label: "Segurança do Paciente",
+      description: "Continuidade dos cuidados assegurada",
     },
     {
-      key: 'dataIntegritySecured',
-      label: 'Integridade dos Dados',
-      description: 'Dados protegidos e sincronizados',
+      key: "dataIntegritySecured",
+      label: "Integridade dos Dados",
+      description: "Dados protegidos e sincronizados",
     },
     {
-      key: 'complianceContinuity',
-      label: 'Conformidade LGPD',
-      description: 'Compliance mantido em modo offline',
+      key: "complianceContinuity",
+      label: "Conformidade LGPD",
+      description: "Compliance mantido em modo offline",
     },
   ];
 
@@ -344,17 +326,14 @@ const ConstitutionalResilienceInfo: React.FC<{
 
       <div className="space-y-2">
         {items.map((item) => {
-          const isActive =
-            constitutionalInfo[item.key as keyof typeof constitutionalInfo];
+          const isActive = constitutionalInfo[item.key as keyof typeof constitutionalInfo];
 
           return (
             <div className="flex items-start gap-3" key={item.key}>
               <div
                 className={cn(
-                  'mt-0.5 flex h-5 w-5 items-center justify-center rounded-full',
-                  isActive
-                    ? 'bg-green-100 text-green-700'
-                    : 'bg-red-100 text-red-700'
+                  "mt-0.5 flex h-5 w-5 items-center justify-center rounded-full",
+                  isActive ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700",
                 )}
               >
                 {isActive ? (
@@ -365,9 +344,7 @@ const ConstitutionalResilienceInfo: React.FC<{
               </div>
               <div className="min-w-0 flex-1">
                 <div className="font-medium text-sm">{item.label}</div>
-                <div className="text-muted-foreground text-xs">
-                  {item.description}
-                </div>
+                <div className="text-muted-foreground text-xs">{item.description}</div>
               </div>
             </div>
           );
@@ -377,10 +354,7 @@ const ConstitutionalResilienceInfo: React.FC<{
   );
 };
 
-export const OfflineIndicator = React.forwardRef<
-  HTMLDivElement,
-  OfflineIndicatorProps
->(
+export const OfflineIndicator = React.forwardRef<HTMLDivElement, OfflineIndicatorProps>(
   (
     {
       connectionStatus,
@@ -388,8 +362,8 @@ export const OfflineIndicator = React.forwardRef<
       offlineData,
       systemHealth,
       showDetails = false,
-      position = 'inline',
-      size = 'md',
+      position = "inline",
+      size = "md",
       onManualSync,
       onToggleOfflineMode,
       onViewSystemStatus,
@@ -398,38 +372,38 @@ export const OfflineIndicator = React.forwardRef<
       className,
       ...props
     },
-    ref
+    ref,
   ) => {
     const [expanded, setExpanded] = React.useState(false);
     const statusInfo = connectionStatusInfo[connectionStatus];
     const capabilityInfo = offlineCapabilityInfo[offlineCapability];
 
     const positionClasses = {
-      'top-left': 'fixed top-4 left-4 z-50',
-      'top-right': 'fixed top-4 right-4 z-50',
-      'bottom-left': 'fixed bottom-4 left-4 z-50',
-      'bottom-right': 'fixed bottom-4 right-4 z-50',
-      inline: '',
+      "top-left": "fixed top-4 left-4 z-50",
+      "top-right": "fixed top-4 right-4 z-50",
+      "bottom-left": "fixed bottom-4 left-4 z-50",
+      "bottom-right": "fixed bottom-4 right-4 z-50",
+      inline: "",
     };
 
     const sizeClasses = {
-      sm: 'text-sm',
-      md: 'text-base',
-      lg: 'text-lg',
+      sm: "text-sm",
+      md: "text-base",
+      lg: "text-lg",
     };
 
     const StatusIcon = statusInfo.icon;
 
     // Compact indicator for fixed positions
-    if (position !== 'inline' && !expanded) {
+    if (position !== "inline" && !expanded) {
       return (
         <div
           className={cn(
-            'cursor-pointer rounded-lg border p-2 shadow-lg transition-all hover:shadow-xl',
+            "cursor-pointer rounded-lg border p-2 shadow-lg transition-all hover:shadow-xl",
             statusInfo.bgColor,
             statusInfo.borderColor,
             positionClasses[position],
-            className
+            className,
           )}
           onClick={() => setExpanded(true)}
           ref={ref}
@@ -439,7 +413,7 @@ export const OfflineIndicator = React.forwardRef<
           role="button"
         >
           <div className="flex items-center gap-2">
-            <StatusIcon className={cn('h-4 w-4', statusInfo.color)} />
+            <StatusIcon className={cn("h-4 w-4", statusInfo.color)} />
             {offlineData && offlineData.pendingSync > 0 && (
               <Badge size="sm" variant="medium">
                 {offlineData.pendingSync}
@@ -454,9 +428,9 @@ export const OfflineIndicator = React.forwardRef<
     return (
       <div
         className={cn(
-          'rounded-lg border bg-card p-4 text-card-foreground shadow-lg',
-          position !== 'inline' && positionClasses[position],
-          className
+          "rounded-lg border bg-card p-4 text-card-foreground shadow-lg",
+          position !== "inline" && positionClasses[position],
+          className,
         )}
         ref={ref}
         {...props}
@@ -468,26 +442,21 @@ export const OfflineIndicator = React.forwardRef<
           <div className="flex items-center gap-3">
             <div
               className={cn(
-                'flex h-8 w-8 items-center justify-center rounded-full',
-                statusInfo.bgColor
+                "flex h-8 w-8 items-center justify-center rounded-full",
+                statusInfo.bgColor,
               )}
             >
-              <StatusIcon className={cn('h-4 w-4', statusInfo.color)} />
+              <StatusIcon className={cn("h-4 w-4", statusInfo.color)} />
             </div>
             <div>
-              <h3
-                className={cn('font-semibold', sizeClasses[size])}
-                id="offline-indicator-title"
-              >
+              <h3 className={cn("font-semibold", sizeClasses[size])} id="offline-indicator-title">
                 {statusInfo.label}
               </h3>
-              <p className="text-muted-foreground text-sm">
-                {statusInfo.description}
-              </p>
+              <p className="text-muted-foreground text-sm">{statusInfo.description}</p>
             </div>
           </div>
 
-          {position !== 'inline' && (
+          {position !== "inline" && (
             <Button
               className="h-6 w-6"
               onClick={() => setExpanded(false)}
@@ -508,13 +477,13 @@ export const OfflineIndicator = React.forwardRef<
               <Badge
                 size="sm"
                 variant={
-                  offlineCapability === 'full'
-                    ? 'confirmed'
-                    : offlineCapability === 'limited'
-                      ? 'medium'
-                      : offlineCapability === 'emergency_only'
-                        ? 'high'
-                        : 'urgent'
+                  offlineCapability === "full"
+                    ? "confirmed"
+                    : offlineCapability === "limited"
+                      ? "medium"
+                      : offlineCapability === "emergency_only"
+                        ? "high"
+                        : "urgent"
                 }
               >
                 {capabilityInfo.label}
@@ -542,23 +511,18 @@ export const OfflineIndicator = React.forwardRef<
 
                 <div>
                   <span className="text-muted-foreground">Última sync:</span>
-                  <div className="font-medium">
-                    {formatLastSync(offlineData.lastSync)}
-                  </div>
+                  <div className="font-medium">{formatLastSync(offlineData.lastSync)}</div>
                 </div>
 
                 <div>
                   <span className="text-muted-foreground">Armazenamento:</span>
                   <div className="font-medium">
-                    {formatBytes(offlineData.storageUsed)} /{' '}
-                    {formatBytes(offlineData.storageLimit)}
+                    {formatBytes(offlineData.storageUsed)} / {formatBytes(offlineData.storageLimit)}
                   </div>
                 </div>
 
                 <div>
-                  <span className="text-muted-foreground">
-                    Dados emergência:
-                  </span>
+                  <span className="text-muted-foreground">Dados emergência:</span>
                   <div className="flex items-center gap-1">
                     {offlineData.emergencyDataAvailable ? (
                       <CheckCircle className="h-4 w-4 text-green-600" />
@@ -566,9 +530,7 @@ export const OfflineIndicator = React.forwardRef<
                       <AlertTriangle className="h-4 w-4 text-red-600" />
                     )}
                     <span className="text-sm">
-                      {offlineData.emergencyDataAvailable
-                        ? 'Disponível'
-                        : 'Indisponível'}
+                      {offlineData.emergencyDataAvailable ? "Disponível" : "Indisponível"}
                     </span>
                   </div>
                 </div>
@@ -586,9 +548,7 @@ export const OfflineIndicator = React.forwardRef<
 
           {/* Constitutional Resilience */}
           {constitutionalInfo && showEmergencyMode && (
-            <ConstitutionalResilienceInfo
-              constitutionalInfo={constitutionalInfo}
-            />
+            <ConstitutionalResilienceInfo constitutionalInfo={constitutionalInfo} />
           )}
 
           {/* Emergency Mode Information */}
@@ -597,12 +557,10 @@ export const OfflineIndicator = React.forwardRef<
               <div className="flex items-start gap-3">
                 <Zap className="mt-0.5 h-5 w-5 text-orange-600" />
                 <div>
-                  <h4 className="font-medium text-orange-900 text-sm">
-                    Modo de Emergência Médica
-                  </h4>
+                  <h4 className="font-medium text-orange-900 text-sm">Modo de Emergência Médica</h4>
                   <p className="mt-1 text-orange-700 text-sm">
-                    Funcionalidades críticas mantidas para garantir continuidade
-                    dos cuidados. Dados de emergência acessíveis mesmo offline.
+                    Funcionalidades críticas mantidas para garantir continuidade dos cuidados. Dados
+                    de emergência acessíveis mesmo offline.
                   </p>
                 </div>
               </div>
@@ -613,7 +571,7 @@ export const OfflineIndicator = React.forwardRef<
           <div className="flex gap-2 border-t pt-2">
             {onManualSync && offlineData && offlineData.pendingSync > 0 && (
               <Button
-                disabled={connectionStatus === 'offline'}
+                disabled={connectionStatus === "offline"}
                 onClick={onManualSync}
                 size="sm"
                 variant="outline"
@@ -625,7 +583,7 @@ export const OfflineIndicator = React.forwardRef<
 
             {onToggleOfflineMode && (
               <Button onClick={onToggleOfflineMode} size="sm" variant="outline">
-                {connectionStatus === 'offline' ? (
+                {connectionStatus === "offline" ? (
                   <>
                     <Wifi className="mr-2 h-4 w-4" />
                     Tentar Reconectar
@@ -642,7 +600,7 @@ export const OfflineIndicator = React.forwardRef<
         </div>
       </div>
     );
-  }
+  },
 );
 
-OfflineIndicator.displayName = 'OfflineIndicator';
+OfflineIndicator.displayName = "OfflineIndicator";

@@ -1,139 +1,94 @@
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
+import React from 'react';
 
-// Mock global fetch if not available
-if (!globalThis.fetch) {
-  globalThis.fetch = vi.fn();
-}
-
-// Mock ResizeObserver
-global.ResizeObserver = vi.fn().mockImplementation(() => ({
-  observe: vi.fn(),
-  unobserve: vi.fn(),
-  disconnect: vi.fn(),
-}));
-
-// Mock IntersectionObserver
-global.IntersectionObserver = vi.fn().mockImplementation(() => ({
-  observe: vi.fn(),
-  unobserve: vi.fn(),
-  disconnect: vi.fn(),
-}));
-
-// Mock crypto for Node.js environment
-Object.defineProperty(global, 'crypto', {
-  value: {
-    getRandomValues: vi.fn().mockImplementation((arr) => {
-      for (let i = 0; i < arr.length; i++) {
-        arr[i] = Math.floor(Math.random() * 256);
-      }
-      return arr;
-    }),
-    randomUUID: vi.fn().mockImplementation(() => {
-      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-        const r = (Math.random() * 16) | 0;
-        const v = c === 'x' ? r : (r & 0x3) | 0x8;
-        return v.toString(16);
-      });
-    }),
-  },
+// Make React available globally in tests
+Object.defineProperty(globalThis, 'React', {
+  value: React,
+  writable: false,
 });
 
-// Mock window.location
-Object.defineProperty(window, 'location', {
-  value: {
-    href: 'http://localhost:3000',
-    origin: 'http://localhost:3000',
-    protocol: 'http:',
-    host: 'localhost:3000',
-    hostname: 'localhost',
-    port: '3000',
-    pathname: '/',
-    search: '',
-    hash: '',
-  },
-  writable: true,
-});
-
-// Mock environment variables for tests
-process.env.NODE_ENV = 'test';
-process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
-process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
-process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-role-key';
-
-// Global test utilities
-global.testUtils = {
-  generateUUID: () => crypto.randomUUID(),
-  createValidUUID: () => '123e4567-e89b-12d3-a456-426614174000',
-  mockSupabaseResponse: (data: unknown, error: unknown = null) => {
-    let count = 0;
-    if (Array.isArray(data)) {
-      count = data.length;
-    } else if (data) {
-      count = 1;
-    }
-
-    return {
-      data,
-      error,
-      count,
-    };
-  },
+// Mock console for cleaner test output
+global.console = {
+  ...console,
+  log: vi.fn(),
+  warn: vi.fn(),
+  error: vi.fn(),
 };
 
-// Mock Supabase client
-vi.mock('@supabase/supabase-js', () => ({
-  createClient: vi.fn(() => ({
-    auth: {
-      getSession: vi.fn().mockResolvedValue({
-        data: { session: { user: { id: 'test-user-id' } } },
-        error: null,
-      }),
-      getUser: vi.fn().mockResolvedValue({
-        data: { user: { id: 'test-user-id', email: 'test@example.com' } },
-        error: null,
-      }),
-    },
-    from: vi.fn(() => ({
-      select: vi.fn().mockReturnThis(),
-      insert: vi.fn().mockReturnThis(),
-      update: vi.fn().mockReturnThis(),
-      delete: vi.fn().mockReturnThis(),
-      eq: vi.fn().mockReturnThis(),
-      single: vi.fn().mockResolvedValue({
-        data: {},
-        error: null,
-      }),
-    })),
-  })),
-}));
+// Mock environment variables
+process.env = {
+  ...process.env,
+  NODE_ENV: 'test',
+  NEXT_PUBLIC_ENVIRONMENT: 'test',
+  NEXT_PUBLIC_APP_URL: 'http://localhost:3000',
+  NEXT_PUBLIC_SUPABASE_URL: 'http://localhost:54321',
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: 'test-key',
+};
 
-// Mock Next.js modules
-vi.mock('next/navigation', () => ({
-  useRouter: vi.fn(() => ({
-    push: vi.fn(),
-    replace: vi.fn(),
-    back: vi.fn(),
-    forward: vi.fn(),
-    refresh: vi.fn(),
-    prefetch: vi.fn(),
-  })),
-  useSearchParams: vi.fn(() => new URLSearchParams()),
-  usePathname: vi.fn(() => '/'),
-}));
+// Mock crypto
+Object.defineProperty(global, 'crypto', {
+  value: {
+    randomUUID: () => 'test-uuid',
+    getRandomValues: (arr: any) => arr,
+  },
+});
 
-vi.mock('next/headers', () => ({
-  cookies: vi.fn(() => ({
-    get: vi.fn(),
-    set: vi.fn(),
-    delete: vi.fn(),
-  })),
-  headers: vi.fn(() => new Map()),
-}));
+// Mock fetch for API testing
+Object.defineProperty(global, 'fetch', {
+  value: vi.fn(() =>
+    Promise.resolve({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve({}),
+      text: () => Promise.resolve(''),
+    })
+  ),
+});
 
-// Mock Supabase Auth Helpers
-vi.mock('@supabase/auth-helpers-nextjs', () => ({
-  createRouteHandlerClient: vi.fn(),
-  createServerComponentClient: vi.fn(),
-  createClientComponentClient: vi.fn(),
-}));
+// Mock localStorage
+Object.defineProperty(window, 'localStorage', {
+  value: {
+    getItem: vi.fn(),
+    setItem: vi.fn(),
+    removeItem: vi.fn(),
+    clear: vi.fn(),
+  },
+});
+
+// Mock sessionStorage
+Object.defineProperty(window, 'sessionStorage', {
+  value: {
+    getItem: vi.fn(),
+    setItem: vi.fn(),
+    removeItem: vi.fn(),
+    clear: vi.fn(),
+  },
+});
+
+// Basic vitest globals setup
+Object.defineProperty(globalThis, 'vi', { value: vi });
+Object.defineProperty(globalThis, 'expect', {
+  value: (await import('vitest')).expect,
+});
+Object.defineProperty(globalThis, 'describe', {
+  value: (await import('vitest')).describe,
+});
+Object.defineProperty(globalThis, 'it', {
+  value: (await import('vitest')).it,
+});
+Object.defineProperty(globalThis, 'test', {
+  value: (await import('vitest')).test,
+});
+Object.defineProperty(globalThis, 'beforeAll', {
+  value: (await import('vitest')).beforeAll,
+});
+Object.defineProperty(globalThis, 'beforeEach', {
+  value: (await import('vitest')).beforeEach,
+});
+Object.defineProperty(globalThis, 'afterAll', {
+  value: (await import('vitest')).afterAll,
+});
+Object.defineProperty(globalThis, 'afterEach', {
+  value: (await import('vitest')).afterEach,
+});

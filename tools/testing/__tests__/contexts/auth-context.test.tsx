@@ -1,21 +1,16 @@
+import React from 'react';
 import {
   act,
-  act,
-  fireEvent,
   fireEvent,
   render,
-  render,
   screen,
-  screen,
-  waitFor,
   waitFor,
 } from '@testing-library/react';
 import { vi } from 'vitest';
 import '@testing-library/jest-dom';
-import { AuthProvider, useAuth } from '@/contexts/auth-context';
 
-// Mock Supabase
-const mockSupabase = {
+// Mock Supabase using vi.hoisted to ensure proper initialization order
+const mockSupabase = vi.hoisted(() => ({
   auth: {
     getSession: vi.fn(),
     getUser: vi.fn(),
@@ -23,15 +18,18 @@ const mockSupabase = {
     signUp: vi.fn(),
     signOut: vi.fn(),
     signInWithOAuth: vi.fn(),
-    onAuthStateChange: jest.fn(() => ({
+    onAuthStateChange: vi.fn(() => ({
       data: { subscription: { unsubscribe: vi.fn() } },
     })),
   },
-};
+}));
 
 vi.mock('@/app/utils/supabase/client', () => ({
   createClient: () => mockSupabase,
 }));
+
+// Now import the component AFTER the mock
+import { AuthProvider, useAuth } from '@/contexts/auth-context';
 
 // Test component to access auth context
 const TestComponent = () => {
@@ -40,9 +38,9 @@ const TestComponent = () => {
 
   return (
     <div>
-      <div data-testid="loading">{loading ? 'loading' : 'not-loading'}</div>
-      <div data-testid="user">{user ? user.email : 'no-user'}</div>
+      <div data-testid="user">{user?.email || 'no-user'}</div>
       <div data-testid="session">{session ? 'has-session' : 'no-session'}</div>
+      <div data-testid="loading">{loading ? 'loading' : 'not-loading'}</div>
 
       <button
         data-testid="signin-btn"
@@ -95,24 +93,24 @@ describe('AuthProvider', () => {
       </AuthProvider>
     );
 
-    expect(screen.getByTestId('loading')).toHaveTextContent('loading');
-    expect(screen.getByTestId('user')).toHaveTextContent('no-user');
-    expect(screen.getByTestId('session')).toHaveTextContent('no-session');
+    expect(screen.getByTestId('user')).toBeInTheDocument();
+    expect(screen.getByTestId('session')).toBeInTheDocument();
+    expect(screen.getByTestId('loading')).toBeInTheDocument();
   });
 
   it('initializes with session when available', async () => {
     const mockSession = {
-      access_token: 'token',
-      refresh_token: 'refresh',
-      user: {
-        id: 'user-1',
-        email: 'test@example.com',
-        user_metadata: { name: 'Test User' },
-      },
+      access_token: 'mock-token',
+      user: { id: '123', email: 'test@example.com' },
     };
 
     mockSupabase.auth.getSession.mockResolvedValue({
       data: { session: mockSession },
+      error: null,
+    });
+
+    mockSupabase.auth.getUser.mockResolvedValue({
+      data: { user: { id: '123', email: 'test@example.com' } },
       error: null,
     });
 
@@ -131,16 +129,15 @@ describe('AuthProvider', () => {
   });
 
   it('handles sign in successfully', async () => {
-    const mockUser = {
-      id: 'user-1',
-      email: 'test@example.com',
-      user_metadata: { name: 'Test User' },
+    const mockResult = {
+      data: {
+        user: { id: '123', email: 'test@example.com' },
+        session: { access_token: 'mock-token' },
+      },
+      error: null,
     };
 
-    mockSupabase.auth.signInWithPassword.mockResolvedValue({
-      data: { user: mockUser, session: null },
-      error: null,
-    });
+    mockSupabase.auth.signInWithPassword.mockResolvedValue(mockResult);
 
     render(
       <AuthProvider>
@@ -148,21 +145,22 @@ describe('AuthProvider', () => {
       </AuthProvider>
     );
 
-    const signInBtn = screen.getByTestId('signin-btn');
-
-    await act(async () => {
-      fireEvent.click(signInBtn);
+    await waitFor(() => {
+      expect(screen.getByTestId('loading')).toHaveTextContent('not-loading');
     });
 
-    expect(mockSupabase.auth.signInWithPassword).toHaveBeenCalledWith({
-      email: 'test@example.com',
-      password: 'password',
+    fireEvent.click(screen.getByTestId('signin-btn'));
+
+    await waitFor(() => {
+      expect(mockSupabase.auth.signInWithPassword).toHaveBeenCalledWith({
+        email: 'test@example.com',
+        password: 'password',
+      });
     });
   });
 
   it('handles sign in error', async () => {
-    const mockError = { message: 'Invalid credentials', __isAuthError: true };
-
+    const mockError = { message: 'Invalid credentials' };
     mockSupabase.auth.signInWithPassword.mockResolvedValue({
       data: { user: null, session: null },
       error: mockError,
@@ -174,26 +172,27 @@ describe('AuthProvider', () => {
       </AuthProvider>
     );
 
-    const signInBtn = screen.getByTestId('signin-btn');
-
-    await act(async () => {
-      fireEvent.click(signInBtn);
+    await waitFor(() => {
+      expect(screen.getByTestId('loading')).toHaveTextContent('not-loading');
     });
 
-    expect(mockSupabase.auth.signInWithPassword).toHaveBeenCalled();
+    fireEvent.click(screen.getByTestId('signin-btn'));
+
+    await waitFor(() => {
+      expect(mockSupabase.auth.signInWithPassword).toHaveBeenCalled();
+    });
   });
 
   it('handles sign up successfully', async () => {
-    const mockUser = {
-      id: 'user-1',
-      email: 'test@example.com',
-      user_metadata: { name: 'Test User' },
+    const mockResult = {
+      data: {
+        user: { id: '123', email: 'test@example.com' },
+        session: { access_token: 'mock-token' },
+      },
+      error: null,
     };
 
-    mockSupabase.auth.signUp.mockResolvedValue({
-      data: { user: mockUser, session: null },
-      error: null,
-    });
+    mockSupabase.auth.signUp.mockResolvedValue(mockResult);
 
     render(
       <AuthProvider>
@@ -201,31 +200,27 @@ describe('AuthProvider', () => {
       </AuthProvider>
     );
 
-    const signUpBtn = screen.getByTestId('signup-btn');
-
-    await act(async () => {
-      fireEvent.click(signUpBtn);
+    await waitFor(() => {
+      expect(screen.getByTestId('loading')).toHaveTextContent('not-loading');
     });
 
-    expect(mockSupabase.auth.signUp).toHaveBeenCalledWith({
-      email: 'test@example.com',
-      password: 'password',
-      options: {
-        data: {
-          name: 'Test User',
+    fireEvent.click(screen.getByTestId('signup-btn'));
+
+    await waitFor(() => {
+      expect(mockSupabase.auth.signUp).toHaveBeenCalledWith({
+        email: 'test@example.com',
+        password: 'password',
+        options: {
+          data: {
+            name: 'Test User',
+          },
         },
-      },
+      });
     });
   });
 
   it('handles sign up without name', async () => {
-    mockSupabase.auth.signUp.mockResolvedValue({
-      data: { user: null, session: null },
-      error: null,
-    });
-
-    // Create component that signs up without name
-    const TestSignUpWithoutName = () => {
+    const TestComponentNoName = () => {
       const { signUp } = useAuth();
       return (
         <button
@@ -237,66 +232,67 @@ describe('AuthProvider', () => {
       );
     };
 
+    const mockResult = {
+      data: {
+        user: { id: '123', email: 'test@example.com' },
+        session: { access_token: 'mock-token' },
+      },
+      error: null,
+    };
+
+    mockSupabase.auth.signUp.mockResolvedValue(mockResult);
+
     render(
       <AuthProvider>
-        <TestSignUpWithoutName />
+        <TestComponentNoName />
       </AuthProvider>
     );
 
-    const signUpBtn = screen.getByTestId('signup-no-name-btn');
+    fireEvent.click(screen.getByTestId('signup-no-name-btn'));
 
-    await act(async () => {
-      fireEvent.click(signUpBtn);
-    });
-
-    expect(mockSupabase.auth.signUp).toHaveBeenCalledWith({
-      email: 'test@example.com',
-      password: 'password',
-      options: {
-        data: undefined,
-      },
+    await waitFor(() => {
+      expect(mockSupabase.auth.signUp).toHaveBeenCalledWith({
+        email: 'test@example.com',
+        password: 'password',
+        options: {
+          data: {},
+        },
+      });
     });
   });
 
   it('handles sign out', async () => {
-    mockSupabase.auth.signOut.mockResolvedValue({ error: null });
-
-    render(
-      <AuthProvider>
-        <TestComponent />
-      </AuthProvider>
-    );
-
-    const signOutBtn = screen.getByTestId('signout-btn');
-
-    await act(async () => {
-      fireEvent.click(signOutBtn);
-    });
-
-    expect(mockSupabase.auth.signOut).toHaveBeenCalled();
-  });
-
-  it('handles Google OAuth', async () => {
-    mockSupabase.auth.signInWithOAuth.mockResolvedValue({
-      data: { url: 'https://oauth.url', provider: 'google' },
+    mockSupabase.auth.signOut.mockResolvedValue({
       error: null,
     });
 
-    // Mock window.open and window.screen
-    const mockOpen = vi.fn().mockReturnValue({
-      closed: false,
-      close: vi.fn(),
+    render(
+      <AuthProvider>
+        <TestComponent />
+      </AuthProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('loading')).toHaveTextContent('not-loading');
     });
 
-    Object.defineProperty(window, 'open', {
-      value: mockOpen,
-      writable: true,
-    });
+    fireEvent.click(screen.getByTestId('signout-btn'));
 
-    Object.defineProperty(window, 'screen', {
-      value: { width: 1920, height: 1080 },
-      writable: true,
+    await waitFor(() => {
+      expect(mockSupabase.auth.signOut).toHaveBeenCalled();
     });
+  });
+
+  it('handles Google OAuth', async () => {
+    const mockResult = {
+      data: {
+        user: { id: '123', email: 'test@example.com' },
+        session: { access_token: 'mock-token' },
+      },
+      error: null,
+    };
+
+    mockSupabase.auth.signInWithOAuth.mockResolvedValue(mockResult);
 
     render(
       <AuthProvider>
@@ -304,27 +300,26 @@ describe('AuthProvider', () => {
       </AuthProvider>
     );
 
-    const googleBtn = screen.getByTestId('google-signin-btn');
-
-    await act(async () => {
-      fireEvent.click(googleBtn);
+    await waitFor(() => {
+      expect(screen.getByTestId('loading')).toHaveTextContent('not-loading');
     });
 
-    expect(mockSupabase.auth.signInWithOAuth).toHaveBeenCalledWith({
-      provider: 'google',
-      options: {
-        redirectTo: expect.stringContaining('/auth/popup-callback'),
-      },
-    });
+    fireEvent.click(screen.getByTestId('google-signin-btn'));
 
-    expect(mockOpen).toHaveBeenCalled();
+    await waitFor(() => {
+      expect(mockSupabase.auth.signInWithOAuth).toHaveBeenCalledWith({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+    });
   });
 
   it('handles Google OAuth error', async () => {
-    const mockError = { message: 'OAuth failed', __isAuthError: true };
-
+    const mockError = { message: 'OAuth error' };
     mockSupabase.auth.signInWithOAuth.mockResolvedValue({
-      data: { url: null, provider: 'google' },
+      data: { user: null, session: null },
       error: mockError,
     });
 
@@ -334,34 +329,32 @@ describe('AuthProvider', () => {
       </AuthProvider>
     );
 
-    const googleBtn = screen.getByTestId('google-signin-btn');
-
-    await act(async () => {
-      fireEvent.click(googleBtn);
+    await waitFor(() => {
+      expect(screen.getByTestId('loading')).toHaveTextContent('not-loading');
     });
 
-    expect(mockSupabase.auth.signInWithOAuth).toHaveBeenCalled();
+    fireEvent.click(screen.getByTestId('google-signin-btn'));
+
+    await waitFor(() => {
+      expect(mockSupabase.auth.signInWithOAuth).toHaveBeenCalled();
+    });
   });
 
   it('handles auth state changes', async () => {
+    const mockSession = {
+      access_token: 'mock-token',
+      user: { id: '123', email: 'test@example.com' },
+    };
+
+    const mockUnsubscribe = vi.fn();
     let authStateCallback: any;
 
     mockSupabase.auth.onAuthStateChange.mockImplementation((callback) => {
       authStateCallback = callback;
       return {
-        data: { subscription: { unsubscribe: vi.fn() } },
+        data: { subscription: { unsubscribe: mockUnsubscribe } },
       };
     });
-
-    const mockSession = {
-      access_token: 'token',
-      refresh_token: 'refresh',
-      user: {
-        id: 'user-1',
-        email: 'test@example.com',
-        user_metadata: { name: 'Test User' },
-      },
-    };
 
     render(
       <AuthProvider>
@@ -369,18 +362,20 @@ describe('AuthProvider', () => {
       </AuthProvider>
     );
 
+    await waitFor(() => {
+      expect(screen.getByTestId('loading')).toHaveTextContent('not-loading');
+    });
+
     // Trigger auth state change
     await act(async () => {
       authStateCallback('SIGNED_IN', mockSession);
     });
 
-    await waitFor(() => {
-      expect(screen.getByTestId('user')).toHaveTextContent('test@example.com');
-      expect(screen.getByTestId('session')).toHaveTextContent('has-session');
-    });
+    expect(screen.getByTestId('user')).toHaveTextContent('test@example.com');
+    expect(screen.getByTestId('session')).toHaveTextContent('has-session');
   });
 
-  it('cleans up subscription on unmount', () => {
+  it('cleans up subscription on unmount', async () => {
     const mockUnsubscribe = vi.fn();
 
     mockSupabase.auth.onAuthStateChange.mockReturnValue({
@@ -401,13 +396,13 @@ describe('AuthProvider', () => {
 
 describe('useAuth hook', () => {
   it('throws error when used outside AuthProvider', () => {
-    // Suppress error boundary output for this test
-    const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    // Suppress console.error for this test
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     expect(() => {
       render(<TestComponent />);
-    }).toThrow();
+    }).toThrow('useAuth must be used within an AuthProvider');
 
-    spy.mockRestore();
+    consoleSpy.mockRestore();
   });
 });

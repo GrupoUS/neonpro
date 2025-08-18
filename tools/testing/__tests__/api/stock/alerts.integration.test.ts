@@ -48,8 +48,8 @@ const mockSupabaseClient = {
 };
 
 // Mock the Supabase import
-vi.Mock('@/app/utils/supabase/server', () => ({
-  createClient: jest.fn(() => Promise.resolve(mockSupabaseClient)),
+vi.mock('@/app/utils/supabase/server', () => ({
+  createClient: vi.fn(() => Promise.resolve(mockSupabaseClient)),
 }));
 
 import { POST as acknowledgePost } from '@/app/api/stock/alerts/acknowledge/route';

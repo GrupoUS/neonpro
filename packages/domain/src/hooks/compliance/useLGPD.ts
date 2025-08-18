@@ -1,6 +1,6 @@
 'use client';
 
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createBrowserClient } from '@supabase/ssr';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from '../placeholders/sonner';
 import { useUser } from '../placeholders/supabase-auth-helpers-react';
@@ -108,7 +108,10 @@ export function useLGPDDashboard() {
   const [metrics, setMetrics] = useState<LGPDMetrics | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const _supabase = createClientComponentClient();
+  const _supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
 
   const fetchMetrics = useCallback(async () => {
     try {
@@ -730,7 +733,10 @@ export function useConsentBanner() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const user = useUser();
-  const supabase = createClientComponentClient();
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
 
   const fetchConsentPurposes = useCallback(async () => {
     try {

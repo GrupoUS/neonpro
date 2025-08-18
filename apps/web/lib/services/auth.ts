@@ -1,7 +1,7 @@
 // Migrated from src/services/auth.ts
 
-import type { Session, User } from '@supabase/supabase-js';
-import { supabase } from '@/lib/supabase';
+import type { Session, User } from "@supabase/supabase-js";
+import { supabase } from "@/lib/supabase";
 
 export interface AuthUser extends User {
   tenant_id?: string;
@@ -39,9 +39,9 @@ export class AuthService {
 
       // Get user role and tenant information
       const { data: userProfile } = await supabase
-        .from('user_profiles')
-        .select('tenant_id, role')
-        .eq('user_id', data.user.id)
+        .from("user_profiles")
+        .select("tenant_id, role")
+        .eq("user_id", data.user.id)
         .single();
 
       const authUser: AuthUser = {
@@ -53,7 +53,7 @@ export class AuthService {
       return { user: authUser, session: data.session };
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : 'Login failed',
+        error: error instanceof Error ? error.message : "Login failed",
       };
     }
   }
@@ -80,25 +80,23 @@ export class AuthService {
 
       if (data.user) {
         // Create user profile
-        const { error: profileError } = await supabase
-          .from('user_profiles')
-          .insert({
-            user_id: data.user.id,
-            tenant_id: userData.tenantId,
-            role: 'user',
-            first_name: userData.firstName,
-            last_name: userData.lastName,
-          });
+        const { error: profileError } = await supabase.from("user_profiles").insert({
+          user_id: data.user.id,
+          tenant_id: userData.tenantId,
+          role: "user",
+          first_name: userData.firstName,
+          last_name: userData.lastName,
+        });
 
         if (profileError) {
-          console.error('Profile creation error:', profileError);
+          console.error("Profile creation error:", profileError);
         }
       }
 
       return { user: data.user as AuthUser };
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : 'Registration failed',
+        error: error instanceof Error ? error.message : "Registration failed",
       };
     }
   }
@@ -112,7 +110,7 @@ export class AuthService {
       return {};
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : 'Logout failed',
+        error: error instanceof Error ? error.message : "Logout failed",
       };
     }
   }
@@ -125,14 +123,14 @@ export class AuthService {
       } = await supabase.auth.getUser();
 
       if (error || !user) {
-        return { error: error?.message || 'No user found' };
+        return { error: error?.message || "No user found" };
       }
 
       // Get user profile data
       const { data: userProfile } = await supabase
-        .from('user_profiles')
-        .select('tenant_id, role')
-        .eq('user_id', user.id)
+        .from("user_profiles")
+        .select("tenant_id, role")
+        .eq("user_id", user.id)
         .single();
 
       const authUser: AuthUser = {
@@ -144,7 +142,7 @@ export class AuthService {
       return { user: authUser };
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : 'Failed to get user',
+        error: error instanceof Error ? error.message : "Failed to get user",
       };
     }
   }
@@ -162,7 +160,7 @@ export class AuthService {
       return {};
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : 'Reset failed',
+        error: error instanceof Error ? error.message : "Reset failed",
       };
     }
   }
@@ -171,9 +169,9 @@ export class AuthService {
     return supabase.auth.onAuthStateChange(async (_event, session) => {
       if (session?.user) {
         const { data: userProfile } = await supabase
-          .from('user_profiles')
-          .select('tenant_id, role')
-          .eq('user_id', session.user.id)
+          .from("user_profiles")
+          .select("tenant_id, role")
+          .eq("user_id", session.user.id)
           .single();
 
         const authUser: AuthUser = {

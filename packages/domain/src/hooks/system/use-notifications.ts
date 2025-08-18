@@ -63,11 +63,6 @@ type UseNotificationsReturn = {
     notification: Omit<Notification, 'id' | 'created_at'>
   ) => Promise<void>;
   refreshNotifications: () => Promise<void>;
-
-  // Utilities
-  getNotificationsByType: (type: Notification['type']) => Notification[];
-  getUnreadNotifications: () => Notification[];
-  hasUnreadNotifications: boolean;
 };
 
 export function useNotifications({
@@ -119,37 +114,29 @@ export function useNotifications({
         await query;
 
       if (notificationsError) {
-        throw new Error(
-          `Failed to load notifications: ${notificationsError.message}`
-        );
+        throw notificationsError;
       }
 
       setNotifications(notificationsData || []);
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : 'Failed to load notifications';
-      setError(errorMessage);
+      setError((err as Error).message);
     } finally {
       setIsLoading(false);
     }
-  }, [userId, limit, types, supabase]);
+  }, [userId, supabase, limit, types]);
 
-  // Load preferences
   const loadPreferences = useCallback(async () => {
     try {
-      const { data, error: preferencesError } = await supabase
+      const { data, error } = await supabase
         .from('notification_preferences')
         .select('*')
         .eq('user_id', userId)
         .single();
 
-      if (preferencesError && preferencesError.code !== 'PGRST116') {
-        throw new Error(
-          `Failed to load preferences: ${preferencesError.message}`
-        );
+      if (error && error.code !== 'PGRST116') {
+        throw error;
       }
 
-      // Set default preferences if none exist
       const defaultPreferences: NotificationPreferences = {
         user_id: userId,
         email_enabled: true,
@@ -157,12 +144,39 @@ export function useNotifications({
         appointment_reminders: true,
         status_changes: true,
         marketing_emails: false,
-        reminder_timing: 120, // 2 hours
+        reminder_timing: 60,
       };
 
       setPreferences(data || defaultPreferences);
     } catch (_err) {}
   }, [userId, supabase]);
+
+  // Mark notification as read - MOVED BEFORE setupRealtimeSubscription
+  const markAsRead = useCallback(
+    async (notificationId: string) => {
+      const { error } = await supabase
+        .from('notifications')
+        .update({ read_at: new Date().toISOString() })
+        .eq('id', notificationId)
+        .eq('user_id', userId);
+
+      if (error) {
+        throw new Error(
+          `Failed to mark notification as read: ${error.message}`
+        );
+      }
+
+      // Update local state
+      setNotifications((prev) =>
+        prev.map((notif) =>
+          notif.id === notificationId
+            ? { ...notif, read_at: new Date().toISOString() }
+            : notif
+        )
+      );
+    },
+    [userId, supabase]
+  );
 
   // Setup real-time subscription
   const setupRealtimeSubscription = useCallback(() => {
@@ -206,8 +220,9 @@ export function useNotifications({
               )
             );
           } else if (payload.eventType === 'DELETE') {
+            const deletedId = payload.old.id;
             setNotifications((prev) =>
-              prev.filter((notif) => notif.id !== payload.old.id)
+              prev.filter((notif) => notif.id !== deletedId)
             );
           }
         }
@@ -224,33 +239,6 @@ export function useNotifications({
     limit,
     markAsRead,
   ]);
-
-  // Mark notification as read
-  const markAsRead = useCallback(
-    async (notificationId: string) => {
-      const { error } = await supabase
-        .from('notifications')
-        .update({ read_at: new Date().toISOString() })
-        .eq('id', notificationId)
-        .eq('user_id', userId);
-
-      if (error) {
-        throw new Error(
-          `Failed to mark notification as read: ${error.message}`
-        );
-      }
-
-      // Update local state
-      setNotifications((prev) =>
-        prev.map((notif) =>
-          notif.id === notificationId
-            ? { ...notif, read_at: new Date().toISOString() }
-            : notif
-        )
-      );
-    },
-    [userId, supabase]
-  );
 
   // Mark all notifications as read
   const markAllAsRead = useCallback(async () => {
@@ -302,34 +290,40 @@ export function useNotifications({
     [userId, supabase]
   );
 
-  // Update preferences
+  // Update notification preferences
   const updatePreferences = useCallback(
     async (newPreferences: Partial<NotificationPreferences>) => {
-      const updatedPreferences = { ...preferences, ...newPreferences };
-
       const { error } = await supabase
         .from('notification_preferences')
-        .upsert(updatedPreferences)
-        .eq('user_id', userId);
+        .upsert(
+          {
+            user_id: userId,
+            ...preferences,
+            ...newPreferences,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: 'user_id' }
+        );
 
       if (error) {
         throw new Error(`Failed to update preferences: ${error.message}`);
       }
 
-      setPreferences(updatedPreferences as NotificationPreferences);
+      setPreferences((prev) => ({
+        ...(prev || { user_id: userId }),
+        ...newPreferences,
+      } as NotificationPreferences));
     },
-    [preferences, userId, supabase]
+    [userId, supabase, preferences]
   );
 
   // Send notification
   const sendNotification = useCallback(
     async (notification: Omit<Notification, 'id' | 'created_at'>) => {
-      const { error } = await supabase.from('notifications').insert([
-        {
-          ...notification,
-          created_at: new Date().toISOString(),
-        },
-      ]);
+      const { error } = await supabase.from('notifications').insert({
+        ...notification,
+        created_at: new Date().toISOString(),
+      });
 
       if (error) {
         throw new Error(`Failed to send notification: ${error.message}`);
@@ -343,23 +337,10 @@ export function useNotifications({
     await loadNotifications();
   }, [loadNotifications]);
 
-  // Utility functions
-  const getNotificationsByType = useCallback(
-    (type: Notification['type']) => {
-      return notifications.filter((notif) => notif.type === type);
-    },
-    [notifications]
-  );
+  // Calculate unread count
+  const unreadCount = notifications.filter((notif) => !notif.read_at).length;
 
-  const getUnreadNotifications = useCallback(() => {
-    return notifications.filter((notif) => !notif.read_at);
-  }, [notifications]);
-
-  // Computed values
-  const unreadCount = getUnreadNotifications().length;
-  const hasUnreadNotifications = unreadCount > 0;
-
-  // Effects
+  // Setup effects
   useEffect(() => {
     loadNotifications();
     loadPreferences();
@@ -375,25 +356,27 @@ export function useNotifications({
     };
   }, [setupRealtimeSubscription, subscription]);
 
+  // Cleanup subscription on unmount
+  useEffect(() => {
+    return () => {
+      if (subscription) {
+        subscription.unsubscribe();
+        setSubscription(null);
+      }
+    };
+  }, [subscription]);
+
   return {
-    // State
     notifications,
     unreadCount,
     preferences,
     isLoading,
     error,
-
-    // Actions
     markAsRead,
     markAllAsRead,
     deleteNotification,
     updatePreferences,
     sendNotification,
     refreshNotifications,
-
-    // Utilities
-    getNotificationsByType,
-    getUnreadNotifications,
-    hasUnreadNotifications,
   };
 }

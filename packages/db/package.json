@@ -57,15 +57,22 @@
   "license": "PROPRIETARY",
   "private": true,
   "dependencies": {
+    "@prisma/client": "^5.22.0",
     "@supabase/ssr": "^0.5.1",
-    "@supabase/supabase-js": "^2.45.4",
-    "@prisma/client": "^5.22.0"
+    "@supabase/supabase-js": "^2.45.4"
   },
   "devDependencies": {
+    "@types/react": "^19.0.0",
+    "next": "^15.1.0",
     "prisma": "^5.22.0",
+    "react": "^19.0.0",
     "supabase": "^1.127.4",
-    "typescript": "^5.3.0",
-    "tsx": "^4.6.0"
+    "tsx": "^4.6.0",
+    "typescript": "^5.3.0"
+  },
+  "peerDependencies": {
+    "next": ">=14.0.0",
+    "react": ">=18.0.0"
   },
   "engines": {
     "node": ">=18.0.0"

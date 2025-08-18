@@ -1,0 +1,78 @@
+{
+  "timestamp": "2025-08-17T23:46:33.690Z",
+  "neonproVersion": "1.0.0",
+  "complianceFrameworks": {
+    "LGPD": {
+      "name": "Lei Geral de Proteção de Dados",
+      "tasks": [
+        "compliance:lgpd"
+      ],
+      "requirements": [
+        "data encryption",
+        "consent management",
+        "data portability"
+      ]
+    },
+    "ANVISA": {
+      "name": "Agência Nacional de Vigilância Sanitária",
+      "tasks": [
+        "compliance:anvisa"
+      ],
+      "requirements": [
+        "treatment validation",
+        "medical device compliance",
+        "safety protocols"
+      ]
+    },
+    "CFM": {
+      "name": "Conselho Federal de Medicina",
+      "tasks": [
+        "compliance:cfm"
+      ],
+      "requirements": [
+        "medical professional validation",
+        "telemedicine compliance",
+        "patient privacy"
+      ]
+    }
+  },
+  "verificationResults": {
+    "lgpd": {
+      "status": false,
+      "details": [
+        {
+          "task": "compliance:lgpd",
+          "status": "failed",
+          "error": "Command failed: pnpm run compliance:lgpd\nturbo 2.5.6\n\nturbo_json_parse_error\n\n  x Failed to parse turbo.json.\n  |->   x End of file expected\n  |        ,-[turbo.json:242:3]\n  |    241 |     }\n  |    2..."
+        }
+      ]
+    },
+    "anvisa": {
+      "status": false,
+      "details": [
+        {
+          "task": "compliance:anvisa",
+          "status": "failed",
+          "error": "Command failed: pnpm run compliance:anvisa\nturbo 2.5.6\n\nturbo_json_parse_error\n\n  x Failed to parse turbo.json.\n  |->   x End of file expected\n  |        ,-[turbo.json:242:3]\n  |    241 |     }\n  |   ..."
+        }
+      ]
+    },
+    "cfm": {
+      "status": false,
+      "details": [
+        {
+          "task": "compliance:cfm",
+          "status": "failed",
+          "error": "Command failed: pnpm run compliance:cfm\nturbo 2.5.6\n\nturbo_json_parse_error\n\n  x Failed to parse turbo.json.\n  |->   x End of file expected\n  |        ,-[turbo.json:242:3]\n  |    241 |     }\n  |    24..."
+        }
+      ]
+    },
+    "overall": false
+  },
+  "recommendations": [
+    "LGPD: Review data protection and privacy compliance measures",
+    "ANVISA: Validate medical treatment and device compliance",
+    "CFM: Ensure medical professional and telemedicine compliance",
+    "CRITICAL: Immediate compliance review required before production deployment"
+  ]
+}

@@ -18,7 +18,7 @@ const mockSupabase = {
 };
 
 // Mock SecurityAPI
-vi.Mock('@/lib/security', () => ({
+vi.mock('@/lib/security', () => ({
   SecurityAPI: {
     createSecurityEvent: vi.fn(),
     getSecurityEvents: vi.fn(),

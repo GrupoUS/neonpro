@@ -1,10 +1,10 @@
 // Story 3.2: API Endpoint - Comprehensive Patient Insights
 
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
-import { type NextRequest, NextResponse } from 'next/server';
-import { PatientInsightsIntegration } from '@/lib/ai/patient-insights';
-import type { PatientInsightRequest } from '@/lib/ai/patient-insights/types';
+import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
+import { cookies } from "next/headers";
+import { type NextRequest, NextResponse } from "next/server";
+import { PatientInsightsIntegration } from "@/lib/ai/patient-insights";
+import type { PatientInsightRequest } from "@/lib/ai/patient-insights/types";
 
 const patientInsights = new PatientInsightsIntegration();
 
@@ -20,32 +20,31 @@ export async function GET(
       data: { session },
     } = await supabase.auth.getSession();
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { patientId } = await params;
 
     // Validate patient access
     const { data: patient } = await supabase
-      .from('patients')
-      .select('id')
-      .eq('id', patientId)
+      .from("patients")
+      .select("id")
+      .eq("id", patientId)
       .single();
 
     if (!patient) {
-      return NextResponse.json({ error: 'Patient not found' }, { status: 404 });
+      return NextResponse.json({ error: "Patient not found" }, { status: 404 });
     }
 
     // Parse query parameters
     const { searchParams } = new URL(request.url);
-    const requestedInsights = searchParams.get('insights')?.split(',') || [];
-    const treatmentContext = searchParams.get('context') || undefined;
+    const requestedInsights = searchParams.get("insights")?.split(",") || [];
+    const treatmentContext = searchParams.get("context") || undefined;
 
     // Create comprehensive insight request
     const insightRequest: PatientInsightRequest = {
       patientId: patientId,
-      requestedInsights:
-        requestedInsights.length > 0 ? (requestedInsights as any[]) : undefined,
+      requestedInsights: requestedInsights.length > 0 ? (requestedInsights as any[]) : undefined,
       treatmentContext,
       timestamp: new Date(),
       requestId: `req_${Date.now()}_${patientId}`,
@@ -61,7 +60,7 @@ export async function GET(
     });
   } catch (_error) {
     return NextResponse.json(
-      { error: 'Failed to generate comprehensive insights' },
+      { error: "Failed to generate comprehensive insights" },
       { status: 500 },
     );
   }
@@ -79,7 +78,7 @@ export async function POST(
       data: { session },
     } = await supabase.auth.getSession();
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { patientId } = await params;
@@ -108,7 +107,7 @@ export async function POST(
     });
   } catch (_error) {
     return NextResponse.json(
-      { error: 'Failed to generate comprehensive insights' },
+      { error: "Failed to generate comprehensive insights" },
       { status: 500 },
     );
   }

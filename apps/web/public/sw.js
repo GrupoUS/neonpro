@@ -2,29 +2,29 @@
 // PWA Implementation with offline-first strategies + Background Sync
 // Target: API p95 ≤ 800ms, Page Load p95 ≤ 300ms
 
-const CACHE_VERSION = '1.1.0';
+const CACHE_VERSION = "1.1.0";
 const STATIC_CACHE = `neonpro-static-v${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `neonpro-dynamic-v${CACHE_VERSION}`;
 const API_CACHE = `neonpro-api-v${CACHE_VERSION}`;
 const OFFLINE_QUEUE_CACHE = `neonpro-offline-queue-v${CACHE_VERSION}`;
 
 // Background sync configuration
-const BACKGROUND_SYNC_TAG = 'neonpro-background-sync';
-const APPOINTMENT_SYNC_TAG = 'appointment-booking-sync';
+const BACKGROUND_SYNC_TAG = "neonpro-background-sync";
+const APPOINTMENT_SYNC_TAG = "appointment-booking-sync";
 
 // Critical resources for offline functionality
 const STATIC_CACHE_URLS = [
-  '/',
-  '/dashboard',
-  '/login',
-  '/signup',
-  '/offline',
-  '/patient/portal',
-  '/patient/appointments',
-  '/patient/profile',
-  '/manifest.json',
-  '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png',
+  "/",
+  "/dashboard",
+  "/login",
+  "/signup",
+  "/offline",
+  "/patient/portal",
+  "/patient/appointments",
+  "/patient/profile",
+  "/manifest.json",
+  "/icons/icon-192x192.png",
+  "/icons/icon-512x512.png",
 ];
 
 // API endpoints to cache for offline access
@@ -47,7 +47,7 @@ const _NETWORK_FIRST_PATTERNS = [
 const _offlineQueue = [];
 
 // Install Event - Cache static assets
-self.addEventListener('install', (event) => {
+self.addEventListener("install", (event) => {
   event.waitUntil(
     Promise.all([
       caches.open(STATIC_CACHE).then((cache) => {
@@ -59,7 +59,7 @@ self.addEventListener('install', (event) => {
 });
 
 // Activate Event - Clean old caches and take control
-self.addEventListener('activate', (event) => {
+self.addEventListener("activate", (event) => {
   event.waitUntil(
     Promise.all([
       caches.keys().then((cacheNames) => {
@@ -78,15 +78,15 @@ self.addEventListener('activate', (event) => {
 });
 
 // Fetch Event - Intelligent caching strategies with offline queue
-self.addEventListener('fetch', (event) => {
+self.addEventListener("fetch", (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
   // Handle POST/PUT/DELETE requests for background sync
-  if (request.method !== 'GET') {
+  if (request.method !== "GET") {
     if (
-      url.pathname.startsWith('/api/patient/appointments') ||
-      url.pathname.startsWith('/api/patient/profile')
+      url.pathname.startsWith("/api/patient/appointments") ||
+      url.pathname.startsWith("/api/patient/profile")
     ) {
       event.respondWith(handleOfflineCapableRequest(request));
     }
@@ -112,7 +112,7 @@ async function handleRequest(request) {
     }
 
     // API requests - Specific strategies
-    if (url.pathname.startsWith('/api/')) {
+    if (url.pathname.startsWith("/api/")) {
       return await handleApiRequest(request);
     }
 
@@ -142,12 +142,12 @@ async function handleOfflineCapableRequest(request) {
       JSON.stringify({
         success: true,
         queued: true,
-        message: 'Ação salva. Será sincronizada quando você estiver online.',
+        message: "Ação salva. Será sincronizada quando você estiver online.",
       }),
       {
         status: 202, // Accepted
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       },
     );
@@ -162,7 +162,7 @@ async function queueRequestForSync(request) {
       url: request.url,
       method: request.method,
       headers: Object.fromEntries(request.headers.entries()),
-      body: request.method !== 'GET' ? await request.clone().text() : null,
+      body: request.method !== "GET" ? await request.clone().text() : null,
       timestamp: Date.now(),
     };
 
@@ -172,17 +172,17 @@ async function queueRequestForSync(request) {
     await cache.put(`queue-${requestData.id}`, queueResponse);
 
     // Register background sync
-    if ('serviceWorker' in self && 'sync' in self.registration) {
+    if ("serviceWorker" in self && "sync" in self.registration) {
       await self.registration.sync.register(BACKGROUND_SYNC_TAG);
     }
 
     // Store in IndexedDB for reliability
-    await storeInIndexedDB('offlineQueue', requestData);
+    await storeInIndexedDB("offlineQueue", requestData);
   } catch (_error) {}
 }
 
 // Background Sync Event
-self.addEventListener('sync', (event) => {
+self.addEventListener("sync", (event) => {
   if (event.tag === BACKGROUND_SYNC_TAG) {
     event.waitUntil(processOfflineQueue());
   } else if (event.tag === APPOINTMENT_SYNC_TAG) {
@@ -210,17 +210,17 @@ async function processOfflineQueue() {
         if (syncResponse.ok) {
           // Remove from cache and IndexedDB
           await cache.delete(cacheKey);
-          await removeFromIndexedDB('offlineQueue', requestData.id);
+          await removeFromIndexedDB("offlineQueue", requestData.id);
 
           // Notify client about successful sync
-          await notifyClientOfSync('sync-success', {
+          await notifyClientOfSync("sync-success", {
             url: requestData.url,
             id: requestData.id,
             timestamp: requestData.timestamp,
           });
         } else {
           // Keep in queue for retry, but notify client
-          await notifyClientOfSync('sync-failed', {
+          await notifyClientOfSync("sync-failed", {
             url: requestData.url,
             id: requestData.id,
             status: syncResponse.status,
@@ -235,10 +235,10 @@ async function processOfflineQueue() {
 async function syncAppointmentData() {
   try {
     // Get fresh appointment data
-    const response = await fetch('/api/patient/appointments');
+    const response = await fetch("/api/patient/appointments");
     if (response.ok) {
       const cache = await caches.open(API_CACHE);
-      await cache.put('/api/patient/appointments', response.clone());
+      await cache.put("/api/patient/appointments", response.clone());
     }
   } catch (_error) {}
 }
@@ -249,7 +249,7 @@ async function notifyClientOfSync(type, data) {
 
   clients.forEach((client) => {
     client.postMessage({
-      type: 'BACKGROUND_SYNC',
+      type: "BACKGROUND_SYNC",
       action: type,
       data,
     });
@@ -259,19 +259,19 @@ async function notifyClientOfSync(type, data) {
 // IndexedDB utilities for persistent offline queue
 async function storeInIndexedDB(storeName, data) {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open('NeonProOffline', 1);
+    const request = indexedDB.open("NeonProOffline", 1);
 
     request.onupgradeneeded = (event) => {
       const db = event.target.result;
       if (!db.objectStoreNames.contains(storeName)) {
-        const store = db.createObjectStore(storeName, { keyPath: 'id' });
-        store.createIndex('timestamp', 'timestamp', { unique: false });
+        const store = db.createObjectStore(storeName, { keyPath: "id" });
+        store.createIndex("timestamp", "timestamp", { unique: false });
       }
     };
 
     request.onsuccess = (event) => {
       const db = event.target.result;
-      const transaction = db.transaction([storeName], 'readwrite');
+      const transaction = db.transaction([storeName], "readwrite");
       const store = transaction.objectStore(storeName);
 
       const addRequest = store.put(data);
@@ -285,11 +285,11 @@ async function storeInIndexedDB(storeName, data) {
 
 async function removeFromIndexedDB(storeName, id) {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open('NeonProOffline', 1);
+    const request = indexedDB.open("NeonProOffline", 1);
 
     request.onsuccess = (event) => {
       const db = event.target.result;
-      const transaction = db.transaction([storeName], 'readwrite');
+      const transaction = db.transaction([storeName], "readwrite");
       const store = transaction.objectStore(storeName);
 
       const deleteRequest = store.delete(id);
@@ -355,7 +355,7 @@ async function handleApiRequest(request) {
   const url = new URL(request.url);
 
   // Authentication - Always network
-  if (url.pathname.startsWith('/api/auth/')) {
+  if (url.pathname.startsWith("/api/auth/")) {
     return await fetch(request);
   }
 
@@ -373,10 +373,10 @@ async function handleOfflineRequest(request) {
   const _url = new URL(request.url);
 
   // Navigation requests - Return offline page
-  if (request.mode === 'navigate') {
+  if (request.mode === "navigate") {
     const cache = await caches.open(STATIC_CACHE);
-    const offlinePage = await cache.match('/offline');
-    return offlinePage || new Response('Offline', { status: 503 });
+    const offlinePage = await cache.match("/offline");
+    return offlinePage || new Response("Offline", { status: 503 });
   }
 
   // Try to find cached version
@@ -391,7 +391,7 @@ async function handleOfflineRequest(request) {
     }
   }
 
-  return new Response('Offline', { status: 503 });
+  return new Response("Offline", { status: 503 });
 }
 
 // Utility functions
@@ -407,25 +407,25 @@ function isCacheableApi(pathname) {
 }
 
 // Push notification event handler
-self.addEventListener('push', (event) => {
+self.addEventListener("push", (event) => {
   let notificationData = {
-    title: 'NeonPro',
-    body: 'Você tem uma nova notificação',
-    icon: '/icons/icon-192x192.png',
-    badge: '/icons/badge-72x72.png',
-    tag: 'default',
+    title: "NeonPro",
+    body: "Você tem uma nova notificação",
+    icon: "/icons/icon-192x192.png",
+    badge: "/icons/badge-72x72.png",
+    tag: "default",
     data: {
-      url: '/dashboard',
+      url: "/dashboard",
     },
     actions: [
       {
-        action: 'open',
-        title: 'Abrir',
-        icon: '/icons/open-action.png',
+        action: "open",
+        title: "Abrir",
+        icon: "/icons/open-action.png",
       },
       {
-        action: 'close',
-        title: 'Fechar',
+        action: "close",
+        title: "Fechar",
       },
     ],
   };
@@ -440,63 +440,60 @@ self.addEventListener('push', (event) => {
     } catch (_error) {}
   }
 
-  const notificationPromise = self.registration.showNotification(
-    notificationData.title,
-    {
-      body: notificationData.body,
-      icon: notificationData.icon,
-      badge: notificationData.badge,
-      tag: notificationData.tag,
-      data: notificationData.data,
-      actions: notificationData.actions,
-      requireInteraction: notificationData.requireInteraction,
-      silent: notificationData.silent,
-      vibrate: notificationData.vibrate || [200, 100, 200],
-      timestamp: Date.now(),
-    },
-  );
+  const notificationPromise = self.registration.showNotification(notificationData.title, {
+    body: notificationData.body,
+    icon: notificationData.icon,
+    badge: notificationData.badge,
+    tag: notificationData.tag,
+    data: notificationData.data,
+    actions: notificationData.actions,
+    requireInteraction: notificationData.requireInteraction,
+    silent: notificationData.silent,
+    vibrate: notificationData.vibrate || [200, 100, 200],
+    timestamp: Date.now(),
+  });
 
   event.waitUntil(notificationPromise);
 });
 
 // Notification click handler
-self.addEventListener('notificationclick', (event) => {
+self.addEventListener("notificationclick", (event) => {
   const notification = event.notification;
   const action = event.action;
   const data = notification.data || {};
 
   notification.close();
 
-  if (action === 'close') {
+  if (action === "close") {
     return;
   }
 
   // Default action or 'open' action
-  let targetUrl = data.url || '/dashboard';
+  let targetUrl = data.url || "/dashboard";
 
   // Handle different notification types
   if (data.type) {
     switch (data.type) {
-      case 'appointment_reminder':
-      case 'appointment_confirmation':
-      case 'appointment_cancellation':
-        targetUrl = `/dashboard/appointments${data.appointmentId ? `/${data.appointmentId}` : ''}`;
+      case "appointment_reminder":
+      case "appointment_confirmation":
+      case "appointment_cancellation":
+        targetUrl = `/dashboard/appointments${data.appointmentId ? `/${data.appointmentId}` : ""}`;
         break;
-      case 'payment_due':
-      case 'payment_received':
-        targetUrl = `/dashboard/billing${data.invoiceId ? `/${data.invoiceId}` : ''}`;
+      case "payment_due":
+      case "payment_received":
+        targetUrl = `/dashboard/billing${data.invoiceId ? `/${data.invoiceId}` : ""}`;
         break;
-      case 'system_notification':
-        targetUrl = data.url || '/dashboard/notifications';
+      case "system_notification":
+        targetUrl = data.url || "/dashboard/notifications";
         break;
       default:
-        targetUrl = data.url || '/dashboard';
+        targetUrl = data.url || "/dashboard";
     }
   }
 
   const urlPromise = clients
     .matchAll({
-      type: 'window',
+      type: "window",
       includeUncontrolled: true,
     })
     .then((clientList) => {
@@ -521,7 +518,7 @@ self.addEventListener('notificationclick', (event) => {
 });
 
 // Notification close handler
-self.addEventListener('notificationclose', (event) => {
+self.addEventListener("notificationclose", (event) => {
   const notification = event.notification;
   const data = notification.data || {};
 
@@ -531,8 +528,8 @@ self.addEventListener('notificationclose', (event) => {
 });
 
 // Background sync handler (for offline actions)
-self.addEventListener('sync', (event) => {
-  if (event.tag === 'sync-notifications') {
+self.addEventListener("sync", (event) => {
+  if (event.tag === "sync-notifications") {
     const syncPromise = syncPendingNotifications();
     event.waitUntil(syncPromise);
   }
@@ -547,10 +544,10 @@ async function syncPendingNotifications() {
     for (const notification of pendingNotifications) {
       try {
         // Attempt to sync with server
-        const response = await fetch('/api/notifications/sync', {
-          method: 'POST',
+        const response = await fetch("/api/notifications/sync", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify(notification),
         });
@@ -574,31 +571,31 @@ async function getPendingNotifications() {
 async function removePendingNotification(_notificationId) {}
 
 // Handle messages from main thread
-self.addEventListener('message', (event) => {
+self.addEventListener("message", (event) => {
   const { type, data } = event.data;
 
   switch (type) {
-    case 'SKIP_WAITING':
+    case "SKIP_WAITING":
       self.skipWaiting();
       break;
 
-    case 'GET_VERSION':
+    case "GET_VERSION":
       event.ports[0].postMessage({
-        type: 'VERSION',
+        type: "VERSION",
         version: CACHE_NAME,
       });
       break;
 
-    case 'CLEAR_CACHE':
+    case "CLEAR_CACHE":
       caches.delete(CACHE_NAME).then(() => {
         event.ports[0].postMessage({
-          type: 'CACHE_CLEARED',
+          type: "CACHE_CLEARED",
           success: true,
         });
       });
       break;
 
-    case 'UPDATE_NOTIFICATION_PREFERENCES':
+    case "UPDATE_NOTIFICATION_PREFERENCES":
       // Handle notification preference updates
       updateNotificationPreferences(data);
       break;
@@ -610,7 +607,7 @@ self.addEventListener('message', (event) => {
 async function updateNotificationPreferences(preferences) {
   // Store preferences for offline use
   try {
-    const cache = await caches.open('preferences');
-    await cache.put('/preferences/notifications', Response.json(preferences));
+    const cache = await caches.open("preferences");
+    await cache.put("/preferences/notifications", Response.json(preferences));
   } catch (_error) {}
 }

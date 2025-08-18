@@ -1,7 +1,7 @@
-import * as React from 'react';
-import { cn } from '../utils/cn';
-import { Badge } from './Badge';
-import { Button } from './Button';
+import * as React from "react";
+import { cn } from "../utils/cn";
+import { Badge } from "./Badge";
+import { Button } from "./Button";
 
 export type FilterOption = {
   id: string;
@@ -27,8 +27,8 @@ export type SearchBoxProps = {
 const SearchBox = React.forwardRef<HTMLDivElement, SearchBoxProps>(
   (
     {
-      placeholder = 'Buscar...',
-      value = '',
+      placeholder = "Buscar...",
+      value = "",
       onValueChange,
       filters = [],
       activeFilters = [],
@@ -39,13 +39,11 @@ const SearchBox = React.forwardRef<HTMLDivElement, SearchBoxProps>(
       className,
       ...props
     },
-    ref
+    ref,
   ) => {
     const [searchValue, setSearchValue] = React.useState(value);
     const [showFilters, setShowFilters] = React.useState(false);
-    const debounceRef = React.useRef<ReturnType<typeof setTimeout> | undefined>(
-      undefined
-    );
+    const debounceRef = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
     React.useEffect(() => {
       setSearchValue(value);
@@ -72,8 +70,8 @@ const SearchBox = React.forwardRef<HTMLDivElement, SearchBoxProps>(
     };
 
     const handleClearSearch = () => {
-      setSearchValue('');
-      onValueChange?.('');
+      setSearchValue("");
+      onValueChange?.("");
     };
 
     const handleFilterToggle = (filterId: string) => {
@@ -84,7 +82,7 @@ const SearchBox = React.forwardRef<HTMLDivElement, SearchBoxProps>(
     const hasFilters = filters && filters.length > 0;
 
     return (
-      <div {...props} className={cn('space-y-3', className)} ref={ref}>
+      <div {...props} className={cn("space-y-3", className)} ref={ref}>
         {/* Search Input */}
         <div className="relative">
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -118,12 +116,7 @@ const SearchBox = React.forwardRef<HTMLDivElement, SearchBoxProps>(
               onClick={handleClearSearch}
               type="button"
             >
-              <svg
-                className="h-4 w-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   d="M6 18L18 6M6 6l12 12"
                   strokeLinecap="round"
@@ -144,11 +137,7 @@ const SearchBox = React.forwardRef<HTMLDivElement, SearchBoxProps>(
         {/* Filter Toggle and Clear */}
         {hasFilters && (
           <div className="flex items-center gap-2">
-            <Button
-              onClick={() => setShowFilters(!showFilters)}
-              size="sm"
-              variant="outline"
-            >
+            <Button onClick={() => setShowFilters(!showFilters)} size="sm" variant="outline">
               Filtros
               {hasActiveFilters && (
                 <Badge className="ml-2" variant="secondary">
@@ -172,14 +161,11 @@ const SearchBox = React.forwardRef<HTMLDivElement, SearchBoxProps>(
               const isActive = activeFilters?.includes(filter.id);
               return (
                 <Button
-                  className={cn(
-                    'justify-start',
-                    isActive && 'bg-primary text-primary-foreground'
-                  )}
+                  className={cn("justify-start", isActive && "bg-primary text-primary-foreground")}
                   key={filter.id}
                   onClick={() => handleFilterToggle(filter.id)}
                   size="sm"
-                  variant={isActive ? 'default' : 'outline'}
+                  variant={isActive ? "default" : "outline"}
                 >
                   {filter.label}
                   {filter.count !== undefined && (
@@ -230,9 +216,9 @@ const SearchBox = React.forwardRef<HTMLDivElement, SearchBoxProps>(
         )}
       </div>
     );
-  }
+  },
 );
 
-SearchBox.displayName = 'SearchBox';
+SearchBox.displayName = "SearchBox";
 
 export { SearchBox };

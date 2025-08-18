@@ -11,6 +11,9 @@ import { LGPDDataSubjectRights } from './data-subject-rights';
 
 export class ComplianceIntegration {
   private static instance: ComplianceIntegration;
+  public rbac: HealthcareRBAC;
+  public consent: LGPDConsentManager;
+  public dataRights: LGPDDataSubjectRights;
 
   private constructor() {
     this.rbac = HealthcareRBAC.getInstance();

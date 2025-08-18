@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
 export function WebVitalsReporter() {
   useEffect(() => {
@@ -10,8 +10,8 @@ export function WebVitalsReporter() {
 
       // Only log in development or with explicit consent
       if (
-        process.env.NODE_ENV === 'development' ||
-        window.localStorage.getItem('performance-consent') === 'true'
+        process.env.NODE_ENV === "development" ||
+        window.localStorage.getItem("performance-consent") === "true"
       ) {
         console.log(`[WebVitals] ${name}:`, {
           value: Math.round(value),
@@ -21,18 +21,18 @@ export function WebVitalsReporter() {
         });
 
         // Send to monitoring service (if available)
-        if (typeof window !== 'undefined' && 'gtag' in window) {
-          (window as any).gtag('event', name, {
+        if (typeof window !== "undefined" && "gtag" in window) {
+          (window as any).gtag("event", name, {
             value: Math.round(value),
             event_label: id,
-            custom_parameter_1: label === 'web-vital',
+            custom_parameter_1: label === "web-vital",
           });
         }
       }
     };
 
     // Dynamic import for Next.js web vitals
-    import('web-vitals').then(({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {
+    import("web-vitals").then(({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {
       getCLS(reportWebVitals);
       getFID(reportWebVitals);
       getFCP(reportWebVitals);
@@ -54,10 +54,8 @@ export function usePerformanceMonitoring() {
       const loadTime = performance.now() - startTime;
 
       // Healthcare compliance: only track with consent
-      if (window.localStorage.getItem('performance-consent') === 'true') {
-        console.log(
-          `[Healthcare Performance] Component load time: ${Math.round(loadTime)}ms`,
-        );
+      if (window.localStorage.getItem("performance-consent") === "true") {
+        console.log(`[Healthcare Performance] Component load time: ${Math.round(loadTime)}ms`);
       }
     };
   }, []);
@@ -65,19 +63,16 @@ export function usePerformanceMonitoring() {
 
 // LGPD-compliant performance consent
 export function requestPerformanceConsent() {
-  const hasConsent = window.localStorage.getItem('performance-consent');
+  const hasConsent = window.localStorage.getItem("performance-consent");
 
   if (!hasConsent) {
     const consent = window.confirm(
-      'Para melhorar a performance do sistema de saúde, podemos coletar métricas de performance não identificadas. Aceita?',
+      "Para melhorar a performance do sistema de saúde, podemos coletar métricas de performance não identificadas. Aceita?",
     );
 
-    window.localStorage.setItem(
-      'performance-consent',
-      consent ? 'true' : 'false',
-    );
+    window.localStorage.setItem("performance-consent", consent ? "true" : "false");
     return consent;
   }
 
-  return hasConsent === 'true';
+  return hasConsent === "true";
 }

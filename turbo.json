@@ -1,254 +1,240 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "ui": "tui",
-  "globalDependencies": [
-    ".env",
-    ".env.local",
-    ".env.production",
-    ".env.test",
-    "tsconfig.json",
-    "package.json",
-    "pnpm-workspace.yaml",
-    "biome.jsonc",
-    "jest.config.js",
-    "vitest.config.ts",
-    "playwright.config.ts",
-    "turbo.json"
+  "globalPassThroughEnv": [
+    "NODE_ENV",
+    "VERCEL_ENV",
+    "CI"
   ],
-  "tasks": {
+  "globalDependencies": [
+    "**/.env.*local",
+    "**/package.json",
+    "**/tsconfig.json",
+    "biome.jsonc",
+    "pnpm-workspace.yaml"
+  ],
+  "globalEnv": [
+    "NODE_ENV",
+    "VERCEL_ENV",
+    "CI",
+    "TURBO_TOKEN",
+    "TURBO_TEAM"
+  ],
+  "remoteCache": {
+    "signature": true,
+    "enabled": true,
+    "timeout": 30
+  },
+  "experimentalSpaces": {
+    "id": "neonpro-aesthetic-clinic"
+  },
+  "pipeline": {
     "build": {
-      "dependsOn": ["^build", "type-check"],
+      "dependsOn": ["^build"],
       "inputs": [
-        "$TURBO_DEFAULT$",
-        ".env*",
-        "next.config.*",
+        "src/**/*.{ts,tsx,js,jsx}",
+        "app/**/*.{ts,tsx,js,jsx}",
+        "components/**/*.{ts,tsx}",
+        "lib/**/*.{ts,tsx}",
+        "styles/**/*.{css,scss}",
+        "public/**/*",
+        "package.json",
         "tsconfig.json",
+        "next.config.*",
         "tailwind.config.*",
-        "postcss.config.*"
+        "!**/__tests__/**",
+        "!**/*.test.*",
+        "!**/*.spec.*"
       ],
       "outputs": [
         ".next/**",
         "!.next/cache/**",
         "dist/**",
-        "build/**",
-        ".vercel/**"
+        "build/**"
       ],
       "env": [
-        "NODE_ENV",
         "NEXT_PUBLIC_*",
+        "DATABASE_URL", 
+        "NEXTAUTH_*",
         "SUPABASE_*",
-        "DATABASE_URL",
-        "VERCEL_*"
+        "OPENAI_*",
+        "STRIPE_*",
+        "RESEND_*"
       ]
     },
-    "dev": {
-      "cache": false,
-      "persistent": true,
+    "build:ai-models": {
       "dependsOn": ["^build"],
-      "env": ["NODE_ENV", "NEXT_PUBLIC_*", "SUPABASE_*", "DATABASE_URL"]
+      "inputs": [
+        "packages/ai/**/*.{ts,tsx,js,jsx}",
+        "apps/web/lib/ai/**/*.{ts,tsx}",
+        "apps/web/components/ai/**/*.{ts,tsx}",
+        "models/**/*",
+        "training-data/**/*"
+      ],
+      "outputs": [
+        "packages/ai/dist/**",
+        "packages/ai/.next/**",
+        ".next/cache/ai-models/**",
+        "ai-models/**"
+      ],
+      "env": [
+        "OPENAI_*",
+        "TENSORFLOW_*",
+        "AI_MODEL_*",
+        "PREDICTION_*"
+      ]
+    },
+    "schedule:optimize": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "packages/core-services/src/scheduling/**/*.{ts,tsx}",
+        "apps/web/app/**/scheduling/**/*.{ts,tsx}",
+        "apps/web/components/scheduling/**/*.{ts,tsx}",
+        "packages/ai/src/scheduling/**/*.{ts,tsx}"
+      ],
+      "outputs": [
+        "packages/core-services/dist/scheduling/**",
+        ".next/cache/scheduling/**"
+      ],
+      "env": [
+        "SCHEDULING_*",
+        "CALENDAR_*",
+        "APPOINTMENT_*"
+      ]
+    },
+    "treatments:validate": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "packages/core-services/src/treatments/**/*.{ts,tsx}",
+        "apps/web/app/**/treatments/**/*.{ts,tsx}",
+        "apps/web/components/treatments/**/*.{ts,tsx}",
+        "packages/compliance/src/treatments/**/*.{ts,tsx}"
+      ],
+      "outputs": [
+        "packages/core-services/dist/treatments/**",
+        ".next/cache/treatments/**",
+        "compliance-reports/treatments/**"
+      ],
+      "env": [
+        "TREATMENT_*",
+        "MEDICAL_*",
+        "ANVISA_*",
+        "CFM_*"
+      ]
+    },
+    "lint": {
+      "inputs": [
+        "**/*.{ts,tsx,js,jsx}",
+        ".eslintrc.*",
+        "biome.jsonc"
+      ],
+      "outputs": []
+    },
+    "type-check": {
+      "dependsOn": ["^build"],
+      "outputs": ["**/*.tsbuildinfo"]
     },
     "test": {
       "dependsOn": ["build"],
-      "inputs": [
-        "$TURBO_DEFAULT$",
-        "vitest.config.*",
-        "jest.config.*",
-        "**/*.test.*",
-        "**/*.spec.*",
-        "__tests__/**",
-        "tests/**"
-      ],
-      "outputs": ["coverage/**", "test-results/**", ".nyc_output/**"],
-      "env": ["NODE_ENV", "TEST_*", "CI"]
+      "outputs": ["coverage/**"]
     },
-    "test:healthcare": {
-      "dependsOn": ["build", "test"],
+    "test:unit": {
+      "dependsOn": ["build"],
+      "outputs": ["coverage/**"]
+    },
+    "test:integration": {
+      "dependsOn": ["build", "test:unit"],
+      "outputs": ["coverage/**"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "compliance:check": {
+      "dependsOn": ["compliance:lgpd", "compliance:anvisa", "compliance:cfm"],
       "inputs": [
-        "$TURBO_DEFAULT$",
-        "packages/devops/src/testing/**",
-        "**/*.healthcare.test.*",
-        "**/*.compliance.test.*"
+        "compliance-reports/lgpd/**",
+        "compliance-reports/anvisa/**", 
+        "compliance-reports/cfm/**"
       ],
-      "outputs": ["coverage/healthcare/**", "test-results/healthcare/**"],
+      "outputs": ["compliance-reports/summary/**"],
+      "env": ["COMPLIANCE_*"]
+    },
+    "compliance:lgpd": {
+      "dependsOn": ["build"],
+      "inputs": [
+        "packages/compliance/src/lgpd/**/*.{ts,tsx}",
+        "apps/web/app/**/privacy/**/*.{ts,tsx}",
+        "apps/web/components/privacy/**/*.{ts,tsx}",
+        "packages/core-services/src/privacy/**/*.{ts,tsx}"
+      ],
+      "outputs": ["compliance-reports/lgpd/**"],
       "env": [
-        "NODE_ENV",
-        "HEALTHCARE_TEST_MODE",
-        "LGPD_COMPLIANCE_MODE",
-        "ANVISA_COMPLIANCE_MODE",
-        "CFM_COMPLIANCE_MODE"
+        "LGPD_*",
+        "PRIVACY_*",
+        "GDPR_*",
+        "DATA_PROTECTION_*"
       ]
     },
-    "test:compliance": {
+    "compliance:anvisa": {
       "dependsOn": ["build"],
       "inputs": [
-        "$TURBO_DEFAULT$",
-        "packages/devops/src/testing/**",
-        "**/*.lgpd.test.*",
-        "**/*.anvisa.test.*",
-        "**/*.cfm.test.*"
+        "packages/compliance/src/anvisa/**/*.{ts,tsx}",
+        "apps/web/app/**/medical/**/*.{ts,tsx}",
+        "packages/core-services/src/medical/**/*.{ts,tsx}",
+        "packages/core-services/src/treatments/**/*.{ts,tsx}"
       ],
-      "outputs": ["compliance-reports/**", "audit-trails/**"],
-      "env": ["NODE_ENV", "COMPLIANCE_VALIDATION_MODE", "AUDIT_TRAIL_ENABLED"]
+      "outputs": ["compliance-reports/anvisa/**"],
+      "env": [
+        "ANVISA_*",
+        "MEDICAL_*",
+        "HEALTH_REGULATION_*"
+      ]
     },
-    "test:e2e": {
+    "compliance:cfm": {
       "dependsOn": ["build"],
       "inputs": [
-        "$TURBO_DEFAULT$",
-        "playwright.config.*",
-        "**/*.e2e.*",
-        "tests/e2e/**"
+        "packages/compliance/src/cfm/**/*.{ts,tsx}",
+        "apps/web/app/**/professional/**/*.{ts,tsx}",
+        "packages/core-services/src/professional/**/*.{ts,tsx}"
       ],
-      "outputs": ["playwright-report/**", "test-results/**"],
-      "env": ["NODE_ENV", "E2E_BASE_URL", "PLAYWRIGHT_*"]
+      "outputs": ["compliance-reports/cfm/**"],
+      "env": [
+        "CFM_*",
+        "MEDICAL_PROFESSIONAL_*",
+        "CERTIFICATION_*"
+      ]
     },
-    "lint": {
-      "dependsOn": ["^lint"],
+    "security:audit": {
+      "dependsOn": ["build"],
       "inputs": [
-        "$TURBO_DEFAULT$",
-        "biome.jsonc",
-        ".eslintrc.*",
-        "**/*.{js,jsx,ts,tsx,vue,svelte}"
+        "packages/security/**/*.{ts,tsx}",
+        "packages/auth/**/*.{ts,tsx}",
+        "apps/web/middleware/**/*.{ts,tsx}",
+        "apps/web/app/**/api/**/*.{ts,tsx}",
+        "package.json",
+        "pnpm-lock.yaml"
       ],
-      "outputs": ["lint-results/**"]
-    },
-    "lint:healthcare": {
-      "dependsOn": ["lint"],
-      "inputs": [
-        "$TURBO_DEFAULT$",
-        "packages/devops/**",
-        "apps/web/app/**",
-        "packages/compliance/**"
+      "outputs": [
+        "security-reports/**",
+        ".turbo/security-cache/**"
       ],
-      "outputs": ["lint-results/healthcare/**"]
-    },
-    "type-check": {
-      "dependsOn": ["^type-check"],
-      "inputs": ["$TURBO_DEFAULT$", "tsconfig.json", "**/*.{ts,tsx}"],
-      "outputs": ["**/*.tsbuildinfo"]
-    },
-    "format": {
-      "inputs": ["$TURBO_DEFAULT$", "biome.jsonc", ".prettierrc.*"],
-      "outputs": []
+      "env": [
+        "SECURITY_*",
+        "AUTH_*",
+        "ENCRYPTION_*",
+        "AUDIT_*"
+      ]
     },
     "clean": {
-      "inputs": [],
-      "outputs": [],
       "cache": false
     },
-    "clean:healthcare": {
-      "inputs": [],
-      "outputs": [],
-      "cache": false,
-      "dependsOn": ["clean"]
-    },
-    "db:generate": {
+    "format": {
       "inputs": [
-        "packages/db/prisma/schema.prisma",
-        "infrastructure/database/migrations/**"
+        "**/*.{ts,tsx,js,jsx,json,md}",
+        ".prettierrc.*",
+        "biome.jsonc"
       ],
-      "outputs": ["packages/db/prisma/generated/**", "types/supabase.ts"],
-      "cache": false
-    },
-    "db:push": {
-      "inputs": [
-        "packages/db/prisma/schema.prisma",
-        "infrastructure/database/migrations/**"
-      ],
-      "outputs": [],
-      "cache": false
-    },
-    "db:migrate": {
-      "inputs": ["infrastructure/database/migrations/**"],
-      "outputs": [],
-      "cache": false
-    },
-    "healthcare:validate": {
-      "dependsOn": [
-        "build",
-        "test:healthcare",
-        "test:compliance",
-        "lint:healthcare"
-      ],
-      "inputs": ["$TURBO_DEFAULT$", "packages/devops/src/testing/**"],
-      "outputs": [
-        "healthcare-validation-report.json",
-        "compliance-certification.json"
-      ],
-      "env": ["NODE_ENV", "HEALTHCARE_VALIDATION_MODE", "QUALITY_THRESHOLD"]
-    },
-    "healthcare:audit": {
-      "dependsOn": ["healthcare:validate"],
-      "inputs": [
-        "$TURBO_DEFAULT$",
-        "packages/compliance/**",
-        "audit-trails/**"
-      ],
-      "outputs": [
-        "healthcare-audit-report.json",
-        "regulatory-compliance-report.json"
-      ],
-      "cache": false
-    },
-    "security:scan": {
-      "inputs": ["$TURBO_DEFAULT$", "package.json", "pnpm-lock.yaml"],
-      "outputs": ["security-scan-results.json", "vulnerability-report.json"]
-    },
-    "performance:test": {
-      "dependsOn": ["build"],
-      "inputs": ["$TURBO_DEFAULT$", "performance/**"],
-      "outputs": ["performance-reports/**", "lighthouse-reports/**"]
-    },
-    "accessibility:test": {
-      "dependsOn": ["build"],
-      "inputs": ["$TURBO_DEFAULT$", "accessibility/**"],
-      "outputs": ["accessibility-reports/**", "wcag-compliance-report.json"]
-    },
-    "quality:gate": {
-      "dependsOn": [
-        "healthcare:validate",
-        "security:scan",
-        "performance:test",
-        "accessibility:test"
-      ],
-      "inputs": ["$TURBO_DEFAULT$"],
-      "outputs": ["quality-gate-report.json", "overall-quality-score.json"],
-      "env": ["QUALITY_THRESHOLD", "HEALTHCARE_QUALITY_MODE"]
-    },
-    "deploy:prepare": {
-      "dependsOn": ["quality:gate"],
-      "inputs": ["$TURBO_DEFAULT$", "vercel.json", "Dockerfile*"],
-      "outputs": ["deployment-artifacts/**"]
-    },
-    "docker:build": {
-      "dependsOn": ["build"],
-      "inputs": ["$TURBO_DEFAULT$", "Dockerfile*", ".dockerignore"],
-      "outputs": [],
-      "cache": false
-    },
-    "docker:prune": {
-      "inputs": ["$TURBO_DEFAULT$"],
-      "outputs": ["out/**"]
+      "outputs": []
     }
-  },
-  "remoteCache": {
-    "signature": true,
-    "preflight": true,
-    "timeout": 30,
-    "uploadTimeout": 60
-  },
-  "cacheDir": ".turbo/cache",
-  "daemon": true,
-  "globalPassThroughEnv": [
-    "NODE_ENV",
-    "CI",
-    "VERCEL",
-    "NEXT_PUBLIC_*",
-    "SUPABASE_*",
-    "DATABASE_URL",
-    "HEALTHCARE_*",
-    "LGPD_*",
-    "ANVISA_*",
-    "CFM_*",
-    "QUALITY_*"
-  ]
+  }
 }

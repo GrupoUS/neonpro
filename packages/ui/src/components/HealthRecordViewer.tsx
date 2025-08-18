@@ -1,12 +1,12 @@
-import { Clock, Download, Eye, EyeOff, FileText, Shield } from 'lucide-react';
-import * as React from 'react';
-import type { HealthRecordData, PractitionerData } from '../types';
-import { cn } from '../utils/cn';
-import { formatters } from '../utils/formatters';
-import { Avatar, AvatarFallback, AvatarImage } from './Avatar';
-import { Badge } from './Badge';
-import { Button } from './Button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './Tabs';
+import { Clock, Download, Eye, EyeOff, FileText, Shield } from "lucide-react";
+import * as React from "react";
+import type { HealthRecordData, PractitionerData } from "../types";
+import { cn } from "../utils/cn";
+import { formatters } from "../utils/formatters";
+import { Avatar, AvatarFallback, AvatarImage } from "./Avatar";
+import { Badge } from "./Badge";
+import { Button } from "./Button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./Tabs";
 
 type HealthRecordViewerProps = {
   record: HealthRecordData;
@@ -21,10 +21,7 @@ type HealthRecordViewerProps = {
   className?: string;
 };
 
-const HealthRecordViewer = React.forwardRef<
-  HTMLDivElement,
-  HealthRecordViewerProps
->(
+const HealthRecordViewer = React.forwardRef<HTMLDivElement, HealthRecordViewerProps>(
   (
     {
       record,
@@ -39,17 +36,11 @@ const HealthRecordViewer = React.forwardRef<
       className,
       ...props
     },
-    ref
+    ref,
   ) => {
-    const [activeTab, setActiveTab] = React.useState('overview');
+    const [activeTab, setActiveTab] = React.useState("overview");
 
-    const sensitiveFields = [
-      'cpf',
-      'rg',
-      'medicalHistory',
-      'medications',
-      'allergies',
-    ];
+    const sensitiveFields = ["cpf", "rg", "medicalHistory", "medications", "allergies"];
     const renderSensitiveContent = (content: string, fieldName: string) => {
       if (sensitiveFields.includes(fieldName) && !showSensitiveData) {
         return (
@@ -57,12 +48,7 @@ const HealthRecordViewer = React.forwardRef<
             <EyeOff className="h-4 w-4" />
             <span>Dados protegidos pela LGPD</span>
             {onToggleSensitive && (
-              <Button
-                className="h-auto p-0"
-                onClick={onToggleSensitive}
-                size="sm"
-                variant="link"
-              >
+              <Button className="h-auto p-0" onClick={onToggleSensitive} size="sm" variant="link">
                 Mostrar
               </Button>
             )}
@@ -73,7 +59,7 @@ const HealthRecordViewer = React.forwardRef<
     };
 
     return (
-      <div className={cn('space-y-6', className)} ref={ref} {...props}>
+      <div className={cn("space-y-6", className)} ref={ref} {...props}>
         {/* Header */}
         <div className="flex items-start justify-between">
           <div className="space-y-1">
@@ -98,16 +84,12 @@ const HealthRecordViewer = React.forwardRef<
                 </div>
               )}
             </div>
-          </div>{' '}
+          </div>{" "}
           <div className="flex items-center gap-2">
             {onToggleSensitive && (
               <Button onClick={onToggleSensitive} size="sm" variant="outline">
-                {showSensitiveData ? (
-                  <EyeOff className="h-4 w-4" />
-                ) : (
-                  <Eye className="h-4 w-4" />
-                )}
-                {showSensitiveData ? 'Ocultar' : 'Mostrar'} Dados Sensíveis
+                {showSensitiveData ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                {showSensitiveData ? "Ocultar" : "Mostrar"} Dados Sensíveis
               </Button>
             )}
 
@@ -132,20 +114,16 @@ const HealthRecordViewer = React.forwardRef<
             <TabsTrigger value="medical">Histórico Médico</TabsTrigger>
             <TabsTrigger value="procedures">Procedimentos</TabsTrigger>
             <TabsTrigger value="documents">Documentos</TabsTrigger>
-          </TabsList>{' '}
+          </TabsList>{" "}
           {/* Overview Tab */}
           <TabsContent className="space-y-6" value="overview">
             {/* Patient Basic Info */}
             <div className="rounded-lg border p-6">
-              <h3 className="mb-4 font-semibold text-lg">
-                Informações Básicas
-              </h3>
+              <h3 className="mb-4 font-semibold text-lg">Informações Básicas</h3>
 
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div>
-                  <label className="font-medium text-muted-foreground text-sm">
-                    Nome Completo
-                  </label>
+                  <label className="font-medium text-muted-foreground text-sm">Nome Completo</label>
                   <div className="mt-1">{record.patientName}</div>
                 </div>
 
@@ -154,75 +132,50 @@ const HealthRecordViewer = React.forwardRef<
                     Data de Nascimento
                   </label>
                   <div className="mt-1">
-                    {formatters.date(record.birthDate)} (
-                    {formatters.age(record.birthDate)} anos)
+                    {formatters.date(record.birthDate)} ({formatters.age(record.birthDate)} anos)
                   </div>
                 </div>
 
                 <div>
-                  <label className="font-medium text-muted-foreground text-sm">
-                    CPF
-                  </label>
-                  <div className="mt-1">
-                    {renderSensitiveContent(record.cpf, 'cpf')}
-                  </div>
+                  <label className="font-medium text-muted-foreground text-sm">CPF</label>
+                  <div className="mt-1">{renderSensitiveContent(record.cpf, "cpf")}</div>
                 </div>
 
                 <div>
-                  <label className="font-medium text-muted-foreground text-sm">
-                    RG
-                  </label>
-                  <div className="mt-1">
-                    {renderSensitiveContent(record.rg, 'rg')}
-                  </div>
+                  <label className="font-medium text-muted-foreground text-sm">RG</label>
+                  <div className="mt-1">{renderSensitiveContent(record.rg, "rg")}</div>
                 </div>
 
                 <div>
-                  <label className="font-medium text-muted-foreground text-sm">
-                    Telefone
-                  </label>
+                  <label className="font-medium text-muted-foreground text-sm">Telefone</label>
                   <div className="mt-1">{formatters.phone(record.phone)}</div>
                 </div>
 
                 <div>
-                  <label className="font-medium text-muted-foreground text-sm">
-                    Email
-                  </label>
+                  <label className="font-medium text-muted-foreground text-sm">Email</label>
                   <div className="mt-1">{record.email}</div>
                 </div>
               </div>
-            </div>{' '}
+            </div>{" "}
             {/* Emergency Contact */}
             {record.emergencyContact && (
               <div className="rounded-lg border p-6">
-                <h3 className="mb-4 font-semibold text-lg">
-                  Contato de Emergência
-                </h3>
+                <h3 className="mb-4 font-semibold text-lg">Contato de Emergência</h3>
 
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                   <div>
-                    <label className="font-medium text-muted-foreground text-sm">
-                      Nome
-                    </label>
+                    <label className="font-medium text-muted-foreground text-sm">Nome</label>
                     <div className="mt-1">{record.emergencyContact.name}</div>
                   </div>
 
                   <div>
-                    <label className="font-medium text-muted-foreground text-sm">
-                      Relação
-                    </label>
-                    <div className="mt-1">
-                      {record.emergencyContact.relationship}
-                    </div>
+                    <label className="font-medium text-muted-foreground text-sm">Relação</label>
+                    <div className="mt-1">{record.emergencyContact.relationship}</div>
                   </div>
 
                   <div>
-                    <label className="font-medium text-muted-foreground text-sm">
-                      Telefone
-                    </label>
-                    <div className="mt-1">
-                      {formatters.phone(record.emergencyContact.phone)}
-                    </div>
+                    <label className="font-medium text-muted-foreground text-sm">Telefone</label>
+                    <div className="mt-1">{formatters.phone(record.emergencyContact.phone)}</div>
                   </div>
                 </div>
               </div>
@@ -230,19 +183,12 @@ const HealthRecordViewer = React.forwardRef<
             {/* Responsible Practitioner */}
             {practitioner && (
               <div className="rounded-lg border p-6">
-                <h3 className="mb-4 font-semibold text-lg">
-                  Profissional Responsável
-                </h3>
+                <h3 className="mb-4 font-semibold text-lg">Profissional Responsável</h3>
 
                 <div className="flex items-center gap-4">
                   <Avatar>
-                    <AvatarImage
-                      alt={practitioner.name}
-                      src={practitioner.avatar}
-                    />
-                    <AvatarFallback>
-                      {formatters.initials(practitioner.name)}
-                    </AvatarFallback>
+                    <AvatarImage alt={practitioner.name} src={practitioner.avatar} />
+                    <AvatarFallback>{formatters.initials(practitioner.name)}</AvatarFallback>
                   </Avatar>
 
                   <div>
@@ -250,14 +196,12 @@ const HealthRecordViewer = React.forwardRef<
                     <div className="text-muted-foreground text-sm">
                       {practitioner.specialization}
                     </div>
-                    <div className="text-muted-foreground text-sm">
-                      CRM: {practitioner.crm}
-                    </div>
+                    <div className="text-muted-foreground text-sm">CRM: {practitioner.crm}</div>
                   </div>
                 </div>
               </div>
             )}
-          </TabsContent>{' '}
+          </TabsContent>{" "}
           {/* Medical History Tab */}
           <TabsContent className="space-y-6" value="medical">
             {/* Medical History */}
@@ -271,9 +215,9 @@ const HealthRecordViewer = React.forwardRef<
                   </label>
                   <div className="mt-2">
                     {renderSensitiveContent(
-                      record.medicalHistory?.conditions?.join(', ') ||
-                        'Nenhuma condição registrada',
-                      'medicalHistory'
+                      record.medicalHistory?.conditions?.join(", ") ||
+                        "Nenhuma condição registrada",
+                      "medicalHistory",
                     )}
                   </div>
                 </div>
@@ -284,72 +228,58 @@ const HealthRecordViewer = React.forwardRef<
                   </label>
                   <div className="mt-2">
                     {renderSensitiveContent(
-                      record.medications?.join(', ') ||
-                        'Nenhum medicamento registrado',
-                      'medications'
+                      record.medications?.join(", ") || "Nenhum medicamento registrado",
+                      "medications",
                     )}
                   </div>
                 </div>
 
                 <div>
-                  <label className="font-medium text-muted-foreground text-sm">
-                    Alergias
-                  </label>
+                  <label className="font-medium text-muted-foreground text-sm">Alergias</label>
                   <div className="mt-2">
                     {renderSensitiveContent(
-                      record.allergies?.join(', ') ||
-                        'Nenhuma alergia registrada',
-                      'allergies'
+                      record.allergies?.join(", ") || "Nenhuma alergia registrada",
+                      "allergies",
                     )}
                   </div>
                 </div>
               </div>
-            </div>{' '}
+            </div>{" "}
             {/* Previous Procedures */}
-            {record.previousProcedures &&
-              record.previousProcedures.length > 0 && (
-                <div className="rounded-lg border p-6">
-                  <h3 className="mb-4 font-semibold text-lg">
-                    Procedimentos Anteriores
-                  </h3>
+            {record.previousProcedures && record.previousProcedures.length > 0 && (
+              <div className="rounded-lg border p-6">
+                <h3 className="mb-4 font-semibold text-lg">Procedimentos Anteriores</h3>
 
-                  <div className="space-y-3">
-                    {record.previousProcedures.map((procedure, index) => (
-                      <div
-                        className="flex items-center justify-between rounded bg-muted/30 p-3"
-                        key={index}
-                      >
-                        <div>
-                          <div className="font-medium">{procedure.name}</div>
-                          <div className="text-muted-foreground text-sm">
-                            {formatters.date(procedure.date)} -{' '}
-                            {procedure.practitioner}
-                          </div>
+                <div className="space-y-3">
+                  {record.previousProcedures.map((procedure, index) => (
+                    <div
+                      className="flex items-center justify-between rounded bg-muted/30 p-3"
+                      key={index}
+                    >
+                      <div>
+                        <div className="font-medium">{procedure.name}</div>
+                        <div className="text-muted-foreground text-sm">
+                          {formatters.date(procedure.date)} - {procedure.practitioner}
                         </div>
-
-                        {procedure.status && (
-                          <Badge
-                            variant={
-                              procedure.status === 'completed'
-                                ? 'confirmed'
-                                : 'secondary'
-                            }
-                          >
-                            {procedure.status}
-                          </Badge>
-                        )}
                       </div>
-                    ))}
-                  </div>
+
+                      {procedure.status && (
+                        <Badge
+                          variant={procedure.status === "completed" ? "confirmed" : "secondary"}
+                        >
+                          {procedure.status}
+                        </Badge>
+                      )}
+                    </div>
+                  ))}
                 </div>
-              )}
+              </div>
+            )}
           </TabsContent>
           {/* Procedures Tab */}
           <TabsContent className="space-y-6" value="procedures">
             <div className="rounded-lg border p-6">
-              <h3 className="mb-4 font-semibold text-lg">
-                Procedimentos Realizados
-              </h3>
+              <h3 className="mb-4 font-semibold text-lg">Procedimentos Realizados</h3>
 
               {record.procedures && record.procedures.length > 0 ? (
                 <div className="space-y-4">
@@ -359,29 +289,20 @@ const HealthRecordViewer = React.forwardRef<
                         <div className="space-y-2">
                           <div className="font-medium">{procedure.name}</div>
                           <div className="text-muted-foreground text-sm">
-                            {formatters.date(procedure.date)} às{' '}
-                            {procedure.time}
+                            {formatters.date(procedure.date)} às {procedure.time}
                           </div>
-                          {procedure.notes && (
-                            <div className="text-sm">{procedure.notes}</div>
-                          )}
-                        </div>{' '}
+                          {procedure.notes && <div className="text-sm">{procedure.notes}</div>}
+                        </div>{" "}
                         <div className="flex items-center gap-2">
                           <Badge
-                            variant={
-                              procedure.status === 'completed'
-                                ? 'confirmed'
-                                : 'default'
-                            }
+                            variant={procedure.status === "completed" ? "confirmed" : "default"}
                           >
                             {procedure.status}
                           </Badge>
 
                           {onViewDetails && (
                             <Button
-                              onClick={() =>
-                                onViewDetails(`procedure-${index}`)
-                              }
+                              onClick={() => onViewDetails(`procedure-${index}`)}
                               size="sm"
                               variant="outline"
                             >
@@ -417,8 +338,7 @@ const HealthRecordViewer = React.forwardRef<
                         <div>
                           <div className="font-medium">{document.name}</div>
                           <div className="text-muted-foreground text-sm">
-                            {document.type} -{' '}
-                            {formatters.date(document.uploadDate)}
+                            {document.type} - {formatters.date(document.uploadDate)}
                           </div>
                         </div>
                       </div>
@@ -443,7 +363,7 @@ const HealthRecordViewer = React.forwardRef<
               )}
             </div>
           </TabsContent>
-        </Tabs>{' '}
+        </Tabs>{" "}
         {/* LGPD Compliance Notice */}
         <div className="rounded-lg border bg-muted/30 p-4">
           <div className="flex items-start gap-3">
@@ -451,20 +371,19 @@ const HealthRecordViewer = React.forwardRef<
             <div className="space-y-1">
               <div className="font-medium">Proteção de Dados - LGPD</div>
               <div className="text-muted-foreground text-sm">
-                Este prontuário contém dados pessoais sensíveis protegidos pela
-                Lei Geral de Proteção de Dados (LGPD). O acesso e tratamento
-                destes dados são registrados e auditados para garantir a
-                segurança e privacidade do paciente.
+                Este prontuário contém dados pessoais sensíveis protegidos pela Lei Geral de
+                Proteção de Dados (LGPD). O acesso e tratamento destes dados são registrados e
+                auditados para garantir a segurança e privacidade do paciente.
               </div>
             </div>
           </div>
         </div>
       </div>
     );
-  }
+  },
 );
 
-HealthRecordViewer.displayName = 'HealthRecordViewer';
+HealthRecordViewer.displayName = "HealthRecordViewer";
 
 export { HealthRecordViewer };
 export type { HealthRecordViewerProps };

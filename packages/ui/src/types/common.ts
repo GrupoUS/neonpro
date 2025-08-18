@@ -34,5 +34,5 @@ export type FilterOption = {
 
 export type SortConfig = {
   field: string;
-  direction: 'asc' | 'desc';
+  direction: "asc" | "desc";
 };

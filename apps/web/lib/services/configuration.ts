@@ -1,13 +1,13 @@
 // Migrated from src/services/configuration.ts
-import { supabase } from '@/lib/supabase';
+import { supabase } from "@/lib/supabase";
 
 export interface TenantConfiguration {
   id: string;
   tenant_id: string;
   key: string;
   value: unknown;
-  type: 'string' | 'number' | 'boolean' | 'object' | 'array';
-  category: 'general' | 'healthcare' | 'compliance' | 'integration' | 'ui';
+  type: "string" | "number" | "boolean" | "object" | "array";
+  category: "general" | "healthcare" | "compliance" | "integration" | "ui";
   description?: string;
   is_encrypted: boolean;
   updated_at: string;
@@ -39,14 +39,14 @@ export class ConfigurationService {
       }
 
       const { data, error } = await supabase
-        .from('tenant_configurations')
-        .select('*')
-        .eq('tenant_id', tenantId)
-        .eq('key', key)
+        .from("tenant_configurations")
+        .select("*")
+        .eq("tenant_id", tenantId)
+        .eq("key", key)
         .single();
 
       if (error) {
-        if (error.code === 'PGRST116') {
+        if (error.code === "PGRST116") {
           // Configuration not found
           return { value: null };
         }
@@ -60,10 +60,7 @@ export class ConfigurationService {
       return { value: this.parseConfigValue(data) };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : 'Failed to get configuration',
+        error: error instanceof Error ? error.message : "Failed to get configuration",
       };
     }
   }
@@ -78,17 +75,15 @@ export class ConfigurationService {
         key: config.key,
         value: config.value,
         type: this.getValueType(config.value),
-        category: config.category || 'general',
+        category: config.category || "general",
         description: config.description,
         is_encrypted: this.shouldEncrypt(config.key),
         updated_at: new Date().toISOString(),
       };
 
-      const { error } = await supabase
-        .from('tenant_configurations')
-        .upsert(configData, {
-          onConflict: 'tenant_id,key',
-        });
+      const { error } = await supabase.from("tenant_configurations").upsert(configData, {
+        onConflict: "tenant_id,key",
+      });
 
       if (error) {
         return { error: error.message };
@@ -102,10 +97,7 @@ export class ConfigurationService {
       return { success: true };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : 'Failed to set configuration',
+        error: error instanceof Error ? error.message : "Failed to set configuration",
       };
     }
   }
@@ -116,14 +108,14 @@ export class ConfigurationService {
   ): Promise<{ configurations?: TenantConfiguration[]; error?: string }> {
     try {
       let query = supabase
-        .from('tenant_configurations')
-        .select('*')
-        .eq('tenant_id', tenantId)
-        .order('category', { ascending: true })
-        .order('key', { ascending: true });
+        .from("tenant_configurations")
+        .select("*")
+        .eq("tenant_id", tenantId)
+        .order("category", { ascending: true })
+        .order("key", { ascending: true });
 
       if (category) {
-        query = query.eq('category', category);
+        query = query.eq("category", category);
       }
 
       const { data, error } = await query;
@@ -135,10 +127,7 @@ export class ConfigurationService {
       return { configurations: data };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : 'Failed to get configurations',
+        error: error instanceof Error ? error.message : "Failed to get configurations",
       };
     }
   }
@@ -149,10 +138,10 @@ export class ConfigurationService {
   ): Promise<{ success?: boolean; error?: string }> {
     try {
       const { error } = await supabase
-        .from('tenant_configurations')
+        .from("tenant_configurations")
         .delete()
-        .eq('tenant_id', tenantId)
-        .eq('key', key);
+        .eq("tenant_id", tenantId)
+        .eq("key", key);
 
       if (error) {
         return { error: error.message };
@@ -166,10 +155,7 @@ export class ConfigurationService {
       return { success: true };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : 'Failed to delete configuration',
+        error: error instanceof Error ? error.message : "Failed to delete configuration",
       };
     }
   }
@@ -179,10 +165,7 @@ export class ConfigurationService {
     settings?: Record<string, unknown>;
     error?: string;
   }> {
-    const { configurations, error } = await this.getAllConfigurations(
-      tenantId,
-      'healthcare',
-    );
+    const { configurations, error } = await this.getAllConfigurations(tenantId, "healthcare");
 
     if (error) {
       return { error };
@@ -205,7 +188,7 @@ export class ConfigurationService {
     return this.setConfiguration(tenantId, {
       key,
       value,
-      category: 'healthcare',
+      category: "healthcare",
       description,
     });
   }
@@ -215,10 +198,7 @@ export class ConfigurationService {
     settings?: Record<string, unknown>;
     error?: string;
   }> {
-    const { configurations, error } = await this.getAllConfigurations(
-      tenantId,
-      'compliance',
-    );
+    const { configurations, error } = await this.getAllConfigurations(tenantId, "compliance");
 
     if (error) {
       return { error };
@@ -237,10 +217,7 @@ export class ConfigurationService {
     settings?: Record<string, unknown>;
     error?: string;
   }> {
-    const { configurations, error } = await this.getAllConfigurations(
-      tenantId,
-      'ui',
-    );
+    const { configurations, error } = await this.getAllConfigurations(tenantId, "ui");
 
     if (error) {
       return { error };
@@ -264,17 +241,15 @@ export class ConfigurationService {
 
     try {
       switch (config.type) {
-        case 'string':
+        case "string":
           return String(config.value);
-        case 'number':
+        case "number":
           return Number(config.value);
-        case 'boolean':
+        case "boolean":
           return Boolean(config.value);
-        case 'object':
-        case 'array':
-          return typeof config.value === 'string'
-            ? JSON.parse(config.value)
-            : config.value;
+        case "object":
+        case "array":
+          return typeof config.value === "string" ? JSON.parse(config.value) : config.value;
         default:
           return config.value;
       }
@@ -283,28 +258,19 @@ export class ConfigurationService {
     }
   }
 
-  private getValueType(value: unknown): TenantConfiguration['type'] {
-    if (typeof value === 'string') return 'string';
-    if (typeof value === 'number') return 'number';
-    if (typeof value === 'boolean') return 'boolean';
-    if (Array.isArray(value)) return 'array';
-    if (typeof value === 'object') return 'object';
-    return 'string';
+  private getValueType(value: unknown): TenantConfiguration["type"] {
+    if (typeof value === "string") return "string";
+    if (typeof value === "number") return "number";
+    if (typeof value === "boolean") return "boolean";
+    if (Array.isArray(value)) return "array";
+    if (typeof value === "object") return "object";
+    return "string";
   }
 
   private shouldEncrypt(key: string): boolean {
-    const sensitiveKeys = [
-      'api_key',
-      'secret',
-      'password',
-      'token',
-      'credential',
-      'private_key',
-    ];
+    const sensitiveKeys = ["api_key", "secret", "password", "token", "credential", "private_key"];
 
-    return sensitiveKeys.some((sensitive) =>
-      key.toLowerCase().includes(sensitive),
-    );
+    return sensitiveKeys.some((sensitive) => key.toLowerCase().includes(sensitive));
   }
 
   // Clear cache manually if needed

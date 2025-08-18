@@ -1,5 +1,5 @@
 {
-  "extends": "@neonpro/typescript-config/base.json",
+  "extends": "../typescript-config/base.json",
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
@@ -13,14 +13,14 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "moduleDetection": "force",
-    "noEmit": false,
-    "composite": true
+    "composite": true,
+    "incremental": true
   },
   "include": ["src/**/*"],
   "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.spec.ts"],
   "references": [
     {
-      "path": "../typescript-config"
+      "path": "../typescript-config/tsconfig.json"
     }
   ]
 }

@@ -45,6 +45,7 @@ const validCreateAlertConfig = {
   severityLevel: 'high' as const,
   isActive: true,
   notificationChannels: ['in_app', 'whatsapp'] as const,
+  createdBy: '423e4567-e89b-12d3-a456-426614174003',
 };
 
 const validAlert = {
@@ -168,6 +169,7 @@ describe('Stock Alert Config Schema Validation', () => {
         alertType: 'low_stock' as const,
         thresholdValue: 10,
         notificationChannels: ['email'] as const,
+        createdBy: '423e4567-e89b-12d3-a456-426614174003',
       };
       const result = createStockAlertConfigSchema.safeParse(minimalConfig);
       expect(result.success).toBe(true);

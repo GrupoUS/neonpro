@@ -1,5 +1,8 @@
 import { z } from 'zod';
 
+// Re-export zod for tests and other consumers
+export { z };
+
 export const emailSchema = z.string().email();
 export const phoneSchema = z.string().min(10).max(15);
 

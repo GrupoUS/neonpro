@@ -7,7 +7,7 @@
 import { exec } from 'child_process';
 import ora from 'ora';
 import { promisify } from 'util';
-import { DeploymentMonitor } from '../monitoring/deployment-monitor';
+import { DeploymentMonitor, MonitorConfig } from './deployment-monitor';
 import { HealthChecker } from './health-checker';
 import { RollbackManager } from './rollback-manager';
 import { TrafficManager } from './traffic-manager';
@@ -74,14 +74,14 @@ export class BlueGreenDeployer {
   private readonly trafficManager: TrafficManager;
   private readonly rollbackManager: RollbackManager;
   private readonly monitor: DeploymentMonitor;
-  private readonly spinner: ora.Ora;
+  private readonly spinner: ReturnType<typeof ora>;
 
   constructor(config: DeploymentConfig) {
     this.config = config;
-    this.healthChecker = new HealthChecker(config.healthCheck);
-    this.trafficManager = new TrafficManager();
-    this.rollbackManager = new RollbackManager();
-    this.monitor = new DeploymentMonitor();
+    this.healthChecker = new HealthChecker({ maxHistoryPerEndpoint: 100, baseUrl: config.environments.production.url || 'http://localhost:3000' });
+    this.trafficManager = new TrafficManager({ maxHistorySize: 100 });
+    this.rollbackManager = new RollbackManager({ maxRollbackHistory: 50 });
+    this.monitor = new DeploymentMonitor({ maxDeploymentHistory: 100, metricsInterval: 5000 } as MonitorConfig);
     this.spinner = ora('Blue-Green Deployment');
   }
 
@@ -165,7 +165,12 @@ export class BlueGreenDeployer {
       if (this.config.deployment.rollbackOnFailure) {
         try {
           this.spinner.start('Rolling back deployment...');
-          await this.rollbackManager.rollback();
+          await this.rollbackManager.rollback({
+            version: this.config.version,
+            environment: result.targetEnvironment,
+            reason: 'Deployment failure',
+            timestamp: new Date()
+          });
           result.rollbackExecuted = true;
           this.spinner.succeed('Rollback completed successfully');
         } catch (rollbackError) {
@@ -178,9 +183,9 @@ export class BlueGreenDeployer {
       this.logDeploymentFailure(result);
     }
 
-    // Send monitoring data
+    // Complete deployment monitoring
     if (this.config.monitoring.enabled) {
-      await this.monitor.recordDeployment(result);
+      this.monitor.completeDeployment(result.success);
     }
 
     return result;
@@ -298,7 +303,7 @@ export class BlueGreenDeployer {
       this.healthChecker.checkComplianceServices(),
     ]);
 
-    return healthcareChecks.every((check) => check);
+    return healthcareChecks.every((check: boolean) => check);
   }
 
   /**
@@ -309,11 +314,7 @@ export class BlueGreenDeployer {
   ): Promise<void> {
     try {
       // Gradual traffic switch for healthcare applications
-      await this.trafficManager.gradualSwitch(targetEnvironment, {
-        stages: [10, 25, 50, 75, 100],
-        intervalSeconds: 30,
-        healthCheckBetweenStages: true,
-      });
+      await this.trafficManager.gradualShift([10, 25, 50, 75, 100]);
     } catch (error) {
       throw new Error(`Failed to switch traffic: ${error}`);
     }

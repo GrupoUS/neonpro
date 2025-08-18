@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 /**
  * Comprehensive audit service for healthcare compliance
@@ -11,75 +11,75 @@ import { z } from 'zod';
  */
 export enum AuditEventType {
   // Authentication events
-  LOGIN_SUCCESS = 'auth.login.success',
-  LOGIN_FAILURE = 'auth.login.failure',
-  LOGOUT = 'auth.logout',
-  MFA_SETUP = 'auth.mfa.setup',
-  MFA_VERIFICATION = 'auth.mfa.verification',
-  PASSWORD_CHANGE = 'auth.password.change',
-  ACCOUNT_LOCKOUT = 'auth.account.lockout',
+  LOGIN_SUCCESS = "auth.login.success",
+  LOGIN_FAILURE = "auth.login.failure",
+  LOGOUT = "auth.logout",
+  MFA_SETUP = "auth.mfa.setup",
+  MFA_VERIFICATION = "auth.mfa.verification",
+  PASSWORD_CHANGE = "auth.password.change",
+  ACCOUNT_LOCKOUT = "auth.account.lockout",
 
   // Patient data access
-  PATIENT_CREATE = 'patient.create',
-  PATIENT_READ = 'patient.read',
-  PATIENT_UPDATE = 'patient.update',
-  PATIENT_DELETE = 'patient.delete',
-  PATIENT_EXPORT = 'patient.export',
+  PATIENT_CREATE = "patient.create",
+  PATIENT_READ = "patient.read",
+  PATIENT_UPDATE = "patient.update",
+  PATIENT_DELETE = "patient.delete",
+  PATIENT_EXPORT = "patient.export",
 
   // Medical records
-  MEDICAL_RECORD_CREATE = 'medical_record.create',
-  MEDICAL_RECORD_READ = 'medical_record.read',
-  MEDICAL_RECORD_UPDATE = 'medical_record.update',
-  MEDICAL_RECORD_DELETE = 'medical_record.delete',
-  MEDICAL_RECORD_SIGN = 'medical_record.sign',
+  MEDICAL_RECORD_CREATE = "medical_record.create",
+  MEDICAL_RECORD_READ = "medical_record.read",
+  MEDICAL_RECORD_UPDATE = "medical_record.update",
+  MEDICAL_RECORD_DELETE = "medical_record.delete",
+  MEDICAL_RECORD_SIGN = "medical_record.sign",
 
   // LGPD compliance
-  CONSENT_GIVEN = 'lgpd.consent.given',
-  CONSENT_WITHDRAWN = 'lgpd.consent.withdrawn',
-  DATA_EXPORT_REQUEST = 'lgpd.data.export_request',
-  DATA_DELETION_REQUEST = 'lgpd.data.deletion_request',
-  DATA_RECTIFICATION = 'lgpd.data.rectification',
-  PRIVACY_ASSESSMENT = 'lgpd.privacy.assessment',
-  BREACH_DETECTED = 'lgpd.breach.detected',
-  BREACH_NOTIFICATION = 'lgpd.breach.notification',
+  CONSENT_GIVEN = "lgpd.consent.given",
+  CONSENT_WITHDRAWN = "lgpd.consent.withdrawn",
+  DATA_EXPORT_REQUEST = "lgpd.data.export_request",
+  DATA_DELETION_REQUEST = "lgpd.data.deletion_request",
+  DATA_RECTIFICATION = "lgpd.data.rectification",
+  PRIVACY_ASSESSMENT = "lgpd.privacy.assessment",
+  BREACH_DETECTED = "lgpd.breach.detected",
+  BREACH_NOTIFICATION = "lgpd.breach.notification",
 
   // System security
-  PERMISSION_GRANTED = 'security.permission.granted',
-  PERMISSION_DENIED = 'security.permission.denied',
-  RATE_LIMIT_EXCEEDED = 'security.rate_limit.exceeded',
-  SUSPICIOUS_ACTIVITY = 'security.suspicious.activity',
-  ENCRYPTION_KEY_ROTATION = 'security.encryption.key_rotation',
+  PERMISSION_GRANTED = "security.permission.granted",
+  PERMISSION_DENIED = "security.permission.denied",
+  RATE_LIMIT_EXCEEDED = "security.rate_limit.exceeded",
+  SUSPICIOUS_ACTIVITY = "security.suspicious.activity",
+  ENCRYPTION_KEY_ROTATION = "security.encryption.key_rotation",
 
   // File operations
-  FILE_UPLOAD = 'file.upload',
-  FILE_DOWNLOAD = 'file.download',
-  FILE_DELETE = 'file.delete',
-  FILE_VIRUS_DETECTED = 'file.virus.detected',
+  FILE_UPLOAD = "file.upload",
+  FILE_DOWNLOAD = "file.download",
+  FILE_DELETE = "file.delete",
+  FILE_VIRUS_DETECTED = "file.virus.detected",
 
   // Administrative
-  USER_ROLE_CHANGE = 'admin.user.role_change',
-  SYSTEM_CONFIG_CHANGE = 'admin.system.config_change',
-  BACKUP_CREATED = 'admin.backup.created',
-  BACKUP_RESTORED = 'admin.backup.restored',
+  USER_ROLE_CHANGE = "admin.user.role_change",
+  SYSTEM_CONFIG_CHANGE = "admin.system.config_change",
+  BACKUP_CREATED = "admin.backup.created",
+  BACKUP_RESTORED = "admin.backup.restored",
 }
 
 /**
  * Audit event severity levels
  */
 export enum AuditSeverity {
-  INFO = 'info',
-  WARNING = 'warning',
-  ERROR = 'error',
-  CRITICAL = 'critical',
+  INFO = "info",
+  WARNING = "warning",
+  ERROR = "error",
+  CRITICAL = "critical",
 }
 
 /**
  * Audit event outcome
  */
 export enum AuditOutcome {
-  SUCCESS = 'success',
-  FAILURE = 'failure',
-  PARTIAL = 'partial',
+  SUCCESS = "success",
+  FAILURE = "failure",
+  PARTIAL = "partial",
 }
 
 /**
@@ -98,7 +98,7 @@ export const auditEventSchema = z.object({
   description: z.string().min(1).max(1000),
   details: z.record(z.any()).optional(),
   timestamp: z.date().default(() => new Date()),
-  source: z.string().default('neonpro-api'),
+  source: z.string().default("neonpro-api"),
 });
 
 /**
@@ -179,65 +179,60 @@ export type AuditFilters = {
 };
 
 /**
- * Cryptographic hash service for audit integrity
+ * Algorithm used for audit hash calculation
  */
-export class AuditHashService {
-  private static readonly ALGORITHM = 'sha256';
+const AUDIT_HASH_ALGORITHM = "sha256";
 
-  /**
-   * Calculate hash for audit event
-   */
-  static calculateHash(event: AuditEvent, previousHash?: string): string {
-    const crypto = require('crypto');
+/**
+ * Calculate hash for audit event
+ */
+export function calculateAuditHash(event: AuditEvent, previousHash?: string): string {
+  const crypto = require("node:crypto");
 
-    // Create canonical representation
-    const canonical = {
-      eventType: event.eventType,
-      severity: event.severity,
-      outcome: event.outcome,
-      userId: event.userId,
-      sessionId: event.sessionId,
-      ipAddress: event.ipAddress,
-      resourceId: event.resourceId,
-      resourceType: event.resourceType,
-      description: event.description,
-      timestamp: event.timestamp.toISOString(),
-      previousHash: previousHash || '',
-    };
+  // Create canonical representation
+  const canonical = {
+    eventType: event.eventType,
+    severity: event.severity,
+    outcome: event.outcome,
+    userId: event.userId,
+    sessionId: event.sessionId,
+    ipAddress: event.ipAddress,
+    resourceId: event.resourceId,
+    resourceType: event.resourceType,
+    description: event.description,
+    timestamp: event.timestamp.toISOString(),
+    previousHash: previousHash || "",
+  };
 
-    const data = JSON.stringify(canonical, Object.keys(canonical).sort());
-    return crypto
-      .createHash(AuditHashService.ALGORITHM)
-      .update(data)
-      .digest('hex');
-  }
+  const data = JSON.stringify(canonical, Object.keys(canonical).sort());
+  return crypto.createHash(AUDIT_HASH_ALGORITHM).update(data).digest("hex");
+}
 
-  /**
-   * Verify audit chain integrity
-   */
-  static verifyChain(events: AuditEvent[]): {
-    valid: boolean;
-    brokenAt?: number;
-  } {
-    if (events.length === 0) {
-      return { valid: true };
-    }
-
-    let previousHash = '';
-
-    for (let i = 0; i < events.length; i++) {
-      const event = events[i];
-      const expectedHash = AuditHashService.calculateHash(event, previousHash);
-
-      if (event.hash !== expectedHash) {
-        return { valid: false, brokenAt: i };
-      }
-
-      previousHash = event.hash!;
-    }
-
+/**
+ * Verify audit chain integrity
+ */
+export function verifyAuditChain(events: AuditEvent[]): {
+  valid: boolean;
+  brokenAt?: number;
+} {
+  if (events.length === 0) {
     return { valid: true };
   }
+
+  let previousHash = "";
+
+  for (let i = 0; i < events.length; i++) {
+    const event = events[i];
+    const expectedHash = calculateAuditHash(event, previousHash);
+
+    if (event.hash !== expectedHash) {
+      return { valid: false, brokenAt: i };
+    }
+
+    previousHash = event.hash || "";
+  }
+
+  return { valid: true };
 }
 
 /**
@@ -246,7 +241,7 @@ export class AuditHashService {
 export class AuditService {
   private readonly config: AuditConfig;
   private readonly store: AuditStore;
-  private lastHash = '';
+  private lastHash = "";
 
   constructor(store: AuditStore, config: Partial<AuditConfig> = {}) {
     this.store = store;
@@ -257,7 +252,7 @@ export class AuditService {
    * Log audit event
    */
   async logEvent(
-    eventData: Omit<AuditEvent, 'id' | 'hash' | 'previousHash'>
+    eventData: Omit<AuditEvent, "id" | "hash" | "previousHash">,
   ): Promise<string | null> {
     if (!this.config.enabled) {
       return null;
@@ -265,8 +260,7 @@ export class AuditService {
 
     // Check minimum severity
     if (
-      this.getSeverityLevel(eventData.severity) <
-      this.getSeverityLevel(this.config.minSeverity)
+      this.getSeverityLevel(eventData.severity) < this.getSeverityLevel(this.config.minSeverity)
     ) {
       return null;
     }
@@ -282,7 +276,7 @@ export class AuditService {
     // Calculate hash if enabled
     if (this.config.enableHashing) {
       event.previousHash = this.lastHash;
-      event.hash = AuditHashService.calculateHash(event, this.lastHash);
+      event.hash = calculateAuditHash(event, this.lastHash);
       this.lastHash = event.hash;
     }
 
@@ -300,7 +294,7 @@ export class AuditService {
   async logLoginSuccess(
     userId: string,
     ipAddress: string,
-    userAgent?: string
+    userAgent?: string,
   ): Promise<string | null> {
     return this.logEvent({
       eventType: AuditEventType.LOGIN_SUCCESS,
@@ -309,9 +303,9 @@ export class AuditService {
       userId,
       ipAddress,
       userAgent,
-      description: 'User logged in successfully',
+      description: "User logged in successfully",
       timestamp: new Date(),
-      source: 'neonpro-api',
+      source: "neonpro-api",
     });
   }
 
@@ -322,7 +316,7 @@ export class AuditService {
     email: string,
     ipAddress: string,
     reason: string,
-    userAgent?: string
+    userAgent?: string,
   ): Promise<string | null> {
     return this.logEvent({
       eventType: AuditEventType.LOGIN_FAILURE,
@@ -333,7 +327,7 @@ export class AuditService {
       description: `Login failed for ${email}: ${reason}`,
       details: { email, reason },
       timestamp: new Date(),
-      source: 'neonpro-api',
+      source: "neonpro-api",
     });
   }
 
@@ -343,9 +337,9 @@ export class AuditService {
   async logPatientAccess(
     userId: string,
     patientId: string,
-    action: 'create' | 'read' | 'update' | 'delete',
+    action: "create" | "read" | "update" | "delete",
     ipAddress: string,
-    details?: Record<string, any>
+    details?: Record<string, unknown>,
   ): Promise<string | null> {
     const eventTypeMap = {
       create: AuditEventType.PATIENT_CREATE,
@@ -356,17 +350,16 @@ export class AuditService {
 
     return this.logEvent({
       eventType: eventTypeMap[action],
-      severity:
-        action === 'delete' ? AuditSeverity.WARNING : AuditSeverity.INFO,
+      severity: action === "delete" ? AuditSeverity.WARNING : AuditSeverity.INFO,
       outcome: AuditOutcome.SUCCESS,
       userId,
       resourceId: patientId,
-      resourceType: 'patient',
+      resourceType: "patient",
       ipAddress,
       description: `Patient ${action} operation performed`,
       details,
       timestamp: new Date(),
-      source: 'neonpro-api',
+      source: "neonpro-api",
     });
   }
 
@@ -376,14 +369,12 @@ export class AuditService {
   async logConsentEvent(
     userId: string,
     patientId: string,
-    action: 'given' | 'withdrawn',
+    action: "given" | "withdrawn",
     purpose: string,
-    ipAddress: string
+    ipAddress: string,
   ): Promise<string | null> {
     const eventType =
-      action === 'given'
-        ? AuditEventType.CONSENT_GIVEN
-        : AuditEventType.CONSENT_WITHDRAWN;
+      action === "given" ? AuditEventType.CONSENT_GIVEN : AuditEventType.CONSENT_WITHDRAWN;
 
     return this.logEvent({
       eventType,
@@ -391,12 +382,12 @@ export class AuditService {
       outcome: AuditOutcome.SUCCESS,
       userId,
       resourceId: patientId,
-      resourceType: 'consent',
+      resourceType: "consent",
       ipAddress,
       description: `LGPD consent ${action} for ${purpose}`,
       details: { purpose, action },
       timestamp: new Date(),
-      source: 'neonpro-api',
+      source: "neonpro-api",
     });
   }
 
@@ -409,7 +400,7 @@ export class AuditService {
     description: string,
     ipAddress: string,
     userId?: string,
-    details?: Record<string, any>
+    details?: Record<string, unknown>,
   ): Promise<string | null> {
     return this.logEvent({
       eventType,
@@ -420,7 +411,7 @@ export class AuditService {
       description,
       details,
       timestamp: new Date(),
-      source: 'neonpro-api',
+      source: "neonpro-api",
     });
   }
 
@@ -430,10 +421,10 @@ export class AuditService {
   async logDataBreach(
     description: string,
     affectedRecords: number,
-    severity: 'low' | 'medium' | 'high' | 'critical',
+    severity: "low" | "medium" | "high" | "critical",
     userId?: string,
     ipAddress?: string,
-    details?: Record<string, any>
+    details?: Record<string, unknown>,
   ): Promise<string | null> {
     const severityMap = {
       low: AuditSeverity.WARNING,
@@ -447,11 +438,11 @@ export class AuditService {
       severity: severityMap[severity],
       outcome: AuditOutcome.FAILURE,
       userId,
-      ipAddress: ipAddress || 'system',
+      ipAddress: ipAddress || "system",
       description,
       details: { affectedRecords, severity, ...details },
       timestamp: new Date(),
-      source: 'neonpro-api',
+      source: "neonpro-api",
     });
   }
 
@@ -483,7 +474,7 @@ export class AuditService {
    */
   async verifyIntegrity(
     startDate?: Date,
-    endDate?: Date
+    endDate?: Date,
   ): Promise<{ valid: boolean; brokenAt?: number }> {
     const events = await this.getEvents({
       startDate,
@@ -491,7 +482,7 @@ export class AuditService {
       limit: 10_000, // Verify in chunks for large datasets
     });
 
-    return AuditHashService.verifyChain(events);
+    return verifyAuditChain(events);
   }
 
   /**

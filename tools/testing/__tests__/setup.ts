@@ -4,25 +4,25 @@
  */
 
 import { config } from 'dotenv';
+import { vi, beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
 
 // Load environment variables for testing
 config({ path: '.env.test' });
 config({ path: '.env.local' });
 config({ path: '.env' });
 
-// Global test timeout
-jest.setTimeout(30_000);
+// Global test timeout is handled by vitest.config.ts
 
 // Mock console methods in test environment
 if (process.env.NODE_ENV === 'test') {
   // Suppress console.log in tests unless explicitly needed
   global.console = {
     ...console,
-    log: jest.fn(),
-    debug: jest.fn(),
-    info: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
+    log: vi.fn(),
+    debug: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
   };
 }
 
@@ -30,27 +30,27 @@ if (process.env.NODE_ENV === 'test') {
 global.testUtils = {
   // Mock Supabase client
   mockSupabaseClient: {
-    from: jest.fn(() => ({
-      select: jest.fn().mockReturnThis(),
-      insert: jest.fn().mockReturnThis(),
-      update: jest.fn().mockReturnThis(),
-      delete: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      single: jest.fn(),
+    from: vi.fn(() => ({
+      select: vi.fn().mockReturnThis(),
+      insert: vi.fn().mockReturnThis(),
+      update: vi.fn().mockReturnThis(),
+      delete: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      single: vi.fn(),
     })),
     auth: {
-      getUser: jest.fn(),
-      signIn: jest.fn(),
-      signOut: jest.fn(),
-      onAuthStateChange: jest.fn(),
+      getUser: vi.fn(),
+      signIn: vi.fn(),
+      signOut: vi.fn(),
+      onAuthStateChange: vi.fn(),
     },
   },
 
   // Mock Next.js router
   mockRouter: {
-    push: jest.fn(),
-    replace: jest.fn(),
-    back: jest.fn(),
+    push: vi.fn(),
+    replace: vi.fn(),
+    back: vi.fn(),
     pathname: '/',
     query: {},
     asPath: '/',
@@ -148,10 +148,10 @@ afterAll(async () => {});
 
 beforeEach(() => {
   // Reset mocks before each test
-  jest.clearAllMocks();
+  vi.clearAllMocks();
 });
 
 afterEach(() => {
   // Cleanup after each test
-  jest.restoreAllMocks();
+  vi.restoreAllMocks();
 });

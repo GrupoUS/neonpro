@@ -8,6 +8,9 @@
  */
 
 // Category Exports (for importing entire categories)
+export * as AnalyticsUtils from './analytics';
+// Analytics Utilities
+export * from './analytics/utils';
 export * as AuthUtils from './auth';
 // Healthcare Auth Utilities
 export * from './auth/rbac';

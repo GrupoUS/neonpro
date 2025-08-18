@@ -4,7 +4,7 @@
  * Story 3.3: Security Hardening & Audit
  */
 
-'use client';
+"use client";
 
 import {
   Activity,
@@ -16,26 +16,20 @@ import {
   TrendingUp,
   Users,
   XCircle,
-} from 'lucide-react';
-import { useEffect, useState } from 'react';
-import type { SecurityMetrics } from '../../../lib/utils';
-import { Alert, AlertDescription } from '../../ui/alert';
-import { Badge } from '../../ui/badge';
-import { Button } from '../../ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '../../ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../ui/tabs';
-import { ActiveSessionsTable } from './ActiveSessionsTable';
-import { AuditLogsTable } from './AuditLogsTable';
-import { ComplianceAuditsTable } from './ComplianceAuditsTable';
-import { SecurityAlertsTable } from './SecurityAlertsTable';
-import { SecurityEventsTable } from './SecurityEventsTable';
-import { SecurityMetricsOverview } from './SecurityMetricsOverview';
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import type { SecurityMetrics } from "../../../lib/utils";
+import { Alert, AlertDescription } from "../../ui/alert";
+import { Badge } from "../../ui/badge";
+import { Button } from "../../ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs";
+import { ActiveSessionsTable } from "./ActiveSessionsTable";
+import { AuditLogsTable } from "./AuditLogsTable";
+import { ComplianceAuditsTable } from "./ComplianceAuditsTable";
+import { SecurityAlertsTable } from "./SecurityAlertsTable";
+import { SecurityEventsTable } from "./SecurityEventsTable";
+import { SecurityMetricsOverview } from "./SecurityMetricsOverview";
 
 type SecurityDashboardProps = {
   className?: string;
@@ -50,16 +44,16 @@ export function SecurityDashboard({ className }: SecurityDashboardProps) {
   const loadMetrics = async () => {
     try {
       setError(null);
-      const response = await fetch('/api/security/metrics');
+      const response = await fetch("/api/security/metrics");
 
       if (!response.ok) {
-        throw new Error('Failed to load security metrics');
+        throw new Error("Failed to load security metrics");
       }
 
       const data = await response.json();
       setMetrics(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load metrics');
+      setError(err instanceof Error ? err.message : "Failed to load metrics");
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -81,28 +75,28 @@ export function SecurityDashboard({ className }: SecurityDashboardProps) {
 
   const getThreatLevelColor = (level: string) => {
     switch (level) {
-      case 'low':
-        return 'text-green-600 bg-green-50 border-green-200';
-      case 'medium':
-        return 'text-yellow-600 bg-yellow-50 border-yellow-200';
-      case 'high':
-        return 'text-orange-600 bg-orange-50 border-orange-200';
-      case 'critical':
-        return 'text-red-600 bg-red-50 border-red-200';
+      case "low":
+        return "text-green-600 bg-green-50 border-green-200";
+      case "medium":
+        return "text-yellow-600 bg-yellow-50 border-yellow-200";
+      case "high":
+        return "text-orange-600 bg-orange-50 border-orange-200";
+      case "critical":
+        return "text-red-600 bg-red-50 border-red-200";
       default:
-        return 'text-gray-600 bg-gray-50 border-gray-200';
+        return "text-gray-600 bg-gray-50 border-gray-200";
     }
   };
 
   const getThreatLevelIcon = (level: string) => {
     switch (level) {
-      case 'low':
+      case "low":
         return <CheckCircle className="h-4 w-4" />;
-      case 'medium':
+      case "medium":
         return <Eye className="h-4 w-4" />;
-      case 'high':
+      case "high":
         return <AlertTriangle className="h-4 w-4" />;
-      case 'critical':
+      case "critical":
         return <XCircle className="h-4 w-4" />;
       default:
         return <Shield className="h-4 w-4" />;
@@ -145,11 +139,7 @@ export function SecurityDashboard({ className }: SecurityDashboardProps) {
               size="sm"
               variant="outline"
             >
-              {refreshing ? (
-                <RefreshCw className="h-3 w-3 animate-spin" />
-              ) : (
-                'Retry'
-              )}
+              {refreshing ? <RefreshCw className="h-3 w-3 animate-spin" /> : "Retry"}
             </Button>
           </AlertDescription>
         </Alert>
@@ -166,12 +156,8 @@ export function SecurityDashboard({ className }: SecurityDashboardProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-bold text-3xl text-gray-900">
-            Security Dashboard
-          </h1>
-          <p className="mt-1 text-gray-600">
-            Monitor and manage system security
-          </p>
+          <h1 className="font-bold text-3xl text-gray-900">Security Dashboard</h1>
+          <p className="mt-1 text-gray-600">Monitor and manage system security</p>
         </div>
         <div className="flex items-center space-x-2">
           <Badge
@@ -179,16 +165,9 @@ export function SecurityDashboard({ className }: SecurityDashboardProps) {
             variant="outline"
           >
             {getThreatLevelIcon(metrics.threat_level)}
-            <span className="ml-1 capitalize">
-              {metrics.threat_level} Threat
-            </span>
+            <span className="ml-1 capitalize">{metrics.threat_level} Threat</span>
           </Badge>
-          <Button
-            disabled={refreshing}
-            onClick={handleRefresh}
-            size="sm"
-            variant="outline"
-          >
+          <Button disabled={refreshing} onClick={handleRefresh} size="sm" variant="outline">
             {refreshing ? (
               <RefreshCw className="h-4 w-4 animate-spin" />
             ) : (
@@ -221,10 +200,7 @@ export function SecurityDashboard({ className }: SecurityDashboardProps) {
             <Eye className="h-4 w-4" />
             <span>Audit Logs</span>
           </TabsTrigger>
-          <TabsTrigger
-            className="flex items-center space-x-2"
-            value="compliance"
-          >
+          <TabsTrigger className="flex items-center space-x-2" value="compliance">
             <CheckCircle className="h-4 w-4" />
             <span>Compliance</span>
           </TabsTrigger>
@@ -331,43 +307,21 @@ export function SecurityDashboard({ className }: SecurityDashboardProps) {
               <CardContent>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="font-medium text-sm">
-                      Failed Login Attempts (24h)
-                    </span>
-                    <Badge
-                      variant={
-                        metrics.failed_attempts_24h > 10
-                          ? 'destructive'
-                          : 'secondary'
-                      }
-                    >
+                    <span className="font-medium text-sm">Failed Login Attempts (24h)</span>
+                    <Badge variant={metrics.failed_attempts_24h > 10 ? "destructive" : "secondary"}>
                       {metrics.failed_attempts_24h}
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="font-medium text-sm">
-                      High-Risk Sessions
-                    </span>
-                    <Badge
-                      variant={
-                        metrics.high_risk_sessions > 5
-                          ? 'destructive'
-                          : 'secondary'
-                      }
-                    >
+                    <span className="font-medium text-sm">High-Risk Sessions</span>
+                    <Badge variant={metrics.high_risk_sessions > 5 ? "destructive" : "secondary"}>
                       {metrics.high_risk_sessions}
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="font-medium text-sm">
-                      Avg Response Time
-                    </span>
+                    <span className="font-medium text-sm">Avg Response Time</span>
                     <Badge
-                      variant={
-                        metrics.avg_response_time_minutes > 60
-                          ? 'destructive'
-                          : 'secondary'
-                      }
+                      variant={metrics.avg_response_time_minutes > 60 ? "destructive" : "secondary"}
                     >
                       {metrics.avg_response_time_minutes}m
                     </Badge>
@@ -389,8 +343,8 @@ export function SecurityDashboard({ className }: SecurityDashboardProps) {
                     <Alert>
                       <AlertTriangle className="h-4 w-4" />
                       <AlertDescription>
-                        Multiple unresolved alerts detected. Review and address
-                        high-priority alerts.
+                        Multiple unresolved alerts detected. Review and address high-priority
+                        alerts.
                       </AlertDescription>
                     </Alert>
                   )}
@@ -398,8 +352,8 @@ export function SecurityDashboard({ className }: SecurityDashboardProps) {
                     <Alert>
                       <AlertTriangle className="h-4 w-4" />
                       <AlertDescription>
-                        High number of failed login attempts. Consider
-                        implementing additional protections.
+                        High number of failed login attempts. Consider implementing additional
+                        protections.
                       </AlertDescription>
                     </Alert>
                   )}
@@ -407,8 +361,7 @@ export function SecurityDashboard({ className }: SecurityDashboardProps) {
                     <Alert>
                       <AlertTriangle className="h-4 w-4" />
                       <AlertDescription>
-                        Compliance score below threshold. Review compliance
-                        audit results.
+                        Compliance score below threshold. Review compliance audit results.
                       </AlertDescription>
                     </Alert>
                   )}
@@ -418,8 +371,7 @@ export function SecurityDashboard({ className }: SecurityDashboardProps) {
                       <Alert>
                         <CheckCircle className="h-4 w-4" />
                         <AlertDescription>
-                          Security posture is strong. All systems operating
-                          normally.
+                          Security posture is strong. All systems operating normally.
                         </AlertDescription>
                       </Alert>
                     )}

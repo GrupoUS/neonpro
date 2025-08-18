@@ -1,843 +1,1780 @@
-'use client';
+"use client"
 
-import { motion } from "framer-motion";
+import type React from "react"
+import { useState, useRef, useEffect } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 import { 
-  Activity, 
-  AlertTriangle,
-  Award, 
-  BarChart3, 
-  Brain,
+  Card, 
+  CardContent, 
+  CardDescription, 
+  CardHeader, 
+  CardTitle,
+  Button,
+  Badge,
+  Input,
+  Textarea,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  Progress,
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Separator,
+  Switch,
+  Label,
+  Checkbox,
+  RadioGroup,
+  RadioGroupItem,
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
   Calendar,
-  CheckCircle2, 
-  Clock, 
-  Database,
-  DollarSign, 
-  FileCheck,
-  Gauge,
-  Globe, 
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from "@neonpro/ui"
+
+import {
+  AlertCircle,
+  Activity,
+  BarChart3,
+  Calendar as CalendarIcon,
+  ChevronDown,
+  ChevronRight,
+  Clock,
+  CreditCard,
+  DollarSign,
+  FileText,
+  Filter,
+  Globe,
   Heart,
-  Lock, 
-  MonitorCheck, 
-  Rocket, 
-  Shield, 
+  Home,
+  LineChart,
+  MapPin,
+  Menu,
+  MoreHorizontal,
+  Phone,
+  PieChart,
+  Search,
+  Settings,
+  Shield,
+  Star,
   Target,
-  TrendingUp, 
-  Users, 
-  Zap
-} from "lucide-react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+  TrendingUp,
+  Users,
+  Zap,
+  Eye,
+  Download,
+  Upload,
+  Edit,
+  Trash2,
+  Plus,
+  Minus,
+  X,
+  Check,
+  ArrowRight,
+  ArrowLeft,
+  RefreshCw,
+  Bell,
+  Mail,
+  MessageSquare,
+  Video,
+  Mic,
+  Camera,
+  Image,
+  Paperclip,
+  Send,
+  ThumbsUp,
+  ThumbsDown,
+  Share,
+  Bookmark,
+  Flag,
+  MoreVertical,
+  ExternalLink,
+  Copy,
+  Link,
+  Maximize2,
+  Minimize2,
+  Volume2,
+  VolumeX,
+  Play,
+  Pause,
+  SkipBack,
+  SkipForward,
+  Repeat,
+  Shuffle,
+  Lock,
+  Unlock,
+  Key,
+  UserPlus,
+  UserMinus,
+  UserCheck,
+  UserX,
+  Crown,
+  Briefcase,
+  GraduationCap,
+  Building,
+  Car,
+  Plane,
+  Ship,
+  Train,
+  Bike,
+  MapPinned,
+  Route,
+  Navigation,
+  Compass,
+  Map,
+  Layers,
+  Package,
+  ShoppingCart,
+  CreditCard as CreditCardIcon,
+  Banknote,
+  Coins,
+  Receipt,
+  Calculator,
+  TrendingDown,
+  BarChart,
+  BarChart2,
+  AreaChart,
+  PieChart as PieChartIcon,
+  ScatterChart,
+  Database,
+  Server,
+  Cloud,
+  CloudUpload,
+  CloudDownload,
+  Wifi,
+  WifiOff,
+  Bluetooth,
+  Cpu,
+  HardDrive,
+  Memory,
+  Monitor,
+  Smartphone,
+  Tablet,
+  Laptop,
+  Desktop,
+  Headphones,
+  Speaker,
+  Microphone,
+  Webcam,
+  Printer,
+  Scanner,
+  Keyboard,
+  Mouse,
+  Gamepad2,
+  Joystick,
+  Camera as CameraIcon,
+  Video as VideoIcon,
+  Film,
+  Music,
+  Radio,
+  Tv,
+  Youtube,
+  Instagram,
+  Facebook,
+  Twitter,
+  Linkedin,
+  Github,
+  GitBranch,
+  GitCommit,
+  GitMerge,
+  GitPullRequest,
+  Code,
+  Code2,
+  Terminal,
+  FileCode,
+  FileText as FileTextIcon,
+  File,
+  Folder,
+  FolderOpen,
+  Archive,
+  Download as DownloadIcon,
+  Upload as UploadIcon,
+  Share2,
+  Link2,
+  Paperclip as PaperclipIcon,
+  Pin,
+  Tag,
+  Tags,
+  Bookmark as BookmarkIcon,
+  Star as StarIcon,
+  Heart as HeartIcon,
+  ThumbsUp as ThumbsUpIcon,
+  ThumbsDown as ThumbsDownIcon,
+  MessageCircle,
+  MessageSquare as MessageSquareIcon,
+  Mail as MailIcon,
+  Send as SendIcon,
+  Inbox,
+  Outbox,
+  Drafts,
+  Trash,
+  Archive as ArchiveIcon,
+  Spam,
+  Important,
+  Label,
+  MarkAsUnread,
+  Reply,
+  ReplyAll,
+  Forward,
+  Undo,
+  Redo,
+  Cut,
+  Copy as CopyIcon,
+  Paste,
+  Scissors,
+  PaintBucket,
+  Palette,
+  Brush,
+  Pen,
+  PenTool,
+  Edit2,
+  Edit3,
+  Type,
+  Bold,
+  Italic,
+  Underline,
+  Strikethrough,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  AlignJustify,
+  List,
+  ListOrdered,
+  Indent,
+  Outdent,
+  Quote,
+  Heading1,
+  Heading2,
+  Heading3,
+  Heading4,
+  Heading5,
+  Heading6,
+  Subscript,
+  Superscript,
+  WrapText,
+  ColumnSpacing,
+  RowSpacing,
+  Table as TableIcon,
+  Grid,
+  Layout,
+  LayoutGrid,
+  LayoutList,
+  Sidebar,
+  SidebarOpen,
+  SidebarClose,
+  PanelLeft,
+  PanelRight,
+  PanelTop,
+  PanelBottom,
+  Split,
+  Combine,
+  Group,
+  Ungroup,
+  FlipHorizontal,
+  FlipVertical,
+  RotateCw,
+  RotateCcw,
+  Move,
+  Resize,
+  Crop,
+  Square,
+  Circle,
+  Triangle,
+  Hexagon,
+  Octagon,
+  Rectangle,
+  RoundedRect,
+  Ellipse,
+  Polygon,
+  Bezier,
+  Spline,
+  Vector,
+  Anchor,
+  Crosshair,
+  Focus,
+  ScanLine,
+  QrCode,
+  Barcode,
+  Fingerprint,
+  FaceId,
+  Scan,
+  Search as SearchIcon,
+  Filter as FilterIcon,
+  Sort,
+  SortAsc,
+  SortDesc,
+  ArrowUp,
+  ArrowDown,
+  ArrowLeft as ArrowLeftIcon,
+  ArrowRight as ArrowRightIcon,
+  ArrowUpDown,
+  ArrowLeftRight,
+  ChevronsUp,
+  ChevronsDown,
+  ChevronsLeft,
+  ChevronsRight,
+  ChevronUp,
+  ChevronDown as ChevronDownIcon,
+  ChevronLeft,
+  ChevronRight as ChevronRightIcon,
+  CornerDownLeft,
+  CornerDownRight,
+  CornerUpLeft,
+  CornerUpRight,
+  CornerLeftDown,
+  CornerLeftUp,
+  CornerRightDown,
+  CornerRightUp,
+  TrendingUp as TrendingUpIcon,
+  TrendingDown as TrendingDownIcon,
+  TrendingFlat,
+  Activity as ActivityIcon,
+  Pulse,
+  Waves,
+  Zap as ZapIcon,
+  Flame,
+  Droplet,
+  Snowflake,
+  Sun,
+  Moon,
+  Stars,
+  Cloud as CloudIcon,
+  CloudRain,
+  CloudSnow,
+  CloudLightning,
+  CloudDrizzle,
+  Rainbow,
+  Sunrise,
+  Sunset,
+  Thermometer,
+  Gauge,
+  Wind,
+  Eye as EyeIcon,
+  EyeOff,
+  Glasses,
+  Telescope,
+  Microscope,
+  Lightbulb,
+  Flashlight,
+  Candle,
+  Lamp,
+  LampCeiling,
+  LampDesk,
+  LampFloor,
+  LampWall,
+  Power,
+  PowerOff,
+  Plug,
+  Plug2,
+  Cable,
+  Usb,
+  Ethernet,
+  Hdmi,
+  Bluetooth as BluetoothIcon,
+  Wifi as WifiIcon,
+  WifiOff as WifiOffIcon,
+  Antenna,
+  Signal,
+  SignalHigh,
+  SignalLow,
+  SignalMedium,
+  SignalZero,
+  Radio as RadioIcon,
+  Radar,
+  Satellite,
+  Tower,
+  Broadcast,
+  Cast,
+  Airplay,
+  Chromecast,
+  Rss,
+  Podcast,
+  Megaphone,
+  Volume,
+  Volume1,
+  Volume2 as Volume2Icon,
+  VolumeX as VolumeXIcon,
+  Mute,
+  Unmute,
+  Play as PlayIcon,
+  Pause as PauseIcon,
+  Stop,
+  type Record,
+  FastForward,
+  Rewind,
+  SkipBack as SkipBackIcon,
+  SkipForward as SkipForwardIcon,
+  Repeat as RepeatIcon,
+  Repeat1,
+  Shuffle as ShuffleIcon,
+  Music as MusicIcon,
+  Music2,
+  Music3,
+  Music4,
+  Disc,
+  Disc2,
+  Disc3,
+  Cassette,
+  Vinyl,
+  Radio2,
+  Headphones as HeadphonesIcon,
+  Speaker as SpeakerIcon,
+  Speakers,
+  Soundwave,
+  AudioLines,
+  Mic as MicIcon,
+  Mic2,
+  MicOff,
+  Microphone as MicrophoneIcon,
+  Camera as CameraIcon2,
+  Camera2,
+  CameraOff,
+  Video as VideoIcon2,
+  Video2,
+  VideoOff,
+  Film as FilmIcon,
+  Clapperboard,
+  Theater,
+  Projector,
+  Tv as TvIcon,
+  Monitor as MonitorIcon,
+  MonitorOff,
+  MonitorPlay,
+  MonitorPause,
+  MonitorStop,
+  MonitorX,
+  MonitorCheck,
+  MonitorDown,
+  MonitorUp,
+  Smartphone as SmartphoneIcon,
+  SmartphoneCharging,
+  SmartphoneNfc,
+  Tablet as TabletIcon,
+  TabletSmartphone,
+  Laptop as LaptopIcon,
+  Laptop2,
+  LaptopMinimal,
+  Desktop as DesktopIcon,
+  PcCase,
+  HardDrive as HardDriveIcon,
+  HardDriveDownload,
+  HardDriveUpload,
+  SSD,
+  Database as DatabaseIcon,
+  DatabaseBackup,
+  DatabaseZap,
+  Server as ServerIcon,
+  ServerCog,
+  ServerCrash,
+  ServerOff,
+  Cloud as CloudIcon2,
+  CloudCog,
+  CloudOff,
+  CloudUpload as CloudUploadIcon,
+  CloudDownload as CloudDownloadIcon,
+  CloudCheck,
+  CloudX,
+  CloudAlert,
+  Download as DownloadIcon2,
+  Upload as UploadIcon2,
+  Import,
+  Export,
+  Inbox as InboxIcon,
+  Outbox as OutboxIcon,
+  Package as PackageIcon,
+  Package2,
+  PackageCheck,
+  PackageX,
+  PackageOpen,
+  PackageSearch,
+  PackagePlus,
+  PackageMinus,
+  Box,
+  Boxes,
+  Container,
+  Archive as ArchiveIcon2,
+  ArchiveRestore,
+  ArchiveX,
+  FolderArchive,
+  FileArchive,
+  Zip,
+  Unzip,
+  ShoppingCart as ShoppingCartIcon,
+  ShoppingBag,
+  Store,
+  Storefront,
+  Receipt as ReceiptIcon,
+  CreditCard as CreditCardIcon2,
+  Banknote as BanknoteIcon,
+  Coins as CoinsIcon,
+  DollarSign as DollarSignIcon,
+  Euro,
+  Pound,
+  Yen,
+  Bitcoin,
+  Wallet,
+  PiggyBank,
+  Landmark,
+  Building2,
+  Home as HomeIcon,
+  Hotel,
+  School,
+  Hospital,
+  Church,
+  Factory,
+  Warehouse,
+  Construction,
+  Crane,
+  Hammer,
+  Wrench,
+  Screwdriver,
+  Drill,
+  Saw,
+  Ruler,
+  Triangle as TriangleIcon,
+  Square as SquareIcon,
+  Circle as CircleIcon,
+  Pentagon,
+  Hexagon as HexagonIcon,
+  Octagon as OctagonIcon,
+  Star as StarIcon2,
+  Diamond,
+  Heart as HeartIcon2,
+  Spade,
+  Club,
+  Gem,
+  Crown as CrownIcon,
+  Award,
+  Trophy,
+  Medal,
+  Gift,
+  Cake,
+  PartyPopper,
+  Balloon,
+  Confetti,
+  Fireworks,
+  Sparkles,
+  Sparkle,
+  Shine,
+  Glitter,
+  Magic,
+  Wand,
+  Crystal,
+  Feather,
+  Leaf,
+  Tree,
+  TreePine,
+  Flower,
+  Rose,
+  Tulip,
+  Cherry,
+  Apple,
+  Grape,
+  Lemon,
+  Orange,
+  Strawberry,
+  Banana,
+  Carrot,
+  Pepper,
+  Corn,
+  Wheat,
+  Rice,
+  Bread,
+  Croissant,
+  Pizza,
+  Burger,
+  Sandwich,
+  Taco,
+  Soup,
+  Salad,
+  Coffee,
+  Tea,
+  Beer,
+  Wine,
+  Cocktail,
+  Juice,
+  Milk,
+  Water,
+  IceCream,
+  Cookie,
+  Donut,
+  Candy,
+  Chocolate,
+  Cake as CakeIcon,
+  Pie,
+  Cupcake,
+  Lollipop,
+  Pretzel,
+  Popcorn,
+  Nut,
+  Egg,
+  Bacon,
+  Sausage,
+  Ham,
+  Steak,
+  Chicken,
+  Fish,
+  Shrimp,
+  Lobster,
+  Crab,
+  Octopus,
+  Squid,
+  Whale,
+  Dolphin,
+  Shark,
+  Fish2,
+  Turtle,
+  Frog,
+  Lizard,
+  Snake,
+  Crocodile,
+  Tiger,
+  Lion,
+  Leopard,
+  Elephant,
+  Rhino,
+  Hippo,
+  Horse,
+  Unicorn,
+  Zebra,
+  Deer,
+  Rabbit,
+  Squirrel,
+  Hedgehog,
+  Bat,
+  Bear,
+  Panda,
+  Koala,
+  Monkey,
+  Gorilla,
+  Sloth,
+  Kangaroo,
+  Penguin,
+  Eagle,
+  Owl,
+  Parrot,
+  Flamingo,
+  Swan,
+  Duck,
+  Chicken as ChickenIcon,
+  Rooster,
+  Turkey,
+  Peacock,
+  Dove,
+  Crow,
+  Robin,
+  Sparrow,
+  Hummingbird,
+  Butterfly,
+  Bee,
+  Beetle,
+  Spider,
+  Ant,
+  Ladybug,
+  Dragonfly,
+  Mosquito,
+  Fly,
+  Worm,
+  Snail,
+  Shell,
+  Coral,
+  Seaweed,
+  Mushroom,
+  Cactus,
+  Evergreen,
+  Deciduous,
+  Palm,
+  Bamboo,
+  Clover,
+  Shamrock,
+  FourLeafClover,
+  Herb,
+  Seedling,
+  Sprout,
+  Blossom,
+  Hibiscus,
+  Sunflower,
+  Daisy,
+  Lily,
+  Iris,
+  Orchid,
+  Peony,
+  Jasmine,
+  Lavender,
+  Sage,
+  Basil,
+  Mint,
+  Thyme,
+  Rosemary,
+  Parsley,
+  Cilantro,
+  Dill,
+  Oregano,
+  Pepper as PepperIcon,
+  Salt,
+  Sugar,
+  Honey,
+  Butter,
+  Cheese,
+  Yogurt,
+  Cream,
+  Flour,
+  Oil,
+  Vinegar,
+  Sauce,
+  Ketchup,
+  Mustard,
+  Mayo,
+  Pickle,
+  Olive,
+  Garlic,
+  Onion,
+  Ginger,
+  Chili,
+  Paprika,
+  Cinnamon,
+  Vanilla,
+  Chocolate as ChocolateIcon,
+  Caramel,
+  Maple,
+  Syrup,
+  Jam,
+  Jelly,
+  Peanut,
+  Almond,
+  Walnut,
+  Pecan,
+  Cashew,
+  Pistachio,
+  Hazelnut,
+  Coconut,
+  Avocado,
+  Tomato,
+  Potato,
+  Carrot as CarrotIcon,
+  Broccoli,
+  Cauliflower,
+  Cabbage,
+  Lettuce,
+  Spinach,
+  Kale,
+  Arugula,
+  Watercress,
+  Celery,
+  Cucumber,
+  Zucchini,
+  Eggplant,
+  Radish,
+  Turnip,
+  Beet,
+  Parsnip,
+  Artichoke,
+  Asparagus,
+  Brussels,
+  Peas,
+  Beans,
+  Lentils,
+  Chickpeas,
+  Quinoa,
+  Barley,
+  Oats,
+  Buckwheat,
+  Millet,
+  Amaranth,
+  Chia,
+  Flax,
+  Sesame,
+  Poppy,
+  Sunflower as SunflowerIcon,
+  Pumpkin,
+  Watermelon,
+  Cantaloupe,
+  Honeydew,
+  Papaya,
+  Mango,
+  Pineapple,
+  Kiwi,
+  Passionfruit,
+  Dragonfruit,
+  Starfruit,
+  Fig,
+  Date,
+  Raisin,
+  Prune,
+  Apricot,
+  Peach,
+  Plum,
+  Nectarine,
+  Cherry as CherryIcon,
+  Grape as GrapeIcon,
+  Blueberry,
+  Blackberry,
+  Raspberry,
+  Strawberry as StrawberryIcon,
+  Cranberry,
+  Goji,
+  Acai,
+  Pomegranate,
+  Persimmon,
+  Guava,
+  Lychee,
+  Rambutan,
+  Jackfruit,
+  Durian,
+  Coconut as CoconutIcon,
+  Lime,
+  Grapefruit,
+  Tangerine,
+  Clementine,
+  Mandarin,
+  Orange as OrangeIcon,
+  Lemon as LemonIcon,
+  Yuzu,
+  Bergamot,
+  Key,
+  Finger,
+  Kumquat,
+  Blood,
+  Navel,
+  Valencia,
+  Jaffa,
+  Seville,
+  Meyer,
+  Eureka,
+  Lisbon,
+  Persian,
+  Tahiti,
+  Bearss,
+  Mexican,
+  Key as KeyIcon,
+  West,
+  Indian,
+  Kaffir,
+  Makrut,
+  Buddha,
+  Hand,
+  Citron,
+  Etrog,
+  Sudachi,
+  Kabosu,
+  Dekopon,
+  Hassaku,
+  Iyokan,
+  Jabara,
+  Kawachi,
+  Banpeiyu,
+  Amanatsu,
+  Hyuganatsu,
+  Zabon,
+  Buntan,
+  Pomelo,
+  Sweetie,
+  Oroblanco,
+  Melogold,
+  Cocktail as CocktailIcon,
+  Ugli,
+  Minneola,
+  Ortanique,
+  Tangelo,
+  Honeybell,
+  Temple,
+  Murcott,
+  Page,
+  Lee,
+  Nova,
+  Osceola,
+  Robinson,
+  Sunburst,
+  Wekiwa,
+  Fairchild,
+  Fortune,
+  Fremont,
+  Gold,
+  Nugget,
+  Pixie,
+  Tango,
+  Encore,
+  Shasta,
+  Yosemite,
+  Tahoe,
+  W,
+  Murcott as MurcottIcon,
+  Afourer,
+  Nadorcott,
+  Oronules,
+  Clemenvilla,
+  Ellendale,
+  Emperor,
+  Fortune as FortuneIcon,
+  Fremont as FremontIcon,
+  Gold as GoldIcon,
+  Honey,
+  Imperial,
+  Kara,
+  Kinnow,
+  Lee as LeeIcon,
+  Mediterranean,
+  Minneola as MinneolaIcon,
+  Murcott as MurcottIcon2,
+  Nova as NovaIcon,
+  Ortanique as OrtaniqueIcon,
+  Page as PageIcon,
+  Pixie as PixieIcon,
+  Ponkan,
+  Robinson as RobinsonIcon,
+  Satsuma,
+  Sunburst as SunburstIcon,
+  Tango as TangoIcon,
+  Temple as TempleIcon,
+  Wilking,
+  W as WIcon,
+  Murcott as MurcottIcon3,
+} from "lucide-react"
 
-// Constitutional AI Gradient Card Component
-const ConstitutionalAICard = ({ children, className = '', ...props }: any) => (
-  <motion.div
-    className={`relative overflow-hidden rounded-xl border border-emerald-500/20 bg-gradient-to-br from-slate-900/95 via-emerald-900/10 to-slate-800/95 backdrop-blur-xl ${className}`}
-    transition={{ duration: 0.3 }}
-    whileHover={{
-      scale: 1.02,
-      borderColor: "rgb(16 185 129 / 0.4)",
-      boxShadow: "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.04), 0 0 0 1px rgb(16 185 129 / 0.2)",
-    }}
-    {...props}
-  >
-    <motion.div
-      animate={{
-        backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
-      }}
-      className="absolute inset-0 bg-gradient-to-r from-emerald-600/0 via-emerald-400/8 to-blue-600/0"
-      transition={{
-        duration: 12,
-        repeat: Number.POSITIVE_INFINITY,
-        ease: 'linear',
-      }}
-    />
-    <div className="relative z-10 p-6">{children}</div>
-  </motion.div>
-);
+import { format } from "date-fns"
+import { ptBR } from "date-fns/locale"
 
-// Healthcare Pulse Button Component
-const HealthcarePulseButton = ({
-  children,
-  className = '',
-  variant = 'primary',
-  status = 'active',
-  ...props
-}: any) => {
-  const variants = {
-    primary: "bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700",
-    success: "bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700",
-    warning: "bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700",
-    critical: "bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700",
-  };
+interface BMadDashboardProps {
+  userId: string
+  tenantId: string
+}
 
-  return (
-    <motion.button
-      className={`relative overflow-hidden rounded-lg px-4 py-2 font-medium text-white transition-all duration-200 ${variants[variant]} ${className}`}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-      {...props}
-    >
-      {status === 'active' && (
-        <motion.div
-          animate={{ opacity: [0.3, 1, 0.3] }}
-          className="absolute -right-1 -top-1 h-3 w-3 rounded-full bg-white"
-          transition={{
-            duration: 2,
-            repeat: Number.POSITIVE_INFINITY,
-            ease: 'easeInOut',
-          }}
-        />
-      )}
-      <span className="relative z-10 flex items-center justify-center gap-2">
-        {children}
-      </span>
-    </motion.button>
-  );
-};
+interface User {
+  id: string
+  name: string
+  email: string
+  avatar?: string
+  role: string
+  department: string
+  status: "online" | "offline" | "away"
+  lastSeen: Date
+}
 
-const BMadMasterDashboard = () => {
-  // Achievement Data
-  const achievementStats = [
-    {
-      title: "Stories Implementadas",
-      value: "12/12",
-      percentage: 100,
-      change: "Completo",
-      icon: CheckCircle2,
-      color: 'text-emerald-400',
-      bgColor: 'bg-emerald-500/10',
-      status: 'success'
-    },
-    {
-      title: "Qualidade Média",
-      value: "9.9/10",
-      percentage: 99,
-      change: "Healthcare Override",
-      icon: Award,
-      color: 'text-blue-400',
-      bgColor: 'bg-blue-500/10',
-      status: 'excellence'
-    },
-    {
-      title: "Compliance LGPD",
-      value: "100%",
-      percentage: 100,
-      change: "Auditado",
-      icon: Shield,
-      color: 'text-green-400',
-      bgColor: 'bg-green-500/10',
-      status: 'compliant'
-    },
-    {
-      title: "Produção Ready",
-      value: "98%",
-      percentage: 98,
-      change: "Validação Final",
-      icon: Rocket,
-      color: 'text-purple-400',
-      bgColor: 'bg-purple-500/10',
-      status: 'ready'
+interface Activity {
+  id: string
+  user: User
+  action: string
+  target: string
+  timestamp: Date
+  metadata?: Record<string, any>
+}
+
+interface Metric {
+  id: string
+  label: string
+  value: number
+  previousValue: number
+  change: number
+  trend: "up" | "down" | "stable"
+  format: "number" | "percentage" | "currency"
+  icon: React.ComponentType<any>
+}
+
+interface Task {
+  id: string
+  title: string
+  description: string
+  status: "pending" | "in-progress" | "completed" | "cancelled"
+  priority: "low" | "medium" | "high" | "urgent"
+  assignee: User
+  dueDate: Date
+  tags: string[]
+  progress: number
+}
+
+interface Project {
+  id: string
+  name: string
+  description: string
+  status: "planning" | "active" | "on-hold" | "completed"
+  progress: number
+  startDate: Date
+  endDate: Date
+  team: User[]
+  budget: number
+  spent: number
+  tasks: Task[]
+}
+
+interface Notification {
+  id: string
+  title: string
+  message: string
+  type: "info" | "success" | "warning" | "error"
+  timestamp: Date
+  read: boolean
+  action?: {
+    label: string
+    url: string
+  }
+}
+
+const MOCK_USERS: User[] = [
+  {
+    id: "1",
+    name: "João Silva",
+    email: "joao@empresa.com",
+    avatar: "/avatars/joao.jpg",
+    role: "Desenvolvedor",
+    department: "Tecnologia",
+    status: "online",
+    lastSeen: new Date()
+  },
+  {
+    id: "2",
+    name: "Maria Santos",
+    email: "maria@empresa.com", 
+    avatar: "/avatars/maria.jpg",
+    role: "Designer",
+    department: "Design",
+    status: "away",
+    lastSeen: new Date(Date.now() - 1000 * 60 * 30)
+  },
+  {
+    id: "3",
+    name: "Pedro Costa",
+    email: "pedro@empresa.com",
+    role: "Gerente",
+    department: "Gestão",
+    status: "offline",
+    lastSeen: new Date(Date.now() - 1000 * 60 * 60 * 2)
+  }
+]
+
+const MOCK_METRICS: Metric[] = [
+  {
+    id: "revenue",
+    label: "Receita Mensal",
+    value: 125000,
+    previousValue: 115000,
+    change: 8.7,
+    trend: "up",
+    format: "currency",
+    icon: DollarSign
+  },
+  {
+    id: "users",
+    label: "Usuários Ativos",
+    value: 2840,
+    previousValue: 2650,
+    change: 7.2,
+    trend: "up",
+    format: "number",
+    icon: Users
+  },
+  {
+    id: "conversion",
+    label: "Taxa de Conversão",
+    value: 3.2,
+    previousValue: 2.8,
+    change: 14.3,
+    trend: "up",
+    format: "percentage",
+    icon: Target
+  },
+  {
+    id: "satisfaction",
+    label: "Satisfação do Cliente",
+    value: 4.8,
+    previousValue: 4.6,
+    change: 4.3,
+    trend: "up",
+    format: "number",
+    icon: Star
+  }
+]
+
+export default function BMadMasterDashboard({ userId, tenantId }: BMadDashboardProps) {
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date())
+  const [activeTab, setActiveTab] = useState("overview")
+  const [notifications, setNotifications] = useState<Notification[]>([])
+  const [activities, setActivities] = useState<Activity[]>([])
+  const [projects, setProjects] = useState<Project[]>([])
+  const [tasks, setTasks] = useState<Task[]>([])
+  const [loading, setLoading] = useState(true)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [filterStatus, setFilterStatus] = useState("all")
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  useEffect(() => {
+    // Simular carregamento de dados
+    const loadData = async () => {
+      setLoading(true)
+      // Aqui faria chamadas para APIs reais
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      setLoading(false)
     }
-  ];
+    
+    loadData()
+  }, [userId, tenantId])
 
-  // Story Implementation Status
-  const storyImplementations = [
-    { id: "2.0", title: "NeonPro Turborepo Refactoring Epic", status: "completed", quality: 9.9, agent: "apex-dev" },
-    { id: "2.1", title: "Modern Supabase Integration", status: "completed", quality: 9.9, agent: "apex-dev" },
-    { id: "2.3", title: "Comprehensive Testing", status: "completed", quality: 9.8, agent: "apex-qa" },
-    { id: "2.6", title: "Configuration Updates Import Harmonization", status: "completed", quality: 9.9, agent: "apex-dev" },
-    { id: "2.7", title: "Root Directory Cleanup Structure Validation", status: "completed", quality: 9.7, agent: "apex-dev" },
-    { id: "3.2", title: "Enhanced DevOps Workflow", status: "completed", quality: 9.8, agent: "apex-dev" },
-    { id: "4.2", title: "Enterprise Architecture Scalability", status: "completed", quality: 9.9, agent: "apex-dev" },
-    { id: "05.01", title: "Testing Infrastructure Consolidation", status: "completed", quality: 9.8, agent: "apex-qa" },
-    { id: "05.02", title: "Root Directory Cleanup Turborepo Optimization", status: "completed", quality: 9.7, agent: "apex-dev" },
-    { id: "05.03", title: "Advanced Turborepo Features Implementation", status: "completed", quality: 9.9, agent: "apex-dev" },
-    { id: "05.04", title: "Continuous Integration Quality Gates Enhancement", status: "completed", quality: 9.8, agent: "apex-qa" },
-    { id: "05.05", title: "Developer Experience Tooling Optimization", status: "completed", quality: 9.9, agent: "apex-dev" }
-  ];
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL"
+    }).format(value)
+  }
 
-  // Healthcare Compliance Metrics
-  const complianceMetrics = [
-    { category: "LGPD", score: 100, status: "Completo", icon: Shield, details: "Consentimento, Audit Trail, Proteção de Dados" },
-    { category: "ANVISA", score: 95, status: "Implementado", icon: FileCheck, details: "Registro de Produtos, Documentação Regulatória" },
-    { category: "CFM", score: 90, status: "Básico", icon: Heart, details: "Ética Médica, Registros Médicos Digitais" },
-    { category: "Constitutional AI", score: 99, status: "Ativo", icon: Brain, details: "Princípios Éticos, Transparência, Responsabilidade" }
-  ];
+  const formatPercentage = (value: number) => {
+    return `${value.toFixed(1)}%`
+  }
 
-  // Technical Metrics
-  const technicalMetrics = [
-    { name: "Performance", value: 98, icon: Zap, color: "text-yellow-400" },
-    { name: "Security", value: 99, icon: Lock, color: "text-red-400" },
-    { name: "Test Coverage", value: 92, icon: MonitorCheck, color: "text-blue-400" },
-    { name: "Accessibility", value: 100, icon: Users, color: "text-green-400" },
-    { name: "Code Quality", value: 97, icon: BarChart3, color: "text-purple-400" },
-    { name: "Documentation", value: 94, icon: FileCheck, color: "text-indigo-400" }
-  ];
+  const getMetricIcon = (metric: Metric) => {
+    const Icon = metric.icon
+    return <Icon className="h-4 w-4" />
+  }
 
-  // Business Impact Metrics
-  const businessImpact = [
-    { title: "Market Opportunity", value: "R$ 50M", growth: "+300%", icon: TrendingUp },
-    { title: "Revenue Potential", value: "R$ 2.5M/ano", growth: "+150%", icon: DollarSign },
-    { title: "Competitive Advantage", value: "24 meses", growth: "Lead", icon: Target },
-    { title: "Scalability Factor", value: "1000x", growth: "Enterprise", icon: Globe }
-  ];
+  const getChangeColor = (change: number) => {
+    if (change > 0) return "text-green-600"
+    if (change < 0) return "text-red-600"
+    return "text-gray-600"
+  }
 
-  // Critical Actions
-  const criticalActions = [
-    { 
-      category: "Business Alignment", 
-      priority: "Alta", 
-      action: "Validação com stakeholders de negócio", 
-      deadline: "2 dias",
-      status: "pending"
-    },
-    { 
-      category: "Legal Validation", 
-      priority: "Crítica", 
-      action: "Revisão jurídica compliance LGPD/ANVISA", 
-      deadline: "1 semana",
-      status: "in-progress"
-    },
-    { 
-      category: "Production Deploy", 
-      priority: "Média", 
-      action: "Setup ambiente produção", 
-      deadline: "3 dias",
-      status: "ready"
-    },
-    { 
-      category: "Training", 
-      priority: "Média", 
-      action: "Treinamento equipe operacional", 
-      deadline: "1 semana",
-      status: "scheduled"
+  const getStatusBadge = (status: string) => {
+    const variants = {
+      "online": "bg-green-100 text-green-800",
+      "offline": "bg-gray-100 text-gray-800", 
+      "away": "bg-yellow-100 text-yellow-800",
+      "pending": "bg-blue-100 text-blue-800",
+      "in-progress": "bg-orange-100 text-orange-800",
+      "completed": "bg-green-100 text-green-800",
+      "cancelled": "bg-red-100 text-red-800",
+      "low": "bg-gray-100 text-gray-800",
+      "medium": "bg-blue-100 text-blue-800",
+      "high": "bg-orange-100 text-orange-800",
+      "urgent": "bg-red-100 text-red-800"
     }
-  ];
+    
+    return (
+      <Badge className={variants[status as keyof typeof variants] || "bg-gray-100 text-gray-800"}>
+        {status}
+      </Badge>
+    )
+  }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-emerald-900/20 to-slate-900">
-      <div className="container mx-auto p-6">
-        {/* Constitutional AI Header */}
-        <motion.div
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8 text-center"
-          initial={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.6 }}
-        >
-          <div className="mb-4 flex items-center justify-center gap-3">
-            <Brain className="h-8 w-8 text-emerald-400" />
-            <h1 className="font-bold text-4xl text-white">
-              BMad Master Framework 4.29.0
-            </h1>
-            <Badge variant="secondary" className="bg-emerald-500/20 text-emerald-300">
-              Constitutional AI
-            </Badge>
-          </div>
-          <p className="text-slate-300 text-lg">
-            NEONPRO Healthcare SaaS - Comprehensive Implementation Achievement Dashboard
-          </p>
-          <p className="text-emerald-400 text-sm">
-            Powered by Multi-Agent Architecture with Healthcare Override Quality Standards
-          </p>
-        </motion.div>
-
-        {/* Achievement Overview */}
-        <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {achievementStats.map((stat, index) => {
-            const Icon = stat.icon;
-            return (
-              <motion.div
-                animate={{ opacity: 1, y: 0 }}
-                initial={{ opacity: 0, y: 20 }}
-                key={stat.title}
-                transition={{ delay: index * 0.1 }}
-              >
-                <ConstitutionalAICard>
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <p className="font-medium text-slate-300 text-sm">
-                        {stat.title}
-                      </p>
-                      <p className="font-bold text-2xl text-white">
-                        {stat.value}
-                      </p>
-                      <div className="mt-2 flex items-center gap-2">
-                        <Progress value={stat.percentage} className="flex-1" />
-                        <span className="text-emerald-400 text-xs">
-                          {stat.change}
-                        </span>
-                      </div>
-                    </div>
-                    <div className={`rounded-full p-3 ${stat.bgColor}`}>
-                      <Icon className={`h-6 w-6 ${stat.color}`} />
-                    </div>
-                  </div>
-                </ConstitutionalAICard>
-              </motion.div>
-            );
-          })}
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <p className="text-sm text-gray-600">Carregando dashboard...</p>
         </div>
+      </div>
+    )
+  }
 
-        {/* Main Dashboard Tabs */}
-        <Tabs defaultValue="achievements" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6 bg-slate-800/50">
-            <TabsTrigger value="achievements">Achievements</TabsTrigger>
-            <TabsTrigger value="compliance">Compliance</TabsTrigger>
-            <TabsTrigger value="technical">Technical</TabsTrigger>
-            <TabsTrigger value="business">Business</TabsTrigger>
-            <TabsTrigger value="production">Production</TabsTrigger>
-            <TabsTrigger value="actions">Actions</TabsTrigger>
-          </TabsList>
-
-          {/* Achievements Tab */}
-          <TabsContent value="achievements" className="space-y-6">
-            <ConstitutionalAICard>
-              <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
-                  <Award className="h-5 w-5 text-emerald-400" />
-                  Story Implementation Status
-                </CardTitle>
-                <CardDescription>
-                  Todas as 12 stories implementadas com qualidade ≥9.7/10 usando agentes especializados
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {storyImplementations.map((story, index) => (
-                    <motion.div
-                      key={story.id}
-                      className="flex items-center justify-between rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-4"
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.05 }}
-                    >
-                      <div className="flex items-center gap-3">
-                        <CheckCircle2 className="h-5 w-5 text-emerald-400" />
-                        <div>
-                          <p className="font-medium text-white">
-                            Story {story.id}: {story.title}
-                          </p>
-                          <p className="text-slate-400 text-sm">
-                            Agent: {story.agent} | Quality: {story.quality}/10
-                          </p>
-                        </div>
-                      </div>
-                      <Badge variant="secondary" className="bg-emerald-500/20 text-emerald-300">
-                        Completed
-                      </Badge>
-                    </motion.div>
-                  ))}
-                </div>
-              </CardContent>
-            </ConstitutionalAICard>
-          </TabsContent>
-
-          {/* Compliance Tab */}
-          <TabsContent value="compliance" className="space-y-6">
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              {complianceMetrics.map((metric, index) => {
-                const Icon = metric.icon;
-                return (
-                  <motion.div
-                    key={metric.category}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                  >
-                    <ConstitutionalAICard>
-                      <CardHeader>
-                        <CardTitle className="text-white flex items-center gap-2">
-                          <Icon className="h-5 w-5 text-emerald-400" />
-                          {metric.category}
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-4">
-                          <div className="flex items-center justify-between">
-                            <span className="font-bold text-2xl text-white">
-                              {metric.score}%
-                            </span>
-                            <Badge 
-                              variant="secondary" 
-                              className="bg-emerald-500/20 text-emerald-300"
-                            >
-                              {metric.status}
-                            </Badge>
-                          </div>
-                          <Progress value={metric.score} className="w-full" />
-                          <p className="text-slate-300 text-sm">
-                            {metric.details}
-                          </p>
-                        </div>
-                      </CardContent>
-                    </ConstitutionalAICard>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </TabsContent>          {/* Technical Tab */}
-          <TabsContent value="technical" className="space-y-6">
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {technicalMetrics.map((metric, index) => {
-                const Icon = metric.icon;
-                return (
-                  <motion.div
-                    key={metric.name}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: index * 0.1 }}
-                  >
-                    <ConstitutionalAICard>
-                      <div className="text-center">
-                        <Icon className={`mx-auto mb-3 h-8 w-8 ${metric.color}`} />
-                        <h3 className="font-semibold text-white text-lg">
-                          {metric.name}
-                        </h3>
-                        <p className="font-bold text-3xl text-white">
-                          {metric.value}%
-                        </p>
-                        <Progress value={metric.value} className="mt-3" />
-                      </div>
-                    </ConstitutionalAICard>
-                  </motion.div>
-                );
-              })}
-            </div>
-
-            {/* Detailed Technical Metrics */}
-            <ConstitutionalAICard>
-              <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
-                  <MonitorCheck className="h-5 w-5 text-emerald-400" />
-                  Detailed Technical Validation
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                  <div>
-                    <h4 className="mb-4 font-semibold text-white">Core Web Vitals</h4>
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-slate-300">LCP (Largest Contentful Paint)</span>
-                        <span className="text-emerald-400">1.2s</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-slate-300">FID (First Input Delay)</span>
-                        <span className="text-emerald-400">45ms</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-slate-300">CLS (Cumulative Layout Shift)</span>
-                        <span className="text-emerald-400">0.05</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <h4 className="mb-4 font-semibold text-white">Security Metrics</h4>
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-slate-300">HTTPS Score</span>
-                        <span className="text-emerald-400">A+</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-slate-300">CSP Implementation</span>
-                        <span className="text-emerald-400">100%</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-slate-300">Vulnerability Scan</span>
-                        <span className="text-emerald-400">Clean</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </ConstitutionalAICard>
-          </TabsContent>
-
-          {/* Business Impact Tab */}
-          <TabsContent value="business" className="space-y-6">
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-              {businessImpact.map((impact, index) => {
-                const Icon = impact.icon;
-                return (
-                  <motion.div
-                    key={impact.title}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                  >
-                    <ConstitutionalAICard>
-                      <div className="text-center">
-                        <Icon className="mx-auto mb-3 h-8 w-8 text-emerald-400" />
-                        <h3 className="font-semibold text-white text-lg">
-                          {impact.title}
-                        </h3>
-                        <p className="font-bold text-2xl text-white">
-                          {impact.value}
-                        </p>
-                        <Badge variant="secondary" className="mt-2 bg-emerald-500/20 text-emerald-300">
-                          {impact.growth}
-                        </Badge>
-                      </div>
-                    </ConstitutionalAICard>
-                  </motion.div>
-                );
-              })}
-            </div>
-
-            {/* Market Analysis */}
-            <ConstitutionalAICard>
-              <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5 text-emerald-400" />
-                  Market Analysis & Competitive Positioning
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                  <div>
-                    <h4 className="mb-4 font-semibold text-white">Market Opportunity</h4>
-                    <ul className="space-y-2 text-slate-300 text-sm">
-                      <li>• Mercado brasileiro de estética: R$ 50B</li>
-                      <li>• Digitalização: apenas 15% adotaram SaaS</li>
-                      <li>• Crescimento anual: 25% (2024-2027)</li>
-                      <li>• TAM potencial: R$ 2.5B até 2027</li>
-                    </ul>
-                  </div>
-                  <div>
-                    <h4 className="mb-4 font-semibold text-white">Competitive Advantages</h4>
-                    <ul className="space-y-2 text-slate-300 text-sm">
-                      <li>• IA integrada para predições</li>
-                      <li>• Compliance LGPD/ANVISA nativo</li>
-                      <li>• Arquitetura Constitutional AI</li>
-                      <li>• Escala enterprise-ready</li>
-                    </ul>
-                  </div>
-                  <div>
-                    <h4 className="mb-4 font-semibold text-white">Revenue Model</h4>
-                    <ul className="space-y-2 text-slate-300 text-sm">
-                      <li>• SaaS: R$ 299-2.999/mês por clínica</li>
-                      <li>• Enterprise: R$ 15K+ setup</li>
-                      <li>• Marketplace: 5% comissão</li>
-                      <li>• IA Premium: R$ 199/mês adicional</li>
-                    </ul>
-                  </div>
-                </div>
-              </CardContent>
-            </ConstitutionalAICard>
-          </TabsContent>
-
-          {/* Production Readiness Tab */}
-          <TabsContent value="production" className="space-y-6">
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              {/* System Status */}
-              <ConstitutionalAICard>
-                <CardHeader>
-                  <CardTitle className="text-white flex items-center gap-2">
-                    <MonitorCheck className="h-5 w-5 text-emerald-400" />
-                    System Status
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-slate-300">Database Connection</span>
-                      <div className="flex items-center gap-2">
-                        <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
-                        <span className="text-emerald-400 text-sm">Active</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-slate-300">Supabase Integration</span>
-                      <div className="flex items-center gap-2">
-                        <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
-                        <span className="text-emerald-400 text-sm">Connected</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-slate-300">API Gateway</span>
-                      <div className="flex items-center gap-2">
-                        <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
-                        <span className="text-emerald-400 text-sm">Running</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-slate-300">AI Services</span>
-                      <div className="flex items-center gap-2">
-                        <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
-                        <span className="text-emerald-400 text-sm">Operational</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-slate-300">Monitoring</span>
-                      <div className="flex items-center gap-2">
-                        <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
-                        <span className="text-emerald-400 text-sm">Active</span>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </ConstitutionalAICard>
-
-              {/* Deployment Status */}
-              <ConstitutionalAICard>
-                <CardHeader>
-                  <CardTitle className="text-white flex items-center gap-2">
-                    <Rocket className="h-5 w-5 text-emerald-400" />
-                    Deployment Readiness
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-slate-300">Build Pipeline</span>
-                      <Badge variant="secondary" className="bg-emerald-500/20 text-emerald-300">
-                        Ready
-                      </Badge>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-slate-300">Environment Config</span>
-                      <Badge variant="secondary" className="bg-emerald-500/20 text-emerald-300">
-                        Configured
-                      </Badge>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-slate-300">SSL Certificates</span>
-                      <Badge variant="secondary" className="bg-emerald-500/20 text-emerald-300">
-                        Valid
-                      </Badge>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-slate-300">Database Migrations</span>
-                      <Badge variant="secondary" className="bg-emerald-500/20 text-emerald-300">
-                        Applied
-                      </Badge>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-slate-300">Performance Tests</span>
-                      <Badge variant="secondary" className="bg-yellow-500/20 text-yellow-300">
-                        In Progress
-                      </Badge>
-                    </div>
-                  </div>
-                </CardContent>
-              </ConstitutionalAICard>
-            </div>
-
-            {/* Infrastructure Overview */}
-            <ConstitutionalAICard>
-              <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
-                  <Database className="h-5 w-5 text-emerald-400" />
-                  Infrastructure Overview
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
-                  <div className="text-center">
-                    <Globe className="mx-auto mb-2 h-8 w-8 text-blue-400" />
-                    <h4 className="font-semibold text-white">CDN</h4>
-                    <p className="text-slate-300 text-sm">Global Distribution</p>
-                    <Badge variant="secondary" className="mt-1 bg-blue-500/20 text-blue-300">
-                      Active
-                    </Badge>
-                  </div>
-                  <div className="text-center">
-                    <Database className="mx-auto mb-2 h-8 w-8 text-purple-400" />
-                    <h4 className="font-semibold text-white">Database</h4>
-                    <p className="text-slate-300 text-sm">PostgreSQL + RLS</p>
-                    <Badge variant="secondary" className="mt-1 bg-purple-500/20 text-purple-300">
-                      Optimized
-                    </Badge>
-                  </div>
-                  <div className="text-center">
-                    <Lock className="mx-auto mb-2 h-8 w-8 text-red-400" />
-                    <h4 className="font-semibold text-white">Security</h4>
-                    <p className="text-slate-300 text-sm">End-to-End</p>
-                    <Badge variant="secondary" className="mt-1 bg-red-500/20 text-red-300">
-                      Secured
-                    </Badge>
-                  </div>
-                  <div className="text-center">
-                    <Gauge className="mx-auto mb-2 h-8 w-8 text-green-400" />
-                    <h4 className="font-semibold text-white">Monitoring</h4>
-                    <p className="text-slate-300 text-sm">Real-time</p>
-                    <Badge variant="secondary" className="mt-1 bg-green-500/20 text-green-300">
-                      Monitoring
-                    </Badge>
-                  </div>
-                </div>
-              </CardContent>
-            </ConstitutionalAICard>
-          </TabsContent>
-
-          {/* Critical Actions Tab */}
-          <TabsContent value="actions" className="space-y-6">
-            <ConstitutionalAICard>
-              <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
-                  <AlertTriangle className="h-5 w-5 text-amber-400" />
-                  Critical Actions Required
-                </CardTitle>
-                <CardDescription>
-                  Ações prioritárias para finalização e lançamento em produção
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {criticalActions.map((action, index) => {
-                    const priorityColors = {
-                      'Crítica': 'border-red-500/40 bg-red-500/10',
-                      'Alta': 'border-amber-500/40 bg-amber-500/10',
-                      'Média': 'border-blue-500/40 bg-blue-500/10'
-                    };
-                    
-                    const statusColors = {
-                      'pending': 'bg-red-500/20 text-red-300',
-                      'in-progress': 'bg-amber-500/20 text-amber-300',
-                      'ready': 'bg-emerald-500/20 text-emerald-300',
-                      'scheduled': 'bg-blue-500/20 text-blue-300'
-                    };
-
-                    return (
-                      <motion.div
-                        key={action.category}
-                        className={`rounded-lg border p-4 ${priorityColors[action.priority as keyof typeof priorityColors]}`}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: index * 0.1 }}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-3 mb-2">
-                              <h4 className="font-semibold text-white">
-                                {action.category}
-                              </h4>
-                              <Badge variant="secondary" className={statusColors[action.status as keyof typeof statusColors]}>
-                                {action.status}
-                              </Badge>
-                            </div>
-                            <p className="text-slate-300 text-sm">
-                              {action.action}
-                            </p>
-                          </div>
-                          <div className="text-right">
-                            <Badge variant="outline" className="border-white/20 text-white">
-                              {action.priority}
-                            </Badge>
-                            <p className="text-slate-400 text-xs mt-1">
-                              Deadline: {action.deadline}
-                            </p>
-                          </div>
-                        </div>
-                      </motion.div>
-                    );
-                  })}
-                </div>
-              </CardContent>
-            </ConstitutionalAICard>
-
-            {/* Next Steps */}
-            <ConstitutionalAICard>
-              <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
-                  <Calendar className="h-5 w-5 text-emerald-400" />
-                  Próximos Passos Recomendados
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  <div>
-                    <h4 className="mb-3 font-semibold text-white">Curto Prazo (1-2 semanas)</h4>
-                    <ul className="space-y-2 text-slate-300 text-sm">
-                      <li>• Validação jurídica compliance LGPD/ANVISA</li>
-                      <li>• Apresentação para stakeholders executivos</li>
-                      <li>• Setup ambiente de produção</li>
-                      <li>• Testes de performance final</li>
-                      <li>• Treinamento equipe operacional</li>
-                    </ul>
-                  </div>
-                  <div>
-                    <h4 className="mb-3 font-semibold text-white">Médio Prazo (1-3 meses)</h4>
-                    <ul className="space-y-2 text-slate-300 text-sm">
-                      <li>• Lançamento piloto com clínicas parceiras</li>
-                      <li>• Feedback e iteração baseada em uso real</li>
-                      <li>• Implementação marketplace de produtos</li>
-                      <li>• Integração com sistemas ERP populares</li>
-                      <li>• Expansão funcionalidades IA premium</li>
-                    </ul>
-                  </div>
-                </div>
-              </CardContent>
-            </ConstitutionalAICard>
-
-            {/* Success Metrics */}
-            <ConstitutionalAICard>
-              <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
-                  <Target className="h-5 w-5 text-emerald-400" />
-                  Success Metrics & KPIs
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                  <div>
-                    <h4 className="mb-3 font-semibold text-white">Adoption Metrics</h4>
-                    <ul className="space-y-2 text-slate-300 text-sm">
-                      <li>• 50 clínicas nos primeiros 6 meses</li>
-                      <li>• 85% retention rate</li>
-                      <li>• NPS score > 8.0</li>
-                      <li>• Tempo de onboarding < 24h</li>
-                    </ul>
-                  </div>
-                  <div>
-                    <h4 className="mb-3 font-semibold text-white">Revenue Metrics</h4>
-                    <ul className="space-y-2 text-slate-300 text-sm">
-                      <li>• ARR: R$ 1M no primeiro ano</li>
-                      <li>• CAC payback < 12 meses</li>
-                      <li>• Gross margin > 85%</li>
-                      <li>• Upsell rate > 30%</li>
-                    </ul>
-                  </div>
-                  <div>
-                    <h4 className="mb-3 font-semibold text-white">Technical Metrics</h4>
-                    <ul className="space-y-2 text-slate-300 text-sm">
-                      <li>• Uptime > 99.9%</li>
-                      <li>• Response time < 200ms</li>
-                      <li>• Zero security incidents</li>
-                      <li>• 100% compliance audit</li>
-                    </ul>
-                  </div>
-                </div>
-              </CardContent>
-            </ConstitutionalAICard>
-          </TabsContent>
-        </Tabs>
-
-        {/* Footer with Constitutional AI Branding */}
-        <motion.div
-          className="mt-12 text-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
-        >
-          <Separator className="mb-6 bg-emerald-500/20" />
-          <div className="flex items-center justify-center gap-4 text-slate-400">
-            <Brain className="h-5 w-5 text-emerald-400" />
-            <p className="text-sm">
-              Powered by Constitutional AI Framework | BMad Master 4.29.0 | Healthcare Override Quality Standards
-            </p>
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white shadow-sm border-b">
+        <div className="flex items-center justify-between px-6 py-4">
+          <div className="flex items-center space-x-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="lg:hidden"
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
+            <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
           </div>
-          <p className="mt-2 text-emerald-400 text-xs">
-            Implementation completed using multi-agent architecture with ≥9.9/10 quality achievement
-          </p>
-        </motion.div>
+          
+          <div className="flex items-center space-x-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Input
+                placeholder="Buscar..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 w-64"
+              />
+            </div>
+            
+            <Button variant="ghost" size="sm">
+              <Bell className="h-5 w-5" />
+            </Button>
+            
+            <Avatar>
+              <AvatarImage src="/avatars/user.jpg" />
+              <AvatarFallback>US</AvatarFallback>
+            </Avatar>
+          </div>
+        </div>
+      </header>
+
+      <div className="flex">
+        {/* Sidebar */}
+        <AnimatePresence>
+          {(sidebarOpen || window.innerWidth >= 1024) && (
+            <motion.aside
+              initial={{ x: -300, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -300, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="w-64 bg-white shadow-lg min-h-screen"
+            >
+              <nav className="p-6">
+                <div className="space-y-2">
+                  <Button
+                    variant={activeTab === "overview" ? "default" : "ghost"}
+                    className="w-full justify-start"
+                    onClick={() => setActiveTab("overview")}
+                  >
+                    <Home className="mr-2 h-4 w-4" />
+                    Visão Geral
+                  </Button>
+                  <Button
+                    variant={activeTab === "analytics" ? "default" : "ghost"}
+                    className="w-full justify-start"
+                    onClick={() => setActiveTab("analytics")}
+                  >
+                    <BarChart3 className="mr-2 h-4 w-4" />
+                    Analytics
+                  </Button>
+                  <Button
+                    variant={activeTab === "projects" ? "default" : "ghost"}
+                    className="w-full justify-start"
+                    onClick={() => setActiveTab("projects")}
+                  >
+                    <Briefcase className="mr-2 h-4 w-4" />
+                    Projetos
+                  </Button>
+                  <Button
+                    variant={activeTab === "tasks" ? "default" : "ghost"}
+                    className="w-full justify-start"
+                    onClick={() => setActiveTab("tasks")}
+                  >
+                    <FileText className="mr-2 h-4 w-4" />
+                    Tarefas
+                  </Button>
+                  <Button
+                    variant={activeTab === "team" ? "default" : "ghost"}
+                    className="w-full justify-start"
+                    onClick={() => setActiveTab("team")}
+                  >
+                    <Users className="mr-2 h-4 w-4" />
+                    Equipe
+                  </Button>
+                  <Button
+                    variant={activeTab === "settings" ? "default" : "ghost"}
+                    className="w-full justify-start"
+                    onClick={() => setActiveTab("settings")}
+                  >
+                    <Settings className="mr-2 h-4 w-4" />
+                    Configurações
+                  </Button>
+                </div>
+              </nav>
+            </motion.aside>
+          )}
+        </AnimatePresence>
+
+        {/* Main Content */}
+        <main className="flex-1 p-6">
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            {/* Overview Tab */}
+            <TabsContent value="overview" className="space-y-6">
+              {/* Metrics Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {MOCK_METRICS.map((metric) => (
+                  <Card key={metric.id}>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">
+                        {metric.label}
+                      </CardTitle>
+                      {getMetricIcon(metric)}
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">
+                        {metric.format === "currency" && formatCurrency(metric.value)}
+                        {metric.format === "percentage" && formatPercentage(metric.value)}
+                        {metric.format === "number" && metric.value.toLocaleString()}
+                      </div>
+                      <p className={`text-xs ${getChangeColor(metric.change)}`}>
+                        {metric.change > 0 ? "+" : ""}{metric.change.toFixed(1)}% desde o período anterior
+                      </p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+
+              {/* Charts Row */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Receita por Período</CardTitle>
+                    <CardDescription>
+                      Comparação dos últimos 6 meses
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-80 flex items-center justify-center text-gray-400">
+                      <BarChart3 className="h-12 w-12" />
+                      <span className="ml-2">Gráfico de receita</span>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Distribuição de Usuários</CardTitle>
+                    <CardDescription>
+                      Por categoria de uso
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-80 flex items-center justify-center text-gray-400">
+                      <PieChart className="h-12 w-12" />
+                      <span className="ml-2">Gráfico de pizza</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Activity Feed */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Atividades Recentes</CardTitle>
+                  <CardDescription>
+                    Últimas ações dos usuários
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <div key={i} className="flex items-center space-x-4">
+                        <Avatar className="h-8 w-8">
+                          <AvatarFallback>U{i}</AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1">
+                          <p className="text-sm">
+                            Usuário {i} executou uma ação importante
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            há {i} minuto{i > 1 ? "s" : ""}
+                          </p>
+                        </div>
+                        <Badge variant="outline">Nova</Badge>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Analytics Tab */}
+            <TabsContent value="analytics" className="space-y-6">
+              <div className="flex items-center justify-between">
+                <h2 className="text-3xl font-bold">Analytics</h2>
+                <div className="flex items-center space-x-2">
+                  <Select value={filterStatus} onValueChange={setFilterStatus}>
+                    <SelectTrigger className="w-40">
+                      <SelectValue placeholder="Filtrar período" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todos os períodos</SelectItem>
+                      <SelectItem value="7d">Últimos 7 dias</SelectItem>
+                      <SelectItem value="30d">Últimos 30 dias</SelectItem>
+                      <SelectItem value="90d">Últimos 90 dias</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button variant="outline">
+                    <Download className="h-4 w-4 mr-2" />
+                    Exportar
+                  </Button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <Card className="lg:col-span-2">
+                  <CardHeader>
+                    <CardTitle>Tendências de Crescimento</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-96 flex items-center justify-center text-gray-400">
+                      <LineChart className="h-16 w-16" />
+                      <span className="ml-2">Gráfico de linha</span>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Metas do Mês</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {[
+                      { label: "Receita", current: 85, target: 100 },
+                      { label: "Usuários", current: 92, target: 100 },
+                      { label: "Satisfação", current: 78, target: 100 }
+                    ].map((goal, i) => (
+                      <div key={i} className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span>{goal.label}</span>
+                          <span>{goal.current}%</span>
+                        </div>
+                        <Progress value={goal.current} className="h-2" />
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            {/* Projects Tab */}
+            <TabsContent value="projects" className="space-y-6">
+              <div className="flex items-center justify-between">
+                <h2 className="text-3xl font-bold">Projetos</h2>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Novo Projeto
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Criar Novo Projeto</DialogTitle>
+                      <DialogDescription>
+                        Preencha as informações do projeto
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="project-name">Nome do Projeto</Label>
+                        <Input id="project-name" placeholder="Digite o nome" />
+                      </div>
+                      <div>
+                        <Label htmlFor="project-desc">Descrição</Label>
+                        <Textarea id="project-desc" placeholder="Descreva o projeto" />
+                      </div>
+                      <div className="flex space-x-4">
+                        <div className="flex-1">
+                          <Label htmlFor="start-date">Data de Início</Label>
+                          <Input id="start-date" type="date" />
+                        </div>
+                        <div className="flex-1">
+                          <Label htmlFor="end-date">Data de Término</Label>
+                          <Input id="end-date" type="date" />
+                        </div>
+                      </div>
+                      <div className="flex justify-end space-x-2">
+                        <Button variant="outline">Cancelar</Button>
+                        <Button>Criar Projeto</Button>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <Card key={i}>
+                    <CardHeader>
+                      <div className="flex items-center justify-between">
+                        <CardTitle className="text-lg">Projeto {i}</CardTitle>
+                        <Button variant="ghost" size="sm">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      <CardDescription>
+                        Descrição do projeto {i}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        <div>
+                          <div className="flex justify-between text-sm mb-2">
+                            <span>Progresso</span>
+                            <span>{Math.floor(Math.random() * 100)}%</span>
+                          </div>
+                          <Progress value={Math.floor(Math.random() * 100)} />
+                        </div>
+                        
+                        <div className="flex items-center justify-between">
+                          <div className="flex -space-x-2">
+                            {[1, 2, 3].map((j) => (
+                              <Avatar key={j} className="h-6 w-6 border-2 border-white">
+                                <AvatarFallback className="text-xs">U{j}</AvatarFallback>
+                              </Avatar>
+                            ))}
+                          </div>
+                          {getStatusBadge(["planning", "active", "on-hold", "completed"][Math.floor(Math.random() * 4)])}
+                        </div>
+                        
+                        <div className="text-sm text-gray-500">
+                          Entrega: {format(new Date(Date.now() + Math.random() * 30 * 24 * 60 * 60 * 1000), "dd/MM/yyyy", { locale: ptBR })}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </TabsContent>
+
+            {/* Tasks Tab */}
+            <TabsContent value="tasks" className="space-y-6">
+              <div className="flex items-center justify-between">
+                <h2 className="text-3xl font-bold">Tarefas</h2>
+                <div className="flex items-center space-x-2">
+                  <Select value={filterStatus} onValueChange={setFilterStatus}>
+                    <SelectTrigger className="w-40">
+                      <SelectValue placeholder="Filtrar status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todas</SelectItem>
+                      <SelectItem value="pending">Pendentes</SelectItem>
+                      <SelectItem value="in-progress">Em andamento</SelectItem>
+                      <SelectItem value="completed">Concluídas</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Nova Tarefa
+                  </Button>
+                </div>
+              </div>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Lista de Tarefas</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Tarefa</TableHead>
+                        <TableHead>Responsável</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Prioridade</TableHead>
+                        <TableHead>Prazo</TableHead>
+                        <TableHead>Ações</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {[1, 2, 3, 4, 5].map((i) => (
+                        <TableRow key={i}>
+                          <TableCell>
+                            <div>
+                              <p className="font-medium">Tarefa {i}</p>
+                              <p className="text-sm text-gray-500">Descrição da tarefa {i}</p>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center space-x-2">
+                              <Avatar className="h-6 w-6">
+                                <AvatarFallback className="text-xs">U{i}</AvatarFallback>
+                              </Avatar>
+                              <span className="text-sm">Usuário {i}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            {getStatusBadge(["pending", "in-progress", "completed"][Math.floor(Math.random() * 3)])}
+                          </TableCell>
+                          <TableCell>
+                            {getStatusBadge(["low", "medium", "high", "urgent"][Math.floor(Math.random() * 4)])}
+                          </TableCell>
+                          <TableCell className="text-sm">
+                            {format(new Date(Date.now() + Math.random() * 14 * 24 * 60 * 60 * 1000), "dd/MM", { locale: ptBR })}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center space-x-1">
+                              <Button variant="ghost" size="sm">
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button variant="ghost" size="sm">
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Team Tab */}
+            <TabsContent value="team" className="space-y-6">
+              <div className="flex items-center justify-between">
+                <h2 className="text-3xl font-bold">Equipe</h2>
+                <Button>
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  Convidar Membro
+                </Button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {MOCK_USERS.map((user) => (
+                  <Card key={user.id}>
+                    <CardHeader>
+                      <div className="flex items-center space-x-4">
+                        <Avatar>
+                          <AvatarImage src={user.avatar} />
+                          <AvatarFallback>{user.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <CardTitle className="text-lg">{user.name}</CardTitle>
+                          <CardDescription>{user.role}</CardDescription>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-gray-500">Status</span>
+                          {getStatusBadge(user.status)}
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-gray-500">Departamento</span>
+                          <span className="text-sm">{user.department}</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-gray-500">Último acesso</span>
+                          <span className="text-sm">
+                            {format(user.lastSeen, "dd/MM HH:mm", { locale: ptBR })}
+                          </span>
+                        </div>
+                        <div className="flex items-center space-x-2 pt-2">
+                          <Button variant="outline" size="sm" className="flex-1">
+                            <Mail className="h-4 w-4 mr-1" />
+                            Email
+                          </Button>
+                          <Button variant="outline" size="sm" className="flex-1">
+                            <MessageSquare className="h-4 w-4 mr-1" />
+                            Chat
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </TabsContent>
+
+            {/* Settings Tab */}
+            <TabsContent value="settings" className="space-y-6">
+              <h2 className="text-3xl font-bold">Configurações</h2>
+              
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Preferências Gerais</CardTitle>
+                    <CardDescription>
+                      Configure suas preferências do sistema
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label htmlFor="notifications">Notificações</Label>
+                        <p className="text-sm text-gray-500">Receber notificações em tempo real</p>
+                      </div>
+                      <Switch id="notifications" />
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label htmlFor="dark-mode">Modo Escuro</Label>
+                        <p className="text-sm text-gray-500">Usar tema escuro</p>
+                      </div>
+                      <Switch id="dark-mode" />
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label htmlFor="auto-save">Salvamento Automático</Label>
+                        <p className="text-sm text-gray-500">Salvar alterações automaticamente</p>
+                      </div>
+                      <Switch id="auto-save" defaultChecked />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Configurações de Segurança</CardTitle>
+                    <CardDescription>
+                      Gerencie suas configurações de segurança
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label htmlFor="2fa">Autenticação em Duas Etapas</Label>
+                        <p className="text-sm text-gray-500">Adicionar camada extra de segurança</p>
+                      </div>
+                      <Switch id="2fa" />
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label htmlFor="session-timeout">Timeout de Sessão</Label>
+                        <p className="text-sm text-gray-500">Deslogar automaticamente após inatividade</p>
+                      </div>
+                      <Switch id="session-timeout" defaultChecked />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="password-change">Alterar Senha</Label>
+                      <Button variant="outline" size="sm">
+                        <Key className="h-4 w-4 mr-2" />
+                        Alterar Senha
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </main>
       </div>
     </div>
-  );
-};
-
-export default BMadMasterDashboard;
+  )
+}

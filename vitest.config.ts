@@ -9,11 +9,13 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: ['./test/setup.ts'],
+    setupFiles: ['./vitest.setup.ts'],
 
-    // Incluir todos os testes que existem
+    // Incluir todos os testes que existem no monorepo
     include: [
-      '**/*.{test,spec}.{ts,tsx}',
+      '**/*.{test,spec}.{ts,tsx,js,jsx}',
+      '**/__tests__/**/*.{ts,tsx,js,jsx}',
+      '**/test/**/*.{test,spec}.{ts,tsx,js,jsx}',
       '!**/node_modules/**',
       '!**/dist/**',
       '!**/.next/**',
@@ -31,12 +33,12 @@ export default defineConfig({
       '**/.vercel/**',
       '**/.nuxt/**',
 
-      // Excluir TODOS os testes Playwright e E2E
+      // Excluir APENAS testes Playwright e E2E específicos
       '**/playwright/**',
-      '**/*.spec.ts',
-      '**/*.spec.tsx',
       '**/*.e2e.test.ts',
       '**/*.e2e.test.tsx',
+      '**/*.e2e.spec.ts',
+      '**/*.e2e.spec.tsx',
       '**/e2e/**',
       '**/cypress/**',
 
@@ -52,6 +54,8 @@ export default defineConfig({
       '@/components': path.resolve(__dirname, './apps/web/components'),
       '@/utils': path.resolve(__dirname, './packages/utils/src'),
       '@/types': path.resolve(__dirname, './packages/types/src'),
+      '@test': path.resolve(__dirname, './tools/testing'),
+      '@/test': path.resolve(__dirname, './tools/testing'), 
       '@neonpro/ui': path.resolve(__dirname, './packages/ui/src'),
       '@neonpro/utils': path.resolve(__dirname, './packages/utils/src'),
       '@neonpro/types': path.resolve(__dirname, './packages/types/src'),
@@ -75,19 +79,10 @@ export default defineConfig({
     // Configuração de reporter
     reporter: ['basic'],
 
-    // Otimização de deps
+    // Otimização de deps simplificada
     deps: {
-      inline: [
-        '@testing-library/react', 
-        '@testing-library/jest-dom',
-        '@testing-library/user-event',
-        'sonner'
-      ],
-      external: [
-        'next',
-        'next/navigation',
-        'next/router'
-      ]
+      // Remove optimizer para evitar problemas de resolução
+      external: ['@testing-library/react', '@testing-library/jest-dom']
     },
 
     // Configuração de coverage apenas para arquivos válidos
@@ -118,14 +113,17 @@ export default defineConfig({
       '@/components': path.resolve(__dirname, './apps/web/components'),
       '@/utils': path.resolve(__dirname, './packages/utils/src'),
       '@/types': path.resolve(__dirname, './packages/types/src'),
+      '@test': path.resolve(__dirname, './tools/testing'),
+      '@/test': path.resolve(__dirname, './tools/testing'),
       '@neonpro/ui': path.resolve(__dirname, './packages/ui/src'),
       '@neonpro/utils': path.resolve(__dirname, './packages/utils/src'),
       '@neonpro/types': path.resolve(__dirname, './packages/types/src'),
+      'zod': path.resolve(__dirname, './node_modules/zod'),
     },
   },
 
   // Configuração específica para monorepo
-  optimizeDeps: {
-    include: ['react', 'react-dom', '@testing-library/react'],
-  },
+  // optimizeDeps: {
+  //   include: ['react', 'react-dom', '@testing-library/react'],
+  // },
 });

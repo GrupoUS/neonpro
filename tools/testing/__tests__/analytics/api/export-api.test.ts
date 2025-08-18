@@ -16,15 +16,15 @@ import { GET, POST } from '@/app/api/export/route';
 import { createClient } from '@/utils/supabase/server';
 
 // Mock Supabase client
-vi.Mock('@/utils/supabase/server');
+vi.mock('@/utils/supabase/server');
 const mockCreateClient = createClient as vi.MockedFunction<typeof createClient>;
 
 // Mock file system operations
-vi.Mock('fs/promises');
-vi.Mock('path');
+vi.mock('fs/promises');
+vi.mock('path');
 
 // Mock jsPDF and xlsx
-vi.Mock('jspdf', () => ({
+vi.mock('jspdf', () => ({
   __esModule: true,
   default: vi.fn().mockImplementation(() => ({
     text: vi.fn(),
@@ -34,7 +34,7 @@ vi.Mock('jspdf', () => ({
   })),
 }));
 
-vi.Mock('xlsx', () => ({
+vi.mock('xlsx', () => ({
   utils: {
     json_to_sheet: vi.fn().mockReturnValue({}),
     book_new: vi.fn().mockReturnValue({}),

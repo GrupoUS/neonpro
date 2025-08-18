@@ -16,7 +16,7 @@ import { AnalyticsRepository } from '@/lib/analytics/repository';
 import { createClient } from '@/utils/supabase/server';
 
 // Mock Supabase client
-vi.Mock('@/utils/supabase/server');
+vi.mock('@/utils/supabase/server');
 const mockCreateClient = createClient as vi.MockedFunction<typeof createClient>;
 
 describe('AnalyticsRepository', () => {

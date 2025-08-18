@@ -3,6 +3,8 @@
  * Centralized environment setup for NeonPro Healthcare System tests
  */
 
+import { vi } from 'vitest';
+
 // Set up comprehensive test environment variables
 process.env.NODE_ENV = 'test';
 process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
@@ -25,32 +27,32 @@ const mockAsyncLocalStorage = {
 };
 
 // Mock Next.js server context to prevent "outside request scope" errors
-jest.mock(
+vi.mock(
   'next/dist/server/app-render/work-unit-async-storage.external',
   () => ({
     workUnitAsyncStorage: mockAsyncLocalStorage,
   })
 );
 
-jest.mock(
+vi.mock(
   'next/dist/server/web/spec-extension/adapters/request-cookies',
   () => ({
-    RequestCookies: jest.fn().mockImplementation(() => ({
-      get: jest.fn(() => ({ name: 'test', value: 'test-value' })),
-      set: jest.fn(),
-      delete: jest.fn(),
-      has: jest.fn(() => false),
-      getAll: jest.fn(() => []),
-      toString: jest.fn(() => ''),
+    RequestCookies: vi.fn().mockImplementation(() => ({
+      get: vi.fn(() => ({ name: 'test', value: 'test-value' })),
+      set: vi.fn(),
+      delete: vi.fn(),
+      has: vi.fn(() => false),
+      getAll: vi.fn(() => []),
+      toString: vi.fn(() => ''),
     })),
   })
 );
 
 // Mock the entire Next.js cache system
-jest.mock('next/cache', () => ({
-  unstable_cache: jest.fn((fn) => fn),
-  revalidateTag: jest.fn(),
-  revalidatePath: jest.fn(),
+vi.mock('next/cache', () => ({
+  unstable_cache: vi.fn((fn) => fn),
+  revalidateTag: vi.fn(),
+  revalidatePath: vi.fn(),
 }));
 
 // Import the singleton mock from the dedicated setup file

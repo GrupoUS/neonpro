@@ -78,12 +78,7 @@
       "label": "Agendamentos no mobile"
     }
   ],
-  "features": [
-    "Cross Platform",
-    "Push Notification",
-    "Background Sync",
-    "Offline Storage"
-  ],
+  "features": ["Cross Platform", "Push Notification", "Background Sync", "Offline Storage"],
   "shortcuts": [
     {
       "name": "Dashboard",
@@ -135,12 +130,7 @@
   "edge_side_panel": {
     "preferred_width": 400
   },
-  "display_override": [
-    "window-controls-overlay",
-    "standalone",
-    "minimal-ui",
-    "browser"
-  ],
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui", "browser"],
   "protocol_handlers": [
     {
       "protocol": "web+neonpro",

@@ -32,7 +32,7 @@ export type OpenAPIConfig = {
 
 export class OpenAPIGenerator {
   private readonly config: OpenAPIConfig;
-  private readonly spinner: ora.Ora;
+  private readonly spinner: ReturnType<typeof ora>;
 
   constructor(config: OpenAPIConfig) {
     this.config = config;
@@ -166,6 +166,10 @@ export class OpenAPIGenerator {
     while ((match = interfaceRegex.exec(content)) !== null) {
       const [, interfaceName, interfaceBody] = match;
 
+      if (!interfaceName || !interfaceBody) {
+        continue;
+      }
+
       try {
         const schema = this.parseInterfaceToSchema(interfaceBody);
         schemas[interfaceName] = {
@@ -191,6 +195,10 @@ export class OpenAPIGenerator {
 
     while ((match = propertyRegex.exec(interfaceBody)) !== null) {
       const [, propName, optional, propType] = match;
+
+      if (!propName || !propType) {
+        continue;
+      }
 
       if (!optional) {
         required.push(propName);

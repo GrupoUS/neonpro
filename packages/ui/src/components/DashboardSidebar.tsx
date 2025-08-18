@@ -8,12 +8,12 @@ import {
   Settings,
   Users,
   X,
-} from 'lucide-react';
-import * as React from 'react';
-import { cn } from '../utils/cn';
-import { Avatar, AvatarFallback, AvatarImage } from './Avatar';
-import { Badge } from './Badge';
-import { Button } from './Button';
+} from "lucide-react";
+import * as React from "react";
+import { cn } from "../utils/cn";
+import { Avatar, AvatarFallback, AvatarImage } from "./Avatar";
+import { Badge } from "./Badge";
+import { Button } from "./Button";
 
 // Types
 type SidebarItem = {
@@ -42,15 +42,12 @@ type DashboardSidebarProps = {
   collapsed?: boolean;
   onToggle?: () => void;
   onItemSelect?: (item: SidebarItem) => void;
-  onUserMenuSelect?: (action: 'profile' | 'settings' | 'logout') => void;
+  onUserMenuSelect?: (action: "profile" | "settings" | "logout") => void;
   notifications?: number;
   className?: string;
 };
 
-export const DashboardSidebar = React.forwardRef<
-  HTMLDivElement,
-  DashboardSidebarProps
->(
+export const DashboardSidebar = React.forwardRef<HTMLDivElement, DashboardSidebarProps>(
   (
     {
       user,
@@ -62,18 +59,16 @@ export const DashboardSidebar = React.forwardRef<
       notifications = 0,
       className,
     },
-    ref
+    ref,
   ) => {
-    const [expandedItems, setExpandedItems] = React.useState<Set<string>>(
-      new Set()
-    );
+    const [expandedItems, setExpandedItems] = React.useState<Set<string>>(new Set());
     const [showUserMenu, setShowUserMenu] = React.useState(false);
 
     const getInitials = (name: string) => {
       return name
-        .split(' ')
+        .split(" ")
         .map((word) => word.charAt(0))
-        .join('')
+        .join("")
         .toUpperCase()
         .slice(0, 2);
     };
@@ -108,14 +103,14 @@ export const DashboardSidebar = React.forwardRef<
         <div key={item.id}>
           <Button
             className={cn(
-              'h-10 w-full justify-start px-3',
-              level > 0 && 'ml-4 w-[calc(100%-1rem)]',
-              collapsed && level === 0 && 'justify-center px-2'
+              "h-10 w-full justify-start px-3",
+              level > 0 && "ml-4 w-[calc(100%-1rem)]",
+              collapsed && level === 0 && "justify-center px-2",
             )}
             onClick={() => handleItemClick(item)}
-            variant={item.active ? 'default' : 'ghost'}
+            variant={item.active ? "default" : "ghost"}
           >
-            <Icon className={cn('h-4 w-4', !collapsed && 'mr-2')} />
+            <Icon className={cn("h-4 w-4", !collapsed && "mr-2")} />
             {!collapsed && (
               <>
                 <span className="flex-1 text-left">{item.label}</span>
@@ -136,9 +131,7 @@ export const DashboardSidebar = React.forwardRef<
 
           {hasChildren && !collapsed && isExpanded && (
             <div className="mt-1 space-y-1">
-              {item.children?.map((child) =>
-                renderSidebarItem(child, level + 1)
-              )}
+              {item.children?.map((child) => renderSidebarItem(child, level + 1))}
             </div>
           )}
         </div>
@@ -147,9 +140,9 @@ export const DashboardSidebar = React.forwardRef<
     return (
       <div
         className={cn(
-          'flex flex-col border-r bg-background transition-all duration-300',
-          collapsed ? 'w-16' : 'w-64',
-          className
+          "flex flex-col border-r bg-background transition-all duration-300",
+          collapsed ? "w-16" : "w-64",
+          className,
         )}
         ref={ref}
       >
@@ -164,16 +157,12 @@ export const DashboardSidebar = React.forwardRef<
             </div>
           )}
           <Button
-            className={cn('p-2', collapsed && 'mx-auto')}
+            className={cn("p-2", collapsed && "mx-auto")}
             onClick={onToggle}
             size="sm"
             variant="ghost"
           >
-            {collapsed ? (
-              <Menu className="h-4 w-4" />
-            ) : (
-              <X className="h-4 w-4" />
-            )}
+            {collapsed ? <Menu className="h-4 w-4" /> : <X className="h-4 w-4" />}
           </Button>
         </div>
 
@@ -187,13 +176,13 @@ export const DashboardSidebar = React.forwardRef<
           <div className="px-4 py-2">
             <button
               className={cn(
-                'flex w-full items-center gap-2 rounded-lg bg-muted/50 p-2 hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
-                collapsed && 'justify-center'
+                "flex w-full items-center gap-2 rounded-lg bg-muted/50 p-2 hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+                collapsed && "justify-center",
               )}
               onClick={() =>
                 onItemSelect?.({
-                  id: 'notifications',
-                  label: 'Notificações',
+                  id: "notifications",
+                  label: "Notificações",
                   icon: Bell,
                 })
               }
@@ -216,8 +205,8 @@ export const DashboardSidebar = React.forwardRef<
         <div className="border-t p-4">
           <button
             className={cn(
-              'flex w-full items-center gap-3 rounded-lg p-2 transition-colors hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
-              collapsed && 'justify-center'
+              "flex w-full items-center gap-3 rounded-lg p-2 transition-colors hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+              collapsed && "justify-center",
             )}
             onClick={() => setShowUserMenu(!showUserMenu)}
             type="button"
@@ -229,18 +218,11 @@ export const DashboardSidebar = React.forwardRef<
             {!collapsed && (
               <>
                 <div className="min-w-0 flex-1">
-                  <div className="truncate font-medium text-sm">
-                    {user.name}
-                  </div>
-                  <div className="truncate text-muted-foreground text-xs">
-                    {user.role}
-                  </div>
+                  <div className="truncate font-medium text-sm">{user.name}</div>
+                  <div className="truncate text-muted-foreground text-xs">{user.role}</div>
                 </div>
                 <ChevronDown
-                  className={cn(
-                    'h-4 w-4 transition-transform',
-                    showUserMenu && 'rotate-180'
-                  )}
+                  className={cn("h-4 w-4 transition-transform", showUserMenu && "rotate-180")}
                 />
               </>
             )}
@@ -252,7 +234,7 @@ export const DashboardSidebar = React.forwardRef<
               <Button
                 className="h-8 w-full justify-start"
                 onClick={() => {
-                  onUserMenuSelect?.('profile');
+                  onUserMenuSelect?.("profile");
                   setShowUserMenu(false);
                 }}
                 size="sm"
@@ -264,7 +246,7 @@ export const DashboardSidebar = React.forwardRef<
               <Button
                 className="h-8 w-full justify-start"
                 onClick={() => {
-                  onUserMenuSelect?.('settings');
+                  onUserMenuSelect?.("settings");
                   setShowUserMenu(false);
                 }}
                 size="sm"
@@ -276,7 +258,7 @@ export const DashboardSidebar = React.forwardRef<
               <Button
                 className="h-8 w-full justify-start text-destructive hover:text-destructive"
                 onClick={() => {
-                  onUserMenuSelect?.('logout');
+                  onUserMenuSelect?.("logout");
                   setShowUserMenu(false);
                 }}
                 size="sm"
@@ -290,9 +272,9 @@ export const DashboardSidebar = React.forwardRef<
         </div>
       </div>
     );
-  }
+  },
 );
 
-DashboardSidebar.displayName = 'DashboardSidebar';
+DashboardSidebar.displayName = "DashboardSidebar";
 
 export type { DashboardSidebarProps, SidebarItem, UserProfile };

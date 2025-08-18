@@ -4,8 +4,8 @@
  * Healthcare compliance with secure session management
  */
 
-import { createServerClient } from '@neonpro/db';
-import { cookies } from 'next/headers';
+import { createServerClient } from "@neonpro/db";
+import { cookies } from "next/headers";
 
 /**
  * Create Supabase server client for Server Components and API Routes

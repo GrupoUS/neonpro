@@ -20,7 +20,7 @@ import type {
 } from '@/lib/analytics/types';
 
 // Mock the repository
-vi.Mock('@/lib/analytics/repository');
+vi.mock('@/lib/analytics/repository');
 
 const MockedAnalyticsRepository = AnalyticsRepository as vi.MockedClass<
   typeof AnalyticsRepository

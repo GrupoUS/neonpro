@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion } from "framer-motion";
 import {
   AlertCircle,
   Calendar,
@@ -13,100 +13,100 @@ import {
   Search,
   User,
   XCircle,
-} from 'lucide-react';
-import { useState } from 'react';
-import { CosmicGlowButton } from '@/components/ui/CosmicGlowButton';
-import { NeonGradientCard } from '@/components/ui/NeonGradientCard';
-import { formatDate, formatTime } from '@/lib/utils';
+} from "lucide-react";
+import { useState } from "react";
+import { CosmicGlowButton } from "@/components/ui/CosmicGlowButton";
+import { NeonGradientCard } from "@/components/ui/NeonGradientCard";
+import { formatDate, formatTime } from "@/lib/utils";
 
 // Dados mock para a agenda
 const agendaData = {
   appointments: [
     {
       id: 1,
-      patient: 'Maria Silva',
-      phone: '(11) 99999-9999',
-      date: new Date('2024-01-15T09:00:00'),
-      type: 'Consulta Inicial',
-      status: 'confirmado',
-      room: 'Sala 01',
-      doctor: 'Dr. João Oliveira',
+      patient: "Maria Silva",
+      phone: "(11) 99999-9999",
+      date: new Date("2024-01-15T09:00:00"),
+      type: "Consulta Inicial",
+      status: "confirmado",
+      room: "Sala 01",
+      doctor: "Dr. João Oliveira",
     },
     {
       id: 2,
-      patient: 'Carlos Santos',
-      phone: '(11) 88888-8888',
-      date: new Date('2024-01-15T10:30:00'),
-      type: 'Retorno',
-      status: 'pendente',
-      room: 'Sala 02',
-      doctor: 'Dra. Ana Costa',
+      patient: "Carlos Santos",
+      phone: "(11) 88888-8888",
+      date: new Date("2024-01-15T10:30:00"),
+      type: "Retorno",
+      status: "pendente",
+      room: "Sala 02",
+      doctor: "Dra. Ana Costa",
     },
     {
       id: 3,
-      patient: 'Fernanda Lima',
-      phone: '(11) 77777-7777',
-      date: new Date('2024-01-15T14:00:00'),
-      type: 'Exame',
-      status: 'confirmado',
-      room: 'Sala 03',
-      doctor: 'Dr. Pedro Silva',
+      patient: "Fernanda Lima",
+      phone: "(11) 77777-7777",
+      date: new Date("2024-01-15T14:00:00"),
+      type: "Exame",
+      status: "confirmado",
+      room: "Sala 03",
+      doctor: "Dr. Pedro Silva",
     },
     {
       id: 4,
-      patient: 'Roberto Costa',
-      phone: '(11) 66666-6666',
-      date: new Date('2024-01-15T15:30:00'),
-      type: 'Consulta',
-      status: 'cancelado',
-      room: 'Sala 01',
-      doctor: 'Dr. João Oliveira',
+      patient: "Roberto Costa",
+      phone: "(11) 66666-6666",
+      date: new Date("2024-01-15T15:30:00"),
+      type: "Consulta",
+      status: "cancelado",
+      room: "Sala 01",
+      doctor: "Dr. João Oliveira",
     },
   ],
   timeSlots: [
-    '08:00',
-    '08:30',
-    '09:00',
-    '09:30',
-    '10:00',
-    '10:30',
-    '11:00',
-    '11:30',
-    '14:00',
-    '14:30',
-    '15:00',
-    '15:30',
-    '16:00',
-    '16:30',
-    '17:00',
-    '17:30',
+    "08:00",
+    "08:30",
+    "09:00",
+    "09:30",
+    "10:00",
+    "10:30",
+    "11:00",
+    "11:30",
+    "14:00",
+    "14:30",
+    "15:00",
+    "15:30",
+    "16:00",
+    "16:30",
+    "17:00",
+    "17:30",
   ],
 };
 
 const statusConfig = {
   confirmado: {
-    color: 'success',
+    color: "success",
     icon: CheckCircle,
-    label: 'Confirmado',
-    bgColor: 'bg-success/10',
-    borderColor: 'border-success/30',
-    textColor: 'text-success',
+    label: "Confirmado",
+    bgColor: "bg-success/10",
+    borderColor: "border-success/30",
+    textColor: "text-success",
   },
   pendente: {
-    color: 'warning',
+    color: "warning",
     icon: AlertCircle,
-    label: 'Pendente',
-    bgColor: 'bg-warning/10',
-    borderColor: 'border-warning/30',
-    textColor: 'text-warning',
+    label: "Pendente",
+    bgColor: "bg-warning/10",
+    borderColor: "border-warning/30",
+    textColor: "text-warning",
   },
   cancelado: {
-    color: 'danger',
+    color: "danger",
     icon: XCircle,
-    label: 'Cancelado',
-    bgColor: 'bg-danger/10',
-    borderColor: 'border-danger/30',
-    textColor: 'text-danger',
+    label: "Cancelado",
+    bgColor: "bg-danger/10",
+    borderColor: "border-danger/30",
+    textColor: "text-danger",
   },
 };
 
@@ -124,7 +124,7 @@ const AppointmentCard = ({ appointment, index }) => {
         y: -5,
         transition: {
           duration: 0.2,
-          type: 'spring',
+          type: "spring",
           stiffness: 400,
           damping: 17,
         },
@@ -137,9 +137,7 @@ const AppointmentCard = ({ appointment, index }) => {
               <User className="h-6 w-6 text-primary" />
             </div>
             <div>
-              <h3 className="font-semibold text-lg text-white">
-                {appointment.patient}
-              </h3>
+              <h3 className="font-semibold text-lg text-white">{appointment.patient}</h3>
               <p className="flex items-center text-gray-400 text-sm">
                 <Phone className="mr-1 h-4 w-4" />
                 {appointment.phone}
@@ -198,16 +196,15 @@ const AppointmentCard = ({ appointment, index }) => {
 
 export default function Agenda() {
   const [selectedDate, _setSelectedDate] = useState(new Date());
-  const [_viewMode, _setViewMode] = useState('list');
-  const [filterStatus, setFilterStatus] = useState('todos');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [_viewMode, _setViewMode] = useState("list");
+  const [filterStatus, setFilterStatus] = useState("todos");
+  const [searchTerm, setSearchTerm] = useState("");
 
   const filteredAppointments = agendaData.appointments.filter((appointment) => {
     const matchesSearch =
       appointment.patient.toLowerCase().includes(searchTerm.toLowerCase()) ||
       appointment.doctor.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus =
-      filterStatus === 'todos' || appointment.status === filterStatus;
+    const matchesStatus = filterStatus === "todos" || appointment.status === filterStatus;
     return matchesSearch && matchesStatus;
   });
 
@@ -219,9 +216,7 @@ export default function Agenda() {
           className="mb-8"
           initial={{ opacity: 0, y: -20 }}
         >
-          <h1 className="mb-2 font-bold text-4xl text-white">
-            Agenda NEONPROV1
-          </h1>
+          <h1 className="mb-2 font-bold text-4xl text-white">Agenda NEONPROV1</h1>
           <p className="text-gray-400">Gerencie consultas e horários médicos</p>
         </motion.div>
 
@@ -232,9 +227,7 @@ export default function Agenda() {
               <Calendar className="h-6 w-6 text-primary" />
               <div>
                 <p className="text-gray-400 text-sm">Data Selecionada</p>
-                <p className="font-semibold text-white">
-                  {formatDate(selectedDate)}
-                </p>
+                <p className="font-semibold text-white">{formatDate(selectedDate)}</p>
               </div>
             </div>
           </NeonGradientCard>
@@ -268,10 +261,7 @@ export default function Agenda() {
             </div>
           </NeonGradientCard>
 
-          <CosmicGlowButton
-            className="flex h-full items-center justify-center"
-            variant="success"
-          >
+          <CosmicGlowButton className="flex h-full items-center justify-center" variant="success">
             <Plus className="mr-2 h-5 w-5" />
             Nova Consulta
           </CosmicGlowButton>
@@ -281,11 +271,7 @@ export default function Agenda() {
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <AnimatePresence>
             {filteredAppointments.map((appointment, index) => (
-              <AppointmentCard
-                appointment={appointment}
-                index={index}
-                key={appointment.id}
-              />
+              <AppointmentCard appointment={appointment} index={index} key={appointment.id} />
             ))}
           </AnimatePresence>
         </div>
@@ -298,15 +284,11 @@ export default function Agenda() {
           >
             <NeonGradientCard className="mx-auto max-w-md" gradient="primary">
               <Calendar className="mx-auto mb-4 h-16 w-16 text-accent" />
-              <h3 className="mb-2 font-semibold text-white text-xl">
-                Nenhuma consulta encontrada
-              </h3>
+              <h3 className="mb-2 font-semibold text-white text-xl">Nenhuma consulta encontrada</h3>
               <p className="mb-4 text-gray-400">
                 Não há consultas que correspondam aos filtros selecionados.
               </p>
-              <CosmicGlowButton variant="primary">
-                Agendar Nova Consulta
-              </CosmicGlowButton>
+              <CosmicGlowButton variant="primary">Agendar Nova Consulta</CosmicGlowButton>
             </NeonGradientCard>
           </motion.div>
         )}

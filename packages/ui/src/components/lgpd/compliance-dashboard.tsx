@@ -1,25 +1,11 @@
-'use client';
+"use client";
 
-import {
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  FileText,
-  Lock,
-  Shield,
-  Users,
-} from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { Alert, AlertDescription } from '../ui/alert';
-import { Badge } from '../ui/badge';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '../ui/card';
-import { Progress } from '../ui/progress';
+import { AlertTriangle, CheckCircle, Clock, FileText, Lock, Shield, Users } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Alert, AlertDescription } from "../ui/alert";
+import { Badge } from "../ui/badge";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
+import { Progress } from "../ui/progress";
 
 // ============================================================================
 // TYPES
@@ -46,19 +32,14 @@ type ComplianceStatus = {
 // ============================================================================
 
 export function ComplianceDashboard() {
-  const [complianceStatus, setComplianceStatus] =
-    useState<ComplianceStatus | null>(null);
+  const [complianceStatus, setComplianceStatus] = useState<ComplianceStatus | null>(null);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    loadComplianceStatus();
-  }, [loadComplianceStatus]);
 
   const loadComplianceStatus = async () => {
     try {
-      const response = await fetch('/api/lgpd/compliance/status');
+      const response = await fetch("/api/lgpd/compliance/status");
       if (!response.ok) {
-        throw new Error('Failed to load compliance status');
+        throw new Error("Failed to load compliance status");
       }
 
       const data: ComplianceStatus = await response.json();
@@ -69,6 +50,10 @@ export function ComplianceDashboard() {
     }
   };
 
+  useEffect(() => {
+    loadComplianceStatus();
+  }, [loadComplianceStatus]);
+
   if (loading) {
     return (
       <Card>
@@ -77,9 +62,7 @@ export function ComplianceDashboard() {
             <Shield className="h-5 w-5" />
             Dashboard de Conformidade LGPD
           </CardTitle>
-          <CardDescription>
-            Carregando status de conformidade...
-          </CardDescription>
+          <CardDescription>Carregando status de conformidade...</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="animate-pulse space-y-4">
@@ -105,8 +88,7 @@ export function ComplianceDashboard() {
           <Alert>
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              Erro ao carregar status de conformidade. Tente novamente mais
-              tarde.
+              Erro ao carregar status de conformidade. Tente novamente mais tarde.
             </AlertDescription>
           </Alert>
         </CardContent>
@@ -121,17 +103,14 @@ export function ComplianceDashboard() {
         100
       : 100;
 
-  const isFullyCompliant =
-    complianceStatus.consentCompliance.hasAllRequiredConsents;
+  const isFullyCompliant = complianceStatus.consentCompliance.hasAllRequiredConsents;
 
   return (
     <div className="space-y-6">
       {/* Overall Status Card */}
       <Card
         className={
-          isFullyCompliant
-            ? 'border-green-200 bg-green-50'
-            : 'border-yellow-200 bg-yellow-50'
+          isFullyCompliant ? "border-green-200 bg-green-50" : "border-yellow-200 bg-yellow-50"
         }
       >
         <CardHeader>
@@ -151,8 +130,7 @@ export function ComplianceDashboard() {
             )}
           </CardTitle>
           <CardDescription>
-            Última atualização:{' '}
-            {new Date(complianceStatus.lastUpdated).toLocaleString('pt-BR')}
+            Última atualização: {new Date(complianceStatus.lastUpdated).toLocaleString("pt-BR")}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -160,16 +138,16 @@ export function ComplianceDashboard() {
             <Alert className="border-green-200 bg-green-50">
               <CheckCircle className="h-4 w-4 text-green-600" />
               <AlertDescription className="text-green-800">
-                Parabéns! Você está em total conformidade com a LGPD. Todos os
-                consentimentos obrigatórios foram concedidos.
+                Parabéns! Você está em total conformidade com a LGPD. Todos os consentimentos
+                obrigatórios foram concedidos.
               </AlertDescription>
             </Alert>
           ) : (
             <Alert className="border-yellow-200 bg-yellow-50">
               <AlertTriangle className="h-4 w-4 text-yellow-600" />
               <AlertDescription className="text-yellow-800">
-                Alguns consentimentos obrigatórios estão pendentes. Revise suas
-                preferências de privacidade para garantir conformidade total.
+                Alguns consentimentos obrigatórios estão pendentes. Revise suas preferências de
+                privacidade para garantir conformidade total.
               </AlertDescription>
             </Alert>
           )}
@@ -181,23 +159,16 @@ export function ComplianceDashboard() {
         {/* Consent Compliance */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="font-medium text-sm">
-              Conformidade de Consentimento
-            </CardTitle>
+            <CardTitle className="font-medium text-sm">Conformidade de Consentimento</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="font-bold text-2xl">
-                  {consentProgress.toFixed(0)}%
-                </span>
-                <Badge variant={isFullyCompliant ? 'default' : 'secondary'}>
-                  {
-                    complianceStatus.consentCompliance
-                      .grantedRequiredConsentsCount
-                  }{' '}
-                  / {complianceStatus.consentCompliance.requiredConsentsCount}
+                <span className="font-bold text-2xl">{consentProgress.toFixed(0)}%</span>
+                <Badge variant={isFullyCompliant ? "default" : "secondary"}>
+                  {complianceStatus.consentCompliance.grantedRequiredConsentsCount} /{" "}
+                  {complianceStatus.consentCompliance.requiredConsentsCount}
                 </Badge>
               </div>
               <Progress className="h-2" value={consentProgress} />
@@ -211,9 +182,7 @@ export function ComplianceDashboard() {
         {/* Data Requests */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="font-medium text-sm">
-              Solicitações de Dados
-            </CardTitle>
+            <CardTitle className="font-medium text-sm">Solicitações de Dados</CardTitle>
             <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -224,20 +193,14 @@ export function ComplianceDashboard() {
               <div className="flex items-center gap-4 text-xs">
                 <div className="flex items-center gap-1">
                   <Clock className="h-3 w-3 text-yellow-500" />
-                  <span>
-                    {complianceStatus.dataRequests.pendingRequests} pendentes
-                  </span>
+                  <span>{complianceStatus.dataRequests.pendingRequests} pendentes</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <CheckCircle className="h-3 w-3 text-green-500" />
-                  <span>
-                    {complianceStatus.dataRequests.completedRequests} concluídas
-                  </span>
+                  <span>{complianceStatus.dataRequests.completedRequests} concluídas</span>
                 </div>
               </div>
-              <p className="text-muted-foreground text-xs">
-                Total de solicitações realizadas
-              </p>
+              <p className="text-muted-foreground text-xs">Total de solicitações realizadas</p>
             </div>
           </CardContent>
         </Card>
@@ -245,36 +208,26 @@ export function ComplianceDashboard() {
         {/* Privacy Score */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="font-medium text-sm">
-              Pontuação de Privacidade
-            </CardTitle>
+            <CardTitle className="font-medium text-sm">Pontuação de Privacidade</CardTitle>
             <Lock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
               <div className="font-bold text-2xl">
-                {isFullyCompliant ? '100' : Math.floor(consentProgress)}
+                {isFullyCompliant ? "100" : Math.floor(consentProgress)}
               </div>
               <div className="flex items-center gap-1">
                 {isFullyCompliant ? (
-                  <Badge className="bg-green-100 text-green-800">
-                    Excelente
-                  </Badge>
+                  <Badge className="bg-green-100 text-green-800">Excelente</Badge>
                 ) : consentProgress >= 75 ? (
                   <Badge className="bg-blue-100 text-blue-800">Bom</Badge>
                 ) : consentProgress >= 50 ? (
-                  <Badge className="bg-yellow-100 text-yellow-800">
-                    Regular
-                  </Badge>
+                  <Badge className="bg-yellow-100 text-yellow-800">Regular</Badge>
                 ) : (
-                  <Badge className="bg-red-100 text-red-800">
-                    Precisa Melhorar
-                  </Badge>
+                  <Badge className="bg-red-100 text-red-800">Precisa Melhorar</Badge>
                 )}
               </div>
-              <p className="text-muted-foreground text-xs">
-                Baseado na conformidade LGPD
-              </p>
+              <p className="text-muted-foreground text-xs">Baseado na conformidade LGPD</p>
             </div>
           </CardContent>
         </Card>
@@ -285,45 +238,39 @@ export function ComplianceDashboard() {
         <Card>
           <CardHeader>
             <CardTitle>Atividade Recente</CardTitle>
-            <CardDescription>
-              Suas solicitações mais recentes relacionadas à LGPD
-            </CardDescription>
+            <CardDescription>Suas solicitações mais recentes relacionadas à LGPD</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {complianceStatus.dataRequests.recentRequests.map(
-                (request, index) => (
-                  <div
-                    className="flex items-center justify-between rounded-lg bg-gray-50 p-3"
-                    key={index}
-                  >
-                    <div className="flex items-center gap-3">
-                      <FileText className="h-4 w-4 text-gray-500" />
-                      <div>
-                        <p className="font-medium">{request.requestType}</p>
-                        <p className="text-gray-600 text-sm">
-                          {new Date(request.requestedAt).toLocaleDateString(
-                            'pt-BR'
-                          )}
-                        </p>
-                      </div>
+              {complianceStatus.dataRequests.recentRequests.map((request, index) => (
+                <div
+                  className="flex items-center justify-between rounded-lg bg-gray-50 p-3"
+                  key={index}
+                >
+                  <div className="flex items-center gap-3">
+                    <FileText className="h-4 w-4 text-gray-500" />
+                    <div>
+                      <p className="font-medium">{request.requestType}</p>
+                      <p className="text-gray-600 text-sm">
+                        {new Date(request.requestedAt).toLocaleDateString("pt-BR")}
+                      </p>
                     </div>
-                    <Badge
-                      variant={
-                        request.status === 'completed'
-                          ? 'default'
-                          : request.status === 'processing'
-                            ? 'secondary'
-                            : request.status === 'denied'
-                              ? 'destructive'
-                              : 'outline'
-                      }
-                    >
-                      {request.status}
-                    </Badge>
                   </div>
-                )
-              )}
+                  <Badge
+                    variant={
+                      request.status === "completed"
+                        ? "default"
+                        : request.status === "processing"
+                          ? "secondary"
+                          : request.status === "denied"
+                            ? "destructive"
+                            : "outline"
+                    }
+                  >
+                    {request.status}
+                  </Badge>
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>
@@ -333,9 +280,7 @@ export function ComplianceDashboard() {
       <Card>
         <CardHeader>
           <CardTitle>Sobre a LGPD</CardTitle>
-          <CardDescription>
-            Informações importantes sobre seus direitos
-          </CardDescription>
+          <CardDescription>Informações importantes sobre seus direitos</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -344,9 +289,7 @@ export function ComplianceDashboard() {
               <ul className="space-y-1 text-gray-600 text-sm">
                 <li>• Confirmação da existência de tratamento</li>
                 <li>• Acesso aos dados</li>
-                <li>
-                  • Correção de dados incompletos, inexatos ou desatualizados
-                </li>
+                <li>• Correção de dados incompletos, inexatos ou desatualizados</li>
                 <li>• Anonimização, bloqueio ou eliminação</li>
                 <li>• Portabilidade dos dados</li>
                 <li>• Informação sobre compartilhamento</li>

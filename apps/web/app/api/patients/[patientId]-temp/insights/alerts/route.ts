@@ -1,9 +1,9 @@
 // Story 3.2: API Endpoint - Patient Alerts
 
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
-import { type NextRequest, NextResponse } from 'next/server';
-import { PatientInsightsIntegration } from '@/lib/ai/patient-insights';
+import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
+import { cookies } from "next/headers";
+import { type NextRequest, NextResponse } from "next/server";
+import { PatientInsightsIntegration } from "@/lib/ai/patient-insights";
 
 const patientInsights = new PatientInsightsIntegration();
 
@@ -19,20 +19,20 @@ export async function GET(
       data: { session },
     } = await supabase.auth.getSession();
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { patientId } = await params;
 
     // Validate patient access
     const { data: patient } = await supabase
-      .from('patients')
-      .select('id')
-      .eq('id', patientId)
+      .from("patients")
+      .select("id")
+      .eq("id", patientId)
       .single();
 
     if (!patient) {
-      return NextResponse.json({ error: 'Patient not found' }, { status: 404 });
+      return NextResponse.json({ error: "Patient not found" }, { status: 404 });
     }
 
     // Monitor patient alerts
@@ -43,10 +43,7 @@ export async function GET(
       data: alertSummary,
     });
   } catch (_error) {
-    return NextResponse.json(
-      { error: 'Failed to retrieve patient alerts' },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "Failed to retrieve patient alerts" }, { status: 500 });
   }
 }
 
@@ -62,7 +59,7 @@ export async function POST(
       data: { session },
     } = await supabase.auth.getSession();
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { patientId } = await params;
@@ -76,15 +73,11 @@ export async function POST(
     let filteredAlerts = alertSummary.alerts;
 
     if (alertTypes.length > 0) {
-      filteredAlerts = filteredAlerts.filter((alert) =>
-        alertTypes.includes(alert.type),
-      );
+      filteredAlerts = filteredAlerts.filter((alert) => alertTypes.includes(alert.type));
     }
 
     if (severityFilter) {
-      filteredAlerts = filteredAlerts.filter(
-        (alert) => alert.severity === severityFilter,
-      );
+      filteredAlerts = filteredAlerts.filter((alert) => alert.severity === severityFilter);
     }
 
     return NextResponse.json({
@@ -96,9 +89,6 @@ export async function POST(
       },
     });
   } catch (_error) {
-    return NextResponse.json(
-      { error: 'Failed to retrieve filtered alerts' },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "Failed to retrieve filtered alerts" }, { status: 500 });
   }
 }

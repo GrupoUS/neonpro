@@ -31,15 +31,33 @@ export type ADRContent = {
   performanceImpact?: string;
 };
 
+export interface ADRAnswers {
+  title: string;
+  status: string;
+  author: string;
+  context?: string;
+  decision?: string;
+  consequences?: string;
+  alternatives?: string;
+  hasImplementation?: boolean;
+  implementation?: string;
+  hasHealthcare?: boolean;
+  healthcareCompliance?: string;
+  hasSecurity?: boolean;
+  securityImplications?: string;
+  hasPerformance?: boolean;
+  performanceImpact?: string;
+}
+
 export class ADRGenerator {
   private readonly adrDirectory: string;
   private readonly templatePath: string;
-  private readonly spinner: ora.Ora;
+  private readonly spinner: ReturnType<typeof ora>;
 
   constructor(adrDirectory = './docs/adrs') {
     this.adrDirectory = adrDirectory;
     this.templatePath = join(adrDirectory, 'template.md');
-    this.spinner = ora('ADR Generator');
+    this.spinner = ora('Processing...');
   }
 
   /**
@@ -54,12 +72,12 @@ export class ADRGenerator {
       this.spinner.succeed(`Next ADR number: ${nextNumber}`);
 
       // Interactive prompts
-      const answers = await inquirer.prompt([
+      const answers = await inquirer.prompt<ADRAnswers>([
         {
           type: 'input',
           name: 'title',
           message: 'ADR Title:',
-          validate: (input) => input.length > 0 || 'Title is required',
+          validate: (input: string) => input.length > 0 || 'Title is required',
         },
         {
           type: 'list',
@@ -72,7 +90,7 @@ export class ADRGenerator {
           type: 'input',
           name: 'author',
           message: 'Author name:',
-          validate: (input) => input.length > 0 || 'Author is required',
+          validate: (input: string) => input.length > 0 || 'Author is required',
         },
         {
           type: 'editor',
@@ -104,7 +122,7 @@ export class ADRGenerator {
           type: 'editor',
           name: 'implementation',
           message: 'Implementation notes:',
-          when: (answers) => answers.hasImplementation,
+          when: (answers: ADRAnswers) => answers.hasImplementation,
         },
         {
           type: 'confirm',
@@ -116,7 +134,7 @@ export class ADRGenerator {
           type: 'editor',
           name: 'healthcareCompliance',
           message: 'Healthcare compliance considerations:',
-          when: (answers) => answers.hasHealthcare,
+          when: (answers: ADRAnswers) => answers.hasHealthcare,
         },
         {
           type: 'confirm',
@@ -128,7 +146,7 @@ export class ADRGenerator {
           type: 'editor',
           name: 'securityImplications',
           message: 'Security implications:',
-          when: (answers) => answers.hasSecurity,
+          when: (answers: ADRAnswers) => answers.hasSecurity,
         },
         {
           type: 'confirm',
@@ -140,7 +158,7 @@ export class ADRGenerator {
           type: 'editor',
           name: 'performanceImpact',
           message: 'Performance impact:',
-          when: (answers) => answers.hasPerformance,
+          when: (answers: ADRAnswers) => answers.hasPerformance,
         },
       ]);
 
@@ -148,19 +166,19 @@ export class ADRGenerator {
       const adrContent: ADRContent = {
         metadata: {
           number: nextNumber,
-          title: answers.title,
-          status: answers.status as any,
-          author: answers.author,
+          title: answers.title || 'Untitled',
+          status: answers.status as ADRMetadata['status'],
+          author: answers.author || 'Unknown',
           date: new Date().toISOString().split('T')[0],
         },
         context: answers.context || '',
         decision: answers.decision || '',
         consequences: answers.consequences || '',
         alternatives: answers.alternatives || '',
-        implementation: answers.implementation,
-        healthcareCompliance: answers.healthcareCompliance,
-        securityImplications: answers.securityImplications,
-        performanceImpact: answers.performanceImpact,
+        implementation: answers.implementation || '',
+        healthcareCompliance: answers.healthcareCompliance ?? '',
+        securityImplications: answers.securityImplications ?? '',
+        performanceImpact: answers.performanceImpact ?? '',
       };
 
       // Generate and save ADR
@@ -310,7 +328,7 @@ export class ADRGenerator {
       return null;
     }
 
-    const [, numberStr, titleSlug] = match;
+    const [, numberStr, titleSlug = ''] = match;
     const number = Number.parseInt(numberStr, 10);
 
     try {
@@ -318,10 +336,10 @@ export class ADRGenerator {
       const content = readFileSync(filepath, 'utf-8');
 
       // Extract metadata from content
-      const title = this.extractTitle(content) || titleSlug.replace(/-/g, ' ');
-      const status = this.extractStatus(content) as ADRMetadata['status'];
-      const date = this.extractDate(content) || '1970-01-01';
-      const author = this.extractAuthor(content) || 'Unknown';
+      const title = this.extractTitle(content) ?? ((titleSlug ?? '').replace(/-/g, ' ') || 'Untitled');
+      const status = (this.extractStatus(content) as ADRMetadata['status']) || 'Proposed';
+      const date = this.extractDate(content) ?? '1970-01-01';
+      const author = this.extractAuthor(content) ?? 'Unknown';
       const supersededBy = this.extractSupersededBy(content);
 
       return {
@@ -330,7 +348,7 @@ export class ADRGenerator {
         status,
         author,
         date,
-        supersededBy,
+        supersededBy: supersededBy || undefined,
       };
     } catch (_error) {
       return null;
@@ -342,7 +360,7 @@ export class ADRGenerator {
    */
   private extractTitle(content: string): string | null {
     const match = content.match(/^# ADR-\d{3}: (.+)$/m);
-    return match ? match[1] : null;
+    return match?.[1] ?? null;
   }
 
   /**
@@ -350,7 +368,7 @@ export class ADRGenerator {
    */
   private extractStatus(content: string): string {
     const match = content.match(/^## Status\n\[([^\]]+)\]/m);
-    return match ? match[1].split(' by ')[0] : 'Proposed';
+    return match?.[1]?.split(' by ')[0] ?? 'Proposed';
   }
 
   /**
@@ -358,7 +376,7 @@ export class ADRGenerator {
    */
   private extractDate(content: string): string | null {
     const match = content.match(/\*\*Date\*\*: (.+)$/m);
-    return match ? match[1] : null;
+    return match && match[1] ? match[1] : null;
   }
 
   /**
@@ -366,7 +384,7 @@ export class ADRGenerator {
    */
   private extractAuthor(content: string): string | null {
     const match = content.match(/\*\*Author\(s\)\*\*: (.+)$/m);
-    return match ? match[1] : null;
+    return match && match[1] ? match[1] : null;
   }
 
   /**
@@ -374,7 +392,7 @@ export class ADRGenerator {
    */
   private extractSupersededBy(content: string): number | undefined {
     const match = content.match(/Superseded by ADR-(\d{3})/m);
-    return match ? Number.parseInt(match[1], 10) : undefined;
+    return match && match[1] ? Number.parseInt(match[1], 10) : undefined;
   }
 
   /**
@@ -535,7 +553,7 @@ if (require.main === module) {
       generator.generateIndex();
       break;
     case 'update': {
-      const adrNumber = Number.parseInt(process.argv[3], 10);
+      const adrNumber = process.argv[3] ? Number.parseInt(process.argv[3], 10) : 0;
       const newStatus = process.argv[4] as ADRMetadata['status'];
       const supersededBy = process.argv[5]
         ? Number.parseInt(process.argv[5], 10)

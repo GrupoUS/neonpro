@@ -15,10 +15,10 @@ import { securityAuditFramework } from '@/lib/auth/security-audit-framework';
 import { sessionManager } from '@/lib/auth/session-manager';
 
 // Mock Supabase client
-vi.Mock('@/app/utils/supabase/server', () => ({
-  createServerClient: jest.fn(() => ({
+vi.mock('@/app/utils/supabase/server', () => ({
+  createServerClient: vi.fn(() => ({
     auth: {
-      getSession: jest.fn(() => ({
+      getSession: vi.fn(() => ({
         data: {
           session: {
             user: { id: 'test-user-id' },
@@ -70,7 +70,7 @@ vi.Mock('@/app/utils/supabase/server', () => ({
 }));
 
 // Mock performance tracker
-vi.Mock('@/lib/auth/performance-tracker', () => ({
+vi.mock('@/lib/auth/performance-tracker', () => ({
   performanceTracker: {
     recordMetric: vi.fn(),
   },

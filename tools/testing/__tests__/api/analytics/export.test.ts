@@ -4,7 +4,7 @@ import { mockExportData, mockSession } from '@/../../__tests__/utils/mockData';
 import handler from '@/app/api/analytics/export/route';
 
 // Mock Supabase auth
-vi.Mock('@/utils/supabase/server', () => ({
+vi.mock('@/utils/supabase/server', () => ({
   createClient: () => ({
     auth: {
       getSession: vi.fn().mockResolvedValue({
@@ -16,7 +16,7 @@ vi.Mock('@/utils/supabase/server', () => ({
 }));
 
 // Mock jsPDF
-vi.Mock('jspdf', () => {
+vi.mock('jspdf', () => {
   return vi.fn().mockImplementation(() => ({
     text: vi.fn(),
     save: vi.fn(),
@@ -34,7 +34,7 @@ vi.Mock('jspdf', () => {
 });
 
 // Mock ExcelJS
-vi.Mock('exceljs', () => ({
+vi.mock('exceljs', () => ({
   Workbook: vi.fn().mockImplementation(() => ({
     addWorksheet: vi.fn().mockReturnValue({
       addRow: vi.fn(),

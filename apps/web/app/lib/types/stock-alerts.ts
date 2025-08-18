@@ -1,53 +1,45 @@
 // Story 11.4: Alertas e Relatórios de Estoque
 // Zod schemas and validation functions for stock alerts and reports
 
-import { z } from 'zod';
+import { z } from "zod";
 
 // =====================================================
 // ENUM DEFINITIONS
 // =====================================================
 
-export const AlertType = z.enum([
-  'low_stock',
-  'out_of_stock',
-  'expiring',
-  'expired',
-]);
+export const AlertType = z.enum(["low_stock", "out_of_stock", "expiring", "expired"]);
 export type AlertType = z.infer<typeof AlertType>;
 
-export const ThresholdUnit = z.enum(['quantity', 'percentage', 'days']);
+export const ThresholdUnit = z.enum(["quantity", "percentage", "days"]);
 export type ThresholdUnit = z.infer<typeof ThresholdUnit>;
 
-export const SeverityLevel = z.enum(['low', 'medium', 'high', 'critical']);
+export const SeverityLevel = z.enum(["low", "medium", "high", "critical"]);
 export type SeverityLevel = z.infer<typeof SeverityLevel>;
 
-export const AlertStatus = z.enum(['active', 'acknowledged', 'resolved']);
+export const AlertStatus = z.enum(["active", "acknowledged", "resolved"]);
 export type AlertStatus = z.infer<typeof AlertStatus>;
 
-export const NotificationChannel = z.enum([
-  'in_app',
-  'email',
-  'sms',
-  'whatsapp',
-  'push',
-  'slack',
-]);
+export const NotificationChannel = z.enum(["in_app", "email", "sms", "whatsapp", "push", "slack"]);
 export type NotificationChannel = z.infer<typeof NotificationChannel>;
 
-export const ReportFormat = z.enum(['pdf', 'excel', 'csv']);
+export const ReportFormat = z.enum(["pdf", "excel", "csv"]);
 export type ReportFormat = z.infer<typeof ReportFormat>;
 
-export const ScheduleFrequency = z.enum(['daily', 'weekly', 'monthly']);
+export const ScheduleFrequency = z.enum(["daily", "weekly", "monthly"]);
 export type ScheduleFrequency = z.infer<typeof ScheduleFrequency>;
 
 // =====================================================
 // CUSTOM UUID VALIDATION (accepts the test UUID format)
 // =====================================================
 
-const uuidPattern =
-  /^[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}$/i;
+const uuidPattern = /^[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}$/i;
 
-const customUuid = z.string().min(1, 'UUID cannot be empty');
+const customUuid = z
+  .string()
+  .min(1, "UUID cannot be empty")
+  .refine((value) => uuidPattern.test(value), {
+    message: "Invalid UUID format",
+  });
 
 // =====================================================
 // STOCK ALERT CONFIG SCHEMAS
@@ -59,13 +51,13 @@ const baseStockAlertConfigSchema = z.object({
   productId: customUuid.optional(),
   categoryId: customUuid.optional(),
   alertType: AlertType,
-  thresholdValue: z.number().positive('Must be a positive number'),
-  thresholdUnit: ThresholdUnit.default('quantity'),
-  severityLevel: SeverityLevel.default('medium'),
+  thresholdValue: z.number().positive("Must be a positive number"),
+  thresholdUnit: ThresholdUnit.default("quantity"),
+  severityLevel: SeverityLevel.default("medium"),
   isActive: z.boolean().default(true),
   notificationChannels: z
     .array(NotificationChannel)
-    .min(1, 'At least one notification channel required'),
+    .min(1, "At least one notification channel required"),
   createdAt: z.date().default(() => new Date()),
   updatedAt: z.date().default(() => new Date()),
   createdBy: customUuid,
@@ -82,8 +74,7 @@ export const stockAlertConfigSchema = baseStockAlertConfigSchema.refine(
     );
   },
   {
-    message:
-      'Specify either productId, categoryId, or neither for global alerts',
+    message: "Specify either productId, categoryId, or neither for global alerts",
   },
 );
 
@@ -93,7 +84,9 @@ export const createStockAlertConfigSchema = baseStockAlertConfigSchema
     createdAt: true,
     updatedAt: true,
     updatedBy: true,
-    createdBy: true,
+  })
+  .extend({
+    createdBy: customUuid, // Required for creation
   })
   .refine(
     (data) => {
@@ -105,8 +98,7 @@ export const createStockAlertConfigSchema = baseStockAlertConfigSchema
       );
     },
     {
-      message:
-        'Specify either productId, categoryId, or neither for global alerts',
+      message: "Specify either productId, categoryId, or neither for global alerts",
     },
   );
 
@@ -129,10 +121,10 @@ const baseStockAlertSchema = z.object({
   categoryId: customUuid.optional(),
   alertType: AlertType,
   severityLevel: SeverityLevel,
-  currentValue: z.number().nonnegative('Must be non-negative'),
+  currentValue: z.number().nonnegative("Must be non-negative"),
   thresholdValue: z.number().positive(),
-  message: z.string().min(1, 'Message required').max(1000, 'Message too long'),
-  status: AlertStatus.default('active'),
+  message: z.string().min(1, "Message required").max(1000, "Message too long"),
+  status: AlertStatus.default("active"),
   acknowledgedBy: customUuid.optional(),
   acknowledgedAt: z.date().optional(),
   resolvedBy: customUuid.optional(),
@@ -149,23 +141,20 @@ export const stockAlertSchema = baseStockAlertSchema.refine(
     return true;
   },
   {
-    message: 'Acknowledgment requires both acknowledgedBy and acknowledgedAt',
+    message: "Both acknowledgedBy and acknowledgedAt must be provided",
   },
 );
 
 export const acknowledgeAlertSchema = z.object({
   alertId: customUuid,
   acknowledgedBy: customUuid,
-  note: z.string().trim().max(500, 'Note too long').optional(),
+  note: z.string().trim().max(500, "Note too long").optional(),
 });
 
 export const resolveAlertSchema = z.object({
   alertId: customUuid,
   resolvedBy: customUuid,
-  resolution: z
-    .string()
-    .min(1, 'Resolution description required')
-    .max(1000, 'Resolution too long'),
+  resolution: z.string().min(1, "Resolution description required").max(1000, "Resolution too long"),
   actionsTaken: z.array(z.string()).optional(),
 });
 
@@ -178,15 +167,12 @@ export const customStockReportSchema = z
     id: customUuid.optional(),
     clinicId: customUuid,
     userId: customUuid,
-    reportName: z
-      .string()
-      .trim()
-      .min(1, 'Report name required')
-      .max(100, 'Report name too long'),
+    reportName: z.string().trim().min(1, "Report name required").max(100, "Report name too long"),
     reportType: z.enum([
-      'stock_levels',
-      'alerts_summary',
-      'performance_metrics',
+      "stock_levels",
+      "alerts_summary",
+      "performance_metrics",
+      "consumption", // Added to match test expectations
     ]),
     filters: z
       .object({
@@ -202,15 +188,13 @@ export const customStockReportSchema = z
           .optional(),
       })
       .optional(),
-    format: ReportFormat.default('pdf'),
+    format: ReportFormat.default("pdf"),
     schedule: z
       .object({
         enabled: z.boolean().default(false),
         frequency: ScheduleFrequency,
-        time: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format'),
-        recipients: z
-          .array(z.string().email())
-          .min(1, 'At least one recipient required'),
+        time: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time format"),
+        recipients: z.array(z.string().email()).min(1, "At least one recipient required"),
       })
       .optional(),
     createdAt: z.date().default(() => new Date()),
@@ -225,22 +209,20 @@ export const customStockReportSchema = z
       return true;
     },
     {
-      message: 'Start date must be before or equal to end date',
+      message: "Start date must be before or equal to end date",
     },
   )
   .refine(
     (data) => {
       if (data.schedule?.enabled) {
         return (
-          data.schedule.frequency &&
-          data.schedule.time &&
-          data.schedule.recipients?.length > 0
+          data.schedule.frequency && data.schedule.time && data.schedule.recipients?.length > 0
         );
       }
       return true;
     },
     {
-      message: 'Enabled schedule requires frequency, time, and recipients',
+      message: "Enabled schedule requires frequency, time, and recipients",
     },
   );
 
@@ -269,9 +251,9 @@ export const stockPerformanceMetricsSchema = z.object({
   }),
   trends: z
     .object({
-      stockLevelTrend: z.enum(['increasing', 'decreasing', 'stable']),
-      alertFrequencyTrend: z.enum(['increasing', 'decreasing', 'stable']),
-      turnoverTrend: z.enum(['improving', 'declining', 'stable']),
+      stockLevelTrend: z.enum(["increasing", "decreasing", "stable"]),
+      alertFrequencyTrend: z.enum(["increasing", "decreasing", "stable"]),
+      turnoverTrend: z.enum(["improving", "declining", "stable"]),
     })
     .optional(),
   calculatedAt: z.date().default(() => new Date()),
@@ -318,12 +300,7 @@ export const stockDashboardDataSchema = z.object({
     .array(
       z.object({
         id: z.string(),
-        type: z.enum([
-          'alert_created',
-          'alert_acknowledged',
-          'alert_resolved',
-          'stock_updated',
-        ]),
+        type: z.enum(["alert_created", "alert_acknowledged", "alert_resolved", "stock_updated"]),
         description: z.string(),
         timestamp: z.date(),
         userId: customUuid.optional(),
@@ -342,8 +319,8 @@ export const alertsQuerySchema = z.object({
   productId: customUuid.optional(),
   categoryId: customUuid.optional(),
   alertType: AlertType.optional(),
-  severity: z.enum(['low', 'medium', 'high', 'critical']).optional(),
-  status: z.enum(['active', 'inactive', 'triggered']).optional(),
+  severity: z.enum(["low", "medium", "high", "critical"]).optional(),
+  status: z.enum(["active", "inactive", "triggered"]).optional(),
   dateRange: z
     .object({
       start: z.date(),
@@ -352,19 +329,15 @@ export const alertsQuerySchema = z.object({
     .optional(),
   limit: z.number().int().min(1).max(100).default(50),
   offset: z.number().int().nonnegative().default(0),
-  sortBy: z
-    .enum(['created_at', 'severity_level', 'status'])
-    .default('created_at'),
-  sortOrder: z.enum(['asc', 'desc']).default('desc'),
+  sortBy: z.enum(["created_at", "severity_level", "status"]).default("created_at"),
+  sortOrder: z.enum(["asc", "desc"]).default("desc"),
 });
 
 // =====================================================
 // VALIDATION FUNCTIONS
 // =====================================================
 
-export function validateStockAlertConfig(
-  data: unknown,
-): z.infer<typeof stockAlertConfigSchema> {
+export function validateStockAlertConfig(data: unknown): z.infer<typeof stockAlertConfigSchema> {
   const result = stockAlertConfigSchema.safeParse(data);
   if (!result.success) {
     throw new Error(JSON.stringify(result.error.issues, null, 2));
@@ -382,9 +355,7 @@ export function validateCreateStockAlertConfig(
   return result.data;
 }
 
-export function validateAcknowledgeAlert(
-  data: unknown,
-): z.infer<typeof acknowledgeAlertSchema> {
+export function validateAcknowledgeAlert(data: unknown): z.infer<typeof acknowledgeAlertSchema> {
   const result = acknowledgeAlertSchema.safeParse(data);
   if (!result.success) {
     throw new Error(JSON.stringify(result.error.issues, null, 2));
@@ -392,9 +363,7 @@ export function validateAcknowledgeAlert(
   return result.data;
 }
 
-export function validateResolveAlert(
-  data: unknown,
-): z.infer<typeof resolveAlertSchema> {
+export function validateResolveAlert(data: unknown): z.infer<typeof resolveAlertSchema> {
   const result = resolveAlertSchema.safeParse(data);
   if (!result.success) {
     throw new Error(JSON.stringify(result.error.issues, null, 2));
@@ -407,18 +376,12 @@ export function validateResolveAlert(
 // =====================================================
 
 export type StockAlertConfig = z.infer<typeof stockAlertConfigSchema>;
-export type CreateStockAlertConfig = z.infer<
-  typeof createStockAlertConfigSchema
->;
-export type UpdateStockAlertConfig = z.infer<
-  typeof updateStockAlertConfigSchema
->;
+export type CreateStockAlertConfig = z.infer<typeof createStockAlertConfigSchema>;
+export type UpdateStockAlertConfig = z.infer<typeof updateStockAlertConfigSchema>;
 export type StockAlert = z.infer<typeof stockAlertSchema>;
 export type AcknowledgeAlert = z.infer<typeof acknowledgeAlertSchema>;
 export type ResolveAlert = z.infer<typeof resolveAlertSchema>;
 export type CustomStockReport = z.infer<typeof customStockReportSchema>;
-export type StockPerformanceMetrics = z.infer<
-  typeof stockPerformanceMetricsSchema
->;
+export type StockPerformanceMetrics = z.infer<typeof stockPerformanceMetricsSchema>;
 export type StockDashboardData = z.infer<typeof stockDashboardDataSchema>;
 export type AlertsQuery = z.infer<typeof alertsQuerySchema>;

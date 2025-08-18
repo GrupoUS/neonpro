@@ -4,7 +4,7 @@
  * Healthcare compliance with real-time capabilities
  */
 
-import { createClient as createDbClient } from '@neonpro/db';
+import { createClient as createDbClient } from "@neonpro/db";
 
 /**
  * Create Supabase browser client for Client Components

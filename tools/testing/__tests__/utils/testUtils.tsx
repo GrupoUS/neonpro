@@ -11,6 +11,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { type RenderOptions, render } from '@testing-library/react';
 import type React from 'react';
+import { vi } from 'vitest';
 import type { SubscriptionStatus, UserProfile } from '@/types/subscription';
 
 // ============================================================================
@@ -131,13 +132,19 @@ export const renderWithProviders = (
  * Creates a mock implementation for subscription hooks
  */
 export const createMockSubscriptionHook = (
-  subscription: Partial<SubscriptionStatus> = {}
+  overrides: Partial<{
+    data: SubscriptionStatus;
+    isLoading: boolean;
+    isError: boolean;
+    error: Error | null;
+    refetch: () => void;
+  }> = {}
 ) => ({
-  data: createMockSubscription(subscription),
-  isLoading: false,
-  isError: false,
-  error: null,
-  refetch: jest.fn(),
+  data: overrides.data || createMockSubscription(),
+  isLoading: overrides.isLoading || false,
+  isError: overrides.isError || false,
+  error: overrides.error || null,
+  refetch: overrides.refetch || vi.fn(),
 });
 
 /**

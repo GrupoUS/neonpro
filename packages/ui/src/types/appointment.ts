@@ -9,18 +9,12 @@ export type AppointmentData = {
   description?: string;
   startTime: string;
   endTime: string;
-  status:
-    | 'scheduled'
-    | 'confirmed'
-    | 'in-progress'
-    | 'completed'
-    | 'cancelled'
-    | 'no-show';
-  type: 'consultation' | 'procedure' | 'follow-up' | 'emergency';
+  status: "scheduled" | "confirmed" | "in-progress" | "completed" | "cancelled" | "no-show";
+  type: "consultation" | "procedure" | "follow-up" | "emergency";
   practitioner?: string;
   room?: string;
   notes?: string;
-  urgency?: 'low' | 'medium' | 'high' | 'urgent';
+  urgency?: "low" | "medium" | "high" | "urgent";
 };
 
 export type AppointmentCardProps = {

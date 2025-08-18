@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 /**
  * Multi-Factor Authentication (MFA) service for healthcare platform
@@ -10,19 +10,19 @@ import { z } from 'zod';
  * MFA method types supported by the system
  */
 export enum MfaMethod {
-  TOTP = 'totp',
-  SMS = 'sms',
-  EMAIL = 'email',
-  BACKUP_CODES = 'backup_codes',
+  TOTP = "totp",
+  SMS = "sms",
+  EMAIL = "email",
+  BACKUP_CODES = "backup_codes",
 }
 
 /**
  * MFA setup request schema
  */
 export const mfaSetupSchema = z.object({
-  userId: z.string().uuid('User ID deve ser um UUID válido'),
+  userId: z.string().uuid("User ID deve ser um UUID válido"),
   method: z.nativeEnum(MfaMethod, {
-    errorMap: () => ({ message: 'Método MFA inválido' }),
+    errorMap: () => ({ message: "Método MFA inválido" }),
   }),
   phoneNumber: z
     .string()
@@ -35,14 +35,10 @@ export const mfaSetupSchema = z.object({
  * MFA verification request schema
  */
 export const mfaVerificationSchema = z.object({
-  userId: z.string().uuid('User ID deve ser um UUID válido'),
+  userId: z.string().uuid("User ID deve ser um UUID válido"),
   method: z.nativeEnum(MfaMethod),
-  code: z
-    .string()
-    .min(6)
-    .max(8)
-    .regex(/^\d+$/, 'Código deve conter apenas dígitos'),
-  sessionId: z.string().uuid('Session ID deve ser um UUID válido'),
+  code: z.string().min(6).max(8).regex(/^\d+$/, "Código deve conter apenas dígitos"),
+  sessionId: z.string().uuid("Session ID deve ser um UUID válido"),
 });
 
 /**
@@ -75,64 +71,63 @@ export type MfaVerificationResult = {
  * TOTP (Time-based One-Time Password) service
  * Implements RFC 6238 standard for authenticator apps
  */
-export class TotpService {
-  private static readonly ALGORITHM = 'SHA1';
-  private static readonly DIGITS = 6;
-  private static readonly PERIOD = 30; // seconds
-  private static readonly WINDOW = 1; // Allow 1 time step tolerance
+/**
+ * TOTP configuration constants
+ */
+const TOTP_ALGORITHM = "SHA1";
+const TOTP_DIGITS = 6;
+const TOTP_PERIOD = 30; // seconds
+const TOTP_WINDOW = 1; // Allow 1 time step tolerance
 
-  /**
-   * Generate a secret key for TOTP setup
-   */
-  static generateSecret(): string {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
-    let secret = '';
+/**
+ * Generate a secret key for TOTP setup
+ * Implements RFC 6238 standard for authenticator apps
+ */
+export function generateTotpSecret(): string {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+    let secret = "";
     for (let i = 0; i < 32; i++) {
       secret += chars.charAt(Math.floor(Math.random() * chars.length));
     }
     return secret;
   }
 
-  /**
-   * Generate QR code URL for authenticator app setup
-   */
-  static generateQrCodeUrl(
+/**
+ * Generate QR code URL for authenticator app setup
+ */
+export function generateTotpQrCodeUrl(
     secret: string,
     accountName: string,
-    issuer = 'NeonPro Healthcare'
+    issuer = "NeonPro Healthcare",
   ): string {
     const params = new URLSearchParams({
       secret,
       issuer,
-      algorithm: TotpService.ALGORITHM,
-      digits: TotpService.DIGITS.toString(),
-      period: TotpService.PERIOD.toString(),
+      algorithm: TOTP_ALGORITHM,
+      digits: TOTP_DIGITS.toString(),
+      period: TOTP_PERIOD.toString(),
     });
 
     return `otpauth://totp/${encodeURIComponent(issuer)}:${encodeURIComponent(accountName)}?${params}`;
   }
 
-  /**
-   * Generate TOTP code for current time
-   */
-  static generateCode(secret: string, timestamp?: number): string {
-    const time = Math.floor(
-      (timestamp || Date.now()) / 1000 / TotpService.PERIOD
-    );
-    return TotpService.generateHotp(secret, time);
+/**
+ * Generate TOTP code for current time
+ */
+export function generateTotpCode(secret: string, timestamp?: number): string {
+  const time = Math.floor((timestamp || Date.now()) / 1000 / TOTP_PERIOD);
+  return generateHotp(secret, time);
   }
 
-  /**
-   * Verify TOTP code with time window tolerance
-   */
-  static verifyCode(secret: string, code: string, timestamp?: number): boolean {
-    const time = Math.floor(
-      (timestamp || Date.now()) / 1000 / TotpService.PERIOD
-    );
+/**
+ * Verify TOTP code with time window tolerance
+ */
+export function verifyTotpCode(secret: string, code: string, timestamp?: number): boolean {
+  const time = Math.floor((timestamp || Date.now()) / 1000 / TOTP_PERIOD);
 
-    // Check current time and adjacent windows
-    for (let i = -TotpService.WINDOW; i <= TotpService.WINDOW; i++) {
-      if (TotpService.generateHotp(secret, time + i) === code) {
+  // Check current time and adjacent windows
+  for (let i = -TOTP_WINDOW; i <= TOTP_WINDOW; i++) {
+    if (generateHotp(secret, time + i) === code) {
         return true;
       }
     }
@@ -140,13 +135,13 @@ export class TotpService {
     return false;
   }
 
-  /**
-   * Generate HMAC-based One-Time Password (HOTP)
-   * Implementation of RFC 4226
-   */
-  private static generateHotp(secret: string, counter: number): string {
-    // Convert secret from Base32
-    const key = TotpService.base32Decode(secret);
+/**
+ * Generate HMAC-based One-Time Password (HOTP)
+ * Implementation of RFC 4226
+ */
+function generateHotp(secret: string, counter: number): string {
+  // Convert secret from Base32
+  const key = base32Decode(secret);
 
     // Convert counter to 8-byte buffer
     const counterBuffer = Buffer.alloc(8);
@@ -154,8 +149,8 @@ export class TotpService {
     counterBuffer.writeUInt32BE(counter & 0xff_ff_ff_ff, 4);
 
     // Generate HMAC
-    const crypto = require('crypto');
-    const hmac = crypto.createHmac('sha1', key);
+    const crypto = require("node:crypto");
+    const hmac = crypto.createHmac("sha1", key);
     hmac.update(counterBuffer);
     const digest = hmac.digest();
 
@@ -167,24 +162,22 @@ export class TotpService {
       ((digest[offset + 2] & 0xff) << 8) |
       (digest[offset + 3] & 0xff);
 
-    return (code % 10 ** TotpService.DIGITS)
-      .toString()
-      .padStart(TotpService.DIGITS, '0');
+    return (code % 10 ** TOTP_DIGITS).toString().padStart(TOTP_DIGITS, "0");
   }
 
-  /**
-   * Decode Base32 string to buffer
-   */
-  private static base32Decode(encoded: string): Buffer {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
-    encoded = encoded.toUpperCase().replace(/=+$/, '');
+/**
+ * Decode Base32 string to buffer
+ */
+function base32Decode(encoded: string): Buffer {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+    const cleanEncoded = encoded.toUpperCase().replace(/=+$/, "");
 
     let bits = 0;
     let value = 0;
     const output = [];
 
-    for (let i = 0; i < encoded.length; i++) {
-      value = (value << 5) | chars.indexOf(encoded[i]);
+    for (let i = 0; i < cleanEncoded.length; i++) {
+      value = (value << 5) | chars.indexOf(cleanEncoded[i]);
       bits += 5;
 
       if (bits >= 8) {
@@ -195,50 +188,47 @@ export class TotpService {
 
     return Buffer.from(output);
   }
+
+/**
+ * SMS code configuration
+ */
+const SMS_CODE_LENGTH = 6;
+
+/**
+ * Generate random numeric code for SMS
+ * Integrates with SMS providers for code delivery
+ */
+export function generateSmsCode(): string {
+  return Math.floor(Math.random() * 10 ** SMS_CODE_LENGTH)
+    .toString()
+    .padStart(SMS_CODE_LENGTH, "0");
 }
 
 /**
- * SMS-based MFA service
- * Integrates with SMS providers for code delivery
+ * Send SMS code to phone number
+ * In production, integrate with Twilio, AWS SNS, or similar service
  */
-export class SmsService {
-  private static readonly CODE_LENGTH = 6;
+export async function sendSmsCode(_phoneNumber: string, _code: string): Promise<boolean> {
+  try {
+    // In production, use SMS service:
+    // await twilioClient.messages.create({
+    //   body: `Seu código de verificação NeonPro: ${code}. Válido por 5 minutos.`,
+    //   to: phoneNumber,
+    //   from: process.env.TWILIO_PHONE_NUMBER
+    // })
 
-  /**
-   * Generate random numeric code for SMS
-   */
-  static generateCode(): string {
-    return Math.floor(Math.random() * 10 ** SmsService.CODE_LENGTH)
-      .toString()
-      .padStart(SmsService.CODE_LENGTH, '0');
+    return true;
+  } catch (_error) {
+    return false;
   }
+}
 
-  /**
-   * Send SMS code to phone number
-   * In production, integrate with Twilio, AWS SNS, or similar service
-   */
-  static async sendCode(_phoneNumber: string, _code: string): Promise<boolean> {
-    try {
-      // In production, use SMS service:
-      // await twilioClient.messages.create({
-      //   body: `Seu código de verificação NeonPro: ${code}. Válido por 5 minutos.`,
-      //   to: phoneNumber,
-      //   from: process.env.TWILIO_PHONE_NUMBER
-      // })
-
-      return true;
-    } catch (_error) {
-      return false;
-    }
-  }
-
-  /**
-   * Validate phone number format
-   */
-  static validatePhoneNumber(phoneNumber: string): boolean {
-    const phoneRegex = /^\+?[\d\s\-()]{10,20}$/;
-    return phoneRegex.test(phoneNumber);
-  }
+/**
+ * Validate phone number format
+ */
+export function validatePhoneNumber(phoneNumber: string): boolean {
+  const phoneRegex = /^\+?[\d\s\-()]{10,20}$/;
+  return phoneRegex.test(phoneNumber);
 }
 
 /**
@@ -266,12 +256,12 @@ export class BackupCodesService {
    * Generate single backup code
    */
   private static generateSingleCode(): string {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    let code = '';
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let code = "";
 
     for (let i = 0; i < BackupCodesService.CODE_LENGTH; i++) {
       if (i === 4) {
-        code += '-'; // Add separator for readability
+        code += "-"; // Add separator for readability
       }
       code += chars.charAt(Math.floor(Math.random() * chars.length));
     }
@@ -306,42 +296,42 @@ export class MfaService {
     message?: string;
   }> {
     try {
-      const { userId, method, phoneNumber, email } = request;
+      const { userId, method, phoneNumber } = request;
 
       switch (method) {
         case MfaMethod.TOTP: {
-          const secret = TotpService.generateSecret();
-          const qrCode = TotpService.generateQrCodeUrl(secret, userId);
+          const secret = generateTotpSecret();
+          const qrCode = generateTotpQrCodeUrl(secret, userId);
 
           return {
             success: true,
             secret,
             qrCode,
-            message: 'Configure seu app autenticador com o QR code',
+            message: "Configure seu app autenticador com o QR code",
           };
         }
 
         case MfaMethod.SMS: {
-          if (!(phoneNumber && SmsService.validatePhoneNumber(phoneNumber))) {
+          if (!(phoneNumber && validatePhoneNumber(phoneNumber))) {
             return {
               success: false,
-              message: 'Número de telefone válido é obrigatório para SMS MFA',
+              message: "Número de telefone válido é obrigatório para SMS MFA",
             };
           }
 
-          const smsCode = SmsService.generateCode();
-          const smsSent = await SmsService.sendCode(phoneNumber, smsCode);
+          const smsCode = generateSmsCode();
+          const smsSent = await sendSmsCode(phoneNumber, smsCode);
 
           if (!smsSent) {
             return {
               success: false,
-              message: 'Falha ao enviar código SMS',
+              message: "Falha ao enviar código SMS",
             };
           }
 
           return {
             success: true,
-            message: 'Código enviado via SMS',
+            message: "Código enviado via SMS",
           };
         }
 
@@ -351,20 +341,20 @@ export class MfaService {
           return {
             success: true,
             backupCodes,
-            message: 'Códigos de backup gerados. Armazene em local seguro.',
+            message: "Códigos de backup gerados. Armazene em local seguro.",
           };
         }
 
         default:
           return {
             success: false,
-            message: 'Método MFA não suportado',
+            message: "Método MFA não suportado",
           };
       }
     } catch (_error) {
       return {
         success: false,
-        message: 'Erro interno ao configurar MFA',
+        message: "Erro interno ao configurar MFA",
       };
     }
   }
@@ -373,10 +363,10 @@ export class MfaService {
    * Verify MFA code
    */
   static async verifyMfa(
-    request: z.infer<typeof mfaVerificationSchema>
+    request: z.infer<typeof mfaVerificationSchema>,
   ): Promise<MfaVerificationResult> {
     try {
-      const { userId, method, code, sessionId } = request;
+      const { userId, method, code } = request;
 
       // Check for lockout
       const lockoutStatus = await MfaService.checkLockout(userId);
@@ -385,8 +375,7 @@ export class MfaService {
           success: false,
           method,
           lockoutUntil: lockoutStatus.lockoutUntil,
-          message:
-            'Conta temporariamente bloqueada devido a tentativas excessivas',
+          message: "Conta temporariamente bloqueada devido a tentativas excessivas",
         };
       }
 
@@ -397,7 +386,7 @@ export class MfaService {
           // In production, retrieve user's TOTP secret from database
           const totpSecret = await MfaService.getUserTotpSecret(userId);
           if (totpSecret) {
-            verified = TotpService.verifyCode(totpSecret, code);
+            verified = verifyTotpCode(totpSecret, code);
           }
           break;
         }
@@ -420,7 +409,7 @@ export class MfaService {
         return {
           success: true,
           method,
-          message: 'MFA verificado com sucesso',
+          message: "MFA verificado com sucesso",
         };
       }
       const attempts = await MfaService.incrementAttempts(userId);
@@ -433,8 +422,7 @@ export class MfaService {
           method,
           remainingAttempts: 0,
           lockoutUntil: new Date(Date.now() + MfaService.LOCKOUT_DURATION),
-          message:
-            'Muitas tentativas incorretas. Conta bloqueada temporariamente.',
+          message: "Muitas tentativas incorretas. Conta bloqueada temporariamente.",
         };
       }
 
@@ -448,7 +436,7 @@ export class MfaService {
       return {
         success: false,
         method: request.method,
-        message: 'Erro interno na verificação MFA',
+        message: "Erro interno na verificação MFA",
       };
     }
   }
@@ -457,7 +445,7 @@ export class MfaService {
    * Check if user is locked out
    */
   private static async checkLockout(
-    _userId: string
+    _userId: string,
   ): Promise<{ locked: boolean; lockoutUntil?: Date }> {
     // In production, check database for lockout status
     // Mock implementation
@@ -467,33 +455,25 @@ export class MfaService {
   /**
    * Get user's TOTP secret from secure storage
    */
-  private static async getUserTotpSecret(
-    _userId: string
-  ): Promise<string | null> {
+  private static async getUserTotpSecret(_userId: string): Promise<string | null> {
     // In production, retrieve from encrypted database storage
     // Mock implementation
-    return 'MOCK_SECRET_KEY_FOR_DEVELOPMENT';
+    return "MOCK_SECRET_KEY_FOR_DEVELOPMENT";
   }
 
   /**
    * Verify SMS code from temporary storage
    */
-  private static async verifySmsCode(
-    _userId: string,
-    code: string
-  ): Promise<boolean> {
+  private static async verifySmsCode(_userId: string, code: string): Promise<boolean> {
     // In production, verify against temporarily stored SMS code
     // Mock implementation
-    return code === '123456';
+    return code === "123456";
   }
 
   /**
    * Verify backup code and mark as used
    */
-  private static async verifyBackupCode(
-    _userId: string,
-    code: string
-  ): Promise<boolean> {
+  private static async verifyBackupCode(_userId: string, code: string): Promise<boolean> {
     // In production, check database and mark code as used
     // Mock implementation
     return BackupCodesService.validateBackupCode(code);
@@ -527,8 +507,5 @@ export class MfaService {
   /**
    * Record successful MFA authentication
    */
-  private static async recordSuccessfulMfa(
-    _userId: string,
-    _method: MfaMethod
-  ): Promise<void> {}
+  private static async recordSuccessfulMfa(_userId: string, _method: MfaMethod): Promise<void> {}
 }

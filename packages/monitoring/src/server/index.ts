@@ -468,10 +468,16 @@ export class PerformanceMonitoringServer {
       filters.environment = params.get('environment')!;
     }
     if (params.get('limit')) {
-      filters.limit = Number.parseInt(params.get('limit')!, 10);
+      const limit = Number.parseInt(params.get('limit')!, 10);
+      if (!Number.isNaN(limit)) {
+        filters.limit = limit;
+      }
     }
     if (params.get('offset')) {
-      filters.offset = Number.parseInt(params.get('offset')!, 10);
+      const offset = Number.parseInt(params.get('offset')!, 10);
+      if (!Number.isNaN(offset)) {
+        filters.offset = offset;
+      }
     }
 
     return filters;
@@ -512,6 +518,8 @@ export function createMonitoringAPI(
  * Database metrics storage (Supabase/PostgreSQL)
  */
 export class DatabaseMetricsStorage implements MetricsStorage {
+  private connectionString: string;
+
   constructor(connectionString: string) {
     this.connectionString = connectionString;
   }

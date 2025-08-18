@@ -3,6 +3,8 @@
  * This file must be loaded before any other setup files to ensure singleton pattern
  */
 
+import { vi } from 'vitest';
+
 // Suppress Supabase warnings immediately
 const originalConsoleWarn = console.warn;
 console.warn = (...args) => {
@@ -27,45 +29,45 @@ const createMockSupabaseClient = () => {
 
   singletonMockSupabaseClient = {
     auth: {
-      getSession: jest.fn(() =>
+      getSession: vi.fn(() =>
         Promise.resolve({ data: { session: null }, error: null })
       ),
-      getUser: jest.fn(() =>
+      getUser: vi.fn(() =>
         Promise.resolve({ data: { user: null }, error: null })
       ),
-      signIn: jest.fn(),
-      signOut: jest.fn(),
-      onAuthStateChange: jest.fn(() => ({
-        data: { subscription: { unsubscribe: jest.fn() } },
+      signIn: vi.fn(),
+      signOut: vi.fn(),
+      onAuthStateChange: vi.fn(() => ({
+        data: { subscription: { unsubscribe: vi.fn() } },
       })),
     },
-    from: jest.fn(() => ({
-      select: jest.fn().mockReturnThis(),
-      insert: jest.fn().mockReturnThis(),
-      update: jest.fn().mockReturnThis(),
-      delete: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      neq: jest.fn().mockReturnThis(),
-      gt: jest.fn().mockReturnThis(),
-      gte: jest.fn().mockReturnThis(),
-      lt: jest.fn().mockReturnThis(),
-      lte: jest.fn().mockReturnThis(),
-      like: jest.fn().mockReturnThis(),
-      ilike: jest.fn().mockReturnThis(),
-      in: jest.fn().mockReturnThis(),
-      is: jest.fn().mockReturnThis(),
-      order: jest.fn().mockReturnThis(),
-      limit: jest.fn().mockReturnThis(),
-      single: jest.fn(() => Promise.resolve({ data: null, error: null })),
-      then: jest.fn((fn) => fn({ data: [], error: null })),
+    from: vi.fn(() => ({
+      select: vi.fn().mockReturnThis(),
+      insert: vi.fn().mockReturnThis(),
+      update: vi.fn().mockReturnThis(),
+      delete: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      neq: vi.fn().mockReturnThis(),
+      gt: vi.fn().mockReturnThis(),
+      gte: vi.fn().mockReturnThis(),
+      lt: vi.fn().mockReturnThis(),
+      lte: vi.fn().mockReturnThis(),
+      like: vi.fn().mockReturnThis(),
+      ilike: vi.fn().mockReturnThis(),
+      in: vi.fn().mockReturnThis(),
+      is: vi.fn().mockReturnThis(),
+      order: vi.fn().mockReturnThis(),
+      limit: vi.fn().mockReturnThis(),
+      single: vi.fn(() => Promise.resolve({ data: null, error: null })),
+      then: vi.fn((fn) => fn({ data: [], error: null })),
     })),
-    rpc: jest.fn(() => Promise.resolve({ data: null, error: null })),
+    rpc: vi.fn(() => Promise.resolve({ data: null, error: null })),
     storage: {
-      from: jest.fn(() => ({
-        upload: jest.fn(),
-        download: jest.fn(),
-        list: jest.fn(),
-        remove: jest.fn(),
+      from: vi.fn(() => ({
+        upload: vi.fn(),
+        download: vi.fn(),
+        list: vi.fn(),
+        remove: vi.fn(),
       })),
     },
   };
@@ -74,52 +76,52 @@ const createMockSupabaseClient = () => {
 };
 
 // Mock Supabase client creation with singleton pattern - this MUST be called early
-jest.mock('@supabase/supabase-js', () => ({
-  createClient: jest.fn(() => createMockSupabaseClient()),
+vi.mock('@supabase/supabase-js', () => ({
+  createClient: vi.fn(() => createMockSupabaseClient()),
 }));
 
 // Mock the GoTrueClient directly to prevent multiple instances warning
-jest.mock('@supabase/auth-js', () => {
-  const originalModule = jest.requireActual('@supabase/auth-js');
+vi.mock('@supabase/auth-js', () => {
+  const originalModule = vi.importActual('@supabase/auth-js');
   let singletonGoTrueClient: any = null;
 
   return {
     ...originalModule,
-    GoTrueClient: jest.fn().mockImplementation(() => {
+    GoTrueClient: vi.fn().mockImplementation(() => {
       if (singletonGoTrueClient) {
         return singletonGoTrueClient;
       }
 
       singletonGoTrueClient = {
-        onAuthStateChange: jest.fn().mockReturnValue({
-          data: { subscription: { unsubscribe: jest.fn() } },
+        onAuthStateChange: vi.fn().mockReturnValue({
+          data: { subscription: { unsubscribe: vi.fn() } },
         }),
-        getUser: jest
+        getUser: vi
           .fn()
           .mockResolvedValue({ data: { user: null }, error: null }),
-        getSession: jest
+        getSession: vi
           .fn()
           .mockResolvedValue({ data: { session: null }, error: null }),
-        signInWithPassword: jest.fn().mockResolvedValue({
+        signInWithPassword: vi.fn().mockResolvedValue({
           data: { user: null, session: null },
           error: null,
         }),
-        signOut: jest.fn().mockResolvedValue({ error: null }),
-        signUp: jest.fn().mockResolvedValue({
+        signOut: vi.fn().mockResolvedValue({ error: null }),
+        signUp: vi.fn().mockResolvedValue({
           data: { user: null, session: null },
           error: null,
         }),
-        _handleAuthResponse: jest.fn(),
-        _handleGoTrueSignIn: jest.fn(),
-        _handleGoTrueSignUp: jest.fn(),
-        _handleGoTrueSession: jest.fn(),
-        _handleGoTrueUser: jest.fn(),
+        _handleAuthResponse: vi.fn(),
+        _handleGoTrueSignIn: vi.fn(),
+        _handleGoTrueSignUp: vi.fn(),
+        _handleGoTrueSession: vi.fn(),
+        _handleGoTrueUser: vi.fn(),
       };
 
       return singletonGoTrueClient;
     }),
-    AuthError: originalModule.AuthError || jest.fn(),
-    AuthApiError: originalModule.AuthApiError || jest.fn(),
+    AuthError: originalModule.AuthError || vi.fn(),
+    AuthApiError: originalModule.AuthApiError || vi.fn(),
   };
 });
 

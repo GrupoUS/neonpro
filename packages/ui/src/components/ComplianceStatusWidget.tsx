@@ -1,21 +1,10 @@
-import {
-  AlertCircle,
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  Shield,
-} from 'lucide-react';
-import * as React from 'react';
-import { cn } from '../utils/cn';
-import { Badge } from './Badge';
-import { Button } from './Button';
+import { AlertCircle, AlertTriangle, CheckCircle, Clock, Shield } from "lucide-react";
+import * as React from "react";
+import { cn } from "../utils/cn";
+import { Badge } from "./Badge";
+import { Button } from "./Button";
 
-export type ComplianceStatus =
-  | 'compliant'
-  | 'warning'
-  | 'non_compliant'
-  | 'pending'
-  | 'unknown';
+export type ComplianceStatus = "compliant" | "warning" | "non_compliant" | "pending" | "unknown";
 
 export type ComplianceCheck = {
   id: string;
@@ -74,13 +63,13 @@ export type ComplianceStatusWidgetProps = {
 
 const getStatusIcon = (status: ComplianceStatus) => {
   switch (status) {
-    case 'compliant':
+    case "compliant":
       return <CheckCircle className="h-4 w-4" />;
-    case 'warning':
+    case "warning":
       return <AlertTriangle className="h-4 w-4" />;
-    case 'non_compliant':
+    case "non_compliant":
       return <AlertCircle className="h-4 w-4" />;
-    case 'pending':
+    case "pending":
       return <Clock className="h-4 w-4" />;
     default:
       return <Shield className="h-4 w-4" />;
@@ -89,41 +78,41 @@ const getStatusIcon = (status: ComplianceStatus) => {
 
 const getStatusBadgeVariant = (status: ComplianceStatus) => {
   switch (status) {
-    case 'compliant':
-      return 'confirmed';
-    case 'warning':
-      return 'medium';
-    case 'non_compliant':
-      return 'urgent';
-    case 'pending':
-      return 'pending';
+    case "compliant":
+      return "confirmed";
+    case "warning":
+      return "medium";
+    case "non_compliant":
+      return "urgent";
+    case "pending":
+      return "pending";
     default:
-      return 'inactive';
+      return "inactive";
   }
 };
 
 const getStatusText = (status: ComplianceStatus) => {
   switch (status) {
-    case 'compliant':
-      return 'Conforme';
-    case 'warning':
-      return 'Atenção';
-    case 'non_compliant':
-      return 'Não Conforme';
-    case 'pending':
-      return 'Pendente';
+    case "compliant":
+      return "Conforme";
+    case "warning":
+      return "Atenção";
+    case "non_compliant":
+      return "Não Conforme";
+    case "pending":
+      return "Pendente";
     default:
-      return 'Desconhecido';
+      return "Desconhecido";
   }
 };
 
 const formatDate = (date: Date): string => {
-  return new Intl.DateTimeFormat('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
+  return new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   }).format(date);
 };
 
@@ -133,11 +122,11 @@ const ComplianceSection: React.FC<{
   onAddressIssue?: (checkId: string) => void;
   showDetails?: boolean;
 }> = ({ title, checks, onAddressIssue, showDetails = false }) => {
-  const overallStatus = checks.every((check) => check.status === 'compliant')
-    ? 'compliant'
-    : checks.some((check) => check.status === 'non_compliant')
-      ? 'non_compliant'
-      : 'warning';
+  const overallStatus = checks.every((check) => check.status === "compliant")
+    ? "compliant"
+    : checks.some((check) => check.status === "non_compliant")
+      ? "non_compliant"
+      : "warning";
 
   return (
     <div className="space-y-3">
@@ -175,19 +164,14 @@ const ComplianceSection: React.FC<{
                     {getStatusText(check.status)}
                   </Badge>
                 </div>
-                <p
-                  className="mt-1 text-muted-foreground"
-                  id={`check-${check.id}-description`}
-                >
+                <p className="mt-1 text-muted-foreground" id={`check-${check.id}-description`}>
                   {check.description}
                 </p>
                 <p className="mt-1 text-muted-foreground text-xs">
                   Última verificação: {formatDate(check.lastChecked)}
                 </p>
                 {check.details && (
-                  <p className="mt-1 text-muted-foreground text-xs">
-                    {check.details}
-                  </p>
+                  <p className="mt-1 text-muted-foreground text-xs">{check.details}</p>
                 )}
               </div>
 
@@ -209,10 +193,7 @@ const ComplianceSection: React.FC<{
   );
 };
 
-export const ComplianceStatusWidget = React.forwardRef<
-  HTMLDivElement,
-  ComplianceStatusWidgetProps
->(
+export const ComplianceStatusWidget = React.forwardRef<HTMLDivElement, ComplianceStatusWidgetProps>(
   (
     {
       lgpdChecks,
@@ -227,16 +208,16 @@ export const ComplianceStatusWidget = React.forwardRef<
       className,
       ...props
     },
-    ref
+    ref,
   ) => {
     const getScoreVariant = (score: number) => {
       if (score >= 90) {
-        return 'confirmed';
+        return "confirmed";
       }
       if (score >= 70) {
-        return 'medium';
+        return "medium";
       }
-      return 'urgent';
+      return "urgent";
     };
 
     const getScoreIcon = (score: number) => {
@@ -251,10 +232,7 @@ export const ComplianceStatusWidget = React.forwardRef<
 
     return (
       <div
-        className={cn(
-          'rounded-lg border bg-card p-6 text-card-foreground shadow-sm',
-          className
-        )}
+        className={cn("rounded-lg border bg-card p-6 text-card-foreground shadow-sm", className)}
         ref={ref}
         {...props}
         aria-describedby="compliance-status-description"
@@ -267,10 +245,7 @@ export const ComplianceStatusWidget = React.forwardRef<
             <h3 className="font-semibold text-lg" id="compliance-status-title">
               Status de Conformidade
             </h3>
-            <p
-              className="text-muted-foreground text-sm"
-              id="compliance-status-description"
-            >
+            <p className="text-muted-foreground text-sm" id="compliance-status-description">
               Monitoramento constitucional de conformidade healthcare
             </p>
           </div>
@@ -294,11 +269,7 @@ export const ComplianceStatusWidget = React.forwardRef<
         </div>
 
         {/* Compliance Sections */}
-        <div
-          aria-label="Seções de conformidade"
-          className="space-y-6"
-          role="list"
-        >
+        <div aria-label="Seções de conformidade" className="space-y-6" role="list">
           <ComplianceSection
             checks={lgpdChecks}
             onAddressIssue={onAddressIssue}
@@ -351,7 +322,7 @@ export const ComplianceStatusWidget = React.forwardRef<
         )}
       </div>
     );
-  }
+  },
 );
 
-ComplianceStatusWidget.displayName = 'ComplianceStatusWidget';
+ComplianceStatusWidget.displayName = "ComplianceStatusWidget";

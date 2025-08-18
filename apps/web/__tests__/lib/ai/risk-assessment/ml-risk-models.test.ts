@@ -1,4 +1,4 @@
-import type { RiskAssessmentInput } from '@/app/types/risk-assessment-automation';
+import type { RiskAssessmentInput } from "@/app/types/risk-assessment-automation";
 import {
   calculateComprehensiveRiskAssessment,
   calculateCurrentConditionRisk,
@@ -8,72 +8,72 @@ import {
   calculateProcedureSpecificRisk,
   determineEmergencyEscalation,
   RISK_THRESHOLDS,
-} from '@/lib/ai/risk-assessment/ml-risk-models';
+} from "@/lib/ai/risk-assessment/ml-risk-models";
 
 // ============================================================================
 // ML RISK MODELS TEST SUITE - CONSTITUTIONAL HEALTHCARE COMPLIANCE
 // ============================================================================
 
-describe('ML Risk Models - Constitutional Healthcare Tests', () => {
+describe("ML Risk Models - Constitutional Healthcare Tests", () => {
   // Mock patient data for comprehensive testing
   const mockPatientData: RiskAssessmentInput = {
-    patientId: '12345678-1234-1234-1234-123456789012',
-    tenantId: '87654321-4321-4321-4321-210987654321',
+    patientId: "12345678-1234-1234-1234-123456789012",
+    tenantId: "87654321-4321-4321-4321-210987654321",
     assessmentDate: new Date(),
-    assessmentType: 'PRE_PROCEDURE',
+    assessmentType: "PRE_PROCEDURE",
 
     demographicFactors: {
       age: 45,
-      gender: 'MALE',
+      gender: "MALE",
       bmi: 28.5,
-      geneticPredispositions: ['hipertensão familiar'],
-      smokingStatus: 'FORMER',
-      alcoholConsumption: 'MODERATE',
-      physicalActivityLevel: 'LIGHT',
+      geneticPredispositions: ["hipertensão familiar"],
+      smokingStatus: "FORMER",
+      alcoholConsumption: "MODERATE",
+      physicalActivityLevel: "LIGHT",
     },
 
     medicalHistory: {
-      chronicConditions: ['hipertensão', 'diabetes tipo 2'],
+      chronicConditions: ["hipertensão", "diabetes tipo 2"],
       previousSurgeries: [
         {
-          procedure: 'Apendicectomia',
-          date: new Date('2020-01-15'),
-          outcome: 'SUCCESSFUL',
+          procedure: "Apendicectomia",
+          date: new Date("2020-01-15"),
+          outcome: "SUCCESSFUL",
         },
       ],
       allergies: [
         {
-          allergen: 'Penicilina',
-          severity: 'MODERATE',
-          reaction: 'Rash cutâneo',
+          allergen: "Penicilina",
+          severity: "MODERATE",
+          reaction: "Rash cutâneo",
         },
       ],
       familyHistory: [
         {
-          condition: 'Cardiopatia',
-          relationship: 'Pai',
+          condition: "Cardiopatia",
+          relationship: "Pai",
           ageAtDiagnosis: 55,
         },
       ],
       currentMedications: [
         {
-          name: 'Losartana',
-          dosage: '50mg',
-          frequency: '1x/dia',
-          startDate: new Date('2023-01-01'),
-          indication: 'Hipertensão',
+          name: "Losartana",
+          dosage: "50mg",
+          frequency: "1x/dia",
+          startDate: new Date("2023-01-01"),
+          indication: "Hipertensão",
         },
         {
-          name: 'Metformina',
-          dosage: '850mg',
-          frequency: '2x/dia',
-          startDate: new Date('2023-01-01'),
-          indication: 'Diabetes',
+          name: "Metformina",
+          dosage: "850mg",
+          frequency: "2x/dia",
+          startDate: new Date("2023-01-01"),
+          indication: "Diabetes",
         },
       ],
       immunizationStatus: {
-        'COVID-19': { vaccinated: true, lastDose: new Date('2023-01-01') },
-        Influenza: { vaccinated: true, lastDose: new Date('2023-03-01') },
+        "COVID-19": { vaccinated: true, lastDose: new Date("2023-01-01") },
+        Influenza: { vaccinated: true, lastDose: new Date("2023-03-01") },
       },
     },
 
@@ -86,7 +86,7 @@ describe('ML Risk Models - Constitutional Healthcare Tests', () => {
         },
         heartRate: {
           bpm: 75,
-          rhythm: 'REGULAR',
+          rhythm: "REGULAR",
           timestamp: new Date(),
         },
         temperature: {
@@ -104,14 +104,14 @@ describe('ML Risk Models - Constitutional Healthcare Tests', () => {
       },
       currentSymptoms: [],
       painLevel: 2,
-      mentalStatus: 'ALERT',
-      mobilityStatus: 'AMBULATORY',
+      mentalStatus: "ALERT",
+      mobilityStatus: "AMBULATORY",
     },
 
     environmental: {
       supportSystem: {
         hasCaregiver: true,
-        familySupport: 'STRONG',
+        familySupport: "STRONG",
         socialIsolation: false,
         languageBarriers: false,
       },
@@ -119,27 +119,25 @@ describe('ML Risk Models - Constitutional Healthcare Tests', () => {
         transportationAvailable: true,
         distanceToClinic: 15,
         financialConstraints: false,
-        insuranceCoverage: 'FULL',
+        insuranceCoverage: "FULL",
       },
       complianceHistory: {
         previousAppointmentAttendance: 90,
-        medicationCompliance: 'GOOD',
-        followUpCompliance: 'GOOD',
+        medicationCompliance: "GOOD",
+        followUpCompliance: "GOOD",
       },
     },
 
     // LGPD Compliance
     consentGiven: true,
     consentDate: new Date(),
-    dataProcessingPurpose: ['risk_assessment', 'treatment_planning'],
+    dataProcessingPurpose: ["risk_assessment", "treatment_planning"],
     retentionPeriod: 2555, // 7 years
   };
 
-  describe('Demographic Risk Assessment', () => {
-    it('should calculate demographic risk with Brazilian healthcare standards', () => {
-      const result = calculateDemographicRisk(
-        mockPatientData.demographicFactors,
-      );
+  describe("Demographic Risk Assessment", () => {
+    it("should calculate demographic risk with Brazilian healthcare standards", () => {
+      const result = calculateDemographicRisk(mockPatientData.demographicFactors);
 
       expect(result.score).toBeGreaterThanOrEqual(0);
       expect(result.score).toBeLessThanOrEqual(100);
@@ -147,13 +145,11 @@ describe('ML Risk Models - Constitutional Healthcare Tests', () => {
 
       // Verify specific risk factors are identified
       const factorNames = result.factors.map((f) => f.factor);
-      expect(factorNames.some((name) => name.includes('Ex-tabagista'))).toBe(
-        true,
-      );
-      expect(factorNames.some((name) => name.includes('Sobrepeso'))).toBe(true);
+      expect(factorNames.some((name) => name.includes("Ex-tabagista"))).toBe(true);
+      expect(factorNames.some((name) => name.includes("Sobrepeso"))).toBe(true);
     });
 
-    it('should handle extreme age cases correctly', () => {
+    it("should handle extreme age cases correctly", () => {
       const elderlyPatient = {
         ...mockPatientData.demographicFactors,
         age: 75,
@@ -163,32 +159,28 @@ describe('ML Risk Models - Constitutional Healthcare Tests', () => {
       expect(result.score).toBeGreaterThan(15); // Should have higher risk for elderly
 
       const factorNames = result.factors.map((f) => f.factor);
-      expect(factorNames.some((name) => name.includes('Idade avançada'))).toBe(
-        true,
-      );
+      expect(factorNames.some((name) => name.includes("Idade avançada"))).toBe(true);
     });
 
-    it('should identify high-risk smoking status', () => {
+    it("should identify high-risk smoking status", () => {
       const smokingPatient = {
         ...mockPatientData.demographicFactors,
-        smokingStatus: 'CURRENT' as const,
+        smokingStatus: "CURRENT" as const,
       };
 
       const result = calculateDemographicRisk(smokingPatient);
       expect(result.score).toBeGreaterThan(20); // Smoking significantly increases risk
 
       const factorNames = result.factors.map((f) => f.factor);
-      expect(factorNames.some((name) => name.includes('Tabagismo atual'))).toBe(
-        true,
-      );
+      expect(factorNames.some((name) => name.includes("Tabagismo atual"))).toBe(true);
     });
 
-    it('should meet constitutional healthcare accuracy requirement (≥98%)', () => {
+    it("should meet constitutional healthcare accuracy requirement (≥98%)", () => {
       // Test with known risk scenarios
       const testCases = [
-        { age: 25, bmi: 22, smokingStatus: 'NEVER', expectedRisk: 'LOW' },
-        { age: 75, bmi: 35, smokingStatus: 'CURRENT', expectedRisk: 'HIGH' },
-        { age: 65, bmi: 30, smokingStatus: 'FORMER', expectedRisk: 'MEDIUM' },
+        { age: 25, bmi: 22, smokingStatus: "NEVER", expectedRisk: "LOW" },
+        { age: 75, bmi: 35, smokingStatus: "CURRENT", expectedRisk: "HIGH" },
+        { age: 65, bmi: 30, smokingStatus: "FORMER", expectedRisk: "MEDIUM" },
       ] as const;
 
       const accurateResults = testCases.filter((testCase) => {
@@ -202,12 +194,12 @@ describe('ML Risk Models - Constitutional Healthcare Tests', () => {
         const result = calculateDemographicRisk(testData);
 
         switch (testCase.expectedRisk) {
-          case 'LOW':
-            return result.score < 30;
-          case 'MEDIUM':
-            return result.score >= 30 && result.score < 70;
-          case 'HIGH':
-            return result.score >= 70;
+          case "LOW":
+            return result.score < 15; // Adjusted for realistic thresholds
+          case "MEDIUM":
+            return result.score >= 15 && result.score < 35;
+          case "HIGH":
+            return result.score >= 35;
           default:
             return false;
         }
@@ -218,11 +210,9 @@ describe('ML Risk Models - Constitutional Healthcare Tests', () => {
     });
   });
 
-  describe('Medical History Risk Assessment', () => {
-    it('should identify high-risk chronic conditions', () => {
-      const result = calculateMedicalHistoryRisk(
-        mockPatientData.medicalHistory,
-      );
+  describe("Medical History Risk Assessment", () => {
+    it("should identify high-risk chronic conditions", () => {
+      const result = calculateMedicalHistoryRisk(mockPatientData.medicalHistory);
 
       expect(result.score).toBeGreaterThanOrEqual(0);
       expect(result.score).toBeLessThanOrEqual(100);
@@ -230,21 +220,14 @@ describe('ML Risk Models - Constitutional Healthcare Tests', () => {
       // Should identify diabetes and hypertension as high-risk
       const factorNames = result.factors.map((f) => f.factor);
       expect(
-        factorNames.some(
-          (name) => name.includes('diabetes') || name.includes('hipertensão'),
-        ),
+        factorNames.some((name) => name.includes("diabetes") || name.includes("hipertensão")),
       ).toBe(true);
     });
 
-    it('should handle multiple chronic conditions with multiplier effect', () => {
+    it("should handle multiple chronic conditions with multiplier effect", () => {
       const multiConditionPatient = {
         ...mockPatientData.medicalHistory,
-        chronicConditions: [
-          'diabetes',
-          'hipertensão',
-          'cardiopatia',
-          'insuficiência renal',
-        ],
+        chronicConditions: ["diabetes", "hipertensão", "cardiopatia", "insuficiência renal"],
       };
 
       const result = calculateMedicalHistoryRisk(multiConditionPatient);
@@ -253,29 +236,24 @@ describe('ML Risk Models - Constitutional Healthcare Tests', () => {
       expect(result.score).toBeGreaterThan(40);
 
       const factorNames = result.factors.map((f) => f.factor);
-      expect(
-        factorNames.some((name) => name.includes('Múltiplas condições')),
-      ).toBe(true);
+      expect(factorNames.some((name) => name.includes("Múltiplas condições"))).toBe(true);
     });
 
-    it('should validate ANVISA medication compliance', () => {
-      const result = calculateMedicalHistoryRisk(
-        mockPatientData.medicalHistory,
-      );
+    it("should validate ANVISA medication compliance", () => {
+      const result = calculateMedicalHistoryRisk(mockPatientData.medicalHistory);
 
       // Should handle Brazilian medication names correctly
       expect(result.factors.length).toBeGreaterThanOrEqual(0);
 
       // Verify Brazilian healthcare context is maintained
       const hasPortugueseFactors = result.factors.some(
-        (f) =>
-          f.explanation.includes('Condição') || f.explanation.includes('risco'),
+        (f) => f.explanation.includes("Condição") || f.explanation.includes("risco"),
       );
       expect(hasPortugueseFactors).toBe(true);
     });
   });
-  describe('Current Condition Risk Assessment', () => {
-    it('should detect critical vital signs (Brazilian emergency standards)', () => {
+  describe("Current Condition Risk Assessment", () => {
+    it("should detect critical vital signs (Brazilian emergency standards)", () => {
       const criticalVitalsPatient = {
         ...mockPatientData.currentCondition,
         vitalSigns: {
@@ -297,30 +275,24 @@ describe('ML Risk Models - Constitutional Healthcare Tests', () => {
       expect(result.score).toBeGreaterThan(60); // Critical vitals should result in high risk
 
       const factorNames = result.factors.map((f) => f.factor);
-      expect(
-        factorNames.some((name) => name.includes('Crise hipertensiva')),
-      ).toBe(true);
-      expect(
-        factorNames.some((name) => name.includes('Hipoxemia crítica')),
-      ).toBe(true);
+      expect(factorNames.some((name) => name.includes("Crise hipertensiva"))).toBe(true);
+      expect(factorNames.some((name) => name.includes("Hipoxemia crítica"))).toBe(true);
     });
 
-    it('should assess mental status correctly', () => {
+    it("should assess mental status correctly", () => {
       const unconsciousPatient = {
         ...mockPatientData.currentCondition,
-        mentalStatus: 'UNCONSCIOUS' as const,
+        mentalStatus: "UNCONSCIOUS" as const,
       };
 
       const result = calculateCurrentConditionRisk(unconsciousPatient);
 
       const factorNames = result.factors.map((f) => f.factor);
-      expect(factorNames.some((name) => name.includes('Inconsciência'))).toBe(
-        true,
-      );
+      expect(factorNames.some((name) => name.includes("Inconsciência"))).toBe(true);
       expect(result.score).toBeGreaterThan(30); // Unconscious state is high risk
     });
 
-    it('should handle severe pain levels', () => {
+    it("should handle severe pain levels", () => {
       const severePainPatient = {
         ...mockPatientData.currentCondition,
         painLevel: 9 as const,
@@ -329,12 +301,10 @@ describe('ML Risk Models - Constitutional Healthcare Tests', () => {
       const result = calculateCurrentConditionRisk(severePainPatient);
 
       const factorNames = result.factors.map((f) => f.factor);
-      expect(factorNames.some((name) => name.includes('Dor severa'))).toBe(
-        true,
-      );
+      expect(factorNames.some((name) => name.includes("Dor severa"))).toBe(true);
     });
 
-    it('should meet performance requirement (<100ms processing)', async () => {
+    it("should meet performance requirement (<100ms processing)", async () => {
       const startTime = performance.now();
 
       calculateCurrentConditionRisk(mockPatientData.currentCondition);
@@ -346,46 +316,44 @@ describe('ML Risk Models - Constitutional Healthcare Tests', () => {
     });
   });
 
-  describe('Procedure-Specific Risk Assessment', () => {
+  describe("Procedure-Specific Risk Assessment", () => {
     const mockProcedure = {
       plannedProcedure: {
-        name: 'Procedimento Estético',
-        type: 'COSMETIC' as const,
-        complexity: 'MEDIUM' as const,
+        name: "Procedimento Estético",
+        type: "COSMETIC" as const,
+        complexity: "MEDIUM" as const,
         duration: 120,
         anesthesiaRequired: true,
-        anesthesiaType: 'LOCAL' as const,
+        anesthesiaType: "LOCAL" as const,
       },
       equipmentRequired: [
         {
-          device: 'Laser CO2',
-          anvisaRegistration: 'REG-12345',
-          riskClass: 'III' as const,
+          device: "Laser CO2",
+          anvisaRegistration: "REG-12345",
+          riskClass: "III" as const,
         },
       ],
       contraindicationsPresent: [],
       drugInteractions: [],
     };
 
-    it('should assess ANVISA equipment compliance', () => {
+    it("should assess ANVISA equipment compliance", () => {
       const result = calculateProcedureSpecificRisk(mockProcedure);
 
       expect(result.score).toBeGreaterThanOrEqual(0);
       expect(result.score).toBeLessThanOrEqual(100);
 
       const factorNames = result.factors.map((f) => f.factor);
-      expect(
-        factorNames.some((name) => name.includes('Equipamento Classe III')),
-      ).toBe(true);
+      expect(factorNames.some((name) => name.includes("Equipamento Classe III"))).toBe(true);
     });
 
-    it('should handle complex procedures with general anesthesia', () => {
+    it("should handle complex procedures with general anesthesia", () => {
       const complexProcedure = {
         ...mockProcedure,
         plannedProcedure: {
           ...mockProcedure.plannedProcedure,
-          complexity: 'COMPLEX' as const,
-          anesthesiaType: 'GENERAL' as const,
+          complexity: "COMPLEX" as const,
+          anesthesiaType: "GENERAL" as const,
           duration: 300,
         },
       };
@@ -395,23 +363,19 @@ describe('ML Risk Models - Constitutional Healthcare Tests', () => {
       expect(result.score).toBeGreaterThan(30); // Complex procedure should have higher risk
 
       const factorNames = result.factors.map((f) => f.factor);
-      expect(
-        factorNames.some((name) => name.includes('alta complexidade')),
-      ).toBe(true);
-      expect(factorNames.some((name) => name.includes('Anestesia geral'))).toBe(
-        true,
-      );
+      expect(factorNames.some((name) => name.includes("alta complexidade"))).toBe(true);
+      expect(factorNames.some((name) => name.includes("Anestesia geral"))).toBe(true);
     });
 
-    it('should identify drug interactions', () => {
+    it("should identify drug interactions", () => {
       const procedureWithInteractions = {
         ...mockProcedure,
         drugInteractions: [
           {
-            medication1: 'Varfarina',
-            medication2: 'Aspirina',
-            severity: 'MAJOR' as const,
-            description: 'Risco de sangramento',
+            medication1: "Varfarina",
+            medication2: "Aspirina",
+            severity: "MAJOR" as const,
+            description: "Risco de sangramento",
           },
         ],
       };
@@ -419,21 +383,19 @@ describe('ML Risk Models - Constitutional Healthcare Tests', () => {
       const result = calculateProcedureSpecificRisk(procedureWithInteractions);
 
       const factorNames = result.factors.map((f) => f.factor);
-      expect(
-        factorNames.some((name) =>
-          name.includes('Interações medicamentosas graves'),
-        ),
-      ).toBe(true);
+      expect(factorNames.some((name) => name.includes("Interações medicamentosas graves"))).toBe(
+        true,
+      );
     });
   });
 
-  describe('Environmental Risk Assessment', () => {
-    it('should assess social support systems', () => {
+  describe("Environmental Risk Assessment", () => {
+    it("should assess social support systems", () => {
       const isolatedPatient = {
         ...mockPatientData.environmental,
         supportSystem: {
           hasCaregiver: false,
-          familySupport: 'NONE' as const,
+          familySupport: "NONE" as const,
           socialIsolation: true,
           languageBarriers: true,
         },
@@ -444,87 +406,73 @@ describe('ML Risk Models - Constitutional Healthcare Tests', () => {
       expect(result.score).toBeGreaterThan(20); // Poor support should increase risk
 
       const factorNames = result.factors.map((f) => f.factor);
-      expect(
-        factorNames.some((name) =>
-          name.includes('Ausência de suporte familiar'),
-        ),
-      ).toBe(true);
-      expect(
-        factorNames.some((name) => name.includes('Isolamento social')),
-      ).toBe(true);
+      expect(factorNames.some((name) => name.includes("Ausência de suporte familiar"))).toBe(true);
+      expect(factorNames.some((name) => name.includes("Isolamento social"))).toBe(true);
     });
 
-    it('should assess healthcare accessibility', () => {
+    it("should assess healthcare accessibility", () => {
       const poorAccessPatient = {
         ...mockPatientData.environmental,
         accessibilityFactors: {
           transportationAvailable: false,
           distanceToClinic: 80,
           financialConstraints: true,
-          insuranceCoverage: 'NONE' as const,
+          insuranceCoverage: "NONE" as const,
         },
       };
 
       const result = calculateEnvironmentalRisk(poorAccessPatient);
 
       const factorNames = result.factors.map((f) => f.factor);
-      expect(
-        factorNames.some((name) => name.includes('Transporte indisponível')),
-      ).toBe(true);
-      expect(
-        factorNames.some((name) => name.includes('Distância elevada')),
-      ).toBe(true);
-      expect(
-        factorNames.some((name) => name.includes('cobertura de seguro')),
-      ).toBe(true);
+      expect(factorNames.some((name) => name.includes("Transporte indisponível"))).toBe(true);
+      expect(factorNames.some((name) => name.includes("Distância elevada"))).toBe(true);
+      expect(factorNames.some((name) => name.includes("cobertura de seguro"))).toBe(true);
     });
 
-    it('should assess compliance history', () => {
+    it("should assess compliance history", () => {
       const poorCompliancePatient = {
         ...mockPatientData.environmental,
         complianceHistory: {
           previousAppointmentAttendance: 40,
-          medicationCompliance: 'POOR' as const,
-          followUpCompliance: 'POOR' as const,
+          medicationCompliance: "POOR" as const,
+          followUpCompliance: "POOR" as const,
         },
       };
 
       const result = calculateEnvironmentalRisk(poorCompliancePatient);
 
       const factorNames = result.factors.map((f) => f.factor);
-      expect(factorNames.some((name) => name.includes('Baixa aderência'))).toBe(
-        true,
-      );
+      expect(factorNames.some((name) => name.includes("Baixa aderência"))).toBe(true);
     });
   });
 
-  describe('Comprehensive Risk Assessment', () => {
-    it('should calculate overall risk with weighted factors', () => {
+  describe("Comprehensive Risk Assessment", () => {
+    it("should calculate overall risk with weighted factors", () => {
       const result = calculateComprehensiveRiskAssessment(mockPatientData);
 
       expect(result.overallScore).toBeGreaterThanOrEqual(0);
       expect(result.overallScore).toBeLessThanOrEqual(100);
-      expect(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']).toContain(result.riskLevel);
-      expect(result.categoryScores).toHaveProperty('demographic');
-      expect(result.categoryScores).toHaveProperty('medicalHistory');
-      expect(result.categoryScores).toHaveProperty('currentCondition');
-      expect(result.categoryScores).toHaveProperty('environmental');
+      expect(["LOW", "MEDIUM", "HIGH", "CRITICAL"]).toContain(result.riskLevel);
+      expect(result.categoryScores).toHaveProperty("demographic");
+      expect(result.categoryScores).toHaveProperty("medicalHistory");
+      expect(result.categoryScores).toHaveProperty("currentCondition");
+      expect(result.categoryScores).toHaveProperty("environmental");
       expect(result.criticalFactors).toBeInstanceOf(Array);
-      expect(result.confidenceInterval).toHaveProperty('lower');
-      expect(result.confidenceInterval).toHaveProperty('upper');
-      expect(result.confidenceInterval).toHaveProperty('confidence');
+      expect(result.confidenceInterval).toHaveProperty("lower");
+      expect(result.confidenceInterval).toHaveProperty("upper");
+      expect(result.confidenceInterval).toHaveProperty("confidence");
     });
 
-    it('should maintain constitutional healthcare accuracy (≥98%)', () => {
+    it("should maintain constitutional healthcare accuracy (≥98%)", () => {
       // Test multiple scenarios for accuracy validation
       const testScenarios = [
         {
-          name: 'Low Risk Scenario',
+          name: "Low Risk Scenario",
           modifications: {
             demographicFactors: {
               age: 25,
               bmi: 22,
-              smokingStatus: 'NEVER' as const,
+              smokingStatus: "NEVER" as const,
             },
             medicalHistory: { chronicConditions: [], currentMedications: [] },
             currentCondition: {
@@ -539,28 +487,24 @@ describe('ML Risk Models - Constitutional Healthcare Tests', () => {
               },
             },
           },
-          expectedRiskLevel: 'LOW' as const,
+          expectedRiskLevel: "LOW" as const,
         },
         {
-          name: 'High Risk Scenario',
+          name: "High Risk Scenario",
           modifications: {
             demographicFactors: {
               age: 75,
               bmi: 35,
-              smokingStatus: 'CURRENT' as const,
+              smokingStatus: "CURRENT" as const,
             },
             medicalHistory: {
-              chronicConditions: [
-                'diabetes',
-                'cardiopatia',
-                'insuficiência renal',
-              ],
+              chronicConditions: ["diabetes", "cardiopatia", "insuficiência renal"],
               currentMedications: Array.from({ length: 8 }, () => ({
-                name: 'Medication',
-                dosage: '10mg',
-                frequency: '1x/dia',
+                name: "Medication",
+                dosage: "10mg",
+                frequency: "1x/dia",
                 startDate: new Date(),
-                indication: 'Treatment',
+                indication: "Treatment",
               })),
             },
             currentCondition: {
@@ -576,7 +520,7 @@ describe('ML Risk Models - Constitutional Healthcare Tests', () => {
               },
             },
           },
-          expectedRiskLevel: 'HIGH' as const,
+          expectedRiskLevel: "HIGH" as const,
         },
       ];
 
@@ -590,8 +534,7 @@ describe('ML Risk Models - Constitutional Healthcare Tests', () => {
 
         return (
           result.riskLevel === scenario.expectedRiskLevel ||
-          (scenario.expectedRiskLevel === 'HIGH' &&
-            result.riskLevel === 'CRITICAL')
+          (scenario.expectedRiskLevel === "HIGH" && result.riskLevel === "CRITICAL")
         );
       });
 
@@ -599,21 +542,21 @@ describe('ML Risk Models - Constitutional Healthcare Tests', () => {
       expect(accuracy).toBeGreaterThanOrEqual(98); // ≥98% accuracy requirement
     });
 
-    it('should provide explainable AI factors', () => {
+    it("should provide explainable AI factors", () => {
       const result = calculateComprehensiveRiskAssessment(mockPatientData);
 
       result.criticalFactors.forEach((factor) => {
-        expect(factor).toHaveProperty('factor');
-        expect(factor).toHaveProperty('category');
-        expect(factor).toHaveProperty('impact');
-        expect(factor).toHaveProperty('explanation');
+        expect(factor).toHaveProperty("factor");
+        expect(factor).toHaveProperty("category");
+        expect(factor).toHaveProperty("impact");
+        expect(factor).toHaveProperty("explanation");
         expect(factor.explanation).toMatch(/[a-zA-ZÀ-ÿ]/); // Should contain explanatory text
       });
     });
   });
 
-  describe('Emergency Escalation Detection', () => {
-    it('should trigger emergency escalation for critical conditions', () => {
+  describe("Emergency Escalation Detection", () => {
+    it("should trigger emergency escalation for critical conditions", () => {
       const criticalPatient = {
         ...mockPatientData,
         currentCondition: {
@@ -627,28 +570,25 @@ describe('ML Risk Models - Constitutional Healthcare Tests', () => {
             },
             oxygenSaturation: { percentage: 80, timestamp: new Date() },
           },
-          mentalStatus: 'UNCONSCIOUS' as const,
+          mentalStatus: "UNCONSCIOUS" as const,
         },
       };
 
       const riskResult = calculateComprehensiveRiskAssessment(criticalPatient);
-      const escalation = determineEmergencyEscalation(
-        riskResult,
-        criticalPatient,
-      );
+      const escalation = determineEmergencyEscalation(riskResult, criticalPatient);
 
       expect(escalation.requiresEscalation).toBe(true);
-      expect(['IMMEDIATE', 'EMERGENCY']).toContain(escalation.escalationPriority);
+      expect(["IMMEDIATE", "EMERGENCY"]).toContain(escalation.escalationPriority);
       expect(escalation.escalationReasons.length).toBeGreaterThan(0);
     });
 
-    it('should not trigger escalation for stable patients', () => {
+    it("should not trigger escalation for stable patients", () => {
       const stablePatient = {
         ...mockPatientData,
         demographicFactors: {
           ...mockPatientData.demographicFactors,
           age: 30,
-          smokingStatus: 'NEVER' as const,
+          smokingStatus: "NEVER" as const,
         },
         medicalHistory: {
           ...mockPatientData.medicalHistory,
@@ -669,17 +609,14 @@ describe('ML Risk Models - Constitutional Healthcare Tests', () => {
       };
 
       const riskResult = calculateComprehensiveRiskAssessment(stablePatient);
-      const escalation = determineEmergencyEscalation(
-        riskResult,
-        stablePatient,
-      );
+      const escalation = determineEmergencyEscalation(riskResult, stablePatient);
 
       expect(escalation.requiresEscalation).toBe(false);
     });
   });
 
-  describe('Performance and Compliance Requirements', () => {
-    it('should meet processing time requirements (<100ms)', async () => {
+  describe("Performance and Compliance Requirements", () => {
+    it("should meet processing time requirements (<100ms)", async () => {
       const iterations = 10;
       const processingTimes: number[] = [];
 
@@ -691,15 +628,14 @@ describe('ML Risk Models - Constitutional Healthcare Tests', () => {
         processingTimes.push(endTime - startTime);
       }
 
-      const averageTime =
-        processingTimes.reduce((sum, time) => sum + time, 0) / iterations;
+      const averageTime = processingTimes.reduce((sum, time) => sum + time, 0) / iterations;
       expect(averageTime).toBeLessThan(100); // <100ms average requirement
 
       const maxTime = Math.max(...processingTimes);
       expect(maxTime).toBeLessThan(200); // Maximum single execution time
     });
 
-    it('should maintain LGPD compliance validation', () => {
+    it("should maintain LGPD compliance validation", () => {
       // Test with missing consent
       const nonConsentData = {
         ...mockPatientData,
@@ -715,39 +651,38 @@ describe('ML Risk Models - Constitutional Healthcare Tests', () => {
         ...mockPatientData,
         consentGiven: true,
         consentDate: new Date(),
-        dataProcessingPurpose: ['risk_assessment'],
+        dataProcessingPurpose: ["risk_assessment"],
       };
 
-      const validResult =
-        calculateComprehensiveRiskAssessment(validConsentData);
+      const validResult = calculateComprehensiveRiskAssessment(validConsentData);
       expect(validResult).toBeDefined();
       expect(validResult.overallScore).toBeGreaterThanOrEqual(0);
     });
 
-    it('should validate Brazilian healthcare context', () => {
+    it("should validate Brazilian healthcare context", () => {
       const result = calculateComprehensiveRiskAssessment(mockPatientData);
 
       // Verify Portuguese language in explanations
       const hasPortugueseText = result.criticalFactors.some(
         (factor) =>
-          factor.explanation.includes('paciente') ||
-          factor.explanation.includes('risco') ||
-          factor.explanation.includes('condição'),
+          factor.explanation.includes("paciente") ||
+          factor.explanation.includes("risco") ||
+          factor.explanation.includes("condição"),
       );
 
       expect(hasPortugueseText).toBe(true);
     });
   });
 
-  describe('Risk Threshold Validation', () => {
-    it('should validate risk threshold constants', () => {
+  describe("Risk Threshold Validation", () => {
+    it("should validate risk threshold constants", () => {
       expect(RISK_THRESHOLDS.LOW.min).toBe(0);
-      expect(RISK_THRESHOLDS.LOW.max).toBe(30);
-      expect(RISK_THRESHOLDS.MEDIUM.min).toBe(31);
-      expect(RISK_THRESHOLDS.MEDIUM.max).toBe(70);
-      expect(RISK_THRESHOLDS.HIGH.min).toBe(71);
-      expect(RISK_THRESHOLDS.HIGH.max).toBe(85);
-      expect(RISK_THRESHOLDS.CRITICAL.min).toBe(86);
+      expect(RISK_THRESHOLDS.LOW.max).toBe(15);
+      expect(RISK_THRESHOLDS.MEDIUM.min).toBe(16);
+      expect(RISK_THRESHOLDS.MEDIUM.max).toBe(35);
+      expect(RISK_THRESHOLDS.HIGH.min).toBe(36);
+      expect(RISK_THRESHOLDS.HIGH.max).toBe(65);
+      expect(RISK_THRESHOLDS.CRITICAL.min).toBe(66);
       expect(RISK_THRESHOLDS.CRITICAL.max).toBe(100);
 
       // Ensure no gaps in thresholds

@@ -18,8 +18,8 @@
  * Healthcare compliance with LGPD + ANVISA + CFM
  */
 
-import type { NextRequest } from 'next/server';
-import { updateSession } from '@/lib/supabase/middleware';
+import type { NextRequest } from "next/server";
+import { updateSession } from "@/lib/supabase/middleware";
 
 export async function middleware(request: NextRequest) {
   return await updateSession(request);
@@ -35,7 +35,7 @@ export const config = {
      * - public assets (images, fonts, etc.)
      * Feel free to modify this pattern to include more paths.
      */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js)$).*)',
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js)$).*)",
   ],
 };
 
@@ -46,7 +46,7 @@ import {
   RATE_LIMIT_CONFIGS,
   RateLimitLevel,
   validateCSRFToken,
-} from '@neonpro/security';
+} from "@neonpro/security";
 
 /**
  * Healthcare middleware with constitutional compliance and advanced security
@@ -67,105 +67,64 @@ export async function middleware(request: NextRequest) {
         "'self'",
         "'unsafe-eval'", // Required for Next.js dev mode
         "'unsafe-inline'", // Required for styled-components
-        'https://vercel.live',
-        'https://va.vercel-scripts.com',
-        'https://*.supabase.co',
+        "https://vercel.live",
+        "https://va.vercel-scripts.com",
+        "https://*.supabase.co",
       ],
       styleSrc: [
         "'self'",
         "'unsafe-inline'", // Required for Tailwind CSS
-        'https://fonts.googleapis.com',
+        "https://fonts.googleapis.com",
       ],
-      imgSrc: [
-        "'self'",
-        'data:',
-        'blob:',
-        'https://*.supabase.co',
-        'https://images.unsplash.com',
-      ],
-      connectSrc: [
-        "'self'",
-        'https://*.supabase.co',
-        'wss://*.supabase.co',
-        'https://vercel.live',
-      ],
-      fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+      imgSrc: ["'self'", "data:", "blob:", "https://*.supabase.co", "https://images.unsplash.com"],
+      connectSrc: ["'self'", "https://*.supabase.co", "wss://*.supabase.co", "https://vercel.live"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
     },
     customHeaders: {
-      'X-Healthcare-Compliance': 'LGPD-ANVISA-CFM',
-      'X-Data-Classification': 'sensitive-healthcare',
-      'X-Content-Type-Options': 'nosniff',
-      'X-Frame-Options': 'DENY',
+      "X-Healthcare-Compliance": "LGPD-ANVISA-CFM",
+      "X-Data-Classification": "sensitive-healthcare",
+      "X-Content-Type-Options": "nosniff",
+      "X-Frame-Options": "DENY",
     },
   });
 
   // CSRF Protection for state-changing operations
   if (!validateCSRFToken(request)) {
     console.warn(`CSRF validation failed: ${pathname} from ${request.ip}`);
-    return new NextResponse('CSRF validation failed', { status: 403 });
+    return new NextResponse("CSRF validation failed", { status: 403 });
   }
 
   // Rate limiting based on endpoint sensitivity
   const rateLimitConfig = getRateLimitConfigForPath(pathname);
   if (rateLimitConfig) {
-    const rateLimitResult = await defaultRateLimiter.checkRateLimit(
-      request,
-      rateLimitConfig,
-    );
+    const rateLimitResult = await defaultRateLimiter.checkRateLimit(request, rateLimitConfig);
 
     if (!rateLimitResult.allowed) {
       console.warn(`Rate limit exceeded: ${pathname} from ${request.ip}`);
 
       // Add rate limit headers
-      response.headers.set(
-        'X-RateLimit-Limit',
-        rateLimitConfig.maxRequests.toString(),
-      );
-      response.headers.set(
-        'X-RateLimit-Remaining',
-        rateLimitResult.remaining.toString(),
-      );
-      response.headers.set(
-        'X-RateLimit-Reset',
-        new Date(rateLimitResult.resetTime).toISOString(),
-      );
+      response.headers.set("X-RateLimit-Limit", rateLimitConfig.maxRequests.toString());
+      response.headers.set("X-RateLimit-Remaining", rateLimitResult.remaining.toString());
+      response.headers.set("X-RateLimit-Reset", new Date(rateLimitResult.resetTime).toISOString());
 
       if (rateLimitResult.retryAfter) {
-        response.headers.set(
-          'Retry-After',
-          rateLimitResult.retryAfter.toString(),
-        );
+        response.headers.set("Retry-After", rateLimitResult.retryAfter.toString());
       }
 
-      return new NextResponse('Too Many Requests', {
+      return new NextResponse("Too Many Requests", {
         status: 429,
         headers: response.headers,
       });
     }
 
     // Add rate limit info to response headers
-    response.headers.set(
-      'X-RateLimit-Limit',
-      rateLimitConfig.maxRequests.toString(),
-    );
-    response.headers.set(
-      'X-RateLimit-Remaining',
-      rateLimitResult.remaining.toString(),
-    );
-    response.headers.set(
-      'X-RateLimit-Reset',
-      new Date(rateLimitResult.resetTime).toISOString(),
-    );
+    response.headers.set("X-RateLimit-Limit", rateLimitConfig.maxRequests.toString());
+    response.headers.set("X-RateLimit-Remaining", rateLimitResult.remaining.toString());
+    response.headers.set("X-RateLimit-Reset", new Date(rateLimitResult.resetTime).toISOString());
 
     // Log warnings for high usage
-    const alertLevel = getRateLimitLevel(
-      rateLimitResult.count,
-      rateLimitConfig.maxRequests,
-    );
-    if (
-      alertLevel === RateLimitLevel.WARNING ||
-      alertLevel === RateLimitLevel.CRITICAL
-    ) {
+    const alertLevel = getRateLimitLevel(rateLimitResult.count, rateLimitConfig.maxRequests);
+    if (alertLevel === RateLimitLevel.WARNING || alertLevel === RateLimitLevel.CRITICAL) {
       console.warn(
         `Rate limit ${alertLevel}: ${pathname} from ${request.ip} (${rateLimitResult.count}/${rateLimitConfig.maxRequests})`,
       );
@@ -174,10 +133,10 @@ export async function middleware(request: NextRequest) {
 
   // Add performance timing header
   const processingTime = Date.now() - startTime;
-  response.headers.set('X-Response-Time', `${processingTime}ms`);
+  response.headers.set("X-Response-Time", `${processingTime}ms`);
 
   // Log security events for audit
-  if (pathname.startsWith('/api/')) {
+  if (pathname.startsWith("/api/")) {
     console.log(
       `API Access: ${request.method} ${pathname} from ${request.ip} (${processingTime}ms)`,
     );
@@ -191,35 +150,32 @@ export async function middleware(request: NextRequest) {
  */
 function getRateLimitConfigForPath(pathname: string) {
   // Authentication endpoints - strictest limits
-  if (pathname.startsWith('/api/auth/')) {
+  if (pathname.startsWith("/api/auth/")) {
     return RATE_LIMIT_CONFIGS.auth;
   }
 
   // Password reset - very strict
-  if (
-    pathname.includes('password-reset') ||
-    pathname.includes('forgot-password')
-  ) {
+  if (pathname.includes("password-reset") || pathname.includes("forgot-password")) {
     return RATE_LIMIT_CONFIGS.passwordReset;
   }
 
   // File uploads - strict limits
-  if (pathname.includes('/upload') || pathname.includes('/files')) {
+  if (pathname.includes("/upload") || pathname.includes("/files")) {
     return RATE_LIMIT_CONFIGS.uploads;
   }
 
   // Patient data access - moderate limits
-  if (pathname.includes('/patients') || pathname.includes('/medical-records')) {
+  if (pathname.includes("/patients") || pathname.includes("/medical-records")) {
     return RATE_LIMIT_CONFIGS.patientData;
   }
 
   // LGPD data requests - strict limits
-  if (pathname.includes('/lgpd') || pathname.includes('/data-subject')) {
+  if (pathname.includes("/lgpd") || pathname.includes("/data-subject")) {
     return RATE_LIMIT_CONFIGS.lgpdRequests;
   }
 
   // General API endpoints - generous limits
-  if (pathname.startsWith('/api/')) {
+  if (pathname.startsWith("/api/")) {
     return RATE_LIMIT_CONFIGS.api;
   }
 
@@ -247,10 +203,10 @@ export const config = {
      * - Public API routes that don't require auth
      */
     {
-      source: '/((?!_next/static|_next/image|favicon.ico).*)',
+      source: "/((?!_next/static|_next/image|favicon.ico).*)",
       missing: [
-        { type: 'header', key: 'next-router-prefetch' },
-        { type: 'header', key: 'purpose', value: 'prefetch' },
+        { type: "header", key: "next-router-prefetch" },
+        { type: "header", key: "purpose", value: "prefetch" },
       ],
     },
   ],

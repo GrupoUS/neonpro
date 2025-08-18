@@ -1,9 +1,9 @@
-import { riskAssessmentService } from '@/app/lib/services/risk-assessment-automation';
+import { riskAssessmentService } from "@/app/lib/services/risk-assessment-automation";
 import type {
   RiskAssessmentInput,
   RiskAssessmentResult,
   RiskLevel,
-} from '@/app/types/risk-assessment-automation';
+} from "@/app/types/risk-assessment-automation";
 
 // ============================================================================
 // PATIENT INSIGHTS INTEGRATION - TREATMENT PREDICTION CONNECTIVITY
@@ -24,7 +24,7 @@ export class RiskAssessmentIntegration {
     treatmentOptions: Array<{
       treatmentId: string;
       name: string;
-      complexity: 'LOW' | 'MEDIUM' | 'HIGH' | 'COMPLEX';
+      complexity: "LOW" | "MEDIUM" | "HIGH" | "COMPLEX";
       estimatedOutcome: number;
     }>,
     performedBy: string,
@@ -55,8 +55,8 @@ export class RiskAssessmentIntegration {
           name: treatment.name,
           riskAdjustedOutcome: treatment.estimatedOutcome * 0.8, // Conservative default
           riskLevel: RiskLevel.MEDIUM,
-          riskFactors: ['Avaliação de risco não disponível'],
-          recommendations: ['Realizar avaliação de risco antes do tratamento'],
+          riskFactors: ["Avaliação de risco não disponível"],
+          recommendations: ["Realizar avaliação de risco antes do tratamento"],
           contraindications: [],
         }));
       }
@@ -82,16 +82,11 @@ export class RiskAssessmentIntegration {
       });
 
       // Sort by risk-adjusted outcome (highest first)
-      return enhancedTreatments.sort(
-        (a, b) => b.riskAdjustedOutcome - a.riskAdjustedOutcome,
-      );
+      return enhancedTreatments.sort((a, b) => b.riskAdjustedOutcome - a.riskAdjustedOutcome);
     } catch (error) {
-      console.error(
-        'Failed to enhance treatment prediction with risk assessment:',
-        error,
-      );
+      console.error("Failed to enhance treatment prediction with risk assessment:", error);
       throw new Error(
-        `Treatment enhancement failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        `Treatment enhancement failed: ${error instanceof Error ? error.message : "Unknown error"}`,
       );
     }
   }
@@ -120,27 +115,23 @@ export class RiskAssessmentIntegration {
     switch (riskAssessment.scoreBreakdown.riskLevel) {
       case RiskLevel.CRITICAL:
         riskMultiplier *= 0.3; // Severely reduce outcome expectation
-        riskFactors.push('Paciente em estado crítico');
-        recommendations.push('Considerar estabilização antes do tratamento');
-        if (treatment.complexity !== 'LOW') {
-          contraindications.push(
-            'Tratamento complexo contraindicado em estado crítico',
-          );
+        riskFactors.push("Paciente em estado crítico");
+        recommendations.push("Considerar estabilização antes do tratamento");
+        if (treatment.complexity !== "LOW") {
+          contraindications.push("Tratamento complexo contraindicado em estado crítico");
         }
         break;
 
       case RiskLevel.HIGH:
         riskMultiplier *= 0.6;
-        riskFactors.push('Alto risco de complicações');
-        recommendations.push('Monitoramento intensivo necessário');
+        riskFactors.push("Alto risco de complicações");
+        recommendations.push("Monitoramento intensivo necessário");
         break;
 
       case RiskLevel.MEDIUM:
         riskMultiplier *= 0.8;
-        riskFactors.push('Risco moderado presente');
-        recommendations.push(
-          'Seguimento padrão com atenção aos fatores de risco',
-        );
+        riskFactors.push("Risco moderado presente");
+        recommendations.push("Seguimento padrão com atenção aos fatores de risco");
         break;
 
       case RiskLevel.LOW:
@@ -154,59 +145,56 @@ export class RiskAssessmentIntegration {
     for (const factor of criticalFactors) {
       // Cardiovascular risks
       if (
-        factor.factor.toLowerCase().includes('cardíac') ||
-        factor.factor.toLowerCase().includes('pressão')
+        factor.factor.toLowerCase().includes("cardíac") ||
+        factor.factor.toLowerCase().includes("pressão")
       ) {
         riskFactors.push(`Risco cardiovascular: ${factor.factor}`);
 
-        if (
-          treatment.name.toLowerCase().includes('anestesia') ||
-          treatment.complexity === 'HIGH'
-        ) {
+        if (treatment.name.toLowerCase().includes("anestesia") || treatment.complexity === "HIGH") {
           riskMultiplier *= 0.7;
-          recommendations.push('Avaliação cardiológica pré-procedimento');
+          recommendations.push("Avaliação cardiológica pré-procedimento");
         }
       }
 
       // Respiratory risks
       if (
-        factor.factor.toLowerCase().includes('respirat') ||
-        factor.factor.toLowerCase().includes('oxigen')
+        factor.factor.toLowerCase().includes("respirat") ||
+        factor.factor.toLowerCase().includes("oxigen")
       ) {
         riskFactors.push(`Risco respiratório: ${factor.factor}`);
 
-        if (treatment.name.toLowerCase().includes('sedação')) {
+        if (treatment.name.toLowerCase().includes("sedação")) {
           riskMultiplier *= 0.6;
-          recommendations.push('Monitoramento respiratório contínuo');
+          recommendations.push("Monitoramento respiratório contínuo");
         }
       }
 
       // Metabolic risks
       if (
-        factor.factor.toLowerCase().includes('diabet') ||
-        factor.factor.toLowerCase().includes('metab')
+        factor.factor.toLowerCase().includes("diabet") ||
+        factor.factor.toLowerCase().includes("metab")
       ) {
         riskFactors.push(`Risco metabólico: ${factor.factor}`);
-        recommendations.push('Controle glicêmico otimizado');
+        recommendations.push("Controle glicêmico otimizado");
         riskMultiplier *= 0.85;
       }
 
       // Allergic reactions
-      if (factor.factor.toLowerCase().includes('alergi')) {
+      if (factor.factor.toLowerCase().includes("alergi")) {
         riskFactors.push(`Risco alérgico: ${factor.factor}`);
-        recommendations.push('Protocolo anti-alérgico profilático');
+        recommendations.push("Protocolo anti-alérgico profilático");
 
-        if (treatment.name.toLowerCase().includes('medicament')) {
+        if (treatment.name.toLowerCase().includes("medicament")) {
           riskMultiplier *= 0.75;
         }
       }
 
       // Age-related risks
-      if (factor.factor.toLowerCase().includes('idade')) {
+      if (factor.factor.toLowerCase().includes("idade")) {
         riskFactors.push(`Fator etário: ${factor.factor}`);
 
-        if (factor.factor.toLowerCase().includes('idoso')) {
-          recommendations.push('Protocolo geriátrico especializado');
+        if (factor.factor.toLowerCase().includes("idoso")) {
+          recommendations.push("Protocolo geriátrico especializado");
           riskMultiplier *= 0.8;
         }
       }
@@ -221,14 +209,11 @@ export class RiskAssessmentIntegration {
     };
 
     riskMultiplier *=
-      complexityMultipliers[
-        treatment.complexity as keyof typeof complexityMultipliers
-      ] || 0.8;
+      complexityMultipliers[treatment.complexity as keyof typeof complexityMultipliers] || 0.8;
 
     // Determine treatment-specific risk level
     let treatmentRiskLevel: RiskLevel;
-    const adjustedScore =
-      riskAssessment.scoreBreakdown.overallScore * (2 - riskMultiplier);
+    const adjustedScore = riskAssessment.scoreBreakdown.overallScore * (2 - riskMultiplier);
 
     if (adjustedScore >= 86) treatmentRiskLevel = RiskLevel.CRITICAL;
     else if (adjustedScore >= 71) treatmentRiskLevel = RiskLevel.HIGH;
@@ -236,21 +221,13 @@ export class RiskAssessmentIntegration {
     else treatmentRiskLevel = RiskLevel.LOW;
 
     // Final contraindication check
-    if (
-      treatmentRiskLevel === RiskLevel.CRITICAL &&
-      treatment.complexity !== 'LOW'
-    ) {
-      contraindications.push(
-        'Risco crítico impede realização de tratamento complexo',
-      );
+    if (treatmentRiskLevel === RiskLevel.CRITICAL && treatment.complexity !== "LOW") {
+      contraindications.push("Risco crítico impede realização de tratamento complexo");
       riskMultiplier *= 0.1; // Severely penalize
     }
 
     return {
-      adjustedOutcome: Math.max(
-        0,
-        Math.min(100, treatment.estimatedOutcome * riskMultiplier),
-      ),
+      adjustedOutcome: Math.max(0, Math.min(100, treatment.estimatedOutcome * riskMultiplier)),
       treatmentRiskLevel,
       applicableRiskFactors: riskFactors,
       recommendations: recommendations,
@@ -291,8 +268,8 @@ export class RiskAssessmentIntegration {
       if (currentRisk.length === 0) {
         return {
           riskUpdate: false,
-          alerts: ['Nenhuma avaliação de risco base encontrada'],
-          recommendations: ['Realizar avaliação de risco completa'],
+          alerts: ["Nenhuma avaliação de risco base encontrada"],
+          recommendations: ["Realizar avaliação de risco completa"],
         };
       }
 
@@ -304,33 +281,30 @@ export class RiskAssessmentIntegration {
       let criticalChange = false;
 
       // Blood pressure assessment
-      if (
-        vitalSigns.bloodPressure.systolic > 180 ||
-        vitalSigns.bloodPressure.diastolic > 110
-      ) {
-        alerts.push('Crise hipertensiva detectada');
-        recommendations.push('Intervenção médica imediata necessária');
+      if (vitalSigns.bloodPressure.systolic > 180 || vitalSigns.bloodPressure.diastolic > 110) {
+        alerts.push("Crise hipertensiva detectada");
+        recommendations.push("Intervenção médica imediata necessária");
         criticalChange = true;
       }
 
       // Oxygen saturation
       if (vitalSigns.oxygenSaturation < 90) {
-        alerts.push('Hipoxemia crítica');
-        recommendations.push('Suporte ventilatório urgente');
+        alerts.push("Hipoxemia crítica");
+        recommendations.push("Suporte ventilatório urgente");
         criticalChange = true;
       }
 
       // Heart rate
       if (vitalSigns.heartRate > 120 || vitalSigns.heartRate < 50) {
-        alerts.push('Frequência cardíaca anormal');
-        recommendations.push('Avaliação cardiológica urgente');
+        alerts.push("Frequência cardíaca anormal");
+        recommendations.push("Avaliação cardiológica urgente");
         criticalChange = true;
       }
 
       // Temperature
       if (vitalSigns.temperature > 39 || vitalSigns.temperature < 35) {
-        alerts.push('Temperatura crítica');
-        recommendations.push('Medidas de controle térmico imediatas');
+        alerts.push("Temperatura crítica");
+        recommendations.push("Medidas de controle térmico imediatas");
         criticalChange = true;
       }
 
@@ -349,7 +323,7 @@ export class RiskAssessmentIntegration {
               },
               heartRate: {
                 bpm: vitalSigns.heartRate,
-                rhythm: 'REGULAR', // Default, would need ECG integration
+                rhythm: "REGULAR", // Default, would need ECG integration
                 timestamp: new Date(),
               },
               temperature: {
@@ -366,7 +340,7 @@ export class RiskAssessmentIntegration {
               },
             },
           },
-          assessmentType: 'ONGOING_CARE' as const,
+          assessmentType: "ONGOING_CARE" as const,
         };
 
         // Execute new risk assessment
@@ -392,11 +366,11 @@ export class RiskAssessmentIntegration {
         recommendations,
       };
     } catch (error) {
-      console.error('Failed to integrate vital signs monitoring:', error);
+      console.error("Failed to integrate vital signs monitoring:", error);
       return {
         riskUpdate: false,
-        alerts: ['Erro na integração de sinais vitais'],
-        recommendations: ['Verificar sistema de monitoramento'],
+        alerts: ["Erro na integração de sinais vitais"],
+        recommendations: ["Verificar sistema de monitoramento"],
       };
     }
   }

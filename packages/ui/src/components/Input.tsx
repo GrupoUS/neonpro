@@ -1,6 +1,6 @@
-import { cva, type VariantProps } from 'class-variance-authority';
-import * as React from 'react';
-import { cn } from '../utils/cn';
+import { cva, type VariantProps } from "class-variance-authority";
+import * as React from "react";
+import { cn } from "../utils/cn";
 
 // Healthcare-optimized regex patterns for Brazilian formats (performance optimization)
 const CPF_REGEX_1 = /(\d{3})(\d)/;
@@ -13,37 +13,37 @@ const DATE_REGEX_1 = /(\d{2})(\d)/;
 const DATE_REGEX_2 = /(\d{2})(\d)/;
 
 const inputVariants = cva(
-  'flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:font-medium file:text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+  "flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:font-medium file:text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
   {
     variants: {
       variant: {
-        default: '',
-        error: 'border-destructive focus-visible:ring-destructive',
-        success: 'border-green-500 focus-visible:ring-green-500',
-        warning: 'border-yellow-500 focus-visible:ring-yellow-500',
+        default: "",
+        error: "border-destructive focus-visible:ring-destructive",
+        success: "border-green-500 focus-visible:ring-green-500",
+        warning: "border-yellow-500 focus-visible:ring-yellow-500",
       },
       size: {
-        default: 'h-10',
-        sm: 'h-9 px-2 py-1',
-        lg: 'h-11 px-4 py-3',
+        default: "h-10",
+        sm: "h-9 px-2 py-1",
+        lg: "h-11 px-4 py-3",
       },
     },
     defaultVariants: {
-      variant: 'default',
-      size: 'default',
+      variant: "default",
+      size: "default",
     },
-  }
+  },
 );
 
 export interface InputProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>,
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size">,
     VariantProps<typeof inputVariants> {
   label?: string;
   error?: string;
   helperText?: string;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
-  mask?: 'cpf' | 'phone' | 'currency' | 'date';
+  mask?: "cpf" | "phone" | "currency" | "date";
   loading?: boolean;
 }
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -66,14 +66,14 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       id,
       ...props
     },
-    ref
+    ref,
   ) => {
-    const [internalValue, setInternalValue] = React.useState(value || '');
+    const [internalValue, setInternalValue] = React.useState(value || "");
     const generatedId = React.useId(); // Generate unique ID for accessibility
     const inputId = id || generatedId;
 
     React.useEffect(() => {
-      setInternalValue(value || '');
+      setInternalValue(value || "");
     }, [value]);
 
     const applyMask = (inputValue: string, maskType?: string) => {
@@ -81,39 +81,34 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         return inputValue;
       }
 
-      const cleaned = inputValue.replace(/\D/g, '');
+      const cleaned = inputValue.replace(/\D/g, "");
 
       switch (maskType) {
-        case 'cpf':
+        case "cpf":
           return cleaned
             .slice(0, 11)
-            .replace(CPF_REGEX_1, '$1.$2')
-            .replace(CPF_REGEX_2, '$1.$2')
-            .replace(CPF_REGEX_3, '$1-$2');
+            .replace(CPF_REGEX_1, "$1.$2")
+            .replace(CPF_REGEX_2, "$1.$2")
+            .replace(CPF_REGEX_3, "$1-$2");
 
-        case 'phone':
+        case "phone":
           if (cleaned.length <= 10) {
-            return cleaned
-              .replace(PHONE_REGEX_1, '($1) $2')
-              .replace(PHONE_REGEX_2, '$1-$2');
+            return cleaned.replace(PHONE_REGEX_1, "($1) $2").replace(PHONE_REGEX_2, "$1-$2");
           }
           return cleaned
             .slice(0, 11)
-            .replace(PHONE_REGEX_1, '($1) $2')
-            .replace(PHONE_REGEX_3, '$1-$2');
-        case 'currency': {
+            .replace(PHONE_REGEX_1, "($1) $2")
+            .replace(PHONE_REGEX_3, "$1-$2");
+        case "currency": {
           const numberValue = `${cleaned.slice(0, -2)}.${cleaned.slice(-2)}`;
-          return new Intl.NumberFormat('pt-BR', {
-            style: 'currency',
-            currency: 'BRL',
+          return new Intl.NumberFormat("pt-BR", {
+            style: "currency",
+            currency: "BRL",
           }).format(Number(numberValue) || 0);
         }
 
-        case 'date':
-          return cleaned
-            .slice(0, 8)
-            .replace(DATE_REGEX_1, '$1/$2')
-            .replace(DATE_REGEX_2, '$1/$2');
+        case "date":
+          return cleaned.slice(0, 8).replace(DATE_REGEX_1, "$1/$2").replace(DATE_REGEX_2, "$1/$2");
 
         default:
           return inputValue;
@@ -131,7 +126,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       }
     };
 
-    const inputVariantClass = variant === 'error' && error ? 'error' : variant;
+    const inputVariantClass = variant === "error" && error ? "error" : variant;
 
     return (
       <div className="space-y-2">
@@ -154,10 +149,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <input
             className={cn(
               inputVariants({ variant: inputVariantClass, size }),
-              leftIcon && 'pl-10',
-              rightIcon && 'pr-10',
-              loading && 'pr-10',
-              className
+              leftIcon && "pl-10",
+              rightIcon && "pr-10",
+              loading && "pr-10",
+              className,
             )}
             disabled={disabled || loading}
             id={inputId}
@@ -181,14 +176,12 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
         {error && <p className="text-destructive text-sm">{error}</p>}
 
-        {helperText && !error && (
-          <p className="text-muted-foreground text-sm">{helperText}</p>
-        )}
+        {helperText && !error && <p className="text-muted-foreground text-sm">{helperText}</p>}
       </div>
     );
-  }
+  },
 );
 
-Input.displayName = 'Input';
+Input.displayName = "Input";
 
 export { Input, inputVariants };

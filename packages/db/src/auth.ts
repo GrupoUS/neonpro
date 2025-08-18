@@ -17,7 +17,7 @@ import { createServerClient } from './client';
  */
 export const getUser = cache(async (): Promise<User | null> => {
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const supabase = createServerClient({
       getAll: () => cookieStore.getAll(),
       setAll: (cookies) => {
@@ -53,7 +53,7 @@ export const getUser = cache(async (): Promise<User | null> => {
  */
 export const getSession = cache(async (): Promise<Session | null> => {
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const supabase = createServerClient({
       getAll: () => cookieStore.getAll(),
       setAll: (cookies) => {
@@ -99,7 +99,7 @@ export const getSession = cache(async (): Promise<Session | null> => {
 export async function requireHealthcareProfessional(): Promise<User> {
   const user = await requireUser();
 
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const supabase = createServerClient({
     getAll: () => cookieStore.getAll(),
     setAll: (cookies) => {
@@ -123,8 +123,8 @@ export async function requireHealthcareProfessional(): Promise<User> {
 
   // Log healthcare professional access
   await logHealthcareAccess(user.id, 'professional_access', {
-    cfm_number: professional.cfm_number,
-    role: professional.role,
+    cfm_number: professional?.cfm_number,
+    role: professional?.role,
   });
 
   return user;
@@ -140,7 +140,7 @@ async function logHealthcareAccess(
   metadata?: Record<string, any>
 ): Promise<void> {
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const supabase = createServerClient({
       getAll: () => cookieStore.getAll(),
       setAll: (cookies) => {
@@ -169,7 +169,7 @@ async function logHealthcareAccess(
 export async function signOut(): Promise<void> {
   const user = await getUser();
 
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const supabase = createServerClient({
     getAll: () => cookieStore.getAll(),
     setAll: (cookies) => {

@@ -71,7 +71,7 @@ describe('WebAuthn Implementation Verification', () => {
     } = require('../../lib/auth/performance-tracker');
 
     // Test that performance tracker is properly initialized
-    expected(authPerformanceTracker).toBeDefined();
+    expect(authPerformanceTracker).toBeDefined();
     expect(typeof authPerformanceTracker.getPerformanceThresholds).toBe(
       'function'
     );

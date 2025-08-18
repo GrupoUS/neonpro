@@ -4,21 +4,21 @@
  * Healthcare compliance with security and audit requirements
  */
 
-import { createServerClient } from '@supabase/ssr';
-import type { EmailOtpType } from '@supabase/supabase-js';
-import { cookies } from 'next/headers';
-import { type NextRequest, NextResponse } from 'next/server';
+import { createServerClient } from "@supabase/ssr";
+import type { EmailOtpType } from "@supabase/supabase-js";
+import { cookies } from "next/headers";
+import { type NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url);
-  const token_hash = requestUrl.searchParams.get('token_hash');
-  const type = requestUrl.searchParams.get('type') as EmailOtpType | null;
-  const next = requestUrl.searchParams.get('next') ?? '/';
-  const error = requestUrl.searchParams.get('error');
+  const token_hash = requestUrl.searchParams.get("token_hash");
+  const type = requestUrl.searchParams.get("type") as EmailOtpType | null;
+  const next = requestUrl.searchParams.get("next") ?? "/";
+  const error = requestUrl.searchParams.get("error");
 
   // Handle confirmation errors
   if (error) {
-    console.error('Healthcare email confirmation error:', error);
+    console.error("Healthcare email confirmation error:", error);
     return NextResponse.redirect(
       `${requestUrl.origin}/auth/error?error=${encodeURIComponent(error)}`,
     );
@@ -43,8 +43,8 @@ export async function GET(request: NextRequest) {
         },
         global: {
           headers: {
-            'X-Client-Type': 'neonpro-healthcare-confirm',
-            'X-Compliance': 'LGPD-ANVISA-CFM',
+            "X-Client-Type": "neonpro-healthcare-confirm",
+            "X-Compliance": "LGPD-ANVISA-CFM",
           },
         },
       },
@@ -61,56 +61,46 @@ export async function GET(request: NextRequest) {
       });
 
       if (verifyError) {
-        console.error('Healthcare OTP verification error:', verifyError);
-        return NextResponse.redirect(
-          `${requestUrl.origin}/auth/error?error=verification_failed`,
-        );
+        console.error("Healthcare OTP verification error:", verifyError);
+        return NextResponse.redirect(`${requestUrl.origin}/auth/error?error=verification_failed`);
       }
 
       if (session?.user) {
         // Healthcare audit logging for successful email confirmation
         await logHealthcareEmailConfirmation(session.user.id, type, {
-          ip_address: request.ip || 'unknown',
-          user_agent: request.headers.get('user-agent') || 'unknown',
+          ip_address: request.ip || "unknown",
+          user_agent: request.headers.get("user-agent") || "unknown",
         });
 
         // Redirect based on confirmation type
         switch (type) {
-          case 'signup':
+          case "signup":
             // New user signup confirmation
-            return NextResponse.redirect(
-              `${requestUrl.origin}/complete-profile?confirmed=true`,
-            );
+            return NextResponse.redirect(`${requestUrl.origin}/complete-profile?confirmed=true`);
 
-          case 'recovery':
+          case "recovery":
             // Password reset confirmation
-            return NextResponse.redirect(
-              `${requestUrl.origin}/auth/reset-password?confirmed=true`,
-            );
+            return NextResponse.redirect(`${requestUrl.origin}/auth/reset-password?confirmed=true`);
 
-          case 'email_change':
+          case "email_change":
             // Email change confirmation
             return NextResponse.redirect(
               `${requestUrl.origin}/dashboard/profile?email_changed=true`,
             );
 
-          case 'invite':
+          case "invite":
             // Healthcare professional invitation
-            return NextResponse.redirect(
-              `${requestUrl.origin}/complete-profile?invited=true`,
-            );
+            return NextResponse.redirect(`${requestUrl.origin}/complete-profile?invited=true`);
 
           default: {
             // Default redirect for other types
-            const sanitizedNext = next.startsWith('/') ? next : '/dashboard';
-            return NextResponse.redirect(
-              `${requestUrl.origin}${sanitizedNext}`,
-            );
+            const sanitizedNext = next.startsWith("/") ? next : "/dashboard";
+            return NextResponse.redirect(`${requestUrl.origin}${sanitizedNext}`);
           }
         }
       }
     } catch (error) {
-      console.error('Critical healthcare confirmation error:', error);
+      console.error("Critical healthcare confirmation error:", error);
       return NextResponse.redirect(
         `${requestUrl.origin}/auth/error?error=critical_confirmation_error`,
       );
@@ -118,9 +108,7 @@ export async function GET(request: NextRequest) {
   }
 
   // Invalid or missing parameters
-  return NextResponse.redirect(
-    `${requestUrl.origin}/auth/error?error=invalid_confirmation_link`,
-  );
+  return NextResponse.redirect(`${requestUrl.origin}/auth/error?error=invalid_confirmation_link`);
 }
 
 /**
@@ -152,10 +140,10 @@ async function logHealthcareEmailConfirmation(
       },
     );
 
-    await supabase.from('healthcare_audit_logs').insert({
+    await supabase.from("healthcare_audit_logs").insert({
       user_id: userId,
       action: `email_confirmation_${confirmationType}`,
-      resource_type: 'authentication',
+      resource_type: "authentication",
       metadata: {
         confirmation_type: confirmationType,
         ...metadata,
@@ -165,7 +153,7 @@ async function logHealthcareEmailConfirmation(
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error('Healthcare audit logging failed:', error);
+    console.error("Healthcare audit logging failed:", error);
     // Don't throw - audit logging failure shouldn't block confirmation
   }
 }

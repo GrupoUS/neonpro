@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@neonpro/db": "workspace:*",
+    "@supabase/supabase-js": "^2.45.4",
     "clsx": "^2.0.0",
     "date-fns": "^4.1.0",
     "tailwind-merge": "^3.3.1",

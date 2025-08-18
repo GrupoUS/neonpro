@@ -4,7 +4,7 @@
  * Healthcare compliance: LGPD + ANVISA + CFM + Multi-tenant isolation
  */
 
-import { createBrowserClient } from '@supabase/ssr';
+import { createBrowserClient, createServerClient as createSSRServerClient } from '@supabase/ssr';
 import type { Database } from './types';
 
 // Healthcare environment validation
@@ -54,12 +54,12 @@ export function createServerClient(cookieStore: {
   getAll: () => { name: string; value: string }[];
   setAll?: (cookies: { name: string; value: string; options?: any }[]) => void;
 }) {
-  return createServerClient<Database>(supabaseUrl, supabaseAnonKey, {
+  return createSSRServerClient<Database>(supabaseUrl, supabaseAnonKey, {
     cookies: {
       getAll() {
         return cookieStore.getAll();
       },
-      setAll(cookiesToSet) {
+      setAll(cookiesToSet: { name: string; value: string; options?: any }[]) {
         if (cookieStore.setAll) {
           cookieStore.setAll(cookiesToSet);
         }

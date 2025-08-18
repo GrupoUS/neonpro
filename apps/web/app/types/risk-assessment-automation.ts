@@ -7,10 +7,10 @@
  * Based on Brazilian healthcare standards (CFM/ANVISA compliance)
  */
 export enum RiskLevel {
-  LOW = 'LOW', // 0-30: Minimal intervention required
-  MEDIUM = 'MEDIUM', // 31-70: Standard monitoring
-  HIGH = 'HIGH', // 71-85: Enhanced monitoring + professional review
-  CRITICAL = 'CRITICAL', // 86-100: Immediate escalation + emergency protocols
+  LOW = "LOW", // 0-30: Minimal intervention required
+  MEDIUM = "MEDIUM", // 31-70: Standard monitoring
+  HIGH = "HIGH", // 71-85: Enhanced monitoring + professional review
+  CRITICAL = "CRITICAL", // 86-100: Immediate escalation + emergency protocols
 }
 
 /**
@@ -18,12 +18,12 @@ export enum RiskLevel {
  * Multi-dimensional analysis for comprehensive patient assessment
  */
 export enum RiskFactorCategory {
-  DEMOGRAPHIC = 'DEMOGRAPHIC', // Age, gender, BMI, genetic factors
-  MEDICAL_HISTORY = 'MEDICAL_HISTORY', // Previous conditions, treatments, allergies
-  CURRENT_CONDITION = 'CURRENT_CONDITION', // Vital signs, symptoms, medications
-  PROCEDURE_SPECIFIC = 'PROCEDURE_SPECIFIC', // Treatment complexity, anesthesia needs
-  ENVIRONMENTAL = 'ENVIRONMENTAL', // Support system, compliance history
-  PSYCHOSOCIAL = 'PSYCHOSOCIAL', // Mental health, stress factors
+  DEMOGRAPHIC = "DEMOGRAPHIC", // Age, gender, BMI, genetic factors
+  MEDICAL_HISTORY = "MEDICAL_HISTORY", // Previous conditions, treatments, allergies
+  CURRENT_CONDITION = "CURRENT_CONDITION", // Vital signs, symptoms, medications
+  PROCEDURE_SPECIFIC = "PROCEDURE_SPECIFIC", // Treatment complexity, anesthesia needs
+  ENVIRONMENTAL = "ENVIRONMENTAL", // Support system, compliance history
+  PSYCHOSOCIAL = "PSYCHOSOCIAL", // Mental health, stress factors
 }
 
 /**
@@ -31,10 +31,10 @@ export enum RiskFactorCategory {
  * CFM compliance for medical professional oversight
  */
 export enum EscalationPriority {
-  ROUTINE = 'ROUTINE', // Standard professional review
-  URGENT = 'URGENT', // Within 4 hours
-  IMMEDIATE = 'IMMEDIATE', // Within 30 minutes
-  EMERGENCY = 'EMERGENCY', // Immediate action required
+  ROUTINE = "ROUTINE", // Standard professional review
+  URGENT = "URGENT", // Within 4 hours
+  IMMEDIATE = "IMMEDIATE", // Within 30 minutes
+  EMERGENCY = "EMERGENCY", // Immediate action required
 }
 
 /**
@@ -43,13 +43,13 @@ export enum EscalationPriority {
  */
 export interface DemographicRiskFactors {
   age: number;
-  gender: 'MALE' | 'FEMALE' | 'OTHER' | 'NOT_SPECIFIED';
+  gender: "MALE" | "FEMALE" | "OTHER" | "NOT_SPECIFIED";
   bmi: number;
   geneticPredispositions: string[];
-  pregnancyStatus?: 'PREGNANT' | 'BREASTFEEDING' | 'NOT_APPLICABLE';
-  smokingStatus: 'NEVER' | 'FORMER' | 'CURRENT';
-  alcoholConsumption: 'NONE' | 'LIGHT' | 'MODERATE' | 'HEAVY';
-  physicalActivityLevel: 'SEDENTARY' | 'LIGHT' | 'MODERATE' | 'INTENSE';
+  pregnancyStatus?: "PREGNANT" | "BREASTFEEDING" | "NOT_APPLICABLE";
+  smokingStatus: "NEVER" | "FORMER" | "CURRENT";
+  alcoholConsumption: "NONE" | "LIGHT" | "MODERATE" | "HEAVY";
+  physicalActivityLevel: "SEDENTARY" | "LIGHT" | "MODERATE" | "INTENSE";
 }
 
 /**
@@ -62,11 +62,11 @@ export interface MedicalHistoryRiskFactors {
     procedure: string;
     date: Date;
     complications?: string[];
-    outcome: 'SUCCESSFUL' | 'COMPLICATED' | 'FAILED';
+    outcome: "SUCCESSFUL" | "COMPLICATED" | "FAILED";
   }>;
   allergies: Array<{
     allergen: string;
-    severity: 'MILD' | 'MODERATE' | 'SEVERE' | 'ANAPHYLACTIC';
+    severity: "MILD" | "MODERATE" | "SEVERE" | "ANAPHYLACTIC";
     reaction: string;
   }>;
   familyHistory: Array<{
@@ -102,7 +102,7 @@ export interface CurrentConditionRiskFactors {
     };
     heartRate: {
       bpm: number;
-      rhythm: 'REGULAR' | 'IRREGULAR';
+      rhythm: "REGULAR" | "IRREGULAR";
       timestamp: Date;
     };
     temperature: {
@@ -125,8 +125,8 @@ export interface CurrentConditionRiskFactors {
     onset: Date;
   }>;
   painLevel: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
-  mentalStatus: 'ALERT' | 'CONFUSED' | 'DROWSY' | 'UNCONSCIOUS';
-  mobilityStatus: 'AMBULATORY' | 'ASSISTED' | 'WHEELCHAIR' | 'BEDRIDDEN';
+  mentalStatus: "ALERT" | "CONFUSED" | "DROWSY" | "UNCONSCIOUS";
+  mobilityStatus: "AMBULATORY" | "ASSISTED" | "WHEELCHAIR" | "BEDRIDDEN";
 } /**
  * Procedure-Specific Risk Factors
  * Treatment complexity assessment with ANVISA compliance
@@ -134,22 +134,22 @@ export interface CurrentConditionRiskFactors {
 export interface ProcedureSpecificRiskFactors {
   plannedProcedure: {
     name: string;
-    type: 'SURGICAL' | 'NON_SURGICAL' | 'MINIMALLY_INVASIVE' | 'COSMETIC';
-    complexity: 'LOW' | 'MEDIUM' | 'HIGH' | 'COMPLEX';
+    type: "SURGICAL" | "NON_SURGICAL" | "MINIMALLY_INVASIVE" | "COSMETIC";
+    complexity: "LOW" | "MEDIUM" | "HIGH" | "COMPLEX";
     duration: number; // minutes
     anesthesiaRequired: boolean;
-    anesthesiaType?: 'LOCAL' | 'REGIONAL' | 'GENERAL' | 'SEDATION';
+    anesthesiaType?: "LOCAL" | "REGIONAL" | "GENERAL" | "SEDATION";
   };
   equipmentRequired: Array<{
     device: string;
     anvisaRegistration?: string;
-    riskClass: 'I' | 'II' | 'III' | 'IV';
+    riskClass: "I" | "II" | "III" | "IV";
   }>;
   contraindicationsPresent: string[];
   drugInteractions: Array<{
     medication1: string;
     medication2: string;
-    severity: 'MINOR' | 'MODERATE' | 'MAJOR' | 'CONTRAINDICATED';
+    severity: "MINOR" | "MODERATE" | "MAJOR" | "CONTRAINDICATED";
     description: string;
   }>;
 }
@@ -161,7 +161,7 @@ export interface ProcedureSpecificRiskFactors {
 export interface EnvironmentalRiskFactors {
   supportSystem: {
     hasCaregiver: boolean;
-    familySupport: 'STRONG' | 'MODERATE' | 'WEAK' | 'NONE';
+    familySupport: "STRONG" | "MODERATE" | "WEAK" | "NONE";
     socialIsolation: boolean;
     languageBarriers: boolean;
   };
@@ -169,12 +169,12 @@ export interface EnvironmentalRiskFactors {
     transportationAvailable: boolean;
     distanceToClinic: number; // kilometers
     financialConstraints: boolean;
-    insuranceCoverage: 'FULL' | 'PARTIAL' | 'NONE';
+    insuranceCoverage: "FULL" | "PARTIAL" | "NONE";
   };
   complianceHistory: {
     previousAppointmentAttendance: number; // percentage
-    medicationCompliance: 'EXCELLENT' | 'GOOD' | 'FAIR' | 'POOR';
-    followUpCompliance: 'EXCELLENT' | 'GOOD' | 'FAIR' | 'POOR';
+    medicationCompliance: "EXCELLENT" | "GOOD" | "FAIR" | "POOR";
+    followUpCompliance: "EXCELLENT" | "GOOD" | "FAIR" | "POOR";
   };
 } /**
  * Comprehensive Risk Assessment Input
@@ -184,11 +184,7 @@ export interface RiskAssessmentInput {
   patientId: string;
   tenantId: string;
   assessmentDate: Date;
-  assessmentType:
-    | 'PRE_PROCEDURE'
-    | 'ONGOING_CARE'
-    | 'POST_PROCEDURE'
-    | 'EMERGENCY';
+  assessmentType: "PRE_PROCEDURE" | "ONGOING_CARE" | "POST_PROCEDURE" | "EMERGENCY";
   demographicFactors: DemographicRiskFactors;
   medicalHistory: MedicalHistoryRiskFactors;
   currentCondition: CurrentConditionRiskFactors;
@@ -234,13 +230,13 @@ export interface RiskScoreBreakdown {
  */
 export interface ProfessionalOversight {
   requiredReview: boolean;
-  reviewLevel: 'NURSE' | 'PHYSICIAN' | 'SPECIALIST' | 'SENIOR_PHYSICIAN';
+  reviewLevel: "NURSE" | "PHYSICIAN" | "SPECIALIST" | "SENIOR_PHYSICIAN";
   timeframe: number; // minutes
   escalationRequired: boolean;
   escalationPriority: EscalationPriority;
   specialistConsultation?: {
     specialty: string;
-    urgency: 'ROUTINE' | 'URGENT' | 'STAT';
+    urgency: "ROUTINE" | "URGENT" | "STAT";
     reason: string;
   };
 }
@@ -252,7 +248,7 @@ export interface ProfessionalOversight {
 export interface EmergencyEscalation {
   triggered: boolean;
   triggerReason: string[];
-  alertLevel: 'YELLOW' | 'ORANGE' | 'RED' | 'BLACK';
+  alertLevel: "YELLOW" | "ORANGE" | "RED" | "BLACK";
   notificationsSent: Array<{
     recipient: string;
     role: string;
@@ -266,7 +262,7 @@ export interface EmergencyEscalation {
     timestamp: Date;
     outcome: string;
   }>;
-  resolutionStatus: 'PENDING' | 'IN_PROGRESS' | 'RESOLVED' | 'ESCALATED';
+  resolutionStatus: "PENDING" | "IN_PROGRESS" | "RESOLVED" | "ESCALATED";
 }
 
 /**
@@ -284,7 +280,7 @@ export interface RiskAssessmentResult {
   emergencyEscalation?: EmergencyEscalation;
   recommendations: Array<{
     category: string;
-    priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+    priority: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
     action: string;
     rationale: string;
     timeframe: string;
@@ -304,7 +300,7 @@ export interface RiskAssessmentResult {
   reviewHistory: Array<{
     reviewedBy: string;
     reviewedAt: Date;
-    decision: 'APPROVED' | 'MODIFIED' | 'REJECTED' | 'ESCALATED';
+    decision: "APPROVED" | "MODIFIED" | "REJECTED" | "ESCALATED";
     comments: string;
     digitalSignature: string;
   }>;
@@ -316,13 +312,7 @@ export interface AuditTrailEntry {
   id: string;
   patientId: string;
   assessmentId: string;
-  action:
-    | 'CREATED'
-    | 'VIEWED'
-    | 'MODIFIED'
-    | 'DELETED'
-    | 'ESCALATED'
-    | 'REVIEWED';
+  action: "CREATED" | "VIEWED" | "MODIFIED" | "DELETED" | "ESCALATED" | "REVIEWED";
   performedBy: string;
   performedAt: Date;
   ipAddress: string;
@@ -333,11 +323,7 @@ export interface AuditTrailEntry {
   digitalSignature: string;
 
   // LGPD Compliance
-  legalBasis:
-    | 'CONSENT'
-    | 'LEGITIMATE_INTEREST'
-    | 'VITAL_INTEREST'
-    | 'LEGAL_OBLIGATION';
+  legalBasis: "CONSENT" | "LEGITIMATE_INTEREST" | "VITAL_INTEREST" | "LEGAL_OBLIGATION";
   dataSubjectNotified: boolean;
   retentionExpiry: Date;
 }

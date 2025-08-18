@@ -1,8 +1,8 @@
-import { Clock } from 'lucide-react';
-import * as React from 'react';
-import { cn } from '../utils/cn';
-import { Button } from './Button';
-import { Popover, PopoverContent, PopoverTrigger } from './Popover';
+import { Clock } from "lucide-react";
+import * as React from "react";
+import { cn } from "../utils/cn";
+import { Button } from "./Button";
+import { Popover, PopoverContent, PopoverTrigger } from "./Popover";
 
 export type TimePickerProps = {
   value: string;
@@ -13,16 +13,7 @@ export type TimePickerProps = {
 };
 
 const TimePicker = React.forwardRef<HTMLButtonElement, TimePickerProps>(
-  (
-    {
-      value,
-      onChange,
-      placeholder = 'Selecione um horário',
-      disabled,
-      className,
-    },
-    ref
-  ) => {
+  ({ value, onChange, placeholder = "Selecione um horário", disabled, className }, ref) => {
     const [open, setOpen] = React.useState(false);
 
     return (
@@ -30,9 +21,9 @@ const TimePicker = React.forwardRef<HTMLButtonElement, TimePickerProps>(
         <PopoverTrigger asChild>
           <Button
             className={cn(
-              'w-full justify-start text-left font-normal',
-              !value && 'text-muted-foreground',
-              className
+              "w-full justify-start text-left font-normal",
+              !value && "text-muted-foreground",
+              className,
             )}
             disabled={disabled}
             ref={ref}
@@ -58,9 +49,9 @@ const TimePicker = React.forwardRef<HTMLButtonElement, TimePickerProps>(
         </PopoverContent>
       </Popover>
     );
-  }
+  },
 );
 
-TimePicker.displayName = 'TimePicker';
+TimePicker.displayName = "TimePicker";
 
 export { TimePicker };

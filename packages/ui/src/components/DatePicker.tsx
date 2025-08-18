@@ -1,9 +1,9 @@
-import { Calendar as CalendarIcon } from 'lucide-react';
-import * as React from 'react';
-import { cn } from '../utils/cn';
-import { formatters } from '../utils/formatters';
-import { Button } from './Button';
-import { Popover, PopoverContent, PopoverTrigger } from './Popover';
+import { Calendar as CalendarIcon } from "lucide-react";
+import * as React from "react";
+import { cn } from "../utils/cn";
+import { formatters } from "../utils/formatters";
+import { Button } from "./Button";
+import { Popover, PopoverContent, PopoverTrigger } from "./Popover";
 
 export type DatePickerProps = {
   date?: Date | null;
@@ -14,16 +14,7 @@ export type DatePickerProps = {
 };
 
 const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
-  (
-    {
-      date,
-      onDateChange,
-      placeholder = 'Selecione uma data',
-      disabled,
-      className,
-    },
-    ref
-  ) => {
+  ({ date, onDateChange, placeholder = "Selecione uma data", disabled, className }, ref) => {
     const [open, setOpen] = React.useState(false);
 
     return (
@@ -31,9 +22,9 @@ const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
         <PopoverTrigger asChild>
           <Button
             className={cn(
-              'w-full justify-start text-left font-normal',
-              !date && 'text-muted-foreground',
-              className
+              "w-full justify-start text-left font-normal",
+              !date && "text-muted-foreground",
+              className,
             )}
             disabled={disabled}
             ref={ref}
@@ -57,15 +48,15 @@ const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
                 setOpen(false);
               }}
               type="date"
-              value={date ? date.toISOString().split('T')[0] : ''}
+              value={date ? date.toISOString().split("T")[0] : ""}
             />
           </div>
         </PopoverContent>
       </Popover>
     );
-  }
+  },
 );
 
-DatePicker.displayName = 'DatePicker';
+DatePicker.displayName = "DatePicker";
 
 export { DatePicker };
