@@ -1,6 +1,6 @@
 // Story 3.2: API Endpoint - Comprehensive Patient Insights
 
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/app/utils/supabase/server';
 import { cookies } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 import { PatientInsightsIntegration } from '@/lib/ai/patient-insights';
@@ -13,7 +13,7 @@ export async function GET(
   { params }: { params: Promise<{ patientId: string }> }
 ) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = await createClient();
 
     // Verify authentication
     const {
@@ -72,7 +72,7 @@ export async function POST(
   { params }: { params: Promise<{ patientId: string }> }
 ) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = await createClient();
 
     // Verify authentication
     const {

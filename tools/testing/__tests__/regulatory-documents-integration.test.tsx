@@ -2,7 +2,7 @@ import '@testing-library/jest-dom';
 
 import { vi } from 'vitest';
 import '@testing-library/jest-dom';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { RegulatoryDocumentsList } from '@/components/regulatory-documents/regulatory-documents-list';
 import { useRegulatoryDocuments } from '@/hooks/use-regulatory-documents';
 
@@ -45,6 +45,7 @@ describe('RegulatoryDocumentsList Integration', () => {
   ];
 
   beforeEach(() => {
+    cleanup(); // Ensure clean DOM before each test
     mockUseRegulatoryDocuments.mockReturnValue({
       documents: mockDocuments,
       loading: false,
@@ -57,6 +58,7 @@ describe('RegulatoryDocumentsList Integration', () => {
   });
 
   afterEach(() => {
+    cleanup(); // Clean up DOM after each test
     vi.clearAllMocks();
   });
 
@@ -116,7 +118,7 @@ describe('RegulatoryDocumentsList Integration', () => {
 
     render(<RegulatoryDocumentsList />);
 
-    // Click delete button for first document
+    // Click delete button for first document (CFM Guidelines - ID '2' when sorted by expiration date)
     const deleteButtons = screen.getAllByTestId('delete-document-button');
     fireEvent.click(deleteButtons[0]);
 
@@ -125,7 +127,7 @@ describe('RegulatoryDocumentsList Integration', () => {
     fireEvent.click(confirmButton);
 
     await waitFor(() => {
-      expect(mockDeleteDocument).toHaveBeenCalledWith('1');
+      expect(mockDeleteDocument).toHaveBeenCalledWith('2');
     });
   });
 

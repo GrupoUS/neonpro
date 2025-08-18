@@ -1,0 +1,267 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalPassThroughEnv": [
+    "NODE_ENV",
+    "VERCEL_ENV", 
+    "CI",
+    "NEXT_PUBLIC_*",
+    "SUPABASE_*",
+    "OPENAI_*"
+  ],
+  "globalDependencies": [
+    "**/.env.*local",
+    "**/package.json",
+    "**/tsconfig.json",
+    "biome.jsonc",
+    "pnpm-workspace.yaml",
+    "docs/coding-standards-neonpro.md",
+    ".bmad-core/core-config.yaml"
+  ],
+  "globalEnv": [
+    "NODE_ENV",
+    "VERCEL_ENV",
+    "CI",
+    "TURBO_TOKEN",
+    "TURBO_TEAM"
+  ],
+  "remoteCache": {
+    "signature": true,
+    "enabled": true,
+    "timeout": 45
+  },
+  "experimentalSpaces": {
+    "id": "neonpro-aesthetic-clinic-optimized"
+  },
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build", "lint:check", "type-check"],
+      "inputs": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        "app/**/*.{ts,tsx,js,jsx}",
+        "components/**/*.{ts,tsx}",
+        "lib/**/*.{ts,tsx}",
+        "styles/**/*.{css,scss}",
+        "public/**/*",
+        "package.json",
+        "tsconfig.json",
+        "next.config.*",
+        "tailwind.config.*",
+        "!**/__tests__/**",
+        "!**/*.test.*",
+        "!**/*.spec.*",
+        "!**/.disabled",
+        "!**/backup/**",
+        "!**/nuclear_backup"
+      ],
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**",
+        "dist/**",
+        "build/**"
+      ],
+      "env": [
+        "NEXT_PUBLIC_*",
+        "DATABASE_URL",
+        "NEXTAUTH_*", 
+        "SUPABASE_*",
+        "OPENAI_*",
+        "STRIPE_*",
+        "RESEND_*"
+      ]
+    },
+    "build:ai-models": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "packages/ai/**/*.{ts,tsx,js,jsx}",
+        "apps/web/lib/ai/**/*.{ts,tsx}",
+        "apps/web/components/ai/**/*.{ts,tsx}",
+        "models/**/*",
+        "training-data/**/*"
+      ],
+      "outputs": [
+        "packages/ai/dist/**",
+        "packages/ai/.next/**",
+        ".next/cache/ai-models/**",
+        "ai-models/**"
+      ],
+      "env": [
+        "OPENAI_*",
+        "TENSORFLOW_*",
+        "AI_MODEL_*",
+        "PREDICTION_*"
+      ]
+    },
+    "lint": {
+      "inputs": [
+        "**/*.{ts,tsx,js,jsx}",
+        ".eslintrc.*",
+        "biome.jsonc",
+        "docs/coding-standards-neonpro.md"
+      ],
+      "outputs": []
+    },
+    "lint:check": {
+      "inputs": [
+        "**/*.{ts,tsx,js,jsx}",
+        "biome.jsonc"
+      ],
+      "outputs": []
+    },
+    "type-check": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "**/*.{ts,tsx}",
+        "tsconfig.json"
+      ],
+      "outputs": ["**/*.tsbuildinfo"]
+    },
+    "test": {
+      "dependsOn": ["build", "lint:check"],
+      "inputs": [
+        "**/*.{ts,tsx,js,jsx}",
+        "**/*.test.*",
+        "**/*.spec.*",
+        "__tests__/**/*"
+      ],
+      "outputs": ["coverage/**"]
+    },
+    "test:unit": {
+      "dependsOn": ["build"],
+      "inputs": [
+        "**/*.{ts,tsx,js,jsx}",
+        "**/*.test.*",
+        "**/*.spec.*"
+      ],
+      "outputs": ["coverage/**"]
+    },
+    "test:integration": {
+      "dependsOn": ["build", "test:unit"],
+      "inputs": [
+        "**/*.{ts,tsx,js,jsx}",
+        "**/*.integration.*",
+        "tools/testing/**/*"
+      ],
+      "outputs": ["coverage/**"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true,
+      "env": [
+        "NEXT_PUBLIC_*",
+        "SUPABASE_*",
+        "OPENAI_*"
+      ]
+    },
+    "compliance:check": {
+      "dependsOn": ["compliance:lgpd", "compliance:anvisa", "compliance:cfm"],
+      "inputs": [
+        "compliance-reports/lgpd/**",
+        "compliance-reports/anvisa/**",
+        "compliance-reports/cfm/**",
+        "apps/web/lib/compliance/**/*.{ts,tsx}"
+      ],
+      "outputs": ["compliance-reports/summary/**"],
+      "env": ["COMPLIANCE_*"]
+    },
+    "compliance:lgpd": {
+      "dependsOn": ["build"],
+      "inputs": [
+        "packages/compliance/src/lgpd/**/*.{ts,tsx}",
+        "apps/web/app/**/privacy/**/*.{ts,tsx}",
+        "apps/web/components/privacy/**/*.{ts,tsx}",
+        "packages/core-services/src/privacy/**/*.{ts,tsx}",
+        "apps/web/lib/compliance/**/*.{ts,tsx}"
+      ],
+      "outputs": ["compliance-reports/lgpd/**"],
+      "env": [
+        "LGPD_*",
+        "PRIVACY_*",
+        "GDPR_*",
+        "DATA_PROTECTION_*"
+      ]
+    },
+    "compliance:anvisa": {
+      "dependsOn": ["build"],
+      "inputs": [
+        "packages/compliance/src/anvisa/**/*.{ts,tsx}",
+        "apps/web/app/**/medical/**/*.{ts,tsx}",
+        "packages/core-services/src/medical/**/*.{ts,tsx}",
+        "packages/core-services/src/treatments/**/*.{ts,tsx}"
+      ],
+      "outputs": ["compliance-reports/anvisa/**"],
+      "env": [
+        "ANVISA_*",
+        "MEDICAL_*",
+        "HEALTH_REGULATION_*"
+      ]
+    },
+    "compliance:cfm": {
+      "dependsOn": ["build"],
+      "inputs": [
+        "packages/compliance/src/cfm/**/*.{ts,tsx}",
+        "apps/web/app/**/professional/**/*.{ts,tsx}",
+        "packages/core-services/src/professional/**/*.{ts,tsx}"
+      ],
+      "outputs": ["compliance-reports/cfm/**"],
+      "env": [
+        "CFM_*",
+        "MEDICAL_PROFESSIONAL_*",
+        "CERTIFICATION_*"
+      ]
+    },
+    "security:audit": {
+      "dependsOn": ["build"],
+      "inputs": [
+        "packages/security/**/*.{ts,tsx}",
+        "packages/auth/**/*.{ts,tsx}",
+        "apps/web/middleware/**/*.{ts,tsx}",
+        "apps/web/app/**/api/**/*.{ts,tsx}",
+        "package.json",
+        "pnpm-lock.yaml"
+      ],
+      "outputs": [
+        "security-reports/**",
+        ".turbo/security-cache/**"
+      ],
+      "env": [
+        "SECURITY_*",
+        "AUTH_*",
+        "ENCRYPTION_*",
+        "AUDIT_*"
+      ]
+    },
+    "bmad:validate": {
+      "dependsOn": ["build", "lint:check", "type-check"],
+      "inputs": [
+        ".bmad-core/**/*",
+        "docs/**/*.md",
+        "**/*.{ts,tsx,js,jsx}"
+      ],
+      "outputs": [
+        ".bmad-core/validation/**",
+        "bmad-debug.log"
+      ]
+    },
+    "archon:sync": {
+      "dependsOn": ["bmad:validate"],
+      "inputs": [
+        "docs/**/*.md",
+        ".bmad-core/**/*"
+      ],
+      "outputs": [
+        ".archon-sync/**"
+      ]
+    },
+    "clean": {
+      "cache": false
+    },
+    "format": {
+      "inputs": [
+        "**/*.{ts,tsx,js,jsx,json,md}",
+        ".prettierrc.*",
+        "biome.jsonc"
+      ],
+      "outputs": []
+    }
+  }
+}

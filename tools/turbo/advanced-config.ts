@@ -4,8 +4,8 @@
  * Quality Standard: ≥9.9/10 Healthcare Override
  */
 
-import { promises as fs } from 'fs';
-import { join } from 'path';
+import { promises as fs } from 'node:fs';
+import { join } from 'node:path';
 
 type AdvancedTurboConfig = {
   remoteCache: {
@@ -150,97 +150,124 @@ export class AdvancedTurboOptimizer {
     );
   }
 
-  private async optimizePipelineDependencies(): Promise<void> {
-    // Read current turbo.json
-    const turboJsonPath = join(this.rootPath, 'turbo.json');
-    let turboConfig: any = {};
+  interface;
+  TurboConfig;
+  {
+  pipeline?: Record<string, unknown>;
+  remoteCache?: Record<string, unknown>;
+  [key: string]: unknown;
+}
 
-    try {
-      const content = await fs.readFile(turboJsonPath, 'utf-8');
-      turboConfig = JSON.parse(content);
-    } catch {
-      // Create new config if doesn't exist
-    }
+private
+async;
+optimizePipelineDependencies();
+: Promise<void>
+{
+  // Read current turbo.json
+  const turboJsonPath = join(this.rootPath, 'turbo.json');
+  let turboConfig: TurboConfig = {};
 
-    // Merge healthcare-optimized pipelines
-    turboConfig.tasks = {
-      ...turboConfig.tasks,
-      ...this.config.healthcarePipelines,
-    };
-
-    // Add global dependencies
-    turboConfig.globalDependencies = this.config.globalDependencies;
-
-    // Write optimized configuration
-    await fs.writeFile(turboJsonPath, JSON.stringify(turboConfig, null, 2));
-  }
-  private async implementHealthcareTasks(): Promise<void> {
-    // Create healthcare task scripts
-    const healthcareScripts = {
-      'healthcare:full-validation': {
-        description: 'Complete healthcare validation pipeline',
-        command:
-          'turbo typecheck lint:healthcare test:healthcare validate:lgpd --parallel',
-      },
-      'healthcare:build-optimized': {
-        description: 'Optimized healthcare build with caching',
-        command: 'turbo build:healthcare --cache-hit-logs --summarize',
-      },
-      'healthcare:test-parallel': {
-        description: 'Parallel healthcare testing with load testing',
-        command: 'turbo test:healthcare test:load --parallel --continue',
-      },
-    };
-
-    // Write healthcare task definitions
-    const tasksDir = join(this.rootPath, 'tools', 'turbo', 'tasks');
-    await fs.mkdir(tasksDir, { recursive: true });
-
-    await fs.writeFile(
-      join(tasksDir, 'healthcare-tasks.json'),
-      JSON.stringify(healthcareScripts, null, 2)
-    );
+  try {
+    const content = await fs.readFile(turboJsonPath, 'utf-8');
+    turboConfig = JSON.parse(content);
+  } catch {
+    // Create new config if doesn't exist
   }
 
-  private async configureAdvancedCaching(): Promise<void> {
-    // Create cache optimization configuration
-    const cacheStrategy = {
-      healthcare: {
-        // High cache hit rate for healthcare components
-        patterns: [
-          'packages/compliance/**',
-          'packages/types/**',
-          'apps/web/lib/compliance/**',
-        ],
-        ttl: this.config.cacheOptions.ttl,
-        compression: true,
-        encryption: true, // Healthcare data requires encryption
-      },
+  // Merge healthcare-optimized pipelines
+  turboConfig.tasks = {
+    ...turboConfig.tasks,
+    ...this.config.healthcarePipelines,
+  };
 
-      testing: {
-        // Moderate caching for tests
-        patterns: ['**/__tests__/**', 'tools/testing/**'],
-        ttl: 86_400, // 1 day
-        compression: true,
-        encryption: false,
-      },
+  // Add global dependencies
+  turboConfig.globalDependencies = this.config.globalDependencies;
 
-      builds: {
-        // Aggressive caching for builds
-        patterns: ['.next/**', 'dist/**', 'build/**'],
-        ttl: this.config.cacheOptions.ttl,
-        compression: true,
-        encryption: false,
-      },
-    };
+  // Write optimized configuration
+  await fs.writeFile(turboJsonPath, JSON.stringify(turboConfig, null, 2));
+}
+private
+async;
+implementHealthcareTasks();
+: Promise<void>
+{
+  // Create healthcare task scripts
+  const healthcareScripts = {
+    'healthcare:full-validation': {
+      description: 'Complete healthcare validation pipeline',
+      command:
+        'turbo typecheck lint:healthcare test:healthcare validate:lgpd --parallel',
+    },
+    'healthcare:build-optimized': {
+      description: 'Optimized healthcare build with caching',
+      command: 'turbo build:healthcare --cache-hit-logs --summarize',
+    },
+    'healthcare:test-parallel': {
+      description: 'Parallel healthcare testing with load testing',
+      command: 'turbo test:healthcare test:load --parallel --continue',
+    },
+  };
 
-    await fs.writeFile(
-      join(this.rootPath, 'tools', 'turbo', 'cache-strategy.json'),
-      JSON.stringify(cacheStrategy, null, 2)
-    );
-  }
+  // Write healthcare task definitions
+  const tasksDir = join(this.rootPath, 'tools', 'turbo', 'tasks');
+  await fs.mkdir(tasksDir, { recursive: true });
 
-  async generateReport(): Promise<void> {}
+  await fs.writeFile(
+    join(tasksDir, 'healthcare-tasks.json'),
+    JSON.stringify(healthcareScripts, null, 2)
+  );
+}
+
+private
+async;
+configureAdvancedCaching();
+: Promise<void>
+{
+  // Create cache optimization configuration
+  const cacheStrategy = {
+    healthcare: {
+      // High cache hit rate for healthcare components
+      patterns: [
+        'packages/compliance/**',
+        'packages/types/**',
+        'apps/web/lib/compliance/**',
+      ],
+      ttl: this.config.cacheOptions.ttl,
+      compression: true,
+      encryption: true, // Healthcare data requires encryption
+    },
+
+    testing: {
+      // Moderate caching for tests
+      patterns: ['**/__tests__/**', 'tools/testing/**'],
+      ttl: 86_400, // 1 day
+      compression: true,
+      encryption: false,
+    },
+
+    builds: {
+      // Aggressive caching for builds
+      patterns: ['.next/**', 'dist/**', 'build/**'],
+      ttl: this.config.cacheOptions.ttl,
+      compression: true,
+      encryption: false,
+    },
+  };
+
+  await fs.writeFile(
+    join(this.rootPath, 'tools', 'turbo', 'cache-strategy.json'),
+    JSON.stringify(cacheStrategy, null, 2)
+  );
+}
+
+async;
+generateReport();
+: Promise<void>
+{
+  // TODO: Implement advanced turbo report generation
+  // This will include cache hit rates, pipeline performance metrics,
+  // and optimization recommendations for healthcare compliance
+}
 }
 
 // Execute optimization if run directly
@@ -249,7 +276,10 @@ if (require.main === module) {
   optimizer
     .implementAdvancedFeatures()
     .then(() => optimizer.generateReport())
-    .catch(console.error);
+    .catch((error: Error) => {
+      process.stderr.write(`Turbo optimization error: ${error.message}\n`);
+      process.exit(1);
+    });
 }
 
 export { AdvancedTurboOptimizer };

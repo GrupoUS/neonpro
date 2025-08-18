@@ -138,8 +138,7 @@ vi.mock('next/navigation', () => ({
   usePathname: () => '/test-path',
 }));
 
-afterEach(() =>
-{
+afterEach(() => {
   // Clean up React components
   cleanup();
 
@@ -154,10 +153,6 @@ afterEach(() =>
 
   // Clean up global state
   (globalThis as any).__HEALTHCARE_MOCK_CLIENT__ = undefined;
-}
-)
+});
 
-afterAll(() =>
-{
-}
-)
+afterAll(() => {});

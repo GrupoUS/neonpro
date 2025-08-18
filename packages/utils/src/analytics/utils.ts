@@ -265,8 +265,16 @@ export function parseAnalyticsFilters(params: URLSearchParams): {
   let endDate: Date;
 
   if (startDateStr && endDateStr) {
-    startDate = parseISO(startDateStr);
-    endDate = parseISO(endDateStr);
+    // Ensure UTC dates by appending 'T00:00:00.000Z' if no time is specified
+    const startISO = startDateStr.includes('T')
+      ? startDateStr
+      : `${startDateStr}T00:00:00.000Z`;
+    const endISO = endDateStr.includes('T')
+      ? endDateStr
+      : `${endDateStr}T00:00:00.000Z`;
+
+    startDate = parseISO(startISO);
+    endDate = parseISO(endISO);
 
     if (!(isValid(startDate) && isValid(endDate))) {
       throw new Error('Invalid filter parameters');

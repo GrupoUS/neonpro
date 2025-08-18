@@ -107,22 +107,21 @@ export class HealthcareWorkflowHelper {
     // Verify encryption indicators
     await expect(page.getByTestId('data-encryption-indicator')).toBeVisible();
   }
-} /**
- * Test emergency access patterns (<100ms requirement)
- */
-static async validateEmergencyAccess(page: Page, patientId: string)
-{
-  const startTime = Date.now();
+  /**
+   * Test emergency access patterns (<100ms requirement)
+   */
+  static async validateEmergencyAccess(page: Page, patientId: string) {
+    const startTime = Date.now();
 
-  await page.getByTestId('emergency-access-button').click();
-  await page.getByTestId('patient-id-input').fill(patientId);
-  await page.getByTestId('emergency-access-submit').click();
+    await page.getByTestId('emergency-access-button').click();
+    await page.getByTestId('patient-id-input').fill(patientId);
+    await page.getByTestId('emergency-access-submit').click();
 
-  await expect(page.getByTestId('patient-emergency-data')).toBeVisible();
+    await expect(page.getByTestId('patient-emergency-data')).toBeVisible();
 
-  const accessTime = Date.now() - startTime;
-  expect(accessTime).toBeLessThan(100); // <100ms for emergency access
-}
+    const accessTime = Date.now() - startTime;
+    expect(accessTime).toBeLessThan(100); // <100ms for emergency access
+  }
 }
 
 // 🔒 LGPD COMPLIANCE TESTING UTILITIES

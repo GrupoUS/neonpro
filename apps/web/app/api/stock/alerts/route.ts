@@ -2,6 +2,21 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
 
+// Helper function to get clinic context from user
+async function getUserClinicContext(supabase: any, userId: string) {
+  const { data: professional, error } = await supabase
+    .from('healthcare_professionals')
+    .select('clinic_id')
+    .eq('user_id', userId)
+    .single();
+  
+  if (error || !professional?.clinic_id) {
+    throw new Error('User clinic context not found');
+  }
+  
+  return professional.clinic_id;
+}
+
 // Validation schemas
 const stockAlertQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).optional().default(10),
@@ -30,7 +45,7 @@ const createStockAlertSchema = z.object({
 export async function GET(request: NextRequest) {
   try {
     console.log('GET /api/stock/alerts - Starting request');
-    
+
     const supabase = await createClient();
     console.log('Supabase client created:', !!supabase);
 
@@ -44,7 +59,10 @@ export async function GET(request: NextRequest) {
     console.log('Session result:', { session: !!session, sessionError });
 
     if (sessionError || !session) {
-      console.log('Session check failed:', { sessionError, hasSession: !!session });
+      console.log('Session check failed:', {
+        sessionError,
+        hasSession: !!session,
+      });
       return NextResponse.json(
         { success: false, error: 'Unauthorized' },
         { status: 401 }
@@ -106,10 +124,10 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('GET /api/stock/alerts error:', error);
-    console.error('Error details:', { 
-      message: error?.message, 
+    console.error('Error details:', {
+      message: error?.message,
       stack: error?.stack,
-      name: error?.name 
+      name: error?.name,
     });
 
     if (error instanceof z.ZodError) {
@@ -133,23 +151,37 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
+    console.log('POST /api/stock/alerts - Starting request');
+
     const supabase = await createClient();
+    console.log('Supabase client created:', !!supabase);
 
     // Get current user session
+    console.log('Getting session...');
     const {
       data: { session },
       error: sessionError,
     } = await supabase.auth.getSession();
 
+    console.log('Session result:', { session: !!session, sessionError });
+
     if (sessionError || !session) {
+      console.log('Session check failed:', {
+        sessionError,
+        hasSession: !!session,
+      });
       return NextResponse.json(
         { success: false, error: 'Unauthorized' },
         { status: 401 }
       );
     }
 
+    console.log('Session validated, reading request body...');
     const body = await request.json();
+    console.log('Request body:', body);
+
     const validatedData = createStockAlertSchema.parse(body);
+    console.log('Data validated:', validatedData);
 
     // Validate that either productId or categoryId is provided
     if (!(validatedData.productId || validatedData.categoryId)) {
@@ -167,7 +199,7 @@ export async function POST(request: NextRequest) {
       .from('stock_alert_configs')
       .select('id')
       .eq('alert_type', validatedData.alertType)
-      .eq('user_id', session.user.id);
+      .eq('clinic_id', testClinicId); // Use clinic_id instead of user_id
 
     if (validatedData.productId) {
       duplicateQuery = duplicateQuery.eq('product_id', validatedData.productId);
@@ -180,6 +212,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    console.log('Checking for duplicates with query parameters:', {
+      alert_type: validatedData.alertType,
+      clinic_id: testClinicId,
+      product_id: validatedData.productId,
+      category_id: validatedData.categoryId,
+    });
+
     const { data: existingConfig } = await duplicateQuery;
 
     if (existingConfig && existingConfig.length > 0) {
@@ -190,13 +229,29 @@ export async function POST(request: NextRequest) {
     }
 
     // Create new alert configuration
+    // Transform camelCase to snake_case for database insertion
+    // Get clinic context from user
+    const clinicId = await getUserClinicContext(supabase, session.user.id);
+
+    const insertData = {
+      product_id: validatedData.productId,
+      category_id: validatedData.categoryId,
+      alert_type: validatedData.alertType,
+      threshold_value: validatedData.threshold,
+      threshold_unit: 'quantity', // Default from schema
+      severity_level: 'medium', // Default from schema
+      is_active: validatedData.isActive,
+      notification_channels: validatedData.notificationChannels,
+      clinic_id: clinicId,
+      user_id: session.user.id,
+      created_at: new Date().toISOString(),
+    };
+
+    console.log('Insert data:', insertData);
+
     const { data: newConfig, error: insertError } = await supabase
       .from('stock_alert_configs')
-      .insert({
-        ...validatedData,
-        user_id: session.user.id,
-        created_at: new Date().toISOString(),
-      })
+      .insert(insertData)
       .select()
       .single();
 

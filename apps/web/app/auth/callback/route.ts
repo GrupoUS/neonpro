@@ -1,161 +1,40 @@
-/**
- * Modern Supabase Auth Callback Handler for NeonPro Healthcare
- * Handles OAuth callbacks and email confirmations
- * Healthcare compliance with audit trails and security
- */
-
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/app/utils/supabase/server';
 
 export async function GET(request: NextRequest) {
-  const requestUrl = new URL(request.url);
-  const code = requestUrl.searchParams.get('code');
-  const error = requestUrl.searchParams.get('error');
-  const error_description = requestUrl.searchParams.get('error_description');
-
-  // Handle OAuth errors
-  if (error) {
-    console.error('Healthcare Auth Error:', { error, error_description });
-    return NextResponse.redirect(
-      `${requestUrl.origin}/auth/error?error=${encodeURIComponent(error)}&description=${encodeURIComponent(error_description || '')}`
-    );
-  }
+  const { searchParams, origin } = new URL(request.url);
+  const code = searchParams.get('code');
+  const next = searchParams.get('next') ?? '/dashboard';
 
   if (code) {
-    const cookieStore = cookies();
-
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() {
-            return cookieStore.getAll();
-          },
-          setAll(cookiesToSet) {
-            cookiesToSet.forEach(({ name, value, options }) => {
-              cookieStore.set(name, value, options);
-            });
-          },
-        },
-        global: {
-          headers: {
-            'X-Client-Type': 'neonpro-healthcare-auth',
-            'X-Compliance': 'LGPD-ANVISA-CFM',
-          },
-        },
-      }
-    );
+    const supabase = createClient();
 
     try {
-      // Exchange code for session
-      const {
-        data: { session },
-        error: exchangeError,
-      } = await supabase.auth.exchangeCodeForSession(code);
+      const { error } = await supabase.auth.exchangeCodeForSession(code);
 
-      if (exchangeError) {
-        console.error('Healthcare session exchange error:', exchangeError);
-        return NextResponse.redirect(
-          `${requestUrl.origin}/auth/error?error=session_exchange_failed`
-        );
+      if (error) {
+        console.error('Auth callback error:', error);
+        return NextResponse.redirect(`${origin}/login?error=auth_error`);
       }
+      const forwardedHost = request.headers.get('x-forwarded-host');
+      const isLocalEnv = process.env.NODE_ENV === 'development';
 
-      if (session?.user) {
-        // Healthcare audit logging for successful authentication
-        await logHealthcareAuthentication(
-          session.user.id,
-          'oauth_callback_success',
-          {
-            provider: session.user.app_metadata?.provider || 'unknown',
-            ip_address: request.ip || 'unknown',
-            user_agent: request.headers.get('user-agent') || 'unknown',
-          }
-        );
-
-        // Check if user has healthcare profile
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role, tenant_id')
-          .eq('id', session.user.id)
-          .single();
-
-        // Redirect based on user role and profile status
-        if (profile) {
-          switch (profile.role) {
-            case 'doctor':
-            case 'nurse':
-            case 'admin':
-            case 'receptionist':
-              return NextResponse.redirect(`${requestUrl.origin}/dashboard`);
-            case 'patient':
-              return NextResponse.redirect(
-                `${requestUrl.origin}/patient-portal`
-              );
-            default:
-              return NextResponse.redirect(
-                `${requestUrl.origin}/complete-profile`
-              );
-          }
-        }
-        // New user - redirect to profile setup
-        return NextResponse.redirect(`${requestUrl.origin}/complete-profile`);
+      if (isLocalEnv) {
+        // In development, redirect to localhost
+        return NextResponse.redirect(`${origin}${next}`);
       }
-    } catch (error) {
-      console.error('Critical healthcare auth error:', error);
-      return NextResponse.redirect(
-        `${requestUrl.origin}/auth/error?error=critical_auth_error`
-      );
+      if (forwardedHost) {
+        // In production, redirect to the forwarded host
+        return NextResponse.redirect(`https://${forwardedHost}${next}`);
+      }
+      // Fallback to origin
+      return NextResponse.redirect(`${origin}${next}`);
+    } catch (err) {
+      console.error('Unexpected auth callback error:', err);
+      return NextResponse.redirect(`${origin}/login?error=unexpected_error`);
     }
   }
 
-  // No code parameter - invalid callback
-  return NextResponse.redirect(
-    `${requestUrl.origin}/auth/login?error=invalid_callback`
-  );
-}
-
-/**
- * Healthcare audit logging for authentication events
- * LGPD compliance requires comprehensive access logging
- */
-async function logHealthcareAuthentication(
-  userId: string,
-  action: string,
-  metadata: Record<string, any>
-): Promise<void> {
-  try {
-    const cookieStore = cookies();
-
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() {
-            return cookieStore.getAll();
-          },
-          setAll(cookiesToSet) {
-            cookiesToSet.forEach(({ name, value, options }) => {
-              cookieStore.set(name, value, options);
-            });
-          },
-        },
-      }
-    );
-
-    await supabase.from('healthcare_audit_logs').insert({
-      user_id: userId,
-      action,
-      resource_type: 'authentication',
-      metadata,
-      ip_address: metadata.ip_address,
-      user_agent: metadata.user_agent,
-      timestamp: new Date().toISOString(),
-    });
-  } catch (error) {
-    console.error('Healthcare audit logging failed:', error);
-    // Don't throw - audit logging failure shouldn't block auth
-  }
+  // Return the user to an error page with instructions
+  return NextResponse.redirect(`${origin}/login?error=no_code_provided`);
 }

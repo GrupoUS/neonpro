@@ -54,7 +54,7 @@ export type WebAuthnAuthenticationOptions = {
     transports?: Array<'usb' | 'nfc' | 'ble' | 'internal'>;
   }>;
   userVerification?: 'required' | 'preferred' | 'discouraged';
-}
+};
 
 export class WebAuthnClient {
   private static instance: WebAuthnClient | null = null;

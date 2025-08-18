@@ -398,7 +398,10 @@ export class MedicalEthicsService {
           (record) => record.patient_decision_overridden === true
         ) || [];
 
-      if (patientDecisionRespectIssues.length > (consentRecords?.length || 0) * 0.1) {
+      if (
+        patientDecisionRespectIssues.length >
+        (consentRecords?.length || 0) * 0.1
+      ) {
         issues.push('High rate of patient decision overrides');
         score -= 1.5;
         violations.push({
@@ -1161,7 +1164,8 @@ export class MedicalEthicsService {
                 compliance_score: complianceResponse.constitutional_score,
                 violations: complianceResponse.violations,
                 recommendations: complianceResponse.corrective_actions,
-                constitutional_compliance: complianceResponse.constitutional_score >= 9.9,
+                constitutional_compliance:
+                  complianceResponse.constitutional_score >= 9.9,
               },
             },
             user_id: assessorId,

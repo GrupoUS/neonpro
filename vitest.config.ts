@@ -1,7 +1,7 @@
 /// <reference types="vitest" />
 
-import react from '@vitejs/plugin-react';
 import path from 'node:path';
+import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
@@ -14,6 +14,7 @@ export default defineConfig({
     // Incluir todos os testes que existem no monorepo
     include: [
       '**/*.{test,spec}.{ts,tsx,js,jsx}',
+      '**/*.integration.test.{ts,tsx,js,jsx}',
       '**/__tests__/**/*.{ts,tsx,js,jsx}',
       '**/test/**/*.{test,spec}.{ts,tsx,js,jsx}',
       '!**/node_modules/**',
@@ -41,6 +42,12 @@ export default defineConfig({
       '**/*.e2e.spec.tsx',
       '**/e2e/**',
       '**/cypress/**',
+
+      // Excluir testes playwright específicos que estão sendo detectados
+      '**/apps/web/test/**/*.spec.ts',
+      '**/apps/web/test/**/*.spec.tsx',
+      '**/tools/testing/e2e/**',
+      '**/tools/testing/playwright/**',
 
       // Excluir testes que requerem servidor ativo
       '**/performance/**',

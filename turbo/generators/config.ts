@@ -14,7 +14,9 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
         name: 'name',
         message: 'Component name:',
         validate: (input) => {
-          if (!input) return 'Component name is required';
+          if (!input) {
+            return 'Component name is required';
+          }
           if (!PASCAL_CASE_REGEX.test(input)) {
             return 'Component name must be PascalCase';
           }

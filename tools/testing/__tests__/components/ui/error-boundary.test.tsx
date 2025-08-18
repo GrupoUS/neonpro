@@ -33,6 +33,11 @@ afterAll(() => {
 });
 
 describe('ErrorBoundary', () => {
+  beforeEach(() => {
+    // Clean up any DOM pollution from previous tests
+    document.body.innerHTML = '';
+  });
+
   it('renders children when there is no error', () => {
     render(
       <ErrorBoundary>
@@ -59,7 +64,7 @@ describe('ErrorBoundary', () => {
   });
 
   it('shows retry button and resets error state when clicked', () => {
-    render(
+    const { unmount } = render(
       <ErrorBoundary>
         <ThrowError />
       </ErrorBoundary>
@@ -72,6 +77,9 @@ describe('ErrorBoundary', () => {
 
     // After retry, component should re-render and error should be gone
     // Note: In real usage, the component would need to fix the error condition
+
+    // Clean up this test's render
+    unmount();
   });
 
   it('shows technical details when showDetails is true', () => {
@@ -140,6 +148,11 @@ describe('CriticalErrorBoundary', () => {
 });
 
 describe('withErrorBoundary HOC', () => {
+  beforeEach(() => {
+    // Clean up any DOM pollution from previous tests
+    document.body.innerHTML = '';
+  });
+
   it('wraps component with error boundary', () => {
     const TestComponent = () => <div>Test Component</div>;
     const WrappedComponent = withErrorBoundary(TestComponent);
@@ -152,9 +165,12 @@ describe('withErrorBoundary HOC', () => {
   it('catches errors in wrapped component', () => {
     const ErrorComponent = withErrorBoundary(ThrowError);
 
-    render(<ErrorComponent />);
+    const { unmount } = render(<ErrorComponent />);
 
     expect(screen.getByText('Oops! Algo deu errado')).toBeInTheDocument();
+
+    // Clean up this test's render
+    unmount();
   });
 
   it('passes props to wrapped component', () => {
@@ -181,12 +197,17 @@ describe('withErrorBoundary HOC', () => {
 });
 
 describe('Error Boundary Edge Cases', () => {
+  beforeEach(() => {
+    // Clean up any DOM pollution from previous tests
+    document.body.innerHTML = '';
+  });
+
   it('handles multiple error types correctly', () => {
     const AsyncErrorComponent = () => {
       throw new TypeError('Type error occurred');
     };
 
-    render(
+    const { unmount } = render(
       <ErrorBoundary showDetails={true}>
         <AsyncErrorComponent />
       </ErrorBoundary>
@@ -199,10 +220,13 @@ describe('Error Boundary Edge Cases', () => {
     fireEvent.click(detailsButton);
 
     expect(screen.getByText('Type error occurred')).toBeInTheDocument();
+
+    // Clean up this test's render
+    unmount();
   });
 
   it('maintains error state across re-renders', () => {
-    const { rerender } = render(
+    const { rerender, unmount } = render(
       <ErrorBoundary>
         <ThrowError />
       </ErrorBoundary>
@@ -218,5 +242,8 @@ describe('Error Boundary Edge Cases', () => {
     );
 
     expect(screen.getByText('Oops! Algo deu errado')).toBeInTheDocument();
+
+    // Clean up this test's render
+    unmount();
   });
 });

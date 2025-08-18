@@ -8,7 +8,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { type RenderOptions, render } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import type { ReactElement } from 'react';
+import React, { type ReactElement } from 'react';
 import { vi } from 'vitest';
 
 /**
@@ -84,8 +84,13 @@ export function renderWithHealthcareContext(
   } = options;
 
   // Mock healthcare context providers
-  const HealthcareWrapper = ({ children }: { children: React.ReactNode }) =>
-    (<div data-testid="healthcare-context">{children}</div>);
+  const HealthcareWrapper = ({ children }: { children: React.ReactNode }) => {
+    return React.createElement(
+      'div',
+      { 'data-testid': 'healthcare-context' },
+      children
+    );
+  };
 
   return {
     user: userEvent.setup(),

@@ -1,6 +1,6 @@
 'use client';
 
-import { useUser } from '@clerk/nextjs';
+import { useAuth } from '@/contexts/auth-context';
 import {
   Alert,
   AlertDescription,
@@ -123,7 +123,7 @@ const MOCK_PATIENTS: Patient[] = [
 ];
 
 export default function PacientesPage() {
-  const { user } = useUser();
+  const { user } = useAuth();
   const [patients, setPatients] = useState<Patient[]>(MOCK_PATIENTS);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');

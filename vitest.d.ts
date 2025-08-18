@@ -9,7 +9,7 @@
 
 declare global {
   namespace Vi {
-    interface AsymmetricMatchersContaining {
+    type AsymmetricMatchersContaining = {
       toBeInTheDocument: () => void;
       toHaveClass: (className: string) => void;
       toHaveAttribute: (attribute: string, value?: string) => void;
@@ -18,7 +18,7 @@ declare global {
       toBeDisabled: () => void;
       toBeEnabled: () => void;
       toHaveValue: (value: string | number) => void;
-    }
+    };
   }
 }
 

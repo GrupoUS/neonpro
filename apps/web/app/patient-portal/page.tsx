@@ -1,6 +1,6 @@
 'use client';
 
-import { useUser } from '@clerk/nextjs';
+import { useAuth } from '@/contexts/auth-context';
 import {
   Alert,
   AlertDescription,
@@ -134,7 +134,7 @@ const MOCK_TEST_RESULTS: TestResult[] = [
 ];
 
 export default function PatientPortalPage() {
-  const { user, isLoaded } = useUser();
+  const { user, loading } = useAuth();
   const [appointments, setAppointments] =
     useState<Appointment[]>(MOCK_APPOINTMENTS);
   const [records, setRecords] = useState<MedicalRecord[]>(MOCK_RECORDS);
@@ -177,7 +177,7 @@ export default function PatientPortalPage() {
     (apt) => apt.status === 'scheduled'
   );
 
-  if (!isLoaded) {
+  if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-blue-600 border-b-2" />

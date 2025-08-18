@@ -7,13 +7,17 @@ import { describe, expect, test } from 'vitest';
 
 // Test constants to avoid magic numbers
 const LGPD_COMPLIANCE_THRESHOLD = 98;
-const ANVISA_COMPLIANCE_THRESHOLD = 95; 
+const ANVISA_COMPLIANCE_THRESHOLD = 95;
 const AUDIT_TRAIL_THRESHOLD = 99;
+const AUDIT_SCORE_RESULT = 99.5; // Audit trail validation score
 const MAX_LCP_TIME = 2500; // 2.5 seconds in milliseconds
 const MAX_FID_TIME = 100; // 100 milliseconds
 const MAX_CLS_SCORE = 0.1; // 0.1 CLS threshold
 const P95_RESPONSE_TIME_THRESHOLD = 100; // 100ms
 const MAX_ERROR_RATE = 0.1; // 10% error rate threshold
+const MINIMUM_QUALITY_SCORE = 99;
+const MINIMUM_OVERALL_SCORE = 9.5;
+const PERFECT_PERCENTAGE = 100;
 
 describe('Enhanced DevOps Workflow Validation', () => {
   describe('Quality Gates Validation', () => {
@@ -67,7 +71,9 @@ describe('Enhanced DevOps Workflow Validation', () => {
 
     test('should validate audit trail completeness', async () => {
       const auditTrailCompleteness = await validateAuditTrail();
-      expect(auditTrailCompleteness).toBeGreaterThanOrEqual(99);
+      expect(auditTrailCompleteness).toBeGreaterThanOrEqual(
+        MINIMUM_QUALITY_SCORE
+      );
     });
   });
   describe('Performance Monitoring Validation', () => {
@@ -82,7 +88,9 @@ describe('Enhanced DevOps Workflow Validation', () => {
     test('should validate API response times <100ms P95', async () => {
       const apiPerformance = await measureAPIPerformance();
 
-      expect(apiPerformance.p95ResponseTime).toBeLessThanOrEqual(P95_RESPONSE_TIME_THRESHOLD);
+      expect(apiPerformance.p95ResponseTime).toBeLessThanOrEqual(
+        P95_RESPONSE_TIME_THRESHOLD
+      );
       expect(apiPerformance.errorRate).toBeLessThanOrEqual(MAX_ERROR_RATE);
     });
 
@@ -101,21 +109,23 @@ describe('Enhanced DevOps Workflow Validation', () => {
 
       expect(securityScan.criticalVulnerabilities).toBe(0);
       expect(securityScan.highVulnerabilities).toBe(0);
-      expect(securityScan.securityScore).toBeGreaterThanOrEqual(9.5);
+      expect(securityScan.securityScore).toBeGreaterThanOrEqual(
+        MINIMUM_OVERALL_SCORE
+      );
     });
 
     test('should validate encryption coverage', async () => {
       const encryptionCoverage = await validateEncryption();
 
-      expect(encryptionCoverage.dataAtRest).toBe(100);
-      expect(encryptionCoverage.dataInTransit).toBe(100);
-      expect(encryptionCoverage.patientData).toBe(100);
+      expect(encryptionCoverage.dataAtRest).toBe(PERFECT_PERCENTAGE);
+      expect(encryptionCoverage.dataInTransit).toBe(PERFECT_PERCENTAGE);
+      expect(encryptionCoverage.patientData).toBe(PERFECT_PERCENTAGE);
     });
   });
 });
 
 // Helper functions for testing
-async function simulateQualityAssessment(): Promise<number> {
+function simulateQualityAssessment(): Promise<number> {
   // Simulate comprehensive quality assessment
   const qualityFactors = {
     codeQuality: 9.8,
@@ -126,33 +136,41 @@ async function simulateQualityAssessment(): Promise<number> {
     aiGovernance: 9.6,
   };
 
+  const CODE_QUALITY_WEIGHT = 0.15;
+  const TEST_COVERAGE_WEIGHT = 0.2;
+  const SECURITY_WEIGHT = 0.25;
+  const PERFORMANCE_WEIGHT = 0.15;
+  const COMPLIANCE_WEIGHT = 0.2;
+  const AI_GOVERNANCE_WEIGHT = 0.05;
+
   const weightedScore =
-    qualityFactors.codeQuality * 0.15 +
-    (qualityFactors.testCoverage / 10) * 0.2 +
-    qualityFactors.security * 0.25 +
-    qualityFactors.performance * 0.15 +
-    qualityFactors.compliance * 0.2 +
-    qualityFactors.aiGovernance * 0.05;
+    qualityFactors.codeQuality * CODE_QUALITY_WEIGHT +
+    (qualityFactors.testCoverage / TEST_COVERAGE_DIVISOR) *
+      TEST_COVERAGE_WEIGHT +
+    qualityFactors.security * SECURITY_WEIGHT +
+    qualityFactors.performance * PERFORMANCE_WEIGHT +
+    qualityFactors.compliance * COMPLIANCE_WEIGHT +
+    qualityFactors.aiGovernance * AI_GOVERNANCE_WEIGHT;
 
-  return weightedScore;
+  return Promise.resolve(weightedScore);
 }
 
-async function validateLGPDCompliance(): Promise<number> {
+function validateLGPDCompliance(): Promise<number> {
   // Simulate LGPD compliance validation
-  return 99.2;
+  return Promise.resolve(LGPD_COMPLIANCE_SCORE);
 }
 
-async function validateANVISACompliance(): Promise<number> {
+function validateANVISACompliance(): Promise<number> {
   // Simulate ANVISA compliance validation
-  return 96.8;
+  return Promise.resolve(ANVISA_COMPLIANCE_SCORE);
 }
 
-async function validateAuditTrail(): Promise<number> {
+function validateAuditTrail(): Promise<number> {
   // Simulate audit trail validation
-  return 99.5;
+  return Promise.resolve(AUDIT_SCORE_RESULT);
 }
 
-async function measureCoreWebVitals() {
+function measureCoreWebVitals() {
   return {
     lcp: 2200, // ms
     fid: 85, // ms
@@ -160,7 +178,7 @@ async function measureCoreWebVitals() {
   };
 }
 
-async function measureAPIPerformance() {
+function measureAPIPerformance() {
   return {
     p95ResponseTime: 95, // ms
     errorRate: 0.05, // percentage
@@ -185,8 +203,8 @@ async function runSecurityScan() {
 
 async function validateEncryption() {
   return {
-    dataAtRest: 100,
-    dataInTransit: 100,
-    patientData: 100,
+    dataAtRest: PERFECT_PERCENTAGE,
+    dataInTransit: PERFECT_PERCENTAGE,
+    patientData: PERFECT_PERCENTAGE,
   };
 }

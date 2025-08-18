@@ -1,5 +1,9 @@
 import { defineConfig, devices } from '@playwright/test';
 
+// Configuration constants to avoid magic numbers
+const DEV_SERVER_PORT = 3000;
+const TIMEOUT_SECONDS = 120;
+
 /**
  * Visual Regression Testing Configuration
  *
@@ -115,9 +119,9 @@ export default defineConfig({
     ? undefined
     : {
         command: 'pnpm dev',
-        port: 3000,
+        port: DEV_SERVER_PORT,
         reuseExistingServer: !process.env.CI,
-        timeout: 120 * 1000,
+        timeout: TIMEOUT_SECONDS * 1000,
       },
 
   // Expect configuration for visual testing

@@ -1,5 +1,5 @@
 // app/api/automated-analysis/route.ts// Main API endpoints for Story 10.1: Automated Before/After Analysis
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/app/utils/supabase/server';
 import { cookies } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 import { automatedBeforeAfterAnalysisService } from '@/app/lib/services/automated-before-after-analysis';
@@ -8,7 +8,7 @@ import { validationSchemas } from '@/app/lib/validations/automated-before-after-
 // GET /api/automated-analysis - Get analysis sessions with filters
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
 // POST /api/automated-analysis - Create new analysis session
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
 // PUT /api/automated-analysis - Update analysis session
 export async function PUT(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -145,7 +145,7 @@ export async function PUT(request: NextRequest) {
 // DELETE /api/automated-analysis - Delete analysis session
 export async function DELETE(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient();
     const {
       data: { user },
     } = await (await supabase).auth.getUser();

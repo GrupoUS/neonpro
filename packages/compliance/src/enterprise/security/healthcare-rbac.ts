@@ -1020,7 +1020,10 @@ export class HealthcareRbacService {
 
     return user.assigned_roles
       .map((roleId) => this.roles.get(roleId))
-      .filter((role): role is HealthcareRole => role !== undefined && role.active === true);
+      .filter(
+        (role): role is HealthcareRole =>
+          role !== undefined && role.active === true
+      );
   }
 
   private async getUserPermissions(roles: HealthcareRole[]): Promise<string[]> {

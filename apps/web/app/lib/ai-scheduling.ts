@@ -869,17 +869,26 @@ getEquipmentUtilization(equipmentId: string, time: Date)
   return this.realTimeMetrics.get(`equipment_utilization_${equipmentId}_${hour}`) || 0.5;
 }
 
-private getStaffSpecializationMatch(staffId: string, treatment: TreatmentType): number {
+private
+getStaffSpecializationMatch(staffId: string, treatment: TreatmentType)
+: number
+{
   // Simplified specialization matching
   return this.realTimeMetrics.get(`specialization_${staffId}_${treatment.category}`) || 0.7;
 }
 
-private getWeatherImpact(date: Date): number {
+private
+getWeatherImpact(date: Date)
+: number
+{
   // Simplified weather impact - would integrate with weather API
   return 1.0; // Neutral impact for now
 }
 
-private getTreatmentValue(category: string): number {
+private
+getTreatmentValue(category: string)
+: number
+{
   const values: Record<string, number> = {
     botox: 0.9,
     fillers: 0.95,
@@ -898,27 +907,44 @@ getHourlyUtilization(hour: number)
 }
 
 private
-private getTimeSlotUtilization(time: Date): number {
+private
+getTimeSlotUtilization(time: Date)
+: number
+{
   const hour = time.getHours();
   return this.getHourlyUtilization(hour);
 }
 
-private getHourlyUtilization(hour: number): number {
+private
+getHourlyUtilization(hour: number)
+: number
+{
   // Implementation would track actual hourly utilization
   const utilization = {
-    9: 0.8, 10: 0.9, 11: 0.95, // Peak morning
-    12: 0.7, 13: 0.8, 14: 0.9, // Lunch and early afternoon
-    15: 0.95, 16: 0.9, 17: 0.8, // Peak afternoon
-    18: 0.6, 19: 0.4, // Evening
+    9: 0.8,
+    10: 0.9,
+    11: 0.95, // Peak morning
+    12: 0.7,
+    13: 0.8,
+    14: 0.9, // Lunch and early afternoon
+    15: 0.95,
+    16: 0.9,
+    17: 0.8, // Peak afternoon
+    18: 0.6,
+    19: 0.4, // Evening
   };
   return utilization[hour] || 0.5;
 }
 
 // Dynamic event handlers
-private async handleCancellation(
+private
+async;
+handleCancellation(
     event: DynamicSchedulingEvent,
     schedule: AppointmentSlot[]
-  ): Promise<SchedulingAction[]> {
+  )
+: Promise<SchedulingAction[]>
+{
   return [{
       type: 'reschedule',
       description: 'Fill cancelled slot with waitlist patient',
@@ -932,10 +958,14 @@ private async handleCancellation(
     }];
 }
 
-private async handleNoShow(
+private
+async;
+handleNoShow(
     event: DynamicSchedulingEvent,
     schedule: AppointmentSlot[]
-  ): Promise<SchedulingAction[]> {
+  )
+: Promise<SchedulingAction[]>
+{
   return [{
       type: 'add_buffer',
       description: 'Use time for walk-in or staff break',
@@ -949,11 +979,15 @@ private async handleNoShow(
     }];
 }
 
-private async handleWalkIn(
+private
+async;
+handleWalkIn(
     event: DynamicSchedulingEvent,
     schedule: AppointmentSlot[],
     staff: Staff[]
-  ): Promise<SchedulingAction[]> {
+  )
+: Promise<SchedulingAction[]>
+{
   return [{
       type: 'adjust_duration',
       description: 'Accommodate walk-in during buffer time',
@@ -967,11 +1001,15 @@ private async handleWalkIn(
     }];
 }
 
-private async handleEmergency(
+private
+async;
+handleEmergency(
     event: DynamicSchedulingEvent,
     schedule: AppointmentSlot[],
     staff: Staff[]
-  ): Promise<SchedulingAction[]> {
+  )
+: Promise<SchedulingAction[]>
+{
   return [{
       type: 'reschedule',
       description: 'Reschedule non-urgent appointments for emergency',
@@ -985,11 +1023,15 @@ private async handleEmergency(
     }];
 }
 
-private async handleStaffUnavailable(
+private
+async;
+handleStaffUnavailable(
     event: DynamicSchedulingEvent,
     schedule: AppointmentSlot[],
     staff: Staff[]
-  ): Promise<SchedulingAction[]> {
+  )
+: Promise<SchedulingAction[]>
+{
   return [{
       type: 'reassign_staff',
       description: 'Reassign appointments to available staff',

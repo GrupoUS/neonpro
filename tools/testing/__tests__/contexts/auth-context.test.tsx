@@ -1,5 +1,6 @@
 import {
   act,
+  cleanup,
   fireEvent,
   render,
   screen,
@@ -72,6 +73,7 @@ const TestComponent = () => {
 
 describe('AuthProvider', () => {
   beforeEach(() => {
+    cleanup(); // Ensure clean DOM before each test
     vi.clearAllMocks();
 
     // Default mock implementations
@@ -84,6 +86,10 @@ describe('AuthProvider', () => {
       data: { user: null },
       error: null,
     });
+  });
+
+  afterEach(() => {
+    cleanup(); // Clean up DOM after each test
   });
 
   it('provides auth context to children', () => {
@@ -211,9 +217,7 @@ describe('AuthProvider', () => {
         email: 'test@example.com',
         password: 'password',
         options: {
-          data: {
-            name: 'Test User',
-          },
+          emailRedirectTo: 'http://localhost:3000/auth/callback',
         },
       });
     });
@@ -255,7 +259,7 @@ describe('AuthProvider', () => {
         email: 'test@example.com',
         password: 'password',
         options: {
-          data: {},
+          emailRedirectTo: 'http://localhost:3000/auth/callback',
         },
       });
     });
@@ -310,7 +314,11 @@ describe('AuthProvider', () => {
       expect(mockSupabase.auth.signInWithOAuth).toHaveBeenCalledWith({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
+          redirectTo: 'http://localhost:3000/auth/popup-callback',
         },
       });
     });

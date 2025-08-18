@@ -42,28 +42,28 @@ describe('Analytics Repository Utils', () => {
     it('should validate correct date range', () => {
       const start = new Date('2024-01-01');
       const end = new Date('2024-01-31');
-      
+
       expect(validateDateRange(start, end)).toBe(true);
     });
 
     it('should invalidate incorrect date range', () => {
       const start = new Date('2024-01-31');
       const end = new Date('2024-01-01');
-      
+
       expect(validateDateRange(start, end)).toBe(false);
     });
 
     it('should handle invalid dates', () => {
       const invalidDate = new Date('invalid');
       const validDate = new Date('2024-01-01');
-      
+
       expect(validateDateRange(invalidDate, validDate)).toBe(false);
       expect(validateDateRange(validDate, invalidDate)).toBe(false);
     });
 
     it('should handle equal dates', () => {
       const date = new Date('2024-01-01');
-      
+
       expect(validateDateRange(date, date)).toBe(true);
     });
   });
@@ -77,10 +77,8 @@ describe('Analytics Repository Utils', () => {
     ];
 
     it('should aggregate revenue by month', () => {
-      const aggregated = aggregateMetricsByPeriod(
-        testData,
-        'month',
-        (items) => items.reduce((sum, item) => sum + item.revenue, 0)
+      const aggregated = aggregateMetricsByPeriod(testData, 'month', (items) =>
+        items.reduce((sum, item) => sum + item.revenue, 0)
       );
 
       expect(aggregated).toHaveLength(2);
@@ -91,10 +89,8 @@ describe('Analytics Repository Utils', () => {
     });
 
     it('should aggregate customers by month', () => {
-      const aggregated = aggregateMetricsByPeriod(
-        testData,
-        'month',
-        (items) => Math.max(...items.map(item => item.customers))
+      const aggregated = aggregateMetricsByPeriod(testData, 'month', (items) =>
+        Math.max(...items.map((item) => item.customers))
       );
 
       expect(aggregated).toHaveLength(2);
@@ -103,10 +99,8 @@ describe('Analytics Repository Utils', () => {
     });
 
     it('should handle day aggregation', () => {
-      const aggregated = aggregateMetricsByPeriod(
-        testData,
-        'day',
-        (items) => items.reduce((sum, item) => sum + item.subscriptions, 0)
+      const aggregated = aggregateMetricsByPeriod(testData, 'day', (items) =>
+        items.reduce((sum, item) => sum + item.subscriptions, 0)
       );
 
       expect(aggregated).toHaveLength(4);
@@ -167,13 +161,13 @@ describe('Analytics Repository Utils', () => {
     it('should calculate churn rate scenarios', () => {
       // Low churn
       expect(calculateChurnRate(5, 100)).toBe(0.05);
-      
+
       // High churn
       expect(calculateChurnRate(20, 100)).toBe(0.2);
-      
+
       // Complete churn
       expect(calculateChurnRate(100, 100)).toBe(1);
-      
+
       // Negative churn (should default to 0)
       expect(calculateChurnRate(-5, 100)).toBe(0);
     });
@@ -181,13 +175,13 @@ describe('Analytics Repository Utils', () => {
     it('should calculate LTV for different scenarios', () => {
       // High value, low churn
       expect(calculateLTV(100, 0.05)).toBe(2000);
-      
+
       // Low value, high churn
       expect(calculateLTV(50, 0.2)).toBe(250);
-      
+
       // Zero ARPU
       expect(calculateLTV(0, 0.1)).toBe(0);
-      
+
       // Negative ARPU (should default to 0)
       expect(calculateLTV(-100, 0.1)).toBe(0);
     });
@@ -195,10 +189,8 @@ describe('Analytics Repository Utils', () => {
 
   describe('Data Edge Cases', () => {
     it('should handle empty datasets gracefully', () => {
-      const aggregated = aggregateMetricsByPeriod(
-        [],
-        'month',
-        (items) => items.reduce((sum, item) => sum + (item as any).value, 0)
+      const aggregated = aggregateMetricsByPeriod([], 'month', (items) =>
+        items.reduce((sum, item) => sum + (item as any).value, 0)
       );
 
       expect(aggregated).toEqual([]);
@@ -218,7 +210,7 @@ describe('Analytics Repository Utils', () => {
 
       // Should skip null/undefined dates
       const aggregated = aggregateMetricsByPeriod(
-        dataWithNullDates.filter(item => item.date),
+        dataWithNullDates.filter((item) => item.date),
         'day',
         (items) => items.reduce((sum, item) => sum + (item as any).value, 0)
       );

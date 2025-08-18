@@ -491,8 +491,7 @@ export class ProfessionalLicensingService {
           license_status: verificationData.status,
           specializations: verificationData.specializations,
           license_expiry: verificationData.expiry_date.toISOString(),
-          constitutional_compliance:
-            verificationData.constitutional_compliance,
+          constitutional_compliance: verificationData.constitutional_compliance,
           updated_at: timestamp.toISOString(),
         })
         .eq('cfm_number', cfmNumber);

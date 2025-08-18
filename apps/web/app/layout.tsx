@@ -1,18 +1,15 @@
-import { ptBR } from '@clerk/localizations';
-import { ClerkProvider } from '@clerk/nextjs';
-import { ThemeProvider, Toaster } from '@neonpro/ui';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import { TwentyFirstToolbar } from '@21st-extension/toolbar-next';
-import { ReactPlugin } from '@21st-extension/react';
-
 import './globals.css';
+import { ThemeProvider } from '@/components/theme-provider';
+import { Toaster } from '@/components/ui/toaster';
+import { AuthProvider } from '@/contexts/auth-context';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'NeonPro',
-  description: 'Sistema de gestão empresarial moderno',
+  title: 'NeonPro - Healthcare Management',
+  description: 'Professional healthcare management system',
 };
 
 export default function RootLayout({
@@ -21,25 +18,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider localization={ptBR}>
-      <html lang="pt-BR" suppressHydrationWarning>
-        <body className={inter.className}>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            disableTransitionOnChange
-            enableSystem
-          >
+    <html lang="pt-BR">
+      <body className={inter.className}>
+        <AuthProvider>
+          <ThemeProvider>
             {children}
             <Toaster />
-            <TwentyFirstToolbar 
-              config={{
-                plugins: [ReactPlugin],
-              }}
-            />
           </ThemeProvider>
-        </body>
-      </html>
-    </ClerkProvider>
+        </AuthProvider>
+      </body>
+    </html>
   );
 }

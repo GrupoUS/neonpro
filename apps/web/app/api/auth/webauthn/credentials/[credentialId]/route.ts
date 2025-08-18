@@ -1,4 +1,4 @@
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/app/utils/supabase/server';
 import { cookies } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 
@@ -12,7 +12,7 @@ export async function GET(
   { params }: { params: { credentialId: string } }
 ) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = await createClient();
     const { credentialId } = params;
 
     // Get current user
@@ -64,7 +64,7 @@ export async function PUT(
   { params }: { params: { credentialId: string } }
 ) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = await createClient();
     const { credentialId } = params;
 
     // Get current user
@@ -144,7 +144,7 @@ export async function DELETE(
   { params }: { params: { credentialId: string } }
 ) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = await createClient();
     const { credentialId } = params;
 
     // Get current user

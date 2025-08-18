@@ -51,7 +51,9 @@ export {
 } from './types';
 
 // Utilities and Helpers
-// export * from './utils'; // TODO: Create utils if needed
+export * from './utils/compliance-helpers';
+export * from './utils/audit-utils';
+export * from './utils/validation-helpers';
 
 /**
  * Constitutional Healthcare Compliance Configuration

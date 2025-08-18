@@ -2,7 +2,7 @@
 // Story 6.1 - Task 2: Recurring Payment System
 // Individual plan management endpoints
 
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/app/utils/supabase/server';
 import { cookies } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
@@ -25,7 +25,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = await createClient();
     const {
       data: { user },
       error: authError,
@@ -99,7 +99,7 @@ export async function PUT(
 ) {
   try {
     const { id } = await params;
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = await createClient();
     const {
       data: { user },
       error: authError,
@@ -202,7 +202,7 @@ export async function DELETE(
 ) {
   const { id } = await params;
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = await createClient();
     const {
       data: { user },
       error: authError,

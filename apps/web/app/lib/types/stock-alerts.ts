@@ -121,9 +121,10 @@ export const updateStockAlertConfigSchema = baseStockAlertConfigSchema
   .omit({ id: true, createdAt: true, createdBy: true })
   .partial()
   .extend({
-    updatedBy: customUuid,
+    updatedBy: customUuid.optional(),
     updatedAt: z.date().default(() => new Date()),
-  });
+  })
+  .strict(); // Only reject extra fields in update schema
 
 // =====================================================
 // STOCK ALERT SCHEMAS

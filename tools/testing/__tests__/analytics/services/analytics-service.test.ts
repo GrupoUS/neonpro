@@ -155,7 +155,11 @@ describe('Analytics Utils', () => {
     });
 
     it('should handle empty data', () => {
-      const aggregated = aggregateMetricsByPeriod([], 'month', (items) => items.length);
+      const aggregated = aggregateMetricsByPeriod(
+        [],
+        'month',
+        (items) => items.length
+      );
       expect(aggregated).toEqual([]);
     });
   });

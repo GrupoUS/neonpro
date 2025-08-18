@@ -1078,7 +1078,9 @@ const MOCK_USERS: User[] = [
     role: 'Designer',
     department: 'Design',
     status: 'away',
-    lastSeen: new Date(Date.now() - MILLISECONDS_PER_SECOND * SECONDS_PER_MINUTE * 30),
+    lastSeen: new Date(
+      Date.now() - MILLISECONDS_PER_SECOND * SECONDS_PER_MINUTE * 30
+    ),
   },
   {
     id: '3',
@@ -1087,7 +1089,10 @@ const MOCK_USERS: User[] = [
     role: 'Gerente',
     department: 'Gestão',
     status: 'offline',
-    lastSeen: new Date(Date.now() - MILLISECONDS_PER_SECOND * SECONDS_PER_MINUTE * MINUTES_PER_HOUR * 2),
+    lastSeen: new Date(
+      Date.now() -
+        MILLISECONDS_PER_SECOND * SECONDS_PER_MINUTE * MINUTES_PER_HOUR * 2
+    ),
   },
 ];
 

@@ -24,20 +24,23 @@ interface AuthContextType {
     email: string,
     password: string
   ) => Promise<{
-    user: User | null;
+    data: any;
     error: AuthError | null;
   }>;
   signUp: (
     email: string,
-    password: string,
-    name?: string
+    password: string
   ) => Promise<{
-    user: User | null;
+    data: any;
+    error: AuthError | null;
+  }>;
+  signInWithGoogle: () => Promise<{
+    data: any;
     error: AuthError | null;
   }>;
   signOut: () => Promise<{ error: AuthError | null }>;
-  signInWithGoogle: () => Promise<{
-    user: User | null;
+  resetPassword: (email: string) => Promise<{
+    data: any;
     error: AuthError | null;
   }>;
 }
@@ -45,34 +48,30 @@ interface AuthContextType {
 // Create context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Create supabase client
-const supabase = createClient();
-
 // Provider props
 interface AuthProviderProps {
   children: ReactNode;
-  supabase?: SupabaseClient;
 }
 
 // Provider component
-export function AuthProvider({
-  children,
-  supabase: customSupabase,
-}: AuthProviderProps) {
+export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const client = customSupabase || supabase;
+  // Initialize Supabase client
+  const supabase = createClient();
 
+  // Initialize session on mount
   useEffect(() => {
     // Get initial session
-    const getInitialSession = async () => {
+    const initializeAuth = async () => {
       try {
         const {
           data: { session },
           error,
-        } = await client.auth.getSession();
+        } = await supabase.auth.getSession();
+
         if (error) {
           console.error('Error getting session:', error);
         } else {
@@ -80,84 +79,185 @@ export function AuthProvider({
           setUser(session?.user ?? null);
         }
       } catch (error) {
-        console.error('Error in getInitialSession:', error);
+        console.error('Auth initialization error:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    getInitialSession();
+    initializeAuth();
 
     // Listen for auth changes
     const {
       data: { subscription },
-    } = client.auth.onAuthStateChange(async (event, session) => {
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth state changed:', event, session);
+
       setSession(session);
       setUser(session?.user ?? null);
+
+      if (event === 'SIGNED_IN') {
+        // Redirect to dashboard after successful sign in
+        window.location.href = '/dashboard';
+      } else if (event === 'SIGNED_OUT') {
+        // Redirect to login after sign out
+        window.location.href = '/login';
+      }
+
       setLoading(false);
     });
 
     return () => subscription.unsubscribe();
-  }, [client]);
-
+  }, [supabase.auth]); // Auth methods
   const signIn = async (email: string, password: string) => {
+    setLoading(true);
     try {
-      const { data, error } = await client.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
-      return { user: data.user, error };
+
+      return { data, error };
     } catch (error) {
-      return { user: null, error: error as AuthError };
+      console.error('Sign in error:', error);
+      return { data: null, error: error as AuthError };
+    } finally {
+      setLoading(false);
     }
   };
 
-  const signUp = async (email: string, password: string, name?: string) => {
+  const signUp = async (email: string, password: string) => {
+    setLoading(true);
     try {
-      const { data, error } = await client.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          data: name ? { name } : {},
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
       });
-      return { user: data.user, error };
-    } catch (error) {
-      return { user: null, error: error as AuthError };
-    }
-  };
 
-  const signOut = async () => {
-    try {
-      const { error } = await client.auth.signOut();
-      return { error };
+      return { data, error };
     } catch (error) {
-      return { error: error as AuthError };
+      console.error('Sign up error:', error);
+      return { data: null, error: error as AuthError };
+    } finally {
+      setLoading(false);
     }
   };
 
   const signInWithGoogle = async () => {
+    setLoading(true);
     try {
-      const { data, error } = await client.auth.signInWithOAuth({
+      // Use Supabase's signInWithOAuth but in popup mode
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: `${window.location.origin}/auth/popup-callback`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
         },
       });
-      return { user: data.user, error };
+
+      if (error) {
+        throw error;
+      }
+
+      // If we have a URL, open it in a popup
+      if (data?.url) {
+        const popup = window.open(
+          data.url,
+          'google-oauth',
+          'width=500,height=600,scrollbars=yes,resizable=yes,left=' +
+            (window.screen.width / 2 - 250) +
+            ',top=' +
+            (window.screen.height / 2 - 300)
+        );
+
+        if (!popup) {
+          throw new Error('Popup blocked. Please allow popups for this site.');
+        }
+
+        // Return a promise that resolves when authentication completes
+        return new Promise((resolve, reject) => {
+          // Listen for messages from popup
+          const messageListener = (event: MessageEvent) => {
+            if (event.origin !== window.location.origin) return;
+
+            if (event.data.type === 'OAUTH_SUCCESS') {
+              popup.close();
+              window.removeEventListener('message', messageListener);
+              clearInterval(checkClosed);
+              // Refresh the session to get the new user
+              supabase.auth.getSession().then(() => {
+                resolve({ error: null });
+              });
+            } else if (event.data.type === 'OAUTH_ERROR') {
+              popup.close();
+              window.removeEventListener('message', messageListener);
+              clearInterval(checkClosed);
+              reject(new Error(event.data.error || 'Authentication failed'));
+            }
+          };
+
+          window.addEventListener('message', messageListener);
+
+          // Check if popup was closed manually
+          const checkClosed = setInterval(() => {
+            if (popup.closed) {
+              clearInterval(checkClosed);
+              window.removeEventListener('message', messageListener);
+              reject(new Error('Authentication was cancelled'));
+            }
+          }, 1000);
+        });
+      }
+
+      return { data, error };
     } catch (error) {
-      return { user: null, error: error as AuthError };
+      console.error('Google sign in error:', error);
+      return { data: null, error: error as AuthError };
+    } finally {
+      setLoading(false);
     }
   };
 
+  const signOut = async () => {
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signOut();
+      return { error };
+    } catch (error) {
+      console.error('Sign out error:', error);
+      return { error: error as AuthError };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const resetPassword = async (email: string) => {
+    try {
+      const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth/reset-password`,
+      });
+
+      return { data, error };
+    } catch (error) {
+      console.error('Reset password error:', error);
+      return { data: null, error: error as AuthError };
+    }
+  }; // Context value
   const value: AuthContextType = {
     user,
     session,
     loading,
     signIn,
     signUp,
-    signOut,
     signInWithGoogle,
+    signOut,
+    resetPassword,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -172,4 +272,5 @@ export function useAuth() {
   return context;
 }
 
-export default AuthContext;
+// Export types for use in other files
+export type { AuthContextType, User, Session, AuthError };

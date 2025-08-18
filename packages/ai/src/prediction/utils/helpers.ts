@@ -7,6 +7,15 @@ import type { PatientProfile, SkinType, TreatmentRequest } from '../types';
  * Simplifies integration and usage of the AI system
  */
 
+// Type definitions for specific concerns, expectations, and urgency levels
+type ConcernType = 'wrinkles' | 'acne' | 'pigmentation' | 'texture';
+type ExpectationType = 'minimal' | 'moderate' | 'significant';
+type UrgencyType = 'low' | 'moderate' | 'high';
+
+// Constants for time calculations and business rules
+const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
+const BUSINESS_DAYS = [1, 2, 3, 4, 5]; // Monday to Friday
+
 /**
  * Initialize the complete AI prediction system
  * Call this once during application startup
@@ -92,18 +101,18 @@ export function createTreatmentRequest(
     treatmentType: treatmentType as any,
     targetAreas: targetAreas.map((area) => ({
       region: area as any,
-      concern: 'wrinkles' as any,
+      concern: 'wrinkles' as ConcernType,
       severity: 5,
       priority: 1,
     })),
     goals: {
       primary: 'Aesthetic improvement',
       secondary: [],
-      expectations: 'moderate' as any,
+      expectations: 'moderate' as ExpectationType,
       maintenance: false,
       naturalLook: true,
     },
-    urgency: 'moderate' as any,
+    urgency: 'moderate' as UrgencyType,
     budgetRange: {
       min: 1000,
       max: 5000,
@@ -112,9 +121,9 @@ export function createTreatmentRequest(
     },
     timeframe: {
       earliestStart: new Date(),
-      latestCompletion: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      latestCompletion: new Date(Date.now() + 30 * MILLISECONDS_PER_DAY),
       flexibility: 'moderate',
-      preferredDays: [1, 2, 3, 4, 5],
+      preferredDays: BUSINESS_DAYS,
       preferredTimes: [{ start: '09:00', end: '17:00' }],
     },
   };
@@ -134,11 +143,15 @@ export function validatePatientData(patient: PatientProfile): {
   const warnings: string[] = [];
 
   // Required fields validation
-  if (!patient.id) errors.push('Patient ID is required');
+  if (!patient.id) {
+    errors.push('Patient ID is required');
+  }
   if (!patient.age || patient.age < 18 || patient.age > 100) {
     errors.push('Patient age must be between 18 and 100');
   }
-  if (!patient.skinType) errors.push('Skin type is required');
+  if (!patient.skinType) {
+    errors.push('Skin type is required');
+  }
   if (!patient.consentStatus.aiPredictionConsent) {
     errors.push('AI prediction consent is required');
   }

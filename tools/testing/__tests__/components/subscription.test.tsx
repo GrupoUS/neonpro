@@ -50,6 +50,8 @@ describe('Subscription Components', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    // Clean up any DOM pollution from previous tests
+    document.body.innerHTML = '';
   });
 
   // ============================================================================
@@ -71,10 +73,15 @@ describe('Subscription Components', () => {
     });
 
     it('should handle different variants correctly', () => {
-      renderWithProviders(<MockSubscriptionStatusCard variant="compact" />);
+      const { unmount } = renderWithProviders(
+        <MockSubscriptionStatusCard variant="compact" />
+      );
 
       const card = screen.getByTestId('subscription-status-card');
       expect(card).toHaveAttribute('data-variant', 'compact');
+
+      // Clean up this test's render
+      unmount();
     });
 
     it('should handle click events on upgrade button', async () => {
@@ -115,7 +122,7 @@ describe('Subscription Components', () => {
     });
 
     it('should render fallback for restricted features', () => {
-      renderWithProviders(
+      const { unmount } = renderWithProviders(
         <MockFeatureGate
           fallback={
             <div data-testid="upgrade-prompt">
@@ -129,10 +136,13 @@ describe('Subscription Components', () => {
       );
 
       expect(screen.getByTestId('feature-gate')).toBeInTheDocument();
+
+      // Clean up this test's render
+      unmount();
     });
 
     it('should pass correct feature attribute', () => {
-      renderWithProviders(
+      const { unmount } = renderWithProviders(
         <MockFeatureGate feature="advanced-reports">
           <div>Advanced Reports</div>
         </MockFeatureGate>
@@ -140,6 +150,9 @@ describe('Subscription Components', () => {
 
       const gate = screen.getByTestId('feature-gate');
       expect(gate).toHaveAttribute('data-feature', 'advanced-reports');
+
+      // Clean up this test's render
+      unmount();
     });
   });
 

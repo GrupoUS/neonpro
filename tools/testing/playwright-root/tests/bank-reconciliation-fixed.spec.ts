@@ -301,7 +301,9 @@ test('should handle large dataset with healthcare performance standards', async 
   await HealthcareWorkflowHelper.validatePatientDataProtection(page);
 });
 
-test('should maintain healthcare audit trail with constitutional compliance', async ({ page }) => {
+test('should maintain healthcare audit trail with constitutional compliance', async ({
+  page,
+}) => {
   // Perform operations to generate audit entries
   await page.getByTestId('import-statement-button').click();
   await page
@@ -348,10 +350,11 @@ test('should maintain healthcare audit trail with constitutional compliance', as
     .textContent();
   expect(auditContent).not.toMatch(/\d{3}\.\d{3}\.\d{3}-\d{2}/); // No CPF in logs
   expect(auditContent).not.toMatch(/\(\d{2}\)\s*9\d{4}-\d{4}/); // No phone numbers
-}
-)
+});
 
-test('should handle errors gracefully with healthcare standards', async ({ page }) => {
+test('should handle errors gracefully with healthcare standards', async ({
+  page,
+}) => {
   // Test file format error with healthcare error handling
   await page.getByTestId('import-statement-button').click();
   await page
@@ -399,10 +402,11 @@ test('should handle errors gracefully with healthcare standards', async ({ page 
 
   // Validate error recovery maintains data protection
   await HealthcareWorkflowHelper.validatePatientDataProtection(page);
-}
 });
 
-test('should validate LGPD compliance features in financial operations', async ({ page }) => {
+test('should validate LGPD compliance features in financial operations', async ({
+  page,
+}) => {
   // Navigate to privacy settings with healthcare compliance
   await page.getByTestId('privacy-settings-tab').click();
 
@@ -437,10 +441,11 @@ test('should validate LGPD compliance features in financial operations', async (
 
   // Validate constitutional healthcare compliance
   await LGPDComplianceHelper.validateConsentManagement(page);
-}
-)
+});
 
-test('should handle mobile responsive design with healthcare accessibility', async ({ page }) => {
+test('should handle mobile responsive design with healthcare accessibility', async ({
+  page,
+}) => {
   // Set mobile viewport for patient accessibility
   await page.setViewportSize({ width: 375, height: 667 });
 
@@ -467,15 +472,11 @@ test('should handle mobile responsive design with healthcare accessibility', asy
     await transactionsList.swipe('left');
     await expect(page.getByTestId('transaction-actions')).toBeVisible();
   }
-}
-)
+});
 
-test('should maintain security throughout reconciliation with healthcare standards', async (
-{
+test('should maintain security throughout reconciliation with healthcare standards', async ({
   page,
-}
-) =>
-{
+}) => {
   // Verify healthcare security measures
   await HealthcareSecurityHelper.validateDataEncryption(page);
 
@@ -527,8 +528,7 @@ test('should maintain security throughout reconciliation with healthcare standar
 
   // Validate final patient data protection
   await HealthcareWorkflowHelper.validatePatientDataProtection(page);
-}
-)
+});
 
 test('should validate healthcare performance benchmarks', async ({ page }) => {
   // Test Core Web Vitals for healthcare interfaces (≥95% requirement)

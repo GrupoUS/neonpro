@@ -1,7 +1,7 @@
 // Story 10.2: Progress Tracking through Computer Vision - Individual Progress Tracking API
 // API endpoint for individual progress tracking operations
 
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/app/utils/supabase/server';
 import { cookies } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 import { progressTrackingService } from '@/app/lib/services/progress-tracking';
@@ -13,7 +13,7 @@ export async function GET(
 ) {
   try {
     const resolvedParams = await params;
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = await createClient();
 
     // Check authentication
     const {
@@ -54,7 +54,7 @@ export async function PATCH(
 ) {
   try {
     const resolvedParams = await params;
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = await createClient();
 
     // Check authentication
     const {
@@ -102,7 +102,7 @@ export async function DELETE(
 ) {
   try {
     const resolvedParams = await params;
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = await createClient();
 
     // Check authentication
     const {
