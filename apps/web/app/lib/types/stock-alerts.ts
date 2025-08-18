@@ -102,6 +102,7 @@ export const createStockAlertConfigSchema = baseStockAlertConfigSchema
   .extend({
     createdBy: customUuid, // Required for creation
   })
+  .strict() // Reject unknown fields including omitted ones
   .refine(
     (data) => {
       // Either productId or categoryId must be present, but not both
