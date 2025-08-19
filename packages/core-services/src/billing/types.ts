@@ -3,7 +3,6 @@ import {
   type BaseEntity,
   type BillingStatus,
   DateSchema,
-  EmailSchema,
   NonNegativeNumberSchema,
   PositiveNumberSchema,
   UUIDSchema,
@@ -35,7 +34,7 @@ export interface Invoice extends BaseEntity {
   cancellationReason?: string;
 }
 
-export interface InvoiceItem {
+export type InvoiceItem = {
   id: string;
   productId?: string;
   treatmentType?: string;
@@ -45,7 +44,7 @@ export interface InvoiceItem {
   discountAmount: number;
   totalPrice: number;
   taxable: boolean;
-}
+};
 
 export interface Payment extends BaseEntity {
   paymentNumber: string;

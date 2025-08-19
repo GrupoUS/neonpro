@@ -3,10 +3,8 @@ import type {
   AppointmentSlot,
   Conflict,
   DynamicSchedulingEvent,
-  OptimizationRecommendation,
   Patient,
   SchedulingAction,
-  SchedulingConstraints,
   SchedulingDecision,
   SchedulingRequest,
   SchedulingResult,
@@ -19,9 +17,8 @@ import type {
  * Achieves 60% reduction in scheduling time through intelligent optimization
  */
 export class AISchedulingEngine {
-  private config: AISchedulingConfig;
-  private historicalData: Map<string, any> = new Map();
-  private realTimeMetrics: Map<string, number> = new Map();
+  private readonly config: AISchedulingConfig;
+  private readonly realTimeMetrics: Map<string, number> = new Map();
 
   constructor(config: AISchedulingConfig) {
     this.config = config;
@@ -90,8 +87,7 @@ export class AISchedulingEngine {
         confidenceScore: decision.confidence,
         estimatedWaitTime: this.calculateWaitTime(optimizedSlots[0], request),
       };
-    } catch (error) {
-      console.error('AI Scheduling Error:', error);
+    } catch (_error) {
       return {
         success: false,
         conflicts: [
@@ -117,7 +113,9 @@ export class AISchedulingEngine {
     treatments: TreatmentType[]
   ): Promise<AppointmentSlot[]> {
     const treatment = treatments.find((t) => t.id === request.treatmentTypeId);
-    if (!treatment) return [];
+    if (!treatment) {
+      return [];
+    }
 
     // AI-based filtering criteria
     const filteredSlots = slots.filter((slot) => {
@@ -169,7 +167,9 @@ export class AISchedulingEngine {
       const staffMember = staff.find((s) => s.id === slot.staffId);
       if (staffMember) {
         const staffConflict = this.predictStaffConflicts(slot, staffMember);
-        if (staffConflict) slotConflicts.push(staffConflict);
+        if (staffConflict) {
+          slotConflicts.push(staffConflict);
+        }
       }
 
       // 2. Equipment availability forecasting
@@ -321,7 +321,7 @@ export class AISchedulingEngine {
     );
 
     // Generate alternatives with trade-off analysis
-    const alternatives = optimizedSlots.slice(1, 4).map((slot, index) => ({
+    const alternatives = optimizedSlots.slice(1, 4).map((slot, _index) => ({
       slot,
       score: slot.optimizationScore,
       tradeoffs: this.analyzeTradeoffs(primarySlot, slot),
@@ -337,46 +337,6 @@ export class AISchedulingEngine {
       alternatives,
       riskAssessment,
     };
-  }
-
-  /**
-   * Predictive analytics for treatment duration based on historical data
-   * Improves accuracy by 40% over static durations
-   */
-  private predictTreatmentDuration(
-    treatment: TreatmentType,
-    staffId: string,
-    patientId: string
-  ): { predicted: number; confidence: number } {
-    // Get historical data for this combination
-    const historyKey = `${treatment.id}-${staffId}-${patientId}`;
-    const history = this.historicalData.get(historyKey) || [];
-
-    if (history.length < 3) {
-      // Insufficient data, use staff efficiency adjustment
-      const staffEfficiency = this.getStaffEfficiency(staffId);
-      const predicted = treatment.duration * (2 - staffEfficiency); // Inverse relationship
-      return { predicted, confidence: 0.6 };
-    }
-
-    // Calculate weighted average with recent bias
-    const weights = history.map(
-      (_: any, index: number) => 0.8 ** (history.length - index - 1)
-    );
-    const weightedSum = history.reduce(
-      (sum: number, duration: number, index: number) =>
-        sum + duration * weights[index],
-      0
-    );
-    const weightSum = weights.reduce(
-      (sum: number, weight: number) => sum + weight,
-      0
-    );
-
-    const predicted = weightedSum / weightSum;
-    const confidence = Math.min(0.95, 0.5 + history.length * 0.1);
-
-    return { predicted, confidence };
   }
 
   /**
@@ -559,7 +519,9 @@ export class AISchedulingEngine {
     slot: AppointmentSlot,
     request: SchedulingRequest
   ): number {
-    if (!request.preferredTimeRanges?.length) return 0.5;
+    if (!request.preferredTimeRanges?.length) {
+      return 0.5;
+    }
 
     // Check if slot falls within any preferred time range
     const isPreferred = request.preferredTimeRanges.some(
@@ -573,7 +535,9 @@ export class AISchedulingEngine {
     slot: AppointmentSlot,
     request: SchedulingRequest
   ): number {
-    if (!request.preferredDate) return 0;
+    if (!request.preferredDate) {
+      return 0;
+    }
 
     const waitTime = slot.start.getTime() - request.preferredDate.getTime();
     return Math.max(0, waitTime / (1000 * 60)); // Convert to minutes
@@ -632,7 +596,9 @@ predictEquipmentConflicts(slot: AppointmentSlot)
 {
   const conflicts: Conflict[] = [];
 
-  if (!slot.equipmentIds?.length) return conflicts;
+  if (!slot.equipmentIds?.length) {
+    return conflicts;
+  }
 
   for (const equipmentId of slot.equipmentIds) {
     const utilization = this.getEquipmentUtilization(equipmentId, slot.start);
@@ -702,7 +668,9 @@ calculateSatisfactionScore(slot: AppointmentSlot, patient: Patient, staff: Staff
   const timeMatch = patient.preferences.preferredTimeSlots.some(
     (pref) => slot.start >= pref.start && slot.end <= pref.end
   );
-  if (timeMatch) score += 0.3;
+  if (timeMatch) {
+    score += 0.3;
+  }
 
   // Historical satisfaction with this staff member
   const staffSatisfaction = staff.patientSatisfactionScore || 0.8;
@@ -817,7 +785,9 @@ calculateSatisfactionRisk(slot: AppointmentSlot, request: SchedulingRequest)
 : number
 {
   // Calculate risk of patient dissatisfaction
-  if (!request.preferredTimeRanges?.length) return 0.2;
+  if (!request.preferredTimeRanges?.length) {
+    return 0.2;
+  }
 
   const isPreferredTime = request.preferredTimeRanges.some(
     (range) => slot.start >= range.start && slot.end <= range.end

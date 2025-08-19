@@ -16,7 +16,7 @@ type PerformanceMetric = {
   delta: number;
   id: string;
   navigationType: string;
-  entries: Array<any>;
+  entries: any[];
   url: string;
   userAgent: string;
   timestamp: number;

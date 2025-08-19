@@ -4,10 +4,10 @@
  * Automatically generates OpenAPI 3.0 specifications from TypeScript interfaces and route handlers
  */
 
-import { existsSync, readFileSync, writeFileSync } from 'fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname } from 'node:path';
 import { glob } from 'glob';
 import ora from 'ora';
-import { dirname } from 'path';
 import yaml from 'yaml';
 
 export type OpenAPIConfig = {

@@ -4,52 +4,38 @@
  * Sets up development environment with healthcare compliance validation
  */
 
-import { execSync } from 'child_process';
-import { existsSync, writeFileSync } from 'fs';
-import { join } from 'path';
+import { execSync } from 'node:child_process';
+import { existsSync, writeFileSync } from 'node:fs';
 
-const HEALTHCARE_REQUIREMENTS = {
+const _HEALTHCARE_REQUIREMENTS = {
   node: '>=20.0.0',
   pnpm: '>=8.0.0',
   qualityThreshold: 9.9,
 };
 
-console.log('🏥 NeonPro Healthcare Development Setup');
-console.log('=====================================');
-
-function executeCommand(command, description) {
-  console.log(`\n📋 ${description}...`);
+function executeCommand(command, _description) {
   try {
     execSync(command, { stdio: 'inherit' });
-    console.log(`✅ ${description} completed`);
-  } catch (error) {
-    console.error(`❌ ${description} failed:`, error.message);
+  } catch (_error) {
     process.exit(1);
   }
 }
 
 function validateEnvironment() {
-  console.log('\n🔍 Validating Healthcare Development Environment...');
-
   // Check Node.js version
-  const nodeVersion = process.version;
-  console.log(`Node.js version: ${nodeVersion}`);
+  const _nodeVersion = process.version;
 
   // Check pnpm
   try {
-    const pnpmVersion = execSync('pnpm --version', { encoding: 'utf8' }).trim();
-    console.log(`pnpm version: ${pnpmVersion}`);
-  } catch (error) {
-    console.error('❌ pnpm not found. Please install pnpm first.');
+    const _pnpmVersion = execSync('pnpm --version', {
+      encoding: 'utf8',
+    }).trim();
+  } catch (_error) {
     process.exit(1);
   }
-
-  console.log('✅ Environment validation passed');
 }
 
 function setupHealthcareCompliance() {
-  console.log('\n⚖️ Setting up Healthcare Compliance Environment...');
-
   const envTemplate = `# NeonPro Healthcare Environment Variables
 # ===========================================
 
@@ -83,10 +69,8 @@ PLAYWRIGHT_BROWSERS_PATH=.playwright
 `;
 
   if (existsSync('.env.local')) {
-    console.log('⚠️  .env.local already exists, skipping creation');
   } else {
     writeFileSync('.env.local', envTemplate);
-    console.log('✅ Created .env.local with healthcare configuration');
   }
 }
 
@@ -99,37 +83,15 @@ function setupPlaywright() {
 }
 
 function validateHealthcareSetup() {
-  console.log('\n🏥 Validating Healthcare Setup...');
-
   executeCommand('pnpm validate:healthcare', 'Healthcare validation');
   executeCommand('pnpm test:compliance', 'Compliance testing');
-
-  console.log('✅ Healthcare setup validation completed');
 }
 
 function setupGitHooks() {
   executeCommand('npx husky install', 'Setting up Git hooks');
-  console.log('✅ Git hooks configured for healthcare quality gates');
 }
 
-function displayNextSteps() {
-  console.log('\n🎉 Healthcare Development Environment Setup Complete!');
-  console.log('\n📋 Next Steps:');
-  console.log('1. pnpm dev              - Start development server');
-  console.log('2. pnpm test:unit        - Run unit tests');
-  console.log('3. pnpm test:e2e         - Run E2E tests');
-  console.log('4. pnpm claude:test-dashboard - Healthcare test dashboard');
-  console.log('\n🏥 Healthcare Commands:');
-  console.log(
-    '• pnpm claude:healthcare-compliance - LGPD+ANVISA+CFM validation'
-  );
-  console.log(
-    '• pnpm claude:patient-data-security - Patient data security tests'
-  );
-  console.log('• pnpm claude:biome-quality-check   - Code quality validation');
-  console.log('\n⚖️ Compliance Status: All healthcare requirements configured');
-  console.log('🎯 Quality Threshold: ≥9.9/10 healthcare standards');
-}
+function displayNextSteps() {}
 
 // Main execution
 async function main() {
@@ -141,8 +103,7 @@ async function main() {
     setupGitHooks();
     validateHealthcareSetup();
     displayNextSteps();
-  } catch (error) {
-    console.error('\n❌ Setup failed:', error.message);
+  } catch (_error) {
     process.exit(1);
   }
 }

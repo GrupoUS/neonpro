@@ -1,32 +1,265 @@
-/**
- * Placeholder MFA hook
- */
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+
+// Mock useUser hook for now - replace with actual auth hook  
+const useUser = () => ({ id: 'mock-user-id' });
+
+import {
+  MfaMethod,
+  mfaSetupSchema,
+  mfaVerificationSchema,
+  setupMfa,
+  verifyMfa,
+} from '@neonpro/security';
+
+export type MfaConfig = {
+  userId: string;
+  method: MfaMethod;
+  isEnabled: boolean;
+  phoneNumber?: string;
+  email?: string;
+  backupCodesCount?: number;
+};
+
+export type MfaSetupResult = {
+  success: boolean;
+  secret?: string;
+  qrCode?: string;
+  backupCodes?: string[];
+  message?: string;
+};
+
+export type MfaVerificationResult = {
+  success: boolean;
+  method: MfaMethod;
+  remainingAttempts?: number;
+  lockoutUntil?: Date;
+  message?: string;
+};
 
 export const useMFA = () => {
+  const user = useUser();
   const [isEnabled, setIsEnabled] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [config, setConfig] = useState<MfaConfig | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const loadMfaConfig = useCallback(async (userId: string) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      // In production, fetch from database
+      // For now, mock the configuration
+      const mockConfig: MfaConfig = {
+        userId,
+        method: MfaMethod.TOTP,
+        isEnabled: false,
+        backupCodesCount: 0,
+      };
+
+      setConfig(mockConfig);
+      setIsEnabled(mockConfig.isEnabled);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : 'Failed to load MFA config'
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  // Load MFA configuration on mount
+  useEffect(() => {
+    if (user?.id) {
+      loadMfaConfig(user.id);
+    }
+  }, [user?.id, loadMfaConfig]);
+
+  const setupMfaMethod = useCallback(
+    async (
+      method: MfaMethod,
+      options?: { phoneNumber?: string; email?: string }
+    ): Promise<MfaSetupResult> => {
+      if (!user?.id) {
+        throw new Error('User not authenticated');
+      }
+
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        const setupRequest = mfaSetupSchema.parse({
+          userId: user.id,
+          method,
+          phoneNumber: options?.phoneNumber,
+          email: options?.email,
+        });
+
+        const result = await setupMfa(setupRequest);
+
+        if (result.success) {
+          // Update local config
+          setConfig((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  method,
+                  isEnabled: false, // Still needs verification
+                  phoneNumber: options?.phoneNumber,
+                  email: options?.email,
+                }
+              : null
+          );
+        }
+
+        return result;
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : 'Failed to setup MFA';
+        setError(errorMessage);
+        return { success: false, message: errorMessage };
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [user?.id]
+  );
+
+  const verifyMfaCode = useCallback(
+    async (
+      method: MfaMethod,
+      code: string,
+      sessionId: string
+    ): Promise<MfaVerificationResult> => {
+      if (!user?.id) {
+        throw new Error('User not authenticated');
+      }
+
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        const verificationRequest = mfaVerificationSchema.parse({
+          userId: user.id,
+          method,
+          code,
+          sessionId,
+        });
+
+        const result = verifyMfa(verificationRequest);
+
+        if (result.success) {
+          // Update enabled state
+          setIsEnabled(true);
+          setConfig((prev) => (prev ? { ...prev, isEnabled: true } : null));
+        }
+
+        return result;
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : 'Failed to verify MFA';
+        setError(errorMessage);
+        return {
+          success: false,
+          method,
+          message: errorMessage,
+        };
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [user?.id]
+  );
+
+  const disableMfa = useCallback(async (): Promise<{
+    success: boolean;
+    message?: string;
+  }> => {
+    if (!user?.id) {
+      throw new Error('User not authenticated');
+    }
+
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      // In production, call API to disable MFA
+      // For now, mock the operation
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      setIsEnabled(false);
+      setConfig((prev) => (prev ? { ...prev, isEnabled: false } : null));
+
+      return { success: true, message: 'MFA disabled successfully' };
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to disable MFA';
+      setError(errorMessage);
+      return { success: false, message: errorMessage };
+    } finally {
+      setIsLoading(false);
+    }
+  }, [user?.id]);
+
+  const regenerateBackupCodes = useCallback(async (): Promise<{
+    success: boolean;
+    backupCodes?: string[];
+    message?: string;
+  }> => {
+    if (!user?.id) {
+      throw new Error('User not authenticated');
+    }
+
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const result = await setupMfa({
+        userId: user.id,
+        method: MfaMethod.BACKUP_CODES,
+      });
+
+      if (result.success && result.backupCodes) {
+        setConfig((prev) =>
+          prev
+            ? {
+                ...prev,
+                backupCodesCount: result.backupCodes?.length || 0,
+              }
+            : null
+        );
+      }
+
+      return result;
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : 'Failed to regenerate backup codes';
+      setError(errorMessage);
+      return { success: false, message: errorMessage };
+    } finally {
+      setIsLoading(false);
+    }
+  }, [user?.id]);
 
   return {
+    // State
     isEnabled,
     isLoading,
-    enable: async () => {
-      setIsLoading(true);
-      // Placeholder implementation
-      setTimeout(() => {
-        setIsEnabled(true);
-        setIsLoading(false);
-      }, 1000);
-    },
-    disable: async () => {
-      setIsLoading(true);
-      setTimeout(() => {
-        setIsEnabled(false);
-        setIsLoading(false);
-      }, 1000);
-    },
-    verify: async (_code: string) => {
-      return { success: true };
-    },
+    config,
+    error,
+
+    // Actions
+    setupMfaMethod,
+    verifyMfaCode,
+    disableMfa,
+    regenerateBackupCodes,
+    clearError: () => setError(null),
+
+    // Utilities
+    isMethodEnabled: (method: MfaMethod) =>
+      config?.method === method && isEnabled,
+    hasBackupCodes: () => (config?.backupCodesCount ?? 0) > 0,
   };
-};
+};;

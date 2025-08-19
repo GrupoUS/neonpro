@@ -13,7 +13,6 @@ export async function GET(request: NextRequest) {
       const { error } = await supabase.auth.exchangeCodeForSession(code);
 
       if (error) {
-        console.error('Auth callback error:', error);
         return NextResponse.redirect(`${origin}/login?error=auth_error`);
       }
       const forwardedHost = request.headers.get('x-forwarded-host');
@@ -29,8 +28,7 @@ export async function GET(request: NextRequest) {
       }
       // Fallback to origin
       return NextResponse.redirect(`${origin}${next}`);
-    } catch (err) {
-      console.error('Unexpected auth callback error:', err);
+    } catch (_err) {
       return NextResponse.redirect(`${origin}/login?error=unexpected_error`);
     }
   }

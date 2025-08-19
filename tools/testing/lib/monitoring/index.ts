@@ -17,12 +17,12 @@ export type { HealthcarePerformanceMetrics } from './performance-monitor';
 export { default as PerformanceMonitor } from './performance-monitor';
 
 // Common monitoring interface
-export interface MonitoringConfig {
+export type MonitoringConfig = {
   analytics: boolean;
   errorTracking: boolean;
   performance: boolean;
   emergency: boolean;
-}
+};
 
 export const DEFAULT_MONITORING_CONFIG: MonitoringConfig = {
   analytics: true,

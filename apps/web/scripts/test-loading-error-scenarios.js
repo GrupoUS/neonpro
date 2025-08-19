@@ -1,14 +1,5 @@
 #!/usr/bin/env node
 
-/**
- * 🧪 SCRIPT DE TESTE - CENÁRIOS DE LOADING & ERROR
- *
- * Este script demonstra como testar todos os cenários implementados
- * na Fase 4 de Loading States e Error Handling do NeonPro.
- */
-
-console.log('🧪 TESTE DE CENÁRIOS - LOADING & ERROR STATES\n');
-
 const testScenarios = [
   {
     id: 1,
@@ -123,29 +114,6 @@ const testScenarios = [
 
 // Exibir cenários de teste
 testScenarios.forEach((scenario) => {
-  console.log(`\n🧪 CENÁRIO ${scenario.id}: ${scenario.name}`);
-  console.log(`📝 ${scenario.description}\n`);
-
-  console.log('📋 PASSOS PARA TESTAR:');
-  scenario.steps.forEach((step) => {
-    console.log(`   ${step}`);
-  });
-
-  console.log('\n🎯 RESULTADOS ESPERADOS:');
-  scenario.expected.forEach((result) => {
-    console.log(`   ${result}`);
-  });
-
-  console.log(`\n🔧 IMPLEMENTAÇÃO: ${scenario.implementation}`);
-  console.log('\n' + '='.repeat(80));
+  scenario.steps.forEach((_step) => {});
+  scenario.expected.forEach((_result) => {});
 });
-
-console.log('\n🎉 TODOS OS CENÁRIOS ESTÃO IMPLEMENTADOS E PRONTOS PARA TESTE!');
-console.log('\n💡 DICAS PARA TESTE:');
-console.log('   • Use as DevTools do Chrome para simular conexão lenta');
-console.log('   • Desconecte a internet para testar estados offline');
-console.log('   • Use o Supabase Dashboard para simular dados vazios');
-console.log('   • Verifique o console para logs de desenvolvimento');
-
-console.log('\n🏆 FASE 4 CONCLUÍDA COM SUCESSO!');
-console.log('   Sistema NeonPro com Loading & Error States profissionais ✅');

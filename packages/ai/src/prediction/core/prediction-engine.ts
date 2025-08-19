@@ -1,23 +1,22 @@
 import * as tf from '@tensorflow/tfjs';
-import { aiModelManager } from './model-manager';
-import { AestheticFeatureExtractor } from './feature-extractor';
-import { AestheticPostProcessor } from './post-processor';
 import type {
-  ModelType,
-  PatientProfile,
-  TreatmentRequest,
-  PredictionResult,
-  TreatmentOutcomePrediction,
-  DurationEstimation,
-  SuccessProbability,
-  RiskAssessment,
   BotoxOptimization,
+  DurationEstimation,
+  FeatureExtractor,
+  FeatureImportance,
   FillerVolumePrediction,
   LaserSettingsPrediction,
-  FeatureExtractor,
+  ModelType,
+  PatientProfile,
   PostProcessor,
-  FeatureImportance,
+  RiskAssessment,
+  SuccessProbability,
+  TreatmentOutcomePrediction,
+  TreatmentRequest,
 } from '../types';
+import { AestheticFeatureExtractor } from './feature-extractor';
+import { aiModelManager } from './model-manager';
+import { AestheticPostProcessor } from './post-processor';
 
 /**
  * Core AI Prediction Engine for NeonPro Aesthetic Treatments
@@ -25,9 +24,9 @@ import type {
  * <2s response time requirement with TensorFlow.js browser optimization
  */
 export class AestheticPredictionEngine {
-  private isInitialized = false;
-  private featureExtractors = new Map<ModelType, FeatureExtractor>();
-  private postProcessors = new Map<ModelType, PostProcessor>();
+  private readonly isInitialized = false;
+  private readonly featureExtractors = new Map<ModelType, FeatureExtractor>();
+  private readonly postProcessors = new Map<ModelType, PostProcessor>();
 
   constructor() {
     this.initializeFeatureExtractors();
@@ -47,9 +46,7 @@ export class AestheticPredictionEngine {
       await aiModelManager.initialize();
 
       this.isInitialized = true;
-      console.log('✅ Aesthetic Prediction Engine initialized');
     } catch (error) {
-      console.error('❌ Failed to initialize Prediction Engine:', error);
       throw new Error(`Prediction Engine initialization failed: ${error}`);
     }
   }
@@ -112,7 +109,6 @@ export class AestheticPredictionEngine {
         },
       };
     } catch (error) {
-      console.error('❌ Treatment outcome prediction failed:', error);
       throw new Error(`Treatment outcome prediction failed: ${error}`);
     }
   } /**
@@ -167,7 +163,6 @@ export class AestheticPredictionEngine {
         },
       };
     } catch (error) {
-      console.error('❌ Botox optimization failed:', error);
       throw new Error(`Botox optimization failed: ${error}`);
     }
   }
@@ -220,7 +215,6 @@ export class AestheticPredictionEngine {
         },
       };
     } catch (error) {
-      console.error('❌ Filler optimization failed:', error);
       throw new Error(`Filler optimization failed: ${error}`);
     }
   }
@@ -273,7 +267,6 @@ export class AestheticPredictionEngine {
         },
       };
     } catch (error) {
-      console.error('❌ Laser optimization failed:', error);
       throw new Error(`Laser optimization failed: ${error}`);
     }
   } /**
@@ -569,7 +562,6 @@ export class AestheticPredictionEngine {
         },
       };
     } catch (error) {
-      console.error('❌ Risk assessment failed:', error);
       throw new Error(`Risk assessment failed: ${error}`);
     }
   }
@@ -624,7 +616,6 @@ export class AestheticPredictionEngine {
         },
       };
     } catch (error) {
-      console.error('❌ Duration estimation failed:', error);
       throw new Error(`Duration estimation failed: ${error}`);
     }
   }
@@ -676,7 +667,6 @@ export class AestheticPredictionEngine {
         },
       };
     } catch (error) {
-      console.error('❌ Success probability calculation failed:', error);
       throw new Error(`Success probability calculation failed: ${error}`);
     }
   }
@@ -704,7 +694,6 @@ export class AestheticPredictionEngine {
 
       return { outcome, risk, duration, success };
     } catch (error) {
-      console.error('❌ Comprehensive prediction failed:', error);
       throw new Error(`Comprehensive prediction failed: ${error}`);
     }
   }
@@ -781,11 +770,17 @@ export class AestheticPredictionEngine {
 
     // Convert risk score to risk level
     let overallRisk: 'very-low' | 'low' | 'moderate' | 'high' | 'very-high';
-    if (overallRiskScore < 0.2) overallRisk = 'very-low';
-    else if (overallRiskScore < 0.4) overallRisk = 'low';
-    else if (overallRiskScore < 0.6) overallRisk = 'moderate';
-    else if (overallRiskScore < 0.8) overallRisk = 'high';
-    else overallRisk = 'very-high';
+    if (overallRiskScore < 0.2) {
+      overallRisk = 'very-low';
+    } else if (overallRiskScore < 0.4) {
+      overallRisk = 'low';
+    } else if (overallRiskScore < 0.6) {
+      overallRisk = 'moderate';
+    } else if (overallRiskScore < 0.8) {
+      overallRisk = 'high';
+    } else {
+      overallRisk = 'very-high';
+    }
 
     const confidence = Math.max(0, Math.min(1, rawOutput[1] || 0.8));
 
@@ -916,10 +911,15 @@ export class AestheticPredictionEngine {
         const probability = Math.max(0, Math.min(1, riskOutputs[index] || 0.1));
 
         let severity: 'minor' | 'moderate' | 'major' | 'severe';
-        if (probability < 0.2) severity = 'minor';
-        else if (probability < 0.5) severity = 'moderate';
-        else if (probability < 0.8) severity = 'major';
-        else severity = 'severe';
+        if (probability < 0.2) {
+          severity = 'minor';
+        } else if (probability < 0.5) {
+          severity = 'moderate';
+        } else if (probability < 0.8) {
+          severity = 'major';
+        } else {
+          severity = 'severe';
+        }
 
         const mitigation = this.getRiskMitigation(type, patient, treatment);
 
@@ -930,7 +930,7 @@ export class AestheticPredictionEngine {
 
   private identifyContraindications(
     patient: PatientProfile,
-    treatment: TreatmentRequest
+    _treatment: TreatmentRequest
   ): Array<{
     condition: string;
     severity: 'relative' | 'absolute';
@@ -1017,8 +1017,8 @@ export class AestheticPredictionEngine {
   private identifyDurationFactors(
     patient: PatientProfile,
     treatment: TreatmentRequest,
-    sessionDuration: number,
-    recoveryTime: number
+    _sessionDuration: number,
+    _recoveryTime: number
   ): Array<{
     factor: string;
     impact: number;
@@ -1063,7 +1063,7 @@ export class AestheticPredictionEngine {
   private identifyRiskFactors(
     patient: PatientProfile,
     treatment: TreatmentRequest,
-    riskOutputs: Float32Array
+    _riskOutputs: Float32Array
   ): Array<{
     factor: string;
     impact: number;
@@ -1138,8 +1138,8 @@ export class AestheticPredictionEngine {
 
   private getRiskMitigation(
     riskType: string,
-    patient: PatientProfile,
-    treatment: TreatmentRequest
+    _patient: PatientProfile,
+    _treatment: TreatmentRequest
   ): string[] {
     const mitigationMap: Record<string, string[]> = {
       'allergic-reaction': [
@@ -1185,14 +1185,14 @@ export class AestheticPredictionEngine {
 
   private generateRiskRecommendations(
     result: any,
-    patient: PatientProfile
+    _patient: PatientProfile
   ): string[] {
     return result.recommendations || [];
   }
 
   private generateDurationRecommendations(
     result: any,
-    patient: PatientProfile
+    _patient: PatientProfile
   ): string[] {
     const recommendations: string[] = [];
 
@@ -1213,7 +1213,7 @@ export class AestheticPredictionEngine {
 
   private generateSuccessRecommendations(
     result: any,
-    patient: PatientProfile
+    _patient: PatientProfile
   ): string[] {
     return result.recommendations || [];
   }

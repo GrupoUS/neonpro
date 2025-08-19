@@ -1,0 +1,468 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  output          = "../node_modules/@prisma/client"
+  previewFeatures = ["multiSchema", "postgresqlExtensions", "views", "relationJoins"]
+  binaryTargets   = ["native", "debian-openssl-3.0.x", "linux-arm64-openssl-3.0.x"]
+}
+
+generator zod {
+  provider                         = "zod-prisma-types"
+  output                          = "../src/zod"
+  useMultipleFiles                = true
+  writeBarrelFiles                = true
+  createInputTypes                = true
+  createModelTypes                = true
+  addInputTypeValidation          = true
+  addIncludeType                  = true
+  addSelectType                   = true
+  validateWhereUniqueInput        = true
+  createOptionalDefaultValuesTypes = true
+  createRelationValuesTypes       = true
+  createPartialTypes              = true
+  useDefaultValidators            = true
+  coerceDate                      = true
+  writeNullishInModelTypes        = true
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  directUrl  = env("DIRECT_URL")
+  extensions = [postgis, uuid_ossp, pgcrypto, btree_gin]
+  schemas    = ["public", "auth", "storage", "realtime"]
+}
+
+// ====================
+// AUTHENTICATION & USERS
+// ====================
+
+model User {
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email             String   @unique
+  email_verified_at DateTime?
+  phone             String?
+  phone_verified_at DateTime?
+  password_hash     String?
+  full_name         String?
+  avatar_url        String?
+  locale            String   @default("pt-BR")
+  timezone          String   @default("America/Sao_Paulo")
+  
+  // LGPD Compliance
+  lgpd_consent_granted_at DateTime?
+  lgpd_consent_version    String?
+  marketing_consent       Boolean  @default(false)
+  data_processing_consent Boolean  @default(false)
+  
+  // Security
+  mfa_enabled          Boolean   @default(false)
+  mfa_secret           String?
+  last_login_at        DateTime?
+  failed_login_attempts Int      @default(0)
+  account_locked_until DateTime?
+  
+  // Metadata
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  deleted_at DateTime?
+  
+  // Relations
+  clinic_members      ClinicMember[]
+  audit_logs          AuditLog[]
+  user_sessions       UserSession[]
+  mfa_backup_codes    MFABackupCode[]
+  lgpd_data_requests  LGPDDataRequest[]
+  
+  @@map("users")
+  @@schema("public")
+}
+
+model UserSession {
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id           String    @db.Uuid
+  refresh_token     String    @unique
+  expires_at        DateTime
+  revoked_at        DateTime?
+  ip_address        String?
+  user_agent        String?
+  device_info       Json?
+  
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  
+  // Relations
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  
+  @@index([user_id])
+  @@index([expires_at])
+  @@map("user_sessions")
+  @@schema("public")
+}
+
+model MFABackupCode {
+  id      String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id String  @db.Uuid
+  code    String  @unique
+  used_at DateTime?
+  
+  created_at DateTime @default(now())
+  
+  // Relations
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  
+  @@index([user_id])
+  @@map("mfa_backup_codes")
+  @@schema("public")
+}
+
+// ====================
+// CLINIC MANAGEMENT
+// ====================
+
+model Clinic {
+  id              String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name            String
+  business_name   String?
+  cnpj            String  @unique
+  cnes_code       String? @unique // CNES - Cadastro Nacional de Estabelecimentos de Saúde
+  anvisa_license  String? @unique
+  
+  // Contact Information
+  email           String?
+  phone           String?
+  website         String?
+  
+  // Address
+  address_line1   String
+  address_line2   String?
+  city            String
+  state           String  @db.Char(2)
+  postal_code     String  @db.Char(8)
+  country         String  @default("BR")
+  latitude        Float?
+  longitude       Float?
+  
+  // Business Information
+  specialties     String[] // ["dermatologia", "estética", "cirurgia plástica"]
+  services_offered String[]
+  operating_hours Json? // { "monday": {"open": "08:00", "close": "18:00"}, ... }
+  
+  // Compliance
+  anvisa_compliant       Boolean @default(false)
+  cfm_compliant         Boolean @default(false)
+  lgpd_compliant        Boolean @default(false)
+  last_compliance_check DateTime?
+  
+  // Settings
+  settings        Json?
+  timezone        String @default("America/Sao_Paulo")
+  locale          String @default("pt-BR")
+  
+  // Metadata
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  deleted_at DateTime?
+  
+  // Relations
+  members              ClinicMember[]
+  patients             Patient[]
+  professionals        Professional[]
+  services             Service[]
+  appointments         Appointment[]
+  treatments           Treatment[]
+  medical_equipment    MedicalEquipment[]
+  inventory_items      InventoryItem[]
+  compliance_reports   ComplianceReport[]
+  
+  @@index([cnpj])
+  @@index([city, state])
+  @@map("clinics")
+  @@schema("public")
+}model ClinicMember {
+  id          String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  clinic_id   String             @db.Uuid
+  user_id     String             @db.Uuid
+  role        ClinicMemberRole
+  permissions String[]           // ["patients:read", "appointments:write", "reports:admin"]
+  status      ClinicMemberStatus @default(ACTIVE)
+  joined_at   DateTime           @default(now())
+  
+  // Metadata
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  
+  // Relations
+  clinic Clinic @relation(fields: [clinic_id], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  
+  @@unique([clinic_id, user_id])
+  @@index([clinic_id])
+  @@index([user_id])
+  @@map("clinic_members")
+  @@schema("public")
+}
+
+enum ClinicMemberRole {
+  OWNER
+  ADMIN
+  MANAGER
+  PROFESSIONAL
+  RECEPTIONIST
+  STAFF
+  
+  @@schema("public")
+}
+
+enum ClinicMemberStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  PENDING
+  
+  @@schema("public")
+}
+
+// ====================
+// PATIENT MANAGEMENT
+// ====================
+
+model Patient {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  clinic_id     String    @db.Uuid
+  patient_code  String    // Internal clinic patient code
+  
+  // Personal Information
+  full_name     String
+  preferred_name String?
+  cpf           String    @unique // Encrypted
+  rg            String?   // Encrypted
+  birth_date    DateTime
+  gender        Gender
+  
+  // Contact Information
+  email         String?
+  phone         String?
+  emergency_contact_name  String?
+  emergency_contact_phone String?
+  
+  // Address
+  address_line1 String?
+  address_line2 String?
+  city          String?
+  state         String?  @db.Char(2)
+  postal_code   String?  @db.Char(8)
+  
+  // Medical Information
+  medical_history      Json? // Encrypted JSON
+  allergies           String[]
+  medications         String[]
+  medical_conditions  String[]
+  
+  // LGPD Compliance
+  lgpd_consent_granted_at DateTime?
+  lgpd_consent_version    String?
+  data_retention_until    DateTime?
+  marketing_consent       Boolean @default(false)
+  photo_consent          Boolean @default(false)
+  
+  // Patient Journey
+  source              PatientSource? // How they found the clinic
+  referral_source     String?
+  first_visit_date    DateTime?
+  last_visit_date     DateTime?
+  total_visits        Int       @default(0)
+  total_spent         Decimal   @default(0) @db.Money
+  lifetime_value      Decimal?  @db.Money
+  
+  // Risk Assessment
+  no_show_risk_score     Float?   @default(0)
+  satisfaction_score     Float?
+  retention_probability  Float?
+  
+  // Metadata
+  status     PatientStatus @default(ACTIVE)
+  notes      String?
+  created_at DateTime      @default(now())
+  updated_at DateTime      @updatedAt
+  deleted_at DateTime?
+  
+  // Relations
+  clinic              Clinic             @relation(fields: [clinic_id], references: [id], onDelete: Cascade)
+  appointments        Appointment[]
+  treatments          Treatment[]
+  medical_records     MedicalRecord[]
+  consent_forms       ConsentForm[]
+  patient_photos      PatientPhoto[]
+  lgpd_data_requests  LGPDDataRequest[]
+  
+  @@unique([clinic_id, patient_code])
+  @@index([clinic_id])
+  @@index([cpf])
+  @@index([email])
+  @@index([phone])
+  @@map("patients")
+  @@schema("public")
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  NON_BINARY
+  PREFER_NOT_TO_SAY
+  
+  @@schema("public")
+}
+
+enum PatientSource {
+  GOOGLE_ADS
+  FACEBOOK_ADS
+  INSTAGRAM
+  REFERRAL
+  WEBSITE
+  WALK_IN
+  RETURN_PATIENT
+  OTHER
+  
+  @@schema("public")
+}
+
+enum PatientStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  DECEASED
+  
+  @@schema("public")
+}
+
+// ====================
+// PROFESSIONAL MANAGEMENT
+// ====================
+
+model Professional {
+  id           String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  clinic_id    String @db.Uuid
+  user_id      String @db.Uuid
+  
+  // Professional Information
+  full_name         String
+  professional_name String? // Name used professionally
+  cpf               String  @unique // Encrypted
+  crm_number        String? @unique // Conselho Regional de Medicina
+  crm_state         String? @db.Char(2)
+  specialty         String[]
+  
+  // Contact Information
+  email             String?
+  phone             String?
+  
+  // Professional Details
+  license_number    String?
+  license_expiry    DateTime?
+  certifications    Json? // Array of certifications with details
+  education         Json? // Educational background
+  experience_years  Int?
+  
+  // CFM Compliance
+  cfm_validated     Boolean   @default(false)
+  cfm_validation_date DateTime?
+  digital_signature_cert String? // Digital certificate for signing
+  
+  // Work Schedule
+  working_hours     Json? // Weekly schedule
+  hourly_rate       Decimal? @db.Money
+  commission_rate   Float?   @default(0)
+  
+  // Performance Metrics
+  patient_satisfaction Float?   @default(0)
+  appointment_completion_rate Float? @default(0)
+  revenue_generated  Decimal?  @default(0) @db.Money
+  
+  // Metadata
+  status     ProfessionalStatus @default(ACTIVE)
+  hire_date  DateTime?
+  created_at DateTime           @default(now())
+  updated_at DateTime           @updatedAt
+  deleted_at DateTime?
+  
+  // Relations
+  clinic              Clinic             @relation(fields: [clinic_id], references: [id], onDelete: Cascade)
+  user                User               @relation(fields: [user_id], references: [id])
+  appointments        Appointment[]
+  treatments          Treatment[]
+  professional_services ProfessionalService[]
+  
+  @@unique([clinic_id, user_id])
+  @@index([clinic_id])
+  @@index([crm_number])
+  @@map("professionals")
+  @@schema("public")
+}
+
+enum ProfessionalStatus {
+  ACTIVE
+  INACTIVE
+  ON_LEAVE
+  SUSPENDED
+  TERMINATED
+  
+  @@schema("public")
+}
+
+// ====================
+// SERVICES & TREATMENTS
+// ====================
+
+model Service {
+  id              String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  clinic_id       String @db.Uuid
+  
+  // Service Information
+  name            String
+  description     String?
+  category        ServiceCategory
+  subcategory     String?
+  
+  // Pricing
+  base_price      Decimal  @db.Money
+  duration_minutes Int     // Expected duration
+  
+  // ANVISA Compliance
+  anvisa_regulated Boolean @default(false)
+  anvisa_registration String?
+  requires_prescription Boolean @default(false)
+  
+  // Requirements
+  requires_consultation Boolean @default(false)
+  requires_consent_form Boolean @default(false)
+  min_age_requirement   Int?
+  contraindications     String[]
+  
+  // Preparation & Aftercare
+  pre_procedure_instructions  String?
+  post_procedure_instructions String?
+  
+  // Analytics
+  popularity_score    Float?   @default(0)
+  satisfaction_score  Float?   @default(0)
+  complication_rate   Float?   @default(0)
+  
+  // Metadata
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  
+  // Relations
+  clinic              Clinic             @relation(fields: [clinic_id], references: [id], onDelete: Cascade)
+  appointments        Appointment[]
+  treatments          Treatment[]
+  professional_services ProfessionalService[]
+  
+  @@index([clinic_id])
+  @@index([category])
+  @@map("services")
+  @@schema("public")
+}

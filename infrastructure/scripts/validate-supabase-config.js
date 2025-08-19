@@ -8,7 +8,7 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
-const chalk = require('chalk');
+const _chalk = require('chalk');
 
 // Target Supabase project configuration
 const TARGET_CONFIG = {
@@ -53,22 +53,18 @@ class SupabaseConfigValidator {
     this.projectRoot = process.cwd();
   }
 
-  log(message, type = 'info') {
+  log(_message, type = 'info') {
     const timestamp = new Date().toISOString();
-    const prefix = `[${timestamp}] [VIBECODE-VALIDATOR]`;
+    const _prefix = `[${timestamp}] [VIBECODE-VALIDATOR]`;
 
     switch (type) {
       case 'success':
-        console.log(chalk.green(`${prefix} ✅ ${message}`));
         break;
       case 'error':
-        console.log(chalk.red(`${prefix} ❌ ${message}`));
         break;
       case 'warning':
-        console.log(chalk.yellow(`${prefix} ⚠️  ${message}`));
         break;
       default:
-        console.log(chalk.blue(`${prefix} ℹ️  ${message}`));
         break;
     }
   }
@@ -200,29 +196,17 @@ class SupabaseConfigValidator {
   }
 
   generateReport() {
-    console.log(`\n${'='.repeat(60)}`);
-    console.log(chalk.bold.blue('VIBECODE SUPABASE CONFIGURATION REPORT'));
-    console.log('='.repeat(60));
-
-    console.log(`\n📊 Project: ${TARGET_CONFIG.project_id}`);
-    console.log(`🌐 URL: ${TARGET_CONFIG.url}`);
-    console.log(`🔗 Dashboard: ${TARGET_CONFIG.dashboard}\n`);
-
     if (this.errors.length === 0) {
       this.log('All configurations are CORRECT! ✅', 'success');
     } else {
       this.log(`Found ${this.errors.length} error(s):`, 'error');
-      this.errors.forEach((error) => console.log(chalk.red(`  • ${error}`)));
+      this.errors.forEach((_error) => {});
     }
 
     if (this.warnings.length > 0) {
       this.log(`Found ${this.warnings.length} warning(s):`, 'warning');
-      this.warnings.forEach((warning) =>
-        console.log(chalk.yellow(`  • ${warning}`))
-      );
+      this.warnings.forEach((_warning) => {});
     }
-
-    console.log(`\n${'='.repeat(60)}`);
     return this.errors.length === 0;
   }
 

@@ -3,7 +3,7 @@
  * Monitors deployment progress and metrics for NeonPro healthcare platform
  */
 
-export interface DeploymentMetrics {
+export type DeploymentMetrics = {
   deploymentId: string;
   environment: 'blue' | 'green';
   startTime: Date;
@@ -12,18 +12,18 @@ export interface DeploymentMetrics {
   version: string;
   healthScore: number;
   errorCount: number;
-}
+};
 
-export interface MonitorConfig {
+export type MonitorConfig = {
   maxDeploymentHistory: number;
   metricsInterval: number;
-}
+};
 
 export class DeploymentMonitor {
-  private deploymentHistory: DeploymentMetrics[] = [];
+  private readonly deploymentHistory: DeploymentMetrics[] = [];
   private currentDeployment: DeploymentMetrics | null = null;
 
-  constructor(private config: MonitorConfig) {}
+  constructor(private readonly config: MonitorConfig) {}
 
   /**
    * Start monitoring a new deployment
@@ -113,7 +113,7 @@ export class DeploymentMonitor {
     const averageTime =
       completedDeployments.length > 0
         ? completedDeployments.reduce((sum, d) => {
-            const duration = d.endTime!.getTime() - d.startTime.getTime();
+            const duration = (d.endTime?.getTime() ?? 0) - d.startTime.getTime();
             return sum + duration;
           }, 0) / completedDeployments.length
         : 0;
@@ -122,7 +122,7 @@ export class DeploymentMonitor {
       totalDeployments: total,
       successRate,
       averageDeploymentTime: averageTime,
-      lastDeployment: this.deploymentHistory[this.deploymentHistory.length - 1],
+      lastDeployment: this.deploymentHistory.at(-1),
     };
   }
 }

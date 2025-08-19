@@ -3,11 +3,11 @@
  * Automated generation and management of Architecture Decision Records for NeonPro
  */
 
+import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 import chalk from 'chalk';
-import { existsSync, readdirSync, readFileSync, writeFileSync } from 'fs';
 import inquirer from 'inquirer';
 import ora from 'ora';
-import { join } from 'path';
 
 export type ADRMetadata = {
   number: number;
@@ -31,7 +31,7 @@ export type ADRContent = {
   performanceImpact?: string;
 };
 
-export interface ADRAnswers {
+export type ADRAnswers = {
   title: string;
   status: string;
   author: string;
@@ -47,7 +47,7 @@ export interface ADRAnswers {
   securityImplications?: string;
   hasPerformance?: boolean;
   performanceImpact?: string;
-}
+};
 
 export class ADRGenerator {
   private readonly adrDirectory: string;
@@ -383,7 +383,7 @@ export class ADRGenerator {
    */
   private extractDate(content: string): string | null {
     const match = content.match(/\*\*Date\*\*: (.+)$/m);
-    return match && match[1] ? match[1] : null;
+    return match?.[1] ? match[1] : null;
   }
 
   /**
@@ -391,7 +391,7 @@ export class ADRGenerator {
    */
   private extractAuthor(content: string): string | null {
     const match = content.match(/\*\*Author\(s\)\*\*: (.+)$/m);
-    return match && match[1] ? match[1] : null;
+    return match?.[1] ? match[1] : null;
   }
 
   /**
@@ -399,7 +399,7 @@ export class ADRGenerator {
    */
   private extractSupersededBy(content: string): number | undefined {
     const match = content.match(/Superseded by ADR-(\d{3})/m);
-    return match && match[1] ? Number.parseInt(match[1], 10) : undefined;
+    return match?.[1] ? Number.parseInt(match[1], 10) : undefined;
   }
 
   /**

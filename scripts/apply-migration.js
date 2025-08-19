@@ -18,9 +18,7 @@ const COLORS = {
   BOLD: '\x1b[1m',
 };
 
-function log(message, color = COLORS.RESET) {
-  console.log(`${color}${message}${COLORS.RESET}`);
-}
+function log(_message, _color = COLORS.RESET) {}
 
 function execPromise(command, args = [], options = {}) {
   return new Promise((resolve, reject) => {

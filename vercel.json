@@ -12,9 +12,60 @@
       "regions": ["gru1"],
       "memory": 1024,
       "maxDuration": 30
+    },
+    "apps/api/main.py": {
+      "runtime": "python3.11",
+      "regions": ["gru1"],
+      "memory": 1024,
+      "maxDuration": 30,
+      "environment": {
+        "PYTHONPATH": "apps/api",
+        "FASTAPI_ENV": "production"
+      }
+    },
+    "apps/api/routers/**/*.py": {
+      "runtime": "python3.11",
+      "regions": ["gru1"],
+      "memory": 512,
+      "maxDuration": 15
     }
   },
   "regions": ["gru1"],
+  "builds": [
+    {
+      "src": "apps/web/package.json",
+      "use": "@vercel/next",
+      "config": {
+        "distDir": ".next"
+      }
+    },
+    {
+      "src": "apps/api/main.py",
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "50mb",
+        "runtime": "python3.11"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/v1/(.*)",
+      "dest": "apps/api/main.py"
+    },
+    {
+      "src": "/health",
+      "dest": "/api/health"
+    },
+    {
+      "src": "/monitoring",
+      "dest": "/api/monitoring/health"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "apps/web/$1"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -54,6 +105,31 @@
         {
           "key": "X-Medical-Grade",
           "value": "Healthcare-Validated"
+        },
+        {
+          "key": "X-API-Version",
+          "value": "v1.0.0"
+        }
+      ]
+    },
+    {
+      "source": "/api/v1/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "X-Requested-With, Content-Type, Authorization, X-LGPD-Consent, X-Patient-Context"
+        },
+        {
+          "key": "X-Powered-By",
+          "value": "FastAPI/NeonPro"
         }
       ]
     }
@@ -66,6 +142,10 @@
     {
       "source": "/monitoring",
       "destination": "/api/monitoring/health"
+    },
+    {
+      "source": "/api/v1/:path*",
+      "destination": "apps/api/main.py"
     }
   ],
   "env": {
@@ -73,6 +153,22 @@
     "NEXT_TELEMETRY_DISABLED": "1",
     "HEALTHCARE_MODE": "production",
     "LGPD_COMPLIANCE": "enabled",
-    "EMERGENCY_ALERTS": "enabled"
-  }
+    "EMERGENCY_ALERTS": "enabled",
+    "FASTAPI_ENV": "production",
+    "PYTHON_VERSION": "3.11"
+  },
+  "crons": [
+    {
+      "path": "/api/v1/cron/cleanup-expired-sessions",
+      "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/v1/cron/generate-compliance-reports",
+      "schedule": "0 6 * * 1"
+    },
+    {
+      "path": "/api/v1/cron/backup-patient-data",
+      "schedule": "0 3 * * *"
+    }
+  ]
 }

@@ -14,10 +14,10 @@ export function RegulatoryDocumentsList() {
   // Show loading skeleton
   if (loading) {
     return (
-      <div data-testid="loading-skeleton" className="space-y-4">
-        <div className="animate-pulse bg-gray-200 h-6 w-3/4 rounded"></div>
-        <div className="animate-pulse bg-gray-200 h-6 w-1/2 rounded"></div>
-        <div className="animate-pulse bg-gray-200 h-6 w-5/6 rounded"></div>
+      <div className="space-y-4" data-testid="loading-skeleton">
+        <div className="h-6 w-3/4 animate-pulse rounded bg-gray-200" />
+        <div className="h-6 w-1/2 animate-pulse rounded bg-gray-200" />
+        <div className="h-6 w-5/6 animate-pulse rounded bg-gray-200" />
       </div>
     );
   }
@@ -82,10 +82,10 @@ export function RegulatoryDocumentsList() {
       {/* Filters and sorting */}
       <div className="flex gap-4">
         <select
+          className="rounded border px-3 py-2"
           data-testid="category-filter"
-          value={filter}
           onChange={(e) => setFilter(e.target.value)}
-          className="border rounded px-3 py-2"
+          value={filter}
         >
           <option value="">All Categories</option>
           <option value="ANVISA">ANVISA</option>
@@ -94,10 +94,10 @@ export function RegulatoryDocumentsList() {
         </select>
 
         <select
+          className="rounded border px-3 py-2"
           data-testid="sort-select"
-          value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
-          className="border rounded px-3 py-2"
+          value={sortBy}
         >
           <option value="expiration_date">Sort by Expiration</option>
           <option value="title">Sort by Title</option>
@@ -108,12 +108,17 @@ export function RegulatoryDocumentsList() {
       <div className="space-y-4">
         {sortedDocuments.map((document) => (
           <div
+            className="rounded-lg border bg-white p-4 shadow-sm"
             key={document.id}
-            className="border rounded-lg p-4 bg-white shadow-sm"
           >
-            <div className="flex justify-between items-start">
+            <div className="flex items-start justify-between">
               <div>
-                <h3 data-testid="document-title" className="font-semibold text-lg">{document.title}</h3>
+                <h3
+                  className="font-semibold text-lg"
+                  data-testid="document-title"
+                >
+                  {document.title}
+                </h3>
                 <p className="text-gray-600">Category: {document.category}</p>
                 <p className="text-gray-600">Type: {document.type}</p>
                 <p className="text-gray-600">
@@ -121,9 +126,9 @@ export function RegulatoryDocumentsList() {
                 </p>
               </div>
               <button
+                className="rounded bg-red-500 px-3 py-1 text-white hover:bg-red-600"
                 data-testid="delete-document-button"
                 onClick={() => handleDelete(document.id)}
-                className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
               >
                 Delete
               </button>
@@ -134,23 +139,24 @@ export function RegulatoryDocumentsList() {
 
       {/* Delete confirmation modal */}
       {deleteDialogOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full mx-4">
-            <h3 className="text-lg font-semibold mb-4">Confirm Deletion</h3>
-            <p className="text-gray-600 mb-6">
-              Are you sure you want to delete this document? This action cannot be undone.
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
+            <h3 className="mb-4 font-semibold text-lg">Confirm Deletion</h3>
+            <p className="mb-6 text-gray-600">
+              Are you sure you want to delete this document? This action cannot
+              be undone.
             </p>
-            <div className="flex gap-3 justify-end">
+            <div className="flex justify-end gap-3">
               <button
+                className="rounded border border-gray-300 px-4 py-2 text-gray-600 hover:bg-gray-50"
                 onClick={cancelDelete}
-                className="px-4 py-2 text-gray-600 border border-gray-300 rounded hover:bg-gray-50"
               >
                 Cancel
               </button>
               <button
+                className="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
                 data-testid="confirm-delete-button"
                 onClick={confirmDelete}
-                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
               >
                 Delete
               </button>

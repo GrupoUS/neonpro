@@ -86,10 +86,6 @@ export class RiskAssessmentIntegration {
         (a, b) => b.riskAdjustedOutcome - a.riskAdjustedOutcome
       );
     } catch (error) {
-      console.error(
-        'Failed to enhance treatment prediction with risk assessment:',
-        error
-      );
       throw new Error(
         `Treatment enhancement failed: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
@@ -230,10 +226,15 @@ export class RiskAssessmentIntegration {
     const adjustedScore =
       riskAssessment.scoreBreakdown.overallScore * (2 - riskMultiplier);
 
-    if (adjustedScore >= 86) treatmentRiskLevel = RiskLevel.CRITICAL;
-    else if (adjustedScore >= 71) treatmentRiskLevel = RiskLevel.HIGH;
-    else if (adjustedScore >= 31) treatmentRiskLevel = RiskLevel.MEDIUM;
-    else treatmentRiskLevel = RiskLevel.LOW;
+    if (adjustedScore >= 86) {
+      treatmentRiskLevel = RiskLevel.CRITICAL;
+    } else if (adjustedScore >= 71) {
+      treatmentRiskLevel = RiskLevel.HIGH;
+    } else if (adjustedScore >= 31) {
+      treatmentRiskLevel = RiskLevel.MEDIUM;
+    } else {
+      treatmentRiskLevel = RiskLevel.LOW;
+    }
 
     // Final contraindication check
     if (
@@ -391,8 +392,7 @@ export class RiskAssessmentIntegration {
         alerts,
         recommendations,
       };
-    } catch (error) {
-      console.error('Failed to integrate vital signs monitoring:', error);
+    } catch (_error) {
       return {
         riskUpdate: false,
         alerts: ['Erro na integração de sinais vitais'],

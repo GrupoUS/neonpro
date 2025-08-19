@@ -8,13 +8,13 @@ import type { ModelMetadata, ModelType, PredictionConfig } from '../types';
  * Target: 85%+ prediction accuracy with <2s inference time
  */
 export class AIModelManager {
-  private models = new Map<string, GraphModel | LayersModel>();
-  private modelMetadata = new Map<string, ModelMetadata>();
-  private loadingPromises = new Map<
+  private readonly models = new Map<string, GraphModel | LayersModel>();
+  private readonly modelMetadata = new Map<string, ModelMetadata>();
+  private readonly loadingPromises = new Map<
     string,
     Promise<GraphModel | LayersModel>
   >();
-  private isInitialized = false;
+  private readonly isInitialized = false;
 
   // Model configuration for aesthetic treatments
   private readonly MODEL_CONFIGS: Record<ModelType, PredictionConfig> = {
@@ -101,9 +101,7 @@ export class AIModelManager {
       );
 
       this.isInitialized = true;
-      console.log('✅ AI Model Manager initialized successfully');
     } catch (error) {
-      console.error('❌ Failed to initialize AI Model Manager:', error);
       throw new Error(`AI Model Manager initialization failed: ${error}`);
     }
   }
@@ -168,14 +166,10 @@ export class AIModelManager {
       // Validate model structure
       this.validateModelStructure(model, config);
 
-      const loadTime = performance.now() - startTime;
-      console.log(
-        `✅ Model ${modelType} loaded successfully in ${loadTime.toFixed(2)}ms`
-      );
+      const _loadTime = performance.now() - startTime;
 
       return model;
     } catch (error) {
-      console.error(`❌ Failed to load model ${modelType}:`, error);
       throw new Error(`Model loading failed for ${modelType}: ${error}`);
     }
   }
@@ -203,7 +197,9 @@ export class AIModelManager {
    * Check if tensor shapes match (allowing null dimensions)
    */
   private shapesMatch(actual: number[], expected: number[]): boolean {
-    if (actual.length !== expected.length) return false;
+    if (actual.length !== expected.length) {
+      return false;
+    }
 
     return actual.every(
       (dim, index) =>
@@ -217,9 +213,7 @@ export class AIModelManager {
   private async preloadModel(modelType: ModelType): Promise<void> {
     try {
       await this.loadModel(modelType);
-      console.log(`🚀 Preloaded model: ${modelType}`);
-    } catch (error) {
-      console.warn(`⚠️  Failed to preload model ${modelType}:`, error);
+    } catch (_error) {
       // Don't throw here - preloading failures shouldn't break initialization
     }
   }
@@ -253,7 +247,6 @@ export class AIModelManager {
       model.dispose();
       this.models.delete(modelType);
       this.modelMetadata.delete(modelType);
-      console.log(`🧹 Cleared model: ${modelType}`);
     }
   }
 
@@ -261,15 +254,13 @@ export class AIModelManager {
    * Clear all models and free memory
    */
   async clearAllModels(): Promise<void> {
-    for (const [modelType, model] of this.models) {
+    for (const [_modelType, model] of this.models) {
       model.dispose();
     }
 
     this.models.clear();
     this.modelMetadata.clear();
     this.loadingPromises.clear();
-
-    console.log('🧹 All models cleared');
   }
 
   /**

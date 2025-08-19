@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
-interface RegulatoryDocument {
+type RegulatoryDocument = {
   id: string;
   title: string;
   category: string;
@@ -9,9 +9,9 @@ interface RegulatoryDocument {
   expiration_date: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-interface UseRegulatoryDocumentsReturn {
+type UseRegulatoryDocumentsReturn = {
   documents: RegulatoryDocument[];
   loading: boolean;
   error: string | null;
@@ -24,7 +24,7 @@ interface UseRegulatoryDocumentsReturn {
     updates: Partial<RegulatoryDocument>
   ) => Promise<void>;
   deleteDocument: (id: string) => Promise<void>;
-}
+};
 
 export function useRegulatoryDocuments(): UseRegulatoryDocumentsReturn {
   const [documents, setDocuments] = useState<RegulatoryDocument[]>([]);
@@ -38,7 +38,7 @@ export function useRegulatoryDocuments(): UseRegulatoryDocumentsReturn {
       // This would normally fetch from an API
       // For now, return empty array since tests mock this
       setDocuments([]);
-    } catch (err) {
+    } catch (_err) {
       setError('Failed to fetch documents');
     } finally {
       setLoading(false);
@@ -46,28 +46,19 @@ export function useRegulatoryDocuments(): UseRegulatoryDocumentsReturn {
   };
 
   const createDocument = async (
-    document: Omit<RegulatoryDocument, 'id' | 'created_at' | 'updated_at'>
-  ) => {
-    // Implementation would go here
-    console.log('Creating document:', document);
-  };
+    _document: Omit<RegulatoryDocument, 'id' | 'created_at' | 'updated_at'>
+  ) => {};
 
   const updateDocument = async (
-    id: string,
-    updates: Partial<RegulatoryDocument>
-  ) => {
-    // Implementation would go here
-    console.log('Updating document:', id, updates);
-  };
+    _id: string,
+    _updates: Partial<RegulatoryDocument>
+  ) => {};
 
-  const deleteDocument = async (id: string) => {
-    // Implementation would go here
-    console.log('Deleting document:', id);
-  };
+  const deleteDocument = async (_id: string) => {};
 
   useEffect(() => {
     fetchDocuments();
-  }, []);
+  }, [fetchDocuments]);
 
   return {
     documents,

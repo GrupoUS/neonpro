@@ -4,7 +4,7 @@
 
 import { type NextRequest, NextResponse } from 'next/server';
 
-interface HealthCheckResult {
+type HealthCheckResult = {
   status: 'healthy' | 'degraded' | 'unhealthy';
   timestamp: string;
   version: string;
@@ -21,14 +21,14 @@ interface HealthCheckResult {
     cfm_validation: boolean;
     patient_data_encryption: boolean;
   };
-}
+};
 
-interface HealthStatus {
+type HealthStatus = {
   status: 'healthy' | 'degraded' | 'unhealthy';
   responseTime?: number;
   message?: string;
   lastChecked: string;
-}
+};
 
 export async function GET(_request: NextRequest) {
   const startTime = Date.now();

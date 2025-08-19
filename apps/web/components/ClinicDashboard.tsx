@@ -14,7 +14,6 @@ import {
   CardHeader,
   CardTitle,
   Progress,
-  Separator,
   Tabs,
   TabsContent,
   TabsList,
@@ -25,20 +24,17 @@ import {
   AlertCircle,
   BarChart3,
   Calendar,
-  CheckCircle,
   Clock,
   DollarSign,
   FileText,
-  Heart,
   PieChart,
   Star,
-  TrendingDown,
   TrendingUp,
   Users,
 } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
 
-interface ClinicMetrics {
+type ClinicMetrics = {
   totalPatients: number;
   appointmentsToday: number;
   pendingResults: number;
@@ -47,17 +43,17 @@ interface ClinicMetrics {
   occupancyRate: number;
   averageWaitTime: number;
   completedAppointments: number;
-}
+};
 
-interface RecentActivity {
+type RecentActivity = {
   id: string;
   type: 'appointment' | 'result' | 'payment' | 'registration';
   description: string;
   timestamp: Date;
   status: 'success' | 'warning' | 'error' | 'info';
-}
+};
 
-interface DoctorStats {
+type DoctorStats = {
   id: string;
   name: string;
   specialty: string;
@@ -66,7 +62,7 @@ interface DoctorStats {
   rating: number;
   availability: 'available' | 'busy' | 'offline';
   avatar?: string;
-}
+};
 
 const MOCK_METRICS: ClinicMetrics = {
   totalPatients: 1247,
@@ -141,11 +137,11 @@ const MOCK_DOCTORS: DoctorStats[] = [
 ];
 
 export default function ClinicDashboard() {
-  const [metrics, setMetrics] = useState<ClinicMetrics>(MOCK_METRICS);
-  const [activities, setActivities] =
+  const [metrics, _setMetrics] = useState<ClinicMetrics>(MOCK_METRICS);
+  const [activities, _setActivities] =
     useState<RecentActivity[]>(MOCK_ACTIVITIES);
-  const [doctors, setDoctors] = useState<DoctorStats[]>(MOCK_DOCTORS);
-  const [timeRange, setTimeRange] = useState('today');
+  const [doctors, _setDoctors] = useState<DoctorStats[]>(MOCK_DOCTORS);
+  const [_timeRange, _setTimeRange] = useState('today');
 
   const getActivityIcon = (type: RecentActivity['type']) => {
     switch (type) {
@@ -207,11 +203,17 @@ export default function ClinicDashboard() {
     const diff = now.getTime() - date.getTime();
     const minutes = Math.floor(diff / (1000 * 60));
 
-    if (minutes < 1) return 'agora';
-    if (minutes < 60) return `${minutes}m atrás`;
+    if (minutes < 1) {
+      return 'agora';
+    }
+    if (minutes < 60) {
+      return `${minutes}m atrás`;
+    }
 
     const hours = Math.floor(minutes / 60);
-    if (hours < 24) return `${hours}h atrás`;
+    if (hours < 24) {
+      return `${hours}h atrás`;
+    }
 
     const days = Math.floor(hours / 24);
     return `${days}d atrás`;

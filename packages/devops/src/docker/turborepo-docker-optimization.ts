@@ -4,9 +4,9 @@
  * Implements turbo prune and Docker build optimization for healthcare systems
  */
 
-import { execSync } from 'child_process';
-import { promises as fs } from 'fs';
-import { join } from 'path';
+import { execSync } from 'node:child_process';
+import { promises as fs } from 'node:fs';
+import { join } from 'node:path';
 
 export type DockerOptimizationConfig = {
   targetApp: string;

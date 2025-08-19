@@ -5,16 +5,16 @@
  * for maintaining healthcare-grade code quality and compliance.
  */
 
-export interface QualityGates {
+export type QualityGates = {
   coverage: CoverageThresholds;
   complexity: ComplexityThresholds;
   security: SecurityThresholds;
   performance: PerformanceThresholds;
   accessibility: AccessibilityThresholds;
   compliance: ComplianceThresholds;
-}
+};
 
-export interface CoverageThresholds {
+export type CoverageThresholds = {
   /** Minimum overall code coverage percentage */
   global: number;
   /** Minimum statement coverage percentage */
@@ -30,9 +30,9 @@ export interface CoverageThresholds {
     packages: string[];
     threshold: number;
   };
-}
+};
 
-export interface ComplexityThresholds {
+export type ComplexityThresholds = {
   /** Maximum cyclomatic complexity per function */
   cyclomatic: number;
   /** Maximum cognitive complexity per function */
@@ -43,9 +43,9 @@ export interface ComplexityThresholds {
   parameters: number;
   /** Maximum nesting depth */
   nestingDepth: number;
-}
+};
 
-export interface SecurityThresholds {
+export type SecurityThresholds = {
   /** Maximum security vulnerabilities allowed */
   vulnerabilities: {
     critical: number;
@@ -57,9 +57,9 @@ export interface SecurityThresholds {
   securityScore: number;
   /** OWASP compliance checks */
   owaspCompliance: boolean;
-}
+};
 
-export interface PerformanceThresholds {
+export type PerformanceThresholds = {
   /** Maximum bundle size in MB */
   bundleSize: number;
   /** Maximum lighthouse performance score */
@@ -72,18 +72,18 @@ export interface PerformanceThresholds {
   };
   /** Maximum API response time (ms) */
   apiResponseTime: number;
-}
+};
 
-export interface AccessibilityThresholds {
+export type AccessibilityThresholds = {
   /** Minimum WCAG compliance level */
   wcagLevel: 'A' | 'AA' | 'AAA';
   /** Minimum accessibility score */
   axeScore: number;
   /** Required accessibility audits */
   audits: string[];
-}
+};
 
-export interface ComplianceThresholds {
+export type ComplianceThresholds = {
   /** LGPD compliance score */
   lgpd: number;
   /** ANVISA compliance score */
@@ -94,7 +94,7 @@ export interface ComplianceThresholds {
   iso27001: number;
   /** FHIR compliance score */
   fhir: number;
-}
+};
 
 /**
  * Healthcare-grade quality gates configuration
@@ -172,7 +172,7 @@ export const QUALITY_GATES: QualityGates = {
 /**
  * Quality gate validation results
  */
-export interface QualityReport {
+export type QualityReport = {
   overall: QualityStatus;
   coverage: QualityResult;
   complexity: QualityResult;
@@ -182,17 +182,17 @@ export interface QualityReport {
   compliance: QualityResult;
   timestamp: string;
   recommendations: string[];
-}
+};
 
-export interface QualityResult {
+export type QualityResult = {
   status: QualityStatus;
   score: number;
   threshold: number;
   details: Record<string, any>;
   issues: QualityIssue[];
-}
+};
 
-export interface QualityIssue {
+export type QualityIssue = {
   type: 'error' | 'warning' | 'info';
   category: string;
   message: string;
@@ -200,7 +200,7 @@ export interface QualityIssue {
   line?: number;
   severity: 'critical' | 'high' | 'medium' | 'low';
   recommendation: string;
-}
+};
 
 export enum QualityStatus {
   PASS = 'PASS',

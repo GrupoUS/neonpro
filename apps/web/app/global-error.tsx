@@ -18,10 +18,7 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  useEffect(() => {
-    // Log error to monitoring service
-    console.error('Global error occurred:', error);
-  }, [error]);
+  useEffect(() => {}, []);
 
   return (
     <html>

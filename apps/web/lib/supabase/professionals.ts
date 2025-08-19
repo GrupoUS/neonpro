@@ -1,7 +1,7 @@
 import { createClient } from '@/app/utils/supabase/server';
 
 // Types
-interface Professional {
+type Professional = {
   id: string;
   given_name: string;
   family_name: string;
@@ -12,9 +12,9 @@ interface Professional {
   status: 'active' | 'inactive' | 'suspended';
   created_at: string;
   updated_at: string;
-}
+};
 
-interface ProfessionalCredential {
+type ProfessionalCredential = {
   id: string;
   professional_id: string;
   credential_type: string;
@@ -25,9 +25,9 @@ interface ProfessionalCredential {
   verified: boolean;
   created_at: string;
   updated_at: string;
-}
+};
 
-interface ProfessionalService {
+type ProfessionalService = {
   id: string;
   professional_id: string;
   service_name: string;
@@ -37,9 +37,9 @@ interface ProfessionalService {
   active: boolean;
   created_at: string;
   updated_at: string;
-}
+};
 
-interface PerformanceMetric {
+type PerformanceMetric = {
   id: string;
   professional_id: string;
   metric_type: string;
@@ -48,7 +48,7 @@ interface PerformanceMetric {
   period_end: string;
   created_at: string;
   updated_at: string;
-} // Professional Management Functions
+}; // Professional Management Functions
 
 export async function createProfessional(
   data: Omit<Professional, 'id' | 'created_at' | 'updated_at'>

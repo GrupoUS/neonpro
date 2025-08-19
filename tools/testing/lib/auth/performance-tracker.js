@@ -31,7 +31,7 @@ const authPerformanceTracker = {
     };
   },
 
-  recordMetric: (metric, value) => {
+  recordMetric: (_metric, _value) => {
     // Mock implementation
     return true;
   },

@@ -9,7 +9,6 @@ import {
   CardHeader,
   CardTitle,
   Input,
-  Select,
   Tabs,
   TabsContent,
   TabsList,
@@ -18,7 +17,6 @@ import {
 import { cn } from '@neonpro/utils';
 import {
   AlertCircle,
-  ArrowRight,
   Bell,
   Calendar,
   CheckCircle,
@@ -290,7 +288,7 @@ function AppointmentCard({
                 <div className="flex items-center space-x-1">
                   <span className="text-sm">Avaliação:</span>
                   <div className="flex">
-                    {[...Array(5)].map((_, i) => (
+                    {[...new Array(5)].map((_, i) => (
                       <span
                         className={cn(
                           'text-sm',

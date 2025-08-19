@@ -1,23 +1,19 @@
 /// <reference types="vitest" />
+
+import path from 'node:path';
 import { defineConfig } from 'vitest/config';
-import tsconfigPaths from 'vite-tsconfig-paths';
-import path from 'path';
 
 export default defineConfig({
-  plugins: [tsconfigPaths()],
   test: {
-    environment: 'node',
+    environment: 'jsdom',
     globals: true,
-    setupFiles: ['./setup.ts'],
-    include: [
-      '**/*.{test,spec}.{ts,tsx}',
-      '**/__tests__/**/*.{ts,tsx}'
-    ],
+    setupFiles: ['./tools/testing/healthcare-setup.ts'],
+    include: ['**/*.{test,spec}.{ts,tsx}', '**/__tests__/**/*.{ts,tsx}'],
     exclude: [
       '**/node_modules/**',
       '**/dist/**',
       '**/e2e/**',
-      '**/playwright/**'
+      '**/playwright/**',
     ],
     coverage: {
       reporter: ['text', 'json', 'html'],
@@ -26,17 +22,19 @@ export default defineConfig({
         '**/dist/**',
         '**/*.config.*',
         '**/*.setup.*',
-        '**/mocks/**'
-      ]
-    }
+        '**/mocks/**',
+      ],
+    },
   },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, '../../apps/web/app'),
+      '@': path.resolve(__dirname, '../../apps/web'),
+      '@/app': path.resolve(__dirname, '../../apps/web/app'),
       '@/lib': path.resolve(__dirname, '../../apps/web/app/lib'),
       '@/components': path.resolve(__dirname, '../../apps/web/app/components'),
+      '@/contexts': path.resolve(__dirname, '../../apps/web/contexts'),
       '@/types': path.resolve(__dirname, '../../apps/web/app/lib/types'),
       '@/utils': path.resolve(__dirname, '../../packages/utils/src'),
-    }
-  }
+    },
+  },
 });

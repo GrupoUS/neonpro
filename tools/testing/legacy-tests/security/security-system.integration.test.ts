@@ -3,12 +3,11 @@
  * Story 3.3: Security Hardening & Audit
  */
 
-import { createClient } from '@supabase/supabase-js';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { SecurityAPI } from '@/lib/security';
 
 // Mock Supabase client
-const mockSupabase = {
+const _mockSupabase = {
   from: vi.fn(),
   rpc: vi.fn(),
   auth: {

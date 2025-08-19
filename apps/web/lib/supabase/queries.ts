@@ -5,7 +5,6 @@
  * para facilitar manutenção e otimização de performance.
  */
 
-import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/supabase';
 
 type SupabaseClient = ReturnType<typeof createClientComponentClient<Database>>;
@@ -26,7 +25,9 @@ export const getDashboardMetricsCurrent = async (supabase: SupabaseClient) => {
     start_date: startOfMonth.toISOString(),
   });
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
   return data;
 };
 
@@ -49,7 +50,9 @@ export const getDashboardMetricsPrevious = async (supabase: SupabaseClient) => {
     end_date: endOfPreviousMonth.toISOString(),
   });
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
   return data;
 };
 
@@ -91,7 +94,7 @@ export const getPatientsWithFilters = async (
     .range(from, to)
     .order('created_at', { ascending: false });
 
-  if (search && search.trim()) {
+  if (search?.trim()) {
     query = query.or(
       `name.ilike.%${search}%,email.ilike.%${search}%,phone.ilike.%${search}%`
     );
@@ -189,7 +192,9 @@ export const getMonthlyRevenue = async (
     months_back: monthsBack,
   });
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
   return data;
 };
 
@@ -202,7 +207,9 @@ export const getPaymentMethodStats = async (supabase: SupabaseClient) => {
     .select('payment_method, amount')
     .eq('status', 'completed');
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
   return data;
 };
 
@@ -224,7 +231,9 @@ export const getRevenueByService = async (supabase: SupabaseClient) => {
     .eq('status', 'completed')
     .not('appointment', 'is', null);
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
   return data;
 };
 
@@ -250,7 +259,9 @@ export const getStaffWithAppointmentStats = async (
     .eq('staff_member_id', staffId)
     .eq('status', 'completed');
 
-  if (totalError) throw totalError;
+  if (totalError) {
+    throw totalError;
+  }
 
   // Agendamentos mensais
   const { count: monthlyAppointments, error: monthlyError } = await supabase
@@ -260,7 +271,9 @@ export const getStaffWithAppointmentStats = async (
     .eq('status', 'completed')
     .gte('appointment_date', startOfMonth.toISOString());
 
-  if (monthlyError) throw monthlyError;
+  if (monthlyError) {
+    throw monthlyError;
+  }
 
   // Receita do funcionário
   const { data: revenueData, error: revenueError } = await supabase
@@ -272,7 +285,9 @@ export const getStaffWithAppointmentStats = async (
     .eq('appointment.staff_member_id', staffId)
     .eq('status', 'completed');
 
-  if (revenueError) throw revenueError;
+  if (revenueError) {
+    throw revenueError;
+  }
 
   const totalRevenue =
     revenueData?.reduce((sum, t) => sum + (t.amount || 0), 0) || 0;
@@ -304,7 +319,9 @@ export const getStaffAvailability = async (
     .lt('appointment_date', endDate.toISOString())
     .in('status', ['scheduled', 'in_progress']);
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
   return data;
 };
 
@@ -330,7 +347,9 @@ export const getServiceUsageStats = async (
     .eq('service_id', serviceId)
     .in('status', ['completed', 'scheduled']);
 
-  if (totalError) throw totalError;
+  if (totalError) {
+    throw totalError;
+  }
 
   // Agendamentos mensais
   const { count: monthlyAppointments, error: monthlyError } = await supabase
@@ -340,7 +359,9 @@ export const getServiceUsageStats = async (
     .in('status', ['completed', 'scheduled'])
     .gte('appointment_date', startOfMonth.toISOString());
 
-  if (monthlyError) throw monthlyError;
+  if (monthlyError) {
+    throw monthlyError;
+  }
 
   // Receita do serviço
   const { data: revenueData, error: revenueError } = await supabase
@@ -352,7 +373,9 @@ export const getServiceUsageStats = async (
     .eq('appointment.service_id', serviceId)
     .eq('status', 'completed');
 
-  if (revenueError) throw revenueError;
+  if (revenueError) {
+    throw revenueError;
+  }
 
   const totalRevenue =
     revenueData?.reduce((sum, t) => sum + (t.amount || 0), 0) || 0;

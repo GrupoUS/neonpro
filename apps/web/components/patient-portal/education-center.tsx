@@ -38,8 +38,6 @@ import {
   Share2,
   Shield,
   Star,
-  Sun,
-  User,
   Volume2,
   VolumeX,
 } from 'lucide-react';
@@ -429,7 +427,7 @@ function CareInstructionsWidget() {
 function VideoPlayer({ content }: { content: any }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
-  const [currentTime, setCurrentTime] = useState(45); // seconds
+  const [currentTime, _setCurrentTime] = useState(45); // seconds
   const [duration] = useState(225); // 3:45 in seconds
 
   const formatTime = (seconds: number) => {
@@ -603,7 +601,7 @@ function EmergencyContacts() {
 export function EducationCenter() {
   const [activeTab, setActiveTab] = useState('my-treatments');
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [_selectedCategory, setSelectedCategory] = useState('all');
   const [selectedContent, setSelectedContent] = useState<any>(null);
 
   const handleViewContent = (content: any) => {

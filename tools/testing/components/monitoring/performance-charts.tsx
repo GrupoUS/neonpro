@@ -1,10 +1,10 @@
 // Performance charts component
 import type React from 'react';
 
-interface PerformanceChartsProps {
+type PerformanceChartsProps = {
   data?: Array<{ timestamp: Date; value: number }>;
   title?: string;
-}
+};
 
 export const PerformanceCharts: React.FC<PerformanceChartsProps> = ({
   data = [],

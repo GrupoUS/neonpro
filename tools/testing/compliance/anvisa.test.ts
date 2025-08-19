@@ -1,9 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import {
-  mockANVISACompliance,
-  mockAuditLogger,
-  mockPatientData,
-} from '../healthcare-setup';
+import { mockANVISACompliance } from '../healthcare-setup';
 
 describe('ANVISA Compliance Tests', () => {
   beforeEach(() => {
@@ -61,7 +57,7 @@ describe('ANVISA Compliance Tests', () => {
         productId: 'botox-001',
         batchNumber: 'BATCH-2024-001',
         manufacturingDate: '2024-01-15',
-        expirationDate: '2025-01-15',
+        expirationDate: '2026-01-15',
         anvisaCode: 'ANVISA-BOT-001',
       };
 
@@ -289,13 +285,28 @@ describe('ANVISA Compliance Tests', () => {
       const validateStorage = (product: string, conditions: any) => {
         const requirements =
           storageRequirements[product as keyof typeof storageRequirements];
-        if (!requirements) return false;
+        if (!requirements) {
+          return false;
+        }
 
-        // Simplified validation for temperature (should be more sophisticated)
-        const tempInRange = conditions.temperature.includes('°C');
-        const humidityOk =
-          Number.parseInt(conditions.humidity) <
-          Number.parseInt(requirements.humidity);
+        // Parse temperature values
+        const actualTemp = Number.parseInt(
+          conditions.temperature.replace('°C', ''),
+          10
+        );
+        const [minTemp, maxTemp] = requirements.temperature
+          .replace('°C', '')
+          .split('-')
+          .map(Number);
+
+        const tempInRange = actualTemp >= minTemp && actualTemp <= maxTemp;
+        // Parse humidity values - requirements use '<60%' format
+        const actualHumidity = Number.parseInt(conditions.humidity, 10);
+        const requiredHumidity = Number.parseInt(
+          requirements.humidity.replace('<', ''),
+          10
+        );
+        const humidityOk = actualHumidity < requiredHumidity;
         const lightOk = conditions.light === requirements.light;
 
         return tempInRange && humidityOk && lightOk;

@@ -4,8 +4,8 @@
  * Safely removes temporary files while preserving important configurations
  */
 
-import { existsSync, promises as fs } from 'fs';
-import { extname, join } from 'path';
+import { existsSync, promises as fs } from 'node:fs';
+import { extname, join } from 'node:path';
 
 export type CleanupConfig = {
   dryRun: boolean;

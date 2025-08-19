@@ -49,10 +49,9 @@ export {
   type RegulatoryEvent,
   RegulatoryEventSchema,
 } from './types';
-
+export * from './utils/audit-utils';
 // Utilities and Helpers
 export * from './utils/compliance-helpers';
-export * from './utils/audit-utils';
 export * from './utils/validation-helpers';
 
 /**

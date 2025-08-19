@@ -6,63 +6,53 @@
 
 'use client';
 
-import { useState, useCallback, useMemo } from 'react';
-import { motion } from 'framer-motion';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { createAuditLog } from '@neonpro/compliance/audit';
+// ✅ Healthcare domain imports
+import { useHealthcarePermissions } from '@neonpro/domain/hooks';
+import { validateHealthcareAccess } from '@neonpro/security/auth';
+// ✅ Type imports
+import type { HealthcareDashboardData } from '@neonpro/types/healthcare';
 
 // ✅ Organized imports - UI components
 import {
+  Alert,
+  AlertDescription,
+  Badge,
+  Button,
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-  Button,
+  Progress,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-  Progress,
-  Badge,
-  Alert,
-  AlertDescription,
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from '@neonpro/ui';
-
-// ✅ Healthcare domain imports
-import { useHealthcarePermissions } from '@neonpro/domain/hooks';
-import { validateHealthcareAccess } from '@neonpro/security/auth';
-import { createAuditLog } from '@neonpro/compliance/audit';
-import { formatCPF, validateCRM } from '@neonpro/utils/brazilian';
-
-// ✅ Type imports
-import type {
-  HealthcareDashboardData,
-  AestheticTreatment,
-  HealthcareProfessional,
-  ComplianceStatus,
-} from '@neonpro/types/healthcare';
-
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { motion } from 'framer-motion';
 // ✅ Icons - only what we need
 import {
-  Calendar,
-  Users,
-  TrendingUp,
-  AlertCircle,
   Activity,
+  AlertCircle,
+  Calendar,
   Download,
-  Filter,
+  TrendingUp,
+  Users,
 } from 'lucide-react';
+import { useCallback, useMemo, useState } from 'react';
 
-interface HealthcareDashboardProps {
+type HealthcareDashboardProps = {
   initialData?: HealthcareDashboardData;
   clinicId: string;
   professionalId: string;
-}
+};
 
 /**
  * Main Healthcare Dashboard Component
@@ -83,7 +73,9 @@ export function HealthcareDashboard({
 
   // ✅ Memoized calculations for performance
   const dashboardMetrics = useMemo(() => {
-    if (!dashboardData) return null;
+    if (!dashboardData) {
+      return null;
+    }
 
     return {
       totalPatients: dashboardData.patients?.length ?? 0,
@@ -133,13 +125,7 @@ export function HealthcareDashboard({
           userId: professionalId,
           details: { period, dataType: 'healthcare_dashboard' },
         });
-      } catch (error) {
-        console.error('Dashboard data fetch failed:', {
-          error: error.message,
-          professionalId,
-          period,
-          timestamp: new Date().toISOString(),
-        });
+      } catch (_error) {
       } finally {
         setIsLoading(false);
       }
@@ -163,7 +149,7 @@ export function HealthcareDashboard({
       {/* ✅ Dashboard Header with Brazilian date formatting */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">
+          <h1 className="font-bold text-3xl tracking-tight">
             Dashboard Clínica
           </h1>
           <p className="text-muted-foreground">
@@ -175,9 +161,9 @@ export function HealthcareDashboard({
 
         <div className="flex items-center space-x-2">
           <Select
-            value={selectedPeriod}
-            onValueChange={handlePeriodChange}
             disabled={isLoading}
+            onValueChange={handlePeriodChange}
+            value={selectedPeriod}
           >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Selecionar período" />
@@ -191,7 +177,7 @@ export function HealthcareDashboard({
           </Select>
 
           {canExportData && (
-            <Button variant="outline" size="sm">
+            <Button size="sm" variant="outline">
               <Download className="mr-2 h-4 w-4" />
               Exportar
             </Button>
@@ -203,8 +189,8 @@ export function HealthcareDashboard({
       {isLoading && (
         <div className="flex items-center justify-center py-8">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-            <p className="mt-2 text-sm text-muted-foreground">
+            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-primary border-b-2" />
+            <p className="mt-2 text-muted-foreground text-sm">
               Carregando dados...
             </p>
           </div>
@@ -214,49 +200,49 @@ export function HealthcareDashboard({
       {/* ✅ Dashboard Metrics Cards */}
       {dashboardMetrics && !isLoading && (
         <motion.div
+          animate={{ opacity: 1, y: 0 }}
           className="grid gap-4 md:grid-cols-2 lg:grid-cols-4"
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
           <MetricCard
-            title="Pacientes Ativos"
-            value={dashboardMetrics.totalPatients}
-            icon={<Users className="h-4 w-4" />}
-            trend={'+12% vs período anterior'}
             className="healthcare-metric-patients"
+            icon={<Users className="h-4 w-4" />}
+            title="Pacientes Ativos"
+            trend={'+12% vs período anterior'}
+            value={dashboardMetrics.totalPatients}
           />
 
           <MetricCard
-            title="Consultas Hoje"
-            value={dashboardMetrics.todayAppointments}
-            icon={<Calendar className="h-4 w-4" />}
-            trend={`${dashboardMetrics.todayAppointments} agendadas`}
             className="healthcare-metric-appointments"
+            icon={<Calendar className="h-4 w-4" />}
+            title="Consultas Hoje"
+            trend={`${dashboardMetrics.todayAppointments} agendadas`}
+            value={dashboardMetrics.todayAppointments}
           />
 
           {canViewFinancials && (
             <MetricCard
+              className="healthcare-metric-revenue"
+              icon={<TrendingUp className="h-4 w-4" />}
               title="Receita Mensal"
+              trend="+8% vs mês anterior"
               value={new Intl.NumberFormat('pt-BR', {
                 style: 'currency',
                 currency: 'BRL',
               }).format(dashboardMetrics.monthlyRevenue)}
-              icon={<TrendingUp className="h-4 w-4" />}
-              trend="+8% vs mês anterior"
-              className="healthcare-metric-revenue"
             />
           )}
 
           <ComplianceCard
-            score={dashboardMetrics.complianceScore}
             className="healthcare-metric-compliance"
+            score={dashboardMetrics.complianceScore}
           />
         </motion.div>
       )}
 
       {/* ✅ Dashboard Content Tabs */}
-      <Tabs defaultValue="overview" className="space-y-4">
+      <Tabs className="space-y-4" defaultValue="overview">
         <TabsList>
           <TabsTrigger value="overview">Visão Geral</TabsTrigger>
           <TabsTrigger value="appointments">Agendamentos</TabsTrigger>
@@ -266,20 +252,20 @@ export function HealthcareDashboard({
           )}
         </TabsList>
 
-        <TabsContent value="overview" className="space-y-4">
+        <TabsContent className="space-y-4" value="overview">
           <OverviewSection data={dashboardData} />
         </TabsContent>
 
-        <TabsContent value="appointments" className="space-y-4">
+        <TabsContent className="space-y-4" value="appointments">
           <AppointmentsSection data={dashboardData?.appointments} />
         </TabsContent>
 
-        <TabsContent value="patients" className="space-y-4">
+        <TabsContent className="space-y-4" value="patients">
           <PatientsSection data={dashboardData?.patients} />
         </TabsContent>
 
         {canViewFinancials && (
-          <TabsContent value="financials" className="space-y-4">
+          <TabsContent className="space-y-4" value="financials">
             <FinancialsSection data={dashboardData?.financials} />
           </TabsContent>
         )}
@@ -289,24 +275,24 @@ export function HealthcareDashboard({
 } /**
  * MetricCard Component - Healthcare metrics display
  */
-interface MetricCardProps {
+type MetricCardProps = {
   title: string;
   value: number | string;
   icon: React.ReactNode;
   trend?: string;
   className?: string;
-}
+};
 
 function MetricCard({ title, value, icon, trend, className }: MetricCardProps) {
   return (
     <Card className={className}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+        <CardTitle className="font-medium text-sm">{title}</CardTitle>
         {icon}
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
-        {trend && <p className="text-xs text-muted-foreground mt-1">{trend}</p>}
+        <div className="font-bold text-2xl">{value}</div>
+        {trend && <p className="mt-1 text-muted-foreground text-xs">{trend}</p>}
       </CardContent>
     </Card>
   );
@@ -315,16 +301,22 @@ function MetricCard({ title, value, icon, trend, className }: MetricCardProps) {
 /**
  * ComplianceCard Component - LGPD/ANVISA compliance display
  */
-interface ComplianceCardProps {
+type ComplianceCardProps = {
   score: number;
   className?: string;
-}
+};
 
 function ComplianceCard({ score, className }: ComplianceCardProps) {
   const getComplianceStatus = (score: number) => {
-    if (score >= 95) return { label: 'Excelente', color: 'green' };
-    if (score >= 85) return { label: 'Boa', color: 'blue' };
-    if (score >= 70) return { label: 'Regular', color: 'yellow' };
+    if (score >= 95) {
+      return { label: 'Excelente', color: 'green' };
+    }
+    if (score >= 85) {
+      return { label: 'Boa', color: 'blue' };
+    }
+    if (score >= 70) {
+      return { label: 'Regular', color: 'yellow' };
+    }
     return { label: 'Atenção', color: 'red' };
   };
 
@@ -333,13 +325,13 @@ function ComplianceCard({ score, className }: ComplianceCardProps) {
   return (
     <Card className={className}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">Compliance LGPD</CardTitle>
+        <CardTitle className="font-medium text-sm">Compliance LGPD</CardTitle>
         <Activity className="h-4 w-4" />
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">{score}%</div>
-        <div className="flex items-center space-x-2 mt-2">
-          <Progress value={score} className="flex-1" />
+        <div className="font-bold text-2xl">{score}%</div>
+        <div className="mt-2 flex items-center space-x-2">
+          <Progress className="flex-1" value={score} />
           <Badge variant={status.color as any}>{status.label}</Badge>
         </div>
       </CardContent>
@@ -395,10 +387,10 @@ function OverviewSection({ data }: { data?: HealthcareDashboardData }) {
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
-            {data.topTreatments?.slice(0, 5).map((treatment, index) => (
+            {data.topTreatments?.slice(0, 5).map((treatment, _index) => (
               <div
+                className="flex items-center justify-between"
                 key={treatment.id}
-                className="flex justify-between items-center"
               >
                 <span className="text-sm">{treatment.name}</span>
                 <Badge variant="outline">{treatment.count}</Badge>

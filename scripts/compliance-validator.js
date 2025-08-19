@@ -16,9 +16,8 @@ class ComplianceValidator {
   }
 
   log(message, type = 'info') {
-    const timestamp = new Date().toISOString();
-    const prefix = type === 'error' ? '❌' : type === 'warning' ? '⚠️' : '✅';
-    console.log(`${prefix} [${timestamp}] ${message}`);
+    const _timestamp = new Date().toISOString();
+    const _prefix = type === 'error' ? '❌' : type === 'warning' ? '⚠️' : '✅';
 
     if (type === 'error') {
       this.issues.push(message);
@@ -322,8 +321,7 @@ if (require.main === module) {
         process.exit(1);
       }
     })
-    .catch((error) => {
-      console.error('❌ Compliance validation failed:', error);
+    .catch((_error) => {
       process.exit(1);
     });
 }

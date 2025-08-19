@@ -1,9 +1,6 @@
 import { aestheticPredictionEngine } from '../core/prediction-engine';
 import type {
-  BotoxOptimization,
   DurationEstimation,
-  FillerVolumePrediction,
-  LaserSettingsPrediction,
   PatientProfile,
   PredictionResponse,
   RiskAssessment,
@@ -18,11 +15,11 @@ import type {
  * Target: 85%+ accuracy with enterprise-grade reliability
  */
 export class AestheticInferenceAPI {
-  private cache = new Map<
+  private readonly cache = new Map<
     string,
     { data: any; timestamp: number; ttl: number }
   >();
-  private isInitialized = false;
+  private readonly isInitialized = false;
   private requestCount = 0;
   private totalResponseTime = 0;
 
@@ -39,9 +36,7 @@ export class AestheticInferenceAPI {
       await aestheticPredictionEngine.initialize();
 
       this.isInitialized = true;
-      console.log('✅ Aesthetic Inference API initialized');
     } catch (error) {
-      console.error('❌ Failed to initialize Inference API:', error);
       throw new Error(`Inference API initialization failed: ${error}`);
     }
   }
@@ -96,7 +91,6 @@ export class AestheticInferenceAPI {
         0.87
       );
     } catch (error) {
-      console.error('❌ Treatment outcome prediction API error:', error);
       return this.createErrorResponse(
         'Prediction failed',
         requestId,
@@ -156,7 +150,6 @@ export class AestheticInferenceAPI {
         0.89
       );
     } catch (error) {
-      console.error('❌ Comprehensive prediction API error:', error);
       return this.createErrorResponse(
         'Comprehensive prediction failed',
         requestId,
@@ -192,7 +185,6 @@ export class AestheticInferenceAPI {
         details: apiDetails,
       };
     } catch (error) {
-      console.error('❌ Health check failed:', error);
       return {
         status: 'unhealthy',
         details: {
@@ -209,7 +201,7 @@ export class AestheticInferenceAPI {
   clearCache(pattern?: string): void {
     if (pattern) {
       // Clear specific patterns
-      for (const [key, value] of this.cache.entries()) {
+      for (const [key, _value] of this.cache.entries()) {
         if (key.includes(pattern)) {
           this.cache.delete(key);
         }
@@ -218,7 +210,6 @@ export class AestheticInferenceAPI {
       // Clear all cache
       this.cache.clear();
     }
-    console.log(`🧹 Cache cleared${pattern ? ` for pattern: ${pattern}` : ''}`);
   }
 
   /**
@@ -260,14 +251,16 @@ export class AestheticInferenceAPI {
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
       hash = (hash << 5) - hash + char;
-      hash = hash & hash; // Convert to 32-bit integer
+      hash &= hash; // Convert to 32-bit integer
     }
     return Math.abs(hash).toString(36);
   }
 
   private getFromCache(key: string): any | null {
     const entry = this.cache.get(key);
-    if (!entry) return null;
+    if (!entry) {
+      return null;
+    }
 
     // Check if cache entry has expired
     if (Date.now() - entry.timestamp > entry.ttl) {
@@ -339,7 +332,7 @@ export class AestheticInferenceAPI {
     message: string,
     requestId: string,
     startTime: number,
-    error?: string
+    _error?: string
   ): PredictionResponse<never> {
     return {
       success: false,

@@ -3,7 +3,7 @@
  * Mock implementation for testing and development
  */
 
-export interface SecurityEvent {
+export type SecurityEvent = {
   userId?: string;
   eventType: string;
   eventDescription: string;
@@ -13,9 +13,9 @@ export interface SecurityEvent {
   riskLevel: 'low' | 'medium' | 'high' | 'critical';
   success: boolean;
   metadata?: Record<string, any>;
-}
+};
 
-export interface ComplianceReport {
+export type ComplianceReport = {
   period: string;
   startDate: string;
   endDate: string;
@@ -30,9 +30,9 @@ export interface ComplianceReport {
   complianceScore: number;
   recommendations: string[];
   generatedAt: string;
-}
+};
 
-export interface AuditResult {
+export type AuditResult = {
   auditId: string;
   auditType: 'quick' | 'targeted' | 'full';
   status: 'completed' | 'failed' | 'in_progress';
@@ -40,31 +40,31 @@ export interface AuditResult {
   riskScore: number;
   recommendations: string[];
   completedAt: string;
-}
+};
 
-export interface AuditFinding {
+export type AuditFinding = {
   severity: 'info' | 'warning' | 'error' | 'critical';
   category: string;
   description: string;
   recommendation?: string;
   metadata?: Record<string, any>;
-}
+};
 
-export interface ThreatData {
+export type ThreatData = {
   source: string;
   type: string;
   severity: 'low' | 'medium' | 'high' | 'critical';
   metadata?: Record<string, any>;
-}
+};
 
-export interface ThreatDetection {
+export type ThreatDetection = {
   threatId: string;
   detected: boolean;
   confidence: number;
   riskLevel: 'low' | 'medium' | 'high' | 'critical';
   actions: string[];
   metadata?: Record<string, any>;
-}
+};
 
 export class SecurityAuditFramework {
   private events: SecurityEvent[] = [];
@@ -79,22 +79,21 @@ export class SecurityAuditFramework {
       metadata: {
         ...event.metadata,
         timestamp: new Date().toISOString(),
-        auditId: `audit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-      }
+        auditId: `audit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      },
     };
 
     this.events.push(enrichedEvent);
-    
-    // In a real implementation, this would write to database
-    console.log('Security event logged:', enrichedEvent);
   }
 
   /**
    * Perform security audit
    */
-  async performAudit(type: 'quick' | 'targeted' | 'full' = 'quick'): Promise<AuditResult> {
+  async performAudit(
+    type: 'quick' | 'targeted' | 'full' = 'quick'
+  ): Promise<AuditResult> {
     const auditId = `audit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
+
     const findings: AuditFinding[] = [];
     let riskScore = 0;
 
@@ -104,7 +103,7 @@ export class SecurityAuditFramework {
         severity: 'info',
         category: 'authentication',
         description: 'Basic authentication checks completed',
-        recommendation: 'Continue monitoring authentication patterns'
+        recommendation: 'Continue monitoring authentication patterns',
       });
       riskScore = 10;
     }
@@ -115,7 +114,7 @@ export class SecurityAuditFramework {
         severity: 'warning',
         category: 'webauthn',
         description: 'WebAuthn implementation requires security review',
-        recommendation: 'Review WebAuthn credential storage and validation'
+        recommendation: 'Review WebAuthn credential storage and validation',
       });
       riskScore = 25;
     }
@@ -132,13 +131,14 @@ export class SecurityAuditFramework {
           severity: 'warning',
           category: 'api',
           description: 'API rate limiting needs enhancement',
-          recommendation: 'Implement stricter rate limiting on authentication endpoints'
+          recommendation:
+            'Implement stricter rate limiting on authentication endpoints',
         },
         {
           severity: 'error',
           category: 'logging',
           description: 'Security event logging incomplete',
-          recommendation: 'Ensure all security events are properly logged'
+          recommendation: 'Ensure all security events are properly logged',
         }
       );
       riskScore = 45;
@@ -151,9 +151,9 @@ export class SecurityAuditFramework {
       findings,
       riskScore,
       recommendations: findings
-        .filter(f => f.recommendation)
-        .map(f => f.recommendation!),
-      completedAt: new Date().toISOString()
+        .filter((f) => f.recommendation)
+        .map((f) => f.recommendation!),
+      completedAt: new Date().toISOString(),
     };
 
     this.auditHistory.push(result);
@@ -165,22 +165,28 @@ export class SecurityAuditFramework {
    */
   async detectThreat(threatData: ThreatData): Promise<ThreatDetection> {
     // Mock threat detection logic
-    const confidence = threatData.severity === 'critical' ? 0.9 : 
-                     threatData.severity === 'high' ? 0.7 :
-                     threatData.severity === 'medium' ? 0.5 : 0.2;
+    const confidence =
+      threatData.severity === 'critical'
+        ? 0.9
+        : threatData.severity === 'high'
+          ? 0.7
+          : threatData.severity === 'medium'
+            ? 0.5
+            : 0.2;
 
     const detection: ThreatDetection = {
       threatId: `threat_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       detected: confidence > 0.6,
       confidence,
       riskLevel: threatData.severity,
-      actions: confidence > 0.6 ? 
-        ['alert_security_team', 'increase_monitoring'] : 
-        ['log_event', 'continue_monitoring'],
+      actions:
+        confidence > 0.6
+          ? ['alert_security_team', 'increase_monitoring']
+          : ['log_event', 'continue_monitoring'],
       metadata: {
         ...threatData.metadata,
-        detectedAt: new Date().toISOString()
-      }
+        detectedAt: new Date().toISOString(),
+      },
     };
 
     // Log the threat detection as a security event
@@ -192,8 +198,8 @@ export class SecurityAuditFramework {
       metadata: {
         threatId: detection.threatId,
         confidence: detection.confidence,
-        source: threatData.source
-      }
+        source: threatData.source,
+      },
     });
 
     return detection;
@@ -202,13 +208,19 @@ export class SecurityAuditFramework {
   /**
    * Validate compliance with security standards
    */
-  async validateCompliance(): Promise<{ compliant: boolean; score: number; issues: string[] }> {
+  async validateCompliance(): Promise<{
+    compliant: boolean;
+    score: number;
+    issues: string[];
+  }> {
     const issues: string[] = [];
     let score = 100;
 
     // Mock compliance checks
     if (this.events.length === 0) {
-      issues.push('No security events logged - logging system may not be functioning');
+      issues.push(
+        'No security events logged - logging system may not be functioning'
+      );
       score -= 20;
     }
 
@@ -218,16 +230,20 @@ export class SecurityAuditFramework {
     }
 
     // Check for high-risk events
-    const highRiskEvents = this.events.filter(e => e.riskLevel === 'high' || e.riskLevel === 'critical');
+    const highRiskEvents = this.events.filter(
+      (e) => e.riskLevel === 'high' || e.riskLevel === 'critical'
+    );
     if (highRiskEvents.length > 0) {
-      issues.push(`${highRiskEvents.length} high-risk security events detected`);
+      issues.push(
+        `${highRiskEvents.length} high-risk security events detected`
+      );
       score -= highRiskEvents.length * 5;
     }
 
     return {
       compliant: score >= 80,
       score: Math.max(0, score),
-      issues
+      issues,
     };
   }
 
@@ -245,10 +261,13 @@ export class SecurityAuditFramework {
     }
 
     // Security report
-    const riskDistribution = this.events.reduce((acc, event) => {
-      acc[event.riskLevel]++;
-      return acc;
-    }, { low: 0, medium: 0, high: 0, critical: 0 });
+    const riskDistribution = this.events.reduce(
+      (acc, event) => {
+        acc[event.riskLevel]++;
+        return acc;
+      },
+      { low: 0, medium: 0, high: 0, critical: 0 }
+    );
 
     return {
       reportId: `report_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -258,33 +277,38 @@ export class SecurityAuditFramework {
       totalEvents: this.events.length,
       totalAudits: this.auditHistory.length,
       riskDistribution,
-      averageRiskScore: this.auditHistory.length > 0 
-        ? this.auditHistory.reduce((sum, audit) => sum + audit.riskScore, 0) / this.auditHistory.length
-        : 0,
+      averageRiskScore:
+        this.auditHistory.length > 0
+          ? this.auditHistory.reduce((sum, audit) => sum + audit.riskScore, 0) /
+            this.auditHistory.length
+          : 0,
       generatedAt: new Date().toISOString(),
       data: {
         events: this.events,
-        audits: this.auditHistory
-      }
+        audits: this.auditHistory,
+      },
     };
   }
 
   /**
    * Generate compliance report
    */
-  async generateComplianceReport(period: string = '30d'): Promise<ComplianceReport> {
+  async generateComplianceReport(period = '30d'): Promise<ComplianceReport> {
     const now = new Date();
-    const startDate = new Date(now.getTime() - (30 * 24 * 60 * 60 * 1000)); // 30 days ago
+    const startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000); // 30 days ago
 
-    const periodEvents = this.events.filter(event => {
+    const periodEvents = this.events.filter((event) => {
       const eventTime = new Date(event.metadata?.timestamp || now);
       return eventTime >= startDate && eventTime <= now;
     });
 
-    const riskDistribution = periodEvents.reduce((acc, event) => {
-      acc[event.riskLevel]++;
-      return acc;
-    }, { low: 0, medium: 0, high: 0, critical: 0 });
+    const riskDistribution = periodEvents.reduce(
+      (acc, event) => {
+        acc[event.riskLevel]++;
+        return acc;
+      },
+      { low: 0, medium: 0, high: 0, critical: 0 }
+    );
 
     // Calculate compliance score based on security events and risk levels
     let complianceScore = 100;
@@ -301,7 +325,9 @@ export class SecurityAuditFramework {
       recommendations.push('Review and resolve high-risk security events');
     }
     if (complianceScore < 80) {
-      recommendations.push('Implement additional security controls to improve compliance score');
+      recommendations.push(
+        'Implement additional security controls to improve compliance score'
+      );
     }
 
     return {
@@ -309,11 +335,13 @@ export class SecurityAuditFramework {
       startDate: startDate.toISOString(),
       endDate: now.toISOString(),
       totalEvents: periodEvents.length,
-      securityEvents: periodEvents.filter(e => e.eventType.includes('security') || e.riskLevel !== 'low').length,
+      securityEvents: periodEvents.filter(
+        (e) => e.eventType.includes('security') || e.riskLevel !== 'low'
+      ).length,
       riskDistribution,
       complianceScore,
       recommendations,
-      generatedAt: now.toISOString()
+      generatedAt: now.toISOString(),
     };
   }
 

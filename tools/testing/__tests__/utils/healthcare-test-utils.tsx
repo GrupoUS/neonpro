@@ -4,12 +4,12 @@ import type { ReactElement } from 'react';
 import { vi } from 'vitest';
 
 // Healthcare-specific test context providers
-interface HealthcareTestProviderProps {
+type HealthcareTestProviderProps = {
   children: React.ReactNode;
   initialPatient?: any;
   initialDoctor?: any;
   initialClinicSettings?: any;
-}
+};
 
 // Mock healthcare context provider for testing
 export function HealthcareTestProvider({
@@ -18,7 +18,7 @@ export function HealthcareTestProvider({
   initialDoctor = null,
   initialClinicSettings = {},
 }: HealthcareTestProviderProps) {
-  const mockHealthcareContext = {
+  const _mockHealthcareContext = {
     patient: initialPatient,
     doctor: initialDoctor,
     clinicSettings: {
@@ -243,10 +243,18 @@ export const healthcareFormUtils = {
       'input[name="phone"]'
     ) as HTMLInputElement;
 
-    if (nameInput) await user.type(nameInput, patientData.name);
-    if (cpfInput) await user.type(cpfInput, patientData.cpf);
-    if (emailInput) await user.type(emailInput, patientData.email);
-    if (phoneInput) await user.type(phoneInput, patientData.phone);
+    if (nameInput) {
+      await user.type(nameInput, patientData.name);
+    }
+    if (cpfInput) {
+      await user.type(cpfInput, patientData.cpf);
+    }
+    if (emailInput) {
+      await user.type(emailInput, patientData.email);
+    }
+    if (phoneInput) {
+      await user.type(phoneInput, patientData.phone);
+    }
   },
 
   submitFormWithLGPDConsent: async (user: any) => {
@@ -257,8 +265,12 @@ export const healthcareFormUtils = {
       'button[type="submit"]'
     ) as HTMLButtonElement;
 
-    if (lgpdCheckbox) await user.click(lgpdCheckbox);
-    if (submitButton) await user.click(submitButton);
+    if (lgpdCheckbox) {
+      await user.click(lgpdCheckbox);
+    }
+    if (submitButton) {
+      await user.click(submitButton);
+    }
   },
 
   expectFormValidationErrors: (requiredFields: string[]) => {
@@ -278,7 +290,7 @@ export const mockHealthcareAPI = {
     formatted: cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4'),
   })),
 
-  checkANVISACompliance: vi.fn(async (productCode: string) => ({
+  checkANVISACompliance: vi.fn(async (_productCode: string) => ({
     isCompliant: true,
     productInfo: {
       name: 'Test Medical Product',
@@ -287,7 +299,7 @@ export const mockHealthcareAPI = {
     },
   })),
 
-  recordLGPDConsent: vi.fn(async (consentData: any) => ({
+  recordLGPDConsent: vi.fn(async (_consentData: any) => ({
     success: true,
     consentId: 'consent-123',
     timestamp: new Date().toISOString(),

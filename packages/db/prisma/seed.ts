@@ -7,7 +7,7 @@
  * @compliance LGPD + ANVISA + CFM
  */
 
-import { PrismaClient, UserRole, UserStatus } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -20,8 +20,8 @@ async function main() {
       email: 'admin@neonpro.health',
       first_name: 'System',
       last_name: 'Administrator',
-      role: UserRole.SUPER_ADMIN,
-      status: UserStatus.ACTIVE,
+      role: 'SUPER_ADMIN' as const,
+      status: 'ACTIVE' as const,
       cpf: '00000000000', // Test CPF
       phone: '+5511999999999',
       is_verified: true,

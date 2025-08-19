@@ -47,13 +47,13 @@ export const mockLGPDConsent = {
     withdrawnAt: new Date().toISOString(),
   })),
 
-  checkConsent: vi.fn(async (patientId: string, purpose: string) => ({
+  checkConsent: vi.fn(async (_patientId: string, _purpose: string) => ({
     hasConsent: true,
     consentDate: new Date().toISOString(),
     expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
   })),
 
-  getConsentHistory: vi.fn(async (patientId: string) => [
+  getConsentHistory: vi.fn(async (_patientId: string) => [
     {
       id: 'consent-123',
       purpose: 'medical-treatment',
@@ -65,7 +65,7 @@ export const mockLGPDConsent = {
 
 // Mock ANVISA compliance validation
 export const mockANVISACompliance = {
-  validateProduct: vi.fn(async (productId: string) => ({
+  validateProduct: vi.fn(async (_productId: string) => ({
     isValid: true,
     anvisaCode: 'ANVISA-12345',
     productName: 'Test Medical Product',
@@ -74,7 +74,7 @@ export const mockANVISACompliance = {
     restrictions: [],
   })),
 
-  validateProcedure: vi.fn(async (procedureCode: string) => ({
+  validateProcedure: vi.fn(async (_procedureCode: string) => ({
     isAuthorized: true,
     procedureName: 'Aesthetic Treatment',
     requiredLicense: 'medical',
@@ -82,7 +82,7 @@ export const mockANVISACompliance = {
     contraindications: [],
   })),
 
-  reportAdverseEvent: vi.fn(async (event: any) => ({
+  reportAdverseEvent: vi.fn(async (_event: any) => ({
     reportId: 'AE-2024-001',
     status: 'submitted',
     submissionDate: new Date().toISOString(),
@@ -109,7 +109,7 @@ export const mockCFMValidation = {
     algorithm: 'RS256',
   })),
 
-  validatePrescription: vi.fn(async (prescriptionData: any) => ({
+  validatePrescription: vi.fn(async (_prescriptionData: any) => ({
     isValid: true,
     prescriptionId: 'PRESC-001',
     validatedAt: new Date().toISOString(),
@@ -119,21 +119,21 @@ export const mockCFMValidation = {
 
 // Mock medical data encryption utilities
 export const mockMedicalEncryption = {
-  encryptPatientData: vi.fn(async (data: any) => ({
+  encryptPatientData: vi.fn(async (_data: any) => ({
     encryptedData: 'encrypted-patient-data',
     keyId: 'key-123',
     algorithm: 'AES-256-GCM',
     timestamp: new Date().toISOString(),
   })),
 
-  decryptPatientData: vi.fn(async (encryptedData: string) => ({
+  decryptPatientData: vi.fn(async (_encryptedData: string) => ({
     data: { patientId: '123', name: 'Test Patient' },
     decryptedAt: new Date().toISOString(),
   })),
 
-  generateAuditHash: vi.fn((data: any) => 'audit-hash-123'),
+  generateAuditHash: vi.fn((_data: any) => 'audit-hash-123'),
 
-  validateDataIntegrity: vi.fn(async (data: any, hash: string) => ({
+  validateDataIntegrity: vi.fn(async (_data: any, _hash: string) => ({
     isValid: true,
     verifiedAt: new Date().toISOString(),
   })),
@@ -172,7 +172,7 @@ export const mockAuditLogger = {
 
 // Mock patient data utilities for testing
 export const mockPatientData = {
-  createMockPatient: () => ({
+  createMockPatient: (overrides: any = {}) => ({
     id: 'patient-123',
     cpf: '123.456.789-09',
     name: 'João Silva Santos',
@@ -199,7 +199,9 @@ export const mockPatientData = {
       granted: true,
       grantedAt: new Date().toISOString(),
       purposes: ['medical-treatment', 'communication', 'analytics'],
+      ...overrides.lgpdConsent,
     },
+    ...overrides,
   }),
 
   createMockTreatment: () => ({
@@ -234,46 +236,46 @@ export const mockPatientData = {
 // Mock Supabase healthcare operations
 export const mockSupabaseHealthcare = {
   patients: {
-    create: vi.fn(async (data: any) => ({
+    create: vi.fn(async (_data: any) => ({
       data: mockPatientData.createMockPatient(),
       error: null,
     })),
-    update: vi.fn(async (id: string, data: any) => ({
+    update: vi.fn(async (_id: string, data: any) => ({
       data: { ...mockPatientData.createMockPatient(), ...data },
       error: null,
     })),
-    delete: vi.fn(async (id: string) => ({ data: null, error: null })),
-    findById: vi.fn(async (id: string) => ({
+    delete: vi.fn(async (_id: string) => ({ data: null, error: null })),
+    findById: vi.fn(async (_id: string) => ({
       data: mockPatientData.createMockPatient(),
       error: null,
     })),
-    findByCPF: vi.fn(async (cpf: string) => ({
+    findByCPF: vi.fn(async (_cpf: string) => ({
       data: mockPatientData.createMockPatient(),
       error: null,
     })),
   },
 
   treatments: {
-    create: vi.fn(async (data: any) => ({
+    create: vi.fn(async (_data: any) => ({
       data: mockPatientData.createMockTreatment(),
       error: null,
     })),
-    update: vi.fn(async (id: string, data: any) => ({
+    update: vi.fn(async (_id: string, data: any) => ({
       data: { ...mockPatientData.createMockTreatment(), ...data },
       error: null,
     })),
-    findByPatient: vi.fn(async (patientId: string) => ({
+    findByPatient: vi.fn(async (_patientId: string) => ({
       data: [mockPatientData.createMockTreatment()],
       error: null,
     })),
   },
 
   medicalRecords: {
-    create: vi.fn(async (data: any) => ({
+    create: vi.fn(async (_data: any) => ({
       data: mockPatientData.createMockMedicalRecord(),
       error: null,
     })),
-    findByPatient: vi.fn(async (patientId: string) => ({
+    findByPatient: vi.fn(async (_patientId: string) => ({
       data: [mockPatientData.createMockMedicalRecord()],
       error: null,
     })),

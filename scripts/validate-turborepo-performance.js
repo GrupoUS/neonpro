@@ -5,9 +5,9 @@
  * Validates build time improvements and healthcare compliance maintenance
  */
 
-const { execSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
+const { execSync } = require('node:child_process');
+const fs = require('node:fs');
+const path = require('node:path');
 
 const PERFORMANCE_TARGETS = {
   BUILD_TIME_REDUCTION: 0.6, // 60% reduction target
@@ -24,9 +24,6 @@ const HEALTHCARE_COMPLIANCE_REQUIREMENTS = [
 ];
 
 async function validatePerformance() {
-  console.log('🏥 NeonPro Turborepo Performance Validation');
-  console.log('============================================\n');
-
   const results = {
     buildTimeImprovement: false,
     cacheOptimization: false,
@@ -36,8 +33,6 @@ async function validatePerformance() {
   };
 
   try {
-    // 1. Validate build time improvement
-    console.log('📊 Testing build time performance...');
     const buildStart = Date.now();
 
     execSync('pnpm run build', { stdio: 'inherit' });
@@ -49,13 +44,6 @@ async function validatePerformance() {
     results.buildTimeImprovement =
       improvement >= PERFORMANCE_TARGETS.BUILD_TIME_REDUCTION;
 
-    console.log(`Build time: ${buildTime}ms`);
-    console.log(`Improvement: ${(improvement * 100).toFixed(1)}%`);
-    console.log(`Target met: ${results.buildTimeImprovement ? '✅' : '❌'}\n`);
-
-    // 2. Validate cache optimization
-    console.log('🚀 Testing cache optimization...');
-
     // Run build twice to test cache
     execSync('pnpm run build', { stdio: 'pipe' });
     const cacheStart = Date.now();
@@ -66,19 +54,10 @@ async function validatePerformance() {
     results.cacheOptimization =
       cacheImprovement >= PERFORMANCE_TARGETS.CACHE_HIT_RATE;
 
-    console.log(`Cached build time: ${cacheTime}ms`);
-    console.log(`Cache improvement: ${(cacheImprovement * 100).toFixed(1)}%`);
-    console.log(`Target met: ${results.cacheOptimization ? '✅' : '❌'}\n`);
-
-    // 3. Validate healthcare compliance maintenance
-    console.log('🏥 Testing healthcare compliance maintenance...');
-
     for (const task of HEALTHCARE_COMPLIANCE_REQUIREMENTS) {
       try {
         execSync(`pnpm run ${task}`, { stdio: 'pipe' });
-        console.log(`${task}: ✅`);
-      } catch (error) {
-        console.log(`${task}: ❌`);
+      } catch (_error) {
         results.complianceMaintained = false;
         break;
       }
@@ -88,13 +67,6 @@ async function validatePerformance() {
       results.complianceMaintained = true;
     }
 
-    console.log(
-      `Compliance maintained: ${results.complianceMaintained ? '✅' : '❌'}\n`
-    );
-
-    // 4. Validate AI/ML optimization
-    console.log('🤖 Testing AI/ML build optimization...');
-
     try {
       const aiStart = Date.now();
       execSync('pnpm run ai:build-models', { stdio: 'pipe' });
@@ -102,12 +74,7 @@ async function validatePerformance() {
 
       // AI builds should be under 30 seconds with optimization
       results.aiOptimization = aiTime < 30_000;
-
-      console.log(`AI model build time: ${aiTime}ms`);
-      console.log(`Target met: ${results.aiOptimization ? '✅' : '❌'}\n`);
-    } catch (error) {
-      console.log('AI build optimization: ❌ (task not available)\n');
-    }
+    } catch (_error) {}
 
     // 5. Overall validation
     results.overall = Object.values(results).every((result) => result === true);
@@ -120,31 +87,10 @@ async function validatePerformance() {
       cacheImprovement,
     });
 
-    console.log('📊 PERFORMANCE VALIDATION SUMMARY');
-    console.log('================================');
-    console.log(
-      `Build Time Improvement: ${results.buildTimeImprovement ? '✅' : '❌'}`
-    );
-    console.log(
-      `Cache Optimization: ${results.cacheOptimization ? '✅' : '❌'}`
-    );
-    console.log(
-      `Compliance Maintained: ${results.complianceMaintained ? '✅' : '❌'}`
-    );
-    console.log(`AI Optimization: ${results.aiOptimization ? '✅' : '❌'}`);
-    console.log(`Overall Success: ${results.overall ? '✅' : '❌'}\n`);
-
     if (results.overall) {
-      console.log(
-        '🎉 Turborepo optimization successful! Healthcare SaaS performance targets met.'
-      );
     } else {
-      console.log(
-        '⚠️  Some optimization targets not met. Review performance report for details.'
-      );
     }
-  } catch (error) {
-    console.error('❌ Performance validation failed:', error.message);
+  } catch (_error) {
     process.exit(1);
   }
 }
@@ -172,8 +118,6 @@ function generatePerformanceReport(results, metrics) {
     path.join(process.cwd(), 'performance-report.json'),
     JSON.stringify(report, null, 2)
   );
-
-  console.log('📄 Performance report generated: performance-report.json');
 }
 
 function generateRecommendations(results) {

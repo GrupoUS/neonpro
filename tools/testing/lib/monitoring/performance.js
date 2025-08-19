@@ -28,7 +28,7 @@ const performanceService = {
     };
   },
 
-  getMetrics: (filter = {}) => {
+  getMetrics: (_filter = {}) => {
     return {
       totalRequests: 1000,
       averageResponseTime: 250,

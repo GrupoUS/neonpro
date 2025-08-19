@@ -13,7 +13,6 @@ export * from './auth/webauthn-client';
 // Auth Services
 export * from './auth/webauthn-service';
 // Re-export specific instances for compatibility
-// Compatibility aliases for legacy imports
 export {
   mockWebAuthnService as webAuthnService,
   mockWebAuthnService,

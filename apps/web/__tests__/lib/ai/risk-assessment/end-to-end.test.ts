@@ -8,7 +8,7 @@ vi.mock('@/lib/ai/patient-insights/risk-assessment', () => ({
     enhanceTreatmentPrediction: vi
       .fn()
       .mockImplementation(
-        async (patientId, tenantId, treatmentOptions, performedBy) => {
+        async (_patientId, _tenantId, treatmentOptions, _performedBy) => {
           return treatmentOptions.map((treatment: any) => ({
             treatmentId: treatment.treatmentId,
             name: treatment.name,
@@ -24,7 +24,7 @@ vi.mock('@/lib/ai/patient-insights/risk-assessment', () => ({
     integrateVitalSignsMonitoring: vi
       .fn()
       .mockImplementation(
-        async (patientId, tenantId, vitalSigns, performedBy) => {
+        async (_patientId, _tenantId, vitalSigns, _performedBy) => {
           const heartRate = vitalSigns.heartRate;
           const systolic = vitalSigns.bloodPressure?.systolic || 120;
           const oxygenSaturation = vitalSigns.oxygenSaturation || 99;
@@ -38,12 +38,21 @@ vi.mock('@/lib/ai/patient-insights/risk-assessment', () => ({
             temperature > 38;
 
           const alerts = [];
-          if (systolic > 180) alerts.push('Crise hipertensiva detectada');
-          if (oxygenSaturation < 90)
+          if (systolic > 180) {
+            alerts.push('Crise hipertensiva detectada');
+          }
+          if (oxygenSaturation < 90) {
             alerts.push('Hipoxemia severa - saturação crítica');
-          if (heartRate < 50) alerts.push('Bradicardia severa');
-          if (temperature > 39) alerts.push('Hipertermia severa');
-          if (!shouldTriggerUpdate) alerts.length = 0;
+          }
+          if (heartRate < 50) {
+            alerts.push('Bradicardia severa');
+          }
+          if (temperature > 39) {
+            alerts.push('Hipertermia severa');
+          }
+          if (!shouldTriggerUpdate) {
+            alerts.length = 0;
+          }
 
           return {
             riskUpdate: shouldTriggerUpdate,

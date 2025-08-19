@@ -1,4 +1,4 @@
-import { addDays, differenceInDays, isAfter, isBefore } from 'date-fns';
+import { differenceInDays } from 'date-fns';
 import { InventoryStatus } from '../types';
 import type {
   CreateProductData,
@@ -19,7 +19,7 @@ import {
   type ProductCategory,
 } from './types';
 
-export interface InventoryRepository {
+export type InventoryRepository = {
   // Product operations
   createProduct(data: CreateProductData): Promise<Product>;
   updateProduct(id: string, data: Partial<Product>): Promise<Product>;
@@ -62,29 +62,29 @@ export interface InventoryRepository {
   ): Promise<InventoryAlert>;
   getAlerts(filters?: AlertFilters): Promise<InventoryAlert[]>;
   acknowledgeAlert(id: string, acknowledgedBy: string): Promise<void>;
-}
-export interface ProductFilters {
+};
+export type ProductFilters = {
   category?: ProductCategory;
   isActive?: boolean;
   lowStock?: boolean;
   search?: string;
-}
+};
 
-export interface PurchaseOrderFilters {
+export type PurchaseOrderFilters = {
   status?: OrderStatus;
   supplierId?: string;
   startDate?: Date;
   endDate?: Date;
-}
+};
 
-export interface AlertFilters {
+export type AlertFilters = {
   type?: AlertType;
   severity?: AlertSeverity;
   isRead?: boolean;
   productId?: string;
-}
+};
 
-export interface InventoryStats {
+export type InventoryStats = {
   totalProducts: number;
   activeProducts: number;
   lowStockItems: number;
@@ -93,26 +93,21 @@ export interface InventoryStats {
   totalValue: number;
   topCategories: { category: ProductCategory; count: number; value: number }[];
   pendingOrders: number;
-}
+};
 
 export class InventoryService {
-  constructor(private repository: InventoryRepository) {}
+  constructor(private readonly repository: InventoryRepository) {}
 
   // Product management
   async createProduct(data: CreateProductData): Promise<Product> {
-    try {
-      // Check if SKU already exists
-      const existingProduct = await this.repository.getProductBySku(data.sku);
-      if (existingProduct) {
-        throw new Error('Product with this SKU already exists');
-      }
-
-      const product = await this.repository.createProduct(data);
-      return product;
-    } catch (error) {
-      console.error('Error creating product:', error);
-      throw error;
+    // Check if SKU already exists
+    const existingProduct = await this.repository.getProductBySku(data.sku);
+    if (existingProduct) {
+      throw new Error('Product with this SKU already exists');
     }
+
+    const product = await this.repository.createProduct(data);
+    return product;
   }
   async updateProduct(id: string, data: Partial<Product>): Promise<Product> {
     // If SKU is being updated, check for duplicates
@@ -136,33 +131,28 @@ export class InventoryService {
 
   // Stock management
   async receiveStock(data: CreateStockItemData): Promise<StockItem> {
-    try {
-      const product = await this.repository.getProduct(data.productId);
-      if (!product) {
-        throw new Error('Product not found');
-      }
-
-      const stockItem = await this.repository.createStockItem(data);
-
-      // Record stock movement
-      await this.repository.createStockMovement({
-        stockItemId: stockItem.id,
-        movementType: MovementType.RECEIVED,
-        quantity: data.quantity,
-        previousQuantity: 0,
-        newQuantity: data.quantity,
-        reason: 'Stock received',
-        performedBy: 'system', // This should be the actual user ID
-      });
-
-      // Check if this resolves any low stock alerts
-      await this.checkAndResolveStockAlerts(data.productId);
-
-      return stockItem;
-    } catch (error) {
-      console.error('Error receiving stock:', error);
-      throw error;
+    const product = await this.repository.getProduct(data.productId);
+    if (!product) {
+      throw new Error('Product not found');
     }
+
+    const stockItem = await this.repository.createStockItem(data);
+
+    // Record stock movement
+    await this.repository.createStockMovement({
+      stockItemId: stockItem.id,
+      movementType: MovementType.RECEIVED,
+      quantity: data.quantity,
+      previousQuantity: 0,
+      newQuantity: data.quantity,
+      reason: 'Stock received',
+      performedBy: 'system', // This should be the actual user ID
+    });
+
+    // Check if this resolves any low stock alerts
+    await this.checkAndResolveStockAlerts(data.productId);
+
+    return stockItem;
   }
   async useStock(
     productId: string,
@@ -199,7 +189,9 @@ export class InventoryService {
     );
 
     for (const stockItem of sortedStock) {
-      if (remainingQuantity <= 0) break;
+      if (remainingQuantity <= 0) {
+        break;
+      }
 
       const useFromThisItem = Math.min(stockItem.quantity, remainingQuantity);
       const newQuantity = stockItem.quantity - useFromThisItem;
@@ -317,7 +309,9 @@ export class InventoryService {
   }
   private async checkAndResolveStockAlerts(productId: string): Promise<void> {
     const product = await this.repository.getProduct(productId);
-    if (!product) return;
+    if (!product) {
+      return;
+    }
 
     const stockItems = await this.repository.getStockItems(productId);
     const totalStock = stockItems

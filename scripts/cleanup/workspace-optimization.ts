@@ -4,20 +4,20 @@
  * Quality Standard: ≥9.9/10 Healthcare Override
  */
 
-import { promises as fs } from 'fs';
-import { join } from 'path';
+import { promises as fs } from 'node:fs';
+import { join } from 'node:path';
 
-interface WorkspaceOptimization {
+type WorkspaceOptimization = {
   packageJson: any;
   turboConfig: any;
   workspacePackages: string[];
   dependencyIssues: string[];
   optimizations: string[];
-}
+};
 
 export class HealthcareWorkspaceOptimizer {
-  private rootPath: string;
-  private results: WorkspaceOptimization;
+  private readonly rootPath: string;
+  private readonly results: WorkspaceOptimization;
 
   constructor(rootPath: string = process.cwd()) {
     this.rootPath = rootPath;
@@ -31,35 +31,24 @@ export class HealthcareWorkspaceOptimizer {
   }
 
   async optimize(): Promise<WorkspaceOptimization> {
-    console.log('🏥 Starting Healthcare Workspace Optimization...');
+    // Analyze current workspace structure
+    await this.analyzeWorkspace();
 
-    try {
-      // Analyze current workspace structure
-      await this.analyzeWorkspace();
+    // Optimize package.json for healthcare
+    await this.optimizeRootPackageJson();
 
-      // Optimize package.json for healthcare
-      await this.optimizeRootPackageJson();
+    // Optimize Turborepo configuration
+    await this.optimizeTurboConfig();
 
-      // Optimize Turborepo configuration
-      await this.optimizeTurboConfig();
+    // Clean up workspace dependencies
+    await this.cleanupDependencies();
 
-      // Clean up workspace dependencies
-      await this.cleanupDependencies();
-
-      // Generate optimization report
-      this.generateOptimizationReport();
-
-      console.log('✅ Healthcare Workspace Optimization Completed');
-      return this.results;
-    } catch (error) {
-      console.error('❌ Workspace optimization failed:', error);
-      throw error;
-    }
+    // Generate optimization report
+    this.generateOptimizationReport();
+    return this.results;
   }
 
   private async analyzeWorkspace(): Promise<void> {
-    console.log('🔍 Analyzing workspace structure...');
-
     // Read root package.json
     try {
       const packageJsonPath = join(this.rootPath, 'package.json');
@@ -74,10 +63,6 @@ export class HealthcareWorkspaceOptimizer {
           ? this.results.packageJson.workspaces
           : this.results.packageJson.workspaces.packages || [];
       }
-
-      console.log(
-        `   ✓ Found ${this.results.workspacePackages.length} workspace packages`
-      );
     } catch (error) {
       this.results.dependencyIssues.push(
         `Failed to read package.json: ${error}`
@@ -89,15 +74,14 @@ export class HealthcareWorkspaceOptimizer {
       const turboJsonPath = join(this.rootPath, 'turbo.json');
       const turboJsonContent = await fs.readFile(turboJsonPath, 'utf-8');
       this.results.turboConfig = JSON.parse(turboJsonContent);
-      console.log('   ✓ Turborepo configuration loaded');
     } catch (error) {
       this.results.dependencyIssues.push(`Failed to read turbo.json: ${error}`);
     }
   }
   private async optimizeRootPackageJson(): Promise<void> {
-    console.log('📦 Optimizing root package.json for healthcare...');
-
-    if (!this.results.packageJson) return;
+    if (!this.results.packageJson) {
+      return;
+    }
 
     // Healthcare-specific script optimizations
     const healthcareScripts = {
@@ -143,12 +127,9 @@ export class HealthcareWorkspaceOptimizer {
     this.results.optimizations.push(
       'Root package.json optimized for healthcare development'
     );
-    console.log('   ✓ Healthcare scripts and dependencies added');
   }
 
   private async optimizeTurboConfig(): Promise<void> {
-    console.log('⚡ Optimizing Turborepo configuration...');
-
     // Use the healthcare-optimized turbo config
     try {
       const healthcareTurboPath = join(this.rootPath, 'turbo-healthcare.json');
@@ -178,7 +159,6 @@ export class HealthcareWorkspaceOptimizer {
       this.results.optimizations.push(
         'Turborepo configuration optimized for healthcare workflows'
       );
-      console.log('   ✓ Healthcare Turborepo configuration applied');
     } catch (error) {
       this.results.dependencyIssues.push(
         `Failed to optimize turbo.json: ${error}`
@@ -186,8 +166,6 @@ export class HealthcareWorkspaceOptimizer {
     }
   }
   private async cleanupDependencies(): Promise<void> {
-    console.log('🧹 Cleaning up workspace dependencies...');
-
     // Remove duplicate dependencies across workspace packages
     for (const workspacePattern of this.results.workspacePackages) {
       try {
@@ -207,7 +185,6 @@ export class HealthcareWorkspaceOptimizer {
     this.results.optimizations.push(
       'Workspace dependencies cleaned and optimized'
     );
-    console.log('   ✓ Dependency cleanup completed');
   }
 
   private async findPackages(pattern: string): Promise<string[]> {
@@ -309,48 +286,17 @@ export class HealthcareWorkspaceOptimizer {
     }
   }
   private generateOptimizationReport(): void {
-    console.log('\n📊 HEALTHCARE WORKSPACE OPTIMIZATION REPORT');
-    console.log('==========================================');
-    console.log(
-      `✅ Optimizations applied: ${this.results.optimizations.length}`
-    );
-    console.log(
-      `📦 Workspace packages: ${this.results.workspacePackages.length}`
-    );
-    console.log(
-      `❌ Issues encountered: ${this.results.dependencyIssues.length}`
-    );
-
     if (this.results.optimizations.length > 0) {
-      console.log('\n✨ Optimizations Applied:');
-      this.results.optimizations.forEach((opt) => console.log(`   ✓ ${opt}`));
+      this.results.optimizations.forEach((_opt) => {});
     }
 
     if (this.results.dependencyIssues.length > 0) {
-      console.log('\n⚠️  Issues Encountered:');
-      this.results.dependencyIssues.forEach((issue) =>
-        console.log(`   ⚠️  ${issue}`)
-      );
+      this.results.dependencyIssues.forEach((_issue) => {});
     }
 
     if (this.results.workspacePackages.length > 0) {
-      console.log('\n📦 Workspace Packages:');
-      this.results.workspacePackages.forEach((pkg) =>
-        console.log(`   • ${pkg}`)
-      );
+      this.results.workspacePackages.forEach((_pkg) => {});
     }
-
-    console.log(
-      '\n🏥 Healthcare workspace optimization completed successfully!'
-    );
-    console.log('🔧 Recommended next steps:');
-    console.log('   1. Run `pnpm install` to update dependencies');
-    console.log(
-      '   2. Run `pnpm healthcare:validate` to validate optimization'
-    );
-    console.log(
-      '   3. Run `pnpm test:healthcare` to test healthcare functionality'
-    );
   }
 }
 

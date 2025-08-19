@@ -1,15 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import {
-  calculateMRR,
+  aggregateMetricsByPeriod,
   calculateARR,
   calculateChurnRate,
-  calculateLTV,
   calculateGrowthRate,
+  calculateLTV,
+  calculateMRR,
+  exportToCSV,
   formatAnalyticsCurrency,
   formatAnalyticsPercentage,
-  aggregateMetricsByPeriod,
   parseAnalyticsFilters,
-  exportToCSV,
 } from '../../../../../packages/utils/src/analytics/utils';
 
 // Test data
@@ -50,7 +50,7 @@ describe('Analytics Utils', () => {
     it('should calculate ARR correctly', () => {
       const mrr = 1000;
       const arr = calculateARR(mrr);
-      expect(arr).toBe(12000);
+      expect(arr).toBe(12_000);
     });
   });
 
@@ -66,7 +66,7 @@ describe('Analytics Utils', () => {
     });
 
     it('should handle invalid inputs', () => {
-      const churnRate = calculateChurnRate(NaN, 100);
+      const churnRate = calculateChurnRate(Number.NaN, 100);
       expect(churnRate).toBeNaN();
     });
   });
@@ -83,7 +83,7 @@ describe('Analytics Utils', () => {
     });
 
     it('should handle invalid inputs', () => {
-      const ltv = calculateLTV(NaN, 0.1);
+      const ltv = calculateLTV(Number.NaN, 0.1);
       expect(ltv).toBeNaN();
     });
   });

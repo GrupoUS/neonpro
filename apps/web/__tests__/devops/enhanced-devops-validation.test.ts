@@ -7,8 +7,8 @@ import { describe, expect, test } from 'vitest';
 
 // Test constants to avoid magic numbers
 const LGPD_COMPLIANCE_THRESHOLD = 98;
-const ANVISA_COMPLIANCE_THRESHOLD = 95;
-const AUDIT_TRAIL_THRESHOLD = 99;
+const _ANVISA_COMPLIANCE_THRESHOLD = 95;
+const _AUDIT_TRAIL_THRESHOLD = 99;
 const AUDIT_SCORE_RESULT = 99.5; // Audit trail validation score
 const MAX_LCP_TIME = 2500; // 2.5 seconds in milliseconds
 const MAX_FID_TIME = 100; // 100 milliseconds

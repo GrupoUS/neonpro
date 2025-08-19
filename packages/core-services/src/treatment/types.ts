@@ -44,7 +44,7 @@ export interface TreatmentSession extends BaseEntity {
   afterPhotos: string[];
   isCompleted: boolean;
 }
-export interface TreatmentDetails {
+export type TreatmentDetails = {
   treatmentType: TreatmentType;
   areas: string[];
   // Botox specific
@@ -66,38 +66,38 @@ export interface TreatmentDetails {
   duration: number; // minutes
   anesthesia?: AnesthesiaType;
   products: ProductUsage[];
-}
+};
 
-export interface InjectionSite {
+export type InjectionSite = {
   area: string;
   units: number;
   depth: 'intradermal' | 'subcutaneous' | 'intramuscular';
   technique: string;
-}
+};
 
-export interface LaserSettings {
+export type LaserSettings = {
   wavelength: number;
   fluence: number;
   spotSize: number;
   pulseWidth?: number;
   coolingSettings?: string;
-}
+};
 
-export interface ProductUsage {
+export type ProductUsage = {
   productId: string;
   productName: string;
   quantityUsed: number;
   batchNumber?: string;
   expiryDate?: Date;
-}
+};
 
-export interface TreatmentPhoto {
+export type TreatmentPhoto = {
   url: string;
   sessionNumber: number;
   date: Date;
   angle: string;
   description?: string;
-}
+};
 
 export enum AnesthesiaType {
   NONE = 'none',

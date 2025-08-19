@@ -5,8 +5,8 @@
  * Analyzes webpack bundles for healthcare-specific optimizations
  */
 
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 const {
   HealthcareBundleAnalyzer,
 } = require('../dist/bundle-analysis/bundle-analyzer');

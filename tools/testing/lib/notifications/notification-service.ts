@@ -3,7 +3,7 @@
  * Implements TASK-003 communication requirements for medical alerts and updates
  */
 
-export interface NotificationChannel {
+export type NotificationChannel = {
   id: string;
   type: 'email' | 'sms' | 'push' | 'webhook' | 'in_app';
   endpoint: string;
@@ -11,9 +11,9 @@ export interface NotificationChannel {
   priority: 'low' | 'medium' | 'high' | 'critical';
   retryAttempts: number;
   cooldownPeriod: number; // seconds
-}
+};
 
-export interface NotificationTemplate {
+export type NotificationTemplate = {
   id: string;
   name: string;
   type:
@@ -26,9 +26,9 @@ export interface NotificationTemplate {
   variables: string[]; // Available template variables
   channels: NotificationChannel['type'][];
   priority: NotificationChannel['priority'];
-}
+};
 
-export interface NotificationMessage {
+export type NotificationMessage = {
   id: string;
   templateId?: string;
   recipient: {
@@ -49,9 +49,9 @@ export interface NotificationMessage {
   status: 'pending' | 'sent' | 'delivered' | 'read' | 'failed';
   retryCount: number;
   errors: string[];
-}
+};
 
-export interface NotificationPreferences {
+export type NotificationPreferences = {
   userId: string;
   channels: {
     [K in NotificationChannel['type']]: {
@@ -70,9 +70,9 @@ export interface NotificationPreferences {
     system_notifications: boolean;
     compliance_alerts: boolean;
   };
-}
+};
 
-export interface NotificationStats {
+export type NotificationStats = {
   totalSent: number;
   totalDelivered: number;
   totalRead: number;
@@ -97,14 +97,14 @@ export interface NotificationStats {
       failed: number;
     }
   >;
-}
+};
 
 class MockNotificationService {
-  private channels: Map<string, NotificationChannel> = new Map();
-  private templates: Map<string, NotificationTemplate> = new Map();
-  private messages: NotificationMessage[] = [];
-  private preferences: Map<string, NotificationPreferences> = new Map();
-  private isServiceActive = true;
+  private readonly channels: Map<string, NotificationChannel> = new Map();
+  private readonly templates: Map<string, NotificationTemplate> = new Map();
+  private readonly messages: NotificationMessage[] = [];
+  private readonly preferences: Map<string, NotificationPreferences> =
+    new Map();
 
   constructor() {
     this.initializeDefaultChannels();

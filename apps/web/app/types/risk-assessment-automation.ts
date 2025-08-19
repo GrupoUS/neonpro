@@ -41,7 +41,7 @@ export enum EscalationPriority {
  * Patient Demographic Risk Factors
  * LGPD compliant data collection with consent tracking
  */
-export interface DemographicRiskFactors {
+export type DemographicRiskFactors = {
   age: number;
   gender: 'MALE' | 'FEMALE' | 'OTHER' | 'NOT_SPECIFIED';
   bmi: number;
@@ -50,13 +50,13 @@ export interface DemographicRiskFactors {
   smokingStatus: 'NEVER' | 'FORMER' | 'CURRENT';
   alcoholConsumption: 'NONE' | 'LIGHT' | 'MODERATE' | 'HEAVY';
   physicalActivityLevel: 'SEDENTARY' | 'LIGHT' | 'MODERATE' | 'INTENSE';
-}
+};
 
 /**
  * Medical History Risk Assessment
  * Constitutional healthcare data with audit trail
  */
-export interface MedicalHistoryRiskFactors {
+export type MedicalHistoryRiskFactors = {
   chronicConditions: string[];
   previousSurgeries: Array<{
     procedure: string;
@@ -89,11 +89,11 @@ export interface MedicalHistoryRiskFactors {
       boosterRequired?: boolean;
     }
   >;
-} /**
+}; /**
  * Current Health Status Assessment
  * Real-time monitoring with vital signs integration
  */
-export interface CurrentConditionRiskFactors {
+export type CurrentConditionRiskFactors = {
   vitalSigns: {
     bloodPressure: {
       systolic: number;
@@ -127,11 +127,11 @@ export interface CurrentConditionRiskFactors {
   painLevel: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
   mentalStatus: 'ALERT' | 'CONFUSED' | 'DROWSY' | 'UNCONSCIOUS';
   mobilityStatus: 'AMBULATORY' | 'ASSISTED' | 'WHEELCHAIR' | 'BEDRIDDEN';
-} /**
+}; /**
  * Procedure-Specific Risk Factors
  * Treatment complexity assessment with ANVISA compliance
  */
-export interface ProcedureSpecificRiskFactors {
+export type ProcedureSpecificRiskFactors = {
   plannedProcedure: {
     name: string;
     type: 'SURGICAL' | 'NON_SURGICAL' | 'MINIMALLY_INVASIVE' | 'COSMETIC';
@@ -152,13 +152,13 @@ export interface ProcedureSpecificRiskFactors {
     severity: 'MINOR' | 'MODERATE' | 'MAJOR' | 'CONTRAINDICATED';
     description: string;
   }>;
-}
+};
 
 /**
  * Environmental & Social Risk Factors
  * Holistic patient assessment with social determinants
  */
-export interface EnvironmentalRiskFactors {
+export type EnvironmentalRiskFactors = {
   supportSystem: {
     hasCaregiver: boolean;
     familySupport: 'STRONG' | 'MODERATE' | 'WEAK' | 'NONE';
@@ -176,11 +176,11 @@ export interface EnvironmentalRiskFactors {
     medicationCompliance: 'EXCELLENT' | 'GOOD' | 'FAIR' | 'POOR';
     followUpCompliance: 'EXCELLENT' | 'GOOD' | 'FAIR' | 'POOR';
   };
-} /**
+}; /**
  * Comprehensive Risk Assessment Input
  * Complete patient risk profile for ML analysis
  */
-export interface RiskAssessmentInput {
+export type RiskAssessmentInput = {
   patientId: string;
   tenantId: string;
   assessmentDate: Date;
@@ -200,13 +200,13 @@ export interface RiskAssessmentInput {
   consentDate: Date;
   dataProcessingPurpose: string[];
   retentionPeriod: number; // days
-}
+};
 
 /**
  * Risk Score Breakdown
  * Explainable AI with factor-level scoring
  */
-export interface RiskScoreBreakdown {
+export type RiskScoreBreakdown = {
   overallScore: number; // 0-100
   riskLevel: RiskLevel;
   categoryScores: {
@@ -228,11 +228,11 @@ export interface RiskScoreBreakdown {
     upper: number;
     confidence: number; // percentage
   };
-} /**
+}; /**
  * Professional Oversight Requirements
  * CFM compliance for medical professional review
  */
-export interface ProfessionalOversight {
+export type ProfessionalOversight = {
   requiredReview: boolean;
   reviewLevel: 'NURSE' | 'PHYSICIAN' | 'SPECIALIST' | 'SENIOR_PHYSICIAN';
   timeframe: number; // minutes
@@ -243,13 +243,13 @@ export interface ProfessionalOversight {
     urgency: 'ROUTINE' | 'URGENT' | 'STAT';
     reason: string;
   };
-}
+};
 
 /**
  * Emergency Escalation Protocol
  * Real-time alert system with chain of command
  */
-export interface EmergencyEscalation {
+export type EmergencyEscalation = {
   triggered: boolean;
   triggerReason: string[];
   alertLevel: 'YELLOW' | 'ORANGE' | 'RED' | 'BLACK';
@@ -267,13 +267,13 @@ export interface EmergencyEscalation {
     outcome: string;
   }>;
   resolutionStatus: 'PENDING' | 'IN_PROGRESS' | 'RESOLVED' | 'ESCALATED';
-}
+};
 
 /**
  * Risk Assessment Result
  * Complete assessment output with professional oversight
  */
-export interface RiskAssessmentResult {
+export type RiskAssessmentResult = {
   id: string;
   patientId: string;
   tenantId: string;
@@ -308,11 +308,11 @@ export interface RiskAssessmentResult {
     comments: string;
     digitalSignature: string;
   }>;
-} /**
+}; /**
  * Audit Trail Entry
  * Constitutional healthcare compliance with LGPD requirements
  */
-export interface AuditTrailEntry {
+export type AuditTrailEntry = {
   id: string;
   patientId: string;
   assessmentId: string;
@@ -340,13 +340,13 @@ export interface AuditTrailEntry {
     | 'LEGAL_OBLIGATION';
   dataSubjectNotified: boolean;
   retentionExpiry: Date;
-}
+};
 
 /**
  * Risk Assessment Monitoring
  * Real-time system performance and accuracy tracking
  */
-export interface RiskAssessmentMetrics {
+export type RiskAssessmentMetrics = {
   totalAssessments: number;
   accuracyRate: number; // percentage
   averageProcessingTime: number; // milliseconds
@@ -372,13 +372,13 @@ export interface RiskAssessmentMetrics {
   };
 
   lastUpdated: Date;
-}
+};
 
 /**
  * System Configuration
  * Risk assessment algorithm parameters and thresholds
  */
-export interface RiskAssessmentConfig {
+export type RiskAssessmentConfig = {
   modelVersion: string;
   accuracyThreshold: number; // minimum required accuracy
 
@@ -407,4 +407,4 @@ export interface RiskAssessmentConfig {
 
   lastUpdated: Date;
   updatedBy: string;
-}
+};

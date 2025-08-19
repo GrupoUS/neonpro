@@ -4,11 +4,10 @@
  * Implements Archon ≥9.5/10 quality standards for healthcare applications
  */
 
-import { z } from 'zod';
 import { createAuditLog } from '@neonpro/compliance/audit';
 
 // ✅ LGPD Compliance Patterns
-export interface LGPDComplianceCheck {
+export type LGPDComplianceCheck = {
   component: string;
   dataTypes: string[];
   consentRequired: boolean;
@@ -16,35 +15,34 @@ export interface LGPDComplianceCheck {
   dataRetentionPolicyApplied: boolean;
   anonymizationSupported: boolean;
   rightToBeDeleted: boolean;
-}
+};
 
 // ✅ ANVISA Compliance Patterns
-export interface ANVISAComplianceCheck {
+export type ANVISAComplianceCheck = {
   component: string;
   medicalDataHandling: boolean;
   professionalValidation: boolean;
   treatmentDocumentation: boolean;
   regulatoryReporting: boolean;
   qualityAssurance: boolean;
-}
+};
 
 // ✅ CFM Compliance Patterns
-export interface CFMComplianceCheck {
+export type CFMComplianceCheck = {
   component: string;
   professionalCredentials: boolean;
   medicalEthicsCompliance: boolean;
   patientConsentDocumentation: boolean;
   medicalRecordsIntegrity: boolean;
   telemedicineCompliance: boolean;
-}
+};
 
 /**
  * Healthcare Compliance Validator Class
  * Validates critical components against Brazilian healthcare regulations
  */
 export class HealthcareComplianceValidator {
-  private violations: string[] = [];
-  private warnings: string[] = [];
+  private readonly violations: string[] = [];
 
   /**
    * Validate LGPD compliance in a component
@@ -278,13 +276,7 @@ export class HealthcareComplianceValidator {
         cfmResults,
         auditLogId: auditLog.id,
       };
-    } catch (error) {
-      console.error('Compliance validation failed:', {
-        component: componentPath,
-        error: error.message,
-        timestamp: new Date().toISOString(),
-      });
-
+    } catch (_error) {
       throw new Error(`Falha na validação de compliance para ${componentPath}`);
     }
   }
@@ -435,7 +427,7 @@ export class ComplianceUtils {
   }): { isValid: boolean; violations: string[] } {
     const violations: string[] = [];
 
-    if (!credentials.crm && !credentials.coren) {
+    if (!(credentials.crm || credentials.coren)) {
       violations.push('CRM ou COREN obrigatório para profissionais de saúde');
     }
 

@@ -16,7 +16,7 @@ export type AppointmentWithRelations = Appointment & {
 };
 
 // Dashboard Metrics Interface
-export interface DashboardMetrics {
+export type DashboardMetrics = {
   totalPatients: number;
   activePatients: number;
   monthlyRevenue: number;
@@ -26,21 +26,21 @@ export interface DashboardMetrics {
   activeStaffMembers: number;
   loading: boolean;
   error: Error | null;
-}
+};
 
 // Financial Data Interfaces
-export interface DailyRevenue {
+export type DailyRevenue = {
   date: string;
   amount: number;
-}
+};
 
-export interface ServiceRevenue {
+export type ServiceRevenue = {
   serviceName: string;
   totalRevenue: number;
   transactionCount: number;
-}
+};
 
-export interface FinancialSummary {
+export type FinancialSummary = {
   monthlyRevenue: number;
   dailyRevenue: DailyRevenue[];
   recentTransactions: FinancialTransaction[];
@@ -48,13 +48,13 @@ export interface FinancialSummary {
   totalIncome: number;
   totalExpenses: number;
   netProfit: number;
-}
+};
 
 // Common Hook Interface
-export interface BaseHookReturn {
+export type BaseHookReturn = {
   loading: boolean;
   error: Error | null;
-}
+};
 
 // Patients Hook Interface
 export interface PatientsHookReturn extends BaseHookReturn {
@@ -104,29 +104,29 @@ export interface ServicesHookReturn extends BaseHookReturn {
 }
 
 // Search and Filter Types
-export interface SearchFilters {
+export type SearchFilters = {
   query?: string;
   status?: string;
   dateFrom?: Date;
   dateTo?: Date;
   category?: string;
   specialty?: string;
-}
+};
 
 // Sort Options
-export interface SortOptions {
+export type SortOptions = {
   field: string;
   direction: 'asc' | 'desc';
-}
+};
 
 // Pagination Interface
-export interface PaginationOptions {
+export type PaginationOptions = {
   page: number;
   limit: number;
   total?: number;
-}
+};
 
-export interface PaginatedResult<T> {
+export type PaginatedResult<T> = {
   data: T[];
   pagination: {
     currentPage: number;
@@ -135,4 +135,4 @@ export interface PaginatedResult<T> {
     hasNextPage: boolean;
     hasPreviousPage: boolean;
   };
-}
+};

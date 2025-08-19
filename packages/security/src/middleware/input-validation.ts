@@ -886,12 +886,12 @@ export const notificationPreferencesSchema = z.object({
 
 import { type NextRequest, NextResponse } from 'next/server';
 
-export interface ValidationResult<T> {
+export type ValidationResult<T> = {
   success: boolean;
   data?: T;
   error?: string;
   errors?: z.ZodError;
-}
+};
 
 export function validateInput<T>(
   schema: z.ZodSchema<T>,
@@ -941,7 +941,7 @@ export async function validateRequestBody<T>(
     }
 
     return { data: validation.data };
-  } catch (error) {
+  } catch (_error) {
     return {
       error: NextResponse.json(
         {

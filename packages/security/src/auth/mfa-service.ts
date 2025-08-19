@@ -350,12 +350,21 @@ export async function setupMfa(
   message?: string;
 }> {
   try {
-    const { userId, method, phoneNumber } = request;
+    const { userId, method, phoneNumber, email } = request;
 
     switch (method) {
       case MfaMethod.TOTP: {
         const secret = generateTotpSecret();
         const qrCode = generateTotpQrCodeUrl(secret, userId);
+
+        // Store the secret temporarily (will be permanently saved after verification)
+        const settings = await mfaDb.getMfaSettings(userId);
+        await mfaDb.upsertMfaSettings({
+          ...settings,
+          userId,
+          totpSecret: secret,
+          totpEnabled: false, // Not enabled until verified
+        });
 
         return {
           success: true,
@@ -374,7 +383,7 @@ export async function setupMfa(
         }
 
         const smsCode = generateSmsCode();
-        const smsSent = await sendSmsCode(phoneNumber, smsCode);
+        const smsSent = sendSmsCode(phoneNumber, smsCode);
 
         if (!smsSent) {
           return {
@@ -383,14 +392,61 @@ export async function setupMfa(
           };
         }
 
+        // Store the code and phone number
+        await storeVerificationCode(userId, smsCode, 'sms', phoneNumber);
+        
+        const settings = await mfaDb.getMfaSettings(userId);
+        await mfaDb.upsertMfaSettings({
+          ...settings,
+          userId,
+          smsPhoneNumber: phoneNumber,
+          smsEnabled: false, // Not enabled until verified
+        });
+
         return {
           success: true,
           message: 'Código enviado via SMS',
         };
       }
 
+      case MfaMethod.EMAIL: {
+        if (!(email && z.string().email().safeParse(email).success)) {
+          return {
+            success: false,
+            message: 'Email válido é obrigatório para Email MFA',
+          };
+        }
+
+        const emailCode = generateSmsCode(); // Use same format for simplicity
+        
+        // In production, send email with code
+        // For now, store the code
+        await storeVerificationCode(userId, emailCode, 'email', undefined, email);
+        
+        const settings = await mfaDb.getMfaSettings(userId);
+        await mfaDb.upsertMfaSettings({
+          ...settings,
+          userId,
+          emailAddress: email,
+          emailEnabled: false, // Not enabled until verified
+        });
+
+        return {
+          success: true,
+          message: 'Código enviado via email',
+        };
+      }
+
       case MfaMethod.BACKUP_CODES: {
         const backupCodes = generateBackupCodes();
+
+        const settings = await mfaDb.getMfaSettings(userId);
+        await mfaDb.upsertMfaSettings({
+          ...settings,
+          userId,
+          backupCodesEnabled: true,
+          backupCodesCount: backupCodes.length,
+        });
 
         return {
           success: true,
@@ -405,7 +461,8 @@ export async function setupMfa(
           message: 'Método MFA não suportado',
         };
     }
-  } catch (_error) {
+  } catch (error) {
+    console.error('MFA setup error:', error);
     return {
       success: false,
       message: 'Erro interno ao configurar MFA',
@@ -416,20 +473,20 @@ export async function setupMfa(
 /**
  * Verify MFA code
  */
-export function verifyMfa(
+export async function verifyMfa(
   request: z.infer<typeof mfaVerificationSchema>
-): MfaVerificationResult {
+): Promise<MfaVerificationResult> {
   try {
     const { userId, method, code } = request;
 
     // Check for lockout
-    const lockoutResult = checkLockout(userId);
+    const lockoutResult = await checkLockout(userId);
     if (lockoutResult.locked) {
       return {
         success: false,
         method,
-        message:
-          'Conta temporariamente bloqueada devido a tentativas excessivas',
+        lockoutUntil: lockoutResult.lockoutUntil,
+        message: 'Conta temporariamente bloqueada devido a tentativas excessivas',
       };
     }
 
@@ -437,8 +494,7 @@ export function verifyMfa(
 
     switch (method) {
       case MfaMethod.TOTP: {
-        // In production, retrieve user's TOTP secret from database
-        const totpSecret = getUserTotpSecret(userId);
+        const totpSecret = await getUserTotpSecret(userId);
         if (totpSecret) {
           verified = verifyTotpCode(totpSecret, code);
         }
@@ -446,50 +502,53 @@ export function verifyMfa(
       }
 
       case MfaMethod.SMS:
-        // In production, retrieve and verify stored SMS code
-        verified = verifySmsCodeForUser(userId, code);
+        verified = await verifySmsCodeForUser(userId, code);
+        break;
+
+      case MfaMethod.EMAIL:
+        verified = await mfaDb.verifyCode(userId, code, 'email').then(r => r.valid);
         break;
 
       case MfaMethod.BACKUP_CODES:
-        // In production, check if backup code exists and mark as used
-        verified = verifyBackupCodeForUser(userId, code);
+        verified = await verifyBackupCodeForUser(userId, code);
         break;
+
       default:
-        return { success: false, method, message: 'Invalid MFA method' };
+        await recordFailedMfa(userId, method, 'Invalid MFA method');
+        return { success: false, method, message: 'Método MFA inválido' };
     }
 
     if (verified) {
-      resetAttempts(userId);
-      recordSuccessfulMfa(userId, method);
-
+      await recordSuccessfulMfa(userId, method);
       return {
         success: true,
         method,
         message: 'MFA verificado com sucesso',
       };
     }
-    const attempts = incrementAttempts(userId);
-    const remainingAttempts = Math.max(0, MAX_ATTEMPTS - attempts);
 
-    if (remainingAttempts === 0) {
-      lockUser(userId);
+    await recordFailedMfa(userId, method, 'Invalid verification code');
+    
+    // Check lockout status after failed attempt
+    const newLockoutStatus = await checkLockout(userId);
+    if (newLockoutStatus.locked) {
       return {
         success: false,
         method,
         remainingAttempts: 0,
-        lockoutUntil: new Date(Date.now() + LOCKOUT_DURATION),
-        message:
-          'Muitas tentativas incorretas. Conta bloqueada temporariamente.',
+        lockoutUntil: newLockoutStatus.lockoutUntil,
+        message: 'Muitas tentativas incorretas. Conta bloqueada temporariamente.',
       };
     }
 
     return {
       success: false,
       method,
-      remainingAttempts,
-      message: `Código incorreto. ${remainingAttempts} tentativas restantes.`,
+      message: 'Código de verificação inválido',
     };
-  } catch (_error) {
+  } catch (error) {
+    console.error('MFA verification error:', error);
+    await recordFailedMfa(request.userId, request.method, 'Internal verification error');
     return {
       success: false,
       method: request.method,
@@ -498,74 +557,157 @@ export function verifyMfa(
   }
 }
 
+import { MfaDatabaseService } from './mfa-database-service';
+
+// Global database service instance
+const mfaDb = new MfaDatabaseService();
+
 /**
  * Check if user is locked out
  */
-function checkLockout(_userId: string): {
+async function checkLockout(userId: string): Promise<{
   locked: boolean;
   lockoutUntil?: Date;
-} {
-  // In production, check database for lockout status
-  // Mock implementation
-  return { locked: false };
+}> {
+  try {
+    const lockoutStatus = await mfaDb.getUserLockout(userId);
+    return {
+      locked: lockoutStatus.locked,
+      lockoutUntil: lockoutStatus.lockoutUntil,
+    };
+  } catch (error) {
+    console.error('Error checking lockout status:', error);
+    return { locked: false };
+  }
 }
 
 /**
  * Get user's TOTP secret from secure storage
  */
-function getUserTotpSecret(_userId: string): string | null {
-  // In production, retrieve from encrypted database storage
-  // Mock implementation
-  return 'MOCK_SECRET_KEY_FOR_DEVELOPMENT';
+async function getUserTotpSecret(userId: string): Promise<string | null> {
+  try {
+    const settings = await mfaDb.getMfaSettings(userId);
+    return settings?.totpSecret || null;
+  } catch (error) {
+    console.error('Error getting TOTP secret:', error);
+    return null;
+  }
 }
 
 /**
  * Verify SMS code from temporary storage
  */
-function verifySmsCodeForUser(_userId: string, code: string): boolean {
-  // In production, verify against temporarily stored SMS code
-  // Mock implementation
-  return code === '123456';
+async function verifySmsCodeForUser(userId: string, code: string): Promise<boolean> {
+  try {
+    const result = await mfaDb.verifyCode(userId, code, 'sms');
+    return result.valid;
+  } catch (error) {
+    console.error('Error verifying SMS code:', error);
+    return false;
+  }
 }
 
 /**
  * Verify backup code and mark as used
  */
-function verifyBackupCodeForUser(_userId: string, code: string): boolean {
-  // In production, check database and mark code as used
-  // Mock implementation
-  return validateBackupCode(code);
+async function verifyBackupCodeForUser(userId: string, code: string): Promise<boolean> {
+  try {
+    const result = await mfaDb.verifyCode(userId, code, 'recovery');
+    return result.valid;
+  } catch (error) {
+    console.error('Error verifying backup code:', error);
+    return false;
+  }
 }
 
 /**
- * Increment failed attempts counter
+ * Store verification code in database
  */
-function incrementAttempts(_userId: string): number {
-  // In production, increment counter in database
-  // Mock implementation
-  return 1;
-}
+async function storeVerificationCode(
+  userId: string,
+  code: string,
+  type: 'sms' | 'email',
+  phoneNumber?: string,
+  email?: string
+): Promise<void> {
+  try {
+    const expiresAt = new Date();
+    expiresAt.setMinutes(expiresAt.getMinutes() + 5); // 5 minute expiry
 
-/**
- * Reset failed attempts counter
- */
-function resetAttempts(_userId: string): void {
-  // In production, reset counter in database
-  // Mock implementation
-}
-
-/**
- * Lock user account temporarily
- */
-function lockUser(_userId: string): void {
-  // In production, set lockout timestamp in database
-  // Mock implementation
+    await mfaDb.storeVerificationCode({
+      userId,
+      code,
+      type,
+      phoneNumber,
+      email,
+      used: false,
+      attempts: 0,
+      maxAttempts: 3,
+      expiresAt,
+    });
+  } catch (error) {
+    console.error('Error storing verification code:', error);
+    throw error;
+  }
 }
 
 /**
  * Record successful MFA authentication
  */
-function recordSuccessfulMfa(_userId: string, _method: MfaMethod): void {
-  // In production, record successful MFA authentication in audit log
-  // Mock implementation
+async function recordSuccessfulMfa(userId: string, method: MfaMethod): Promise<void> {
+  try {
+    await mfaDb.logAuditEvent({
+      userId,
+      eventType: 'mfa_verification_success',
+      eventDescription: `Successful MFA verification using ${method}`,
+      success: true,
+      metadata: { method },
+    });
+
+    // Update last used timestamp
+    const settings = await mfaDb.getMfaSettings(userId);
+    if (settings) {
+      const updateData: any = {};
+      
+      switch (method) {
+        case MfaMethod.SMS:
+          updateData.smsLastUsed = new Date();
+          break;
+        case MfaMethod.EMAIL:
+          updateData.emailLastUsed = new Date();
+          break;
+        case MfaMethod.TOTP:
+          updateData.totpLastUsed = new Date();
+          break;
+      }
+
+      if (Object.keys(updateData).length > 0) {
+        await mfaDb.upsertMfaSettings({ ...settings, ...updateData });
+      }
+    }
+  } catch (error) {
+    console.error('Error recording successful MFA:', error);
+  }
+}
+
+/**
+ * Record failed MFA authentication
+ */
+async function recordFailedMfa(
+  userId: string, 
+  method: MfaMethod, 
+  errorMessage?: string
+): Promise<void> {
+  try {
+    await mfaDb.logAuditEvent({
+      userId,
+      eventType: 'mfa_verification_failure',
+      eventDescription: `Failed MFA verification using ${method}`,
+      success: false,
+      errorMessage,
+      metadata: { method },
+    });
+  } catch (error) {
+    console.error('Error recording failed MFA:', error);
+  }
 }

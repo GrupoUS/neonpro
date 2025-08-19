@@ -21,8 +21,8 @@ class RoadmapUpdater {
     this.changes = [];
   }
 
-  log(message, color = 'reset') {
-    const colors = {
+  log(_message, _color = 'reset') {
+    const _colors = {
       green: '\x1b[32m',
       red: '\x1b[31m',
       yellow: '\x1b[33m',
@@ -30,7 +30,6 @@ class RoadmapUpdater {
       reset: '\x1b[0m',
       bold: '\x1b[1m',
     };
-    console.log(`${colors[color]}${message}${colors.reset}`);
   }
 
   /**
@@ -370,7 +369,6 @@ class RoadmapUpdater {
       }
     } catch (error) {
       this.log(`❌ Erro durante atualização: ${error.message}`, 'red');
-      console.error(error);
     }
   }
 }
@@ -381,9 +379,6 @@ if (require.main === module) {
   const dryRun = args.includes('--dry-run');
 
   if (dryRun) {
-    console.log(
-      '🔍 Executando em modo DRY RUN - nenhuma alteração será salva\n'
-    );
   }
 
   const updater = new RoadmapUpdater(dryRun);

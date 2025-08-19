@@ -15,7 +15,7 @@ import type React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AISchedulingEngine } from '@/lib/ai-scheduling';
 
-interface IntelligentSchedulerProps {
+type IntelligentSchedulerProps = {
   tenantId: string;
   patientId?: string;
   treatmentTypes: TreatmentType[];
@@ -23,7 +23,7 @@ interface IntelligentSchedulerProps {
   patients: Patient[];
   onAppointmentScheduled: (result: SchedulingResult) => void;
   onError: (error: string) => void;
-}
+};
 
 /**
  * AI-Powered Intelligent Scheduler Component
@@ -84,7 +84,9 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
 
   // Real-time slot loading with AI pre-filtering
   const loadAvailableSlots = useCallback(async () => {
-    if (!(selectedTreatment && selectedPatient)) return;
+    if (!(selectedTreatment && selectedPatient)) {
+      return;
+    }
 
     setIsScheduling(true);
     const startTime = performance.now();
@@ -113,7 +115,7 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
 
       const endTime = performance.now();
       setProcessingTime(endTime - startTime);
-    } catch (error) {
+    } catch (_error) {
       onError('Failed to load available slots');
     } finally {
       setIsScheduling(false);
@@ -127,12 +129,15 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
     treatmentTypes,
     aiEngine,
     onError,
+    generateMockSlots,
   ]);
 
   // AI-powered appointment scheduling
   const scheduleAppointment = useCallback(
     async (slot: AppointmentSlot) => {
-      if (!(selectedTreatment && selectedPatient)) return;
+      if (!(selectedTreatment && selectedPatient)) {
+        return;
+      }
 
       setIsScheduling(true);
       const startTime = performance.now();
@@ -164,7 +169,7 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
 
         const endTime = performance.now();
         setProcessingTime(endTime - startTime);
-      } catch (error) {
+      } catch (_error) {
         onError('Failed to schedule appointment');
       } finally {
         setIsScheduling(false);
@@ -192,7 +197,7 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
   }, [loadAvailableSlots]);
 
   // Real-time event handling
-  const handleRealtimeEvent = useCallback(
+  const _handleRealtimeEvent = useCallback(
     async (event: DynamicSchedulingEvent) => {
       const actions = await aiEngine.handleDynamicEvent(
         event,
@@ -202,7 +207,6 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
 
       // Update UI based on recommended actions
       if (actions.length > 0) {
-        console.log('Real-time optimization actions:', actions);
         // Trigger re-loading of slots if needed
         if (actions.some((action) => action.type === 'reschedule')) {
           await loadAvailableSlots();
@@ -346,7 +350,7 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
               max="14"
               min="0"
               onChange={(e) =>
-                setFlexibilityDays(Number.parseInt(e.target.value))
+                setFlexibilityDays(Number.parseInt(e.target.value, 10))
               }
               type="range"
               value={flexibilityDays}

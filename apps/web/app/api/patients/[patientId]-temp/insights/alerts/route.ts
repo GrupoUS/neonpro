@@ -1,8 +1,7 @@
 // Story 3.2: API Endpoint - Patient Alerts
 
-import { createClient } from '@/app/utils/supabase/server';
-import { cookies } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/app/utils/supabase/server';
 import { PatientInsightsIntegration } from '@/lib/ai/patient-insights';
 
 const patientInsights = new PatientInsightsIntegration();

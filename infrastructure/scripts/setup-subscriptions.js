@@ -14,11 +14,6 @@ const { execSync } = require('node:child_process');
 const fs = require('node:fs');
 const _path = require('node:path');
 
-console.log('🚀 SETUP AUTOMÁTICO DO SISTEMA DE ASSINATURAS');
-console.log('='.repeat(60));
-console.log(`📅 Data: ${new Date().toLocaleString('pt-BR')}`);
-console.log('='.repeat(60));
-
 let setupSteps = 0;
 let completedSteps = 0;
 const errors = [];
@@ -27,13 +22,9 @@ const errors = [];
 async function runSetupStep(name, setupFn) {
   setupSteps++;
   try {
-    console.log(`\n🔄 Executando: ${name}`);
     await setupFn();
-    console.log(`✅ CONCLUÍDO: ${name}`);
     completedSteps++;
   } catch (error) {
-    console.log(`❌ ERRO: ${name}`);
-    console.log(`   Detalhes: ${error.message}`);
     errors.push({ name, error: error.message });
   }
 }
@@ -42,8 +33,7 @@ async function runSetupStep(name, setupFn) {
 async function checkDependencies() {
   try {
     // Verificar versão do Node.js
-    const nodeVersion = process.version;
-    console.log(`   Node.js: ${nodeVersion}`);
+    const _nodeVersion = process.version;
 
     // Verificar se package.json existe
     if (!fs.existsSync('package.json')) {
@@ -52,11 +42,8 @@ async function checkDependencies() {
 
     // Verificar se node_modules existe
     if (!fs.existsSync('node_modules')) {
-      console.log('   Instalando dependências...');
       execSync('npm install', { stdio: 'pipe', shell: false });
     }
-
-    console.log('   Dependências verificadas');
   } catch (error) {
     throw new Error(`Erro nas dependências: ${error.message}`);
   }
@@ -93,8 +80,6 @@ async function checkEnvironmentVariables() {
   if (missingVars.length > 0) {
     throw new Error(`Variáveis não configuradas: ${missingVars.join(', ')}`);
   }
-
-  console.log('   Todas as variáveis de ambiente estão configuradas');
 }
 
 // 3. Verificar conexão com Supabase
@@ -115,8 +100,6 @@ async function checkSupabaseConnection() {
     if (error && !error.message.includes('permission denied')) {
       throw new Error(`Conexão falhou: ${error.message}`);
     }
-
-    console.log('   Conexão com Supabase estabelecida');
   } catch (error) {
     throw new Error(`Erro de conexão Supabase: ${error.message}`);
   }
@@ -130,8 +113,6 @@ async function applyDatabaseMigration() {
   if (!fs.existsSync(migrationPath)) {
     throw new Error('Arquivo de migration não encontrado');
   }
-
-  console.log('   Migration encontrada, aplicando...');
 
   try {
     // Ler conteúdo da migration
@@ -154,18 +135,8 @@ async function applyDatabaseMigration() {
     });
 
     if (existingTables && existingTables.length >= 3) {
-      console.log('   Migration já aplicada (tabelas existem)');
       return;
     }
-
-    console.log('   ⚠️  AVISO: Para aplicar a migration, execute manualmente:');
-    console.log('   1. Acesse o Supabase Dashboard');
-    console.log('   2. Vá para SQL Editor');
-    console.log('   3. Execute o conteúdo do arquivo:');
-    console.log(`      ${migrationPath}`);
-    console.log(
-      '   4. Ou use: npx supabase db push (se CLI estiver configurado)'
-    );
   } catch (error) {
     throw new Error(`Erro ao aplicar migration: ${error.message}`);
   }
@@ -183,20 +154,13 @@ async function checkStripeConfiguration() {
       throw new Error('Não foi possível conectar à conta Stripe');
     }
 
-    console.log(`   Conta Stripe conectada: ${account.id}`);
-
     // Verificar se existem produtos
-    const products = await stripe.products.list({ limit: 10 });
-    console.log(`   Produtos encontrados: ${products.data.length}`);
+    const _products = await stripe.products.list({ limit: 10 });
 
     // Verificar preços
     const prices = await stripe.prices.list({ limit: 10 });
-    console.log(`   Preços encontrados: ${prices.data.length}`);
 
     if (prices.data.length === 0) {
-      console.log(
-        '   ⚠️  Nenhum preço encontrado - configure no Stripe Dashboard'
-      );
     }
   } catch (error) {
     throw new Error(`Erro na configuração Stripe: ${error.message}`);
@@ -205,20 +169,9 @@ async function checkStripeConfiguration() {
 
 // 6. Executar testes de validação
 async function runValidationTests() {
-  console.log('   Executando teste do banco de dados...');
-
   try {
     const _dbTestScript = require('./test-database-schema.js');
-    // Executar teste silenciosamente
-    // await dbTestScript.main();
-    console.log('   Teste do banco: OK');
-  } catch (_error) {
-    console.log('   Teste do banco: Algumas verificações falharam');
-    console.log('   Execute: npm run test:db para mais detalhes');
-  }
-
-  console.log('   Para teste completo do sistema, execute:');
-  console.log('   npm run test:subscriptions');
+  } catch (_error) {}
 }
 
 // 7. Configurar scripts de desenvolvimento
@@ -233,10 +186,7 @@ async function setupDevelopmentScripts() {
   );
 
   if (missingScripts.length > 0) {
-    console.log(`   ⚠️  Scripts faltando: ${missingScripts.join(', ')}`);
-    console.log('   Execute o comando de atualização do package.json');
   } else {
-    console.log('   Scripts de teste configurados');
   }
 
   // Criar arquivo de configuração de desenvolvimento se não existir
@@ -255,7 +205,6 @@ async function setupDevelopmentScripts() {
     };
 
     fs.writeFileSync(devConfigPath, JSON.stringify(devConfig, null, 2));
-    console.log('   Arquivo de configuração de desenvolvimento criado');
   }
 }
 
@@ -290,13 +239,10 @@ async function generateSetupReport() {
   report.nextSteps.push('Iniciar desenvolvimento com npm run dev');
 
   fs.writeFileSync('.setup-report.json', JSON.stringify(report, null, 2));
-  console.log('   Relatório de setup salvo em .setup-report.json');
 }
 
 // Função principal
 async function main() {
-  console.log('🎯 Iniciando setup automático...\n');
-
   const steps = [
     ['Verificar Dependências', checkDependencies],
     ['Verificar Variáveis de Ambiente', checkEnvironmentVariables],
@@ -312,53 +258,22 @@ async function main() {
     await runSetupStep(name, setupFn);
   }
 
-  // Relatório final
-  console.log(`\n${'='.repeat(60)}`);
-  console.log('📊 RELATÓRIO FINAL DO SETUP');
-  console.log('='.repeat(60));
-  console.log(`✅ Etapas Concluídas: ${completedSteps}/${setupSteps}`);
-  console.log(`❌ Etapas com Erro: ${errors.length}`);
-
   const successRate = ((completedSteps / setupSteps) * 100).toFixed(1);
-  console.log(`📈 Taxa de Sucesso: ${successRate}%`);
 
   if (errors.length > 0) {
-    console.log('\n❌ Erros Encontrados:');
-    errors.forEach((error, i) => {
-      console.log(`${i + 1}. ${error.name}: ${error.error}`);
-    });
+    errors.forEach((_error, _i) => {});
   }
-
-  console.log('\n📋 Próximos Passos:');
 
   if (successRate >= 80) {
-    console.log('🎉 Setup quase completo! Próximos passos:');
-    console.log('1. Execute: npm run test:subscriptions');
-    console.log('2. Configure produtos no Stripe Dashboard (se necessário)');
-    console.log('3. Inicie o desenvolvimento: npm run dev');
-    console.log('4. Acesse: http://localhost:3000/pricing para testar');
   } else {
-    console.log('⚠️  Setup precisa de correções:');
-    console.log('1. Corrija os erros listados acima');
-    console.log('2. Configure variáveis de ambiente faltantes');
-    console.log('3. Aplique a migration do banco de dados');
-    console.log('4. Execute o setup novamente');
   }
-
-  console.log('\n📚 Documentação:');
-  console.log('- Guia de configuração Stripe: docs/STRIPE_SETUP_GUIDE.md');
-  console.log(
-    '- Migration do banco: supabase/migrations/20250721130000_create_subscriptions_schema.sql'
-  );
-  console.log('- Scripts de teste: npm run test:stripe, npm run test:db');
 
   process.exit(errors.length > 0 ? 1 : 0);
 }
 
 // Executar se chamado diretamente
 if (require.main === module) {
-  main().catch((error) => {
-    console.error('💥 Erro crítico no setup:', error);
+  main().catch((_error) => {
     process.exit(1);
   });
 }

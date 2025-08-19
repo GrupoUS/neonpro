@@ -1,7 +1,7 @@
 // Migrated from src/services/configuration.ts
 import { supabase } from '@/lib/supabase';
 
-export interface TenantConfiguration {
+export type TenantConfiguration = {
   id: string;
   tenant_id: string;
   key: string;
@@ -11,18 +11,18 @@ export interface TenantConfiguration {
   description?: string;
   is_encrypted: boolean;
   updated_at: string;
-}
+};
 
-export interface ConfigurationUpdate {
+export type ConfigurationUpdate = {
   key: string;
   value: unknown;
   category?: string;
   description?: string;
-}
+};
 
 export class ConfigurationService {
-  private cache = new Map<string, TenantConfiguration>();
-  private cacheExpiry = new Map<string, number>();
+  private readonly cache = new Map<string, TenantConfiguration>();
+  private readonly cacheExpiry = new Map<string, number>();
   private readonly CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
   async getConfiguration(
@@ -260,7 +260,9 @@ export class ConfigurationService {
   }
 
   private parseConfigValue(config: TenantConfiguration): unknown {
-    if (!config.value) return null;
+    if (!config.value) {
+      return null;
+    }
 
     try {
       switch (config.type) {
@@ -284,11 +286,21 @@ export class ConfigurationService {
   }
 
   private getValueType(value: unknown): TenantConfiguration['type'] {
-    if (typeof value === 'string') return 'string';
-    if (typeof value === 'number') return 'number';
-    if (typeof value === 'boolean') return 'boolean';
-    if (Array.isArray(value)) return 'array';
-    if (typeof value === 'object') return 'object';
+    if (typeof value === 'string') {
+      return 'string';
+    }
+    if (typeof value === 'number') {
+      return 'number';
+    }
+    if (typeof value === 'boolean') {
+      return 'boolean';
+    }
+    if (Array.isArray(value)) {
+      return 'array';
+    }
+    if (typeof value === 'object') {
+      return 'object';
+    }
     return 'string';
   }
 

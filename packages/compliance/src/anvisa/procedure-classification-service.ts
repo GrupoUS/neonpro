@@ -109,7 +109,11 @@ export type ProcedureFilters = {
   procedureCode?: string;
   anvisaCategory?: string;
   riskLevel?: ProcedureRiskLevel;
-  invasivenessLevel?: 'NON_INVASIVE' | 'MINIMALLY_INVASIVE' | 'MODERATELY_INVASIVE' | 'HIGHLY_INVASIVE';
+  invasivenessLevel?:
+    | 'NON_INVASIVE'
+    | 'MINIMALLY_INVASIVE'
+    | 'MODERATELY_INVASIVE'
+    | 'HIGHLY_INVASIVE';
   anesthesiaRequired?: 'NONE' | 'TOPICAL' | 'LOCAL' | 'REGIONAL' | 'GENERAL';
   specialistRequired?: boolean;
   classificationDateFrom?: Date;

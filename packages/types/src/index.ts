@@ -2,6 +2,7 @@
 
 export * from './appointment';
 export * from './common';
+export * from './constants/healthcare-constants';
 export * from './database';
 export * from './patient';
 export * from './user';

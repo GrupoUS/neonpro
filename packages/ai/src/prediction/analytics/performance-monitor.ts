@@ -1,12 +1,4 @@
-import type {
-  AccuracyMetrics,
-  DateRange,
-  ErrorAnalysis,
-  ModelType,
-  PerformanceMetrics,
-  PredictionAnalytics,
-  UsagePattern,
-} from '../types';
+import type { ModelType } from '../types';
 
 /**
  * Performance Monitoring System for AI Prediction Engine
@@ -22,23 +14,13 @@ export class PredictionPerformanceMonitor {
     error?: string;
   }> = [];
 
-  private accuracyHistory: Array<{
+  private readonly accuracyHistory: Array<{
     modelType: ModelType;
     date: Date;
     actualOutcome: number;
     predictedOutcome: number;
     confidence: number;
   }> = [];
-
-  private performanceHistory: Array<{
-    timestamp: Date;
-    modelType: ModelType;
-    responseTime: number;
-    memoryUsage: number;
-    cacheHit: boolean;
-  }> = []; /**
-   * Log a prediction for monitoring
-   */
   logPrediction(
     modelType: ModelType,
     processingTime: number,

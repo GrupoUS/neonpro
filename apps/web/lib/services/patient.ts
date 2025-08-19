@@ -1,7 +1,7 @@
 // Migrated from src/services/patient.ts
 import { supabase } from '@/lib/supabase';
 
-export interface Patient {
+export type Patient = {
   id?: string;
   tenant_id: string;
   first_name: string;
@@ -38,9 +38,9 @@ export interface Patient {
   status: 'active' | 'inactive' | 'blocked';
   created_at?: string;
   updated_at?: string;
-}
+};
 
-export interface PatientAppointment {
+export type PatientAppointment = {
   id?: string;
   patient_id: string;
   professional_id: string;
@@ -56,9 +56,9 @@ export interface PatientAppointment {
     | 'no_show';
   notes?: string;
   created_at?: string;
-}
+};
 
-export interface PatientTreatment {
+export type PatientTreatment = {
   id?: string;
   patient_id: string;
   professional_id: string;
@@ -72,9 +72,9 @@ export interface PatientTreatment {
   notes?: string;
   created_at?: string;
   updated_at?: string;
-}
+};
 
-export interface PatientConsent {
+export type PatientConsent = {
   id?: string;
   patient_id: string;
   tenant_id: string;
@@ -91,7 +91,7 @@ export interface PatientConsent {
   ip_address?: string;
   user_agent?: string;
   created_at?: string;
-}
+};
 
 export class PatientService {
   async createPatient(
@@ -489,10 +489,14 @@ export class PatientService {
     const cleanCPF = cpf.replace(/\D/g, '');
 
     // Check if it has 11 digits
-    if (cleanCPF.length !== 11) return false;
+    if (cleanCPF.length !== 11) {
+      return false;
+    }
 
     // Check if all digits are the same
-    if (/^(\d)\1+$/.test(cleanCPF)) return false;
+    if (/^(\d)\1+$/.test(cleanCPF)) {
+      return false;
+    }
 
     // Calculate check digits
     let sum = 0;
@@ -501,9 +505,13 @@ export class PatientService {
     }
 
     let checkDigit1 = 11 - (sum % 11);
-    if (checkDigit1 >= 10) checkDigit1 = 0;
+    if (checkDigit1 >= 10) {
+      checkDigit1 = 0;
+    }
 
-    if (Number.parseInt(cleanCPF.charAt(9), 10) !== checkDigit1) return false;
+    if (Number.parseInt(cleanCPF.charAt(9), 10) !== checkDigit1) {
+      return false;
+    }
 
     sum = 0;
     for (let i = 0; i < 10; i++) {
@@ -511,7 +519,9 @@ export class PatientService {
     }
 
     let checkDigit2 = 11 - (sum % 11);
-    if (checkDigit2 >= 10) checkDigit2 = 0;
+    if (checkDigit2 >= 10) {
+      checkDigit2 = 0;
+    }
 
     return Number.parseInt(cleanCPF.charAt(10), 10) === checkDigit2;
   }

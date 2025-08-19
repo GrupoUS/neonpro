@@ -1,4 +1,4 @@
-import { addDays, addHours, format, isAfter, isBefore } from 'date-fns';
+import { addHours, format, isBefore } from 'date-fns';
 import { NotificationType } from '../types';
 import type {
   AudienceFilterData,
@@ -21,7 +21,7 @@ import {
   VariableType,
 } from './types';
 
-export interface NotificationRepository {
+export type NotificationRepository = {
   // Notification operations
   createNotification(data: CreateNotificationData): Promise<Notification>;
   updateNotification(
@@ -72,15 +72,15 @@ export interface NotificationRepository {
   getPatient(id: string): Promise<PatientInfo | null>;
   getAppointment(id: string): Promise<AppointmentInfo | null>;
   getTreatmentPlan(id: string): Promise<TreatmentPlanInfo | null>;
-}
-export interface TemplateFilters {
+};
+export type TemplateFilters = {
   type?: NotificationType;
   channel?: NotificationChannel;
   isActive?: boolean;
   language?: string;
-}
+};
 
-export interface PatientInfo {
+export type PatientInfo = {
   id: string;
   firstName: string;
   lastName: string;
@@ -89,9 +89,9 @@ export interface PatientInfo {
   dateOfBirth: Date;
   tags: string[];
   preferences?: NotificationPreference;
-}
+};
 
-export interface AppointmentInfo {
+export type AppointmentInfo = {
   id: string;
   patientId: string;
   treatmentType: string;
@@ -99,17 +99,17 @@ export interface AppointmentInfo {
   scheduledDate: Date;
   duration: number;
   status: string;
-}
+};
 
-export interface TreatmentPlanInfo {
+export type TreatmentPlanInfo = {
   id: string;
   patientId: string;
   treatmentType: string;
   totalSessions: number;
   completedSessions: number;
-}
+};
 
-export interface NotificationStats {
+export type NotificationStats = {
   totalSent: number;
   totalDelivered: number;
   totalOpened: number;
@@ -119,9 +119,9 @@ export interface NotificationStats {
   openRate: number;
   clickRate: number;
   channelDistribution: { channel: NotificationChannel; count: number }[];
-}
+};
 
-export interface ExternalNotificationProvider {
+export type ExternalNotificationProvider = {
   sendEmail(
     to: string,
     subject: string,
@@ -136,46 +136,39 @@ export interface ExternalNotificationProvider {
     message: string,
     metadata?: any
   ): Promise<string>;
-}
+};
 
 export class NotificationService {
   constructor(
-    private repository: NotificationRepository,
-    private externalProvider: ExternalNotificationProvider
+    private readonly repository: NotificationRepository,
+    private readonly externalProvider: ExternalNotificationProvider
   ) {}
 
   // Core notification management
   async sendNotification(data: CreateNotificationData): Promise<Notification> {
-    try {
-      // Get recipient preferences
-      const preferences = await this.repository.getPreferences(
-        data.recipientId
-      );
+    // Get recipient preferences
+    const preferences = await this.repository.getPreferences(data.recipientId);
 
-      // Check if recipient has opted in for this type of notification
-      if (!this.canSendNotification(data, preferences)) {
-        throw new Error('Recipient has opted out of this notification type');
-      }
-
-      // Create notification record
-      const notification = await this.repository.createNotification({
-        ...data,
-        status: data.scheduledAt
-          ? NotificationStatus.SCHEDULED
-          : NotificationStatus.QUEUED,
-        retryCount: 0,
-      });
-
-      // If not scheduled, send immediately
-      if (!data.scheduledAt) {
-        await this.deliverNotification(notification);
-      }
-
-      return notification;
-    } catch (error) {
-      console.error('Error sending notification:', error);
-      throw error;
+    // Check if recipient has opted in for this type of notification
+    if (!this.canSendNotification(data, preferences)) {
+      throw new Error('Recipient has opted out of this notification type');
     }
+
+    // Create notification record
+    const notification = await this.repository.createNotification({
+      ...data,
+      status: data.scheduledAt
+        ? NotificationStatus.SCHEDULED
+        : NotificationStatus.QUEUED,
+      retryCount: 0,
+    });
+
+    // If not scheduled, send immediately
+    if (!data.scheduledAt) {
+      await this.deliverNotification(notification);
+    }
+
+    return notification;
   }
   private async deliverNotification(notification: Notification): Promise<void> {
     try {
@@ -239,8 +232,6 @@ export class NotificationService {
         details: { externalId, channel: notification.channel },
       });
     } catch (error) {
-      console.error(`Error delivering notification ${notification.id}:`, error);
-
       const retryCount = notification.retryCount + 1;
       const shouldRetry = retryCount <= notification.maxRetries;
 
@@ -556,12 +547,7 @@ export class NotificationService {
         await this.repository.updateCampaign(campaignId, {
           sentCount: campaign.sentCount + 1,
         });
-      } catch (error) {
-        console.error(
-          `Error sending campaign notification to ${recipient.id}:`,
-          error
-        );
-
+      } catch (_error) {
         await this.repository.updateCampaign(campaignId, {
           failedCount: campaign.failedCount + 1,
         });
@@ -585,16 +571,24 @@ export class NotificationService {
     // Check global channel preferences
     switch (notification.channel) {
       case NotificationChannel.EMAIL:
-        if (!preferences.emailNotifications) return false;
+        if (!preferences.emailNotifications) {
+          return false;
+        }
         break;
       case NotificationChannel.SMS:
-        if (!preferences.smsNotifications) return false;
+        if (!preferences.smsNotifications) {
+          return false;
+        }
         break;
       case NotificationChannel.WHATSAPP:
-        if (!preferences.whatsappNotifications) return false;
+        if (!preferences.whatsappNotifications) {
+          return false;
+        }
         break;
       case NotificationChannel.PUSH:
-        if (!preferences.pushNotifications) return false;
+        if (!preferences.pushNotifications) {
+          return false;
+        }
         break;
     }
 
@@ -659,12 +653,7 @@ export class NotificationService {
     for (const notification of scheduledNotifications) {
       try {
         await this.deliverNotification(notification);
-      } catch (error) {
-        console.error(
-          `Error processing scheduled notification ${notification.id}:`,
-          error
-        );
-      }
+      } catch (_error) {}
     }
   }
 
@@ -744,7 +733,7 @@ export class NotificationService {
   }
 
   // Unsubscribe handling
-  async unsubscribePatient(patientId: string, reason?: string): Promise<void> {
+  async unsubscribePatient(patientId: string, _reason?: string): Promise<void> {
     const preferences = await this.repository.getPreferences(patientId);
 
     const updatedPreferences: NotificationPreferenceData = {

@@ -1,8 +1,8 @@
 // Middleware Module
-export interface MiddlewareConfig {
+export type MiddlewareConfig = {
   enabled: boolean;
   data?: unknown;
-}
+};
 
 export const Middleware_DEFAULT: MiddlewareConfig = {
   enabled: true,

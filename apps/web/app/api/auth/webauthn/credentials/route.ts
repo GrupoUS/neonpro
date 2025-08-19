@@ -1,13 +1,12 @@
-import { createClient } from '@/app/utils/supabase/server';
-import { cookies } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/app/utils/supabase/server';
 
 /**
  * WebAuthn Credentials API Route
  * Handles CRUD operations for WebAuthn credentials
  */
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const supabase = createClient();
 
@@ -28,7 +27,6 @@ export async function GET(request: NextRequest) {
       .order('created_at', { ascending: false });
 
     if (error) {
-      console.error('Error fetching WebAuthn credentials:', error);
       return NextResponse.json(
         { error: 'Internal server error' },
         { status: 500 }
@@ -36,8 +34,7 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json({ credentials });
-  } catch (error) {
-    console.error('WebAuthn credentials GET error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -88,7 +85,6 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error('Error creating WebAuthn credential:', error);
       if (error.code === '23505') {
         // Unique constraint violation
         return NextResponse.json(
@@ -116,8 +112,7 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     );
-  } catch (error) {
-    console.error('WebAuthn credentials POST error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

@@ -47,10 +47,9 @@ export function LoginForm() {
         toastHelpers.success.login();
         // Redirect will be handled by auth context
       }
-    } catch (err) {
+    } catch (_err) {
       setError('Erro inesperado ao fazer login');
       toastHelpers.error.network();
-      console.error('Login error:', err);
     } finally {
       setIsSubmitting(false);
     }
@@ -67,10 +66,9 @@ export function LoginForm() {
         toastHelpers.error.generic();
       }
       // Redirect will be handled by OAuth flow
-    } catch (err) {
+    } catch (_err) {
       toastHelpers.error.network();
       setError('Erro inesperado ao fazer login com Google');
-      console.error('Google login error:', err);
     }
   };
   return (

@@ -1,6 +1,5 @@
-import { createClient } from '@/app/utils/supabase/server';
-import { cookies } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/app/utils/supabase/server';
 
 /**
  * WebAuthn Individual Credential API Route
@@ -8,7 +7,7 @@ import { type NextRequest, NextResponse } from 'next/server';
  */
 
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: { credentialId: string } }
 ) {
   try {
@@ -42,7 +41,6 @@ export async function GET(
           { status: 404 }
         );
       }
-      console.error('Error fetching WebAuthn credential:', error);
       return NextResponse.json(
         { error: 'Internal server error' },
         { status: 500 }
@@ -50,8 +48,7 @@ export async function GET(
     }
 
     return NextResponse.json({ credential });
-  } catch (error) {
-    console.error('WebAuthn credential GET error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -81,7 +78,9 @@ export async function PUT(
 
     // Build update object
     const updates: any = {};
-    if (name !== undefined) updates.name = name;
+    if (name !== undefined) {
+      updates.name = name;
+    }
     if (counter !== undefined) {
       updates.counter = counter;
       updates.last_used_at = new Date().toISOString();
@@ -113,7 +112,6 @@ export async function PUT(
           { status: 404 }
         );
       }
-      console.error('Error updating WebAuthn credential:', error);
       return NextResponse.json(
         { error: 'Internal server error' },
         { status: 500 }
@@ -130,8 +128,7 @@ export async function PUT(
         last_used_at: data.last_used_at,
       },
     });
-  } catch (error) {
-    console.error('WebAuthn credential PUT error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -140,7 +137,7 @@ export async function PUT(
 }
 
 export async function DELETE(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: { credentialId: string } }
 ) {
   try {
@@ -164,7 +161,6 @@ export async function DELETE(
       .eq('credential_id', credentialId);
 
     if (error) {
-      console.error('Error deleting WebAuthn credential:', error);
       return NextResponse.json(
         { error: 'Internal server error' },
         { status: 500 }
@@ -174,8 +170,7 @@ export async function DELETE(
     return NextResponse.json({
       message: 'Credential deleted successfully',
     });
-  } catch (error) {
-    console.error('WebAuthn credential DELETE error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

@@ -3,13 +3,13 @@
  * Provides comprehensive mocking for all Supabase operations
  */
 
-export interface MockQueryResult {
+export type MockQueryResult = {
   data?: any;
   error?: any;
   count?: number;
-}
+};
 
-export interface MockSupabaseClient {
+export type MockSupabaseClient = {
   from: jest.MockedFunction<any>;
   rpc: jest.MockedFunction<any>;
   auth: {
@@ -20,7 +20,7 @@ export interface MockSupabaseClient {
   storage: {
     from: jest.MockedFunction<any>;
   };
-}
+};
 
 /**
  * Creates a mock Supabase client with all common operations

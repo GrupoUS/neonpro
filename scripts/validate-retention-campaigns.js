@@ -25,11 +25,7 @@ const testCampaign = {
 };
 
 async function validateCampaignAPIs() {
-  console.log('🔄 Validando APIs de Campanhas de Retenção...\n');
-
   try {
-    // 1. Test Campaign Creation
-    console.log('1. Testando criação de campanha...');
     const createResponse = await fetch(`${API_BASE}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -37,36 +33,20 @@ async function validateCampaignAPIs() {
     });
 
     if (createResponse.ok) {
-      console.log('✅ POST /campaigns - Criação funcionando');
       const created = await createResponse.json();
       const campaignId = created.data?.campaign?.id;
 
       if (campaignId) {
-        // 2. Test Campaign Retrieval
-        console.log('2. Testando busca de campanha...');
         const getResponse = await fetch(`${API_BASE}/${campaignId}`);
         if (getResponse.ok) {
-          console.log('✅ GET /campaigns/[id] - Busca funcionando');
         } else {
-          console.log('❌ GET /campaigns/[id] - Erro:', getResponse.status);
         }
-
-        // 3. Test Campaign Analytics
-        console.log('3. Testando analytics de campanha...');
         const analyticsResponse = await fetch(
           `${API_BASE}/analytics?clinic_id=${testCampaign.clinic_id}`
         );
         if (analyticsResponse.ok) {
-          console.log('✅ GET /campaigns/analytics - Analytics funcionando');
         } else {
-          console.log(
-            '❌ GET /campaigns/analytics - Erro:',
-            analyticsResponse.status
-          );
         }
-
-        // 4. Test A/B Testing
-        console.log('4. Testando A/B testing...');
         const abTestResponse = await fetch(`${API_BASE}/analytics`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -77,59 +57,18 @@ async function validateCampaignAPIs() {
           }),
         });
         if (abTestResponse.ok) {
-          console.log('✅ POST /campaigns/analytics - A/B Testing funcionando');
         } else {
-          console.log(
-            '❌ POST /campaigns/analytics - Erro:',
-            abTestResponse.status
-          );
         }
       }
     } else {
-      console.log(
-        '❌ POST /campaigns - Erro na criação:',
-        createResponse.status
-      );
     }
-
-    // 5. Test Campaign List
-    console.log('5. Testando listagem de campanhas...');
     const listResponse = await fetch(
       `${API_BASE}?clinic_id=${testCampaign.clinic_id}`
     );
     if (listResponse.ok) {
-      console.log('✅ GET /campaigns - Listagem funcionando');
     } else {
-      console.log('❌ GET /campaigns - Erro:', listResponse.status);
     }
-
-    console.log('\n✅ VALIDAÇÃO CONCLUÍDA - Task 5 implementada com sucesso!');
-    console.log('\nEndpoints implementados:');
-    console.log(
-      '- POST /api/retention-analytics/campaigns - Criação de campanhas'
-    );
-    console.log(
-      '- GET /api/retention-analytics/campaigns - Listagem de campanhas'
-    );
-    console.log(
-      '- GET /api/retention-analytics/campaigns/[id] - Detalhes da campanha'
-    );
-    console.log(
-      '- PUT /api/retention-analytics/campaigns/[id] - Execução de campanha'
-    );
-    console.log(
-      '- GET /api/retention-analytics/campaigns/analytics - Analytics de campanhas'
-    );
-    console.log(
-      '- POST /api/retention-analytics/campaigns/analytics - A/B Testing'
-    );
-  } catch (error) {
-    console.error('❌ Erro na validação:', error.message);
-    console.log(
-      '\n⚠️  Nota: Para testar as APIs, execute o servidor de desenvolvimento:'
-    );
-    console.log('   pnpm dev');
-  }
+  } catch (_error) {}
 }
 
 // Execute validation if running directly

@@ -5,7 +5,6 @@ import type {
   Patient,
   SchedulingAction,
   SchedulingAnalytics,
-  SchedulingConstraints,
   SchedulingRequest,
   SchedulingResult,
   Staff,
@@ -17,10 +16,10 @@ import type {
  * Integrates with AI scheduling engine for 60% efficiency improvement
  */
 export class AISchedulingService {
-  private aiEngine: any; // Will be imported from web app
+  private readonly aiEngine: any; // Will be imported from web app
   private analytics: SchedulingAnalytics;
-  private config: AISchedulingConfig;
-  private realtimeListeners: Map<string, Function> = new Map();
+  private readonly config: AISchedulingConfig;
+  private readonly realtimeListeners: Map<string, Function> = new Map();
 
   constructor(config: AISchedulingConfig) {
     this.config = config;
@@ -74,8 +73,7 @@ export class AISchedulingService {
       this.updateAnalytics(processingTime, schedulingResult.success);
 
       return schedulingResult;
-    } catch (error) {
-      console.error('AI Scheduling Service Error:', error);
+    } catch (_error) {
       return {
         success: false,
         conflicts: [
@@ -149,7 +147,7 @@ export class AISchedulingService {
     appointmentHistory: any[],
     tenantId: string
   ): Promise<void> {
-    const patient = await this.getPatientData(patientId, tenantId);
+    const _patient = await this.getPatientData(patientId, tenantId);
 
     // Analyze appointment patterns
     const preferences = this.analyzeAppointmentPatterns(appointmentHistory);
@@ -414,8 +412,7 @@ export class AISchedulingService {
         '../../web/app/lib/ai-scheduling'
       );
       this.aiEngine = new AISchedulingEngine(this.config);
-    } catch (error) {
-      console.warn('AI Engine not available, falling back to basic scheduling');
+    } catch (_error) {
       this.aiEngine = null;
     }
   }
@@ -433,28 +430,28 @@ export class AISchedulingService {
   }
 
   private async getAvailableSlots(
-    request: SchedulingRequest,
-    tenantId: string
+    _request: SchedulingRequest,
+    _tenantId: string
   ): Promise<AppointmentSlot[]> {
     // Implementation would query database for available slots
     // This is a simplified version
     return [];
   }
 
-  private async getStaffMembers(tenantId: string): Promise<Staff[]> {
+  private async getStaffMembers(_tenantId: string): Promise<Staff[]> {
     // Implementation would query database for staff
     return [];
   }
 
   private async getPatientData(
-    patientId: string,
-    tenantId: string
+    _patientId: string,
+    _tenantId: string
   ): Promise<Patient> {
     // Implementation would query database for patient data
     return {} as Patient;
   }
 
-  private async getTreatmentTypes(tenantId: string): Promise<TreatmentType[]> {
+  private async getTreatmentTypes(_tenantId: string): Promise<TreatmentType[]> {
     // Implementation would query database for treatment types
     return [];
   }
@@ -482,9 +479,11 @@ export class AISchedulingService {
   private async schedulePreventiveActions(
     result: SchedulingResult,
     patient: Patient,
-    tenantId: string
+    _tenantId: string
   ): Promise<void> {
-    if (!result.appointmentSlot) return;
+    if (!result.appointmentSlot) {
+      return;
+    }
 
     const noShowRisk = patient.noShowProbability || 0.1;
 
@@ -509,9 +508,9 @@ export class AISchedulingService {
       this.realtimeListeners.forEach((listener) => {
         listener({
           type: 'appointment_scheduled',
-          appointmentId: result.appointmentSlot!.id,
+          appointmentId: result.appointmentSlot?.id,
           tenantId,
-          optimizationScore: result.appointmentSlot!.optimizationScore,
+          optimizationScore: result.appointmentSlot?.optimizationScore,
         });
       });
     }
@@ -523,7 +522,7 @@ export class AISchedulingService {
       this.analytics.averageBookingTime * 0.9 + processingTime * 0.1;
 
     // Update success rate tracking
-    const currentSuccessRate = success ? 1 : 0;
+    const _currentSuccessRate = success ? 1 : 0;
     // Implementation would store and analyze success rates over time
   }
 
@@ -566,7 +565,7 @@ export class AISchedulingService {
     const preferredHours = Object.entries(hourCounts)
       .sort(([, a], [, b]) => b - a)
       .slice(0, 3)
-      .map(([hour]) => Number.parseInt(hour));
+      .map(([hour]) => Number.parseInt(hour, 10));
 
     patterns.preferredTimeSlots = preferredHours.map((hour) => ({
       start: new Date(2024, 0, 1, hour, 0),
@@ -625,8 +624,8 @@ export class AISchedulingService {
 
   private async generateRebalancingActions(
     imbalances: any[],
-    appointments: any[],
-    staff: Staff[]
+    _appointments: any[],
+    _staff: Staff[]
   ): Promise<SchedulingAction[]> {
     const actions: SchedulingAction[] = [];
 
@@ -665,7 +664,7 @@ export class AISchedulingService {
   }
 
   private calculateUtilizationImprovement(
-    currentWorkload: Record<string, number>,
+    _currentWorkload: Record<string, number>,
     actions: SchedulingAction[]
   ): number {
     // Calculate potential improvement from rebalancing actions
@@ -679,81 +678,81 @@ export class AISchedulingService {
 
   // Additional helper methods would be implemented here
   private async getAppointment(
-    appointmentId: string,
-    tenantId: string
+    _appointmentId: string,
+    _tenantId: string
   ): Promise<any> {
     // Database query implementation
     return null;
   }
 
   private async executePreventiveActions(
-    actions: string[],
-    appointmentId: string,
-    tenantId: string
+    _actions: string[],
+    _appointmentId: string,
+    _tenantId: string
   ): Promise<void> {
     // Implementation for executing preventive actions
   }
 
   private async updatePreferenceLearningModel(
-    patientId: string,
-    preferences: any,
-    tenantId: string
+    _patientId: string,
+    _preferences: any,
+    _tenantId: string
   ): Promise<void> {
     // Update ML model with new preference data
   }
 
   private async savePatientPreferences(
-    patientId: string,
-    preferences: any,
-    tenantId: string
+    _patientId: string,
+    _preferences: any,
+    _tenantId: string
   ): Promise<void> {
     // Save updated preferences to database
   }
 
   private async getCurrentSchedule(
-    tenantId: string
+    _tenantId: string
   ): Promise<AppointmentSlot[]> {
     // Get current schedule from database
     return [];
   }
 
-  private async getAvailableStaff(tenantId: string): Promise<Staff[]> {
+  private async getAvailableStaff(_tenantId: string): Promise<Staff[]> {
     // Get available staff from database
     return [];
   }
 
   private async executeSchedulingAction(
-    action: SchedulingAction,
-    tenantId: string
+    _action: SchedulingAction,
+    _tenantId: string
   ): Promise<void> {
     // Execute the scheduling action
   }
 
   private updateRealtimeMetrics(
-    event: DynamicSchedulingEvent,
-    actions: SchedulingAction[]
+    _event: DynamicSchedulingEvent,
+    _actions: SchedulingAction[]
   ): void {
     // Update real-time metrics
   }
 
   private async getAppointmentsInRange(
-    timeRange: { start: Date; end: Date },
-    tenantId: string
+    _timeRange: { start: Date; end: Date },
+    _tenantId: string
   ): Promise<any[]> {
     // Get appointments in date range
     return [];
   }
 
   private calculateUtilizationRate(
-    appointments: any[],
-    staff: Staff[],
-    timeRange: { start: Date; end: Date }
+    _appointments: any[],
+    _staff: Staff[],
+    _timeRange: { start: Date; end: Date }
   ): number {
     // Calculate utilization rate
     return 0.75;
   }
 
-  private calculateAverageBookingTime(tenantId: string): number {
+  private calculateAverageBookingTime(_tenantId: string): number {
     return this.analytics.averageBookingTime;
   }
 
@@ -768,20 +767,20 @@ export class AISchedulingService {
   }
 
   private async calculatePatientSatisfaction(
-    tenantId: string
+    _tenantId: string
   ): Promise<number> {
     // Calculate patient satisfaction from feedback
     return 4.2;
   }
 
-  private calculateRevenueOptimization(appointments: any[]): number {
+  private calculateRevenueOptimization(_appointments: any[]): number {
     // Calculate revenue optimization percentage
     return 0.15;
   }
 
   private calculateTimeSlotEfficiency(
-    appointments: any[],
-    timeRange: { start: Date; end: Date }
+    _appointments: any[],
+    _timeRange: { start: Date; end: Date }
   ): any[] {
     // Calculate efficiency by time slot
     return [];

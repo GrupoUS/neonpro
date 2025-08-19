@@ -4,7 +4,6 @@
 // ================================================
 
 import { createClient } from '@supabase/supabase-js';
-import { authService } from './auth';
 import { config } from './configuration';
 import { monitoring } from './monitoring';
 
@@ -12,7 +11,7 @@ import { monitoring } from './monitoring';
 // TYPES AND INTERFACES
 // ================================================
 
-interface Notification {
+type Notification = {
   id: string;
   tenantId: string;
   recipientId: string;
@@ -35,9 +34,9 @@ interface Notification {
   createdAt: Date;
   updatedAt: Date;
   createdBy?: string;
-}
+};
 
-interface NotificationTemplate {
+type NotificationTemplate = {
   id: string;
   tenantId: string;
   name: string;
@@ -50,9 +49,9 @@ interface NotificationTemplate {
   metadata: Record<string, any>;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
-interface NotificationPreference {
+type NotificationPreference = {
   id: string;
   userId: string;
   tenantId: string;
@@ -65,9 +64,9 @@ interface NotificationPreference {
   metadata: Record<string, any>;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
-interface NotificationRule {
+type NotificationRule = {
   id: string;
   tenantId: string;
   name: string;
@@ -79,38 +78,38 @@ interface NotificationRule {
   metadata: Record<string, any>;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
-interface NotificationTrigger {
+type NotificationTrigger = {
   event: string;
   entity: string;
   conditions?: Record<string, any>;
-}
+};
 
-interface NotificationCondition {
+type NotificationCondition = {
   field: string;
   operator: ConditionOperator;
   value: any;
   logicalOperator?: LogicalOperator;
-}
+};
 
-interface NotificationAction {
+type NotificationAction = {
   type: NotificationType;
   channel: NotificationChannel;
   templateId?: string;
   recipients: NotificationRecipient[];
   delay?: number;
   priority: NotificationPriority;
-}
+};
 
-interface NotificationRecipient {
+type NotificationRecipient = {
   type: RecipientType;
   id?: string;
   contact?: string;
   role?: string;
-}
+};
 
-interface NotificationBatch {
+type NotificationBatch = {
   id: string;
   tenantId: string;
   name: string;
@@ -129,9 +128,9 @@ interface NotificationBatch {
   createdAt: Date;
   updatedAt: Date;
   createdBy: string;
-}
+};
 
-interface NotificationAnalytics {
+type NotificationAnalytics = {
   totalSent: number;
   totalDelivered: number;
   totalFailed: number;
@@ -142,38 +141,38 @@ interface NotificationAnalytics {
   byType: Record<NotificationType, TypeStats>;
   byPriority: Record<NotificationPriority, PriorityStats>;
   trends: NotificationTrends;
-}
+};
 
-interface ChannelStats {
+type ChannelStats = {
   sent: number;
   delivered: number;
   failed: number;
   read: number;
   deliveryRate: number;
   readRate: number;
-}
+};
 
-interface TypeStats {
+type TypeStats = {
   sent: number;
   delivered: number;
   failed: number;
   read: number;
   deliveryRate: number;
   readRate: number;
-}
+};
 
-interface PriorityStats {
+type PriorityStats = {
   sent: number;
   delivered: number;
   failed: number;
   avgDeliveryTime: number;
-}
+};
 
-interface NotificationTrends {
+type NotificationTrends = {
   daily: Record<string, number>;
   weekly: Record<string, number>;
   monthly: Record<string, number>;
-}
+};
 
 // ================================================
 // ENUMS
@@ -266,7 +265,7 @@ enum LogicalOperator {
 // REQUEST/RESPONSE TYPES
 // ================================================
 
-interface SendNotificationRequest {
+type SendNotificationRequest = {
   tenantId: string;
   recipientId: string;
   recipientType: RecipientType;
@@ -279,9 +278,9 @@ interface SendNotificationRequest {
   scheduledAt?: Date;
   expiresAt?: Date;
   metadata?: Record<string, any>;
-}
+};
 
-interface SendBulkNotificationRequest {
+type SendBulkNotificationRequest = {
   tenantId: string;
   type: NotificationType;
   channel: NotificationChannel;
@@ -293,9 +292,9 @@ interface SendBulkNotificationRequest {
   scheduledAt?: Date;
   expiresAt?: Date;
   metadata?: Record<string, any>;
-}
+};
 
-interface CreateTemplateRequest {
+type CreateTemplateRequest = {
   tenantId: string;
   name: string;
   type: NotificationType;
@@ -304,9 +303,9 @@ interface CreateTemplateRequest {
   content: string;
   variables: string[];
   metadata?: Record<string, any>;
-}
+};
 
-interface NotificationFilters {
+type NotificationFilters = {
   tenantId?: string;
   recipientId?: string;
   recipientType?: RecipientType;
@@ -320,7 +319,7 @@ interface NotificationFilters {
   offset?: number;
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
-}
+};
 
 // ================================================
 // NOTIFICATION SERVICE
@@ -328,13 +327,13 @@ interface NotificationFilters {
 
 export class NotificationService {
   private static instance: NotificationService;
-  private supabase = createClient(
+  private readonly supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
 
   private maxRetries = 3;
-  private retryDelays = [1000, 5000, 15_000]; // 1s, 5s, 15s
+  private readonly retryDelays = [1000, 5000, 15_000]; // 1s, 5s, 15s
 
   private constructor() {
     this.initializeConfiguration();
@@ -573,7 +572,7 @@ export class NotificationService {
     try {
       // Get template
       const template = await this.getTemplate(templateId, userId);
-      if (!(template && template.isActive)) {
+      if (!template?.isActive) {
         throw new Error('Template not found or inactive');
       }
 
@@ -1240,8 +1239,8 @@ export class NotificationService {
   }
 
   private async validateTenantAccess(
-    userId: string,
-    tenantId: string
+    _userId: string,
+    _tenantId: string
   ): Promise<void> {
     // Implementation would validate user has access to tenant
     // For now, we'll assume the auth service handles this

@@ -7,7 +7,7 @@ const corsHeaders = {
     'authorization, x-client-info, apikey, content-type',
 };
 
-interface ReportConfig {
+type ReportConfig = {
   id: string;
   clinic_id: string;
   user_id: string;
@@ -22,7 +22,7 @@ interface ReportConfig {
     recipients: string[];
   };
   is_active: boolean;
-}
+};
 
 serve(async (req) => {
   // Handle CORS
@@ -35,8 +35,6 @@ serve(async (req) => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
-    console.log('Starting scheduled reports generation...');
 
     // Get current date/time info
     const now = new Date();
@@ -52,11 +50,8 @@ serve(async (req) => {
       .not('schedule_config', 'is', null);
 
     if (configError) {
-      console.error('Error fetching report configs:', configError);
       throw configError;
     }
-
-    console.log(`Found ${reportConfigs?.length || 0} scheduled reports`);
 
     const processedReports: any[] = [];
     const emailQueue: any[] = [];
@@ -98,10 +93,6 @@ serve(async (req) => {
       // Check time (simplified - just check hour)
       const scheduleHour = Number.parseInt(schedule.time.split(':')[0], 10);
       if (shouldGenerate && currentHour === scheduleHour) {
-        console.log(
-          `Generating report: ${config.report_name} for clinic ${config.clinic_id}`
-        );
-
         try {
           const reportData = await generateReport(supabase, config);
 
@@ -121,10 +112,6 @@ serve(async (req) => {
             .single();
 
           if (reportError) {
-            console.error(
-              `Error storing report ${config.report_name}:`,
-              reportError
-            );
             continue;
           }
 
@@ -144,23 +131,12 @@ serve(async (req) => {
               reportData,
             });
           }
-        } catch (error) {
-          console.error(
-            `Error generating report ${config.report_name}:`,
-            error
-          );
-        }
+        } catch (_error) {}
       }
     }
 
-    console.log(`Generated ${processedReports.length} reports`);
-
     // Process email notifications (simplified)
-    for (const email of emailQueue) {
-      console.log(
-        `Queuing email for report ${email.reportName} to ${email.recipients.length} recipients`
-      );
-
+    for (const _email of emailQueue) {
       // In a real implementation, you would:
       // 1. Generate PDF/Excel from reportData
       // 2. Send email with attachment using a service like SendGrid
@@ -183,8 +159,6 @@ serve(async (req) => {
       }
     );
   } catch (error) {
-    console.error('Stock reports generation error:', error);
-
     return new Response(
       JSON.stringify({
         success: false,

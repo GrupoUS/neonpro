@@ -7,21 +7,17 @@ export type { HealthcarePerformanceMetrics } from '../performance-monitor';
 export { default as PerformanceMonitor } from '../performance-monitor';
 
 // Integration utilities
-export interface MonitoringPerformanceIntegration {
+export type MonitoringPerformanceIntegration = {
   trackAuthenticationPerformance: (duration: number) => void;
   trackDatabasePerformance: (duration: number) => void;
   getPerformanceReport: () => Record<string, any>;
-}
+};
 
 export const monitoringPerformanceIntegration: MonitoringPerformanceIntegration =
   {
-    trackAuthenticationPerformance(duration: number) {
-      console.log('Auth performance tracked:', duration);
-    },
+    trackAuthenticationPerformance(_duration: number) {},
 
-    trackDatabasePerformance(duration: number) {
-      console.log('DB performance tracked:', duration);
-    },
+    trackDatabasePerformance(_duration: number) {},
 
     getPerformanceReport() {
       return {

@@ -17,7 +17,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup",
+    "build": "npx tsc",
     "dev": "tsup --watch",
     "lint": "cd ../.. && biome lint packages/ui/src --write",
     "format": "cd ../.. && biome format --write packages/ui/src",

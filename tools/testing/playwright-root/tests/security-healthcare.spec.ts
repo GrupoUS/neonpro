@@ -269,7 +269,7 @@ test.describe('🔐 Healthcare Security Testing - Patient Data Protection', () =
     await page.goto('/dashboard/patient/documents');
 
     // Test malicious file upload prevention
-    const maliciousFiles = [
+    const _maliciousFiles = [
       'playwright/fixtures/malicious.php',
       'playwright/fixtures/script.js',
       'playwright/fixtures/executable.exe',
@@ -382,7 +382,8 @@ test.describe('🔐 Healthcare Security Testing - Patient Data Protection', () =
     // Check session timeout configuration
     const sessionTimeout = await page.evaluate(() => {
       return Number.parseInt(
-        localStorage.getItem('session_timeout_minutes') || '30'
+        localStorage.getItem('session_timeout_minutes') || '30',
+        10
       );
     });
 

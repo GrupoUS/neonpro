@@ -1,10 +1,4 @@
-import {
-  addDays,
-  addMonths,
-  differenceInDays,
-  isAfter,
-  isBefore,
-} from 'date-fns';
+import { addDays, addMonths, isAfter, isBefore } from 'date-fns';
 import { BillingStatus } from '../types';
 import type {
   CreateDiscountData,
@@ -30,7 +24,7 @@ import {
   RefundStatus,
 } from './types';
 
-export interface BillingRepository {
+export type BillingRepository = {
   // Invoice operations
   createInvoice(data: CreateInvoiceData): Promise<Invoice>;
   updateInvoice(id: string, data: Partial<Invoice>): Promise<Invoice>;
@@ -80,8 +74,8 @@ export interface BillingRepository {
   updateRefund(id: string, data: Partial<Refund>): Promise<Refund>;
   getRefund(id: string): Promise<Refund | null>;
   getRefundsByPatient(patientId: string): Promise<Refund[]>;
-}
-export interface BillingStats {
+};
+export type BillingStats = {
   totalRevenue: number;
   monthlyRevenue: number;
   outstandingAmount: number;
@@ -96,10 +90,10 @@ export interface BillingStats {
     amount: number;
   }[];
   treatmentRevenue: { treatmentType: string; count: number; revenue: number }[];
-}
+};
 
 export class BillingService {
-  constructor(private repository: BillingRepository) {}
+  constructor(private readonly repository: BillingRepository) {}
 
   // Invoice management
   async createInvoice(data: CreateInvoiceData): Promise<Invoice> {
@@ -130,68 +124,59 @@ export class BillingService {
 
       const invoice = await this.repository.createInvoice(invoiceData);
       return invoice;
-    } catch (error) {
-      console.error('Error creating invoice:', error);
+    } catch (_error) {
       throw new Error('Failed to create invoice');
     }
   }
   async processPayment(
     data: CreatePaymentData
   ): Promise<{ payment: Payment; invoice: Invoice }> {
-    try {
-      const invoice = await this.repository.getInvoice(data.invoiceId);
-      if (!invoice) {
-        throw new Error('Invoice not found');
-      }
-
-      if (invoice.status === BillingStatus.PAID) {
-        throw new Error('Invoice is already paid');
-      }
-
-      if (invoice.status === BillingStatus.CANCELLED) {
-        throw new Error('Cannot process payment for cancelled invoice');
-      }
-
-      // Validate payment amount
-      if (data.amount <= 0) {
-        throw new Error('Payment amount must be greater than zero');
-      }
-
-      if (data.amount > invoice.balanceAmount) {
-        throw new Error('Payment amount exceeds invoice balance');
-      }
-
-      // Create payment record
-      const paymentData = {
-        ...data,
-        paymentNumber: await this.generatePaymentNumber(),
-        patientId: invoice.patientId,
-        paymentStatus: PaymentStatus.COMPLETED, // In real implementation, this might be PROCESSING first
-      };
-
-      const payment = await this.repository.createPayment(paymentData);
-
-      // Update invoice
-      const newPaidAmount = invoice.paidAmount + data.amount;
-      const newBalanceAmount = invoice.totalAmount - newPaidAmount;
-      const newStatus =
-        newBalanceAmount <= 0 ? BillingStatus.PAID : BillingStatus.PENDING;
-
-      const updatedInvoice = await this.repository.updateInvoice(
-        data.invoiceId,
-        {
-          paidAmount: newPaidAmount,
-          balanceAmount: newBalanceAmount,
-          status: newStatus,
-          paidDate: newStatus === BillingStatus.PAID ? new Date() : undefined,
-        }
-      );
-
-      return { payment, invoice: updatedInvoice };
-    } catch (error) {
-      console.error('Error processing payment:', error);
-      throw error;
+    const invoice = await this.repository.getInvoice(data.invoiceId);
+    if (!invoice) {
+      throw new Error('Invoice not found');
     }
+
+    if (invoice.status === BillingStatus.PAID) {
+      throw new Error('Invoice is already paid');
+    }
+
+    if (invoice.status === BillingStatus.CANCELLED) {
+      throw new Error('Cannot process payment for cancelled invoice');
+    }
+
+    // Validate payment amount
+    if (data.amount <= 0) {
+      throw new Error('Payment amount must be greater than zero');
+    }
+
+    if (data.amount > invoice.balanceAmount) {
+      throw new Error('Payment amount exceeds invoice balance');
+    }
+
+    // Create payment record
+    const paymentData = {
+      ...data,
+      paymentNumber: await this.generatePaymentNumber(),
+      patientId: invoice.patientId,
+      paymentStatus: PaymentStatus.COMPLETED, // In real implementation, this might be PROCESSING first
+    };
+
+    const payment = await this.repository.createPayment(paymentData);
+
+    // Update invoice
+    const newPaidAmount = invoice.paidAmount + data.amount;
+    const newBalanceAmount = invoice.totalAmount - newPaidAmount;
+    const newStatus =
+      newBalanceAmount <= 0 ? BillingStatus.PAID : BillingStatus.PENDING;
+
+    const updatedInvoice = await this.repository.updateInvoice(data.invoiceId, {
+      paidAmount: newPaidAmount,
+      balanceAmount: newBalanceAmount,
+      status: newStatus,
+      paidDate: newStatus === BillingStatus.PAID ? new Date() : undefined,
+    });
+
+    return { payment, invoice: updatedInvoice };
   }
 
   async applyDiscount(
@@ -504,7 +489,7 @@ export class BillingService {
     startDate?: Date,
     endDate?: Date
   ): Promise<BillingStats> {
-    const invoices =
+    const _invoices =
       startDate && endDate
         ? await this.repository.getInvoicesByDateRange(startDate, endDate)
         : await this.repository.getInvoicesByStatus(BillingStatus.PAID);

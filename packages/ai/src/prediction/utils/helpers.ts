@@ -1,4 +1,3 @@
-import { aestheticInferenceAPI } from '../api/inference-api';
 import { neonproAIIntegration } from '../integrations/neonpro-integration';
 import type { PatientProfile, SkinType, TreatmentRequest } from '../types';
 
@@ -13,21 +12,15 @@ type ExpectationType = 'subtle' | 'moderate' | 'dramatic';
 type UrgencyType = 'low' | 'moderate' | 'high';
 
 // Constants for time calculations and business rules
-const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
-const BUSINESS_DAYS = [1, 2, 3, 4, 5]; // Monday to Friday
+const _MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
+const _BUSINESS_DAYS = [1, 2, 3, 4, 5]; // Monday to Friday
 
 /**
  * Initialize the complete AI prediction system
  * Call this once during application startup
  */
 export async function initializeAIPredictionEngine(): Promise<void> {
-  try {
-    await neonproAIIntegration.initialize();
-    console.log('✅ NeonPro AI Prediction Engine initialized successfully');
-  } catch (error) {
-    console.error('❌ Failed to initialize AI Prediction Engine:', error);
-    throw error;
-  }
+  await neonproAIIntegration.initialize();
 }
 
 /**
@@ -306,8 +299,7 @@ export async function checkAccuracyTargets(): Promise<{
       individualTargets,
       recommendations,
     };
-  } catch (error) {
-    console.error('❌ Accuracy check failed:', error);
+  } catch (_error) {
     return {
       overallTarget: false,
       individualTargets: {},

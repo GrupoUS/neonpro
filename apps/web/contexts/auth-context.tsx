@@ -1,12 +1,7 @@
 'use client';
 
-import type {
-  AuthError,
-  Session,
-  SupabaseClient,
-  User,
-} from '@supabase/supabase-js';
-import React, {
+import type { AuthError, Session, User } from '@supabase/supabase-js';
+import {
   createContext,
   type ReactNode,
   useContext,
@@ -16,7 +11,7 @@ import React, {
 import { createClient } from '@/app/utils/supabase/client';
 
 // Types
-interface AuthContextType {
+type AuthContextType = {
   user: User | null;
   session: Session | null;
   loading: boolean;
@@ -43,15 +38,15 @@ interface AuthContextType {
     data: any;
     error: AuthError | null;
   }>;
-}
+};
 
 // Create context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // Provider props
-interface AuthProviderProps {
+type AuthProviderProps = {
   children: ReactNode;
-}
+};
 
 // Provider component
 export function AuthProvider({ children }: AuthProviderProps) {
@@ -73,13 +68,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
         } = await supabase.auth.getSession();
 
         if (error) {
-          console.error('Error getting session:', error);
         } else {
           setSession(session);
           setUser(session?.user ?? null);
         }
-      } catch (error) {
-        console.error('Auth initialization error:', error);
+      } catch (_error) {
       } finally {
         setLoading(false);
       }
@@ -91,8 +84,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('Auth state changed:', event, session);
-
       setSession(session);
       setUser(session?.user ?? null);
 
@@ -119,7 +110,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       return { data, error };
     } catch (error) {
-      console.error('Sign in error:', error);
       return { data: null, error: error as AuthError };
     } finally {
       setLoading(false);
@@ -139,7 +129,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       return { data, error };
     } catch (error) {
-      console.error('Sign up error:', error);
       return { data: null, error: error as AuthError };
     } finally {
       setLoading(false);
@@ -184,7 +173,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
         return new Promise((resolve, reject) => {
           // Listen for messages from popup
           const messageListener = (event: MessageEvent) => {
-            if (event.origin !== window.location.origin) return;
+            if (event.origin !== window.location.origin) {
+              return;
+            }
 
             if (event.data.type === 'OAUTH_SUCCESS') {
               popup.close();
@@ -217,7 +208,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       return { data, error };
     } catch (error) {
-      console.error('Google sign in error:', error);
       return { data: null, error: error as AuthError };
     } finally {
       setLoading(false);
@@ -230,7 +220,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const { error } = await supabase.auth.signOut();
       return { error };
     } catch (error) {
-      console.error('Sign out error:', error);
       return { error: error as AuthError };
     } finally {
       setLoading(false);
@@ -245,7 +234,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       return { data, error };
     } catch (error) {
-      console.error('Reset password error:', error);
       return { data: null, error: error as AuthError };
     }
   }; // Context value

@@ -1,12 +1,12 @@
 'use client';
 
-import { createClient } from '@/app/utils/supabase/client';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { createClient } from '@/app/utils/supabase/client';
 import type { Database } from '@/types/supabase';
 
 type Patient = Database['public']['Tables']['patients']['Row'];
 
-interface PatientsHook {
+type PatientsHook = {
   patients: Patient[];
   recentPatients: Patient[];
   totalCount: number;
@@ -15,7 +15,7 @@ interface PatientsHook {
   searchPatients: (query: string) => void;
   getPatientById: (id: string) => Patient | null;
   refreshPatients: () => Promise<void>;
-}
+};
 
 export function usePatients(): PatientsHook {
   const [patients, setPatients] = useState<Patient[]>([]);
@@ -50,7 +50,6 @@ export function usePatients(): PatientsHook {
 
       setPatients(data || []);
     } catch (err) {
-      console.error('Error fetching patients:', err);
       setError(err as Error);
     } finally {
       setLoading(false);

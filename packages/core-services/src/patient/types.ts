@@ -33,21 +33,21 @@ export interface Patient extends BaseEntity {
   tags: string[];
 }
 
-export interface Address {
+export type Address = {
   street: string;
   city: string;
   state: string;
   zipCode: string;
   country: string;
-}
+};
 
-export interface EmergencyContact {
+export type EmergencyContact = {
   name: string;
   relationship: string;
   phone: string;
   email?: string;
-}
-export interface MedicalHistory {
+};
+export type MedicalHistory = {
   pregnancyStatus?: PregnancyStatus;
   isBreastfeeding?: boolean;
   hasHeartCondition: boolean;
@@ -60,9 +60,9 @@ export interface MedicalHistory {
   hasRecentSurgery: boolean;
   recentSurgeryDetails?: string;
   otherConditions: string[];
-}
+};
 
-export interface AestheticHistory {
+export type AestheticHistory = {
   previousTreatments: PreviousTreatment[];
   lastBotoxDate?: Date;
   lastFillerDate?: Date;
@@ -71,33 +71,33 @@ export interface AestheticHistory {
   treatmentGoals: string[];
   concernAreas: string[];
   expectedResults: string;
-}
+};
 
-export interface PreviousTreatment {
+export type PreviousTreatment = {
   treatmentType: string;
   date: Date;
   provider: string;
   result: 'excellent' | 'good' | 'fair' | 'poor';
   complications?: string;
   notes?: string;
-}
+};
 
-export interface Allergy {
+export type Allergy = {
   allergen: string;
   severity: AllergySeverity;
   reaction: string;
   notes?: string;
-}
+};
 
-export interface Medication {
+export type Medication = {
   name: string;
   dosage: string;
   frequency: string;
   prescribedBy?: string;
   relevantToTreatment: boolean;
   notes?: string;
-}
-export interface SkinAssessment {
+};
+export type SkinAssessment = {
   skinType: SkinType;
   skinTone: string;
   skinCondition: SkinCondition[];
@@ -110,18 +110,18 @@ export interface SkinAssessment {
   notes: string;
   assessmentDate: Date;
   assessedBy: string;
-}
+};
 
-export interface WrinkleAssessment {
+export type WrinkleAssessment = {
   forehead: WrinkleGrade;
   glabella: WrinkleGrade;
   crowsFeet: WrinkleGrade;
   nasolabial: WrinkleGrade;
   marionette: WrinkleGrade;
   perioral: WrinkleGrade;
-}
+};
 
-export interface ConsentForm {
+export type ConsentForm = {
   treatmentType: string;
   version: string;
   signedDate: Date;
@@ -130,7 +130,7 @@ export interface ConsentForm {
   witnessedBy?: string;
   documentUrl: string;
   isActive: boolean;
-}
+};
 
 // Enums
 export enum Gender {
@@ -272,7 +272,7 @@ export type CreatePatientData = z.infer<typeof CreatePatientSchema>;
 export type UpdatePatientData = z.infer<typeof UpdatePatientSchema>;
 
 // Additional types for patient management
-export interface PatientFilters {
+export type PatientFilters = {
   status?: PatientStatus;
   gender?: Gender;
   ageRange?: {
@@ -290,9 +290,9 @@ export interface PatientFilters {
   referralSource?: string;
   hasAllergies?: boolean;
   hasConditions?: boolean;
-}
+};
 
-export interface PatientStats {
+export type PatientStats = {
   totalPatients: number;
   activePatients: number;
   inactivePatients: number;
@@ -313,4 +313,4 @@ export interface PatientStats {
   }>;
   retentionRate: number;
   averageLifetimeValue: number;
-}
+};

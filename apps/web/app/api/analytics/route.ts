@@ -63,11 +63,12 @@ export async function GET(request: NextRequest) {
       validatedParams.userId &&
       validatedParams.userId !== userId &&
       userRole !== 'admin'
-    )
+    ) {
       return NextResponse.json(
         { error: 'Insufficient permissions' },
         { status: 403 }
       );
+    }
 
     // Set default date range if not provided (last 30 days)    const endDate =
     validatedParams.endDate || new Date().toISOString().split('T')[0];

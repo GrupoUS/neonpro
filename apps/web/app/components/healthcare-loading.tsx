@@ -3,13 +3,12 @@
 import { Card, CardContent, Progress } from '@neonpro/ui';
 import { motion } from 'framer-motion';
 import { Activity, Heart, Shield, Stethoscope } from 'lucide-react';
-import React from 'react';
 
-interface HealthcareLoadingProps {
+type HealthcareLoadingProps = {
   message?: string;
   progress?: number;
   showProgress?: boolean;
-}
+};
 
 const iconVariants = {
   animate: {

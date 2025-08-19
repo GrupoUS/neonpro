@@ -39,6 +39,4 @@ module.exports = async () => {
   // Set environment variables for tests
   process.env.NODE_ENV = 'test';
   process.env.JEST_WORKER_ID = process.env.JEST_WORKER_ID || '1';
-
-  console.log('🧪 Global Jest setup complete - Supabase warnings suppressed');
 };

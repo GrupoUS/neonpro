@@ -1,14 +1,14 @@
-import React from 'react';
+import type React from 'react';
 
-interface AnalyticsMetric {
+type AnalyticsMetric = {
   id: string;
   label: string;
   value: number | string;
   change?: number;
   trend?: 'up' | 'down' | 'neutral';
-}
+};
 
-interface AnalyticsDashboardProps {
+type AnalyticsDashboardProps = {
   metrics?: AnalyticsMetric[];
   loading?: boolean;
   title?: string;
@@ -16,7 +16,7 @@ interface AnalyticsDashboardProps {
     start: string;
     end: string;
   };
-}
+};
 
 export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
   metrics = [],
@@ -26,12 +26,12 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
 }) => {
   if (loading) {
     return (
-      <div className="p-6 bg-white rounded-lg shadow" data-testid="loading-state">
+      <div className="rounded-lg bg-white p-6 shadow" data-testid="loading-state">
         <div className="animate-pulse">
-          <div className="h-6 bg-gray-200 rounded mb-4"></div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-24 bg-gray-200 rounded"></div>
+          <div className="mb-4 h-6 rounded bg-gray-200" />
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+            {[...new Array(4)].map((_, i) => (
+              <div className="h-24 rounded bg-gray-200" key={i} />
             ))}
           </div>
         </div>
@@ -40,33 +40,33 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
   }
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow" data-testid="analytics-dashboard">
+    <div className="rounded-lg bg-white p-6 shadow" data-testid="analytics-dashboard">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
+        <h2 className="font-bold text-2xl text-gray-900">{title}</h2>
         {dateRange && (
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="mt-1 text-gray-500 text-sm">
             {dateRange.start} - {dateRange.end}
           </p>
         )}
       </div>
 
       {metrics.length === 0 ? (
-        <div className="text-center py-8 text-gray-500" data-testid="empty-state">
+        <div className="py-8 text-center text-gray-500" data-testid="empty-state">
           No analytics data available
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" data-testid="metrics-grid">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4" data-testid="metrics-grid">
           {metrics.map((metric) => (
             <div
-              key={metric.id}
-              className="bg-gray-50 rounded-lg p-4 border border-gray-200"
+              className="rounded-lg border border-gray-200 bg-gray-50 p-4"
               data-testid={`metric-${metric.id}`}
+              key={metric.id}
             >
-              <h3 className="text-sm font-medium text-gray-500 mb-2">{metric.label}</h3>
+              <h3 className="mb-2 font-medium text-gray-500 text-sm">{metric.label}</h3>
               <div className="flex items-center justify-between">
-                <span className="text-2xl font-bold text-gray-900">{metric.value}</span>
+                <span className="font-bold text-2xl text-gray-900">{metric.value}</span>
                 {metric.change !== undefined && (
-                  <span className={`text-sm font-medium flex items-center ${
+                  <span className={`flex items-center font-medium text-sm ${
                     metric.trend === 'up' ? 'text-green-600' :
                     metric.trend === 'down' ? 'text-red-600' :
                     'text-gray-600'

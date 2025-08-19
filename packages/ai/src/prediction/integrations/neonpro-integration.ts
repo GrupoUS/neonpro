@@ -1,17 +1,13 @@
 import { predictionPerformanceMonitor } from '../analytics/performance-monitor';
 import { aestheticInferenceAPI } from '../api/inference-api';
-import type {
-  PatientProfile,
-  PredictionResponse,
-  TreatmentRequest,
-} from '../types';
+import type { PatientProfile, TreatmentRequest } from '../types';
 
 /**
  * NeonPro Core Services Integration Layer
  * Connects AI prediction engine with existing NeonPro patient and treatment systems
  */
 export class NeonProAIIntegration {
-  private isInitialized = false;
+  private readonly isInitialized = false;
 
   /**
    * Initialize integration with NeonPro services
@@ -26,9 +22,7 @@ export class NeonProAIIntegration {
       await aestheticInferenceAPI.initialize();
 
       this.isInitialized = true;
-      console.log('✅ NeonPro AI Integration initialized');
     } catch (error) {
-      console.error('❌ Failed to initialize NeonPro AI Integration:', error);
       throw new Error(`NeonPro AI Integration initialization failed: ${error}`);
     }
   }
@@ -40,7 +34,7 @@ export class NeonProAIIntegration {
     patientId: string,
     treatmentType: string,
     targetAreas: string[],
-    additionalParams?: Record<string, any>
+    _additionalParams?: Record<string, any>
   ): Promise<{
     success: boolean;
     recommendation?: any;
@@ -125,8 +119,6 @@ export class NeonProAIIntegration {
         },
       };
     } catch (error) {
-      console.error('❌ Treatment recommendation failed:', error);
-
       // Log error for monitoring
       predictionPerformanceMonitor.logPrediction(
         'treatment-outcome',
@@ -181,7 +173,6 @@ export class NeonProAIIntegration {
 
       throw new Error(result.error || 'Botox optimization failed');
     } catch (error) {
-      console.error('❌ Botox optimization failed:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -257,8 +248,7 @@ export class NeonProAIIntegration {
         },
         recommendations,
       };
-    } catch (error) {
-      console.error('❌ System health check failed:', error);
+    } catch (_error) {
       return {
         status: 'unhealthy',
         accuracy: {},

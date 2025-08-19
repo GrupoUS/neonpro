@@ -1,6 +1,6 @@
 // CommonJS compatibility wrapper for auth modules
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 
 // WebAuthn Service
 let webAuthnService;
@@ -16,9 +16,7 @@ try {
       getPublicKeyCredentialCreationOptions: () => ({}),
     };
   }
-} catch (error) {
-  console.warn('WebAuthn service not available:', error.message);
-}
+} catch (_error) {}
 
 // Performance Tracker
 let authPerformanceTracker;
@@ -38,9 +36,7 @@ try {
       successRate: 0.95,
     }),
   };
-} catch (error) {
-  console.warn('Performance tracker not available:', error.message);
-}
+} catch (_error) {}
 
 module.exports = {
   webAuthnService,

@@ -13,8 +13,6 @@ import { createClient } from '@/app/utils/supabase/server';
 import { NeonProAutomation } from '@/lib/automation/trigger-jobs';
 
 async function testEmailAutomation() {
-  console.log('🧪 Testing NeonPro Background Jobs Integration...\n');
-
   try {
     // Test data (usando dados fake para teste)
     const testAppointmentData = {
@@ -29,40 +27,24 @@ async function testEmailAutomation() {
       serviceName: 'Consulta Geral',
     };
 
-    console.log('📧 Testing appointment confirmation...');
-
     // Teste apenas em desenvolvimento ou com flag especial
     if (
       process.env.NODE_ENV === 'development' &&
       process.env.ENABLE_TEST_JOBS === 'true'
     ) {
-      const confirmationResult =
+      const _confirmationResult =
         await NeonProAutomation.sendAppointmentConfirmation(
           testAppointmentData
         );
-      console.log('✅ Confirmation job triggered:', confirmationResult);
 
-      const reminderResult =
+      const _reminderResult =
         await NeonProAutomation.scheduleAppointmentReminder(
           testAppointmentData
         );
-      console.log('✅ Reminder job scheduled:', reminderResult);
-
-      console.log('\n🎯 Full automation test...');
-      const fullResult =
+      const _fullResult =
         await NeonProAutomation.onNewAppointmentCreated(testAppointmentData);
-      console.log('✅ Full automation completed:', {
-        confirmationJobId: fullResult.confirmation?.jobId,
-        reminderJobId: fullResult.reminder?.jobId,
-      });
     } else {
-      console.log(
-        '⚠️ Skipping live job triggers (set ENABLE_TEST_JOBS=true to test)'
-      );
-      console.log('✅ Job classes and methods are properly structured');
     }
-
-    console.log('\n🔧 Testing configuration...');
 
     // Verifica se as variáveis de ambiente estão definidas
     const requiredEnvVars = [
@@ -76,13 +58,8 @@ async function testEmailAutomation() {
     );
 
     if (missingVars.length > 0) {
-      console.log('⚠️ Missing environment variables:', missingVars);
-      console.log('   Please check your .env.local file');
     } else {
-      console.log('✅ All required environment variables are set');
     }
-
-    console.log('\n🏗️ Testing Supabase integration...');
 
     try {
       const supabase = await createClient();
@@ -92,15 +69,9 @@ async function testEmailAutomation() {
         .limit(1);
 
       if (error) {
-        console.log('⚠️ Supabase connection issue:', error.message);
       } else {
-        console.log('✅ Supabase connection working');
       }
-    } catch (supabaseError) {
-      console.log('⚠️ Supabase integration test failed:', supabaseError);
-    }
-
-    console.log('\n🚀 Deployment readiness check...');
+    } catch (_supabaseError) {}
 
     const deploymentChecks = [
       { name: 'Trigger.dev config', status: existsFile('trigger.config.ts') },
@@ -119,25 +90,14 @@ async function testEmailAutomation() {
       },
     ];
 
-    deploymentChecks.forEach((check) => {
-      console.log(`${check.status ? '✅' : '❌'} ${check.name}`);
-    });
+    deploymentChecks.forEach((_check) => {});
 
     const allChecksPass = deploymentChecks.every((check) => check.status);
 
     if (allChecksPass) {
-      console.log('\n🎉 All systems ready for Vercel deployment!');
-      console.log('📋 Next steps:');
-      console.log('   1. Set environment variables in Vercel dashboard');
-      console.log('   2. Deploy to Vercel: vercel --prod');
-      console.log('   3. Test live endpoints after deployment');
     } else {
-      console.log(
-        '\n❌ Some components are missing. Check the failed items above.'
-      );
     }
-  } catch (error) {
-    console.error('❌ Test failed:', error);
+  } catch (_error) {
     process.exit(1);
   }
 }

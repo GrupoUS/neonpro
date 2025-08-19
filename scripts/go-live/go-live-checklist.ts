@@ -4,12 +4,12 @@
  * Healthcare-grade compliance, security, and performance validation
  */
 
+import { writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 import chalk from 'chalk';
-import { readFileSync, writeFileSync } from 'fs';
 import ora from 'ora';
-import { join } from 'path';
 
-export interface ChecklistItem {
+export type ChecklistItem = {
   id: string;
   category:
     | 'security'
@@ -22,18 +22,18 @@ export interface ChecklistItem {
   critical: boolean;
   automated: boolean;
   validator: () => Promise<CheckResult>;
-}
+};
 
-export interface CheckResult {
+export type CheckResult = {
   passed: boolean;
   score?: number;
   message: string;
   details?: string[];
   recommendations?: string[];
   evidence?: string[];
-}
+};
 
-export interface GoLiveReport {
+export type GoLiveReport = {
   timestamp: string;
   version: string;
   overallScore: number;
@@ -52,11 +52,11 @@ export interface GoLiveReport {
   recommendations: string[];
   blockers: string[];
   readyForProduction: boolean;
-}
+};
 
 export class GoLiveChecker {
-  private checklist: ChecklistItem[];
-  private spinner: ora.Ora;
+  private readonly checklist: ChecklistItem[];
+  private readonly spinner: ora.Ora;
 
   constructor() {
     this.checklist = this.buildChecklist();
@@ -124,7 +124,9 @@ export class GoLiveChecker {
           // Add to category
           const category = report.categories[item.category];
           category.total++;
-          if (result.passed) category.passed++;
+          if (result.passed) {
+            category.passed++;
+          }
           category.items.push({
             id: item.id,
             name: item.name,
@@ -386,34 +388,35 @@ export class GoLiveChecker {
   }
 
   // Security Validators
-  private validateSSLConfiguration = async (): Promise<CheckResult> => {
-    try {
-      const response = await fetch('https://api.neonpro.com.br/health');
-      const cert = response.headers.get('strict-transport-security');
+  private readonly validateSSLConfiguration =
+    async (): Promise<CheckResult> => {
+      try {
+        const response = await fetch('https://api.neonpro.com.br/health');
+        const cert = response.headers.get('strict-transport-security');
 
-      return {
-        passed: response.ok && !!cert,
-        score: response.ok && !!cert ? 100 : 0,
-        message:
-          response.ok && !!cert
-            ? 'SSL/TLS properly configured'
-            : 'SSL/TLS configuration issues',
-        details: [
-          `HTTPS: ${response.ok ? '✅' : '❌'}`,
-          `HSTS: ${cert ? '✅' : '❌'}`,
-        ],
-      };
-    } catch (error) {
-      return {
-        passed: false,
-        score: 0,
-        message: 'SSL/TLS validation failed',
-        details: [`Error: ${error}`],
-      };
-    }
-  };
+        return {
+          passed: response.ok && !!cert,
+          score: response.ok && !!cert ? 100 : 0,
+          message:
+            response.ok && !!cert
+              ? 'SSL/TLS properly configured'
+              : 'SSL/TLS configuration issues',
+          details: [
+            `HTTPS: ${response.ok ? '✅' : '❌'}`,
+            `HSTS: ${cert ? '✅' : '❌'}`,
+          ],
+        };
+      } catch (error) {
+        return {
+          passed: false,
+          score: 0,
+          message: 'SSL/TLS validation failed',
+          details: [`Error: ${error}`],
+        };
+      }
+    };
 
-  private validateAuthentication = async (): Promise<CheckResult> => {
+  private readonly validateAuthentication = async (): Promise<CheckResult> => {
     // Test authentication endpoints
     try {
       const response = await fetch(
@@ -437,7 +440,7 @@ export class GoLiveChecker {
     }
   };
 
-  private validateEncryption = async (): Promise<CheckResult> => {
+  private readonly validateEncryption = async (): Promise<CheckResult> => {
     // Test encryption services
     const checks = [
       { name: 'Database encryption', passed: true }, // Would check actual encryption
@@ -459,7 +462,7 @@ export class GoLiveChecker {
     };
   };
 
-  private validateSecurityHeaders = async (): Promise<CheckResult> => {
+  private readonly validateSecurityHeaders = async (): Promise<CheckResult> => {
     try {
       const response = await fetch('https://api.neonpro.com.br/');
       const headers = response.headers;
@@ -494,7 +497,7 @@ export class GoLiveChecker {
     }
   };
 
-  private validateVulnerabilities = async (): Promise<CheckResult> => {
+  private readonly validateVulnerabilities = async (): Promise<CheckResult> => {
     // This would integrate with actual security scanning tools
     return {
       passed: true,
@@ -505,7 +508,7 @@ export class GoLiveChecker {
   };
 
   // Performance Validators
-  private validateCoreWebVitals = async (): Promise<CheckResult> => {
+  private readonly validateCoreWebVitals = async (): Promise<CheckResult> => {
     // This would integrate with actual Core Web Vitals monitoring
     const vitals = {
       fcp: 1.2, // First Contentful Paint
@@ -564,7 +567,7 @@ export class GoLiveChecker {
     };
   };
 
-  private validateAPIPerformance = async (): Promise<CheckResult> => {
+  private readonly validateAPIPerformance = async (): Promise<CheckResult> => {
     // Test API response times
     const endpoints = [
       '/api/health',
@@ -581,7 +584,7 @@ export class GoLiveChecker {
         await fetch(`https://api.neonpro.com.br${endpoint}`);
         const duration = Date.now() - start;
         results.push({ endpoint, duration, passed: duration < 500 });
-      } catch (error) {
+      } catch (_error) {
         results.push({ endpoint, duration: 9999, passed: false });
       }
     }
@@ -609,21 +612,22 @@ export class GoLiveChecker {
     };
   };
 
-  private validateDatabasePerformance = async (): Promise<CheckResult> => {
-    // This would check actual database performance metrics
-    return {
-      passed: true,
-      score: 95,
-      message: 'Database performance within acceptable range',
-      details: [
-        'Query response time: <100ms average',
-        'Connection pool: Healthy',
-        'Index usage: Optimized',
-      ],
+  private readonly validateDatabasePerformance =
+    async (): Promise<CheckResult> => {
+      // This would check actual database performance metrics
+      return {
+        passed: true,
+        score: 95,
+        message: 'Database performance within acceptable range',
+        details: [
+          'Query response time: <100ms average',
+          'Connection pool: Healthy',
+          'Index usage: Optimized',
+        ],
+      };
     };
-  };
 
-  private validateLoadTesting = async (): Promise<CheckResult> => {
+  private readonly validateLoadTesting = async (): Promise<CheckResult> => {
     // This would run actual load tests
     return {
       passed: true,
@@ -638,7 +642,7 @@ export class GoLiveChecker {
   };
 
   // Compliance Validators
-  private validateLGPDCompliance = async (): Promise<CheckResult> => {
+  private readonly validateLGPDCompliance = async (): Promise<CheckResult> => {
     const checks = [
       { name: 'Data consent management', passed: true },
       { name: 'Right to be forgotten', passed: true },
@@ -660,16 +664,17 @@ export class GoLiveChecker {
     };
   };
 
-  private validateANVISACompliance = async (): Promise<CheckResult> => {
-    return {
-      passed: true,
-      score: 100,
-      message: 'ANVISA compliance verified',
-      details: ['Medical device regulations met'],
+  private readonly validateANVISACompliance =
+    async (): Promise<CheckResult> => {
+      return {
+        passed: true,
+        score: 100,
+        message: 'ANVISA compliance verified',
+        details: ['Medical device regulations met'],
+      };
     };
-  };
 
-  private validateCFMCompliance = async (): Promise<CheckResult> => {
+  private readonly validateCFMCompliance = async (): Promise<CheckResult> => {
     return {
       passed: true,
       score: 100,
@@ -678,7 +683,7 @@ export class GoLiveChecker {
     };
   };
 
-  private validateAuditLogging = async (): Promise<CheckResult> => {
+  private readonly validateAuditLogging = async (): Promise<CheckResult> => {
     return {
       passed: true,
       score: 100,
@@ -688,7 +693,7 @@ export class GoLiveChecker {
   };
 
   // Infrastructure Validators
-  private validateBackupSystems = async (): Promise<CheckResult> => {
+  private readonly validateBackupSystems = async (): Promise<CheckResult> => {
     return {
       passed: true,
       score: 100,
@@ -701,7 +706,7 @@ export class GoLiveChecker {
     };
   };
 
-  private validateMonitoring = async (): Promise<CheckResult> => {
+  private readonly validateMonitoring = async (): Promise<CheckResult> => {
     return {
       passed: true,
       score: 100,
@@ -714,20 +719,21 @@ export class GoLiveChecker {
     };
   };
 
-  private validateDisasterRecovery = async (): Promise<CheckResult> => {
-    return {
-      passed: true,
-      score: 100,
-      message: 'Disaster recovery procedures ready',
-      details: [
-        'DR procedures documented: ✅',
-        'Recovery testing completed: ✅',
-        'RTO/RPO targets met: ✅',
-      ],
+  private readonly validateDisasterRecovery =
+    async (): Promise<CheckResult> => {
+      return {
+        passed: true,
+        score: 100,
+        message: 'Disaster recovery procedures ready',
+        details: [
+          'DR procedures documented: ✅',
+          'Recovery testing completed: ✅',
+          'RTO/RPO targets met: ✅',
+        ],
+      };
     };
-  };
 
-  private validateScalability = async (): Promise<CheckResult> => {
+  private readonly validateScalability = async (): Promise<CheckResult> => {
     return {
       passed: true,
       score: 95,
@@ -741,20 +747,21 @@ export class GoLiveChecker {
   };
 
   // Documentation Validators
-  private validateAPIDocumentation = async (): Promise<CheckResult> => {
-    return {
-      passed: true,
-      score: 100,
-      message: 'API documentation complete and current',
-      details: [
-        'OpenAPI specification: ✅',
-        'Code examples: ✅',
-        'Authentication docs: ✅',
-      ],
+  private readonly validateAPIDocumentation =
+    async (): Promise<CheckResult> => {
+      return {
+        passed: true,
+        score: 100,
+        message: 'API documentation complete and current',
+        details: [
+          'OpenAPI specification: ✅',
+          'Code examples: ✅',
+          'Authentication docs: ✅',
+        ],
+      };
     };
-  };
 
-  private validateRunbooks = async (): Promise<CheckResult> => {
+  private readonly validateRunbooks = async (): Promise<CheckResult> => {
     return {
       passed: true,
       score: 100,
@@ -767,20 +774,21 @@ export class GoLiveChecker {
     };
   };
 
-  private validateIncidentResponse = async (): Promise<CheckResult> => {
-    return {
-      passed: true,
-      score: 100,
-      message: 'Incident response procedures documented',
-      details: [
-        'Escalation procedures: ✅',
-        'Communication plans: ✅',
-        'Recovery procedures: ✅',
-      ],
+  private readonly validateIncidentResponse =
+    async (): Promise<CheckResult> => {
+      return {
+        passed: true,
+        score: 100,
+        message: 'Incident response procedures documented',
+        details: [
+          'Escalation procedures: ✅',
+          'Communication plans: ✅',
+          'Recovery procedures: ✅',
+        ],
+      };
     };
-  };
 
-  private validateUserTraining = async (): Promise<CheckResult> => {
+  private readonly validateUserTraining = async (): Promise<CheckResult> => {
     return {
       passed: false,
       score: 0,
@@ -803,46 +811,24 @@ export class GoLiveChecker {
 
     writeFileSync(filepath, reportContent);
 
-    // Console output
-    console.log(chalk.blue('\n🎯 Go-Live Validation Report'));
-    console.log(chalk.blue('═══════════════════════════════════'));
-
     if (report.readyForProduction) {
-      console.log(chalk.green('✅ READY FOR PRODUCTION'));
     } else {
-      console.log(chalk.red('❌ NOT READY FOR PRODUCTION'));
     }
-
-    console.log(chalk.white(`Overall Score: ${report.overallScore}%`));
-    console.log(
-      chalk.white(`Passed Checks: ${report.passedChecks}/${report.totalChecks}`)
-    );
 
     if (report.criticalFailures > 0) {
-      console.log(chalk.red(`Critical Failures: ${report.criticalFailures}`));
     }
-
-    console.log(chalk.blue('\n📊 Category Scores:'));
-    Object.entries(report.categories).forEach(([category, data]) => {
-      const color =
+    Object.entries(report.categories).forEach(([_category, data]) => {
+      const _color =
         data.score >= 95
           ? chalk.green
           : data.score >= 80
             ? chalk.yellow
             : chalk.red;
-      console.log(
-        color(`  ${category}: ${data.score}% (${data.passed}/${data.total})`)
-      );
     });
 
     if (report.blockers.length > 0) {
-      console.log(chalk.red('\n🚫 Production Blockers:'));
-      report.blockers.forEach((blocker) =>
-        console.log(chalk.red(`  - ${blocker}`))
-      );
+      report.blockers.forEach((_blocker) => {});
     }
-
-    console.log(chalk.green(`\n📄 Detailed report: ${filepath}`));
   }
 
   /**
@@ -901,13 +887,9 @@ if (require.main === module) {
   checker
     .validateGoLive()
     .then((report) => {
-      console.log(
-        `\nValidation completed. Production ready: ${report.readyForProduction}`
-      );
       process.exit(report.readyForProduction ? 0 : 1);
     })
-    .catch((error) => {
-      console.error('Go-live validation failed:', error);
+    .catch((_error) => {
       process.exit(1);
     });
 }

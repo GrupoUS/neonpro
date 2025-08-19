@@ -4,9 +4,9 @@
  * Enterprise-grade deployment with health checks, rollback, and monitoring
  */
 
-import { exec } from 'child_process';
+import { exec } from 'node:child_process';
+import { promisify } from 'node:util';
 import ora from 'ora';
-import { promisify } from 'util';
 import { DeploymentMonitor, type MonitorConfig } from './deployment-monitor';
 import { HealthChecker } from './health-checker';
 import { RollbackManager } from './rollback-manager';
@@ -316,7 +316,7 @@ export class BlueGreenDeployer {
    * Switch production traffic to new environment
    */
   private async switchTraffic(
-    targetEnvironment: 'blue' | 'green'
+    _targetEnvironment: 'blue' | 'green'
   ): Promise<void> {
     try {
       // Gradual traffic switch for healthcare applications

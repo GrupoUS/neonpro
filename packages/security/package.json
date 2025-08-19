@@ -6,7 +6,7 @@
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsup",
+    "build": "npx tsc",
     "dev": "tsup --watch",
     "lint": "biome check src/",
     "lint:fix": "biome check --apply src/",

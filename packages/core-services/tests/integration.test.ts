@@ -1,17 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
-  AppointmentStatus,
   BillingService,
   InventoryService,
-  NotificationChannel,
   NotificationService,
   PatientService,
   PatientStatus,
-  PaymentMethod,
-  ProductCategory,
   SchedulingService,
   TreatmentService,
-  TreatmentType,
 } from '../src';
 
 // Mock repositories for testing
@@ -181,12 +176,12 @@ describe('Core Services Integration', () => {
 
   describe('Service Dependencies', () => {
     it('should handle service repository dependencies', () => {
-      expect(schedulingService['repository']).toBe(mockSchedulingRepo);
-      expect(treatmentService['repository']).toBe(mockTreatmentRepo);
-      expect(patientService['repository']).toBe(mockPatientRepo);
-      expect(inventoryService['repository']).toBe(mockInventoryRepo);
-      expect(billingService['repository']).toBe(mockBillingRepo);
-      expect(notificationService['repository']).toBe(mockNotificationRepo);
+      expect(schedulingService.repository).toBe(mockSchedulingRepo);
+      expect(treatmentService.repository).toBe(mockTreatmentRepo);
+      expect(patientService.repository).toBe(mockPatientRepo);
+      expect(inventoryService.repository).toBe(mockInventoryRepo);
+      expect(billingService.repository).toBe(mockBillingRepo);
+      expect(notificationService.repository).toBe(mockNotificationRepo);
     });
   });
 

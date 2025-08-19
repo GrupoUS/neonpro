@@ -61,7 +61,9 @@ export default function generator(plop: PlopTypes.NodePlopAPI): void {
         name: 'name',
         message: 'API endpoint name:',
         validate: (input) => {
-          if (!input) return 'Endpoint name is required';
+          if (!input) {
+            return 'Endpoint name is required';
+          }
           return true;
         },
       },

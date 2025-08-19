@@ -21,12 +21,6 @@ const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
 const STRIPE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
 
-console.log('🧪 TESTE COMPLETO DO SISTEMA DE ASSINATURAS STRIPE');
-console.log('='.repeat(60));
-console.log(`🌐 Base URL: ${BASE_URL}`);
-console.log(`📅 Data: ${new Date().toLocaleString('pt-BR')}`);
-console.log('='.repeat(60));
-
 let totalTests = 0;
 let passedTests = 0;
 let failedTests = 0;
@@ -79,13 +73,9 @@ function makeRequest(url, options = {}) {
 async function runTest(name, testFn) {
   totalTests++;
   try {
-    console.log(`\n🔄 Testando: ${name}`);
     await testFn();
-    console.log(`✅ PASSOU: ${name}`);
     passedTests++;
   } catch (error) {
-    console.log(`❌ FALHOU: ${name}`);
-    console.log(`   Erro: ${error.message}`);
     failedTests++;
     failedTestsList.push({ name, error: error.message });
   }
@@ -112,8 +102,6 @@ async function testEnvironmentVariables() {
       throw new Error(`Variável ${varName} tem formato inválido`);
     }
   }
-
-  console.log('   ✓ Todas as variáveis de ambiente Stripe estão configuradas');
 }
 
 // 2. Teste de Conectividade da API
@@ -126,9 +114,6 @@ async function testAPIConnectivity() {
       `${BASE_URL}/api/subscription/current`
     );
     if (pingResponse.status >= 200 && pingResponse.status < 500) {
-      console.log(
-        '   ✓ API está respondendo (health endpoint não implementado)'
-      );
       return;
     }
   }
@@ -136,8 +121,6 @@ async function testAPIConnectivity() {
   if (response.status !== 200) {
     throw new Error(`API não está respondendo. Status: ${response.status}`);
   }
-
-  console.log('   ✓ API está respondendo corretamente');
 }
 
 // 3. Teste de Endpoints Stripe
@@ -156,9 +139,6 @@ async function testStripeEndpoints() {
 
     // Para endpoints que requerem autenticação, 401 é esperado
     if (response.status === 401 || response.status === 405) {
-      console.log(
-        `   ✓ Endpoint ${endpoint} está configurado (requer auth/método correto)`
-      );
       continue;
     }
 
@@ -167,8 +147,6 @@ async function testStripeEndpoints() {
         `Endpoint ${endpoint} retornou erro de servidor: ${response.status}`
       );
     }
-
-    console.log(`   ✓ Endpoint ${endpoint} está funcionando`);
   }
 }
 
@@ -188,11 +166,8 @@ async function testStripeConfiguration() {
       throw new Error('Falha ao criar customer de teste');
     }
 
-    console.log('   ✓ Conexão com Stripe API funcionando');
-
     // Limpar customer de teste
     await stripe.customers.del(testCustomer.id);
-    console.log('   ✓ Customer de teste removido');
   } catch (error) {
     throw new Error(`Erro na configuração Stripe: ${error.message}`);
   }
@@ -217,21 +192,13 @@ async function testSubscriptionPlans() {
       const price = prices.data.find((p) => p.id === priceId);
       if (price) {
         foundPrices++;
-        console.log(
-          `   ✓ Plano ${priceId} encontrado: ${price.unit_amount / 100} ${price.currency.toUpperCase()}`
-        );
       } else {
-        console.log(`   ⚠️  Plano ${priceId} não encontrado no Stripe`);
       }
     }
 
     if (foundPrices === 0) {
       throw new Error('Nenhum plano de assinatura encontrado no Stripe');
     }
-
-    console.log(
-      `   ✓ ${foundPrices}/${expectedPrices.length} planos encontrados`
-    );
   } catch (error) {
     throw new Error(`Erro ao verificar planos: ${error.message}`);
   }
@@ -247,9 +214,6 @@ async function testDatabaseSchema() {
       'Possível erro de schema do banco - endpoint retornando 500'
     );
   }
-
-  console.log('   ✓ Endpoints que dependem do banco estão respondendo');
-  console.log('   ℹ️  Para teste completo do banco, execute: npm run test:db');
 }
 
 // 7. Teste de Webhook Stripe (simulado)
@@ -273,11 +237,6 @@ async function testStripeWebhook() {
       `Webhook endpoint retornando erro de servidor: ${response.status}`
     );
   }
-
-  console.log('   ✓ Webhook endpoint está configurado');
-  console.log(
-    '   ℹ️  Para testar webhooks reais, configure ngrok e teste no Stripe Dashboard'
-  );
 }
 
 // 8. Teste de Interface de Usuário
@@ -298,15 +257,10 @@ async function testUserInterface() {
         response.status === 401 ||
         response.status === 302
       ) {
-        console.log(`   ✓ Página ${page} está acessível`);
       } else if (response.status >= 500) {
         throw new Error(`Página ${page} retornando erro: ${response.status}`);
       }
-    } catch (error) {
-      console.log(
-        `   ⚠️  Página ${page} pode estar inacessível: ${error.message}`
-      );
-    }
+    } catch (_error) {}
   }
 }
 
@@ -321,8 +275,6 @@ async function testPerformance() {
   if (duration > 5000) {
     throw new Error(`Endpoint muito lento: ${duration}ms`);
   }
-
-  console.log(`   ✓ Tempo de resposta aceitável: ${duration}ms`);
 }
 
 // 10. Teste de Segurança Básica
@@ -342,15 +294,12 @@ async function testBasicSecurity() {
     }
 
     if (response.status === 401 || response.status === 403) {
-      console.log(`   ✓ Endpoint ${endpoint} está protegido`);
     }
   }
 }
 
 // Função principal
 async function main() {
-  console.log('🚀 Iniciando testes...\n');
-
   // Lista de testes para executar
   const tests = [
     ['Variáveis de Ambiente', testEnvironmentVariables],
@@ -370,57 +319,32 @@ async function main() {
     await runTest(name, testFn);
   }
 
-  // Relatório final
-  console.log(`\n${'='.repeat(60)}`);
-  console.log('📊 RELATÓRIO FINAL');
-  console.log('='.repeat(60));
-  console.log(`✅ Testes Passaram: ${passedTests}/${totalTests}`);
-  console.log(`❌ Testes Falharam: ${failedTests}/${totalTests}`);
-
   if (failedTests > 0) {
-    console.log('\n❌ Testes que Falharam:');
-    failedTestsList.forEach((test, i) => {
-      console.log(`${i + 1}. ${test.name}: ${test.error}`);
-    });
+    failedTestsList.forEach((_test, _i) => {});
   }
 
   const successRate = ((passedTests / totalTests) * 100).toFixed(1);
-  console.log(`\n📈 Taxa de Sucesso: ${successRate}%`);
 
   if (successRate >= 80) {
-    console.log('🎉 Sistema de assinaturas está em boa condição!');
   } else if (successRate >= 60) {
-    console.log('⚠️  Sistema precisa de algumas correções');
   } else {
-    console.log('🚨 Sistema precisa de correções críticas');
   }
 
-  console.log(`\n${'='.repeat(60)}`);
-  console.log('📝 Próximos Passos Recomendados:');
-
   if (failedTestsList.some((t) => t.name.includes('Stripe'))) {
-    console.log('1. Configurar produtos e preços no Stripe Dashboard');
-    console.log('2. Verificar variáveis de ambiente Stripe');
   }
 
   if (failedTestsList.some((t) => t.name.includes('Banco'))) {
-    console.log('3. Executar migration do banco: supabase db push');
   }
 
   if (failedTestsList.some((t) => t.name.includes('API'))) {
-    console.log('4. Verificar se o servidor está rodando: pnpm run dev');
   }
-
-  console.log('5. Executar testes específicos com: pnpm run test:[categoria]');
-  console.log('6. Configurar webhook com ngrok para testes locais');
 
   process.exit(failedTests > 0 ? 1 : 0);
 }
 
 // Executar se for chamado diretamente
 if (require.main === module) {
-  main().catch((error) => {
-    console.error('💥 Erro crítico durante os testes:', error);
+  main().catch((_error) => {
     process.exit(1);
   });
 }

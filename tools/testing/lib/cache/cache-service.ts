@@ -3,19 +3,19 @@
  * Provides Redis-like caching functionality for tests
  */
 
-export interface CacheOptions {
+export type CacheOptions = {
   ttl?: number; // Time to live in milliseconds
   serialize?: boolean; // Whether to JSON serialize values
-}
+};
 
-export interface CacheEntry<T = any> {
+export type CacheEntry<T = any> = {
   value: T;
   expires: number;
   metadata?: Record<string, any>;
-}
+};
 
 class CacheService {
-  private cache: Map<string, CacheEntry> = new Map();
+  private readonly cache: Map<string, CacheEntry> = new Map();
   private defaultTtl: number = 5 * 60 * 1000; // 5 minutes
 
   /**

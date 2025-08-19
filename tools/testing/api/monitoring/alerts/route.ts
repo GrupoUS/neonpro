@@ -1,7 +1,7 @@
 // Monitoring alerts API endpoint
 import { type NextRequest, NextResponse } from 'next/server';
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     // Mock alerts data for testing
     const alerts = [
@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     ];
 
     return NextResponse.json({ alerts });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch alerts' },
       { status: 500 }
@@ -34,15 +34,12 @@ export async function POST(request: NextRequest) {
   try {
     const alert = await request.json();
 
-    // Mock creating alert
-    console.log('Alert created:', alert);
-
     return NextResponse.json({
       success: true,
       id: `alert-${Date.now()}`,
       alert,
     });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to create alert' },
       { status: 500 }

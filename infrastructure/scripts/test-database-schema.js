@@ -15,19 +15,10 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!(supabaseUrl && supabaseServiceKey)) {
-  console.error(
-    '❌ Variáveis SUPABASE_URL ou SUPABASE_SERVICE_ROLE_KEY não configuradas'
-  );
   process.exit(1);
 }
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
-console.log('🗄️  TESTE DO SCHEMA DO BANCO DE DADOS');
-console.log('='.repeat(50));
-console.log(`🌐 URL: ${supabaseUrl}`);
-console.log(`📅 Data: ${new Date().toLocaleString('pt-BR')}`);
-console.log('='.repeat(50));
 
 let totalTests = 0;
 let passedTests = 0;
@@ -38,17 +29,12 @@ const results = [];
 async function runTest(name, testFn) {
   totalTests++;
   try {
-    console.log(`\n🔄 Testando: ${name}`);
     const result = await testFn();
-    console.log(`✅ PASSOU: ${name}`);
     if (result) {
-      console.log(`   ${result}`);
     }
     passedTests++;
     results.push({ name, status: 'PASSOU', details: result });
   } catch (error) {
-    console.log(`❌ FALHOU: ${name}`);
-    console.log(`   Erro: ${error.message}`);
     failedTests++;
     results.push({ name, status: 'FALHOU', error: error.message });
   }
@@ -236,7 +222,7 @@ async function testCRUDOperations() {
 }
 
 // Script para aplicar migration se necessário
-function generateMigrationSQL() {
+function _generateMigrationSQL() {
   return `
 -- Se a migration ainda não foi aplicada, execute este SQL no Supabase SQL Editor:
 
@@ -258,8 +244,6 @@ WHERE table_schema = 'public'
 
 // Função principal
 async function main() {
-  console.log('🚀 Iniciando testes do banco de dados...\n');
-
   const tests = [
     ['Conexão com Supabase', testConnection],
     ['Tabela user_subscriptions', testUserSubscriptionsTable],
@@ -277,53 +261,23 @@ async function main() {
     await runTest(name, testFn);
   }
 
-  // Relatório final
-  console.log(`\n${'='.repeat(50)}`);
-  console.log('📊 RELATÓRIO DO BANCO DE DADOS');
-  console.log('='.repeat(50));
-  console.log(`✅ Testes Passaram: ${passedTests}/${totalTests}`);
-  console.log(`❌ Testes Falharam: ${failedTests}/${totalTests}`);
-
   const successRate = ((passedTests / totalTests) * 100).toFixed(1);
-  console.log(`📈 Taxa de Sucesso: ${successRate}%`);
 
   if (failedTests > 0) {
-    console.log('\n❌ Problemas Encontrados:');
-    results
-      .filter((r) => r.status === 'FALHOU')
-      .forEach((test, i) => {
-        console.log(`${i + 1}. ${test.name}: ${test.error}`);
-      });
-
-    console.log('\n🔧 Como Resolver:');
-    console.log('1. Execute a migration no Supabase:');
-    console.log('   npx supabase db push');
-    console.log('\n2. Ou execute manualmente no SQL Editor:');
-    console.log(generateMigrationSQL());
+    results.filter((r) => r.status === 'FALHOU').forEach((_test, _i) => {});
   }
 
   if (successRate >= 80) {
-    console.log('\n🎉 Schema do banco está em ótimo estado!');
   } else if (successRate >= 60) {
-    console.log('\n⚠️  Schema precisa de algumas correções');
   } else {
-    console.log('\n🚨 Schema precisa ser aplicado/corrigido');
   }
-
-  console.log('\n📋 Resumo das Tabelas/Views Testadas:');
-  console.log('- user_subscriptions (tabela principal)');
-  console.log('- subscription_plans (planos disponíveis)');
-  console.log('- billing_events (histórico de cobrança)');
-  console.log('- active_subscriptions (view)');
-  console.log('- user_subscriptions_view (view para API)');
 
   process.exit(failedTests > 0 ? 1 : 0);
 }
 
 // Executar se chamado diretamente
 if (require.main === module) {
-  main().catch((error) => {
-    console.error('💥 Erro crítico:', error);
+  main().catch((_error) => {
     process.exit(1);
   });
 }

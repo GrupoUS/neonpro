@@ -1,8 +1,8 @@
 // ApiRoute Module
-export interface ApiRouteConfig {
+export type ApiRouteConfig = {
   enabled: boolean;
   data?: unknown;
-}
+};
 
 export const ApiRoute_DEFAULT: ApiRouteConfig = {
   enabled: true,

@@ -3,25 +3,25 @@
  * Handles deployment rollback operations for NeonPro healthcare platform
  */
 
-export interface RollbackConfig {
+export type RollbackConfig = {
   version: string;
   environment: string;
   reason?: string;
   timestamp: Date;
-}
+};
 
-export interface RollbackResult {
+export type RollbackResult = {
   success: boolean;
   previousVersion: string;
   currentVersion: string;
   rollbackTime: number;
   error?: string;
-}
+};
 
 export class RollbackManager {
-  private rollbackHistory: RollbackConfig[] = [];
+  private readonly rollbackHistory: RollbackConfig[] = [];
 
-  constructor(private config: { maxRollbackHistory: number }) {}
+  constructor(private readonly config: { maxRollbackHistory: number }) {}
 
   /**
    * Execute rollback to previous version
@@ -74,7 +74,7 @@ export class RollbackManager {
     return this.rollbackHistory.some((r) => r.environment === environment);
   }
 
-  private async performRollback(config: RollbackConfig): Promise<void> {
+  private async performRollback(_config: RollbackConfig): Promise<void> {
     // Implementation would depend on deployment platform
     // This is a placeholder for the actual rollback logic
     await new Promise((resolve) => setTimeout(resolve, 1000));

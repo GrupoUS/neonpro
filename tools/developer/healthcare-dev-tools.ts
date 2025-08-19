@@ -4,8 +4,8 @@
  * Quality Standard: ≥9.9/10 Healthcare Override
  */
 
-import { promises as fs } from 'fs';
-import { join } from 'path';
+import { promises as fs } from 'node:fs';
+import { join } from 'node:path';
 
 export type HealthcareDeveloperConfig = {
   project: {

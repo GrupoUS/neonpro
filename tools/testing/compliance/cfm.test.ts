@@ -1,9 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import {
-  mockAuditLogger,
-  mockCFMValidation,
-  mockMedicalEncryption,
-} from '../healthcare-setup';
+import { mockAuditLogger, mockCFMValidation } from '../healthcare-setup';
 
 describe('CFM (Medical Council) Compliance Tests', () => {
   beforeEach(() => {

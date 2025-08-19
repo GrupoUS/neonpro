@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
-interface EmptyStateProps {
+type EmptyStateProps = {
   icon?: React.ReactNode;
   title: string;
   description: string;
@@ -21,7 +21,7 @@ interface EmptyStateProps {
       | 'destructive';
   };
   className?: string;
-}
+};
 
 export function EmptyState({
   icon,

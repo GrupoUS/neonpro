@@ -1,16 +1,16 @@
 // Risk Assessment Service
 import { vi } from 'vitest';
 
-export interface RiskAssessmentConfig {
+export type RiskAssessmentConfig = {
   supabaseUrl: string;
   supabaseKey: string;
   enableRealTimeMonitoring?: boolean;
   professionalOversightEnabled?: boolean;
   auditTrailEnabled?: boolean;
   performanceMonitoringEnabled?: boolean;
-}
+};
 
-export interface RiskAssessmentService {
+export type RiskAssessmentService = {
   assessPatientRisk: (patientData: any) => Promise<any>;
   createTreatmentPrediction: (riskData: any) => Promise<any>;
   startRealTimeMonitoring: (patientId: string) => Promise<any>;
@@ -25,10 +25,10 @@ export interface RiskAssessmentService {
     doctorId: string,
     options?: any
   ) => Promise<any>;
-}
+};
 
 export function createRiskAssessmentService(
-  config: RiskAssessmentConfig
+  _config: RiskAssessmentConfig
 ): RiskAssessmentService {
   const service = {
     assessPatientRisk: vi.fn().mockImplementation(async (patientData: any) => {
@@ -48,7 +48,7 @@ export function createRiskAssessmentService(
       .fn()
       .mockImplementation(async (riskData: any) => {
         return {
-          treatmentId: 'treatment-' + Math.random().toString(36).substr(2, 9),
+          treatmentId: `treatment-${Math.random().toString(36).substr(2, 9)}`,
           predictedOutcome:
             riskData.riskLevel === 'high'
               ? 'requires monitoring'
@@ -62,7 +62,7 @@ export function createRiskAssessmentService(
       .fn()
       .mockImplementation(async (patientId: string) => {
         return {
-          monitoringId: 'monitor-' + Math.random().toString(36).substr(2, 9),
+          monitoringId: `monitor-${Math.random().toString(36).substr(2, 9)}`,
           patientId,
           status: 'active',
           interval: 300, // 5 minutes
@@ -130,9 +130,9 @@ export function createRiskAssessmentService(
     executeRiskAssessment: vi
       .fn()
       .mockImplementation(
-        async (patientData: any, doctorId: string, options?: any) => {
+        async (patientData: any, doctorId: string, _options?: any) => {
           // Validate input integrity first
-          if (!(patientData && patientData.id)) {
+          if (!patientData?.id) {
             throw new Error('Invalid patient data: missing required fields');
           }
 
@@ -149,8 +149,7 @@ export function createRiskAssessmentService(
           const contextConsistency = await service.validateContextConsistency();
 
           return {
-            assessmentId:
-              'assessment-' + Math.random().toString(36).substr(2, 9),
+            assessmentId: `assessment-${Math.random().toString(36).substr(2, 9)}`,
             patientId: patientData.id,
             doctorId,
             riskAssessment,

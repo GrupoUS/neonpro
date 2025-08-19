@@ -14,8 +14,8 @@ const mockSupabase = {
     }),
   },
   from: (table: string) => ({
-    select: (columns?: string) => ({
-      eq: (column: string, value: any) => ({
+    select: (_columns?: string) => ({
+      eq: (_column: string, _value: any) => ({
         data: table === 'patients' ? [] : null,
         error: null,
       }),
@@ -31,7 +31,7 @@ const mockSupabase = {
       error: data.consent === false ? new Error('Consent required') : null,
     }),
     delete: () => ({
-      eq: (column: string, value: any) => ({
+      eq: (_column: string, _value: any) => ({
         data: null,
         error: null,
       }),
@@ -54,7 +54,7 @@ const mockAuthService = {
 };
 
 const mockComplianceService = {
-  checkLGPDCompliance: async (tenantId: string) => ({
+  checkLGPDCompliance: async (_tenantId: string) => ({
     status: 'compliant',
     score: 98.5,
     issues: [],
@@ -62,10 +62,10 @@ const mockComplianceService = {
 };
 
 const mockMonitoringService = {
-  recordSecurityEvent: async (event: any) => ({ id: 'mock-event-id' }),
-  getSecurityEvents: async (filters: any) => [],
-  getFailedLoginAttempts: async (timeframe: any) => [],
-  logDataAccess: async (event: any) => ({ id: 'mock-log-id' }),
+  recordSecurityEvent: async (_event: any) => ({ id: 'mock-event-id' }),
+  getSecurityEvents: async (_filters: any) => [],
+  getFailedLoginAttempts: async (_timeframe: any) => [],
+  logDataAccess: async (_event: any) => ({ id: 'mock-log-id' }),
 };
 
 // Replace imports with mocks
@@ -419,10 +419,7 @@ describe('Security System Integration Tests', () => {
   });
 
   // Helper functions
-  async function setupTestEnvironment() {
-    // Setup test database state
-    console.log('Setting up test environment');
-  }
+  async function setupTestEnvironment() {}
 
   async function cleanupTestData() {
     // Clean up test data

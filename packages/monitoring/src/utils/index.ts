@@ -140,13 +140,15 @@ export function getPerformanceInsights(metrics: CustomMetric[]): {
       if (!metricGroups[metric.name]) {
         metricGroups[metric.name] = [];
       }
-      metricGroups[metric.name]!.push(metric);
+      metricGroups[metric.name]?.push(metric);
     }
   });
 
   // Analyze each metric type
   Object.entries(metricGroups).forEach(([name, values]) => {
-    if (!values || values.length === 0) return;
+    if (!values || values.length === 0) {
+      return;
+    }
 
     const avgValue =
       values.reduce((sum, m) => sum + m.value, 0) / values.length;
@@ -322,7 +324,7 @@ export function detectAnomalies(
       if (!metricGroups[metric.name]) {
         metricGroups[metric.name] = [];
       }
-      metricGroups[metric.name]!.push(metric.value);
+      metricGroups[metric.name]?.push(metric.value);
     }
   });
 

@@ -1,5 +1,4 @@
 import { Bell, Search, Settings, User } from 'lucide-react';
-import type React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {

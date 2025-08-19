@@ -9,7 +9,7 @@ import { createClient } from '@supabase/supabase-js';
 // TYPES AND INTERFACES
 // ================================================
 
-interface MetricData {
+type MetricData = {
   name: string;
   value: number;
   unit: 'count' | 'bytes' | 'milliseconds' | 'percentage' | 'rate';
@@ -17,9 +17,9 @@ interface MetricData {
   timestamp: Date;
   source: string;
   tenantId?: string;
-}
+};
 
-interface LogEntry {
+type LogEntry = {
   level: 'debug' | 'info' | 'warn' | 'error' | 'critical';
   message: string;
   service: string;
@@ -32,9 +32,9 @@ interface LogEntry {
   timestamp: Date;
   stack?: string;
   duration?: number;
-}
+};
 
-interface Alert {
+type Alert = {
   id: string;
   name: string;
   level: 'info' | 'warning' | 'critical';
@@ -50,9 +50,9 @@ interface Alert {
   resolvedAt?: Date;
   createdAt: Date;
   tenantId?: string;
-}
+};
 
-interface HealthCheck {
+type HealthCheck = {
   service: string;
   status: 'healthy' | 'degraded' | 'unhealthy';
   latency: number;
@@ -67,9 +67,9 @@ interface HealthCheck {
   timestamp: Date;
   version?: string;
   uptime?: number;
-}
+};
 
-interface PerformanceMetrics {
+type PerformanceMetrics = {
   requestsPerSecond: number;
   averageResponseTime: number;
   errorRate: number;
@@ -78,7 +78,7 @@ interface PerformanceMetrics {
   diskUsage: number;
   activeConnections: number;
   queueDepth: number;
-}
+};
 
 // ================================================
 // MONITORING SERVICE
@@ -86,15 +86,15 @@ interface PerformanceMetrics {
 
 export class MonitoringService {
   private static instance: MonitoringService;
-  private supabase = createClient(
+  private readonly supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
 
   private metricsBuffer: MetricData[] = [];
   private logsBuffer: LogEntry[] = [];
-  private bufferFlushInterval = 5000; // 5 seconds
-  private maxBufferSize = 1000;
+  private readonly bufferFlushInterval = 5000; // 5 seconds
+  private readonly maxBufferSize = 1000;
 
   private constructor() {
     this.initializeBufferFlush();
@@ -185,16 +185,12 @@ export class MonitoringService {
 
     // Console output for development
     if (process.env.NODE_ENV === 'development') {
-      const logMethod =
+      const _logMethod =
         level === 'error' || level === 'critical'
           ? 'error'
           : level === 'warn'
             ? 'warn'
             : 'log';
-      console[logMethod](
-        `[${level.toUpperCase()}] ${service}: ${message}`,
-        metadata
-      );
     }
 
     this.logsBuffer.push(logEntry);
@@ -608,12 +604,10 @@ export class MonitoringService {
       const { error } = await this.supabase.from('metrics').insert(metrics);
 
       if (error) {
-        console.error('Failed to flush metrics:', error);
         // Put metrics back in buffer
         this.metricsBuffer.unshift(...metrics);
       }
-    } catch (error) {
-      console.error('Failed to flush metrics:', error);
+    } catch (_error) {
       // Put metrics back in buffer
       this.metricsBuffer.unshift(...metrics);
     }
@@ -627,12 +621,10 @@ export class MonitoringService {
       const { error } = await this.supabase.from('logs').insert(logs);
 
       if (error) {
-        console.error('Failed to flush logs:', error);
         // Put logs back in buffer
         this.logsBuffer.unshift(...logs);
       }
-    } catch (error) {
-      console.error('Failed to flush logs:', error);
+    } catch (_error) {
       // Put logs back in buffer
       this.logsBuffer.unshift(...logs);
     }
@@ -640,7 +632,7 @@ export class MonitoringService {
 
   private getTransactionDuration(transactionId: string): number {
     // Extract timestamp from transaction ID
-    const timestamp = Number.parseInt(transactionId.split('_')[1]);
+    const timestamp = Number.parseInt(transactionId.split('_')[1], 10);
     return Date.now() - timestamp;
   }
 
@@ -706,7 +698,9 @@ export class MonitoringService {
 
   private calculateRate(metrics: MetricData[], metricName: string): number {
     const relevantMetrics = metrics.filter((m) => m.name === metricName);
-    if (relevantMetrics.length === 0) return 0;
+    if (relevantMetrics.length === 0) {
+      return 0;
+    }
 
     const sum = relevantMetrics.reduce((acc, m) => acc + m.value, 0);
     const timeSpan = Math.max(1, (relevantMetrics.length - 1) * 60); // Assume 1-minute intervals
@@ -716,7 +710,9 @@ export class MonitoringService {
 
   private calculateAverage(metrics: MetricData[], metricName: string): number {
     const relevantMetrics = metrics.filter((m) => m.name === metricName);
-    if (relevantMetrics.length === 0) return 0;
+    if (relevantMetrics.length === 0) {
+      return 0;
+    }
 
     const sum = relevantMetrics.reduce((acc, m) => acc + m.value, 0);
     return sum / relevantMetrics.length;
@@ -731,7 +727,9 @@ export class MonitoringService {
       .filter((m) => m.name === 'requests.error')
       .reduce((acc, m) => acc + m.value, 0);
 
-    if (totalRequests === 0) return 0;
+    if (totalRequests === 0) {
+      return 0;
+    }
     return (errorRequests / totalRequests) * 100;
   }
 

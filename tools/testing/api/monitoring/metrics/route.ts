@@ -1,7 +1,7 @@
 // Monitoring metrics API endpoint
 import { type NextRequest, NextResponse } from 'next/server';
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     // Mock metrics data for testing
     const metrics = {
@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     };
 
     return NextResponse.json(metrics);
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch metrics' },
       { status: 500 }
@@ -24,16 +24,13 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-
-    // Mock recording metric
-    console.log('Metric recorded:', body);
+    const _body = await request.json();
 
     return NextResponse.json({
       success: true,
       id: `metric-${Date.now()}`,
     });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to record metric' },
       { status: 500 }

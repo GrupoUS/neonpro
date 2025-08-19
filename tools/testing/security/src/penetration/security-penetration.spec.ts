@@ -7,19 +7,19 @@
 
 import { expect, test } from '@playwright/test';
 
-interface SQLInjectionPayload {
+type SQLInjectionPayload = {
   name: string;
   payload: string;
   expectedBlocked: boolean;
   severity: 'low' | 'medium' | 'high' | 'critical';
-}
+};
 
-interface XSSPayload {
+type XSSPayload = {
   name: string;
   payload: string;
   expectedBlocked: boolean;
   context: 'input' | 'url' | 'header';
-}
+};
 
 const SQL_INJECTION_PAYLOADS: SQLInjectionPayload[] = [
   {
@@ -548,10 +548,10 @@ test.describe('Infrastructure Security Tests', () => {
     }
 
     // Test that inline scripts are blocked
-    let scriptBlocked = false;
+    let _scriptBlocked = false;
     page.on('console', (msg) => {
       if (msg.text().includes('Content Security Policy')) {
-        scriptBlocked = true;
+        _scriptBlocked = true;
       }
     });
 
@@ -559,9 +559,7 @@ test.describe('Infrastructure Security Tests', () => {
       try {
         // This should be blocked by CSP
         eval('console.log("This should not execute")');
-      } catch (e) {
-        console.log('Script blocked by CSP');
-      }
+      } catch (_e) {}
     });
 
     await page.waitForTimeout(1000);

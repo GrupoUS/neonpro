@@ -2,19 +2,19 @@
 // Enhanced types supporting AI-powered intelligent scheduling
 
 // Temporary BaseEntity definition until @neonpro/core-services is available
-interface BaseEntity {
+type BaseEntity = {
   id: string;
   createdAt: Date;
   updatedAt: Date;
   createdBy?: string;
   updatedBy?: string;
-}
+};
 
 // TODO: Replace with import when @neonpro/core-services is properly built
 // import type { BaseEntity } from '@neonpro/core-services';
 
 // Core AI Scheduling Interfaces
-export interface AISchedulingConfig {
+export type AISchedulingConfig = {
   optimizationLevel: 'basic' | 'standard' | 'advanced' | 'enterprise';
   maxConcurrentBookings: number;
   bufferTimeMinutes: number;
@@ -22,9 +22,9 @@ export interface AISchedulingConfig {
   noShowPredictionThreshold: number;
   overbookingAllowed: boolean;
   maxOverbookingPercentage: number;
-}
+};
 
-export interface TreatmentDuration {
+export type TreatmentDuration = {
   treatmentId: string;
   treatmentType: string;
   estimatedMinutes: number;
@@ -35,24 +35,24 @@ export interface TreatmentDuration {
   staffRequired: string[];
   roomType: RoomType;
   complexity: 'low' | 'medium' | 'high' | 'critical';
-}
+};
 
-export interface RoomType {
+export type RoomType = {
   id: string;
   name: string;
   capacity: number;
   equipment: string[];
   suitableFor: string[];
   availability: TimeSlot[];
-}
+};
 
-export interface TimeSlot {
+export type TimeSlot = {
   start: Date;
   end: Date;
   available: boolean;
   resourceId?: string;
   appointmentId?: string;
-}
+};
 
 // AI-Enhanced Appointment Interface
 export interface AIAppointment extends BaseEntity {
@@ -109,31 +109,31 @@ export type AppointmentPriority =
   | 'emergency';
 
 // AI Prediction Interfaces
-export interface NoShowPrediction {
+export type NoShowPrediction = {
   probability: number;
   confidence: number;
   factors: NoShowFactor[];
   riskLevel: 'low' | 'medium' | 'high' | 'critical';
   recommendedActions: string[];
   lastUpdated: Date;
-}
+};
 
-export interface NoShowFactor {
+export type NoShowFactor = {
   factor: string;
   weight: number;
   value: number;
   impact: 'positive' | 'negative' | 'neutral';
-}
+};
 
 // Conflict Detection and Resolution
-export interface ConflictDetection {
+export type ConflictDetection = {
   conflicts: SchedulingConflict[];
   resolutions: ConflictResolution[];
   autoResolvable: boolean;
   criticalLevel: number;
-}
+};
 
-export interface SchedulingConflict {
+export type SchedulingConflict = {
   id: string;
   type: ConflictType;
   severity: 'low' | 'medium' | 'high' | 'critical';
@@ -142,7 +142,7 @@ export interface SchedulingConflict {
   affectedResources: string[];
   detectedAt: Date;
   autoResolvable: boolean;
-}
+};
 
 export type ConflictType =
   | 'double_booking'
@@ -154,7 +154,7 @@ export type ConflictType =
   | 'patient_availability'
   | 'business_hours';
 
-export interface ConflictResolution {
+export type ConflictResolution = {
   conflictId: string;
   resolutionType: ResolutionType;
   newScheduling: Partial<AIAppointment>;
@@ -162,7 +162,7 @@ export interface ConflictResolution {
   confidence: number;
   implementedAt?: Date;
   success?: boolean;
-}
+};
 
 export type ResolutionType =
   | 'reschedule'
@@ -173,16 +173,16 @@ export type ResolutionType =
   | 'patient_notification'
   | 'manual_intervention';
 
-export interface ResolutionImpact {
+export type ResolutionImpact = {
   patientsAffected: number;
   staffAffected: number;
   revenueImpact: number;
   patientSatisfactionImpact: number;
   operationalImpact: number;
-}
+};
 
 // Optimization and Analytics
-export interface SchedulingMetrics {
+export type SchedulingMetrics = {
   utilizationRate: number;
   efficiency: number;
   patientWaitTime: number;
@@ -192,25 +192,25 @@ export interface SchedulingMetrics {
   cancellationRate: number;
   noShowRate: number;
   revenueOptimization: number;
-}
+};
 
-export interface SchedulingOptimization {
+export type SchedulingOptimization = {
   originalMetrics: SchedulingMetrics;
   optimizedMetrics: SchedulingMetrics;
   improvements: OptimizationImprovement[];
   timeToImplement: number;
   confidenceLevel: number;
-}
+};
 
-export interface OptimizationImprovement {
+export type OptimizationImprovement = {
   metric: keyof SchedulingMetrics;
   improvement: number;
   impact: string;
   implementation: string[];
-}
+};
 
 // Patient and Staff Interfaces
-export interface PatientPreferences {
+export type PatientPreferences = {
   preferredTimes: TimePreference[];
   preferredStaff: string[];
   preferredRooms: string[];
@@ -218,22 +218,22 @@ export interface PatientPreferences {
   communicationMethod: 'sms' | 'email' | 'phone' | 'app';
   reminderPreferences: ReminderPreference[];
   specialNeeds: string[];
-}
+};
 
-export interface TimePreference {
+export type TimePreference = {
   dayOfWeek: number; // 0-6 (Sunday-Saturday)
   startTime: string; // HH:mm format
   endTime: string;
   preference: 'preferred' | 'acceptable' | 'avoid';
-}
+};
 
-export interface ReminderPreference {
+export type ReminderPreference = {
   type: 'sms' | 'email' | 'phone' | 'app';
   timing: number; // hours before appointment
   enabled: boolean;
-}
+};
 
-export interface PatientHistory {
+export type PatientHistory = {
   totalAppointments: number;
   completedAppointments: number;
   cancelledAppointments: number;
@@ -243,17 +243,17 @@ export interface PatientHistory {
   treatmentHistory: TreatmentHistoryItem[];
   punctualityScore: number;
   satisfactionScore: number;
-}
+};
 
-export interface TreatmentHistoryItem {
+export type TreatmentHistoryItem = {
   treatmentId: string;
   date: Date;
   duration: number;
   outcome: string;
   notes?: string;
-}
+};
 
-export interface StaffAvailability {
+export type StaffAvailability = {
   staffId: string;
   date: Date;
   shifts: WorkShift[];
@@ -261,17 +261,17 @@ export interface StaffAvailability {
   maxConcurrentPatients: number;
   breakTimes: TimeSlot[];
   unavailableTimes: TimeSlot[];
-}
+};
 
-export interface WorkShift {
+export type WorkShift = {
   start: Date;
   end: Date;
   type: 'regular' | 'overtime' | 'on_call';
   maxAppointments: number;
-}
+};
 
 // Rescheduling and Events
-export interface ReschedulingEvent {
+export type ReschedulingEvent = {
   id: string;
   originalAppointment: Partial<AIAppointment>;
   newAppointment: Partial<AIAppointment>;
@@ -279,7 +279,7 @@ export interface ReschedulingEvent {
   initiatedBy: 'patient' | 'staff' | 'system' | 'ai';
   timestamp: Date;
   impact: ResolutionImpact;
-}
+};
 
 export type ReschedulingReason =
   | 'patient_request'
@@ -291,7 +291,7 @@ export type ReschedulingReason =
   | 'cancellation';
 
 // AI Scheduling Request and Response
-export interface SchedulingRequest {
+export type SchedulingRequest = {
   patientId: string;
   treatmentId: string;
   preferredDates: Date[];
@@ -300,9 +300,9 @@ export interface SchedulingRequest {
   specialRequirements?: string[];
   flexibilityLevel: 'none' | 'low' | 'medium' | 'high';
   maxWaitDays: number;
-}
+};
 
-export interface SchedulingResponse {
+export type SchedulingResponse = {
   success: boolean;
   appointmentId?: string;
   scheduledAppointment?: AIAppointment;
@@ -312,19 +312,19 @@ export interface SchedulingResponse {
   confidenceScore: number;
   processingTime: number;
   recommendations: string[];
-}
+};
 
-export interface AlternativeSlot {
+export type AlternativeSlot = {
   slot: TimeSlot;
   staffId: string;
   roomId: string;
   score: number;
   pros: string[];
   cons: string[];
-}
+};
 
 // Performance and Analytics
-export interface PerformanceMetrics {
+export type PerformanceMetrics = {
   averageSchedulingTime: number;
   appointmentsPerDay: number;
   systemUtilization: number;
@@ -333,9 +333,9 @@ export interface PerformanceMetrics {
   aiAccuracy: number;
   conflictResolutionRate: number;
   noShowReduction: number;
-}
+};
 
-export interface AISchedulingAudit {
+export type AISchedulingAudit = {
   timestamp: Date;
   action: string;
   userId: string;
@@ -344,7 +344,7 @@ export interface AISchedulingAudit {
   aiDecision: boolean;
   confidence: number;
   outcome: 'success' | 'failure' | 'partial';
-}
+};
 
 // Export types for external use
 // Types are already exported individually above

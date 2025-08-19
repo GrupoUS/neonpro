@@ -1,9 +1,9 @@
 // Feature flags utilities for NeonPro Healthcare System
-export interface FeatureFlag {
+export type FeatureFlag = {
   name: string;
   enabled: boolean;
   variants?: Record<string, any>;
-}
+};
 
 export class FeatureFlagsService {
   private static flags: Map<string, boolean> = new Map([

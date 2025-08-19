@@ -1,7 +1,7 @@
 // Migrated from src/services/financial.ts
 import { supabase } from '@/lib/supabase';
 
-export interface FinancialTransaction {
+export type FinancialTransaction = {
   id?: string;
   tenant_id: string;
   type: 'income' | 'expense' | 'transfer';
@@ -17,9 +17,9 @@ export interface FinancialTransaction {
   due_date?: string;
   created_at?: string;
   updated_at?: string;
-}
+};
 
-export interface FinancialSummary {
+export type FinancialSummary = {
   total_income: number;
   total_expenses: number;
   net_profit: number;
@@ -28,9 +28,9 @@ export interface FinancialSummary {
   currency: string;
   period_start: string;
   period_end: string;
-}
+};
 
-export interface RevenueAnalytics {
+export type RevenueAnalytics = {
   daily_revenue: Array<{ date: string; amount: number }>;
   monthly_revenue: Array<{ month: string; amount: number }>;
   revenue_by_service: Array<{
@@ -43,7 +43,7 @@ export interface RevenueAnalytics {
     amount: number;
     percentage: number;
   }>;
-}
+};
 
 export class FinancialService {
   async createTransaction(
@@ -420,11 +420,7 @@ export class FinancialService {
     }
   }
 
-  private async invalidateFinancialCache(tenantId: string): Promise<void> {
-    // Invalidate any cached financial data
-    // This would integrate with your caching layer if you have one
-    console.log(`Invalidating financial cache for tenant: ${tenantId}`);
-  }
+  private async invalidateFinancialCache(_tenantId: string): Promise<void> {}
 }
 
 export const financialService = new FinancialService();

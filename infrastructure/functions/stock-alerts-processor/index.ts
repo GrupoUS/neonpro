@@ -7,7 +7,7 @@ const corsHeaders = {
     'authorization, x-client-info, apikey, content-type',
 };
 
-interface AlertConfig {
+type AlertConfig = {
   id: string;
   clinic_id: string;
   product_id?: string;
@@ -18,9 +18,9 @@ interface AlertConfig {
   severity_level: 'low' | 'medium' | 'high' | 'critical';
   is_active: boolean;
   notification_channels: string[];
-}
+};
 
-interface Product {
+type Product = {
   id: string;
   name: string;
   quantity_available: number;
@@ -28,9 +28,9 @@ interface Product {
   max_stock_level: number;
   expiry_date?: string;
   unit_cost: number;
-}
+};
 
-interface GeneratedAlert {
+type GeneratedAlert = {
   clinic_id: string;
   alert_config_id: string;
   product_id: string;
@@ -40,7 +40,7 @@ interface GeneratedAlert {
   threshold_value: number;
   message: string;
   status: 'active';
-}
+};
 
 serve(async (req) => {
   // Handle CORS
@@ -54,8 +54,6 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    console.log('Starting stock alerts processing...');
-
     // Get all active alert configurations
     const { data: alertConfigs, error: configError } = await supabase
       .from('stock_alert_configs')
@@ -63,13 +61,8 @@ serve(async (req) => {
       .eq('is_active', true);
 
     if (configError) {
-      console.error('Error fetching alert configs:', configError);
       throw configError;
     }
-
-    console.log(
-      `Found ${alertConfigs?.length || 0} active alert configurations`
-    );
 
     const generatedAlerts: GeneratedAlert[] = [];
     const notificationQueue: any[] = [];
@@ -80,8 +73,6 @@ serve(async (req) => {
     ];
 
     for (const clinicId of clinicIds) {
-      console.log(`Processing alerts for clinic: ${clinicId}`);
-
       const clinicConfigs =
         alertConfigs?.filter((config) => config.clinic_id === clinicId) || [];
 
@@ -105,16 +96,8 @@ serve(async (req) => {
         .eq('is_active', true);
 
       if (inventoryError) {
-        console.error(
-          `Error fetching inventory for clinic ${clinicId}:`,
-          inventoryError
-        );
         continue;
       }
-
-      console.log(
-        `Found ${inventory?.length || 0} products in inventory for clinic ${clinicId}`
-      );
 
       // Process each alert configuration
       for (const config of clinicConfigs) {
@@ -137,8 +120,6 @@ serve(async (req) => {
         }
       }
     }
-
-    console.log(`Generated ${generatedAlerts.length} new alerts`);
 
     // Insert new alerts (avoiding duplicates)
     if (generatedAlerts.length > 0) {
@@ -168,17 +149,12 @@ serve(async (req) => {
           )
       );
 
-      console.log(
-        `Inserting ${newAlerts.length} new alerts (${generatedAlerts.length - newAlerts.length} duplicates filtered)`
-      );
-
       if (newAlerts.length > 0) {
         const { error: insertError } = await supabase
           .from('stock_alerts')
           .insert(newAlerts);
 
         if (insertError) {
-          console.error('Error inserting alerts:', insertError);
           throw insertError;
         }
 
@@ -200,9 +176,6 @@ serve(async (req) => {
       }
     }
 
-    // Process notifications (simplified - would need actual notification service)
-    console.log(`Queued ${notificationQueue.length} notifications`);
-
     // Update performance metrics
     await updatePerformanceMetrics(supabase, clinicIds);
 
@@ -223,8 +196,6 @@ serve(async (req) => {
       }
     );
   } catch (error) {
-    console.error('Stock alerts processing error:', error);
-
     return new Response(
       JSON.stringify({
         success: false,
@@ -339,8 +310,6 @@ async function generateAlertsForProduct(
 }
 
 async function updatePerformanceMetrics(supabase: any, clinicIds: string[]) {
-  console.log('Updating performance metrics...');
-
   for (const clinicId of clinicIds) {
     try {
       // Calculate daily metrics
@@ -389,14 +358,8 @@ async function updatePerformanceMetrics(supabase: any, clinicIds: string[]) {
         );
 
       if (metricsError) {
-        console.error(
-          `Error updating metrics for clinic ${clinicId}:`,
-          metricsError
-        );
       }
-    } catch (error) {
-      console.error(`Error processing metrics for clinic ${clinicId}:`, error);
-    }
+    } catch (_error) {}
   }
 }
 

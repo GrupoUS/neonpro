@@ -1,10 +1,10 @@
 // Monitoring dashboard component for NeonPro Healthcare System
 import type React from 'react';
 
-interface MonitoringDashboardProps {
+type MonitoringDashboardProps = {
   metrics?: Record<string, number>;
   alerts?: string[];
-}
+};
 
 export const MonitoringDashboard: React.FC<MonitoringDashboardProps> = ({
   metrics = {},

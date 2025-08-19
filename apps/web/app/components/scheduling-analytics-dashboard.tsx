@@ -1,26 +1,23 @@
 'use client';
 
-import type {
-  SchedulingAnalytics,
-  TimeSlotEfficiency,
-} from '@neonpro/core-services/scheduling';
+import type { SchedulingAnalytics } from '@neonpro/core-services/scheduling';
 import type React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 
-interface SchedulingAnalyticsDashboardProps {
+type SchedulingAnalyticsDashboardProps = {
   tenantId: string;
   timeRange: { start: Date; end: Date };
   onTimeRangeChange: (range: { start: Date; end: Date }) => void;
-}
+};
 
-interface MetricCardProps {
+type MetricCardProps = {
   title: string;
   value: string | number;
   trend?: number;
   suffix?: string;
   color?: 'green' | 'blue' | 'yellow' | 'red' | 'purple';
   icon?: React.ReactNode;
-}
+};
 
 const MetricCard: React.FC<MetricCardProps> = ({
   title,
@@ -153,13 +150,15 @@ export const SchedulingAnalyticsDashboard: React.FC<
     };
 
     loadAnalytics();
-  }, [tenantId, timeRange]);
+  }, [mockAnalytics]);
 
   const chartData = useMemo(() => {
-    if (!analytics) return null;
+    if (!analytics) {
+      return null;
+    }
 
     return {
-      utilizationByHour: analytics.timeSlotEfficiency.map((slot, index) => ({
+      utilizationByHour: analytics.timeSlotEfficiency.map((slot, _index) => ({
         hour: `${slot.timeRange.start.getHours()}:00`,
         utilization: slot.utilizationRate * 100,
         revenue: slot.revenuePerHour,
@@ -193,7 +192,7 @@ export const SchedulingAnalyticsDashboard: React.FC<
       <div className="animate-pulse rounded-lg bg-white p-6 shadow-lg">
         <div className="mb-6 h-8 rounded bg-gray-200" />
         <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {[...Array(4)].map((_, i) => (
+          {[...new Array(4)].map((_, i) => (
             <div className="h-32 rounded-lg bg-gray-200" key={i} />
           ))}
         </div>
@@ -202,7 +201,9 @@ export const SchedulingAnalyticsDashboard: React.FC<
     );
   }
 
-  if (!analytics) return null;
+  if (!analytics) {
+    return null;
+  }
 
   return (
     <div className="mx-auto max-w-7xl rounded-lg bg-white p-6 shadow-lg">

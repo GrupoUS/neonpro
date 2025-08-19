@@ -3,35 +3,35 @@
  * Monitors application health during blue-green deployments for NeonPro healthcare platform
  */
 
-export interface HealthCheckConfig {
+export type HealthCheckConfig = {
   url: string;
   timeout: number;
   retries: number;
   interval: number;
   expectedStatus?: number;
   expectedBody?: string;
-}
+};
 
-export interface HealthCheckResult {
+export type HealthCheckResult = {
   healthy: boolean;
   responseTime: number;
   statusCode?: number;
   error?: string;
   timestamp: Date;
-}
+};
 
-export interface HealthStatus {
+export type HealthStatus = {
   environment: string;
   checks: HealthCheckResult[];
   overallHealth: boolean;
   lastCheck: Date;
-}
+};
 
 export class HealthChecker {
-  private healthHistory: Map<string, HealthCheckResult[]> = new Map();
+  private readonly healthHistory: Map<string, HealthCheckResult[]> = new Map();
 
   constructor(
-    private config: { maxHistoryPerEndpoint: number; baseUrl: string }
+    private readonly config: { maxHistoryPerEndpoint: number; baseUrl: string }
   ) {}
 
   /**
@@ -89,7 +89,9 @@ export class HealthChecker {
           const retryResult = await this.checkHealth(config);
           results.push(retryResult);
 
-          if (retryResult.healthy) break;
+          if (retryResult.healthy) {
+            break;
+          }
         }
       }
 
@@ -108,7 +110,9 @@ export class HealthChecker {
 
     const recentChecks = history.filter((check) => check.timestamp > cutoff);
 
-    if (recentChecks.length === 0) return false;
+    if (recentChecks.length === 0) {
+      return false;
+    }
 
     const healthyChecks = recentChecks.filter((check) => check.healthy);
     const healthRatio = healthyChecks.length / recentChecks.length;
@@ -132,23 +136,28 @@ export class HealthChecker {
       const lgpdResponse = await fetch(
         `${this.config.baseUrl}/compliance/lgpd/status`
       );
-      if (!lgpdResponse.ok) return false;
+      if (!lgpdResponse.ok) {
+        return false;
+      }
 
       // Check ANVISA compliance service
       const anvisaResponse = await fetch(
         `${this.config.baseUrl}/compliance/anvisa/status`
       );
-      if (!anvisaResponse.ok) return false;
+      if (!anvisaResponse.ok) {
+        return false;
+      }
 
       // Check audit compliance
       const auditResponse = await fetch(
         `${this.config.baseUrl}/compliance/audit/status`
       );
-      if (!auditResponse.ok) return false;
+      if (!auditResponse.ok) {
+        return false;
+      }
 
       return true;
-    } catch (error) {
-      console.error('Compliance services check failed:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -162,7 +171,7 @@ export class HealthChecker {
         `${this.config.baseUrl}/api/security/encryption/status`
       );
       return response.ok;
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   }
@@ -176,7 +185,7 @@ export class HealthChecker {
         `${this.config.baseUrl}/api/audit/logging/status`
       );
       return response.ok;
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   }
@@ -188,7 +197,7 @@ export class HealthChecker {
     try {
       const response = await fetch(url);
       return response.ok;
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   }
@@ -202,7 +211,7 @@ export class HealthChecker {
         `${this.config.baseUrl}/api/health/database`
       );
       return response.ok;
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   }
@@ -214,7 +223,7 @@ export class HealthChecker {
     try {
       const response = await fetch(`${this.config.baseUrl}/api/auth/health`);
       return response.ok;
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   }
@@ -231,7 +240,7 @@ export class HealthChecker {
       allChecks.push(...history);
 
       if (history.length > 0) {
-        const lastResult = history[history.length - 1];
+        const lastResult = history.at(-1);
         if (lastResult && lastResult.timestamp > lastCheck) {
           lastCheck = lastResult.timestamp;
         }
@@ -248,7 +257,7 @@ export class HealthChecker {
     };
   }
 
-  private async performHealthCheck(config: HealthCheckConfig): Promise<{
+  private async performHealthCheck(_config: HealthCheckConfig): Promise<{
     healthy: boolean;
     statusCode?: number;
   }> {

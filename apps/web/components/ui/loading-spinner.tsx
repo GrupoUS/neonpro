@@ -1,13 +1,12 @@
 'use client';
 
-import React from 'react';
 import { cn } from '@/lib/utils';
 
-interface LoadingSpinnerProps {
+type LoadingSpinnerProps = {
   size?: 'sm' | 'md' | 'lg' | 'xl';
   className?: string;
   text?: string;
-}
+};
 
 const sizeClasses = {
   sm: 'w-4 h-4',

@@ -1,14 +1,4 @@
-import {
-  differenceInDays,
-  differenceInMonths,
-  endOfMonth,
-  format,
-  isValid,
-  parseISO,
-  startOfMonth,
-  subDays,
-  subMonths,
-} from 'date-fns';
+import { format, isValid, parseISO, subDays } from 'date-fns';
 
 /**
  * Format currency values with proper locale formatting
@@ -18,7 +8,12 @@ export function formatAnalyticsCurrency(
   currency = 'USD',
   precision = 2
 ): string {
-  if (!amount || isNaN(amount) || amount === null || amount === undefined) {
+  if (
+    !amount ||
+    Number.isNaN(amount) ||
+    amount === null ||
+    amount === undefined
+  ) {
     return '$0.00';
   }
 
@@ -39,7 +34,7 @@ export function formatAnalyticsPercentage(
   value: number,
   precision = 2
 ): string {
-  if (!value || isNaN(value) || !isFinite(value)) {
+  if (!value || Number.isNaN(value) || !Number.isFinite(value)) {
     return '0.00%';
   }
 
@@ -50,7 +45,7 @@ export function formatAnalyticsPercentage(
  * Calculate growth rate between two periods
  */
 export function calculateGrowthRate(previous: number, current: number): number {
-  if (isNaN(current) || isNaN(previous)) {
+  if (Number.isNaN(current) || Number.isNaN(previous)) {
     return Number.NaN;
   }
 
@@ -72,7 +67,7 @@ export function calculateChurnRate(
   churned: number,
   startCustomers: number
 ): number {
-  if (isNaN(churned) || isNaN(startCustomers)) {
+  if (Number.isNaN(churned) || Number.isNaN(startCustomers)) {
     return Number.NaN;
   }
 
@@ -91,7 +86,7 @@ export function calculateChurnRate(
  * Calculate Customer Lifetime Value (LTV)
  */
 export function calculateLTV(arpu: number, churnRate: number): number {
-  if (isNaN(arpu) || isNaN(churnRate)) {
+  if (Number.isNaN(arpu) || Number.isNaN(churnRate)) {
     return Number.NaN;
   }
 
@@ -120,8 +115,8 @@ export function calculateMRR(subscriptions: any[]): number {
         sub &&
         sub.status === 'active' &&
         typeof sub.amount === 'number' &&
-        !isNaN(sub.amount) &&
-        isFinite(sub.amount)
+        !Number.isNaN(sub.amount) &&
+        Number.isFinite(sub.amount)
     )
     .reduce((total, sub) => total + sub.amount / 100, 0); // Convert from cents
 }
@@ -191,8 +186,10 @@ export function aggregateMetricsByPeriod<T>(
       ];
       const [monthA, yearA] = a.split(' ');
       const [monthB, yearB] = b.split(' ');
-      const yearDiff = Number.parseInt(yearA) - Number.parseInt(yearB);
-      if (yearDiff !== 0) return yearDiff;
+      const yearDiff = Number.parseInt(yearA, 10) - Number.parseInt(yearB, 10);
+      if (yearDiff !== 0) {
+        return yearDiff;
+      }
       return monthOrder.indexOf(monthA) - monthOrder.indexOf(monthB);
     }
     // For date format, sort as strings (ISO format sorts correctly)
@@ -309,8 +306,8 @@ export function parseAnalyticsFilters(params: URLSearchParams): {
  */
 export function exportToCSV(
   data: any[],
-  filename: string,
-  options?: { filename?: string; includeTimestamp?: boolean }
+  _filename: string,
+  _options?: { filename?: string; includeTimestamp?: boolean }
 ): string {
   const XLSX = require('xlsx');
   const worksheet = XLSX.utils.json_to_sheet(data);
@@ -323,7 +320,7 @@ export function exportToCSV(
 export function exportToPDF(
   data: any[],
   title: string,
-  options?: { title?: string; fontSize?: number; margins?: any }
+  _options?: { title?: string; fontSize?: number; margins?: any }
 ): string {
   const jsPDF = require('jspdf').default;
   const doc = new jsPDF();
@@ -348,8 +345,8 @@ export function exportToPDF(
  */
 export function exportToExcel(
   data: any,
-  filename: string,
-  options?: { formatting?: any }
+  _filename: string,
+  _options?: { formatting?: any }
 ): string {
   const XLSX = require('xlsx');
   const workbook = XLSX.utils.book_new();

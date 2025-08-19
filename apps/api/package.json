@@ -1,0 +1,80 @@
+{
+  "name": "@neonpro/api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "NeonPro FastAPI Healthcare Backend - LGPD/ANVISA Compliant",
+  "main": "main.py",
+  "scripts": {
+    "dev": "uvicorn main:app --reload --host 0.0.0.0 --port 8000",
+    "start": "uvicorn main:app --host 0.0.0.0 --port 8000",
+    "build": "python -m py_compile **/*.py",
+    "test": "pytest tests/ -v --cov=app --cov-report=term-missing",
+    "test:watch": "pytest-watch tests/ -v",
+    "lint": "flake8 app/ tests/",
+    "format": "black app/ tests/ && isort app/ tests/",
+    "type-check": "mypy app/",
+    "prisma:generate": "prisma generate --schema=../database/prisma/schema.prisma",
+    "prisma:deploy": "prisma migrate deploy --schema=../database/prisma/schema.prisma",
+    "compliance:check": "python scripts/compliance_check.py",
+    "security:audit": "bandit -r app/ -f json -o security-report.json"
+  },
+  "dependencies": {
+    "fastapi": "^0.115.6",
+    "uvicorn": "^0.32.1",
+    "pydantic": "^2.10.4",
+    "pydantic-settings": "^2.6.1",
+    "python-multipart": "^0.0.12",
+    "python-jose": "^3.3.0",
+    "passlib": "^1.7.4",
+    "bcrypt": "^4.2.1",
+    "supabase": "^2.9.1",
+    "psycopg2-binary": "^2.9.10",
+    "prisma": "^0.16.0",
+    "redis": "^5.2.1",
+    "celery": "^5.4.0",
+    "httpx": "^0.28.1",
+    "aiofiles": "^24.1.0",
+    "python-dotenv": "^1.0.1",
+    "cryptography": "^44.0.0",
+    "reportlab": "^4.2.5",
+    "openpyxl": "^3.1.5",
+    "pandas": "^2.2.3",
+    "numpy": "^2.2.1",
+    "scikit-learn": "^1.6.0",
+    "tensorflow": "^2.18.0",
+    "openai": "^1.59.2",
+    "anthropic": "^0.40.0"
+  },
+  "devDependencies": {
+    "pytest": "^8.3.4",
+    "pytest-asyncio": "^0.24.0",
+    "pytest-cov": "^6.0.0",
+    "pytest-watch": "^4.2.0",
+    "flake8": "^7.1.1",
+    "black": "^24.10.0",
+    "isort": "^5.13.2",
+    "mypy": "^1.13.0",
+    "bandit": "^1.8.0",
+    "httpx-test": "^0.1.0",
+    "factory-boy": "^3.3.1"
+  },
+  "engines": {
+    "python": ">=3.11"
+  },
+  "prisma": {
+    "schema": "../database/prisma/schema.prisma"
+  },
+  "keywords": [
+    "fastapi",
+    "healthcare",
+    "lgpd",
+    "anvisa",
+    "cfm",
+    "aesthetic-clinic",
+    "brazil",
+    "compliance",
+    "ai",
+    "supabase",
+    "prisma"
+  ]
+}

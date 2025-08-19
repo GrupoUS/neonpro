@@ -1,12 +1,12 @@
 'use client';
 
-import { createClient } from '@/app/utils/supabase/client';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { createClient } from '@/app/utils/supabase/client';
 import type { Database } from '@/types/supabase';
 
 type StaffMember = Database['public']['Tables']['staff_members']['Row'];
 
-interface StaffHook {
+type StaffHook = {
   staffMembers: StaffMember[];
   activeStaff: StaffMember[];
   staffById: (id: string) => StaffMember | null;
@@ -16,7 +16,7 @@ interface StaffHook {
   loading: boolean;
   error: Error | null;
   refreshStaff: () => Promise<void>;
-}
+};
 
 export function useStaffMembers(): StaffHook {
   const [staffMembers, setStaffMembers] = useState<StaffMember[]>([]);
@@ -41,7 +41,6 @@ export function useStaffMembers(): StaffHook {
 
       setStaffMembers(data || []);
     } catch (err) {
-      console.error('Error fetching staff members:', err);
       setError(err as Error);
     } finally {
       setLoading(false);

@@ -1,14 +1,14 @@
 // CommonJS wrapper for webauthn-service
 const webAuthnService = {
-  validateCredential: (credential) => {
+  validateCredential: (_credential) => {
     return { valid: true, user: { id: 'test-user' } };
   },
 
-  getCredentials: (userId) => {
+  getCredentials: (_userId) => {
     return [];
   },
 
-  createCredential: (options) => {
+  createCredential: (_options) => {
     return {
       id: 'test-credential',
       publicKey: 'test-public-key',
@@ -16,11 +16,11 @@ const webAuthnService = {
     };
   },
 
-  validateChallenge: (challenge) => {
+  validateChallenge: (_challenge) => {
     return true;
   },
 
-  getPublicKeyCredentialRequestOptions: (userId) => {
+  getPublicKeyCredentialRequestOptions: (_userId) => {
     return {
       challenge: 'test-challenge',
       allowCredentials: [],

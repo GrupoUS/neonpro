@@ -66,7 +66,7 @@ export default function PatientsPage() {
       <div className="grid grid-cols-1 gap-4">
         {loading ? (
           // Loading skeleton
-          [...Array(6)].map((_, i) => (
+          [...new Array(6)].map((_, i) => (
             <Card key={i}>
               <CardHeader>
                 <div className="flex items-center space-x-4">

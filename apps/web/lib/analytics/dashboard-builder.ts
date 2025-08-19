@@ -1,8 +1,8 @@
 // Dashboardbuilder Module
-export interface DashboardbuilderConfig {
+export type DashboardbuilderConfig = {
   enabled: boolean;
   data?: unknown;
-}
+};
 
 export const Dashboardbuilder_DEFAULT: DashboardbuilderConfig = {
   enabled: true,

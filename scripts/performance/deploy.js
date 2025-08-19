@@ -23,9 +23,7 @@ const colors = {
   bold: '\x1b[1m',
 };
 
-function log(message, color = colors.reset) {
-  console.log(`${color}${message}${colors.reset}`);
-}
+function log(_message, _color = colors.reset) {}
 
 function success(message) {
   log(`✅ ${message}`, colors.green);

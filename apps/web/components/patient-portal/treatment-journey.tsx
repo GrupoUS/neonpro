@@ -17,25 +17,15 @@ import {
 import { cn } from '@neonpro/utils';
 import {
   Activity,
-  AlertTriangle,
   Award,
-  Calendar,
   Camera,
   CheckCircle,
-  ChevronLeft,
-  ChevronRight,
   Clock,
   Download,
   Eye,
-  Heart,
-  Pause,
-  Play,
-  Plus,
-  RotateCcw,
   Share2,
   Star,
   Target,
-  TrendingUp,
   Upload,
   User,
   ZoomIn,
@@ -378,8 +368,8 @@ function TreatmentProgressCard({ treatment }: { treatment: any }) {
 }
 
 function BeforeAfterGallery({ photos }: { photos: any[] }) {
-  const [selectedPhoto, setSelectedPhoto] = useState(0);
-  const [showComparison, setShowComparison] = useState(false);
+  const [_selectedPhoto, _setSelectedPhoto] = useState(0);
+  const [_showComparison, _setShowComparison] = useState(false);
 
   const beforePhotos = photos.filter((p) => p.type === 'before');
   const progressPhotos = photos.filter((p) => p.type === 'progress');
@@ -496,7 +486,7 @@ function BeforeAfterGallery({ photos }: { photos: any[] }) {
 function PhotoTimeline({ photos }: { photos: any[] }) {
   return (
     <div className="space-y-4">
-      {photos.map((photo, index) => (
+      {photos.map((photo, _index) => (
         <div
           className="flex items-center space-x-4 rounded-lg border p-4"
           key={photo.id}
@@ -652,7 +642,7 @@ function TreatmentMilestones({ milestones }: { milestones: any[] }) {
                 {milestone.photos && milestone.photos.length > 0 && (
                   <div className="mt-3 flex space-x-2">
                     {milestone.photos.map(
-                      (photo: string, photoIndex: number) => (
+                      (_photo: string, photoIndex: number) => (
                         <div
                           className="flex h-12 w-12 items-center justify-center rounded bg-gray-200"
                           key={photoIndex}
@@ -861,7 +851,7 @@ export function TreatmentJourney() {
 
                       <div className="space-y-2 text-right">
                         <div className="flex items-center space-x-1">
-                          {[...Array(5)].map((_, i) => (
+                          {[...new Array(5)].map((_, i) => (
                             <Star
                               className={cn(
                                 'h-4 w-4',

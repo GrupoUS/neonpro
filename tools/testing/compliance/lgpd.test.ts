@@ -24,7 +24,7 @@ describe('LGPD Compliance Tests', () => {
         return true;
       };
 
-      expect(processData).toThrow(
+      expect(() => processData()).toThrow(
         'LGPD consent is required for data processing'
       );
     });
@@ -84,7 +84,7 @@ describe('LGPD Compliance Tests', () => {
       const patientId = 'patient-123';
 
       // Mock data export function
-      const exportPatientData = vi.fn(async (id: string) => ({
+      const exportPatientData = vi.fn(async (_id: string) => ({
         personalData: {
           name: 'João Silva',
           cpf: '123.456.789-09',

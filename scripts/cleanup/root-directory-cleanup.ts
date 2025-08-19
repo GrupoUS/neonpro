@@ -4,16 +4,16 @@
  * Healthcare SaaS Quality Standard: ≥9.9/10
  */
 
-import { promises as fs } from 'fs';
-import { join } from 'path';
+import { promises as fs } from 'node:fs';
+import { join } from 'node:path';
 
-interface CleanupConfig {
+type CleanupConfig = {
   rootPath: string;
   filesToRemove: string[];
   patternsToRemove: RegExp[];
   directoriesToClean: string[];
   preservePatterns: RegExp[];
-}
+};
 
 const healthcareCleanupConfig: CleanupConfig = {
   rootPath: process.cwd(),
@@ -78,41 +78,30 @@ const healthcareCleanupConfig: CleanupConfig = {
   ],
 };
 export class HealthcareDirectoryCleanup {
-  private config: CleanupConfig;
-  private cleanedFiles: string[] = [];
-  private preservedFiles: string[] = [];
-  private errors: Array<{ file: string; error: string }> = [];
+  private readonly config: CleanupConfig;
+  private readonly cleanedFiles: string[] = [];
+  private readonly preservedFiles: string[] = [];
+  private readonly errors: Array<{ file: string; error: string }> = [];
 
   constructor(config: CleanupConfig) {
     this.config = config;
   }
 
   async executeCleanup(): Promise<void> {
-    console.log('🏥 Starting Healthcare Directory Cleanup...');
+    // Remove specific files
+    await this.removeSpecificFiles();
 
-    try {
-      // Remove specific files
-      await this.removeSpecificFiles();
+    // Remove files matching patterns
+    await this.removePatternFiles();
 
-      // Remove files matching patterns
-      await this.removePatternFiles();
+    // Clean empty directories
+    await this.cleanEmptyDirectories();
 
-      // Clean empty directories
-      await this.cleanEmptyDirectories();
-
-      // Generate cleanup report
-      this.generateReport();
-
-      console.log('✅ Healthcare Directory Cleanup Completed');
-    } catch (error) {
-      console.error('❌ Cleanup failed:', error);
-      throw error;
-    }
+    // Generate cleanup report
+    this.generateReport();
   }
 
   private async removeSpecificFiles(): Promise<void> {
-    console.log('🧹 Removing specific temporary files...');
-
     for (const filename of this.config.filesToRemove) {
       const filepath = join(this.config.rootPath, filename);
 
@@ -120,7 +109,6 @@ export class HealthcareDirectoryCleanup {
         await fs.access(filepath);
         await fs.unlink(filepath);
         this.cleanedFiles.push(filename);
-        console.log(`   ✓ Removed: ${filename}`);
       } catch (error) {
         // File doesn't exist or can't be removed - this is often expected
         if ((error as any).code !== 'ENOENT') {
@@ -131,8 +119,6 @@ export class HealthcareDirectoryCleanup {
   }
 
   private async removePatternFiles(): Promise<void> {
-    console.log('🔍 Scanning for pattern-matched files...');
-
     try {
       const files = await fs.readdir(this.config.rootPath);
 
@@ -160,7 +146,6 @@ export class HealthcareDirectoryCleanup {
             if (stats.isFile()) {
               await fs.unlink(filepath);
               this.cleanedFiles.push(filename);
-              console.log(`   ✓ Pattern removal: ${filename}`);
             }
           } catch (error) {
             this.errors.push({
@@ -170,13 +155,9 @@ export class HealthcareDirectoryCleanup {
           }
         }
       }
-    } catch (error) {
-      console.error('Error scanning directory:', error);
-    }
+    } catch (_error) {}
   }
   private async cleanEmptyDirectories(): Promise<void> {
-    console.log('📁 Cleaning empty directories...');
-
     for (const dirName of this.config.directoriesToClean) {
       const dirPath = join(this.config.rootPath, dirName);
 
@@ -187,7 +168,6 @@ export class HealthcareDirectoryCleanup {
           if (files.length === 0) {
             await fs.rmdir(dirPath);
             this.cleanedFiles.push(`${dirName}/`);
-            console.log(`   ✓ Removed empty directory: ${dirName}/`);
           }
         }
       } catch (error) {
@@ -200,25 +180,13 @@ export class HealthcareDirectoryCleanup {
   }
 
   private generateReport(): void {
-    console.log('\n📊 HEALTHCARE DIRECTORY CLEANUP REPORT');
-    console.log('=====================================');
-    console.log(`✅ Files cleaned: ${this.cleanedFiles.length}`);
-    console.log(`🔒 Files preserved: ${this.preservedFiles.length}`);
-    console.log(`❌ Errors encountered: ${this.errors.length}`);
-
     if (this.cleanedFiles.length > 0) {
-      console.log('\n🧹 Cleaned Files:');
-      this.cleanedFiles.forEach((file) => console.log(`   - ${file}`));
+      this.cleanedFiles.forEach((_file) => {});
     }
 
     if (this.errors.length > 0) {
-      console.log('\n❌ Errors:');
-      this.errors.forEach(({ file, error }) =>
-        console.log(`   - ${file}: ${error}`)
-      );
+      this.errors.forEach(({ file, error }) => {});
     }
-
-    console.log('\n🏥 Healthcare directory cleanup completed successfully!');
   }
 }
 

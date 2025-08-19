@@ -16,7 +16,7 @@ const corsHeaders = {
     'authorization, x-client-info, apikey, content-type',
 };
 
-interface Database {
+type Database = {
   public: {
     Tables: {
       user_subscriptions: {
@@ -66,7 +66,7 @@ interface Database {
       };
     };
   };
-}
+};
 
 serve(async (req) => {
   // Handle CORS
@@ -78,8 +78,6 @@ serve(async (req) => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient<Database>(supabaseUrl, supabaseKey);
-
-    console.log('Starting subscription billing processor...');
 
     // Process trial expirations
     await processTrialExpirations(supabase);
@@ -104,8 +102,6 @@ serve(async (req) => {
       }
     );
   } catch (error) {
-    console.error('Subscription billing processor error:', error);
-
     return new Response(
       JSON.stringify({
         error: 'Billing processing failed',
@@ -121,8 +117,6 @@ serve(async (req) => {
 
 async function processTrialExpirations(supabase: any) {
   try {
-    console.log('Processing trial expirations...');
-
     const now = new Date().toISOString();
 
     // Find expired trials
@@ -133,11 +127,8 @@ async function processTrialExpirations(supabase: any) {
       .lt('trial_end', now);
 
     if (error) {
-      console.error('Error fetching expired trials:', error);
       return;
     }
-
-    console.log(`Found ${expiredTrials?.length || 0} expired trials`);
 
     for (const subscription of expiredTrials || []) {
       try {
@@ -164,26 +155,15 @@ async function processTrialExpirations(supabase: any) {
           },
         });
 
-        console.log(`Trial expired for subscription ${subscription.id}`);
-
         // TODO: Send trial expiration notification
         // await sendTrialExpirationNotification(subscription);
-      } catch (error) {
-        console.error(
-          `Error processing trial expiration for ${subscription.id}:`,
-          error
-        );
-      }
+      } catch (_error) {}
     }
-  } catch (error) {
-    console.error('Error in processTrialExpirations:', error);
-  }
+  } catch (_error) {}
 }
 
 async function processBillingRenewals(supabase: any) {
   try {
-    console.log('Processing billing renewals...');
-
     const now = new Date();
     const renewalWindow = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 24 hours ahead
 
@@ -201,13 +181,8 @@ async function processBillingRenewals(supabase: any) {
       .gt('next_billing_date', now.toISOString());
 
     if (error) {
-      console.error('Error fetching renewals due:', error);
       return;
     }
-
-    console.log(
-      `Found ${renewalDue?.length || 0} subscriptions due for renewal`
-    );
 
     for (const subscription of renewalDue || []) {
       try {
@@ -262,26 +237,15 @@ async function processBillingRenewals(supabase: any) {
           },
         });
 
-        console.log(`Processed renewal for subscription ${subscription.id}`);
-
         // TODO: Trigger payment processing
         // await triggerPaymentProcessing(subscription, amount);
-      } catch (error) {
-        console.error(
-          `Error processing renewal for ${subscription.id}:`,
-          error
-        );
-      }
+      } catch (_error) {}
     }
-  } catch (error) {
-    console.error('Error in processBillingRenewals:', error);
-  }
+  } catch (_error) {}
 }
 
 async function processSubscriptionCancellations(supabase: any) {
   try {
-    console.log('Processing subscription cancellations...');
-
     const now = new Date().toISOString();
 
     // Find subscriptions to cancel at period end
@@ -293,11 +257,8 @@ async function processSubscriptionCancellations(supabase: any) {
       .lt('current_period_end', now);
 
     if (error) {
-      console.error('Error fetching subscriptions to cancel:', error);
       return;
     }
-
-    console.log(`Found ${toCancelSubs?.length || 0} subscriptions to cancel`);
 
     for (const subscription of toCancelSubs || []) {
       try {
@@ -326,26 +287,15 @@ async function processSubscriptionCancellations(supabase: any) {
           },
         });
 
-        console.log(`Canceled subscription ${subscription.id}`);
-
         // TODO: Send cancellation confirmation
         // await sendCancellationConfirmation(subscription);
-      } catch (error) {
-        console.error(
-          `Error canceling subscription ${subscription.id}:`,
-          error
-        );
-      }
+      } catch (_error) {}
     }
-  } catch (error) {
-    console.error('Error in processSubscriptionCancellations:', error);
-  }
+  } catch (_error) {}
 }
 
 async function processFailedPaymentRetries(supabase: any) {
   try {
-    console.log('Processing failed payment retries...');
-
     const now = new Date();
     const retryWindow = new Date(now.getTime() - 24 * 60 * 60 * 1000); // 24 hours ago
 
@@ -359,13 +309,8 @@ async function processFailedPaymentRetries(supabase: any) {
       .gt('created_at', retryWindow.toISOString());
 
     if (error) {
-      console.error('Error fetching failed payments:', error);
       return;
     }
-
-    console.log(
-      `Found ${failedPayments?.length || 0} failed payments to retry`
-    );
 
     for (const payment of failedPayments || []) {
       try {
@@ -379,15 +324,9 @@ async function processFailedPaymentRetries(supabase: any) {
           })
           .eq('id', payment.id);
 
-        console.log(
-          `Retry attempt ${payment.processing_attempts + 1} for payment ${payment.id}`
-        );
-
         // TODO: Trigger payment retry
         // await retryPaymentProcessing(payment);
       } catch (error) {
-        console.error(`Error retrying payment ${payment.id}:`, error);
-
         // Update error information
         await supabase
           .from('billing_events')
@@ -398,9 +337,7 @@ async function processFailedPaymentRetries(supabase: any) {
           .eq('id', payment.id);
       }
     }
-  } catch (error) {
-    console.error('Error in processFailedPaymentRetries:', error);
-  }
+  } catch (_error) {}
 }
 
 function calculateNextPeriodEnd(periodStart: Date, billingCycle: string): Date {

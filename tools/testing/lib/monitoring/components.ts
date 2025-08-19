@@ -6,11 +6,11 @@
 import React from 'react';
 
 // Component types
-export interface MonitoringComponentProps {
+export type MonitoringComponentProps = {
   className?: string;
   onMetricUpdate?: (metric: string, value: number) => void;
   refreshInterval?: number;
-}
+};
 
 export interface SystemHealthComponentProps extends MonitoringComponentProps {
   showDetailed?: boolean;
@@ -27,9 +27,9 @@ export interface PerformanceChartProps extends MonitoringComponentProps {
 export const SystemHealthComponent: React.FC<SystemHealthComponentProps> = ({
   className = '',
   onMetricUpdate,
-  refreshInterval = 30000,
+  refreshInterval = 30_000,
   showDetailed = false,
-  alertThreshold = 80
+  alertThreshold = 80,
 }) => {
   React.useEffect(() => {
     const interval = setInterval(() => {
@@ -44,18 +44,30 @@ export const SystemHealthComponent: React.FC<SystemHealthComponentProps> = ({
 
       // Trigger alerts if thresholds exceeded
       if (cpuUsage > alertThreshold || memoryUsage > alertThreshold) {
-        console.warn('System health alert:', { cpuUsage, memoryUsage });
       }
     }, refreshInterval);
 
     return () => clearInterval(interval);
   }, [onMetricUpdate, refreshInterval, alertThreshold]);
 
-  return React.createElement('div', { className: `system-health ${className}` }, [
-    React.createElement('h3', { key: 'title' }, 'System Health'),
-    React.createElement('div', { key: 'status', className: 'health-status' }, 'Healthy'),
-    showDetailed && React.createElement('div', { key: 'details', className: 'health-details' }, 'Detailed metrics available')
-  ]);
+  return React.createElement(
+    'div',
+    { className: `system-health ${className}` },
+    [
+      React.createElement('h3', { key: 'title' }, 'System Health'),
+      React.createElement(
+        'div',
+        { key: 'status', className: 'health-status' },
+        'Healthy'
+      ),
+      showDetailed &&
+        React.createElement(
+          'div',
+          { key: 'details', className: 'health-details' },
+          'Detailed metrics available'
+        ),
+    ]
+  );
 };
 
 export const PerformanceChart: React.FC<PerformanceChartProps> = ({
@@ -64,7 +76,7 @@ export const PerformanceChart: React.FC<PerformanceChartProps> = ({
   timeRange,
   chartType,
   onMetricUpdate,
-  refreshInterval = 5000
+  refreshInterval = 5000,
 }) => {
   React.useEffect(() => {
     const interval = setInterval(() => {
@@ -76,23 +88,37 @@ export const PerformanceChart: React.FC<PerformanceChartProps> = ({
     return () => clearInterval(interval);
   }, [metricName, onMetricUpdate, refreshInterval]);
 
-  return React.createElement('div', { className: `performance-chart ${className}` }, [
-    React.createElement('h4', { key: 'title' }, `${metricName} (${timeRange})`),
-    React.createElement('div', { key: 'chart', className: `chart-${chartType}` }, `${chartType} chart for ${metricName}`)
-  ]);
+  return React.createElement(
+    'div',
+    { className: `performance-chart ${className}` },
+    [
+      React.createElement(
+        'h4',
+        { key: 'title' },
+        `${metricName} (${timeRange})`
+      ),
+      React.createElement(
+        'div',
+        { key: 'chart', className: `chart-${chartType}` },
+        `${chartType} chart for ${metricName}`
+      ),
+    ]
+  );
 };
 
 export const AlertsList: React.FC<MonitoringComponentProps> = ({
   className = '',
   onMetricUpdate,
-  refreshInterval = 10000
+  refreshInterval = 10_000,
 }) => {
-  const [alerts, setAlerts] = React.useState<Array<{
-    id: string;
-    type: 'error' | 'warning' | 'info';
-    message: string;
-    timestamp: number;
-  }>>([]);
+  const [alerts, setAlerts] = React.useState<
+    Array<{
+      id: string;
+      type: 'error' | 'warning' | 'info';
+      message: string;
+      timestamp: number;
+    }>
+  >([]);
 
   React.useEffect(() => {
     const interval = setInterval(() => {
@@ -100,11 +126,14 @@ export const AlertsList: React.FC<MonitoringComponentProps> = ({
       if (Math.random() > 0.8) {
         const newAlert = {
           id: `alert_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-          type: ['error', 'warning', 'info'][Math.floor(Math.random() * 3)] as 'error' | 'warning' | 'info',
+          type: ['error', 'warning', 'info'][Math.floor(Math.random() * 3)] as
+            | 'error'
+            | 'warning'
+            | 'info',
           message: `System alert: ${['High CPU usage', 'Memory threshold exceeded', 'Database connection slow'][Math.floor(Math.random() * 3)]}`,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         };
-        setAlerts(prev => [newAlert, ...prev.slice(0, 9)]); // Keep last 10
+        setAlerts((prev) => [newAlert, ...prev.slice(0, 9)]); // Keep last 10
         onMetricUpdate?.('alerts_count', alerts.length + 1);
       }
     }, refreshInterval);
@@ -114,59 +143,85 @@ export const AlertsList: React.FC<MonitoringComponentProps> = ({
 
   return React.createElement('div', { className: `alerts-list ${className}` }, [
     React.createElement('h4', { key: 'title' }, 'Recent Alerts'),
-    React.createElement('div', { key: 'list' }, 
-      alerts.map(alert => 
-        React.createElement('div', {
-          key: alert.id,
-          className: `alert alert-${alert.type}`
-        }, `[${alert.type.toUpperCase()}] ${alert.message}`)
+    React.createElement(
+      'div',
+      { key: 'list' },
+      alerts.map((alert) =>
+        React.createElement(
+          'div',
+          {
+            key: alert.id,
+            className: `alert alert-${alert.type}`,
+          },
+          `[${alert.type.toUpperCase()}] ${alert.message}`
+        )
       )
-    )
+    ),
   ]);
 };
 
-export const MetricsDashboard: React.FC<MonitoringComponentProps & {
-  metrics: string[];
-  layout: 'grid' | 'list';
-}> = ({
+export const MetricsDashboard: React.FC<
+  MonitoringComponentProps & {
+    metrics: string[];
+    layout: 'grid' | 'list';
+  }
+> = ({
   className = '',
   metrics = ['cpu_usage', 'memory_usage', 'response_time'],
   layout = 'grid',
   onMetricUpdate,
-  refreshInterval = 15000
+  refreshInterval = 15_000,
 }) => {
-  const [metricValues, setMetricValues] = React.useState<Record<string, number>>({});
+  const [metricValues, setMetricValues] = React.useState<
+    Record<string, number>
+  >({});
 
   React.useEffect(() => {
     const interval = setInterval(() => {
       const updates: Record<string, number> = {};
-      metrics.forEach(metric => {
+      metrics.forEach((metric) => {
         const value = Math.random() * 100;
         updates[metric] = value;
         onMetricUpdate?.(metric, value);
       });
-      setMetricValues(prev => ({ ...prev, ...updates }));
+      setMetricValues((prev) => ({ ...prev, ...updates }));
     }, refreshInterval);
 
     return () => clearInterval(interval);
   }, [metrics, onMetricUpdate, refreshInterval]);
 
-  return React.createElement('div', { className: `metrics-dashboard layout-${layout} ${className}` }, [
-    React.createElement('h3', { key: 'title' }, 'Metrics Dashboard'),
-    React.createElement('div', { key: 'metrics', className: 'metrics-grid' },
-      metrics.map(metric =>
-        React.createElement('div', {
-          key: metric,
-          className: 'metric-card'
-        }, [
-          React.createElement('div', { key: 'name', className: 'metric-name' }, metric.replace('_', ' ').toUpperCase()),
-          React.createElement('div', { key: 'value', className: 'metric-value' }, 
-            (metricValues[metric] || 0).toFixed(1)
+  return React.createElement(
+    'div',
+    { className: `metrics-dashboard layout-${layout} ${className}` },
+    [
+      React.createElement('h3', { key: 'title' }, 'Metrics Dashboard'),
+      React.createElement(
+        'div',
+        { key: 'metrics', className: 'metrics-grid' },
+        metrics.map((metric) =>
+          React.createElement(
+            'div',
+            {
+              key: metric,
+              className: 'metric-card',
+            },
+            [
+              React.createElement(
+                'div',
+                { key: 'name', className: 'metric-name' },
+                metric.replace('_', ' ').toUpperCase()
+              ),
+              React.createElement(
+                'div',
+                { key: 'value', className: 'metric-value' },
+                (metricValues[metric] || 0).toFixed(1)
+              ),
+            ]
           )
-        ])
-      )
-    )
-  ]);
+        )
+      ),
+    ]
+  );
 };
 
 // Component registry for dynamic loading
@@ -174,7 +229,7 @@ export const MonitoringComponents = {
   SystemHealthComponent,
   PerformanceChart,
   AlertsList,
-  MetricsDashboard
+  MetricsDashboard,
 };
 
 // Helper functions for component integration
@@ -191,12 +246,12 @@ export const getAvailableComponents = () => {
 };
 
 // Monitoring hooks
-export const useSystemHealth = (refreshInterval = 30000) => {
+export const useSystemHealth = (refreshInterval = 30_000) => {
   const [health, setHealth] = React.useState({
     status: 'healthy' as 'healthy' | 'degraded' | 'unhealthy',
     cpu: 0,
     memory: 0,
-    disk: 0
+    disk: 0,
   });
 
   React.useEffect(() => {
@@ -204,7 +259,7 @@ export const useSystemHealth = (refreshInterval = 30000) => {
       const cpu = Math.random() * 100;
       const memory = Math.random() * 100;
       const disk = Math.random() * 100;
-      
+
       let status: 'healthy' | 'degraded' | 'unhealthy' = 'healthy';
       if (cpu > 90 || memory > 90) {
         status = 'unhealthy';
@@ -221,19 +276,24 @@ export const useSystemHealth = (refreshInterval = 30000) => {
   return health;
 };
 
-export const usePerformanceMetrics = (metricNames: string[], refreshInterval = 5000) => {
-  const [metrics, setMetrics] = React.useState<Record<string, { value: number; timestamp: number }>>({});
+export const usePerformanceMetrics = (
+  metricNames: string[],
+  refreshInterval = 5000
+) => {
+  const [metrics, setMetrics] = React.useState<
+    Record<string, { value: number; timestamp: number }>
+  >({});
 
   React.useEffect(() => {
     const interval = setInterval(() => {
       const updates: Record<string, { value: number; timestamp: number }> = {};
-      metricNames.forEach(name => {
+      metricNames.forEach((name) => {
         updates[name] = {
           value: Math.random() * 1000,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         };
       });
-      setMetrics(prev => ({ ...prev, ...updates }));
+      setMetrics((prev) => ({ ...prev, ...updates }));
     }, refreshInterval);
 
     return () => clearInterval(interval);
@@ -247,10 +307,10 @@ export default {
   components: MonitoringComponents,
   hooks: {
     useSystemHealth,
-    usePerformanceMetrics
+    usePerformanceMetrics,
   },
   utils: {
     createMonitoringComponent,
-    getAvailableComponents
-  }
+    getAvailableComponents,
+  },
 };

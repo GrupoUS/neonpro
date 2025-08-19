@@ -3,20 +3,20 @@
 // Centralized authentication and authorization microservice
 // ================================================
 
+import { randomBytes, scrypt } from 'node:crypto';
+import { promisify } from 'node:util';
 import { createClient } from '@supabase/supabase-js';
-import { randomBytes, scrypt } from 'crypto';
 import { sign, verify } from 'jsonwebtoken';
-import { promisify } from 'util';
 import { config } from './configuration';
 import { monitoring } from './monitoring';
 
-const scryptAsync = promisify(scrypt);
+const _scryptAsync = promisify(scrypt);
 
 // ================================================
 // TYPES AND INTERFACES
 // ================================================
 
-interface User {
+type User = {
   id: string;
   email: string;
   roles: string[];
@@ -29,9 +29,9 @@ interface User {
   emailVerified: boolean;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
-interface Session {
+type Session = {
   id: string;
   userId: string;
   tenantId?: string;
@@ -42,32 +42,32 @@ interface Session {
   createdAt: Date;
   lastAccessedAt: Date;
   isActive: boolean;
-}
+};
 
-interface AuthToken {
+type AuthToken = {
   accessToken: string;
   refreshToken: string;
   expiresIn: number;
   tokenType: 'Bearer';
   scope?: string[];
-}
+};
 
-interface AuthContext {
+type AuthContext = {
   user: User;
   session: Session;
   permissions: string[];
   tenantId?: string;
-}
+};
 
-interface LoginCredentials {
+type LoginCredentials = {
   email: string;
   password: string;
   deviceId?: string;
   rememberMe?: boolean;
   mfaCode?: string;
-}
+};
 
-interface RegisterData {
+type RegisterData = {
   email: string;
   password: string;
   firstName?: string;
@@ -75,19 +75,19 @@ interface RegisterData {
   tenantId?: string;
   roles?: string[];
   metadata?: Record<string, any>;
-}
+};
 
-interface PasswordResetRequest {
+type PasswordResetRequest = {
   email: string;
   redirectUrl?: string;
-}
+};
 
-interface MfaSetupData {
+type MfaSetupData = {
   userId: string;
   secret: string;
   qrCodeUrl: string;
   backupCodes: string[];
-}
+};
 
 // ================================================
 // AUTHENTICATION SERVICE
@@ -95,12 +95,12 @@ interface MfaSetupData {
 
 export class AuthenticationService {
   private static instance: AuthenticationService;
-  private supabase = createClient(
+  private readonly supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
 
-  private jwtSecret = process.env.JWT_SECRET || 'default-secret';
+  private readonly jwtSecret = process.env.JWT_SECRET || 'default-secret';
   private jwtExpiryMinutes = 60; // 1 hour
   private refreshTokenExpiryDays = 30; // 30 days
 
@@ -149,7 +149,7 @@ export class AuthenticationService {
 
       // Get user profile
       const user = await this.getUserProfile(authData.user.id);
-      if (!(user && user.isActive)) {
+      if (!user?.isActive) {
         monitoring.warn('Login failed - user inactive', 'auth-service', {
           userId: authData.user.id,
         });
@@ -308,7 +308,7 @@ export class AuthenticationService {
 
       // Get session
       const session = await this.getSession(payload.sessionId);
-      if (!(session && session.isActive)) {
+      if (!session?.isActive) {
         monitoring.warn(
           'Token refresh failed - invalid session',
           'auth-service',
@@ -321,7 +321,7 @@ export class AuthenticationService {
 
       // Get user
       const user = await this.getUserProfile(session.userId);
-      if (!(user && user.isActive)) {
+      if (!user?.isActive) {
         monitoring.warn(
           'Token refresh failed - user inactive',
           'auth-service',
@@ -361,13 +361,13 @@ export class AuthenticationService {
 
       // Get session
       const session = await this.getSession(payload.sessionId);
-      if (!(session && session.isActive) || session.expiresAt < new Date()) {
+      if (!session?.isActive || session.expiresAt < new Date()) {
         return null;
       }
 
       // Get user
       const user = await this.getUserProfile(payload.userId);
-      if (!(user && user.isActive)) {
+      if (!user?.isActive) {
         return null;
       }
 
@@ -395,7 +395,7 @@ export class AuthenticationService {
   ): Promise<boolean> {
     try {
       const user = await this.getUserProfile(userId);
-      if (!(user && user.isActive)) {
+      if (!user?.isActive) {
         return false;
       }
 
@@ -951,7 +951,7 @@ export class AuthenticationService {
       }
 
       return this.mapSessionFromDb(data);
-    } catch (error) {
+    } catch (_error) {
       return null;
     }
   }
@@ -975,7 +975,7 @@ export class AuthenticationService {
       }
 
       return data.map((row) => row.permission_name);
-    } catch (error) {
+    } catch (_error) {
       return [];
     }
   }
@@ -996,7 +996,7 @@ export class AuthenticationService {
       }
 
       return data.map((row) => row.permission_name);
-    } catch (error) {
+    } catch (_error) {
       return [];
     }
   }
@@ -1013,39 +1013,45 @@ export class AuthenticationService {
     monitoring.info('Verification email sent', 'auth-service', { email });
   }
 
-  private async verifyMfaCode(userId: string, code: string): Promise<boolean> {
+  private async verifyMfaCode(
+    _userId: string,
+    _code: string
+  ): Promise<boolean> {
     // Implementation would verify TOTP or backup codes
     return true;
   }
 
-  private async verifyTotpCode(secret: string, code: string): Promise<boolean> {
+  private async verifyTotpCode(
+    _secret: string,
+    _code: string
+  ): Promise<boolean> {
     // Implementation would verify TOTP code using the secret
     return true;
   }
 
   private async storeTempMfaData(
-    userId: string,
-    secret: string,
-    backupCodes: string[]
+    _userId: string,
+    _secret: string,
+    _backupCodes: string[]
   ): Promise<void> {
     // Implementation would store temporary MFA data
   }
 
   private async getTempMfaData(
-    userId: string
+    _userId: string
   ): Promise<{ secret: string; backupCodes: string[] } | null> {
     // Implementation would retrieve temporary MFA data
     return null;
   }
 
-  private async clearTempMfaData(userId: string): Promise<void> {
+  private async clearTempMfaData(_userId: string): Promise<void> {
     // Implementation would clear temporary MFA data
   }
 
   private async enableMfaForUser(
-    userId: string,
-    secret: string,
-    backupCodes: string[]
+    _userId: string,
+    _secret: string,
+    _backupCodes: string[]
   ): Promise<void> {
     // Implementation would enable MFA for user
   }

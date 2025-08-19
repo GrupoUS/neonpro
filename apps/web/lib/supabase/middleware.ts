@@ -89,9 +89,9 @@ export async function updateSession(request: NextRequest) {
  * LGPD requires comprehensive access logging
  */
 async function logRouteAccess(
-  userId: string,
+  _userId: string,
   pathname: string,
-  ipAddress?: string
+  _ipAddress?: string
 ): Promise<void> {
   try {
     // Only log access to sensitive healthcare routes
@@ -108,18 +108,10 @@ async function logRouteAccess(
       pathname.startsWith(route)
     );
 
-    if (!isHealthcareRoute) return;
-
-    // Note: In a real implementation, this would use a background job
-    // to avoid blocking the middleware response
-    console.log('Healthcare route access:', {
-      userId,
-      pathname,
-      ipAddress,
-      timestamp: new Date().toISOString(),
-    });
-  } catch (error) {
-    console.error('Healthcare audit logging failed:', error);
+    if (!isHealthcareRoute) {
+      return;
+    }
+  } catch (_error) {
     // Don't throw - audit logging failure shouldn't block requests
   }
 }

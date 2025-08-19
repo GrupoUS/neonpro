@@ -1,15 +1,12 @@
 // Analytics monitoring utilities for NeonPro Healthcare System
-export interface AnalyticsEvent {
+export type AnalyticsEvent = {
   name: string;
   properties?: Record<string, any>;
   timestamp?: Date;
-}
+};
 
 export class AnalyticsService {
-  static track(event: AnalyticsEvent): void {
-    // Mock implementation for testing
-    console.log('Analytics event tracked:', event);
-  }
+  static track(_event: AnalyticsEvent): void {}
 
   static trackUserAction(
     action: string,

@@ -8,18 +8,18 @@ export interface AuthUser extends User {
   role?: string;
 }
 
-export interface LoginCredentials {
+export type LoginCredentials = {
   email: string;
   password: string;
-}
+};
 
-export interface RegisterData {
+export type RegisterData = {
   email: string;
   password: string;
   firstName: string;
   lastName: string;
   tenantId?: string;
-}
+};
 
 export class AuthService {
   async login(credentials: LoginCredentials): Promise<{
@@ -91,7 +91,6 @@ export class AuthService {
           });
 
         if (profileError) {
-          console.error('Profile creation error:', profileError);
         }
       }
 

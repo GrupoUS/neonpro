@@ -2,6 +2,7 @@
 // Story 11.4: Alertas e Relatórios de Estoque
 // Integration tests covering API endpoints with database operations
 
+import type { NextRequest } from 'next/server';
 import {
   afterAll,
   afterEach,
@@ -12,7 +13,6 @@ import {
   it,
   vi,
 } from 'vitest';
-import type { NextRequest } from 'next/server';
 
 // HTTP Status Constants
 const HTTP_STATUS = {
@@ -47,7 +47,7 @@ const mockRequest = (method: string, url: string, body?: unknown) =>
     },
   }) as NextRequest;
 
-const mockSession = {
+const _mockSession = {
   user: {
     id: 'test-user-id-123',
     email: 'test@example.com',
@@ -60,12 +60,12 @@ const testUserId = '87654321-e89b-12d3-a456-426614174000';
 const testProductId = '11111111-e89b-12d3-a456-426614174000';
 const testAlertId = '22222222-e89b-12d3-a456-426614174000';
 
-const mockProfile = {
+const _mockProfile = {
   id: testUserId,
   clinic_id: testClinicId,
 };
 
-const mockProduct = {
+const _mockProduct = {
   id: testProductId,
   name: 'Test Product',
   category: 'medication',
@@ -164,7 +164,7 @@ mockQueryChain.single.mockImplementation(async () => {
     };
   }
 
-  // If this is an update chain, return the updated alert and update state
+  // If this is an update chain, apply the update
   if (mockQueryChain._isUpdateChain) {
     const isAcknowledge = mockQueryChain._updateData?.status === 'acknowledged';
     const isResolve = mockQueryChain._updateData?.status === 'resolved';
@@ -173,7 +173,7 @@ mockQueryChain.single.mockImplementation(async () => {
     const updateData = mockQueryChain._updateData;
     mockQueryChain._updateData = null; // Reset update data
 
-    // Update the alert state for future queries
+    // Apply the update (assuming it passed the previous SELECT validation)
     if (isAcknowledge) {
       mockQueryChain._alertStates[alertId] = 'acknowledged';
       return {
@@ -187,7 +187,8 @@ mockQueryChain.single.mockImplementation(async () => {
         },
         error: null,
       };
-    } else if (isResolve) {
+    }
+    if (isResolve) {
       mockQueryChain._alertStates[alertId] = 'resolved';
       return {
         data: {
@@ -217,7 +218,7 @@ mockQueryChain.single.mockImplementation(async () => {
   };
 });
 
-const createMockQueryChain = () => mockQueryChain;
+const _createMockQueryChain = () => mockQueryChain;
 
 // Mock Next.js headers
 vi.mock('next/headers', () => ({
@@ -247,16 +248,16 @@ vi.mock('@/lib/supabase/server', () => ({
   })),
 }));
 
-import { POST as acknowledgePost } from '@/app/api/stock/alerts/acknowledge/route';
-import { POST as resolvePost } from '@/app/api/stock/alerts/resolve/route';
+import { POST as acknowledgePost } from '@/api/stock/alerts/acknowledge/route';
+import { POST as resolvePost } from '@/api/stock/alerts/resolve/route';
 // Import the API handlers after mocking
-import { GET, POST } from '@/app/api/stock/alerts/route';
+import { GET, POST } from '@/api/stock/alerts/route';
 
 // =====================================================
 // TEST DATA FIXTURES
 // =====================================================
 
-const mockAlertConfig = {
+const _mockAlertConfig = {
   id: '44444444-e89b-12d3-a456-426614174000',
   clinic_id: testClinicId,
   product_id: testProductId,
@@ -341,21 +342,20 @@ describe('GET /api/stock/alerts', () => {
       responseData = await response.json();
     } catch (e) {
       error = e instanceof Error ? e : new Error(String(e));
-      console.error('Exception during GET call:', e);
       throw new Error(`Exception during GET call: ${error.message}`);
     }
 
     // Ensure response is defined
     expect(response).toBeDefined();
 
-    if (response!.status !== HTTP_STATUS.OK) {
+    if (response?.status !== HTTP_STATUS.OK) {
       // Throw the response data as an error so we can see it
       throw new Error(
-        `Status ${response!.status}: ${JSON.stringify(responseData, null, 2)}`
+        `Status ${response?.status}: ${JSON.stringify(responseData, null, 2)}`
       );
     }
 
-    expect(response!.status).toBe(HTTP_STATUS.OK);
+    expect(response?.status).toBe(HTTP_STATUS.OK);
     expect((responseData as any).success).toBe(true);
     expect((responseData as any).data).toBeDefined();
     expect(Array.isArray((responseData as any).data)).toBe(true);
@@ -457,48 +457,27 @@ describe('POST /api/stock/alerts', () => {
   });
 
   it('should create alert configuration successfully', async () => {
-    console.log('Test data being sent:', validCreateRequest);
-
     const request = mockRequest(
       'POST',
       '/api/stock/alerts',
       validCreateRequest
     );
+    const response = await POST(request);
+    const responseData = await response.json();
 
-    console.log('Mock request created:', {
-      method: request.method,
-      url: request.url,
-      hasJson: typeof request.json === 'function',
-    });
-
-    try {
-      const response = await POST(request);
-      const responseData = await response.json();
-
-      console.log('POST Response Status:', response.status);
-      console.log('POST Response Data:', responseData);
-
-      if (response.status !== HTTP_STATUS.CREATED) {
-        console.error('Unexpected response:', {
-          status: response.status,
-          data: responseData,
-        });
-        // Let's see what the actual error message is
-        if (responseData.error) {
-          throw new Error(
-            `API returned ${response.status}: ${responseData.error}`
-          );
-        }
+    if (response.status !== HTTP_STATUS.CREATED) {
+      // Let's see what the actual error message is
+      if (responseData.error) {
+        throw new Error(
+          `API returned ${response.status}: ${responseData.error}`
+        );
       }
-
-      expect(response.status).toBe(HTTP_STATUS.CREATED);
-      expect(responseData.success).toBe(true);
-      expect(responseData.data).toBeDefined();
-      expect(responseData.data.id).toBe(testUserId); // Use the consistent test ID
-    } catch (error) {
-      console.error('Test execution error:', error);
-      throw error;
     }
+
+    expect(response.status).toBe(HTTP_STATUS.CREATED);
+    expect(responseData.success).toBe(true);
+    expect(responseData.data).toBeDefined();
+    expect(responseData.data.id).toBe(testUserId); // Use the consistent test ID
   });
 
   it('should validate required fields', async () => {
@@ -587,18 +566,12 @@ describe('POST /api/stock/alerts/acknowledge', () => {
       '/api/stock/alerts/acknowledge',
       validAcknowledgeRequest
     );
+    const response = await acknowledgePost(request);
+    const responseData = await response.json();
 
-    try {
-      const response = await acknowledgePost(request);
-      const responseData = await response.json();
-
-      expect(response.status).toBe(HTTP_STATUS.OK);
-      expect(responseData.success).toBe(true);
-      expect(responseData.data.status).toBe('acknowledged');
-    } catch (error) {
-      console.error('Test execution error:', error);
-      throw error;
-    }
+    expect(response.status).toBe(HTTP_STATUS.OK);
+    expect(responseData.success).toBe(true);
+    expect(responseData.data.status).toBe('acknowledged');
   });
 
   it('should validate alert ID format', async () => {
@@ -757,7 +730,7 @@ describe('Edge Cases and Error Handling', () => {
     const request = mockRequest('GET', '/api/stock/alerts');
 
     const response = await GET(request);
-    const responseData = await response.json();
+    const _responseData = await response.json();
 
     // Should handle timeouts or return normal response
     expect([HTTP_STATUS.OK, HTTP_STATUS.INTERNAL_SERVER_ERROR]).toContain(
@@ -787,7 +760,7 @@ describe('Edge Cases and Error Handling', () => {
 describe('Performance Tests', () => {
   it('should handle large result sets efficiently', async () => {
     // Mock large dataset
-    const largeDataset = new Array(LARGE_DATASET_SIZE)
+    const _largeDataset = new Array(LARGE_DATASET_SIZE)
       .fill(mockAlert)
       .map((alert, index) => ({
         ...alert,

@@ -1,4 +1,4 @@
-import { addYears, differenceInYears } from 'date-fns';
+import { differenceInYears } from 'date-fns';
 import { PatientStatus } from '../types';
 import type {
   AestheticHistory,
@@ -10,7 +10,7 @@ import type {
   UpdatePatientData,
 } from './types';
 
-export interface PatientRepository {
+export type PatientRepository = {
   // Patient CRUD operations
   createPatient(data: CreatePatientData): Promise<Patient>;
   updatePatient(id: string, data: UpdatePatientData): Promise<Patient>;
@@ -40,9 +40,9 @@ export interface PatientRepository {
   // Search and analytics
   searchPatients(query: string): Promise<Patient[]>;
   getPatientStats(): Promise<PatientStats>;
-}
+};
 
-export interface PatientFilters {
+export type PatientFilters = {
   status?: PatientStatus;
   ageRange?: { min: number; max: number };
   gender?: string;
@@ -50,8 +50,8 @@ export interface PatientFilters {
   city?: string;
   limit?: number;
   offset?: number;
-}
-export interface PatientStats {
+};
+export type PatientStats = {
   totalPatients: number;
   activePatients: number;
   newPatientsThisMonth: number;
@@ -59,59 +59,47 @@ export interface PatientStats {
   genderDistribution: { male: number; female: number; other: number };
   topReferralSources: { source: string; count: number }[];
   patientsByStatus: { status: PatientStatus; count: number }[];
-}
+};
 
 export class PatientService {
-  constructor(private repository: PatientRepository) {}
+  constructor(private readonly repository: PatientRepository) {}
 
   // Patient management
   async createPatient(data: CreatePatientData): Promise<Patient> {
-    try {
-      // Check if patient already exists
-      const existingPatient = await this.repository.getPatientByEmail(
-        data.email
-      );
-      if (existingPatient) {
-        throw new Error('Patient with this email already exists');
-      }
-
-      // Validate age (must be 18+ for aesthetic treatments)
-      const age = differenceInYears(new Date(), data.dateOfBirth);
-      if (age < 18) {
-        throw new Error(
-          'Patient must be 18 years or older for aesthetic treatments'
-        );
-      }
-
-      const patient = await this.repository.createPatient(data);
-      return patient;
-    } catch (error) {
-      console.error('Error creating patient:', error);
-      throw error;
+    // Check if patient already exists
+    const existingPatient = await this.repository.getPatientByEmail(data.email);
+    if (existingPatient) {
+      throw new Error('Patient with this email already exists');
     }
+
+    // Validate age (must be 18+ for aesthetic treatments)
+    const age = differenceInYears(new Date(), data.dateOfBirth);
+    if (age < 18) {
+      throw new Error(
+        'Patient must be 18 years or older for aesthetic treatments'
+      );
+    }
+
+    const patient = await this.repository.createPatient(data);
+    return patient;
   }
 
   async updatePatient(id: string, data: UpdatePatientData): Promise<Patient> {
-    try {
-      const existingPatient = await this.repository.getPatient(id);
-      if (!existingPatient) {
-        throw new Error('Patient not found');
-      }
-
-      // If email is being updated, check for duplicates
-      if (data.email && data.email !== existingPatient.email) {
-        const emailExists = await this.repository.getPatientByEmail(data.email);
-        if (emailExists && emailExists.id !== id) {
-          throw new Error('Another patient with this email already exists');
-        }
-      }
-
-      const patient = await this.repository.updatePatient(id, data);
-      return patient;
-    } catch (error) {
-      console.error('Error updating patient:', error);
-      throw error;
+    const existingPatient = await this.repository.getPatient(id);
+    if (!existingPatient) {
+      throw new Error('Patient not found');
     }
+
+    // If email is being updated, check for duplicates
+    if (data.email && data.email !== existingPatient.email) {
+      const emailExists = await this.repository.getPatientByEmail(data.email);
+      if (emailExists && emailExists.id !== id) {
+        throw new Error('Another patient with this email already exists');
+      }
+    }
+
+    const patient = await this.repository.updatePatient(id, data);
+    return patient;
   }
   async getPatient(id: string): Promise<Patient | null> {
     return this.repository.getPatient(id);

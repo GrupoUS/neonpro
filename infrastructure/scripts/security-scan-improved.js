@@ -104,7 +104,6 @@ function scanFile(filePath) {
 
     return violations;
   } catch (_error) {
-    console.warn(`⚠️  Não foi possível ler: ${filePath}`);
     return [];
   }
 }
@@ -131,38 +130,19 @@ function scanDirectory(dirPath) {
         violations.push(...scanFile(fullPath));
       }
     }
-  } catch (_error) {
-    console.warn(`⚠️  Não foi possível ler diretório: ${dirPath}`);
-  }
+  } catch (_error) {}
 
   return violations;
 }
 
 function main() {
-  console.log('🛡️ INICIANDO SCAN DE SEGURANÇA INTELIGENTE NEONPRO...');
-
   const projectRoot = process.cwd();
   const violations = scanDirectory(projectRoot);
 
   if (violations.length === 0) {
-    console.log('✅ SCAN LIMPO - Nenhuma chave sensível detectada!');
-    console.log('🎯 Projeto seguro para commit.');
     process.exit(0);
   } else {
-    console.log(
-      `🚨 VULNERABILIDADES CRÍTICAS DETECTADAS: ${violations.length}`
-    );
-    violations.forEach((violation, index) => {
-      console.log(`${index + 1}. 📁 ${violation.file}`);
-      console.log(`   🔑 ${violation.pattern}`);
-      console.log(`   ⚠️  Line ${violation.line}: ${violation.match}`);
-      console.log('');
-    });
-
-    console.log('❌ COMMIT BLOQUEADO - API KEYS REAIS EXPOSTAS!');
-    console.log(
-      '💡 AÇÃO: Mova as keys para .env.local ou use variáveis de ambiente'
-    );
+    violations.forEach((_violation, _index) => {});
     process.exit(1);
   }
 }

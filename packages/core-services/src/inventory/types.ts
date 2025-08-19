@@ -72,13 +72,13 @@ export interface Supplier extends BaseEntity {
   notes?: string;
 }
 
-export interface SupplierAddress {
+export type SupplierAddress = {
   street: string;
   city: string;
   state: string;
   zipCode: string;
   country: string;
-}
+};
 
 export interface PurchaseOrder extends BaseEntity {
   orderNumber: string;
@@ -96,15 +96,15 @@ export interface PurchaseOrder extends BaseEntity {
   receivedBy?: string;
 }
 
-export interface PurchaseOrderItem {
+export type PurchaseOrderItem = {
   productId: string;
   quantity: number;
   unitCost: number;
   totalCost: number;
   receivedQuantity?: number;
-}
+};
 
-export interface StorageLocation {
+export type StorageLocation = {
   id: string;
   name: string;
   zone: string; // refrigerated, room temperature, controlled
@@ -112,9 +112,9 @@ export interface StorageLocation {
   currentOccupancy: number;
   temperature?: TemperatureRange;
   humidity?: HumidityRange;
-}
+};
 
-export interface StorageRequirements {
+export type StorageRequirements = {
   temperatureMin?: number;
   temperatureMax?: number;
   humidityMin?: number;
@@ -123,28 +123,28 @@ export interface StorageRequirements {
   requiresRefrigeration: boolean;
   requiresFreezing: boolean;
   specialInstructions?: string;
-}
-export interface RegulatoryInfo {
+};
+export type RegulatoryInfo = {
   fdaApproved: boolean;
   anvisaApproved: boolean;
   ceMarking: boolean;
   lotNumber?: string;
   manufactureDate?: Date;
   regulatoryNotes?: string;
-}
+};
 
-export interface TemperatureRange {
+export type TemperatureRange = {
   min: number;
   max: number;
   unit: 'celsius' | 'fahrenheit';
-}
+};
 
-export interface HumidityRange {
+export type HumidityRange = {
   min: number; // percentage
   max: number; // percentage
-}
+};
 
-export interface InventoryAlert {
+export type InventoryAlert = {
   id: string;
   type: AlertType;
   productId: string;
@@ -155,7 +155,7 @@ export interface InventoryAlert {
   createdAt: Date;
   acknowledgedAt?: Date;
   acknowledgedBy?: string;
-}
+};
 
 // Enums
 export enum ProductCategory {

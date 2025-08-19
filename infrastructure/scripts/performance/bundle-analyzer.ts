@@ -10,7 +10,7 @@ import { promisify } from 'node:util';
 
 const execAsync = promisify(exec);
 
-interface BundleStats {
+type BundleStats = {
   totalSize: number;
   gzippedSize: number;
   chunks: Array<{
@@ -19,57 +19,45 @@ interface BundleStats {
     modules: string[];
   }>;
   recommendations: string[];
-}
+};
 
 /**
  * Analyze Next.js bundle and generate optimization recommendations
  */
 export async function analyzeBundleSize(): Promise<BundleStats> {
-  console.log('🔍 Starting bundle analysis...');
+  // Run Next.js build with bundle analyzer
+  const { stdout, stderr } = await execAsync('ANALYZE=true npm run build', {
+    cwd: process.cwd(),
+    maxBuffer: 1024 * 1024 * 10, // 10MB buffer
+  });
 
-  try {
-    // Run Next.js build with bundle analyzer
-    const { stdout, stderr } = await execAsync('ANALYZE=true npm run build', {
-      cwd: process.cwd(),
-      maxBuffer: 1024 * 1024 * 10, // 10MB buffer
-    });
-
-    if (stderr) {
-      console.warn('Build warnings:', stderr);
-    }
-
-    console.log('✅ Build completed successfully');
-
-    // Parse build output for size information
-    const stats = parseBuildOutput(stdout);
-
-    // Generate optimization recommendations
-    const recommendations = generateRecommendations(stats);
-
-    // Save analysis report
-    const report = {
-      timestamp: new Date().toISOString(),
-      stats,
-      recommendations,
-    };
-
-    writeFileSync(
-      join(process.cwd(), 'performance', 'bundle-analysis.json'),
-      JSON.stringify(report, null, 2)
-    );
-
-    console.log('📊 Bundle analysis saved to performance/bundle-analysis.json');
-
-    return {
-      totalSize: stats.totalSize,
-      gzippedSize: stats.gzippedSize,
-      chunks: stats.chunks,
-      recommendations,
-    };
-  } catch (error) {
-    console.error('❌ Bundle analysis failed:', error);
-    throw error;
+  if (stderr) {
   }
+
+  // Parse build output for size information
+  const stats = parseBuildOutput(stdout);
+
+  // Generate optimization recommendations
+  const recommendations = generateRecommendations(stats);
+
+  // Save analysis report
+  const report = {
+    timestamp: new Date().toISOString(),
+    stats,
+    recommendations,
+  };
+
+  writeFileSync(
+    join(process.cwd(), 'performance', 'bundle-analysis.json'),
+    JSON.stringify(report, null, 2)
+  );
+
+  return {
+    totalSize: stats.totalSize,
+    gzippedSize: stats.gzippedSize,
+    chunks: stats.chunks,
+    recommendations,
+  };
 }
 
 /**
@@ -155,62 +143,43 @@ function generateRecommendations(stats: any): string[] {
  * Generate Lighthouse performance report
  */
 export async function generateLighthouseReport(
-  url: string = 'http://localhost:3000'
+  url = 'http://localhost:3000'
 ): Promise<void> {
-  console.log(`🔍 Running Lighthouse analysis on ${url}...`);
+  const { stdout } = await execAsync(
+    `npx lighthouse ${url} --output=json --output-path=./performance/lighthouse-report.json --chrome-flags="--headless" --quiet`
+  );
 
-  try {
-    const { stdout } = await execAsync(
-      `npx lighthouse ${url} --output=json --output-path=./performance/lighthouse-report.json --chrome-flags="--headless" --quiet`
-    );
+  // Parse and summarize results
+  const reportPath = join(
+    process.cwd(),
+    'performance',
+    'lighthouse-report.json'
+  );
+  const report = JSON.parse(readFileSync(reportPath, 'utf8'));
 
-    console.log(
-      '✅ Lighthouse report generated at performance/lighthouse-report.json'
-    );
+  const scores = {
+    performance: Math.round(report.lhr.categories.performance.score * 100),
+    accessibility: Math.round(report.lhr.categories.accessibility.score * 100),
+    bestPractices: Math.round(
+      report.lhr.categories['best-practices'].score * 100
+    ),
+    seo: Math.round(report.lhr.categories.seo.score * 100),
+  };
 
-    // Parse and summarize results
-    const reportPath = join(
-      process.cwd(),
-      'performance',
-      'lighthouse-report.json'
-    );
-    const report = JSON.parse(readFileSync(reportPath, 'utf8'));
-
-    const scores = {
-      performance: Math.round(report.lhr.categories.performance.score * 100),
-      accessibility: Math.round(
-        report.lhr.categories.accessibility.score * 100
-      ),
-      bestPractices: Math.round(
-        report.lhr.categories['best-practices'].score * 100
-      ),
-      seo: Math.round(report.lhr.categories.seo.score * 100),
-    };
-
-    console.log('📊 Lighthouse Scores:');
-    console.log(`  Performance: ${scores.performance}/100`);
-    console.log(`  Accessibility: ${scores.accessibility}/100`);
-    console.log(`  Best Practices: ${scores.bestPractices}/100`);
-    console.log(`  SEO: ${scores.seo}/100`);
-
-    // Save summary
-    writeFileSync(
-      join(process.cwd(), 'performance', 'lighthouse-summary.json'),
-      JSON.stringify(
-        {
-          timestamp: new Date().toISOString(),
-          url,
-          scores,
-          recommendations: extractLighthouseRecommendations(report.lhr),
-        },
-        null,
-        2
-      )
-    );
-  } catch (error) {
-    console.error('❌ Lighthouse analysis failed:', error);
-    throw error;
-  }
+  // Save summary
+  writeFileSync(
+    join(process.cwd(), 'performance', 'lighthouse-summary.json'),
+    JSON.stringify(
+      {
+        timestamp: new Date().toISOString(),
+        url,
+        scores,
+        recommendations: extractLighthouseRecommendations(report.lhr),
+      },
+      null,
+      2
+    )
+  );
 }
 
 /**
@@ -259,23 +228,14 @@ function extractLighthouseRecommendations(lhr: any): string[] {
  * Run complete performance analysis
  */
 export async function runFullAnalysis(url?: string): Promise<void> {
-  console.log('🚀 Starting complete performance analysis...');
-
   try {
-    // 1. Bundle analysis
-    console.log('\n📦 Step 1: Bundle Analysis');
     await analyzeBundleSize();
 
     // 2. Lighthouse analysis
     if (url) {
-      console.log('\n🔍 Step 2: Lighthouse Analysis');
       await generateLighthouseReport(url);
     }
-
-    console.log('\n✅ Performance analysis complete!');
-    console.log('📁 Reports saved in ./performance/ directory');
-  } catch (error) {
-    console.error('❌ Performance analysis failed:', error);
+  } catch (_error) {
     process.exit(1);
   }
 }

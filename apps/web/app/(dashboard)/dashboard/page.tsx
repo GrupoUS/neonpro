@@ -1,54 +1,35 @@
 'use client';
 
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
   Activity,
   AlertTriangle,
   Calendar,
   CheckCircle,
-  Clock,
   Cpu,
   DollarSign,
   Plus,
   Shield,
-  Target,
   TrendingDown,
   TrendingUp,
   Users,
   Zap,
 } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { CosmicGlowButton } from '@/components/ui/CosmicGlowButton';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { EmptyState } from '@/components/ui/empty-state';
-import { LoadingSpinner } from '@/components/ui/loading-spinner';
-// Import existing NeonPro visual components
-import { NeonGradientCard } from '@/components/ui/NeonGradientCard';
-import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAppointments } from '@/hooks/useAppointments';
 import { useAuth } from '@/hooks/useAuth';
 import { useDashboardMetrics } from '@/hooks/useDashboardMetrics';
-import { useFinancialData } from '@/hooks/useFinancialData';
 import { usePatients } from '@/hooks/usePatients';
-import { useServices } from '@/hooks/useServices';
 import { useStaffMembers } from '@/hooks/useStaffMembers';
-import { toastHelpers } from '@/lib/toast-helpers';
 
 // Visual components to maintain - NeonPro design elements
-interface NeonGradientCardProps {
+type NeonGradientCardProps = {
   children: React.ReactNode;
   className?: string;
-}
+};
 
 const NeonGradientCard = ({
   children,
@@ -63,14 +44,14 @@ const NeonGradientCard = ({
     <div className="relative z-10 p-6">{children}</div>
   </motion.div>
 );
-interface CosmicGlowButtonProps {
+type CosmicGlowButtonProps = {
   children: React.ReactNode;
   variant?: 'primary' | 'secondary' | 'success' | 'warning' | 'danger';
   size?: 'sm' | 'md' | 'lg';
   onClick?: () => void;
   href?: string;
   className?: string;
-}
+};
 
 const CosmicGlowButton = ({
   children,
@@ -133,7 +114,7 @@ function DashboardMetricsCards() {
   if (loading) {
     return (
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-        {[...Array(4)].map((_, i) => (
+        {[...new Array(4)].map((_, i) => (
           <NeonGradientCard key={i}>
             <div className="flex flex-row items-center justify-between space-y-0 pb-2">
               <Skeleton className="h-4 w-[120px] bg-white/20" />
@@ -215,7 +196,7 @@ function DashboardMetricsCards() {
 
   return (
     <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-      {stats.map((stat, index) => {
+      {stats.map((stat, _index) => {
         const Icon = stat.icon;
         return (
           <NeonGradientCard key={stat.title}>
@@ -252,7 +233,7 @@ function RecentPatientsSection() {
           Pacientes Recentes
         </h2>
         <div className="space-y-4">
-          {[...Array(5)].map((_, i) => (
+          {[...new Array(5)].map((_, i) => (
             <div
               className="flex items-center space-x-4 rounded-lg bg-white/5 p-3"
               key={i}
@@ -367,7 +348,7 @@ function TodaysAppointmentsSection() {
       <NeonGradientCard>
         <h2 className="mb-6 font-bold text-white text-xl">Agenda de Hoje</h2>
         <div className="space-y-3">
-          {[...Array(4)].map((_, i) => (
+          {[...new Array(4)].map((_, i) => (
             <div
               className="flex items-center justify-between rounded-lg bg-white/5 p-3"
               key={i}

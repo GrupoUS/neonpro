@@ -462,7 +462,9 @@ export class LgpdService {
       mitigationMeasures.push('Adequacy decision or appropriate safeguards');
     }
 
-    if (processingActivity.retentionPeriod > 2555) {
+    import { HEALTHCARE_DATA_RETENTION_DAYS } from '@neonpro/types/constants/healthcare-constants';
+
+    if (processingActivity.retentionPeriod > HEALTHCARE_DATA_RETENTION_DAYS) {
       // > 7 years
       riskScore += 1;
       riskFactors.push('Long retention period');

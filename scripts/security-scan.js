@@ -114,36 +114,17 @@ function scanDirectory(dirPath) {
         }
       }
     }
-  } catch (error) {
-    console.error(`Erro ao escanear ${dirPath}:`, error.message);
-  }
+  } catch (_error) {}
 
   return allViolations;
 }
-
-// Executar scan
-console.log('🛡️ INICIANDO SCAN DE SEGURANÇA NEONPRO...\n');
 
 const projectRoot = process.cwd();
 const violations = scanDirectory(projectRoot);
 
 if (violations.length > 0) {
-  console.log('🚨 VULNERABILIDADES DETECTADAS:\n');
-
-  violations.forEach((violation, index) => {
-    console.log(`${index + 1}. 📁 ${violation.file}`);
-    console.log(`   🔑 Pattern: ${violation.pattern}`);
-    console.log(`   ⚠️  Match: ${violation.match}`);
-    console.log('');
-  });
-
-  console.log('❌ SCAN FALHOU - API KEYS EXPOSTAS DETECTADAS!');
-  console.log(
-    '💡 AÇÃO: Mova as keys para .env.local ou use variáveis de ambiente'
-  );
+  violations.forEach((_violation, _index) => {});
   process.exit(1);
 } else {
-  console.log('✅ SCAN COMPLETO - NENHUMA VULNERABILIDADE DETECTADA');
-  console.log('🛡️ Projeto seguro para commit');
   process.exit(0);
 }

@@ -11,7 +11,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 // TYPES AND INTERFACES
 // ================================================
 
-interface ServiceRoute {
+type ServiceRoute = {
   pattern: RegExp;
   service: string;
   baseUrl: string;
@@ -21,17 +21,17 @@ interface ServiceRoute {
     max: number;
   };
   timeout: number;
-}
+};
 
-interface AuthContext {
+type AuthContext = {
   userId: string;
   tenantId: string;
   roles: string[];
   permissions: string[];
   sessionId: string;
-}
+};
 
-interface RequestMetrics {
+type RequestMetrics = {
   method: string;
   path: string;
   service: string;
@@ -40,7 +40,7 @@ interface RequestMetrics {
   timestamp: Date;
   userId?: string;
   tenantId?: string;
-}
+};
 
 // ================================================
 // SERVICE CONFIGURATION
@@ -112,7 +112,7 @@ const SERVICE_ROUTES: ServiceRoute[] = [
 // RATE LIMITING CONFIGURATION
 // ================================================
 
-const createRateLimiter = (windowMs: number, max: number) => {
+const _createRateLimiter = (windowMs: number, max: number) => {
   return rateLimit({
     windowMs,
     max,
@@ -130,7 +130,7 @@ const createRateLimiter = (windowMs: number, max: number) => {
   });
 };
 
-const speedLimiter = slowDown({
+const _speedLimiter = slowDown({
   windowMs: 15 * 60 * 1000, // 15 minutes
   delayAfter: 100, // Allow 100 requests per 15 minutes at full speed
   delayMs: 500, // Add 500ms delay after delayAfter requests
@@ -170,8 +170,7 @@ export class AuthenticationService {
 
       const data = await response.json();
       return data.authContext;
-    } catch (error) {
-      console.error('Token validation failed:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -193,8 +192,7 @@ export class AuthenticationService {
 
       const data = await response.json();
       return data.accessToken;
-    } catch (error) {
-      console.error('Token refresh failed:', error);
+    } catch (_error) {
       return null;
     }
   }
@@ -204,16 +202,15 @@ export class AuthenticationService {
 // CIRCUIT BREAKER
 // ================================================
 
-interface CircuitBreakerState {
+type CircuitBreakerState = {
   failures: number;
   nextAttempt: number;
   state: 'CLOSED' | 'OPEN' | 'HALF_OPEN';
-}
+};
 
 export class CircuitBreaker {
-  private states: Map<string, CircuitBreakerState> = new Map();
+  private readonly states: Map<string, CircuitBreakerState> = new Map();
   private readonly failureThreshold = 5;
-  private readonly timeout = 60_000; // 1 minute
   private readonly retryTimeout = 30_000; // 30 seconds
 
   async execute<T>(
@@ -273,8 +270,8 @@ export class CircuitBreaker {
 // ================================================
 
 export class RequestRouter {
-  private circuitBreaker = new CircuitBreaker();
-  private authService = AuthenticationService.getInstance();
+  private readonly circuitBreaker = new CircuitBreaker();
+  private readonly authService = AuthenticationService.getInstance();
 
   async routeRequest(request: NextRequest): Promise<NextResponse> {
     const startTime = Date.now();
@@ -326,9 +323,7 @@ export class RequestRouter {
       });
 
       return response;
-    } catch (error) {
-      console.error('Request routing failed:', error);
-
+    } catch (_error) {
       // Record error metrics
       await this.recordMetrics({
         method: request.method,
@@ -355,10 +350,12 @@ export class RequestRouter {
   }
 
   private async checkRateLimit(
-    request: NextRequest,
+    _request: NextRequest,
     route: ServiceRoute
   ): Promise<NextResponse | null> {
-    if (!route.rateLimit) return null;
+    if (!route.rateLimit) {
+      return null;
+    }
 
     // Rate limiting logic would be implemented here
     // For now, return null (no rate limiting applied)
@@ -369,7 +366,7 @@ export class RequestRouter {
     request: NextRequest
   ): Promise<AuthContext | NextResponse> {
     const authHeader = request.headers.get('Authorization');
-    if (!(authHeader && authHeader.startsWith('Bearer '))) {
+    if (!authHeader?.startsWith('Bearer ')) {
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
@@ -457,13 +454,8 @@ export class RequestRouter {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(metrics),
-      }).catch((error) => {
-        console.error('Failed to record metrics:', error);
-      });
-    } catch (error) {
-      // Silently ignore metrics errors
-      console.error('Metrics recording failed:', error);
-    }
+      }).catch((_error) => {});
+    } catch (_error) {}
   }
 }
 

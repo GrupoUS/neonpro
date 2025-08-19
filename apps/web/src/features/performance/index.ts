@@ -13,13 +13,6 @@ export function WebVitalsReporter() {
         process.env.NODE_ENV === 'development' ||
         window.localStorage.getItem('performance-consent') === 'true'
       ) {
-        console.log(`[WebVitals] ${name}:`, {
-          value: Math.round(value),
-          id,
-          label,
-          timestamp: Date.now(),
-        });
-
         // Send to monitoring service (if available)
         if (typeof window !== 'undefined' && 'gtag' in window) {
           (window as any).gtag('event', name, {
@@ -51,13 +44,10 @@ export function usePerformanceMonitoring() {
     const startTime = performance.now();
 
     return () => {
-      const loadTime = performance.now() - startTime;
+      const _loadTime = performance.now() - startTime;
 
       // Healthcare compliance: only track with consent
       if (window.localStorage.getItem('performance-consent') === 'true') {
-        console.log(
-          `[Healthcare Performance] Component load time: ${Math.round(loadTime)}ms`
-        );
       }
     };
   }, []);

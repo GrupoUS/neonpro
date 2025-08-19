@@ -7,7 +7,6 @@
  */
 
 import { defineConfig, devices } from '@playwright/test';
-import path from 'path';
 
 /**
  * Healthcare E2E Test Configuration
@@ -271,23 +270,23 @@ export const healthcareE2EConfig = {
 
   // Healthcare user authentication
   authenticateHealthcareUser: async (
-    role: 'patient' | 'professional' | 'admin'
+    _role: 'patient' | 'professional' | 'admin'
   ) => {
     // Implementation in test utilities
   },
 
   // LGPD compliance validation
-  validateLGPDCompliance: async (page: any) => {
+  validateLGPDCompliance: async (_page: any) => {
     // Implementation in healthcare utilities
   },
 
   // Multi-tenant isolation validation
-  validateTenantIsolation: async (page: any, expectedTenantId: string) => {
+  validateTenantIsolation: async (_page: any, _expectedTenantId: string) => {
     // Implementation in healthcare utilities
   },
 
   // Healthcare accessibility validation
-  validateHealthcareAccessibility: async (page: any) => {
+  validateHealthcareAccessibility: async (_page: any) => {
     // Implementation in accessibility utilities
   },
 };

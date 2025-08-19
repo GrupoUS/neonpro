@@ -58,7 +58,7 @@ export type WebAuthnAuthenticationOptions = {
 
 export class WebAuthnClient {
   private static instance: WebAuthnClient | null = null;
-  private isSupported = false;
+  private readonly isSupported = false;
 
   constructor() {
     // Mock browser support detection
@@ -80,7 +80,7 @@ export class WebAuthnClient {
   }
 
   async register(
-    options: WebAuthnRegistrationOptions
+    _options: WebAuthnRegistrationOptions
   ): Promise<WebAuthnCredential> {
     if (!this.isSupported) {
       throw new Error('WebAuthn is not supported in this environment');
@@ -99,7 +99,7 @@ export class WebAuthnClient {
   }
 
   async authenticate(
-    options: WebAuthnAuthenticationOptions
+    _options: WebAuthnAuthenticationOptions
   ): Promise<WebAuthnCredential> {
     if (!this.isSupported) {
       throw new Error('WebAuthn is not supported in this environment');
@@ -133,7 +133,7 @@ export class WebAuthnClient {
     ];
   }
 
-  async deleteCredential(credentialId: string): Promise<boolean> {
+  async deleteCredential(_credentialId: string): Promise<boolean> {
     // Mock successful deletion
     return true;
   }

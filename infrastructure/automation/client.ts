@@ -37,12 +37,12 @@ export const JOB_IDS = {
 export type JobId = (typeof JOB_IDS)[keyof typeof JOB_IDS];
 
 // Helper types para jobs
-export interface EmailJobPayload {
+export type EmailJobPayload = {
   recipientEmail: string;
   recipientName: string;
   clinicName: string;
   clinicId: string;
-}
+};
 
 export interface AppointmentJobPayload extends EmailJobPayload {
   appointmentId: string;
@@ -59,7 +59,7 @@ export interface InvoiceJobPayload extends EmailJobPayload {
   invoiceUrl?: string;
 }
 
-export interface ReportJobPayload {
+export type ReportJobPayload = {
   clinicId: string;
   reportType: 'daily' | 'weekly' | 'monthly';
   recipientEmails: string[];
@@ -67,4 +67,4 @@ export interface ReportJobPayload {
     startDate: string;
     endDate: string;
   };
-}
+};

@@ -16,7 +16,7 @@ import {
  * Risk Factor Weights Configuration
  * Evidence-based weightings for Brazilian healthcare context
  */
-interface RiskFactorWeights {
+type RiskFactorWeights = {
   demographic: {
     age: number;
     bmi: number;
@@ -53,7 +53,7 @@ interface RiskFactorWeights {
     depression: number;
     stress: number;
   };
-}
+};
 
 /**
  * Default Evidence-Based Risk Weights
@@ -1292,32 +1292,38 @@ function calculateDataQuality(input: RiskAssessmentInput): number {
   let qualityScore = 100;
 
   // Demographic data completeness
-  if (!input.demographicFactors.age || input.demographicFactors.age === 0)
+  if (!input.demographicFactors.age || input.demographicFactors.age === 0) {
     qualityScore -= 5;
-  if (!input.demographicFactors.bmi || input.demographicFactors.bmi === 0)
+  }
+  if (!input.demographicFactors.bmi || input.demographicFactors.bmi === 0) {
     qualityScore -= 5;
+  }
   if (
     !input.demographicFactors.geneticPredispositions ||
     input.demographicFactors.geneticPredispositions.length === 0
-  )
+  ) {
     qualityScore -= 3;
+  }
 
   // Medical history completeness
   if (
     !input.medicalHistory.chronicConditions ||
     input.medicalHistory.chronicConditions.length === 0
-  )
+  ) {
     qualityScore -= 3;
+  }
   if (
     !input.medicalHistory.currentMedications ||
     input.medicalHistory.currentMedications.length === 0
-  )
+  ) {
     qualityScore -= 2;
+  }
   if (
     !input.medicalHistory.allergies ||
     input.medicalHistory.allergies.length === 0
-  )
+  ) {
     qualityScore -= 2;
+  }
 
   // Current condition data freshness (vital signs should be recent)
   const now = new Date();
@@ -1326,15 +1332,21 @@ function calculateDataQuality(input: RiskAssessmentInput): number {
     input.currentCondition.vitalSigns.bloodPressure.timestamp.getTime();
   const hoursOld = vitalSignsAge / (1000 * 60 * 60);
 
-  if (hoursOld > 24)
+  if (hoursOld > 24) {
     qualityScore -= 10; // Vital signs older than 24 hours
-  else if (hoursOld > 12)
+  } else if (hoursOld > 12) {
     qualityScore -= 5; // Vital signs older than 12 hours
-  else if (hoursOld > 6) qualityScore -= 2; // Vital signs older than 6 hours
+  } else if (hoursOld > 6) {
+    qualityScore -= 2; // Vital signs older than 6 hours
+  }
 
   // LGPD compliance check
-  if (!input.consentGiven) qualityScore -= 15; // No consent significantly reduces confidence
-  if (input.dataProcessingPurpose.length === 0) qualityScore -= 5;
+  if (!input.consentGiven) {
+    qualityScore -= 15; // No consent significantly reduces confidence
+  }
+  if (input.dataProcessingPurpose.length === 0) {
+    qualityScore -= 5;
+  }
 
   return Math.max(60, Math.min(100, qualityScore)); // Minimum 60% confidence
 }

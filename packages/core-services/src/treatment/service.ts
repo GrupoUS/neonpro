@@ -9,7 +9,7 @@ import type {
 } from './types';
 import { TreatmentStatus } from './types';
 
-export interface TreatmentRepository {
+export type TreatmentRepository = {
   // Treatment plan operations
   createTreatmentPlan(data: CreateTreatmentPlanData): Promise<TreatmentPlan>;
   updateTreatmentPlan(
@@ -36,10 +36,10 @@ export interface TreatmentRepository {
     id: string,
     data: CompleteTreatmentSessionData
   ): Promise<TreatmentSession>;
-}
+};
 
 export class TreatmentService {
-  constructor(private repository: TreatmentRepository) {}
+  constructor(private readonly repository: TreatmentRepository) {}
 
   // Treatment plan management
   async createTreatmentPlan(
@@ -48,8 +48,7 @@ export class TreatmentService {
     try {
       const treatmentPlan = await this.repository.createTreatmentPlan(data);
       return treatmentPlan;
-    } catch (error) {
-      console.error('Error creating treatment plan:', error);
+    } catch (_error) {
       throw new Error('Failed to create treatment plan');
     }
   }
@@ -60,8 +59,7 @@ export class TreatmentService {
     try {
       const treatmentPlan = await this.repository.updateTreatmentPlan(id, data);
       return treatmentPlan;
-    } catch (error) {
-      console.error('Error updating treatment plan:', error);
+    } catch (_error) {
       throw new Error('Failed to update treatment plan');
     }
   }
@@ -114,8 +112,7 @@ export class TreatmentService {
 
       const session = await this.repository.createTreatmentSession(data);
       return session;
-    } catch (error) {
-      console.error('Error creating treatment session:', error);
+    } catch (_error) {
       throw new Error('Failed to create treatment session');
     }
   }
@@ -168,8 +165,7 @@ export class TreatmentService {
         treatmentPlan: updatedPlan,
         nextSessionDate,
       };
-    } catch (error) {
-      console.error('Error completing treatment session:', error);
+    } catch (_error) {
       throw new Error('Failed to complete treatment session');
     }
   }
@@ -220,7 +216,7 @@ export class TreatmentService {
       status === TreatmentStatus.IN_PROGRESS &&
       completedSessions.length > 0
     ) {
-      const lastSession = completedSessions[completedSessions.length - 1];
+      const lastSession = completedSessions.at(-1);
       nextSessionDate = addDays(lastSession.date, plan.sessionInterval);
     }
 

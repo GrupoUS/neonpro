@@ -15,8 +15,8 @@
 import { z } from 'zod';
 import {
   AdverseEventType,
-  ComplianceScore,
-  ConstitutionalResponse,
+  type ComplianceScore,
+  type ConstitutionalResponse,
 } from '../types';
 
 /**
@@ -30,7 +30,7 @@ export enum ANVISADeviceCategory {
   IMPLANTABLE = 'IMPLANTABLE',
   DIAGNOSTIC = 'DIAGNOSTIC',
   THERAPEUTIC = 'THERAPEUTIC',
-  SURGICAL = 'SURGICAL'
+  SURGICAL = 'SURGICAL',
 }
 
 /**

@@ -22,7 +22,7 @@ import {
 import { useRouter } from 'next/navigation';
 import type React from 'react';
 
-interface PricingPlan {
+type PricingPlan = {
   id: string;
   name: string;
   description: string;
@@ -34,7 +34,7 @@ interface PricingPlan {
   storage: string;
   support: string;
   icon: React.ComponentType<any>;
-}
+};
 
 const PRICING_PLANS: PricingPlan[] = [
   {

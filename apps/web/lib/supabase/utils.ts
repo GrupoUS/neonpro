@@ -5,7 +5,6 @@
  * cache management e error handling dos hooks React.
  */
 
-import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/supabase';
 
 type SupabaseClient = ReturnType<typeof createClientComponentClient<Database>>;
@@ -13,11 +12,11 @@ type SupabaseClient = ReturnType<typeof createClientComponentClient<Database>>;
 /**
  * Interface para resultados com cache
  */
-interface CachedResult<T> {
+type CachedResult<T> = {
   data: T;
   timestamp: number;
   ttl: number;
-}
+};
 
 /**
  * Cache em memória para queries
@@ -27,7 +26,7 @@ const queryCache = new Map<string, CachedResult<any>>();
 /**
  * Configurações de cache por tipo de dados
  */
-const CACHE_CONFIG = {
+const _CACHE_CONFIG = {
   dashboard_metrics: 30, // 30 segundos
   patients: 60, // 1 minuto
   appointments: 30, // 30 segundos
@@ -62,7 +61,9 @@ export const generateCacheKey = (
 export const getCachedData = <T>(cacheKey: string): T | null => {
   const cached = queryCache.get(cacheKey);
 
-  if (!cached) return null;
+  if (!cached) {
+    return null;
+  }
 
   const now = Date.now();
   const isExpired = now - cached.timestamp > cached.ttl * 1000;
@@ -373,7 +374,9 @@ export const isBusinessHour = (
  * Converte string de erro para mensagem amigável
  */
 export const getErrorMessage = (error: any): string => {
-  if (typeof error === 'string') return error;
+  if (typeof error === 'string') {
+    return error;
+  }
 
   if (error?.message) {
     // Converte erros comuns do Supabase

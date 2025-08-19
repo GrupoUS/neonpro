@@ -1,6 +1,5 @@
 'use client';
 
-import { useAuth } from '@/contexts/auth-context';
 import {
   Alert,
   AlertDescription,
@@ -29,22 +28,8 @@ import {
   TabsTrigger,
   Textarea,
 } from '@neonpro/ui';
-import {
-  Activity,
-  Bell,
-  Camera,
-  CreditCard,
-  Edit,
-  Lock,
-  Mail,
-  MapPin,
-  Phone,
-  Save,
-  Settings,
-  Shield,
-  User,
-} from 'lucide-react';
-import React, { useState } from 'react';
+import { Activity, Camera, Edit, Lock, Save, Shield } from 'lucide-react';
+import { useState } from 'react';
 
 export default function ProfilePage() {
   const { user, isLoaded } = useUser();
@@ -72,7 +57,7 @@ export default function ProfilePage() {
     language: 'pt-BR',
   });
 
-  const handleSave = async () => {
+  const _handleSave = async () => {
     // Here you would save the profile data
     setIsEditing(false);
     // Show success message

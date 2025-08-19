@@ -151,8 +151,12 @@ const baseStockAlertSchema = z.object({
 export const stockAlertSchema = baseStockAlertSchema.refine(
   (data) => {
     // If acknowledgedBy is present, acknowledgedAt must also be present
-    if (data.acknowledgedBy && !data.acknowledgedAt) return false;
-    if (!data.acknowledgedBy && data.acknowledgedAt) return false;
+    if (data.acknowledgedBy && !data.acknowledgedAt) {
+      return false;
+    }
+    if (!data.acknowledgedBy && data.acknowledgedAt) {
+      return false;
+    }
     return true;
   },
   {

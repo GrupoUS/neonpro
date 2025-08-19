@@ -50,7 +50,7 @@ export const mockSupabaseClient = {
 
     signOut: vi.fn(async () => ({ error: null })),
 
-    onAuthStateChange: vi.fn((callback) => {
+    onAuthStateChange: vi.fn((_callback) => {
       return { data: { subscription: { unsubscribe: vi.fn() } } };
     }),
   },
@@ -61,7 +61,7 @@ export const mockSupabaseClient = {
     mockContext.queryConditions.clear(); // Clear conditions for each new query
 
     const queryBuilder = {
-      select: vi.fn((columns?: string) => {
+      select: vi.fn((_columns?: string) => {
         return queryBuilder;
       }),
       insert: vi.fn().mockReturnThis(),
@@ -205,7 +205,7 @@ export const mockSupabaseClient = {
   })),
 
   // RPC (Remote Procedure Call) mock for custom functions
-  rpc: vi.fn(async (functionName: string, params?: any) => {
+  rpc: vi.fn(async (functionName: string, _params?: any) => {
     const mockRpcResults = {
       calculate_patient_age: 35,
       get_treatment_statistics: {
@@ -419,7 +419,7 @@ export const testDatabaseUtils = {
     }),
 
     doctorCanAccessAssignedPatients: vi.fn(
-      (doctorId: string, patientId: string) => {
+      (_doctorId: string, _patientId: string) => {
         // Mock logic: doctors can access patients they have treatments with
         return true; // Simplified for testing
       }

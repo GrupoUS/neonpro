@@ -1,12 +1,10 @@
 'use client';
 
-import { useAuth } from '@/contexts/auth-context';
 import {
   Alert,
   AlertDescription,
   Avatar,
   AvatarFallback,
-  AvatarImage,
   Badge,
   Button,
   Card,
@@ -20,7 +18,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   Input,
   Label,
   Select,
@@ -28,7 +25,6 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-  Separator,
   Table,
   TableBody,
   TableCell,
@@ -42,24 +38,19 @@ import {
   Textarea,
 } from '@neonpro/ui';
 import {
-  Activity,
   Calendar,
-  Clock,
   Edit,
-  FileText,
-  Filter,
   Heart,
   Mail,
-  MoreHorizontal,
   Phone,
   Plus,
   Search,
   Trash2,
-  User,
 } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useAuth } from '@/contexts/auth-context';
 
-interface Patient {
+type Patient = {
   id: string;
   name: string;
   email: string;
@@ -78,7 +69,7 @@ interface Patient {
   insuranceInfo?: string;
   createdAt: string;
   lgpdConsent: boolean;
-}
+};
 
 const MOCK_PATIENTS: Patient[] = [
   {
@@ -129,7 +120,7 @@ export default function PacientesPage() {
   const [filterStatus, setFilterStatus] = useState('all');
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [_isLoading, _setIsLoading] = useState(false);
 
   const filteredPatients = patients.filter((patient) => {
     const matchesSearch =

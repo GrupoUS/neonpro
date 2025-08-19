@@ -1,7 +1,7 @@
 'use client';
 
-import { createClient } from '@/app/utils/supabase/client';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { createClient } from '@/app/utils/supabase/client';
 import type { Database } from '@/types/supabase';
 
 type Appointment = Database['public']['Tables']['appointments']['Row'] & {
@@ -10,7 +10,7 @@ type Appointment = Database['public']['Tables']['appointments']['Row'] & {
   services: { name: string; duration: number } | null;
 };
 
-interface AppointmentsHook {
+type AppointmentsHook = {
   appointments: Appointment[];
   upcomingAppointments: Appointment[];
   todaysAppointments: Appointment[];
@@ -18,7 +18,7 @@ interface AppointmentsHook {
   loading: boolean;
   error: Error | null;
   refreshAppointments: () => Promise<void>;
-}
+};
 
 export function useAppointments(): AppointmentsHook {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
@@ -48,7 +48,6 @@ export function useAppointments(): AppointmentsHook {
 
       setAppointments(data || []);
     } catch (err) {
-      console.error('Error fetching appointments:', err);
       setError(err as Error);
     } finally {
       setLoading(false);
@@ -140,7 +139,7 @@ export function useAppointments(): AppointmentsHook {
           schema: 'public',
           table: 'appointments',
         },
-        async (payload) => {
+        async (_payload) => {
           // Refetch appointments para incluir dados relacionados
           await fetchAppointments();
         }

@@ -2,10 +2,9 @@
 // Story 6.1 - Task 3: Installment Management System
 // API endpoints for individual payment plan management
 
-import { createClient } from '@/app/utils/supabase/server';
-import { cookies } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { createClient } from '@/app/utils/supabase/server';
 import { getInstallmentManager } from '@/lib/payments/installments/installment-manager';
 
 // Validation schemas

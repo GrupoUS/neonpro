@@ -73,8 +73,6 @@ export async function GET(
       processingTime,
     });
   } catch (error) {
-    console.error('Analytics Error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { success: false, error: 'Invalid query parameters' },
@@ -106,8 +104,7 @@ export async function POST(
       success: true,
       message: 'Analytics recorded successfully',
     });
-  } catch (error) {
-    console.error('Analytics Recording Error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { success: false, error: 'Failed to record analytics' },
       { status: 500 }
@@ -117,9 +114,9 @@ export async function POST(
 
 // Helper functions
 async function getSchedulingAnalytics(
-  tenantId: string,
-  startDate: Date,
-  endDate: Date
+  _tenantId: string,
+  _startDate: Date,
+  _endDate: Date
 ): Promise<SchedulingAnalytics> {
   // Mock implementation - would fetch from database
   const analytics: SchedulingAnalytics = {
@@ -171,8 +168,8 @@ function generateTimeSlotEfficiency(): TimeSlotEfficiency[] {
 }
 
 async function calculateTrends(
-  analytics: SchedulingAnalytics,
-  tenantId: string
+  _analytics: SchedulingAnalytics,
+  _tenantId: string
 ): Promise<any> {
   // Calculate improvement trends
   return {
@@ -199,8 +196,8 @@ async function calculateTrends(
 }
 
 async function generateAIInsights(
-  analytics: SchedulingAnalytics,
-  trends: any
+  _analytics: SchedulingAnalytics,
+  _trends: any
 ): Promise<any> {
   return {
     keyAchievements: [
@@ -252,10 +249,6 @@ async function generateAIInsights(
 }
 
 async function recordSchedulingEvent(
-  tenantId: string,
-  eventData: any
-): Promise<void> {
-  // Record event for analytics and ML training
-  // In production, this would write to a database or analytics service
-  console.log(`Recording scheduling event for tenant ${tenantId}:`, eventData);
-}
+  _tenantId: string,
+  _eventData: any
+): Promise<void> {}

@@ -56,10 +56,10 @@ export const CONSTITUTIONAL_CFM_COMPLIANCE_MINIMUM = 9.9;
 
 // Import classes for factory function
 import { DigitalSignatureService } from './digital-signature-service';
-import { ProfessionalLicensingService } from './professional-licensing-service';
-import { TelemedicineComplianceService } from './telemedicine-compliance-service';
 import { MedicalEthicsService } from './medical-ethics-service';
 import { MedicalRecordsService } from './medical-records-service';
+import { ProfessionalLicensingService } from './professional-licensing-service';
+import { TelemedicineComplianceService } from './telemedicine-compliance-service';
 
 /**
  * CFM Service Factory

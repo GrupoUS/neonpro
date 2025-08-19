@@ -1,11 +1,11 @@
 // Performance monitor with healthcare-specific metrics
-export interface HealthcarePerformanceMetrics {
+export type HealthcarePerformanceMetrics = {
   patientDataLoadTime: number;
   apiResponseTime: number;
   databaseQueryTime: number;
   securityCheckTime: number;
   complianceValidationTime: number;
-}
+};
 
 export class PerformanceMonitor {
   private static metrics: HealthcarePerformanceMetrics = {
@@ -26,9 +26,6 @@ export class PerformanceMonitor {
 
       // Healthcare-specific thresholds
       if (operation === 'patientDataLoadTime' && duration > 500) {
-        console.warn(
-          'Patient data load time exceeds healthcare standard (500ms)'
-        );
       }
     };
   }

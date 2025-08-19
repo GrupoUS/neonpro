@@ -1,6 +1,5 @@
 'use client';
 
-import { useAuth } from '@/contexts/auth-context';
 import {
   Alert,
   AlertDescription,
@@ -9,14 +8,11 @@ import {
   AvatarImage,
   Badge,
   Button,
-  Calendar,
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-  Progress,
-  Separator,
   Table,
   TableBody,
   TableCell,
@@ -32,22 +28,18 @@ import {
   Activity,
   AlertCircle,
   Calendar as CalendarIcon,
-  CheckCircle,
   Clock,
   Download,
   Eye,
   FileText,
-  Heart,
-  Mail,
   MapPin,
-  Phone,
   Pill,
   Stethoscope,
-  User,
 } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useAuth } from '@/contexts/auth-context';
 
-interface Appointment {
+type Appointment = {
   id: string;
   date: string;
   time: string;
@@ -56,9 +48,9 @@ interface Appointment {
   status: 'scheduled' | 'completed' | 'cancelled';
   location: string;
   notes?: string;
-}
+};
 
-interface MedicalRecord {
+type MedicalRecord = {
   id: string;
   date: string;
   doctor: string;
@@ -66,9 +58,9 @@ interface MedicalRecord {
   prescription: string[];
   notes: string;
   attachments?: string[];
-}
+};
 
-interface TestResult {
+type TestResult = {
   id: string;
   date: string;
   type: string;
@@ -76,7 +68,7 @@ interface TestResult {
   status: 'normal' | 'abnormal' | 'pending';
   doctor: string;
   notes?: string;
-}
+};
 
 const MOCK_APPOINTMENTS: Appointment[] = [
   {
@@ -135,12 +127,12 @@ const MOCK_TEST_RESULTS: TestResult[] = [
 
 export default function PatientPortalPage() {
   const { user, loading } = useAuth();
-  const [appointments, setAppointments] =
+  const [appointments, _setAppointments] =
     useState<Appointment[]>(MOCK_APPOINTMENTS);
-  const [records, setRecords] = useState<MedicalRecord[]>(MOCK_RECORDS);
-  const [testResults, setTestResults] =
+  const [records, _setRecords] = useState<MedicalRecord[]>(MOCK_RECORDS);
+  const [testResults, _setTestResults] =
     useState<TestResult[]>(MOCK_TEST_RESULTS);
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [_selectedDate, _setSelectedDate] = useState<Date>(new Date());
 
   const getStatusBadge = (status: string) => {
     const variants = {

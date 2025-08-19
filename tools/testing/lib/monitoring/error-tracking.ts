@@ -1,16 +1,13 @@
 // Error tracking utilities for NeonPro Healthcare System
-export interface ErrorEvent {
+export type ErrorEvent = {
   error: Error;
   context?: Record<string, any>;
   severity?: 'low' | 'medium' | 'high' | 'critical';
   timestamp?: Date;
-}
+};
 
 export class ErrorTrackingService {
-  static captureError(error: Error, context?: Record<string, any>): void {
-    // Mock implementation for testing
-    console.error('Error captured:', error.message, context);
-  }
+  static captureError(_error: Error, _context?: Record<string, any>): void {}
 
   static captureException(
     exception: unknown,
@@ -21,10 +18,7 @@ export class ErrorTrackingService {
     ErrorTrackingService.captureError(error, context);
   }
 
-  static setContext(key: string, value: any): void {
-    // Mock implementation for testing
-    console.log('Error context set:', key, value);
-  }
+  static setContext(_key: string, _value: any): void {}
 }
 
 export default ErrorTrackingService;

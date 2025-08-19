@@ -1,11 +1,6 @@
 'use client';
 
 import {
-  Alert,
-  AlertDescription,
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
   Badge,
   Button,
   Calendar,
@@ -28,10 +23,6 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
 } from '@neonpro/ui';
 import {
   AlertCircle,
@@ -39,17 +30,13 @@ import {
   CheckCircle,
   Clock,
   Edit,
-  Mail,
-  MapPin,
-  Phone,
   Plus,
-  Trash2,
   User,
   XCircle,
 } from 'lucide-react';
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 
-interface Appointment {
+type Appointment = {
   id: string;
   patientName: string;
   patientEmail: string;
@@ -63,9 +50,9 @@ interface Appointment {
   status: 'scheduled' | 'confirmed' | 'completed' | 'cancelled' | 'no-show';
   notes?: string;
   room?: string;
-}
+};
 
-interface Doctor {
+type Doctor = {
   id: string;
   name: string;
   specialty: string;
@@ -73,7 +60,7 @@ interface Doctor {
   availability: {
     [key: string]: string[]; // day: available times
   };
-}
+};
 
 const MOCK_DOCTORS: Doctor[] = [
   {
@@ -113,7 +100,7 @@ export default function AppointmentScheduler() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedAppointment, setSelectedAppointment] =
+  const [_selectedAppointment, _setSelectedAppointment] =
     useState<Appointment | null>(null);
   const [formData, setFormData] = useState({
     patientName: '',
@@ -139,7 +126,9 @@ export default function AppointmentScheduler() {
       (t) => t.value === formData.type
     );
 
-    if (!(selectedDoctor && appointmentType)) return;
+    if (!(selectedDoctor && appointmentType)) {
+      return;
+    }
 
     const newAppointment: Appointment = {
       id: Date.now().toString(),
@@ -220,7 +209,9 @@ export default function AppointmentScheduler() {
 
   const getAvailableTimes = (doctorId: string, date: Date) => {
     const doctor = MOCK_DOCTORS.find((d) => d.id === doctorId);
-    if (!doctor) return [];
+    if (!doctor) {
+      return [];
+    }
 
     const dayName = date.toLocaleDateString('en-US', { weekday: 'lowercase' });
     return doctor.availability[dayName] || [];

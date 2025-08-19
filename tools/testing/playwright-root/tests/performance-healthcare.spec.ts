@@ -45,7 +45,6 @@ test.describe('⚡ Healthcare Performance Testing - Critical Medical Workflows',
     await expect(page.getByTestId('emergency-patient-data')).toBeVisible();
 
     const emergencyAccessTime = Date.now() - emergencyStartTime;
-    console.log(`🚨 Emergency Access Time: ${emergencyAccessTime}ms`);
 
     // CRITICAL: Emergency access must be <100ms
     expect(emergencyAccessTime).toBeLessThan(100);
@@ -57,7 +56,6 @@ test.describe('⚡ Healthcare Performance Testing - Critical Medical Workflows',
     await expect(page.getByTestId('emergency-medical-history')).toBeVisible();
 
     const historyAccessTime = Date.now() - historyStartTime;
-    console.log(`🏥 Emergency Medical History Time: ${historyAccessTime}ms`);
 
     expect(historyAccessTime).toBeLessThan(100);
 
@@ -68,7 +66,6 @@ test.describe('⚡ Healthcare Performance Testing - Critical Medical Workflows',
     await expect(page.getByTestId('emergency-alerts-panel')).toBeVisible();
 
     const alertsAccessTime = Date.now() - alertsStartTime;
-    console.log(`⚠️ Emergency Alerts Time: ${alertsAccessTime}ms`);
 
     expect(alertsAccessTime).toBeLessThan(100);
 
@@ -79,7 +76,6 @@ test.describe('⚡ Healthcare Performance Testing - Critical Medical Workflows',
     await expect(page.getByTestId('emergency-contacts-list')).toBeVisible();
 
     const contactAccessTime = Date.now() - contactStartTime;
-    console.log(`📞 Emergency Contacts Time: ${contactAccessTime}ms`);
 
     expect(contactAccessTime).toBeLessThan(100);
 
@@ -236,8 +232,6 @@ test.describe('⚡ Healthcare Performance Testing - Critical Medical Workflows',
       });
     });
 
-    console.log('🎯 Healthcare Performance Metrics:', performanceMetrics);
-
     // Validate Core Web Vitals thresholds for healthcare
     expect(performanceMetrics.fcp).toBeLessThan(1800); // First Contentful Paint <1.8s
     expect(performanceMetrics.lcp).toBeLessThan(2500); // Largest Contentful Paint <2.5s
@@ -263,8 +257,6 @@ test.describe('⚡ Healthcare Performance Testing - Critical Medical Workflows',
 
     // Total load test time should be reasonable
     expect(loadTestTime).toBeLessThan(2000);
-
-    console.log(`🔄 Load Test Completed in ${loadTestTime}ms`);
   });
 
   test('should validate mobile healthcare performance with accessibility', async ({
@@ -280,7 +272,6 @@ test.describe('⚡ Healthcare Performance Testing - Critical Medical Workflows',
     await expect(page.getByTestId('mobile-patient-dashboard')).toBeVisible();
 
     const mobileDashboardTime = Date.now() - mobileStartTime;
-    console.log(`📱 Mobile Dashboard Load Time: ${mobileDashboardTime}ms`);
 
     // Mobile healthcare interfaces should load quickly for patient anxiety reduction
     expect(mobileDashboardTime).toBeLessThan(2000);
@@ -306,7 +297,6 @@ test.describe('⚡ Healthcare Performance Testing - Critical Medical Workflows',
     // Average touch response should be fast for healthcare mobile UX
     const avgTouchResponse =
       touchResponses.reduce((a, b) => a + b, 0) / touchResponses.length;
-    console.log(`👆 Average Touch Response: ${avgTouchResponse}ms`);
 
     expect(avgTouchResponse).toBeLessThan(300);
 
@@ -336,7 +326,6 @@ test.describe('⚡ Healthcare Performance Testing - Critical Medical Workflows',
     await page.keyboard.press('Enter');
 
     const accessibilityTestTime = Date.now() - accessibilityTestStartTime;
-    console.log(`♿ Mobile Accessibility Response: ${accessibilityTestTime}ms`);
 
     expect(accessibilityTestTime).toBeLessThan(500);
   });
@@ -358,7 +347,6 @@ test.describe('⚡ Healthcare Performance Testing - Critical Medical Workflows',
     await expect(page.getByTestId('emergency-dashboard')).toBeVisible();
 
     const fast3gLoadTime = Date.now() - fast3gStartTime;
-    console.log(`📶 Fast 3G Load Time: ${fast3gLoadTime}ms`);
 
     // Emergency dashboard should load reasonably even on slower networks
     expect(fast3gLoadTime).toBeLessThan(5000);
@@ -379,7 +367,6 @@ test.describe('⚡ Healthcare Performance Testing - Critical Medical Workflows',
     await expect(page.getByTestId('patient-dashboard')).toBeVisible();
 
     const slow3gLoadTime = Date.now() - slow3gStartTime;
-    console.log(`📶 Slow 3G Load Time: ${slow3gLoadTime}ms`);
 
     // Patient dashboard should still be usable on slow networks
     expect(slow3gLoadTime).toBeLessThan(10_000);
@@ -429,8 +416,6 @@ test.describe('⚡ Healthcare Performance Testing - Critical Medical Workflows',
 
       await page.goto(`/dashboard/${query.operation.toLowerCase()}`);
 
-      console.log(`🗄️ ${query.operation} API Response: ${apiResponseTime}ms`);
-
       // Database queries should be fast for healthcare responsiveness
       expect(apiResponseTime).toBeLessThan(1000);
 
@@ -449,8 +434,6 @@ test.describe('⚡ Healthcare Performance Testing - Critical Medical Workflows',
 
     const responses = await Promise.all(concurrentRequests);
     const concurrentTime = Date.now() - concurrentStartTime;
-
-    console.log(`🔄 Concurrent API Requests: ${concurrentTime}ms`);
 
     // All requests should succeed
     responses.forEach((response) => expect(response.status).toBe(200));
@@ -471,7 +454,6 @@ test.describe('⚡ Healthcare Performance Testing - Critical Medical Workflows',
     await expect(page.getByTestId('analytics-charts')).toBeVisible();
 
     const largeDataTime = Date.now() - largeDataStartTime;
-    console.log(`📊 Large Dataset Processing: ${largeDataTime}ms`);
 
     // Large dataset should process within reasonable time
     expect(largeDataTime).toBeLessThan(5000);
@@ -513,9 +495,6 @@ test.describe('⚡ Healthcare Performance Testing - Critical Medical Workflows',
     if (initialMemory && finalMemory) {
       const memoryIncrease =
         finalMemory.usedJSMemory - initialMemory.usedJSMemory;
-      console.log(
-        `🧠 Memory Usage Increase: ${memoryIncrease / 1024 / 1024}MB`
-      );
 
       // Memory usage should not increase excessively
       expect(memoryIncrease).toBeLessThan(50 * 1024 * 1024); // <50MB increase
@@ -532,8 +511,6 @@ test.describe('⚡ Healthcare Performance Testing - Critical Medical Workflows',
 
       return { images, scripts, stylesheets, eventListeners };
     });
-
-    console.log('📦 Resource Counts:', resourceCounts);
 
     // Resource counts should be reasonable for healthcare application
     expect(resourceCounts.images).toBeLessThan(50);

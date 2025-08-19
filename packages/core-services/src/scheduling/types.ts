@@ -1,5 +1,5 @@
 // Enhanced scheduling types for AI-powered scheduling
-export interface AppointmentSlot {
+export type AppointmentSlot = {
   id: string;
   start: Date;
   end: Date;
@@ -11,9 +11,9 @@ export interface AppointmentSlot {
   treatmentTypeId: string;
   conflictScore: number; // AI-calculated conflict probability (0-1)
   optimizationScore: number; // AI-calculated optimization score (0-1)
-}
+};
 
-export interface SchedulingConstraints {
+export type SchedulingConstraints = {
   staffId: string;
   roomId?: string;
   equipmentIds?: string[];
@@ -22,9 +22,9 @@ export interface SchedulingConstraints {
   preferredTimeSlots: TimeRange[];
   minBufferTime: number; // minutes between appointments
   maxTravelTime: number; // if patient has multiple treatments
-}
+};
 
-export interface TreatmentType {
+export type TreatmentType = {
   id: string;
   name: string;
   category: 'botox' | 'fillers' | 'laser' | 'skincare' | 'consultation';
@@ -35,9 +35,9 @@ export interface TreatmentType {
   complexityLevel: 1 | 2 | 3 | 4 | 5;
   averageDuration?: number; // AI-calculated average from historical data
   durationVariance?: number; // AI-calculated variance
-}
+};
 
-export interface Staff {
+export type Staff = {
   id: string;
   name: string;
   specializations: string[];
@@ -45,43 +45,43 @@ export interface Staff {
   skillLevel: 1 | 2 | 3 | 4 | 5;
   efficiency: number; // AI-calculated efficiency score (0-1)
   patientSatisfactionScore: number; // 0-1
-}
+};
 
-export interface WorkingHours {
+export type WorkingHours = {
   [key: string]: {
     start: string; // HH:mm format
     end: string;
     breaks: TimeRange[];
   };
-}
+};
 
-export interface TimeRange {
+export type TimeRange = {
   start: Date;
   end: Date;
-}
+};
 
-export interface Patient {
+export type Patient = {
   id: string;
   name: string;
   preferences: PatientPreferences;
   history: AppointmentHistory[];
   riskFactors: RiskFactor[];
   noShowProbability: number; // AI-calculated (0-1)
-}
+};
 
-export interface PatientPreferences {
+export type PatientPreferences = {
   preferredStaff?: string[];
   preferredTimeSlots: TimeRange[];
   treatmentSpacing: number; // preferred days between treatments
   reminderPreferences: ReminderPreference[];
-}
+};
 
-export interface ReminderPreference {
+export type ReminderPreference = {
   method: 'email' | 'sms' | 'push' | 'call';
   timing: number; // hours before appointment
-}
+};
 
-export interface AppointmentHistory {
+export type AppointmentHistory = {
   id: string;
   date: Date;
   treatmentType: string;
@@ -94,15 +94,15 @@ export interface AppointmentHistory {
     hoursAdvance: number;
   };
   satisfaction?: number; // 1-5
-}
+};
 
-export interface RiskFactor {
+export type RiskFactor = {
   type: 'no_show' | 'late_arrival' | 'cancellation';
   weight: number; // 0-1
   description: string;
-}
+};
 
-export interface SchedulingRequest {
+export type SchedulingRequest = {
   patientId: string;
   treatmentTypeId: string;
   preferredDate?: Date;
@@ -110,9 +110,9 @@ export interface SchedulingRequest {
   staffPreference?: string[];
   urgency: 'low' | 'medium' | 'high' | 'emergency';
   flexibilityWindow: number; // days the patient is flexible
-}
+};
 
-export interface SchedulingResult {
+export type SchedulingResult = {
   success: boolean;
   appointmentSlot?: AppointmentSlot;
   alternatives?: AppointmentSlot[];
@@ -120,9 +120,9 @@ export interface SchedulingResult {
   optimizationRecommendations?: OptimizationRecommendation[];
   confidenceScore: number; // AI confidence in the scheduling decision (0-1)
   estimatedWaitTime?: number; // minutes until appointment
-}
+};
 
-export interface Conflict {
+export type Conflict = {
   type:
     | 'staff_unavailable'
     | 'room_occupied'
@@ -132,9 +132,9 @@ export interface Conflict {
   description: string;
   affectedResource: string;
   suggestedResolution?: string;
-}
+};
 
-export interface OptimizationRecommendation {
+export type OptimizationRecommendation = {
   type:
     | 'time_adjustment'
     | 'staff_change'
@@ -147,9 +147,9 @@ export interface OptimizationRecommendation {
     | 'resource_utilization';
   description: string;
   expectedImprovement: number; // percentage improvement
-}
+};
 
-export interface SchedulingAnalytics {
+export type SchedulingAnalytics = {
   utilizationRate: number; // percentage
   averageBookingTime: number; // seconds
   noShowRate: number; // percentage
@@ -157,17 +157,17 @@ export interface SchedulingAnalytics {
   patientSatisfactionScore: number; // 1-5
   revenueOptimization: number; // percentage above baseline
   timeSlotEfficiency: TimeSlotEfficiency[];
-}
+};
 
-export interface TimeSlotEfficiency {
+export type TimeSlotEfficiency = {
   timeRange: TimeRange;
   utilizationRate: number;
   demandScore: number;
   staffEfficiency: number;
   revenuePerHour: number;
-}
+};
 
-export interface AISchedulingConfig {
+export type AISchedulingConfig = {
   optimizationGoals: {
     patientSatisfaction: number; // weight 0-1
     staffUtilization: number;
@@ -185,32 +185,32 @@ export interface AISchedulingConfig {
     demandForecasting: boolean;
     resourceOptimization: boolean;
   };
-}
+};
 
 // AI Scheduling Engine Types
-export interface SchedulingDecision {
+export type SchedulingDecision = {
   appointmentId: string;
   confidence: number;
   reasoning: string[];
   alternatives: AlternativeSlot[];
   riskAssessment: RiskAssessment;
-}
+};
 
-export interface AlternativeSlot {
+export type AlternativeSlot = {
   slot: AppointmentSlot;
   score: number;
   tradeoffs: string[];
-}
+};
 
-export interface RiskAssessment {
+export type RiskAssessment = {
   noShowRisk: number;
   overbookingRisk: number;
   patientSatisfactionRisk: number;
   mitigationStrategies: string[];
-}
+};
 
 // Real-time optimization types
-export interface DynamicSchedulingEvent {
+export type DynamicSchedulingEvent = {
   type:
     | 'cancellation'
     | 'no_show'
@@ -220,9 +220,9 @@ export interface DynamicSchedulingEvent {
   timestamp: Date;
   affectedAppointments: string[];
   availableActions: SchedulingAction[];
-}
+};
 
-export interface SchedulingAction {
+export type SchedulingAction = {
   type:
     | 'reschedule'
     | 'reassign_staff'
@@ -232,11 +232,11 @@ export interface SchedulingAction {
   description: string;
   impact: ActionImpact;
   executionTime: number; // seconds to execute
-}
+};
 
-export interface ActionImpact {
+export type ActionImpact = {
   efficiencyChange: number; // percentage
   patientSatisfactionChange: number;
   revenueImpact: number; // monetary
   affectedAppointments: number;
-}
+};

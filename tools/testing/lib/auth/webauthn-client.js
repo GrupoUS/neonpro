@@ -8,7 +8,7 @@ const webAuthnClient = {
     );
   },
 
-  register: async (options) => {
+  register: async (_options) => {
     // Mock implementation for testing
     return {
       id: 'mock-credential-id',

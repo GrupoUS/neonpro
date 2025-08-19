@@ -54,8 +54,10 @@ export const LGPDAuditLogEntrySchema = z.object({
 });
 
 // Audit Configuration Schema
+import { HEALTHCARE_DATA_RETENTION_DAYS } from '@neonpro/types/constants/healthcare-constants';
+
 export const LGPDAuditConfigSchema = z.object({
-  retention_period_days: z.number().default(2555), // 7 years as per LGPD
+  retention_period_days: z.number().default(HEALTHCARE_DATA_RETENTION_DAYS), // 7 years as per LGPD
   real_time_monitoring: z.boolean().default(true),
   constitutional_validation: z.boolean().default(true),
   privacy_preserving_logging: z.boolean().default(true),
@@ -73,7 +75,6 @@ export type LGPDAuditConfig = z.infer<typeof LGPDAuditConfigSchema>;
  */
 export class LGPDAuditLogger {
   private readonly config: LGPDAuditConfig;
-  private readonly db: Database;
 
   constructor(config: LGPDAuditConfig, db: Database) {
     this.config = config;
@@ -373,9 +374,9 @@ export async function validateLGPDAuditConfig(
     violations.push('Integrity verification must be enabled');
   }
 
-  if (config.retention_period_days < 2555) {
+  if (config.retention_period_days < HEALTHCARE_DATA_RETENTION_DAYS) {
     violations.push(
-      'Retention period must be at least 7 years (2555 days) as per LGPD'
+      `Retention period must be at least 7 years (${HEALTHCARE_DATA_RETENTION_DAYS} days) as per LGPD`
     );
   }
 

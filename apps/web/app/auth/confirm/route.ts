@@ -18,7 +18,6 @@ export async function GET(request: NextRequest) {
 
   // Handle confirmation errors
   if (error) {
-    console.error('Healthcare email confirmation error:', error);
     return NextResponse.redirect(
       `${requestUrl.origin}/auth/error?error=${encodeURIComponent(error)}`
     );
@@ -61,7 +60,6 @@ export async function GET(request: NextRequest) {
       });
 
       if (verifyError) {
-        console.error('Healthcare OTP verification error:', verifyError);
         return NextResponse.redirect(
           `${requestUrl.origin}/auth/error?error=verification_failed`
         );
@@ -109,8 +107,7 @@ export async function GET(request: NextRequest) {
           }
         }
       }
-    } catch (error) {
-      console.error('Critical healthcare confirmation error:', error);
+    } catch (_error) {
       return NextResponse.redirect(
         `${requestUrl.origin}/auth/error?error=critical_confirmation_error`
       );
@@ -164,8 +161,7 @@ async function logHealthcareEmailConfirmation(
       user_agent: metadata.user_agent,
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
-    console.error('Healthcare audit logging failed:', error);
+  } catch (_error) {
     // Don't throw - audit logging failure shouldn't block confirmation
   }
 }

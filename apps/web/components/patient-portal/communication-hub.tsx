@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  Avatar,
   Badge,
   Button,
   Card,
@@ -18,36 +17,24 @@ import {
 import { cn } from '@neonpro/utils';
 import {
   AlertTriangle,
-  Archive,
   Bell,
-  BellOff,
   Calendar,
   CheckCircle,
   Clock,
-  Download,
-  Filter,
-  Forward,
   Heart,
   Image as ImageIcon,
-  Mail,
-  MapPin,
   MessageCircle,
   Mic,
   MoreVertical,
   Paperclip,
   Phone,
   Pin,
-  Reply,
   Search,
   Send,
   Shield,
   Star,
-  Trash2,
   User,
   Video,
-  VideoOff,
-  Volume2,
-  VolumeX,
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -329,7 +316,7 @@ function ConversationList({
 
 function ChatWindow({ conversation }: any) {
   const [message, setMessage] = useState('');
-  const [showCallOptions, setShowCallOptions] = useState(false);
+  const [_showCallOptions, _setShowCallOptions] = useState(false);
 
   const formatMessageTime = (timestamp: string) => {
     return new Date(timestamp).toLocaleTimeString('pt-BR', {

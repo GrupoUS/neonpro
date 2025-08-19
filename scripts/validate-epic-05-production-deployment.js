@@ -13,13 +13,9 @@
  * - Final ≥9.9/10 healthcare quality certification
  */
 
-const { execSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
-
-console.log('🏥 EPIC-05 PRODUCTION HEALTHCARE DEPLOYMENT VALIDATION');
-console.log('======================================================');
-console.log('🎯 Target: ≥9.9/10 Healthcare Quality Certification\n');
+const { execSync } = require('node:child_process');
+const fs = require('node:fs');
+const path = require('node:path');
 
 const validationResults = {
   totalTests: 0,
@@ -35,22 +31,18 @@ const validationResults = {
  * Execute validation test with error handling
  */
 function runValidationTest(testName, testFunction) {
-  console.log(`🔍 Testing: ${testName}`);
   validationResults.totalTests++;
 
   try {
     const result = testFunction();
     if (result) {
-      console.log(`✅ PASSED: ${testName}\n`);
       validationResults.passedTests++;
       return true;
     }
-    console.log(`❌ FAILED: ${testName}\n`);
     validationResults.failedTests++;
     validationResults.criticalIssues.push(testName);
     return false;
   } catch (error) {
-    console.log(`💥 ERROR: ${testName} - ${error.message}\n`);
     validationResults.failedTests++;
     validationResults.criticalIssues.push(`${testName}: ${error.message}`);
     return false;
@@ -70,7 +62,7 @@ function testVercelConfiguration() {
   const config = JSON.parse(fs.readFileSync(vercelConfigPath, 'utf8'));
 
   // Validate São Paulo region configuration
-  if (!(config.regions && config.regions.includes('gru1'))) {
+  if (!config.regions?.includes('gru1')) {
     throw new Error('São Paulo region (gru1) not configured');
   }
 
@@ -89,10 +81,6 @@ function testVercelConfiguration() {
       throw new Error(`Missing security header: ${header}`);
     }
   }
-
-  console.log('  ✓ São Paulo region configured');
-  console.log('  ✓ Healthcare security headers validated');
-  console.log('  ✓ Edge runtime configuration verified');
 
   return true;
 }
@@ -127,11 +115,6 @@ function testHealthcareMonitoring() {
     }
   }
 
-  console.log('  ✓ Patient safety monitoring implemented');
-  console.log('  ✓ LGPD compliance monitoring validated');
-  console.log('  ✓ Emergency alert system verified');
-  console.log('  ✓ <1 minute response capability implemented');
-
   return true;
 } /**
  * Test 3: Healthcare Error Boundaries Validation
@@ -162,11 +145,6 @@ function testHealthcareErrorBoundaries() {
       throw new Error(`Missing error boundary feature: ${feature}`);
     }
   }
-
-  console.log('  ✓ Patient data protection error boundaries');
-  console.log('  ✓ Emergency access protocols implemented');
-  console.log('  ✓ Patient data recovery mechanisms');
-  console.log('  ✓ Constitutional emergency override system');
 
   return true;
 }
@@ -211,11 +189,6 @@ function testPerformanceOptimization() {
     throw new Error('Lighthouse CI not configured for ≥95% Core Web Vitals');
   }
 
-  console.log('  ✓ Emergency response <100ms optimization');
-  console.log('  ✓ Medical persona optimization (Dr. Marina <3 clicks)');
-  console.log('  ✓ Core Web Vitals ≥95% validation');
-  console.log('  ✓ Lighthouse CI healthcare configuration');
-
   return true;
 }
 
@@ -241,7 +214,7 @@ function testQualityCertificationSystem() {
   }
 
   const qualityCode = fs.readFileSync(qualityPath, 'utf8');
-  const apiCode = fs.readFileSync(qualityApiPath, 'utf8');
+  const _apiCode = fs.readFileSync(qualityApiPath, 'utf8');
 
   // Check quality system features
   const requiredQualityFeatures = [
@@ -266,13 +239,6 @@ function testQualityCertificationSystem() {
       throw new Error(`Missing compliance validation: ${regulation}`);
     }
   }
-
-  console.log('  ✓ ≥9.9/10 quality certification system');
-  console.log(
-    '  ✓ Brazilian regulatory compliance (LGPD + ANVISA + CFM + SBIS)'
-  );
-  console.log('  ✓ Constitutional patient safety validation');
-  console.log('  ✓ Quality assessment API endpoint');
 
   return true;
 } /**
@@ -305,11 +271,6 @@ function testProductionEnvironment() {
     }
   }
 
-  console.log('  ✓ Production environment variables configured');
-  console.log('  ✓ Healthcare mode enabled');
-  console.log('  ✓ Brazilian compliance settings validated');
-  console.log('  ✓ Supabase São Paulo region configured');
-
   return true;
 }
 
@@ -317,8 +278,6 @@ function testProductionEnvironment() {
  * Execute all validation tests
  */
 async function runAllValidationTests() {
-  console.log('🚀 STARTING EPIC-05 COMPREHENSIVE VALIDATION\n');
-
   // Execute all validation tests
   runValidationTest(
     '1. Vercel São Paulo Production Configuration',
@@ -355,42 +314,12 @@ async function runAllValidationTests() {
     validationResults.qualityScore >= 9.9 &&
     validationResults.criticalIssues.length === 0;
 
-  // Display final results
-  console.log('🏥 EPIC-05 HEALTHCARE DEPLOYMENT VALIDATION RESULTS');
-  console.log('====================================================');
-  console.log(`📊 Total Tests: ${validationResults.totalTests}`);
-  console.log(`✅ Passed: ${validationResults.passedTests}`);
-  console.log(`❌ Failed: ${validationResults.failedTests}`);
-  console.log(`🎖️ Quality Score: ${validationResults.qualityScore}/10`);
-  console.log(
-    `🏥 Production Ready: ${validationResults.productionReady ? '✅ YES' : '❌ NO'}`
-  );
-
   if (validationResults.criticalIssues.length > 0) {
-    console.log('\n🚨 CRITICAL ISSUES:');
-    validationResults.criticalIssues.forEach((issue) => {
-      console.log(`   ❌ ${issue}`);
-    });
+    validationResults.criticalIssues.forEach((_issue) => {});
   }
 
   if (validationResults.productionReady) {
-    console.log('\n🎉 HEALTHCARE EXCELLENCE ACHIEVED!');
-    console.log('✅ NeonPro healthcare system ready for production deployment');
-    console.log('✅ ≥9.9/10 quality certification achieved');
-    console.log(
-      '✅ Brazilian regulatory compliance validated (LGPD + ANVISA + CFM + SBIS)'
-    );
-    console.log('✅ Constitutional patient safety protocols operational');
-    console.log('✅ São Paulo deployment ready with medical-grade security');
-    console.log('\n🚀 Ready to deploy to Vercel São Paulo region!');
   } else {
-    console.log('\n⚠️  PRODUCTION DEPLOYMENT BLOCKED');
-    console.log(
-      `❌ Quality score ${validationResults.qualityScore}/10 below healthcare requirement (≥9.9/10)`
-    );
-    console.log(
-      '❌ Critical issues must be resolved before production deployment'
-    );
   }
 
   // Save validation results
@@ -405,13 +334,11 @@ async function runAllValidationTests() {
   }
 
   fs.writeFileSync(resultsPath, JSON.stringify(validationResults, null, 2));
-  console.log(`\n📋 Validation results saved to: ${resultsPath}`);
 }
 
 // Execute validation if run directly
 if (require.main === module) {
-  runAllValidationTests().catch((error) => {
-    console.error('💥 Validation script failed:', error);
+  runAllValidationTests().catch((_error) => {
     process.exit(1);
   });
 }

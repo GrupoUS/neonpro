@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import {
-  generateDateRange,
-  validateDateRange,
   aggregateMetricsByPeriod,
-  formatAnalyticsCurrency,
-  formatAnalyticsPercentage,
-  calculateMRR,
   calculateChurnRate,
   calculateLTV,
+  calculateMRR,
+  formatAnalyticsCurrency,
+  formatAnalyticsPercentage,
+  generateDateRange,
+  validateDateRange,
 } from '../../../../../packages/utils/src/analytics/utils';
 
 describe('Analytics Repository Utils', () => {
@@ -111,7 +111,7 @@ describe('Analytics Repository Utils', () => {
 
   describe('Analytics Formatting', () => {
     it('should format large currency amounts', () => {
-      expect(formatAnalyticsCurrency(1234567.89)).toBe('$1,234,567.89');
+      expect(formatAnalyticsCurrency(1_234_567.89)).toBe('$1,234,567.89');
     });
 
     it('should format small currency amounts', () => {
@@ -123,7 +123,7 @@ describe('Analytics Repository Utils', () => {
     });
 
     it('should format percentage with custom precision', () => {
-      expect(formatAnalyticsPercentage(0.12345, 3)).toBe('12.345%');
+      expect(formatAnalyticsPercentage(0.123_45, 3)).toBe('12.345%');
     });
 
     it('should format very small percentages', () => {

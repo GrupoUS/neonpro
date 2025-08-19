@@ -9,11 +9,11 @@ async function getUserClinicContext(supabase: any, userId: string) {
     .select('clinic_id')
     .eq('user_id', userId)
     .single();
-  
+
   if (error || !professional?.clinic_id) {
     throw new Error('User clinic context not found');
   }
-  
+
   return professional.clinic_id;
 }
 
@@ -44,41 +44,22 @@ const createStockAlertSchema = z.object({
  */
 export async function GET(request: NextRequest) {
   try {
-    console.log('GET /api/stock/alerts - Starting request');
-
     const supabase = await createClient();
-    console.log('Supabase client created:', !!supabase);
-
-    // Get current user session
-    console.log('Getting session...');
     const {
       data: { session },
       error: sessionError,
     } = await supabase.auth.getSession();
 
-    console.log('Session result:', { session: !!session, sessionError });
-
     if (sessionError || !session) {
-      console.log('Session check failed:', {
-        sessionError,
-        hasSession: !!session,
-      });
       return NextResponse.json(
         { success: false, error: 'Unauthorized' },
         { status: 401 }
       );
     }
-
-    console.log('Session validated, parsing URL...');
     const { searchParams } = new URL(request.url);
     const queryParams = Object.fromEntries(searchParams.entries());
-    console.log('Query params:', queryParams);
 
     const validatedParams = stockAlertQuerySchema.parse(queryParams);
-    console.log('Validated params:', validatedParams);
-
-    // Build query with filters
-    console.log('Building database query...');
     let query = supabase.from('stock_alerts').select('*', { count: 'exact' });
 
     // Apply filters
@@ -99,20 +80,14 @@ export async function GET(request: NextRequest) {
         validatedParams.offset,
         validatedParams.offset + validatedParams.limit - 1
       );
-
-    console.log('Executing database query...');
     const { data: alerts, error, count } = await query;
-    console.log('Query result:', { alerts: alerts?.length, error, count });
 
     if (error) {
-      console.error('Database error:', error);
       return NextResponse.json(
         { success: false, error: 'Database error' },
         { status: 500 }
       );
     }
-
-    console.log('Returning successful response');
     return NextResponse.json({
       success: true,
       data: alerts || [],
@@ -123,13 +98,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('GET /api/stock/alerts error:', error);
-    console.error('Error details:', {
-      message: error?.message,
-      stack: error?.stack,
-      name: error?.name,
-    });
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -151,37 +119,21 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
-    console.log('POST /api/stock/alerts - Starting request');
-
     const supabase = await createClient();
-    console.log('Supabase client created:', !!supabase);
-
-    // Get current user session
-    console.log('Getting session...');
     const {
       data: { session },
       error: sessionError,
     } = await supabase.auth.getSession();
 
-    console.log('Session result:', { session: !!session, sessionError });
-
     if (sessionError || !session) {
-      console.log('Session check failed:', {
-        sessionError,
-        hasSession: !!session,
-      });
       return NextResponse.json(
         { success: false, error: 'Unauthorized' },
         { status: 401 }
       );
     }
-
-    console.log('Session validated, reading request body...');
     const body = await request.json();
-    console.log('Request body:', body);
 
     const validatedData = createStockAlertSchema.parse(body);
-    console.log('Data validated:', validatedData);
 
     // Validate that either productId or categoryId is provided
     if (!(validatedData.productId || validatedData.categoryId)) {
@@ -215,13 +167,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log('Checking for duplicates with query parameters:', {
-      alert_type: validatedData.alertType,
-      clinic_id: clinicId,
-      product_id: validatedData.productId,
-      category_id: validatedData.categoryId,
-    });
-
     const { data: existingConfig } = await duplicateQuery;
 
     if (existingConfig && existingConfig.length > 0) {
@@ -248,8 +193,6 @@ export async function POST(request: NextRequest) {
       created_at: new Date().toISOString(),
     };
 
-    console.log('Insert data:', insertData);
-
     const { data: newConfig, error: insertError } = await supabase
       .from('stock_alert_configs')
       .insert(insertData)
@@ -257,7 +200,6 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (insertError) {
-      console.error('Insert error:', insertError);
       return NextResponse.json(
         { success: false, error: 'Failed to create alert configuration' },
         { status: 500 }
@@ -272,8 +214,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('POST /api/stock/alerts error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {

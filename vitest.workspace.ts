@@ -13,17 +13,20 @@ export default defineWorkspace([
       root: './apps/web',
       environment: 'jsdom',
       include: [
-        '**/*.{test,spec}.{ts,tsx}',
-        '**/__tests__/**/*.{ts,tsx}'
+        '**/*.{test}.{ts,tsx}', // SOMENTE .test.* (NÃO .spec.*)
+        '**/__tests__/**/*.{ts,tsx}',
       ],
       exclude: [
         '**/node_modules/**',
         '**/dist/**',
         '**/.next/**',
+        '**/*.spec.ts', // Excluir TODOS os .spec.* (Playwright)
+        '**/*.spec.tsx',
         '**/e2e/**',
-        '**/playwright/**'
-      ]
-    }
+        '**/playwright/**',
+        '**/test/**', // Excluir pasta test (contém .spec.ts)
+      ],
+    },
   },
 
   // Packages configurations
@@ -33,10 +36,11 @@ export default defineWorkspace([
       root: './packages/ui',
       environment: 'jsdom',
       include: [
-        '**/*.{test,spec}.{ts,tsx}',
-        '**/__tests__/**/*.{ts,tsx}'
-      ]
-    }
+        '**/*.{test}.{ts,tsx}', // SOMENTE .test.* (NÃO .spec.*)
+        '**/__tests__/**/*.{ts,tsx}',
+      ],
+      exclude: ['**/*.spec.*'],
+    },
   },
 
   {
@@ -45,10 +49,11 @@ export default defineWorkspace([
       root: './packages/utils',
       environment: 'node',
       include: [
-        '**/*.{test,spec}.{ts}',
-        '**/__tests__/**/*.{ts}'
-      ]
-    }
+        '**/*.{test}.{ts}', // SOMENTE .test.* (NÃO .spec.*)
+        '**/__tests__/**/*.{ts}',
+      ],
+      exclude: ['**/*.spec.*'],
+    },
   },
 
   {
@@ -57,10 +62,11 @@ export default defineWorkspace([
       root: './packages/types',
       environment: 'node',
       include: [
-        '**/*.{test,spec}.{ts}',
-        '**/__tests__/**/*.{ts}'
-      ]
-    }
+        '**/*.{test}.{ts}', // SOMENTE .test.* (NÃO .spec.*)
+        '**/__tests__/**/*.{ts}',
+      ],
+      exclude: ['**/*.spec.*'],
+    },
   },
 
   {
@@ -69,10 +75,11 @@ export default defineWorkspace([
       root: './packages/auth',
       environment: 'jsdom',
       include: [
-        '**/*.{test,spec}.{ts,tsx}',
-        '**/__tests__/**/*.{ts,tsx}'
-      ]
-    }
+        '**/*.{test}.{ts,tsx}', // SOMENTE .test.* (NÃO .spec.*)
+        '**/__tests__/**/*.{ts,tsx}',
+      ],
+      exclude: ['**/*.spec.*'],
+    },
   },
 
   {
@@ -81,10 +88,11 @@ export default defineWorkspace([
       root: './packages/db',
       environment: 'node',
       include: [
-        '**/*.{test,spec}.{ts}',
-        '**/__tests__/**/*.{ts}'
-      ]
-    }
+        '**/*.{test}.{ts}', // SOMENTE .test.* (NÃO .spec.*)
+        '**/__tests__/**/*.{ts}',
+      ],
+      exclude: ['**/*.spec.*'],
+    },
   },
 
   {
@@ -93,27 +101,31 @@ export default defineWorkspace([
       root: './packages/domain',
       environment: 'node',
       include: [
-        '**/*.{test,spec}.{ts}',
-        '**/__tests__/**/*.{ts}'
-      ]
-    }
+        '**/*.{test}.{ts}', // SOMENTE .test.* (NÃO .spec.*)
+        '**/__tests__/**/*.{ts}',
+      ],
+      exclude: ['**/*.spec.*'],
+    },
   },
 
-  // Tools configurations
+  // Tools configurations - SOMENTE testes unitários (NÃO .spec.*)
   {
     test: {
       name: 'testing-tools',
       root: './tools/testing',
       environment: 'jsdom',
       include: [
-        '**/*.{test,spec}.{ts,tsx}',
-        '**/__tests__/**/*.{ts,tsx}'
+        '**/__tests__/**/*.{ts,tsx}', // SOMENTE __tests__ (NÃO .spec.*)
       ],
       exclude: [
+        '**/*.spec.ts', // Excluir TODOS os .spec.* (Playwright)
+        '**/*.spec.tsx',
         '**/e2e/**',
         '**/playwright/**',
-        '**/*.e2e.{test,spec}.{ts,tsx}'
-      ]
-    }
-  }
+        '**/security/**',
+        '**/visual/**',
+        '**/*.e2e.{test,spec}.{ts,tsx}',
+      ],
+    },
+  },
 ]);

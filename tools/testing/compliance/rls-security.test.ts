@@ -35,7 +35,7 @@ describe('Row Level Security (RLS) Compliance Tests', () => {
     it('should allow doctors to access only assigned patients', async () => {
       const doctorId = 'doctor-123';
       const assignedPatientId = 'patient-123';
-      const unassignedPatientId = 'patient-456';
+      const _unassignedPatientId = 'patient-456';
 
       const canAccessAssigned =
         testDatabaseUtils.simulateRLS.doctorCanAccessAssignedPatients(
@@ -89,8 +89,8 @@ describe('Row Level Security (RLS) Compliance Tests', () => {
     });
 
     it('should prevent unauthorized access to medical records', async () => {
-      const unauthorizedUserId = 'unauthorized-user-123';
-      const patientId = 'patient-123';
+      const _unauthorizedUserId = 'unauthorized-user-123';
+      const _patientId = 'patient-123';
 
       // Simulate RLS policy blocking unauthorized access
       const mockUnauthorizedAccess = vi.fn(() => {
@@ -125,7 +125,7 @@ describe('Row Level Security (RLS) Compliance Tests', () => {
 
   describe('Treatment Data Protection', () => {
     it('should restrict treatment data based on user role', async () => {
-      const treatmentData = {
+      const _treatmentData = {
         patient_id: 'patient-123',
         doctor_id: 'doctor-123',
         type: 'botox-application',
@@ -155,7 +155,7 @@ describe('Row Level Security (RLS) Compliance Tests', () => {
     });
 
     it('should protect sensitive treatment information', async () => {
-      const sensitiveTreatmentData = {
+      const _sensitiveTreatmentData = {
         patient_id: 'patient-123',
         procedure_notes: 'Confidential medical notes',
         medication_dosage: '50 UI Botox',
@@ -244,7 +244,7 @@ describe('Row Level Security (RLS) Compliance Tests', () => {
 
   describe('Audit Trail Security', () => {
     it('should protect audit logs from modification', async () => {
-      const auditEntry = {
+      const _auditEntry = {
         user_id: 'doctor-123',
         action: 'view_patient_data',
         resource_id: 'patient-123',
@@ -331,7 +331,9 @@ describe('Row Level Security (RLS) Compliance Tests', () => {
       // Check that sensitive fields are protected
       const isDataProtected = (data: any, field: string) => {
         const value = data[field];
-        if (!value) return true; // No data to protect
+        if (!value) {
+          return true; // No data to protect
+        }
 
         // Check for encryption markers or masking
         return (
@@ -389,13 +391,13 @@ describe('Row Level Security (RLS) Compliance Tests', () => {
 
   describe('Multi-tenant Data Isolation', () => {
     it('should isolate data between different clinics', async () => {
-      const clinic1Data = {
+      const _clinic1Data = {
         clinic_id: 'clinic-001',
         patient_id: 'patient-123',
         data: 'Clinic 1 patient data',
       };
 
-      const clinic2Data = {
+      const _clinic2Data = {
         clinic_id: 'clinic-002',
         patient_id: 'patient-456',
         data: 'Clinic 2 patient data',
@@ -453,7 +455,7 @@ describe('Row Level Security (RLS) Compliance Tests', () => {
 
         // Create emergency audit entry
         const emergencyAudit = {
-          access_id: 'emergency-' + Date.now(),
+          access_id: `emergency-${Date.now()}`,
           reason: access.emergency_reason,
           requires_review: access.requires_post_access_review,
           logged_at: access.access_time,

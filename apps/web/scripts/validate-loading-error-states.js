@@ -7,14 +7,12 @@
  * no sistema NeonPro para garantir uma UX consistente.
  */
 
-const { execSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
-
-console.log('🔍 VALIDAÇÃO DE LOADING & ERROR STATES - NEONPRO\n');
+const { execSync } = require('node:child_process');
+const fs = require('node:fs');
+const path = require('node:path');
 
 // Cores para output
-const colors = {
+const _colors = {
   green: '\x1b[32m',
   red: '\x1b[31m',
   yellow: '\x1b[33m',
@@ -23,14 +21,12 @@ const colors = {
 };
 
 const log = {
-  success: (msg) => console.log(`${colors.green}✅ ${msg}${colors.reset}`),
-  error: (msg) => console.log(`${colors.red}❌ ${msg}${colors.reset}`),
-  warning: (msg) => console.log(`${colors.yellow}⚠️  ${msg}${colors.reset}`),
-  info: (msg) => console.log(`${colors.blue}ℹ️  ${msg}${colors.reset}`),
+  success: (_msg) => {},
+  error: (_msg) => {},
+  warning: (_msg) => {},
+  info: (_msg) => {},
 }; // 1. VALIDAÇÃO DE HOOKS
 function validateHooks() {
-  console.log('📁 VALIDANDO HOOKS...\n');
-
   const hooksDir = path.join(__dirname, '../hooks');
   const hooks = fs.readdirSync(hooksDir).filter((f) => f.endsWith('.ts'));
 
@@ -77,12 +73,8 @@ function validateHooks() {
       log.error(`${hook} - Hook não encontrado`);
     }
   });
-
-  console.log('');
 } // 2. VALIDAÇÃO DE COMPONENTES UI
 function validateUIComponents() {
-  console.log('🎨 VALIDANDO COMPONENTES UI...\n');
-
   const uiComponents = [
     'components/ui/toast.tsx',
     'components/ui/toaster.tsx',
@@ -100,14 +92,10 @@ function validateUIComponents() {
       log.error(`${component} - Ausente`);
     }
   });
-
-  console.log('');
 }
 
 // 3. VALIDAÇÃO DE ERROR BOUNDARIES
 function validateErrorBoundaries() {
-  console.log('🛡️  VALIDANDO ERROR BOUNDARIES...\n');
-
   const errorBoundaries = [
     'components/error-boundary.tsx',
     'app/error.tsx',
@@ -122,8 +110,6 @@ function validateErrorBoundaries() {
       log.error(`${boundary} - Ausente`);
     }
   });
-
-  console.log('');
 } // EXECUTAR VALIDAÇÕES
 function runValidation() {
   try {

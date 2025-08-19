@@ -19,11 +19,11 @@ import { config } from 'dotenv';
 // Load environment variables
 config({ path: '.env.local' });
 
-interface SetupResult {
+type SetupResult = {
   success: boolean;
   message: string;
   details?: any;
-}
+};
 
 class RBACSetup {
   private readonly supabase;
@@ -49,8 +49,6 @@ class RBACSetup {
    */
   private async executeMigration(filename: string): Promise<SetupResult> {
     try {
-      console.log(`📄 Executing migration: ${filename}`);
-
       const migrationPath = join(__dirname, 'migrations', filename);
       const sql = readFileSync(migrationPath, 'utf-8');
 
@@ -59,8 +57,6 @@ class RBACSetup {
         .split(';')
         .map((stmt) => stmt.trim())
         .filter((stmt) => stmt.length > 0 && !stmt.startsWith('--'));
-
-      console.log(`📊 Executing ${statements.length} SQL statements...`);
 
       for (let i = 0; i < statements.length; i++) {
         const statement = statements[i];
@@ -71,13 +67,11 @@ class RBACSetup {
             });
 
             if (error) {
-              console.warn(`⚠️  Statement ${i + 1} warning:`, error.message);
               // Continue with other statements unless it's a critical error
               if (error.message.includes('already exists')) {
               }
             }
-          } catch (err) {
-            console.error(`❌ Error in statement ${i + 1}:`, err);
+          } catch (_err) {
             // Continue with other statements for non-critical errors
           }
         }
@@ -88,7 +82,6 @@ class RBACSetup {
         message: `Migration ${filename} executed successfully`,
       };
     } catch (error) {
-      console.error(`❌ Migration ${filename} failed:`, error);
       return {
         success: false,
         message: `Migration ${filename} failed`,
@@ -102,8 +95,6 @@ class RBACSetup {
    */
   private async verifyRLSPolicies(): Promise<SetupResult> {
     try {
-      console.log('🔍 Verifying RLS policies...');
-
       // Check if RLS is enabled on key tables
       const { data: rlsStatus, error } = await this.supabase
         .from('pg_tables')
@@ -118,8 +109,6 @@ class RBACSetup {
       const tablesWithRLS =
         rlsStatus?.filter((table) => table.rowsecurity) || [];
 
-      console.log(`✅ RLS enabled on ${tablesWithRLS.length} tables`);
-
       // Check if policies exist
       const { data: policies, error: policiesError } = await this.supabase
         .from('pg_policies')
@@ -131,7 +120,6 @@ class RBACSetup {
       }
 
       const policyCount = policies?.length || 0;
-      console.log(`✅ ${policyCount} RLS policies configured`);
 
       return {
         success: true,
@@ -155,8 +143,6 @@ class RBACSetup {
    */
   private async setupAuditLog(): Promise<SetupResult> {
     try {
-      console.log('📋 Setting up audit log table...');
-
       const createAuditTableSQL = `
         CREATE TABLE IF NOT EXISTS permission_audit_log (
           id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -204,8 +190,6 @@ class RBACSetup {
    */
   private async testRBACPermissions(): Promise<SetupResult> {
     try {
-      console.log('🧪 Testing RBAC permissions...');
-
       // Test basic role functions
       const { data: roleTest, error: roleError } = await this.supabase.rpc(
         'has_role',
@@ -215,7 +199,6 @@ class RBACSetup {
       );
 
       if (roleError) {
-        console.warn('⚠️  Role function test warning:', roleError.message);
       }
 
       // Test minimum role functions
@@ -223,13 +206,7 @@ class RBACSetup {
         await this.supabase.rpc('has_minimum_role', { required_role: 'staff' });
 
       if (minRoleError) {
-        console.warn(
-          '⚠️  Minimum role function test warning:',
-          minRoleError.message
-        );
       }
-
-      console.log('✅ RBAC functions are callable');
 
       return {
         success: true,
@@ -252,76 +229,34 @@ class RBACSetup {
    * Main setup process
    */
   async setup(): Promise<void> {
-    console.log('🚀 Starting RBAC Setup Process...');
-    console.log('='.repeat(50));
-
     const results: SetupResult[] = [];
-
-    // Step 1: Execute RLS policies migration
-    console.log('\n📋 Step 1: Setting up RLS policies');
     const migrationResult = await this.executeMigration(
       '001_setup_rbac_policies.sql'
     );
     results.push(migrationResult);
 
     if (!migrationResult.success) {
-      console.error('❌ Migration failed, stopping setup');
       return;
     }
-
-    // Step 2: Setup audit logging
-    console.log('\n📋 Step 2: Setting up audit logging');
     const auditResult = await this.setupAuditLog();
     results.push(auditResult);
-
-    // Step 3: Verify RLS policies
-    console.log('\n📋 Step 3: Verifying RLS policies');
     const verifyResult = await this.verifyRLSPolicies();
     results.push(verifyResult);
-
-    // Step 4: Test RBAC permissions
-    console.log('\n📋 Step 4: Testing RBAC permissions');
     const testResult = await this.testRBACPermissions();
     results.push(testResult);
-
-    // Summary
-    console.log(`\n${'='.repeat(50)}`);
-    console.log('📊 RBAC Setup Summary:');
-    console.log('='.repeat(50));
 
     const successCount = results.filter((r) => r.success).length;
     const totalSteps = results.length;
 
-    results.forEach((result, index) => {
-      const status = result.success ? '✅' : '❌';
-      console.log(`${status} Step ${index + 1}: ${result.message}`);
+    results.forEach((result, _index) => {
+      const _status = result.success ? '✅' : '❌';
       if (result.details) {
-        console.log('   Details:', result.details);
       }
     });
 
-    console.log(`\n${'='.repeat(50)}`);
-
     if (successCount === totalSteps) {
-      console.log('🎉 RBAC Setup completed successfully!');
-      console.log('\n📋 Next steps:');
-      console.log(
-        '   1. Update your application to use the new RBAC middleware'
-      );
-      console.log('   2. Test permission checks in your frontend components');
-      console.log('   3. Review audit logs for permission usage');
-      console.log('   4. Configure role assignments for existing users');
     } else {
-      console.log(
-        `⚠️  RBAC Setup completed with ${totalSteps - successCount} warnings/errors`
-      );
-      console.log('   Please review the errors above and fix any issues');
     }
-
-    console.log('\n🔗 Documentation:');
-    console.log('   - RBAC Implementation: /docs/RBAC_IMPLEMENTATION.md');
-    console.log('   - Permission Guide: /docs/PERMISSION_GUIDE.md');
-    console.log('   - API Documentation: /docs/API_RBAC.md');
   }
 }
 
@@ -330,8 +265,7 @@ class RBACSetup {
  */
 if (require.main === module) {
   const setup = new RBACSetup();
-  setup.setup().catch((error) => {
-    console.error('❌ Setup failed:', error);
+  setup.setup().catch((_error) => {
     process.exit(1);
   });
 }

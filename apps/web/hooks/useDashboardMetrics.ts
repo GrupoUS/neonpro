@@ -1,10 +1,9 @@
 'use client';
 
-import { createClient } from '@/app/utils/supabase/client';
 import { useEffect, useState } from 'react';
-import type { Database } from '@/types/supabase';
+import { createClient } from '@/app/utils/supabase/client';
 
-interface DashboardMetrics {
+type DashboardMetrics = {
   totalPatients: number;
   activePatients: number;
   monthlyRevenue: number;
@@ -14,7 +13,7 @@ interface DashboardMetrics {
   activeStaffMembers: number;
   loading: boolean;
   error: Error | null;
-}
+};
 
 export function useDashboardMetrics(): DashboardMetrics {
   const [metrics, setMetrics] = useState<
@@ -184,7 +183,6 @@ export function useDashboardMetrics(): DashboardMetrics {
           activeStaffMembers,
         });
       } catch (err) {
-        console.error('Error fetching dashboard metrics:', err);
         setError(err as Error);
       } finally {
         setLoading(false);

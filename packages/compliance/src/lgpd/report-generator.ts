@@ -74,7 +74,6 @@ export type LGPDReport = z.infer<typeof LGPDReportSchema>;
  */
 export class LGPDReportGenerator {
   private readonly config: LGPDReportConfig;
-  private readonly db: Database;
 
   constructor(config: LGPDReportConfig, db: Database) {
     this.config = config;
@@ -171,12 +170,168 @@ export class LGPDReportGenerator {
       case 'json':
         return JSON.stringify(report, null, 2);
       case 'pdf':
-        return 'PDF export not implemented';
+        return this.generatePdfReport(report);
       case 'csv':
-        return 'CSV export not implemented';
+        return this.generateCsvReport(report);
       default:
         throw new Error(`Unsupported format: ${format}`);
     }
+  }
+
+  /**
+   * Generate PDF report
+   */
+  private generatePdfReport(report: any): string {
+    // Basic PDF-like text representation
+    // In production, integrate with libraries like puppeteer or pdfkit
+    const pdfContent = `
+%PDF-1.4
+1 0 obj
+<<
+/Type /Catalog
+/Pages 2 0 R
+>>
+endobj
+
+2 0 obj
+<<
+/Type /Pages
+/Kids [3 0 R]
+/Count 1
+>>
+endobj
+
+3 0 obj
+<<
+/Type /Page
+/Parent 2 0 R
+/Resources <<
+/Font <<
+/F1 4 0 R
+>>
+>>
+/MediaBox [0 0 612 792]
+/Contents 5 0 R
+>>
+endobj
+
+4 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/BaseFont /Times-Roman
+>>
+endobj
+
+5 0 obj
+<<
+/Length ${JSON.stringify(report, null, 2).length + 100}
+>>
+stream
+BT
+/F1 12 Tf
+50 750 Td
+(RELATORIO LGPD) Tj
+0 -20 Td
+(Gerado em: ${new Date().toLocaleDateString('pt-BR')}) Tj
+0 -20 Td
+(Tenant ID: ${report.tenantId || 'N/A'}) Tj
+0 -20 Td
+(Periodo: ${report.startDate} - ${report.endDate}) Tj
+0 -40 Td
+(=== CONSENTIMENTOS ===) Tj
+${this.formatPdfContent(report.consents || [])}
+0 -40 Td
+(=== VIOLACOES ===) Tj
+${this.formatPdfContent(report.breaches || [])}
+0 -40 Td
+(=== EXERCICIO DE DIREITOS ===) Tj
+${this.formatPdfContent(report.rightsExercises || [])}
+ET
+endstream
+endobj
+
+xref
+0 6
+0000000000 65535 f 
+0000000010 00000 n 
+0000000079 00000 n 
+0000000173 00000 n 
+0000000301 00000 n 
+0000000380 00000 n 
+trailer
+<<
+/Size 6
+/Root 1 0 R
+>>
+startxref
+${1000 + JSON.stringify(report, null, 2).length}
+%%EOF`;
+    return pdfContent;
+  }
+
+  /**
+   * Format content for PDF
+   */
+  private formatPdfContent(items: any[]): string {
+    if (!items.length) return '0 -15 Td\n(Nenhum registro encontrado) Tj';
+    
+    return items.slice(0, 10).map((item, index) => 
+      `0 -15 Td\n(${index + 1}. ${item.id || item.type || 'Item'}: ${item.status || item.description || 'N/A'}) Tj`
+    ).join('\n');
+  }
+
+  /**
+   * Generate CSV report
+   */
+  private generateCsvReport(report: any): string {
+    const csvLines: string[] = [];
+    
+    // Header
+    csvLines.push('RELATÓRIO LGPD - ' + new Date().toLocaleDateString('pt-BR'));
+    csvLines.push('Tenant ID,' + (report.tenantId || 'N/A'));
+    csvLines.push('Período,' + (report.startDate || '') + ' - ' + (report.endDate || ''));
+    csvLines.push('');
+    
+    // Consentimentos
+    if (report.consents && report.consents.length > 0) {
+      csvLines.push('CONSENTIMENTOS');
+      csvLines.push('ID,Tipo,Status,Data,Finalidade');
+      report.consents.forEach((consent: any) => {
+        csvLines.push(`${consent.id || ''},${consent.type || ''},${consent.status || ''},${consent.createdAt || ''},${consent.purpose || ''}`);
+      });
+      csvLines.push('');
+    }
+    
+    // Violações
+    if (report.breaches && report.breaches.length > 0) {
+      csvLines.push('VIOLAÇÕES DE DADOS');
+      csvLines.push('ID,Categoria,Severidade,Data,Descrição,Status');
+      report.breaches.forEach((breach: any) => {
+        csvLines.push(`${breach.id || ''},${breach.category || ''},${breach.severity || ''},${breach.detectedAt || ''},${(breach.description || '').replace(/,/g, ';')},${breach.status || ''}`);
+      });
+      csvLines.push('');
+    }
+    
+    // Exercício de direitos
+    if (report.rightsExercises && report.rightsExercises.length > 0) {
+      csvLines.push('EXERCÍCIO DE DIREITOS');
+      csvLines.push('ID,Tipo,Status,Data Solicitação,Data Conclusão');
+      report.rightsExercises.forEach((exercise: any) => {
+        csvLines.push(`${exercise.id || ''},${exercise.type || ''},${exercise.status || ''},${exercise.requestedAt || ''},${exercise.completedAt || ''}`);
+      });
+      csvLines.push('');
+    }
+    
+    // Estatísticas
+    csvLines.push('ESTATÍSTICAS');
+    csvLines.push('Métrica,Valor');
+    csvLines.push(`Total de Consentimentos,${report.consents?.length || 0}`);
+    csvLines.push(`Total de Violações,${report.breaches?.length || 0}`);
+    csvLines.push(`Total de Exercícios de Direitos,${report.rightsExercises?.length || 0}`);
+    csvLines.push(`Score de Compliance,${report.complianceScore?.overall || 0}`);
+    
+    return csvLines.join('\n');
   }
 }
 

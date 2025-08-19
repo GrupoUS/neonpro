@@ -15,35 +15,35 @@ import type {
 } from './types';
 
 // Import core service interfaces (these would be actual imports in production)
-interface PatientService {
+type PatientService = {
   getPatient(id: string): Promise<any>;
   getPatientHistory(id: string): Promise<PatientHistory>;
   getPatientPreferences(id: string): Promise<PatientPreferences>;
   updatePatientHistory(id: string, appointment: AIAppointment): Promise<void>;
-}
+};
 
-interface TreatmentService {
+type TreatmentService = {
   getTreatment(id: string): Promise<any>;
   getTreatmentDuration(id: string): Promise<TreatmentDuration>;
   getTreatmentRequirements(id: string): Promise<any>;
   updateTreatmentStats(id: string, duration: number): Promise<void>;
-}
+};
 
-interface StaffService {
+type StaffService = {
   getStaffMember(id: string): Promise<any>;
   getStaffAvailability(id: string, date: Date): Promise<StaffAvailability>;
   getAvailableStaff(date: Date, skills: string[]): Promise<any[]>;
   updateStaffSchedule(id: string, appointment: AIAppointment): Promise<void>;
-}
+};
 
-interface RoomService {
+type RoomService = {
   getRoom(id: string): Promise<RoomType>;
   getRoomAvailability(id: string, timeSlot: any): Promise<boolean>;
   getAvailableRooms(timeSlot: any, requirements: any): Promise<RoomType[]>;
   reserveRoom(id: string, appointment: AIAppointment): Promise<void>;
-}
+};
 
-interface NotificationService {
+type NotificationService = {
   sendAppointmentConfirmation(appointment: AIAppointment): Promise<void>;
   sendReminders(appointment: AIAppointment): Promise<void>;
   sendReschedulingNotification(
@@ -51,9 +51,9 @@ interface NotificationService {
     newAppointment: AIAppointment
   ): Promise<void>;
   sendConflictAlert(conflicts: any[]): Promise<void>;
-}
+};
 
-interface InventoryService {
+type InventoryService = {
   checkEquipmentAvailability(
     equipment: string[],
     timeSlot: any
@@ -63,24 +63,26 @@ interface InventoryService {
     appointment: AIAppointment
   ): Promise<void>;
   getEquipmentMaintenance(equipment: string): Promise<any[]>;
-}
+};
 
-export interface ServiceDependencies {
+export type ServiceDependencies = {
   patientService: PatientService;
   treatmentService: TreatmentService;
   staffService: StaffService;
   roomService: RoomService;
   notificationService: NotificationService;
   inventoryService: InventoryService;
-}
+};
 
 export class SchedulingIntegrationService {
-  private services: ServiceDependencies;
-  private auditLog: AISchedulingAudit[] = [];
-  private performanceMetrics: PerformanceMetrics;
+  private readonly services: ServiceDependencies;
+  private readonly auditLog: AISchedulingAudit[] = [];
+  private readonly performanceMetrics: PerformanceMetrics;
   private cacheEnabled = true;
-  private cache: Map<string, { data: any; timestamp: number; ttl: number }> =
-    new Map();
+  private readonly cache: Map<
+    string,
+    { data: any; timestamp: number; ttl: number }
+  > = new Map();
 
   constructor(services: ServiceDependencies) {
     this.services = services;
@@ -99,7 +101,9 @@ export class SchedulingIntegrationService {
   }> {
     const cacheKey = `patient_context_${patientId}`;
     const cached = this.getFromCache(cacheKey);
-    if (cached) return cached;
+    if (cached) {
+      return cached;
+    }
 
     try {
       const [patient, history, preferences] = await Promise.all([
@@ -123,8 +127,7 @@ export class SchedulingIntegrationService {
 
       this.setCache(cacheKey, context, 300_000); // 5 minutes TTL
       return context;
-    } catch (error) {
-      console.error('Failed to get patient context:', error);
+    } catch (_error) {
       throw new Error(`Unable to retrieve patient context for ${patientId}`);
     }
   }
@@ -140,7 +143,9 @@ export class SchedulingIntegrationService {
   }> {
     const cacheKey = `treatment_context_${treatmentId}`;
     const cached = this.getFromCache(cacheKey);
-    if (cached) return cached;
+    if (cached) {
+      return cached;
+    }
 
     try {
       const [treatment, duration, requirements] = await Promise.all([
@@ -161,8 +166,7 @@ export class SchedulingIntegrationService {
 
       this.setCache(cacheKey, context, 600_000); // 10 minutes TTL
       return context;
-    } catch (error) {
-      console.error('Failed to get treatment context:', error);
+    } catch (_error) {
       throw new Error(
         `Unable to retrieve treatment context for ${treatmentId}`
       );
@@ -215,8 +219,7 @@ export class SchedulingIntegrationService {
         equipmentAvailable,
         conflicts,
       };
-    } catch (error) {
-      console.error('Failed to get resource availability:', error);
+    } catch (_error) {
       throw new Error('Unable to check resource availability');
     }
   }
@@ -247,7 +250,8 @@ export class SchedulingIntegrationService {
           message: 'Staff reserved',
         });
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
         errors.push({ service: 'staff', error: errorMessage });
         success = false;
       }
@@ -264,7 +268,8 @@ export class SchedulingIntegrationService {
           message: 'Room reserved',
         });
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
         errors.push({ service: 'room', error: errorMessage });
         success = false;
       }
@@ -281,7 +286,8 @@ export class SchedulingIntegrationService {
           message: 'Equipment reserved',
         });
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
         errors.push({ service: 'inventory', error: errorMessage });
         success = false;
       }
@@ -298,7 +304,8 @@ export class SchedulingIntegrationService {
           message: 'Patient history updated',
         });
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
         errors.push({ service: 'patient', error: errorMessage });
         // Not critical - don't fail the whole operation
       }
@@ -315,7 +322,8 @@ export class SchedulingIntegrationService {
           message: 'Treatment stats updated',
         });
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
         errors.push({ service: 'treatment', error: errorMessage });
         // Not critical - don't fail the whole operation
       }
@@ -331,7 +339,8 @@ export class SchedulingIntegrationService {
           message: 'Confirmation sent',
         });
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
         errors.push({ service: 'notification', error: errorMessage });
         // Not critical - don't fail the whole operation
       }
@@ -355,14 +364,13 @@ export class SchedulingIntegrationService {
         errors,
       };
     } catch (error) {
-      console.error('Critical error in appointment creation:', error);
-
       // Attempt rollback if partial success
       if (integrationResults.length > 0) {
         await this.rollbackAppointment(appointment, integrationResults);
       }
 
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
 
       return {
         success: false,
@@ -459,8 +467,8 @@ export class SchedulingIntegrationService {
         integrationResults,
       };
     } catch (error) {
-      console.error('Failed to update appointment:', error);
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       return {
         success: false,
         conflicts,
@@ -494,7 +502,8 @@ export class SchedulingIntegrationService {
           const response = await this.processIndividualScheduling(request);
           successful.push(response);
         } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : String(error);
+          const errorMessage =
+            error instanceof Error ? error.message : String(error);
           failed.push({ request, error: errorMessage });
         }
       });
@@ -558,8 +567,7 @@ export class SchedulingIntegrationService {
         conflicts: resources.conflicts,
         confidence,
       };
-    } catch (error) {
-      console.error('Real-time availability check failed:', error);
+    } catch (_error) {
       return {
         available: false,
         alternatives: [],
@@ -572,7 +580,7 @@ export class SchedulingIntegrationService {
   // Helper methods
   private calculatePatientRiskFactors(
     history: PatientHistory,
-    preferences: PatientPreferences
+    _preferences: PatientPreferences
   ): any[] {
     const factors = [];
 
@@ -595,7 +603,7 @@ export class SchedulingIntegrationService {
     return factors;
   }
 
-  private async getTreatmentStatistics(treatmentId: string): Promise<any> {
+  private async getTreatmentStatistics(_treatmentId: string): Promise<any> {
     // Calculate treatment statistics for optimization
     return {
       averageDuration: 60,
@@ -606,20 +614,19 @@ export class SchedulingIntegrationService {
   }
 
   private async identifyResourceConflicts(
-    staff: any[],
-    rooms: RoomType[],
-    equipment: string[],
-    timeSlot: any
+    _staff: any[],
+    _rooms: RoomType[],
+    _equipment: string[],
+    _timeSlot: any
   ): Promise<any[]> {
     // Identify potential resource conflicts
     return [];
   }
 
   private async rollbackAppointment(
-    appointment: AIAppointment,
+    _appointment: AIAppointment,
     completedIntegrations: any[]
   ): Promise<void> {
-    console.log('Rolling back appointment creation:', appointment.id);
     // Implement rollback logic for each completed integration
     for (const integration of completedIntegrations) {
       try {
@@ -634,25 +641,20 @@ export class SchedulingIntegrationService {
             // Release equipment reservation
             break;
         }
-      } catch (rollbackError) {
-        console.error(
-          `Rollback failed for ${integration.service}:`,
-          rollbackError
-        );
-      }
+      } catch (_rollbackError) {}
     }
   }
 
   private async getCurrentAppointment(
-    appointmentId: string
+    _appointmentId: string
   ): Promise<AIAppointment | null> {
     // Get current appointment from database
     return null;
   }
 
   private async checkUpdateConflicts(
-    current: AIAppointment,
-    updates: Partial<AIAppointment>
+    _current: AIAppointment,
+    _updates: Partial<AIAppointment>
   ): Promise<any[]> {
     // Check for conflicts with updates
     return [];
@@ -660,22 +662,22 @@ export class SchedulingIntegrationService {
 
   private applyConflictResolution(
     updates: Partial<AIAppointment>,
-    resolution: any
+    _resolution: any
   ): Partial<AIAppointment> {
     // Apply conflict resolution to updates
     return updates;
   }
 
   private async updateAppointmentResources(
-    current: AIAppointment,
-    updates: Partial<AIAppointment>
+    _current: AIAppointment,
+    _updates: Partial<AIAppointment>
   ): Promise<any[]> {
     // Update resources based on appointment changes
     return [];
   }
 
   private hasSignificantChanges(
-    current: AIAppointment,
+    _current: AIAppointment,
     updates: Partial<AIAppointment>
   ): boolean {
     return !!(
@@ -687,7 +689,7 @@ export class SchedulingIntegrationService {
   }
 
   private async processIndividualScheduling(
-    request: SchedulingRequest
+    _request: SchedulingRequest
   ): Promise<SchedulingResponse> {
     // Process individual scheduling request
     throw new Error(
@@ -696,16 +698,16 @@ export class SchedulingIntegrationService {
   }
 
   private async findAlternativeSlots(
-    timeSlot: any,
-    requirements: any
+    _timeSlot: any,
+    _requirements: any
   ): Promise<any[]> {
     // Find alternative time slots
     return [];
   }
 
   private calculateAvailabilityConfidence(
-    resources: any,
-    alternatives: any[]
+    _resources: any,
+    _alternatives: any[]
   ): number {
     // Calculate confidence score for availability
     return 0.85;
@@ -718,10 +720,14 @@ export class SchedulingIntegrationService {
 
   // Cache management
   private getFromCache(key: string): any | null {
-    if (!this.cacheEnabled) return null;
+    if (!this.cacheEnabled) {
+      return null;
+    }
 
     const cached = this.cache.get(key);
-    if (!cached) return null;
+    if (!cached) {
+      return null;
+    }
 
     if (Date.now() - cached.timestamp > cached.ttl) {
       this.cache.delete(key);
@@ -732,7 +738,9 @@ export class SchedulingIntegrationService {
   }
 
   private setCache(key: string, data: any, ttl: number): void {
-    if (!this.cacheEnabled) return;
+    if (!this.cacheEnabled) {
+      return;
+    }
 
     this.cache.set(key, {
       data,

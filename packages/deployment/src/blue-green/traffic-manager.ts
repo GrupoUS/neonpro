@@ -3,28 +3,28 @@
  * Manages traffic routing during blue-green deployments for NeonPro healthcare platform
  */
 
-export interface TrafficConfig {
+export type TrafficConfig = {
   blueWeight: number;
   greenWeight: number;
   environment: string;
   gradualRollout?: boolean;
   rolloutSteps?: number[];
-}
+};
 
-export interface TrafficStatus {
+export type TrafficStatus = {
   currentDistribution: {
     blue: number;
     green: number;
   };
   activeEnvironment: 'blue' | 'green' | 'mixed';
   lastUpdate: Date;
-}
+};
 
 export class TrafficManager {
   private currentConfig: TrafficConfig | null = null;
-  private trafficHistory: TrafficStatus[] = [];
+  private readonly trafficHistory: TrafficStatus[] = [];
 
-  constructor(private config: { maxHistorySize: number }) {}
+  constructor(private readonly config: { maxHistorySize: number }) {}
 
   /**
    * Route traffic between blue and green environments
@@ -105,7 +105,7 @@ export class TrafficManager {
    * Get current traffic status
    */
   getCurrentStatus(): TrafficStatus | null {
-    return this.trafficHistory[this.trafficHistory.length - 1] || null;
+    return this.trafficHistory.at(-1) || null;
   }
 
   /**
@@ -137,12 +137,16 @@ export class TrafficManager {
   private determineActiveEnvironment(
     config: TrafficConfig
   ): 'blue' | 'green' | 'mixed' {
-    if (config.blueWeight === 100) return 'blue';
-    if (config.greenWeight === 100) return 'green';
+    if (config.blueWeight === 100) {
+      return 'blue';
+    }
+    if (config.greenWeight === 100) {
+      return 'green';
+    }
     return 'mixed';
   }
 
-  private async applyTrafficRouting(config: TrafficConfig): Promise<void> {
+  private async applyTrafficRouting(_config: TrafficConfig): Promise<void> {
     // Implementation would depend on load balancer/proxy configuration
     // This is a placeholder for the actual traffic routing logic
     await new Promise((resolve) => setTimeout(resolve, 500));

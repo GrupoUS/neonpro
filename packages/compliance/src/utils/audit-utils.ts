@@ -6,7 +6,7 @@
 import { z } from 'zod';
 
 // Audit log entry structure
-export interface AuditLogEntry {
+export type AuditLogEntry = {
   id: string;
   timestamp: Date;
   user_id: string;
@@ -24,7 +24,7 @@ export interface AuditLogEntry {
     retention_period: number; // days
     access_level: 'read' | 'write' | 'delete' | 'export';
   };
-}
+};
 
 // Standard healthcare actions for audit logging
 export const HEALTHCARE_ACTIONS = {
@@ -34,24 +34,24 @@ export const HEALTHCARE_ACTIONS = {
   PATIENT_UPDATE: 'patient:update',
   PATIENT_DELETE: 'patient:delete',
   PATIENT_EXPORT: 'patient:export',
-  
+
   // Medical record actions
   RECORD_VIEW: 'medical_record:view',
   RECORD_CREATE: 'medical_record:create',
   RECORD_UPDATE: 'medical_record:update',
   RECORD_DELETE: 'medical_record:delete',
-  
+
   // Appointment actions
   APPOINTMENT_VIEW: 'appointment:view',
   APPOINTMENT_CREATE: 'appointment:create',
   APPOINTMENT_UPDATE: 'appointment:update',
   APPOINTMENT_CANCEL: 'appointment:cancel',
-  
+
   // Authentication actions
   LOGIN_SUCCESS: 'auth:login_success',
   LOGIN_FAILURE: 'auth:login_failure',
   LOGOUT: 'auth:logout',
-  
+
   // Data export/import
   DATA_EXPORT: 'data:export',
   DATA_IMPORT: 'data:import',
@@ -98,7 +98,9 @@ export function createAuditLog(params: {
     compliance_context: {
       lgpd_basis: params.lgpd_basis || LGPD_BASIS.HEALTHCARE_PROCEDURE,
       data_category: params.data_category || 'health',
-      retention_period: calculateRetentionPeriod(params.data_category || 'health'),
+      retention_period: calculateRetentionPeriod(
+        params.data_category || 'health'
+      ),
       access_level: determineAccessLevel(params.action),
     },
   };
@@ -121,10 +123,18 @@ function calculateRetentionPeriod(dataCategory: string): number {
 }
 
 // Determine access level from action
-function determineAccessLevel(action: string): 'read' | 'write' | 'delete' | 'export' {
-  if (action.includes('view') || action.includes('read')) return 'read';
-  if (action.includes('delete') || action.includes('remove')) return 'delete';
-  if (action.includes('export') || action.includes('download')) return 'export';
+function determineAccessLevel(
+  action: string
+): 'read' | 'write' | 'delete' | 'export' {
+  if (action.includes('view') || action.includes('read')) {
+    return 'read';
+  }
+  if (action.includes('delete') || action.includes('remove')) {
+    return 'delete';
+  }
+  if (action.includes('export') || action.includes('download')) {
+    return 'export';
+  }
   return 'write';
 }
 
@@ -143,28 +153,42 @@ export const AuditLogSchema = z.object({
   after_state: z.record(z.any()).optional(),
   compliance_context: z.object({
     lgpd_basis: z.string(),
-    data_category: z.enum(['personal', 'sensitive', 'health', 'administrative']),
+    data_category: z.enum([
+      'personal',
+      'sensitive',
+      'health',
+      'administrative',
+    ]),
     retention_period: z.number().positive(),
     access_level: z.enum(['read', 'write', 'delete', 'export']),
   }),
 });
 
 // Anonymize sensitive data for audit logs
-export function anonymizeAuditData(data: Record<string, any>): Record<string, any> {
-  const sensitiveFields = ['cpf', 'rg', 'email', 'phone', 'address', 'birth_date'];
+export function anonymizeAuditData(
+  data: Record<string, any>
+): Record<string, any> {
+  const sensitiveFields = [
+    'cpf',
+    'rg',
+    'email',
+    'phone',
+    'address',
+    'birth_date',
+  ];
   const anonymized = { ...data };
-  
+
   for (const field of sensitiveFields) {
     if (anonymized[field]) {
       anonymized[field] = '[ANONYMIZED]';
     }
   }
-  
+
   return anonymized;
 }
 
 // Generate audit report for compliance verification
-export interface AuditReport {
+export type AuditReport = {
   period: { start: Date; end: Date };
   total_entries: number;
   by_action: Record<string, number>;
@@ -172,7 +196,7 @@ export interface AuditReport {
   by_data_category: Record<string, number>;
   compliance_score: number;
   violations: string[];
-}
+};
 
 export function generateAuditReport(
   logs: AuditLogEntry[],
@@ -180,30 +204,34 @@ export function generateAuditReport(
   endDate: Date
 ): AuditReport {
   const filteredLogs = logs.filter(
-    log => log.timestamp >= startDate && log.timestamp <= endDate
+    (log) => log.timestamp >= startDate && log.timestamp <= endDate
   );
-  
+
   const byAction: Record<string, number> = {};
   const byUser: Record<string, number> = {};
   const byDataCategory: Record<string, number> = {};
   const violations: string[] = [];
-  
+
   for (const log of filteredLogs) {
     byAction[log.action] = (byAction[log.action] || 0) + 1;
     byUser[log.user_id] = (byUser[log.user_id] || 0) + 1;
-    byDataCategory[log.compliance_context.data_category] = 
+    byDataCategory[log.compliance_context.data_category] =
       (byDataCategory[log.compliance_context.data_category] || 0) + 1;
-    
+
     // Check for compliance violations
     if (!log.compliance_context.lgpd_basis) {
-      violations.push(`Missing LGPD basis for action ${log.action} on ${log.timestamp}`);
+      violations.push(
+        `Missing LGPD basis for action ${log.action} on ${log.timestamp}`
+      );
     }
   }
-  
+
   // Calculate compliance score (100% if no violations)
-  const complianceScore = violations.length === 0 ? 100 : 
-    Math.max(0, 100 - (violations.length / filteredLogs.length) * 100);
-  
+  const complianceScore =
+    violations.length === 0
+      ? 100
+      : Math.max(0, 100 - (violations.length / filteredLogs.length) * 100);
+
   return {
     period: { start: startDate, end: endDate },
     total_entries: filteredLogs.length,

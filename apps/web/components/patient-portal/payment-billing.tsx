@@ -18,9 +18,6 @@ import {
 import { cn } from '@neonpro/utils';
 import {
   AlertTriangle,
-  ArrowDownRight,
-  ArrowUpRight,
-  Banknote,
   Building2,
   Calculator,
   Calendar,
@@ -31,18 +28,13 @@ import {
   DollarSign,
   Download,
   Eye,
-  FileText,
   Filter,
   Heart,
-  Info,
   PieChart,
-  Plus,
   QrCode,
   Receipt,
   Search,
-  Share2,
   Shield,
-  Smartphone,
   Star,
   TrendingUp,
   XCircle,
@@ -273,7 +265,7 @@ function PaymentMethodCard({ method, onSelect, isSelected }: any) {
 }
 
 function PaymentForm({ payment, selectedMethod }: any) {
-  const [pixKey, setPixKey] = useState('pix@neonpro.com.br');
+  const [pixKey, _setPixKey] = useState('pix@neonpro.com.br');
   const [installments, setInstallments] = useState(1);
 
   const renderPaymentFields = () => {
@@ -327,7 +319,7 @@ function PaymentForm({ payment, selectedMethod }: any) {
                   onChange={(e) => setInstallments(Number(e.target.value))}
                   value={installments}
                 >
-                  {[...Array(12)].map((_, i) => {
+                  {[...new Array(12)].map((_, i) => {
                     const parcels = i + 1;
                     const parcelValue = payment.amount / parcels;
                     return (

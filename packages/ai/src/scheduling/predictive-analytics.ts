@@ -14,49 +14,48 @@ import type {
   TreatmentDuration,
 } from './types';
 
-export interface PredictionModel {
+export type PredictionModel = {
   modelId: string;
   modelType: 'no_show' | 'duration' | 'satisfaction' | 'optimization';
   accuracy: number;
   lastTrained: Date;
   version: string;
-}
+};
 
-export interface TreatmentDurationPrediction {
+export type TreatmentDurationPrediction = {
   estimatedMinutes: number;
   confidence: number;
   minDuration: number;
   maxDuration: number;
   factors: DurationFactor[];
   bufferRecommendation: number;
-}
+};
 
-export interface DurationFactor {
+export type DurationFactor = {
   factor: string;
   impact: number;
   confidence: number;
-}
+};
 
-export interface SchedulingPattern {
+export type SchedulingPattern = {
   patternId: string;
   description: string;
   frequency: number;
   successRate: number;
   recommendedAction: string;
-}
+};
 
-export interface OptimizationRecommendation {
+export type OptimizationRecommendation = {
   type: 'time_slot' | 'staff_allocation' | 'room_usage' | 'treatment_sequence';
   recommendation: string;
   expectedImpact: number;
   confidence: number;
   implementationEffort: 'low' | 'medium' | 'high';
-}
+};
 
 export class PredictiveAnalytics {
-  private models: Map<string, PredictionModel> = new Map();
-  private historicalData: Map<string, any[]> = new Map();
-  private patterns: Map<string, SchedulingPattern> = new Map();
+  private readonly models: Map<string, PredictionModel> = new Map();
+  private readonly patterns: Map<string, SchedulingPattern> = new Map();
 
   constructor() {
     this.initializeModels();
@@ -96,8 +95,7 @@ export class PredictiveAnalytics {
         recommendedActions,
         lastUpdated: new Date(),
       };
-    } catch (error) {
-      console.error('No-show prediction failed:', error);
+    } catch (_error) {
       // Return conservative prediction on error
       return {
         probability: 0.15, // Default 15% probability
@@ -155,8 +153,7 @@ export class PredictiveAnalytics {
         factors,
         bufferRecommendation,
       };
-    } catch (error) {
-      console.error('Duration prediction failed:', error);
+    } catch (_error) {
       // Return base duration on error
       return {
         estimatedMinutes: baseDuration.estimatedMinutes,
@@ -174,7 +171,7 @@ export class PredictiveAnalytics {
    */
   async generateOptimizationRecommendations(
     currentSchedule: AIAppointment[],
-    timeRange: { start: Date; end: Date },
+    _timeRange: { start: Date; end: Date },
     targetMetrics: SchedulingMetrics
   ): Promise<OptimizationRecommendation[]> {
     const recommendations: OptimizationRecommendation[] = [];
@@ -217,8 +214,7 @@ export class PredictiveAnalytics {
       return recommendations.sort(
         (a, b) => b.expectedImpact - a.expectedImpact
       );
-    } catch (error) {
-      console.error('Optimization analysis failed:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -228,7 +224,7 @@ export class PredictiveAnalytics {
    */
   async analyzeSchedulingPatterns(
     appointments: AIAppointment[],
-    timeRange: { start: Date; end: Date }
+    _timeRange: { start: Date; end: Date }
   ): Promise<SchedulingPattern[]> {
     const patterns: SchedulingPattern[] = [];
 
@@ -255,8 +251,7 @@ export class PredictiveAnalytics {
       });
 
       return patterns;
-    } catch (error) {
-      console.error('Pattern analysis failed:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -267,7 +262,7 @@ export class PredictiveAnalytics {
   async calculateSchedulingOptimization(
     currentSchedule: AIAppointment[],
     proposedChanges: Partial<AIAppointment>[],
-    timeRange: { start: Date; end: Date }
+    _timeRange: { start: Date; end: Date }
   ): Promise<SchedulingOptimization> {
     try {
       const originalMetrics = this.calculateCurrentMetrics(currentSchedule);
@@ -291,8 +286,7 @@ export class PredictiveAnalytics {
         timeToImplement,
         confidenceLevel,
       };
-    } catch (error) {
-      console.error('Optimization calculation failed:', error);
+    } catch (_error) {
       throw new Error('Failed to calculate scheduling optimization');
     }
   }
@@ -301,7 +295,7 @@ export class PredictiveAnalytics {
    * Calculate no-show factors
    */
   private async calculateNoShowFactors(
-    patientId: string,
+    _patientId: string,
     appointmentSlot: AlternativeSlot,
     patientHistory: PatientHistory,
     treatmentType: string
@@ -390,7 +384,7 @@ export class PredictiveAnalytics {
    */
   private async calculateDurationFactors(
     treatmentId: string,
-    patientId: string,
+    _patientId: string,
     baseDuration: TreatmentDuration,
     patientHistory: PatientHistory
   ): Promise<DurationFactor[]> {
@@ -518,7 +512,7 @@ export class PredictiveAnalytics {
 
   // Analytics helper methods
   private calculateCurrentMetrics(
-    appointments: AIAppointment[]
+    _appointments: AIAppointment[]
   ): SchedulingMetrics {
     // Implementation would calculate actual metrics from appointments
     return {
@@ -536,7 +530,7 @@ export class PredictiveAnalytics {
 
   private simulateOptimizedMetrics(
     currentSchedule: AIAppointment[],
-    changes: Partial<AIAppointment>[]
+    _changes: Partial<AIAppointment>[]
   ): SchedulingMetrics {
     // Simulate the impact of proposed changes
     const current = this.calculateCurrentMetrics(currentSchedule);
@@ -577,28 +571,28 @@ export class PredictiveAnalytics {
 
   // Pattern analysis methods
   private analyzeTimePatterns(
-    appointments: AIAppointment[]
+    _appointments: AIAppointment[]
   ): SchedulingPattern[] {
     // Analyze time-based patterns
     return [];
   }
 
   private analyzeNoShowPatterns(
-    appointments: AIAppointment[]
+    _appointments: AIAppointment[]
   ): SchedulingPattern[] {
     // Analyze no-show patterns
     return [];
   }
 
   private analyzeTreatmentPatterns(
-    appointments: AIAppointment[]
+    _appointments: AIAppointment[]
   ): SchedulingPattern[] {
     // Analyze treatment-specific patterns
     return [];
   }
 
   private analyzeStaffPatterns(
-    appointments: AIAppointment[]
+    _appointments: AIAppointment[]
   ): SchedulingPattern[] {
     // Analyze staff efficiency patterns
     return [];
@@ -606,33 +600,33 @@ export class PredictiveAnalytics {
 
   // Optimization analysis methods
   private async analyzeTimeSlotOptimizations(
-    schedule: AIAppointment[],
-    current: SchedulingMetrics,
-    target: SchedulingMetrics
+    _schedule: AIAppointment[],
+    _current: SchedulingMetrics,
+    _target: SchedulingMetrics
   ): Promise<OptimizationRecommendation[]> {
     return [];
   }
 
   private async analyzeStaffOptimizations(
-    schedule: AIAppointment[],
-    current: SchedulingMetrics,
-    target: SchedulingMetrics
+    _schedule: AIAppointment[],
+    _current: SchedulingMetrics,
+    _target: SchedulingMetrics
   ): Promise<OptimizationRecommendation[]> {
     return [];
   }
 
   private async analyzeRoomOptimizations(
-    schedule: AIAppointment[],
-    current: SchedulingMetrics,
-    target: SchedulingMetrics
+    _schedule: AIAppointment[],
+    _current: SchedulingMetrics,
+    _target: SchedulingMetrics
   ): Promise<OptimizationRecommendation[]> {
     return [];
   }
 
   private async analyzeTreatmentSequenceOptimizations(
-    schedule: AIAppointment[],
-    current: SchedulingMetrics,
-    target: SchedulingMetrics
+    _schedule: AIAppointment[],
+    _current: SchedulingMetrics,
+    _target: SchedulingMetrics
   ): Promise<OptimizationRecommendation[]> {
     return [];
   }
@@ -661,9 +655,15 @@ export class PredictiveAnalytics {
   private categorizeRiskLevel(
     probability: number
   ): 'low' | 'medium' | 'high' | 'critical' {
-    if (probability < 0.15) return 'low';
-    if (probability < 0.35) return 'medium';
-    if (probability < 0.6) return 'high';
+    if (probability < 0.15) {
+      return 'low';
+    }
+    if (probability < 0.35) {
+      return 'medium';
+    }
+    if (probability < 0.6) {
+      return 'high';
+    }
     return 'critical';
   }
 
@@ -691,13 +691,13 @@ export class PredictiveAnalytics {
   }
 
   private async getTreatmentNoShowFactor(
-    treatmentType: string
+    _treatmentType: string
   ): Promise<NoShowFactor | null> {
     // Get treatment-specific no-show factors
     return null;
   }
 
-  private async getWeatherFactor(date: Date): Promise<NoShowFactor | null> {
+  private async getWeatherFactor(_date: Date): Promise<NoShowFactor | null> {
     // Get weather-based no-show factor
     return null;
   }
@@ -709,8 +709,12 @@ export class PredictiveAnalytics {
 
   private getTimeOfDayImpact(date: Date): number {
     const hour = date.getHours();
-    if (hour < 9 || hour > 17) return 0.1; // Early/late appointments take longer
-    if (hour >= 11 && hour <= 14) return -0.05; // Optimal time is faster
+    if (hour < 9 || hour > 17) {
+      return 0.1; // Early/late appointments take longer
+    }
+    if (hour >= 11 && hour <= 14) {
+      return -0.05; // Optimal time is faster
+    }
     return 0;
   }
 
@@ -721,7 +725,7 @@ export class PredictiveAnalytics {
   }
 
   private calculateOptimizationConfidence(
-    improvements: OptimizationImprovement[]
+    _improvements: OptimizationImprovement[]
   ): number {
     return 0.85; // Default confidence
   }
@@ -734,7 +738,7 @@ export class PredictiveAnalytics {
     return `${Math.abs(improvement).toFixed(1)}% ${direction} in ${metric.replace(/([A-Z])/g, ' $1').toLowerCase()}`;
   }
 
-  private getImplementationSteps(metric: keyof SchedulingMetrics): string[] {
+  private getImplementationSteps(_metric: keyof SchedulingMetrics): string[] {
     // Return implementation steps for each metric
     return [
       'Review current scheduling',

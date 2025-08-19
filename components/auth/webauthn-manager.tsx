@@ -9,7 +9,7 @@ import {
   Trash2,
   Usb,
 } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -21,18 +21,18 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 
-interface WebAuthnCredential {
+type WebAuthnCredential = {
   id: string;
   credential_id: string;
   name: string;
   created_at: string;
   last_used_at?: string;
   transports: string[];
-}
+};
 
-interface WebAuthnManagerProps {
+type WebAuthnManagerProps = {
   className?: string;
-}
+};
 
 export function WebAuthnManager({ className }: WebAuthnManagerProps) {
   const [credentials, setCredentials] = useState<WebAuthnCredential[]>([]);
@@ -42,7 +42,7 @@ export function WebAuthnManager({ className }: WebAuthnManagerProps) {
 
   useEffect(() => {
     fetchCredentials();
-  }, []);
+  }, [fetchCredentials]);
 
   const fetchCredentials = async () => {
     try {
@@ -53,8 +53,7 @@ export function WebAuthnManager({ className }: WebAuthnManagerProps) {
       }
       const data = await response.json();
       setCredentials(data.credentials || []);
-    } catch (error) {
-      console.error('Error fetching credentials:', error);
+    } catch (_error) {
       setError('Failed to load WebAuthn credentials');
     } finally {
       setLoading(false);
@@ -137,7 +136,6 @@ export function WebAuthnManager({ className }: WebAuthnManagerProps) {
       // Refresh credentials list
       await fetchCredentials();
     } catch (error: any) {
-      console.error('Registration error:', error);
       setError(error.message || 'Failed to register WebAuthn credential');
     } finally {
       setIsRegistering(false);
@@ -159,8 +157,7 @@ export function WebAuthnManager({ className }: WebAuthnManagerProps) {
 
       // Refresh credentials list
       await fetchCredentials();
-    } catch (error) {
-      console.error('Delete error:', error);
+    } catch (_error) {
       setError('Failed to delete credential');
     }
   };

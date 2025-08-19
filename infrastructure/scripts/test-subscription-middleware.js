@@ -18,40 +18,26 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!(supabaseUrl && supabaseServiceKey)) {
-  console.error(
-    '❌ Variáveis SUPABASE_URL ou SUPABASE_SERVICE_ROLE_KEY não configuradas'
-  );
   process.exit(1);
 }
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-console.log('🔒 TESTE DO MIDDLEWARE DE SUBSCRIPTION');
-console.log('='.repeat(50));
-console.log(`🌐 URL: ${supabaseUrl}`);
-console.log(`📅 Data: ${new Date().toLocaleString('pt-BR')}`);
-console.log('='.repeat(50));
-
-let totalTests = 0;
-let passedTests = 0;
+let _totalTests = 0;
+let _passedTests = 0;
 let failedTests = 0;
 const results = [];
 
 // Função para executar teste
 async function runTest(name, testFn) {
-  totalTests++;
+  _totalTests++;
   try {
-    console.log(`\n🔄 Testando: ${name}`);
     const result = await testFn();
-    console.log(`✅ PASSOU: ${name}`);
     if (result) {
-      console.log(`   ${result}`);
     }
-    passedTests++;
+    _passedTests++;
     results.push({ name, status: 'PASSOU', details: result });
   } catch (error) {
-    console.log(`❌ FALHOU: ${name}`);
-    console.log(`   Erro: ${error.message}`);
     failedTests++;
     results.push({ name, status: 'FALHOU', error: error.message });
   }
@@ -283,47 +269,17 @@ async function runAllTests() {
     return 'Tipos TypeScript definidos corretamente';
   });
 
-  // Resumo dos resultados
-  console.log(`\n${'='.repeat(50)}`);
-  console.log('📊 RESUMO DOS TESTES');
-  console.log('='.repeat(50));
-  console.log(`Total de testes: ${totalTests}`);
-  console.log(`✅ Passou: ${passedTests}`);
-  console.log(`❌ Falhou: ${failedTests}`);
-  console.log(
-    `📈 Taxa de sucesso: ${((passedTests / totalTests) * 100).toFixed(1)}%`
-  );
-
   if (failedTests > 0) {
-    console.log('\n❌ TESTES QUE FALHARAM:');
-    results
-      .filter((r) => r.status === 'FALHOU')
-      .forEach((r) => {
-        console.log(`   • ${r.name}: ${r.error}`);
-      });
+    results.filter((r) => r.status === 'FALHOU').forEach((_r) => {});
   }
-
-  console.log('\n✅ PRÓXIMOS PASSOS:');
   if (failedTests === 0) {
-    console.log('   • Todos os testes passaram! ✨');
-    console.log('   • Execute: pnpm dev');
-    console.log('   • Acesse: http://localhost:3000/dashboard/subscription');
-    console.log('   • Teste o middleware em rotas protegidas');
-    console.log('   • Implemente STORY-SUB-002 (Analytics Dashboard)');
   } else {
-    console.log('   • Corrija os testes que falharam');
-    console.log('   • Execute novamente: pnpm test:middleware');
-    console.log('   • Aplique as migrations necessárias no banco');
   }
-
-  console.log('\n🎯 VALIDAÇÃO DO MIDDLEWARE DE SUBSCRIPTION CONCLUÍDA!');
-  console.log(`📅 ${new Date().toLocaleString('pt-BR')}`);
 
   process.exit(failedTests > 0 ? 1 : 0);
 }
 
 // Executar todos os testes
-runAllTests().catch((error) => {
-  console.error('❌ Erro fatal durante execução dos testes:', error);
+runAllTests().catch((_error) => {
   process.exit(1);
 });

@@ -1,43 +1,35 @@
 {
   "name": "@neonpro/database",
-  "version": "0.1.0",
-  "description": "Database utilities and types for NeonPro with Supabase",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    },
-    "./client": {
-      "types": "./dist/client/index.d.ts",
-      "default": "./dist/client/index.js"
-    },
-    "./types": {
-      "types": "./dist/types/index.d.ts",
-      "default": "./dist/types/index.js"
-    },
-    "./migrations": {
-      "types": "./dist/migrations/index.d.ts",
-      "default": "./dist/migrations/index.js"
-    }
-  },
+  "version": "1.0.0",
+  "private": true,
+  "description": "NeonPro Database Layer - Prisma ORM with Supabase PostgreSQL",
+  "main": "index.ts",
   "scripts": {
-    "build": "npx tsc",
-    "dev": "npx tsc --watch",
-    "lint": "biome lint .",
-    "type-check": "npx tsc --noEmit",
-    "db:generate": "supabase gen types typescript --local > src/types/database.ts"
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "db:reset": "prisma migrate reset",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:studio": "prisma studio",
+    "db:format": "prisma format",
+    "db:validate": "prisma validate",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@neonpro/types": "workspace:*",
-    "@supabase/supabase-js": "^2.45.4",
-    "drizzle-orm": "^0.33.0"
+    "@prisma/client": "workspace:*",
+    "prisma": "workspace:*",
+    "zod": "workspace:*"
   },
   "devDependencies": {
-    "@neonpro/config": "workspace:*",
-    "drizzle-kit": "^0.24.0",
-    "supabase": "^1.191.3",
-    "typescript": "^5.5.4"
+    "@types/node": "workspace:*",
+    "tsx": "workspace:*",
+    "typescript": "workspace:*"
+  },
+  "prisma": {
+    "schema": "prisma/schema.prisma",
+    "seed": "tsx prisma/seed.ts"
   }
 }

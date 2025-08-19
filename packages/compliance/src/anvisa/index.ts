@@ -17,16 +17,15 @@ export {
 
 // ANVISA Medical Device Services
 export {
+  type ClassificationLevel,
   type DeviceClassification,
   type MedicalDevice,
   type MedicalDeviceFilters,
-  type ClassificationLevel,
   MedicalDeviceService,
 } from './medical-device-service';
 
 // ANVISA Procedure Classification Services
 export {
-
   type ProcedureClassification,
   ProcedureClassificationService,
   type ProcedureFilters,

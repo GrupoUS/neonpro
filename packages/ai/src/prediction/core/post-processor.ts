@@ -182,14 +182,22 @@ export class AestheticPostProcessor {
 
     // Adjust based on patient factors
     // Age affects longevity
-    if (patient.age < 30)
+    if (patient.age < 30) {
       durability *= 0.8; // Faster metabolism
-    else if (patient.age > 50) durability *= 1.2; // Slower metabolism
+    } else if (patient.age > 50) {
+      durability *= 1.2; // Slower metabolism
+    }
 
     // Lifestyle factors
-    if (patient.lifestyle.smoking) durability *= 0.7;
-    if (patient.lifestyle.sunExposure === 'high') durability *= 0.8;
-    if (patient.lifestyle.exerciseLevel === 'high') durability *= 0.9;
+    if (patient.lifestyle.smoking) {
+      durability *= 0.7;
+    }
+    if (patient.lifestyle.sunExposure === 'high') {
+      durability *= 0.8;
+    }
+    if (patient.lifestyle.exerciseLevel === 'high') {
+      durability *= 0.9;
+    }
 
     // Outcome score affects perceived durability
     durability *= 0.5 + outcomeScore * 0.5;
@@ -293,13 +301,19 @@ export class AestheticPostProcessor {
     let onsetDays = 5;
 
     // Higher doses may work faster
-    if (totalUnits > 50) onsetDays -= 1;
-    if (totalUnits > 100) onsetDays -= 1;
+    if (totalUnits > 50) {
+      onsetDays -= 1;
+    }
+    if (totalUnits > 100) {
+      onsetDays -= 1;
+    }
 
     // Certain areas respond faster
     const fastAreas = ['forehead', 'glabella'];
     const hasFastAreas = targetAreas.some((area) => fastAreas.includes(area));
-    if (hasFastAreas) onsetDays -= 1;
+    if (hasFastAreas) {
+      onsetDays -= 1;
+    }
 
     return Math.max(3, Math.min(14, onsetDays));
   }
@@ -427,10 +441,14 @@ export class AestheticPostProcessor {
 
     // Energy-pulse width relationship
     const energyPulseRatio = energy / pulseWidth;
-    if (energyPulseRatio > 1 && energyPulseRatio < 5) confidence += 0.1;
+    if (energyPulseRatio > 1 && energyPulseRatio < 5) {
+      confidence += 0.1;
+    }
 
     // Spot size appropriateness
-    if (spotSize >= 6 && spotSize <= 12) confidence += 0.1;
+    if (spotSize >= 6 && spotSize <= 12) {
+      confidence += 0.1;
+    }
 
     return Math.min(confidence, 1);
   }
@@ -438,7 +456,7 @@ export class AestheticPostProcessor {
   /**
    * Calculate feature importance for interpretability
    */
-  calculateFeatureImportance(features: number[]): FeatureImportance[] {
+  calculateFeatureImportance(_features: number[]): FeatureImportance[] {
     // This would ideally use model's actual feature importance
     // For now, provide general importance based on clinical knowledge
     const importance: FeatureImportance[] = [

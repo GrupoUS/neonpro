@@ -1,21 +1,21 @@
 // Performance tracker enhanced with CommonJS compatibility
-export interface PerformanceThresholds {
+export type PerformanceThresholds = {
   authentication: number;
   registration: number;
   databaseQuery: number;
   apiResponse: number;
-}
+};
 
-export interface AuthenticationMetrics {
+export type AuthenticationMetrics = {
   averageTime: number;
   p95Time: number;
   errorRate: number;
   successRate: number;
-}
+};
 
 export class AuthPerformanceTracker {
-  private metrics: Map<string, number[]> = new Map();
-  private thresholds: PerformanceThresholds = {
+  private readonly metrics: Map<string, number[]> = new Map();
+  private readonly thresholds: PerformanceThresholds = {
     authentication: 200, // ms
     registration: 500, // ms
     databaseQuery: 100, // ms
@@ -51,7 +51,9 @@ export class AuthPerformanceTracker {
   }
 
   private calculateP95(values: number[]): number {
-    if (values.length === 0) return 0;
+    if (values.length === 0) {
+      return 0;
+    }
     const sorted = [...values].sort((a, b) => a - b);
     const index = Math.floor(sorted.length * 0.95);
     return sorted[index] || 0;

@@ -40,7 +40,6 @@ type TurboPipeline = {
 };
 export class AdvancedTurboOptimizer {
   private readonly rootPath: string;
-  private readonly config: AdvancedTurboConfig;
 
   constructor(rootPath: string = process.cwd()) {
     this.rootPath = rootPath;

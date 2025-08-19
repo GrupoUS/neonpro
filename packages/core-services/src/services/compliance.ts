@@ -4,16 +4,13 @@
 // ================================================
 
 import { createClient } from '@supabase/supabase-js';
-import { authService } from './auth';
-import { config } from './configuration';
 import { monitoring } from './monitoring';
-import { notificationService } from './notification';
 
 // ================================================
 // TYPES AND INTERFACES
 // ================================================
 
-interface CompliancePolicy {
+type CompliancePolicy = {
   id: string;
   tenantId: string;
   name: string;
@@ -30,9 +27,9 @@ interface CompliancePolicy {
   createdAt: Date;
   updatedAt: Date;
   createdBy: string;
-}
+};
 
-interface ComplianceRule {
+type ComplianceRule = {
   id: string;
   name: string;
   description: string;
@@ -42,26 +39,26 @@ interface ComplianceRule {
   severity: SeverityLevel;
   isActive: boolean;
   metadata: Record<string, any>;
-}
+};
 
-interface RuleCondition {
+type RuleCondition = {
   field: string;
   operator: ConditionOperator;
   value: any;
   dataSource: DataSource;
   logicalOperator?: LogicalOperator;
   nestedConditions?: RuleCondition[];
-}
+};
 
-interface RuleAction {
+type RuleAction = {
   type: ActionType;
   parameters: Record<string, any>;
   autoExecute: boolean;
   notificationRequired: boolean;
   escalationRequired: boolean;
-}
+};
 
-interface ComplianceAudit {
+type ComplianceAudit = {
   id: string;
   tenantId: string;
   policyId: string;
@@ -80,9 +77,9 @@ interface ComplianceAudit {
   metadata: Record<string, any>;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
-interface ComplianceFinding {
+type ComplianceFinding = {
   id: string;
   auditId: string;
   ruleId: string;
@@ -98,9 +95,9 @@ interface ComplianceFinding {
   resolvedAt?: Date;
   resolution?: string;
   metadata: Record<string, any>;
-}
+};
 
-interface ComplianceEvidence {
+type ComplianceEvidence = {
   id: string;
   type: EvidenceType;
   source: string;
@@ -108,9 +105,9 @@ interface ComplianceEvidence {
   data: Record<string, any>;
   hash: string;
   metadata: Record<string, any>;
-}
+};
 
-interface ComplianceIncident {
+type ComplianceIncident = {
   id: string;
   tenantId: string;
   title: string;
@@ -132,9 +129,9 @@ interface ComplianceIncident {
   metadata: Record<string, any>;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
-interface DataImpactAssessment {
+type DataImpactAssessment = {
   recordsAffected: number;
   dataTypes: string[];
   sensitivityLevel: SensitivityLevel;
@@ -142,9 +139,9 @@ interface DataImpactAssessment {
   estimatedImpact: ImpactLevel;
   notificationRequired: boolean;
   regulatoryReportingRequired: boolean;
-}
+};
 
-interface ContainmentAction {
+type ContainmentAction = {
   id: string;
   type: string;
   description: string;
@@ -152,18 +149,18 @@ interface ContainmentAction {
   executedBy: string;
   effectiveness: EffectivenessLevel;
   metadata: Record<string, any>;
-}
+};
 
-interface RemediationPlan {
+type RemediationPlan = {
   actions: RemediationAction[];
   timeline: string;
   responsibleParty: string;
   estimatedCost?: number;
   approvalRequired: boolean;
   status: RemediationStatus;
-}
+};
 
-interface RemediationAction {
+type RemediationAction = {
   id: string;
   description: string;
   type: string;
@@ -173,9 +170,9 @@ interface RemediationAction {
   status: ActionStatus;
   completedAt?: Date;
   notes?: string;
-}
+};
 
-interface ConsentRecord {
+type ConsentRecord = {
   id: string;
   tenantId: string;
   dataSubjectId: string;
@@ -195,9 +192,9 @@ interface ConsentRecord {
   metadata: Record<string, any>;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
-interface DataSubjectRequest {
+type DataSubjectRequest = {
   id: string;
   tenantId: string;
   dataSubjectId: string;
@@ -215,9 +212,9 @@ interface DataSubjectRequest {
   metadata: Record<string, any>;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
-interface ComplianceReport {
+type ComplianceReport = {
   id: string;
   tenantId: string;
   name: string;
@@ -235,9 +232,9 @@ interface ComplianceReport {
   metadata: Record<string, any>;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
-interface ComplianceMetrics {
+type ComplianceMetrics = {
   policyCompliance: number;
   incidentCount: number;
   findingCount: number;
@@ -248,33 +245,33 @@ interface ComplianceMetrics {
   trendsAnalysis: TrendsAnalysis;
   riskBreakdown: RiskBreakdown;
   complianceByFramework: Record<ComplianceFramework, FrameworkCompliance>;
-}
+};
 
-interface TrendsAnalysis {
+type TrendsAnalysis = {
   incidentTrend: TrendData[];
   complianceTrend: TrendData[];
   riskTrend: TrendData[];
-}
+};
 
-interface TrendData {
+type TrendData = {
   period: string;
   value: number;
   change: number;
-}
+};
 
-interface RiskBreakdown {
+type RiskBreakdown = {
   critical: number;
   high: number;
   medium: number;
   low: number;
-}
+};
 
-interface FrameworkCompliance {
+type FrameworkCompliance = {
   score: number;
   policies: number;
   violations: number;
   lastAssessment: Date;
-}
+};
 
 // ================================================
 // ENUMS
@@ -571,7 +568,7 @@ enum ReportStatus {
 // REQUEST/RESPONSE TYPES
 // ================================================
 
-interface CreatePolicyRequest {
+type CreatePolicyRequest = {
   tenantId: string;
   name: string;
   description: string;
@@ -582,9 +579,9 @@ interface CreatePolicyRequest {
   effectiveDate: Date;
   expiryDate?: Date;
   metadata?: Record<string, any>;
-}
+};
 
-interface CreateAuditRequest {
+type CreateAuditRequest = {
   tenantId: string;
   policyId: string;
   name: string;
@@ -595,9 +592,9 @@ interface CreateAuditRequest {
   endDate?: Date;
   assessor: string;
   metadata?: Record<string, any>;
-}
+};
 
-interface ReportIncidentRequest {
+type ReportIncidentRequest = {
   tenantId: string;
   title: string;
   description: string;
@@ -610,9 +607,9 @@ interface ReportIncidentRequest {
     'notificationRequired' | 'regulatoryReportingRequired'
   >;
   metadata?: Record<string, any>;
-}
+};
 
-interface CreateConsentRequest {
+type CreateConsentRequest = {
   tenantId: string;
   dataSubjectId: string;
   dataSubjectType: DataSubjectType;
@@ -624,18 +621,18 @@ interface CreateConsentRequest {
   consentVersion: string;
   retentionPeriod: number;
   metadata?: Record<string, any>;
-}
+};
 
-interface DataSubjectRequestRequest {
+type DataSubjectRequestRequest = {
   tenantId: string;
   dataSubjectId: string;
   requestType: DataSubjectRequestType;
   description: string;
   verificationMethod: VerificationMethod;
   metadata?: Record<string, any>;
-}
+};
 
-interface ComplianceFilters {
+type ComplianceFilters = {
   tenantId?: string;
   framework?: ComplianceFramework;
   category?: ComplianceCategory;
@@ -647,7 +644,7 @@ interface ComplianceFilters {
   offset?: number;
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
-}
+};
 
 // ================================================
 // COMPLIANCE SERVICE
@@ -655,7 +652,7 @@ interface ComplianceFilters {
 
 export class ComplianceService {
   private static instance: ComplianceService;
-  private supabase = createClient(
+  private readonly supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
@@ -1352,8 +1349,8 @@ export class ComplianceService {
   }
 
   private async validateTenantAccess(
-    userId: string,
-    tenantId: string
+    _userId: string,
+    _tenantId: string
   ): Promise<void> {
     // Implementation would validate user has access to tenant
     // For now, we'll assume the auth service handles this
@@ -1461,7 +1458,9 @@ export class ComplianceService {
   }
 
   private calculatePolicyCompliance(policies: any[]): number {
-    if (policies.length === 0) return 100;
+    if (policies.length === 0) {
+      return 100;
+    }
 
     const activePolicies = policies.filter((p) => p.is_active);
     return (activePolicies.length / policies.length) * 100;
@@ -1508,23 +1507,27 @@ export class ComplianceService {
   }
 
   private calculateConsentRate(consents: any[]): number {
-    if (consents.length === 0) return 0;
+    if (consents.length === 0) {
+      return 0;
+    }
 
     const givenConsents = consents.filter((c) => c.consent_given);
     return (givenConsents.length / consents.length) * 100;
   }
 
   private async calculateAverageResponseTime(
-    tenantId: string,
-    periodStart: Date,
-    periodEnd: Date
+    _tenantId: string,
+    _periodStart: Date,
+    _periodEnd: Date
   ): Promise<number> {
     // Calculate average response time for incidents/requests
     return 24; // hours (mock)
   }
 
   private calculateAuditScore(findings: any[]): number {
-    if (findings.length === 0) return 100;
+    if (findings.length === 0) {
+      return 100;
+    }
 
     const resolvedFindings = findings.filter(
       (f) => f.status === FindingStatus.RESOLVED
@@ -1533,9 +1536,9 @@ export class ComplianceService {
   }
 
   private async createTrendsAnalysis(
-    tenantId: string,
-    periodStart: Date,
-    periodEnd: Date
+    _tenantId: string,
+    _periodStart: Date,
+    _periodEnd: Date
   ): Promise<TrendsAnalysis> {
     // Create trends analysis (simplified)
     return {
@@ -1572,7 +1575,7 @@ export class ComplianceService {
   }
 
   private async createComplianceByFramework(
-    tenantId: string
+    _tenantId: string
   ): Promise<Record<ComplianceFramework, FrameworkCompliance>> {
     // Create compliance breakdown by framework (simplified)
     const frameworks: Record<ComplianceFramework, FrameworkCompliance> =

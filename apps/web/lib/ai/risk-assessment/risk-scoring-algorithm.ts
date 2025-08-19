@@ -23,33 +23,33 @@ import {
  * Performance Monitoring Interface
  * Track algorithm performance for ≥98% accuracy requirement
  */
-interface PerformanceMetrics {
+type PerformanceMetrics = {
   processingTime: number; // milliseconds
   accuracy: number; // percentage
   modelVersion: string;
   timestamp: Date;
   patientId: string;
   riskLevel: RiskLevel;
-}
+};
 
 /**
  * Cache Configuration for Real-Time Performance
  * Optimize for <100ms response time requirement
  */
-interface RiskAssessmentCache {
+type RiskAssessmentCache = {
   patientId: string;
   inputHash: string;
   result: RiskAssessmentResult;
   cachedAt: Date;
   expiresAt: Date;
   hitCount: number;
-}
+};
 
 /**
  * Professional Oversight Configuration
  * CFM compliance requirements
  */
-interface ProfessionalOversightConfig {
+type ProfessionalOversightConfig = {
   autoReviewThresholds: {
     [K in RiskLevel]: {
       required: boolean;
@@ -62,7 +62,7 @@ interface ProfessionalOversightConfig {
     priority: EscalationPriority;
     action: string;
   }>;
-}
+};
 
 /**
  * Default Professional Oversight Configuration
@@ -114,8 +114,8 @@ const DEFAULT_OVERSIGHT_CONFIG: ProfessionalOversightConfig = {
  */
 export class RiskScoringEngine {
   private performanceMetrics: PerformanceMetrics[] = [];
-  private cache: Map<string, RiskAssessmentCache> = new Map();
-  private oversightConfig: ProfessionalOversightConfig;
+  private readonly cache: Map<string, RiskAssessmentCache> = new Map();
+  private readonly oversightConfig: ProfessionalOversightConfig;
 
   constructor(customOversightConfig?: Partial<ProfessionalOversightConfig>) {
     this.oversightConfig = {
@@ -586,9 +586,15 @@ export class RiskScoringEngine {
   private determineEscalationPriority(
     scoreBreakdown: RiskScoreBreakdown
   ): EscalationPriority {
-    if (scoreBreakdown.overallScore >= 95) return EscalationPriority.EMERGENCY;
-    if (scoreBreakdown.overallScore >= 85) return EscalationPriority.IMMEDIATE;
-    if (scoreBreakdown.overallScore >= 70) return EscalationPriority.URGENT;
+    if (scoreBreakdown.overallScore >= 95) {
+      return EscalationPriority.EMERGENCY;
+    }
+    if (scoreBreakdown.overallScore >= 85) {
+      return EscalationPriority.IMMEDIATE;
+    }
+    if (scoreBreakdown.overallScore >= 70) {
+      return EscalationPriority.URGENT;
+    }
     return EscalationPriority.ROUTINE;
   }
 
@@ -702,9 +708,6 @@ export class RiskScoringEngine {
 
     // Log warning if processing time exceeds target
     if (processingTime > 100) {
-      console.warn(
-        `Risk assessment processing time exceeded target: ${processingTime}ms (target: <100ms)`
-      );
     }
   }
 
@@ -718,7 +721,7 @@ export class RiskScoringEngine {
     performedBy: string
   ): Promise<void> {
     // This would integrate with the audit trail service
-    const auditEntry = {
+    const _auditEntry = {
       id: crypto.randomUUID(),
       patientId: result.patientId,
       assessmentId: result.id,
@@ -735,9 +738,6 @@ export class RiskScoringEngine {
       dataSubjectNotified: false,
       retentionExpiry: new Date(Date.now() + 7 * 365 * 24 * 60 * 60 * 1000), // 7 years
     };
-
-    // Store audit entry (would integrate with database)
-    console.log('Audit trail entry created:', auditEntry);
   }
 
   private updateAuditTrail(

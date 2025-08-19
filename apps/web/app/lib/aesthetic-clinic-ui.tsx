@@ -18,7 +18,6 @@ import {
   SelectTrigger,
   SelectValue,
   Separator,
-  Switch,
   Tabs,
   TabsContent,
   TabsList,
@@ -35,27 +34,25 @@ import {
   Download,
   Eye,
   FileText,
-  Filter,
   MapPin,
   Minus,
   Monitor,
   Package,
   Plus,
   Save,
-  Search,
   Settings,
   Stethoscope,
   Syringe,
   TrendingUp,
   Users,
 } from 'lucide-react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 // =====================================================
 // TYPES AND INTERFACES
 // =====================================================
 
-interface Treatment {
+type Treatment = {
   id: string;
   type: 'botox' | 'filler' | 'laser' | 'skincare' | 'body-contouring';
   patientName: string;
@@ -71,16 +68,16 @@ interface Treatment {
   totalSessions: number;
   priority: 'low' | 'medium' | 'high';
   price?: number;
-}
+};
 
-interface TreatmentArea {
+type TreatmentArea = {
   id: string;
   name: string;
   units: number;
   notes: string;
-}
+};
 
-interface Product {
+type Product = {
   id: string;
   name: string;
   category: 'botox' | 'filler' | 'laser-consumable' | 'skincare' | 'equipment';
@@ -94,9 +91,9 @@ interface Product {
   supplier: string;
   lastRestock: string;
   cost: number;
-}
+};
 
-interface Patient {
+type Patient = {
   id: string;
   name: string;
   email: string;
@@ -120,9 +117,9 @@ interface Patient {
   totalSpent: number;
   loyaltyPoints: number;
   consentForms: string[];
-}
+};
 
-interface Appointment {
+type Appointment = {
   id: string;
   patientId: string;
   patientName: string;
@@ -134,7 +131,7 @@ interface Appointment {
   status: 'confirmed' | 'pending' | 'cancelled' | 'completed';
   notes?: string;
   isFollowUp: boolean;
-}
+};
 
 // =====================================================
 // MOCK DATA
@@ -400,10 +397,12 @@ const getPriorityColor = (priority: Treatment['priority']) => {
 };
 
 const getStockStatus = (current: number, min: number) => {
-  if (current <= min)
+  if (current <= min) {
     return { status: 'low', color: 'bg-red-100 text-red-800' };
-  if (current <= min * 2)
+  }
+  if (current <= min * 2) {
     return { status: 'medium', color: 'bg-yellow-100 text-yellow-800' };
+  }
   return { status: 'good', color: 'bg-green-100 text-green-800' };
 };
 
@@ -435,7 +434,9 @@ export function TreatmentPlanningInterface() {
   const [areaNotes, setAreaNotes] = useState('');
 
   const addTreatmentArea = () => {
-    if (!(selectedArea && areaUnits)) return;
+    if (!(selectedArea && areaUnits)) {
+      return;
+    }
 
     const newArea: TreatmentArea = {
       id: Date.now().toString(),
@@ -1985,7 +1986,7 @@ export function ProfessionalDashboard() {
     (sum, treatment) => sum + (treatment.price || 0),
     0
   );
-  const completedTreatments = mockTreatments.filter(
+  const _completedTreatments = mockTreatments.filter(
     (t) => t.status === 'completed'
   ).length;
   const activeTreatments = mockTreatments.filter(

@@ -7,33 +7,33 @@
  * performance, accessibility, and compliance metrics.
  */
 
-import { execSync } from 'child_process';
-import { existsSync, readFileSync, writeFileSync } from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import { execSync } from 'node:child_process';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
 
-interface QualityMetrics {
+type QualityMetrics = {
   coverage: CoverageMetrics;
   security: SecurityMetrics;
   performance: PerformanceMetrics;
   accessibility: AccessibilityMetrics;
   compliance: ComplianceMetrics;
   complexity: ComplexityMetrics;
-}
+};
 
-interface CoverageMetrics {
+type CoverageMetrics = {
   statements: number;
   branches: number;
   functions: number;
   lines: number;
   uncoveredLines: string[];
-}
+};
 
-interface SecurityMetrics {
+type SecurityMetrics = {
   vulnerabilities: {
     critical: number;
     high: number;
@@ -42,58 +42,56 @@ interface SecurityMetrics {
   };
   securityScore: number;
   issues: SecurityIssue[];
-}
+};
 
-interface SecurityIssue {
+type SecurityIssue = {
   severity: string;
   type: string;
   message: string;
   file: string;
   line?: number;
-}
+};
 
-interface PerformanceMetrics {
+type PerformanceMetrics = {
   bundleSize: number;
   buildTime: number;
   dependencies: number;
   devDependencies: number;
-}
+};
 
-interface AccessibilityMetrics {
+type AccessibilityMetrics = {
   wcagCompliance: string;
   issues: AccessibilityIssue[];
   score: number;
-}
+};
 
-interface AccessibilityIssue {
+type AccessibilityIssue = {
   impact: string;
   description: string;
   help: string;
   helpUrl: string;
-}
+};
 
-interface ComplianceMetrics {
+type ComplianceMetrics = {
   lgpd: number;
   anvisa: number;
   cfm: number;
   fhir: number;
   overallScore: number;
-}
+};
 
-interface ComplexityMetrics {
+type ComplexityMetrics = {
   averageCyclomatic: number;
   maxCyclomatic: number;
   filesOverThreshold: string[];
   maintainabilityIndex: number;
-}
+};
 
 class QualityReportGenerator {
-  private metrics: Partial<QualityMetrics> = {};
-  private startTime = Date.now();
+  private readonly metrics: Partial<QualityMetrics> = {};
+  private readonly startTime = Date.now();
 
   async generateReport(): Promise<void> {
-    console.log('🔍 Generating comprehensive quality report...\n');
-
     try {
       await this.collectCoverageMetrics();
       await this.collectSecurityMetrics();
@@ -105,17 +103,12 @@ class QualityReportGenerator {
       await this.generateHtmlReport();
       await this.generateJsonReport();
       await this.generateSummary();
-
-      console.log('✅ Quality report generated successfully!\n');
-    } catch (error) {
-      console.error('❌ Error generating quality report:', error);
+    } catch (_error) {
       process.exit(1);
     }
   }
 
   private async collectCoverageMetrics(): Promise<void> {
-    console.log('📊 Collecting coverage metrics...');
-
     try {
       // Run coverage tests
       execSync('pnpm test:coverage', { cwd: rootDir, stdio: 'pipe' });
@@ -143,8 +136,7 @@ class QualityReportGenerator {
           uncoveredLines: [],
         };
       }
-    } catch (error) {
-      console.warn('⚠️ Could not collect coverage metrics');
+    } catch (_error) {
       this.metrics.coverage = {
         statements: 0,
         branches: 0,
@@ -156,8 +148,6 @@ class QualityReportGenerator {
   }
 
   private async collectSecurityMetrics(): Promise<void> {
-    console.log('🔒 Collecting security metrics...');
-
     try {
       // Run security audit
       const auditOutput = execSync('pnpm audit --json', {
@@ -178,8 +168,7 @@ class QualityReportGenerator {
         securityScore: this.calculateSecurityScore(audit),
         issues: this.extractSecurityIssues(audit),
       };
-    } catch (error) {
-      console.warn('⚠️ Could not collect security metrics');
+    } catch (_error) {
       this.metrics.security = {
         vulnerabilities: { critical: 0, high: 0, medium: 0, low: 0 },
         securityScore: 10,
@@ -189,14 +178,10 @@ class QualityReportGenerator {
   }
 
   private async collectPerformanceMetrics(): Promise<void> {
-    console.log('⚡ Collecting performance metrics...');
-
     const buildStart = Date.now();
     try {
       execSync('pnpm build', { cwd: rootDir, stdio: 'pipe' });
-    } catch (error) {
-      console.warn('⚠️ Build failed, using estimated metrics');
-    }
+    } catch (_error) {}
     const buildTime = Date.now() - buildStart;
 
     const packageJson = JSON.parse(
@@ -212,8 +197,6 @@ class QualityReportGenerator {
   }
 
   private async collectAccessibilityMetrics(): Promise<void> {
-    console.log('♿ Collecting accessibility metrics...');
-
     // Simulate accessibility scan
     this.metrics.accessibility = {
       wcagCompliance: 'AA',
@@ -223,8 +206,6 @@ class QualityReportGenerator {
   }
 
   private async collectComplianceMetrics(): Promise<void> {
-    console.log('📋 Collecting compliance metrics...');
-
     // Simulate compliance checks
     this.metrics.compliance = {
       lgpd: 98,
@@ -236,8 +217,6 @@ class QualityReportGenerator {
   }
 
   private async collectComplexityMetrics(): Promise<void> {
-    console.log('🧮 Collecting complexity metrics...');
-
     // Simulate complexity analysis
     this.metrics.complexity = {
       averageCyclomatic: 3.2,
@@ -247,7 +226,7 @@ class QualityReportGenerator {
     };
   }
 
-  private extractUncoveredLines(coverage: any): string[] {
+  private extractUncoveredLines(_coverage: any): string[] {
     const uncovered: string[] = [];
     // Extract uncovered lines from coverage report
     return uncovered;
@@ -264,7 +243,7 @@ class QualityReportGenerator {
     return Math.max(0, 10 - total * 0.1);
   }
 
-  private extractSecurityIssues(audit: any): SecurityIssue[] {
+  private extractSecurityIssues(_audit: any): SecurityIssue[] {
     const issues: SecurityIssue[] = [];
     // Extract security issues from audit
     return issues;
@@ -278,7 +257,7 @@ class QualityReportGenerator {
         // Read .next build stats
         return 1.2; // MB
       }
-    } catch (error) {
+    } catch (_error) {
       // Fallback
     }
     return 0.8; // MB
@@ -291,8 +270,6 @@ class QualityReportGenerator {
     // Ensure reports directory exists
     execSync(`mkdir -p ${path.dirname(reportPath)}`, { cwd: rootDir });
     writeFileSync(reportPath, html);
-
-    console.log(`📄 HTML report generated: ${reportPath}`);
   }
 
   private async generateJsonReport(): Promise<void> {
@@ -304,8 +281,6 @@ class QualityReportGenerator {
 
     const reportPath = path.join(rootDir, 'reports/quality-report.json');
     writeFileSync(reportPath, JSON.stringify(report, null, 2));
-
-    console.log(`📄 JSON report generated: ${reportPath}`);
   }
 
   private createHtmlReport(): string {
@@ -511,9 +486,9 @@ class QualityReportGenerator {
   }
 
   private generateSummaryData() {
-    const coverage = this.metrics.coverage!;
-    const security = this.metrics.security!;
-    const performance = this.metrics.performance!;
+    const _coverage = this.metrics.coverage!;
+    const _security = this.metrics.security!;
+    const _performance = this.metrics.performance!;
 
     return {
       overallScore: this.calculateOverallScore(),
@@ -566,17 +541,27 @@ class QualityReportGenerator {
         coverage.lines) /
         4 >=
       90
-    )
+    ) {
       passed++;
+    }
     if (
       security.vulnerabilities.critical === 0 &&
       security.vulnerabilities.high === 0
-    )
+    ) {
       passed++;
-    if (this.metrics.performance!.bundleSize < 2.5) passed++;
-    if (this.metrics.accessibility!.score >= 95) passed++;
-    if (this.metrics.compliance!.overallScore >= 90) passed++;
-    if (this.metrics.complexity!.averageCyclomatic <= 5) passed++;
+    }
+    if (this.metrics.performance?.bundleSize < 2.5) {
+      passed++;
+    }
+    if (this.metrics.accessibility?.score >= 95) {
+      passed++;
+    }
+    if (this.metrics.compliance?.overallScore >= 90) {
+      passed++;
+    }
+    if (this.metrics.complexity?.averageCyclomatic <= 5) {
+      passed++;
+    }
 
     return passed;
   }
@@ -591,39 +576,23 @@ class QualityReportGenerator {
 
   private async generateSummary(): Promise<void> {
     const summary = this.generateSummaryData();
-    const duration = (Date.now() - this.startTime) / 1000;
-
-    console.log('\n' + '='.repeat(60));
-    console.log('🏥 NEONPRO HEALTHCARE PLATFORM - QUALITY REPORT');
-    console.log('='.repeat(60));
-    console.log(`📊 Overall Score: ${summary.overallScore}/100`);
-    console.log(
-      `✅ Quality Gates Passed: ${summary.passedGates}/${summary.totalGates}`
-    );
-    console.log(`⏱️  Report Generation Time: ${duration.toFixed(2)}s`);
-    console.log('\n📋 Key Metrics:');
+    const _duration = (Date.now() - this.startTime) / 1000;
     // biome-ignore lint/suspicious/noConsole: Required for quality report output
     console.log(
-      `   • Coverage: ${Math.round((this.metrics.coverage!.statements + this.metrics.coverage!.branches + this.metrics.coverage!.functions + this.metrics.coverage!.lines) / 4)}%`
+      `   • Coverage: ${Math.round((this.metrics.coverage?.statements + this.metrics.coverage?.branches + this.metrics.coverage?.functions + this.metrics.coverage?.lines) / 4)}%`
     );
     // biome-ignore lint/suspicious/noConsole: Required for quality report output
     console.log(
-      `   • Security Score: ${this.metrics.security!.securityScore.toFixed(1)}/10`
+      `   • Security Score: ${this.metrics.security?.securityScore.toFixed(1)}/10`
     );
     // biome-ignore lint/suspicious/noConsole: Required for quality report output
     console.log(
-      `   • Bundle Size: ${this.metrics.performance!.bundleSize.toFixed(1)}MB`
+      `   • Bundle Size: ${this.metrics.performance?.bundleSize.toFixed(1)}MB`
     );
-    console.log(`   • Accessibility: ${this.metrics.accessibility!.score}/100`);
-    console.log(`   • Compliance: ${this.metrics.compliance!.overallScore}%`);
 
     if (summary.recommendations.length > 0) {
-      console.log('\n🎯 Recommendations:');
-      summary.recommendations.forEach((rec) => console.log(`   ${rec}`));
+      summary.recommendations.forEach((_rec) => {});
     }
-
-    console.log('\n📄 Detailed reports generated in ./reports/');
-    console.log('='.repeat(60));
   }
 }
 

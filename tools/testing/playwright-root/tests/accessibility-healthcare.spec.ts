@@ -7,7 +7,6 @@
 import { expect, test } from '@playwright/test';
 import {
   HealthcareAccessibilityHelper,
-  HealthcareDataAnonymizer,
   HealthcareWorkflowHelper,
 } from '../utils/healthcare-testing-utils';
 
@@ -54,7 +53,9 @@ test.describe('🌐 Healthcare Accessibility Testing - WCAG 2.1 AA+ & NBR 17225'
       // Verify focus is visible (WCAG 2.4.7)
       const focusVisible = await page.evaluate(() => {
         const element = document.activeElement as HTMLElement;
-        if (!element) return false;
+        if (!element) {
+          return false;
+        }
 
         const styles = getComputedStyle(element);
         return styles.outline !== 'none' || styles.boxShadow !== 'none';
@@ -71,7 +72,7 @@ test.describe('🌐 Healthcare Accessibility Testing - WCAG 2.1 AA+ & NBR 17225'
         document.querySelectorAll('h1, h2, h3, h4, h5, h6')
       );
       return headingElements.map((h) => ({
-        level: Number.parseInt(h.tagName.charAt(1)),
+        level: Number.parseInt(h.tagName.charAt(1), 10),
         text: h.textContent?.trim(),
       }));
     });

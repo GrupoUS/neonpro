@@ -1,6 +1,5 @@
-import { createClient } from '@/app/utils/supabase/server';
-import { cookies } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/app/utils/supabase/server';
 
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url);
@@ -76,9 +75,7 @@ export async function GET(request: NextRequest) {
           headers: { 'Content-Type': 'text/html' },
         }
       );
-    } catch (exchangeError) {
-      console.error('Error exchanging code for session:', exchangeError);
-
+    } catch (_exchangeError) {
       return new NextResponse(
         `
         <!DOCTYPE html>

@@ -127,7 +127,3 @@ vi.mock('@supabase/auth-js', () => {
 
 // Export the singleton for use in tests
 export const mockSupabaseClient = createMockSupabaseClient();
-
-console.log(
-  '🔧 Supabase singleton mock initialized - preventing multiple client instances'
-);

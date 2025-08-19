@@ -17,7 +17,7 @@ const _IMPLEMENTATION_GUIDE = 'docs/IMPLEMENTATION_GUIDE_2025.md';
 const SRC_DIR = 'src';
 
 // Cores para output
-const colors = {
+const _colors = {
   green: '\x1b[32m',
   red: '\x1b[31m',
   yellow: '\x1b[33m',
@@ -36,9 +36,7 @@ class StoryValidator {
     };
   }
 
-  log(message, color = 'reset') {
-    console.log(`${colors[color]}${message}${colors.reset}`);
-  }
+  log(_message, _color = 'reset') {}
 
   /**
    * Verifica se uma story está realmente implementada

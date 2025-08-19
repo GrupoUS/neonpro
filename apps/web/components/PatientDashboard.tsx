@@ -13,7 +13,6 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-  Progress,
   Separator,
   Tabs,
   TabsContent,
@@ -24,21 +23,17 @@ import {
   Activity,
   AlertCircle,
   Calendar,
-  CheckCircle,
-  Clock,
-  FileText,
   Heart,
   Mail,
   MapPin,
   Phone,
   Pill,
-  Star,
   TrendingUp,
   User,
 } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
 
-interface PatientInfo {
+type PatientInfo = {
   id: string;
   name: string;
   email: string;
@@ -48,9 +43,9 @@ interface PatientInfo {
   emergencyContact: string;
   emergencyPhone: string;
   avatar?: string;
-}
+};
 
-interface HealthMetrics {
+type HealthMetrics = {
   bloodPressure: {
     systolic: number;
     diastolic: number;
@@ -71,9 +66,9 @@ interface HealthMetrics {
     value: number;
     category: 'underweight' | 'normal' | 'overweight' | 'obese';
   };
-}
+};
 
-interface Appointment {
+type Appointment = {
   id: string;
   date: Date;
   time: string;
@@ -81,9 +76,9 @@ interface Appointment {
   specialty: string;
   type: string;
   status: 'scheduled' | 'completed' | 'cancelled';
-}
+};
 
-interface Medication {
+type Medication = {
   id: string;
   name: string;
   dosage: string;
@@ -92,7 +87,7 @@ interface Medication {
   endDate?: Date;
   prescribedBy: string;
   status: 'active' | 'completed' | 'paused';
-}
+};
 
 const MOCK_PATIENT: PatientInfo = {
   id: '1',
@@ -198,7 +193,6 @@ export default function PatientDashboard() {
       high: 'bg-red-100 text-red-800',
       low: 'bg-blue-100 text-blue-800',
       scheduled: 'bg-blue-100 text-blue-800',
-      completed: 'bg-green-100 text-green-800',
       cancelled: 'bg-red-100 text-red-800',
       active: 'bg-green-100 text-green-800',
       paused: 'bg-yellow-100 text-yellow-800',

@@ -22,7 +22,9 @@ export function useRealtimeAppointments(clinicId?: string) {
   const supabase = createClient();
 
   const fetchAppointments = useCallback(async () => {
-    if (!clinicId) return;
+    if (!clinicId) {
+      return;
+    }
 
     try {
       setLoading(true);
@@ -37,7 +39,9 @@ export function useRealtimeAppointments(clinicId?: string) {
         .order('appointment_date', { ascending: true })
         .order('appointment_time', { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       setAppointments(data || []);
     } catch (err) {
       setError(
@@ -49,7 +53,9 @@ export function useRealtimeAppointments(clinicId?: string) {
   }, [clinicId, supabase]);
 
   useEffect(() => {
-    if (!clinicId) return;
+    if (!clinicId) {
+      return;
+    }
 
     // Initial fetch
     fetchAppointments();
@@ -83,9 +89,7 @@ export function useRealtimeAppointments(clinicId?: string) {
       )
       .subscribe((status) => {
         if (status === 'SUBSCRIBED') {
-          console.log('Healthcare real-time connected for appointments');
         } else if (status === 'CHANNEL_ERROR') {
-          console.error('Healthcare real-time error for appointments');
           setError('Real-time connection failed');
         }
       });
@@ -110,7 +114,9 @@ export function useRealtimeNotifications(userId?: string) {
   const supabase = createClient();
 
   useEffect(() => {
-    if (!userId) return;
+    if (!userId) {
+      return;
+    }
 
     const fetchNotifications = async () => {
       try {
@@ -122,11 +128,12 @@ export function useRealtimeNotifications(userId?: string) {
           .order('created_at', { ascending: false })
           .limit(50);
 
-        if (error) throw error;
+        if (error) {
+          throw error;
+        }
         setNotifications(data || []);
         setUnreadCount(data?.length || 0);
-      } catch (err) {
-        console.error('Failed to fetch notifications:', err);
+      } catch (_err) {
       } finally {
         setLoading(false);
       }
@@ -188,10 +195,10 @@ export function useRealtimeNotifications(userId?: string) {
           .update({ is_read: true, read_at: new Date().toISOString() })
           .eq('id', notificationId);
 
-        if (error) throw error;
-      } catch (err) {
-        console.error('Failed to mark notification as read:', err);
-      }
+        if (error) {
+          throw error;
+        }
+      } catch (_err) {}
     },
     [supabase]
   );
@@ -215,7 +222,9 @@ export function useRealtimeProfessionalAvailability(professionalId?: string) {
   const supabase = createClient();
 
   useEffect(() => {
-    if (!professionalId) return;
+    if (!professionalId) {
+      return;
+    }
 
     const fetchAvailability = async () => {
       try {
@@ -226,10 +235,11 @@ export function useRealtimeProfessionalAvailability(professionalId?: string) {
           .gte('date', new Date().toISOString().split('T')[0])
           .order('date', { ascending: true });
 
-        if (error) throw error;
+        if (error) {
+          throw error;
+        }
         setAvailability(data || []);
-      } catch (err) {
-        console.error('Failed to fetch availability:', err);
+      } catch (_err) {
       } finally {
         setLoading(false);
       }

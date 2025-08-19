@@ -7,20 +7,20 @@
 
 import { expect, test } from '@playwright/test';
 
-interface EncryptionTestCase {
+type EncryptionTestCase = {
   field: string;
   testValue: string;
   shouldBeEncrypted: boolean;
   sensitivity: 'low' | 'medium' | 'high' | 'critical';
-}
+};
 
-interface AccessTestCase {
+type AccessTestCase = {
   role: string;
   resource: string;
   method: 'GET' | 'POST' | 'PUT' | 'DELETE';
   shouldAllow: boolean;
   expectedStatus: number;
-}
+};
 
 const HEALTHCARE_DATA_TESTS: EncryptionTestCase[] = [
   {

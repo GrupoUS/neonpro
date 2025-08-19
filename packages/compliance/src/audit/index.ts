@@ -57,7 +57,10 @@ export async function validateAuditCompliance(
 
     // Validate compliance audit requirements
     const complianceAuditReport =
-      await complianceAuditService.generateComplianceReport(tenantId, 'system-auditor');
+      await complianceAuditService.generateComplianceReport(
+        tenantId,
+        'system-auditor'
+      );
 
     const violations: string[] = [];
     const recommendations: string[] = [];

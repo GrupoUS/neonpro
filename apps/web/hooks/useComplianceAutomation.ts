@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 
-interface ComplianceAutomationState {
+type ComplianceAutomationState = {
   isCompliant: boolean;
   violations: string[];
   lastCheck: Date | null;
   isLoading: boolean;
-}
+};
 
 export const useComplianceAutomation = () => {
   const [state, setState] = useState<ComplianceAutomationState>({
@@ -27,7 +27,9 @@ export const useComplianceAutomation = () => {
         .order('created_at', { ascending: false })
         .limit(1);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       const violations: string[] = [];
 
@@ -52,8 +54,7 @@ export const useComplianceAutomation = () => {
         lastCheck: new Date(),
         isLoading: false,
       });
-    } catch (error) {
-      console.error('Compliance check failed:', error);
+    } catch (_error) {
       setState((prev) => ({
         ...prev,
         isLoading: false,

@@ -1,12 +1,12 @@
 'use client';
 
-import { createClient } from '@/app/utils/supabase/client';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { createClient } from '@/app/utils/supabase/client';
 import type { Database } from '@/types/supabase';
 
 type Service = Database['public']['Tables']['services']['Row'];
 
-interface ServicesHook {
+type ServicesHook = {
   services: Service[];
   activeServices: Service[];
   servicesByCategory: Record<string, Service[]>;
@@ -17,7 +17,7 @@ interface ServicesHook {
   loading: boolean;
   error: Error | null;
   refreshServices: () => Promise<void>;
-}
+};
 
 export function useServices(): ServicesHook {
   const [services, setServices] = useState<Service[]>([]);
@@ -42,7 +42,6 @@ export function useServices(): ServicesHook {
 
       setServices(data || []);
     } catch (err) {
-      console.error('Error fetching services:', err);
       setError(err as Error);
     } finally {
       setLoading(false);

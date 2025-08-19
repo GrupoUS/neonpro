@@ -5,9 +5,9 @@
  * Ensures LGPD, ANVISA, and CFM compliance maintained after optimization
  */
 
-const { execSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
+const { execSync } = require('node:child_process');
+const fs = require('node:fs');
+const path = require('node:path');
 
 const COMPLIANCE_FRAMEWORKS = {
   LGPD: {
@@ -36,9 +36,6 @@ const COMPLIANCE_FRAMEWORKS = {
 };
 
 async function verifyCompliance() {
-  console.log('🏥 NeonPro Healthcare Compliance Verification');
-  console.log('==========================================\n');
-
   const results = {
     lgpd: { status: false, details: [] },
     anvisa: { status: false, details: [] },
@@ -49,13 +46,10 @@ async function verifyCompliance() {
   try {
     // Verify each compliance framework
     for (const [framework, config] of Object.entries(COMPLIANCE_FRAMEWORKS)) {
-      console.log(`📋 Verifying ${config.name} (${framework})...`);
-
       const frameworkKey = framework.toLowerCase();
 
       for (const task of config.tasks) {
         try {
-          console.log(`  Running ${task}...`);
           const output = execSync(`pnpm run ${task}`, {
             stdio: 'pipe',
             encoding: 'utf8',
@@ -64,28 +58,20 @@ async function verifyCompliance() {
           results[frameworkKey].details.push({
             task,
             status: 'passed',
-            output: output.substring(0, 200) + '...',
+            output: `${output.substring(0, 200)}...`,
           });
-
-          console.log(`  ✅ ${task} passed`);
         } catch (error) {
           results[frameworkKey].details.push({
             task,
             status: 'failed',
-            error: error.message.substring(0, 200) + '...',
+            error: `${error.message.substring(0, 200)}...`,
           });
-
-          console.log(`  ❌ ${task} failed`);
         }
       }
 
       // Check if all tasks passed for this framework
       results[frameworkKey].status = results[frameworkKey].details.every(
         (detail) => detail.status === 'passed'
-      );
-
-      console.log(
-        `${config.name}: ${results[frameworkKey].status ? '✅' : '❌'}\n`
       );
     }
 
@@ -96,22 +82,11 @@ async function verifyCompliance() {
     // Generate compliance report
     generateComplianceReport(results);
 
-    console.log('📊 HEALTHCARE COMPLIANCE SUMMARY');
-    console.log('===============================');
-    console.log(`LGPD Compliance: ${results.lgpd.status ? '✅' : '❌'}`);
-    console.log(`ANVISA Compliance: ${results.anvisa.status ? '✅' : '❌'}`);
-    console.log(`CFM Compliance: ${results.cfm.status ? '✅' : '❌'}`);
-    console.log(`Overall Compliance: ${results.overall ? '✅' : '❌'}\n`);
-
     if (results.overall) {
-      console.log('🎉 All healthcare compliance requirements maintained!');
     } else {
-      console.log('⚠️  CRITICAL: Healthcare compliance issues detected!');
-      console.log('   Immediate review and remediation required.');
       process.exit(1);
     }
-  } catch (error) {
-    console.error('❌ Compliance verification failed:', error.message);
+  } catch (_error) {
     process.exit(1);
   }
 }
@@ -129,8 +104,6 @@ function generateComplianceReport(results) {
     path.join(process.cwd(), 'compliance-report.json'),
     JSON.stringify(report, null, 2)
   );
-
-  console.log('📄 Compliance report generated: compliance-report.json');
 }
 
 function generateComplianceRecommendations(results) {

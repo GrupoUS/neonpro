@@ -111,7 +111,11 @@ export type MedicalDevice = {
   anvisaRegistrationNumber: string;
   deviceCategory: ANVISADeviceCategory;
   riskClassification: 'BAIXO' | 'MEDIO' | 'ALTO' | 'MAXIMO';
-  complianceStatus: 'COMPLIANT' | 'NON_COMPLIANT' | 'PENDING_REVIEW' | 'SUSPENDED';
+  complianceStatus:
+    | 'COMPLIANT'
+    | 'NON_COMPLIANT'
+    | 'PENDING_REVIEW'
+    | 'SUSPENDED';
   registrationDate: Date;
   expirationDate: Date;
 };
@@ -123,7 +127,11 @@ export type MedicalDeviceFilters = {
   tenantId?: string;
   deviceCategory?: ANVISADeviceCategory;
   riskClassification?: 'BAIXO' | 'MEDIO' | 'ALTO' | 'MAXIMO';
-  complianceStatus?: 'COMPLIANT' | 'NON_COMPLIANT' | 'PENDING_REVIEW' | 'SUSPENDED';
+  complianceStatus?:
+    | 'COMPLIANT'
+    | 'NON_COMPLIANT'
+    | 'PENDING_REVIEW'
+    | 'SUSPENDED';
   manufacturer?: string;
   registrationDateFrom?: Date;
   registrationDateTo?: Date;

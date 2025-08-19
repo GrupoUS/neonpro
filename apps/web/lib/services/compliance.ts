@@ -1,7 +1,7 @@
 // Migrated from src/services/compliance.ts
 import { supabase } from '@/lib/supabase';
 
-export interface ComplianceCheck {
+export type ComplianceCheck = {
   id?: string;
   tenant_id: string;
   check_type: 'lgpd' | 'anvisa' | 'cfm';
@@ -9,29 +9,29 @@ export interface ComplianceCheck {
   details: Record<string, unknown>;
   checked_at: string;
   expires_at?: string;
-}
+};
 
-export interface LGPDComplianceData {
+export type LGPDComplianceData = {
   data_processing_consent: boolean;
   privacy_policy_updated: boolean;
   data_retention_compliant: boolean;
   breach_notification_process: boolean;
   data_subject_rights_enabled: boolean;
-}
+};
 
-export interface ANVISAComplianceData {
+export type ANVISAComplianceData = {
   product_registration_valid: boolean;
   adverse_event_reporting: boolean;
   quality_management_system: boolean;
   professional_licensing_valid: boolean;
-}
+};
 
-export interface CFMComplianceData {
+export type CFMComplianceData = {
   medical_license_valid: boolean;
   continuing_education_current: boolean;
   ethical_compliance: boolean;
   telemedicine_authorization: boolean;
-}
+};
 
 export class ComplianceService {
   async checkLGPDCompliance(tenantId: string): Promise<{

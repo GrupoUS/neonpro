@@ -6,9 +6,9 @@
 
 import type {
   Alert,
-  MonitoringReport,
-  MonitoringConfig,
   AlertThresholds,
+  MonitoringConfig,
+  MonitoringReport,
 } from './types/monitoring-types';
 
 export type HealthcareMetrics = {
@@ -676,15 +676,7 @@ export class HealthcareMonitoringDashboard {
    */
   private async sendAlerts(alerts: Alert[]): Promise<void> {
     // In a real implementation, this would send alerts via email, Slack, etc.
-    alerts.forEach((alert) => {
-      console.log('ALERT:', {
-        type: alert.type,
-        category: alert.category,
-        message: alert.message,
-        timestamp: alert.timestamp,
-        severity: alert.severity,
-      });
-    });
+    alerts.forEach((_alert) => {});
 
     // Send alerts through real notification service
     await this.sendHealthcareAlerts(alerts);
@@ -694,17 +686,6 @@ export class HealthcareMonitoringDashboard {
    * Store monitoring report for historical analysis
    */
   private async storeReport(report: MonitoringReport): Promise<void> {
-    // In a real implementation, this would store to a database
-    // For now, we'll log the report
-    console.log('Storing monitoring report:', {
-      timestamp: report.timestamp,
-      overallHealthScore: report.overallHealthScore,
-      complianceScore: report.complianceScore,
-      securityScore: report.securityScore,
-      performanceScore: report.performanceScore,
-      recommendationsCount: report.recommendations.length,
-    });
-
     // Store monitoring report in database with audit trail
     await this.storeMonitoringReport(report);
   }
@@ -753,7 +734,7 @@ export class HealthcareMonitoringDashboard {
           lockWaitTime: 10,
         },
         bundleMetrics: {
-          size: 1024000,
+          size: 1_024_000,
           loadTime: 2000,
           compressionRatio: 0.65,
           cacheHitRate: 0.85,
@@ -860,14 +841,15 @@ export class HealthcareMonitoringDashboard {
     const memUsage = process.memoryUsage();
     const totalMem = memUsage.heapTotal + memUsage.external;
     const usedMem = memUsage.heapUsed;
-    
+
     return {
       uptime: process.uptime(),
       responseTime: await this.measureResponseTime(),
       errorRate: await this.getErrorRate(),
       throughput: await this.getThroughputMetrics(),
       activeUsers: await this.getActiveUserCount(),
-      systemLoad: typeof process.cpuUsage === 'function' ? this.calculateCpuUsage() : 0,
+      systemLoad:
+        typeof process.cpuUsage === 'function' ? this.calculateCpuUsage() : 0,
       memoryUsage: (usedMem / totalMem) * 100,
       diskUsage: await this.getDiskUsage(),
       networkLatency: await this.measureNetworkLatency(),
@@ -919,7 +901,7 @@ export class HealthcareMonitoringDashboard {
   private async measureResponseTime(): Promise<number> {
     const start = performance.now();
     // Simulate a lightweight health check
-    await new Promise(resolve => setTimeout(resolve, 1));
+    await new Promise((resolve) => setTimeout(resolve, 1));
     return performance.now() - start;
   }
 
@@ -965,21 +947,15 @@ export class HealthcareMonitoringDashboard {
 
   private async sendHealthcareAlerts(alerts: Alert[]): Promise<void> {
     // Send alerts to configured notification channels
-    for (const alert of alerts) {
-      console.log(`Healthcare Alert [${alert.severity}]: ${alert.message}`);
+    for (const _alert of alerts) {
       // In real implementation: email, Slack, SMS, etc.
       // await this.notificationService.send(alert);
     }
   }
 
-  private async storeMonitoringReport(report: MonitoringReport): Promise<void> {
-    // Store monitoring report with audit trail
-    console.log('Storing healthcare monitoring report:', {
-      timestamp: report.timestamp,
-      overallHealthScore: report.overallHealthScore,
-      complianceScore: report.complianceScore,
-      alertCount: 0 // alerts are handled separately
-    });
+  private async storeMonitoringReport(
+    _report: MonitoringReport
+  ): Promise<void> {
     // In real implementation: save to Supabase with proper schema
     // await this.supabaseClient.from('monitoring_reports').insert(report);
   }

@@ -3,14 +3,14 @@
  * Provides system monitoring, metrics collection, and alerting functionality
  */
 
-export interface MetricData {
+export type MetricData = {
   timestamp: number;
   value: number;
   tags?: Record<string, string>;
   metadata?: Record<string, any>;
-}
+};
 
-export interface Alert {
+export type Alert = {
   id: string;
   type: 'error' | 'warning' | 'info' | 'critical';
   message: string;
@@ -18,9 +18,9 @@ export interface Alert {
   timestamp: number;
   resolved: boolean;
   metadata?: Record<string, any>;
-}
+};
 
-export interface SystemHealth {
+export type SystemHealth = {
   status: 'healthy' | 'degraded' | 'unhealthy';
   uptime: number;
   memory: {
@@ -45,8 +45,8 @@ export interface SystemHealth {
       responseTime: number;
     }
   >;
-}
-export interface PerformanceMetrics {
+};
+export type PerformanceMetrics = {
   responseTime: {
     p50: number;
     p95: number;
@@ -66,10 +66,10 @@ export interface PerformanceMetrics {
     uptime: number;
     downtime: number;
   };
-}
+};
 
 class MonitoringService {
-  private metrics: Map<string, MetricData[]> = new Map();
+  private readonly metrics: Map<string, MetricData[]> = new Map();
   private alerts: Alert[] = [];
   private healthData: SystemHealth;
   private performanceData: PerformanceMetrics;
@@ -116,8 +116,12 @@ class MonitoringService {
     }
 
     return metrics.filter((metric) => {
-      if (startTime && metric.timestamp < startTime) return false;
-      if (endTime && metric.timestamp > endTime) return false;
+      if (startTime && metric.timestamp < startTime) {
+        return false;
+      }
+      if (endTime && metric.timestamp > endTime) {
+        return false;
+      }
       return true;
     });
   }

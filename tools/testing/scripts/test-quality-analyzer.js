@@ -1,15 +1,6 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-/**
- * 🧪 NEONPRO TEST QUALITY ANALYSIS & VALIDATION TOOL
- * Healthcare-Grade Test Implementation Verification
- * Validates test coverage, compliance, and production readiness
- */
-
-console.log('🧪 NEONPRO TEST QUALITY ANALYSIS & VALIDATION');
-console.log('='.repeat(80));
-
 class TestQualityAnalyzer {
   constructor() {
     this.testFiles = [];
@@ -24,9 +15,6 @@ class TestQualityAnalyzer {
 
   // Discover all test files
   discoverTestFiles() {
-    console.log('\n🔍 DISCOVERING TEST FILES');
-    console.log('-'.repeat(40));
-
     const testPaths = [
       'tests/integration/bank-reconciliation-api.test.ts',
       'tests/security/security-audit.test.ts',
@@ -44,11 +32,7 @@ class TestQualityAnalyzer {
           exists: true,
           size: fs.statSync(fullPath).size,
         });
-        console.log(
-          `✅ Found: ${testPath} (${Math.round(fs.statSync(fullPath).size / 1024)}KB)`
-        );
       } else {
-        console.log(`❌ Missing: ${testPath}`);
         this.testFiles.push({
           path: testPath,
           exists: false,
@@ -56,10 +40,6 @@ class TestQualityAnalyzer {
         });
       }
     });
-
-    console.log(
-      `\n📊 Total test files discovered: ${this.testFiles.filter((f) => f.exists).length}/${testPaths.length}`
-    );
   }
 
   getTestType(filePath) {
@@ -138,12 +118,8 @@ class TestQualityAnalyzer {
 
   // Validate syntax and TypeScript structure
   validateSyntax() {
-    console.log('\n🔧 SYNTAX & STRUCTURE VALIDATION');
-    console.log('-'.repeat(40));
-
     this.testFiles.forEach((testFile) => {
       if (!testFile.exists) {
-        console.log(`❌ ${testFile.path} - File not found`);
         return;
       }
 
@@ -164,14 +140,9 @@ class TestQualityAnalyzer {
         const totalChecks = Object.keys(syntaxChecks).length;
         const quality = (passedChecks / totalChecks) * 100;
 
-        console.log(
-          `${quality >= 80 ? '✅' : quality >= 60 ? '⚠️' : '❌'} ${testFile.path} - Syntax Quality: ${quality.toFixed(1)}%`
-        );
-
         if (quality < 80) {
-          Object.entries(syntaxChecks).forEach(([check, passed]) => {
+          Object.entries(syntaxChecks).forEach(([_check, passed]) => {
             if (!passed) {
-              console.log(`   ❌ ${check}`);
             }
           });
         }
@@ -182,7 +153,6 @@ class TestQualityAnalyzer {
           passed: quality >= 80,
         };
       } catch (error) {
-        console.log(`❌ ${testFile.path} - Syntax Error: ${error.message}`);
         this.analysisResults.syntaxValidation[testFile.path] = {
           quality: 0,
           error: error.message,
@@ -194,9 +164,6 @@ class TestQualityAnalyzer {
 
   // Analyze test coverage comprehensiveness
   analyzeCoverage() {
-    console.log('\n📊 TEST COVERAGE ANALYSIS');
-    console.log('-'.repeat(40));
-
     const coverageByType = {};
     let totalTests = 0;
     let totalExpectations = 0;
@@ -214,12 +181,6 @@ class TestQualityAnalyzer {
       coverageByType[testFile.type] = analysis;
       totalTests += analysis.testCases;
       totalExpectations += analysis.expectations;
-
-      console.log(`📋 ${testFile.type} Tests (${testFile.path}):`);
-      console.log(`   Test Suites: ${analysis.testSuites}`);
-      console.log(`   Test Cases: ${analysis.testCases}`);
-      console.log(`   Expectations: ${analysis.expectations}`);
-      console.log(`   Async Tests: ${analysis.asyncTests}`);
     });
 
     // Calculate coverage scores
@@ -229,8 +190,6 @@ class TestQualityAnalyzer {
       PERFORMANCE: { suites: 2, tests: 10, expectations: 20 },
       E2E: { suites: 2, tests: 8, expectations: 15 },
     };
-
-    console.log('\n📈 COVERAGE ASSESSMENT:');
     Object.entries(coverageByType).forEach(([type, analysis]) => {
       const expected = expectedMinimums[type] || {
         suites: 1,
@@ -249,25 +208,8 @@ class TestQualityAnalyzer {
         100,
         (analysis.expectations / expected.expectations) * 100
       );
-      const avgScore = (suiteScore + testScore + expectScore) / 3;
-
-      console.log(
-        `   ${avgScore >= 80 ? '✅' : avgScore >= 60 ? '⚠️' : '❌'} ${type}: ${avgScore.toFixed(1)}% coverage`
-      );
-      console.log(
-        `      Suites: ${analysis.testSuites}/${expected.suites} (${suiteScore.toFixed(1)}%)`
-      );
-      console.log(
-        `      Tests: ${analysis.testCases}/${expected.tests} (${testScore.toFixed(1)}%)`
-      );
-      console.log(
-        `      Expectations: ${analysis.expectations}/${expected.expectations} (${expectScore.toFixed(1)}%)`
-      );
+      const _avgScore = (suiteScore + testScore + expectScore) / 3;
     });
-
-    console.log(
-      `\n🎯 TOTAL COVERAGE: ${totalTests} tests, ${totalExpectations} expectations`
-    );
 
     this.analysisResults.coverageAnalysis = {
       coverageByType,
@@ -278,9 +220,6 @@ class TestQualityAnalyzer {
 
   // Validate healthcare compliance patterns
   validateCompliance() {
-    console.log('\n🏥 HEALTHCARE COMPLIANCE VALIDATION');
-    console.log('-'.repeat(40));
-
     const complianceResults = {};
 
     this.testFiles.forEach((testFile) => {
@@ -308,36 +247,23 @@ class TestQualityAnalyzer {
       const maxScore = 9;
       const percentage = (complianceScore / maxScore) * 100;
 
-      console.log(
-        `${percentage >= 70 ? '✅' : percentage >= 50 ? '⚠️' : '❌'} ${testFile.type} Compliance: ${percentage.toFixed(1)}%`
-      );
-
       if (analysis.lgpdCompliance) {
-        console.log('   ✅ LGPD Data Protection');
       }
       if (analysis.anvisaCompliance) {
-        console.log('   ✅ ANVISA Regulatory');
       }
       if (analysis.cfmCompliance) {
-        console.log('   ✅ CFM Medical Standards');
       }
       if (analysis.auditTrail) {
-        console.log('   ✅ Audit Trail Validation');
       }
       if (analysis.authenticationTests) {
-        console.log('   ✅ Authentication Security');
       }
       if (analysis.authorizationTests) {
-        console.log('   ✅ Authorization Controls');
       }
       if (analysis.encryptionTests) {
-        console.log('   ✅ Data Encryption');
       }
       if (analysis.patientDataProtection) {
-        console.log('   ✅ Patient Privacy');
       }
       if (analysis.clinicIsolation) {
-        console.log('   ✅ Clinic Data Isolation');
       }
 
       complianceResults[testFile.type] = {
@@ -353,8 +279,6 @@ class TestQualityAnalyzer {
         0
       ) / Object.keys(complianceResults).length;
 
-    console.log(`\n🏆 OVERALL COMPLIANCE SCORE: ${avgCompliance.toFixed(1)}%`);
-
     this.analysisResults.complianceValidation = {
       complianceResults,
       avgCompliance,
@@ -363,9 +287,6 @@ class TestQualityAnalyzer {
 
   // Generate production readiness report
   generateProductionReadinessReport() {
-    console.log('\n🚀 PRODUCTION READINESS ASSESSMENT');
-    console.log('-'.repeat(40));
-
     const metrics = {
       testFilesComplete:
         this.testFiles.filter((f) => f.exists).length / this.testFiles.length,
@@ -386,34 +307,9 @@ class TestQualityAnalyzer {
       metrics.complianceScore * 0.3 +
       Math.min(100, metrics.totalTestCount * 2) * 0.2;
 
-    console.log('📊 READINESS METRICS:');
-    console.log(
-      `   Test Files Complete: ${(metrics.testFilesComplete * 100).toFixed(1)}%`
-    );
-    console.log(`   Syntax Quality: ${metrics.syntaxQuality.toFixed(1)}%`);
-    console.log(
-      `   Healthcare Compliance: ${metrics.complianceScore.toFixed(1)}%`
-    );
-    console.log(
-      `   Test Coverage: ${metrics.totalTestCount} tests, ${metrics.totalExpectations} assertions`
-    );
-
-    console.log(
-      `\n🎯 PRODUCTION READINESS SCORE: ${readinessScore.toFixed(1)}%`
-    );
-
     if (readinessScore >= 85) {
-      console.log('✅ READY FOR PRODUCTION DEPLOYMENT');
-      console.log('   Healthcare-grade test coverage achieved');
-      console.log('   Compliance validation complete');
-      console.log('   Test structure meets enterprise standards');
     } else if (readinessScore >= 70) {
-      console.log('⚠️  PRODUCTION READY WITH MONITORING');
-      console.log('   Core testing requirements met');
-      console.log('   Some optimization opportunities remain');
     } else {
-      console.log('❌ PRODUCTION DEPLOYMENT NOT RECOMMENDED');
-      console.log('   Critical testing gaps identified');
     }
 
     this.analysisResults.productionReadiness = { metrics, readinessScore };
@@ -450,11 +346,6 @@ class TestQualityAnalyzer {
       JSON.stringify(reportData, null, 2)
     );
 
-    console.log(
-      '\n📄 Detailed analysis saved to: test-quality-analysis-report.json'
-    );
-    console.log('='.repeat(80));
-
     return reportData;
   }
 }
@@ -462,8 +353,7 @@ class TestQualityAnalyzer {
 // Execute analysis if run directly
 if (require.main === module) {
   const analyzer = new TestQualityAnalyzer();
-  analyzer.runAnalysis().catch((error) => {
-    console.error('❌ Analysis failed:', error);
+  analyzer.runAnalysis().catch((_error) => {
     process.exit(1);
   });
 }

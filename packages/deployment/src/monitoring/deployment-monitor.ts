@@ -3,7 +3,7 @@
  * Monitors deployment progress and health for NeonPro healthcare platform
  */
 
-export interface DeploymentMetrics {
+export type DeploymentMetrics = {
   deploymentId: string;
   environment: string;
   version: string;
@@ -14,9 +14,9 @@ export interface DeploymentMetrics {
   responseTime: number;
   errorRate: number;
   throughput: number;
-}
+};
 
-export interface DeploymentEvent {
+export type DeploymentEvent = {
   timestamp: Date;
   type:
     | 'start'
@@ -27,9 +27,9 @@ export interface DeploymentEvent {
     | 'rollback';
   message: string;
   data?: any;
-}
+};
 
-export interface MonitoringConfig {
+export type MonitoringConfig = {
   healthCheckInterval: number;
   alertThresholds: {
     errorRate: number;
@@ -37,14 +37,14 @@ export interface MonitoringConfig {
     healthScore: number;
   };
   retentionPeriod: number;
-}
+};
 
 export class DeploymentMonitor {
-  private deployments: Map<string, DeploymentMetrics> = new Map();
-  private events: Map<string, DeploymentEvent[]> = new Map();
-  private monitoringIntervals: Map<string, NodeJS.Timeout> = new Map();
+  private readonly deployments: Map<string, DeploymentMetrics> = new Map();
+  private readonly events: Map<string, DeploymentEvent[]> = new Map();
+  private readonly monitoringIntervals: Map<string, NodeJS.Timeout> = new Map();
 
-  constructor(private config: MonitoringConfig) {}
+  constructor(private readonly config: MonitoringConfig) {}
 
   /**
    * Start monitoring a deployment

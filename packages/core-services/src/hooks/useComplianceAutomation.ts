@@ -11,7 +11,7 @@
 // TYPES AND INTERFACES
 // ================================================
 
-interface ComplianceStatus {
+type ComplianceStatus = {
   overall_score: number;
   overall_status: string;
   lgpd_score: number;
@@ -21,9 +21,9 @@ interface ComplianceStatus {
   pending_requests: number;
   requires_attention: boolean;
   assessed_at: string;
-}
+};
 
-interface ComplianceAlert {
+type ComplianceAlert = {
   id: string;
   alert_type: string;
   severity: 'low' | 'medium' | 'high' | 'critical';
@@ -31,9 +31,9 @@ interface ComplianceAlert {
   created_at: string;
   affected_systems: string[];
   alert_status: string;
-}
+};
 
-interface DataClassificationRequest {
+type DataClassificationRequest = {
   tableName: string;
   columnName: string;
   sampleData?: string;
@@ -43,9 +43,9 @@ interface DataClassificationRequest {
     encryptionRequired?: boolean;
     retentionDays?: number;
   };
-}
+};
 
-interface DataSubjectRequest {
+type DataSubjectRequest = {
   requestType:
     | 'access'
     | 'rectification'
@@ -61,21 +61,21 @@ interface DataSubjectRequest {
   };
   requestDetails?: Record<string, any>;
   urgency?: 'normal' | 'urgent' | 'critical';
-}
+};
 
-interface SoftwareValidationRequest {
+type SoftwareValidationRequest = {
   softwareItemName: string;
   softwareVersion: string;
   changeDescription?: string;
   safetyClassification?: 'A' | 'B' | 'C';
   riskAssessmentRequired?: boolean;
-}
+};
 
-interface ProfessionalValidationRequest {
+type ProfessionalValidationRequest = {
   professionalId: string;
   validationType?: 'license' | 'credentials' | 'ethics' | 'comprehensive';
   includeRecommendations?: boolean;
-}
+};
 
 // ================================================
 // MAIN COMPLIANCE STATUS HOOK
@@ -117,7 +117,6 @@ export const useComplianceStatus = (clinicId?: string, autoRefresh = true) => {
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error occurred');
-      console.error('Failed to fetch compliance status:', err);
     } finally {
       setLoading(false);
     }
@@ -260,7 +259,6 @@ export const useConsentStatus = (dataSubjectId: string) => {
       setConsentData(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error occurred');
-      console.error('Failed to fetch consent status:', err);
     } finally {
       setLoading(false);
     }
@@ -353,7 +351,6 @@ export const useSoftwareLifecycle = (itemName: string) => {
       setLifecycleData(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error occurred');
-      console.error('Failed to fetch software lifecycle:', err);
     } finally {
       setLoading(false);
     }
@@ -446,7 +443,6 @@ export const useProfessionalStatus = (professionalId: string) => {
       setProfessionalData(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error occurred');
-      console.error('Failed to fetch professional status:', err);
     } finally {
       setLoading(false);
     }

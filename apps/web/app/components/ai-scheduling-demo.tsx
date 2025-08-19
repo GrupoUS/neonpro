@@ -7,14 +7,14 @@ import type {
   TreatmentType,
 } from '@neonpro/core-services/scheduling';
 import type React from 'react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useAIScheduling } from '@/hooks/use-ai-scheduling';
 import { IntelligentScheduler } from './intelligent-scheduler';
 import { SchedulingAnalyticsDashboard } from './scheduling-analytics-dashboard';
 
-interface AISchedulingDemoProps {
+type AISchedulingDemoProps = {
   tenantId: string;
-}
+};
 
 /**
  * Comprehensive AI Scheduling System Demo
@@ -207,7 +207,6 @@ export const AISchedulingDemo: React.FC<AISchedulingDemoProps> = ({
   });
 
   const handleAppointmentScheduled = (result: SchedulingResult) => {
-    console.log('Appointment scheduled:', result);
     // Show success notification
     if (result.success) {
       alert(
@@ -217,7 +216,6 @@ export const AISchedulingDemo: React.FC<AISchedulingDemoProps> = ({
   };
 
   const handleError = (errorMessage: string) => {
-    console.error('Scheduling error:', errorMessage);
     alert(`Scheduling error: ${errorMessage}`);
   };
 

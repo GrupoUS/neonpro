@@ -15,24 +15,24 @@ export type ModelType =
   | 'filler-volume'
   | 'laser-settings';
 
-export interface PredictionConfig {
+export type PredictionConfig = {
   modelPath: string;
   inputShape: number[];
   outputShape: number[];
   accuracy: number;
   version: string;
-}
+};
 
-export interface ModelMetadata {
+export type ModelMetadata = {
   type: ModelType;
   version: string;
   accuracy: number;
   loadedAt: Date;
   inputShape: number[];
   outputShape: number[];
-} // ==================== PATIENT DATA TYPES ====================
+}; // ==================== PATIENT DATA TYPES ====================
 
-export interface PatientProfile {
+export type PatientProfile = {
   id: string;
   age: number;
   gender: 'male' | 'female' | 'other';
@@ -42,7 +42,7 @@ export interface PatientProfile {
   previousTreatments: TreatmentHistory[];
   goals: TreatmentGoals;
   consentStatus: LGPDConsent;
-}
+};
 
 export type SkinType =
   | 'fitzpatrick-1' // Very fair, always burns
@@ -52,7 +52,7 @@ export type SkinType =
   | 'fitzpatrick-5' // Brown, very rarely burns
   | 'fitzpatrick-6'; // Dark brown/black, never burns
 
-export interface MedicalHistory {
+export type MedicalHistory = {
   allergies: string[];
   medications: Medication[];
   conditions: MedicalCondition[];
@@ -61,23 +61,23 @@ export interface MedicalHistory {
   autoimmuneDiseases: string[];
   bloodThinnersUse: boolean;
   keloidProneness: boolean;
-}
+};
 
-export interface Medication {
+export type Medication = {
   name: string;
   dosage: string;
   frequency: string;
   isBloodThinner: boolean;
   affectsHealing: boolean;
-}
-export interface MedicalCondition {
+};
+export type MedicalCondition = {
   name: string;
   severity: 'mild' | 'moderate' | 'severe';
   treatmentRelevant: boolean;
   contraindication: boolean;
-}
+};
 
-export interface LifestyleFactors {
+export type LifestyleFactors = {
   smoking: boolean;
   smokingFrequency?: 'occasional' | 'daily' | 'heavy';
   alcohol: boolean;
@@ -87,20 +87,20 @@ export interface LifestyleFactors {
   exerciseLevel: 'sedentary' | 'light' | 'moderate' | 'high';
   stressLevel: number; // 1-10 scale
   sleepQuality: number; // 1-10 scale
-}
+};
 
-export interface SkincareRoutine {
+export type SkincareRoutine = {
   cleansing: boolean;
   moisturizing: boolean;
   sunscreenUse: boolean;
   retinoidUse: boolean;
   exfoliation: boolean;
   professionalTreatments: string[];
-}
+};
 
 // ==================== TREATMENT TYPES ====================
 
-export interface TreatmentRequest {
+export type TreatmentRequest = {
   patientId: string;
   treatmentType: TreatmentType;
   targetAreas: TargetArea[];
@@ -108,7 +108,7 @@ export interface TreatmentRequest {
   urgency: 'low' | 'moderate' | 'high';
   budgetRange: BudgetRange;
   timeframe: TimeframePreference;
-}
+};
 export type TreatmentType =
   | 'botox'
   | 'dermal-fillers'
@@ -121,12 +121,12 @@ export type TreatmentType =
   | 'photofacial'
   | 'thread-lift';
 
-export interface TargetArea {
+export type TargetArea = {
   region: FacialRegion | BodyRegion;
   concern: AestheticConcern;
   severity: number; // 1-10 scale
   priority: number; // 1-5 scale
-}
+};
 
 export type FacialRegion =
   | 'forehead'
@@ -161,31 +161,35 @@ export type AestheticConcern =
   | 'cellulite'
   | 'unwanted-hair';
 
-export interface TreatmentGoals {
+export type TreatmentGoals = {
   primary: string;
   secondary: string[];
   expectations: ExpectationLevel;
   maintenance: boolean;
   naturalLook: boolean;
-}
+};
 
 export type ExpectationLevel = 'subtle' | 'moderate' | 'dramatic';
 
-export type TimeframePreference = 'immediate' | 'within-month' | 'within-quarter' | 'flexible';
+export type TimeframePreference =
+  | 'immediate'
+  | 'within-month'
+  | 'within-quarter'
+  | 'flexible';
 
-export interface TreatmentHistory {
+export type TreatmentHistory = {
   treatmentType: TreatmentType;
   date: Date;
   provider: string;
   outcome: 'excellent' | 'good' | 'fair' | 'poor';
   sideEffects?: string[];
-}
+};
 
 export type LGPDConsent = 'granted' | 'denied' | 'pending' | 'withdrawn';
 
-export interface BudgetRange {
+export type BudgetRange = {
   min: number;
   max: number;
   currency: string;
   flexible: boolean;
-}
+};

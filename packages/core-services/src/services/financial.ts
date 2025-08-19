@@ -4,7 +4,6 @@
 // ================================================
 
 import { createClient } from '@supabase/supabase-js';
-import { authService } from './auth';
 import { config } from './configuration';
 import { monitoring } from './monitoring';
 
@@ -12,7 +11,7 @@ import { monitoring } from './monitoring';
 // TYPES AND INTERFACES
 // ================================================
 
-interface FinancialTransaction {
+type FinancialTransaction = {
   id: string;
   tenantId: string;
   patientId?: string;
@@ -31,9 +30,9 @@ interface FinancialTransaction {
   updatedAt: Date;
   createdBy: string;
   updatedBy: string;
-}
+};
 
-interface PaymentPlan {
+type PaymentPlan = {
   id: string;
   tenantId: string;
   patientId: string;
@@ -46,9 +45,9 @@ interface PaymentPlan {
   createdAt: Date;
   updatedAt: Date;
   createdBy: string;
-}
+};
 
-interface PaymentInstallment {
+type PaymentInstallment = {
   id: string;
   paymentPlanId: string;
   installmentNumber: number;
@@ -60,9 +59,9 @@ interface PaymentInstallment {
   transactionId?: string;
   lateFee?: number;
   discount?: number;
-}
+};
 
-interface Invoice {
+type Invoice = {
   id: string;
   tenantId: string;
   patientId: string;
@@ -82,9 +81,9 @@ interface Invoice {
   metadata: Record<string, any>;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
-interface InvoiceItem {
+type InvoiceItem = {
   id: string;
   serviceId: string;
   serviceName: string;
@@ -94,9 +93,9 @@ interface InvoiceItem {
   totalPrice: number;
   taxRate: number;
   taxAmount: number;
-}
+};
 
-interface FinancialReport {
+type FinancialReport = {
   id: string;
   tenantId: string;
   reportType: ReportType;
@@ -105,18 +104,18 @@ interface FinancialReport {
   data: ReportData;
   generatedAt: Date;
   generatedBy: string;
-}
+};
 
-interface ReportData {
+type ReportData = {
   revenue: RevenueData;
   expenses: ExpenseData;
   profitLoss: ProfitLossData;
   cashFlow: CashFlowData;
   receivables: ReceivablesData;
   taxes: TaxData;
-}
+};
 
-interface RevenueData {
+type RevenueData = {
   totalRevenue: number;
   paidRevenue: number;
   pendingRevenue: number;
@@ -124,41 +123,41 @@ interface RevenueData {
   revenueByService: Record<string, number>;
   revenueByMonth: Record<string, number>;
   averageTransactionValue: number;
-}
+};
 
-interface ExpenseData {
+type ExpenseData = {
   totalExpenses: number;
   expensesByCategory: Record<string, number>;
   expensesByMonth: Record<string, number>;
-}
+};
 
-interface ProfitLossData {
+type ProfitLossData = {
   grossProfit: number;
   netProfit: number;
   profitMargin: number;
   operatingExpenses: number;
   ebitda: number;
-}
+};
 
-interface CashFlowData {
+type CashFlowData = {
   cashInflow: number;
   cashOutflow: number;
   netCashFlow: number;
   cashFlowByMonth: Record<string, number>;
-}
+};
 
-interface ReceivablesData {
+type ReceivablesData = {
   totalReceivables: number;
   currentReceivables: number;
   overdueReceivables: number;
   averageCollectionPeriod: number;
-}
+};
 
-interface TaxData {
+type TaxData = {
   totalTaxes: number;
   taxesByType: Record<string, number>;
   taxLiabilities: number;
-}
+};
 
 // ================================================
 // ENUMS
@@ -242,7 +241,7 @@ enum ReportType {
 // REQUEST/RESPONSE TYPES
 // ================================================
 
-interface CreateTransactionRequest {
+type CreateTransactionRequest = {
   tenantId: string;
   patientId?: string;
   appointmentId?: string;
@@ -254,9 +253,9 @@ interface CreateTransactionRequest {
   paymentMethod?: PaymentMethod;
   dueDate?: Date;
   metadata?: Record<string, any>;
-}
+};
 
-interface CreatePaymentPlanRequest {
+type CreatePaymentPlanRequest = {
   tenantId: string;
   patientId: string;
   totalAmount: number;
@@ -264,18 +263,18 @@ interface CreatePaymentPlanRequest {
   numberOfInstallments: number;
   firstInstallmentDate: Date;
   installmentInterval: 'monthly' | 'weekly' | 'biweekly';
-}
+};
 
-interface CreateInvoiceRequest {
+type CreateInvoiceRequest = {
   tenantId: string;
   patientId: string;
   items: Omit<InvoiceItem, 'id' | 'taxAmount' | 'totalPrice'>[];
   dueDate: Date;
   notes?: string;
   metadata?: Record<string, any>;
-}
+};
 
-interface FinancialFilters {
+type FinancialFilters = {
   tenantId?: string;
   patientId?: string;
   type?: TransactionType;
@@ -290,7 +289,7 @@ interface FinancialFilters {
   offset?: number;
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
-}
+};
 
 // ================================================
 // FINANCIAL SERVICE
@@ -298,7 +297,7 @@ interface FinancialFilters {
 
 export class FinancialService {
   private static instance: FinancialService;
-  private supabase = createClient(
+  private readonly supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
@@ -644,7 +643,6 @@ export class FinancialService {
           case 'biweekly':
             currentDate.setDate(currentDate.getDate() + 14);
             break;
-          case 'monthly':
           default:
             currentDate.setMonth(currentDate.getMonth() + 1);
             break;
@@ -1109,7 +1107,6 @@ export class FinancialService {
             periodEnd
           );
           break;
-        case ReportType.COMPREHENSIVE:
         default:
           reportData = await this.generateComprehensiveReport(
             tenantId,
@@ -1180,8 +1177,8 @@ export class FinancialService {
   }
 
   private async validateTenantAccess(
-    userId: string,
-    tenantId: string
+    _userId: string,
+    _tenantId: string
   ): Promise<void> {
     // Implementation would validate user has access to tenant
     // For now, we'll assume the auth service handles this
@@ -1200,63 +1197,63 @@ export class FinancialService {
   }
 
   private async generateRevenueReport(
-    tenantId: string,
-    periodStart: Date,
-    periodEnd: Date
+    _tenantId: string,
+    _periodStart: Date,
+    _periodEnd: Date
   ): Promise<ReportData> {
     // Implementation for revenue report generation
     return {} as ReportData;
   }
 
   private async generateExpenseReport(
-    tenantId: string,
-    periodStart: Date,
-    periodEnd: Date
+    _tenantId: string,
+    _periodStart: Date,
+    _periodEnd: Date
   ): Promise<ReportData> {
     // Implementation for expense report generation
     return {} as ReportData;
   }
 
   private async generateProfitLossReport(
-    tenantId: string,
-    periodStart: Date,
-    periodEnd: Date
+    _tenantId: string,
+    _periodStart: Date,
+    _periodEnd: Date
   ): Promise<ReportData> {
     // Implementation for profit & loss report generation
     return {} as ReportData;
   }
 
   private async generateCashFlowReport(
-    tenantId: string,
-    periodStart: Date,
-    periodEnd: Date
+    _tenantId: string,
+    _periodStart: Date,
+    _periodEnd: Date
   ): Promise<ReportData> {
     // Implementation for cash flow report generation
     return {} as ReportData;
   }
 
   private async generateReceivablesReport(
-    tenantId: string,
-    periodStart: Date,
-    periodEnd: Date
+    _tenantId: string,
+    _periodStart: Date,
+    _periodEnd: Date
   ): Promise<ReportData> {
     // Implementation for receivables report generation
     return {} as ReportData;
   }
 
   private async generateTaxReport(
-    tenantId: string,
-    periodStart: Date,
-    periodEnd: Date
+    _tenantId: string,
+    _periodStart: Date,
+    _periodEnd: Date
   ): Promise<ReportData> {
     // Implementation for tax report generation
     return {} as ReportData;
   }
 
   private async generateComprehensiveReport(
-    tenantId: string,
-    periodStart: Date,
-    periodEnd: Date
+    _tenantId: string,
+    _periodStart: Date,
+    _periodEnd: Date
   ): Promise<ReportData> {
     // Implementation for comprehensive report generation
     return {} as ReportData;

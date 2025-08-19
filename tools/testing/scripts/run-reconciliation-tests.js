@@ -1,16 +1,6 @@
 const { execSync } = require('node:child_process');
 const path = require('node:path');
 
-/**
- * NEONPRO RECONCILIATION TEST RUNNER
- * Healthcare-Grade Test Execution for Bank Reconciliation System
- */
-
-console.log(
-  '🚀 NEONPRO RECONCILIATION TEST SUITE - Healthcare Excellence Validation'
-);
-console.log('='.repeat(80));
-
 const RECONCILIATION_TESTS = [
   {
     name: 'API Integration Tests',
@@ -46,83 +36,54 @@ const E2E_TESTS = [
 ];
 
 function runTest(test, testType = 'UNIT') {
-  console.log(`\n📊 Executing: ${test.name} [${test.priority}]`);
-  console.log(`   Description: ${test.description}`);
-  console.log(`   File: ${test.file}`);
-  console.log('-'.repeat(60));
-
   try {
     const startTime = Date.now();
 
     if (testType === 'E2E') {
       // Run Playwright E2E tests
       const command = `npx playwright test ${test.file} --reporter=list --timeout=${test.timeout}`;
-      console.log(`   Command: ${command}`);
-      const output = execSync(command, {
+      const _output = execSync(command, {
         cwd: process.cwd(),
         encoding: 'utf8',
         timeout: test.timeout + 30_000,
       });
-      console.log(output);
     } else {
       // Run Jest tests with isolated configuration
       const command = `npx jest ${test.file} --verbose --detectOpenHandles --forceExit --timeout=${test.timeout}`;
-      console.log(`   Command: ${command}`);
-      const output = execSync(command, {
+      const _output = execSync(command, {
         cwd: path.join(process.cwd(), 'apps/web'),
         encoding: 'utf8',
         timeout: test.timeout + 30_000,
       });
-      console.log(output);
     }
 
     const endTime = Date.now();
     const duration = (endTime - startTime) / 1000;
-
-    console.log(`✅ ${test.name} - PASSED (${duration.toFixed(2)}s)`);
     return { status: 'PASSED', duration, test: test.name };
   } catch (error) {
     const errorMessage = error.message || error.toString();
-    console.log(`❌ ${test.name} - FAILED`);
-    console.log(`   Error: ${errorMessage.substring(0, 500)}...`);
 
     return { status: 'FAILED', error: errorMessage, test: test.name };
   }
 }
 
 function generateReport(results) {
-  console.log(`\n${'='.repeat(80)}`);
-  console.log('📋 NEONPRO RECONCILIATION TEST EXECUTION REPORT');
-  console.log('='.repeat(80));
-
   const passed = results.filter((r) => r.status === 'PASSED').length;
   const failed = results.filter((r) => r.status === 'FAILED').length;
   const total = results.length;
 
-  console.log('\n📊 SUMMARY:');
-  console.log(`   Total Tests: ${total}`);
-  console.log(`   Passed: ${passed} ✅`);
-  console.log(`   Failed: ${failed} ❌`);
-  console.log(`   Success Rate: ${((passed / total) * 100).toFixed(1)}%`);
-
   if (passed >= 3) {
-    console.log('\n🏆 HEALTHCARE QUALITY STANDARD: ACHIEVED (≥75% pass rate)');
   } else {
-    console.log('\n⚠️  HEALTHCARE QUALITY STANDARD: NEEDS IMPROVEMENT');
   }
-
-  console.log('\n📋 DETAILED RESULTS:');
   results.forEach((result) => {
-    const status = result.status === 'PASSED' ? '✅' : '❌';
-    const duration = result.duration ? ` (${result.duration.toFixed(2)}s)` : '';
-    console.log(`   ${status} ${result.test}${duration}`);
+    const _status = result.status === 'PASSED' ? '✅' : '❌';
+    const _duration = result.duration
+      ? ` (${result.duration.toFixed(2)}s)`
+      : '';
 
     if (result.status === 'FAILED' && result.error) {
-      console.log(`      Error: ${result.error.substring(0, 200)}...`);
     }
   });
-
-  console.log(`\n${'='.repeat(80)}`);
 
   // Save results to file
   const reportData = {
@@ -140,26 +101,17 @@ function generateReport(results) {
   const fs = require('node:fs');
   const reportPath = 'reconciliation-test-results.json';
   fs.writeFileSync(reportPath, JSON.stringify(reportData, null, 2));
-  console.log(`📄 Detailed report saved to: ${reportPath}`);
 
   return reportData;
 }
 
 // Main execution
 async function main() {
-  console.log('🔧 Initializing NeonPro Reconciliation Test Environment...');
-
   const results = [];
-
-  // Execute Unit/Integration Tests
-  console.log('\n🧪 PHASE 1: UNIT & INTEGRATION TESTS');
   for (const test of RECONCILIATION_TESTS) {
     const result = runTest(test, 'UNIT');
     results.push(result);
   }
-
-  // Execute E2E Tests
-  console.log('\n🎭 PHASE 2: END-TO-END TESTS');
   for (const test of E2E_TESTS) {
     const result = runTest(test, 'E2E');
     results.push(result);
@@ -175,8 +127,7 @@ async function main() {
 
 // Execute if run directly
 if (require.main === module) {
-  main().catch((error) => {
-    console.error('❌ Test execution failed:', error);
+  main().catch((_error) => {
     process.exit(1);
   });
 }

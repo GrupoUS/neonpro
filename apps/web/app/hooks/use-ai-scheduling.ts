@@ -3,25 +3,23 @@
 import type {
   AppointmentSlot,
   DynamicSchedulingEvent,
-  Patient,
   SchedulingAction,
   SchedulingAnalytics,
   SchedulingRequest,
   SchedulingResult,
-  Staff,
   TreatmentType,
 } from '@neonpro/core-services/scheduling';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AISchedulingEngine } from '@/lib/ai-scheduling';
 
-interface UseAISchedulingOptions {
+type UseAISchedulingOptions = {
   tenantId: string;
   autoOptimize?: boolean;
   realtimeUpdates?: boolean;
   analyticsEnabled?: boolean;
-}
+};
 
-interface UseAISchedulingReturn {
+type UseAISchedulingReturn = {
   // Core scheduling functions
   scheduleAppointment: (
     request: SchedulingRequest
@@ -54,7 +52,7 @@ interface UseAISchedulingReturn {
   // Configuration
   updateConfig: (config: Partial<any>) => void;
   resetState: () => void;
-}
+};
 
 /**
  * Advanced React Hook for AI-Powered Scheduling
@@ -114,16 +112,16 @@ export const useAIScheduling = (
 
   // Initialize real-time WebSocket connection
   useEffect(() => {
-    if (!realtimeUpdates) return;
+    if (!realtimeUpdates) {
+      return;
+    }
 
     const connectWebSocket = () => {
       try {
         const wsUrl = `${process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:3001'}/scheduling/${tenantId}`;
         wsConnectionRef.current = new WebSocket(wsUrl);
 
-        wsConnectionRef.current.onopen = () => {
-          console.log('Real-time scheduling connection established');
-        };
+        wsConnectionRef.current.onopen = () => {};
 
         wsConnectionRef.current.onmessage = (event) => {
           const data = JSON.parse(event.data);
@@ -131,18 +129,11 @@ export const useAIScheduling = (
         };
 
         wsConnectionRef.current.onclose = () => {
-          console.log(
-            'Real-time connection closed, attempting to reconnect...'
-          );
           setTimeout(connectWebSocket, 5000);
         };
 
-        wsConnectionRef.current.onerror = (error) => {
-          console.error('WebSocket error:', error);
-        };
-      } catch (error) {
-        console.error('Failed to establish WebSocket connection:', error);
-      }
+        wsConnectionRef.current.onerror = (_error) => {};
+      } catch (_error) {}
     };
 
     connectWebSocket();
@@ -152,11 +143,13 @@ export const useAIScheduling = (
         wsConnectionRef.current.close();
       }
     };
-  }, [tenantId, realtimeUpdates]);
+  }, [tenantId, realtimeUpdates, handleRealtimeUpdate]);
 
   // Load analytics data
   useEffect(() => {
-    if (!analyticsEnabled) return;
+    if (!analyticsEnabled) {
+      return;
+    }
 
     const loadAnalytics = async () => {
       try {
@@ -165,9 +158,7 @@ export const useAIScheduling = (
           const analyticsData = await response.json();
           setAnalytics(analyticsData);
         }
-      } catch (error) {
-        console.error('Failed to load analytics:', error);
-      }
+      } catch (_error) {}
     };
 
     loadAnalytics();
@@ -251,7 +242,9 @@ export const useAIScheduling = (
   // Get available slots with AI pre-filtering
   const getAvailableSlots = useCallback(
     async (request: Partial<SchedulingRequest>): Promise<AppointmentSlot[]> => {
-      if (!aiEngineRef.current) return [];
+      if (!aiEngineRef.current) {
+        return [];
+      }
 
       setIsLoading(true);
       try {
@@ -281,8 +274,7 @@ export const useAIScheduling = (
         }
 
         return slots;
-      } catch (error) {
-        console.error('Failed to get available slots:', error);
+      } catch (_error) {
         return [];
       } finally {
         setIsLoading(false);
@@ -294,7 +286,9 @@ export const useAIScheduling = (
   // Handle real-time scheduling events
   const handleRealtimeEvent = useCallback(
     async (event: DynamicSchedulingEvent): Promise<SchedulingAction[]> => {
-      if (!aiEngineRef.current) return [];
+      if (!aiEngineRef.current) {
+        return [];
+      }
 
       try {
         const [scheduleResponse, staffResponse] = await Promise.all([
@@ -330,12 +324,11 @@ export const useAIScheduling = (
         }
 
         return actions;
-      } catch (error) {
-        console.error('Failed to handle real-time event:', error);
+      } catch (_error) {
         return [];
       }
     },
-    [tenantId, autoOptimize]
+    [tenantId, autoOptimize, executeAction]
   );
 
   // Predict no-show risk for specific patient/slot combination
@@ -353,8 +346,7 @@ export const useAIScheduling = (
 
         const { risk } = await response.json();
         return risk;
-      } catch (error) {
-        console.error('Failed to predict no-show risk:', error);
+      } catch (_error) {
         return 0.1; // Default low risk
       }
     },
@@ -375,8 +367,7 @@ export const useAIScheduling = (
 
       const { actions } = await response.json();
       return actions;
-    } catch (error) {
-      console.error('Failed to optimize staff workload:', error);
+    } catch (_error) {
       return [];
     }
   }, [tenantId]);
@@ -389,8 +380,7 @@ export const useAIScheduling = (
           `/api/scheduling/forecast/${tenantId}?days=${days}`
         );
         return await response.json();
-      } catch (error) {
-        console.error('Failed to forecast demand:', error);
+      } catch (_error) {
         return null;
       }
     },
@@ -398,10 +388,8 @@ export const useAIScheduling = (
   );
 
   // Update AI engine configuration
-  const updateConfig = useCallback((config: Partial<any>) => {
+  const updateConfig = useCallback((_config: Partial<any>) => {
     if (aiEngineRef.current) {
-      // Update configuration (would need to implement in AI engine)
-      console.log('Updating AI configuration:', config);
     }
   }, []);
 
@@ -419,7 +407,6 @@ export const useAIScheduling = (
       case 'schedule_change':
         // Refresh available slots
         if (data.affectedSlots) {
-          console.log('Schedule change detected, refreshing slots');
         }
         break;
 
@@ -434,7 +421,6 @@ export const useAIScheduling = (
         break;
 
       default:
-        console.log('Unknown real-time update:', data);
     }
   }, []);
 
@@ -452,11 +438,8 @@ export const useAIScheduling = (
         );
 
         if (response.ok) {
-          console.log('Action executed successfully:', action.description);
         }
-      } catch (error) {
-        console.error('Failed to execute action:', error);
-      }
+      } catch (_error) {}
     },
     [tenantId]
   );

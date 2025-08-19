@@ -256,7 +256,9 @@ export class AestheticFeatureExtractor {
   }
 
   private encodeSmokingFrequency(frequency?: string): number {
-    if (!frequency) return 0;
+    if (!frequency) {
+      return 0;
+    }
     const mapping = { occasional: 0.33, daily: 0.67, heavy: 1.0 };
     return mapping[frequency as keyof typeof mapping] || 0;
   }
@@ -354,13 +356,16 @@ export class AestheticFeatureExtractor {
 
   private estimateMuscleActivity(
     patient: PatientProfile,
-    areas: string[]
+    _areas: string[]
   ): number {
     let activityScore = 0.5; // Base activity
 
     // Age factor - younger patients typically have stronger muscle activity
-    if (patient.age < 30) activityScore += 0.2;
-    else if (patient.age > 50) activityScore -= 0.1;
+    if (patient.age < 30) {
+      activityScore += 0.2;
+    } else if (patient.age > 50) {
+      activityScore -= 0.1;
+    }
 
     // Stress level affects muscle tension
     activityScore += (patient.lifestyle.stressLevel / 10) * 0.2;
@@ -373,7 +378,9 @@ export class AestheticFeatureExtractor {
       const avgSatisfaction =
         botoxHistory.reduce((sum, t) => sum + t.satisfaction, 0) /
         botoxHistory.length;
-      if (avgSatisfaction < 7) activityScore += 0.1; // Low satisfaction may indicate strong muscles
+      if (avgSatisfaction < 7) {
+        activityScore += 0.1; // Low satisfaction may indicate strong muscles
+      }
     }
 
     return Math.min(Math.max(activityScore, 0), 1);
@@ -386,18 +393,27 @@ export class AestheticFeatureExtractor {
     elasticity -= (patient.age - 20) / 100;
 
     // Sun exposure damages elasticity
-    if (patient.lifestyle.sunExposure === 'high') elasticity -= 0.2;
-    else if (patient.lifestyle.sunExposure === 'moderate') elasticity -= 0.1;
+    if (patient.lifestyle.sunExposure === 'high') {
+      elasticity -= 0.2;
+    } else if (patient.lifestyle.sunExposure === 'moderate') {
+      elasticity -= 0.1;
+    }
 
     // Smoking damages collagen
     if (patient.lifestyle.smoking) {
       elasticity -= 0.15;
-      if (patient.lifestyle.smokingFrequency === 'heavy') elasticity -= 0.1;
+      if (patient.lifestyle.smokingFrequency === 'heavy') {
+        elasticity -= 0.1;
+      }
     }
 
     // Skincare routine helps
-    if (patient.lifestyle.skincare.sunscreenUse) elasticity += 0.05;
-    if (patient.lifestyle.skincare.retinoidUse) elasticity += 0.1;
+    if (patient.lifestyle.skincare.sunscreenUse) {
+      elasticity += 0.05;
+    }
+    if (patient.lifestyle.skincare.retinoidUse) {
+      elasticity += 0.1;
+    }
 
     return Math.min(Math.max(elasticity, 0), 1);
   }
@@ -412,22 +428,28 @@ export class AestheticFeatureExtractor {
     const hasAsymmetryHistory = patient.previousTreatments.some((t) =>
       t.complications.includes('asymmetry')
     );
-    if (hasAsymmetryHistory) riskScore += 0.3;
+    if (hasAsymmetryHistory) {
+      riskScore += 0.3;
+    }
 
     // Multiple areas increase complexity and risk
-    if (areas.length > 3) riskScore += 0.1;
+    if (areas.length > 3) {
+      riskScore += 0.1;
+    }
 
     // Certain areas are higher risk
     const highRiskAreas = ['under-eyes', 'jawline'];
     const hasHighRiskAreas = areas.some((area) => highRiskAreas.includes(area));
-    if (hasHighRiskAreas) riskScore += 0.2;
+    if (hasHighRiskAreas) {
+      riskScore += 0.2;
+    }
 
     return Math.min(riskScore, 1);
   }
 
   private estimateExpressionStrength(
     patient: PatientProfile,
-    areas: string[]
+    _areas: string[]
   ): number {
     let strength = 0.5;
 
@@ -435,11 +457,17 @@ export class AestheticFeatureExtractor {
     strength += (patient.lifestyle.stressLevel / 10) * 0.3;
 
     // Professional factors (estimated from lifestyle)
-    if (patient.lifestyle.stressLevel > 7) strength += 0.1; // High-stress professions
+    if (patient.lifestyle.stressLevel > 7) {
+      strength += 0.1; // High-stress professions
+    }
 
     // Age factor - expression lines deepen with age
-    if (patient.age > 40) strength += 0.1;
-    if (patient.age > 55) strength += 0.1;
+    if (patient.age > 40) {
+      strength += 0.1;
+    }
+    if (patient.age > 55) {
+      strength += 0.1;
+    }
 
     return Math.min(strength, 1);
   }
@@ -451,12 +479,17 @@ export class AestheticFeatureExtractor {
     capacity -= (patient.age - 25) / 100;
 
     // Health factors
-    if (patient.medicalHistory.autoimmuneDiseases.length > 0) capacity -= 0.2;
-    if (patient.medicalHistory.medications.some((m) => m.affectsHealing))
+    if (patient.medicalHistory.autoimmuneDiseases.length > 0) {
+      capacity -= 0.2;
+    }
+    if (patient.medicalHistory.medications.some((m) => m.affectsHealing)) {
       capacity -= 0.1;
+    }
 
     // Lifestyle factors
-    if (patient.lifestyle.smoking) capacity -= 0.2;
+    if (patient.lifestyle.smoking) {
+      capacity -= 0.2;
+    }
     capacity += (patient.lifestyle.sleepQuality / 10) * 0.1;
     capacity += (10 - patient.lifestyle.stressLevel) / 100;
 
@@ -474,15 +507,19 @@ export class AestheticFeatureExtractor {
 
   private estimateVolumeDeficit(
     patient: PatientProfile,
-    areas: string[]
+    _areas: string[]
   ): number {
     let deficit = 0;
 
     // Age-related volume loss
-    if (patient.age > 30) deficit += (patient.age - 30) / 100;
+    if (patient.age > 30) {
+      deficit += (patient.age - 30) / 100;
+    }
 
     // Weight loss history (estimated from lifestyle)
-    if (patient.lifestyle.exerciseLevel === 'high') deficit += 0.1;
+    if (patient.lifestyle.exerciseLevel === 'high') {
+      deficit += 0.1;
+    }
 
     // Genetics (estimated from family history if available)
     // This would ideally come from patient data
@@ -498,7 +535,9 @@ export class AestheticFeatureExtractor {
     thickness -= (patient.age - 25) / 200;
 
     // Gender differences
-    if (patient.gender === 'male') thickness += 0.1;
+    if (patient.gender === 'male') {
+      thickness += 0.1;
+    }
 
     // Skin type affects thickness
     if (patient.skinType.includes('5') || patient.skinType.includes('6')) {
@@ -515,11 +554,17 @@ export class AestheticFeatureExtractor {
     production -= (patient.age - 20) / 80; // Decreases with age
 
     // Lifestyle factors
-    if (patient.lifestyle.smoking) production -= 0.2;
-    if (patient.lifestyle.sunExposure === 'high') production -= 0.15;
+    if (patient.lifestyle.smoking) {
+      production -= 0.2;
+    }
+    if (patient.lifestyle.sunExposure === 'high') {
+      production -= 0.15;
+    }
 
     // Beneficial factors
-    if (patient.lifestyle.skincare.retinoidUse) production += 0.1;
+    if (patient.lifestyle.skincare.retinoidUse) {
+      production += 0.1;
+    }
     production += (patient.lifestyle.sleepQuality / 10) * 0.05;
 
     return Math.min(Math.max(production, 0.1), 1);
@@ -536,7 +581,9 @@ export class AestheticFeatureExtractor {
     const hasAsymmetryIssues = patient.previousTreatments.some(
       (t) => t.complications.includes('asymmetry') || t.satisfaction < 6
     );
-    if (hasAsymmetryIssues) asymmetry += 0.2;
+    if (hasAsymmetryIssues) {
+      asymmetry += 0.2;
+    }
 
     return Math.min(asymmetry, 0.5);
   }
@@ -545,20 +592,26 @@ export class AestheticFeatureExtractor {
     let laxity = 0;
 
     // Age is primary factor
-    if (patient.age > 35) laxity += (patient.age - 35) / 100;
+    if (patient.age > 35) {
+      laxity += (patient.age - 35) / 100;
+    }
 
     // Sun damage increases laxity
-    if (patient.lifestyle.sunExposure === 'high') laxity += 0.15;
+    if (patient.lifestyle.sunExposure === 'high') {
+      laxity += 0.15;
+    }
 
     // Weight fluctuations (estimated)
-    if (patient.lifestyle.exerciseLevel === 'sedentary') laxity += 0.05;
+    if (patient.lifestyle.exerciseLevel === 'sedentary') {
+      laxity += 0.05;
+    }
 
     return Math.min(laxity, 0.8);
   }
 
   private evaluateProductCompatibility(
     patient: PatientProfile,
-    productType: string
+    _productType: string
   ): number {
     let compatibility = 0.9; // High base compatibility for HA
 
@@ -568,14 +621,18 @@ export class AestheticFeatureExtractor {
         allergy.toLowerCase().includes('hyaluronic') ||
         allergy.toLowerCase().includes('lidocaine')
     );
-    if (hasRelevantAllergies) compatibility -= 0.4;
+    if (hasRelevantAllergies) {
+      compatibility -= 0.4;
+    }
 
     // Previous filler reactions
     const fillerHistory = patient.previousTreatments.filter(
       (t) => t.type === 'dermal-fillers'
     );
     const hasReactions = fillerHistory.some((t) => t.complications.length > 0);
-    if (hasReactions) compatibility -= 0.2;
+    if (hasReactions) {
+      compatibility -= 0.2;
+    }
 
     return Math.max(compatibility, 0.1);
   }
@@ -603,7 +660,9 @@ export class AestheticFeatureExtractor {
     const hasComplexCombination = complexCombinations.some((combo) =>
       combo.every((area) => areas.includes(area))
     );
-    if (hasComplexCombination) complexity += 0.2;
+    if (hasComplexCombination) {
+      complexity += 0.2;
+    }
 
     return Math.min(complexity, 1);
   }
@@ -633,19 +692,29 @@ export class AestheticFeatureExtractor {
     let maintenance = 0.5; // Base maintenance requirement
 
     // Age affects longevity
-    if (patient.age < 30) maintenance += 0.1; // Faster metabolism
-    if (patient.age > 60) maintenance -= 0.1; // Slower metabolism
+    if (patient.age < 30) {
+      maintenance += 0.1; // Faster metabolism
+    }
+    if (patient.age > 60) {
+      maintenance -= 0.1; // Slower metabolism
+    }
 
     // Lifestyle factors
-    if (patient.lifestyle.exerciseLevel === 'high') maintenance += 0.1;
-    if (patient.lifestyle.smoking) maintenance += 0.15;
+    if (patient.lifestyle.exerciseLevel === 'high') {
+      maintenance += 0.1;
+    }
+    if (patient.lifestyle.smoking) {
+      maintenance += 0.15;
+    }
 
     // Area-specific factors
     const highMaintenanceAreas = ['lips', 'nasolabial-folds'];
     const hasHighMaintenanceAreas = areas.some((area) =>
       highMaintenanceAreas.includes(area)
     );
-    if (hasHighMaintenanceAreas) maintenance += 0.1;
+    if (hasHighMaintenanceAreas) {
+      maintenance += 0.1;
+    }
 
     return Math.min(maintenance, 1);
   }
@@ -657,7 +726,9 @@ export class AestheticFeatureExtractor {
     let risk = 0.1; // Base vascular risk
 
     // Blood thinners significantly increase risk
-    if (patient.medicalHistory.bloodThinnersUse) risk += 0.3;
+    if (patient.medicalHistory.bloodThinnersUse) {
+      risk += 0.3;
+    }
 
     // Certain medications increase bleeding risk
     const riskMedications = patient.medicalHistory.medications.filter(
@@ -668,10 +739,14 @@ export class AestheticFeatureExtractor {
     // High-risk areas
     const highRiskAreas = ['under-eyes', 'lips'];
     const hasHighRiskAreas = areas.some((area) => highRiskAreas.includes(area));
-    if (hasHighRiskAreas) risk += 0.15;
+    if (hasHighRiskAreas) {
+      risk += 0.15;
+    }
 
     // Age factor
-    if (patient.age > 60) risk += 0.1;
+    if (patient.age > 60) {
+      risk += 0.1;
+    }
 
     return Math.min(risk, 0.8);
   }
@@ -680,7 +755,9 @@ export class AestheticFeatureExtractor {
     let proneness = 0.3; // Base swelling tendency
 
     // Age factor
-    if (patient.age > 50) proneness += 0.1;
+    if (patient.age > 50) {
+      proneness += 0.1;
+    }
 
     // Medical conditions
     if (
@@ -694,7 +771,9 @@ export class AestheticFeatureExtractor {
     }
 
     // Lifestyle factors
-    if (patient.lifestyle.alcohol) proneness += 0.1;
+    if (patient.lifestyle.alcohol) {
+      proneness += 0.1;
+    }
     proneness -= (patient.lifestyle.sleepQuality / 10) * 0.1;
 
     return Math.min(proneness, 0.8);
@@ -733,7 +812,9 @@ export class AestheticFeatureExtractor {
     }
 
     // Retinoid use increases sensitivity
-    if (patient.lifestyle.skincare.retinoidUse) sensitivity += 0.1;
+    if (patient.lifestyle.skincare.retinoidUse) {
+      sensitivity += 0.1;
+    }
 
     return Math.min(sensitivity, 1);
   }
@@ -757,8 +838,8 @@ export class AestheticFeatureExtractor {
   }
 
   private evaluateConcurrentTreatmentRisk(
-    patient: PatientProfile,
-    treatmentType: string
+    _patient: PatientProfile,
+    _treatmentType: string
   ): number {
     // This would check for interactions with other planned treatments
     // For now, return a base risk assessment
@@ -769,14 +850,18 @@ export class AestheticFeatureExtractor {
     // Current season affects treatment planning
     const month = new Date().getMonth();
     // Summer months (higher sun exposure risk)
-    if (month >= 5 && month <= 8) return 0.8;
+    if (month >= 5 && month <= 8) {
+      return 0.8;
+    }
     // Winter months (lower sun exposure, better for some treatments)
-    if (month >= 11 || month <= 2) return 0.3;
+    if (month >= 11 || month <= 2) {
+      return 0.3;
+    }
     // Spring/Fall
     return 0.5;
   }
 
-  private encodeCurrentTrends(treatmentType: string): number {
+  private encodeCurrentTrends(_treatmentType: string): number {
     // This would incorporate current aesthetic trends
     // For now, return a neutral value
     return 0.5;
@@ -829,22 +914,30 @@ export class AestheticFeatureExtractor {
     let sessions = 0.5;
 
     // Age affects number of sessions needed
-    if (patient.age > 50) sessions += 0.2;
+    if (patient.age > 50) {
+      sessions += 0.2;
+    }
 
     // Skin damage level
-    if (patient.lifestyle.sunExposure === 'high') sessions += 0.2;
-    if (patient.lifestyle.smoking) sessions += 0.1;
+    if (patient.lifestyle.sunExposure === 'high') {
+      sessions += 0.2;
+    }
+    if (patient.lifestyle.smoking) {
+      sessions += 0.1;
+    }
 
     // Goal complexity
     const complexGoals = ['acne-scars', 'deep-wrinkles', 'skin-tightening'];
-    if (complexGoals.some((g) => goal.includes(g))) sessions += 0.3;
+    if (complexGoals.some((g) => goal.includes(g))) {
+      sessions += 0.3;
+    }
 
     return Math.min(sessions, 1);
   }
 
   // Additional contextual and risk assessment methods
   private evaluateSeasonalAppropriate(
-    patient: PatientProfile,
+    _patient: PatientProfile,
     laserType: string
   ): number {
     const month = new Date().getMonth();
@@ -852,20 +945,26 @@ export class AestheticFeatureExtractor {
 
     // Some laser treatments are better in winter
     const winterPreferred = ['co2', 'erbium', 'fraxel'];
-    if (winterPreferred.includes(laserType) && !isSummer) return 0.8;
-    if (winterPreferred.includes(laserType) && isSummer) return 0.3;
+    if (winterPreferred.includes(laserType) && !isSummer) {
+      return 0.8;
+    }
+    if (winterPreferred.includes(laserType) && isSummer) {
+      return 0.3;
+    }
 
     return 0.6;
   }
 
   private evaluateContraindicationRisk(
     patient: PatientProfile,
-    laserType: string
+    _laserType: string
   ): number {
     let risk = 0;
 
     // Pregnancy (if applicable)
-    if (patient.medicalHistory.pregnancyStatus) risk += 0.8;
+    if (patient.medicalHistory.pregnancyStatus) {
+      risk += 0.8;
+    }
 
     // Photosensitizing medications
     const photosensitizingMeds = patient.medicalHistory.medications.filter(
@@ -876,17 +975,21 @@ export class AestheticFeatureExtractor {
     risk += photosensitizingMeds.length * 0.3;
 
     // Autoimmune conditions
-    if (patient.medicalHistory.autoimmuneDiseases.length > 0) risk += 0.2;
+    if (patient.medicalHistory.autoimmuneDiseases.length > 0) {
+      risk += 0.2;
+    }
 
     // Recent sun exposure
-    if (patient.lifestyle.sunExposure === 'high') risk += 0.2;
+    if (patient.lifestyle.sunExposure === 'high') {
+      risk += 0.2;
+    }
 
     return Math.min(risk, 1);
   }
 
   private estimateComplicationRisk(
     patient: PatientProfile,
-    laserType: string
+    _laserType: string
   ): number {
     let risk = 0.1;
 
@@ -898,7 +1001,9 @@ export class AestheticFeatureExtractor {
     const hasLaserComplications = patient.previousTreatments.some(
       (t) => t.type.includes('laser') && t.complications.length > 0
     );
-    if (hasLaserComplications) risk += 0.3;
+    if (hasLaserComplications) {
+      risk += 0.3;
+    }
 
     // Healing capacity
     risk += (1 - this.estimateHealingCapacity(patient)) * 0.2;
@@ -933,14 +1038,18 @@ export class AestheticFeatureExtractor {
     let damage = 0;
 
     // Age and sun exposure history
-    if (patient.age > 40) damage += (patient.age - 40) / 100;
+    if (patient.age > 40) {
+      damage += (patient.age - 40) / 100;
+    }
 
     // Lifestyle sun exposure
     const exposureMap = { minimal: 0.1, moderate: 0.3, high: 0.6 };
     damage += exposureMap[patient.lifestyle.sunExposure];
 
     // Protective measures
-    if (patient.lifestyle.skincare.sunscreenUse) damage *= 0.7;
+    if (patient.lifestyle.skincare.sunscreenUse) {
+      damage *= 0.7;
+    }
 
     return Math.min(damage, 0.8);
   }
@@ -962,7 +1071,9 @@ export class AestheticFeatureExtractor {
         t.complications.includes('hyperpigmentation') ||
         t.complications.includes('hypopigmentation')
     );
-    if (hasPigmentationHistory) risk += 0.3;
+    if (hasPigmentationHistory) {
+      risk += 0.3;
+    }
 
     // Hormonal factors (estimated)
     if (patient.gender === 'female' && patient.age >= 20 && patient.age <= 45) {
@@ -976,14 +1087,18 @@ export class AestheticFeatureExtractor {
     let risk = 0.1;
 
     // Keloid tendency
-    if (patient.medicalHistory.keloidProneness) risk += 0.4;
+    if (patient.medicalHistory.keloidProneness) {
+      risk += 0.4;
+    }
 
     // Previous scarring
     const hasScarHistory = patient.previousTreatments.some(
       (t) =>
         t.complications.includes('scar') || t.complications.includes('scarring')
     );
-    if (hasScarHistory) risk += 0.3;
+    if (hasScarHistory) {
+      risk += 0.3;
+    }
 
     // Healing factors
     risk += (1 - this.estimateHealingCapacity(patient)) * 0.2;
@@ -1003,7 +1118,9 @@ export class AestheticFeatureExtractor {
     const hasMinimalDowntimeTreatments = patient.previousTreatments.some((t) =>
       ['botox', 'dermal-fillers', 'microneedling'].includes(t.type)
     );
-    if (hasMinimalDowntimeTreatments) tolerance += 0.2;
+    if (hasMinimalDowntimeTreatments) {
+      tolerance += 0.2;
+    }
 
     return Math.min(Math.max(tolerance, 0.2), 1);
   }
@@ -1012,13 +1129,19 @@ export class AestheticFeatureExtractor {
     let response = 0.3; // Base inflammatory response
 
     // Age affects inflammatory response
-    if (patient.age > 50) response += 0.1;
+    if (patient.age > 50) {
+      response += 0.1;
+    }
 
     // Medical conditions
-    if (patient.medicalHistory.autoimmuneDiseases.length > 0) response += 0.2;
+    if (patient.medicalHistory.autoimmuneDiseases.length > 0) {
+      response += 0.2;
+    }
 
     // Lifestyle factors
-    if (patient.lifestyle.smoking) response += 0.15;
+    if (patient.lifestyle.smoking) {
+      response += 0.15;
+    }
     response -= (patient.lifestyle.sleepQuality / 10) * 0.1;
 
     // Skin sensitivity
@@ -1142,7 +1265,7 @@ export class AestheticFeatureExtractor {
 }
 
 // Export type interfaces for feature extraction
-export interface FeatureExtractor {
+export type FeatureExtractor = {
   extractTreatmentFeatures(
     patient: PatientProfile,
     treatment: TreatmentRequest
@@ -1162,8 +1285,8 @@ export interface FeatureExtractor {
     laserType: string,
     goal: string
   ): Promise<number[]>;
-}
+};
 
-export interface PostProcessor {
+export type PostProcessor = {
   process(rawOutput: Float32Array, inputs: any): any;
-}
+};

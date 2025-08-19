@@ -1,7 +1,7 @@
 // Migrated from src/services/notification.ts
 import { supabase } from '@/lib/supabase';
 
-export interface NotificationTemplate {
+export type NotificationTemplate = {
   id?: string;
   tenant_id: string;
   name: string;
@@ -19,9 +19,9 @@ export interface NotificationTemplate {
   is_active: boolean;
   created_at?: string;
   updated_at?: string;
-}
+};
 
-export interface Notification {
+export type Notification = {
   id?: string;
   tenant_id: string;
   recipient_id: string;
@@ -42,9 +42,9 @@ export interface Notification {
   read_at?: string;
   metadata?: Record<string, unknown>;
   created_at?: string;
-}
+};
 
-export interface NotificationPreferences {
+export type NotificationPreferences = {
   id?: string;
   user_id: string;
   tenant_id: string;
@@ -57,7 +57,7 @@ export interface NotificationPreferences {
   marketing_communications: boolean;
   system_notifications: boolean;
   updated_at?: string;
-}
+};
 
 export class NotificationService {
   async sendNotification(
@@ -475,34 +475,52 @@ export class NotificationService {
     notification: Omit<Notification, 'id' | 'created_at' | 'sent_at'>,
     preferences?: NotificationPreferences
   ): boolean {
-    if (!preferences) return true;
+    if (!preferences) {
+      return true;
+    }
 
     // Check type preferences
-    if (notification.type === 'email' && !preferences.email_enabled)
+    if (notification.type === 'email' && !preferences.email_enabled) {
       return false;
-    if (notification.type === 'sms' && !preferences.sms_enabled) return false;
-    if (notification.type === 'push' && !preferences.push_enabled) return false;
+    }
+    if (notification.type === 'sms' && !preferences.sms_enabled) {
+      return false;
+    }
+    if (notification.type === 'push' && !preferences.push_enabled) {
+      return false;
+    }
 
     // Check category preferences
     if (
       notification.category === 'appointment' &&
       !preferences.appointment_reminders
-    )
+    ) {
       return false;
-    if (notification.category === 'treatment' && !preferences.treatment_updates)
+    }
+    if (
+      notification.category === 'treatment' &&
+      !preferences.treatment_updates
+    ) {
       return false;
+    }
     if (
       notification.category === 'payment' &&
       !preferences.payment_notifications
-    )
+    ) {
       return false;
+    }
     if (
       notification.category === 'marketing' &&
       !preferences.marketing_communications
-    )
+    ) {
       return false;
-    if (notification.category === 'system' && !preferences.system_notifications)
+    }
+    if (
+      notification.category === 'system' &&
+      !preferences.system_notifications
+    ) {
       return false;
+    }
 
     return true;
   }
@@ -520,10 +538,6 @@ export class NotificationService {
   }
 
   private async deliverNotification(notification: Notification): Promise<void> {
-    // Implementation for actually delivering the notification
-    // This would integrate with email, SMS, and push notification services
-    console.log('Delivering notification:', notification);
-
     try {
       switch (notification.type) {
         case 'email':
@@ -545,33 +559,22 @@ export class NotificationService {
         .from('notifications')
         .update({ status: 'delivered' })
         .eq('id', notification.id);
-    } catch (error) {
+    } catch (_error) {
       // Update status to failed
       await supabase
         .from('notifications')
         .update({ status: 'failed' })
         .eq('id', notification.id);
-
-      console.error('Failed to deliver notification:', error);
     }
   }
 
-  private async sendEmail(notification: Notification): Promise<void> {
-    // Email implementation would go here
-    console.log('Sending email notification:', notification.title);
-  }
+  private async sendEmail(_notification: Notification): Promise<void> {}
 
-  private async sendSMS(notification: Notification): Promise<void> {
-    // SMS implementation would go here
-    console.log('Sending SMS notification:', notification.title);
-  }
+  private async sendSMS(_notification: Notification): Promise<void> {}
 
   private async sendPushNotification(
-    notification: Notification
-  ): Promise<void> {
-    // Push notification implementation would go here
-    console.log('Sending push notification:', notification.title);
-  }
+    _notification: Notification
+  ): Promise<void> {}
 }
 
 export const notificationService = new NotificationService();

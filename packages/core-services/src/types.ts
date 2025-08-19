@@ -65,10 +65,10 @@ export const PositiveNumberSchema = z.number().positive();
 export const NonNegativeNumberSchema = z.number().nonnegative();
 
 // Base entity interface
-export interface BaseEntity {
+export type BaseEntity = {
   id: string;
   createdAt: Date;
   updatedAt: Date;
   createdBy?: string;
   updatedBy?: string;
-}
+};

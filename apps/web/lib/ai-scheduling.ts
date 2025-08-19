@@ -4,20 +4,20 @@
  * Implements LGPD compliant scheduling with audit trails
  */
 
-import { z } from 'zod';
 import { createAuditLog } from '@neonpro/compliance/audit';
 import { validateHealthcareAccess } from '@neonpro/security/auth';
+import { z } from 'zod';
 
 // ✅ Healthcare-specific scheduling interfaces
-interface HealthcareProfessional {
+type HealthcareProfessional = {
   id: string;
   name: string;
   specializations: string[];
   availability: TimeSlot[];
   efficiency_rating: number;
-}
+};
 
-interface AestheticTreatment {
+type AestheticTreatment = {
   id: string;
   name: string;
   duration_minutes: number;
@@ -25,17 +25,17 @@ interface AestheticTreatment {
   preparation_time: number;
   recovery_time: number;
   professional_requirements: string[];
-}
+};
 
-interface TimeSlot {
+type TimeSlot = {
   start: Date;
   end: Date;
   available: boolean;
   professional_id: string;
   room_id?: string;
-}
+};
 
-interface AppointmentRequest {
+type AppointmentRequest = {
   patient_id: string;
   treatment_id: string;
   preferred_professional_id?: string;
@@ -45,7 +45,7 @@ interface AppointmentRequest {
   };
   priority: 'low' | 'medium' | 'high' | 'urgent';
   flexibility_hours: number; // How flexible the patient is with timing
-}
+};
 
 // ✅ Zod schemas for validation
 const AppointmentRequestSchema = z.object({
@@ -60,7 +60,7 @@ const AppointmentRequestSchema = z.object({
   flexibility_hours: z.number().min(0).max(168), // Max 1 week flexibility
 });
 
-interface SchedulingRecommendation {
+type SchedulingRecommendation = {
   slot: TimeSlot;
   professional: HealthcareProfessional;
   treatment: AestheticTreatment;
@@ -72,13 +72,14 @@ interface SchedulingRecommendation {
     professional_expertise_match: number;
   };
   estimated_satisfaction: number;
-} /**
+}; /**
  * AISchedulingEngine - Core scheduling optimization class
  * Implements machine learning-inspired algorithms for optimal appointment scheduling
  */
 export class AISchedulingEngine {
-  private professionals: Map<string, HealthcareProfessional> = new Map();
-  private treatments: Map<string, AestheticTreatment> = new Map();
+  private readonly professionals: Map<string, HealthcareProfessional> =
+    new Map();
+  private readonly treatments: Map<string, AestheticTreatment> = new Map();
 
   constructor() {
     this.initializeCache();
@@ -139,11 +140,6 @@ export class AISchedulingEngine {
         audit_id: auditLog.id,
       };
     } catch (error) {
-      console.error('AI Scheduling optimization failed:', {
-        error: error.message,
-        timestamp: new Date().toISOString(),
-      });
-
       return {
         success: false,
         error:
@@ -186,7 +182,9 @@ export class AISchedulingEngine {
 
     for (const slot of slots) {
       const professional = this.professionals.get(slot.professional_id);
-      if (!professional) continue;
+      if (!professional) {
+        continue;
+      }
 
       const recommendation: SchedulingRecommendation = {
         slot,
@@ -247,7 +245,9 @@ export class AISchedulingEngine {
       const professional = this.professionals.get(slot.professional_id);
       const treatment = this.treatments.get(request.treatment_id);
 
-      if (!professional || !treatment) continue;
+      if (!(professional && treatment)) {
+        continue;
+      }
 
       // ✅ Check if professional can perform the treatment
       const canPerformTreatment = this.checkProfessionalCompetency(
@@ -255,7 +255,9 @@ export class AISchedulingEngine {
         treatment
       );
 
-      if (!canPerformTreatment) continue;
+      if (!canPerformTreatment) {
+        continue;
+      }
 
       const recommendation: SchedulingRecommendation = {
         slot,
@@ -310,7 +312,7 @@ export class AISchedulingEngine {
   private calculateAdvancedConfidenceScore(
     slot: TimeSlot,
     professional: HealthcareProfessional,
-    treatment: AestheticTreatment,
+    _treatment: AestheticTreatment,
     request: z.infer<typeof AppointmentRequestSchema>
   ): number {
     const weights = {
@@ -350,7 +352,7 @@ export class AISchedulingEngine {
   private async getAvailableSlots(
     startDate: Date,
     endDate: Date,
-    treatmentId: string
+    _treatmentId: string
   ): Promise<TimeSlot[]> {
     // ✅ This would integrate with your actual database/calendar system
     // For now, returning mock data for demonstration
@@ -478,7 +480,7 @@ export class AISchedulingEngine {
     return Math.min(score, 100);
   }
 
-  private calculatePreferenceMatch(slot: TimeSlot): number {
+  private calculatePreferenceMatch(_slot: TimeSlot): number {
     // Base preference matching - could be enhanced with patient history
     return 70;
   }

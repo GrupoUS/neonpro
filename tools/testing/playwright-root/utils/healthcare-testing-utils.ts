@@ -39,7 +39,7 @@ export class HealthcareDataAnonymizer {
    */
   private static generateTestCPF(): string {
     // Generate test CPF starting with 000 to indicate test data
-    const base = '000' + faker.string.numeric(8);
+    const base = `000${faker.string.numeric(8)}`;
     return base.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
   }
 
@@ -219,7 +219,7 @@ export class HealthcarePerformanceHelper {
    * Test routine operations performance (<500ms requirement)
    */
   static async validateRoutineOperationPerformance(
-    page: Page,
+    _page: Page,
     operation: () => Promise<void>
   ) {
     const startTime = Date.now();

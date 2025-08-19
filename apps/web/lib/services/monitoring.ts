@@ -1,7 +1,7 @@
 // Migrated from src/services/monitoring.ts
 import { supabase } from '@/lib/supabase';
 
-export interface SystemMetric {
+export type SystemMetric = {
   id?: string;
   tenant_id: string;
   metric_name: string;
@@ -11,18 +11,18 @@ export interface SystemMetric {
   tags?: Record<string, string>;
   timestamp: string;
   created_at?: string;
-}
+};
 
-export interface PerformanceMetrics {
+export type PerformanceMetrics = {
   response_time: number;
   throughput: number;
   error_rate: number;
   cpu_usage: number;
   memory_usage: number;
   active_users: number;
-}
+};
 
-export interface SecurityEvent {
+export type SecurityEvent = {
   id?: string;
   tenant_id: string;
   event_type:
@@ -38,9 +38,9 @@ export interface SecurityEvent {
   timestamp: string;
   resolved?: boolean;
   created_at?: string;
-}
+};
 
-export interface ComplianceAlert {
+export type ComplianceAlert = {
   id?: string;
   tenant_id: string;
   alert_type:
@@ -56,7 +56,7 @@ export interface ComplianceAlert {
   status: 'open' | 'in_progress' | 'resolved' | 'dismissed';
   created_at?: string;
   resolved_at?: string;
-}
+};
 
 export class MonitoringService {
   async recordMetric(
@@ -400,19 +400,11 @@ export class MonitoringService {
     }
   }
 
-  private async triggerSecurityAlert(event: SecurityEvent): Promise<void> {
-    // Implementation for triggering security alerts
-    // This could send notifications, create incidents, etc.
-    console.log('Security alert triggered:', event);
-  }
+  private async triggerSecurityAlert(_event: SecurityEvent): Promise<void> {}
 
   private async triggerComplianceNotification(
-    alert: ComplianceAlert
-  ): Promise<void> {
-    // Implementation for triggering compliance notifications
-    // This could send emails, create tasks, etc.
-    console.log('Compliance notification triggered:', alert);
-  }
+    _alert: ComplianceAlert
+  ): Promise<void> {}
 
   async generateMonitoringReport(
     tenantId: string,

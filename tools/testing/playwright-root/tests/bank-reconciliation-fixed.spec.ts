@@ -52,7 +52,7 @@ test.describe('🏥 Healthcare Bank Reconciliation System E2E', () => {
     page,
   }) => {
     // Generate anonymous financial data for testing
-    const testFinancialData =
+    const _testFinancialData =
       HealthcareDataAnonymizer.generateAnonymousFinancialData();
 
     // Start file import process with performance validation
@@ -211,7 +211,7 @@ test('should export reconciliation report with healthcare compliance', async ({
   page,
 }) => {
   // Setup: ensure we have test data with healthcare anonymization
-  const testData = HealthcareDataAnonymizer.generateAnonymousFinancialData();
+  const _testData = HealthcareDataAnonymizer.generateAnonymousFinancialData();
 
   // Import sample data first
   await page.getByTestId('import-statement-button').click();
@@ -516,7 +516,7 @@ test('should maintain security throughout reconciliation with healthcare standar
     expect(route.request().url()).toMatch(/^https:\/\//);
 
     // Verify healthcare-specific security headers
-    const responseHeaders = {
+    const _responseHeaders = {
       'strict-transport-security': 'max-age=31536000; includeSubDomains',
       'x-content-type-options': 'nosniff',
       'x-frame-options': 'DENY',

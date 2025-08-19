@@ -8,13 +8,13 @@
 'use client';
 
 import {
+  type Metric,
   onCLS,
   onFCP,
   onFID,
   onINP,
   onLCP,
   onTTFB,
-  type Metric,
 } from 'web-vitals';
 import type {
   CustomMetric,

@@ -1,24 +1,24 @@
 'use client';
 
-import { createClient } from '@/app/utils/supabase/client';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { createClient } from '@/app/utils/supabase/client';
 import type { Database } from '@/types/supabase';
 
 type FinancialTransaction =
   Database['public']['Tables']['financial_transactions']['Row'];
 
-interface DailyRevenue {
+type DailyRevenue = {
   date: string;
   amount: number;
-}
+};
 
-interface ServiceRevenue {
+type ServiceRevenue = {
   serviceName: string;
   totalRevenue: number;
   transactionCount: number;
-}
+};
 
-interface FinancialHook {
+type FinancialHook = {
   monthlyRevenue: number;
   dailyRevenue: DailyRevenue[];
   recentTransactions: FinancialTransaction[];
@@ -29,7 +29,7 @@ interface FinancialHook {
   loading: boolean;
   error: Error | null;
   refreshFinancialData: () => Promise<void>;
-}
+};
 
 export function useFinancialData(): FinancialHook {
   const [transactions, setTransactions] = useState<FinancialTransaction[]>([]);
@@ -59,7 +59,6 @@ export function useFinancialData(): FinancialHook {
 
       setTransactions(data || []);
     } catch (err) {
-      console.error('Error fetching financial data:', err);
       setError(err as Error);
     } finally {
       setLoading(false);

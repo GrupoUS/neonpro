@@ -8,14 +8,14 @@ import {
   verifyRegistrationResponse,
 } from '@simplewebauthn/server';
 
-export interface WebAuthnConfig {
+export type WebAuthnConfig = {
   rpName: string;
   rpID: string;
   origin: string;
-}
+};
 
 export class WebAuthnService {
-  private config: WebAuthnConfig;
+  private readonly config: WebAuthnConfig;
 
   constructor(config: WebAuthnConfig) {
     this.config = config;

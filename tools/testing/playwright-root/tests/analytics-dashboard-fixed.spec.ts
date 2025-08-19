@@ -241,10 +241,10 @@ test.describe('🏥 Healthcare Analytics Dashboard E2E', () => {
     await expect(page.getByTestId('analytics-dashboard')).toBeVisible();
 
     // Get initial values with patient data protection
-    const initialPatients = await page
+    const _initialPatients = await page
       .getByTestId('total-patients-value')
       .textContent();
-    const initialRevenue = await page
+    const _initialRevenue = await page
       .getByTestId('total-revenue-value')
       .textContent();
 

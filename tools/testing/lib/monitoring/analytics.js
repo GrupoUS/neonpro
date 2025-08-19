@@ -27,7 +27,7 @@ const analyticsService = {
     };
   },
 
-  getAnalytics: (filter = {}) => {
+  getAnalytics: (_filter = {}) => {
     return {
       totalEvents: 1000,
       uniqueUsers: 150,

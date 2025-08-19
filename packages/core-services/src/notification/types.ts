@@ -50,14 +50,14 @@ export interface NotificationTemplate extends BaseEntity {
   tags: string[];
 }
 
-export interface TemplateVariable {
+export type TemplateVariable = {
   name: string;
   type: VariableType;
   description: string;
   required: boolean;
   defaultValue?: string;
   validation?: string; // RegEx pattern
-}
+};
 
 export interface NotificationCampaign extends BaseEntity {
   name: string;
@@ -81,7 +81,7 @@ export interface NotificationCampaign extends BaseEntity {
   recurringConfig?: RecurringConfig;
   abTestConfig?: ABTestConfig;
 }
-export interface AudienceFilter {
+export type AudienceFilter = {
   patientIds?: string[];
   tags?: string[];
   ageRange?: { min: number; max: number };
@@ -92,31 +92,31 @@ export interface AudienceFilter {
   city?: string[];
   marketingConsent: boolean;
   excludePatientIds?: string[];
-}
+};
 
-export interface RecurringConfig {
+export type RecurringConfig = {
   frequency: RecurringFrequency;
   interval: number; // Every X days/weeks/months
   endDate?: Date;
   maxOccurrences?: number;
   dayOfWeek?: number[]; // For weekly (0-6, Sunday-Saturday)
   dayOfMonth?: number; // For monthly (1-31)
-}
+};
 
-export interface ABTestConfig {
+export type ABTestConfig = {
   enabled: boolean;
   variantA: ABTestVariant;
   variantB: ABTestVariant;
   trafficSplit: number; // Percentage for variant A (0-100)
   testDuration: number; // Days
   winnerMetric: 'open_rate' | 'click_rate' | 'conversion_rate';
-}
+};
 
-export interface ABTestVariant {
+export type ABTestVariant = {
   name: string;
   templateId: string;
   subject?: string;
-}
+};
 
 export interface NotificationPreference extends BaseEntity {
   patientId: string;
@@ -138,12 +138,12 @@ export interface NotificationPreference extends BaseEntity {
   unsubscribeReason?: string;
 }
 
-export interface TimePreference {
+export type TimePreference = {
   morning: boolean; // 6-12
   afternoon: boolean; // 12-18
   evening: boolean; // 18-22
   weekend: boolean;
-}
+};
 
 export interface NotificationLog extends BaseEntity {
   notificationId: string;

@@ -4,12 +4,8 @@
  * Validates development environment health and compliance
  */
 
-import { execSync } from 'child_process';
-import { existsSync } from 'fs';
-import { join } from 'path';
-
-console.log('🏥 NeonPro Healthcare Development Health Check');
-console.log('=============================================');
+import { execSync } from 'node:child_process';
+import { existsSync } from 'node:fs';
 
 let healthScore = 0;
 let maxScore = 0;
@@ -17,26 +13,22 @@ const issues = [];
 
 function checkItem(name, checkFn, weight = 1) {
   maxScore += weight;
-  console.log(`\n🔍 Checking ${name}...`);
 
   try {
     const result = checkFn();
     if (result.success) {
-      console.log(`✅ ${name}: ${result.message}`);
       healthScore += weight;
     } else {
-      console.log(`⚠️  ${name}: ${result.message}`);
       issues.push(`${name}: ${result.message}`);
     }
   } catch (error) {
-    console.log(`❌ ${name}: ${error.message}`);
     issues.push(`${name}: ${error.message}`);
   }
 }
 
 function checkNodeVersion() {
   const version = process.version;
-  const major = Number.parseInt(version.slice(1).split('.')[0]);
+  const major = Number.parseInt(version.slice(1).split('.')[0], 10);
   return {
     success: major >= 20,
     message:
@@ -53,7 +45,7 @@ function checkPnpmInstallation() {
       success: true,
       message: `pnpm ${version} installed`,
     };
-  } catch (error) {
+  } catch (_error) {
     return {
       success: false,
       message: 'pnpm not found or not working',
@@ -156,7 +148,7 @@ function checkTypeScript() {
       success: true,
       message: 'TypeScript compilation successful',
     };
-  } catch (error) {
+  } catch (_error) {
     return {
       success: false,
       message: 'TypeScript compilation errors detected',
@@ -171,7 +163,7 @@ function checkLinting() {
       success: true,
       message: 'Linting passed (Biome)',
     };
-  } catch (error) {
+  } catch (_error) {
     return {
       success: false,
       message: 'Linting errors detected',
@@ -186,7 +178,7 @@ function checkHealthcareCompliance() {
       success: true,
       message: 'Healthcare compliance tests passed',
     };
-  } catch (error) {
+  } catch (_error) {
     return {
       success: false,
       message: 'Healthcare compliance issues detected',
@@ -205,7 +197,7 @@ function checkGitStatus() {
         ? 'Git repository has uncommitted changes'
         : 'Git repository clean',
     };
-  } catch (error) {
+  } catch (_error) {
     return {
       success: false,
       message: 'Not in a git repository or git not available',
@@ -220,7 +212,7 @@ function checkPlaywrightBrowsers() {
       success: true,
       message: 'Playwright browsers installed',
     };
-  } catch (error) {
+  } catch (_error) {
     return {
       success: false,
       message: 'Playwright browsers not installed - run npx playwright install',
@@ -230,62 +222,34 @@ function checkPlaywrightBrowsers() {
 
 function displayResults() {
   const percentage = Math.round((healthScore / maxScore) * 100);
-  const healthGrade = getHealthGrade(percentage);
-
-  console.log('\n📊 Healthcare Development Health Report');
-  console.log('========================================');
-  console.log(`Health Score: ${healthScore}/${maxScore} (${percentage}%)`);
-  console.log(`Health Grade: ${healthGrade.grade} ${healthGrade.emoji}`);
-  console.log(
-    `Quality Standard: ${percentage >= 90 ? '✅ Meets healthcare requirements (≥90%)' : '❌ Below healthcare requirements'}`
-  );
+  const _healthGrade = getHealthGrade(percentage);
 
   if (issues.length > 0) {
-    console.log('\n🚨 Issues to Address:');
-    issues.forEach((issue, index) => {
-      console.log(`${index + 1}. ${issue}`);
-    });
+    issues.forEach((_issue, _index) => {});
   }
 
   if (percentage >= 95) {
-    console.log(
-      '\n🎉 Excellent! Your healthcare development environment is in perfect condition.'
-    );
   } else if (percentage >= 80) {
-    console.log(
-      '\n✅ Good! Your environment is mostly healthy. Address the issues above.'
-    );
   } else {
-    console.log(
-      '\n⚠️  Warning! Your environment needs attention. Please resolve the issues above.'
-    );
   }
-
-  console.log('\n🏥 Healthcare Compliance Status:');
-  console.log(
-    `LGPD Compliance: ${percentage >= 90 ? '✅ Ready' : '❌ Needs attention'}`
-  );
-  console.log(
-    `ANVISA Compliance: ${percentage >= 90 ? '✅ Ready' : '❌ Needs attention'}`
-  );
-  console.log(
-    `CFM Compliance: ${percentage >= 90 ? '✅ Ready' : '❌ Needs attention'}`
-  );
-
-  console.log('\n💡 Quick Fixes:');
-  console.log('• Run: pnpm dev:setup    - Setup development environment');
-  console.log('• Run: pnpm dev:clean    - Clean and reinstall dependencies');
-  console.log(
-    '• Run: pnpm validate:healthcare - Validate healthcare compliance'
-  );
 }
 
 function getHealthGrade(percentage) {
-  if (percentage >= 95) return { grade: 'A+', emoji: '🌟' };
-  if (percentage >= 90) return { grade: 'A', emoji: '✅' };
-  if (percentage >= 80) return { grade: 'B', emoji: '👍' };
-  if (percentage >= 70) return { grade: 'C', emoji: '⚠️' };
-  if (percentage >= 60) return { grade: 'D', emoji: '😰' };
+  if (percentage >= 95) {
+    return { grade: 'A+', emoji: '🌟' };
+  }
+  if (percentage >= 90) {
+    return { grade: 'A', emoji: '✅' };
+  }
+  if (percentage >= 80) {
+    return { grade: 'B', emoji: '👍' };
+  }
+  if (percentage >= 70) {
+    return { grade: 'C', emoji: '⚠️' };
+  }
+  if (percentage >= 60) {
+    return { grade: 'D', emoji: '😰' };
+  }
   return { grade: 'F', emoji: '🚨' };
 }
 

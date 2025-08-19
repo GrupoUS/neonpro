@@ -1,24 +1,23 @@
 // Intelligent Conflict Detection and Resolution System
 // Real-time conflict detection with automatic resolution for aesthetic clinic scheduling
 
-import {
-  type AIAppointment,
-  type AlternativeSlot,
-  type ConflictDetection,
-  type ConflictResolution,
-  ConflictType,
-  type ResolutionImpact,
-  type ResolutionType,
-  type RoomType,
-  type SchedulingConflict,
-  type StaffAvailability,
-  type TimeSlot,
-  type TreatmentDuration,
+import type {
+  AIAppointment,
+  AlternativeSlot,
+  ConflictDetection,
+  ConflictResolution,
+  ResolutionImpact,
+  ResolutionType,
+  RoomType,
+  SchedulingConflict,
+  StaffAvailability,
+  TimeSlot,
+  TreatmentDuration,
 } from './types';
 
 export class ConflictDetector {
-  private conflictHistory: Map<string, SchedulingConflict[]> = new Map();
-  private resolutionSuccessRate: Map<ResolutionType, number> = new Map();
+  private readonly resolutionSuccessRate: Map<ResolutionType, number> =
+    new Map();
 
   constructor() {
     this.initializeResolutionSuccessRates();
@@ -110,8 +109,7 @@ export class ConflictDetector {
         autoResolvable,
         criticalLevel,
       };
-    } catch (error) {
-      console.error('Conflict detection failed:', error);
+    } catch (_error) {
       throw new Error('Failed to detect scheduling conflicts');
     }
   }
@@ -618,7 +616,9 @@ export class ConflictDetector {
   }
 
   private calculateCriticalLevel(conflicts: SchedulingConflict[]): number {
-    if (conflicts.length === 0) return 0;
+    if (conflicts.length === 0) {
+      return 0;
+    }
 
     const severityLevels = { low: 1, medium: 2, high: 3, critical: 4 };
     const maxSeverity = Math.max(
@@ -638,8 +638,8 @@ export class ConflictDetector {
 
   // Placeholder methods for external service integration
   private async getStaffAvailability(
-    staffId: string,
-    date: Date
+    _staffId: string,
+    _date: Date
   ): Promise<StaffAvailability | null> {
     // Implementation would fetch from staff service
     return null;
@@ -653,36 +653,36 @@ export class ConflictDetector {
   }
 
   private calculateStaffWorkload(
-    staffId: string,
-    date: Date,
-    appointments: AIAppointment[]
+    _staffId: string,
+    _date: Date,
+    _appointments: AIAppointment[]
   ): { concurrent: number } {
     return { concurrent: 0 };
   }
 
   private checkBreakTimeConflicts(
-    staff: StaffAvailability,
-    slot: TimeSlot
+    _staff: StaffAvailability,
+    _slot: TimeSlot
   ): SchedulingConflict[] {
     return [];
   }
 
-  private async getRoomDetails(roomId: string): Promise<RoomType | null> {
+  private async getRoomDetails(_roomId: string): Promise<RoomType | null> {
     return null;
   }
 
   private checkRoomPreparationTime(
-    slot: AlternativeSlot,
-    duration: TreatmentDuration,
-    appointments: AIAppointment[]
+    _slot: AlternativeSlot,
+    _duration: TreatmentDuration,
+    _appointments: AIAppointment[]
   ): SchedulingConflict | null {
     return null;
   }
 
   private async checkEquipmentAvailability(
-    equipment: string,
-    slot: TimeSlot,
-    appointments: AIAppointment[]
+    _equipment: string,
+    _slot: TimeSlot,
+    _appointments: AIAppointment[]
   ): Promise<{
     available: boolean;
     critical: boolean;
@@ -712,9 +712,9 @@ export class ConflictDetector {
   }
 
   private async checkTreatmentSpecificRules(
-    duration: TreatmentDuration,
-    patientId: string,
-    slot: AlternativeSlot
+    _duration: TreatmentDuration,
+    _patientId: string,
+    _slot: AlternativeSlot
   ): Promise<SchedulingConflict[]> {
     return [];
   }
@@ -729,57 +729,57 @@ export class ConflictDetector {
     return diffDays <= days;
   }
 
-  private async getPatientPreferences(patientId: string): Promise<any> {
+  private async getPatientPreferences(_patientId: string): Promise<any> {
     return {};
   }
 
   private checkPatientPreferenceConflicts(
-    slot: AlternativeSlot,
-    preferences: any
+    _slot: AlternativeSlot,
+    _preferences: any
   ): SchedulingConflict[] {
     return [];
   }
 
   private async getTreatmentSequenceRules(
-    treatmentType: string
+    _treatmentType: string
   ): Promise<any[]> {
     return [];
   }
 
   private async findAlternativeSlot(
-    originalSlot: AlternativeSlot,
-    bufferMinutes: number
+    _originalSlot: AlternativeSlot,
+    _bufferMinutes: number
   ): Promise<AlternativeSlot | null> {
     return null;
   }
 
   private async findAlternativeStaff(
-    originalSlot: AlternativeSlot
+    _originalSlot: AlternativeSlot
   ): Promise<string | null> {
     return null;
   }
 
   private async findAlternativeRoom(
-    originalSlot: AlternativeSlot
+    _originalSlot: AlternativeSlot
   ): Promise<string | null> {
     return null;
   }
 
   private async findSlotWithEquipment(
-    originalSlot: AlternativeSlot
+    _originalSlot: AlternativeSlot
   ): Promise<AlternativeSlot | null> {
     return null;
   }
 
   private async findBusinessHoursSlot(
-    originalSlot: AlternativeSlot
+    _originalSlot: AlternativeSlot
   ): Promise<AlternativeSlot | null> {
     return null;
   }
 
   private async calculateResolutionImpact(
-    conflict: SchedulingConflict,
-    newScheduling: Partial<AIAppointment>
+    _conflict: SchedulingConflict,
+    _newScheduling: Partial<AIAppointment>
   ): Promise<ResolutionImpact> {
     return {
       patientsAffected: 1,

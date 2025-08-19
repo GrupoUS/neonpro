@@ -1,11 +1,10 @@
 // Story 10.2: Progress Tracking through Computer Vision - Individual Progress Tracking API
 // API endpoint for individual progress tracking operations
 
-import { createClient } from '@/app/utils/supabase/server';
-import { cookies } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 import { progressTrackingService } from '@/app/lib/services/progress-tracking';
 import { updateProgressTrackingSchema } from '@/app/lib/validations/progress-tracking';
+import { createClient } from '@/app/utils/supabase/server';
 
 export async function GET(
   _request: NextRequest,

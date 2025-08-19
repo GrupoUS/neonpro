@@ -9,7 +9,7 @@ import { createClient } from '@supabase/supabase-js';
 // TYPES AND INTERFACES
 // ================================================
 
-interface ConfigurationValue {
+type ConfigurationValue = {
   key: string;
   value: any;
   type: 'string' | 'number' | 'boolean' | 'json' | 'array';
@@ -20,9 +20,9 @@ interface ConfigurationValue {
   createdAt: Date;
   updatedAt: Date;
   version: number;
-}
+};
 
-interface FeatureFlag {
+type FeatureFlag = {
   key: string;
   enabled: boolean;
   percentage?: number; // For gradual rollout
@@ -34,28 +34,29 @@ interface FeatureFlag {
   description?: string;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
-interface ConfigurationContext {
+type ConfigurationContext = {
   environment: string;
   tenantId?: string;
   userId?: string;
   userRoles?: string[];
-}
+};
 
-interface ConfigurationUpdate {
+type ConfigurationUpdate = {
   key: string;
   value: any;
   updatedBy: string;
   reason?: string;
-}
+};
 
 // ================================================
 // CONFIGURATION CACHE
 // ================================================
 
 class ConfigurationCache {
-  private cache: Map<string, { value: any; expiry: number }> = new Map();
+  private readonly cache: Map<string, { value: any; expiry: number }> =
+    new Map();
   private readonly defaultTtl = 5 * 60 * 1000; // 5 minutes
   private readonly secretTtl = 60 * 1000; // 1 minute for secrets
 
@@ -69,7 +70,9 @@ class ConfigurationCache {
 
   get(key: string): any | null {
     const cached = this.cache.get(key);
-    if (!cached) return null;
+    if (!cached) {
+      return null;
+    }
 
     if (Date.now() > cached.expiry) {
       this.cache.delete(key);
@@ -98,8 +101,8 @@ class ConfigurationCache {
 
 export class ConfigurationService {
   private static instance: ConfigurationService;
-  private cache = new ConfigurationCache();
-  private supabase = createClient(
+  private readonly cache = new ConfigurationCache();
+  private readonly supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
@@ -152,7 +155,6 @@ export class ConfigurationService {
         .limit(1);
 
       if (error) {
-        console.error('Configuration fetch error:', error);
         return defaultValue;
       }
 
@@ -167,8 +169,7 @@ export class ConfigurationService {
       this.cache.set(cacheKey, value, config.isSecret);
 
       return value;
-    } catch (error) {
-      console.error('Configuration service error:', error);
+    } catch (_error) {
       return defaultValue;
     }
   }
@@ -199,7 +200,6 @@ export class ConfigurationService {
         });
 
       if (error) {
-        console.error('Configuration update error:', error);
         return false;
       }
 
@@ -211,8 +211,7 @@ export class ConfigurationService {
       this.cache.invalidate(cacheKey);
 
       return true;
-    } catch (error) {
-      console.error('Configuration service error:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -238,7 +237,6 @@ export class ConfigurationService {
       const { error } = await query;
 
       if (error) {
-        console.error('Configuration deletion error:', error);
         return false;
       }
 
@@ -253,8 +251,7 @@ export class ConfigurationService {
       this.cache.invalidate(cacheKey);
 
       return true;
-    } catch (error) {
-      console.error('Configuration service error:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -286,7 +283,6 @@ export class ConfigurationService {
       const { data, error } = await query;
 
       if (error) {
-        console.error('Feature flag fetch error:', error);
         return false;
       }
 
@@ -301,8 +297,7 @@ export class ConfigurationService {
       this.cache.set(cacheKey, isEnabled);
 
       return isEnabled;
-    } catch (error) {
-      console.error('Feature flag service error:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -339,7 +334,6 @@ export class ConfigurationService {
       });
 
       if (error) {
-        console.error('Feature flag update error:', error);
         return false;
       }
 
@@ -348,8 +342,7 @@ export class ConfigurationService {
       this.cache.invalidate(cacheKey);
 
       return true;
-    } catch (error) {
-      console.error('Feature flag service error:', error);
+    } catch (_error) {
       return false;
     }
   }
@@ -391,13 +384,11 @@ export class ConfigurationService {
       const { data, error } = await query.order('key');
 
       if (error) {
-        console.error('Configuration bulk fetch error:', error);
         return [];
       }
 
       return data as ConfigurationValue[];
-    } catch (error) {
-      console.error('Configuration service error:', error);
+    } catch (_error) {
       return [];
     }
   }
@@ -431,10 +422,18 @@ export class ConfigurationService {
   }
 
   private getValueType(value: any): ConfigurationValue['type'] {
-    if (typeof value === 'string') return 'string';
-    if (typeof value === 'number') return 'number';
-    if (typeof value === 'boolean') return 'boolean';
-    if (Array.isArray(value)) return 'array';
+    if (typeof value === 'string') {
+      return 'string';
+    }
+    if (typeof value === 'number') {
+      return 'number';
+    }
+    if (typeof value === 'boolean') {
+      return 'boolean';
+    }
+    if (Array.isArray(value)) {
+      return 'array';
+    }
     return 'json';
   }
 
@@ -457,8 +456,12 @@ export class ConfigurationService {
   ): boolean {
     // Check date range
     const now = new Date();
-    if (flag.startDate && now < flag.startDate) return false;
-    if (flag.endDate && now > flag.endDate) return false;
+    if (flag.startDate && now < flag.startDate) {
+      return false;
+    }
+    if (flag.endDate && now > flag.endDate) {
+      return false;
+    }
 
     // Check tenant restriction
     if (
@@ -473,10 +476,7 @@ export class ConfigurationService {
     if (
       flag.userRoles &&
       flag.userRoles.length > 0 &&
-      !(
-        context.userRoles &&
-        context.userRoles.some((role) => flag.userRoles!.includes(role))
-      )
+      !context.userRoles?.some((role) => flag.userRoles?.includes(role))
     ) {
       return false;
     }
@@ -501,7 +501,7 @@ export class ConfigurationService {
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
       hash = (hash << 5) - hash + char;
-      hash = hash & hash; // Convert to 32bit integer
+      hash &= hash; // Convert to 32bit integer
     }
     return Math.abs(hash);
   }
@@ -520,9 +520,7 @@ export class ConfigurationService {
         reason: update.reason,
         timestamp: new Date(),
       });
-    } catch (error) {
-      console.error('Configuration audit log error:', error);
-    }
+    } catch (_error) {}
   }
 
   private initializeRealtimeUpdates(): void {
@@ -540,7 +538,7 @@ export class ConfigurationService {
             'key' in payload.new
           ) {
             const config = payload.new as ConfigurationValue;
-            const keyPattern = `*:*:${config.key}`;
+            const _keyPattern = `*:*:${config.key}`;
 
             // Invalidate all cache entries for this key
             this.cache
@@ -566,7 +564,7 @@ export class ConfigurationService {
             'key' in payload.new
           ) {
             const flag = payload.new as FeatureFlag;
-            const keyPattern = `feature:*:*:${flag.key}`;
+            const _keyPattern = `feature:*:*:${flag.key}`;
 
             // Invalidate all cache entries for this feature flag
             this.cache

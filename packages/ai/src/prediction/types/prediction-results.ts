@@ -2,7 +2,7 @@
  * Prediction Result Types for NeonPro AI Engine
  */
 
-export interface PredictionResult {
+export type PredictionResult = {
   modelType: string;
   confidence: number; // 0-1 scale
   accuracy: number; // Model's known accuracy
@@ -11,44 +11,44 @@ export interface PredictionResult {
   inputs: PredictionInputs;
   outputs: PredictionOutputs;
   metadata: PredictionMetadata;
-}
+};
 
-export interface PredictionInputs {
+export type PredictionInputs = {
   patientFeatures: number[];
   treatmentFeatures: number[];
   contextualFeatures: number[];
   featureNames: string[];
-}
+};
 
-export interface PredictionOutputs {
+export type PredictionOutputs = {
   primary: number | number[];
   secondary?: number | number[];
   confidence: number;
   alternatives?: AlternativePrediction[];
-}
+};
 
-export interface AlternativePrediction {
+export type AlternativePrediction = {
   prediction: number | number[];
   confidence: number;
   reasoning: string;
-}
+};
 
-export interface FeatureImportance {
+export type FeatureImportance = {
   feature: string;
   importance: number;
   description?: string;
-}
+};
 
-export interface UncertaintyMetrics {
+export type UncertaintyMetrics = {
   confidence: number;
   variance: number;
   range: [number, number];
-}
+};
 
-export interface PredictionMetadata {
+export type PredictionMetadata = {
   processingTime: number; // milliseconds
   modelVersion: string;
   featureImportance?: FeatureImportance[];
   uncertainty?: UncertaintyMetrics;
   recommendations?: string[];
-}
+};

@@ -1,7 +1,6 @@
 /// <reference types="vitest" />
 
-import path from 'path';
-
+import path from 'node:path';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vitest/config';
 
@@ -12,12 +11,12 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./vitest.setup.ts'],
 
-    // Incluir todos os testes que existem no monorepo
+    // Incluir SOMENTE testes .test.* (NÃO .spec.* que são Playwright)
     include: [
-      '**/*.{test,spec}.{ts,tsx,js,jsx}',
+      '**/*.{test}.{ts,tsx,js,jsx}', // SOMENTE .test.* (NÃO .spec.*)
       '**/*.integration.test.{ts,tsx,js,jsx}',
       '**/__tests__/**/*.{ts,tsx,js,jsx}',
-      '**/test/**/*.{test,spec}.{ts,tsx,js,jsx}',
+      '**/test/**/*.{test}.{ts,tsx,js,jsx}', // SOMENTE .test.* (NÃO .spec.*)
       '!**/node_modules/**',
       '!**/dist/**',
       '!**/.next/**',
@@ -26,7 +25,7 @@ export default defineConfig({
       '!**/cypress/**',
     ],
 
-    // Configuração abrangente de exclusões apenas para arquivos problemáticos
+    // Configuração abrangente de exclusões
     exclude: [
       '**/node_modules/**',
       '**/dist/**',
@@ -34,6 +33,12 @@ export default defineConfig({
       '**/.next/**',
       '**/.vercel/**',
       '**/.nuxt/**',
+
+      // CRÍTICO: Excluir TODOS os arquivos .spec.* (Playwright)
+      '**/*.spec.ts',
+      '**/*.spec.tsx',
+      '**/*.spec.js',
+      '**/*.spec.jsx',
 
       // Excluir APENAS testes Playwright e E2E específicos
       '**/playwright/**',
@@ -45,10 +50,13 @@ export default defineConfig({
       '**/cypress/**',
 
       // Excluir testes playwright específicos que estão sendo detectados
-      '**/apps/web/test/**/*.spec.ts',
-      '**/apps/web/test/**/*.spec.tsx',
+      '**/apps/web/test/**',
       '**/tools/testing/e2e/**',
       '**/tools/testing/playwright/**',
+      '**/tools/testing/security/**',
+      '**/tools/testing/visual/**',
+      '**/security/**',
+      '**/visual/**',
 
       // Excluir testes que requerem servidor ativo
       '**/performance/**',
@@ -130,8 +138,18 @@ export default defineConfig({
     },
   },
 
-  // Configuração específica para monorepo
-  // optimizeDeps: {
-  //   include: ['react', 'react-dom', '@testing-library/react'],
-  // },
+  // CRÍTICO: Configuração para resolver dependências do monorepo
+  optimizeDeps: {
+    include: [
+      'react',
+      'react-dom',
+      '@testing-library/react',
+      '@testing-library/jest-dom',
+      'zod',
+      'lucide-react',
+      '@tanstack/react-query',
+      'web-vitals',
+      'next/server',
+    ],
+  },
 });

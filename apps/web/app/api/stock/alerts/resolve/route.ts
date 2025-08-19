@@ -66,7 +66,6 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (updateError) {
-      console.error('Update error:', updateError);
       return NextResponse.json(
         { success: false, error: 'Failed to resolve alert' },
         { status: 500 }
@@ -78,8 +77,6 @@ export async function POST(request: NextRequest) {
       data: updatedAlert,
     });
   } catch (error) {
-    console.error('POST /api/stock/alerts/resolve error:', error);
-
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {

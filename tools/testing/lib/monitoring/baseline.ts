@@ -1,11 +1,11 @@
 // Baseline monitoring for system health
-export interface BaselineMetric {
+export type BaselineMetric = {
   name: string;
   value: number;
   baseline: number;
   threshold: number;
   status: 'healthy' | 'warning' | 'critical';
-}
+};
 
 export class BaselineMonitoringService {
   static checkSystemHealth(): BaselineMetric[] {
@@ -27,9 +27,7 @@ export class BaselineMonitoringService {
     ];
   }
 
-  static recordBaseline(metric: string, value: number): void {
-    console.log('Baseline recorded:', metric, value);
-  }
+  static recordBaseline(_metric: string, _value: number): void {}
 }
 
 export default BaselineMonitoringService;

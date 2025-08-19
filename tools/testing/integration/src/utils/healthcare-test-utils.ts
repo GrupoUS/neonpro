@@ -6,12 +6,12 @@
  */
 
 import { faker } from '@faker-js/faker';
-import { expect, type Locator, type Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 
 // Set locale for Brazilian healthcare context
 faker.setLocale('pt_BR');
 
-export interface TestPatient {
+export type TestPatient = {
   id?: string;
   cpf: string;
   name: string;
@@ -25,9 +25,9 @@ export interface TestPatient {
     phone: string;
     relationship: string;
   };
-}
+};
 
-export interface TestProfessional {
+export type TestProfessional = {
   id?: string;
   name: string;
   email: string;
@@ -35,9 +35,9 @@ export interface TestProfessional {
   registration: string;
   registrationBody: 'CRM' | 'COREN' | 'CREFITO' | 'CRP';
   specialties?: string[];
-}
+};
 
-export interface TestAppointment {
+export type TestAppointment = {
   id?: string;
   patientId: string;
   professionalId: string;
@@ -45,10 +45,10 @@ export interface TestAppointment {
   type: string;
   status?: 'scheduled' | 'completed' | 'cancelled';
   notes?: string;
-}
+};
 
 export class HealthcareTestUtils {
-  constructor(private page: Page) {}
+  constructor(private readonly page: Page) {}
 
   // ===========================================
   // PATIENT MANAGEMENT UTILITIES
@@ -548,13 +548,17 @@ export class HealthcareTestUtils {
     // Calculate first check digit
     let sum = cpf.reduce((acc, digit, index) => acc + digit * (10 - index), 0);
     let checkDigit1 = 11 - (sum % 11);
-    if (checkDigit1 >= 10) checkDigit1 = 0;
+    if (checkDigit1 >= 10) {
+      checkDigit1 = 0;
+    }
     cpf.push(checkDigit1);
 
     // Calculate second check digit
     sum = cpf.reduce((acc, digit, index) => acc + digit * (11 - index), 0);
     let checkDigit2 = 11 - (sum % 11);
-    if (checkDigit2 >= 10) checkDigit2 = 0;
+    if (checkDigit2 >= 10) {
+      checkDigit2 = 0;
+    }
     cpf.push(checkDigit2);
 
     return cpf.join('').replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
@@ -572,11 +576,11 @@ export class HealthcareTestUtils {
       '81',
       '85',
     ]);
-    const number = '9' + faker.string.numeric(8);
+    const number = `9${faker.string.numeric(8)}`;
     return `(${ddd}) ${number.slice(0, 5)}-${number.slice(5)}`;
   }
 
-  private generateProfessionalRegistration(body: string): string {
+  private generateProfessionalRegistration(_body: string): string {
     const number = faker.string.numeric(6);
     const state = 'SP'; // Default to São Paulo
     return `${number}-${state}`;

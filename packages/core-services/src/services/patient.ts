@@ -4,15 +4,13 @@
 // ================================================
 
 import { createClient } from '@supabase/supabase-js';
-import { authService } from './auth';
-import { config } from './configuration';
 import { monitoring } from './monitoring';
 
 // ================================================
 // TYPES AND INTERFACES
 // ================================================
 
-interface Patient {
+type Patient = {
   id: string;
   tenantId: string;
   clinicId: string;
@@ -28,9 +26,9 @@ interface Patient {
   updatedAt: Date;
   createdBy: string;
   updatedBy: string;
-}
+};
 
-interface PersonalInfo {
+type PersonalInfo = {
   firstName: string;
   lastName: string;
   fullName: string;
@@ -42,17 +40,17 @@ interface PersonalInfo {
   maritalStatus?: string;
   profession?: string;
   photoUrl?: string;
-}
+};
 
-interface ContactInfo {
+type ContactInfo = {
   email: string;
   phone: string;
   whatsapp?: string;
   address: Address;
   preferredContactMethod: 'email' | 'phone' | 'whatsapp' | 'sms';
-}
+};
 
-interface Address {
+type Address = {
   street: string;
   number: string;
   complement?: string;
@@ -61,9 +59,9 @@ interface Address {
   state: string;
   zipCode: string;
   country: string;
-}
+};
 
-interface MedicalInfo {
+type MedicalInfo = {
   bloodType?: string;
   allergies: string[];
   medications: string[];
@@ -73,16 +71,16 @@ interface MedicalInfo {
   alcoholConsumption: 'none' | 'occasional' | 'regular' | 'heavy';
   exerciseFrequency: 'none' | 'light' | 'moderate' | 'intense';
   notes?: string;
-}
+};
 
-interface EmergencyContact {
+type EmergencyContact = {
   name: string;
   relationship: string;
   phone: string;
   email?: string;
-}
+};
 
-interface PatientPreferences {
+type PatientPreferences = {
   language: string;
   timezone: string;
   communicationPreferences: {
@@ -96,9 +94,9 @@ interface PatientPreferences {
     allowMarketing: boolean;
     dataRetentionYears: number;
   };
-}
+};
 
-interface PatientStatus {
+type PatientStatus = {
   isActive: boolean;
   registrationStatus: 'pending' | 'active' | 'inactive' | 'blocked';
   lastVisit?: Date;
@@ -106,9 +104,9 @@ interface PatientStatus {
   totalSpent: number;
   loyaltyLevel: 'bronze' | 'silver' | 'gold' | 'platinum';
   riskLevel: 'low' | 'medium' | 'high';
-}
+};
 
-interface PatientSearchFilters {
+type PatientSearchFilters = {
   tenantId?: string;
   clinicId?: string;
   name?: string;
@@ -127,9 +125,9 @@ interface PatientSearchFilters {
   offset?: number;
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
-}
+};
 
-interface PatientCreateRequest {
+type PatientCreateRequest = {
   tenantId: string;
   clinicId: string;
   personalInfo: Omit<PersonalInfo, 'fullName'>;
@@ -139,9 +137,9 @@ interface PatientCreateRequest {
   preferences?: Partial<PatientPreferences>;
   tags?: string[];
   metadata?: Record<string, any>;
-}
+};
 
-interface PatientUpdateRequest {
+type PatientUpdateRequest = {
   personalInfo?: Partial<PersonalInfo>;
   contactInfo?: Partial<ContactInfo>;
   medicalInfo?: Partial<MedicalInfo>;
@@ -149,9 +147,9 @@ interface PatientUpdateRequest {
   preferences?: Partial<PatientPreferences>;
   tags?: string[];
   metadata?: Record<string, any>;
-}
+};
 
-interface PatientHistory {
+type PatientHistory = {
   id: string;
   patientId: string;
   action: string;
@@ -161,9 +159,9 @@ interface PatientHistory {
   changedBy: string;
   changedAt: Date;
   reason?: string;
-}
+};
 
-interface PatientConsent {
+type PatientConsent = {
   id: string;
   patientId: string;
   consentType: string;
@@ -178,7 +176,7 @@ interface PatientConsent {
   revokedAt?: Date;
   revokedBy?: string;
   revokedReason?: string;
-}
+};
 
 // ================================================
 // PATIENT SERVICE
@@ -186,7 +184,7 @@ interface PatientConsent {
 
 export class PatientService {
   private static instance: PatientService;
-  private supabase = createClient(
+  private readonly supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
@@ -406,10 +404,12 @@ export class PatientService {
 
       // Personal info updates
       if (updates.personalInfo) {
-        if (updates.personalInfo.firstName)
+        if (updates.personalInfo.firstName) {
           updateData.first_name = updates.personalInfo.firstName;
-        if (updates.personalInfo.lastName)
+        }
+        if (updates.personalInfo.lastName) {
           updateData.last_name = updates.personalInfo.lastName;
+        }
         if (updates.personalInfo.firstName || updates.personalInfo.lastName) {
           const firstName =
             updates.personalInfo.firstName ||
@@ -419,99 +419,134 @@ export class PatientService {
             currentPatient.personalInfo.lastName;
           updateData.full_name = `${firstName} ${lastName}`.trim();
         }
-        if (updates.personalInfo.dateOfBirth)
+        if (updates.personalInfo.dateOfBirth) {
           updateData.date_of_birth =
             updates.personalInfo.dateOfBirth.toISOString();
-        if (updates.personalInfo.gender)
+        }
+        if (updates.personalInfo.gender) {
           updateData.gender = updates.personalInfo.gender;
-        if (updates.personalInfo.cpf !== undefined)
+        }
+        if (updates.personalInfo.cpf !== undefined) {
           updateData.cpf = updates.personalInfo.cpf;
-        if (updates.personalInfo.rg !== undefined)
+        }
+        if (updates.personalInfo.rg !== undefined) {
           updateData.rg = updates.personalInfo.rg;
-        if (updates.personalInfo.nationality !== undefined)
+        }
+        if (updates.personalInfo.nationality !== undefined) {
           updateData.nationality = updates.personalInfo.nationality;
-        if (updates.personalInfo.maritalStatus !== undefined)
+        }
+        if (updates.personalInfo.maritalStatus !== undefined) {
           updateData.marital_status = updates.personalInfo.maritalStatus;
-        if (updates.personalInfo.profession !== undefined)
+        }
+        if (updates.personalInfo.profession !== undefined) {
           updateData.profession = updates.personalInfo.profession;
-        if (updates.personalInfo.photoUrl !== undefined)
+        }
+        if (updates.personalInfo.photoUrl !== undefined) {
           updateData.photo_url = updates.personalInfo.photoUrl;
+        }
       }
 
       // Contact info updates
       if (updates.contactInfo) {
-        if (updates.contactInfo.email)
+        if (updates.contactInfo.email) {
           updateData.email = updates.contactInfo.email;
-        if (updates.contactInfo.phone)
+        }
+        if (updates.contactInfo.phone) {
           updateData.phone = updates.contactInfo.phone;
-        if (updates.contactInfo.whatsapp !== undefined)
+        }
+        if (updates.contactInfo.whatsapp !== undefined) {
           updateData.whatsapp = updates.contactInfo.whatsapp;
-        if (updates.contactInfo.preferredContactMethod)
+        }
+        if (updates.contactInfo.preferredContactMethod) {
           updateData.preferred_contact_method =
             updates.contactInfo.preferredContactMethod;
+        }
 
         if (updates.contactInfo.address) {
-          if (updates.contactInfo.address.street)
+          if (updates.contactInfo.address.street) {
             updateData.street = updates.contactInfo.address.street;
-          if (updates.contactInfo.address.number)
+          }
+          if (updates.contactInfo.address.number) {
             updateData.street_number = updates.contactInfo.address.number;
-          if (updates.contactInfo.address.complement !== undefined)
+          }
+          if (updates.contactInfo.address.complement !== undefined) {
             updateData.complement = updates.contactInfo.address.complement;
-          if (updates.contactInfo.address.neighborhood)
+          }
+          if (updates.contactInfo.address.neighborhood) {
             updateData.neighborhood = updates.contactInfo.address.neighborhood;
-          if (updates.contactInfo.address.city)
+          }
+          if (updates.contactInfo.address.city) {
             updateData.city = updates.contactInfo.address.city;
-          if (updates.contactInfo.address.state)
+          }
+          if (updates.contactInfo.address.state) {
             updateData.state = updates.contactInfo.address.state;
-          if (updates.contactInfo.address.zipCode)
+          }
+          if (updates.contactInfo.address.zipCode) {
             updateData.zip_code = updates.contactInfo.address.zipCode;
-          if (updates.contactInfo.address.country)
+          }
+          if (updates.contactInfo.address.country) {
             updateData.country = updates.contactInfo.address.country;
+          }
         }
       }
 
       // Medical info updates
       if (updates.medicalInfo) {
-        if (updates.medicalInfo.bloodType !== undefined)
+        if (updates.medicalInfo.bloodType !== undefined) {
           updateData.blood_type = updates.medicalInfo.bloodType;
-        if (updates.medicalInfo.allergies)
+        }
+        if (updates.medicalInfo.allergies) {
           updateData.allergies = updates.medicalInfo.allergies;
-        if (updates.medicalInfo.medications)
+        }
+        if (updates.medicalInfo.medications) {
           updateData.medications = updates.medicalInfo.medications;
-        if (updates.medicalInfo.medicalConditions)
+        }
+        if (updates.medicalInfo.medicalConditions) {
           updateData.medical_conditions = updates.medicalInfo.medicalConditions;
-        if (updates.medicalInfo.familyHistory)
+        }
+        if (updates.medicalInfo.familyHistory) {
           updateData.family_history = updates.medicalInfo.familyHistory;
-        if (updates.medicalInfo.smokingStatus)
+        }
+        if (updates.medicalInfo.smokingStatus) {
           updateData.smoking_status = updates.medicalInfo.smokingStatus;
-        if (updates.medicalInfo.alcoholConsumption)
+        }
+        if (updates.medicalInfo.alcoholConsumption) {
           updateData.alcohol_consumption =
             updates.medicalInfo.alcoholConsumption;
-        if (updates.medicalInfo.exerciseFrequency)
+        }
+        if (updates.medicalInfo.exerciseFrequency) {
           updateData.exercise_frequency = updates.medicalInfo.exerciseFrequency;
-        if (updates.medicalInfo.notes !== undefined)
+        }
+        if (updates.medicalInfo.notes !== undefined) {
           updateData.medical_notes = updates.medicalInfo.notes;
+        }
       }
 
       // Emergency contact updates
       if (updates.emergencyContact) {
-        if (updates.emergencyContact.name !== undefined)
+        if (updates.emergencyContact.name !== undefined) {
           updateData.emergency_contact_name = updates.emergencyContact.name;
-        if (updates.emergencyContact.relationship !== undefined)
+        }
+        if (updates.emergencyContact.relationship !== undefined) {
           updateData.emergency_contact_relationship =
             updates.emergencyContact.relationship;
-        if (updates.emergencyContact.phone !== undefined)
+        }
+        if (updates.emergencyContact.phone !== undefined) {
           updateData.emergency_contact_phone = updates.emergencyContact.phone;
-        if (updates.emergencyContact.email !== undefined)
+        }
+        if (updates.emergencyContact.email !== undefined) {
           updateData.emergency_contact_email = updates.emergencyContact.email;
+        }
       }
 
       // Preferences updates
       if (updates.preferences) {
-        if (updates.preferences.language)
+        if (updates.preferences.language) {
           updateData.language = updates.preferences.language;
-        if (updates.preferences.timezone)
+        }
+        if (updates.preferences.timezone) {
           updateData.timezone = updates.preferences.timezone;
+        }
         if (updates.preferences.communicationPreferences) {
           updateData.communication_preferences = {
             ...currentPatient.preferences.communicationPreferences,
@@ -527,7 +562,9 @@ export class PatientService {
       }
 
       // Tags and metadata updates
-      if (updates.tags) updateData.tags = updates.tags;
+      if (updates.tags) {
+        updateData.tags = updates.tags;
+      }
       if (updates.metadata) {
         updateData.metadata = {
           ...currentPatient.metadata,
@@ -1069,8 +1106,8 @@ export class PatientService {
   // ================================================
 
   private async validateTenantAccess(
-    userId: string,
-    tenantId: string
+    _userId: string,
+    _tenantId: string
   ): Promise<void> {
     // Implementation would validate user has access to tenant
     // For now, we'll assume the auth service handles this
@@ -1102,7 +1139,7 @@ export class PatientService {
       }
 
       return this.mapPatientFromDb(data);
-    } catch (error) {
+    } catch (_error) {
       return null;
     }
   }
