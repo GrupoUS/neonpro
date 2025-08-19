@@ -20,12 +20,13 @@ export {
   type DeviceClassification,
   type MedicalDevice,
   type MedicalDeviceFilters,
+  type ClassificationLevel,
   MedicalDeviceService,
 } from './medical-device-service';
 
 // ANVISA Procedure Classification Services
 export {
-  type ClassificationLevel,
+
   type ProcedureClassification,
   ProcedureClassificationService,
   type ProcedureFilters,
@@ -51,15 +52,22 @@ export {
 export const ANVISA_COMPLIANCE_VERSION = '1.0.0';
 export const CONSTITUTIONAL_COMPLIANCE_MINIMUM = 9.9;
 
+// Import classes for factory function
+import { AdverseEventService } from './adverse-event-service';
+import { MedicalDeviceService } from './medical-device-service';
+import { ProcedureClassificationService } from './procedure-classification-service';
+import { ProductRegistrationService } from './product-registration-service';
+import { RegulatoryDocumentationService } from './regulatory-documentation-service';
+
 /**
  * ANVISA Service Factory
  * Constitutional service initialization with Supabase integration
  */
 export function createAnvisaServices(supabaseClient: any) {
   return {
-    adverseEvent: new AdverseEventService(supabaseClient),
-    medicalDevice: new MedicalDeviceService(supabaseClient),
-    procedureClassification: new ProcedureClassificationService(supabaseClient),
+    adverseEvent: new AdverseEventService(),
+    medicalDevice: new MedicalDeviceService(),
+    procedureClassification: new ProcedureClassificationService(),
     productRegistration: new ProductRegistrationService(supabaseClient),
     regulatoryDocumentation: new RegulatoryDocumentationService(supabaseClient),
   };

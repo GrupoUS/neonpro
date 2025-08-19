@@ -19,6 +19,11 @@ const MINIMUM_QUALITY_SCORE = 99;
 const MINIMUM_OVERALL_SCORE = 9.5;
 const PERFECT_PERCENTAGE = 100;
 
+// DevOps environment variables (mock values for testing)
+const TEST_COVERAGE_DIVISOR = 10; // Convert percentage to decimal factor
+const LGPD_COMPLIANCE_SCORE = 98.5; // LGPD compliance score
+const ANVISA_COMPLIANCE_SCORE = 96.2; // ANVISA compliance score
+
 describe('Enhanced DevOps Workflow Validation', () => {
   describe('Quality Gates Validation', () => {
     test('should enforce healthcare quality standards ≥9.9/10', async () => {

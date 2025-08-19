@@ -88,6 +88,61 @@ export type MedicalDeviceRegistration = z.infer<
 >;
 
 /**
+ * Device Classification Types
+ */
+export type DeviceClassification = {
+  classificationId: string;
+  riskLevel: 'BAIXO' | 'MEDIO' | 'ALTO' | 'MAXIMO';
+  category: ANVISADeviceCategory;
+  regulatoryRequirements: string[];
+  inspectionFrequency: 'MONTHLY' | 'QUARTERLY' | 'SEMI_ANNUAL' | 'ANNUAL';
+};
+
+/**
+ * Medical Device Type
+ */
+export type MedicalDevice = {
+  deviceId: string;
+  tenantId: string;
+  deviceName: string;
+  manufacturer: string;
+  model: string;
+  serialNumber: string;
+  anvisaRegistrationNumber: string;
+  deviceCategory: ANVISADeviceCategory;
+  riskClassification: 'BAIXO' | 'MEDIO' | 'ALTO' | 'MAXIMO';
+  complianceStatus: 'COMPLIANT' | 'NON_COMPLIANT' | 'PENDING_REVIEW' | 'SUSPENDED';
+  registrationDate: Date;
+  expirationDate: Date;
+};
+
+/**
+ * Medical Device Filters
+ */
+export type MedicalDeviceFilters = {
+  tenantId?: string;
+  deviceCategory?: ANVISADeviceCategory;
+  riskClassification?: 'BAIXO' | 'MEDIO' | 'ALTO' | 'MAXIMO';
+  complianceStatus?: 'COMPLIANT' | 'NON_COMPLIANT' | 'PENDING_REVIEW' | 'SUSPENDED';
+  manufacturer?: string;
+  registrationDateFrom?: Date;
+  registrationDateTo?: Date;
+  expirationDateFrom?: Date;
+  expirationDateTo?: Date;
+};
+
+/**
+ * Classification Level Type
+ */
+export type ClassificationLevel = {
+  level: number;
+  description: string;
+  riskCategory: 'BAIXO' | 'MEDIO' | 'ALTO' | 'MAXIMO';
+  regulatoryRequirements: string[];
+  validationCriteria: string[];
+};
+
+/**
  * Device Compliance Monitoring Result
  */
 export type DeviceComplianceResult = {

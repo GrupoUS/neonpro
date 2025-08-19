@@ -394,7 +394,6 @@ export class AISchedulingEngine {
       // Base entity fields
       createdAt: new Date(),
       updatedAt: new Date(),
-      tenantId: '', // To be set by calling service
       createdBy: '', // To be set by calling service
       updatedBy: '', // To be set by calling service
     };

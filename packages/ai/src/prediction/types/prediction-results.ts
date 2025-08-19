@@ -33,6 +33,18 @@ export interface AlternativePrediction {
   reasoning: string;
 }
 
+export interface FeatureImportance {
+  feature: string;
+  importance: number;
+  description?: string;
+}
+
+export interface UncertaintyMetrics {
+  confidence: number;
+  variance: number;
+  range: [number, number];
+}
+
 export interface PredictionMetadata {
   processingTime: number; // milliseconds
   modelVersion: string;

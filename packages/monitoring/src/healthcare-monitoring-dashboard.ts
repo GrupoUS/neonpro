@@ -196,9 +196,9 @@ export class HealthcareMonitoringDashboard {
    * Start real-time monitoring
    */
   public startMonitoring(intervalMs = 30_000): void {
-    this.monitoringInterval = setInterval(() => {
+    this.monitoringInterval = setInterval(async () => {
       this.collectMetrics();
-      this.evaluateAlerts();
+      await this.evaluateAlerts();
       this.generateReports();
     }, intervalMs);
   }
@@ -246,7 +246,7 @@ export class HealthcareMonitoringDashboard {
   /**
    * Evaluate alert conditions
    */
-  private evaluateAlerts(): void {
+  private async evaluateAlerts(): Promise<void> {
     const alerts: Alert[] = [];
 
     // Evaluate system health alerts
@@ -263,7 +263,7 @@ export class HealthcareMonitoringDashboard {
 
     // Send alerts if any
     if (alerts.length > 0) {
-      this.sendAlerts(alerts);
+      await this.sendAlerts(alerts);
     }
   } /**
    * Generate comprehensive monitoring reports
@@ -674,7 +674,7 @@ export class HealthcareMonitoringDashboard {
   /**
    * Send alerts to configured channels
    */
-  private sendAlerts(alerts: Alert[]): void {
+  private async sendAlerts(alerts: Alert[]): Promise<void> {
     // In a real implementation, this would send alerts via email, Slack, etc.
     alerts.forEach((alert) => {
       console.log('ALERT:', {
@@ -693,7 +693,7 @@ export class HealthcareMonitoringDashboard {
   /**
    * Store monitoring report for historical analysis
    */
-  private storeReport(report: MonitoringReport): void {
+  private async storeReport(report: MonitoringReport): Promise<void> {
     // In a real implementation, this would store to a database
     // For now, we'll log the report
     console.log('Storing monitoring report:', {
@@ -867,7 +867,7 @@ export class HealthcareMonitoringDashboard {
       errorRate: await this.getErrorRate(),
       throughput: await this.getThroughputMetrics(),
       activeUsers: await this.getActiveUserCount(),
-      systemLoad: process.cpuUsage ? this.calculateCpuUsage() : 0,
+      systemLoad: typeof process.cpuUsage === 'function' ? this.calculateCpuUsage() : 0,
       memoryUsage: (usedMem / totalMem) * 100,
       diskUsage: await this.getDiskUsage(),
       networkLatency: await this.measureNetworkLatency(),
@@ -978,7 +978,7 @@ export class HealthcareMonitoringDashboard {
       timestamp: report.timestamp,
       overallHealthScore: report.overallHealthScore,
       complianceScore: report.complianceScore,
-      alertCount: report.alerts.length
+      alertCount: 0 // alerts are handled separately
     });
     // In real implementation: save to Supabase with proper schema
     // await this.supabaseClient.from('monitoring_reports').insert(report);

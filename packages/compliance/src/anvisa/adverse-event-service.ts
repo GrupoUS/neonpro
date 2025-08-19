@@ -13,11 +13,25 @@
  */
 
 import { z } from 'zod';
-import type {
+import {
   AdverseEventType,
   ComplianceScore,
   ConstitutionalResponse,
 } from '../types';
+
+/**
+ * ANVISA Device Categories
+ */
+export enum ANVISADeviceCategory {
+  CLASS_I = 'CLASS_I',
+  CLASS_II = 'CLASS_II',
+  CLASS_III = 'CLASS_III',
+  CLASS_IV = 'CLASS_IV',
+  IMPLANTABLE = 'IMPLANTABLE',
+  DIAGNOSTIC = 'DIAGNOSTIC',
+  THERAPEUTIC = 'THERAPEUTIC',
+  SURGICAL = 'SURGICAL'
+}
 
 /**
  * Adverse Event Report Schema

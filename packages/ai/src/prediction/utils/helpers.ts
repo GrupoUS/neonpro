@@ -8,8 +8,8 @@ import type { PatientProfile, SkinType, TreatmentRequest } from '../types';
  */
 
 // Type definitions for specific concerns, expectations, and urgency levels
-type ConcernType = 'wrinkles' | 'acne' | 'pigmentation' | 'texture';
-type ExpectationType = 'minimal' | 'moderate' | 'significant';
+type ConcernType = 'wrinkles' | 'acne-scars' | 'pigmentation' | 'texture';
+type ExpectationType = 'subtle' | 'moderate' | 'dramatic';
 type UrgencyType = 'low' | 'moderate' | 'high';
 
 // Constants for time calculations and business rules
@@ -117,15 +117,9 @@ export function createTreatmentRequest(
       min: 1000,
       max: 5000,
       currency: 'BRL',
-      flexibility: 'moderate',
+      flexible: true,
     },
-    timeframe: {
-      earliestStart: new Date(),
-      latestCompletion: new Date(Date.now() + 30 * MILLISECONDS_PER_DAY),
-      flexibility: 'moderate',
-      preferredDays: BUSINESS_DAYS,
-      preferredTimes: [{ start: '09:00', end: '17:00' }],
-    },
+    timeframe: 'within-month',
   };
 
   return { ...defaultRequest, ...overrides };

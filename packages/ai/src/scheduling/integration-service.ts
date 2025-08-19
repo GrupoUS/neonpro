@@ -247,7 +247,8 @@ export class SchedulingIntegrationService {
           message: 'Staff reserved',
         });
       } catch (error) {
-        errors.push({ service: 'staff', error: error.message });
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        errors.push({ service: 'staff', error: errorMessage });
         success = false;
       }
 
@@ -263,7 +264,8 @@ export class SchedulingIntegrationService {
           message: 'Room reserved',
         });
       } catch (error) {
-        errors.push({ service: 'room', error: error.message });
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        errors.push({ service: 'room', error: errorMessage });
         success = false;
       }
 
@@ -279,7 +281,8 @@ export class SchedulingIntegrationService {
           message: 'Equipment reserved',
         });
       } catch (error) {
-        errors.push({ service: 'inventory', error: error.message });
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        errors.push({ service: 'inventory', error: errorMessage });
         success = false;
       }
 
@@ -295,7 +298,8 @@ export class SchedulingIntegrationService {
           message: 'Patient history updated',
         });
       } catch (error) {
-        errors.push({ service: 'patient', error: error.message });
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        errors.push({ service: 'patient', error: errorMessage });
         // Not critical - don't fail the whole operation
       }
 
@@ -311,7 +315,8 @@ export class SchedulingIntegrationService {
           message: 'Treatment stats updated',
         });
       } catch (error) {
-        errors.push({ service: 'treatment', error: error.message });
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        errors.push({ service: 'treatment', error: errorMessage });
         // Not critical - don't fail the whole operation
       }
 
@@ -326,7 +331,8 @@ export class SchedulingIntegrationService {
           message: 'Confirmation sent',
         });
       } catch (error) {
-        errors.push({ service: 'notification', error: error.message });
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        errors.push({ service: 'notification', error: errorMessage });
         // Not critical - don't fail the whole operation
       }
 
@@ -334,7 +340,7 @@ export class SchedulingIntegrationService {
       await this.logSchedulingAudit({
         timestamp: new Date(),
         action: 'appointment_created',
-        userId: appointment.createdBy,
+        userId: appointment.createdBy || 'system',
         appointmentId: appointment.id,
         changes: { appointment },
         aiDecision: true,
@@ -356,11 +362,13 @@ export class SchedulingIntegrationService {
         await this.rollbackAppointment(appointment, integrationResults);
       }
 
+      const errorMessage = error instanceof Error ? error.message : String(error);
+
       return {
         success: false,
         appointmentId: '',
         integrationResults,
-        errors: [{ service: 'system', error: error.message }],
+        errors: [{ service: 'system', error: errorMessage }],
       };
     }
   }
@@ -452,11 +460,12 @@ export class SchedulingIntegrationService {
       };
     } catch (error) {
       console.error('Failed to update appointment:', error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
       return {
         success: false,
         conflicts,
         integrationResults: [
-          { service: 'system', status: 'error', message: error.message },
+          { service: 'system', status: 'error', message: errorMessage },
         ],
       };
     }
@@ -485,7 +494,8 @@ export class SchedulingIntegrationService {
           const response = await this.processIndividualScheduling(request);
           successful.push(response);
         } catch (error) {
-          failed.push({ request, error: error.message });
+          const errorMessage = error instanceof Error ? error.message : String(error);
+          failed.push({ request, error: errorMessage });
         }
       });
 

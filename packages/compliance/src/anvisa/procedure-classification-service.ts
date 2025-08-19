@@ -101,6 +101,26 @@ export type ProcedureClassification = z.infer<
 >;
 
 /**
+ * Procedure Filters Type
+ */
+export type ProcedureFilters = {
+  tenantId?: string;
+  procedureName?: string;
+  procedureCode?: string;
+  anvisaCategory?: string;
+  riskLevel?: ProcedureRiskLevel;
+  invasivenessLevel?: 'NON_INVASIVE' | 'MINIMALLY_INVASIVE' | 'MODERATELY_INVASIVE' | 'HIGHLY_INVASIVE';
+  anesthesiaRequired?: 'NONE' | 'TOPICAL' | 'LOCAL' | 'REGIONAL' | 'GENERAL';
+  specialistRequired?: boolean;
+  classificationDateFrom?: Date;
+  classificationDateTo?: Date;
+  lastReviewDateFrom?: Date;
+  lastReviewDateTo?: Date;
+  nextReviewDateFrom?: Date;
+  nextReviewDateTo?: Date;
+};
+
+/**
  * Classification Validation Result
  */
 export type ClassificationValidationResult = {

@@ -47,6 +47,7 @@
     "test:coverage": "vitest --coverage"
   },
   "dependencies": {
+    "@neonpro/core-services": "workspace:*",
     "@neonpro/db": "workspace:*",
     "@neonpro/types": "workspace:*",
     "@neonpro/ui": "workspace:*",

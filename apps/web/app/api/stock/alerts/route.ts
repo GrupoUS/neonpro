@@ -194,12 +194,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Get clinic context from user
+    const clinicId = await getUserClinicContext(supabase, session.user.id);
+
     // Check for duplicate configuration
     let duplicateQuery = supabase
       .from('stock_alert_configs')
       .select('id')
       .eq('alert_type', validatedData.alertType)
-      .eq('clinic_id', testClinicId); // Use clinic_id instead of user_id
+      .eq('clinic_id', clinicId);
 
     if (validatedData.productId) {
       duplicateQuery = duplicateQuery.eq('product_id', validatedData.productId);
@@ -214,7 +217,7 @@ export async function POST(request: NextRequest) {
 
     console.log('Checking for duplicates with query parameters:', {
       alert_type: validatedData.alertType,
-      clinic_id: testClinicId,
+      clinic_id: clinicId,
       product_id: validatedData.productId,
       category_id: validatedData.categoryId,
     });
@@ -230,8 +233,6 @@ export async function POST(request: NextRequest) {
 
     // Create new alert configuration
     // Transform camelCase to snake_case for database insertion
-    // Get clinic context from user
-    const clinicId = await getUserClinicContext(supabase, session.user.id);
 
     const insertData = {
       product_id: validatedData.productId,

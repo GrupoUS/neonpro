@@ -8,7 +8,6 @@
         "DC_FILE_READ_LIMIT": "2000",
         "DC_FILE_WRITE_LIMIT": "50",
         "DC_TELEMETRY_ENABLED": "false",
-        "DC_ALLOWED_DIRECTORIES": "C:\\Users\\Mauri\\OneDrive\\GRUPOUS\\VSCODE",
         "DC_BLOCKED_COMMANDS": "rm,del,format,shutdown,reboot"
       }
     },

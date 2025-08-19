@@ -259,8 +259,8 @@ export class DigitalSignatureService {
         verified: cfmValidation.valid && certificateValidation.valid,
         cfm_validation: {
           registration_valid: cfmValidation.valid,
-          license_active: cfmValidation.license_active,
-          specialization_verified: cfmValidation.specialization_verified,
+          license_active: cfmValidation.license_active ?? false,
+          specialization_verified: cfmValidation.specialization_verified ?? false,
           constitutional_compliance: cfmValidation.valid,
         },
         certificate_validation: {

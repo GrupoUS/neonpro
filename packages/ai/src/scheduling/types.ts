@@ -1,7 +1,17 @@
 // AI Scheduling Types for NeonPro Aesthetic Clinic
 // Enhanced types supporting AI-powered intelligent scheduling
 
-import type { BaseEntity } from '@neonpro/core-services';
+// Temporary BaseEntity definition until @neonpro/core-services is available
+interface BaseEntity {
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  createdBy?: string;
+  updatedBy?: string;
+}
+
+// TODO: Replace with import when @neonpro/core-services is properly built
+// import type { BaseEntity } from '@neonpro/core-services';
 
 // Core AI Scheduling Interfaces
 export interface AISchedulingConfig {

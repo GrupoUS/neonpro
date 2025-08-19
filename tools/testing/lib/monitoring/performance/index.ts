@@ -1,10 +1,10 @@
 // Performance monitoring compatibility wrapper
 // Exports monitoring performance utilities with CommonJS support
 
-export type { PerformanceMetric, WebVital } from './performance';
-export { default as PerformanceService } from './performance';
-export type { HealthcarePerformanceMetrics } from './performance-monitor';
-export { default as PerformanceMonitor } from './performance-monitor';
+export type { PerformanceMetric, WebVital } from '../performance';
+export { default as PerformanceService } from '../performance';
+export type { HealthcarePerformanceMetrics } from '../performance-monitor';
+export { default as PerformanceMonitor } from '../performance-monitor';
 
 // Integration utilities
 export interface MonitoringPerformanceIntegration {
@@ -34,7 +34,7 @@ export const monitoringPerformanceIntegration: MonitoringPerformanceIntegration 
 
 // CommonJS compatibility
 module.exports = {
-  PerformanceService: require('./performance').default,
-  PerformanceMonitor: require('./performance-monitor').default,
+  PerformanceService: require('../performance').default,
+  PerformanceMonitor: require('../performance-monitor').default,
   monitoringPerformanceIntegration,
 };

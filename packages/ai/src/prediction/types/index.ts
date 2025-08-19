@@ -170,3 +170,22 @@ export interface TreatmentGoals {
 }
 
 export type ExpectationLevel = 'subtle' | 'moderate' | 'dramatic';
+
+export type TimeframePreference = 'immediate' | 'within-month' | 'within-quarter' | 'flexible';
+
+export interface TreatmentHistory {
+  treatmentType: TreatmentType;
+  date: Date;
+  provider: string;
+  outcome: 'excellent' | 'good' | 'fair' | 'poor';
+  sideEffects?: string[];
+}
+
+export type LGPDConsent = 'granted' | 'denied' | 'pending' | 'withdrawn';
+
+export interface BudgetRange {
+  min: number;
+  max: number;
+  currency: string;
+  flexible: boolean;
+}

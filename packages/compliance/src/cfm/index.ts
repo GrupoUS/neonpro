@@ -54,6 +54,13 @@ export {
 export const CFM_COMPLIANCE_VERSION = '1.0.0';
 export const CONSTITUTIONAL_CFM_COMPLIANCE_MINIMUM = 9.9;
 
+// Import classes for factory function
+import { DigitalSignatureService } from './digital-signature-service';
+import { ProfessionalLicensingService } from './professional-licensing-service';
+import { TelemedicineComplianceService } from './telemedicine-compliance-service';
+import { MedicalEthicsService } from './medical-ethics-service';
+import { MedicalRecordsService } from './medical-records-service';
+
 /**
  * CFM Service Factory
  * Constitutional service initialization with Supabase integration
@@ -116,7 +123,7 @@ export async function validateCfmCompliance(
       );
     if (telemedicineConsultations && telemedicineConsultations.length > 0) {
       const nonCompliantConsultations = telemedicineConsultations.filter(
-        (c) => !c.constitutional_compliance
+        (c: any) => !c.constitutional_compliance
       );
       if (nonCompliantConsultations.length > 0) {
         issues.push(
@@ -134,7 +141,7 @@ export async function validateCfmCompliance(
       await services.medicalEthics.getEthicsAssessments(tenantId);
     if (ethicsAssessments && ethicsAssessments.length > 0) {
       const lowScoreAssessments = ethicsAssessments.filter(
-        (a) => a.assessment_results.compliance_score < 9.0
+        (a: any) => a.assessment_results.compliance_score < 9.0
       );
       if (lowScoreAssessments.length > 0) {
         issues.push(
@@ -218,7 +225,7 @@ export async function validateCfmResolutions(
         if (resolutions.includes(resolution)) {
           const compliantConsultations =
             telemedicineConsultations?.filter(
-              (c) =>
+              (c: any) =>
                 c.cfm_resolution_compliance?.[
                   `resolution_${resolution.replace(/[/.]/g, '_')}`
                 ]

@@ -102,7 +102,6 @@ export const createStockAlertConfigSchema = baseStockAlertConfigSchema
   .extend({
     createdBy: customUuid, // Required for creation
   })
-  .strict() // Reject unknown fields including omitted ones
   .refine(
     (data) => {
       // Either productId or categoryId must be present, but not both
@@ -124,8 +123,7 @@ export const updateStockAlertConfigSchema = baseStockAlertConfigSchema
   .extend({
     updatedBy: customUuid.optional(),
     updatedAt: z.date().default(() => new Date()),
-  })
-  .strict(); // Only reject extra fields in update schema
+  });
 
 // =====================================================
 // STOCK ALERT SCHEMAS
