@@ -6,7 +6,7 @@ import { defineConfig } from 'vitest/config';
 /**
  * Simplified Vitest Configuration for NeonPro Healthcare Testing
  * ============================================================
- * 
+ *
  * This configuration focuses on testing without Prisma dependencies
  * to avoid workspace conflicts. Designed for healthcare compliance testing.
  */
@@ -16,20 +16,17 @@ export default defineConfig({
     name: 'neonpro-healthcare-tests',
     environment: 'jsdom',
     globals: true,
-    
+
     // Setup files for healthcare testing
-    setupFiles: [
-      './healthcare-setup.ts',
-      './setup.ts'
-    ],
-    
+    setupFiles: ['./healthcare-setup.ts', './setup.ts'],
+
     // Test file patterns
     include: [
       '**/*.{test,spec}.{ts,tsx}',
       '**/__tests__/**/*.{ts,tsx}',
-      '../**/*.{test,spec}.{ts,tsx}' // Include parent directory tests
+      '../**/*.{test,spec}.{ts,tsx}', // Include parent directory tests
     ],
-    
+
     // Exclusions to avoid conflicts
     exclude: [
       '**/node_modules/**',
@@ -46,7 +43,7 @@ export default defineConfig({
       // Skip packages that might have dependency issues
       '**/packages/database/**',
     ],
-    
+
     // Coverage configuration
     coverage: {
       provider: 'v8',
@@ -62,11 +59,11 @@ export default defineConfig({
         '**/playwright/**',
       ],
     },
-    
+
     // Test timeout for healthcare scenarios
-    testTimeout: 30000,
-    hookTimeout: 30000,
-    
+    testTimeout: 30_000,
+    hookTimeout: 30_000,
+
     // Healthcare-specific environment variables
     env: {
       NODE_ENV: 'test',
@@ -76,7 +73,7 @@ export default defineConfig({
       CFM_STANDARDS: 'true',
     },
   },
-  
+
   // Path resolution for NeonPro modules
   resolve: {
     alias: {
@@ -93,7 +90,7 @@ export default defineConfig({
       '@neonpro/types': path.resolve(__dirname, '../../packages/types/src'),
     },
   },
-  
+
   // Enable source maps for debugging
   esbuild: {
     sourcemap: true,

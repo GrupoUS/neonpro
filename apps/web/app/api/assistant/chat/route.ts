@@ -1,6 +1,6 @@
 import { anthropic } from '@ai-sdk/anthropic';
 import { openai } from '@ai-sdk/openai';
-import { streamText } from 'ai';
+import { convertToCoreMessages, streamText } from 'ai';
 import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
 
@@ -121,7 +121,7 @@ CONTEXTO RECENTE: ${
 ${recentAppointments
   .map(
     (apt) =>
-      `- ${apt.date_time}: ${apt.patients?.name || 'Nome não informado'} - ${apt.service || 'Serviço não informado'} (${apt.status})`
+      `- ${apt.date_time}: ${(apt.patients as any)?.name || 'Nome não informado'} - ${apt.service || 'Serviço não informado'} (${apt.status})`
   )
   .join('\n')}`
         : 'Nenhum agendamento recente encontrado.'
@@ -138,14 +138,16 @@ INSTRUÇÕES:
 
 Seja sempre útil, preciso e contextualmente relevante para a gestão de clínicas de estética e beleza.`;
 
-    // Converter mensagens para o formato do AI SDK    const coreMessages = convertToCoreMessages(messages);
+    // Converter mensagens para o formato do AI SDK
+    const coreMessages = convertToCoreMessages(messages);
 
-    // Salvar mensagem do usuário    const userMessage = messages.at(-1);
-    await (await supabase).from('assistant_messages').insert({
+    // Salvar mensagem do usuário
+    const userMessage = messages.at(-1);
+    await supabase.from('assistant_messages').insert({
       conversation_id: conversation.id,
       user_id: user.id,
       role: 'user',
-      content: userMessage.content,
+      content: userMessage?.content || '',
       model_used: model,
     });
 
@@ -155,7 +157,6 @@ Seja sempre útil, preciso e contextualmente relevante para a gestão de clínic
       system: systemPrompt,
       messages: coreMessages,
       temperature: preferences?.temperature || 0.7,
-      maxTokens: preferences?.max_tokens || 2000,
     });
 
     // Log da interação
@@ -174,7 +175,7 @@ Seja sempre útil, preciso e contextualmente relevante para a gestão de clínic
       },
     });
 
-    return result.toDataStreamResponse();
+    return result.toTextStreamResponse();
   } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },

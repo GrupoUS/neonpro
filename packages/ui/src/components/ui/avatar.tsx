@@ -15,12 +15,12 @@ const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
 
     return (
       <div
-        ref={ref}
         className={cn(
           'relative flex shrink-0 overflow-hidden rounded-full',
           sizeClasses[size],
           className
         )}
+        ref={ref}
         {...props}
       />
     );
@@ -34,8 +34,8 @@ const AvatarImage = React.forwardRef<
   React.ImgHTMLAttributes<HTMLImageElement>
 >(({ className, ...props }, ref) => (
   <img
-    ref={ref}
     className={cn('aspect-square h-full w-full', className)}
+    ref={ref}
     {...props}
   />
 ));
@@ -47,11 +47,11 @@ const AvatarFallback = React.forwardRef<
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
   <div
-    ref={ref}
     className={cn(
       'flex h-full w-full items-center justify-center rounded-full bg-muted',
       className
     )}
+    ref={ref}
     {...props}
   />
 ));

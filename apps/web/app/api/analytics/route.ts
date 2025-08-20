@@ -74,7 +74,8 @@ export async function GET(request: NextRequest) {
     }
 
     // Set default date range if not provided (last 30 days)
-    const endDate = validatedParams.endDate || new Date().toISOString().split('T')[0];
+    const endDate =
+      validatedParams.endDate || new Date().toISOString().split('T')[0];
     const startDate =
       validatedParams.startDate ||
       new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)

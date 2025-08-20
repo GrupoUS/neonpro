@@ -1,9 +1,9 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 /**
  * Basic Utility Tests - No External Dependencies
  * ==============================================
- * 
+ *
  * Simple tests to verify Vitest is working correctly
  * without complex dependencies or imports.
  */
@@ -13,7 +13,7 @@ describe('Basic Utility Functions', () => {
   const formatCurrency = (value: number): string => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
-      currency: 'BRL'
+      currency: 'BRL',
     }).format(value);
   };
 
@@ -28,13 +28,13 @@ describe('Basic Utility Functions', () => {
     return name
       .toLowerCase()
       .split(' ')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
   };
 
   it('should format currency correctly', () => {
     expect(formatCurrency(100)).toBe('R$ 100,00');
-    expect(formatCurrency(1500.50)).toBe('R$ 1.500,50');
+    expect(formatCurrency(1500.5)).toBe('R$ 1.500,50');
     expect(formatCurrency(0)).toBe('R$ 0,00');
   });
 
@@ -62,12 +62,12 @@ describe('Basic Utility Functions', () => {
 
   it('should work with arrays', () => {
     const patients = ['João', 'Maria', 'Pedro'];
-    
+
     expect(patients).toHaveLength(3);
     expect(patients).toContain('João');
     expect(patients[0]).toBe('João');
-    
-    const filtered = patients.filter(name => name.startsWith('M'));
+
+    const filtered = patients.filter((name) => name.startsWith('M'));
     expect(filtered).toEqual(['Maria']);
   });
 
@@ -76,7 +76,7 @@ describe('Basic Utility Functions', () => {
       id: 1,
       name: 'João Silva',
       age: 35,
-      active: true
+      active: true,
     };
 
     expect(patient.name).toBe('João Silva');

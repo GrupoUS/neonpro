@@ -1,11 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = params
+    const { id } = params;
 
     // Mock patient data
     const patient = {
@@ -15,20 +15,20 @@ export async function GET(
       phone: '+5511999999999',
       birthDate: '1990-01-01',
       gender: 'female',
-      created_at: new Date().toISOString()
-    }
+      created_at: new Date().toISOString(),
+    };
 
     return NextResponse.json({
       data: patient,
       success: true,
-      message: 'Paciente encontrado'
-    })
+      message: 'Paciente encontrado',
+    });
   } catch (error) {
-    console.error('Erro ao buscar paciente:', error)
+    console.error('Erro ao buscar paciente:', error);
     return NextResponse.json(
       { error: 'Erro interno do servidor', success: false },
       { status: 500 }
-    )
+    );
   }
 }
 
@@ -37,27 +37,27 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = params
-    const body = await request.json()
+    const { id } = params;
+    const body = await request.json();
 
     // Mock update
     const updatedPatient = {
       id,
       ...body,
-      updated_at: new Date().toISOString()
-    }
+      updated_at: new Date().toISOString(),
+    };
 
     return NextResponse.json({
       data: updatedPatient,
       success: true,
-      message: 'Paciente atualizado com sucesso'
-    })
+      message: 'Paciente atualizado com sucesso',
+    });
   } catch (error) {
-    console.error('Erro ao atualizar paciente:', error)
+    console.error('Erro ao atualizar paciente:', error);
     return NextResponse.json(
       { error: 'Erro interno do servidor', success: false },
       { status: 500 }
-    )
+    );
   }
 }
 
@@ -66,17 +66,17 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = params
+    const { id } = params;
 
     return NextResponse.json({
       success: true,
-      message: 'Paciente removido com sucesso'
-    })
+      message: 'Paciente removido com sucesso',
+    });
   } catch (error) {
-    console.error('Erro ao remover paciente:', error)
+    console.error('Erro ao remover paciente:', error);
     return NextResponse.json(
       { error: 'Erro interno do servidor', success: false },
       { status: 500 }
-    )
+    );
   }
 }

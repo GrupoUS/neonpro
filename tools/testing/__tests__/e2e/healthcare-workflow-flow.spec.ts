@@ -18,10 +18,14 @@ test.describe('Complete Healthcare Workflow', () => {
 
     // Should navigate to consultation interface
     await expect(page).toHaveURL(/\/consultation\/[a-zA-Z0-9-]+/);
-    
+
     // Patient information should be visible
-    await expect(page.locator('[data-testid="patient-info-panel"]')).toBeVisible();
-    await expect(page.locator('[data-testid="patient-name"]')).toContainText('João Silva Santos');
+    await expect(
+      page.locator('[data-testid="patient-info-panel"]')
+    ).toBeVisible();
+    await expect(page.locator('[data-testid="patient-name"]')).toContainText(
+      'João Silva Santos'
+    );
 
     // Record vital signs
     await page.click('[data-testid="vital-signs-tab"]');
@@ -38,37 +42,68 @@ test.describe('Complete Healthcare Workflow', () => {
 
     // Record chief complaint and history
     await page.click('[data-testid="anamnesis-tab"]');
-    await page.fill('[data-testid="chief-complaint"]', 'Dor de cabeça há 3 dias');
-    await page.fill('[data-testid="present-illness"]', 'Paciente relata cefaleia pulsátil, de intensidade moderada, iniciada há 3 dias. Não houve fatores desencadeantes identificados. Melhora parcial com analgésicos comuns.');
-    await page.fill('[data-testid="review-systems"]', 'Nega náuseas, vômitos, alterações visuais ou neurológicas associadas.');
+    await page.fill(
+      '[data-testid="chief-complaint"]',
+      'Dor de cabeça há 3 dias'
+    );
+    await page.fill(
+      '[data-testid="present-illness"]',
+      'Paciente relata cefaleia pulsátil, de intensidade moderada, iniciada há 3 dias. Não houve fatores desencadeantes identificados. Melhora parcial com analgésicos comuns.'
+    );
+    await page.fill(
+      '[data-testid="review-systems"]',
+      'Nega náuseas, vômitos, alterações visuais ou neurológicas associadas.'
+    );
 
     // Physical examination
     await page.click('[data-testid="physical-exam-tab"]');
-    await page.fill('[data-testid="general-appearance"]', 'Paciente em bom estado geral, consciente, orientado.');
-    await page.fill('[data-testid="cardiovascular-exam"]', 'Ritmo cardíaco regular, bulhas normofonéticas, sem sopros.');
-    await page.fill('[data-testid="neurological-exam"]', 'Sem sinais neurológicos focais. Reflexos normais.');
+    await page.fill(
+      '[data-testid="general-appearance"]',
+      'Paciente em bom estado geral, consciente, orientado.'
+    );
+    await page.fill(
+      '[data-testid="cardiovascular-exam"]',
+      'Ritmo cardíaco regular, bulhas normofonéticas, sem sopros.'
+    );
+    await page.fill(
+      '[data-testid="neurological-exam"]',
+      'Sem sinais neurológicos focais. Reflexos normais.'
+    );
 
     // Clinical reasoning and diagnosis
     await page.click('[data-testid="diagnosis-tab"]');
-    await page.fill('[data-testid="clinical-reasoning"]', 'Quadro compatível com cefaleia tensional, sem sinais de alarme.');
-    
+    await page.fill(
+      '[data-testid="clinical-reasoning"]',
+      'Quadro compatível com cefaleia tensional, sem sinais de alarme.'
+    );
+
     // Add diagnosis
     await page.click('[data-testid="add-diagnosis-btn"]');
     await page.fill('[data-testid="diagnosis-code"]', 'G44.2');
-    await page.fill('[data-testid="diagnosis-description"]', 'Cefaleia do tipo tensional');
+    await page.fill(
+      '[data-testid="diagnosis-description"]',
+      'Cefaleia do tipo tensional'
+    );
     await page.click('[data-testid="diagnosis-primary-checkbox"]');
     await page.click('[data-testid="save-diagnosis-btn"]');
 
     // Treatment plan
     await page.click('[data-testid="treatment-tab"]');
-    await page.fill('[data-testid="treatment-plan"]', 'Orientações sobre higiene do sono, redução de estresse. Analgésico se necessário. Retorno se persistir ou piorar.');
+    await page.fill(
+      '[data-testid="treatment-plan"]',
+      'Orientações sobre higiene do sono, redução de estresse. Analgésico se necessário. Retorno se persistir ou piorar.'
+    );
 
     // Save consultation
     await page.click('[data-testid="save-consultation-btn"]');
-    await expect(page.locator('text=Consulta registrada com sucesso')).toBeVisible();
+    await expect(
+      page.locator('text=Consulta registrada com sucesso')
+    ).toBeVisible();
   });
 
-  test('should manage prescriptions with controlled medications', async ({ page }) => {
+  test('should manage prescriptions with controlled medications', async ({
+    page,
+  }) => {
     // Start from consultation or patient profile
     await page.goto('/patients');
     await page.click('[data-testid="patient-item-123.456.789-00"]');
@@ -83,21 +118,34 @@ test.describe('Complete Healthcare Workflow', () => {
     await page.fill('[data-testid="medication-dose"]', '500mg');
     await page.fill('[data-testid="medication-frequency"]', 'A cada 6 horas');
     await page.fill('[data-testid="medication-duration"]', '5 dias');
-    await page.fill('[data-testid="medication-instructions"]', 'Tomar se dor ou febre');
+    await page.fill(
+      '[data-testid="medication-instructions"]',
+      'Tomar se dor ou febre'
+    );
 
     // Add controlled medication (requires special handling)
     await page.click('[data-testid="add-medication-btn"]');
     await page.fill('[data-testid="medication-name"]', 'Clonazepam');
     await page.fill('[data-testid="medication-dose"]', '0,5mg');
-    await page.fill('[data-testid="medication-frequency"]', '1x ao dia à noite');
+    await page.fill(
+      '[data-testid="medication-frequency"]',
+      '1x ao dia à noite'
+    );
     await page.fill('[data-testid="medication-duration"]', '30 dias');
 
     // Should show controlled medication warning
-    await expect(page.locator('[data-testid="controlled-medication-warning"]')).toBeVisible();
-    await expect(page.locator('text=Medicamento controlado - Receita Azul')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="controlled-medication-warning"]')
+    ).toBeVisible();
+    await expect(
+      page.locator('text=Medicamento controlado - Receita Azul')
+    ).toBeVisible();
 
     // Fill controlled medication requirements
-    await page.fill('[data-testid="controlled-justification"]', 'Tratamento de ansiedade conforme avaliação clínica');
+    await page.fill(
+      '[data-testid="controlled-justification"]',
+      'Tratamento de ansiedade conforme avaliação clínica'
+    );
     await page.check('[data-testid="patient-consent-controlled"]');
 
     // Digital signature and CRM validation
@@ -109,11 +157,17 @@ test.describe('Complete Healthcare Workflow', () => {
     await page.click('[data-testid="generate-prescription-btn"]');
 
     // Should show prescription preview
-    await expect(page.locator('[data-testid="prescription-preview"]')).toBeVisible();
-    await expect(page.locator('[data-testid="prescription-pdf"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="prescription-preview"]')
+    ).toBeVisible();
+    await expect(
+      page.locator('[data-testid="prescription-pdf"]')
+    ).toBeVisible();
 
     // Should have separate controlled medication receipt
-    await expect(page.locator('[data-testid="controlled-prescription-pdf"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="controlled-prescription-pdf"]')
+    ).toBeVisible();
 
     // Print and save
     await page.click('[data-testid="save-and-print-btn"]');
@@ -130,9 +184,12 @@ test.describe('Complete Healthcare Workflow', () => {
     await page.click('[data-testid="certificate-type-work-absence"]');
 
     // Fill certificate details
-    await page.fill('[data-testid="certificate-reason"]', 'Cefaleia incapacitante');
+    await page.fill(
+      '[data-testid="certificate-reason"]',
+      'Cefaleia incapacitante'
+    );
     await page.fill('[data-testid="absence-days"]', '2');
-    
+
     // Set certificate dates
     const today = new Date().toLocaleDateString('pt-BR');
     const tomorrow = new Date();
@@ -143,7 +200,10 @@ test.describe('Complete Healthcare Workflow', () => {
     await page.fill('[data-testid="absence-end-date"]', tomorrowStr);
 
     // Add medical observations
-    await page.fill('[data-testid="medical-observations"]', 'Repouso recomendado devido a quadro de cefaleia intensa');
+    await page.fill(
+      '[data-testid="medical-observations"]',
+      'Repouso recomendado devido a quadro de cefaleia intensa'
+    );
 
     // CID code
     await page.fill('[data-testid="cid-code"]', 'G44.2');
@@ -155,16 +215,24 @@ test.describe('Complete Healthcare Workflow', () => {
     await page.click('[data-testid="generate-certificate-btn"]');
 
     // Should show certificate preview
-    await expect(page.locator('[data-testid="certificate-preview"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="certificate-preview"]')
+    ).toBeVisible();
     await expect(page.locator('text=ATESTADO MÉDICO')).toBeVisible();
 
     // Validate certificate information
-    await expect(page.locator('[data-testid="certificate-patient-name"]')).toContainText('João Silva Santos');
-    await expect(page.locator('[data-testid="certificate-days"]')).toContainText('2 dias');
+    await expect(
+      page.locator('[data-testid="certificate-patient-name"]')
+    ).toContainText('João Silva Santos');
+    await expect(
+      page.locator('[data-testid="certificate-days"]')
+    ).toContainText('2 dias');
 
     // Save certificate
     await page.click('[data-testid="save-certificate-btn"]');
-    await expect(page.locator('text=Atestado emitido com sucesso')).toBeVisible();
+    await expect(
+      page.locator('text=Atestado emitido com sucesso')
+    ).toBeVisible();
   });
 
   test('should manage medical exams and referrals', async ({ page }) => {
@@ -182,7 +250,10 @@ test.describe('Complete Healthcare Workflow', () => {
     await page.check('[data-testid="exam-colesterol"]');
 
     // Add clinical indication
-    await page.fill('[data-testid="exam-clinical-indication"]', 'Avaliação de rotina - controle de diabetes e dislipidemia');
+    await page.fill(
+      '[data-testid="exam-clinical-indication"]',
+      'Avaliação de rotina - controle de diabetes e dislipidemia'
+    );
 
     // Set exam priority
     await page.click('[data-testid="exam-priority-routine"]');
@@ -194,29 +265,41 @@ test.describe('Complete Healthcare Workflow', () => {
     await page.click('[data-testid="generate-exam-request-btn"]');
 
     // Should show exam request preview
-    await expect(page.locator('[data-testid="exam-request-preview"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="exam-request-preview"]')
+    ).toBeVisible();
     await page.click('[data-testid="save-exam-request-btn"]');
 
     // Request medical referral
     await page.click('[data-testid="request-referral-btn"]');
-    
+
     // Select specialty
     await page.click('[data-testid="referral-specialty-select"]');
     await page.click('[data-testid="specialty-cardiology"]');
 
     // Fill referral details
-    await page.fill('[data-testid="referral-reason"]', 'Avaliação cardiológica - hipertensão arterial');
-    await page.fill('[data-testid="referral-clinical-summary"]', 'Paciente com HAS em uso de Losartana, PA atual 130x80mmHg. Solicito avaliação para ajuste terapêutico.');
+    await page.fill(
+      '[data-testid="referral-reason"]',
+      'Avaliação cardiológica - hipertensão arterial'
+    );
+    await page.fill(
+      '[data-testid="referral-clinical-summary"]',
+      'Paciente com HAS em uso de Losartana, PA atual 130x80mmHg. Solicito avaliação para ajuste terapêutico.'
+    );
 
     // Set referral priority
     await page.click('[data-testid="referral-priority-routine"]');
 
     // Generate referral
     await page.click('[data-testid="generate-referral-btn"]');
-    await expect(page.locator('[data-testid="referral-preview"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="referral-preview"]')
+    ).toBeVisible();
     await page.click('[data-testid="save-referral-btn"]');
 
-    await expect(page.locator('text=Encaminhamento gerado com sucesso')).toBeVisible();
+    await expect(
+      page.locator('text=Encaminhamento gerado com sucesso')
+    ).toBeVisible();
   });
 
   test('should handle emergency protocols and alerts', async ({ page }) => {
@@ -228,8 +311,12 @@ test.describe('Complete Healthcare Workflow', () => {
     await page.click('[data-testid="emergency-alert-btn"]');
 
     // Should show emergency protocol interface
-    await expect(page.locator('[data-testid="emergency-interface"]')).toBeVisible();
-    await expect(page.locator('[data-testid="emergency-header"]')).toContainText('PROTOCOLO DE EMERGÊNCIA');
+    await expect(
+      page.locator('[data-testid="emergency-interface"]')
+    ).toBeVisible();
+    await expect(
+      page.locator('[data-testid="emergency-header"]')
+    ).toContainText('PROTOCOLO DE EMERGÊNCIA');
 
     // Select emergency type
     await page.click('[data-testid="emergency-type-select"]');
@@ -237,7 +324,9 @@ test.describe('Complete Healthcare Workflow', () => {
 
     // Should load cardiac emergency protocol
     await expect(page.locator('[data-testid="protocol-steps"]')).toBeVisible();
-    await expect(page.locator('text=Protocolo de Parada Cardiorrespiratória')).toBeVisible();
+    await expect(
+      page.locator('text=Protocolo de Parada Cardiorrespiratória')
+    ).toBeVisible();
 
     // Mark protocol steps as completed
     await page.check('[data-testid="step-1-airway"]');
@@ -250,7 +339,7 @@ test.describe('Complete Healthcare Workflow', () => {
     await page.fill('[data-testid="emergency-med-name"]', 'Epinefrina');
     await page.fill('[data-testid="emergency-med-dose"]', '1mg');
     await page.fill('[data-testid="emergency-med-route"]', 'IV');
-    
+
     const currentTime = new Date().toLocaleTimeString('pt-BR');
     await page.fill('[data-testid="emergency-med-time"]', currentTime);
 
@@ -262,60 +351,86 @@ test.describe('Complete Healthcare Workflow', () => {
 
     // Call for backup/ambulance
     await page.click('[data-testid="call-ambulance-btn"]');
-    await expect(page.locator('[data-testid="ambulance-called-status"]')).toContainText('SAMU chamado');
+    await expect(
+      page.locator('[data-testid="ambulance-called-status"]')
+    ).toContainText('SAMU chamado');
 
     // Document emergency outcome
     await page.click('[data-testid="emergency-outcome-tab"]');
-    await page.fill('[data-testid="emergency-outcome"]', 'Paciente estabilizado após protocolo de RCP. Transferido para CTI.');
+    await page.fill(
+      '[data-testid="emergency-outcome"]',
+      'Paciente estabilizado após protocolo de RCP. Transferido para CTI.'
+    );
 
     // Save emergency record
     await page.click('[data-testid="save-emergency-record-btn"]');
-    await expect(page.locator('text=Registro de emergência salvo')).toBeVisible();
+    await expect(
+      page.locator('text=Registro de emergência salvo')
+    ).toBeVisible();
 
     // Should generate emergency report
-    await expect(page.locator('[data-testid="emergency-report-generated"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="emergency-report-generated"]')
+    ).toBeVisible();
   });
 
   test('should handle telemedicine consultation workflow', async ({ page }) => {
     await page.goto('/appointments');
-    
+
     // Start telemedicine appointment
     await page.click('[data-testid="telemedicine-appointment"]');
     await page.click('[data-testid="start-video-consultation-btn"]');
 
     // Should initialize video interface
-    await expect(page.locator('[data-testid="video-consultation-interface"]')).toBeVisible();
-    
+    await expect(
+      page.locator('[data-testid="video-consultation-interface"]')
+    ).toBeVisible();
+
     // Video controls should be available
     await expect(page.locator('[data-testid="video-controls"]')).toBeVisible();
     await expect(page.locator('[data-testid="mute-btn"]')).toBeVisible();
     await expect(page.locator('[data-testid="video-btn"]')).toBeVisible();
 
     // Patient should appear as connected
-    await expect(page.locator('[data-testid="patient-connection-status"]')).toContainText('Conectado');
+    await expect(
+      page.locator('[data-testid="patient-connection-status"]')
+    ).toContainText('Conectado');
 
     // Share screen for showing exam results
     await page.click('[data-testid="share-screen-btn"]');
-    await expect(page.locator('[data-testid="screen-sharing-active"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="screen-sharing-active"]')
+    ).toBeVisible();
 
     // Record consultation notes during call
-    await page.fill('[data-testid="telemedicine-notes"]', 'Consulta por telemedicina. Paciente apresenta melhora do quadro de cefaleia.');
+    await page.fill(
+      '[data-testid="telemedicine-notes"]',
+      'Consulta por telemedicina. Paciente apresenta melhora do quadro de cefaleia.'
+    );
 
     // Take screenshot for medical record
     await page.click('[data-testid="capture-screenshot-btn"]');
-    await expect(page.locator('text=Captura salva no prontuário')).toBeVisible();
+    await expect(
+      page.locator('text=Captura salva no prontuário')
+    ).toBeVisible();
 
     // End consultation
     await page.click('[data-testid="end-consultation-btn"]');
-    
+
     // Should show consultation summary
-    await expect(page.locator('[data-testid="consultation-summary"]')).toBeVisible();
-    
+    await expect(
+      page.locator('[data-testid="consultation-summary"]')
+    ).toBeVisible();
+
     // Duration should be recorded
-    await expect(page.locator('[data-testid="consultation-duration"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="consultation-duration"]')
+    ).toBeVisible();
 
     // Save telemedicine record
     await page.click('[data-testid="save-telemedicine-record-btn"]');
-    await expect(page.locator('text=Teleconsulta registrada com sucesso')).toBeVisible();
+    await expect(
+      page.locator('text=Teleconsulta registrada com sucesso')
+    ).toBeVisible();
   });
 });

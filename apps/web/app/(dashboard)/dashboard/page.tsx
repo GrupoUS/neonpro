@@ -137,7 +137,8 @@ function DashboardMetricsCards() {
           <Alert>
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              Erro ao carregar métricas do dashboard: {error?.message || String(error)}
+              Erro ao carregar métricas do dashboard:{' '}
+              {error?.message || String(error)}
             </AlertDescription>
           </Alert>
         </div>
@@ -260,7 +261,8 @@ function RecentPatientsSection() {
         <Alert>
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
-            Erro ao carregar pacientes recentes: {error?.message || 'Erro desconhecido'}
+            Erro ao carregar pacientes recentes:{' '}
+            {error?.message || 'Erro desconhecido'}
           </AlertDescription>
         </Alert>
       </NeonGradientCard>
@@ -373,7 +375,9 @@ function TodaysAppointmentsSection() {
         <h2 className="mb-6 font-bold text-white text-xl">Agenda de Hoje</h2>
         <Alert>
           <AlertTriangle className="h-4 w-4" />
-          <AlertDescription>Erro ao carregar agenda: {error?.message || 'Erro desconhecido'}</AlertDescription>
+          <AlertDescription>
+            Erro ao carregar agenda: {error?.message || 'Erro desconhecido'}
+          </AlertDescription>
         </Alert>
       </NeonGradientCard>
     );

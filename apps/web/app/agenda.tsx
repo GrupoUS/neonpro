@@ -1,5 +1,6 @@
 'use client';
 
+import { Button, Card } from '@neonpro/ui';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   AlertCircle,
@@ -15,7 +16,6 @@ import {
   XCircle,
 } from 'lucide-react';
 import { useState } from 'react';
-import { Button, Card } from '@neonpro/ui';
 import { formatDate, formatTime } from '@/lib/utils';
 
 // Dados mock para a agenda
@@ -161,7 +161,9 @@ const AppointmentCard = ({ appointment, index }: AppointmentCardProps) => {
         },
       }}
     >
-      <Card className={`group border-2 ${statusInfo.borderColor} ${statusInfo.bgColor} p-6 shadow-lg transition-all duration-300 hover:shadow-xl`}>
+      <Card
+        className={`group border-2 ${statusInfo.borderColor} ${statusInfo.bgColor} p-6 shadow-lg transition-all duration-300 hover:shadow-xl`}
+      >
         <div className="mb-4 flex items-start justify-between">
           <div className="flex items-center space-x-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/20">
@@ -189,16 +191,18 @@ const AppointmentCard = ({ appointment, index }: AppointmentCardProps) => {
           </div>
         </div>
 
-          <div className="mb-4 grid grid-cols-2 gap-4">
-            <div className="flex items-center space-x-2 text-gray-300">
-              <Clock className="h-4 w-4 text-accent" />
-              <span className="text-sm">{formatTime(new Date(appointment.date))}</span>
-            </div>
-            <div className="flex items-center space-x-2 text-gray-300">
-              <MapPin className="h-4 w-4 text-accent" />
-              <span className="text-sm">{appointment.room}</span>
-            </div>
+        <div className="mb-4 grid grid-cols-2 gap-4">
+          <div className="flex items-center space-x-2 text-gray-300">
+            <Clock className="h-4 w-4 text-accent" />
+            <span className="text-sm">
+              {formatTime(new Date(appointment.date))}
+            </span>
           </div>
+          <div className="flex items-center space-x-2 text-gray-300">
+            <MapPin className="h-4 w-4 text-accent" />
+            <span className="text-sm">{appointment.room}</span>
+          </div>
+        </div>
 
         <div className="flex items-center justify-between">
           <div>
@@ -258,7 +262,7 @@ export default function Agenda() {
 
         {/* Controles superiores */}
         <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-4">
-          <Card className="p-4 bg-gradient-to-r from-primary/20 to-primary/10">
+          <Card className="bg-gradient-to-r from-primary/20 to-primary/10 p-4">
             <div className="flex items-center space-x-3">
               <Calendar className="h-6 w-6 text-primary" />
               <div>
@@ -270,7 +274,7 @@ export default function Agenda() {
             </div>
           </Card>
 
-          <Card className="p-4 bg-gradient-to-r from-secondary/20 to-secondary/10">
+          <Card className="bg-gradient-to-r from-secondary/20 to-secondary/10 p-4">
             <div className="relative">
               <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 transform text-gray-400" />
               <input
@@ -283,7 +287,7 @@ export default function Agenda() {
             </div>
           </Card>
 
-          <Card className="p-4 bg-gradient-to-r from-accent/20 to-accent/10">
+          <Card className="bg-gradient-to-r from-accent/20 to-accent/10 p-4">
             <div className="relative">
               <Filter className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 transform text-gray-400" />
               <select
@@ -327,7 +331,7 @@ export default function Agenda() {
             className="py-12 text-center"
             initial={{ opacity: 0 }}
           >
-            <Card className="mx-auto max-w-md p-6 bg-gradient-to-r from-primary/20 to-primary/10">
+            <Card className="mx-auto max-w-md bg-gradient-to-r from-primary/20 to-primary/10 p-6">
               <Calendar className="mx-auto mb-4 h-16 w-16 text-accent" />
               <h3 className="mb-2 font-semibold text-white text-xl">
                 Nenhuma consulta encontrada
@@ -335,9 +339,7 @@ export default function Agenda() {
               <p className="mb-4 text-gray-400">
                 Não há consultas que correspondam aos filtros selecionados.
               </p>
-              <Button variant="default">
-                Agendar Nova Consulta
-              </Button>
+              <Button variant="default">Agendar Nova Consulta</Button>
             </Card>
           </motion.div>
         )}

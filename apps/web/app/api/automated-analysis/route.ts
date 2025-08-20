@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const searchParams = request.nextUrl.searchParams();
+    const searchParams = request.nextUrl.searchParams;
     const filters = {
       patient_id: searchParams.get('patient_id') || undefined,
       treatment_type: searchParams.get('treatment_type') || undefined,
@@ -31,8 +31,9 @@ export async function GET(request: NextRequest) {
       created_by: searchParams.get('created_by') || undefined,
     };
 
-    // Validate filters    const validatedFilters =
-    validationSchemas.analysisSessionFilters.parse(filters);
+    // Validate filters
+    const validatedFilters =
+      validationSchemas.analysisSessionFilters.parse(filters);
 
     const sessions =
       await automatedBeforeAfterAnalysisService.getAnalysisSessions(
@@ -67,9 +68,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const _body = await request.json();
+    const body = await request.json();
 
-    // Validate request body    const validatedData = validationSchemas.createAnalysisSession.parse(body);
+    // Validate request body
+    const validatedData = validationSchemas.createAnalysisSession.parse(body);
 
     const session =
       await automatedBeforeAfterAnalysisService.createAnalysisSession(
@@ -117,8 +119,9 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    // Validate updates    const validatedUpdates =
-    validationSchemas.updateAnalysisSession.parse(updates);
+    // Validate updates
+    const validatedUpdates =
+      validationSchemas.updateAnalysisSession.parse(updates);
 
     const updatedSession =
       await automatedBeforeAfterAnalysisService.updateAnalysisSession(
@@ -148,7 +151,7 @@ export async function DELETE(request: NextRequest) {
     const supabase = createClient();
     const {
       data: { user },
-    } = await (await supabase).auth.getUser();
+    } = await supabase.auth.getUser();
 
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

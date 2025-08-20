@@ -94,7 +94,7 @@ export const patientApi = {
   // Get patient by ID
   getPatient: async (id: string): Promise<Patient> => {
     const response = await apiClient.api.v1.patients[':id'].$get({
-      param: { id }
+      param: { id },
     });
     if (!response.ok) {
       throw new Error(`Failed to fetch patient: ${response.status}`);
@@ -106,7 +106,7 @@ export const patientApi = {
   // Create new patient
   createPatient: async (data: CreatePatientRequest): Promise<Patient> => {
     const response = await apiClient.api.v1.patients.$post({
-      json: data
+      json: data,
     });
     if (!response.ok) {
       throw new Error(`Failed to create patient: ${response.status}`);
@@ -120,7 +120,7 @@ export const patientApi = {
     const { id, ...updateData } = data;
     const response = await apiClient.api.v1.patients[':id'].$put({
       param: { id },
-      json: updateData
+      json: updateData,
     });
     if (!response.ok) {
       throw new Error(`Failed to update patient: ${response.status}`);
@@ -132,7 +132,7 @@ export const patientApi = {
   // Delete patient
   deletePatient: async (id: string): Promise<void> => {
     const response = await apiClient.api.v1.patients[':id'].$delete({
-      param: { id }
+      param: { id },
     });
     if (!response.ok) {
       throw new Error(`Failed to delete patient: ${response.status}`);
@@ -169,7 +169,7 @@ export function usePatient(id: string) {
 
 export function useCreatePatient() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: patientApi.createPatient,
     onSuccess: () => {
@@ -184,7 +184,7 @@ export function useCreatePatient() {
 
 export function useUpdatePatient() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: patientApi.updatePatient,
     onSuccess: (data) => {
@@ -200,7 +200,7 @@ export function useUpdatePatient() {
 
 export function useDeletePatient() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: patientApi.deletePatient,
     onSuccess: () => {

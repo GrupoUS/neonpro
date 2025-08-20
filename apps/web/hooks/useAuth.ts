@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react';
 
 // Mock auth hook for development
 export function useAuth() {
-  const [user, setUser] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Mock user data
@@ -11,12 +11,12 @@ export function useAuth() {
       id: '1',
       name: 'Test User',
       email: 'test@example.com',
-      roles: ['user', 'admin']
-    }
-    
-    setUser(mockUser)
-    setLoading(false)
-  }, [])
+      roles: ['user', 'admin'],
+    };
+
+    setUser(mockUser);
+    setLoading(false);
+  }, []);
 
   return {
     user,
@@ -24,8 +24,8 @@ export function useAuth() {
     isLoading: loading, // Add alias for consistency
     signIn: () => Promise.resolve(),
     signOut: () => Promise.resolve(),
-    signUp: () => Promise.resolve()
-  }
+    signUp: () => Promise.resolve(),
+  };
 }
 
-export default useAuth
+export default useAuth;

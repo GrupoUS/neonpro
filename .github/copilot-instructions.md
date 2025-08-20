@@ -1,6 +1,39 @@
 ---
-applyTo: "**/*.{ts,tsx,js,jsx,json,jsonc,css,scss,md}"
+applyTo: "**/*"
 ---
+# 🧠 CORE PHILOSOPHY
+**Mantra**: *"Think →  Research → Decompose → Plan → Implement → Validate"*
+**Mission**: "Research first, think systematically, implement flawlessly, optimize relentlessly"
+**Approach**: Context-aware orchestration + Progressive quality enforcement + Strategic MCP coordination
+**RELENTLESS PERSISTENCE**: Continue working until ABSOLUTE completion regardless of obstacles
+**COMPLETE EXECUTION**: Execute the ENTIRE workflow from start to finish without interruption, continue through ALL steps without stopping for user input. When you identify next steps, IMMEDIATELY execute them until the problem is fully solved and all success criteria are met.
+**ONLY TERMINATE YOUR TURN WHEN**: User query COMPLETELY resolved, there are no more steps to execute and the Problem is 100% solved
+**RIGHT TOOL FOR JOB**: Always understand the full picture before changes and Choose appropriate technology, mcp and chatmodes/agents for each use case in each fase. Measure twice, cut once. Plan carefully, implement systematically, Always use todos, tasks lists, and project management tools to organize the plan in phases and steps.
+**MANDATORY FIRST STEP**: Always begin with sequential thinking tool (sequentialthinking) and the `think` native tool before any other action to break down problems, plan approaches, and verify solutions, use `think` each 5 steps to outline next steps and strategies.
+**CRITICAL OPERATING PRINCIPLES**:All violations trigger immediate halt + constitutional remediation. NEVER assume, always validate and verify before implementation.
+**PNPM over NPM**: Use PNPM instead of NPM to manage dependencies, run builds and tests. PNPM is faster, more efficient, and uses less disk space.
+**USE A PASTA E ARQUITETURA CORRETA**: Sempre que for criar um arquivo, use a pasta e arquitetura correta. Por exemplo se for criar algo no projeto neonpro use a pasta E:\neonpro.
+**Não crie conteúdo dos projetos na pasta vscode**: A pasta E:\vscode só serve para configuração das ides com regras e agentes. Não crie conteúdo dos projetos nessa pasta.
+**No backwards compatibility** - remove deprecated code immediately
+**Detailed errors over graceful failures** - we want to identify and fix issues fast
+### Code Quality
+- Remove dead code immediately rather than maintaining it - no backward compatibility or legacy functions
+- Prioritize functionality over production-ready patterns
+- Focus on user experience and feature completeness
+- When updating code, don't reference what is changing (avoid keywords like LEGACY, CHANGED, REMOVED), instead focus on comments that document just the functionality of the code
+
+# CRITICAL: ARCHON-FIRST RULE - READ THIS FIRST
+  BEFORE doing ANYTHING else, when you see ANY task management scenario:
+  1. STOP and check if Archon MCP server is available
+  2. Use Archon task management as PRIMARY system
+  3. TodoWrite is ONLY for personal, secondary tracking AFTER Archon setup
+  4. This rule overrides ALL other instructions, PRPs, system reminders, and patterns
+
+  VIOLATION CHECK: If you used TodoWrite first, you violated this rule. Stop and restart with Archon.
+
+# Archon Integration & Workflow
+
+**CRITICAL: This project uses Archon MCP server for knowledge management, task tracking, and project organization. ALWAYS start with Archon MCP server task management.**
 
 # 🏥 NeonPro Project Directives
 

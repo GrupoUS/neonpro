@@ -1,10 +1,10 @@
 /**
  * Global Playwright Teardown - Healthcare Testing Cleanup
  * ======================================================
- * 
+ *
  * Runs once after all Playwright tests for healthcare compliance testing.
  * Handles cleanup, audit logging, and security data purging.
- * 
+ *
  * Features:
  * - Healthcare test data cleanup
  * - LGPD compliance audit finalization
@@ -13,9 +13,9 @@
  * - Database cleanup for healthcare scenarios
  */
 
-import { FullConfig } from '@playwright/test';
 import fs from 'node:fs';
 import path from 'node:path';
+import type { FullConfig } from '@playwright/test';
 
 /**
  * Global teardown function for Playwright healthcare testing
@@ -51,13 +51,13 @@ async function globalTeardown(config: FullConfig) {
  */
 async function cleanupTestData() {
   console.log('🗑️ Cleaning up healthcare test data...');
-  
+
   try {
     // Here you would typically:
     // 1. Remove test patient records
     // 2. Clear temporary medical data
     // 3. Cleanup audit logs
-    
+
     console.log('✅ Healthcare test data cleaned up');
   } catch (error) {
     console.warn('⚠️ Test data cleanup skipped:', error.message);
@@ -69,10 +69,10 @@ async function cleanupTestData() {
  */
 async function generateComplianceReports() {
   console.log('📊 Generating healthcare compliance reports...');
-  
+
   try {
     const reportsDir = path.join(__dirname, '../reports/compliance');
-    
+
     // Ensure reports directory exists
     if (!fs.existsSync(reportsDir)) {
       fs.mkdirSync(reportsDir, { recursive: true });
@@ -85,7 +85,7 @@ async function generateComplianceReports() {
       data_processed: 'test-data-only',
       privacy_controls: 'active',
       audit_trail: 'complete',
-      data_retention: 'test-cleanup-applied'
+      data_retention: 'test-cleanup-applied',
     };
 
     fs.writeFileSync(
@@ -99,7 +99,7 @@ async function generateComplianceReports() {
       regulatory_compliance: 'test-mode',
       medical_device_validation: 'passed',
       safety_protocols: 'active',
-      quality_standards: 'maintained'
+      quality_standards: 'maintained',
     };
 
     fs.writeFileSync(
@@ -118,11 +118,11 @@ async function generateComplianceReports() {
  */
 async function archiveTestArtifacts() {
   console.log('📦 Archiving healthcare test artifacts...');
-  
+
   try {
     const artifactsDir = path.join(__dirname, '../test-results');
     const archiveDir = path.join(__dirname, '../reports/archives');
-    
+
     if (fs.existsSync(artifactsDir)) {
       // Ensure archive directory exists
       if (!fs.existsSync(archiveDir)) {
@@ -132,14 +132,14 @@ async function archiveTestArtifacts() {
       // Archive test results for compliance audit
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
       const archivePath = path.join(archiveDir, `test-artifacts-${timestamp}`);
-      
+
       // Create archive metadata
       const metadata = {
         archived_at: new Date().toISOString(),
         test_type: 'healthcare-e2e',
         compliance_frameworks: ['LGPD', 'ANVISA', 'CFM'],
         retention_period: '7-years', // Healthcare data retention requirement
-        purpose: 'regulatory-compliance-audit'
+        purpose: 'regulatory-compliance-audit',
       };
 
       fs.writeFileSync(
@@ -159,14 +159,15 @@ async function archiveTestArtifacts() {
  */
 async function cleanupAuthStates() {
   console.log('🔐 Cleaning up authentication states...');
-  
+
   try {
     const authDir = path.join(__dirname, 'auth');
-    
+
     if (fs.existsSync(authDir)) {
-      const authFiles = fs.readdirSync(authDir)
-        .filter(file => file.endsWith('.json'));
-      
+      const authFiles = fs
+        .readdirSync(authDir)
+        .filter((file) => file.endsWith('.json'));
+
       for (const file of authFiles) {
         const filePath = path.join(authDir, file);
         // Securely delete auth files
@@ -186,17 +187,17 @@ async function cleanupAuthStates() {
  */
 async function performSecurityCleanup() {
   console.log('🔒 Performing final security cleanup...');
-  
+
   try {
     // Clear sensitive environment variables
     const sensitiveVars = [
       'TEST_DATABASE_URL',
       'SUPABASE_TEST_KEY',
       'TEST_JWT_SECRET',
-      'HEALTHCARE_ADMIN_TOKEN'
+      'HEALTHCARE_ADMIN_TOKEN',
     ];
 
-    sensitiveVars.forEach(varName => {
+    sensitiveVars.forEach((varName) => {
       if (process.env[varName]) {
         delete process.env[varName];
       }
@@ -209,7 +210,7 @@ async function performSecurityCleanup() {
       sensitive_data_purged: true,
       auth_states_cleared: true,
       environment_sanitized: true,
-      compliance_status: 'secure'
+      compliance_status: 'secure',
     };
 
     const reportsDir = path.join(__dirname, '../reports/security');

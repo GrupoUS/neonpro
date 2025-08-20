@@ -52,7 +52,11 @@ async function testEndpoints() {
     const patientsResponse = await fetch(`${BACKEND_URL}/api/patients`);
     if (patientsResponse.ok) {
       const patientsData = await patientsResponse.json();
-      console.log('✅ Patients Endpoint:', patientsData.data?.length || 0, 'patients');
+      console.log(
+        '✅ Patients Endpoint:',
+        patientsData.data?.length || 0,
+        'patients'
+      );
     } else {
       console.log('⚠️  Patients Endpoint Response:', patientsResponse.status);
     }

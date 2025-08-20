@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 
 /**
  * Security middleware for Next.js application
@@ -12,7 +12,7 @@ export async function securityMiddleware(request: NextRequest) {
   response.headers.set('X-Content-Type-Options', 'nosniff');
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
   response.headers.set('X-XSS-Protection', '1; mode=block');
-  
+
   // Content Security Policy
   response.headers.set(
     'Content-Security-Policy',
@@ -21,7 +21,10 @@ export async function securityMiddleware(request: NextRequest) {
 
   // HSTS (only in production with HTTPS)
   if (process.env.NODE_ENV === 'production') {
-    response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+    response.headers.set(
+      'Strict-Transport-Security',
+      'max-age=31536000; includeSubDomains'
+    );
   }
 
   // Rate limiting headers (basic implementation)
@@ -38,7 +41,7 @@ export async function securityMiddleware(request: NextRequest) {
 export function isAuthenticated(request: NextRequest): boolean {
   const authHeader = request.headers.get('authorization');
   const sessionCookie = request.cookies.get('session');
-  
+
   // Basic auth check - in production, implement proper JWT validation
   return !!(authHeader || sessionCookie);
 }

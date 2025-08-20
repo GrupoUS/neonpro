@@ -34,7 +34,7 @@ type UseInventoryReturn = {
   // Loading states
   loading: boolean;
   error: string | null;
-  
+
   // Actions
   refreshData: () => Promise<void>;
   addItem: (item: Partial<InventoryItem>) => Promise<void>;
@@ -42,7 +42,9 @@ type UseInventoryReturn = {
   deleteItem: (id: string) => Promise<void>;
 };
 
-export function useInventory(options: UseInventoryOptions = {}): UseInventoryReturn {
+export function useInventory(
+  options: UseInventoryOptions = {}
+): UseInventoryReturn {
   const [state, setState] = useState<InventoryState>({
     items: [],
     loading: false,
@@ -50,21 +52,21 @@ export function useInventory(options: UseInventoryOptions = {}): UseInventoryRet
   });
 
   const refreshData = useCallback(async () => {
-    setState(prev => ({ ...prev, loading: true, error: null }));
-    
+    setState((prev) => ({ ...prev, loading: true, error: null }));
+
     try {
       // Placeholder implementation
       const mockItems: InventoryItem[] = [
         { id: '1', name: 'Sample Item', quantity: 10 },
       ];
-      
-      setState(prev => ({
+
+      setState((prev) => ({
         ...prev,
         items: mockItems,
         loading: false,
       }));
     } catch (error) {
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         error: error instanceof Error ? error.message : 'Unknown error',
         loading: false,
@@ -80,26 +82,29 @@ export function useInventory(options: UseInventoryOptions = {}): UseInventoryRet
       quantity: item.quantity || 0,
       barcode: item.barcode,
     };
-    
-    setState(prev => ({
+
+    setState((prev) => ({
       ...prev,
       items: [...prev.items, newItem],
     }));
   }, []);
 
-  const updateItem = useCallback(async (id: string, updates: Partial<InventoryItem>) => {
-    setState(prev => ({
-      ...prev,
-      items: prev.items.map(item => 
-        item.id === id ? { ...item, ...updates } : item
-      ),
-    }));
-  }, []);
+  const updateItem = useCallback(
+    async (id: string, updates: Partial<InventoryItem>) => {
+      setState((prev) => ({
+        ...prev,
+        items: prev.items.map((item) =>
+          item.id === id ? { ...item, ...updates } : item
+        ),
+      }));
+    },
+    []
+  );
 
   const deleteItem = useCallback(async (id: string) => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
-      items: prev.items.filter(item => item.id !== id),
+      items: prev.items.filter((item) => item.id !== id),
     }));
   }, []);
 

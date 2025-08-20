@@ -46,16 +46,17 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Formatar resposta    const formattedConversations =
-    conversations?.map((conv) => ({
-      id: conv.id,
-      title: conv.title,
-      model_used: conv.model_used,
-      is_active: conv.is_active,
-      created_at: conv.created_at,
-      updated_at: conv.updated_at,
-      message_count: conv.assistant_messages?.[0]?.count || 0,
-    })) || [];
+    // Formatar resposta
+    const formattedConversations =
+      conversations?.map((conv) => ({
+        id: conv.id,
+        title: conv.title,
+        model_used: conv.model_used,
+        is_active: conv.is_active,
+        created_at: conv.created_at,
+        updated_at: conv.updated_at,
+        message_count: conv.assistant_messages?.[0]?.count || 0,
+      })) || [];
 
     return NextResponse.json({
       conversations: formattedConversations,

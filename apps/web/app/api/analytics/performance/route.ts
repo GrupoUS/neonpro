@@ -136,21 +136,24 @@ export async function POST(request: NextRequest) {
     await checkPerformanceAlerts(enrichedMetrics, supabase);
 
     // Return success response with appropriate cache headers
-    const response = NextResponse.json({
-      success: true,
-      stored: data?.length || 0,
-      metrics: data?.map((d) => ({
-        id: d.id,
-        name: (d as any).name,
-        grade: d.grade,
-      })),
-    }, {
-      headers: {
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0',
+    const response = NextResponse.json(
+      {
+        success: true,
+        stored: data?.length || 0,
+        metrics: data?.map((d) => ({
+          id: d.id,
+          name: (d as any).name,
+          grade: d.grade,
+        })),
+      },
+      {
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          Pragma: 'no-cache',
+          Expires: '0',
+        },
       }
-    });
+    );
 
     return response;
   } catch (_error) {
@@ -313,7 +316,8 @@ function _calculateAggregatedStats(metrics: any[]) {
       ...stats,
       min: values[0],
       max: values[count - 1],
-      average: values.reduce((sum: number, val: number) => sum + val, 0) / count,
+      average:
+        values.reduce((sum: number, val: number) => sum + val, 0) / count,
       median: values[Math.floor(count / 2)],
       p75: values[Math.floor(count * 0.75)],
       p95: values[Math.floor(count * 0.95)],

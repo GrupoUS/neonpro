@@ -1,10 +1,10 @@
 /**
  * Global Playwright Setup - Healthcare Testing Configuration
  * ========================================================
- * 
+ *
  * Runs once before all Playwright tests for healthcare compliance testing.
  * Configures environment, database connections, and security settings.
- * 
+ *
  * Features:
  * - Database initialization for healthcare data
  * - LGPD compliance environment setup
@@ -13,18 +13,21 @@
  * - Test data seeding for healthcare scenarios
  */
 
-import { chromium, FullConfig } from '@playwright/test';
 import path from 'node:path';
+import { chromium, type FullConfig } from '@playwright/test';
 
 // Healthcare test configuration constants
 const HEALTHCARE_CONFIG = {
-  TEST_DATABASE_URL: process.env.TEST_DATABASE_URL || 'postgresql://test:test@localhost:5432/neonpro_test',
-  SUPABASE_TEST_URL: process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321',
+  TEST_DATABASE_URL:
+    process.env.TEST_DATABASE_URL ||
+    'postgresql://test:test@localhost:5432/neonpro_test',
+  SUPABASE_TEST_URL:
+    process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321',
   SUPABASE_TEST_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'test-key',
   BASE_URL: process.env.BASE_URL || 'http://localhost:3000',
   HEALTHCARE_MODE: 'true',
   LGPD_COMPLIANCE: 'true',
-  ANVISA_VALIDATION: 'true'
+  ANVISA_VALIDATION: 'true',
 } as const;
 
 /**
@@ -58,7 +61,7 @@ async function globalSetup(config: FullConfig) {
  */
 function setupHealthcareEnvironment() {
   console.log('📋 Configuring healthcare environment...');
-  
+
   // Set healthcare testing environment variables
   Object.entries(HEALTHCARE_CONFIG).forEach(([key, value]) => {
     process.env[key] = value;
@@ -84,17 +87,20 @@ function setupHealthcareEnvironment() {
  */
 async function setupTestDatabase() {
   console.log('🗄️ Setting up healthcare test database...');
-  
+
   try {
     // Here you would typically:
     // 1. Connect to test database
     // 2. Run migrations
     // 3. Seed with healthcare test data
-    
+
     // For now, we'll just validate connection
     console.log('✅ Test database ready for healthcare scenarios');
   } catch (error) {
-    console.warn('⚠️ Test database setup skipped (using mock data):', error.message);
+    console.warn(
+      '⚠️ Test database setup skipped (using mock data):',
+      error.message
+    );
   }
 }
 
@@ -103,7 +109,7 @@ async function setupTestDatabase() {
  */
 async function setupAuthenticationStates(config: FullConfig) {
   console.log('🔐 Setting up authentication states...');
-  
+
   try {
     const browser = await chromium.launch();
     const context = await browser.newContext();
@@ -115,19 +121,19 @@ async function setupAuthenticationStates(config: FullConfig) {
       { type: 'doctor', file: 'doctor-auth.json' },
       { type: 'nurse', file: 'nurse-auth.json' },
       { type: 'patient', file: 'patient-auth.json' },
-      { type: 'receptionist', file: 'receptionist-auth.json' }
+      { type: 'receptionist', file: 'receptionist-auth.json' },
     ];
 
     for (const userType of userTypes) {
       // Navigate to login and authenticate (mock for now)
       await page.goto(`${HEALTHCARE_CONFIG.BASE_URL}/login`);
-      
+
       // Save authentication state
       const authDir = path.join(__dirname, 'auth');
-      await context.storageState({ 
-        path: path.join(authDir, userType.file) 
+      await context.storageState({
+        path: path.join(authDir, userType.file),
       });
-      
+
       console.log(`✅ ${userType.type} authentication state saved`);
     }
 
@@ -142,19 +148,19 @@ async function setupAuthenticationStates(config: FullConfig) {
  */
 function setupComplianceEnvironment() {
   console.log('⚖️ Setting up healthcare compliance environment...');
-  
+
   // LGPD (Brazilian GDPR) compliance setup
   process.env.LGPD_AUDIT_MODE = 'true';
   process.env.DATA_PRIVACY_LEVEL = 'healthcare';
-  
+
   // ANVISA (Brazilian Health Agency) compliance
   process.env.ANVISA_COMPLIANCE_MODE = 'true';
   process.env.MEDICAL_DEVICE_VALIDATION = 'true';
-  
+
   // CFM (Brazilian Medical Council) standards
   process.env.CFM_STANDARDS_MODE = 'true';
   process.env.MEDICAL_ETHICS_VALIDATION = 'true';
-  
+
   console.log('✅ Healthcare compliance environment configured');
 }
 
