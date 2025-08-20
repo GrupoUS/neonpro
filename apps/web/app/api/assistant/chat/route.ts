@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
         status,
         service,
         notes,
-        patients(name, phone)
+        patients!inner(name, phone)
       `
       )
       .eq('user_id', user.id)
@@ -121,7 +121,7 @@ CONTEXTO RECENTE: ${
 ${recentAppointments
   .map(
     (apt) =>
-      `- ${apt.date_time}: ${apt.patients?.name} - ${apt.service} (${apt.status})`
+      `- ${apt.date_time}: ${apt.patients?.name || 'Nome não informado'} - ${apt.service || 'Serviço não informado'} (${apt.status})`
   )
   .join('\n')}`
         : 'Nenhum agendamento recente encontrado.'

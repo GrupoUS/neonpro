@@ -11,7 +11,7 @@ const nextConfig = {
   },
   
   // Turbo configuration for monorepo
-  transpilePackages: ['@neonpro/ui', '@neonpro/shared', '@neonpro/types', '@neonpro/utils'],
+  transpilePackages: ['@neonpro/ui', '@neonpro/domain', '@neonpro/types', '@neonpro/utils'],
   
   // Environment variables
   env: {

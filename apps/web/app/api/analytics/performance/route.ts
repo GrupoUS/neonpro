@@ -96,9 +96,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const supabaseClient = createClient();
     const {
       data: { session },
-    } = await (await supabase).auth.getSession();
+    } = await supabaseClient.auth.getSession();
     const userId = session?.user?.id;
 
     // Enrich metrics with additional context
@@ -143,12 +144,12 @@ export async function POST(request: NextRequest) {
         name: (d as any).name,
         grade: d.grade,
       })),
-    });
-
-    // Add cache headers (no caching for this endpoint)
-    const headers = CacheHeaders.noCache();
-    headers.forEach((value, key) => {
-      response.headers.set(key, value);
+    }, {
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      }
     });
 
     return response;
@@ -164,9 +165,10 @@ export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient;
     const { searchParams } = new URL(request.url);
+    const supabaseClient = createClient();
     const {
       data: { session },
-    } = await (await supabase).auth.getSession();
+    } = await supabaseClient.auth.getSession();
     if (!session) {
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -174,13 +176,14 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Parse query parameters    const userId = searchParams.get('userId') || session.user.id();
+    // Parse query parameters
+    const userId = searchParams.get('userId') || session.user.id;
     const metric = searchParams.get('metric') as MetricType | null;
     const timeRange = searchParams.get('timeRange') || '24h';
     const limit = Number.parseInt(searchParams.get('limit') || '100', 10);
 
     // Build query
-    let query = supabase
+    let query = supabase()
       .from('performance_metrics')
       .select('*')
       .eq('userId', userId)
@@ -192,7 +195,8 @@ export async function GET(request: NextRequest) {
       query = query.eq('name', metric);
     }
 
-    // Filter by time range    const timeRangeMs = parseTimeRange(timeRange);
+    // Filter by time range
+    const timeRangeMs = _parseTimeRange(timeRange);
     if (timeRangeMs > 0) {
       const cutoff = Date.now() - timeRangeMs;
       query = query.gte('timestamp', cutoff);
@@ -207,7 +211,8 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Calculate aggregated statistics    const stats = calculateAggregatedStats(data || []);
+    // Calculate aggregated statistics
+    const stats = _calculateAggregatedStats(data || []);
 
     const response = NextResponse.json({
       metrics: data || [],
@@ -216,10 +221,8 @@ export async function GET(request: NextRequest) {
       stats,
     });
 
-    // Add cache headers (5 minute cache for aggregated data)    const headers = CacheHeaders.apiResponse();
-    headers.forEach((value, key) => {
-      response.headers.set(key, value);
-    });
+    // Add cache headers (5 minute cache for aggregated data)
+    response.headers.set('Cache-Control', 'public, s-maxage=300');
 
     return response;
   } catch (_error) {
@@ -301,22 +304,25 @@ function _calculateAggregatedStats(metrics: any[]) {
     statsByMetric[(metric as any).name].grades[metric.grade]++;
   }
 
-  // Calculate percentiles and averages  for (const [metricName, stats] of Object.entries(statsByMetric)) {
-  const values = stats.values.sort((a: number, b: number) => a - b);
-  const count = values.length;
+  // Calculate percentiles and averages
+  for (const [metricName, stats] of Object.entries(statsByMetric)) {
+    const values = stats.values.sort((a: number, b: number) => a - b);
+    const count = values.length;
 
-  statsByMetric[metricName] = {
-    ...stats,
-    min: values[0],
-    max: values[count - 1],
-    average: values.reduce((sum: number, val: number) => sum + val, 0) / count,
-    median: values[Math.floor(count / 2)],
-    p75: values[Math.floor(count * 0.75)],
-    p95: values[Math.floor(count * 0.95)],
-    p99: values[Math.floor(count * 0.99)],
-  };
+    statsByMetric[metricName] = {
+      ...stats,
+      min: values[0],
+      max: values[count - 1],
+      average: values.reduce((sum: number, val: number) => sum + val, 0) / count,
+      median: values[Math.floor(count / 2)],
+      p75: values[Math.floor(count * 0.75)],
+      p95: values[Math.floor(count * 0.95)],
+      p99: values[Math.floor(count * 0.99)],
+    };
 
-  statsByMetric[metricName].values = undefined; // Remove raw values to reduce response size  }
+    // Remove raw values to reduce response size
+    statsByMetric[metricName].values = undefined;
+  }
 
   return statsByMetric;
 }

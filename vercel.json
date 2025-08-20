@@ -4,8 +4,8 @@
   "regions": ["sao1"],
   "framework": "nextjs",
   "installCommand": "pnpm install",
-  "buildCommand": "pnpm build",
-  "outputDirectory": ".next",
+  "buildCommand": "cd apps/web && pnpm run build",
+  "outputDirectory": "apps/web/.next",
   "env": {
     "NODE_ENV": "production",
     "VERCEL": "1",

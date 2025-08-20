@@ -15,52 +15,63 @@ import {
   XCircle,
 } from 'lucide-react';
 import { useState } from 'react';
-import CosmicGlowButton from '@/components/ui/CosmicGlowButton';
-import NeonGradientCard from '@/components/ui/NeonGradientCard';
+import { Button, Card } from '@neonpro/ui';
 import { formatDate, formatTime } from '@/lib/utils';
 
 // Dados mock para a agenda
 const agendaData = {
   appointments: [
     {
-      id: 1,
+      id: '1',
       patient: 'Maria Silva',
       phone: '(11) 99999-9999',
-      date: new Date('2024-01-15T09:00:00'),
+      date: '2024-01-15T09:00:00',
+      title: 'Consulta Inicial',
       type: 'Consulta Inicial',
-      status: 'confirmado',
+      status: 'confirmado' as const,
       room: 'Sala 01',
       doctor: 'Dr. João Oliveira',
+      professional: 'Dr. João Oliveira',
+      duration: '60 min',
     },
     {
-      id: 2,
+      id: '2',
       patient: 'Carlos Santos',
       phone: '(11) 88888-8888',
-      date: new Date('2024-01-15T10:30:00'),
+      date: '2024-01-15T10:30:00',
+      title: 'Retorno',
       type: 'Retorno',
-      status: 'pendente',
+      status: 'pendente' as const,
       room: 'Sala 02',
       doctor: 'Dra. Ana Costa',
+      professional: 'Dra. Ana Costa',
+      duration: '45 min',
     },
     {
-      id: 3,
+      id: '3',
       patient: 'Fernanda Lima',
       phone: '(11) 77777-7777',
-      date: new Date('2024-01-15T14:00:00'),
+      date: '2024-01-15T14:00:00',
+      title: 'Exame',
       type: 'Exame',
-      status: 'confirmado',
+      status: 'confirmado' as const,
       room: 'Sala 03',
       doctor: 'Dr. Pedro Silva',
+      professional: 'Dr. Pedro Silva',
+      duration: '30 min',
     },
     {
-      id: 4,
+      id: '4',
       patient: 'Roberto Costa',
       phone: '(11) 66666-6666',
-      date: new Date('2024-01-15T15:30:00'),
+      date: '2024-01-15T15:30:00',
+      title: 'Consulta',
       type: 'Consulta',
-      status: 'cancelado',
+      status: 'cancelado' as const,
       room: 'Sala 01',
       doctor: 'Dr. João Oliveira',
+      professional: 'Dr. João Oliveira',
+      duration: '60 min',
     },
   ],
   timeSlots: [
@@ -115,9 +126,12 @@ interface AppointmentType {
   date: string;
   title: string;
   patient: string;
-  status: string;
+  phone: string;
+  status: keyof typeof statusConfig;
   room: string;
   duration: string;
+  type: string;
+  doctor: string;
   professional: string;
   notes?: string;
 }
@@ -147,7 +161,7 @@ const AppointmentCard = ({ appointment, index }: AppointmentCardProps) => {
         },
       }}
     >
-      <NeonGradientCard className="group" gradient={statusInfo.color}>
+      <Card className={`group border-2 ${statusInfo.borderColor} ${statusInfo.bgColor} p-6 shadow-lg transition-all duration-300 hover:shadow-xl`}>
         <div className="mb-4 flex items-start justify-between">
           <div className="flex items-center space-x-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/20">
@@ -175,16 +189,16 @@ const AppointmentCard = ({ appointment, index }: AppointmentCardProps) => {
           </div>
         </div>
 
-        <div className="mb-4 grid grid-cols-2 gap-4">
-          <div className="flex items-center space-x-2 text-gray-300">
-            <Clock className="h-4 w-4 text-accent" />
-            <span className="text-sm">{formatTime(appointment.date)}</span>
+          <div className="mb-4 grid grid-cols-2 gap-4">
+            <div className="flex items-center space-x-2 text-gray-300">
+              <Clock className="h-4 w-4 text-accent" />
+              <span className="text-sm">{formatTime(new Date(appointment.date))}</span>
+            </div>
+            <div className="flex items-center space-x-2 text-gray-300">
+              <MapPin className="h-4 w-4 text-accent" />
+              <span className="text-sm">{appointment.room}</span>
+            </div>
           </div>
-          <div className="flex items-center space-x-2 text-gray-300">
-            <MapPin className="h-4 w-4 text-accent" />
-            <span className="text-sm">{appointment.room}</span>
-          </div>
-        </div>
 
         <div className="flex items-center justify-between">
           <div>
@@ -198,17 +212,17 @@ const AppointmentCard = ({ appointment, index }: AppointmentCardProps) => {
         </div>
 
         <div className="mt-4 flex space-x-2">
-          <CosmicGlowButton className="flex-1" size="sm" variant="primary">
+          <Button className="flex-1" size="sm" variant="default">
             Editar
-          </CosmicGlowButton>
-          <CosmicGlowButton className="flex-1" size="sm" variant="success">
+          </Button>
+          <Button className="flex-1" size="sm" variant="default">
             Confirmar
-          </CosmicGlowButton>
-          <CosmicGlowButton className="flex-1" size="sm" variant="danger">
+          </Button>
+          <Button className="flex-1" size="sm" variant="destructive">
             Cancelar
-          </CosmicGlowButton>
+          </Button>
         </div>
-      </NeonGradientCard>
+      </Card>
     </motion.div>
   );
 };
@@ -244,7 +258,7 @@ export default function Agenda() {
 
         {/* Controles superiores */}
         <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-4">
-          <NeonGradientCard gradient="primary">
+          <Card className="p-4 bg-gradient-to-r from-primary/20 to-primary/10">
             <div className="flex items-center space-x-3">
               <Calendar className="h-6 w-6 text-primary" />
               <div>
@@ -254,9 +268,9 @@ export default function Agenda() {
                 </p>
               </div>
             </div>
-          </NeonGradientCard>
+          </Card>
 
-          <NeonGradientCard gradient="secondary">
+          <Card className="p-4 bg-gradient-to-r from-secondary/20 to-secondary/10">
             <div className="relative">
               <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 transform text-gray-400" />
               <input
@@ -267,9 +281,9 @@ export default function Agenda() {
                 value={searchTerm}
               />
             </div>
-          </NeonGradientCard>
+          </Card>
 
-          <NeonGradientCard gradient="accent">
+          <Card className="p-4 bg-gradient-to-r from-accent/20 to-accent/10">
             <div className="relative">
               <Filter className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 transform text-gray-400" />
               <select
@@ -283,15 +297,15 @@ export default function Agenda() {
                 <option value="cancelado">Cancelados</option>
               </select>
             </div>
-          </NeonGradientCard>
+          </Card>
 
-          <CosmicGlowButton
+          <Button
             className="flex h-full items-center justify-center"
-            variant="success"
+            variant="default"
           >
             <Plus className="mr-2 h-5 w-5" />
             Nova Consulta
-          </CosmicGlowButton>
+          </Button>
         </div>
 
         {/* Lista de consultas */}
@@ -313,7 +327,7 @@ export default function Agenda() {
             className="py-12 text-center"
             initial={{ opacity: 0 }}
           >
-            <NeonGradientCard className="mx-auto max-w-md" gradient="primary">
+            <Card className="mx-auto max-w-md p-6 bg-gradient-to-r from-primary/20 to-primary/10">
               <Calendar className="mx-auto mb-4 h-16 w-16 text-accent" />
               <h3 className="mb-2 font-semibold text-white text-xl">
                 Nenhuma consulta encontrada
@@ -321,10 +335,10 @@ export default function Agenda() {
               <p className="mb-4 text-gray-400">
                 Não há consultas que correspondam aos filtros selecionados.
               </p>
-              <CosmicGlowButton variant="primary">
+              <Button variant="default">
                 Agendar Nova Consulta
-              </CosmicGlowButton>
-            </NeonGradientCard>
+              </Button>
+            </Card>
           </motion.div>
         )}
       </div>

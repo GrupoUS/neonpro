@@ -19,15 +19,15 @@ const _analyticsQuerySchema = z.object({
     .enum(['day', 'week', 'month', 'quarter'])
     .optional()
     .default('day'),
-  userId: z.string().optional,
+  userId: z.string().optional(),
   subscriptionTier: z.enum(['free', 'pro', 'enterprise']).optional(),
 });
 
 const eventTrackingSchema = z.object({
-  event_type: z.string,
-  user_id: z.string,
-  properties: z.record(z.any()).optional,
-  timestamp: z.string().optional,
+  event_type: z.string(),
+  user_id: z.string(),
+  properties: z.record(z.any()).optional(),
+  timestamp: z.string().optional(),
 });
 
 /**
@@ -35,7 +35,8 @@ const eventTrackingSchema = z.object({
  */
 export async function GET(request: NextRequest) {
   try {
-    // Extract user info from middleware headers    const userId = request.headers.get('x-user-id');
+    // Extract user info from middleware headers
+    const userId = request.headers.get('x-user-id');
     const userRole = request.headers.get('x-user-role');
     const _subscriptionStatus = request.headers.get('x-user-subscription');
 
@@ -46,8 +47,9 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Parse query parameters    const { searchParams } = new URL(request.url);
-    const _queryParams = {
+    // Parse query parameters
+    const { searchParams } = new URL(request.url);
+    const queryParams = {
       startDate: searchParams.get('startDate'),
       endDate: searchParams.get('endDate'),
       metric: searchParams.get('metric'),
@@ -56,7 +58,8 @@ export async function GET(request: NextRequest) {
       subscriptionTier: searchParams.get('subscriptionTier'),
     };
 
-    // Validate query parameters    const validatedParams = analyticsQuerySchema.parse(queryParams);
+    // Validate query parameters
+    const validatedParams = _analyticsQuerySchema.parse(queryParams);
 
     // Check permissions - only admins can view other users' data
     if (
@@ -70,8 +73,8 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Set default date range if not provided (last 30 days)    const endDate =
-    validatedParams.endDate || new Date().toISOString().split('T')[0];
+    // Set default date range if not provided (last 30 days)
+    const endDate = validatedParams.endDate || new Date().toISOString().split('T')[0];
     const startDate =
       validatedParams.startDate ||
       new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
@@ -177,7 +180,8 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const validatedEvent = eventTrackingSchema.parse(body);
 
-    // Ensure user can only track events for themselves (unless admin)    const userRole = request.headers.get('x-user-role');
+    // Ensure user can only track events for themselves (unless admin)
+    const userRole = request.headers.get('x-user-role');
     if (validatedEvent.user_id !== userId && userRole !== 'admin') {
       return NextResponse.json(
         { error: 'Cannot track events for other users' },
