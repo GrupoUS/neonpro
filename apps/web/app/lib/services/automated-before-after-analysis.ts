@@ -1,6 +1,6 @@
 // Automated Before/After Analysis Service stub
 export const automatedBeforeAfterAnalysisService = {
-  async getAnalysisSessions(filters: any) {
+  async getAnalysisSessions(_filters: any) {
     return [];
   },
   async createAnalysisSession(data: any) {
@@ -9,9 +9,9 @@ export const automatedBeforeAfterAnalysisService = {
   async updateAnalysisSession(id: string, updates: any) {
     return { id, ...updates };
   },
-  async deleteAnalysisSession(id: string) {
+  async deleteAnalysisSession(_id: string) {
     return { success: true };
-  }
+  },
 };
 
 export default automatedBeforeAfterAnalysisService;

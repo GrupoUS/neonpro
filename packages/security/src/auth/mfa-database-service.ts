@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
-import { MfaConfig, type MfaMethod } from './mfa-service';
+import type { MfaMethod } from './mfa-service';
 
-export interface MfaSettings {
+export type MfaSettings = {
   id?: string;
   userId: string;
   clinicId?: string;
@@ -38,9 +38,9 @@ export interface MfaSettings {
 
   createdAt?: Date;
   updatedAt?: Date;
-}
+};
 
-export interface MfaVerificationCode {
+export type MfaVerificationCode = {
   id?: string;
   userId: string;
   clinicId?: string;
@@ -54,9 +54,9 @@ export interface MfaVerificationCode {
   expiresAt: Date;
   createdAt?: Date;
   verifiedAt?: Date;
-}
+};
 
-export interface MfaAuditLog {
+export type MfaAuditLog = {
   id?: string;
   userId: string;
   clinicId?: string;
@@ -68,14 +68,14 @@ export interface MfaAuditLog {
   errorMessage?: string;
   metadata?: Record<string, any>;
   createdAt?: Date;
-}
+};
 
 /**
  * Database operations for MFA functionality
  * Integrates with Supabase for persistent storage
  */
 export class MfaDatabaseService {
-  private supabase = createClient(
+  private readonly supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
@@ -187,7 +187,9 @@ export class MfaDatabaseService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return this.mapDbDataToSettings(data);
   }
@@ -217,7 +219,9 @@ export class MfaDatabaseService {
       .select('id')
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return data.id;
   }
@@ -244,7 +248,9 @@ export class MfaDatabaseService {
       .order('created_at', { ascending: false })
       .limit(1);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     if (!codes || codes.length === 0) {
       return { valid: false };
@@ -297,7 +303,9 @@ export class MfaDatabaseService {
 
     const { error } = await this.supabase.from('mfa_audit_logs').insert(dbData);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
   }
 
   /**
@@ -310,7 +318,9 @@ export class MfaDatabaseService {
       .lt('expires_at', new Date().toISOString())
       .select('id');
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     return data?.length || 0;
   }
@@ -333,7 +343,9 @@ export class MfaDatabaseService {
       .order('created_at', { ascending: false })
       .limit(1);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     if (!data || data.length === 0) {
       return { locked: false, attempts: 0 };

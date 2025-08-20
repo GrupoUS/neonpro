@@ -334,8 +334,8 @@ export function validateBackupCode(code: string): boolean {
 /**
  * Main MFA service that orchestrates different authentication methods
  */
-const MAX_ATTEMPTS = 3;
-const LOCKOUT_DURATION = LOCKOUT_DURATION_MINUTES * MINUTES_TO_MILLISECONDS; // 15 minutes
+const _MAX_ATTEMPTS = 3;
+const _LOCKOUT_DURATION = LOCKOUT_DURATION_MINUTES * MINUTES_TO_MILLISECONDS; // 15 minutes
 
 /**
  * Setup MFA for user
@@ -467,8 +467,7 @@ export async function setupMfa(
           message: 'Método MFA não suportado',
         };
     }
-  } catch (error) {
-    console.error('MFA setup error:', error);
+  } catch (_error) {
     return {
       success: false,
       message: 'Erro interno ao configurar MFA',
@@ -556,8 +555,7 @@ export async function verifyMfa(
       method,
       message: 'Código de verificação inválido',
     };
-  } catch (error) {
-    console.error('MFA verification error:', error);
+  } catch (_error) {
     await recordFailedMfa(
       request.userId,
       request.method,
@@ -589,8 +587,7 @@ async function checkLockout(userId: string): Promise<{
       locked: lockoutStatus.locked,
       lockoutUntil: lockoutStatus.lockoutUntil,
     };
-  } catch (error) {
-    console.error('Error checking lockout status:', error);
+  } catch (_error) {
     return { locked: false };
   }
 }
@@ -602,8 +599,7 @@ async function getUserTotpSecret(userId: string): Promise<string | null> {
   try {
     const settings = await mfaDb.getMfaSettings(userId);
     return settings?.totpSecret || null;
-  } catch (error) {
-    console.error('Error getting TOTP secret:', error);
+  } catch (_error) {
     return null;
   }
 }
@@ -618,8 +614,7 @@ async function verifySmsCodeForUser(
   try {
     const result = await mfaDb.verifyCode(userId, code, 'sms');
     return result.valid;
-  } catch (error) {
-    console.error('Error verifying SMS code:', error);
+  } catch (_error) {
     return false;
   }
 }
@@ -634,8 +629,7 @@ async function verifyBackupCodeForUser(
   try {
     const result = await mfaDb.verifyCode(userId, code, 'recovery');
     return result.valid;
-  } catch (error) {
-    console.error('Error verifying backup code:', error);
+  } catch (_error) {
     return false;
   }
 }
@@ -650,25 +644,20 @@ async function storeVerificationCode(
   phoneNumber?: string,
   email?: string
 ): Promise<void> {
-  try {
-    const expiresAt = new Date();
-    expiresAt.setMinutes(expiresAt.getMinutes() + 5); // 5 minute expiry
+  const expiresAt = new Date();
+  expiresAt.setMinutes(expiresAt.getMinutes() + 5); // 5 minute expiry
 
-    await mfaDb.storeVerificationCode({
-      userId,
-      code,
-      type,
-      phoneNumber,
-      email,
-      used: false,
-      attempts: 0,
-      maxAttempts: 3,
-      expiresAt,
-    });
-  } catch (error) {
-    console.error('Error storing verification code:', error);
-    throw error;
-  }
+  await mfaDb.storeVerificationCode({
+    userId,
+    code,
+    type,
+    phoneNumber,
+    email,
+    used: false,
+    attempts: 0,
+    maxAttempts: 3,
+    expiresAt,
+  });
 }
 
 /**
@@ -708,9 +697,7 @@ async function recordSuccessfulMfa(
         await mfaDb.upsertMfaSettings({ ...settings, ...updateData });
       }
     }
-  } catch (error) {
-    console.error('Error recording successful MFA:', error);
-  }
+  } catch (_error) {}
 }
 
 /**
@@ -730,7 +717,5 @@ async function recordFailedMfa(
       errorMessage,
       metadata: { method },
     });
-  } catch (error) {
-    console.error('Error recording failed MFA:', error);
-  }
+  } catch (_error) {}
 }

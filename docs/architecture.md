@@ -73,46 +73,42 @@ NeonPro implements an **AI-First Edge-Native SaaS architecture** designed specif
 ```
 neonpro/
 ├── apps/
-│   └── web/               # Next.js 15 App Router (Main Application)
-│       ├── app/           # Next.js App Router pages
-│       ├── components/    # Application-specific components
-│       ├── lib/           # Application utilities
-│       └── middleware.ts  # Edge middleware for auth/routing
-├── packages/              # Shared packages for monorepo
-│   ├── ui/               # @neonpro/ui - Shared UI components
-│   │   ├── src/
-│   │   │   ├── components/  # Reusable UI components
-│   │   │   ├── lib/         # UI utilities (cn, etc.)
-│   │   │   └── index.ts     # Package exports
-│   │   └── package.json
-│   ├── utils/            # @neonpro/utils - Shared utilities
-│   │   ├── src/
-│   │   │   ├── date.ts      # Date formatting functions
-│   │   │   ├── validation.ts # Validation utilities
-│   │   │   ├── format.ts    # Text formatting utilities
-│   │   │   └── index.ts     # Package exports
-│   │   └── package.json
+│   ├── web/               # Next.js 15 App Router (Main Application)
+│   │   ├── app/           # Next.js App Router pages
+│   │   ├── components/    # Application-specific components
+│   │   ├── lib/           # Application utilities
+│   │   └── middleware.ts  # Edge middleware for auth/routing
+│   ├── api/               # Hono.dev Backend (Edge Functions)
+│   │   ├── src/           # Hono.dev application source
+│   │   ├── routes/        # API route definitions
+│   │   ├── middleware/    # Auth, LGPD, rate limiting
+│   │   └── index.ts       # Hono app entry point
+│   └── admin/             # Admin dashboard (future)
+├── packages/              # Shared packages (24 total) - Real Turborepo structure
+│   ├── ui/               # @neonpro/ui - shadcn/ui + TweakCN theme
 │   ├── types/            # @neonpro/types - Shared TypeScript definitions
-│   │   ├── src/
-│   │   │   ├── common.ts    # Common interfaces (BaseEntity, etc.)
-│   │   │   ├── user.ts      # User-related types
-│   │   │   ├── patient.ts   # Patient data types
-│   │   │   ├── appointment.ts # Appointment types
-│   │   │   └── index.ts     # Package exports
-│   │   └── package.json
-│   ├── shared/           # @neonpro/shared - Business logic
-│   │   ├── src/
-│   │   │   ├── services/    # Business services
-│   │   │   ├── validations/ # Zod schemas
-│   │   │   └── constants/   # Business constants
-│   │   └── package.json
-│   ├── core-services/    # @neonpro/core-services - Centralized services
-│   │   ├── src/
-│   │   │   ├── hooks/       # React hooks
-│   │   │   ├── services/    # Core business services
-│   │   │   └── index.ts     # Package exports
-│   │   └── package.json
-│   └── config/           # @neonpro/config - Shared configurations
+│   ├── utils/            # @neonpro/utils - Shared utilities
+│   ├── shared/           # @neonpro/shared - Business logic + Zod schemas
+│   ├── core-services/    # @neonpro/core-services - React hooks + services
+│   ├── config/           # @neonpro/config - Shared configurations (ESLint, Tailwind, TS)
+│   ├── domain/           # @neonpro/domain - Domain models and business rules
+│   ├── api-client/       # @neonpro/api-client - Hono RPC client for type-safe API calls
+│   ├── compliance/       # @neonpro/compliance - LGPD/ANVISA/CFM compliance modules
+│   ├── security/         # @neonpro/security - Security utilities and middleware
+│   ├── ai/               # @neonpro/ai - AI services integration (OpenAI, scheduling algorithms)
+│   ├── analytics/        # @neonpro/analytics - Business intelligence and metrics
+│   ├── notifications/    # @neonpro/notifications - Email, SMS, push notification services
+│   ├── payments/         # @neonpro/payments - Payment processing and billing
+│   ├── storage/          # @neonpro/storage - File upload and management (Supabase Storage)
+│   ├── auth/             # @neonpro/auth - Authentication utilities and providers
+│   ├── webhooks/         # @neonpro/webhooks - Webhook handling and processing
+│   ├── integrations/     # @neonpro/integrations - External service integrations
+│   ├── testing-utils/    # @neonpro/testing-utils - Shared testing utilities and mocks
+│   ├── eslint-config/    # @neonpro/eslint-config - Shared ESLint configuration (legacy)
+│   ├── tsconfig/         # @neonpro/tsconfig - Shared TypeScript configurations
+│   ├── tailwind-config/  # @neonpro/tailwind-config - Shared Tailwind configuration
+│   ├── constants/        # @neonpro/constants - Application constants and enums
+│   └── validators/       # @neonpro/validators - Zod schemas and validation utilities
 │       ├── eslint-config.js # ESLint shared config
 │       ├── tailwind.config.js # Tailwind shared config
 │       ├── tsconfig.json    # TypeScript shared config
@@ -144,14 +140,30 @@ neonpro/
 └── package.json         # Root package.json with workspace scripts
 ```
 
-**Shared Package Architecture:**
+**Turborepo Architecture (24 Packages + 3 Apps):**
 
-- **@neonpro/ui**: Reusable UI components built with shadcn/ui and Radix UI
-- **@neonpro/utils**: Common utility functions for date handling, validation, and formatting
-- **@neonpro/types**: Shared TypeScript interfaces and types for healthcare entities
-- **@neonpro/shared**: Business logic and domain services
-- **@neonpro/core-services**: 🆕 Centralized React hooks and core services
-- **@neonpro/config**: Shared configuration files for ESLint, Tailwind, and TypeScript
+**Core UI & UX:**
+- **@neonpro/ui**: shadcn/ui components with TweakCN theme integration
+- **@neonpro/tailwind-config**: Shared Tailwind configuration with healthcare design tokens
+
+**Type Safety & API:**
+- **@neonpro/types**: Comprehensive TypeScript interfaces for healthcare entities
+- **@neonpro/api-client**: Hono RPC client for type-safe API communication
+- **@neonpro/validators**: Zod schemas for runtime validation
+
+**Business Logic:**
+- **@neonpro/shared**: Core business services and domain logic
+- **@neonpro/domain**: Healthcare-specific domain models and business rules  
+- **@neonpro/core-services**: React hooks (usePatients, useAppointments, etc.)
+
+**Healthcare Compliance:**
+- **@neonpro/compliance**: LGPD/ANVISA/CFM regulatory compliance modules
+- **@neonpro/security**: Authentication, authorization, and security utilities
+
+**Enterprise Features:**
+- **@neonpro/ai**: AI scheduling algorithms and OpenAI integration
+- **@neonpro/analytics**: Business intelligence and performance metrics
+- **@neonpro/payments**: Payment processing and billing systems
 
 **Centralized Infrastructure:**
 
@@ -181,8 +193,9 @@ graph TB
         CC[Client Components]
     end
 
-    subgraph "API Layer"
-        REST[REST API Routes]
+    subgraph "API Layer (Hono.dev)"
+        HONO[Hono.dev API Server]
+        RPC[Type-safe RPC Client]
         WS[WebSocket/Realtime]
         AI_API[AI Integration Layer]
     end
@@ -216,10 +229,12 @@ graph TB
 
     UI --> SC
     UI --> CC
-    SC --> REST
+    SC --> HONO
+    CC --> RPC
     CC --> WS
 
-    REST --> PG
+    HONO --> PG
+    RPC --> HONO
     WS --> PG
     AI_API --> OPENAI
     AI_API --> CLAUDE
@@ -259,10 +274,10 @@ This is the DEFINITIVE technology selection for the entire project. All developm
 | Frontend Language    | TypeScript                          | 5.6+        | Type-safe development             | Healthcare data requires strict typing and error prevention |
 | Frontend Framework   | Next.js                             | 15.0+       | React SSR/SSG with App Router     | Edge rendering, SEO, and performance for clinic management  |
 | UI Component Library | shadcn/ui                           | Latest      | Customizable components           | Accessible, customizable, and consistent with design system |
-| State Management     | Zustand + React Query               | 4.5+ / 5.0+ | Client state + server state       | Simplified state management with optimistic updates         |
+| State Management     | TanStack Query + Zustand           | 5.0+ / 4.5+ | Server state + client state       | TanStack Query for server state, Zustand for complex client logic |
 | Backend Language     | TypeScript                          | 5.6+        | Unified type safety               | Shared types between frontend and backend                   |
-| Backend Framework    | Next.js API Routes + Edge Functions | 15.0+       | Serverless API endpoints          | Scalable, edge-optimized for low latency                    |
-| API Style            | REST + WebSocket                    | OpenAPI 3.0 | RESTful with real-time updates    | Standard REST with real-time for appointment updates        |
+| Backend Framework    | Hono.dev + Vercel Edge Functions   | 4.0+        | High-performance Edge Functions   | Ultra-fast runtime, type-safe RPC, perfect Vercel integration |
+| API Style            | REST + WebSocket + RPC              | OpenAPI 3.0 | RESTful with type-safe RPC        | Hono RPC client for type-safe API calls + real-time updates |
 | Database             | Supabase PostgreSQL                 | 15+         | Primary data store with RLS       | Multi-tenant isolation and real-time subscriptions          |
 | Cache                | Vercel Edge + Supabase Cache        | Native      | Multi-layer caching               | Edge caching + database query caching                       |
 | File Storage         | Supabase Storage                    | Latest      | Patient files and media           | HIPAA-compliant storage with access controls                |
@@ -271,8 +286,8 @@ This is the DEFINITIVE technology selection for the entire project. All developm
 | Backend Testing      | Jest + Supertest                    | 29+ / 6+    | API endpoint testing              | Ensure API reliability for critical clinic operations       |
 | E2E Testing          | Playwright                          | 1.40+       | End-to-end testing                | Full user journey testing for compliance validation         |
 | Package Manager      | PNPM                                | 8.15+       | Monorepo package management       | Fast, disk-efficient package management with workspaces     |
-| Build Orchestrator   | Turborepo                           | 2.5+        | Monorepo build coordination       | Intelligent caching and parallel builds across packages     |
-| Build Tool           | Next.js + Turbopack                 | 15.0+       | Development and production builds | Optimized builds with edge deployment                       |
+| Build Orchestrator   | Turborepo                           | 2.0+        | Monorepo build coordination       | 24 packages + 3 apps, intelligent caching, 60-80% faster builds |
+| Build Tool           | Next.js + tsup + Turbopack         | 15.0+ / 8.0+| Development and production builds | Next.js for apps, tsup for packages, optimized edge deployment |
 | Bundler              | Built-in Next.js                    | 15.0+       | Asset bundling                    | Optimized for Vercel deployment                             |
 | IaC Tool             | Vercel CLI + Supabase CLI           | Latest      | Infrastructure as code            | Declarative infrastructure management                       |
 | CI/CD                | GitHub Actions + Vercel             | Latest      | Automated deployment              | Git-based deployment with preview environments              |
@@ -3162,8 +3177,7 @@ interface ProjectStructure {
 ├── 📄 next.config.js                    # Next.js configuration
 ├── 📄 tailwind.config.js                # Tailwind CSS configuration
 ├── 📄 tsconfig.json                     # TypeScript configuration
-├── 📄 eslint.config.js                  # ESLint configuration
-├── 📄 prettier.config.js                # Prettier configuration
+├── 📄 biome.json                        # Biome configuration (linting + formatting)
 ├── 📄 playwright.config.ts              # Playwright E2E test config
 ├── 📄 jest.config.js                    # Jest unit test configuration
 ├── 📄 .env.local                        # Local environment variables
@@ -3793,7 +3807,7 @@ sprint_1_foundation:
       - 'Set up Supabase database with RLS policies'
       - 'Implement user authentication with Supabase Auth'
       - 'Create base UI components with accessibility attributes'
-      - 'Configure ESLint, Prettier, TypeScript strict mode'
+      - 'Configure Biome (linting + formatting), TypeScript strict mode'
       - 'Set up testing framework (Jest, React Testing Library)'
 
     validation_criteria:

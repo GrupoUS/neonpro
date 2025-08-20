@@ -275,14 +275,9 @@ async function validateHealthcareCompliance() {
       cacheManager.includes('patient-data');
   }
 
-  // Check for accessibility (ESLint config)
-  const eslintPath = path.join(
-    process.cwd(),
-    'packages',
-    'eslint-config',
-    'healthcare.js'
-  );
-  complianceChecks.accessibilityOptimization = fs.existsSync(eslintPath);
+  // Check for accessibility (Biome config)
+  const biomeConfigPath = path.join(process.cwd(), 'biome.jsonc');
+  complianceChecks.accessibilityOptimization = fs.existsSync(biomeConfigPath);
 
   // Clinical workflow optimization (healthcare-specific thresholds)
   const webVitalsPath = path.join(

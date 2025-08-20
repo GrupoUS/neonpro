@@ -15,7 +15,7 @@ import {
  * Stock Alerts Service - Core business logic for managing stock alerts
  */
 export class StockAlertsService {
-  private supabase = createClient();
+  private readonly supabase = createClient();
 
   /**
    * Get user's clinic context
@@ -297,7 +297,9 @@ export class StockAlertsService {
     }
 
     const { data: items, error } = await stockQuery;
-    if (error || !items) return alerts;
+    if (error || !items) {
+      return alerts;
+    }
 
     for (const item of items) {
       const alertNeeded = this.shouldTriggerAlert(item, config);
@@ -317,7 +319,9 @@ export class StockAlertsService {
             config,
             alertNeeded.message
           );
-          if (newAlert) alerts.push(newAlert);
+          if (newAlert) {
+            alerts.push(newAlert);
+          }
         }
       }
     }
@@ -410,7 +414,6 @@ export class StockAlertsService {
       .single();
 
     if (error) {
-      console.error('Failed to create alert:', error);
       return null;
     }
 

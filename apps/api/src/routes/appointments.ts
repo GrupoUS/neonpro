@@ -34,7 +34,7 @@ appointmentRoutes.use('*', requireAuth());
  */
 appointmentRoutes.get('/', async (c) => {
   try {
-    const user = c.get('user')!;
+    const _user = c.get('user')!;
 
     const appointments = await db.getAppointments();
 
@@ -43,7 +43,6 @@ appointmentRoutes.get('/', async (c) => {
       count: appointments.length,
     });
   } catch (error) {
-    console.error('List appointments error:', error);
     return c.json(
       {
         error: {
@@ -84,7 +83,6 @@ appointmentRoutes.post(
         201
       );
     } catch (error) {
-      console.error('Create appointment error:', error);
       return c.json(
         {
           error: {
@@ -114,7 +112,7 @@ appointmentRoutes.get(
   async (c) => {
     try {
       const { id } = c.req.valid('param');
-      const user = c.get('user')!;
+      const _user = c.get('user')!;
 
       // TODO: Implement getAppointmentById when schema is ready
       return c.json({
@@ -122,7 +120,6 @@ appointmentRoutes.get(
         appointment_id: id,
       });
     } catch (error) {
-      console.error('Get appointment error:', error);
       return c.json(
         {
           error: {
@@ -154,7 +151,7 @@ appointmentRoutes.put(
     try {
       const { id } = c.req.valid('param');
       const data = c.req.valid('json');
-      const user = c.get('user')!;
+      const _user = c.get('user')!;
 
       // TODO: Implement updateAppointment when schema is ready
       return c.json({
@@ -163,7 +160,6 @@ appointmentRoutes.put(
         data,
       });
     } catch (error) {
-      console.error('Update appointment error:', error);
       return c.json(
         {
           error: {

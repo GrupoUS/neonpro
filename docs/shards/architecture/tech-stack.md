@@ -10,15 +10,18 @@
 - **TypeScript 5.x** - Type safety e development experience
 
 ### **Frontend Stack**
-- **Next.js 15** - React framework com App Router
+- **Next.js 15** - React framework com App Router + Server Components
 - **React 19** - UI library com Server Components
+- **TanStack Query 5.x** - Server state management e data fetching
 - **Tailwind CSS 3.x** - Utility-first CSS framework
-- **shadcn/ui** - Component library baseada em Radix UI
+- **shadcn/ui + TweakCN** - Component library com healthcare theme
 
 ### **Backend & Database**
-- **Supabase** - PostgreSQL, Auth, Real-time, Edge Functions
+- **Hono.dev 4.x** - Ultra-fast web framework para Edge Functions
+- **Vercel Edge Functions** - Serverless compute com Hono.dev runtime
+- **Supabase** - PostgreSQL, Auth, Real-time, Storage
 - **Row Level Security (RLS)** - Database-level authorization
-- **Supabase Edge Functions** - Serverless compute para APIs
+- **Hono RPC Client** - Type-safe API communication
 
 ### **Development & Quality**
 - **Biome** - Code formatting e linting (substitui ESLint + Prettier)
@@ -38,6 +41,7 @@ RUNTIME_DEPENDENCIES:
     
   State_Management:
     - "@tanstack/react-query": "^5.0.0"
+    - "@tanstack/react-query-devtools": "^5.0.0"
     - "zustand": "^4.0.0"
     
   UI_Components:
@@ -50,6 +54,11 @@ RUNTIME_DEPENDENCIES:
     - "zod": "^3.22.0"
     - "@hookform/resolvers": "^3.3.0"
     
+  Backend_Framework:
+    - "hono": "^4.0.0"
+    - "@hono/node-server": "^1.0.0"
+    - "@hono/zod-validator": "^0.2.0"
+
   Backend_SDKs:
     - "@supabase/supabase-js": "^2.38.0"
     - "@supabase/ssr": "^0.0.10"
@@ -317,6 +326,84 @@ resolution-mode: highest
 }
 ```
 
+### **Hono.dev Configuration (apps/api)**
+```typescript
+// apps/api/src/index.ts - Main Hono application
+import { Hono } from 'hono'
+import { cors } from 'hono/cors'
+import { logger } from 'hono/logger'
+import { secureHeaders } from 'hono/secure-headers'
+
+// Route imports
+import { authRoutes } from './routes/auth'
+import { patientsRoutes } from './routes/patients'
+import { appointmentsRoutes } from './routes/appointments'
+import { clinicsRoutes } from './routes/clinics'
+
+// Middleware imports
+import { authMiddleware } from './middleware/auth'
+import { lgpdMiddleware } from './middleware/lgpd'
+import { rateLimitMiddleware } from './middleware/rate-limit'
+
+const app = new Hono()
+
+// Global middleware
+app.use('*', cors({
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://neonpro.app'] 
+    : ['http://localhost:3000'],
+  credentials: true,
+}))
+
+app.use('*', logger())
+app.use('*', secureHeaders())
+app.use('*', rateLimitMiddleware())
+app.use('*', lgpdMiddleware())
+
+// Health check
+app.get('/health', (c) => c.json({ status: 'ok', timestamp: new Date().toISOString() }))
+
+// API routes with authentication
+app.route('/api/v1/auth', authRoutes)
+app.use('/api/v1/*', authMiddleware())
+app.route('/api/v1/patients', patientsRoutes)
+app.route('/api/v1/appointments', appointmentsRoutes)
+app.route('/api/v1/clinics', clinicsRoutes)
+
+export default app
+export type AppType = typeof app
+```
+
+```typescript
+// apps/api/package.json - Hono project configuration
+{
+  "name": "@neonpro/api",
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsup",
+    "start": "node dist/index.js",
+    "test": "vitest",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "hono": "^4.0.0",
+    "@hono/node-server": "^1.0.0",
+    "@hono/zod-validator": "^0.2.0",
+    "@supabase/supabase-js": "^2.38.0",
+    "zod": "^3.23.8",
+    "jose": "^5.0.0"
+  },
+  "devDependencies": {
+    "@neonpro/tsconfig": "workspace:*",
+    "tsx": "^4.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.2.0",
+    "vitest": "^1.0.0"
+  }
+}
+```
+
 ## 🚀 **Build Scripts**
 
 ### **Root package.json Scripts**
@@ -324,7 +411,10 @@ resolution-mode: highest
 {
   "scripts": {
     "build": "turbo run build",
+    "build:api": "turbo run build --filter=@neonpro/api",
     "dev": "turbo run dev",
+    "dev:api": "turbo run dev --filter=@neonpro/api",
+    "dev:web": "turbo run dev --filter=@neonpro/web",
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint:fix",
     "type-check": "turbo run type-check",

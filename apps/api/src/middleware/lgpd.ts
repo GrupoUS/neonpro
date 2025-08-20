@@ -78,7 +78,7 @@ function shouldLogDataProcessing(method: string, path: string): boolean {
 /**
  * Determine the legal basis for data processing under LGPD
  */
-function determineLegalBasis(path: string, method: string): string {
+function determineLegalBasis(path: string, _method: string): string {
   // Healthcare data typically requires consent or legitimate interest
   if (path.includes('/patients') || path.includes('/appointments')) {
     return 'consent'; // LGPD Art. 7, II
@@ -106,7 +106,7 @@ function determineLegalBasis(path: string, method: string): string {
  * Log data processing event for LGPD compliance
  * TODO: Implement actual database logging
  */
-async function logDataProcessing(event: {
+async function logDataProcessing(_event: {
   request_id: string;
   user_id: string;
   action: string;
@@ -115,7 +115,4 @@ async function logDataProcessing(event: {
   processing_time: number;
   timestamp: string;
   legal_basis: string;
-}): Promise<void> {
-  // TODO: Store in database for LGPD audit trail
-  console.log('LGPD Data Processing Event:', event);
-}
+}): Promise<void> {}

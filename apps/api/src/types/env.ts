@@ -2,7 +2,7 @@
  * Environment types for Hono.dev application
  */
 
-export interface AppEnv {
+export type AppEnv = {
   Bindings: {
     // Vercel environment variables
     NODE_ENV: string;
@@ -47,4 +47,4 @@ export interface AppEnv {
     ip_address?: string;
     user_agent?: string;
   };
-}
+};

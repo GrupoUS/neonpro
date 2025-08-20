@@ -263,7 +263,7 @@ export class RootDirectoryCleanup {
       'check_imports.js',
       'check_middleware.js',
       'check_mocks.js',
-      'check_prettier_configs.js',
+      'check_biome_configs.js',
       'check_story.js',
       'check_story_05_02.js',
       'check_test_content.js',

@@ -5,7 +5,7 @@ import type { NotificationChannel, StockAlert } from '@/lib/types/stock-alerts';
  * Stock Notifications Service - Multi-channel notification delivery
  */
 export class StockNotificationsService {
-  private supabase = createClient();
+  private readonly supabase = createClient();
 
   /**
    * Send notifications for a stock alert through configured channels
@@ -423,7 +423,7 @@ export class StockNotificationsService {
   private formatSMSContent(alert: StockAlert): string {
     const shortMessage = `🚨 ${alert.alertType.replace('_', ' ').toUpperCase()}: ${alert.message.substring(0, 100)}...`;
     return shortMessage.length > 160
-      ? shortMessage.substring(0, 157) + '...'
+      ? `${shortMessage.substring(0, 157)}...`
       : shortMessage;
   }
 
@@ -518,7 +518,9 @@ export class StockNotificationsService {
       (acc, log) => {
         acc.total++;
         acc.byChannel[log.channel] = (acc.byChannel[log.channel] || 0) + 1;
-        if (log.success) acc.successful++;
+        if (log.success) {
+          acc.successful++;
+        }
         return acc;
       },
       {

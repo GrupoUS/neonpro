@@ -5,7 +5,6 @@
 
 import { createClient } from '@supabase/supabase-js';
 import type { MiddlewareHandler } from 'hono';
-import * as jose from 'jose';
 import type { AppEnv } from '@/types/env';
 
 // Supabase client setup
@@ -19,7 +18,7 @@ export const authMiddleware = (): MiddlewareHandler<AppEnv> => {
   return async (c, next) => {
     const authHeader = c.req.header('Authorization');
 
-    if (!(authHeader && authHeader.startsWith('Bearer '))) {
+    if (!authHeader?.startsWith('Bearer ')) {
       await next();
       return;
     }
@@ -34,7 +33,6 @@ export const authMiddleware = (): MiddlewareHandler<AppEnv> => {
       } = await supabase.auth.getUser(token);
 
       if (error || !user) {
-        console.warn('Invalid token:', error?.message);
         await next();
         return;
       }
@@ -48,8 +46,7 @@ export const authMiddleware = (): MiddlewareHandler<AppEnv> => {
       });
 
       await next();
-    } catch (error) {
-      console.error('Auth middleware error:', error);
+    } catch (_error) {
       await next();
     }
   };

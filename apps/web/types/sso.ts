@@ -1,5 +1,5 @@
 // Single Sign-On Types
-export interface SSOProvider {
+export type SSOProvider = {
   id: string;
   name: string;
   type: 'saml' | 'oauth2' | 'oidc' | 'ldap';
@@ -8,15 +8,15 @@ export interface SSOProvider {
   metadata: Record<string, any>;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
-export interface SSOConfiguration {
+export type SSOConfiguration = {
   // OAuth2/OIDC Configuration  clientId: string;
   clientSecret: string;
   authorizationUrl: string;
   tokenUrl: string;
   userInfoUrl: string;
-  scope: Array<string>;
+  scope: string[];
   // SAML Configuration  entityId: string;
   ssoUrl: string;
   sloUrl: string;
@@ -30,10 +30,10 @@ export interface SSOConfiguration {
   // Common Configuration  attributeMapping: AttributeMapping;
   autoProvision: boolean;
   defaultRole: string;
-  allowedDomains: Array<string>;
-}
+  allowedDomains: string[];
+};
 
-export interface AttributeMapping {
+export type AttributeMapping = {
   email: string;
   firstName: string;
   lastName: string;
@@ -42,9 +42,9 @@ export interface AttributeMapping {
   department: string;
   title: string;
   phone: string;
-}
+};
 
-export interface SSOSession {
+export type SSOSession = {
   id: string;
   userId: string;
   providerId: string;
@@ -55,9 +55,9 @@ export interface SSOSession {
   expiresAt: Date;
   createdAt: Date;
   lastUsed: Date;
-}
+};
 
-export interface SSOUser {
+export type SSOUser = {
   id: string;
   providerId: string;
   providerUserId: string;
@@ -70,9 +70,9 @@ export interface SSOUser {
   lastLogin: Date;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
-export interface SSOAuthRequest {
+export type SSOAuthRequest = {
   id: string;
   providerId: string;
   state: string;
@@ -82,9 +82,9 @@ export interface SSOAuthRequest {
   codeChallengeMethod: string;
   createdAt: Date;
   expiresAt: Date;
-}
+};
 
-export interface SSOAuthResponse {
+export type SSOAuthResponse = {
   code: string;
   state: string;
   error: string;
@@ -94,18 +94,18 @@ export interface SSOAuthResponse {
   expiresIn: number;
   refreshToken: string;
   idToken: string;
-}
+};
 
-export interface SSOTokens {
+export type SSOTokens = {
   accessToken: string;
   refreshToken: string;
   idToken: string;
   tokenType: string;
   expiresIn: number;
   scope: string;
-}
+};
 
-export interface SSOUserInfo {
+export type SSOUserInfo = {
   sub: string;
   email: string;
   emailVerified: boolean;
@@ -114,11 +114,11 @@ export interface SSOUserInfo {
   familyName: string;
   picture: string;
   locale: string;
-  groups: Array<string>;
+  groups: string[];
   [key: string]: any;
-}
+};
 
-export interface SSOAuditLog {
+export type SSOAuditLog = {
   id: string;
   providerId: string;
   userId: string;
@@ -129,7 +129,7 @@ export interface SSOAuditLog {
   userAgent: string;
   timestamp: Date;
   details: Record<string, any>;
-}
+};
 
 export type SSOAction =
   | 'login_initiated'
@@ -142,7 +142,7 @@ export type SSOAction =
   | 'user_updated'
   | 'session_expired';
 
-export interface SSOMetrics {
+export type SSOMetrics = {
   providerId: string;
   totalLogins: number;
   successfulLogins: number;
@@ -153,17 +153,17 @@ export interface SSOMetrics {
   period: {;
   start: Date;
   end: Date;
-}
+};
 }
 
-export interface SSOProviderStatus {
+export type SSOProviderStatus = {
   providerId: string;
   isHealthy: boolean;
   lastCheck: Date;
   responseTime: number;
   error: string;
   uptime: number;
-}
+};
 
 // Predefined SSO providersexport const SSO_PROVIDERS = {
 GOOGLE: 'google', MICROSOFT;
@@ -195,7 +195,7 @@ attributes: Record<string, string | string[]>;
 }
 }
 
-export interface SAMLRequest {
+export type SAMLRequest = {
   id: string;
   issuer: string;
   destination: string;
@@ -204,10 +204,10 @@ export interface SAMLRequest {
   nameIdPolicy: {;
   format: string;
   allowCreate: boolean;
-}
+};
 }
 
-export interface SAMLResponse {
+export type SAMLResponse = {
   id: string;
   inResponseTo: string;
   issuer: string;
@@ -215,6 +215,6 @@ export interface SAMLResponse {
   status: {;
   code: string;
   message: string;
-}
+};
 assertion: SAMLAssertion;
 }

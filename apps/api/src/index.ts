@@ -33,7 +33,6 @@ import { prettyJSON } from 'hono/pretty-json';
 import { secureHeaders } from 'hono/secure-headers';
 import { timing } from 'hono/timing';
 import { auditMiddleware } from '@/middleware/audit';
-import { authMiddleware } from '@/middleware/auth';
 import { errorHandler } from '@/middleware/error-handler';
 import { lgpdMiddleware } from '@/middleware/lgpd';
 import { rateLimitMiddleware } from '@/middleware/rate-limit';
@@ -101,8 +100,7 @@ app.use('*', async (c, next) => {
     // Make database available in context
     c.set('dbClient', 'supabase');
     await next();
-  } catch (error) {
-    console.error('Database middleware error:', error);
+  } catch (_error) {
     return c.json({ error: 'Database middleware failed' }, 500);
   }
 });
@@ -165,7 +163,6 @@ app.get('/health', async (c) => {
 
     return c.json(healthStatus, isHealthy ? 200 : 503);
   } catch (error) {
-    console.error('Health check failed:', error);
     return c.json(
       {
         status: 'unhealthy',
@@ -216,18 +213,10 @@ export default app;
 if (ENVIRONMENT === 'development') {
   const { serve } = await import('@hono/node-server');
 
-  const port = Number.parseInt(process.env.PORT || '8000');
-
-  console.log('🚀 NeonPro API Server starting...');
-  console.log(`📍 Environment: ${ENVIRONMENT}`);
-  console.log(`🌐 Server: http://localhost:${port}`);
-  console.log(`📚 API Docs: http://localhost:${port}/docs`);
-  console.log(`❤️  Health: http://localhost:${port}/health`);
+  const port = Number.parseInt(process.env.PORT || '8000', 10);
 
   serve({
     fetch: app.fetch,
     port,
   });
-
-  console.log(`✅ NeonPro API Server running on port ${port}`);
 }

@@ -9,13 +9,13 @@ import type { AppEnv } from '@/types/env';
 // In-memory store for rate limiting (TODO: Replace with Redis in production)
 const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
 
-interface RateLimitConfig {
+type RateLimitConfig = {
   windowMs: number; // Time window in milliseconds
   maxRequests: number; // Maximum requests per window
   message?: string;
   skipSuccessfulRequests?: boolean;
   skipFailedRequests?: boolean;
-}
+};
 
 // Default rate limit configuration
 const defaultConfig: RateLimitConfig = {

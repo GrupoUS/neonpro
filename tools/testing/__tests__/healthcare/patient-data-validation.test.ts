@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 /**
  * Patient Data Validation Tests - LGPD Critical Component
@@ -11,13 +11,16 @@ import { beforeEach, describe, expect, it } from 'vitest';
 // Mock patient data validation service
 const mockPatientValidation = {
   validateCPF: (cpf: string) => {
-    if (!cpf) return { valid: false, error: 'CPF required' };
+    if (!cpf) {
+      return { valid: false, error: 'CPF required' };
+    }
 
     // Remove formatting
     const cleanCPF = cpf.replace(/\D/g, '');
 
-    if (cleanCPF.length !== 11)
+    if (cleanCPF.length !== 11) {
       return { valid: false, error: 'CPF must have 11 digits' };
+    }
 
     // Check for known invalid patterns
     const invalidPatterns = ['00000000000', '11111111111', '22222222222'];
@@ -49,8 +52,8 @@ const mockPatientValidation = {
     }
 
     // Remove highly sensitive medical data
-    delete sanitized.medicalHistory;
-    delete sanitized.allergies;
+    sanitized.medicalHistory = undefined;
+    sanitized.allergies = undefined;
 
     return sanitized;
   },

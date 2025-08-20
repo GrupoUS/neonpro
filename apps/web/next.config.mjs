@@ -8,8 +8,8 @@ const nextConfig = {
     '@neonpro/db'
   ],
   eslint: {
-    // HEALTHCARE CRITICAL: Code quality errors MUST be fixed for medical accuracy
-    ignoreDuringBuilds: false,
+    // HEALTHCARE CRITICAL: Using Biome for code quality validation
+    ignoreDuringBuilds: true, // Biome handles linting in CI/CD pipeline
   },
   typescript: {
     // HEALTHCARE CRITICAL: TypeScript errors MUST be fixed for patient safety

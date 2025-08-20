@@ -9,7 +9,7 @@
  */
 
 const { spawn } = require('node:child_process');
-const path = require('node:path');
+const _path = require('node:path');
 
 // Test configurations
 const CONFIGS = {
@@ -37,8 +37,6 @@ const HEALTHCARE_ENV = {
  */
 function runCommand(command, args = [], options = {}) {
   return new Promise((resolve, reject) => {
-    console.log(`🔄 Running: ${command} ${args.join(' ')}`);
-
     const child = spawn(command, args, {
       stdio: 'inherit',
       shell: true,
@@ -48,16 +46,13 @@ function runCommand(command, args = [], options = {}) {
 
     child.on('close', (code) => {
       if (code === 0) {
-        console.log(`✅ ${command} completed successfully`);
         resolve(code);
       } else {
-        console.log(`❌ ${command} failed with code ${code}`);
         reject(new Error(`Command failed with code ${code}`));
       }
     });
 
     child.on('error', (error) => {
-      console.error(`❌ Error running ${command}:`, error);
       reject(error);
     });
   });
@@ -77,8 +72,7 @@ async function runVitest(config = 'simple') {
       configFile,
       '--reporter=verbose',
     ]);
-  } catch (error) {
-    console.error('Vitest failed:', error.message);
+  } catch (_error) {
     process.exit(1);
   }
 }
@@ -97,8 +91,7 @@ async function runPlaywright(config = 'simple') {
       configFile,
       '--reporter=line',
     ]);
-  } catch (error) {
-    console.error('Playwright failed:', error.message);
+  } catch (_error) {
     process.exit(1);
   }
 }
@@ -111,9 +104,6 @@ async function main() {
   const command = args[0];
   const config = args[1] || 'simple';
 
-  console.log('🏥 NeonPro Healthcare Test Runner');
-  console.log('================================');
-
   switch (command) {
     case 'vitest':
       await runVitest(config);
@@ -124,32 +114,15 @@ async function main() {
       break;
 
     case 'all':
-      console.log('Running all tests...');
       await runVitest(config);
       await runPlaywright(config);
       break;
-
-    case 'help':
     default:
-      console.log('Usage:');
-      console.log(
-        '  node run-tests.js vitest [simple|full]     - Run Vitest tests'
-      );
-      console.log(
-        '  node run-tests.js playwright [simple|full] - Run Playwright tests'
-      );
-      console.log(
-        '  node run-tests.js all [simple|full]        - Run all tests'
-      );
-      console.log(
-        '  node run-tests.js help                     - Show this help'
-      );
       break;
   }
 }
 
 // Run the CLI
-main().catch((error) => {
-  console.error('Test runner failed:', error);
+main().catch((_error) => {
   process.exit(1);
 });

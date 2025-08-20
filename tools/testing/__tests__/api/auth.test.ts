@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 /**
  * API Authentication Tests - Healthcare Critical Component
@@ -11,10 +11,16 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 // Mock authentication functions for testing
 const mockAuthService = {
   validateToken: (token: string) => {
-    if (!token) return { valid: false, error: 'Token required' };
-    if (token === 'invalid') return { valid: false, error: 'Invalid token' };
-    if (token === 'expired') return { valid: false, error: 'Token expired' };
-    if (token.startsWith('valid-'))
+    if (!token) {
+      return { valid: false, error: 'Token required' };
+    }
+    if (token === 'invalid') {
+      return { valid: false, error: 'Invalid token' };
+    }
+    if (token === 'expired') {
+      return { valid: false, error: 'Token expired' };
+    }
+    if (token.startsWith('valid-')) {
       return {
         valid: true,
         user: {
@@ -24,6 +30,7 @@ const mockAuthService = {
           clinic_id: 'clinic-456',
         },
       };
+    }
     return { valid: false, error: 'Unknown token format' };
   },
 
@@ -42,12 +49,15 @@ const mockAuthService = {
   },
 
   validateHealthcareProfessional: (crm: string, state: string) => {
-    if (!(crm && state))
+    if (!(crm && state)) {
       return { valid: false, error: 'CRM and state required' };
-    if (!/^\d{4,6}$/.test(crm))
+    }
+    if (!/^\d{4,6}$/.test(crm)) {
       return { valid: false, error: 'Invalid CRM format' };
-    if (!/^[A-Z]{2}$/.test(state))
+    }
+    if (!/^[A-Z]{2}$/.test(state)) {
       return { valid: false, error: 'Invalid state format' };
+    }
     return { valid: true, professional_type: 'medical_doctor' };
   },
 };
@@ -68,7 +78,9 @@ const mockLGPDService = {
   },
 
   validateDataConsent: (userId: string, dataTypes: string[]) => {
-    if (!userId) return { valid: false, error: 'User ID required' };
+    if (!userId) {
+      return { valid: false, error: 'User ID required' };
+    }
     if (!dataTypes || dataTypes.length === 0) {
       return { valid: false, error: 'Data types required' };
     }

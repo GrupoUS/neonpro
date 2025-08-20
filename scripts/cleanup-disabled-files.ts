@@ -5,15 +5,15 @@
  * NEONPRO System Maintenance
  */
 
-import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'fs';
-import { join } from 'path';
+import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 
-interface CleanupItem {
+type CleanupItem = {
   path: string;
   action: 'remove' | 'reactivate' | 'keep';
   reason: string;
   category: string;
-}
+};
 
 // Files to definitely REMOVE (duplicated/obsolete)
 const REMOVE_LIST: CleanupItem[] = [
@@ -137,39 +137,25 @@ const KEEP_DISABLED: CleanupItem[] = [
  * Execute cleanup actions
  */
 function executeCleanup() {
-  console.log('🧹 Starting NEONPRO .disabled files cleanup...\n');
-
   let removedCount = 0;
   let keptCount = 0;
   let errorCount = 0;
-
-  // Process removal list
-  console.log('📋 REMOVING obsolete/duplicate files:');
   for (const item of REMOVE_LIST) {
     const fullPath = join(process.cwd(), item.path);
 
     try {
       if (existsSync(fullPath)) {
         unlinkSync(fullPath);
-        console.log(`✅ Removed: ${item.path}`);
-        console.log(`   Reason: ${item.reason}\n`);
         removedCount++;
       } else {
-        console.log(`⚠️  Not found: ${item.path}\n`);
       }
-    } catch (error) {
-      console.log(`❌ Error removing ${item.path}: ${error}\n`);
+    } catch (_error) {
       errorCount++;
     }
   }
-
-  // Process reactivation candidates (just log for manual review)
-  console.log('🔍 FILES TO EVALUATE MANUALLY:');
   for (const item of REACTIVATE_CANDIDATES) {
     const fullPath = join(process.cwd(), item.path);
     if (existsSync(fullPath)) {
-      console.log(`📋 Evaluate: ${item.path}`);
-      console.log(`   Reason: ${item.reason}\n`);
       keptCount++;
     }
   }
@@ -193,16 +179,8 @@ function executeCleanup() {
   const reportPath = join(process.cwd(), 'scripts/cleanup-report.json');
   writeFileSync(reportPath, JSON.stringify(report, null, 2));
 
-  console.log('📊 CLEANUP SUMMARY:');
-  console.log(`✅ Files removed: ${removedCount}`);
-  console.log(`📋 Files kept for evaluation: ${keptCount}`);
-  console.log(`❌ Errors: ${errorCount}`);
-  console.log(`📄 Report saved to: ${reportPath}\n`);
-
   if (errorCount === 0) {
-    console.log('🎉 Cleanup completed successfully!');
   } else {
-    console.log('⚠️  Cleanup completed with errors. Check the report.');
   }
 }
 

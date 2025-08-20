@@ -1,17 +1,17 @@
 import { useAuth } from './useAuth';
 
 // Types
-interface Permission {
+type Permission = {
   action: string;
   resource: string;
-}
+};
 
-interface Role {
+type Role = {
   name: string;
   permissions: Permission[];
-}
+};
 
-interface PermissionHookReturn {
+type PermissionHookReturn = {
   hasPermission: (permissionOrAction: string, resource?: string) => boolean;
   canView: (resource: string) => boolean;
   canCreate: (resource: string) => boolean;
@@ -19,7 +19,7 @@ interface PermissionHookReturn {
   canDelete: (resource: string) => boolean;
   userRoles: string[];
   isLoading: boolean;
-}
+};
 
 export function usePermissions(): PermissionHookReturn {
   const auth = useAuth();
@@ -28,8 +28,8 @@ export function usePermissions(): PermissionHookReturn {
   const userRoles = auth?.user?.roles || ['user'];
 
   const hasPermission = (
-    permissionOrAction: string,
-    resource?: string
+    _permissionOrAction: string,
+    _resource?: string
   ): boolean => {
     // In a real implementation, this would check against actual user permissions
     // Support both single permission string and action + resource format

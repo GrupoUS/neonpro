@@ -32,7 +32,7 @@ clinicRoutes.use('*', requireAuth());
  */
 clinicRoutes.get('/', async (c) => {
   try {
-    const user = c.get('user')!;
+    const _user = c.get('user')!;
 
     const clinics = await db.getClinics();
 
@@ -41,7 +41,6 @@ clinicRoutes.get('/', async (c) => {
       count: clinics.length,
     });
   } catch (error) {
-    console.error('List clinics error:', error);
     return c.json(
       {
         error: {
@@ -61,7 +60,7 @@ clinicRoutes.get('/', async (c) => {
  */
 clinicRoutes.post('/', zValidator('json', createClinicSchema), async (c) => {
   try {
-    const user = c.get('user')!;
+    const _user = c.get('user')!;
     const data = c.req.valid('json');
 
     // Basic clinic creation - TODO: Expand with proper schema
@@ -84,7 +83,6 @@ clinicRoutes.post('/', zValidator('json', createClinicSchema), async (c) => {
       201
     );
   } catch (error) {
-    console.error('Create clinic error:', error);
     return c.json(
       {
         error: {
@@ -113,7 +111,7 @@ clinicRoutes.get(
   async (c) => {
     try {
       const { id } = c.req.valid('param');
-      const user = c.get('user')!;
+      const _user = c.get('user')!;
 
       // TODO: Implement getClinicById when schema is ready
       return c.json({
@@ -121,7 +119,6 @@ clinicRoutes.get(
         clinic_id: id,
       });
     } catch (error) {
-      console.error('Get clinic error:', error);
       return c.json(
         {
           error: {
@@ -153,7 +150,7 @@ clinicRoutes.put(
     try {
       const { id } = c.req.valid('param');
       const data = c.req.valid('json');
-      const user = c.get('user')!;
+      const _user = c.get('user')!;
 
       // TODO: Implement updateClinic when schema is ready
       return c.json({
@@ -162,7 +159,6 @@ clinicRoutes.put(
         data,
       });
     } catch (error) {
-      console.error('Update clinic error:', error);
       return c.json(
         {
           error: {

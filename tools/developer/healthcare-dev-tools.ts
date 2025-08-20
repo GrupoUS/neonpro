@@ -56,7 +56,7 @@ export class HealthcareDeveloperTools {
         healthcareMode: true,
         lgpdCompliance: true,
         testingFramework: 'vitest',
-        linting: 'eslint-healthcare',
+        linting: 'biome-healthcare',
       },
       productivity: {
         codeGeneration: true,
@@ -94,13 +94,13 @@ export class HealthcareDeveloperTools {
     const vscodeSettings = {
       'editor.formatOnSave': true,
       'editor.codeActionsOnSave': {
-        'source.fixAll.eslint': true,
-        'source.organizeImports': true,
+        'source.fixAll.biome': true,
+        'source.organizeImports.biome': true,
       },
       'typescript.preferences.includePackageJsonAutoImports': 'on',
       'healthcare.mode': true,
       'lgpd.compliance': true,
-      'eslint.validate': [
+      'biome.validate': [
         'javascript',
         'javascriptreact',
         'typescript',
@@ -130,8 +130,7 @@ export class HealthcareDeveloperTools {
     const extensions = {
       recommendations: [
         'bradlc.vscode-tailwindcss',
-        'esbenp.prettier-vscode',
-        'dbaeumer.vscode-eslint',
+        'biomejs.biome',
         'ms-vscode.vscode-typescript-next',
         'vitest.explorer',
         'ms-vscode.vscode-json',
@@ -214,71 +213,111 @@ export class HealthcareDeveloperTools {
     );
   }
   private async setupValidationTools(): Promise<void> {
-    // Create healthcare-specific ESLint configuration
-    const eslintHealthcareConfig = {
-      extends: ['@neonpro/eslint-config', '@neonpro/eslint-config/healthcare'],
-      rules: {
-        // Healthcare-specific rules
-        'no-console': ['warn', { allow: ['warn', 'error'] }],
-        'prefer-const': 'error',
-        '@typescript-eslint/no-explicit-any': 'error',
-        '@typescript-eslint/strict-boolean-expressions': 'error',
-        'healthcare/lgpd-consent-required': 'error',
-        'healthcare/sensitive-data-validation': 'error',
-        'healthcare/tenant-isolation': 'error',
+    // Create healthcare-specific Biome configuration
+    const biomeHealthcareConfig = {
+      $schema: 'https://biomejs.dev/schemas/2.2.0/schema.json',
+      extends: ['ultracite'],
+      files: {
+        includes: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
       },
-      env: {
-        browser: true,
-        node: true,
-        es2022: true,
+      linter: {
+        rules: {
+          style: {
+            noConsole: 'warn',
+            useConst: 'error',
+          },
+          suspicious: {
+            noExplicitAny: 'error',
+          },
+          correctness: {
+            useExhaustiveDependencies: 'error',
+          },
+        },
       },
-      parserOptions: {
-        ecmaVersion: 2022,
-        sourceType: 'module',
-        project: './tsconfig.json',
+      formatter: {
+        enabled: true,
+        indentStyle: 'space',
+        indentWidth: 2,
+        lineWidth: 100,
       },
     };
 
+    // Write Biome configuration for healthcare compliance
     await fs.writeFile(
-      join(this.rootPath, '.eslintrc.healthcare.json'),
-      JSON.stringify(eslintHealthcareConfig, null, 2)
+      join(this.rootPath, 'biome.healthcare.jsonc'),
+      JSON.stringify(biomeHealthcareConfig, null, 2)
     );
   }
 
-  private async createDeveloperScripts(): Promise<void> {
-    // Create developer convenience scripts
-    const devScripts = {
-      'healthcare:setup': 'node tools/developer/healthcare-dev-tools.js',
-      'healthcare:dev': "turbo dev --filter='apps/web' --env-mode=development",
-      'healthcare:test:watch': 'turbo test:healthcare --watch',
-      'healthcare:validate:quick': 'turbo typecheck lint:healthcare --parallel',
-      'healthcare:validate:full': 'turbo healthcare:full-validation',
-      'healthcare:build:analyze':
-        'turbo build:healthcare --summarize --dry=json',
-      'healthcare:performance':
-        'artillery run tools/testing/configs/artillery-healthcare.yml',
-      'healthcare:compliance': 'turbo validate:lgpd',
-      'healthcare:db:reset': 'supabase db reset',
-      'healthcare:db:migrate': 'supabase db push',
-      'healthcare:clean': 'turbo clean && rm -rf node_modules/.cache',
+  console;
+  .
+  log('✅ Healthcare Biome configuration created');
+
+  // Create package.json scripts for healthcare validation
+  const;
+  packageJsonPath = join(this.rootPath, 'package.json');
+  const;
+  packageJson = JSON.parse(await fs.readFile(packageJsonPath, 'utf-8'));
+
+  packageJson;
+  .
+  scripts = {
+    ...packageJson.scripts,
+    'healthcare:lint': 'biome lint --config-path biome.healthcare.jsonc .',
+    'healthcare:format': 'biome format --config-path biome.healthcare.jsonc .',
+    'healthcare:check': 'biome check --config-path biome.healthcare.jsonc .',
+    'healthcare:fix':
+      'biome check --config-path biome.healthcare.jsonc --write .',
+    'healthcare:validate': 'pnpm healthcare:check && pnpm test:unit',
+  };
+
+  await;
+  fs;
+  .
+  writeFile(packageJsonPath, JSON.stringify(packageJson, null, 2)
+  )
+  console;
+  .
+  log('✅ Healthcare validation scripts added to package.json');
+}
+
+private
+async;
+createDeveloperScripts();
+: Promise<void>
+{
+  // Create developer convenience scripts with Biome integration
+  const devScripts = {
+    'healthcare:setup': 'node tools/developer/healthcare-dev-tools.js',
+    'healthcare:dev': "turbo dev --filter='apps/web' --env-mode=development",
+    'healthcare:test:watch': 'turbo test:healthcare --watch',
+    'healthcare:validate:quick': 'turbo typecheck healthcare:check --parallel',
+    'healthcare:validate:full': 'turbo healthcare:full-validation',
+    'healthcare:build:analyze': 'turbo build:healthcare --summarize --dry=json',
+    'healthcare:performance':
+      'artillery run tools/testing/configs/artillery-healthcare.yml',
+    'healthcare:compliance': 'turbo validate:lgpd',
+    'healthcare:db:reset': 'supabase db reset',
+    'healthcare:db:migrate': 'supabase db push',
+    'healthcare:clean': 'turbo clean && rm -rf node_modules/.cache',
+  };
+
+  // Update package.json with healthcare scripts
+  const packageJsonPath = join(this.rootPath, 'package.json');
+  try {
+    const packageContent = await fs.readFile(packageJsonPath, 'utf-8');
+    const packageJson = JSON.parse(packageContent);
+
+    packageJson.scripts = {
+      ...packageJson.scripts,
+      ...devScripts,
     };
 
-    // Update package.json with healthcare scripts
-    const packageJsonPath = join(this.rootPath, 'package.json');
-    try {
-      const packageContent = await fs.readFile(packageJsonPath, 'utf-8');
-      const packageJson = JSON.parse(packageContent);
+    await fs.writeFile(packageJsonPath, JSON.stringify(packageJson, null, 2));
+  } catch (_error) {}
 
-      packageJson.scripts = {
-        ...packageJson.scripts,
-        ...devScripts,
-      };
-
-      await fs.writeFile(packageJsonPath, JSON.stringify(packageJson, null, 2));
-    } catch (_error) {}
-
-    // Create healthcare developer README
-    const devReadme = `# Healthcare Developer Guide
+  // Create healthcare developer README
+  const devReadme = `# Healthcare Developer Guide
 
 ## Quick Start
 \`\`\`bash
@@ -287,6 +326,12 @@ pnpm healthcare:setup
 
 # Start healthcare development server
 pnpm healthcare:dev
+
+# Run healthcare Biome validation
+pnpm healthcare:check
+
+# Auto-fix healthcare code formatting
+pnpm healthcare:fix
 
 # Run healthcare validation
 pnpm healthcare:validate:quick
@@ -327,13 +372,14 @@ pnpm healthcare:validate:quick
 - [ ] Data retention policies implemented
 `;
 
-    await fs.writeFile(
-      join(this.rootPath, 'HEALTHCARE-DEV-GUIDE.md'),
-      devReadme
-    );
-  }
+  await fs.writeFile(join(this.rootPath, 'HEALTHCARE-DEV-GUIDE.md'), devReadme);
+}
 
-  async generateOptimizationReport(): Promise<void> {}
+async;
+generateOptimizationReport();
+: Promise<void>
+{
+}
 }
 
 // Execute optimization if run directly

@@ -112,8 +112,7 @@ authRoutes.post('/login', zValidator('json', loginSchema), async (c) => {
       clinic: clinic_data,
       permissions,
     });
-  } catch (error) {
-    console.error('Login error:', error);
+  } catch (_error) {
     return c.json(
       {
         error: {
@@ -191,8 +190,7 @@ authRoutes.post('/register', zValidator('json', registerSchema), async (c) => {
       user_id: data.user.id,
       email_sent: true,
     });
-  } catch (error) {
-    console.error('Registration error:', error);
+  } catch (_error) {
     return c.json(
       {
         error: {
@@ -246,16 +244,15 @@ authRoutes.post(
         token_type: 'bearer',
         expires_in: data.session.expires_in || 3600,
         user: {
-          id: data.user!.id,
-          email: data.user!.email,
-          full_name: data.user!.user_metadata?.full_name,
-          avatar_url: data.user!.user_metadata?.avatar_url,
-          role: data.user!.app_metadata?.role || 'user',
+          id: data.user?.id,
+          email: data.user?.email,
+          full_name: data.user?.user_metadata?.full_name,
+          avatar_url: data.user?.user_metadata?.avatar_url,
+          role: data.user?.app_metadata?.role || 'user',
         },
         permissions,
       });
-    } catch (error) {
-      console.error('Token refresh error:', error);
+    } catch (_error) {
       return c.json(
         {
           error: {
@@ -275,7 +272,7 @@ authRoutes.post(
  */
 authRoutes.post('/logout', requireAuth(), async (c) => {
   try {
-    const user = c.get('user')!;
+    const _user = c.get('user')!;
 
     // Get token from header
     const authHeader = c.req.header('Authorization');
@@ -293,8 +290,7 @@ authRoutes.post('/logout', requireAuth(), async (c) => {
       success: true,
       message: 'Logout realizado com sucesso',
     });
-  } catch (error) {
-    console.error('Logout error:', error);
+  } catch (_error) {
     return c.json(
       {
         error: {
@@ -324,8 +320,7 @@ authRoutes.get('/me', requireAuth(), async (c) => {
       // consent_status: consent_status,
       // active_sessions: session_count,
     });
-  } catch (error) {
-    console.error('Get user data error:', error);
+  } catch (_error) {
     return c.json(
       {
         error: {

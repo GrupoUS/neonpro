@@ -1,12 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import {
-  type CreatePatientRequest,
-  type Patient,
-  patientApi,
-  patientKeys,
-  type UpdatePatientRequest,
-} from '../lib/api/patients';
+import { patientApi, patientKeys } from '../lib/api/patients';
 
 // Hook to get all patients
 export function usePatients() {
@@ -42,8 +36,7 @@ export function useCreatePatient() {
 
       toast.success('Paciente criado com sucesso!');
     },
-    onError: (error) => {
-      console.error('Error creating patient:', error);
+    onError: (_error) => {
       toast.error('Erro ao criar paciente. Tente novamente.');
     },
   });
@@ -67,8 +60,7 @@ export function useUpdatePatient() {
 
       toast.success('Paciente atualizado com sucesso!');
     },
-    onError: (error) => {
-      console.error('Error updating patient:', error);
+    onError: (_error) => {
       toast.error('Erro ao atualizar paciente. Tente novamente.');
     },
   });
@@ -89,8 +81,7 @@ export function useDeletePatient() {
 
       toast.success('Paciente removido com sucesso!');
     },
-    onError: (error) => {
-      console.error('Error deleting patient:', error);
+    onError: (_error) => {
       toast.error('Erro ao remover paciente. Tente novamente.');
     },
   });

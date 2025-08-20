@@ -78,7 +78,7 @@ pnpm test:watch
 - **Playwright**: End-to-end testing framework
 - **Jest**: Legacy compatibility where needed
 - **Istanbul**: Code coverage reporting
-- **Biome**: Exclusive linting and formatting (Prettier removed)
+- **Biome**: Exclusive linting and formatting (ESLint and Prettier fully migrated)
 
 ### Quality Standards
 - **Minimum Coverage**: 90% across all packages

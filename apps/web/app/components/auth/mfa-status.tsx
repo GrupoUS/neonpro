@@ -4,9 +4,9 @@ import { useState } from 'react';
 import { useMFA } from '@/packages/domain/src/hooks/auth/use-mfa';
 import { MfaMethod } from '@/packages/security/src/auth/mfa-service';
 
-interface MfaStatusProps {
+type MfaStatusProps = {
   onSetupMfa?: () => void;
-}
+};
 
 export function MfaStatus({ onSetupMfa }: MfaStatusProps) {
   const {
@@ -33,9 +33,7 @@ export function MfaStatus({ onSetupMfa }: MfaStatusProps) {
       if (result.success) {
         setShowDisableConfirm(false);
       }
-    } catch (err) {
-      console.error('Failed to disable MFA:', err);
-    }
+    } catch (_err) {}
   };
 
   const handleRegenerateBackupCodes = async () => {
@@ -45,9 +43,7 @@ export function MfaStatus({ onSetupMfa }: MfaStatusProps) {
         setGeneratedBackupCodes(result.backupCodes);
         setShowBackupCodes(true);
       }
-    } catch (err) {
-      console.error('Failed to regenerate backup codes:', err);
-    }
+    } catch (_err) {}
   };
 
   const getMethodDisplayName = (method: MfaMethod) => {

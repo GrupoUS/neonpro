@@ -121,7 +121,7 @@ const statusConfig = {
   },
 };
 
-interface AppointmentType {
+type AppointmentType = {
   id: string;
   date: string;
   title: string;
@@ -134,12 +134,12 @@ interface AppointmentType {
   doctor: string;
   professional: string;
   notes?: string;
-}
+};
 
-interface AppointmentCardProps {
+type AppointmentCardProps = {
   appointment: AppointmentType;
   index: number;
-}
+};
 
 const AppointmentCard = ({ appointment, index }: AppointmentCardProps) => {
   const statusInfo = statusConfig[appointment.status];

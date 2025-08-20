@@ -32,9 +32,9 @@ import {
 } from '@/components/ui/table';
 import { usePatients } from '@/hooks/use-patients';
 
-interface PatientFilters {
+type PatientFilters = {
   searchTerm: string;
-}
+};
 
 export default function PatientsPage() {
   const [filters, setFilters] = useState<PatientFilters>({
@@ -53,7 +53,7 @@ export default function PatientsPage() {
     return matchesSearch;
   });
 
-  const formatCurrency = (amount: number) => {
+  const _formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL',

@@ -7,7 +7,7 @@
     "dev": "next dev --turbopack --port 3001",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint --max-warnings 0",
+    "lint": "biome check .",
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
@@ -21,7 +21,7 @@
     "@types/node": "^22.15.3",
     "@types/react": "19.1.0",
     "@types/react-dom": "19.1.1",
-    "eslint": "^9.33.0",
+    "@biomejs/biome": "^1.9.0",
     "typescript": "5.9.2"
   }
 }

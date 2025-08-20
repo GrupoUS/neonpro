@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('NeonPro Healthcare Platform', () => {
-  test.skip('homepage loads correctly', async ({ page }) => {
+  test('homepage loads correctly', async ({ page }) => {
     // Este teste será executado quando o servidor local estiver rodando
     await page.goto('http://localhost:3000');
 
@@ -12,7 +12,7 @@ test.describe('NeonPro Healthcare Platform', () => {
     await expect(page.locator('body')).toBeVisible();
   });
 
-  test.skip('login page is accessible', async ({ page }) => {
+  test('login page is accessible', async ({ page }) => {
     // Teste de acesso à página de login
     await page.goto('http://localhost:3000/login');
 

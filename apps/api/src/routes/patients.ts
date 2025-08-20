@@ -34,7 +34,7 @@ patientRoutes.use('*', requireAuth());
  */
 patientRoutes.get('/', async (c) => {
   try {
-    const user = c.get('user')!;
+    const _user = c.get('user')!;
 
     const patients = await db.getPatients();
 
@@ -43,7 +43,6 @@ patientRoutes.get('/', async (c) => {
       count: patients.length,
     });
   } catch (error) {
-    console.error('List patients error:', error);
     return c.json(
       {
         error: {
@@ -80,7 +79,6 @@ patientRoutes.post('/', zValidator('json', createPatientSchema), async (c) => {
       201
     );
   } catch (error) {
-    console.error('Create patient error:', error);
     return c.json(
       {
         error: {
@@ -109,7 +107,7 @@ patientRoutes.get(
   async (c) => {
     try {
       const { id } = c.req.valid('param');
-      const user = c.get('user')!;
+      const _user = c.get('user')!;
 
       const patient = await db.getPatientById(id);
 
@@ -129,7 +127,6 @@ patientRoutes.get(
         patient,
       });
     } catch (error) {
-      console.error('Get patient error:', error);
       return c.json(
         {
           error: {
@@ -161,7 +158,7 @@ patientRoutes.put(
     try {
       const { id } = c.req.valid('param');
       const data = c.req.valid('json');
-      const user = c.get('user')!;
+      const _user = c.get('user')!;
 
       // TODO: Implement updatePatient when schema is ready
       return c.json({
@@ -170,7 +167,6 @@ patientRoutes.put(
         data,
       });
     } catch (error) {
-      console.error('Update patient error:', error);
       return c.json(
         {
           error: {

@@ -274,7 +274,9 @@ ${1000 + JSON.stringify(report, null, 2).length}
    * Format content for PDF
    */
   private formatPdfContent(items: any[]): string {
-    if (!items.length) return '0 -15 Td\n(Nenhum registro encontrado) Tj';
+    if (!items.length) {
+      return '0 -15 Td\n(Nenhum registro encontrado) Tj';
+    }
 
     return items
       .slice(0, 10)
@@ -292,10 +294,10 @@ ${1000 + JSON.stringify(report, null, 2).length}
     const csvLines: string[] = [];
 
     // Header
-    csvLines.push('RELATÓRIO LGPD - ' + new Date().toLocaleDateString('pt-BR'));
-    csvLines.push('Tenant ID,' + (report.tenantId || 'N/A'));
+    csvLines.push(`RELATÓRIO LGPD - ${new Date().toLocaleDateString('pt-BR')}`);
+    csvLines.push(`Tenant ID,${report.tenantId || 'N/A'}`);
     csvLines.push(
-      'Período,' + (report.startDate || '') + ' - ' + (report.endDate || '')
+      `Período,${report.startDate || ''} - ${report.endDate || ''}`
     );
     csvLines.push('');
 

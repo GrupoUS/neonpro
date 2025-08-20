@@ -27,9 +27,6 @@
       "dependsOn": ["^build"],
       "inputs": [
         "src/**/*.{ts,tsx,js,jsx}",
-        "app/**/*.{ts,tsx,js,jsx}",
-        "components/**/*.{ts,tsx}",
-        "lib/**/*.{ts,tsx}",
         "styles/**/*.{css,scss}",
         "public/**/*",
         "package.json",
@@ -50,7 +47,6 @@
     "lint": {
       "inputs": [
         "**/*.{ts,tsx,js,jsx}",
-        ".eslintrc.*",
         "biome.jsonc"
       ]
     },
@@ -72,7 +68,6 @@
     "format": {
       "inputs": [
         "**/*.{ts,tsx,js,jsx,json,md}",
-        ".prettierrc.*",
         "biome.jsonc"
       ]
     }

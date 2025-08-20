@@ -323,7 +323,7 @@ test.describe('LGPD Compliance Complete Flow', () => {
     await page.check('[data-testid="action-access-revoked"]');
     await page.fill('[data-testid="containment-actions'
     ]', 'Sistema bloqueado temporariamente. Acesso
-    do funcionário suspenso. Logs
+    do { funcionário  }suspenso. Logs
     auditados.
     ');
 
@@ -331,17 +331,17 @@ test.describe('LGPD Compliance Complete Flow', () => {
     await page.click('[data-testid="anpd-notification-required"]')
     await expect(
       page.locator('[data-testid="anpd-notification-warning"]')
-    ).toContainText('Notificação à ANPD necessária em 72 horas');
+    ).toContainText('Notificação à ANPD necessária em 72 horas')
 
     // Affected individuals notification
-    await page.check('[data-testid="notify-affected-individuals"]');
+    await page.check('[data-testid="notify-affected-individuals"]')
     await page.fill(
       '[data-testid="notification-method"]',
       'Email e carta registrada'
-    );
+    )
 
     // Submit breach report
-    await page.click('[data-testid="submit-breach-report-btn"]');
+    await page.click('[data-testid="submit-breach-report-btn"]')
 
     // Should create incident ID
     await expect(page.locator('[data-testid="incident-id"]')).toBeVisible();

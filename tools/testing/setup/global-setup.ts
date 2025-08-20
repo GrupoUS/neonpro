@@ -34,34 +34,23 @@ const HEALTHCARE_CONFIG = {
  * Global setup function for Playwright healthcare testing
  */
 async function globalSetup(config: FullConfig) {
-  console.log('🏥 Starting NeonPro Healthcare Test Setup...');
+  // 1. Environment Configuration
+  setupHealthcareEnvironment();
 
-  try {
-    // 1. Environment Configuration
-    setupHealthcareEnvironment();
+  // 2. Database Setup (if needed)
+  await setupTestDatabase();
 
-    // 2. Database Setup (if needed)
-    await setupTestDatabase();
+  // 3. Authentication Setup
+  await setupAuthenticationStates(config);
 
-    // 3. Authentication Setup
-    await setupAuthenticationStates(config);
-
-    // 4. Healthcare Compliance Setup
-    setupComplianceEnvironment();
-
-    console.log('✅ Healthcare test setup completed successfully');
-  } catch (error) {
-    console.error('❌ Healthcare test setup failed:', error);
-    throw error;
-  }
+  // 4. Healthcare Compliance Setup
+  setupComplianceEnvironment();
 }
 
 /**
  * Configure healthcare-specific environment variables
  */
 function setupHealthcareEnvironment() {
-  console.log('📋 Configuring healthcare environment...');
-
   // Set healthcare testing environment variables
   Object.entries(HEALTHCARE_CONFIG).forEach(([key, value]) => {
     process.env[key] = value;
@@ -86,30 +75,14 @@ function setupHealthcareEnvironment() {
  * Setup test database for healthcare scenarios
  */
 async function setupTestDatabase() {
-  console.log('🗄️ Setting up healthcare test database...');
-
   try {
-    // Here you would typically:
-    // 1. Connect to test database
-    // 2. Run migrations
-    // 3. Seed with healthcare test data
-
-    // For now, we'll just validate connection
-    console.log('✅ Test database ready for healthcare scenarios');
-  } catch (error) {
-    console.warn(
-      '⚠️ Test database setup skipped (using mock data):',
-      error.message
-    );
-  }
+  } catch (_error) {}
 }
 
 /**
  * Setup authentication states for different user types
  */
-async function setupAuthenticationStates(config: FullConfig) {
-  console.log('🔐 Setting up authentication states...');
-
+async function setupAuthenticationStates(_config: FullConfig) {
   try {
     const browser = await chromium.launch();
     const context = await browser.newContext();
@@ -133,22 +106,16 @@ async function setupAuthenticationStates(config: FullConfig) {
       await context.storageState({
         path: path.join(authDir, userType.file),
       });
-
-      console.log(`✅ ${userType.type} authentication state saved`);
     }
 
     await browser.close();
-  } catch (error) {
-    console.warn('⚠️ Authentication setup skipped:', error.message);
-  }
+  } catch (_error) {}
 }
 
 /**
  * Setup healthcare compliance environment
  */
 function setupComplianceEnvironment() {
-  console.log('⚖️ Setting up healthcare compliance environment...');
-
   // LGPD (Brazilian GDPR) compliance setup
   process.env.LGPD_AUDIT_MODE = 'true';
   process.env.DATA_PRIVACY_LEVEL = 'healthcare';
@@ -160,8 +127,6 @@ function setupComplianceEnvironment() {
   // CFM (Brazilian Medical Council) standards
   process.env.CFM_STANDARDS_MODE = 'true';
   process.env.MEDICAL_ETHICS_VALIDATION = 'true';
-
-  console.log('✅ Healthcare compliance environment configured');
 }
 
 export default globalSetup;

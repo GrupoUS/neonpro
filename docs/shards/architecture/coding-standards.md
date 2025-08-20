@@ -156,6 +156,286 @@ export default function Loading() {
 }
 ```
 
+## 🔥 **Hono.dev Backend Patterns**
+
+### **API Route Structure**
+```typescript
+// ✅ Route definition pattern
+// apps/api/src/routes/patients.ts
+import { Hono } from 'hono'
+import { zValidator } from '@hono/zod-validator'
+import { z } from 'zod'
+import { authMiddleware } from '../middleware/auth'
+import { PatientService } from '@neonpro/shared'
+
+const patientsRoutes = new Hono()
+
+// GET /api/v1/patients - List patients
+patientsRoutes.get('/', 
+  authMiddleware(),
+  async (c) => {
+    const { search, page = '1', limit = '20' } = c.req.query()
+    
+    const patients = await PatientService.list({
+      search,
+      page: parseInt(page),
+      limit: parseInt(limit),
+      clinicId: c.get('user').clinicId
+    })
+    
+    return c.json({ 
+      success: true, 
+      data: patients.data,
+      pagination: patients.pagination 
+    })
+  }
+)
+
+// POST /api/v1/patients - Create patient
+patientsRoutes.post('/',
+  authMiddleware(),
+  zValidator('json', z.object({
+    name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
+    email: z.string().email('Email inválido'),
+    phone: z.string().regex(/^\+55\d{10,11}$/, 'Telefone brasileiro válido'),
+    birth_date: z.string().date(),
+    gender: z.enum(['M', 'F', 'NB']),
+    address: z.object({
+      street: z.string(),
+      number: z.string(),
+      city: z.string(),
+      state: z.string(),
+      zip_code: z.string().regex(/^\d{5}-?\d{3}$/)
+    })
+  })),
+  async (c) => {
+    const patientData = c.req.valid('json')
+    
+    try {
+      const patient = await PatientService.create({
+        ...patientData,
+        clinicId: c.get('user').clinicId
+      })
+      
+      return c.json({ 
+        success: true, 
+        data: patient 
+      }, 201)
+    } catch (error) {
+      return c.json({ 
+        success: false, 
+        error: error.message 
+      }, 400)
+    }
+  }
+)
+
+export { patientsRoutes }
+```
+
+### **Middleware Patterns**
+```typescript
+// ✅ Authentication middleware
+// apps/api/src/middleware/auth.ts
+import { createMiddleware } from 'hono/factory'
+import { verify } from 'jose'
+import { supabase } from '../lib/supabase'
+
+export const authMiddleware = () => createMiddleware(async (c, next) => {
+  const authorization = c.req.header('Authorization')
+  
+  if (!authorization || !authorization.startsWith('Bearer ')) {
+    return c.json({ error: 'Authentication required' }, 401)
+  }
+  
+  const token = authorization.split(' ')[1]
+  
+  try {
+    const { data: { user }, error } = await supabase.auth.getUser(token)
+    
+    if (error || !user) {
+      return c.json({ error: 'Invalid token' }, 401)
+    }
+    
+    // Attach user to context
+    c.set('user', user)
+    c.set('clinicId', user.user_metadata.clinic_id)
+    
+    await next()
+  } catch (error) {
+    return c.json({ error: 'Authentication failed' }, 401)
+  }
+})
+
+// ✅ LGPD Compliance middleware
+// apps/api/src/middleware/lgpd.ts
+export const lgpdMiddleware = () => createMiddleware(async (c, next) => {
+  // Log all data access for LGPD compliance
+  const startTime = Date.now()
+  
+  await next()
+  
+  const duration = Date.now() - startTime
+  const user = c.get('user')
+  
+  // Audit log for compliance
+  if (user && c.req.method !== 'GET') {
+    await AuditService.log({
+      userId: user.id,
+      action: `${c.req.method} ${c.req.path}`,
+      duration,
+      timestamp: new Date().toISOString(),
+      ipAddress: c.req.header('CF-Connecting-IP') || c.req.header('X-Forwarded-For'),
+      userAgent: c.req.header('User-Agent')
+    })
+  }
+})
+
+// ✅ Rate limiting middleware
+// apps/api/src/middleware/rate-limit.ts
+const rateLimits = new Map<string, { count: number; resetTime: number }>()
+
+export const rateLimitMiddleware = (maxRequests = 100, windowMs = 60000) => 
+  createMiddleware(async (c, next) => {
+    const clientId = c.req.header('CF-Connecting-IP') || 'unknown'
+    const now = Date.now()
+    const windowStart = Math.floor(now / windowMs) * windowMs
+    
+    const key = `${clientId}:${windowStart}`
+    const current = rateLimits.get(key) || { count: 0, resetTime: windowStart + windowMs }
+    
+    if (current.count >= maxRequests) {
+      return c.json({ 
+        error: 'Rate limit exceeded',
+        retryAfter: Math.ceil((current.resetTime - now) / 1000)
+      }, 429)
+    }
+    
+    rateLimits.set(key, { count: current.count + 1, resetTime: current.resetTime })
+    
+    // Clean up old entries
+    for (const [k, v] of rateLimits) {
+      if (v.resetTime < now) {
+        rateLimits.delete(k)
+      }
+    }
+    
+    await next()
+  })
+```
+
+### **Hono RPC Client Integration**
+```typescript
+// ✅ Type-safe RPC client setup
+// packages/api-client/src/index.ts
+import { hc } from 'hono/client'
+import type { AppType } from '@neonpro/api'
+
+export const apiClient = hc<AppType>(
+  process.env.NODE_ENV === 'production' 
+    ? 'https://neonpro.app'
+    : 'http://localhost:8001'
+)
+
+// ✅ Frontend hook integration
+// packages/core-services/src/hooks/use-patients.ts
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { apiClient } from '@neonpro/api-client'
+
+export function usePatients(filters?: PatientFilters) {
+  return useQuery({
+    queryKey: ['patients', filters],
+    queryFn: async () => {
+      const response = await apiClient.api.v1.patients.$get({
+        query: filters
+      })
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch patients')
+      }
+      
+      const data = await response.json()
+      return data
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+  })
+}
+
+export function useCreatePatient() {
+  const queryClient = useQueryClient()
+  
+  return useMutation({
+    mutationFn: async (patientData: CreatePatientInput) => {
+      const response = await apiClient.api.v1.patients.$post({
+        json: patientData
+      })
+      
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Failed to create patient')
+      }
+      
+      return response.json()
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['patients'] })
+    },
+  })
+}
+```
+
+### **Error Handling Patterns**
+```typescript
+// ✅ Standardized error response
+// apps/api/src/lib/errors.ts
+export class APIError extends Error {
+  constructor(
+    message: string,
+    public statusCode: number = 400,
+    public code: string = 'API_ERROR'
+  ) {
+    super(message)
+    this.name = 'APIError'
+  }
+}
+
+export const errorHandler = () => createMiddleware(async (c, next) => {
+  try {
+    await next()
+  } catch (error) {
+    if (error instanceof APIError) {
+      return c.json({
+        success: false,
+        error: error.message,
+        code: error.code
+      }, error.statusCode)
+    }
+    
+    console.error('Unhandled error:', error)
+    
+    return c.json({
+      success: false,
+      error: 'Internal server error',
+      code: 'INTERNAL_ERROR'
+    }, 500)
+  }
+})
+
+// ✅ Usage in routes
+patientsRoutes.get('/:id', async (c) => {
+  const { id } = c.req.param()
+  
+  const patient = await PatientService.findById(id)
+  
+  if (!patient) {
+    throw new APIError('Patient not found', 404, 'PATIENT_NOT_FOUND')
+  }
+  
+  return c.json({ success: true, data: patient })
+})
+```
+
 ## 📦 **Turborepo & Package Organization**
 
 ### **Package Imports**
@@ -388,6 +668,227 @@ export default async function PatientsList() {
     .eq('organization_id', user.user_metadata.organization_id)
 
   return <PatientList patients={patients} />
+}
+```
+
+## 🔄 **TanStack Query Patterns**
+
+### **Query Configuration**
+```typescript
+// ✅ Query client setup
+// app/providers/query-provider.tsx
+'use client'
+
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { ReactNode, useState } from 'react'
+
+export function QueryProvider({ children }: { children: ReactNode }) {
+  const [queryClient] = useState(() => 
+    new QueryClient({
+      defaultOptions: {
+        queries: {
+          staleTime: 5 * 60 * 1000, // 5 minutes
+          gcTime: 10 * 60 * 1000, // 10 minutes (formerly cacheTime)
+          retry: 3,
+          refetchOnWindowFocus: false,
+          refetchOnReconnect: true,
+        },
+        mutations: {
+          retry: 1,
+        },
+      },
+    })
+  )
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      {children}
+      {process.env.NODE_ENV === 'development' && <ReactQueryDevtools />}
+    </QueryClientProvider>
+  )
+}
+```
+
+### **Data Fetching Hooks**
+```typescript
+// ✅ Standard query patterns
+// hooks/use-patients.ts
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { PatientService } from '@neonpro/shared'
+
+export function usePatients(filters?: PatientFilters) {
+  return useQuery({
+    queryKey: ['patients', filters],
+    queryFn: () => PatientService.list(filters),
+    enabled: true, // Only run if enabled
+    placeholderData: (previousData) => previousData, // Keep previous data while refetching
+    select: (data) => data.patients, // Transform data if needed
+  })
+}
+
+export function usePatient(id: string) {
+  return useQuery({
+    queryKey: ['patients', id],
+    queryFn: () => PatientService.getById(id),
+    enabled: !!id, // Only run if ID exists
+    staleTime: 10 * 60 * 1000, // 10 minutes for individual records
+  })
+}
+
+// ✅ Optimistic updates
+export function useUpdatePatient() {
+  const queryClient = useQueryClient()
+  
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string, data: UpdatePatientInput }) => 
+      PatientService.update(id, data),
+      
+    // Optimistic update
+    onMutate: async ({ id, data }) => {
+      // Cancel outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['patients', id] })
+      
+      // Snapshot previous value
+      const previousPatient = queryClient.getQueryData<Patient>(['patients', id])
+      
+      // Optimistically update
+      if (previousPatient) {
+        queryClient.setQueryData<Patient>(['patients', id], {
+          ...previousPatient,
+          ...data,
+        })
+      }
+      
+      return { previousPatient }
+    },
+    
+    // On error, rollback
+    onError: (err, variables, context) => {
+      if (context?.previousPatient) {
+        queryClient.setQueryData(['patients', variables.id], context.previousPatient)
+      }
+    },
+    
+    // Always refetch after success or error
+    onSettled: (data, error, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['patients', variables.id] })
+      queryClient.invalidateQueries({ queryKey: ['patients'] })
+    },
+  })
+}
+
+// ✅ Infinite queries for pagination
+export function useInfinitePatients(filters?: PatientFilters) {
+  return useInfiniteQuery({
+    queryKey: ['patients', 'infinite', filters],
+    queryFn: ({ pageParam = 1 }) => 
+      PatientService.list({ ...filters, page: pageParam }),
+    getNextPageParam: (lastPage, pages) => 
+      lastPage.hasNextPage ? pages.length + 1 : undefined,
+    initialPageParam: 1,
+  })
+}
+```
+
+### **Cache Management**
+```typescript
+// ✅ Manual cache management
+export function usePatientActions() {
+  const queryClient = useQueryClient()
+  
+  const prefetchPatient = (id: string) => {
+    queryClient.prefetchQuery({
+      queryKey: ['patients', id],
+      queryFn: () => PatientService.getById(id),
+      staleTime: 5 * 60 * 1000,
+    })
+  }
+  
+  const invalidatePatient = (id: string) => {
+    queryClient.invalidateQueries({ queryKey: ['patients', id] })
+    queryClient.invalidateQueries({ queryKey: ['patients'] })
+  }
+  
+  const setPatientData = (id: string, data: Patient) => {
+    queryClient.setQueryData(['patients', id], data)
+  }
+  
+  const removePatientFromCache = (id: string) => {
+    queryClient.removeQueries({ queryKey: ['patients', id] })
+    
+    // Update list cache to remove deleted patient
+    queryClient.setQueriesData<PatientsResponse>(
+      { queryKey: ['patients'] },
+      (old) => {
+        if (!old) return old
+        return {
+          ...old,
+          patients: old.patients.filter(p => p.id !== id)
+        }
+      }
+    )
+  }
+  
+  return {
+    prefetchPatient,
+    invalidatePatient,
+    setPatientData,
+    removePatientFromCache,
+  }
+}
+```
+
+### **Error Handling with Queries**
+```typescript
+// ✅ Error boundary integration
+export function usePatientsWithError() {
+  return useQuery({
+    queryKey: ['patients'],
+    queryFn: PatientService.list,
+    throwOnError: (error) => {
+      // Only throw on server errors, not client errors
+      return error.statusCode >= 500
+    },
+    retry: (failureCount, error) => {
+      // Don't retry on 4xx errors
+      if (error.statusCode >= 400 && error.statusCode < 500) {
+        return false
+      }
+      return failureCount < 3
+    },
+  })
+}
+
+// ✅ Global error handling
+export function useGlobalErrorHandler() {
+  const queryClient = useQueryClient()
+  
+  React.useEffect(() => {
+    const unsubscribe = queryClient.getQueryCache().subscribe((event) => {
+      if (event.type === 'error') {
+        const error = event.error as APIError
+        
+        // Handle auth errors globally
+        if (error.statusCode === 401) {
+          // Redirect to login
+          window.location.href = '/login'
+        }
+        
+        // Handle rate limiting
+        if (error.statusCode === 429) {
+          toast.error('Too many requests. Please wait a moment.')
+        }
+        
+        // Handle server errors
+        if (error.statusCode >= 500) {
+          toast.error('Server error. Please try again later.')
+        }
+      }
+    })
+    
+    return unsubscribe
+  }, [queryClient])
 }
 ```
 

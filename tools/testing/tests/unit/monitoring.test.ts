@@ -41,9 +41,9 @@ describe('TASK-001 Foundation Setup Verification', () => {
       expect(fs.existsSync(tsconfigPath)).toBe(true);
     });
 
-    it('should have ESLint configuration in web app', () => {
-      const eslintConfigPath = path.join(rootDir, 'apps/web/.eslintrc.json');
-      expect(fs.existsSync(eslintConfigPath)).toBe(true);
+    it('should have Biome configuration', () => {
+      const biomeConfigPath = path.join(rootDir, 'biome.jsonc');
+      expect(fs.existsSync(biomeConfigPath)).toBe(true);
     });
 
     it('should have package.json with required scripts', () => {

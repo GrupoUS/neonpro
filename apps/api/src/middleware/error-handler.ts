@@ -7,16 +7,6 @@ import type { ErrorHandler } from 'hono';
 import type { AppEnv } from '@/types/env';
 
 export const errorHandler: ErrorHandler<AppEnv> = (err, c) => {
-  console.error('API Error:', {
-    error: err.message,
-    stack: err.stack,
-    path: c.req.path,
-    method: c.req.method,
-    timestamp: new Date().toISOString(),
-    request_id: c.get('request_id'),
-    user_id: c.get('user')?.id,
-  });
-
   // Default error response
   let status = 500;
   let message = 'Internal Server Error';

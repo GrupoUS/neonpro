@@ -1,20 +1,20 @@
 // packages/ui/src/hooks/use-permissions.ts
 import { useMemo } from 'react';
 
-export interface Permission {
+export type Permission = {
   create: boolean;
   read: boolean;
   update: boolean;
   delete: boolean;
   admin: boolean;
-}
+};
 
-export interface UserPermissions {
+export type UserPermissions = {
   patients: Permission;
   appointments: Permission;
   clinics: Permission;
   users: Permission;
-}
+};
 
 // Mock permissions hook for now - in real app would check JWT/user role
 export function usePermissions(): UserPermissions {

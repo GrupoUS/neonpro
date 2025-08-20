@@ -1,8 +1,6 @@
 import { createClient } from '@/lib/supabase/client';
 import type {
-  AlertType,
   CustomStockReport,
-  SeverityLevel,
   StockDashboardData,
   StockPerformanceMetrics,
 } from '@/lib/types/stock-alerts';
@@ -11,7 +9,7 @@ import type {
  * Stock Analytics Service - Performance metrics, trends analysis, and reporting
  */
 export class StockAnalyticsService {
-  private supabase = createClient();
+  private readonly supabase = createClient();
 
   /**
    * Get user's clinic context
@@ -191,13 +189,15 @@ export class StockAnalyticsService {
    */
   private async calculateSupplierPerformance(
     transactions: any[],
-    period: { start: Date; end: Date }
+    _period: { start: Date; end: Date }
   ): Promise<number> {
     const inboundTransactions = transactions.filter(
       (t) => t.transaction_type === 'inbound' && t.supplier_id
     );
 
-    if (inboundTransactions.length === 0) return 0;
+    if (inboundTransactions.length === 0) {
+      return 0;
+    }
 
     // Simplified calculation based on transaction success rate
     const successfulDeliveries = inboundTransactions.filter(
@@ -444,7 +444,9 @@ export class StockAnalyticsService {
       `)
       .eq('clinic_id', clinicId);
 
-    if (!inventory) return [];
+    if (!inventory) {
+      return [];
+    }
 
     return inventory
       .map((item) => ({
@@ -541,7 +543,7 @@ export class StockAnalyticsService {
     };
 
     // Generate report data based on type and filters
-    const reportData = await this.generateReportData(report);
+    const _reportData = await this.generateReportData(report);
 
     // Store report configuration for future reference
     await this.supabase.from('custom_reports').insert({

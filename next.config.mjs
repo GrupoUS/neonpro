@@ -1,24 +1,10 @@
 /** @type {import('next').NextConfig} */
+// ⚠️ DEPRECATED: This next.config.mjs is now DEPRECATED after Turborepo reorganization
+// All Next.js configuration should be done in apps/web/next.config.mjs
+// This file exists only for compatibility and will be removed after migration is complete
+
 const nextConfig = {
-  // TypeScript configuration - disable all type checking
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  
-  // ESLint configuration - disable all ESLint checks
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  
-  // Disable all build optimizations that might cause issues
-  swcMinify: false,
-  
-  // Experimental features to bypass strict checks
-  experimental: {
-    typedRoutes: false,
-  },
-  
-  // Turbo configuration for monorepo
+  // Legacy transpilePackages for compatibility during migration
   transpilePackages: ['@neonpro/ui', '@neonpro/domain', '@neonpro/types', '@neonpro/utils'],
   
   // Environment variables

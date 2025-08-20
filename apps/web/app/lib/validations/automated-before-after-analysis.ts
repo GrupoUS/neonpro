@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 // Validation schemas for automated before/after analysis
 export const validationSchemas = {
@@ -12,7 +12,7 @@ export const validationSchemas = {
     accuracy_min: z.number().optional(),
     created_by: z.string().optional(),
   }),
-  
+
   createAnalysisSession: z.object({
     patient_id: z.string(),
     treatment_type: z.string(),
@@ -20,7 +20,7 @@ export const validationSchemas = {
     before_images: z.array(z.string()).optional(),
     after_images: z.array(z.string()).optional(),
   }),
-  
+
   updateAnalysisSession: z.object({
     status: z.string().optional(),
     results: z.any().optional(),

@@ -23,7 +23,9 @@ export class DatabaseService {
   async getPatients() {
     const { data, error } = await supabase.from('patients').select('*');
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -34,7 +36,9 @@ export class DatabaseService {
       .eq('id', id)
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -45,7 +49,9 @@ export class DatabaseService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -53,7 +59,9 @@ export class DatabaseService {
   async getClinics() {
     const { data, error } = await supabase.from('clinics').select('*');
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -61,7 +69,9 @@ export class DatabaseService {
   async getAppointments() {
     const { data, error } = await supabase.from('appointments').select('*');
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
@@ -72,7 +82,9 @@ export class DatabaseService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data;
   }
 

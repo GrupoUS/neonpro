@@ -136,7 +136,7 @@ export type DashboardAnalytics = {
 };
 
 export class BMadDashboardService {
-  private supabase = createClient();
+  private readonly supabase = createClient();
 
   /**
    * Get user's clinic/organization context
@@ -671,7 +671,7 @@ export class BMadDashboardService {
 
   private async getTaskStatistics(
     clinicId: string,
-    dateRange: { start: Date; end: Date }
+    _dateRange: { start: Date; end: Date }
   ) {
     const { data } = await this.supabase
       .from('dashboard_tasks')
@@ -707,7 +707,7 @@ export class BMadDashboardService {
 
   private async getBudgetStatistics(
     clinicId: string,
-    dateRange: { start: Date; end: Date }
+    _dateRange: { start: Date; end: Date }
   ) {
     const { data } = await this.supabase
       .from('dashboard_projects')
@@ -730,8 +730,8 @@ export class BMadDashboardService {
   }
 
   private async getPerformanceMetrics(
-    clinicId: string,
-    dateRange: { start: Date; end: Date }
+    _clinicId: string,
+    _dateRange: { start: Date; end: Date }
   ) {
     // Complex performance calculations would go here
     return {
@@ -770,8 +770,12 @@ export class BMadDashboardService {
       (new Date(project.end_date).getTime() -
         new Date(project.start_date).getTime());
 
-    if (budgetHealth > 1.2 || timeHealth > 1.2) return 'critical';
-    if (budgetHealth > 0.9 || timeHealth > 0.9) return 'at-risk';
+    if (budgetHealth > 1.2 || timeHealth > 1.2) {
+      return 'critical';
+    }
+    if (budgetHealth > 0.9 || timeHealth > 0.9) {
+      return 'at-risk';
+    }
     return 'healthy';
   }
 }

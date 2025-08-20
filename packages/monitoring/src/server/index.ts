@@ -518,8 +518,6 @@ export function createMonitoringAPI(
  * Database metrics storage (Supabase/PostgreSQL)
  */
 export class DatabaseMetricsStorage implements MetricsStorage {
-  private connectionString: string;
-
   constructor(connectionString: string) {
     this.connectionString = connectionString;
   }

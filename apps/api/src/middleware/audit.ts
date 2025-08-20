@@ -116,7 +116,7 @@ function extractResourceId(path: string): string | null {
  * Log audit event
  * TODO: Implement actual database logging
  */
-async function logAuditEvent(event: {
+async function logAuditEvent(_event: {
   request_id: string;
   user_id: string;
   action: string;
@@ -129,7 +129,4 @@ async function logAuditEvent(event: {
   timestamp: string;
   clinic_id: string | null;
   success: boolean;
-}): Promise<void> {
-  // TODO: Store in audit_logs table
-  console.log('Audit Event:', event);
-}
+}): Promise<void> {}

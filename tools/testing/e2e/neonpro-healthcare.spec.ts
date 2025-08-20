@@ -68,7 +68,7 @@ test.describe('NeonPro Healthcare System', () => {
         .catch(() => false);
 
       expect(hasEmailInput || hasPasswordInput || hasLoginText).toBe(true);
-    } catch (error) {
+    } catch (_error) {
       // If navigation fails, verify we get appropriate error handling
       const is404 = await page
         .locator('text=/404|not found/i')
@@ -107,7 +107,7 @@ test.describe('NeonPro Healthcare System', () => {
           foundPatientRoute = true;
           break;
         }
-      } catch (error) {}
+      } catch (_error) {}
     }
 
     // If no patient route found, verify proper redirect to login/dashboard

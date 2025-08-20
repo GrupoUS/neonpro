@@ -725,7 +725,9 @@ export class DataPortabilityService {
     const key = crypto.createHash('sha256').update(keyMaterial).digest('hex');
 
     // In production, encrypt the actual export data
-    if (!result.metadata) result.metadata = {};
+    if (!result.metadata) {
+      result.metadata = {};
+    }
     result.metadata.encrypted = true;
     result.metadata.encryptionAlgorithm = 'AES-256-GCM';
     result.metadata.keyHash = crypto
@@ -766,7 +768,9 @@ export class DataPortabilityService {
       .update(password)
       .digest('hex');
 
-    if (!result.metadata) result.metadata = {};
+    if (!result.metadata) {
+      result.metadata = {};
+    }
     result.metadata.passwordProtected = true;
     result.metadata.passwordHash = passwordHash.slice(0, 8); // Store only first 8 chars for verification
     result.metadata.protectedAt = new Date().toISOString();
@@ -797,7 +801,9 @@ export class DataPortabilityService {
       .digest('hex');
 
     // Store signature metadata
-    if (!result.metadata) result.metadata = {};
+    if (!result.metadata) {
+      result.metadata = {};
+    }
     result.metadata.digitalSignature = signature;
     result.metadata.signatureAlgorithm = 'HMAC-SHA256';
     result.metadata.signedAt = new Date().toISOString();

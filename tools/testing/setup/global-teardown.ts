@@ -20,9 +20,7 @@ import type { FullConfig } from '@playwright/test';
 /**
  * Global teardown function for Playwright healthcare testing
  */
-async function globalTeardown(config: FullConfig) {
-  console.log('🏥 Starting NeonPro Healthcare Test Teardown...');
-
+async function globalTeardown(_config: FullConfig) {
   try {
     // 1. Cleanup test data
     await cleanupTestData();
@@ -38,10 +36,7 @@ async function globalTeardown(config: FullConfig) {
 
     // 5. Final security cleanup
     await performSecurityCleanup();
-
-    console.log('✅ Healthcare test teardown completed successfully');
-  } catch (error) {
-    console.error('❌ Healthcare test teardown failed:', error);
+  } catch (_error) {
     // Don't throw - we want tests to complete even if cleanup fails
   }
 }
@@ -50,26 +45,14 @@ async function globalTeardown(config: FullConfig) {
  * Cleanup sensitive healthcare test data
  */
 async function cleanupTestData() {
-  console.log('🗑️ Cleaning up healthcare test data...');
-
   try {
-    // Here you would typically:
-    // 1. Remove test patient records
-    // 2. Clear temporary medical data
-    // 3. Cleanup audit logs
-
-    console.log('✅ Healthcare test data cleaned up');
-  } catch (error) {
-    console.warn('⚠️ Test data cleanup skipped:', error.message);
-  }
+  } catch (_error) {}
 }
 
 /**
  * Generate LGPD and healthcare compliance reports
  */
 async function generateComplianceReports() {
-  console.log('📊 Generating healthcare compliance reports...');
-
   try {
     const reportsDir = path.join(__dirname, '../reports/compliance');
 
@@ -106,19 +89,13 @@ async function generateComplianceReports() {
       path.join(reportsDir, `anvisa-compliance-${Date.now()}.json`),
       JSON.stringify(anvisaReport, null, 2)
     );
-
-    console.log('✅ Compliance reports generated');
-  } catch (error) {
-    console.warn('⚠️ Compliance report generation skipped:', error.message);
-  }
+  } catch (_error) {}
 }
 
 /**
  * Archive test artifacts for healthcare audit purposes
  */
 async function archiveTestArtifacts() {
-  console.log('📦 Archiving healthcare test artifacts...');
-
   try {
     const artifactsDir = path.join(__dirname, '../test-results');
     const archiveDir = path.join(__dirname, '../reports/archives');
@@ -131,7 +108,7 @@ async function archiveTestArtifacts() {
 
       // Archive test results for compliance audit
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-      const archivePath = path.join(archiveDir, `test-artifacts-${timestamp}`);
+      const _archivePath = path.join(archiveDir, `test-artifacts-${timestamp}`);
 
       // Create archive metadata
       const metadata = {
@@ -147,19 +124,13 @@ async function archiveTestArtifacts() {
         JSON.stringify(metadata, null, 2)
       );
     }
-
-    console.log('✅ Test artifacts archived for healthcare compliance');
-  } catch (error) {
-    console.warn('⚠️ Test artifacts archiving skipped:', error.message);
-  }
+  } catch (_error) {}
 }
 
 /**
  * Cleanup authentication states
  */
 async function cleanupAuthStates() {
-  console.log('🔐 Cleaning up authentication states...');
-
   try {
     const authDir = path.join(__dirname, 'auth');
 
@@ -172,22 +143,15 @@ async function cleanupAuthStates() {
         const filePath = path.join(authDir, file);
         // Securely delete auth files
         fs.unlinkSync(filePath);
-        console.log(`🗑️ Cleaned up ${file}`);
       }
     }
-
-    console.log('✅ Authentication states cleaned up');
-  } catch (error) {
-    console.warn('⚠️ Auth state cleanup skipped:', error.message);
-  }
+  } catch (_error) {}
 }
 
 /**
  * Perform final security cleanup
  */
 async function performSecurityCleanup() {
-  console.log('🔒 Performing final security cleanup...');
-
   try {
     // Clear sensitive environment variables
     const sensitiveVars = [
@@ -222,11 +186,7 @@ async function performSecurityCleanup() {
       path.join(reportsDir, `security-cleanup-${Date.now()}.json`),
       JSON.stringify(securityReport, null, 2)
     );
-
-    console.log('✅ Security cleanup completed');
-  } catch (error) {
-    console.warn('⚠️ Security cleanup skipped:', error.message);
-  }
+  } catch (_error) {}
 }
 
 export default globalTeardown;
