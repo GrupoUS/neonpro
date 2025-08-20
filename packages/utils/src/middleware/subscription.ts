@@ -11,36 +11,45 @@ export interface SubscriptionStatus {
   planType: 'basic' | 'premium' | 'enterprise';
 }
 
-export const validateSubscriptionStatus = (subscription: SubscriptionStatus | null): boolean => {
+export const validateSubscriptionStatus = (
+  subscription: SubscriptionStatus | null
+): boolean => {
   if (!subscription) return false;
   if (subscription.status === 'active') return true;
-  if (subscription.status === 'expired' || subscription.status === 'cancelled') return false;
+  if (subscription.status === 'expired' || subscription.status === 'cancelled')
+    return false;
   return false;
 };
 
 export const routeProtection = {
   isPublicRoute: (route: string): boolean => {
     const publicRoutes = ['/login', '/signup', '/public', '/'];
-    return publicRoutes.some(pub => route.startsWith(pub));
+    return publicRoutes.some((pub) => route.startsWith(pub));
   },
-  
+
   isPremiumRoute: (route: string): boolean => {
     const premiumRoutes = ['/premium', '/analytics', '/reports'];
-    return premiumRoutes.some(premium => route.startsWith(premium));
+    return premiumRoutes.some((premium) => route.startsWith(premium));
   },
-  
-  shouldRedirectToUpgrade: (subscription: SubscriptionStatus | null, route: string): boolean => {
+
+  shouldRedirectToUpgrade: (
+    subscription: SubscriptionStatus | null,
+    route: string
+  ): boolean => {
     if (this.isPublicRoute(route)) return false;
-    if (this.isPremiumRoute(route) && (!subscription || subscription.status !== 'active')) {
+    if (
+      this.isPremiumRoute(route) &&
+      (!subscription || subscription.status !== 'active')
+    ) {
       return true;
     }
     return false;
-  }
+  },
 };
 
 export const subscriptionCaching = {
   cache: new Map<string, { data: SubscriptionStatus; expires: number }>(),
-  
+
   get: (userId: string): SubscriptionStatus | null => {
     const cached = subscriptionCaching.cache.get(userId);
     if (cached && cached.expires > Date.now()) {
@@ -48,21 +57,21 @@ export const subscriptionCaching = {
     }
     return null;
   },
-  
-  set: (userId: string, data: SubscriptionStatus, ttl: number = 300000): void => {
+
+  set: (userId: string, data: SubscriptionStatus, ttl = 300_000): void => {
     subscriptionCaching.cache.set(userId, {
       data,
-      expires: Date.now() + ttl
+      expires: Date.now() + ttl,
     });
   },
-  
+
   invalidate: (userId: string): void => {
     subscriptionCaching.cache.delete(userId);
   },
-  
+
   clear: (): void => {
     subscriptionCaching.cache.clear();
-  }
+  },
 };
 
 export const errorHandling = {
@@ -70,9 +79,9 @@ export const errorHandling = {
     console.error('Network error in subscription check:', error);
     return null;
   },
-  
+
   handleInvalidResponse: (response: any): SubscriptionStatus | null => {
     console.error('Invalid subscription response:', response);
     return null;
-  }
+  },
 };

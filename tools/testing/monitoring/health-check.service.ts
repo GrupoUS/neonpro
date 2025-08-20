@@ -1,6 +1,6 @@
 /**
  * 🔄 NeonPro - Health Check Service
- * 
+ *
  * Serviço especializado para verificações de saúde do sistema
  * com checks automatizados de todos os componentes críticos.
  */
@@ -37,7 +37,7 @@ export class HealthCheckService {
    */
   public async performFullHealthCheck(): Promise<SystemHealth> {
     const checks: HealthCheckResult[] = [];
-    
+
     // Executar todos os checks em paralelo
     const checkPromises = [
       this.checkDatabase(),
@@ -46,11 +46,11 @@ export class HealthCheckService {
       this.checkMemory(),
       this.checkEnvironment(),
       this.checkDependencies(),
-      this.checkCompliance()
+      this.checkCompliance(),
     ];
 
     const results = await Promise.allSettled(checkPromises);
-    
+
     results.forEach((result, index) => {
       if (result.status === 'fulfilled') {
         checks.push(result.value);
@@ -59,7 +59,7 @@ export class HealthCheckService {
           component: `check-${index}`,
           status: 'down',
           responseTime: -1,
-          message: `Check failed: ${result.reason?.message || 'Unknown error'}`
+          message: `Check failed: ${result.reason?.message || 'Unknown error'}`,
         });
       }
     });
@@ -73,7 +73,7 @@ export class HealthCheckService {
       score,
       timestamp: Date.now(),
       checks,
-      uptime: process.uptime()
+      uptime: process.uptime(),
     };
   }
 
@@ -82,7 +82,7 @@ export class HealthCheckService {
    */
   private async checkDatabase(): Promise<HealthCheckResult> {
     const start = performance.now();
-    
+
     try {
       // Test basic connectivity
       const { data, error } = await this.supabase
@@ -98,7 +98,7 @@ export class HealthCheckService {
           status: 'down',
           responseTime,
           message: `Database error: ${error.message}`,
-          metadata: { error: error.code }
+          metadata: { error: error.code },
         };
       }
 
@@ -112,15 +112,14 @@ export class HealthCheckService {
         status,
         responseTime,
         message: `Database ${status} (${responseTime.toFixed(2)}ms)`,
-        metadata: { recordCount: data?.length || 0 }
+        metadata: { recordCount: data?.length || 0 },
       };
-
     } catch (error) {
       return {
         component: 'database',
         status: 'down',
         responseTime: performance.now() - start,
-        message: `Database connection failed: ${error.message}`
+        message: `Database connection failed: ${error.message}`,
       };
     }
   }
@@ -131,22 +130,20 @@ export class HealthCheckService {
   private async checkAPI(): Promise<HealthCheckResult> {
     const start = performance.now();
     const baseURL = process.env.API_BASE_URL || 'http://localhost:3000';
-    
+
     try {
-      const endpoints = [
-        '/api/health',
-        '/api/patients',
-        '/api/appointments'
-      ];
+      const endpoints = ['/api/health', '/api/patients', '/api/appointments'];
 
       const results = await Promise.allSettled(
-        endpoints.map(endpoint => 
+        endpoints.map((endpoint) =>
           axios.get(`${baseURL}${endpoint}`, { timeout: 5000 })
         )
       );
 
       const responseTime = performance.now() - start;
-      const successCount = results.filter(r => r.status === 'fulfilled').length;
+      const successCount = results.filter(
+        (r) => r.status === 'fulfilled'
+      ).length;
       const successRate = (successCount / endpoints.length) * 100;
 
       let status: 'healthy' | 'degraded' | 'down' = 'healthy';
@@ -158,19 +155,18 @@ export class HealthCheckService {
         status,
         responseTime,
         message: `API ${status} (${successCount}/${endpoints.length} endpoints)`,
-        metadata: { 
+        metadata: {
           successRate,
           endpoints: endpoints.length,
-          successful: successCount
-        }
+          successful: successCount,
+        },
       };
-
     } catch (error) {
       return {
         component: 'api',
         status: 'down',
         responseTime: performance.now() - start,
-        message: `API check failed: ${error.message}`
+        message: `API check failed: ${error.message}`,
       };
     }
   }
@@ -180,25 +176,27 @@ export class HealthCheckService {
    */
   private async checkFileSystem(): Promise<HealthCheckResult> {
     const start = performance.now();
-    
+
     try {
       // Verificar diretórios críticos
       const criticalPaths = [
         './uploads',
         './reports',
         './coverage',
-        './tools/testing'
+        './tools/testing',
       ];
 
       const pathChecks = await Promise.allSettled(
-        criticalPaths.map(async path => {
+        criticalPaths.map(async (path) => {
           const stats = await fs.stat(path);
           return { path, exists: true, isDirectory: stats.isDirectory() };
         })
       );
 
       const responseTime = performance.now() - start;
-      const accessiblePaths = pathChecks.filter(r => r.status === 'fulfilled').length;
+      const accessiblePaths = pathChecks.filter(
+        (r) => r.status === 'fulfilled'
+      ).length;
       const successRate = (accessiblePaths / criticalPaths.length) * 100;
 
       let status: 'healthy' | 'degraded' | 'down' = 'healthy';
@@ -210,19 +208,18 @@ export class HealthCheckService {
         status,
         responseTime,
         message: `FileSystem ${status} (${accessiblePaths}/${criticalPaths.length} paths)`,
-        metadata: { 
+        metadata: {
           successRate,
           totalPaths: criticalPaths.length,
-          accessiblePaths
-        }
+          accessiblePaths,
+        },
       };
-
     } catch (error) {
       return {
         component: 'filesystem',
         status: 'down',
         responseTime: performance.now() - start,
-        message: `FileSystem check failed: ${error.message}`
+        message: `FileSystem check failed: ${error.message}`,
       };
     }
   }
@@ -232,11 +229,11 @@ export class HealthCheckService {
    */
   private async checkMemory(): Promise<HealthCheckResult> {
     const start = performance.now();
-    
+
     try {
       const memory = process.memoryUsage();
       const responseTime = performance.now() - start;
-      
+
       const heapUsedMB = memory.heapUsed / 1024 / 1024;
       const heapTotalMB = memory.heapTotal / 1024 / 1024;
       const usagePercent = (memory.heapUsed / memory.heapTotal) * 100;
@@ -255,16 +252,15 @@ export class HealthCheckService {
           heapTotal: heapTotalMB,
           usagePercent,
           rss: memory.rss / 1024 / 1024,
-          external: memory.external / 1024 / 1024
-        }
+          external: memory.external / 1024 / 1024,
+        },
       };
-
     } catch (error) {
       return {
         component: 'memory',
         status: 'down',
         responseTime: performance.now() - start,
-        message: `Memory check failed: ${error.message}`
+        message: `Memory check failed: ${error.message}`,
       };
     }
   }
@@ -274,15 +270,17 @@ export class HealthCheckService {
    */
   private async checkEnvironment(): Promise<HealthCheckResult> {
     const start = performance.now();
-    
+
     try {
       const requiredEnvVars = [
         'NEXT_PUBLIC_SUPABASE_URL',
         'NEXT_PUBLIC_SUPABASE_ANON_KEY',
-        'NODE_ENV'
+        'NODE_ENV',
       ];
 
-      const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
+      const missingVars = requiredEnvVars.filter(
+        (varName) => !process.env[varName]
+      );
       const responseTime = performance.now() - start;
 
       let status: 'healthy' | 'degraded' | 'down' = 'healthy';
@@ -294,23 +292,23 @@ export class HealthCheckService {
         component: 'environment',
         status,
         responseTime,
-        message: status === 'healthy' 
-          ? 'Environment variables configured'
-          : `Missing variables: ${missingVars.join(', ')}`,
+        message:
+          status === 'healthy'
+            ? 'Environment variables configured'
+            : `Missing variables: ${missingVars.join(', ')}`,
         metadata: {
           required: requiredEnvVars.length,
           missing: missingVars.length,
           missingVars,
-          nodeEnv: process.env.NODE_ENV
-        }
+          nodeEnv: process.env.NODE_ENV,
+        },
       };
-
     } catch (error) {
       return {
         component: 'environment',
         status: 'down',
         responseTime: performance.now() - start,
-        message: `Environment check failed: ${error.message}`
+        message: `Environment check failed: ${error.message}`,
       };
     }
   }
@@ -320,17 +318,17 @@ export class HealthCheckService {
    */
   private async checkDependencies(): Promise<HealthCheckResult> {
     const start = performance.now();
-    
+
     try {
       // Verificar se módulos críticos estão carregando
       const criticalModules = [
         '@supabase/supabase-js',
         'next',
         'react',
-        'typescript'
+        'typescript',
       ];
 
-      const moduleChecks = criticalModules.map(moduleName => {
+      const moduleChecks = criticalModules.map((moduleName) => {
         try {
           require.resolve(moduleName);
           return { module: moduleName, available: true };
@@ -340,7 +338,7 @@ export class HealthCheckService {
       });
 
       const responseTime = performance.now() - start;
-      const availableModules = moduleChecks.filter(m => m.available).length;
+      const availableModules = moduleChecks.filter((m) => m.available).length;
       const successRate = (availableModules / criticalModules.length) * 100;
 
       let status: 'healthy' | 'degraded' | 'down' = 'healthy';
@@ -356,16 +354,15 @@ export class HealthCheckService {
           successRate,
           totalModules: criticalModules.length,
           availableModules,
-          moduleChecks
-        }
+          moduleChecks,
+        },
       };
-
     } catch (error) {
       return {
         component: 'dependencies',
         status: 'down',
         responseTime: performance.now() - start,
-        message: `Dependencies check failed: ${error.message}`
+        message: `Dependencies check failed: ${error.message}`,
       };
     }
   }
@@ -375,18 +372,19 @@ export class HealthCheckService {
    */
   private async checkCompliance(): Promise<HealthCheckResult> {
     const start = performance.now();
-    
+
     try {
       const complianceChecks = {
         lgpdConfig: !!process.env.LGPD_ENABLED,
         anvisaConfig: !!process.env.ANVISA_COMPLIANCE,
         encryptionKeys: !!process.env.ENCRYPTION_KEY,
         auditLogging: !!process.env.AUDIT_LOG_ENABLED,
-        securityHeaders: true // Simulated check
+        securityHeaders: true, // Simulated check
       };
 
       const responseTime = performance.now() - start;
-      const passedChecks = Object.values(complianceChecks).filter(Boolean).length;
+      const passedChecks =
+        Object.values(complianceChecks).filter(Boolean).length;
       const totalChecks = Object.keys(complianceChecks).length;
       const complianceRate = (passedChecks / totalChecks) * 100;
 
@@ -403,16 +401,15 @@ export class HealthCheckService {
           complianceRate,
           totalChecks,
           passedChecks,
-          checks: complianceChecks
-        }
+          checks: complianceChecks,
+        },
       };
-
     } catch (error) {
       return {
         component: 'compliance',
         status: 'down',
         responseTime: performance.now() - start,
-        message: `Compliance check failed: ${error.message}`
+        message: `Compliance check failed: ${error.message}`,
       };
     }
   }
@@ -428,20 +425,26 @@ export class HealthCheckService {
       dependencies: 10,
       filesystem: 10,
       environment: 5,
-      compliance: 5
+      compliance: 5,
     };
 
     let totalScore = 0;
     let totalWeight = 0;
 
-    checks.forEach(check => {
+    checks.forEach((check) => {
       const weight = weights[check.component as keyof typeof weights] || 5;
       let score = 0;
-      
+
       switch (check.status) {
-        case 'healthy': score = 100; break;
-        case 'degraded': score = 60; break;
-        case 'down': score = 0; break;
+        case 'healthy':
+          score = 100;
+          break;
+        case 'degraded':
+          score = 60;
+          break;
+        case 'down':
+          score = 0;
+          break;
       }
 
       totalScore += score * weight;
@@ -454,7 +457,9 @@ export class HealthCheckService {
   /**
    * 🎯 Determinar status geral
    */
-  private determineOverallStatus(score: number): 'healthy' | 'degraded' | 'down' {
+  private determineOverallStatus(
+    score: number
+  ): 'healthy' | 'degraded' | 'down' {
     if (score >= 90) return 'healthy';
     if (score >= 60) return 'degraded';
     return 'down';

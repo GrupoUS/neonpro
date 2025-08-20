@@ -344,7 +344,7 @@ test.describe('LGPD Compliance Complete Flow', () => {
     await page.click('[data-testid="submit-breach-report-btn"]')
 
     // Should create incident ID
-    await expect(page.locator('[data-testid="incident-id"]')).toBeVisible();
+    await expect(page.locator('[data-testid="incident-id"]')).toBeVisible()
 
     // Should show next steps timeline
     await expect(

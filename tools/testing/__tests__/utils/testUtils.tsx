@@ -8,11 +8,14 @@
  * @created 2025-07-22
  */
 
-import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { type RenderOptions, render } from '@testing-library/react';
+import React from 'react';
 import { vi } from 'vitest';
-import type { SubscriptionStatus, UserProfile } from '../../../../types/subscription';
+import type {
+  SubscriptionStatus,
+  UserProfile,
+} from '../../../../types/subscription';
 
 // ============================================================================
 // Mock Data Factories

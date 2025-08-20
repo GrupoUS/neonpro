@@ -37,7 +37,7 @@ describe('Basic Utility Functions', () => {
     const formatted100 = formatCurrency(100);
     const formatted1500 = formatCurrency(1500.5);
     const formatted0 = formatCurrency(0);
-    
+
     expect(formatted100).toContain('100');
     expect(formatted100).toContain('R$');
     expect(formatted1500).toContain('1.500');

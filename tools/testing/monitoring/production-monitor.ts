@@ -1,9 +1,9 @@
 /**
  * 📈 NeonPro - Production Quality Monitoring System
- * 
+ *
  * Sistema de monitoramento contínuo de qualidade em produção
  * com coleta de métricas em tempo real e alertas automáticos.
- * 
+ *
  * Features:
  * - Real-time metrics collection
  * - Automated alerting (Slack/Email/PagerDuty)
@@ -13,13 +13,13 @@
  * - Dashboard integration com live updates
  */
 
-import express from 'express';
-import { createServer } from 'http';
-import { Server } from 'socket.io';
-import cron from 'node-cron';
 import axios from 'axios';
+import express from 'express';
 import fs from 'fs/promises';
+import { createServer } from 'http';
+import cron from 'node-cron';
 import path from 'path';
+import { Server } from 'socket.io';
 
 interface MetricValue {
   timestamp: number;
@@ -47,16 +47,16 @@ class ProductionMonitor {
   private app = express();
   private server = createServer(this.app);
   private io = new Server(this.server, {
-    cors: { origin: "*", methods: ["GET", "POST"] }
+    cors: { origin: '*', methods: ['GET', 'POST'] },
   });
-  
+
   private metrics: Map<string, MetricValue[]> = new Map();
   private alerts: Alert[] = [];
   private healthStatus: HealthStatus = {
     status: 'healthy',
     score: 100,
     lastCheck: Date.now(),
-    issues: []
+    issues: [],
   };
 
   constructor(private readonly port: number = 3003) {
@@ -77,23 +77,25 @@ class ProductionMonitor {
         timestamp: Date.now(),
         uptime: process.uptime(),
         memory: process.memoryUsage(),
-        checks: this.healthStatus
+        checks: this.healthStatus,
       });
     });
 
     // Metrics endpoint
     this.app.get('/metrics', (req, res) => {
       const { metric, since } = req.query;
-      const sinceTime = since ? parseInt(since as string) : Date.now() - 3600000; // 1 hour default
+      const sinceTime = since
+        ? Number.parseInt(since as string)
+        : Date.now() - 3_600_000; // 1 hour default
 
       if (metric) {
         const metricData = this.metrics.get(metric as string) || [];
-        const filteredData = metricData.filter(m => m.timestamp >= sinceTime);
+        const filteredData = metricData.filter((m) => m.timestamp >= sinceTime);
         res.json({ metric, data: filteredData });
       } else {
         const allMetrics: Record<string, MetricValue[]> = {};
         for (const [key, values] of this.metrics.entries()) {
-          allMetrics[key] = values.filter(m => m.timestamp >= sinceTime);
+          allMetrics[key] = values.filter((m) => m.timestamp >= sinceTime);
         }
         res.json(allMetrics);
       }
@@ -105,12 +107,14 @@ class ProductionMonitor {
       let filteredAlerts = this.alerts;
 
       if (level) {
-        filteredAlerts = filteredAlerts.filter(a => a.level === level);
+        filteredAlerts = filteredAlerts.filter((a) => a.level === level);
       }
-      
+
       if (resolved !== undefined) {
         const isResolved = resolved === 'true';
-        filteredAlerts = filteredAlerts.filter(a => a.resolved === isResolved);
+        filteredAlerts = filteredAlerts.filter(
+          (a) => a.resolved === isResolved
+        );
       }
 
       res.json(filteredAlerts);
@@ -120,20 +124,23 @@ class ProductionMonitor {
     this.app.get('/dashboard', (req, res) => {
       res.json({
         health: this.healthStatus,
-        activeAlerts: this.alerts.filter(a => !a.resolved).length,
+        activeAlerts: this.alerts.filter((a) => !a.resolved).length,
         metrics: {
           coverage: this.getLatestMetric('coverage'),
           performance: this.getLatestMetric('performance'),
           security: this.getLatestMetric('security'),
-          compliance: this.getLatestMetric('compliance')
+          compliance: this.getLatestMetric('compliance'),
         },
         uptime: process.uptime(),
-        lastUpdate: Date.now()
+        lastUpdate: Date.now(),
       });
     });
 
     // Static dashboard
-    this.app.use('/static', express.static(path.join(__dirname, '../quality-dashboard')));
+    this.app.use(
+      '/static',
+      express.static(path.join(__dirname, '../quality-dashboard'))
+    );
   }
 
   /**
@@ -146,8 +153,8 @@ class ProductionMonitor {
       // Enviar dados iniciais
       socket.emit('initial-data', {
         health: this.healthStatus,
-        alerts: this.alerts.filter(a => !a.resolved),
-        metrics: this.getRecentMetrics()
+        alerts: this.alerts.filter((a) => !a.resolved),
+        metrics: this.getRecentMetrics(),
       });
 
       socket.on('disconnect', () => {
@@ -195,7 +202,7 @@ class ProductionMonitor {
       const apiChecks = await Promise.allSettled([
         this.checkEndpoint('/api/health'),
         this.checkEndpoint('/api/patients'),
-        this.checkEndpoint('/api/appointments')
+        this.checkEndpoint('/api/appointments'),
       ]);
 
       apiChecks.forEach((result, index) => {
@@ -237,7 +244,7 @@ class ProductionMonitor {
         status,
         score: Math.max(0, score),
         lastCheck: Date.now(),
-        issues
+        issues,
       };
 
       // Criar alertas se necessário
@@ -250,7 +257,6 @@ class ProductionMonitor {
 
       // Broadcast para dashboards
       this.io.emit('health-update', this.healthStatus);
-
     } catch (error) {
       console.error('❌ Erro no health check:', error);
       this.createAlert('error', `Health check failed: ${error.message}`);
@@ -278,7 +284,7 @@ class ProductionMonitor {
       // Em produção, implementar check real do Supabase
       // const { data, error } = await supabase.from('health_check').select('1').limit(1);
       // return !error;
-      
+
       // Simulação para desenvolvimento
       return Math.random() > 0.1; // 90% success rate
     } catch {
@@ -299,7 +305,7 @@ class ProductionMonitor {
         performance: await this.getPerformanceMetric(),
         security: await this.getSecurityMetric(),
         compliance: await this.getComplianceMetric(),
-        usage: await this.getUsageMetrics()
+        usage: await this.getUsageMetrics(),
       };
 
       // Armazenar métricas
@@ -310,9 +316,8 @@ class ProductionMonitor {
       // Broadcast para dashboards
       this.io.emit('metrics-update', {
         timestamp,
-        metrics
+        metrics,
       });
-
     } catch (error) {
       console.error('❌ Erro na coleta de métricas:', error);
       this.createAlert('error', `Metrics collection failed: ${error.message}`);
@@ -341,13 +346,13 @@ class ProductionMonitor {
     const lcp = 1.0 + Math.random() * 0.5; // 1.0-1.5s
     const fid = 30 + Math.random() * 40; // 30-70ms
     const cls = Math.random() * 0.1; // 0-0.1
-    
+
     // Score baseado em Core Web Vitals
     let score = 100;
     if (lcp > 2.5) score -= 20;
     if (fid > 100) score -= 20;
     if (cls > 0.1) score -= 20;
-    
+
     return Math.max(0, score);
   }
 
@@ -359,12 +364,12 @@ class ProductionMonitor {
     const criticalVulns = Math.floor(Math.random() * 2); // 0-1
     const highVulns = Math.floor(Math.random() * 3); // 0-2
     const mediumVulns = Math.floor(Math.random() * 5); // 0-4
-    
+
     let score = 100;
     score -= criticalVulns * 40; // Critical = -40 points
     score -= highVulns * 20; // High = -20 points
     score -= mediumVulns * 5; // Medium = -5 points
-    
+
     return Math.max(0, score);
   }
 
@@ -375,7 +380,7 @@ class ProductionMonitor {
     // Simular verificações de compliance
     const lgpdScore = 95 + Math.random() * 5; // 95-100%
     const anvisaScore = 90 + Math.random() * 10; // 90-100%
-    
+
     return (lgpdScore + anvisaScore) / 2;
   }
 
@@ -394,10 +399,10 @@ class ProductionMonitor {
     if (!this.metrics.has(key)) {
       this.metrics.set(key, []);
     }
-    
+
     const metricArray = this.metrics.get(key)!;
     metricArray.push({ timestamp, value });
-    
+
     // Manter apenas últimas 1000 entradas
     if (metricArray.length > 1000) {
       metricArray.splice(0, metricArray.length - 1000);
@@ -407,18 +412,22 @@ class ProductionMonitor {
   /**
    * 🚨 Criar alerta
    */
-  private createAlert(level: Alert['level'], message: string, metadata?: Record<string, any>): void {
+  private createAlert(
+    level: Alert['level'],
+    message: string,
+    metadata?: Record<string, any>
+  ): void {
     const alert: Alert = {
       id: `alert-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       level,
       message,
       timestamp: Date.now(),
       resolved: false,
-      metadata
+      metadata,
     };
 
     this.alerts.unshift(alert);
-    
+
     // Manter apenas últimos 100 alertas
     if (this.alerts.length > 100) {
       this.alerts = this.alerts.slice(0, 100);
@@ -442,7 +451,7 @@ class ProductionMonitor {
   private async sendCriticalAlert(alert: Alert): Promise<void> {
     // Em produção, implementar integrações reais
     console.log('📧 Enviando alerta crítico:', alert.message);
-    
+
     // Simulação de envio para Slack
     // await axios.post(process.env.SLACK_WEBHOOK_URL, {
     //   text: `🚨 NeonPro Alert: ${alert.message}`,
@@ -457,7 +466,7 @@ class ProductionMonitor {
   private getLatestMetric(key: string): number | null {
     const metricArray = this.metrics.get(key);
     if (!metricArray || metricArray.length === 0) return null;
-    
+
     return metricArray[metricArray.length - 1].value;
   }
 
@@ -466,10 +475,10 @@ class ProductionMonitor {
    */
   private getRecentMetrics(): Record<string, MetricValue[]> {
     const recentMetrics: Record<string, MetricValue[]> = {};
-    const oneHourAgo = Date.now() - 3600000;
+    const oneHourAgo = Date.now() - 3_600_000;
 
     for (const [key, values] of this.metrics.entries()) {
-      recentMetrics[key] = values.filter(m => m.timestamp >= oneHourAgo);
+      recentMetrics[key] = values.filter((m) => m.timestamp >= oneHourAgo);
     }
 
     return recentMetrics;
@@ -479,17 +488,17 @@ class ProductionMonitor {
    * 🧹 Limpar dados antigos
    */
   private cleanupOldData(): void {
-    const oneDayAgo = Date.now() - 86400000; // 24 hours
+    const oneDayAgo = Date.now() - 86_400_000; // 24 hours
 
     // Limpar métricas antigas
     for (const [key, values] of this.metrics.entries()) {
-      const filteredValues = values.filter(m => m.timestamp >= oneDayAgo);
+      const filteredValues = values.filter((m) => m.timestamp >= oneDayAgo);
       this.metrics.set(key, filteredValues);
     }
 
     // Limpar alertas antigos resolvidos
-    this.alerts = this.alerts.filter(a => 
-      !a.resolved || (a.timestamp >= oneDayAgo)
+    this.alerts = this.alerts.filter(
+      (a) => !a.resolved || a.timestamp >= oneDayAgo
     );
 
     console.log('🧹 Cleanup de dados antigos executado');
@@ -501,22 +510,21 @@ class ProductionMonitor {
   private async generateDailyReport(): Promise<void> {
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
-    
+
     const report = {
       date: yesterday.toISOString().split('T')[0],
       avgHealthScore: this.calculateAverageHealth(),
-      totalAlerts: this.alerts.filter(a => 
-        a.timestamp >= yesterday.getTime() && 
-        a.timestamp < Date.now()
+      totalAlerts: this.alerts.filter(
+        (a) => a.timestamp >= yesterday.getTime() && a.timestamp < Date.now()
       ).length,
       metrics: this.getRecentMetrics(),
-      uptime: process.uptime()
+      uptime: process.uptime(),
     };
 
     // Salvar relatório
     const reportPath = `./reports/daily/daily-report-${report.date}.json`;
     await fs.writeFile(reportPath, JSON.stringify(report, null, 2));
-    
+
     console.log(`📄 Relatório diário gerado: ${reportPath}`);
   }
 

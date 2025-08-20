@@ -6,6 +6,7 @@
  *              covering state management, caching, and real-time updates
  * @version 1.0.0
  * @created 2025-07-22
+ * @vitest-environment jsdom
  */
 
 import type { QueryClient } from '@tanstack/react-query';

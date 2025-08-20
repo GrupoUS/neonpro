@@ -1,4 +1,8 @@
-import { describe, expect, it } from 'vitest';
+/**
+ * @vitest-environment jsdom
+ */
+
+import { describe, expect, it, vi } from 'vitest';
 
 describe('NeonPro Healthcare System', () => {
   it('should initialize Vitest correctly', () => {

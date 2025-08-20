@@ -2,7 +2,7 @@
  * Subscription Components for NeonPro Healthcare System
  * React components for subscription management and feature gating
  */
-import React from 'react';
+import type React from 'react';
 
 export interface SubscriptionStatusCardProps {
   subscription: {
@@ -13,20 +13,22 @@ export interface SubscriptionStatusCardProps {
   variant?: 'default' | 'premium' | 'enterprise';
 }
 
-export const SubscriptionStatusCard: React.FC<SubscriptionStatusCardProps> = ({ 
-  subscription, 
-  variant = 'default' 
+export const SubscriptionStatusCard: React.FC<SubscriptionStatusCardProps> = ({
+  subscription,
+  variant = 'default',
 }) => {
   return (
-    <div 
+    <div
+      className="subscription-card"
       data-testid="subscription-status-card"
       data-variant={variant}
-      className="subscription-card"
     >
       <div className="status">Status: {subscription.status}</div>
       <div className="plan">Plan: {subscription.planType}</div>
       {subscription.expiresAt && (
-        <div className="expires">Expires: {subscription.expiresAt.toLocaleDateString()}</div>
+        <div className="expires">
+          Expires: {subscription.expiresAt.toLocaleDateString()}
+        </div>
       )}
     </div>
   );
@@ -39,23 +41,25 @@ export interface FeatureGateProps {
   fallback?: React.ReactNode;
 }
 
-export const FeatureGate: React.FC<FeatureGateProps> = ({ 
-  feature, 
-  isAvailable, 
-  children, 
-  fallback 
+export const FeatureGate: React.FC<FeatureGateProps> = ({
+  feature,
+  isAvailable,
+  children,
+  fallback,
 }) => {
   if (isAvailable) {
     return (
-      <div data-testid="feature-gate" data-feature={feature}>
+      <div data-feature={feature} data-testid="feature-gate">
         <div data-testid="feature-content">{children}</div>
       </div>
     );
   }
-  
+
   return (
-    <div data-testid="feature-gate" data-feature={feature}>
-      <div data-testid="feature-fallback">{fallback || 'Feature not available'}</div>
+    <div data-feature={feature} data-testid="feature-gate">
+      <div data-testid="feature-fallback">
+        {fallback || 'Feature not available'}
+      </div>
     </div>
   );
 };
@@ -67,11 +71,13 @@ export interface SubscriptionNotificationsProps {
   };
 }
 
-export const SubscriptionNotifications: React.FC<SubscriptionNotificationsProps> = ({ 
-  subscription 
-}) => {
-  const isExpiringSoon = subscription.expiresAt && 
-    new Date(subscription.expiresAt).getTime() - Date.now() < 7 * 24 * 60 * 60 * 1000; // 7 days
+export const SubscriptionNotifications: React.FC<
+  SubscriptionNotificationsProps
+> = ({ subscription }) => {
+  const isExpiringSoon =
+    subscription.expiresAt &&
+    new Date(subscription.expiresAt).getTime() - Date.now() <
+      7 * 24 * 60 * 60 * 1000; // 7 days
 
   if (subscription.status === 'expired' || isExpiringSoon) {
     return (

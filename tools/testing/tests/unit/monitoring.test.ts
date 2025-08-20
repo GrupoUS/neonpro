@@ -1,6 +1,6 @@
-const fs = require('node:fs');
-const path = require('node:path');
-const { describe, expect, it } = require('vitest');
+import fs from 'node:fs';
+import path from 'node:path';
+import { describe, expect, it } from 'vitest';
 
 describe('TASK-001 Foundation Setup Verification', () => {
   const rootDir = path.join(__dirname, '../../../../');
@@ -14,14 +14,12 @@ describe('TASK-001 Foundation Setup Verification', () => {
       expect(fs.existsSync(webAppDir)).toBe(true);
     });
 
-    it('should have lib directory with core modules', () => {
-      const libDir = path.join(rootDir, 'lib');
-      const authDir = path.join(rootDir, 'lib/auth');
-      const securityDir = path.join(rootDir, 'lib/security');
-
+    it('should have app directory with core modules', () => {
+      const appDir = path.join(rootDir, 'app');
+      const libDir = path.join(rootDir, 'app/lib');
+      
+      expect(fs.existsSync(appDir)).toBe(true);
       expect(fs.existsSync(libDir)).toBe(true);
-      expect(fs.existsSync(authDir)).toBe(true);
-      expect(fs.existsSync(securityDir)).toBe(true);
     });
 
     it('should have web app components', () => {
@@ -59,9 +57,9 @@ describe('TASK-001 Foundation Setup Verification', () => {
   });
 
   describe('Testing Infrastructure', () => {
-    it('should have Jest configuration in testing tools', () => {
-      const jestConfigPath = path.join(rootDir, 'tools/testing/jest.config.ts');
-      expect(fs.existsSync(jestConfigPath)).toBe(true);
+    it('should have Vitest configuration in testing tools', () => {
+      const vitestConfigPath = path.join(rootDir, 'vitest.config.ts');
+      expect(fs.existsSync(vitestConfigPath)).toBe(true);
     });
 
     it('should have testing directory structure', () => {

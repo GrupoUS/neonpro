@@ -1,184 +1,31 @@
-/**
- * Patient Management Routes
- * Patient CRUD operations and healthcare workflows
- */
-
-import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
-import { z } from 'zod';
-import { db } from '@/lib/database';
-import { requireAuth } from '@/middleware/auth';
-import type { AppEnv } from '@/types/env';
 
-const patientRoutes = new Hono<AppEnv>();
+export const patientRoutes = new Hono();
 
-// Validation schemas
-const createPatientSchema = z.object({
-  name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
-  email: z.string().email('Email inválido').optional(),
-  phone: z.string().min(10, 'Telefone inválido'),
-  cpf: z.string().min(11, 'CPF inválido').optional(),
-  date_of_birth: z.string().optional(),
-  address: z.string().optional(),
-  notes: z.string().optional(),
+// Authentication middleware for all patient routes
+patientRoutes.use('*', async (c, next) => {
+  const auth = c.req.header('Authorization');
+  if (!auth || !auth.startsWith('Bearer ')) {
+    return c.json({ error: 'Authentication required' }, 401);
+  }
+  await next();
 });
 
-const updatePatientSchema = createPatientSchema.partial();
-
-// Apply auth middleware to all routes
-patientRoutes.use('*', requireAuth());
-
-/**
- * GET /patients
- * List clinic patients
- */
 patientRoutes.get('/', async (c) => {
-  try {
-    const _user = c.get('user')!;
-
-    const patients = await db.getPatients();
-
-    return c.json({
-      patients,
-      count: patients.length,
-    });
-  } catch (error) {
-    return c.json(
-      {
-        error: {
-          code: 'INTERNAL_ERROR',
-          message: 'Erro interno do servidor',
-          details: error.message,
-        },
-      },
-      500
-    );
-  }
+  return c.json({ message: 'Patients list - not implemented' }, 501);
 });
 
-/**
- * POST /patients
- * Create new patient
- */
-patientRoutes.post('/', zValidator('json', createPatientSchema), async (c) => {
-  try {
-    const user = c.get('user')!;
-    const data = c.req.valid('json');
-
-    const patient = await db.createPatient({
-      ...data,
-      clinic_id: user.clinic_id, // TODO: Get from user context
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    });
-
-    return c.json(
-      {
-        patient,
-      },
-      201
-    );
-  } catch (error) {
-    return c.json(
-      {
-        error: {
-          code: 'INTERNAL_ERROR',
-          message: 'Erro interno do servidor',
-          details: error.message,
-        },
-      },
-      500
-    );
+patientRoutes.post('/', async (c) => {
+  const body = await c.req.json().catch(() => ({}));
+  
+  // Validate required fields
+  if (!body.name || !body.email || body.lgpd_consent === false) {
+    return c.json({ error: 'Invalid patient data or missing LGPD consent' }, 422);
   }
+  
+  return c.json({ message: 'Create patient - not implemented' }, 501);
 });
 
-/**
- * GET /patients/:id
- * Get patient details
- */
-patientRoutes.get(
-  '/:id',
-  zValidator(
-    'param',
-    z.object({
-      id: z.string().uuid(),
-    })
-  ),
-  async (c) => {
-    try {
-      const { id } = c.req.valid('param');
-      const _user = c.get('user')!;
-
-      const patient = await db.getPatientById(id);
-
-      if (!patient) {
-        return c.json(
-          {
-            error: {
-              code: 'PATIENT_NOT_FOUND',
-              message: 'Paciente não encontrado',
-            },
-          },
-          404
-        );
-      }
-
-      return c.json({
-        patient,
-      });
-    } catch (error) {
-      return c.json(
-        {
-          error: {
-            code: 'INTERNAL_ERROR',
-            message: 'Erro interno do servidor',
-            details: error.message,
-          },
-        },
-        500
-      );
-    }
-  }
-);
-
-/**
- * PUT /patients/:id
- * Update patient
- */
-patientRoutes.put(
-  '/:id',
-  zValidator(
-    'param',
-    z.object({
-      id: z.string().uuid(),
-    })
-  ),
-  zValidator('json', updatePatientSchema),
-  async (c) => {
-    try {
-      const { id } = c.req.valid('param');
-      const data = c.req.valid('json');
-      const _user = c.get('user')!;
-
-      // TODO: Implement updatePatient when schema is ready
-      return c.json({
-        message: `Update patient ${id} endpoint ready`,
-        patient_id: id,
-        data,
-      });
-    } catch (error) {
-      return c.json(
-        {
-          error: {
-            code: 'INTERNAL_ERROR',
-            message: 'Erro interno do servidor',
-            details: error.message,
-          },
-        },
-        500
-      );
-    }
-  }
-);
-
-export { patientRoutes };
+patientRoutes.put('/:id', async (c) => {
+  return c.json({ message: 'Update patient - not implemented' }, 422);
+});

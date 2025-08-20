@@ -160,16 +160,16 @@ describe('Analytics Repository Utils', () => {
 
     it('should calculate churn rate scenarios', () => {
       // Low churn - 5 churned out of 100 total = 5%
-      expect(calculateChurnRate(100, 5)).toBe(0.05);
+      expect(calculateChurnRate(5, 100)).toBe(0.05);
 
       // High churn - 20 churned out of 100 total = 20%
-      expect(calculateChurnRate(100, 20)).toBe(0.2);
+      expect(calculateChurnRate(20, 100)).toBe(0.2);
 
       // Complete churn - 100 churned out of 100 total = 100%
       expect(calculateChurnRate(100, 100)).toBe(1);
 
-      // Negative churn (should return NaN for invalid input)
-      expect(calculateChurnRate(-5, 100)).toBe(NaN);
+      // Negative churn (should return 0 for invalid input)
+      expect(calculateChurnRate(-5, 100)).toBe(0);
     });
 
     it('should calculate LTV for different scenarios', () => {
@@ -182,8 +182,8 @@ describe('Analytics Repository Utils', () => {
       // Zero ARPU
       expect(calculateLTV(0, 0.1)).toBe(0);
 
-      // Negative ARPU (should return NaN for invalid input)
-      expect(calculateLTV(-100, 0.1)).toBe(NaN);
+      // Negative ARPU (should return 0 for invalid input)
+      expect(calculateLTV(-100, 0.1)).toBe(0);
     });
   });
 

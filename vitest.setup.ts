@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom/vitest';
-import { expect, vi } from 'vitest';
 import React from 'react';
+import { expect, vi } from 'vitest';
 
 // Make React available globally in tests
 Object.defineProperty(globalThis, 'React', {

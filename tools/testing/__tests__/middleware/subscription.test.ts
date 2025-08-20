@@ -30,21 +30,26 @@ vi.mock('next/navigation', () => ({
 // ============================================================================
 
 describe('Subscription Middleware', () => {
-  let mockFetch: vi.MockedFunction<typeof fetch>;
+  let originalFetch: typeof global.fetch;
 
   beforeEach(() => {
     // Reset all mocks
     vi.clearAllMocks();
-
-    // Setup fetch mock
-    mockFetch = vi.mocked(global.fetch);
-    if (mockFetch.mockClear) {
-      mockFetch.mockClear();
-    }
+    
+    // Store original fetch
+    originalFetch = global.fetch;
+    
+    // Setup default fetch mock
+    const mockFetch = vi.fn();
+    vi.stubGlobal('fetch', mockFetch);
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
+    // Restore original fetch
+    if (originalFetch) {
+      global.fetch = originalFetch;
+    }
   });
 
   // ============================================================================
@@ -157,8 +162,9 @@ describe('Subscription Middleware', () => {
 
   describe('errorHandling', () => {
     it('should handle network errors gracefully', async () => {
-      // Mock fetch to reject with an error
-      vi.mocked(fetch).mockRejectedValueOnce(new Error('Network error'));
+      // Mock fetch to reject with an error - Vitest v3.2.4 syntax
+      const mockFetch = vi.fn().mockRejectedValueOnce(new Error('Network error'));
+      vi.stubGlobal('fetch', mockFetch);
 
       try {
         await fetch('/api/subscription');
@@ -169,12 +175,15 @@ describe('Subscription Middleware', () => {
     });
 
     it('should handle invalid subscription responses', async () => {
-      // Mock fetch to return invalid data
-      vi.mocked(fetch).mockResolvedValueOnce({
+      // Mock fetch to return invalid data - Vitest v3.2.4 syntax
+      const mockResponse = {
         ok: false,
         status: 500,
         json: () => Promise.resolve({ error: 'Server error' }),
-      } as Response);
+      } as Response;
+      
+      const mockFetch = vi.fn().mockResolvedValueOnce(mockResponse);
+      vi.stubGlobal('fetch', mockFetch);
 
       const response = await fetch('/api/subscription');
       expect(response.status).toBe(500);
