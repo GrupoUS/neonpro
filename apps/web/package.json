@@ -29,6 +29,7 @@
     "@aws-sdk/client-ses": "^3.864.0",
     "@neonpro/db": "workspace:*",
     "@neonpro/domain": "workspace:*",
+    "@neonpro/shared": "workspace:*",
     "@neonpro/ui": "workspace:*",
     "@neonpro/utils": "workspace:*",
     "@prisma/client": "^5.7.1",

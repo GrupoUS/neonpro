@@ -1,0 +1,63 @@
+{
+  "name": "@neonpro/shared",
+  "version": "1.0.0",
+  "description": "Shared types and schemas for NeonPro Healthcare Platform",
+  "main": "./dist/index.js",
+  "module": "./dist/index.esm.js",
+  "types": "./dist/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.js"
+    },
+    "./schemas": {
+      "types": "./dist/schemas/index.d.ts",
+      "import": "./dist/schemas/index.esm.js",
+      "require": "./dist/schemas/index.js"
+    },
+    "./types": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/types/index.esm.js",
+      "require": "./dist/types/index.js"
+    },
+    "./api-client": {
+      "types": "./dist/api-client.d.ts",
+      "import": "./dist/api-client.esm.js",
+      "require": "./dist/api-client.js"
+    }
+  },
+  "files": [
+    "dist/**/*"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --dts --clean",
+    "dev": "tsup src/index.ts --format esm,cjs --dts --watch",
+    "type-check": "tsc --noEmit",
+    "lint": "biome check src",
+    "lint:fix": "biome check src --apply"
+  },
+  "dependencies": {
+    "hono": "^4.5.8",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.8.3",
+    "@types/node": "^20.14.15",
+    "tsup": "^8.2.4",
+    "typescript": "^5.5.4"
+  },
+  "keywords": [
+    "neonpro",
+    "healthcare",
+    "shared",
+    "types",
+    "schemas",
+    "zod",
+    "hono",
+    "rpc"
+  ],
+  "author": "NeonPro Team",
+  "license": "PROPRIETARY"
+}

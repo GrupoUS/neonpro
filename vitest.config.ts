@@ -3,11 +3,6 @@
 import path from 'node:path';
 import { defineConfig } from 'vitest/config';
 
-/// <reference types="vitest" />
-
-import path from 'node:path';
-import { defineConfig } from 'vitest/config';
-
 export default defineConfig({
   test: {
     // Projects configuration (replaces workspace)
@@ -30,6 +25,7 @@ export default defineConfig({
           '!**/apps/**', // Exclude apps (they have their own configs below)
           '!**/packages/**', // Exclude packages (they have their own configs below)
           '!**/tools/**', // Exclude tools (they have their own configs below)
+          '!**/Archon/**', // Exclude Archon (it has its own config below)
         ],
         exclude: [
           '**/node_modules/**',
@@ -201,6 +197,31 @@ export default defineConfig({
           '**/visual/**',
           '**/*.e2e.{test,spec}.{ts,tsx}',
         ],
+      },
+
+      // Archon UI
+      {
+        name: 'archon-ui',
+        root: './Archon/archon-ui-main',
+        globals: true,
+        environment: 'jsdom',
+        setupFiles: ['./test/setup.ts'],
+        include: [
+          'test/**/*.{test,spec}.{ts,tsx}',
+        ],
+        exclude: [
+          '**/node_modules/**',
+          '**/dist/**',
+          '**/.next/**',
+          '**/coverage/**',
+          '**/e2e/**',
+          '**/playwright/**',
+        ],
+        resolve: {
+          alias: {
+            '@': path.resolve(__dirname, './Archon/archon-ui-main/src'),
+          },
+        },
       },
     ],
 
