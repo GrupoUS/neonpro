@@ -14,6 +14,8 @@ applyTo: "**/*"
 **PNPM over NPM**: Use PNPM instead of NPM to manage dependencies, run builds and tests. PNPM is faster, more efficient, and uses less disk space.
 **USE A PASTA E ARQUITETURA CORRETA**: Sempre que for criar um arquivo, use a pasta e arquitetura correta. Por exemplo se for criar algo no projeto neonpro use a pasta E:\neonpro.
 **Não crie conteúdo dos projetos na pasta vscode**: A pasta E:\vscode só serve para configuração das ides com regras e agentes. Não crie conteúdo dos projetos nessa pasta.
+**Sempre mantenha a arquitetura definida no source-tree**: Sempre que for criar um arquivo, use a pasta e arquitetura correta do "D:\neonpro\docs\shards\architecture\source-tree.md".
+**CLEAN UP CONSTANTLY**: Sem que terminar uma task busque por arquivos e códigos duplicados, redundantes, inutilizados ou obsoletos para limpar, incorporar mantendo sempre o sistema limpo e organizado. Sempre corrija os paths necessários para evitar erros de redirecionamento.
 **No backwards compatibility** - remove deprecated code immediately
 **Detailed errors over graceful failures** - we want to identify and fix issues fast
 ### Code Quality
@@ -39,7 +41,7 @@ applyTo: "**/*"
 
 ## 🎯 Project Context & Business Domain
 
-**NeonPro** é um **sistema de gestão para clínicas de estética multiprofissionais brasileiras** com foco em **gerenciamento de pacientes e inteligência financeira através de IA**. 
+**NeonPro** é um **sistema de gestão para clínicas de estética multiprofissionais brasileiras** com foco em **gerenciamento de pacientes e inteligência financeira através de IA**.
 
 **Importante**: Sistema **não médico** (sem CFM, telemedicina), focado em procedimentos estéticos e wellness.
 
@@ -119,11 +121,11 @@ export async function createPatientAction(prevState: any, formData: FormData) {
     email: formData.get('email'),
     cpf: formData.get('cpf'),
   })
-  
+
   if (!validated.success) {
     return { errors: validated.error.flatten().fieldErrors }
   }
-  
+
   await createPatient(validated.data)
   revalidatePath('/patients')
   return { success: true }
@@ -356,16 +358,16 @@ export async function recordConsent(consent: LGPDConsent) {
   const { data, error } = await supabase
     .from('lgpd_consents')
     .insert(consent)
-  
+
   if (error) throw error
-  
+
   // Audit log for compliance
   await logComplianceEvent({
     event_type: 'consent_recorded',
     patient_id: consent.patient_id,
     details: consent
   })
-  
+
   return data
 }
 
@@ -408,7 +410,7 @@ interface EquipmentMaintenance {
 
 ### **Security Multi-layer**
 ```yaml
-Authentication: 
+Authentication:
   - MFA obrigatório para admin
   - Supabase Auth + OAuth providers
   - Session management com timeout
@@ -441,7 +443,7 @@ export async function optimizeSchedule(
   constraints: ScheduleConstraints
 ): Promise<OptimizedSchedule> {
   const aiService = new OpenAIService()
-  
+
   const prompt = `
     Otimize a agenda de uma clínica estética brasileira considerando:
     - ${appointments.length} agendamentos existentes
@@ -449,14 +451,14 @@ export async function optimizeSchedule(
     - Tipos de procedimento: ${constraints.serviceTypes}
     - Preferências dos pacientes: ${constraints.patientPreferences}
     - Tempo de preparação entre procedimentos: ${constraints.setupTime}
-    
+
     Retorne uma agenda otimizada que:
     1. Minimize tempo de espera dos pacientes
     2. Maximize utilização dos profissionais
     3. Reduza probabilidade de no-show
     4. Considere complexidade dos procedimentos
   `
-  
+
   const optimization = await aiService.generateScheduleOptimization(prompt)
   return parseOptimizationResponse(optimization)
 }
@@ -464,7 +466,7 @@ export async function optimizeSchedule(
 // ✅ Patient Journey Analytics
 export async function analyzePatientJourney(patientId: string) {
   const journey = await getPatientJourney(patientId)
-  
+
   return {
     satisfactionScore: calculateSatisfactionScore(journey),
     retentionProbability: predictRetention(journey),
@@ -479,7 +481,7 @@ export async function analyzePatientJourney(patientId: string) {
 export async function predictNoShow(appointmentId: string): Promise<NoShowPrediction> {
   const appointment = await getAppointment(appointmentId)
   const patientHistory = await getPatientHistory(appointment.patient_id)
-  
+
   return {
     probability: calculateNoShowProbability(appointment, patientHistory),
     riskFactors: identifyNoShowRiskFactors(appointment, patientHistory),
@@ -497,7 +499,7 @@ export async function generateFinancialInsights(
   period: DateRange
 ): Promise<FinancialInsights> {
   const data = await getFinancialData(clinicId, period)
-  
+
   return {
     revenue: {
       total: data.totalRevenue,
@@ -619,7 +621,7 @@ Fluxos Críticos:
 ```bash
 # 🔧 Desenvolvimento
 pnpm dev                    # Start dev server (Turborepo)
-pnpm build                  # Build all packages 
+pnpm build                  # Build all packages
 pnpm test                   # Run test suite (Vitest + Playwright)
 pnpm format                 # Biome formatting
 pnpm lint:biome            # Biome linting
@@ -692,15 +694,15 @@ interface AestheticService {
 // 2. ✅ Create service management action
 export async function createAestheticService(service: AestheticService) {
   const validated = aestheticServiceSchema.parse(service)
-  
+
   const { data, error } = await supabase
     .from('services')
     .insert(validated)
     .select()
     .single()
-  
+
   if (error) throw error
-  
+
   await logServiceCreation(data)
   return data
 }
@@ -728,29 +730,29 @@ export async function createPatientWorkflow(patientData: PatientInput) {
   try {
     // 1. Validate data
     const validated = patientSchema.parse(patientData)
-    
+
     // 2. Check for existing patient (prevent duplicates)
     const existing = await findPatientByCPF(validated.cpf)
     if (existing) {
       throw new Error('Paciente já cadastrado no sistema')
     }
-    
+
     // 3. Encrypt sensitive data
     const encryptedData = {
       ...validated,
       cpf: encryptSensitiveData(validated.cpf),
       medical_history: encryptSensitiveData(JSON.stringify(validated.medical_history))
     }
-    
+
     // 4. Create patient record with RLS
     const { data: patient, error } = await supabase
       .from('patients')
       .insert(encryptedData)
       .select()
       .single()
-    
+
     if (error) throw error
-    
+
     // 5. Record LGPD consent
     await recordConsent({
       patient_id: patient.id,
@@ -760,15 +762,15 @@ export async function createPatientWorkflow(patientData: PatientInput) {
       ip_address: getClientIP(),
       user_agent: getUserAgent()
     })
-    
+
     // 6. Create audit log
     await logPatientCreation(patient.id)
-    
+
     // 7. Send welcome communication
     await sendWelcomeMessage(patient)
-    
+
     return patient
-    
+
   } catch (error) {
     console.error('Patient creation failed:', error)
     throw error
@@ -820,9 +822,9 @@ describe('Financial Analytics', () => {
       appointments: 50,
       duration_hours: 100
     }
-    
+
     const profitability = calculateServiceProfitability(serviceData)
-    
+
     expect(profitability.margin).toBe(0.7) // 70% margin
     expect(profitability.revenuePerHour).toBe(100)
   })
@@ -833,19 +835,19 @@ import { test, expect } from '@playwright/test'
 
 test('should complete patient registration flow', async ({ page }) => {
   await page.goto('/patients/new')
-  
+
   // Fill patient data
   await page.fill('[name="name"]', 'Maria Silva')
   await page.fill('[name="email"]', 'maria@example.com')
   await page.fill('[name="phone"]', '+5511999999999')
   await page.fill('[name="cpf"]', '123.456.789-00')
-  
+
   // Grant LGPD consent
   await page.check('[name="consent_data_processing"]')
   await page.check('[name="consent_marketing"]')
-  
+
   await page.click('button[type="submit"]')
-  
+
   // Verify success
   await expect(page.locator('text=Paciente criado com sucesso')).toBeVisible()
   await expect(page.locator('text=Maria Silva')).toBeVisible()
@@ -942,7 +944,7 @@ import { debounce } from 'lodash/debounce'
 const patients = await fetch('/api/patients') // No caching
 
 // ✅ SEMPRE: Proper caching
-const patients = await fetch('/api/patients', { 
+const patients = await fetch('/api/patients', {
   next: { revalidate: 300 } // 5min cache
 })
 
@@ -955,7 +957,7 @@ function PatientCard({ patient }) {
 // ✅ SEMPRE: Memoization when needed
 const PatientCard = memo(function PatientCard({ patient }) {
   const expensiveCalculation = useMemo(
-    () => calculateMetrics(patient), 
+    () => calculateMetrics(patient),
     [patient.id]
   )
   return <div>{expensiveCalculation}</div>
@@ -979,7 +981,7 @@ ARCHITECTURE_CONTEXT:
     use_when: "Infraestrutura, security detalhada, API completa, deployment strategy"
 
   technical_preferences:
-    file: "E:\neonpro\.bmad-core\data\technical-preferences.md" 
+    file: "E:\neonpro\.bmad-core\data\technical-preferences.md"
     lines: 220
     content: "Configurações 2025, performance targets, build optimization, quality gates"
     use_when: "Configurações específicas, otimizações, standards de qualidade"
@@ -990,13 +992,13 @@ ARCHITECTURE_CONTEXT:
       lines: 704
       content: "Stack completo, dependências, configurações detalhadas"
       use_when: "Configuração específica de packages, builds, pipeline"
-    
+
     coding_standards:
       file: "E:\neonpro\docs\shards\architecture\coding-standards.md"
       lines: 712
       content: "Padrões Next.js 15, TypeScript patterns, testing, components"
       use_when: "Implementação de componentes, patterns de código, testing"
-    
+
     source_tree:
       file: "E:\neonpro\docs\shards\architecture\source-tree.md"
       lines: 335

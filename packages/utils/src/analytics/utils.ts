@@ -1,366 +1,202 @@
-import { format, isValid, parseISO, subDays } from 'date-fns';
+/**
+ * Analytics Utilities for NeonPro Healthcare System
+ * Provides utility functions for analytics and data processing
+ */
+
+export interface AnalyticsData {
+  timestamp: Date;
+  metric: string;
+  value: number;
+  metadata?: Record<string, any>;
+}
+
+export interface ExportOptions {
+  format: 'csv' | 'excel' | 'pdf';
+  dateRange?: {
+    start: Date;
+    end: Date;
+  };
+  includeMetadata?: boolean;
+}
 
 /**
- * Format currency values with proper locale formatting
+ * Calculate growth percentage between two values
  */
-export function formatAnalyticsCurrency(
-  amount: number,
-  currency = 'USD',
-  precision = 2
-): string {
-  if (
-    !amount ||
-    Number.isNaN(amount) ||
-    amount === null ||
-    amount === undefined
-  ) {
-    return '$0.00';
-  }
+export function calculateGrowth(current: number, previous: number): number {
+  if (previous === 0) return current > 0 ? 100 : 0;
+  return ((current - previous) / previous) * 100;
+}
 
-  const formatter = new Intl.NumberFormat('en-US', {
+// Additional function expected by tests
+export const calculateGrowthRate = (current: number, previous: number): number => {
+  if (previous === 0) return Number.POSITIVE_INFINITY;
+  return ((current - previous) / previous) * 100;
+};
+
+export const formatAnalyticsCurrency = (amount: number | null | undefined): string => {
+  if (amount == null) return '$0.00';
+  return new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency,
-    minimumFractionDigits: precision,
-    maximumFractionDigits: precision,
-  });
+    currency: 'USD',
+  }).format(amount);
+};
 
-  return formatter.format(amount);
-}
+export const formatAnalyticsPercentage = (value: number | null | undefined, precision: number = 2): string => {
+  if (value == null) return '0%';
+  return `${value.toFixed(precision)}%`;
+};
 
-/**
- * Format percentage values
- */
-export function formatAnalyticsPercentage(
-  value: number,
-  precision = 2
-): string {
-  if (!value || Number.isNaN(value) || !Number.isFinite(value)) {
-    return '0.00%';
-  }
-
-  return `${(value * 100).toFixed(precision)}%`;
-}
-
-/**
- * Calculate growth rate between two periods
- */
-export function calculateGrowthRate(previous: number, current: number): number {
-  if (Number.isNaN(current) || Number.isNaN(previous)) {
-    return Number.NaN;
-  }
-
-  if (previous === 0) {
-    return current === 0 ? 0 : Number.POSITIVE_INFINITY;
-  }
-
-  if (current === 0) {
-    return -1; // Complete loss = -100% decline
-  }
-
-  return (current - previous) / previous;
-}
-
-/**
- * Calculate churn rate
- */
-export function calculateChurnRate(
-  churned: number,
-  startCustomers: number
-): number {
-  if (Number.isNaN(churned) || Number.isNaN(startCustomers)) {
-    return Number.NaN;
-  }
-
-  if (churned < 0) {
-    return 0;
-  }
-
-  if (startCustomers === 0) {
-    return 0;
-  }
-
-  return churned / startCustomers;
-}
-
-/**
- * Calculate Customer Lifetime Value (LTV)
- */
-export function calculateLTV(arpu: number, churnRate: number): number {
-  if (Number.isNaN(arpu) || Number.isNaN(churnRate)) {
-    return Number.NaN;
-  }
-
-  if (arpu < 0) {
-    return 0;
-  }
-
-  if (churnRate === 0) {
-    return Number.POSITIVE_INFINITY;
-  }
-
-  return arpu / churnRate;
-}
-
-/**
- * Calculate Monthly Recurring Revenue (MRR)
- */
-export function calculateMRR(subscriptions: any[]): number {
-  if (!Array.isArray(subscriptions)) {
-    return 0;
-  }
-
+export const calculateMRR = (subscriptions: any[] | null | undefined): number => {
+  if (!Array.isArray(subscriptions)) return 0;
   return subscriptions
-    .filter(
-      (sub) =>
-        sub &&
-        sub.status === 'active' &&
-        typeof sub.amount === 'number' &&
-        !Number.isNaN(sub.amount) &&
-        Number.isFinite(sub.amount)
-    )
-    .reduce((total, sub) => total + sub.amount / 100, 0); // Convert from cents
-}
+    .filter(sub => sub?.status === 'active')
+    .reduce((sum, sub) => sum + (sub?.price || 0), 0);
+};
 
-/**
- * Calculate Annual Recurring Revenue (ARR)
- */
-export function calculateARR(mrr: number): number {
+export const calculateARR = (mrr: number): number => {
   return mrr * 12;
-}
+};
 
-// Removed local date utility functions to avoid conflicts with date-fns imports
+export const calculateChurnRate = (totalCustomers: number, churnedCustomers: number): number => {
+  if (totalCustomers === 0) return 0;
+  if (isNaN(totalCustomers) || isNaN(churnedCustomers)) return NaN;
+  return churnedCustomers / totalCustomers;
+};
 
-/**
- * Aggregate metrics by period
- */
-export function aggregateMetricsByPeriod<T>(
-  data: T[],
-  period: 'day' | 'week' | 'month',
-  aggregationFn: (items: T[]) => number
-): Array<{ period: string; value: number }> {
-  if (!Array.isArray(data) || data.length === 0) {
-    return [];
-  }
+export const calculateLTV = (averageRevenue: number, churnRate: number): number => {
+  if (churnRate === 0) return Number.POSITIVE_INFINITY;
+  if (isNaN(averageRevenue) || isNaN(churnRate)) return NaN;
+  return averageRevenue / churnRate;
+};
 
-  const formatString = period === 'month' ? 'MMM yyyy' : 'yyyy-MM-dd';
-
-  // Simple groupBy implementation instead of lodash
-  const grouped: Record<string, T[]> = {};
-  for (const item of data) {
-    // Parse date properly to avoid timezone issues
-    const dateStr = (item as any).date;
-    let date: Date;
-
-    // For YYYY-MM-DD format, parse as local date to match test expectations
-    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
-      const [year, month, day] = dateStr.split('-').map(Number);
-      date = new Date(year, month - 1, day); // Local date
-    } else {
-      date = new Date(dateStr);
+export const aggregateMetricsByPeriod = (
+  data: any[],
+  period: 'day' | 'month' | 'year',
+  aggregator: (items: any[]) => number
+): any[] => {
+  if (!Array.isArray(data)) return [];
+  
+  const grouped = data.reduce((acc, item) => {
+    if (!item?.date) return acc;
+    
+    const date = new Date(item.date);
+    let key: string;
+    
+    switch (period) {
+      case 'day':
+        key = date.toISOString().split('T')[0];
+        break;
+      case 'month':
+        key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        break;
+      case 'year':
+        key = String(date.getFullYear());
+        break;
     }
-
-    const key = format(date, formatString);
-    if (!grouped[key]) {
-      grouped[key] = [];
-    }
-    grouped[key].push(item);
-  }
-
-  // Sort results by period chronologically
-  const sortedEntries = Object.entries(grouped).sort(([a], [b]) => {
-    // For month format like "Jan 2024", sort chronologically
-    if (formatString === 'MMM yyyy') {
-      const monthOrder = [
-        'Jan',
-        'Feb',
-        'Mar',
-        'Apr',
-        'May',
-        'Jun',
-        'Jul',
-        'Aug',
-        'Sep',
-        'Oct',
-        'Nov',
-        'Dec',
-      ];
-      const [monthA, yearA] = a.split(' ');
-      const [monthB, yearB] = b.split(' ');
-      const yearDiff = Number.parseInt(yearA, 10) - Number.parseInt(yearB, 10);
-      if (yearDiff !== 0) {
-        return yearDiff;
-      }
-      return monthOrder.indexOf(monthA) - monthOrder.indexOf(monthB);
-    }
-    // For date format, sort as strings (ISO format sorts correctly)
-    return a.localeCompare(b);
-  });
-
-  return sortedEntries.map(([period, items]) => ({
+    
+    if (!acc[key]) acc[key] = [];
+    acc[key].push(item);
+    return acc;
+  }, {} as Record<string, any[]>);
+  
+  return Object.entries(grouped).map(([period, items]) => ({
     period,
-    value: aggregationFn(items),
+    value: aggregator(items),
+    count: items.length
   }));
-}
+};
 
-/**
- * Generate date range
- */
-export function generateDateRange(start: Date, end: Date): Date[] {
-  if (start > end) {
-    throw new Error('Start date must be before or equal to end date');
+export const generateDateRange = (start: Date, end: Date): Date[] => {
+  const dates = [];
+  const current = new Date(start);
+  
+  while (current <= end) {
+    dates.push(new Date(current));
+    current.setDate(current.getDate() + 1);
   }
-
-  const dates: Date[] = [];
-  const currentDate = new Date(start);
-
-  while (currentDate <= end) {
-    dates.push(new Date(currentDate));
-    currentDate.setDate(currentDate.getDate() + 1);
-  }
-
+  
   return dates;
-}
+};
 
-/**
- * Validate date range
- */
-export function validateDateRange(start: Date, end: Date): boolean {
-  if (!(isValid(start) && isValid(end))) {
+export const validateDateRange = (start: Date, end: Date): boolean => {
+  if (!start || !end || !(start instanceof Date) || !(end instanceof Date)) {
     return false;
   }
-
   return start <= end;
-}
+};
 
-/**
- * Parse analytics filters from URL parameters
- */
-export function parseAnalyticsFilters(params: URLSearchParams): {
-  period: string;
-  metric: string;
-  startDate: Date;
-  endDate: Date;
-  groupBy?: string;
-  filters: Record<string, string>;
-} {
-  const period = params.get('period') || 'last_30_days';
-  const metric = params.get('metric') || 'all';
-  const startDateStr = params.get('start_date');
-  const endDateStr = params.get('end_date');
-  const groupBy = params.get('group_by') || undefined;
-
-  // Validate period and metric
-  const validPeriods = ['last_7_days', 'last_30_days', 'last_month', 'custom'];
-  const validMetrics = ['all', 'subscriptions', 'revenue', 'users'];
-
-  if (!(validPeriods.includes(period) && validMetrics.includes(metric))) {
-    throw new Error('Invalid filter parameters');
-  }
-
-  // Parse dates
-  let startDate: Date;
-  let endDate: Date;
-
-  if (startDateStr && endDateStr) {
-    // Ensure UTC dates by appending 'T00:00:00.000Z' if no time is specified
-    const startISO = startDateStr.includes('T')
-      ? startDateStr
-      : `${startDateStr}T00:00:00.000Z`;
-    const endISO = endDateStr.includes('T')
-      ? endDateStr
-      : `${endDateStr}T00:00:00.000Z`;
-
-    startDate = parseISO(startISO);
-    endDate = parseISO(endISO);
-
-    if (!(isValid(startDate) && isValid(endDate))) {
-      throw new Error('Invalid filter parameters');
-    }
-  } else {
-    // Default to last 30 days
-    endDate = new Date();
-    startDate = subDays(endDate, 30);
-  }
-
-  // Parse additional filters
-  const filters: Record<string, string> = {};
-  for (const [key, value] of params.entries()) {
-    if (key.startsWith('filter[') && key.endsWith(']')) {
-      const filterKey = key.slice(7, -1);
-      filters[filterKey] = value;
-    }
-  }
-
+export const parseAnalyticsFilters = (params: URLSearchParams): any => {
   return {
-    period,
-    metric,
-    startDate,
-    endDate,
-    groupBy,
-    filters,
+    period: params.get('period') || 'month',
+    metric: params.get('metric') || 'revenue',
+    startDate: params.get('startDate') ? new Date(params.get('startDate')!) : new Date(),
+    endDate: params.get('endDate') ? new Date(params.get('endDate')!) : new Date()
   };
-}
+};
+
+export const exportToCSV = (data: any[], filename: string = 'export.csv'): string => {
+  if (!Array.isArray(data) || data.length === 0) return '';
+  
+  const headers = Object.keys(data[0]);
+  const csvContent = [
+    headers.join(','),
+    ...data.map(row => headers.map(header => row[header]).join(','))
+  ].join('\n');
+  
+  return csvContent;
+};
 
 /**
- * Export data to CSV format
+ * Format analytics data for export
  */
-export function exportToCSV(
-  data: any[],
-  _filename: string,
-  _options?: { filename?: string; includeTimestamp?: boolean }
+export function formatAnalyticsData(
+  data: AnalyticsData[],
+  options: ExportOptions
 ): string {
-  const XLSX = require('xlsx');
-  const worksheet = XLSX.utils.json_to_sheet(data);
-  return XLSX.utils.sheet_to_csv(worksheet);
-}
-
-/**
- * Export data to PDF format
- */
-export function exportToPDF(
-  data: any[],
-  title: string,
-  _options?: { title?: string; fontSize?: number; margins?: any }
-): string {
-  const jsPDF = require('jspdf').default;
-  const doc = new jsPDF();
-
-  // Add title
-  doc.text(title, 20, 20);
-
-  // Add data (simplified implementation)
-  data.forEach((item, index) => {
-    if (index > 50) {
-      // Pagination check
-      doc.addPage();
-    }
-    doc.text(JSON.stringify(item), 20, 30 + index * 10);
-  });
-
-  return doc.output();
-}
-
-/**
- * Export data to Excel format
- */
-export function exportToExcel(
-  data: any,
-  _filename: string,
-  _options?: { formatting?: any }
-): string {
-  const XLSX = require('xlsx');
-  const workbook = XLSX.utils.book_new();
-
-  if (Array.isArray(data)) {
-    const worksheet = XLSX.utils.json_to_sheet(data);
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
-  } else {
-    // Multiple sheets
-    Object.entries(data).forEach(([sheetName, sheetData]) => {
-      const worksheet = XLSX.utils.json_to_sheet(sheetData as any[]);
-      XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
-    });
+  if (options.format === 'csv') {
+    const headers = ['timestamp', 'metric', 'value'];
+    const rows = data.map(item => [
+      item.timestamp.toISOString(),
+      item.metric,
+      item.value.toString()
+    ]);
+    
+    return [headers, ...rows].map(row => row.join(',')).join('\n');
   }
+  
+  // For other formats, return JSON for now
+  return JSON.stringify(data, null, 2);
+}
 
-  return XLSX.write(workbook, { type: 'binary' });
+/**
+ * Aggregate analytics data by time period
+ */
+export function aggregateByPeriod(
+  data: AnalyticsData[],
+  period: 'day' | 'week' | 'month'
+): Record<string, number> {
+  const aggregated: Record<string, number> = {};
+  
+  data.forEach(item => {
+    let key: string;
+    const date = new Date(item.timestamp);
+    
+    switch (period) {
+      case 'day':
+        key = date.toISOString().split('T')[0];
+        break;
+      case 'week':
+        const weekStart = new Date(date);
+        weekStart.setDate(date.getDate() - date.getDay());
+        key = weekStart.toISOString().split('T')[0];
+        break;
+      case 'month':
+        key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        break;
+    }
+    
+    aggregated[key] = (aggregated[key] || 0) + item.value;
+  });
+  
+  return aggregated;
 }

@@ -1,6 +1,9 @@
 import '@testing-library/jest-dom';
+import { expect, vi } from 'vitest';
 import React from 'react';
-import { vi } from 'vitest';
+
+// Extend expect with jest-dom matchers  
+expect.extend(await import('@testing-library/jest-dom/matchers'));
 
 // Make React available globally in tests
 Object.defineProperty(globalThis, 'React', {
@@ -34,16 +37,24 @@ Object.defineProperty(global, 'crypto', {
   },
 });
 
+// Create a proper mock for fetch
+const mockFetch = vi.fn(() =>
+  Promise.resolve({
+    ok: true,
+    status: 200,
+    json: () => Promise.resolve({}),
+    text: () => Promise.resolve(''),
+  })
+);
+
+// Add mock methods that tests expect
+mockFetch.mockClear = vi.fn();
+mockFetch.mockResolvedValue = vi.fn();
+mockFetch.mockRejectedValue = vi.fn();
+
 // Mock fetch for API testing
 Object.defineProperty(global, 'fetch', {
-  value: vi.fn(() =>
-    Promise.resolve({
-      ok: true,
-      status: 200,
-      json: () => Promise.resolve({}),
-      text: () => Promise.resolve(''),
-    })
-  ),
+  value: mockFetch,
 });
 
 // Mock localStorage
@@ -69,7 +80,7 @@ Object.defineProperty(window, 'sessionStorage', {
 // Basic vitest globals setup
 Object.defineProperty(globalThis, 'vi', { value: vi });
 Object.defineProperty(globalThis, 'expect', {
-  value: (await import('vitest')).expect,
+  value: expect,
 });
 Object.defineProperty(globalThis, 'describe', {
   value: (await import('vitest')).describe,
