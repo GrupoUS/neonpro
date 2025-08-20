@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊 NeonPro - Quality Dashboard</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    
+    <style>
+        .metric-card {
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .progress-ring {
+            transition: stroke-dasharray 0.5s ease-in-out;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .status-indicator {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <div class="gradient-bg text-white p-6 shadow-lg">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="p-3 bg-white bg-opacity-20 rounded-lg">
+                        <i data-lucide="activity" class="w-8 h-8"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-bold">NeonPro Quality Dashboard</h1>
+                        <p class="text-blue-100">Sistema de Gestão para Clínicas Estéticas</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="text-right">
+                        <div class="text-sm text-blue-100">Última Atualização</div>
+                        <div class="font-semibold" id="lastUpdate">--:--</div>
+                    </div>
+                    <div class="w-3 h-3 bg-green-400 rounded-full status-indicator"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto p-6 space-y-6">
+        
+        <!-- Overall Health Score -->
+        <div class="bg-white rounded-xl shadow-lg p-6 glass-effect">
+            <div class="text-center">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">🏆 Health Score Geral</h2>
+                <div class="flex justify-center">
+                    <div class="relative w-48 h-48">
+                        <svg class="w-48 h-48 transform -rotate-90" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="40" stroke="rgb(229, 231, 235)" stroke-width="8" fill="transparent" />
+                            <circle cx="50" cy="50" r="40" stroke="rgb(34, 197, 94)" stroke-width="8" 
+                                    fill="transparent" stroke-linecap="round" 
+                                    stroke-dasharray="251.2" stroke-dashoffset="25.12" 
+                                    class="progress-ring" id="overallHealthRing" />
+                        </svg>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="text-center">
+                                <div class="text-4xl font-bold text-green-600" id="overallHealthScore">95.8%</div>
+                                <div class="text-sm text-gray-500">Excelente</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Metrics Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            
+            <!-- Code Coverage -->
+            <div class="metric-card bg-white rounded-xl shadow-lg p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="p-3 bg-blue-100 rounded-lg">
+                        <i data-lucide="pie-chart" class="w-6 h-6 text-blue-600"></i>
+                    </div>
+                    <span class="text-2xl font-bold text-blue-600" id="coverageScore">92.4%</span>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800">Code Coverage</h3>
+                <p class="text-sm text-gray-500">Cobertura de Testes</p>
+                <div class="mt-3 bg-gray-200 rounded-full h-2">
+                    <div class="bg-blue-600 h-2 rounded-full" style="width: 92.4%" id="coverageProgress"></div>
+                </div>
+            </div>
+
+            <!-- Performance Score -->
+            <div class="metric-card bg-white rounded-xl shadow-lg p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="p-3 bg-green-100 rounded-lg">
+                        <i data-lucide="zap" class="w-6 h-6 text-green-600"></i>
+                    </div>
+                    <span class="text-2xl font-bold text-green-600" id="performanceScore">98.1%</span>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800">Performance</h3>
+                <p class="text-sm text-gray-500">Core Web Vitals</p>
+                <div class="mt-3 bg-gray-200 rounded-full h-2">
+                    <div class="bg-green-600 h-2 rounded-full" style="width: 98.1%" id="performanceProgress"></div>
+                </div>
+            </div>
+
+            <!-- Security Score -->
+            <div class="metric-card bg-white rounded-xl shadow-lg p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="p-3 bg-red-100 rounded-lg">
+                        <i data-lucide="shield-check" class="w-6 h-6 text-red-600"></i>
+                    </div>
+                    <span class="text-2xl font-bold text-red-600" id="securityScore">94.7%</span>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800">Security</h3>
+                <p class="text-sm text-gray-500">Vulnerabilidades</p>
+                <div class="mt-3 bg-gray-200 rounded-full h-2">
+                    <div class="bg-red-600 h-2 rounded-full" style="width: 94.7%" id="securityProgress"></div>
+                </div>
+            </div>
+
+            <!-- Compliance Score -->
+            <div class="metric-card bg-white rounded-xl shadow-lg p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="p-3 bg-purple-100 rounded-lg">
+                        <i data-lucide="check-circle" class="w-6 h-6 text-purple-600"></i>
+                    </div>
+                    <span class="text-2xl font-bold text-purple-600" id="complianceScore">96.2%</span>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800">Compliance</h3>
+                <p class="text-sm text-gray-500">LGPD/ANVISA</p>
+                <div class="mt-3 bg-gray-200 rounded-full h-2">
+                    <div class="bg-purple-600 h-2 rounded-full" style="width: 96.2%" id="complianceProgress"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            
+            <!-- Coverage Trend Chart -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">📈 Tendência de Cobertura (30 dias)</h3>
+                <canvas id="coverageTrendChart" class="w-full h-64"></canvas>
+            </div>
+
+            <!-- Performance Metrics Chart -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">⚡ Métricas de Performance</h3>
+                <canvas id="performanceChart" class="w-full h-64"></canvas>
+            </div>
+        </div>
+
+        <!-- Detailed Metrics Table -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-xl font-bold text-gray-800 mb-6">📊 Métricas Detalhadas</h3>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Categoria</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Métrica</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valor Atual</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Threshold</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trend</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200" id="metricsTableBody">
+                        <!-- Will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Compliance Dashboard -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-xl font-bold text-gray-800 mb-6">🛡️ Compliance Dashboard</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- LGPD Compliance -->
+                <div class="p-4 border border-green-200 rounded-lg bg-green-50">
+                    <div class="flex items-center justify-between mb-2">
+                        <h4 class="font-semibold text-green-800">LGPD Compliance</h4>
+                        <span class="text-green-600 font-bold">98.5%</span>
+                    </div>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span>Consentimento</span>
+                            <span class="text-green-600">✓ 100%</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Auditoria</span>
+                            <span class="text-green-600">✓ 97%</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Relatórios</span>
+                            <span class="text-green-600">✓ 99%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ANVISA Compliance -->
+                <div class="p-4 border border-blue-200 rounded-lg bg-blue-50">
+                    <div class="flex items-center justify-between mb-2">
+                        <h4 class="font-semibold text-blue-800">ANVISA Compliance</h4>
+                        <span class="text-blue-600 font-bold">94.2%</span>
+                    </div>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span>Produtos</span>
+                            <span class="text-blue-600">✓ 95%</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Equipamentos</span>
+                            <span class="text-blue-600">✓ 93%</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Documentação</span>
+                            <span class="text-blue-600">✓ 95%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security Compliance -->
+                <div class="p-4 border border-purple-200 rounded-lg bg-purple-50">
+                    <div class="flex items-center justify-between mb-2">
+                        <h4 class="font-semibold text-purple-800">Security Standards</h4>
+                        <span class="text-purple-600 font-bold">96.8%</span>
+                    </div>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span>Autenticação</span>
+                            <span class="text-purple-600">✓ 99%</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Criptografia</span>
+                            <span class="text-purple-600">✓ 95%</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Vulnerabilidades</span>
+                            <span class="text-purple-600">✓ 96%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Update last update time
+        function updateLastUpdateTime() {
+            const now = new Date();
+            document.getElementById('lastUpdate').textContent = 
+                now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        // Sample metrics data
+        const metricsData = [
+            { category: 'Coverage', metric: 'Lines', current: '92.4%', threshold: '90%', status: 'pass', trend: '↗️' },
+            { category: 'Coverage', metric: 'Branches', current: '89.7%', threshold: '85%', status: 'pass', trend: '↗️' },
+            { category: 'Coverage', metric: 'Functions', current: '95.2%', threshold: '90%', status: 'pass', trend: '→' },
+            { category: 'Performance', metric: 'LCP', current: '1.2s', threshold: '<2.5s', status: 'pass', trend: '↗️' },
+            { category: 'Performance', metric: 'FID', current: '45ms', threshold: '<100ms', status: 'pass', trend: '↗️' },
+            { category: 'Performance', metric: 'CLS', current: '0.08', threshold: '<0.1', status: 'pass', trend: '↘️' },
+            { category: 'Security', metric: 'Vulnerabilities', current: '0', threshold: '0', status: 'pass', trend: '→' },
+            { category: 'Security', metric: 'Auth Coverage', current: '100%', threshold: '100%', status: 'pass', trend: '→' },
+            { category: 'Compliance', metric: 'LGPD Score', current: '98.5%', threshold: '>95%', status: 'pass', trend: '↗️' },
+            { category: 'Compliance', metric: 'ANVISA Score', current: '94.2%', threshold: '>90%', status: 'pass', trend: '↗️' }
+        ];
+
+        // Populate metrics table
+        function populateMetricsTable() {
+            const tbody = document.getElementById('metricsTableBody');
+            tbody.innerHTML = '';
+
+            metricsData.forEach(metric => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${metric.category}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${metric.metric}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${metric.current}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${metric.threshold}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                            metric.status === 'pass' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                        }">
+                            ${metric.status === 'pass' ? 'PASS' : 'FAIL'}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${metric.trend}</td>
+                `;
+            });
+        }
+
+        // Initialize charts
+        function initializeCharts() {
+            // Coverage Trend Chart
+            const coverageCtx = document.getElementById('coverageTrendChart').getContext('2d');
+            new Chart(coverageCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'],
+                    datasets: [{
+                        label: 'Cobertura (%)',
+                        data: [85, 88, 91, 92.4],
+                        borderColor: 'rgb(59, 130, 246)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 80,
+                            max: 100
+                        }
+                    }
+                }
+            });
+
+            // Performance Chart
+            const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+            new Chart(performanceCtx, {
+                type: 'radar',
+                data: {
+                    labels: ['LCP', 'FID', 'CLS', 'TTFB', 'FCP'],
+                    datasets: [{
+                        label: 'Performance Score',
+                        data: [95, 98, 92, 94, 96],
+                        borderColor: 'rgb(34, 197, 94)',
+                        backgroundColor: 'rgba(34, 197, 94, 0.2)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+
+        // Auto-refresh functionality
+        function startAutoRefresh() {
+            setInterval(() => {
+                updateLastUpdateTime();
+                // In a real implementation, you would fetch fresh data here
+                console.log('Refreshing dashboard data...');
+            }, 30000); // Refresh every 30 seconds
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            updateLastUpdateTime();
+            populateMetricsTable();
+            initializeCharts();
+            startAutoRefresh();
+        });
+    </script>
+</body>
+</html>

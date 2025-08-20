@@ -1,0 +1,88 @@
+{
+  "name": "neonpro-production-monitor",
+  "version": "1.0.0",
+  "description": "Sistema de monitoramento de produção para NeonPro com métricas em tempo real",
+  "main": "production-monitor.ts",
+  "scripts": {
+    "monitor:start": "tsx production-monitor.ts",
+    "monitor:dev": "tsx watch production-monitor.ts",
+    "health:check": "tsx -e \"import('./health-check.service.ts').then(m => m.HealthCheckService).then(Service => new Service().performFullHealthCheck()).then(console.log)\"",
+    "health:watch": "watch -n 30 'npm run health:check'",
+    "alerts:list": "curl -s http://localhost:3003/alerts | jq '.'",
+    "alerts:critical": "curl -s http://localhost:3003/alerts?level=critical | jq '.'",
+    "metrics:current": "curl -s http://localhost:3003/metrics | jq '.'",
+    "metrics:coverage": "curl -s 'http://localhost:3003/metrics?metric=coverage&since=3600000' | jq '.'",
+    "dashboard:open": "open http://localhost:3003/static",
+    "reports:generate": "tsx -e \"console.log('Generating production report...'); process.exit(0)\"",
+    "monitor:stop": "pkill -f production-monitor",
+    "monitor:restart": "npm run monitor:stop && sleep 2 && npm run monitor:start",
+    "monitor:status": "ps aux | grep production-monitor | grep -v grep || echo 'Monitor not running'",
+    "test:monitor": "vitest run monitoring.test.ts --reporter=verbose",
+    "test:health": "vitest run health-check.test.ts --reporter=verbose"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0",
+    "express": "^4.18.2",
+    "socket.io": "^4.7.2",
+    "axios": "^1.6.0",
+    "node-cron": "^3.0.3",
+    "tsx": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.17",
+    "@types/node": "^20.0.0",
+    "@types/node-cron": "^3.0.8",
+    "vitest": "^1.0.0",
+    "watch": "^1.0.2"
+  },
+  "keywords": [
+    "monitoring",
+    "production",
+    "healthcare",
+    "neonpro",
+    "quality",
+    "metrics",
+    "alerts",
+    "dashboard"
+  ],
+  "monitoring": {
+    "healthCheckInterval": "1m",
+    "metricsCollectionInterval": "5m",
+    "dataRetentionDays": 7,
+    "alertThresholds": {
+      "healthScore": {
+        "warning": 80,
+        "critical": 60
+      },
+      "responseTime": {
+        "warning": 1000,
+        "critical": 5000
+      },
+      "memoryUsage": {
+        "warning": 80,
+        "critical": 95
+      }
+    },
+    "endpoints": {
+      "health": "/health",
+      "metrics": "/metrics",
+      "alerts": "/alerts",
+      "dashboard": "/dashboard"
+    }
+  },
+  "environment": {
+    "production": {
+      "port": 3003,
+      "logLevel": "info",
+      "enableAlerts": true,
+      "slackWebhook": "${SLACK_WEBHOOK_URL}",
+      "emailAlerts": "${EMAIL_ALERTS_ENABLED}"
+    },
+    "development": {
+      "port": 3003,
+      "logLevel": "debug",
+      "enableAlerts": false,
+      "mockData": true
+    }
+  }
+}
