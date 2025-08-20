@@ -2,7 +2,7 @@
 export interface SSOProvider {
   id: string;
   name: string;
-  type: 'saml' | "oauth2" | "oidc" | "ldap";
+  type: 'saml' | 'oauth2' | 'oidc' | 'ldap';
   enabled: boolean;
   configuration: SSOConfiguration;
   metadata: Record<string, any>;
@@ -138,7 +138,9 @@ export type SSOAction =
   | 'logout_initiated'
   | 'logout_completed'
   | 'token_refreshed'
-  | "user_provisioned" | "user_updated" | "session_expired";
+  | 'user_provisioned'
+  | 'user_updated'
+  | 'session_expired';
 
 export interface SSOMetrics {
   providerId: string;
@@ -151,7 +153,7 @@ export interface SSOMetrics {
   period: {;
   start: Date;
   end: Date;
-};
+}
 }
 
 export interface SSOProviderStatus {
@@ -164,32 +166,33 @@ export interface SSOProviderStatus {
 }
 
 // Predefined SSO providersexport const SSO_PROVIDERS = {
-  GOOGLE: "google",
-    MICROSOFT: "microsoft",
+GOOGLE: 'google', MICROSOFT;
+: "microsoft",
   OKTA: "okta",
     AUTH0: "auth0",
   AZURE_AD: "azure_ad",
     SAML_GENERIC: "saml_generic",
   LDAP: "ldap"
-} as const;
+} as
+const;
 
 export type SSOProviderType =
   (typeof SSO_PROVIDERS)[keyof typeof SSO_PROVIDERS];
 
 // SAML specific typesexport interface SAMLAssertion {
-  issuer: string;
-  subject: string;
-  audience: string;
-  sessionIndex: string;
-  attributes: Record<string, string | string[]>;
-  {;
+issuer: string;
+subject: string;
+audience: string;
+sessionIndex: string;
+attributes: Record<string, string | string[]>;
+{
   notBefore: Date;
   notOnOrAfter: Date;
-};
-  {;
-    algorithm: string;
-    value: string;
-  };
+}
+{
+  algorithm: string;
+  value: string;
+}
 }
 
 export interface SAMLRequest {
@@ -201,7 +204,7 @@ export interface SAMLRequest {
   nameIdPolicy: {;
   format: string;
   allowCreate: boolean;
-};
+}
 }
 
 export interface SAMLResponse {
@@ -212,6 +215,6 @@ export interface SAMLResponse {
   status: {;
   code: string;
   message: string;
-};
-  assertion: SAMLAssertion;
+}
+assertion: SAMLAssertion;
 }

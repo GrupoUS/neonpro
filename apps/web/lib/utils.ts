@@ -27,3 +27,11 @@ export function formatDateTime(date: Date | string): string {
     minute: '2-digit',
   }).format(dateObj);
 }
+
+export function formatTime(date: Date | string): string {
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  return new Intl.DateTimeFormat('pt-BR', {
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(dateObj);
+}

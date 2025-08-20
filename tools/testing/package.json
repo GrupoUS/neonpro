@@ -8,14 +8,18 @@
     "vitest": "^3.2.4"
   },
   "scripts": {
-    "test": "playwright test",
-    "test:ui": "playwright test --ui",
-    "test:headed": "playwright test --headed",
-    "test:debug": "playwright test --debug",
-    "test:chromium": "playwright test --project=chromium",
-    "test:firefox": "playwright test --project=firefox",
-    "test:webkit": "playwright test --project=webkit",
+    "test": "node run-tests.js all simple",
+    "test:vitest": "node run-tests.js vitest simple",
+    "test:playwright": "node run-tests.js playwright simple",
+    "test:playwright:full": "node run-tests.js playwright full",
+    "test:vitest:full": "node run-tests.js vitest full",
+    "test:ui": "playwright test --config playwright.simple.config.ts --ui",
+    "test:headed": "playwright test --config playwright.simple.config.ts --headed",
+    "test:debug": "playwright test --config playwright.simple.config.ts --debug",
     "report": "playwright show-report reports/playwright-html",
-    "codegen": "playwright codegen localhost:3000"
+    "codegen": "playwright codegen localhost:3000",
+    "vitest": "vitest run --config vitest.simple.config.ts --reporter=verbose",
+    "vitest:watch": "vitest --config vitest.simple.config.ts",
+    "coverage": "vitest run --config vitest.simple.config.ts --coverage"
   }
 }

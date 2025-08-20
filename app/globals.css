@@ -1,0 +1,238 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@layer base {
+  :root {
+    /* TweakCN Healthcare Theme Colors */
+    /* Primary Theme Colors */
+    --background: 252 252 252; /* #fcfcfc */
+    --foreground: 23 23 23; /* #171717 */
+    --primary: 114 227 173; /* #72e3ad - Healthcare green */
+    --primary-foreground: 30 39 35; /* #1e2723 */
+
+    /* Secondary & Accent Colors */
+    --secondary: 253 253 253; /* #fdfdfd */
+    --secondary-foreground: 23 23 23; /* #171717 */
+    --accent: 237 237 237; /* #ededed */
+    --accent-foreground: 32 32 32; /* #202020 */
+
+    /* UI Component Colors */
+    --card: 252 252 252; /* #fcfcfc */
+    --card-foreground: 23 23 23; /* #171717 */
+    --popover: 252 252 252; /* #fcfcfc */
+    --popover-foreground: 82 82 82; /* #525252 */
+    --muted: 237 237 237; /* #ededed */
+    --muted-foreground: 32 32 32; /* #202020 */
+
+    /* Utility & Form Colors */
+    --border: 223 223 223; /* #dfdfdf */
+    --input: 246 246 246; /* #f6f6f6 */
+    --ring: 114 227 173; /* #72e3ad - Healthcare green */
+
+    /* Status & Feedback Colors */
+    --destructive: 202 50 20; /* #ca3214 */
+    --destructive-foreground: 255 252 252; /* #fffcfc */
+
+    /* Chart & Visualization Colors */
+    --chart-1: 114 227 173; /* #72e3ad - Healthcare green */
+    --chart-2: 59 130 246; /* #3b82f6 - Blue */
+    --chart-3: 139 92 246; /* #8b5cf6 - Purple */
+    --chart-4: 245 158 11; /* #f59e0b - Orange */
+    --chart-5: 16 185 129; /* #10b981 - Emerald */
+
+    /* Sidebar & Navigation Colors */
+    --sidebar-background: 252 252 252; /* #fcfcfc */
+    --sidebar-foreground: 112 112 112; /* #707070 */
+    --sidebar-primary: 114 227 173; /* #72e3ad */
+    --sidebar-primary-foreground: 30 39 35; /* #1e2723 */
+    --sidebar-accent: 237 237 237; /* #ededed */
+    --sidebar-accent-foreground: 32 32 32; /* #202020 */
+    --sidebar-border: 223 223 223; /* #dfdfdf */
+    --sidebar-ring: 114 227 173; /* #72e3ad */
+
+    /* Success & Info Colors for Healthcare */
+    --success: 16 185 129; /* #10b981 - Emerald */
+    --success-foreground: 255 255 255; /* #ffffff */
+    --info: 59 130 246; /* #3b82f6 - Blue */
+    --info-foreground: 255 255 255; /* #ffffff */
+    --warning: 245 158 11; /* #f59e0b - Orange */
+    --warning-foreground: 255 255 255; /* #ffffff */
+
+    /* Radius */
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* Dark mode colors (for future implementation) */
+    --background: 9 9 11; /* #09090b */
+    --foreground: 250 250 250; /* #fafafa */
+    --primary: 114 227 173; /* #72e3ad - Keep healthcare green */
+    --primary-foreground: 9 9 11; /* #09090b */
+    
+    --secondary: 39 39 42; /* #27272a */
+    --secondary-foreground: 250 250 250; /* #fafafa */
+    --accent: 39 39 42; /* #27272a */
+    --accent-foreground: 250 250 250; /* #fafafa */
+
+    --card: 24 24 27; /* #18181b */
+    --card-foreground: 250 250 250; /* #fafafa */
+    --popover: 9 9 11; /* #09090b */
+    --popover-foreground: 161 161 170; /* #a1a1aa */
+
+    --border: 39 39 42; /* #27272a */
+    --input: 39 39 42; /* #27272a */
+    --ring: 114 227 173; /* #72e3ad */
+
+    --destructive: 239 68 68; /* #ef4444 */
+    --destructive-foreground: 250 250 250; /* #fafafa */
+
+    --sidebar-background: 24 24 27; /* #18181b */
+    --sidebar-foreground: 161 161 170; /* #a1a1aa */
+    --sidebar-primary: 114 227 173; /* #72e3ad */
+    --sidebar-primary-foreground: 9 9 11; /* #09090b */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Healthcare specific styling */
+  .healthcare-gradient {
+    background: linear-gradient(135deg, rgb(var(--primary)) 0%, rgb(var(--chart-5)) 100%);
+  }
+
+  .healthcare-shadow {
+    box-shadow: 0 4px 6px -1px rgba(114, 227, 173, 0.1), 0 2px 4px -1px rgba(114, 227, 173, 0.06);
+  }
+
+  .healthcare-border {
+    border: 1px solid rgb(var(--primary) / 0.2);
+  }
+
+  /* Improved focus states for accessibility */
+  .healthcare-focus {
+    @apply focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:outline-none;
+  }
+
+  /* Smooth transitions for better UX */
+  .healthcare-transition {
+    @apply transition-all duration-200 ease-in-out;
+  }
+
+  /* Status indicators for healthcare */
+  .status-active {
+    @apply bg-success/10 text-success border-success/20;
+  }
+
+  .status-inactive {
+    @apply bg-muted text-muted-foreground border-border;
+  }
+
+  .status-warning {
+    @apply bg-warning/10 text-warning border-warning/20;
+  }
+
+  .status-danger {
+    @apply bg-destructive/10 text-destructive border-destructive/20;
+  }
+}
+
+/* Typography enhancements for healthcare readability */
+@layer components {
+  .healthcare-heading {
+    @apply text-2xl font-semibold text-foreground leading-tight tracking-tight;
+  }
+
+  .healthcare-subheading {
+    @apply text-lg font-medium text-foreground/90 leading-relaxed;
+  }
+
+  .healthcare-body {
+    @apply text-sm text-foreground/80 leading-relaxed;
+  }
+
+  .healthcare-caption {
+    @apply text-xs text-muted-foreground font-medium uppercase tracking-wide;
+  }
+
+  /* Card components for healthcare data */
+  .healthcare-card {
+    @apply bg-card text-card-foreground border border-border rounded-lg p-6 healthcare-shadow healthcare-transition;
+  }
+
+  .healthcare-card:hover {
+    @apply healthcare-shadow;
+    box-shadow: 0 10px 15px -3px rgba(114, 227, 173, 0.1), 0 4px 6px -2px rgba(114, 227, 173, 0.05);
+  }
+
+  /* Form components optimized for healthcare */
+  .healthcare-input {
+    @apply w-full px-3 py-2 text-sm bg-input border border-border rounded-md healthcare-focus healthcare-transition;
+  }
+
+  .healthcare-button {
+    @apply inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md healthcare-focus healthcare-transition;
+  }
+
+  .healthcare-button-primary {
+    @apply healthcare-button bg-primary text-primary-foreground hover:bg-primary/90;
+  }
+
+  .healthcare-button-secondary {
+    @apply healthcare-button bg-secondary text-secondary-foreground hover:bg-secondary/80 border border-border;
+  }
+}
+
+/* Animations for better UX */
+@layer utilities {
+  .animate-slide-in {
+    animation: slideIn 0.3s ease-out;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.2s ease-out;
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}
+
+/* Print styles for healthcare reports */
+@media print {
+  .print-hidden {
+    @apply hidden;
+  }
+
+  .print-full-width {
+    @apply w-full;
+  }
+
+  .healthcare-card {
+    @apply border border-gray-300 shadow-none;
+  }
+}

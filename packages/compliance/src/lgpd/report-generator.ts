@@ -275,10 +275,14 @@ ${1000 + JSON.stringify(report, null, 2).length}
    */
   private formatPdfContent(items: any[]): string {
     if (!items.length) return '0 -15 Td\n(Nenhum registro encontrado) Tj';
-    
-    return items.slice(0, 10).map((item, index) => 
-      `0 -15 Td\n(${index + 1}. ${item.id || item.type || 'Item'}: ${item.status || item.description || 'N/A'}) Tj`
-    ).join('\n');
+
+    return items
+      .slice(0, 10)
+      .map(
+        (item, index) =>
+          `0 -15 Td\n(${index + 1}. ${item.id || item.type || 'Item'}: ${item.status || item.description || 'N/A'}) Tj`
+      )
+      .join('\n');
   }
 
   /**
@@ -286,51 +290,63 @@ ${1000 + JSON.stringify(report, null, 2).length}
    */
   private generateCsvReport(report: any): string {
     const csvLines: string[] = [];
-    
+
     // Header
     csvLines.push('RELATÓRIO LGPD - ' + new Date().toLocaleDateString('pt-BR'));
     csvLines.push('Tenant ID,' + (report.tenantId || 'N/A'));
-    csvLines.push('Período,' + (report.startDate || '') + ' - ' + (report.endDate || ''));
+    csvLines.push(
+      'Período,' + (report.startDate || '') + ' - ' + (report.endDate || '')
+    );
     csvLines.push('');
-    
+
     // Consentimentos
     if (report.consents && report.consents.length > 0) {
       csvLines.push('CONSENTIMENTOS');
       csvLines.push('ID,Tipo,Status,Data,Finalidade');
       report.consents.forEach((consent: any) => {
-        csvLines.push(`${consent.id || ''},${consent.type || ''},${consent.status || ''},${consent.createdAt || ''},${consent.purpose || ''}`);
+        csvLines.push(
+          `${consent.id || ''},${consent.type || ''},${consent.status || ''},${consent.createdAt || ''},${consent.purpose || ''}`
+        );
       });
       csvLines.push('');
     }
-    
+
     // Violações
     if (report.breaches && report.breaches.length > 0) {
       csvLines.push('VIOLAÇÕES DE DADOS');
       csvLines.push('ID,Categoria,Severidade,Data,Descrição,Status');
       report.breaches.forEach((breach: any) => {
-        csvLines.push(`${breach.id || ''},${breach.category || ''},${breach.severity || ''},${breach.detectedAt || ''},${(breach.description || '').replace(/,/g, ';')},${breach.status || ''}`);
+        csvLines.push(
+          `${breach.id || ''},${breach.category || ''},${breach.severity || ''},${breach.detectedAt || ''},${(breach.description || '').replace(/,/g, ';')},${breach.status || ''}`
+        );
       });
       csvLines.push('');
     }
-    
+
     // Exercício de direitos
     if (report.rightsExercises && report.rightsExercises.length > 0) {
       csvLines.push('EXERCÍCIO DE DIREITOS');
       csvLines.push('ID,Tipo,Status,Data Solicitação,Data Conclusão');
       report.rightsExercises.forEach((exercise: any) => {
-        csvLines.push(`${exercise.id || ''},${exercise.type || ''},${exercise.status || ''},${exercise.requestedAt || ''},${exercise.completedAt || ''}`);
+        csvLines.push(
+          `${exercise.id || ''},${exercise.type || ''},${exercise.status || ''},${exercise.requestedAt || ''},${exercise.completedAt || ''}`
+        );
       });
       csvLines.push('');
     }
-    
+
     // Estatísticas
     csvLines.push('ESTATÍSTICAS');
     csvLines.push('Métrica,Valor');
     csvLines.push(`Total de Consentimentos,${report.consents?.length || 0}`);
     csvLines.push(`Total de Violações,${report.breaches?.length || 0}`);
-    csvLines.push(`Total de Exercícios de Direitos,${report.rightsExercises?.length || 0}`);
-    csvLines.push(`Score de Compliance,${report.complianceScore?.overall || 0}`);
-    
+    csvLines.push(
+      `Total de Exercícios de Direitos,${report.rightsExercises?.length || 0}`
+    );
+    csvLines.push(
+      `Score de Compliance,${report.complianceScore?.overall || 0}`
+    );
+
     return csvLines.join('\n');
   }
 }

@@ -1,10 +1,10 @@
 import { createClient } from '@/lib/supabase/client';
-import {
-  type StockPerformanceMetrics,
-  type StockDashboardData,
-  type CustomStockReport,
-  type AlertType,
-  type SeverityLevel,
+import type {
+  AlertType,
+  CustomStockReport,
+  SeverityLevel,
+  StockDashboardData,
+  StockPerformanceMetrics,
 } from '@/lib/types/stock-alerts';
 
 /**
@@ -74,15 +74,8 @@ export class StockAnalyticsService {
     }
 
     // Execute queries
-    const [
-      { data: inventory },
-      { data: transactions },
-      { data: alerts },
-    ] = await Promise.all([
-      inventoryQuery,
-      transactionQuery,
-      alertQuery,
-    ]);
+    const [{ data: inventory }, { data: transactions }, { data: alerts }] =
+      await Promise.all([inventoryQuery, transactionQuery, alertQuery]);
 
     // Calculate metrics
     const metrics = await this.computeMetrics(
@@ -132,7 +125,7 @@ export class StockAnalyticsService {
 
     // Stock movements for turnover calculation
     const outboundTransactions = transactions.filter(
-      t => t.transaction_type === 'outbound'
+      (t) => t.transaction_type === 'outbound'
     );
     const totalOutbound = outboundTransactions.reduce(
       (sum, t) => sum + Math.abs(t.quantity_change || 0),
@@ -147,26 +140,26 @@ export class StockAnalyticsService {
       (period.end.getTime() - period.start.getTime()) / (1000 * 60 * 60 * 24)
     );
     const annualizedOutbound = (totalOutbound * 365) / daysInPeriod;
-    const turnoverRate = averageStockLevel > 0 
-      ? Math.min((annualizedOutbound / averageStockLevel) * 100, 100)
-      : 0;
+    const turnoverRate =
+      averageStockLevel > 0
+        ? Math.min((annualizedOutbound / averageStockLevel) * 100, 100)
+        : 0;
 
     // Alert-based metrics
     const stockoutEvents = alerts.filter(
-      a => a.alert_type === 'out_of_stock'
+      (a) => a.alert_type === 'out_of_stock'
     ).length;
     const lowStockAlerts = alerts.filter(
-      a => a.alert_type === 'low_stock'
+      (a) => a.alert_type === 'low_stock'
     ).length;
 
     // Expiration metrics
     const expiredItems = inventory.filter(
-      item => new Date(item.expiry_date) < new Date()
+      (item) => new Date(item.expiry_date) < new Date()
     );
     const totalItems = inventory.length;
-    const expirationRate = totalItems > 0 
-      ? (expiredItems.length / totalItems) * 100 
-      : 0;
+    const expirationRate =
+      totalItems > 0 ? (expiredItems.length / totalItems) * 100 : 0;
 
     // Waste calculation (estimated from expired items)
     const wasteAmount = expiredItems.reduce(
@@ -201,14 +194,14 @@ export class StockAnalyticsService {
     period: { start: Date; end: Date }
   ): Promise<number> {
     const inboundTransactions = transactions.filter(
-      t => t.transaction_type === 'inbound' && t.supplier_id
+      (t) => t.transaction_type === 'inbound' && t.supplier_id
     );
 
     if (inboundTransactions.length === 0) return 0;
 
     // Simplified calculation based on transaction success rate
     const successfulDeliveries = inboundTransactions.filter(
-      t => t.status === 'completed'
+      (t) => t.status === 'completed'
     ).length;
 
     return (successfulDeliveries / inboundTransactions.length) * 100;
@@ -233,7 +226,12 @@ export class StockAnalyticsService {
     // Get metrics for both periods
     const [currentMetrics, previousMetrics] = await Promise.all([
       this.getBasicMetricsForPeriod(clinicId, period, productId, categoryId),
-      this.getBasicMetricsForPeriod(clinicId, previousPeriod, productId, categoryId),
+      this.getBasicMetricsForPeriod(
+        clinicId,
+        previousPeriod,
+        productId,
+        categoryId
+      ),
     ]);
 
     return {
@@ -246,14 +244,18 @@ export class StockAnalyticsService {
         previousMetrics.alertCount,
         true // Reverse logic - fewer alerts is better
       ),
-      turnoverTrend: this.compareTrend(
-        currentMetrics.turnoverRate,
-        previousMetrics.turnoverRate
-      ) === 'increasing' ? 'improving' : 
-      this.compareTrend(
-        currentMetrics.turnoverRate,
-        previousMetrics.turnoverRate
-      ) === 'decreasing' ? 'declining' : 'stable',
+      turnoverTrend:
+        this.compareTrend(
+          currentMetrics.turnoverRate,
+          previousMetrics.turnoverRate
+        ) === 'increasing'
+          ? 'improving'
+          : this.compareTrend(
+                currentMetrics.turnoverRate,
+                previousMetrics.turnoverRate
+              ) === 'decreasing'
+            ? 'declining'
+            : 'stable',
     };
   }
 
@@ -291,17 +293,18 @@ export class StockAnalyticsService {
       alertQuery = alertQuery.eq('category_id', categoryId);
     }
 
-    const [
-      { data: inventory },
-      { data: alerts },
-    ] = await Promise.all([
+    const [{ data: inventory }, { data: alerts }] = await Promise.all([
       inventoryQuery,
       alertQuery,
     ]);
 
-    const averageStockLevel = inventory && inventory.length > 0
-      ? inventory.reduce((sum, item) => sum + (item.current_quantity || 0), 0) / inventory.length
-      : 0;
+    const averageStockLevel =
+      inventory && inventory.length > 0
+        ? inventory.reduce(
+            (sum, item) => sum + (item.current_quantity || 0),
+            0
+          ) / inventory.length
+        : 0;
 
     return {
       averageStockLevel,
@@ -316,7 +319,7 @@ export class StockAnalyticsService {
   private compareTrend(
     current: number,
     previous: number,
-    reverse: boolean = false
+    reverse = false
   ): 'increasing' | 'decreasing' | 'stable' {
     const threshold = 0.05; // 5% threshold for "stable"
     const change = (current - previous) / Math.max(previous, 1);
@@ -328,7 +331,7 @@ export class StockAnalyticsService {
     if (reverse) {
       return change > 0 ? 'decreasing' : 'increasing';
     }
-    
+
     return change > 0 ? 'increasing' : 'decreasing';
   }
 
@@ -355,9 +358,12 @@ export class StockAnalyticsService {
 
     // Get recent alerts (limited)
     const recentAlerts = (alerts || [])
-      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+      .sort(
+        (a, b) =>
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      )
       .slice(0, 100)
-      .map(alert => ({
+      .map((alert) => ({
         id: alert.id,
         productId: alert.product_id,
         alertType: alert.alert_type,
@@ -385,18 +391,21 @@ export class StockAnalyticsService {
   /**
    * Calculate dashboard summary statistics
    */
-  private calculateSummary(inventory: any[], alerts: any[]): StockDashboardData['summary'] {
+  private calculateSummary(
+    inventory: any[],
+    alerts: any[]
+  ): StockDashboardData['summary'] {
     const lowStockThreshold = 10; // Configurable threshold
 
     const lowStockItems = inventory.filter(
-      item => (item.current_quantity || 0) <= lowStockThreshold
+      (item) => (item.current_quantity || 0) <= lowStockThreshold
     ).length;
 
     const expiredItems = inventory.filter(
-      item => new Date(item.expiry_date) < new Date()
+      (item) => new Date(item.expiry_date) < new Date()
     ).length;
 
-    const expiringItems = inventory.filter(item => {
+    const expiringItems = inventory.filter((item) => {
       const expiryDate = new Date(item.expiry_date);
       const thirtyDaysFromNow = new Date();
       thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
@@ -404,7 +413,7 @@ export class StockAnalyticsService {
     }).length;
 
     const totalValue = inventory.reduce(
-      (sum, item) => sum + ((item.current_quantity || 0) * (item.unit_cost || 0)),
+      (sum, item) => sum + (item.current_quantity || 0) * (item.unit_cost || 0),
       0
     );
 
@@ -421,7 +430,9 @@ export class StockAnalyticsService {
   /**
    * Get top products by value and alert frequency
    */
-  private async getTopProducts(clinicId: string): Promise<StockDashboardData['topProducts']> {
+  private async getTopProducts(
+    clinicId: string
+  ): Promise<StockDashboardData['topProducts']> {
     const { data: inventory } = await this.supabase
       .from('inventory_items')
       .select(`
@@ -436,7 +447,7 @@ export class StockAnalyticsService {
     if (!inventory) return [];
 
     return inventory
-      .map(item => ({
+      .map((item) => ({
         productId: item.product_id,
         name: item.product_name,
         currentStock: item.current_quantity || 0,
@@ -450,7 +461,9 @@ export class StockAnalyticsService {
   /**
    * Get recent activity feed
    */
-  private async getRecentActivity(clinicId: string): Promise<StockDashboardData['recentActivity']> {
+  private async getRecentActivity(
+    clinicId: string
+  ): Promise<StockDashboardData['recentActivity']> {
     // Combine different activity sources
     const activities: StockDashboardData['recentActivity'] = [];
 
@@ -465,7 +478,9 @@ export class StockAnalyticsService {
     // Recent stock transactions
     const { data: recentTransactions } = await this.supabase
       .from('stock_transactions')
-      .select('id, transaction_type, quantity_change, product_id, created_at, user_id')
+      .select(
+        'id, transaction_type, quantity_change, product_id, created_at, user_id'
+      )
       .eq('clinic_id', clinicId)
       .order('created_at', { ascending: false })
       .limit(10);
@@ -473,7 +488,7 @@ export class StockAnalyticsService {
     // Add alerts to activity feed
     if (recentAlerts) {
       activities.push(
-        ...recentAlerts.map(alert => ({
+        ...recentAlerts.map((alert) => ({
           id: alert.id,
           type: 'alert_created' as const,
           description: `${alert.alert_type.replace('_', ' ').toUpperCase()}: ${alert.message}`,
@@ -485,7 +500,7 @@ export class StockAnalyticsService {
     // Add transactions to activity feed
     if (recentTransactions) {
       activities.push(
-        ...recentTransactions.map(transaction => ({
+        ...recentTransactions.map((transaction) => ({
           id: transaction.id,
           type: 'stock_updated' as const,
           description: `Stock ${transaction.transaction_type}: ${Math.abs(transaction.quantity_change || 0)} units`,
@@ -529,20 +544,18 @@ export class StockAnalyticsService {
     const reportData = await this.generateReportData(report);
 
     // Store report configuration for future reference
-    await this.supabase
-      .from('custom_reports')
-      .insert({
-        id: reportId,
-        clinic_id: clinicId,
-        user_id: userId,
-        report_name: report.reportName,
-        report_type: report.reportType,
-        filters: report.filters,
-        format: report.format,
-        schedule: report.schedule,
-        created_at: now,
-        updated_at: now,
-      });
+    await this.supabase.from('custom_reports').insert({
+      id: reportId,
+      clinic_id: clinicId,
+      user_id: userId,
+      report_name: report.reportName,
+      report_type: report.reportType,
+      filters: report.filters,
+      format: report.format,
+      schedule: report.schedule,
+      created_at: now,
+      updated_at: now,
+    });
 
     return report;
   }
@@ -568,7 +581,9 @@ export class StockAnalyticsService {
   /**
    * Generate stock levels report
    */
-  private async generateStockLevelsReport(report: CustomStockReport): Promise<any> {
+  private async generateStockLevelsReport(
+    report: CustomStockReport
+  ): Promise<any> {
     let query = this.supabase
       .from('inventory_items')
       .select('*')
@@ -588,7 +603,9 @@ export class StockAnalyticsService {
   /**
    * Generate alerts summary report
    */
-  private async generateAlertsSummaryReport(report: CustomStockReport): Promise<any> {
+  private async generateAlertsSummaryReport(
+    report: CustomStockReport
+  ): Promise<any> {
     let query = this.supabase
       .from('stock_alerts')
       .select('*')
@@ -613,7 +630,9 @@ export class StockAnalyticsService {
   /**
    * Generate performance metrics report
    */
-  private async generatePerformanceReport(report: CustomStockReport): Promise<any> {
+  private async generatePerformanceReport(
+    report: CustomStockReport
+  ): Promise<any> {
     const dateRange = report.filters?.dateRange || {
       start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // Last 30 days
       end: new Date(),
@@ -630,7 +649,9 @@ export class StockAnalyticsService {
   /**
    * Generate consumption report
    */
-  private async generateConsumptionReport(report: CustomStockReport): Promise<any> {
+  private async generateConsumptionReport(
+    report: CustomStockReport
+  ): Promise<any> {
     let query = this.supabase
       .from('stock_transactions')
       .select('*')

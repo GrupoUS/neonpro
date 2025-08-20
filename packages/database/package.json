@@ -19,14 +19,14 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@prisma/client": "workspace:*",
-    "prisma": "workspace:*",
-    "zod": "workspace:*"
+    "@prisma/client": "^5.22.0",
+    "prisma": "^5.22.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@types/node": "workspace:*",
-    "tsx": "workspace:*",
-    "typescript": "workspace:*"
+    "@types/node": "^22.10.2",
+    "tsx": "^4.6.0",
+    "typescript": "^5.7.2"
   },
   "prisma": {
     "schema": "prisma/schema.prisma",

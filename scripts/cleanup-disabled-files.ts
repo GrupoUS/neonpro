@@ -5,7 +5,7 @@
  * NEONPRO System Maintenance
  */
 
-import { readFileSync, writeFileSync, unlinkSync, existsSync } from 'fs';
+import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
 interface CleanupItem {
@@ -20,75 +20,76 @@ const REMOVE_LIST: CleanupItem[] = [
   {
     path: 'apps/web/types/lgpd.ts.disabled',
     action: 'remove',
-    reason: 'LGPD types already implemented in packages/compliance/src/lgpd/types.ts',
-    category: 'duplicate'
+    reason:
+      'LGPD types already implemented in packages/compliance/src/lgpd/types.ts',
+    category: 'duplicate',
   },
   {
-    path: 'apps/web/jest.config.js.disabled', 
+    path: 'apps/web/jest.config.js.disabled',
     action: 'remove',
     reason: 'Using Vitest now, Jest config obsolete',
-    category: 'obsolete'
+    category: 'obsolete',
   },
   {
     path: 'apps/web/jest.setup.js.disabled',
-    action: 'remove', 
+    action: 'remove',
     reason: 'Using Vitest setup, Jest setup obsolete',
-    category: 'obsolete'
+    category: 'obsolete',
   },
   {
     path: 'packages/ui/jest.config.js.disabled',
     action: 'remove',
-    reason: 'Using Vitest now, Jest config obsolete', 
-    category: 'obsolete'
+    reason: 'Using Vitest now, Jest config obsolete',
+    category: 'obsolete',
   },
   {
     path: 'packages/ui/vitest.config.mjs.disabled',
     action: 'remove',
     reason: 'Superseded by main vitest config',
-    category: 'obsolete'
+    category: 'obsolete',
   },
   {
     path: 'packages/ai/src/chatbot/chatbot-service.ts.disabled',
     action: 'remove',
     reason: 'Experimental AI service, not part of core healthcare system',
-    category: 'experimental'
+    category: 'experimental',
   },
   {
     path: 'packages/ai/src/ethics/explainable-ai.ts.disabled',
     action: 'remove',
     reason: 'Experimental AI service, not part of core healthcare system',
-    category: 'experimental'
+    category: 'experimental',
   },
   {
     path: 'packages/ai/src/follow-up/follow-up-service.ts.disabled',
     action: 'remove',
-    reason: 'Experimental AI service, not part of core healthcare system', 
-    category: 'experimental'
+    reason: 'Experimental AI service, not part of core healthcare system',
+    category: 'experimental',
   },
   {
     path: 'packages/ai/src/scheduling/intelligent-scheduler.ts.disabled',
     action: 'remove',
     reason: 'Experimental AI service, not part of core healthcare system',
-    category: 'experimental'
+    category: 'experimental',
   },
   {
     path: 'packages/domain/src/api/anvisa.ts.disabled',
     action: 'remove',
     reason: 'ANVISA compliance already implemented in active compliance system',
-    category: 'duplicate'
+    category: 'duplicate',
   },
   {
     path: 'packages/domain/src/api/lgpd.ts.disabled',
     action: 'remove',
-    reason: 'LGPD API already implemented in active compliance system', 
-    category: 'duplicate'
+    reason: 'LGPD API already implemented in active compliance system',
+    category: 'duplicate',
   },
   {
     path: 'packages/domain/src/api/compliance-automation.ts.disabled',
     action: 'remove',
     reason: 'Compliance automation already implemented in active system',
-    category: 'duplicate'
-  }
+    category: 'duplicate',
+  },
 ];
 
 // Files to potentially REACTIVATE (might be useful)
@@ -96,21 +97,22 @@ const REACTIVATE_CANDIDATES: CleanupItem[] = [
   {
     path: 'apps/web/types/rbac.ts.disabled',
     action: 'keep',
-    reason: 'RBAC types may be needed, analyze if current implementation is complete',
-    category: 'evaluate'
+    reason:
+      'RBAC types may be needed, analyze if current implementation is complete',
+    category: 'evaluate',
   },
   {
     path: 'apps/web/types/session.ts.disabled',
     action: 'keep',
     reason: 'Session types may be needed for advanced session management',
-    category: 'evaluate'
+    category: 'evaluate',
   },
   {
     path: 'apps/web/types/sso.ts.disabled',
     action: 'keep',
     reason: 'SSO types may be needed for enterprise integrations',
-    category: 'evaluate'
-  }
+    category: 'evaluate',
+  },
 ];
 
 // Files to KEEP disabled (legacy/future use)
@@ -120,15 +122,15 @@ const KEEP_DISABLED: CleanupItem[] = [
     path: 'packages/domain/src/hooks/analytics/*.disabled',
     action: 'keep',
     reason: 'Analytics hooks may be useful for advanced analytics features',
-    category: 'future'
+    category: 'future',
   },
   // Legacy hooks - keeping for reference
   {
-    path: 'packages/domain/src/hooks/legacy/*.disabled', 
+    path: 'packages/domain/src/hooks/legacy/*.disabled',
     action: 'keep',
     reason: 'Legacy hooks kept for reference and potential migration',
-    category: 'legacy'
-  }
+    category: 'legacy',
+  },
 ];
 
 /**
@@ -145,7 +147,7 @@ function executeCleanup() {
   console.log('📋 REMOVING obsolete/duplicate files:');
   for (const item of REMOVE_LIST) {
     const fullPath = join(process.cwd(), item.path);
-    
+
     try {
       if (existsSync(fullPath)) {
         unlinkSync(fullPath);
@@ -177,14 +179,14 @@ function executeCleanup() {
     timestamp: new Date().toISOString(),
     summary: {
       removed: removedCount,
-      kept: keptCount, 
-      errors: errorCount
+      kept: keptCount,
+      errors: errorCount,
     },
     actions: {
       removed: REMOVE_LIST,
       candidates: REACTIVATE_CANDIDATES,
-      kept: KEEP_DISABLED
-    }
+      kept: KEEP_DISABLED,
+    },
   };
 
   // Write report
@@ -211,32 +213,32 @@ function analyzeDisabledFile(filePath: string): CleanupItem {
   try {
     const content = readFileSync(filePath, 'utf-8');
     const fileName = filePath.split('/').pop() || '';
-    
+
     // Analyze content to suggest action
     if (content.includes('// Placeholder') || content.includes('placeholder')) {
       return {
         path: filePath,
         action: 'remove',
         reason: 'Contains only placeholder code',
-        category: 'placeholder'
+        category: 'placeholder',
       };
     }
-    
+
     if (fileName.includes('jest') || fileName.includes('test')) {
       return {
         path: filePath,
-        action: 'remove', 
+        action: 'remove',
         reason: 'Old test configuration, using Vitest now',
-        category: 'obsolete'
+        category: 'obsolete',
       };
     }
-    
+
     if (content.includes('experimental') || content.includes('TODO')) {
       return {
         path: filePath,
         action: 'keep',
         reason: 'Experimental or incomplete code, may be useful later',
-        category: 'experimental'
+        category: 'experimental',
       };
     }
 
@@ -244,14 +246,14 @@ function analyzeDisabledFile(filePath: string): CleanupItem {
       path: filePath,
       action: 'keep',
       reason: 'Unable to determine action automatically',
-      category: 'unknown'
+      category: 'unknown',
     };
   } catch (error) {
     return {
       path: filePath,
       action: 'keep',
       reason: `Error analyzing file: ${error}`,
-      category: 'error'
+      category: 'error',
     };
   }
 }
@@ -261,4 +263,9 @@ if (require.main === module) {
   executeCleanup();
 }
 
-export { executeCleanup, analyzeDisabledFile, REMOVE_LIST, REACTIVATE_CANDIDATES };
+export {
+  executeCleanup,
+  analyzeDisabledFile,
+  REMOVE_LIST,
+  REACTIVATE_CANDIDATES,
+};

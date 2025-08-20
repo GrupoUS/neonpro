@@ -3,6 +3,9 @@
 // VITEST AND BIOME OPTIMIZED VERSION
 
 export async function register() {
+  // Temporarily disabled - observability setup not yet implemented
+  return;
+  
   // Only enable instrumentation in production for performance monitoring
   if (process.env.NODE_ENV !== 'production') {
     return;

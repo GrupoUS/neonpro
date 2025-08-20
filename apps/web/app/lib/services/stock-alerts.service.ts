@@ -1,13 +1,13 @@
 import { createClient } from '@/lib/supabase/client';
 import {
-  type StockAlert,
-  type CreateStockAlertConfig,
-  type StockAlertConfig,
   type AcknowledgeAlert,
-  type ResolveAlert,
   type AlertsQuery,
-  validateCreateStockAlertConfig,
+  type CreateStockAlertConfig,
+  type ResolveAlert,
+  type StockAlert,
+  type StockAlertConfig,
   validateAcknowledgeAlert,
+  validateCreateStockAlertConfig,
   validateResolveAlert,
 } from '@/lib/types/stock-alerts';
 
@@ -55,7 +55,10 @@ export class StockAlertsService {
       duplicateQuery = duplicateQuery.eq('product_id', validatedData.productId);
     }
     if (validatedData.categoryId) {
-      duplicateQuery = duplicateQuery.eq('category_id', validatedData.categoryId);
+      duplicateQuery = duplicateQuery.eq(
+        'category_id',
+        validatedData.categoryId
+      );
     }
 
     const { data: existing } = await duplicateQuery;
@@ -113,7 +116,10 @@ export class StockAlertsService {
   /**
    * Get active stock alerts with filtering and pagination
    */
-  async getAlerts(query: AlertsQuery, userId: string): Promise<{
+  async getAlerts(
+    query: AlertsQuery,
+    userId: string
+  ): Promise<{
     alerts: StockAlert[];
     total: number;
   }> {
@@ -166,7 +172,9 @@ export class StockAlertsService {
   /**
    * Acknowledge an alert
    */
-  async acknowledgeAlert(acknowledgeData: AcknowledgeAlert): Promise<StockAlert> {
+  async acknowledgeAlert(
+    acknowledgeData: AcknowledgeAlert
+  ): Promise<StockAlert> {
     const validatedData = validateAcknowledgeAlert(acknowledgeData);
 
     // First, check if alert exists and is active
@@ -293,7 +301,7 @@ export class StockAlertsService {
 
     for (const item of items) {
       const alertNeeded = this.shouldTriggerAlert(item, config);
-      
+
       if (alertNeeded.trigger) {
         // Check if we already have an active alert for this item
         const { data: existingAlerts } = await this.supabase
@@ -304,7 +312,11 @@ export class StockAlertsService {
           .eq('status', 'active');
 
         if (!existingAlerts || existingAlerts.length === 0) {
-          const newAlert = await this.createAlert(item, config, alertNeeded.message);
+          const newAlert = await this.createAlert(
+            item,
+            config,
+            alertNeeded.message
+          );
           if (newAlert) alerts.push(newAlert);
         }
       }
@@ -342,12 +354,12 @@ export class StockAlertsService {
         }
         break;
 
-      case 'expiring':
+      case 'expiring': {
         const expiryDate = new Date(item.expiry_date);
         const daysUntilExpiry = Math.ceil(
           (expiryDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)
         );
-        
+
         if (daysUntilExpiry <= threshold && daysUntilExpiry > 0) {
           return {
             trigger: true,
@@ -355,8 +367,9 @@ export class StockAlertsService {
           };
         }
         break;
+      }
 
-      case 'expired':
+      case 'expired': {
         const expiredDate = new Date(item.expiry_date);
         if (expiredDate < new Date()) {
           return {
@@ -365,6 +378,7 @@ export class StockAlertsService {
           };
         }
         break;
+      }
     }
 
     return { trigger: false, message: '' };

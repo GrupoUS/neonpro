@@ -1,14 +1,21 @@
 // Stock Alert Integration Tests - Updated for new StockAlertsService
 // Story 11.4: Alertas e Relatórios de Estoque
 
-import { describe, expect, it, jest, beforeEach, afterEach } from '@jest/globals';
-import { StockAlertsService } from '../stock-alerts.service';
 import {
-  type CreateStockAlertConfig,
-  type AcknowledgeAlert,
-  type ResolveAlert,
-  type AlertsQuery,
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  jest,
+} from '@jest/globals';
+import type {
+  AcknowledgeAlert,
+  AlertsQuery,
+  CreateStockAlertConfig,
+  ResolveAlert,
 } from '@/lib/types/stock-alerts';
+import { StockAlertsService } from '../stock-alerts.service';
 
 // Mock Supabase client
 const mockSupabaseClient = {
@@ -57,13 +64,12 @@ describe('Stock Alert Integration Tests', () => {
     };
 
     (mockSupabaseClient.from as jest.Mock).mockReturnValue(mockQuery);
-    
+
     // Mock getUserClinicId method
-    mockQuery.single
-      .mockResolvedValueOnce({ 
-        data: { clinic_id: mockClinicId }, 
-        error: null 
-      });
+    mockQuery.single.mockResolvedValueOnce({
+      data: { clinic_id: mockClinicId },
+      error: null,
+    });
 
     service = new StockAlertsService();
     // Replace the supabase client with our mock
@@ -78,30 +84,41 @@ describe('Stock Alert Integration Tests', () => {
     it('should create alert configuration successfully', async () => {
       // Mock getUserClinicId
       mockQuery.single
-        .mockResolvedValueOnce({ data: { clinic_id: mockClinicId }, error: null })
+        .mockResolvedValueOnce({
+          data: { clinic_id: mockClinicId },
+          error: null,
+        })
         // Mock duplicate check (no existing)
         .mockResolvedValueOnce({ data: [], error: null })
         // Mock insert result
-        .mockResolvedValueOnce({ 
-          data: { 
+        .mockResolvedValueOnce({
+          data: {
             id: 'new-config-id',
             ...mockAlertConfig,
-            clinic_id: mockClinicId 
-          }, 
-          error: null 
+            clinic_id: mockClinicId,
+          },
+          error: null,
         });
 
-      const result = await service.createAlertConfig(mockAlertConfig, mockUserId);
+      const result = await service.createAlertConfig(
+        mockAlertConfig,
+        mockUserId
+      );
 
       expect(result).toBeDefined();
       expect(result.clinic_id).toBe(mockClinicId);
-      expect(mockSupabaseClient.from).toHaveBeenCalledWith('stock_alert_configs');
+      expect(mockSupabaseClient.from).toHaveBeenCalledWith(
+        'stock_alert_configs'
+      );
     });
 
     it('should handle duplicate configuration error', async () => {
       // Mock getUserClinicId
       mockQuery.single
-        .mockResolvedValueOnce({ data: { clinic_id: mockClinicId }, error: null })
+        .mockResolvedValueOnce({
+          data: { clinic_id: mockClinicId },
+          error: null,
+        })
         // Mock duplicate found
         .mockResolvedValueOnce({ data: [{ id: 'existing-id' }], error: null });
 
@@ -131,12 +148,14 @@ describe('Stock Alert Integration Tests', () => {
           message: 'Test alert',
           status: 'active',
           created_at: new Date(),
-        }
+        },
       ];
 
       // Mock getUserClinicId
-      mockQuery.single
-        .mockResolvedValueOnce({ data: { clinic_id: mockClinicId }, error: null });
+      mockQuery.single.mockResolvedValueOnce({
+        data: { clinic_id: mockClinicId },
+        error: null,
+      });
 
       // Mock alerts query
       mockQuery.single = jest.fn();
@@ -145,15 +164,15 @@ describe('Stock Alert Integration Tests', () => {
         single: undefined,
       };
       (mockSupabaseClient.from as jest.Mock).mockReturnValue(mockAlertsQuery);
-      
+
       // Mock the final query execution
       Object.defineProperty(mockAlertsQuery, 'then', {
-        value: jest.fn().mockResolvedValue({ 
-          data: mockAlerts, 
-          error: null, 
-          count: 1 
+        value: jest.fn().mockResolvedValue({
+          data: mockAlerts,
+          error: null,
+          count: 1,
         }),
-        writable: true
+        writable: true,
       });
 
       const result = await service.getAlerts(query, mockUserId);
@@ -174,19 +193,19 @@ describe('Stock Alert Integration Tests', () => {
 
       // Mock check existing alert (active)
       mockQuery.single
-        .mockResolvedValueOnce({ 
-          data: { id: 'alert-id', status: 'active' }, 
-          error: null 
+        .mockResolvedValueOnce({
+          data: { id: 'alert-id', status: 'active' },
+          error: null,
         })
         // Mock update result
-        .mockResolvedValueOnce({ 
-          data: { 
-            id: 'alert-id', 
+        .mockResolvedValueOnce({
+          data: {
+            id: 'alert-id',
             status: 'acknowledged',
             acknowledged_by: mockUserId,
             acknowledged_at: new Date(),
-          }, 
-          error: null 
+          },
+          error: null,
         });
 
       const result = await service.acknowledgeAlert(acknowledgeData);
@@ -202,10 +221,14 @@ describe('Stock Alert Integration Tests', () => {
         acknowledgedBy: mockUserId,
       };
 
-      mockQuery.single.mockResolvedValue({ data: null, error: { message: 'Not found' } });
+      mockQuery.single.mockResolvedValue({
+        data: null,
+        error: { message: 'Not found' },
+      });
 
-      await expect(service.acknowledgeAlert(acknowledgeData))
-        .rejects.toThrow('Alert not found');
+      await expect(service.acknowledgeAlert(acknowledgeData)).rejects.toThrow(
+        'Alert not found'
+      );
     });
 
     it('should handle acknowledgment of non-active alert', async () => {
@@ -214,13 +237,14 @@ describe('Stock Alert Integration Tests', () => {
         acknowledgedBy: mockUserId,
       };
 
-      mockQuery.single.mockResolvedValue({ 
-        data: { id: 'alert-id', status: 'resolved' }, 
-        error: null 
+      mockQuery.single.mockResolvedValue({
+        data: { id: 'alert-id', status: 'resolved' },
+        error: null,
       });
 
-      await expect(service.acknowledgeAlert(acknowledgeData))
-        .rejects.toThrow('Alert is not in active status');
+      await expect(service.acknowledgeAlert(acknowledgeData)).rejects.toThrow(
+        'Alert is not in active status'
+      );
     });
   });
 
@@ -235,14 +259,14 @@ describe('Stock Alert Integration Tests', () => {
 
       // Mock check existing alert
       mockQuery.single
-        .mockResolvedValueOnce({ 
-          data: { id: 'alert-id', status: 'acknowledged' }, 
-          error: null 
+        .mockResolvedValueOnce({
+          data: { id: 'alert-id', status: 'acknowledged' },
+          error: null,
         })
         // Mock update result
-        .mockResolvedValueOnce({ 
-          data: { 
-            id: 'alert-id', 
+        .mockResolvedValueOnce({
+          data: {
+            id: 'alert-id',
             status: 'resolved',
             resolved_by: mockUserId,
             resolved_at: new Date(),
@@ -250,8 +274,8 @@ describe('Stock Alert Integration Tests', () => {
               resolution: 'Stock replenished',
               actions_taken: ['Ordered more inventory', 'Updated thresholds'],
             },
-          }, 
-          error: null 
+          },
+          error: null,
         });
 
       const result = await service.resolveAlert(resolveData);
@@ -269,21 +293,24 @@ describe('Stock Alert Integration Tests', () => {
         resolution: 'Already resolved',
       };
 
-      mockQuery.single.mockResolvedValue({ 
-        data: { id: 'alert-id', status: 'resolved' }, 
-        error: null 
+      mockQuery.single.mockResolvedValue({
+        data: { id: 'alert-id', status: 'resolved' },
+        error: null,
       });
 
-      await expect(service.resolveAlert(resolveData))
-        .rejects.toThrow('Alert is already resolved');
+      await expect(service.resolveAlert(resolveData)).rejects.toThrow(
+        'Alert is already resolved'
+      );
     });
   });
 
   describe('Stock Level Evaluation', () => {
     it('should check stock levels and generate alerts', async () => {
       // Mock getUserClinicId
-      mockQuery.single
-        .mockResolvedValueOnce({ data: { clinic_id: mockClinicId }, error: null });
+      mockQuery.single.mockResolvedValueOnce({
+        data: { clinic_id: mockClinicId },
+        error: null,
+      });
 
       // Mock getAlertConfigs
       const mockConfigs = [
@@ -294,13 +321,15 @@ describe('Stock Alert Integration Tests', () => {
           alertType: 'low_stock',
           thresholdValue: 10,
           severityLevel: 'medium',
-        }
+        },
       ];
-      
-      // Replace getAlertConfigs method
-      (service as any).getAlertConfigs = jest.fn().mockResolvedValue(mockConfigs);
 
-      // Mock evaluateStockConfig 
+      // Replace getAlertConfigs method
+      (service as any).getAlertConfigs = jest
+        .fn()
+        .mockResolvedValue(mockConfigs);
+
+      // Mock evaluateStockConfig
       (service as any).evaluateStockConfig = jest.fn().mockResolvedValue([
         {
           id: 'new-alert',
@@ -312,7 +341,7 @@ describe('Stock Alert Integration Tests', () => {
           thresholdValue: 10,
           message: 'Low stock detected',
           status: 'active',
-        }
+        },
       ]);
 
       const result = await service.checkStockLevels(mockUserId);
@@ -327,15 +356,20 @@ describe('Stock Alert Integration Tests', () => {
     it('should handle database connection errors', async () => {
       mockQuery.single.mockRejectedValue(new Error('Connection failed'));
 
-      await expect(service.createAlertConfig(mockAlertConfig, mockUserId))
-        .rejects.toThrow('Connection failed');
+      await expect(
+        service.createAlertConfig(mockAlertConfig, mockUserId)
+      ).rejects.toThrow('Connection failed');
     });
 
     it('should handle invalid user clinic context', async () => {
-      mockQuery.single.mockResolvedValue({ data: null, error: { message: 'Not found' } });
+      mockQuery.single.mockResolvedValue({
+        data: null,
+        error: { message: 'Not found' },
+      });
 
-      await expect(service.createAlertConfig(mockAlertConfig, mockUserId))
-        .rejects.toThrow('User clinic context not found');
+      await expect(
+        service.createAlertConfig(mockAlertConfig, mockUserId)
+      ).rejects.toThrow('User clinic context not found');
     });
   });
 });

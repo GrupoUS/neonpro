@@ -15,8 +15,8 @@ import {
   XCircle,
 } from 'lucide-react';
 import { useState } from 'react';
-import { CosmicGlowButton } from '@/components/ui/CosmicGlowButton';
-import { NeonGradientCard } from '@/components/ui/NeonGradientCard';
+import CosmicGlowButton from '@/components/ui/CosmicGlowButton';
+import NeonGradientCard from '@/components/ui/NeonGradientCard';
 import { formatDate, formatTime } from '@/lib/utils';
 
 // Dados mock para a agenda
@@ -110,7 +110,24 @@ const statusConfig = {
   },
 };
 
-const AppointmentCard = ({ appointment, index }) => {
+interface AppointmentType {
+  id: string;
+  date: string;
+  title: string;
+  patient: string;
+  status: string;
+  room: string;
+  duration: string;
+  professional: string;
+  notes?: string;
+}
+
+interface AppointmentCardProps {
+  appointment: AppointmentType;
+  index: number;
+}
+
+const AppointmentCard = ({ appointment, index }: AppointmentCardProps) => {
   const statusInfo = statusConfig[appointment.status];
   const StatusIcon = statusInfo.icon;
 

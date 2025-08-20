@@ -1,8 +1,5 @@
 import { createClient } from '@/lib/supabase/client';
-import {
-  type StockAlert,
-  type NotificationChannel,
-} from '@/lib/types/stock-alerts';
+import type { NotificationChannel, StockAlert } from '@/lib/types/stock-alerts';
 
 /**
  * Stock Notifications Service - Multi-channel notification delivery
@@ -43,7 +40,7 @@ export class StockNotificationsService {
       }
     }
 
-    const overallSuccess = results.every(r => r.success);
+    const overallSuccess = results.every((r) => r.success);
     return { success: overallSuccess, results };
   }
 
@@ -94,7 +91,7 @@ export class StockNotificationsService {
       }
 
       // Create in-app notifications for each recipient
-      const notifications = recipients.map(recipient => ({
+      const notifications = recipients.map((recipient) => ({
         user_id: recipient.user_id,
         title: this.getNotificationTitle(alert),
         message: alert.message,
@@ -141,7 +138,10 @@ export class StockNotificationsService {
         .single();
 
       if (settingsError || !clinicSettings?.email_enabled) {
-        return { success: false, error: 'Email notifications not enabled for clinic' };
+        return {
+          success: false,
+          error: 'Email notifications not enabled for clinic',
+        };
       }
 
       const emails = clinicSettings.notification_emails || [];
@@ -197,7 +197,10 @@ export class StockNotificationsService {
         .single();
 
       if (settingsError || !clinicSettings?.sms_enabled) {
-        return { success: false, error: 'SMS notifications not enabled for clinic' };
+        return {
+          success: false,
+          error: 'SMS notifications not enabled for clinic',
+        };
       }
 
       const phones = clinicSettings.notification_phones || [];
@@ -250,7 +253,10 @@ export class StockNotificationsService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'WhatsApp service unavailable',
+        error:
+          error instanceof Error
+            ? error.message
+            : 'WhatsApp service unavailable',
       };
     }
   }
@@ -278,7 +284,7 @@ export class StockNotificationsService {
         'send-push',
         {
           body: {
-            tokens: tokens.map(t => t.token),
+            tokens: tokens.map((t) => t.token),
             title: this.getNotificationTitle(alert),
             body: alert.message,
             data: {
@@ -318,8 +324,15 @@ export class StockNotificationsService {
         .eq('clinic_id', alert.clinicId)
         .single();
 
-      if (settingsError || !clinicSettings?.slack_enabled || !clinicSettings.slack_webhook_url) {
-        return { success: false, error: 'Slack notifications not configured for clinic' };
+      if (
+        settingsError ||
+        !clinicSettings?.slack_enabled ||
+        !clinicSettings.slack_webhook_url
+      ) {
+        return {
+          success: false,
+          error: 'Slack notifications not configured for clinic',
+        };
       }
 
       // Format Slack message
@@ -333,7 +346,10 @@ export class StockNotificationsService {
       });
 
       if (!response.ok) {
-        return { success: false, error: `Slack API error: ${response.statusText}` };
+        return {
+          success: false,
+          error: `Slack API error: ${response.statusText}`,
+        };
       }
 
       await this.logNotification(alert.id, 'slack', 1);
@@ -354,15 +370,13 @@ export class StockNotificationsService {
     channel: NotificationChannel,
     recipientCount: number
   ): Promise<void> {
-    await this.supabase
-      .from('notification_logs')
-      .insert({
-        alert_id: alertId,
-        channel,
-        recipient_count: recipientCount,
-        sent_at: new Date(),
-        success: true,
-      });
+    await this.supabase.from('notification_logs').insert({
+      alert_id: alertId,
+      channel,
+      recipient_count: recipientCount,
+      sent_at: new Date(),
+      success: true,
+    });
   }
 
   /**
@@ -408,7 +422,9 @@ export class StockNotificationsService {
    */
   private formatSMSContent(alert: StockAlert): string {
     const shortMessage = `🚨 ${alert.alertType.replace('_', ' ').toUpperCase()}: ${alert.message.substring(0, 100)}...`;
-    return shortMessage.length > 160 ? shortMessage.substring(0, 157) + '...' : shortMessage;
+    return shortMessage.length > 160
+      ? shortMessage.substring(0, 157) + '...'
+      : shortMessage;
   }
 
   /**
@@ -422,10 +438,26 @@ export class StockNotificationsService {
           color: this.getSeverityColor(alert.severityLevel),
           fields: [
             { title: 'Message', value: alert.message, short: false },
-            { title: 'Severity', value: alert.severityLevel.toUpperCase(), short: true },
-            { title: 'Current Value', value: alert.currentValue.toString(), short: true },
-            { title: 'Threshold', value: alert.thresholdValue.toString(), short: true },
-            { title: 'Created', value: alert.createdAt.toLocaleString(), short: true },
+            {
+              title: 'Severity',
+              value: alert.severityLevel.toUpperCase(),
+              short: true,
+            },
+            {
+              title: 'Current Value',
+              value: alert.currentValue.toString(),
+              short: true,
+            },
+            {
+              title: 'Threshold',
+              value: alert.thresholdValue.toString(),
+              short: true,
+            },
+            {
+              title: 'Created',
+              value: alert.createdAt.toLocaleString(),
+              short: true,
+            },
           ],
           footer: 'NEONPRO Stock Management',
           ts: Math.floor(alert.createdAt.getTime() / 1000),
@@ -450,10 +482,13 @@ export class StockNotificationsService {
   /**
    * Get delivery statistics
    */
-  async getNotificationStats(clinicId: string, dateRange?: {
-    start: Date;
-    end: Date;
-  }): Promise<{
+  async getNotificationStats(
+    clinicId: string,
+    dateRange?: {
+      start: Date;
+      end: Date;
+    }
+  ): Promise<{
     total: number;
     byChannel: Record<NotificationChannel, number>;
     success_rate: number;
@@ -496,7 +531,8 @@ export class StockNotificationsService {
     return {
       total: stats.total,
       byChannel: stats.byChannel,
-      success_rate: stats.total > 0 ? (stats.successful / stats.total) * 100 : 0,
+      success_rate:
+        stats.total > 0 ? (stats.successful / stats.total) * 100 : 0,
     };
   }
 }

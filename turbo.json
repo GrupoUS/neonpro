@@ -3,19 +3,14 @@
   "globalPassThroughEnv": [
     "NODE_ENV",
     "VERCEL_ENV",
-    "CI",
-    "PYTHONPATH",
-    "FASTAPI_ENV"
+    "CI"
   ],
   "globalDependencies": [
     "**/.env.*local",
     "**/package.json",
-    "**/requirements.txt",
-    "**/pyproject.toml", 
     "**/tsconfig.json",
     "biome.jsonc",
-    "pnpm-workspace.yaml",
-    "packages/database/prisma/schema.prisma"
+    "pnpm-workspace.yaml"
   ],
   "globalEnv": [
     "NODE_ENV",
@@ -23,36 +18,24 @@
     "CI",
     "TURBO_TOKEN",
     "TURBO_TEAM",
-    "DATABASE_URL",
-    "DIRECT_URL",
     "SUPABASE_URL",
     "SUPABASE_ANON_KEY",
     "SUPABASE_SERVICE_ROLE_KEY"
   ],
-  "remoteCache": {
-    "signature": true,
-    "enabled": true,
-    "timeout": 30
-  },
-  "tasks": {
+  "pipeline": {
     "build": {
-      "dependsOn": ["^build", "db:generate"],
+      "dependsOn": ["^build"],
       "inputs": [
-        "src/**/*.{ts,tsx,js,jsx,py}",
-        "app/**/*.{ts,tsx,js,jsx,py}",
+        "src/**/*.{ts,tsx,js,jsx}",
+        "app/**/*.{ts,tsx,js,jsx}",
         "components/**/*.{ts,tsx}",
         "lib/**/*.{ts,tsx}",
-        "routers/**/*.py",
-        "services/**/*.py",
-        "models/**/*.py",
         "styles/**/*.{css,scss}",
         "public/**/*",
         "package.json",
-        "requirements.txt",
         "tsconfig.json",
         "next.config.*",
         "tailwind.config.*",
-        "main.py",
         "!**/__tests__/**",
         "!**/*.test.*",
         "!**/*.spec.*"
@@ -61,334 +44,37 @@
         ".next/**",
         "!.next/cache/**",
         "dist/**",
-        "build/**",
-        "__pycache__/**",
-        "*.pyc"
-      ],
-      "env": [
-        "NEXT_PUBLIC_*",
-        "DATABASE_URL", 
-        "DIRECT_URL",
-        "NEXTAUTH_*",
-        "SUPABASE_*",
-        "OPENAI_*",
-        "STRIPE_*",
-        "RESEND_*",
-        "FASTAPI_*",
-        "PYTHON_*"
-      ]
-    },
-    "build:api": {
-      "dependsOn": ["^build", "db:generate"],
-      "inputs": [
-        "apps/api/**/*.py",
-        "packages/database/prisma/schema.prisma",
-        "apps/api/requirements.txt",
-        "apps/api/main.py"
-      ],
-      "outputs": [
-        "apps/api/__pycache__/**",
-        "apps/api/**/*.pyc",
-        "apps/api/dist/**"
-      ],
-      "env": [
-        "DATABASE_URL",
-        "FASTAPI_*",
-        "SUPABASE_*",
-        "OPENAI_*",
-        "LGPD_*",
-        "ANVISA_*",
-        "CFM_*"
-      ]
-    },
-    "build:ai-models": {
-      "dependsOn": ["^build", "build:api"],
-      "inputs": [
-        "packages/ai/**/*.{ts,tsx,js,jsx,py}",
-        "apps/web/lib/ai/**/*.{ts,tsx}",
-        "apps/web/components/ai/**/*.{ts,tsx}",
-        "apps/api/services/ai/**/*.py",
-        "models/**/*",
-        "training-data/**/*"
-      ],
-      "outputs": [
-        "packages/ai/dist/**",
-        "packages/ai/.next/**",
-        ".next/cache/ai-models/**",
-        "ai-models/**",
-        "apps/api/__pycache__/ai/**"
-      ],
-      "env": [
-        "OPENAI_*",
-        "TENSORFLOW_*",
-        "AI_MODEL_*",
-        "PREDICTION_*"
-      ]
-    },
-    "db:generate": {
-      "inputs": [
-        "packages/database/prisma/schema.prisma",
-        "packages/database/package.json"
-      ],
-      "outputs": [
-        "packages/database/node_modules/@prisma/client/**",
-        "packages/database/src/zod/**"
-      ],
-      "env": [
-        "DATABASE_URL",
-        "DIRECT_URL"
-      ]
-    },
-    "db:push": {
-      "dependsOn": ["db:generate"],
-      "cache": false,
-      "inputs": [
-        "packages/database/prisma/schema.prisma"
-      ],
-      "env": [
-        "DATABASE_URL",
-        "DIRECT_URL"
-      ]
-    },
-    "db:migrate": {
-      "dependsOn": ["db:generate"],
-      "cache": false,
-      "inputs": [
-        "packages/database/prisma/schema.prisma",
-        "packages/database/prisma/migrations/**"
-      ],
-      "env": [
-        "DATABASE_URL",
-        "DIRECT_URL"
-      ]
-    },
-    "api:dev": {
-      "dependsOn": ["db:generate"],
-      "cache": false,
-      "persistent": true,
-      "inputs": [
-        "apps/api/**/*.py",
-        "apps/api/requirements.txt"
-      ],
-      "env": [
-        "DATABASE_URL",
-        "FASTAPI_*",
-        "SUPABASE_*",
-        "LGPD_*"
-      ]
-    },
-    "schedule:optimize": {
-      "dependsOn": ["^build", "build:api"],
-      "inputs": [
-        "packages/core-services/src/scheduling/**/*.{ts,tsx}",
-        "apps/web/app/**/scheduling/**/*.{ts,tsx}",
-        "apps/web/components/scheduling/**/*.{ts,tsx}",
-        "packages/ai/src/scheduling/**/*.{ts,tsx}",
-        "apps/api/services/scheduling/**/*.py",
-        "apps/api/routers/scheduling/**/*.py"
-      ],
-      "outputs": [
-        "packages/core-services/dist/scheduling/**",
-        ".next/cache/scheduling/**",
-        "apps/api/__pycache__/scheduling/**"
-      ],
-      "env": [
-        "SCHEDULING_*",
-        "CALENDAR_*",
-        "APPOINTMENT_*"
-      ]
-    },
-    "treatments:validate": {
-      "dependsOn": ["^build", "build:api"],
-      "inputs": [
-        "packages/core-services/src/treatments/**/*.{ts,tsx}",
-        "apps/web/app/**/treatments/**/*.{ts,tsx}",
-        "apps/web/components/treatments/**/*.{ts,tsx}",
-        "packages/compliance/src/treatments/**/*.{ts,tsx}",
-        "apps/api/services/treatments/**/*.py",
-        "apps/api/routers/treatments/**/*.py"
-      ],
-      "outputs": [
-        "packages/core-services/dist/treatments/**",
-        ".next/cache/treatments/**",
-        "compliance-reports/treatments/**",
-        "apps/api/__pycache__/treatments/**"
-      ],
-      "env": [
-        "TREATMENT_*",
-        "MEDICAL_*",
-        "ANVISA_*",
-        "CFM_*"
+        "build/**"
       ]
     },
     "lint": {
       "inputs": [
-        "**/*.{ts,tsx,js,jsx,py}",
+        "**/*.{ts,tsx,js,jsx}",
         ".eslintrc.*",
-        "biome.jsonc",
-        "setup.cfg",
-        "pyproject.toml"
-      ],
-      "outputs": []
-    },
-    "lint:python": {
-      "inputs": [
-        "apps/api/**/*.py",
-        "setup.cfg",
-        "pyproject.toml"
-      ],
-      "outputs": []
+        "biome.jsonc"
+      ]
     },
     "type-check": {
-      "dependsOn": ["^build", "db:generate"],
+      "dependsOn": ["^build"],
       "outputs": ["**/*.tsbuildinfo"]
     },
-    "type-check:python": {
-      "dependsOn": ["build:api"],
-      "inputs": [
-        "apps/api/**/*.py",
-        "apps/api/requirements.txt"
-      ],
-      "outputs": [
-        ".mypy_cache/**"
-      ]
-    },
     "test": {
-      "dependsOn": ["build", "build:api"],
+      "dependsOn": ["build"],
       "outputs": ["coverage/**"]
-    },
-    "test:unit": {
-      "dependsOn": ["build", "build:api"],
-      "outputs": ["coverage/**"]
-    },
-    "test:integration": {
-      "dependsOn": ["build", "build:api", "test:unit"],
-      "outputs": ["coverage/**"]
-    },
-    "test:python": {
-      "dependsOn": ["build:api"],
-      "inputs": [
-        "apps/api/**/*.py",
-        "apps/api/tests/**/*.py"
-      ],
-      "outputs": [
-        "apps/api/coverage/**",
-        "apps/api/.coverage"
-      ]
     },
     "dev": {
       "cache": false,
       "persistent": true
-    },
-    "compliance:check": {
-      "dependsOn": ["compliance:lgpd", "compliance:anvisa", "compliance:cfm"],
-      "inputs": [
-        "compliance-reports/lgpd/**",
-        "compliance-reports/anvisa/**", 
-        "compliance-reports/cfm/**"
-      ],
-      "outputs": ["compliance-reports/summary/**"],
-      "env": ["COMPLIANCE_*"]
-    },
-    "compliance:lgpd": {
-      "dependsOn": ["build", "build:api"],
-      "inputs": [
-        "packages/compliance/src/lgpd/**/*.{ts,tsx}",
-        "apps/web/app/**/privacy/**/*.{ts,tsx}",
-        "apps/web/components/privacy/**/*.{ts,tsx}",
-        "packages/core-services/src/privacy/**/*.{ts,tsx}",
-        "apps/api/services/compliance/lgpd/**/*.py",
-        "apps/api/routers/compliance/**/*.py"
-      ],
-      "outputs": [
-        "compliance-reports/lgpd/**",
-        "apps/api/__pycache__/compliance/**"
-      ],
-      "env": [
-        "LGPD_*",
-        "PRIVACY_*",
-        "GDPR_*",
-        "DATA_PROTECTION_*"
-      ]
-    },
-    "compliance:anvisa": {
-      "dependsOn": ["build", "build:api"],
-      "inputs": [
-        "packages/compliance/src/anvisa/**/*.{ts,tsx}",
-        "apps/web/app/**/medical/**/*.{ts,tsx}",
-        "packages/core-services/src/medical/**/*.{ts,tsx}",
-        "packages/core-services/src/treatments/**/*.{ts,tsx}",
-        "apps/api/services/compliance/anvisa/**/*.py"
-      ],
-      "outputs": [
-        "compliance-reports/anvisa/**",
-        "apps/api/__pycache__/compliance/**"
-      ],
-      "env": [
-        "ANVISA_*",
-        "MEDICAL_*",
-        "HEALTH_REGULATION_*"
-      ]
-    },
-    "compliance:cfm": {
-      "dependsOn": ["build", "build:api"],
-      "inputs": [
-        "packages/compliance/src/cfm/**/*.{ts,tsx}",
-        "apps/web/app/**/professional/**/*.{ts,tsx}",
-        "packages/core-services/src/professional/**/*.{ts,tsx}",
-        "apps/api/services/compliance/cfm/**/*.py"
-      ],
-      "outputs": [
-        "compliance-reports/cfm/**",
-        "apps/api/__pycache__/compliance/**"
-      ],
-      "env": [
-        "CFM_*",
-        "MEDICAL_PROFESSIONAL_*",
-        "CERTIFICATION_*"
-      ]
-    },
-    "security:audit": {
-      "dependsOn": ["build", "build:api"],
-      "inputs": [
-        "packages/security/**/*.{ts,tsx}",
-        "packages/auth/**/*.{ts,tsx}",
-        "apps/web/middleware/**/*.{ts,tsx}",
-        "apps/web/app/**/api/**/*.{ts,tsx}",
-        "apps/api/**/*.py",
-        "package.json",
-        "pnpm-lock.yaml",
-        "requirements.txt"
-      ],
-      "outputs": [
-        "security-reports/**",
-        ".turbo/security-cache/**"
-      ],
-      "env": [
-        "SECURITY_*",
-        "AUTH_*",
-        "ENCRYPTION_*",
-        "AUDIT_*"
-      ]
     },
     "clean": {
       "cache": false
     },
     "format": {
       "inputs": [
-        "**/*.{ts,tsx,js,jsx,json,md,py}",
+        "**/*.{ts,tsx,js,jsx,json,md}",
         ".prettierrc.*",
-        "biome.jsonc",
-        "pyproject.toml"
-      ],
-      "outputs": []
-    },
-    "format:python": {
-      "inputs": [
-        "apps/api/**/*.py",
-        "pyproject.toml"
-      ],
-      "outputs": []
+        "biome.jsonc"
+      ]
     }
   }
 }

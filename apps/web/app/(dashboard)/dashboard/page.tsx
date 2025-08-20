@@ -137,7 +137,7 @@ function DashboardMetricsCards() {
           <Alert>
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              Erro ao carregar métricas do dashboard: {error}
+              Erro ao carregar métricas do dashboard: {error?.message || String(error)}
             </AlertDescription>
           </Alert>
         </div>
@@ -260,7 +260,7 @@ function RecentPatientsSection() {
         <Alert>
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
-            Erro ao carregar pacientes recentes: {error}
+            Erro ao carregar pacientes recentes: {error?.message || 'Erro desconhecido'}
           </AlertDescription>
         </Alert>
       </NeonGradientCard>
@@ -373,7 +373,7 @@ function TodaysAppointmentsSection() {
         <h2 className="mb-6 font-bold text-white text-xl">Agenda de Hoje</h2>
         <Alert>
           <AlertTriangle className="h-4 w-4" />
-          <AlertDescription>Erro ao carregar agenda: {error}</AlertDescription>
+          <AlertDescription>Erro ao carregar agenda: {error?.message || 'Erro desconhecido'}</AlertDescription>
         </Alert>
       </NeonGradientCard>
     );
@@ -401,10 +401,10 @@ function TodaysAppointmentsSection() {
           >
             <div>
               <p className="font-medium text-white">
-                {appointment.patient_name || 'Paciente'}
+                {appointment.patients?.name || 'Paciente'}
               </p>
               <p className="text-slate-400 text-sm">
-                {appointment.service_name || 'Consulta'}
+                {appointment.services?.name || 'Consulta'}
               </p>
             </div>
             <div className="text-right">
@@ -499,7 +499,7 @@ function QuickActionsSection() {
   );
 } // System Status Section with real data
 function SystemStatusSection() {
-  const { activeStaffMembers, loading: staffLoading } = useStaffMembers();
+  const { activeStaff, loading: staffLoading } = useStaffMembers();
   const { todaysAppointments, loading: appointmentsLoading } =
     useAppointments();
   const { totalPatients, loading: patientsLoading } = useDashboardMetrics();
@@ -514,7 +514,7 @@ function SystemStatusSection() {
     },
     {
       label: 'Profissionais Ativos',
-      value: staffLoading ? '...' : activeStaffMembers?.toString() || '0',
+      value: staffLoading ? '...' : activeStaff?.length?.toString() || '0',
       status: 'success' as const,
       icon: Users,
       description: 'Profissionais disponíveis hoje',

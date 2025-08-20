@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { MfaMethod, MfaConfig } from './mfa-service';
+import { MfaConfig, type MfaMethod } from './mfa-service';
 
 export interface MfaSettings {
   id?: string;
@@ -8,34 +8,34 @@ export interface MfaSettings {
   mfaEnabled: boolean;
   preferredMethod?: MfaMethod;
   enforced: boolean;
-  
+
   // SMS settings
   smsEnabled: boolean;
   smsPhoneNumber?: string;
   smsVerified: boolean;
   smsLastUsed?: Date;
-  
+
   // Email settings
   emailEnabled: boolean;
   emailAddress?: string;
   emailVerified: boolean;
   emailLastUsed?: Date;
-  
+
   // TOTP settings
   totpEnabled: boolean;
   totpSecret?: string;
   totpVerified: boolean;
   totpLastUsed?: Date;
-  
+
   // Biometric settings
   biometricEnabled: boolean;
   biometricVerified: boolean;
   biometricLastUsed?: Date;
-  
+
   // Backup codes
   backupCodesEnabled: boolean;
   backupCodesCount: number;
-  
+
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -75,7 +75,10 @@ export interface MfaAuditLog {
  * Integrates with Supabase for persistent storage
  */
 export class MfaDatabaseService {
-  private supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
+  private supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
 
   /**
    * Get MFA settings for a user
@@ -119,18 +122,26 @@ export class MfaDatabaseService {
       smsEnabled: data.sms_enabled,
       smsPhoneNumber: data.sms_phone_number,
       smsVerified: data.sms_verified,
-      smsLastUsed: data.sms_last_used ? new Date(data.sms_last_used) : undefined,
+      smsLastUsed: data.sms_last_used
+        ? new Date(data.sms_last_used)
+        : undefined,
       emailEnabled: data.email_enabled,
       emailAddress: data.email_address,
       emailVerified: data.email_verified,
-      emailLastUsed: data.email_last_used ? new Date(data.email_last_used) : undefined,
+      emailLastUsed: data.email_last_used
+        ? new Date(data.email_last_used)
+        : undefined,
       totpEnabled: data.totp_enabled,
       totpSecret: data.totp_secret,
       totpVerified: data.totp_verified,
-      totpLastUsed: data.totp_last_used ? new Date(data.totp_last_used) : undefined,
+      totpLastUsed: data.totp_last_used
+        ? new Date(data.totp_last_used)
+        : undefined,
       biometricEnabled: data.biometric_enabled,
       biometricVerified: data.biometric_verified,
-      biometricLastUsed: data.biometric_last_used ? new Date(data.biometric_last_used) : undefined,
+      biometricLastUsed: data.biometric_last_used
+        ? new Date(data.biometric_last_used)
+        : undefined,
       backupCodesEnabled: data.backup_codes_enabled,
       backupCodesCount: data.backup_codes_count,
       createdAt: new Date(data.created_at),
@@ -141,7 +152,9 @@ export class MfaDatabaseService {
   /**
    * Create or update MFA settings
    */
-  async upsertMfaSettings(settings: Partial<MfaSettings>): Promise<MfaSettings> {
+  async upsertMfaSettings(
+    settings: Partial<MfaSettings>
+  ): Promise<MfaSettings> {
     const dbData = {
       user_id: settings.userId,
       clinic_id: settings.clinicId,
@@ -182,7 +195,9 @@ export class MfaDatabaseService {
   /**
    * Store verification code
    */
-  async storeVerificationCode(code: Omit<MfaVerificationCode, 'id'>): Promise<string> {
+  async storeVerificationCode(
+    code: Omit<MfaVerificationCode, 'id'>
+  ): Promise<string> {
     const dbData = {
       user_id: code.userId,
       clinic_id: code.clinicId,
@@ -210,7 +225,11 @@ export class MfaDatabaseService {
   /**
    * Get and verify code
    */
-  async verifyCode(userId: string, code: string, type: MfaVerificationCode['type']): Promise<{
+  async verifyCode(
+    userId: string,
+    code: string,
+    type: MfaVerificationCode['type']
+  ): Promise<{
     valid: boolean;
     codeRecord?: MfaVerificationCode;
   }> {
@@ -234,7 +253,8 @@ export class MfaDatabaseService {
     const codeRecord = codes[0];
 
     // Check if code matches
-    const valid = codeRecord.code === code && codeRecord.attempts < codeRecord.max_attempts;
+    const valid =
+      codeRecord.code === code && codeRecord.attempts < codeRecord.max_attempts;
 
     // Increment attempts and potentially mark as used
     const updates: any = {
@@ -260,7 +280,9 @@ export class MfaDatabaseService {
   /**
    * Log MFA audit event
    */
-  async logAuditEvent(event: Omit<MfaAuditLog, 'id' | 'createdAt'>): Promise<void> {
+  async logAuditEvent(
+    event: Omit<MfaAuditLog, 'id' | 'createdAt'>
+  ): Promise<void> {
     const dbData = {
       user_id: event.userId,
       clinic_id: event.clinicId,
@@ -273,9 +295,7 @@ export class MfaDatabaseService {
       metadata: event.metadata,
     };
 
-    const { error } = await this.supabase
-      .from('mfa_audit_logs')
-      .insert(dbData);
+    const { error } = await this.supabase.from('mfa_audit_logs').insert(dbData);
 
     if (error) throw error;
   }
@@ -338,18 +358,26 @@ export class MfaDatabaseService {
       smsEnabled: data.sms_enabled,
       smsPhoneNumber: data.sms_phone_number,
       smsVerified: data.sms_verified,
-      smsLastUsed: data.sms_last_used ? new Date(data.sms_last_used) : undefined,
+      smsLastUsed: data.sms_last_used
+        ? new Date(data.sms_last_used)
+        : undefined,
       emailEnabled: data.email_enabled,
       emailAddress: data.email_address,
       emailVerified: data.email_verified,
-      emailLastUsed: data.email_last_used ? new Date(data.email_last_used) : undefined,
+      emailLastUsed: data.email_last_used
+        ? new Date(data.email_last_used)
+        : undefined,
       totpEnabled: data.totp_enabled,
       totpSecret: data.totp_secret,
       totpVerified: data.totp_verified,
-      totpLastUsed: data.totp_last_used ? new Date(data.totp_last_used) : undefined,
+      totpLastUsed: data.totp_last_used
+        ? new Date(data.totp_last_used)
+        : undefined,
       biometricEnabled: data.biometric_enabled,
       biometricVerified: data.biometric_verified,
-      biometricLastUsed: data.biometric_last_used ? new Date(data.biometric_last_used) : undefined,
+      biometricLastUsed: data.biometric_last_used
+        ? new Date(data.biometric_last_used)
+        : undefined,
       backupCodesEnabled: data.backup_codes_enabled,
       backupCodesCount: data.backup_codes_count,
       createdAt: new Date(data.created_at),

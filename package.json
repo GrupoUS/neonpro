@@ -4,7 +4,10 @@
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "build": "turbo run build",
-    "dev": "turbo run dev",
+    "dev": "next dev",
+    "dev:api": "turbo run api:dev",
+    "dev:full": "concurrently \"pnpm dev\" \"pnpm dev:api\"",
+    "start": "next start",
     "lint": "turbo run lint",
     "format": "npx ultracite format",
     "format:check": "npx @biomejs/biome check .",
@@ -13,7 +16,8 @@
     "ci-check": "npx @biomejs/biome ci .",
     "type-check": "turbo run type-check",
     "test": "turbo run test",
-    "test:unit": "turbo run test:unit",
+    "test:unit": "cd tools/testing && pnpm vitest",
+    "test:e2e": "cd tools/testing && pnpm test:playwright",
     "test:integration": "turbo run test:integration",
     "clean": "turbo run clean",
     "compliance:check": "turbo run compliance:check",
@@ -33,6 +37,9 @@
     "@testing-library/react": "^16.0.1",
     "@testing-library/user-event": "^14.6.1",
     "@turbo/gen": "^1.13.4",
+    "@types/node": "^22.10.2",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
     "@vitest/ui": "^3.2.4",
     "dotenv": "^17.2.1",
     "eslint": "^8.57.0",
@@ -52,10 +59,14 @@
     "node": ">=18"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.62.2",
+    "@tanstack/react-query-devtools": "^5.62.2",
     "@vitejs/plugin-react": "^5.0.0",
     "jspdf": "^3.0.1",
+    "next": "^15.1.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "tailwindcss": "^3.4.15",
     "xlsx": "^0.18.5"
   }
 }

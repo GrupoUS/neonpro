@@ -1,75 +1,38 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "name": "neonpro-healthcare",
+  "name": "neonpro",
+  "regions": ["sao1"],
   "framework": "nextjs",
-  "buildCommand": "pnpm build",
-  "outputDirectory": "apps/web/.next",
   "installCommand": "pnpm install",
-  "functions": {
-    "apps/web/app/api/**/*.ts": {
-      "runtime": "edge",
-      "regions": ["gru1"],
-      "memory": 1024,
-      "maxDuration": 30
-    },
-    "apps/api/main.py": {
-      "runtime": "python3.11",
-      "regions": ["gru1"],
-      "memory": 1024,
-      "maxDuration": 30,
-      "environment": {
-        "PYTHONPATH": "apps/api",
-        "FASTAPI_ENV": "production"
-      }
-    },
-    "apps/api/routers/**/*.py": {
-      "runtime": "python3.11",
-      "regions": ["gru1"],
-      "memory": 512,
-      "maxDuration": 15
-    }
+  "buildCommand": "pnpm build",
+  "outputDirectory": ".next",
+  "env": {
+    "NODE_ENV": "production",
+    "VERCEL": "1",
+    "SUPABASE_URL": "https://ownkoxryswokcdanrdgj.supabase.co",
+    "SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im93bmtveHJ5c3dva2NkYW5yZGdqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQ0MzI2NjEsImV4cCI6MjA1MDAwODY2MX0.nYEwCu-Cv2MBDrDq8T9XLO9YzOVLYZo-gkmdNfRE6_0",
+    "SUPABASE_SERVICE_ROLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im93bmtveHJ5c3dva2NkYW5yZGdqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczNDQzMjY2MSwiZXhwIjoyMDUwMDA4NjYxfQ.jnhZfD9Zi7VvMxz1QPbJKDf5FHQlCkw0xUJW6xrW7Jg",
+    "JWT_SECRET": "your-very-secure-jwt-secret-here-min-32-chars-neonpro-prod",
+    "NEXT_PUBLIC_SUPABASE_URL": "https://ownkoxryswokcdanrdgj.supabase.co",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im93bmtveHJ5c3dva2NkYW5yZGdqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQ0MzI2NjEsImV4cCI6MjA1MDAwODY2MX0.nYEwCu-Cv2MBDrDq8T9XLO9YzOVLYZo-gkmdNfRE6_0",
+    "NEXT_PUBLIC_API_URL": "/api"
   },
-  "regions": ["gru1"],
-  "builds": [
-    {
-      "src": "apps/web/package.json",
-      "use": "@vercel/next",
-      "config": {
-        "distDir": ".next"
-      }
-    },
-    {
-      "src": "apps/api/main.py",
-      "use": "@vercel/python",
-      "config": {
-        "maxLambdaSize": "50mb",
-        "runtime": "python3.11"
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/v1/(.*)",
-      "dest": "apps/api/main.py"
-    },
-    {
-      "src": "/health",
-      "dest": "/api/health"
-    },
-    {
-      "src": "/monitoring",
-      "dest": "/api/monitoring/health"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "apps/web/$1"
-    }
-  ],
   "headers": [
     {
-      "source": "/(.*)",
+      "source": "/api/(.*)",
       "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization, x-client-info, apikey"
+        },
         {
           "key": "X-Content-Type-Options",
           "value": "nosniff"
@@ -85,90 +48,8 @@
         {
           "key": "Referrer-Policy",
           "value": "strict-origin-when-cross-origin"
-        },
-        {
-          "key": "Permissions-Policy",
-          "value": "camera=(), microphone=(), geolocation=()"
-        },
-        {
-          "key": "Strict-Transport-Security",
-          "value": "max-age=63072000; includeSubDomains; preload"
-        },
-        {
-          "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self' data:; connect-src 'self' https://api.supabase.co https://*.supabase.co wss://*.supabase.co https://vercel.live; media-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';"
-        },
-        {
-          "key": "X-Healthcare-Privacy",
-          "value": "LGPD-Compliant"
-        },
-        {
-          "key": "X-Medical-Grade",
-          "value": "Healthcare-Validated"
-        },
-        {
-          "key": "X-API-Version",
-          "value": "v1.0.0"
         }
       ]
-    },
-    {
-      "source": "/api/v1/(.*)",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "*"
-        },
-        {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET, POST, PUT, DELETE, OPTIONS"
-        },
-        {
-          "key": "Access-Control-Allow-Headers",
-          "value": "X-Requested-With, Content-Type, Authorization, X-LGPD-Consent, X-Patient-Context"
-        },
-        {
-          "key": "X-Powered-By",
-          "value": "FastAPI/NeonPro"
-        }
-      ]
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/health",
-      "destination": "/api/health"
-    },
-    {
-      "source": "/monitoring",
-      "destination": "/api/monitoring/health"
-    },
-    {
-      "source": "/api/v1/:path*",
-      "destination": "apps/api/main.py"
-    }
-  ],
-  "env": {
-    "NODE_ENV": "production",
-    "NEXT_TELEMETRY_DISABLED": "1",
-    "HEALTHCARE_MODE": "production",
-    "LGPD_COMPLIANCE": "enabled",
-    "EMERGENCY_ALERTS": "enabled",
-    "FASTAPI_ENV": "production",
-    "PYTHON_VERSION": "3.11"
-  },
-  "crons": [
-    {
-      "path": "/api/v1/cron/cleanup-expired-sessions",
-      "schedule": "0 2 * * *"
-    },
-    {
-      "path": "/api/v1/cron/generate-compliance-reports",
-      "schedule": "0 6 * * 1"
-    },
-    {
-      "path": "/api/v1/cron/backup-patient-data",
-      "schedule": "0 3 * * *"
     }
   ]
 }

@@ -723,13 +723,17 @@ export class DataPortabilityService {
     const crypto = require('node:crypto');
     const keyMaterial = `${request.patientId}-${request.tenantId}-${Date.now()}`;
     const key = crypto.createHash('sha256').update(keyMaterial).digest('hex');
-    
+
     // In production, encrypt the actual export data
     if (!result.metadata) result.metadata = {};
     result.metadata.encrypted = true;
     result.metadata.encryptionAlgorithm = 'AES-256-GCM';
-    result.metadata.keyHash = crypto.createHash('sha256').update(key).digest('hex').slice(0, 8);
-    
+    result.metadata.keyHash = crypto
+      .createHash('sha256')
+      .update(key)
+      .digest('hex')
+      .slice(0, 8);
+
     return { key };
   }
 
@@ -737,14 +741,15 @@ export class DataPortabilityService {
     // Generate cryptographically secure password for export access
     const crypto = require('node:crypto');
     const length = 16;
-    const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+    const charset =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
     let password = '';
-    
+
     for (let i = 0; i < length; i++) {
       const randomIndex = crypto.randomInt(0, charset.length);
       password += charset[randomIndex];
     }
-    
+
     return password;
   }
 
@@ -754,17 +759,21 @@ export class DataPortabilityService {
   ): Promise<void> {
     // Apply password protection to the export
     const crypto = require('node:crypto');
-    
+
     // Hash the password for storage
-    const passwordHash = crypto.createHash('sha256').update(password).digest('hex');
-    
+    const passwordHash = crypto
+      .createHash('sha256')
+      .update(password)
+      .digest('hex');
+
     if (!result.metadata) result.metadata = {};
     result.metadata.passwordProtected = true;
     result.metadata.passwordHash = passwordHash.slice(0, 8); // Store only first 8 chars for verification
     result.metadata.protectedAt = new Date().toISOString();
-    
+
     // In production, actually encrypt the data with this password
-    result.metadata.accessInstructions = 'Use the provided password to decrypt and access your data export';
+    result.metadata.accessInstructions =
+      'Use the provided password to decrypt and access your data export';
   }
 
   private async generateDigitalSignature(
@@ -780,19 +789,19 @@ export class DataPortabilityService {
       recordCount: result.data.length,
       version: '1.0',
     });
-    
+
     // Use HMAC-SHA256 for signature
     const signature = crypto
       .createHmac('sha256', 'neonpro-lgpd-portability-key')
       .update(dataToSign)
       .digest('hex');
-    
+
     // Store signature metadata
     if (!result.metadata) result.metadata = {};
     result.metadata.digitalSignature = signature;
     result.metadata.signatureAlgorithm = 'HMAC-SHA256';
     result.metadata.signedAt = new Date().toISOString();
-    
+
     return signature;
   }
 

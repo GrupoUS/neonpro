@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
-// Mock useUser hook for now - replace with actual auth hook  
+// Mock useUser hook for now - replace with actual auth hook
 const useUser = () => ({ id: 'mock-user-id' });
 
 import {
@@ -262,4 +262,4 @@ export const useMFA = () => {
       config?.method === method && isEnabled,
     hasBackupCodes: () => (config?.backupCodesCount ?? 0) > 0,
   };
-};;
+};

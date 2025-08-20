@@ -23,6 +23,9 @@
       "vitest/globals"
     ],
     "paths": {
+      "@/*": [
+        "./*"
+      ],
       "@neonpro/ui": [
         "./packages/ui/src"
       ],
@@ -60,14 +63,20 @@
         "./packages/config/*"
       ]
     },
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
   "include": [
-    "**/*.ts",
-    "**/*.tsx",
     "**/*.js",
     "**/*.jsx",
-    "vitest.d.ts"
+    "**/*.ts",
+    "**/*.tsx",
+    "vitest.d.ts",
+    ".next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",

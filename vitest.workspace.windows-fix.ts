@@ -1,7 +1,7 @@
 /// <reference types="vitest" />
 
-import { defineWorkspace } from 'vitest/config';
 import path from 'path';
+import { defineWorkspace } from 'vitest/config';
 
 // Configuração alternativa para resolver problemas de workspace folder no Windows
 export default defineWorkspace([
@@ -21,10 +21,7 @@ export default defineWorkspace([
       name: 'web-app',
       root: path.resolve(process.cwd(), 'apps/web'),
       environment: 'jsdom',
-      include: [
-        '**/*.{test}.{ts,tsx}',
-        '**/__tests__/**/*.{ts,tsx}',
-      ],
+      include: ['**/*.{test}.{ts,tsx}', '**/__tests__/**/*.{ts,tsx}'],
       exclude: [
         '**/node_modules/**',
         '**/dist/**',
@@ -44,10 +41,7 @@ export default defineWorkspace([
       name: 'ui-package',
       root: path.resolve(process.cwd(), 'packages/ui'),
       environment: 'jsdom',
-      include: [
-        '**/*.{test}.{ts,tsx}',
-        '**/__tests__/**/*.{ts,tsx}',
-      ],
+      include: ['**/*.{test}.{ts,tsx}', '**/__tests__/**/*.{ts,tsx}'],
       exclude: ['**/*.spec.*'],
     },
   },
@@ -57,10 +51,7 @@ export default defineWorkspace([
       name: 'utils-package',
       root: path.resolve(process.cwd(), 'packages/utils'),
       environment: 'node',
-      include: [
-        '**/*.{test}.{ts}',
-        '**/__tests__/**/*.{ts}',
-      ],
+      include: ['**/*.{test}.{ts}', '**/__tests__/**/*.{ts}'],
       exclude: ['**/*.spec.*'],
     },
   },
@@ -70,10 +61,7 @@ export default defineWorkspace([
       name: 'types-package',
       root: path.resolve(process.cwd(), 'packages/types'),
       environment: 'node',
-      include: [
-        '**/*.{test}.{ts}',
-        '**/__tests__/**/*.{ts}',
-      ],
+      include: ['**/*.{test}.{ts}', '**/__tests__/**/*.{ts}'],
       exclude: ['**/*.spec.*'],
     },
   },
@@ -83,10 +71,7 @@ export default defineWorkspace([
       name: 'auth-package',
       root: path.resolve(process.cwd(), 'packages/auth'),
       environment: 'jsdom',
-      include: [
-        '**/*.{test}.{ts,tsx}',
-        '**/__tests__/**/*.{ts,tsx}',
-      ],
+      include: ['**/*.{test}.{ts,tsx}', '**/__tests__/**/*.{ts,tsx}'],
       exclude: ['**/*.spec.*'],
     },
   },
@@ -96,11 +81,9 @@ export default defineWorkspace([
       name: 'db-package',
       root: path.resolve(process.cwd(), 'packages/db'),
       environment: 'node',
-      include: [
-        '**/*.{test}.{ts}',
-        '**/__tests__/**/*.{ts}',
-      ],
-      exclude: ['**/*.spec.*'],
+      include: ['**/*.{test}.{ts}', '**/__tests__/**/*.{ts}'],
+      exclude: ['**/*.spec.*', '**/prisma/**', '**/node_modules/**'],
+      globals: true,
     },
   },
 
@@ -109,10 +92,7 @@ export default defineWorkspace([
       name: 'domain-package',
       root: path.resolve(process.cwd(), 'packages/domain'),
       environment: 'node',
-      include: [
-        '**/*.{test}.{ts}',
-        '**/__tests__/**/*.{ts}',
-      ],
+      include: ['**/*.{test}.{ts}', '**/__tests__/**/*.{ts}'],
       exclude: ['**/*.spec.*'],
     },
   },
@@ -123,9 +103,7 @@ export default defineWorkspace([
       name: 'testing-tools',
       root: path.resolve(process.cwd(), 'tools/testing'),
       environment: 'jsdom',
-      include: [
-        '**/__tests__/**/*.{ts,tsx}',
-      ],
+      include: ['**/__tests__/**/*.{ts,tsx}'],
       exclude: [
         '**/*.spec.ts',
         '**/*.spec.tsx',

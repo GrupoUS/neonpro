@@ -394,7 +394,7 @@ export async function setupMfa(
 
         // Store the code and phone number
         await storeVerificationCode(userId, smsCode, 'sms', phoneNumber);
-        
+
         const settings = await mfaDb.getMfaSettings(userId);
         await mfaDb.upsertMfaSettings({
           ...settings,
@@ -418,11 +418,17 @@ export async function setupMfa(
         }
 
         const emailCode = generateSmsCode(); // Use same format for simplicity
-        
+
         // In production, send email with code
         // For now, store the code
-        await storeVerificationCode(userId, emailCode, 'email', undefined, email);
-        
+        await storeVerificationCode(
+          userId,
+          emailCode,
+          'email',
+          undefined,
+          email
+        );
+
         const settings = await mfaDb.getMfaSettings(userId);
         await mfaDb.upsertMfaSettings({
           ...settings,
@@ -486,7 +492,8 @@ export async function verifyMfa(
         success: false,
         method,
         lockoutUntil: lockoutResult.lockoutUntil,
-        message: 'Conta temporariamente bloqueada devido a tentativas excessivas',
+        message:
+          'Conta temporariamente bloqueada devido a tentativas excessivas',
       };
     }
 
@@ -506,7 +513,9 @@ export async function verifyMfa(
         break;
 
       case MfaMethod.EMAIL:
-        verified = await mfaDb.verifyCode(userId, code, 'email').then(r => r.valid);
+        verified = await mfaDb
+          .verifyCode(userId, code, 'email')
+          .then((r) => r.valid);
         break;
 
       case MfaMethod.BACKUP_CODES:
@@ -528,7 +537,7 @@ export async function verifyMfa(
     }
 
     await recordFailedMfa(userId, method, 'Invalid verification code');
-    
+
     // Check lockout status after failed attempt
     const newLockoutStatus = await checkLockout(userId);
     if (newLockoutStatus.locked) {
@@ -537,7 +546,8 @@ export async function verifyMfa(
         method,
         remainingAttempts: 0,
         lockoutUntil: newLockoutStatus.lockoutUntil,
-        message: 'Muitas tentativas incorretas. Conta bloqueada temporariamente.',
+        message:
+          'Muitas tentativas incorretas. Conta bloqueada temporariamente.',
       };
     }
 
@@ -548,7 +558,11 @@ export async function verifyMfa(
     };
   } catch (error) {
     console.error('MFA verification error:', error);
-    await recordFailedMfa(request.userId, request.method, 'Internal verification error');
+    await recordFailedMfa(
+      request.userId,
+      request.method,
+      'Internal verification error'
+    );
     return {
       success: false,
       method: request.method,
@@ -597,7 +611,10 @@ async function getUserTotpSecret(userId: string): Promise<string | null> {
 /**
  * Verify SMS code from temporary storage
  */
-async function verifySmsCodeForUser(userId: string, code: string): Promise<boolean> {
+async function verifySmsCodeForUser(
+  userId: string,
+  code: string
+): Promise<boolean> {
   try {
     const result = await mfaDb.verifyCode(userId, code, 'sms');
     return result.valid;
@@ -610,7 +627,10 @@ async function verifySmsCodeForUser(userId: string, code: string): Promise<boole
 /**
  * Verify backup code and mark as used
  */
-async function verifyBackupCodeForUser(userId: string, code: string): Promise<boolean> {
+async function verifyBackupCodeForUser(
+  userId: string,
+  code: string
+): Promise<boolean> {
   try {
     const result = await mfaDb.verifyCode(userId, code, 'recovery');
     return result.valid;
@@ -654,7 +674,10 @@ async function storeVerificationCode(
 /**
  * Record successful MFA authentication
  */
-async function recordSuccessfulMfa(userId: string, method: MfaMethod): Promise<void> {
+async function recordSuccessfulMfa(
+  userId: string,
+  method: MfaMethod
+): Promise<void> {
   try {
     await mfaDb.logAuditEvent({
       userId,
@@ -668,7 +691,7 @@ async function recordSuccessfulMfa(userId: string, method: MfaMethod): Promise<v
     const settings = await mfaDb.getMfaSettings(userId);
     if (settings) {
       const updateData: any = {};
-      
+
       switch (method) {
         case MfaMethod.SMS:
           updateData.smsLastUsed = new Date();
@@ -694,8 +717,8 @@ async function recordSuccessfulMfa(userId: string, method: MfaMethod): Promise<v
  * Record failed MFA authentication
  */
 async function recordFailedMfa(
-  userId: string, 
-  method: MfaMethod, 
+  userId: string,
+  method: MfaMethod,
   errorMessage?: string
 ): Promise<void> {
   try {

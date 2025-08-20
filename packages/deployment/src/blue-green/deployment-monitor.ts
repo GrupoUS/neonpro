@@ -113,7 +113,8 @@ export class DeploymentMonitor {
     const averageTime =
       completedDeployments.length > 0
         ? completedDeployments.reduce((sum, d) => {
-            const duration = (d.endTime?.getTime() ?? 0) - d.startTime.getTime();
+            const duration =
+              (d.endTime?.getTime() ?? 0) - d.startTime.getTime();
             return sum + duration;
           }, 0) / completedDeployments.length
         : 0;
