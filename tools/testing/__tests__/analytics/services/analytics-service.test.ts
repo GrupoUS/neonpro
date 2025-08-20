@@ -56,12 +56,14 @@ describe('Analytics Utils', () => {
 
   describe('Churn Rate Calculations', () => {
     it('should calculate churn rate correctly', () => {
-      const churnRate = calculateChurnRate(10, 100);
+      // 10 churned customers out of 100 total customers = 10% churn rate
+      const churnRate = calculateChurnRate(100, 10);
       expect(churnRate).toBe(0.1);
     });
 
     it('should handle zero starting customers', () => {
-      const churnRate = calculateChurnRate(10, 0);
+      // 0 total customers means no churn is possible
+      const churnRate = calculateChurnRate(0, 10);
       expect(churnRate).toBe(0);
     });
 
@@ -90,12 +92,14 @@ describe('Analytics Utils', () => {
 
   describe('Growth Rate Calculations', () => {
     it('should calculate positive growth rate', () => {
-      const growthRate = calculateGrowthRate(100, 120);
+      // Growth from 100 to 120 = 20% growth  
+      const growthRate = calculateGrowthRate(120, 100);
       expect(growthRate).toBe(0.2);
     });
 
     it('should calculate negative growth rate', () => {
-      const growthRate = calculateGrowthRate(100, 80);
+      // Decline from 100 to 80 = -20% growth
+      const growthRate = calculateGrowthRate(80, 100);
       expect(growthRate).toBe(-0.2);
     });
 

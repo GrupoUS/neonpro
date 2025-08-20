@@ -567,7 +567,7 @@ describe('Analytics Utils', () => {
     test('should handle extremely large numbers', () => {
       const largeNumber = Number.MAX_SAFE_INTEGER;
       expect(formatAnalyticsCurrency(largeNumber)).toContain('$');
-      expect(calculateGrowthRate(largeNumber, largeNumber * 2)).toBe(1);
+      expect(calculateGrowthRate(largeNumber * 2, largeNumber)).toBe(1);
     });
 
     test('should handle floating point precision issues', () => {

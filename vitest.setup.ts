@@ -1,9 +1,6 @@
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 import { expect, vi } from 'vitest';
 import React from 'react';
-
-// Extend expect with jest-dom matchers  
-expect.extend(await import('@testing-library/jest-dom/matchers'));
 
 // Make React available globally in tests
 Object.defineProperty(globalThis, 'React', {

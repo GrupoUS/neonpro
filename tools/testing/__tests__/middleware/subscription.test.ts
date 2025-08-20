@@ -8,12 +8,12 @@
  * @created 2025-07-22
  */
 
-import { afterEach, beforeEach, describe, expect, it, jest, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMockResponse, createMockSubscription } from '../utils/testUtils';
 
 // Mock Next.js modules
 vi.mock('next/headers', () => ({
-  cookies: jest.fn(() => ({
+  cookies: vi.fn(() => ({
     get: vi.fn(),
     set: vi.fn(),
     delete: vi.fn(),
@@ -37,8 +37,10 @@ describe('Subscription Middleware', () => {
     vi.clearAllMocks();
 
     // Setup fetch mock
-    mockFetch = global.fetch as vi.MockedFunction<typeof fetch>;
-    mockFetch.mockClear();
+    mockFetch = vi.mocked(global.fetch);
+    if (mockFetch.mockClear) {
+      mockFetch.mockClear();
+    }
   });
 
   afterEach(() => {
@@ -155,7 +157,8 @@ describe('Subscription Middleware', () => {
 
   describe('errorHandling', () => {
     it('should handle network errors gracefully', async () => {
-      mockFetch.mockRejectedValueOnce(new Error('Network error'));
+      // Mock fetch to reject with an error
+      vi.mocked(fetch).mockRejectedValueOnce(new Error('Network error'));
 
       try {
         await fetch('/api/subscription');
@@ -166,10 +169,15 @@ describe('Subscription Middleware', () => {
     });
 
     it('should handle invalid subscription responses', async () => {
-      mockFetch.mockResolvedValueOnce(createMockResponse(null, 404) as any);
+      // Mock fetch to return invalid data
+      vi.mocked(fetch).mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+        json: () => Promise.resolve({ error: 'Server error' }),
+      } as Response);
 
       const response = await fetch('/api/subscription');
-      expect(response.status).toBe(404);
+      expect(response.status).toBe(500);
     });
   });
 });
