@@ -7,8 +7,8 @@ import {
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
-import { mockAnalyticsData } from '@/../../__tests__/utils/mockData';
 import AnalyticsDashboard from '@/components/dashboard/AnalyticsDashboard';
+import { mockAnalyticsData } from '../../../utils/mockData';
 
 // Mock Recharts components
 vi.mock('recharts', () => ({

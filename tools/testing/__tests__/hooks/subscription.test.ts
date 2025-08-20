@@ -17,7 +17,7 @@ import {
   createMockSubscription,
   createMockSubscriptionHook,
   createTestQueryClient,
-} from '../utils/testUtils';
+} from '../../utils/test-utils';
 
 // Mock the subscription hooks (to be imported when they exist)
 const mockUseSubscriptionStatus = () => createMockSubscriptionHook();

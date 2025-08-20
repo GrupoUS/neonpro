@@ -12,7 +12,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { renderWithProviders } from '../utils/testUtils';
+import { renderWithProviders } from '../../utils/test-utils';
 
 // Mock subscription components (to be imported when they exist)
 const MockSubscriptionStatusCard = ({

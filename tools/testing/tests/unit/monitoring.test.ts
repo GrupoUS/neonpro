@@ -17,7 +17,7 @@ describe('TASK-001 Foundation Setup Verification', () => {
     it('should have app directory with core modules', () => {
       const webAppDir = path.join(rootDir, 'apps/web/app');
       const webLibDir = path.join(rootDir, 'apps/web/lib');
-      
+
       expect(fs.existsSync(webAppDir)).toBe(true);
       expect(fs.existsSync(webLibDir)).toBe(true);
     });

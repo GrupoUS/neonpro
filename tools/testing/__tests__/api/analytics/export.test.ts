@@ -1,7 +1,7 @@
 import { createMocks, createMocks } from 'node-mocks-http';
 import { vi } from 'vitest';
-import { mockExportData, mockSession } from '@/../../__tests__/utils/mockData';
 import handler from '@/app/api/analytics/export/route';
+import { mockExportData, mockSession } from '../../utils/mockData';
 
 // Mock Supabase auth
 vi.mock('@/utils/supabase/server', () => ({

@@ -1,33 +1,33 @@
 /**
  * 🔗 Integration Example - NeonPro Healthcare
  * ===========================================
- * 
+ *
  * Exemplo prático da integração Frontend-Backend + Hono.dev Stack
  * demonstrando o uso dos hooks TanStack Query com Hono RPC.
  */
 
 'use client';
 
-import { useState } from 'react';
-import { 
-  useLogin, 
-  useProfile, 
-  useAuthStatus,
-  usePatients,
-  useCreatePatient,
-  useAppointments,
-  useCreateAppointment 
-} from '@/hooks/api';
-import type { 
-  Login, 
-  CreatePatient, 
-  CreateAppointment 
+import type {
+  CreateAppointment,
+  CreatePatient,
+  Login,
 } from '@neonpro/shared/schemas';
+import { useState } from 'react';
+import {
+  useAppointments,
+  useAuthStatus,
+  useCreateAppointment,
+  useCreatePatient,
+  useLogin,
+  usePatients,
+  useProfile,
+} from '@/hooks/api';
 
 export function IntegrationExample() {
   const [loginData, setLoginData] = useState<Login>({
     email: 'admin@neonpro.com',
-    password: 'Admin123!'
+    password: 'Admin123!',
   });
 
   // Auth hooks
@@ -36,18 +36,16 @@ export function IntegrationExample() {
   const { data: profile, refetch: refetchProfile } = useProfile();
 
   // Patient hooks
-  const { 
-    data: patients, 
-    isLoading: patientsLoading, 
-    error: patientsError 
+  const {
+    data: patients,
+    isLoading: patientsLoading,
+    error: patientsError,
   } = usePatients({ page: 1, limit: 5 });
   const createPatientMutation = useCreatePatient();
 
   // Appointment hooks
-  const { 
-    data: appointments, 
-    isLoading: appointmentsLoading 
-  } = useAppointments({ page: 1, limit: 3 });
+  const { data: appointments, isLoading: appointmentsLoading } =
+    useAppointments({ page: 1, limit: 3 });
   const createAppointmentMutation = useCreateAppointment();
 
   const handleLogin = async () => {
@@ -74,14 +72,14 @@ export function IntegrationExample() {
         neighborhood: 'Centro',
         city: 'São Paulo',
         state: 'SP',
-        zipCode: '01234567'
+        zipCode: '01234567',
       },
       allergies: ['Nenhuma conhecida'],
       chronicConditions: [],
       currentMedications: [],
       consentGiven: true,
       dataProcessingConsent: true,
-      marketingConsent: false
+      marketingConsent: false,
     };
 
     try {
@@ -112,7 +110,7 @@ export function IntegrationExample() {
       title: 'Consulta de Avaliação Estética',
       description: 'Primeira consulta para avaliação de tratamentos faciais',
       treatmentArea: 'Face',
-      estimatedCost: 150.00
+      estimatedCost: 150.0,
     };
 
     try {
@@ -124,9 +122,9 @@ export function IntegrationExample() {
 
   if (authLoading) {
     return (
-      <div className="p-6 max-w-4xl mx-auto">
+      <div className="mx-auto max-w-4xl p-6">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-blue-600 border-b-2" />
           <p className="mt-2">Verificando autenticação...</p>
         </div>
       </div>
@@ -134,14 +132,16 @@ export function IntegrationExample() {
   }
 
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-8">
-      <div className="bg-white rounded-lg shadow-lg p-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">
+    <div className="mx-auto max-w-4xl space-y-8 p-6">
+      <div className="rounded-lg bg-white p-6 shadow-lg">
+        <h1 className="mb-6 font-bold text-2xl text-gray-900">
           🔗 Integração Frontend-Backend + Hono.dev Stack
         </h1>
-        
-        <div className="mb-6 p-4 bg-blue-50 rounded-lg">
-          <h2 className="text-lg font-semibold text-blue-900 mb-2">Status da Implementação</h2>
+
+        <div className="mb-6 rounded-lg bg-blue-50 p-4">
+          <h2 className="mb-2 font-semibold text-blue-900 text-lg">
+            Status da Implementação
+          </h2>
           <ul className="space-y-1 text-blue-800">
             <li>✅ Package @neonpro/shared criado</li>
             <li>✅ Schemas Zod compartilhados</li>
@@ -153,74 +153,46 @@ export function IntegrationExample() {
           </ul>
         </div>
 
-        {!isAuthenticated ? (
-          <div className="bg-yellow-50 p-4 rounded-lg">
-            <h2 className="text-lg font-semibold text-yellow-900 mb-4">
-              🔐 Autenticação
-            </h2>
-            <div className="space-y-3">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Email</label>
-                <input
-                  type="email"
-                  value={loginData.email}
-                  onChange={(e) => setLoginData(prev => ({ ...prev, email: e.target.value }))}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Senha</label>
-                <input
-                  type="password"
-                  value={loginData.password}
-                  onChange={(e) => setLoginData(prev => ({ ...prev, password: e.target.value }))}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-              
-              <button
-                onClick={handleLogin}
-                disabled={loginMutation.isPending}
-                className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:opacity-50"
-              >
-                {loginMutation.isPending ? 'Entrando...' : 'Fazer Login'}
-              </button>
-              
-              {loginMutation.error && (
-                <p className="text-red-600 text-sm">{loginMutation.error.message}</p>
-              )}
-            </div>
-          </div>
-        ) : (
+        {isAuthenticated ? (
           <div className="space-y-6">
-            <div className="bg-green-50 p-4 rounded-lg">
-              <h2 className="text-lg font-semibold text-green-900 mb-2">
+            <div className="rounded-lg bg-green-50 p-4">
+              <h2 className="mb-2 font-semibold text-green-900 text-lg">
                 ✅ Autenticado com sucesso!
               </h2>
               <div className="text-green-800">
-                <p><strong>Usuário:</strong> {user?.fullName}</p>
-                <p><strong>Email:</strong> {user?.email}</p>
-                <p><strong>Papel:</strong> {user?.role}</p>
-                <p><strong>Permissões:</strong> {user?.permissions?.join(', ') || 'Nenhuma'}</p>
+                <p>
+                  <strong>Usuário:</strong> {user?.fullName}
+                </p>
+                <p>
+                  <strong>Email:</strong> {user?.email}
+                </p>
+                <p>
+                  <strong>Papel:</strong> {user?.role}
+                </p>
+                <p>
+                  <strong>Permissões:</strong>{' '}
+                  {user?.permissions?.join(', ') || 'Nenhuma'}
+                </p>
               </div>
             </div>
 
             {/* Patients Section */}
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">
+            <div className="rounded-lg bg-gray-50 p-4">
+              <div className="mb-4 flex items-center justify-between">
+                <h2 className="font-semibold text-gray-900 text-lg">
                   🩺 Pacientes ({patients?.meta?.total || 0})
                 </h2>
                 <button
-                  onClick={handleCreateTestPatient}
+                  className="rounded-md bg-green-600 px-4 py-2 text-white hover:bg-green-700 disabled:opacity-50"
                   disabled={createPatientMutation.isPending}
-                  className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 disabled:opacity-50"
+                  onClick={handleCreateTestPatient}
                 >
-                  {createPatientMutation.isPending ? 'Criando...' : 'Criar Paciente Teste'}
+                  {createPatientMutation.isPending
+                    ? 'Criando...'
+                    : 'Criar Paciente Teste'}
                 </button>
               </div>
-              
+
               {patientsLoading ? (
                 <p>Carregando pacientes...</p>
               ) : patientsError ? (
@@ -228,50 +200,66 @@ export function IntegrationExample() {
               ) : patients?.data && patients.data.length > 0 ? (
                 <div className="space-y-2">
                   {patients.data.map((patient) => (
-                    <div key={patient.id} className="bg-white p-3 rounded border">
-                      <p><strong>{patient.fullName}</strong></p>
-                      <p className="text-sm text-gray-600">{patient.email}</p>
-                      <p className="text-xs text-gray-500">ID: {patient.id}</p>
+                    <div
+                      className="rounded border bg-white p-3"
+                      key={patient.id}
+                    >
+                      <p>
+                        <strong>{patient.fullName}</strong>
+                      </p>
+                      <p className="text-gray-600 text-sm">{patient.email}</p>
+                      <p className="text-gray-500 text-xs">ID: {patient.id}</p>
                     </div>
                   ))}
                 </div>
               ) : (
                 <p className="text-gray-600">Nenhum paciente encontrado.</p>
               )}
-              
+
               {createPatientMutation.error && (
-                <p className="text-red-600 text-sm mt-2">
+                <p className="mt-2 text-red-600 text-sm">
                   Erro ao criar paciente: {createPatientMutation.error.message}
                 </p>
               )}
             </div>
 
             {/* Appointments Section */}
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">
+            <div className="rounded-lg bg-gray-50 p-4">
+              <div className="mb-4 flex items-center justify-between">
+                <h2 className="font-semibold text-gray-900 text-lg">
                   📅 Agendamentos ({appointments?.meta?.total || 0})
                 </h2>
                 <button
+                  className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
+                  disabled={
+                    createAppointmentMutation.isPending || !patients?.data?.[0]
+                  }
                   onClick={handleCreateTestAppointment}
-                  disabled={createAppointmentMutation.isPending || !patients?.data?.[0]}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50"
                 >
-                  {createAppointmentMutation.isPending ? 'Agendando...' : 'Criar Agendamento'}
+                  {createAppointmentMutation.isPending
+                    ? 'Agendando...'
+                    : 'Criar Agendamento'}
                 </button>
               </div>
-              
+
               {appointmentsLoading ? (
                 <p>Carregando agendamentos...</p>
               ) : appointments?.data && appointments.data.length > 0 ? (
                 <div className="space-y-2">
                   {appointments.data.map((appointment) => (
-                    <div key={appointment.id} className="bg-white p-3 rounded border">
-                      <p><strong>{appointment.title}</strong></p>
-                      <p className="text-sm text-gray-600">
-                        {new Date(appointment.scheduledAt).toLocaleString('pt-BR')}
+                    <div
+                      className="rounded border bg-white p-3"
+                      key={appointment.id}
+                    >
+                      <p>
+                        <strong>{appointment.title}</strong>
                       </p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-gray-600 text-sm">
+                        {new Date(appointment.scheduledAt).toLocaleString(
+                          'pt-BR'
+                        )}
+                      </p>
+                      <p className="text-gray-500 text-xs">
                         Status: {appointment.status} | Tipo: {appointment.type}
                       </p>
                     </div>
@@ -280,16 +268,17 @@ export function IntegrationExample() {
               ) : (
                 <p className="text-gray-600">Nenhum agendamento encontrado.</p>
               )}
-              
+
               {createAppointmentMutation.error && (
-                <p className="text-red-600 text-sm mt-2">
-                  Erro ao criar agendamento: {createAppointmentMutation.error.message}
+                <p className="mt-2 text-red-600 text-sm">
+                  Erro ao criar agendamento:{' '}
+                  {createAppointmentMutation.error.message}
                 </p>
               )}
             </div>
 
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <h2 className="text-lg font-semibold text-blue-900 mb-2">
+            <div className="rounded-lg bg-blue-50 p-4">
+              <h2 className="mb-2 font-semibold text-blue-900 text-lg">
                 🎯 Próximos Passos
               </h2>
               <ul className="space-y-1 text-blue-800 text-sm">
@@ -300,6 +289,58 @@ export function IntegrationExample() {
                 <li>• Adicionar validação LGPD/ANVISA</li>
                 <li>• Otimizar performance com caching</li>
               </ul>
+            </div>
+          </div>
+        ) : (
+          <div className="rounded-lg bg-yellow-50 p-4">
+            <h2 className="mb-4 font-semibold text-lg text-yellow-900">
+              🔐 Autenticação
+            </h2>
+            <div className="space-y-3">
+              <div>
+                <label className="block font-medium text-gray-700 text-sm">
+                  Email
+                </label>
+                <input
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                  onChange={(e) =>
+                    setLoginData((prev) => ({ ...prev, email: e.target.value }))
+                  }
+                  type="email"
+                  value={loginData.email}
+                />
+              </div>
+
+              <div>
+                <label className="block font-medium text-gray-700 text-sm">
+                  Senha
+                </label>
+                <input
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                  onChange={(e) =>
+                    setLoginData((prev) => ({
+                      ...prev,
+                      password: e.target.value,
+                    }))
+                  }
+                  type="password"
+                  value={loginData.password}
+                />
+              </div>
+
+              <button
+                className="w-full rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
+                disabled={loginMutation.isPending}
+                onClick={handleLogin}
+              >
+                {loginMutation.isPending ? 'Entrando...' : 'Fazer Login'}
+              </button>
+
+              {loginMutation.error && (
+                <p className="text-red-600 text-sm">
+                  {loginMutation.error.message}
+                </p>
+              )}
             </div>
           </div>
         )}

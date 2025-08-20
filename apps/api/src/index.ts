@@ -36,16 +36,15 @@ import { auditMiddleware } from '@/middleware/audit';
 import { errorHandler } from '@/middleware/error-handler';
 import { lgpdMiddleware } from '@/middleware/lgpd';
 import { rateLimitMiddleware } from '@/middleware/rate-limit';
+import { analyticsRoutes } from '@/routes/analytics';
 import { appointmentRoutes } from '@/routes/appointments';
 // Import routes
 import { authRoutes } from '@/routes/auth';
 import { clinicRoutes } from '@/routes/clinics';
+import { complianceRoutes } from '@/routes/compliance';
 import { patientRoutes } from '@/routes/patients';
-// TODO: Create these route modules
-// import { professionalsRoutes } from '@/routes/professionals'
-// import { servicesRoutes } from '@/routes/services'
-// import { analyticsRoutes } from '@/routes/analytics'
-// import { complianceRoutes } from '@/routes/compliance'
+import { professionalsRoutes } from '@/routes/professionals';
+import { servicesRoutes } from '@/routes/services';
 
 // Import utilities
 import type { AppEnv } from '@/types/env';
@@ -175,16 +174,19 @@ app.get('/health', async (c) => {
   }
 });
 
-// API routes
-app.route('/api/v1/auth', authRoutes);
-app.route('/api/v1/clinics', clinicRoutes);
-app.route('/api/v1/patients', patientRoutes);
-app.route('/api/v1/appointments', appointmentRoutes);
-// TODO: Add remaining routes
-// app.route('/api/v1/professionals', professionalsRoutes)
-// app.route('/api/v1/services', servicesRoutes)
-// app.route('/api/v1/analytics', analyticsRoutes)
-// app.route('/api/v1/compliance', complianceRoutes)
+// API routes - Structured for optimal Hono RPC inference
+const apiV1 = new Hono<AppEnv>()
+  .route('/auth', authRoutes)
+  .route('/clinics', clinicRoutes)
+  .route('/patients', patientRoutes)
+  .route('/appointments', appointmentRoutes)
+  .route('/professionals', professionalsRoutes)
+  .route('/services', servicesRoutes)
+  .route('/analytics', analyticsRoutes)
+  .route('/compliance', complianceRoutes);
+
+// Mount API v1
+app.route('/api/v1', apiV1);
 
 // 404 handler
 app.notFound((c) => {
@@ -203,8 +205,11 @@ app.notFound((c) => {
 // Global error handler
 app.onError(errorHandler);
 
-// Export the app type for RPC client
+// Export the app type for RPC client - Optimized for Hono RPC
 export type AppType = typeof app;
+
+// Export the API v1 type specifically for better type inference
+export type ApiV1Type = typeof apiV1;
 
 // Export default app
 export default app;

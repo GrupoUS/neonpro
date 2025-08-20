@@ -9,7 +9,7 @@
  */
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { createMockSubscription } from '../utils/testUtils';
+import { createMockSubscription } from '../../utils/test-utils';
 
 // ============================================================================
 // Performance Testing Suite

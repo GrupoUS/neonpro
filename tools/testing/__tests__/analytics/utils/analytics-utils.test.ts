@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 import {
   aggregateMetricsByPeriod,
   calculateARR,
@@ -14,7 +15,6 @@ import {
   parseAnalyticsFilters,
   validateDateRange,
 } from '../../../../../packages/utils/src/analytics/utils';
-import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 // Mock date-fns
 vi.mock('date-fns', () => ({

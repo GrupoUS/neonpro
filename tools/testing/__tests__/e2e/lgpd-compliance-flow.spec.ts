@@ -349,10 +349,10 @@ test.describe('LGPD Compliance Complete Flow', () => {
     // Should show next steps timeline
     await expect(
       page.locator('[data-testid="response-timeline"]')
-    ).toContainText('72h: Notificar ANPD');
+    ).toContainText('72h: Notificar ANPD')
     await expect(
       page.locator('[data-testid="response-timeline"]')
-    ).toContainText('5 dias: Notificar indivíduos afetados');
+    ).toContainText('5 dias: Notificar indivíduos afetados')
 
     // Should create audit log entry
     await expect(

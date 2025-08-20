@@ -1,292 +1,155 @@
 /**
- * Playwright Configuration for NeonPro Healthcare E2E Testing
+ * NeonPro Simplified Playwright Configuration
  *
- * Healthcare User Journeys + Brazilian Compliance + Multi-tenant Testing
- * Patient Registration → Appointment Booking → Medical Records
- * Quality Standards: ≥9.9/10 Healthcare Validation
+ * FOCUS: Essential User Journeys + Patient Management E2E
+ * REMOVED: Over-engineered compliance/accessibility/multi-tenant testing
+ * PROJECTS: 2 essential projects vs 8 complex projects
  */
 
 import { defineConfig, devices } from '@playwright/test';
 
-/**
- * Healthcare E2E Test Configuration
- */
 export default defineConfig({
-  // Test directory
-  testDir: './tools/testing/e2e/tests',
+  // Test directory - simplified structure
+  testDir: './e2e/tests',
 
-  // Healthcare test patterns
+  // Essential test patterns only - E2E TESTS ONLY
   testMatch: [
-    '**/healthcare/**/*.spec.ts',
-    '**/patient-journey/**/*.spec.ts',
-    '**/compliance/**/*.spec.ts',
-    '**/medical-workflows/**/*.spec.ts',
+    '**/e2e/**/*.spec.ts',
+    '**/e2e/**/*.e2e.ts',
+    '**/tests/**/*.spec.ts',
+    // Specific E2E patterns
+    '**/*e2e*.spec.ts',
+    '**/*.playwright.ts',
   ],
 
-  // Global test configuration
-  fullyParallel: false, // Sequential for healthcare data consistency
+  // EXCLUDE UNIT TESTS TO AVOID CONFLICTS
+  testIgnore: [
+    '**/*.test.ts',
+    '**/*.test.tsx', 
+    '**/tests/**/*.test.{ts,tsx}',
+    '**/packages/**/*.test.{ts,tsx}',
+    '**/src/**/*.test.{ts,tsx}',
+    '**/lib/**/*.test.{ts,tsx}',
+    // Ignore vitest files
+    '**/vitest/**',
+    '**/__tests__/**',
+  ],
+
+  // Optimized for development efficiency
+  fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 1,
-  workers: process.env.CI ? 2 : 1, // Limited workers for healthcare testing
+  retries: process.env.CI ? 1 : 0,
+  workers: process.env.CI ? 2 : 1,
 
-  // Healthcare test reporter
+  // Simple HTML reporter
   reporter: [
-    [
-      'html',
-      {
-        outputFolder: 'tools/testing/reports/e2e-report',
-        open: 'never',
-      },
-    ],
-    [
-      'junit',
-      {
-        outputFile: 'tools/testing/reports/healthcare-e2e-results.xml',
-      },
-    ],
-    [
-      'json',
-      {
-        outputFile: 'tools/testing/reports/healthcare-e2e-results.json',
-      },
-    ],
-    // Custom healthcare reporter
-    ['./tools/testing/utils/healthcare-e2e-reporter.ts'],
+    ['html', { outputFolder: 'playwright-report', open: 'never' }],
+    ['junit', { outputFile: 'e2e/reports/results.xml' }],
   ],
 
-  // Healthcare test configuration
+  // Core configuration
   use: {
-    // Base URL for healthcare application
     baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000',
 
-    // Healthcare test tracing
+    // Essential settings
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
 
-    // Healthcare user agent
-    userAgent: 'NeonPro-E2E-Tests/1.0 (Healthcare Testing)',
-
-    // Brazilian locale for healthcare testing
+    // Brazilian locale (healthcare requirement)
     locale: 'pt-BR',
     timezoneId: 'America/Sao_Paulo',
 
-    // Healthcare accessibility standards
-    colorScheme: 'light',
-    reducedMotion: 'reduce', // For anxiety reduction
+    // Reasonable timeouts
+    actionTimeout: 10_000, // Reduced from 15s
+    navigationTimeout: 15_000, // Reduced from 30s
 
-    // Extended timeouts for healthcare operations
-    actionTimeout: 15_000,
-    navigationTimeout: 30_000,
-
-    // Ignore HTTPS errors in test environment
-    ignoreHTTPSErrors: true,
-
-    // Healthcare test context
+    // Test identification
     extraHTTPHeaders: {
-      'X-Healthcare-Testing': 'true',
-      'X-LGPD-Compliance': 'true',
-      'X-Anvisa-Validation': 'true',
-      'X-CFM-Standards': 'true',
+      'X-E2E-Testing': 'true',
     },
   },
 
-  // Healthcare test projects (different user roles)
+  // Essential projects only
   projects: [
-    // Patient User Journey Testing
+    // 1. Desktop Testing (Chrome) - Primary user journey
     {
-      name: 'patient-chrome',
+      name: 'desktop-chrome',
       use: {
         ...devices['Desktop Chrome'],
-        storageState: './tools/testing/setup/auth/patient-auth.json',
-        contextOptions: {
-          permissions: ['geolocation', 'camera'], // For healthcare features
-        },
+        viewport: { width: 1280, height: 720 },
       },
-      testMatch: '**/patient-journey/**/*.spec.ts',
+      testMatch: [
+        '**/patient-management/**/*.spec.ts',
+        '**/auth/**/*.spec.ts',
+        '**/dashboard/**/*.spec.ts',
+      ],
     },
 
-    // Healthcare Professional Testing
+    // 2. Mobile Testing (Safari) - Responsive validation
     {
-      name: 'healthcare-professional-chrome',
-      use: {
-        ...devices['Desktop Chrome'],
-        storageState: './tools/testing/setup/auth/professional-auth.json',
-        contextOptions: {
-          permissions: ['geolocation', 'camera', 'microphone'], // For telemedicine
-        },
-      },
-      testMatch: '**/professional-workflows/**/*.spec.ts',
-    },
-
-    // Clinic Administrator Testing
-    {
-      name: 'admin-chrome',
-      use: {
-        ...devices['Desktop Chrome'],
-        storageState: './tools/testing/setup/auth/admin-auth.json',
-        contextOptions: {
-          permissions: ['geolocation'],
-        },
-      },
-      testMatch: '**/admin-workflows/**/*.spec.ts',
-    },
-
-    // Mobile Healthcare Testing (Patient App)
-    {
-      name: 'patient-mobile-safari',
+      name: 'mobile-safari',
       use: {
         ...devices['iPhone 14 Pro'],
-        storageState: './tools/testing/setup/auth/patient-auth.json',
       },
-      testMatch: '**/mobile-patient/**/*.spec.ts',
-    },
-
-    // Accessibility Testing
-    {
-      name: 'accessibility-testing',
-      use: {
-        ...devices['Desktop Chrome'],
-        // High contrast for accessibility testing
-        colorScheme: 'dark',
-        reducedMotion: 'reduce',
-        // Screen reader simulation
-        extraHTTPHeaders: {
-          'X-Accessibility-Testing': 'true',
-          'X-Screen-Reader-Simulation': 'true',
-        },
-      },
-      testMatch: '**/accessibility/**/*.spec.ts',
-    },
-
-    // LGPD Compliance Testing
-    {
-      name: 'lgpd-compliance',
-      use: {
-        ...devices['Desktop Chrome'],
-        extraHTTPHeaders: {
-          'X-LGPD-Audit-Mode': 'true',
-          'X-Data-Subject-Rights-Testing': 'true',
-        },
-      },
-      testMatch: '**/compliance/lgpd/**/*.spec.ts',
-    },
-
-    // Multi-tenant Isolation Testing
-    {
-      name: 'multi-tenant-testing',
-      use: {
-        ...devices['Desktop Chrome'],
-        extraHTTPHeaders: {
-          'X-Multi-Tenant-Testing': 'true',
-          'X-Tenant-Isolation-Validation': 'true',
-        },
-      },
-      testMatch: '**/multi-tenant/**/*.spec.ts',
-    },
-
-    // Cross-browser Healthcare Testing
-    {
-      name: 'healthcare-firefox',
-      use: {
-        ...devices['Desktop Firefox'],
-        storageState: './tools/testing/setup/auth/patient-auth.json',
-      },
-      testMatch: '**/cross-browser/**/*.spec.ts',
-    },
-
-    {
-      name: 'healthcare-safari',
-      use: {
-        ...devices['Desktop Safari'],
-        storageState: './tools/testing/setup/auth/patient-auth.json',
-      },
-      testMatch: '**/cross-browser/**/*.spec.ts',
+      testMatch: [
+        '**/mobile/**/*.spec.ts',
+        '**/patient-management/mobile-*.spec.ts',
+      ],
     },
   ],
 
-  // Global setup and teardown for healthcare testing
-  globalSetup: require.resolve('./tools/testing/setup/global-setup.ts'),
-  globalTeardown: require.resolve('./tools/testing/setup/global-teardown.ts'),
+  // Development server configuration (disabled for basic testing)
+  // webServer: {
+  //   command: 'pnpm dev',
+  //   url: 'http://localhost:3000',
+  //   reuseExistingServer: !process.env.CI,
+  //   timeout: 60_000,
+  //   env: {
+  //     NODE_ENV: 'test',
+  //   },
+  // },
 
-  // Test output directory
-  outputDir: 'tools/testing/reports/',
-
-  // Web server configuration for testing
-  webServer: {
-    command: 'pnpm dev',
-    url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
-    timeout: 120_000, // 2 minutes for healthcare app startup
-
-    // Environment variables for testing
-    env: {
-      NODE_ENV: 'test',
-      HEALTHCARE_MODE: 'true',
-      LGPD_COMPLIANCE: 'true',
-      ANVISA_VALIDATION: 'true',
-      CFM_STANDARDS: 'true',
-      // Test database configuration
-      NEXT_PUBLIC_SUPABASE_URL:
-        process.env.TEST_SUPABASE_URL || 'https://test.supabase.co',
-      NEXT_PUBLIC_SUPABASE_ANON_KEY:
-        process.env.TEST_SUPABASE_ANON_KEY || 'test_anon_key',
-      SUPABASE_SERVICE_ROLE_KEY:
-        process.env.TEST_SUPABASE_SERVICE_ROLE_KEY || 'test_service_role_key',
-    },
-  },
-
-  // Healthcare test expectations
+  // Reasonable expectations
   expect: {
-    // Extended timeout for healthcare operations
-    timeout: 10_000,
-
-    // Custom healthcare matchers
+    timeout: 5000, // Reduced from 10s
     toHaveScreenshot: {
-      // Healthcare UI consistency
       threshold: 0.3,
       mode: 'strict',
-      animations: 'disabled', // For anxiety reduction
     },
   },
 
-  // Test metadata
-  metadata: {
-    healthcare_compliance: 'LGPD + ANVISA + CFM',
-    quality_standard: '≥9.9/10',
-    accessibility_level: 'WCAG 2.1 AA+',
-    locale: 'pt-BR',
-    timezone: 'America/Sao_Paulo',
-    test_environment: 'healthcare_specialized',
-  },
+  // Output directory
+  outputDir: 'test-results',
 });
 
-// Healthcare test utilities export
-export const healthcareE2EConfig = {
-  // Test data seeding
-  seedTestData: async () => {
-    // Implementation in global setup
-  },
-
-  // Healthcare user authentication
-  authenticateHealthcareUser: async (
-    _role: 'patient' | 'professional' | 'admin'
-  ) => {
-    // Implementation in test utilities
-  },
-
-  // LGPD compliance validation
-  validateLGPDCompliance: async (_page: any) => {
-    // Implementation in healthcare utilities
-  },
-
-  // Multi-tenant isolation validation
-  validateTenantIsolation: async (_page: any, _expectedTenantId: string) => {
-    // Implementation in healthcare utilities
-  },
-
-  // Healthcare accessibility validation
-  validateHealthcareAccessibility: async (_page: any) => {
-    // Implementation in accessibility utilities
-  },
-};
+/**
+ * Simplified E2E Testing Strategy:
+ *
+ * FOCUS AREAS:
+ * 1. Patient Management workflows (create, edit, list, detail)
+ * 2. Authentication flow (login/logout)
+ * 3. Core dashboard navigation
+ * 4. Mobile responsiveness validation
+ *
+ * REMOVED (Premature for MVP):
+ * - Compliance testing (LGPD, ANVISA, CFM)
+ * - Accessibility testing (manual validation sufficient)
+ * - Multi-tenant testing (single tenant MVP)
+ * - Security penetration testing (premature)
+ * - Cross-browser matrix (Chrome + Safari sufficient)
+ * - Role-based testing (single role MVP)
+ *
+ * EFFICIENCY GAINS:
+ * - 2 projects vs 8 (75% reduction in complexity)
+ * - Focus on implemented Patient Management
+ * - Faster test execution (60s vs 120s setup)
+ * - Simpler maintenance
+ * - Clear test boundaries
+ *
+ * NEXT STEPS:
+ * 1. Create essential test files in e2e/tests/
+ * 2. Focus on happy path scenarios
+ * 3. Add edge cases only after core functionality works
+ * 4. Expand testing as features are implemented
+ */

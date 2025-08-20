@@ -1,23 +1,23 @@
 /**
  * 🔐 Authentication Hooks - NeonPro Healthcare
  * =============================================
- * 
+ *
  * Hooks customizados para autenticação com TanStack Query
  * e integração completa com Hono RPC client.
  */
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@neonpro/shared/api-client';
-import type { 
-  Login, 
-  Register, 
+import type {
+  AuthUser,
   ChangePassword,
   ForgotPassword,
-  ResetPassword,
-  AuthUser,
+  Login,
   LoginResponse,
-  RegisterResponse
+  Register,
+  RegisterResponse,
+  ResetPassword,
 } from '@neonpro/shared/schemas';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 // Query keys for auth
 export const AUTH_QUERY_KEYS = {
@@ -32,11 +32,11 @@ export function useProfile() {
     queryFn: async () => {
       const response = await apiClient.api.v1.auth.profile.$get();
       const result = await response.json();
-      
+
       if (!result.success) {
         throw new Error(result.message || 'Failed to fetch profile');
       }
-      
+
       return result.data;
     },
     retry: (failureCount, error: any) => {
@@ -54,19 +54,19 @@ export function useProfile() {
 // 🚪 Login mutation
 export function useLogin() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (loginData: Login): Promise<LoginResponse> => {
       const response = await apiClient.api.v1.auth.login.$post({
-        json: loginData
+        json: loginData,
       });
-      
+
       const result = await response.json();
-      
+
       if (!result.success) {
         throw new Error(result.message || 'Login failed');
       }
-      
+
       // Store tokens
       if (result.data?.tokens) {
         apiClient.auth.setTokens(
@@ -74,91 +74,91 @@ export function useLogin() {
           result.data.tokens.refreshToken
         );
       }
-      
+
       return result as LoginResponse;
     },
-    
+
     onSuccess: (data) => {
       // Cache user data
       if (data.data?.user) {
         queryClient.setQueryData(AUTH_QUERY_KEYS.profile, data.data.user);
       }
-      
+
       // Invalidate any cached data that might need refresh
       queryClient.invalidateQueries({
-        queryKey: ['auth']
+        queryKey: ['auth'],
       });
     },
-    
+
     onError: (error) => {
       console.error('Login failed:', error);
       // Clear any cached auth data
       queryClient.removeQueries({
-        queryKey: ['auth']
+        queryKey: ['auth'],
       });
-    }
+    },
   });
 }
 
 // 📝 Register mutation
 export function useRegister() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (registerData: Register): Promise<RegisterResponse> => {
       const response = await apiClient.api.v1.auth.register.$post({
-        json: registerData
+        json: registerData,
       });
-      
+
       const result = await response.json();
-      
+
       if (!result.success) {
         throw new Error(result.message || 'Registration failed');
       }
-      
+
       return result as RegisterResponse;
     },
-    
+
     onSuccess: () => {
       // Invalidate auth queries
       queryClient.invalidateQueries({
-        queryKey: ['auth']
+        queryKey: ['auth'],
       });
-    }
+    },
   });
 }
 
 // 🚪 Logout mutation
 export function useLogout() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async () => {
       const response = await apiClient.api.v1.auth.logout.$post();
       const result = await response.json();
-      
+
       if (!result.success) {
         throw new Error(result.message || 'Logout failed');
       }
-      
+
       return result;
     },
-    
+
     onSuccess: () => {
       // Clear tokens
       apiClient.auth.clearTokens();
-      
+
       // Clear all cached data
       queryClient.clear();
     },
-    
+
     onSettled: () => {
       // Always clear auth data, even on error
       apiClient.auth.clearTokens();
       queryClient.removeQueries({
-        queryKey: ['auth']
+        queryKey: ['auth'],
       });
-    }
+    },
   });
 }
 
@@ -167,17 +167,17 @@ export function useChangePassword() {
   return useMutation({
     mutationFn: async (passwordData: ChangePassword) => {
       const response = await apiClient.api.v1.auth['change-password'].$post({
-        json: passwordData
+        json: passwordData,
       });
-      
+
       const result = await response.json();
-      
+
       if (!result.success) {
         throw new Error(result.message || 'Password change failed');
       }
-      
+
       return result;
-    }
+    },
   });
 }
 
@@ -186,17 +186,17 @@ export function useForgotPassword() {
   return useMutation({
     mutationFn: async (forgotData: ForgotPassword) => {
       const response = await apiClient.api.v1.auth['forgot-password'].$post({
-        json: forgotData
+        json: forgotData,
       });
-      
+
       const result = await response.json();
-      
+
       if (!result.success) {
         throw new Error(result.message || 'Password reset request failed');
       }
-      
+
       return result;
-    }
+    },
   });
 }
 
@@ -205,42 +205,42 @@ export function useResetPassword() {
   return useMutation({
     mutationFn: async (resetData: ResetPassword) => {
       const response = await apiClient.api.v1.auth['reset-password'].$post({
-        json: resetData
+        json: resetData,
       });
-      
+
       const result = await response.json();
-      
+
       if (!result.success) {
         throw new Error(result.message || 'Password reset failed');
       }
-      
+
       return result;
-    }
+    },
   });
 }
 
 // 🔄 Refresh token mutation (usually automatic)
 export function useRefreshToken() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async () => {
       const refreshToken = apiClient.auth.getAccessToken();
-      
+
       if (!refreshToken) {
         throw new Error('No refresh token available');
       }
-      
+
       const response = await apiClient.api.v1.auth.refresh.$post({
-        json: { refreshToken }
+        json: { refreshToken },
       });
-      
+
       const result = await response.json();
-      
+
       if (!result.success) {
         throw new Error('Token refresh failed');
       }
-      
+
       // Update tokens
       if (result.data?.tokens) {
         apiClient.auth.setTokens(
@@ -248,62 +248,66 @@ export function useRefreshToken() {
           result.data.tokens.refreshToken
         );
       }
-      
+
       return result;
     },
-    
+
     onError: () => {
       // Clear tokens and cached data on refresh failure
       apiClient.auth.clearTokens();
       queryClient.removeQueries({
-        queryKey: ['auth']
+        queryKey: ['auth'],
       });
-    }
+    },
   });
 }
 
 // 🛡️ Check authentication status
 export function useAuthStatus() {
   const { data: user, isLoading, error } = useProfile();
-  
+
   return {
     isAuthenticated: !!user && !error,
     user,
     isLoading,
     error,
     hasRole: (role: string) => user?.role === role,
-    hasPermission: (permission: string) => user?.permissions?.includes(permission) ?? false,
+    hasPermission: (permission: string) =>
+      user?.permissions?.includes(permission) ?? false,
   };
 }
 
 // 🔧 Auth utilities hook
 export function useAuthUtils() {
   const queryClient = useQueryClient();
-  
+
   return {
     // Clear all auth-related cache
     clearAuthCache: () => {
       queryClient.removeQueries({
-        queryKey: ['auth']
+        queryKey: ['auth'],
       });
     },
-    
+
     // Update cached user data
     updateUser: (userData: Partial<AuthUser>) => {
-      queryClient.setQueryData(AUTH_QUERY_KEYS.profile, (old: AuthUser | undefined) => {
-        if (!old) return old;
-        return { ...old, ...userData };
-      });
+      queryClient.setQueryData(
+        AUTH_QUERY_KEYS.profile,
+        (old: AuthUser | undefined) => {
+          if (!old) return old;
+          return { ...old, ...userData };
+        }
+      );
     },
-    
+
     // Check if token exists (doesn't validate)
     hasToken: () => !!apiClient.auth.getAccessToken(),
-    
+
     // Force refresh profile
     refreshProfile: () => {
       queryClient.invalidateQueries({
-        queryKey: AUTH_QUERY_KEYS.profile
+        queryKey: AUTH_QUERY_KEYS.profile,
       });
-    }
+    },
   };
 }

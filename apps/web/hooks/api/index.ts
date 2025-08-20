@@ -1,58 +1,56 @@
 /**
  * 🔗 API Hooks Export Index - NeonPro Healthcare
  * ===============================================
- * 
+ *
  * Centralização de exports para todos os hooks da API
  * com TanStack Query e Hono RPC integration.
  */
 
-// Authentication hooks
-export * from './useAuth';
-export {
-  useProfile,
-  useLogin,
-  useRegister,
-  useLogout,
-  useChangePassword,
-  useForgotPassword,
-  useResetPassword,
-  useRefreshToken,
-  useAuthStatus,
-  useAuthUtils,
-  AUTH_QUERY_KEYS,
-} from './useAuth';
-
-// Patient hooks
-export * from './usePatients';
-export {
-  usePatients,
-  usePatientsInfinite,
-  usePatient,
-  useCreatePatient,
-  useUpdatePatient,
-  useDeletePatient,
-  useSearchPatients,
-  usePatientsStats,
-  useExportPatients,
-  usePatientUtils,
-  PATIENT_QUERY_KEYS,
-} from './usePatients';
-
 // Appointment hooks
 export * from './useAppointments';
 export {
-  useAppointments,
-  useAppointment,
-  useCreateAppointment,
-  useUpdateAppointment,
-  useRescheduleAppointment,
-  useCancelAppointment,
-  useAvailability,
-  useAppointmentStats,
-  useCalendarAppointments,
-  useAppointmentUtils,
   APPOINTMENT_QUERY_KEYS,
+  useAppointment,
+  useAppointmentStats,
+  useAppointments,
+  useAppointmentUtils,
+  useAvailability,
+  useCalendarAppointments,
+  useCancelAppointment,
+  useCreateAppointment,
+  useRescheduleAppointment,
+  useUpdateAppointment,
 } from './useAppointments';
+// Authentication hooks
+export * from './useAuth';
+export {
+  AUTH_QUERY_KEYS,
+  useAuthStatus,
+  useAuthUtils,
+  useChangePassword,
+  useForgotPassword,
+  useLogin,
+  useLogout,
+  useProfile,
+  useRefreshToken,
+  useRegister,
+  useResetPassword,
+} from './useAuth';
+// Patient hooks
+export * from './usePatients';
+export {
+  PATIENT_QUERY_KEYS,
+  useCreatePatient,
+  useDeletePatient,
+  useExportPatients,
+  usePatient,
+  usePatients,
+  usePatientsInfinite,
+  usePatientsStats,
+  usePatientUtils,
+  useSearchPatients,
+  useUpdatePatient,
+} from './usePatients';
 
 // Common query key patterns for easy invalidation
 export const ALL_QUERY_KEYS = {
@@ -67,31 +65,31 @@ export const queryUtils = {
   invalidateAll: (queryClient: any) => {
     queryClient.invalidateQueries();
   },
-  
+
   // Invalidate specific domain data
   invalidateAuth: (queryClient: any) => {
     queryClient.invalidateQueries({
-      queryKey: AUTH_QUERY_KEYS.all
+      queryKey: AUTH_QUERY_KEYS.all,
     });
   },
-  
+
   invalidatePatients: (queryClient: any) => {
     queryClient.invalidateQueries({
-      queryKey: PATIENT_QUERY_KEYS.all
+      queryKey: PATIENT_QUERY_KEYS.all,
     });
   },
-  
+
   invalidateAppointments: (queryClient: any) => {
     queryClient.invalidateQueries({
-      queryKey: APPOINTMENT_QUERY_KEYS.all
+      queryKey: APPOINTMENT_QUERY_KEYS.all,
     });
   },
-  
+
   // Clear all cached data
   clearAll: (queryClient: any) => {
     queryClient.clear();
   },
-  
+
   // Prefetch common data (useful for app initialization)
   prefetchCommonData: async (queryClient: any) => {
     const promises = [
@@ -100,13 +98,13 @@ export const queryUtils = {
         queryKey: AUTH_QUERY_KEYS.profile,
         staleTime: 1000 * 60 * 5,
       }),
-      
+
       // Prefetch recent patients
       queryClient.prefetchQuery({
         queryKey: PATIENT_QUERY_KEYS.list({ page: 1, limit: 10 }),
         staleTime: 1000 * 60 * 2,
       }),
-      
+
       // Prefetch today's appointments
       queryClient.prefetchQuery({
         queryKey: APPOINTMENT_QUERY_KEYS.calendar({
@@ -116,16 +114,16 @@ export const queryUtils = {
         staleTime: 1000 * 30,
       }),
     ];
-    
+
     await Promise.allSettled(promises);
   },
 };
 
 // Type helpers for hooks
-export type QueryKeyType = 
-  | typeof AUTH_QUERY_KEYS[keyof typeof AUTH_QUERY_KEYS]
-  | typeof PATIENT_QUERY_KEYS[keyof typeof PATIENT_QUERY_KEYS]  
-  | typeof APPOINTMENT_QUERY_KEYS[keyof typeof APPOINTMENT_QUERY_KEYS];
+export type QueryKeyType =
+  | (typeof AUTH_QUERY_KEYS)[keyof typeof AUTH_QUERY_KEYS]
+  | (typeof PATIENT_QUERY_KEYS)[keyof typeof PATIENT_QUERY_KEYS]
+  | (typeof APPOINTMENT_QUERY_KEYS)[keyof typeof APPOINTMENT_QUERY_KEYS];
 
 // Hook status helpers
 export interface UseQueryState<T> {

@@ -1,77 +1,69 @@
 /**
  * 📝 Types Export Index - NeonPro Healthcare
  * ==========================================
- * 
+ *
  * Centralização de exports para todos os tipos TypeScript
  * do sistema NeonPro Healthcare.
  */
 
-// API types
-export * from './api.types';
-
-// Entity types
-export * from './entities.types';
-
-// Response types
-export * from './responses.types';
-
 // Re-export commonly used types for convenience
 export type {
+  Address,
+  ApiError,
+  ApiMeta,
   // API types
   ApiResponse,
-  ApiMeta,
-  PaginationMeta,
-  PaginationParams,
-  SearchParams,
-  ApiError,
-  ValidationError,
-  RequestContext,
-  HttpMethod,
   ApiStatusCode,
-  
+  Appointment,
+  AppointmentResponse,
   // Entity types
   BaseEntity,
-  User,
-  Patient,
-  Professional,
-  Clinic,
-  Appointment,
-  Notification,
-  TreatmentRecord,
-  Payment,
-  FileDocument,
-  Address,
-  ContactInfo,
   BusinessHours,
+  Clinic,
+  ClinicResponse,
+  ContactInfo,
+  ErrorResponse,
+  FileDocument,
   GeoCoordinates,
-  
+  HealthCheckResponse,
+  HttpMethod,
+  ListResponse,
   // Response types
   LoginResponse,
-  RegisterResponse,
-  PatientResponse,
-  AppointmentResponse,
-  ClinicResponse,
-  HealthCheckResponse,
+  Notification,
   PaginatedResponse,
-  ListResponse,
-  ErrorResponse,
+  PaginationMeta,
+  PaginationParams,
+  Patient,
+  PatientResponse,
+  Payment,
+  Professional,
+  RegisterResponse,
+  RequestContext,
+  SearchParams,
   SuccessResponse,
-  
+  TreatmentRecord,
+  User,
+  ValidationError,
 } from './api.types';
-
+// API types
+export * from './api.types';
 export type {
   Entity,
   EntityType,
 } from './entities.types';
-
+// Entity types
+export * from './entities.types';
 export type {
-  ValidationErrorResponse,
   AuthErrorResponse,
-  NotFoundErrorResponse,
   ConflictErrorResponse,
+  NotFoundErrorResponse,
   RateLimitErrorResponse,
   ServerErrorResponse,
+  ValidationErrorResponse,
 } from './responses.types';
+// Response types
+export * from './responses.types';
 
 // Utility types for common patterns
 export type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
@@ -91,12 +83,12 @@ export type TimeString = string; // HH:MM
 // Common enums as const assertions for better type inference
 export const APPOINTMENT_STATUSES = [
   'scheduled',
-  'confirmed', 
+  'confirmed',
   'in_progress',
   'completed',
   'cancelled',
   'no_show',
-  'rescheduled'
+  'rescheduled',
 ] as const;
 
 export const USER_ROLES = [
@@ -107,7 +99,7 @@ export const USER_ROLES = [
   'aesthetician',
   'receptionist',
   'manager',
-  'patient'
+  'patient',
 ] as const;
 
 export const APPOINTMENT_TYPES = [
@@ -123,13 +115,13 @@ export const APPOINTMENT_TYPES = [
   'fat_reduction',
   'skin_tightening',
   'assessment',
-  'other'
+  'other',
 ] as const;
 
 // Type utilities for form handling
 export type FormData<T> = {
-  [K in keyof T]: T[K] extends string | number | boolean | null | undefined 
-    ? T[K] 
+  [K in keyof T]: T[K] extends string | number | boolean | null | undefined
+    ? T[K]
     : string;
 };
 
@@ -144,7 +136,11 @@ export type EndpointMethod<T> = T extends `${string}:${infer M}` ? M : 'GET';
 export type EndpointPath<T> = T extends `${infer P}:${string}` ? P : T;
 
 // Generic CRUD operations types
-export interface CrudOperations<T, TCreate = Omit<T, 'id' | 'createdAt' | 'updatedAt'>, TUpdate = Partial<TCreate>> {
+export interface CrudOperations<
+  T,
+  TCreate = Omit<T, 'id' | 'createdAt' | 'updatedAt'>,
+  TUpdate = Partial<TCreate>,
+> {
   create: (data: TCreate) => Promise<ApiResponse<T>>;
   read: (id: EntityId) => Promise<ApiResponse<T>>;
   update: (id: EntityId, data: TUpdate) => Promise<ApiResponse<T>>;
@@ -153,7 +149,17 @@ export interface CrudOperations<T, TCreate = Omit<T, 'id' | 'createdAt' | 'updat
 }
 
 // Filter utilities
-export type FilterOperator = 'eq' | 'ne' | 'gt' | 'gte' | 'lt' | 'lte' | 'in' | 'nin' | 'like' | 'ilike';
+export type FilterOperator =
+  | 'eq'
+  | 'ne'
+  | 'gt'
+  | 'gte'
+  | 'lt'
+  | 'lte'
+  | 'in'
+  | 'nin'
+  | 'like'
+  | 'ilike';
 
 export interface FilterCondition<T = unknown> {
   field: string;
@@ -218,7 +224,8 @@ export interface EnvironmentConfig {
 
 // Type guards
 export const isUUID = (value: string): value is UUID => {
-  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  const uuidRegex =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   return uuidRegex.test(value);
 };
 

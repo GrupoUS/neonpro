@@ -1,0 +1,112 @@
+name: 🔍 PR Validation - Fast Check
+
+on:
+  pull_request:
+    branches: [main, develop]
+    types: [opened, synchronize, reopened]
+
+env:
+  NODE_VERSION: '20'
+  PNPM_VERSION: '9.0.0'
+
+concurrency:
+  group: pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  # Fast validation for PR changes
+  pr-check:
+    name: ⚡ PR Quick Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    
+    steps:
+      - name: 📥 Checkout PR
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 📦 Setup PNPM
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: ⚡ Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🎯 Code quality check
+        run: |
+          echo "🎯 Running quality checks..."
+          pnpm format --check
+          pnpm lint:biome
+          pnpm type-check
+
+      - name: 🧪 Unit tests only
+        run: pnpm test:unit
+
+      - name: 🏗️ Build verification
+        run: pnpm build
+
+      - name: ✅ PR validation summary
+        run: |
+          echo "# ✅ PR Validation Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ **Code formatting**: Passed" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ **Linting**: Passed" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ **Type checking**: Passed" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ **Unit tests**: Passed" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ **Build**: Passed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "🚀 **Ready for review!**" >> $GITHUB_STEP_SUMMARY
+
+  # Changed files analysis
+  analyze-changes:
+    name: 📊 Analyze Changes
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 📊 Analyze changed files
+        run: |
+          echo "# 📊 Changed Files Analysis" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Get changed files
+          CHANGED_FILES=$(git diff --name-only origin/main...HEAD)
+          
+          echo "## Modified Files:" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "$CHANGED_FILES" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Count by file type
+          TS_FILES=$(echo "$CHANGED_FILES" | grep -E '\.(ts|tsx)$' | wc -l)
+          TEST_FILES=$(echo "$CHANGED_FILES" | grep -E '\.test\.(ts|tsx)$' | wc -l)
+          CONFIG_FILES=$(echo "$CHANGED_FILES" | grep -E '\.(json|yml|yaml|config\.(ts|js))$' | wc -l)
+          
+          echo "## File Summary:" >> $GITHUB_STEP_SUMMARY
+          echo "- **TypeScript files**: $TS_FILES" >> $GITHUB_STEP_SUMMARY
+          echo "- **Test files**: $TEST_FILES" >> $GITHUB_STEP_SUMMARY
+          echo "- **Config files**: $CONFIG_FILES" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Risk assessment
+          if [ $CONFIG_FILES -gt 0 ]; then
+            echo "⚠️ **Config changes detected** - Extra attention recommended" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ $TEST_FILES -eq 0 ] && [ $TS_FILES -gt 0 ]; then
+            echo "⚠️ **No test changes** - Consider adding tests for new code" >> $GITHUB_STEP_SUMMARY
+          fi

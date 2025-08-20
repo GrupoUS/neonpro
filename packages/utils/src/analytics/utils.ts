@@ -44,7 +44,10 @@ export const calculateGrowthRate = (
   if (current === 0 && previous > 0) return -1;
 
   // Handle extremely large numbers by using relative calculation
-  if (Math.abs(previous) > Number.MAX_SAFE_INTEGER / 10 || Math.abs(current) > Number.MAX_SAFE_INTEGER / 10) {
+  if (
+    Math.abs(previous) > Number.MAX_SAFE_INTEGER / 10 ||
+    Math.abs(current) > Number.MAX_SAFE_INTEGER / 10
+  ) {
     // For very large numbers, use ratio to avoid overflow issues
     const ratio = current / previous;
     return ratio - 1;
@@ -173,7 +176,7 @@ export const aggregateMetricsByPeriod = (
 
       // Parse date in UTC to avoid timezone issues
       const date = new Date(item.date + 'T12:00:00.000Z'); // Use noon UTC to avoid timezone edge cases
-      
+
       let key: string;
 
       switch (period) {

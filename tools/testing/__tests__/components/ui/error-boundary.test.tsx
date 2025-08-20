@@ -6,13 +6,14 @@ import {
   screen,
   screen,
 } from '@testing-library/react';
+import React from 'react';
 import { vi } from 'vitest';
 import '@testing-library/jest-dom';
 import {
   CriticalErrorBoundary,
   ErrorBoundary,
   withErrorBoundary,
-} from '@/components/ui/error-boundary';
+} from '../../../../../components/ui/error-boundary';
 
 // Mock component that throws an error
 const ThrowError = ({ shouldThrow = true }: { shouldThrow?: boolean }) => {
@@ -58,7 +59,7 @@ describe('ErrorBoundary', () => {
     expect(screen.getByText('Oops! Algo deu errado')).toBeInTheDocument();
     expect(
       screen.getByText(
-        'Ocorreu um erro inesperado. Nossa equipe foi notificada.'
+        'Um erro inesperado aconteceu. Nossa equipe foi notificada.'
       )
     ).toBeInTheDocument();
   });
@@ -137,8 +138,8 @@ describe('CriticalErrorBoundary', () => {
       </CriticalErrorBoundary>
     );
 
-    expect(screen.getByText('Erro em Test Section')).toBeInTheDocument();
-    expect(screen.getByText('Recarregar Página')).toBeInTheDocument();
+    expect(screen.getByText('Test Section')).toBeInTheDocument();
+    expect(screen.getByText('Recarregar página')).toBeInTheDocument();
 
     const reloadButton = screen.getByText('Recarregar Página');
     fireEvent.click(reloadButton);
@@ -219,7 +220,9 @@ describe('Error Boundary Edge Cases', () => {
     const detailsButton = screen.getByText('Detalhes técnicos');
     fireEvent.click(detailsButton);
 
-    expect(screen.getByText('Type error occurred')).toBeInTheDocument();
+    expect(
+      screen.getByText('TypeError: Type error occurred')
+    ).toBeInTheDocument();
 
     // Clean up this test's render
     unmount();

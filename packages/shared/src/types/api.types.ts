@@ -1,7 +1,7 @@
 /**
  * 🔗 API Types - NeonPro Healthcare
  * =================================
- * 
+ *
  * Tipos base para comunicação entre frontend e backend
  * com type-safety completo via Hono RPC.
  */
@@ -10,10 +10,21 @@
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
 // API Status codes
-export type ApiStatusCode = 
-  | 200 | 201 | 202 | 204  // Success
-  | 400 | 401 | 403 | 404 | 409 | 422  // Client Error
-  | 500 | 502 | 503 | 504; // Server Error
+export type ApiStatusCode =
+  | 200
+  | 201
+  | 202
+  | 204 // Success
+  | 400
+  | 401
+  | 403
+  | 404
+  | 409
+  | 422 // Client Error
+  | 500
+  | 502
+  | 503
+  | 504; // Server Error
 
 // Base API Response structure
 export interface ApiResponse<T = unknown> {
@@ -81,13 +92,13 @@ export type EntityId = string; // UUID
 // Date range type
 export interface DateRange {
   startDate: string; // ISO date
-  endDate: string;   // ISO date
+  endDate: string; // ISO date
 }
 
-// Time range type  
+// Time range type
 export interface TimeRange {
   startTime: string; // HH:MM format
-  endTime: string;   // HH:MM format
+  endTime: string; // HH:MM format
 }
 
 // Geolocation type
@@ -195,10 +206,13 @@ export interface AuditTrail {
   entityType: string;
   entityId: EntityId;
   userId: EntityId;
-  changes?: Record<string, {
-    before: unknown;
-    after: unknown;
-  }>;
+  changes?: Record<
+    string,
+    {
+      before: unknown;
+      after: unknown;
+    }
+  >;
   metadata?: Record<string, unknown>;
   timestamp: string;
   ipAddress: string;
@@ -215,7 +229,7 @@ export interface RateLimit {
 // API Headers type
 export interface ApiHeaders {
   'Content-Type'?: string;
-  'Authorization'?: string;
+  Authorization?: string;
   'X-Request-ID'?: string;
   'X-Rate-Limit'?: string;
   'X-User-Agent'?: string;
@@ -224,9 +238,9 @@ export interface ApiHeaders {
 }
 
 // WebSocket message types
-export type WebSocketMessageType = 
+export type WebSocketMessageType =
   | 'appointment_created'
-  | 'appointment_updated' 
+  | 'appointment_updated'
   | 'appointment_cancelled'
   | 'patient_registered'
   | 'notification'
@@ -252,21 +266,20 @@ export type ApiQuery<TParams = unknown, TResponse = unknown> = (
 
 // Type guards
 export const isApiError = (obj: unknown): obj is ApiError => {
-  return typeof obj === 'object' && 
-         obj !== null && 
-         'code' in obj && 
-         'message' in obj;
+  return (
+    typeof obj === 'object' && obj !== null && 'code' in obj && 'message' in obj
+  );
 };
 
 export const isApiResponse = <T>(obj: unknown): obj is ApiResponse<T> => {
-  return typeof obj === 'object' && 
-         obj !== null && 
-         'success' in obj;
+  return typeof obj === 'object' && obj !== null && 'success' in obj;
 };
 
 export const isValidationError = (obj: unknown): obj is ValidationError => {
-  return typeof obj === 'object' && 
-         obj !== null && 
-         'field' in obj && 
-         'message' in obj;
+  return (
+    typeof obj === 'object' &&
+    obj !== null &&
+    'field' in obj &&
+    'message' in obj
+  );
 };

@@ -18,7 +18,6 @@ applyTo: "**/*"
 **CRITICAL OPERATING PRINCIPLES**:All violations trigger immediate halt + constitutional remediation. NEVER assume, always validate and verify before implementation.
 **PNPM over NPM**: Use PNPM instead of NPM to manage dependencies, run builds and tests. PNPM is faster, more efficient, and uses less disk space.
 **USE A PASTA E ARQUITETURA CORRETA**: Sempre que for criar um arquivo, use a pasta e arquitetura correta. Por exemplo se for criar algo no projeto neonpro use a pasta E:\neonpro.
-**CHATMODES DISPONÍVEIS**: Este projeto possui múltiplos chatmodes especializados em D:\neonpro\.github\chatmodes\. Use @vibecoder para desenvolvimento full-stack, @apex-dev para desenvolvimento avançado, @apex-ui-ux-designer para design, @apex-qa-debugger para QA, @architect para arquitetura, @bmad-master para metodologia BMad, e outros conforme necessário.
 **Não crie conteúdo dos projetos na pasta vscode**: A pasta E:\vscode só serve para configuração das ides com regras e agentes. Não crie conteúdo dos projetos nessa pasta.
 **Sempre mantenha a arquitetura definida no source-tree**: Sempre que for criar um arquivo, use a pasta e arquitetura correta do "D:\neonpro\docs\shards\architecture\source-tree.md".
 **CLEAN UP CONSTANTLY**: Sem que terminar uma task busque por arquivos e códigos duplicados, redundantes, inutilizados ou obsoletos para limpar, incorporar mantendo sempre o sistema limpo e organizado. Sempre corrija os paths necessários para evitar erros de redirecionamento.
@@ -103,7 +102,7 @@ archon:manage_task(action="list", filter_by="project", filter_value="[project_id
 # High-level patterns and architecture
 archon:perform_rag_query(query="[technology] architecture patterns", match_count=5)
 
-# Specific implementation guidance
+# Specific implementation guidance  
 archon:search_code_examples(query="[specific feature] implementation", match_count=3)
 ```
 
@@ -122,7 +121,7 @@ archon:search_code_examples(query="[specific feature] implementation", match_cou
 # Get current project status
 archon:manage_task(
   action="list",
-  filter_by="project",
+  filter_by="project", 
   filter_value="[project_id]",
   include_closed=false
 )
@@ -190,7 +189,7 @@ archon:manage_task(
 - When you complete a task mark it under review so that the user can confirm and test.
 ```bash
 archon:manage_task(
-  action="update",
+  action="update", 
   task_id="[current_task_id]",
   update_fields={"status": "review"}
 )
@@ -206,7 +205,7 @@ archon:manage_task(
 # Architecture & patterns
 archon:perform_rag_query(query="microservices vs monolith pros cons", match_count=5)
 
-# Security considerations
+# Security considerations  
 archon:perform_rag_query(query="OAuth 2.0 PKCE flow implementation", match_count=3)
 
 # Specific API usage
@@ -233,7 +232,7 @@ archon:search_code_examples(query="PostgreSQL connection pooling Node.js", match
 
 **Usage Guidelines:**
 - Search for examples before implementing from scratch
-- Adapt patterns to project-specific requirements
+- Adapt patterns to project-specific requirements  
 - Use for both complex features and simple API usage
 - Validate examples against current best practices
 
@@ -274,7 +273,7 @@ archon:manage_task(
 
 # Complete task after review passes
 archon:manage_task(
-  action="update",
+  action="update", 
   task_id="...",
   update_fields={"status": "done"}
 )
@@ -373,6 +372,29 @@ archon:manage_task(
 - [ ] Security considerations addressed
 - [ ] Basic functionality tested
 - [ ] Documentation updated if needed
+
+# Archon Integration & Workflow
+
+**CRITICAL: This project uses Archon for knowledge management, task tracking, and project organization.**
+
+## Core Archon Workflow Principles
+
+### The Golden Rule: Task-Driven Development with Archon
+
+**MANDATORY: Always complete the full Archon task cycle before any coding:**
+
+1. **Check Current Task** → Review task details and requirements
+2. **Research for Task** → Search relevant documentation and examples
+3. **Implement the Task** → Write code based on research
+4. **Update Task Status** → Move task from "todo" → "doing" → "review"
+5. **Get Next Task** → Check for next priority task
+6. **Repeat Cycle**
+
+**Task Management Rules:**
+- Update all actions to Archon
+- Move tasks from "todo" → "doing" → "review" (not directly to complete)
+- Maintain task descriptions and add implementation notes
+- DO NOT MAKE ASSUMPTIONS - check project documentation for questions
 
 ACTIVATION-NOTICE: This file contains your full agent operating guidelines. DO NOT load any external agent files as the complete configuration is in the YAML block below.
 

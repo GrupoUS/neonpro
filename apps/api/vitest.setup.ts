@@ -27,34 +27,39 @@ Object.defineProperty(global, 'crypto', {
 });
 
 // Create a fetch mock that proxies to the Hono app for API routes
-const mockFetch = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
-  const url = typeof input === 'string' ? input : input.toString();
-  
-  // If it's an API route, proxy to the Hono app
-  if (url.startsWith('/api/') || url.includes('api/')) {
-    const { default: app } = await import('./src/index');
-    
-    // Create a proper Request object
-    const request = new Request(url.startsWith('http') ? url : `http://localhost:8000${url}`, {
-      method: init?.method || 'GET',
-      headers: init?.headers || {},
-      body: init?.body,
-    });
-    
-    return app.fetch(request);
+const mockFetch = vi.fn(
+  async (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = typeof input === 'string' ? input : input.toString();
+
+    // If it's an API route, proxy to the Hono app
+    if (url.startsWith('/api/') || url.includes('api/')) {
+      const { default: app } = await import('./src/index');
+
+      // Create a proper Request object
+      const request = new Request(
+        url.startsWith('http') ? url : `http://localhost:8000${url}`,
+        {
+          method: init?.method || 'GET',
+          headers: init?.headers || {},
+          body: init?.body,
+        }
+      );
+
+      return app.fetch(request);
+    }
+
+    // For non-API routes, return mock response
+    return Promise.resolve({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve({}),
+      text: () => Promise.resolve(''),
+      headers: new Headers({
+        'content-type': 'application/json',
+      }),
+    } as Response);
   }
-  
-  // For non-API routes, return mock response
-  return Promise.resolve({
-    ok: true,
-    status: 200,
-    json: () => Promise.resolve({}),
-    text: () => Promise.resolve(''),
-    headers: new Headers({
-      'content-type': 'application/json',
-    }),
-  } as Response);
-});
+);
 
 // Add mock methods that tests expect
 mockFetch.mockClear = vi.fn();

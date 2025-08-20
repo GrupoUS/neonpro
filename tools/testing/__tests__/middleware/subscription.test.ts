@@ -9,7 +9,10 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { createMockResponse, createMockSubscription } from '../utils/testUtils';
+import {
+  createMockResponse,
+  createMockSubscription,
+} from '../../utils/test-utils';
 
 // Mock Next.js modules
 vi.mock('next/headers', () => ({
@@ -35,10 +38,10 @@ describe('Subscription Middleware', () => {
   beforeEach(() => {
     // Reset all mocks
     vi.clearAllMocks();
-    
+
     // Store original fetch
     originalFetch = global.fetch;
-    
+
     // Setup default fetch mock
     const mockFetch = vi.fn();
     vi.stubGlobal('fetch', mockFetch);
@@ -163,7 +166,9 @@ describe('Subscription Middleware', () => {
   describe('errorHandling', () => {
     it('should handle network errors gracefully', async () => {
       // Mock fetch to reject with an error - Vitest v3.2.4 syntax
-      const mockFetch = vi.fn().mockRejectedValueOnce(new Error('Network error'));
+      const mockFetch = vi
+        .fn()
+        .mockRejectedValueOnce(new Error('Network error'));
       vi.stubGlobal('fetch', mockFetch);
 
       try {
@@ -181,7 +186,7 @@ describe('Subscription Middleware', () => {
         status: 500,
         json: () => Promise.resolve({ error: 'Server error' }),
       } as Response;
-      
+
       const mockFetch = vi.fn().mockResolvedValueOnce(mockResponse);
       vi.stubGlobal('fetch', mockFetch);
 
