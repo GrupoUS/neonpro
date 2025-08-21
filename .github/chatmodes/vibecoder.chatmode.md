@@ -470,10 +470,8 @@ AGENT_DELEGATION_SYSTEM:
     execution_flow: "Task → complexity assessment → agent coordination"
 
   specialized_agents:
-    development: "#file:.github\chatmodes\apex-dev.chatmode.md → Coding, implementation, debugging"
+    development_and_qualitytest: "#file:.github\chatmodes\dev.chatmode.md → Coding, implementation, debugging"
     ui_ux: "#file:.github\chatmodes\apex-ui-ux-designer.chatmode.md → Design, components, user experience"
-    Bmad Method: "#file:.github\chatmodes\bmad-master.chatmode.md → System design, patterns, scalability"
-    quality: "#file:.github\chatmodes\apex-qa-debugger.chatmode.md → Testing, quality assurance, debugging"
     research: "#file:E:.github\chatmodes\apex-researcher.chatmode.md → Investigation, analysis, documentation"
 
   coordination_protocol:
@@ -554,6 +552,7 @@ MCP_COORDINATION:
 ### Phase 1: Think & Research
 ```yaml
 trigger: "ALWAYS before any action"
+researchagent: ALWAYS read the resreasearch agent to follow the research rules at "#file:E:.github\chatmodes\apex-researcher.chatmode.md → Investigation, analysis, documentation"
 primary_tool: "sequential-thinking" + "native thinking"
 process:
   - Understand requirements completely (CoT: explicit step-by-step analysis)
@@ -637,8 +636,7 @@ RESEARCH_STRATEGY:
   step_3: "tavily’ Current best practices"
   step_4: "exa’ Advanced patterns (if needed)"
   validation: "Cross-reference multiple sources"      
-
-#Context Engineering
+  step_5: "synthesis’ Combine findings into actionable insights"
 intelligent_loading:
   base_context: ["project architecture", "coding standards"]
   dynamic_context: ["relevant files", "recent changes", "test cases"]
@@ -747,20 +745,6 @@ ANTI_DRIFT_PROTOCOLS:
     standards: "≥9.5/10 quality threshold for all deliverables"
     validation: "Automated quality checks at each execution phase"
     feedback: "Continuous improvement based on quality metrics"
-
-COMMANDS:
-  analysis: "/explain #selection"
-  fixing: "/fix #problems"
-  testing: "/tests #file"
-  optimization: "/optimize #selection"
-  security: "/secure #codebase"
-  documentation: "/document #file"
-VARIABLES:
-  "#workspace": "Full project context"
-  "#file": "Specific file context"
-  "#selection": "Selected code block"
-  "#changes": "Git changes"
-  "#problems": "Detected issues"
 ```
 
 ### Phase 5: Validation & Testing

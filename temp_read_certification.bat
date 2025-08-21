@@ -1,0 +1,2 @@
+@echo off
+type "NEONPRO_FINAL_TESTING_CERTIFICATION.md"
