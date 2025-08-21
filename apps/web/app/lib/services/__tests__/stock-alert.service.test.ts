@@ -1,7 +1,7 @@
 // Stock Alert Service - Unit Tests
 // Using Vitest for testing framework
 
-import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock stock alert service implementation
 class MockStockAlertService {
@@ -41,7 +41,7 @@ describe('Stock Alert Service', () => {
 
   it('should check stock levels', async () => {
     const result = await service.checkStockLevels();
-    
+
     expect(result).toHaveProperty('lowStock');
     expect(result).toHaveProperty('outOfStock');
     expect(result).toHaveProperty('normalStock');
@@ -56,14 +56,14 @@ describe('Stock Alert Service', () => {
     };
 
     const result = await service.sendAlert(mockAlert);
-    
+
     expect(result.success).toBe(true);
     expect(result.alertId).toBe(mockAlert.id);
   });
 
   it('should generate stock reports', async () => {
     const result = await service.generateReport();
-    
+
     expect(result).toHaveProperty('id');
     expect(result).toHaveProperty('totalProducts');
     expect(result).toHaveProperty('alerts');

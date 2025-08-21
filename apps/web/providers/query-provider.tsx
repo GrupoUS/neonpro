@@ -17,13 +17,12 @@ import {
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
-
-// Import Supabase client and realtime utilities
-import { createClient } from '@/lib/supabase/client';
-import { 
+import {
   defaultRealtimeConfig,
   useRealtimeQueryManager,
 } from '@/lib/query/realtime-query-utils';
+// Import Supabase client and realtime utilities
+import { createClient } from '@/lib/supabase/client';
 import { RealtimeProvider } from './realtime-provider';
 
 // Import authentication hook (we'll create this in the next phase)

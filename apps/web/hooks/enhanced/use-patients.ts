@@ -1,71 +1,66 @@
 /**
  * 👥 Enhanced Patient Management Hooks - NeonPro Healthcare
  * ==========================================================
- * 
+ *
  * Type-safe patient management hooks with Zod validation,
  * LGPD compliance, audit logging, and healthcare-specific features.
  */
 
-import { useCallback, useMemo } from 'react';
-import { toast } from 'sonner';
-
-// Import our enhanced query utilities
-import { 
-  useHealthcareQueryUtils, 
-  QueryKeys, 
-  HealthcareQueryConfig,
-  InvalidationHelpers,
-  type PaginatedResponse 
-} from '@/lib/query/query-utils';
-
 // Import our enhanced API client
-import { 
-  apiClient, 
-  ApiHelpers, 
-  type ApiResponse 
+import {
+  ApiHelpers,
+  type ApiResponse,
+  apiClient,
 } from '@neonpro/shared/api-client';
-
 // Import validation schemas and types
 import {
-  // Patient schemas
-  PatientBaseSchema,
-  CreatePatientSchema,
-  UpdatePatientSchema,
-  PatientQuerySchema,
-  PatientResponseSchema,
-  PatientsListResponseSchema,
-  PatientStatsSchema,
-  PatientDataExportSchema,
-  PatientDataExportResponseSchema,
-  
+  type Address,
   // Supporting schemas
   AddressSchema,
-  EmergencyContactSchema,
-  MedicalHistorySchema,
+  type Allergy,
   AllergySchema,
-  MedicationSchema,
+  type BloodType,
+  type CreatePatient,
+  CreatePatientSchema,
+  type EmergencyContact,
+  EmergencyContactSchema,
+  type Insurance,
   InsuranceSchema,
-  
+  type MaritalStatus,
+  type MedicalHistory,
+  MedicalHistorySchema,
+  type Medication,
+  MedicationSchema,
   // Types
   type PatientBase,
-  type CreatePatient,
-  type UpdatePatient,
-  type PatientQuery,
-  type PatientResponse,
-  type PatientsListResponse,
-  type PatientStats,
+  // Patient schemas
+  PatientBaseSchema,
   type PatientDataExport,
   type PatientDataExportResponse,
-  type Address,
-  type EmergencyContact,
-  type MedicalHistory,
-  type Allergy,
-  type Medication,
-  type Insurance,
+  PatientDataExportResponseSchema,
+  PatientDataExportSchema,
   type PatientGender,
-  type MaritalStatus,
-  type BloodType,
+  type PatientQuery,
+  PatientQuerySchema,
+  type PatientResponse,
+  PatientResponseSchema,
+  type PatientStats,
+  PatientStatsSchema,
+  type PatientsListResponse,
+  PatientsListResponseSchema,
+  type UpdatePatient,
+  UpdatePatientSchema,
 } from '@neonpro/shared/schemas';
+import { useCallback, useMemo } from 'react';
+import { toast } from 'sonner';
+// Import our enhanced query utilities
+import {
+  HealthcareQueryConfig,
+  InvalidationHelpers,
+  type PaginatedResponse,
+  QueryKeys,
+  useHealthcareQueryUtils,
+} from '@/lib/query/query-utils';
 
 // Patient management context interface
 export interface PatientManagementContext {
@@ -73,15 +68,15 @@ export interface PatientManagementContext {
   createPatient: ReturnType<typeof useCreatePatient>;
   updatePatient: ReturnType<typeof useUpdatePatient>;
   deletePatient: ReturnType<typeof useDeletePatient>;
-  
+
   // Data retrieval
   getPatient: (id: string) => ReturnType<typeof usePatient>;
   getPatients: (filters?: PatientQuery) => ReturnType<typeof usePatients>;
   getPatientStats: ReturnType<typeof usePatientStats>;
-  
+
   // LGPD compliance
   exportPatientData: ReturnType<typeof useExportPatientData>;
-  
+
   // Utility functions
   utils: ReturnType<typeof usePatientUtils>;
 }
@@ -89,12 +84,12 @@ export interface PatientManagementContext {
 // 👤 Get single patient with validation and audit logging
 export function usePatient(id: string) {
   const queryUtils = useHealthcareQueryUtils();
-  
+
   return queryUtils.createQuery({
     queryKey: QueryKeys.patients.detail(id),
     queryFn: async () => {
       const response = await apiClient.api.v1.patients[':id'].$get({
-        param: { id }
+        param: { id },
       });
       return await response.json();
     },
@@ -108,15 +103,17 @@ export function usePatient(id: string) {
     enableAuditLogging: true,
     sensitiveData: true,
     lgpdCompliant: true,
-    
+
     // Patient data configuration
     staleTime: HealthcareQueryConfig.patient.staleTime,
     gcTime: HealthcareQueryConfig.patient.gcTime,
-    
+
     retry: (failureCount, error) => {
       // Don't retry on permission or not found errors
-      if (ApiHelpers.isAuthError(error) || 
-          (error as any)?.message?.includes('not found')) {
+      if (
+        ApiHelpers.isAuthError(error) ||
+        (error as any)?.message?.includes('not found')
+      ) {
         return false;
       }
       return failureCount < 1; // Conservative retry for patient data
@@ -127,13 +124,13 @@ export function usePatient(id: string) {
 // 👥 Get patients list with advanced filtering and pagination
 export function usePatients(filters?: PatientQuery) {
   const queryUtils = useHealthcareQueryUtils();
-  
+
   return queryUtils.createQuery({
     queryKey: QueryKeys.patients.list(filters),
     queryFn: async () => {
       // Validate query parameters
       const validatedFilters = filters ? PatientQuerySchema.parse(filters) : {};
-      
+
       const response = await apiClient.api.v1.patients.$get({
         query: validatedFilters as any,
       });
@@ -153,7 +150,7 @@ export function usePatients(filters?: PatientQuery) {
     enableAuditLogging: true,
     sensitiveData: true,
     lgpdCompliant: true,
-    
+
     // Patient data configuration
     staleTime: HealthcareQueryConfig.patient.staleTime,
     gcTime: HealthcareQueryConfig.patient.gcTime,
@@ -163,24 +160,28 @@ export function usePatients(filters?: PatientQuery) {
 // 🏗️ Create new patient with validation and consent management
 export function useCreatePatient() {
   const queryUtils = useHealthcareQueryUtils();
-  
+
   return queryUtils.createMutation({
-    mutationFn: async (patientData: CreatePatient): Promise<ApiResponse<PatientResponse['data']>> => {
+    mutationFn: async (
+      patientData: CreatePatient
+    ): Promise<ApiResponse<PatientResponse['data']>> => {
       // Validate patient data including LGPD consent
       const validatedData = CreatePatientSchema.parse(patientData);
-      
+
       // Ensure LGPD consent is provided
       if (!validatedData.lgpd_consent) {
-        throw new Error('Consentimento LGPD é obrigatório para cadastrar um paciente');
+        throw new Error(
+          'Consentimento LGPD é obrigatório para cadastrar um paciente'
+        );
       }
-      
+
       const response = await apiClient.api.v1.patients.$post({
         json: validatedData,
       });
-      
+
       return await response.json();
     },
-    
+
     validator: (data: unknown) => {
       const response = PatientResponseSchema.parse(data);
       if (!response.success) {
@@ -188,20 +189,17 @@ export function useCreatePatient() {
       }
       return response.data!;
     },
-    
+
     enableAuditLogging: true,
     requiresConsent: false, // Creation includes consent
     lgpdCompliant: true,
     showSuccessToast: true,
     showErrorToast: true,
     successMessage: 'Paciente cadastrado com sucesso',
-    
+
     // Invalidate patient lists after creation
-    invalidateQueries: [
-      QueryKeys.patients.all(),
-      QueryKeys.patients.stats(),
-    ],
-    
+    invalidateQueries: [QueryKeys.patients.all(), QueryKeys.patients.stats()],
+
     onSuccess: (response, variables) => {
       // Log patient creation for audit
       const user = apiClient.auth.getUser();
@@ -225,20 +223,22 @@ export function useCreatePatient() {
 // ✏️ Update patient with validation and change tracking
 export function useUpdatePatient(id: string) {
   const queryUtils = useHealthcareQueryUtils();
-  
+
   return queryUtils.createMutation({
-    mutationFn: async (patientData: UpdatePatient): Promise<ApiResponse<PatientResponse['data']>> => {
+    mutationFn: async (
+      patientData: UpdatePatient
+    ): Promise<ApiResponse<PatientResponse['data']>> => {
       // Validate update data
       const validatedData = UpdatePatientSchema.parse(patientData);
-      
+
       const response = await apiClient.api.v1.patients[':id'].$put({
         param: { id },
         json: validatedData,
       });
-      
+
       return await response.json();
     },
-    
+
     validator: (data: unknown) => {
       const response = PatientResponseSchema.parse(data);
       if (!response.success) {
@@ -246,26 +246,27 @@ export function useUpdatePatient(id: string) {
       }
       return response.data!;
     },
-    
+
     enableAuditLogging: true,
     requiresConsent: true,
     lgpdCompliant: true,
     showSuccessToast: true,
     showErrorToast: true,
     successMessage: 'Dados do paciente atualizados',
-    
+
     // Invalidate related queries
     invalidateQueries: [
       QueryKeys.patients.detail(id),
       QueryKeys.patients.all(),
     ],
-    
+
     // Optimistic update for better UX
     ...queryUtils.createOptimisticUpdate<PatientBase>(
       QueryKeys.patients.detail(id),
-      (oldData) => oldData ? { ...oldData, ...patientData } : oldData as PatientBase
+      (oldData) =>
+        oldData ? { ...oldData, ...patientData } : (oldData as PatientBase)
     ),
-    
+
     onSuccess: (response, variables) => {
       // Log patient update for audit
       const user = apiClient.auth.getUser();
@@ -289,33 +290,30 @@ export function useUpdatePatient(id: string) {
 // 🗑️ Delete patient with LGPD compliance
 export function useDeletePatient() {
   const queryUtils = useHealthcareQueryUtils();
-  
+
   return queryUtils.createMutation({
     mutationFn: async (id: string): Promise<ApiResponse<void>> => {
       const response = await apiClient.api.v1.patients[':id'].$delete({
-        param: { id }
+        param: { id },
       });
-      
+
       return await response.json();
     },
-    
+
     enableAuditLogging: true,
     requiresConsent: true,
     lgpdCompliant: true,
     showSuccessToast: true,
     showErrorToast: true,
     successMessage: 'Paciente removido com sucesso',
-    
+
     // Invalidate all patient data
-    invalidateQueries: [
-      QueryKeys.patients.all(),
-      QueryKeys.patients.stats(),
-    ],
-    
+    invalidateQueries: [QueryKeys.patients.all(), QueryKeys.patients.stats()],
+
     onSuccess: (response, id) => {
       // Clear patient from cache
       queryUtils.clearSensitiveUserData(id);
-      
+
       // Log patient deletion for audit
       const user = apiClient.auth.getUser();
       if (user) {
@@ -332,17 +330,17 @@ export function useDeletePatient() {
         });
       }
     },
-    
+
     onMutate: async (id: string) => {
       // Show confirmation dialog before deletion
       const confirmed = window.confirm(
         'Tem certeza que deseja remover este paciente? Esta ação não pode ser desfeita.'
       );
-      
+
       if (!confirmed) {
         throw new Error('Operação cancelada pelo usuário');
       }
-      
+
       return { id };
     },
   });
@@ -351,7 +349,7 @@ export function useDeletePatient() {
 // 📊 Get patient statistics
 export function usePatientStats() {
   const queryUtils = useHealthcareQueryUtils();
-  
+
   return queryUtils.createQuery({
     queryKey: QueryKeys.patients.stats(),
     queryFn: async () => {
@@ -362,7 +360,7 @@ export function usePatientStats() {
     enableAuditLogging: false, // Stats don't need audit logging
     sensitiveData: false,
     lgpdCompliant: true,
-    
+
     // Stats can be cached longer
     staleTime: 1000 * 60 * 5, // 5 minutes
     gcTime: 1000 * 60 * 15, // 15 minutes
@@ -370,15 +368,18 @@ export function usePatientStats() {
 }
 
 // 🏥 Get patients by clinic
-export function useClinicPatients(clinicId: string, filters?: Omit<PatientQuery, 'clinic_id'>) {
+export function useClinicPatients(
+  clinicId: string,
+  filters?: Omit<PatientQuery, 'clinic_id'>
+) {
   const queryUtils = useHealthcareQueryUtils();
-  
+
   return queryUtils.createQuery({
     queryKey: QueryKeys.patients.list({ ...filters, clinic_id: clinicId }),
     queryFn: async () => {
       const queryFilters = { ...filters, clinic_id: clinicId };
       const validatedFilters = PatientQuerySchema.parse(queryFilters);
-      
+
       const response = await apiClient.api.v1.patients.$get({
         query: validatedFilters as any,
       });
@@ -387,7 +388,9 @@ export function useClinicPatients(clinicId: string, filters?: Omit<PatientQuery,
     validator: (data: unknown) => {
       const response = PatientsListResponseSchema.parse(data);
       if (!response.success) {
-        throw new Error(response.error?.code || 'Failed to fetch clinic patients');
+        throw new Error(
+          response.error?.code || 'Failed to fetch clinic patients'
+        );
       }
       return {
         patients: response.data!.patients,
@@ -397,7 +400,7 @@ export function useClinicPatients(clinicId: string, filters?: Omit<PatientQuery,
     enableAuditLogging: true,
     sensitiveData: true,
     lgpdCompliant: true,
-    
+
     // Clinic patient data configuration
     staleTime: HealthcareQueryConfig.patient.staleTime,
     gcTime: HealthcareQueryConfig.patient.gcTime,
@@ -407,35 +410,39 @@ export function useClinicPatients(clinicId: string, filters?: Omit<PatientQuery,
 // 📋 Export patient data for LGPD compliance
 export function useExportPatientData() {
   const queryUtils = useHealthcareQueryUtils();
-  
+
   return queryUtils.createMutation({
-    mutationFn: async (exportRequest: PatientDataExport): Promise<ApiResponse<PatientDataExportResponse['data']>> => {
+    mutationFn: async (
+      exportRequest: PatientDataExport
+    ): Promise<ApiResponse<PatientDataExportResponse['data']>> => {
       // Validate export request
       const validatedRequest = PatientDataExportSchema.parse(exportRequest);
-      
+
       const response = await apiClient.api.v1.patients[':id'].export.$post({
         param: { id: validatedRequest.patient_id },
         json: validatedRequest,
       });
-      
+
       return await response.json();
     },
-    
+
     validator: (data: unknown) => {
       const response = PatientDataExportResponseSchema.parse(data);
       if (!response.success) {
-        throw new Error(response.error?.code || 'Failed to export patient data');
+        throw new Error(
+          response.error?.code || 'Failed to export patient data'
+        );
       }
       return response.data!;
     },
-    
+
     enableAuditLogging: true,
     requiresConsent: true,
     lgpdCompliant: true,
     showSuccessToast: true,
     showErrorToast: true,
     successMessage: 'Dados exportados com sucesso',
-    
+
     onSuccess: (response, variables) => {
       // Log data export for compliance
       const user = apiClient.auth.getUser();
@@ -452,7 +459,7 @@ export function useExportPatientData() {
           success: true,
         });
       }
-      
+
       // Auto-download the file if URL is provided
       if (response.download_url) {
         const link = document.createElement('a');
@@ -469,154 +476,190 @@ export function useExportPatientData() {
 // 🔍 Search patients with advanced filtering
 export function useSearchPatients() {
   const queryUtils = useHealthcareQueryUtils();
-  
-  return useCallback((searchQuery: string, filters?: Partial<PatientQuery>) => {
-    return queryUtils.createQuery({
-      queryKey: QueryKeys.patients.list({ ...filters, search: searchQuery }),
-      queryFn: async () => {
-        const queryFilters = PatientQuerySchema.parse({ ...filters, search: searchQuery });
-        
-        const response = await apiClient.api.v1.patients.$get({
-          query: queryFilters as any,
-        });
-        return await response.json();
-      },
-      validator: (data: unknown) => {
-        const response = PatientsListResponseSchema.parse(data);
-        if (!response.success) {
-          throw new Error(response.error?.code || 'Failed to search patients');
-        }
-        return response.data!.patients;
-      },
-      enableAuditLogging: true,
-      sensitiveData: true,
-      lgpdCompliant: true,
-      
-      // Search results can be more fresh
-      staleTime: 1000 * 30, // 30 seconds
-      gcTime: 1000 * 60 * 2, // 2 minutes
-      
-      // Don't fetch if search query is too short
-      enabled: searchQuery.length >= 2,
-    });
-  }, [queryUtils]);
+
+  return useCallback(
+    (searchQuery: string, filters?: Partial<PatientQuery>) => {
+      return queryUtils.createQuery({
+        queryKey: QueryKeys.patients.list({ ...filters, search: searchQuery }),
+        queryFn: async () => {
+          const queryFilters = PatientQuerySchema.parse({
+            ...filters,
+            search: searchQuery,
+          });
+
+          const response = await apiClient.api.v1.patients.$get({
+            query: queryFilters as any,
+          });
+          return await response.json();
+        },
+        validator: (data: unknown) => {
+          const response = PatientsListResponseSchema.parse(data);
+          if (!response.success) {
+            throw new Error(
+              response.error?.code || 'Failed to search patients'
+            );
+          }
+          return response.data!.patients;
+        },
+        enableAuditLogging: true,
+        sensitiveData: true,
+        lgpdCompliant: true,
+
+        // Search results can be more fresh
+        staleTime: 1000 * 30, // 30 seconds
+        gcTime: 1000 * 60 * 2, // 2 minutes
+
+        // Don't fetch if search query is too short
+        enabled: searchQuery.length >= 2,
+      });
+    },
+    [queryUtils]
+  );
 }
 
 // 🛠️ Patient utilities hook
 export function usePatientUtils() {
   const queryUtils = useHealthcareQueryUtils();
-  
-  return useMemo(() => ({
-    // Validate patient data
-    validatePatientData: (data: unknown): CreatePatient => {
-      return CreatePatientSchema.parse(data);
-    },
-    
-    // Format patient name
-    formatPatientName: (patient: PatientBase): string => {
-      return `${patient.first_name} ${patient.last_name}`;
-    },
-    
-    // Calculate patient age
-    calculateAge: (birthDate: string): number => {
-      const today = new Date();
-      const birth = new Date(birthDate);
-      let age = today.getFullYear() - birth.getFullYear();
-      const monthDiff = today.getMonth() - birth.getMonth();
-      
-      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-        age--;
-      }
-      
-      return age;
-    },
-    
-    // Format patient contact
-    formatPatientContact: (patient: PatientBase): string => {
-      return `${patient.phone} | ${patient.email}`;
-    },
-    
-    // Get primary address
-    getPrimaryAddress: (patient: PatientBase): Address | null => {
-      return patient.addresses.find(addr => addr.is_primary) || patient.addresses[0] || null;
-    },
-    
-    // Get primary emergency contact
-    getPrimaryEmergencyContact: (patient: PatientBase): EmergencyContact | null => {
-      return patient.emergency_contacts.find(contact => contact.is_primary) || 
-             patient.emergency_contacts[0] || null;
-    },
-    
-    // Check LGPD consent status
-    checkConsentStatus: (patient: PatientBase) => {
-      const consentDate = new Date(patient.lgpd_consent_date);
-      const expiryDate = new Date(consentDate.getTime() + 365 * 24 * 60 * 60 * 1000); // 1 year
-      const isExpired = expiryDate < new Date();
-      const daysUntilExpiry = Math.ceil((expiryDate.getTime() - Date.now()) / (24 * 60 * 60 * 1000));
-      
-      return {
-        hasConsent: true,
-        isExpired,
-        expiryDate,
-        daysUntilExpiry,
-        needsRenewal: daysUntilExpiry <= 30 && !isExpired,
-      };
-    },
-    
-    // Format medical conditions
-    formatMedicalConditions: (patient: PatientBase): string => {
-      const conditions = [
-        ...patient.medical_history.filter(h => h.status === 'active').map(h => h.condition),
-        ...patient.allergies.filter(a => a.is_active).map(a => a.allergen),
-      ];
-      
-      return conditions.length > 0 ? conditions.join(', ') : 'Nenhuma condição registrada';
-    },
-    
-    // Get current medications
-    getCurrentMedications: (patient: PatientBase): Medication[] => {
-      return patient.medications.filter(med => med.is_active);
-    },
-    
-    // Calculate BMI if height and weight available
-    calculateBMI: (patient: PatientBase): number | null => {
-      if (!patient.height || !patient.weight) return null;
-      
-      const heightInMeters = patient.height / 100;
-      return patient.weight / (heightInMeters * heightInMeters);
-    },
-    
-    // Format BMI with classification
-    formatBMIWithClassification: (bmi: number): string => {
-      let classification = '';
-      if (bmi < 18.5) classification = 'Abaixo do peso';
-      else if (bmi < 25) classification = 'Peso normal';
-      else if (bmi < 30) classification = 'Sobrepeso';
-      else classification = 'Obesidade';
-      
-      return `${bmi.toFixed(1)} (${classification})`;
-    },
-    
-    // Invalidate patient data
-    invalidatePatient: (patientId: string) => {
-      InvalidationHelpers.invalidatePatientData(queryUtils.queryClient, patientId);
-    },
-    
-    // Invalidate all patient data
-    invalidateAllPatients: () => {
-      InvalidationHelpers.invalidatePatientData(queryUtils.queryClient);
-    },
-    
-    // Clear patient from cache (for LGPD compliance)
-    clearPatientData: (patientId: string) => {
-      queryUtils.clearSensitiveUserData(patientId);
-    },
-    
-    // Export patient data
-    exportPatientData: async (patientId: string) => {
-      return await queryUtils.exportUserData(patientId);
-    },
-  }), [queryUtils]);
+
+  return useMemo(
+    () => ({
+      // Validate patient data
+      validatePatientData: (data: unknown): CreatePatient => {
+        return CreatePatientSchema.parse(data);
+      },
+
+      // Format patient name
+      formatPatientName: (patient: PatientBase): string => {
+        return `${patient.first_name} ${patient.last_name}`;
+      },
+
+      // Calculate patient age
+      calculateAge: (birthDate: string): number => {
+        const today = new Date();
+        const birth = new Date(birthDate);
+        let age = today.getFullYear() - birth.getFullYear();
+        const monthDiff = today.getMonth() - birth.getMonth();
+
+        if (
+          monthDiff < 0 ||
+          (monthDiff === 0 && today.getDate() < birth.getDate())
+        ) {
+          age--;
+        }
+
+        return age;
+      },
+
+      // Format patient contact
+      formatPatientContact: (patient: PatientBase): string => {
+        return `${patient.phone} | ${patient.email}`;
+      },
+
+      // Get primary address
+      getPrimaryAddress: (patient: PatientBase): Address | null => {
+        return (
+          patient.addresses.find((addr) => addr.is_primary) ||
+          patient.addresses[0] ||
+          null
+        );
+      },
+
+      // Get primary emergency contact
+      getPrimaryEmergencyContact: (
+        patient: PatientBase
+      ): EmergencyContact | null => {
+        return (
+          patient.emergency_contacts.find((contact) => contact.is_primary) ||
+          patient.emergency_contacts[0] ||
+          null
+        );
+      },
+
+      // Check LGPD consent status
+      checkConsentStatus: (patient: PatientBase) => {
+        const consentDate = new Date(patient.lgpd_consent_date);
+        const expiryDate = new Date(
+          consentDate.getTime() + 365 * 24 * 60 * 60 * 1000
+        ); // 1 year
+        const isExpired = expiryDate < new Date();
+        const daysUntilExpiry = Math.ceil(
+          (expiryDate.getTime() - Date.now()) / (24 * 60 * 60 * 1000)
+        );
+
+        return {
+          hasConsent: true,
+          isExpired,
+          expiryDate,
+          daysUntilExpiry,
+          needsRenewal: daysUntilExpiry <= 30 && !isExpired,
+        };
+      },
+
+      // Format medical conditions
+      formatMedicalConditions: (patient: PatientBase): string => {
+        const conditions = [
+          ...patient.medical_history
+            .filter((h) => h.status === 'active')
+            .map((h) => h.condition),
+          ...patient.allergies
+            .filter((a) => a.is_active)
+            .map((a) => a.allergen),
+        ];
+
+        return conditions.length > 0
+          ? conditions.join(', ')
+          : 'Nenhuma condição registrada';
+      },
+
+      // Get current medications
+      getCurrentMedications: (patient: PatientBase): Medication[] => {
+        return patient.medications.filter((med) => med.is_active);
+      },
+
+      // Calculate BMI if height and weight available
+      calculateBMI: (patient: PatientBase): number | null => {
+        if (!(patient.height && patient.weight)) return null;
+
+        const heightInMeters = patient.height / 100;
+        return patient.weight / (heightInMeters * heightInMeters);
+      },
+
+      // Format BMI with classification
+      formatBMIWithClassification: (bmi: number): string => {
+        let classification = '';
+        if (bmi < 18.5) classification = 'Abaixo do peso';
+        else if (bmi < 25) classification = 'Peso normal';
+        else if (bmi < 30) classification = 'Sobrepeso';
+        else classification = 'Obesidade';
+
+        return `${bmi.toFixed(1)} (${classification})`;
+      },
+
+      // Invalidate patient data
+      invalidatePatient: (patientId: string) => {
+        InvalidationHelpers.invalidatePatientData(
+          queryUtils.queryClient,
+          patientId
+        );
+      },
+
+      // Invalidate all patient data
+      invalidateAllPatients: () => {
+        InvalidationHelpers.invalidatePatientData(queryUtils.queryClient);
+      },
+
+      // Clear patient from cache (for LGPD compliance)
+      clearPatientData: (patientId: string) => {
+        queryUtils.clearSensitiveUserData(patientId);
+      },
+
+      // Export patient data
+      exportPatientData: async (patientId: string) => {
+        return await queryUtils.exportUserData(patientId);
+      },
+    }),
+    [queryUtils]
+  );
 }
 
 // 🎯 Complete patient management context hook
@@ -627,31 +670,34 @@ export function usePatientManagement(): PatientManagementContext {
   const getPatientStats = usePatientStats();
   const exportPatientData = useExportPatientData();
   const utils = usePatientUtils();
-  
-  return useMemo<PatientManagementContext>(() => ({
-    // Basic operations
-    createPatient,
-    updatePatient,
-    deletePatient,
-    
-    // Data retrieval
-    getPatient: usePatient,
-    getPatients: usePatients,
-    getPatientStats,
-    
-    // LGPD compliance
-    exportPatientData,
-    
-    // Utility functions
-    utils,
-  }), [
-    createPatient,
-    updatePatient,
-    deletePatient,
-    getPatientStats,
-    exportPatientData,
-    utils,
-  ]);
+
+  return useMemo<PatientManagementContext>(
+    () => ({
+      // Basic operations
+      createPatient,
+      updatePatient,
+      deletePatient,
+
+      // Data retrieval
+      getPatient: usePatient,
+      getPatients: usePatients,
+      getPatientStats,
+
+      // LGPD compliance
+      exportPatientData,
+
+      // Utility functions
+      utils,
+    }),
+    [
+      createPatient,
+      updatePatient,
+      deletePatient,
+      getPatientStats,
+      exportPatientData,
+      utils,
+    ]
+  );
 }
 
 // Export specialized hooks for specific use cases

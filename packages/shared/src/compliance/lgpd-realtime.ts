@@ -50,13 +50,15 @@ export const LGPDRealtimeConfigSchema = z.object({
   retentionPeriodDays: z.number().min(1).max(2555).optional(), // Max ~7 years
   sensitiveFields: z.array(z.string()).default([]),
   allowedUsers: z.array(z.string()).optional(),
-  dataSubjectRights: z.object({
-    accessRight: z.boolean().default(true),
-    rectificationRight: z.boolean().default(true),
-    erasureRight: z.boolean().default(true),
-    portabilityRight: z.boolean().default(true),
-    objectRight: z.boolean().default(true),
-  }).default({}),
+  dataSubjectRights: z
+    .object({
+      accessRight: z.boolean().default(true),
+      rectificationRight: z.boolean().default(true),
+      erasureRight: z.boolean().default(true),
+      portabilityRight: z.boolean().default(true),
+      objectRight: z.boolean().default(true),
+    })
+    .default({}),
 });
 
 export type LGPDRealtimeConfig = z.infer<typeof LGPDRealtimeConfigSchema>;
@@ -86,9 +88,22 @@ export interface LGPDAuditLogEntry {
 // Data anonymization/pseudonymization utilities
 export class LGPDDataProcessor {
   private static readonly SENSITIVE_FIELD_PATTERNS = [
-    'cpf', 'rg', 'email', 'phone', 'telefone', 'celular',
-    'address', 'endereco', 'cep', 'birth_date', 'nascimento',
-    'password', 'senha', 'ssn', 'passport', 'passaporte'
+    'cpf',
+    'rg',
+    'email',
+    'phone',
+    'telefone',
+    'celular',
+    'address',
+    'endereco',
+    'cep',
+    'birth_date',
+    'nascimento',
+    'password',
+    'senha',
+    'ssn',
+    'passport',
+    'passaporte',
   ];
 
   /**
@@ -101,13 +116,19 @@ export class LGPDDataProcessor {
     if (!config.anonymization) return payload;
 
     const anonymized = { ...payload };
-    
+
     if (anonymized.new) {
-      anonymized.new = this.anonymizeFields(anonymized.new, config.sensitiveFields);
+      anonymized.new = LGPDDataProcessor.anonymizeFields(
+        anonymized.new,
+        config.sensitiveFields
+      );
     }
-    
+
     if (anonymized.old) {
-      anonymized.old = this.anonymizeFields(anonymized.old, config.sensitiveFields);
+      anonymized.old = LGPDDataProcessor.anonymizeFields(
+        anonymized.old,
+        config.sensitiveFields
+      );
     }
 
     return anonymized;
@@ -123,13 +144,19 @@ export class LGPDDataProcessor {
     if (!config.pseudonymization) return payload;
 
     const pseudonymized = { ...payload };
-    
+
     if (pseudonymized.new) {
-      pseudonymized.new = this.pseudonymizeFields(pseudonymized.new, config.sensitiveFields);
+      pseudonymized.new = LGPDDataProcessor.pseudonymizeFields(
+        pseudonymized.new,
+        config.sensitiveFields
+      );
     }
-    
+
     if (pseudonymized.old) {
-      pseudonymized.old = this.pseudonymizeFields(pseudonymized.old, config.sensitiveFields);
+      pseudonymized.old = LGPDDataProcessor.pseudonymizeFields(
+        pseudonymized.old,
+        config.sensitiveFields
+      );
     }
 
     return pseudonymized;
@@ -143,13 +170,19 @@ export class LGPDDataProcessor {
     allowedFields: string[]
   ): RealtimePostgresChangesPayload<any> {
     const minimized = { ...payload };
-    
+
     if (minimized.new) {
-      minimized.new = this.extractFields(minimized.new, allowedFields);
+      minimized.new = LGPDDataProcessor.extractFields(
+        minimized.new,
+        allowedFields
+      );
     }
-    
+
     if (minimized.old) {
-      minimized.old = this.extractFields(minimized.old, allowedFields);
+      minimized.old = LGPDDataProcessor.extractFields(
+        minimized.old,
+        allowedFields
+      );
     }
 
     return minimized;
@@ -159,19 +192,22 @@ export class LGPDDataProcessor {
     if (!data || typeof data !== 'object') return data;
 
     const anonymized = { ...data };
-    
+
     // Auto-detect sensitive fields
-    const detectedSensitiveFields = Object.keys(data).filter(field =>
-      this.SENSITIVE_FIELD_PATTERNS.some(pattern => 
+    const detectedSensitiveFields = Object.keys(data).filter((field) =>
+      LGPDDataProcessor.SENSITIVE_FIELD_PATTERNS.some((pattern) =>
         field.toLowerCase().includes(pattern.toLowerCase())
       )
     );
 
     const fieldsToAnonymize = [...sensitiveFields, ...detectedSensitiveFields];
-    
-    fieldsToAnonymize.forEach(field => {
+
+    fieldsToAnonymize.forEach((field) => {
       if (field in anonymized) {
-        anonymized[field] = this.generateAnonymousValue(field, anonymized[field]);
+        anonymized[field] = LGPDDataProcessor.generateAnonymousValue(
+          field,
+          anonymized[field]
+        );
       }
     });
 
@@ -182,10 +218,13 @@ export class LGPDDataProcessor {
     if (!data || typeof data !== 'object') return data;
 
     const pseudonymized = { ...data };
-    
-    sensitiveFields.forEach(field => {
+
+    sensitiveFields.forEach((field) => {
       if (field in pseudonymized) {
-        pseudonymized[field] = this.generatePseudonym(field, pseudonymized[field]);
+        pseudonymized[field] = LGPDDataProcessor.generatePseudonym(
+          field,
+          pseudonymized[field]
+        );
       }
     });
 
@@ -196,8 +235,8 @@ export class LGPDDataProcessor {
     if (!data || typeof data !== 'object') return data;
 
     const extracted: any = {};
-    
-    allowedFields.forEach(field => {
+
+    allowedFields.forEach((field) => {
       if (field in data) {
         extracted[field] = data[field];
       }
@@ -206,11 +245,18 @@ export class LGPDDataProcessor {
     return extracted;
   }
 
-  private static generateAnonymousValue(fieldName: string, originalValue: any): string {
+  private static generateAnonymousValue(
+    fieldName: string,
+    originalValue: any
+  ): string {
     const fieldLower = fieldName.toLowerCase();
-    
+
     if (fieldLower.includes('email')) return '***@***.***';
-    if (fieldLower.includes('phone') || fieldLower.includes('telefone') || fieldLower.includes('celular')) {
+    if (
+      fieldLower.includes('phone') ||
+      fieldLower.includes('telefone') ||
+      fieldLower.includes('celular')
+    ) {
       return '***-***-****';
     }
     if (fieldLower.includes('cpf')) return '***.***.**-**';
@@ -219,23 +265,27 @@ export class LGPDDataProcessor {
     if (fieldLower.includes('address') || fieldLower.includes('endereco')) {
       return '*** *** *** ***';
     }
-    
+
     // Generic anonymization
-    return typeof originalValue === 'string' 
+    return typeof originalValue === 'string'
       ? '*'.repeat(Math.min(originalValue.length, 10))
       : '***PROTECTED***';
   }
 
-  private static generatePseudonym(fieldName: string, originalValue: any): string {
+  private static generatePseudonym(
+    fieldName: string,
+    originalValue: any
+  ): string {
     // Simple hash-based pseudonymization (in production, use proper cryptographic methods)
-    const hash = this.simpleHash(String(originalValue));
+    const hash = LGPDDataProcessor.simpleHash(String(originalValue));
     const fieldLower = fieldName.toLowerCase();
-    
+
     if (fieldLower.includes('email')) return `user${hash}@example.com`;
-    if (fieldLower.includes('phone') || fieldLower.includes('telefone')) return `+55${hash}`;
+    if (fieldLower.includes('phone') || fieldLower.includes('telefone'))
+      return `+55${hash}`;
     if (fieldLower.includes('cpf')) return `${hash.slice(0, 11)}`;
     if (fieldLower.includes('rg')) return `${hash.slice(0, 9)}`;
-    
+
     return `pseudo_${hash}`;
   }
 
@@ -243,7 +293,7 @@ export class LGPDDataProcessor {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32bit integer
     }
     return Math.abs(hash).toString().slice(0, 8);
@@ -252,7 +302,10 @@ export class LGPDDataProcessor {
 
 // LGPD consent validator
 export class LGPDConsentValidator {
-  private static consentCache = new Map<string, { status: LGPDConsentStatus; expiresAt?: Date }>();
+  private static consentCache = new Map<
+    string,
+    { status: LGPDConsentStatus; expiresAt?: Date }
+  >();
 
   /**
    * Validate consent for real-time data processing
@@ -268,11 +321,11 @@ export class LGPDConsentValidator {
   }> {
     // Check cache first
     const cacheKey = `${userId}:${processingPurpose}:${dataCategory}`;
-    const cached = this.consentCache.get(cacheKey);
-    
+    const cached = LGPDConsentValidator.consentCache.get(cacheKey);
+
     if (cached) {
       if (cached.expiresAt && cached.expiresAt < new Date()) {
-        this.consentCache.delete(cacheKey);
+        LGPDConsentValidator.consentCache.delete(cacheKey);
       } else {
         return {
           valid: cached.status === LGPDConsentStatus.GRANTED,
@@ -283,10 +336,14 @@ export class LGPDConsentValidator {
 
     // In a real implementation, this would check the database
     // For now, we'll simulate consent validation
-    const result = await this.checkConsentInDatabase(userId, processingPurpose, dataCategory);
-    
+    const result = await LGPDConsentValidator.checkConsentInDatabase(
+      userId,
+      processingPurpose,
+      dataCategory
+    );
+
     // Cache the result
-    this.consentCache.set(cacheKey, {
+    LGPDConsentValidator.consentCache.set(cacheKey, {
       status: result.status,
       expiresAt: result.expiresAt,
     });
@@ -309,7 +366,7 @@ export class LGPDConsentValidator {
   }> {
     // Simulate database check
     // In production, this would be an actual database query
-    
+
     // For healthcare delivery, consent is usually granted by default (legitimate interest)
     if (processingPurpose === LGPDProcessingPurpose.HEALTHCARE_DELIVERY) {
       return {
@@ -329,9 +386,12 @@ export class LGPDConsentValidator {
    * Clear consent cache for a user (when consent is revoked)
    */
   static clearConsentCache(userId: string) {
-    const keysToDelete = Array.from(this.consentCache.keys())
-      .filter(key => key.startsWith(`${userId}:`));
-    
-    keysToDelete.forEach(key => this.consentCache.delete(key));
+    const keysToDelete = Array.from(
+      LGPDConsentValidator.consentCache.keys()
+    ).filter((key) => key.startsWith(`${userId}:`));
+
+    keysToDelete.forEach((key) =>
+      LGPDConsentValidator.consentCache.delete(key)
+    );
   }
 }

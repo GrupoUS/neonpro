@@ -1,14 +1,7 @@
 // Story 11.4: Alertas e Relatórios de Estoque
 // Integration test using Vitest instead of Jest
 
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-} from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock implementation for stock alert integration
 describe('Stock Alert Integration', () => {

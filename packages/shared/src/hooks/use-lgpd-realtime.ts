@@ -6,17 +6,20 @@
  * with consent validation and audit logging
  */
 
+import type {
+  RealtimePostgresChangesPayload,
+  SupabaseClient,
+} from '@supabase/supabase-js';
 import { useCallback, useEffect, useState } from 'react';
-import type { SupabaseClient, RealtimePostgresChangesPayload } from '@supabase/supabase-js';
-import { 
-  LGPDDataProcessor,
+import {
+  LGPDConsentStatus,
   LGPDConsentValidator,
   LGPDDataCategory,
+  LGPDDataProcessor,
   LGPDProcessingPurpose,
-  LGPDConsentStatus,
   type LGPDRealtimeConfig,
 } from '../compliance/lgpd-realtime';
-import { useRealtime, type UseRealtimeConfig } from './use-realtime';
+import { type UseRealtimeConfig, useRealtime } from './use-realtime';
 
 // LGPD-compliant realtime hook configuration
 export interface UseLGPDRealtimeConfig extends UseRealtimeConfig {
@@ -35,12 +38,14 @@ export function useLGPDConsentStatus(
   processingPurpose?: LGPDProcessingPurpose,
   dataCategory?: LGPDDataCategory
 ) {
-  const [consentStatus, setConsentStatus] = useState<LGPDConsentStatus | null>(null);
+  const [consentStatus, setConsentStatus] = useState<LGPDConsentStatus | null>(
+    null
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
   const validateConsent = useCallback(async () => {
-    if (!userId || !processingPurpose || !dataCategory) {
+    if (!(userId && processingPurpose && dataCategory)) {
       setConsentStatus(null);
       return;
     }
@@ -56,12 +61,13 @@ export function useLGPDConsentStatus(
       );
 
       setConsentStatus(result.status);
-      
+
       if (!result.valid && result.reason) {
         setError(new Error(`Consent denied: ${result.reason}`));
       }
     } catch (err) {
-      const error = err instanceof Error ? err : new Error('Consent validation failed');
+      const error =
+        err instanceof Error ? err : new Error('Consent validation failed');
       setError(error);
       setConsentStatus(LGPDConsentStatus.REVOKED);
     } finally {
@@ -98,14 +104,16 @@ export function useLGPDRealtime<T = any>(
   config: UseLGPDRealtimeConfig
 ) {
   const [processedData, setProcessedData] = useState<T | null>(null);
-  const [dataProcessingError, setDataProcessingError] = useState<Error | null>(null);
-  
+  const [dataProcessingError, setDataProcessingError] = useState<Error | null>(
+    null
+  );
+
   // Get consent status
-  const { 
-    hasConsent, 
-    consentStatus, 
+  const {
+    hasConsent,
+    consentStatus,
     isLoading: consentLoading,
-    error: consentError 
+    error: consentError,
   } = useLGPDConsentStatus(
     config.userId,
     config.processingPurpose,
@@ -113,63 +121,77 @@ export function useLGPDRealtime<T = any>(
   );
 
   // Process data according to LGPD config
-  const processRealtimeData = useCallback((
-    payload: RealtimePostgresChangesPayload<T>
-  ) => {
-    try {
-      let processedPayload = payload;
+  const processRealtimeData = useCallback(
+    (payload: RealtimePostgresChangesPayload<T>) => {
+      try {
+        let processedPayload = payload;
 
-      // Apply data minimization if configured
-      if (config.lgpdConfig.dataMinimization) {
-        const allowedFields = config.lgpdConfig.sensitiveFields || [];
-        processedPayload = LGPDDataProcessor.minimizeData(processedPayload, allowedFields);
+        // Apply data minimization if configured
+        if (config.lgpdConfig.dataMinimization) {
+          const allowedFields = config.lgpdConfig.sensitiveFields || [];
+          processedPayload = LGPDDataProcessor.minimizeData(
+            processedPayload,
+            allowedFields
+          );
+        }
+
+        // Apply anonymization if configured
+        if (config.lgpdConfig.anonymization) {
+          processedPayload = LGPDDataProcessor.anonymizePayload(
+            processedPayload,
+            config.lgpdConfig
+          );
+        }
+
+        // Apply pseudonymization if configured
+        if (config.lgpdConfig.pseudonymization) {
+          processedPayload = LGPDDataProcessor.pseudonymizePayload(
+            processedPayload,
+            config.lgpdConfig
+          );
+        }
+
+        setProcessedData(processedPayload as T);
+        setDataProcessingError(null);
+
+        // Notify about processed data
+        config.onDataProcessed?.(processedPayload);
+
+        return processedPayload;
+      } catch (err) {
+        const error =
+          err instanceof Error ? err : new Error('Data processing failed');
+        setDataProcessingError(error);
+        config.onError?.(error);
+        return null;
       }
-
-      // Apply anonymization if configured
-      if (config.lgpdConfig.anonymization) {
-        processedPayload = LGPDDataProcessor.anonymizePayload(processedPayload, config.lgpdConfig);
-      }
-
-      // Apply pseudonymization if configured
-      if (config.lgpdConfig.pseudonymization) {
-        processedPayload = LGPDDataProcessor.pseudonymizePayload(processedPayload, config.lgpdConfig);
-      }
-
-      setProcessedData(processedPayload as T);
-      setDataProcessingError(null);
-      
-      // Notify about processed data
-      config.onDataProcessed?.(processedPayload);
-
-      return processedPayload;
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error('Data processing failed');
-      setDataProcessingError(error);
-      config.onError?.(error);
-      return null;
-    }
-  }, [config]);
+    },
+    [config]
+  );
 
   // Enhanced event handlers with LGPD processing
-  const createLGPDEventHandler = useCallback((
-    originalHandler?: (payload: RealtimePostgresChangesPayload<T>) => void
-  ) => {
-    return (payload: RealtimePostgresChangesPayload<T>) => {
-      // Check consent before processing
-      if (config.validateConsent !== false && !hasConsent) {
-        const reason = `Consent denied for ${config.processingPurpose} on ${config.dataCategory} data`;
-        config.onConsentDenied?.(reason);
-        return;
-      }
+  const createLGPDEventHandler = useCallback(
+    (
+      originalHandler?: (payload: RealtimePostgresChangesPayload<T>) => void
+    ) => {
+      return (payload: RealtimePostgresChangesPayload<T>) => {
+        // Check consent before processing
+        if (config.validateConsent !== false && !hasConsent) {
+          const reason = `Consent denied for ${config.processingPurpose} on ${config.dataCategory} data`;
+          config.onConsentDenied?.(reason);
+          return;
+        }
 
-      // Process data with LGPD compliance
-      const processedPayload = processRealtimeData(payload);
-      
-      if (processedPayload && originalHandler) {
-        originalHandler(processedPayload);
-      }
-    };
-  }, [hasConsent, config, processRealtimeData]);
+        // Process data with LGPD compliance
+        const processedPayload = processRealtimeData(payload);
+
+        if (processedPayload && originalHandler) {
+          originalHandler(processedPayload);
+        }
+      };
+    },
+    [hasConsent, config, processRealtimeData]
+  );
 
   // Enhanced realtime config with LGPD handlers
   const lgpdRealtimeConfig: UseRealtimeConfig<T> = {
@@ -241,8 +263,11 @@ export function useLGPDPatientRealtime(
 
   const config: UseLGPDRealtimeConfig = {
     table: 'patients',
-    filter: options.patientId ? `id=eq.${options.patientId}` : 
-             options.clinicId ? `clinic_id=eq.${options.clinicId}` : undefined,
+    filter: options.patientId
+      ? `id=eq.${options.patientId}`
+      : options.clinicId
+        ? `clinic_id=eq.${options.clinicId}`
+        : undefined,
     enabled: options.enabled,
     userId: options.userId,
     dataCategory: LGPDDataCategory.SENSITIVE,
@@ -293,7 +318,7 @@ export function useLGPDAppointmentRealtime(
 
   const buildFilter = useCallback(() => {
     const filters = [];
-    
+
     if (options.appointmentId) {
       filters.push(`id=eq.${options.appointmentId}`);
     }
@@ -306,7 +331,7 @@ export function useLGPDAppointmentRealtime(
     if (options.clinicId) {
       filters.push(`clinic_id=eq.${options.clinicId}`);
     }
-    
+
     return filters.join(',');
   }, [options]);
 

@@ -25,7 +25,7 @@ export default defineConfig({
   // EXCLUDE UNIT TESTS TO AVOID CONFLICTS
   testIgnore: [
     '**/*.test.ts',
-    '**/*.test.tsx', 
+    '**/*.test.tsx',
     '**/tests/**/*.test.{ts,tsx}',
     '**/packages/**/*.test.{ts,tsx}',
     '**/src/**/*.test.{ts,tsx}',

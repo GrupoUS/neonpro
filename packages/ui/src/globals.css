@@ -1,0 +1,187 @@
+/* NEONPROV1 Theme - Healthcare Design System */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* NEONPROV1 Color System - Healthcare Focused */
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    
+    /* Healthcare Primary - Professional Blue */
+    --primary: 214 84% 56%;
+    --primary-foreground: 0 0% 98%;
+    
+    /* Healthcare Secondary - Soft Mint */
+    --secondary: 162 63% 41%;
+    --secondary-foreground: 0 0% 98%;
+    
+    /* Healthcare Accent - Warm Accent */
+    --accent: 210 40% 96%;
+    --accent-foreground: 240 5.9% 10%;
+    
+    /* Muted - Subtle Background */
+    --muted: 210 40% 98%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    
+    /* Destructive - Medical Alert Red */
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    
+    /* Warning - Medical Attention Yellow */
+    --warning: 38 92% 50%;
+    --warning-foreground: 26 83% 14%;
+    
+    /* Success - Medical Approval Green */
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 98%;
+    
+    /* Info - Medical Info Blue */
+    --info: 199 89% 48%;
+    --info-foreground: 0 0% 98%;
+    
+    /* Border and Input */
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 214 84% 56%;
+    
+    /* Healthcare Status Colors */
+    --status-critical: 0 84% 60%;
+    --status-urgent: 25 95% 53%;
+    --status-normal: 142 76% 36%;
+    --status-inactive: 215 16% 47%;
+    
+    /* LGPD Compliance Colors */
+    --lgpd-compliant: 142 76% 36%;
+    --lgpd-warning: 38 92% 50%;
+    --lgpd-violation: 0 84% 60%;
+    
+    /* Chart Colors for Healthcare Analytics */
+    --chart-1: 214 84% 56%;
+    --chart-2: 162 63% 41%;
+    --chart-3: 38 92% 50%;
+    --chart-4: 0 84% 60%;
+    --chart-5: 142 76% 36%;
+    
+    /* Accessibility Focus */
+    --focus-ring: 214 84% 56%;
+    --focus-ring-offset: 0 0% 100%;
+    
+    /* Healthcare Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(214 84% 56%) 0%, hsl(162 63% 41%) 100%);
+    --gradient-secondary: linear-gradient(135deg, hsl(162 63% 41%) 0%, hsl(214 84% 56%) 100%);
+    
+    /* Border Radius */
+    --radius: 0.5rem;
+    --radius-sm: 0.25rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    
+    /* Healthcare Primary - Professional Blue (Dark) */
+    --primary: 214 84% 65%;
+    --primary-foreground: 222.2 84% 4.9%;
+    
+    /* Healthcare Secondary - Soft Mint (Dark) */
+    --secondary: 162 63% 50%;
+    --secondary-foreground: 222.2 84% 4.9%;
+    
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    
+    /* Medical Alert Colors (Dark) */
+    --destructive: 0 62.8% 55%;
+    --destructive-foreground: 210 40% 98%;
+    --warning: 38 92% 60%;
+    --warning-foreground: 26 83% 14%;
+    --success: 142 76% 45%;
+    --success-foreground: 210 40% 98%;
+    --info: 199 89% 58%;
+    --info-foreground: 210 40% 98%;
+    
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 214 84% 65%;
+    
+    /* Healthcare Status Colors (Dark) */
+    --status-critical: 0 62% 55%;
+    --status-urgent: 25 95% 63%;
+    --status-normal: 142 76% 45%;
+    --status-inactive: 215 20% 65%;
+    
+    /* LGPD Compliance Colors (Dark) */
+    --lgpd-compliant: 142 76% 45%;
+    --lgpd-warning: 38 92% 60%;
+    --lgpd-violation: 0 62% 55%;
+    
+    /* Chart Colors (Dark) */
+    --chart-1: 214 84% 65%;
+    --chart-2: 162 63% 50%;
+    --chart-3: 38 92% 60%;
+    --chart-4: 0 62% 55%;
+    --chart-5: 142 76% 45%;
+    
+    --focus-ring: 214 84% 65%;
+    --focus-ring-offset: 222.2 84% 4.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  /* Healthcare-specific base styles */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold text-foreground leading-tight;
+  }
+  
+  /* Accessibility enhancements */
+  :focus-visible {
+    @apply outline-none ring-2 ring-focus-ring ring-offset-2 ring-offset-focus-ring-offset;
+  }
+  
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+  
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    :root {
+      --border: 0 0% 20%;
+      --ring: 214 100% 50%;
+    }
+    
+    .dark {
+      --border: 0 0% 80%;
+      --ring: 214 100% 70%;
+    }
+  }
+}

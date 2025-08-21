@@ -1,0 +1,44 @@
+{
+  "name": "@neonpro/final-validation",
+  "version": "1.0.0",
+  "description": "NeonPro Healthcare Platform - Final Validation Test Suite",
+  "private": true,
+  "scripts": {
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:integration": "vitest run --config final-test-suite.config.ts integration/",
+    "test:healthcare": "vitest run --config final-test-suite.config.ts healthcare-workflows/",
+    "test:performance": "vitest run --config final-test-suite.config.ts performance/",
+    "test:deployment": "vitest run --config final-test-suite.config.ts production-deployment/",
+    "test:certification": "vitest run --config final-test-suite.config.ts final-production-certification.test.ts",
+    "validate:final": "tsx run-final-validation.ts",
+    "validate:quick": "npm run test:integration && npm run test:certification",
+    "validate:full": "npm run test:coverage && npm run validate:final",
+    "report:generate": "tsx run-final-validation.ts --report-only",
+    "clean": "rm -rf coverage/ .vitest/ *.json",
+    "setup": "npm install && npm run clean"
+  },
+  "dependencies": {
+    "@testing-library/react": "^14.0.0",
+    "@testing-library/jest-dom": "^6.1.0",
+    "@testing-library/user-event": "^14.5.0",
+    "@tanstack/react-query": "^5.0.0",
+    "@vitest/coverage-v8": "^1.0.0",
+    "jsdom": "^23.0.0",
+    "tsx": "^4.0.0",
+    "vitest": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "keywords": [
+    "healthcare",
+    "testing",
+    "validation",
+    "neonpro",
+    "lgpd",
+    "compliance"
+  ]
+}

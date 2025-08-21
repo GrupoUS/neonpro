@@ -1,24 +1,39 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
+    // Target modern ESNext to match tsup build configuration
+    "target": "ESNext",
     "module": "ESNext",
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
+    "moduleResolution": "node",
+    
+    // ESM and module configurations
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
+    
+    // Strict type checking (healthcare compliance)
     "strict": true,
     "noUncheckedIndexedAccess": true,
+    // "exactOptionalPropertyTypes": true, // Temporary disabled - too strict for current codebase
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    // "noUncheckedSideEffectImports": true, // Temporary disabled
+    
+    // Build configurations
     "skipLibCheck": true,
     "declaration": true,
+    "declarationMap": true,
     "outDir": "./dist",
-    "rootDir": "./src",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": false,
-    "jsx": "preserve",
-    "lib": ["ES2022"],
-    "types": ["node"],
+    
+    // Type checking only (tsup handles building)
+    "noEmit": true,
+    
+    // Libraries for Node.js environment
+    "lib": ["ESNext"],
+    "types": ["node", "vitest/globals"],
+    
+    // Path mapping
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
@@ -27,9 +42,23 @@
       "@/middleware/*": ["./src/middleware/*"],
       "@/routes/*": ["./src/routes/*"],
       "@neonpro/shared": ["../../packages/shared/src"],
-      "@neonpro/database": ["../../packages/database/src"]
+      "@neonpro/shared/*": ["../../packages/shared/src/*"],
+      "@neonpro/database": ["../../packages/database/src"],
+      "@neonpro/types": ["../../packages/types/src"]
     }
   },
-  "include": ["src/**/*", "src/**/*.json"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
+  "include": [
+    "src/**/*",
+    "src/**/*.json",
+    "vitest.config.ts",
+    "vitest.setup.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts", 
+    "**/*.spec.ts",
+    "main.py",
+    "routers/"
+  ]
 }

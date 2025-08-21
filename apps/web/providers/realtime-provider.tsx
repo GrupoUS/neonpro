@@ -8,15 +8,15 @@
  * with TanStack Query integration and LGPD compliance
  */
 
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { useQueryClient } from '@tanstack/react-query';
-import { createClient } from '@/lib/supabase/client';
-import { 
-  RealtimeQueryManager,
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import {
   defaultRealtimeConfig,
   type RealtimeQueryConfig,
+  RealtimeQueryManager,
 } from '@/lib/query/realtime-query-utils';
+import { createClient } from '@/lib/supabase/client';
 
 // Real-time context interface
 interface RealtimeContextValue {
@@ -34,10 +34,10 @@ interface RealtimeContextValue {
 const RealtimeContext = createContext<RealtimeContextValue | null>(null);
 
 // Provider component
-export function RealtimeProvider({ 
+export function RealtimeProvider({
   children,
   config = defaultRealtimeConfig,
-}: { 
+}: {
   children: React.ReactNode;
   config?: RealtimeQueryConfig;
 }) {
@@ -45,7 +45,9 @@ export function RealtimeProvider({
   const [supabaseClient] = useState(() => createClient());
   const [manager, setManager] = useState<RealtimeQueryManager | null>(null);
   const [isEnabled, setIsEnabled] = useState(config.enabled);
-  const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected' | 'error'>('disconnected');
+  const [connectionStatus, setConnectionStatus] = useState<
+    'connecting' | 'connected' | 'disconnected' | 'error'
+  >('disconnected');
   const [currentConfig, setCurrentConfig] = useState(config);
   const managerRef = useRef<RealtimeQueryManager | null>(null);
 
@@ -69,7 +71,8 @@ export function RealtimeProvider({
       return () => {
         clearTimeout(timeout);
       };
-    } else if (!isEnabled && manager) {
+    }
+    if (!isEnabled && manager) {
       // Clean up manager when disabled
       manager.cleanup();
       setManager(null);
@@ -115,7 +118,9 @@ export function RealtimeProvider({
 export function useRealtimeContext(): RealtimeContextValue {
   const context = useContext(RealtimeContext);
   if (!context) {
-    throw new Error('useRealtimeContext must be used within a RealtimeProvider');
+    throw new Error(
+      'useRealtimeContext must be used within a RealtimeProvider'
+    );
   }
   return context;
 }
@@ -139,7 +144,7 @@ export function useSupabaseRealtime() {
 // Hook to toggle realtime functionality
 export function useRealtimeToggle() {
   const { isEnabled, enableRealtime, disableRealtime } = useRealtimeContext();
-  
+
   const toggle = () => {
     if (isEnabled) {
       disableRealtime();
@@ -148,7 +153,12 @@ export function useRealtimeToggle() {
     }
   };
 
-  return { isEnabled, toggle, enable: enableRealtime, disable: disableRealtime };
+  return {
+    isEnabled,
+    toggle,
+    enable: enableRealtime,
+    disable: disableRealtime,
+  };
 }
 
 // Hook to update realtime configuration

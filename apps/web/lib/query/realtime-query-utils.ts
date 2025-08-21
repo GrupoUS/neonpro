@@ -6,15 +6,15 @@
  * Combines server state management with live data updates
  */
 
-import { useQueryClient, type QueryClient } from '@tanstack/react-query';
-import type { SupabaseClient } from '@supabase/supabase-js';
-import { useCallback, useEffect } from 'react';
-import { 
-  usePatientRealtime, 
-  useAppointmentRealtime, 
-  useProfessionalRealtime,
+import {
+  useAppointmentRealtime,
   useDashboardRealtime,
+  usePatientRealtime,
+  useProfessionalRealtime,
 } from '@neonpro/shared/hooks/use-healthcare-realtime';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import { type QueryClient, useQueryClient } from '@tanstack/react-query';
+import { useCallback, useEffect } from 'react';
 
 // Enhanced query invalidation strategies
 export type InvalidationStrategy = {
@@ -74,7 +74,10 @@ export class RealtimeQueryManager {
     }
   }
 
-  private executeInvalidation(queryKey: string[], strategy: InvalidationStrategy) {
+  private executeInvalidation(
+    queryKey: string[],
+    strategy: InvalidationStrategy
+  ) {
     if (strategy.immediate) {
       this.queryClient.invalidateQueries({ queryKey });
     }
@@ -136,33 +139,45 @@ export function useRealtimePatients(
 ) {
   const manager = useRealtimeQueryManager(supabaseClient);
 
-  const handlePatientUpdate = useCallback((patient: any) => {
-    const strategy: InvalidationStrategy = {
-      immediate: options.config?.invalidationStrategy?.immediate ?? true,
-      debounced: options.config?.invalidationStrategy?.debounced ?? false,
-      debounceMs: options.config?.invalidationStrategy?.debounceMs ?? 500,
-      background: options.config?.invalidationStrategy?.background ?? true,
-    };
+  const handlePatientUpdate = useCallback(
+    (patient: any) => {
+      const strategy: InvalidationStrategy = {
+        immediate: options.config?.invalidationStrategy?.immediate ?? true,
+        debounced: options.config?.invalidationStrategy?.debounced ?? false,
+        debounceMs: options.config?.invalidationStrategy?.debounceMs ?? 500,
+        background: options.config?.invalidationStrategy?.background ?? true,
+      };
 
-    // Invalidate related queries
-    manager.invalidateWithStrategy(['patients'], strategy);
-    
-    if (options.patientId) {
-      manager.invalidateWithStrategy(['patients', options.patientId], strategy);
-    }
-    
-    if (options.clinicId) {
-      manager.invalidateWithStrategy(['patients', 'by-clinic', options.clinicId], strategy);
-    }
+      // Invalidate related queries
+      manager.invalidateWithStrategy(['patients'], strategy);
 
-    // Also invalidate dashboard metrics that depend on patient data
-    manager.invalidateWithStrategy(['dashboard', 'metrics'], strategy);
-    
-    // Invalidate appointments for this patient
-    if (patient?.id) {
-      manager.invalidateWithStrategy(['appointments', 'by-patient', patient.id], strategy);
-    }
-  }, [manager, options.patientId, options.clinicId, options.config]);
+      if (options.patientId) {
+        manager.invalidateWithStrategy(
+          ['patients', options.patientId],
+          strategy
+        );
+      }
+
+      if (options.clinicId) {
+        manager.invalidateWithStrategy(
+          ['patients', 'by-clinic', options.clinicId],
+          strategy
+        );
+      }
+
+      // Also invalidate dashboard metrics that depend on patient data
+      manager.invalidateWithStrategy(['dashboard', 'metrics'], strategy);
+
+      // Invalidate appointments for this patient
+      if (patient?.id) {
+        manager.invalidateWithStrategy(
+          ['appointments', 'by-patient', patient.id],
+          strategy
+        );
+      }
+    },
+    [manager, options.patientId, options.clinicId, options.config]
+  );
 
   const realtime = usePatientRealtime(supabaseClient, {
     patientId: options.patientId,
@@ -193,36 +208,48 @@ export function useRealtimeAppointments(
 ) {
   const manager = useRealtimeQueryManager(supabaseClient);
 
-  const handleAppointmentUpdate = useCallback((appointment: any) => {
-    const strategy: InvalidationStrategy = {
-      immediate: options.config?.invalidationStrategy?.immediate ?? true,
-      debounced: options.config?.invalidationStrategy?.debounced ?? true,
-      debounceMs: options.config?.invalidationStrategy?.debounceMs ?? 300,
-      background: options.config?.invalidationStrategy?.background ?? true,
-    };
+  const handleAppointmentUpdate = useCallback(
+    (appointment: any) => {
+      const strategy: InvalidationStrategy = {
+        immediate: options.config?.invalidationStrategy?.immediate ?? true,
+        debounced: options.config?.invalidationStrategy?.debounced ?? true,
+        debounceMs: options.config?.invalidationStrategy?.debounceMs ?? 300,
+        background: options.config?.invalidationStrategy?.background ?? true,
+      };
 
-    // Invalidate appointment queries
-    manager.invalidateWithStrategy(['appointments'], strategy);
-    
-    if (options.appointmentId) {
-      manager.invalidateWithStrategy(['appointments', options.appointmentId], strategy);
-    }
-    
-    if (options.patientId) {
-      manager.invalidateWithStrategy(['appointments', 'by-patient', options.patientId], strategy);
-    }
-    
-    if (options.professionalId) {
-      manager.invalidateWithStrategy(['appointments', 'by-professional', options.professionalId], strategy);
-    }
+      // Invalidate appointment queries
+      manager.invalidateWithStrategy(['appointments'], strategy);
 
-    // Update calendar/schedule views
-    manager.invalidateWithStrategy(['schedule'], strategy);
-    manager.invalidateWithStrategy(['calendar'], strategy);
-    
-    // Update dashboard metrics
-    manager.invalidateWithStrategy(['dashboard', 'appointments'], strategy);
-  }, [manager, options, options.config]);
+      if (options.appointmentId) {
+        manager.invalidateWithStrategy(
+          ['appointments', options.appointmentId],
+          strategy
+        );
+      }
+
+      if (options.patientId) {
+        manager.invalidateWithStrategy(
+          ['appointments', 'by-patient', options.patientId],
+          strategy
+        );
+      }
+
+      if (options.professionalId) {
+        manager.invalidateWithStrategy(
+          ['appointments', 'by-professional', options.professionalId],
+          strategy
+        );
+      }
+
+      // Update calendar/schedule views
+      manager.invalidateWithStrategy(['schedule'], strategy);
+      manager.invalidateWithStrategy(['calendar'], strategy);
+
+      // Update dashboard metrics
+      manager.invalidateWithStrategy(['dashboard', 'appointments'], strategy);
+    },
+    [manager, options, options.config]
+  );
 
   const realtime = useAppointmentRealtime(supabaseClient, {
     appointmentId: options.appointmentId,
@@ -254,34 +281,49 @@ export function useRealtimeProfessionals(
 ) {
   const manager = useRealtimeQueryManager(supabaseClient);
 
-  const handleProfessionalUpdate = useCallback((professional: any) => {
-    const strategy: InvalidationStrategy = {
-      immediate: options.config?.invalidationStrategy?.immediate ?? true,
-      debounced: options.config?.invalidationStrategy?.debounced ?? false,
-      background: options.config?.invalidationStrategy?.background ?? true,
-    };
+  const handleProfessionalUpdate = useCallback(
+    (professional: any) => {
+      const strategy: InvalidationStrategy = {
+        immediate: options.config?.invalidationStrategy?.immediate ?? true,
+        debounced: options.config?.invalidationStrategy?.debounced ?? false,
+        background: options.config?.invalidationStrategy?.background ?? true,
+      };
 
-    // Invalidate professional queries
-    manager.invalidateWithStrategy(['professionals'], strategy);
-    
-    if (options.professionalId) {
-      manager.invalidateWithStrategy(['professionals', options.professionalId], strategy);
-    }
-    
-    if (options.clinicId) {
-      manager.invalidateWithStrategy(['professionals', 'by-clinic', options.clinicId], strategy);
-    }
-    
-    if (options.specialty) {
-      manager.invalidateWithStrategy(['professionals', 'by-specialty', options.specialty], strategy);
-    }
+      // Invalidate professional queries
+      manager.invalidateWithStrategy(['professionals'], strategy);
 
-    // Update related appointment availability
-    manager.invalidateWithStrategy(['appointments', 'availability'], strategy);
-    
-    // Update dashboard metrics
-    manager.invalidateWithStrategy(['dashboard', 'professionals'], strategy);
-  }, [manager, options, options.config]);
+      if (options.professionalId) {
+        manager.invalidateWithStrategy(
+          ['professionals', options.professionalId],
+          strategy
+        );
+      }
+
+      if (options.clinicId) {
+        manager.invalidateWithStrategy(
+          ['professionals', 'by-clinic', options.clinicId],
+          strategy
+        );
+      }
+
+      if (options.specialty) {
+        manager.invalidateWithStrategy(
+          ['professionals', 'by-specialty', options.specialty],
+          strategy
+        );
+      }
+
+      // Update related appointment availability
+      manager.invalidateWithStrategy(
+        ['appointments', 'availability'],
+        strategy
+      );
+
+      // Update dashboard metrics
+      manager.invalidateWithStrategy(['dashboard', 'professionals'], strategy);
+    },
+    [manager, options, options.config]
+  );
 
   const realtime = useProfessionalRealtime(supabaseClient, {
     professionalId: options.professionalId,
@@ -309,23 +351,29 @@ export function useRealtimeDashboard(
 ) {
   const manager = useRealtimeQueryManager(supabaseClient);
 
-  const handleDashboardUpdate = useCallback((data: any) => {
-    const strategy: InvalidationStrategy = {
-      immediate: false, // Dashboard updates can be less aggressive
-      debounced: true,
-      debounceMs: 1000, // 1 second debounce for dashboard
-      background: true,
-    };
+  const handleDashboardUpdate = useCallback(
+    (data: any) => {
+      const strategy: InvalidationStrategy = {
+        immediate: false, // Dashboard updates can be less aggressive
+        debounced: true,
+        debounceMs: 1000, // 1 second debounce for dashboard
+        background: true,
+      };
 
-    // Invalidate all dashboard-related queries
-    manager.invalidateWithStrategy(['dashboard'], strategy);
-    manager.invalidateWithStrategy(['dashboard', 'metrics'], strategy);
-    manager.invalidateWithStrategy(['dashboard', 'analytics'], strategy);
-    
-    if (options.clinicId) {
-      manager.invalidateWithStrategy(['dashboard', 'clinic', options.clinicId], strategy);
-    }
-  }, [manager, options.clinicId, options.config]);
+      // Invalidate all dashboard-related queries
+      manager.invalidateWithStrategy(['dashboard'], strategy);
+      manager.invalidateWithStrategy(['dashboard', 'metrics'], strategy);
+      manager.invalidateWithStrategy(['dashboard', 'analytics'], strategy);
+
+      if (options.clinicId) {
+        manager.invalidateWithStrategy(
+          ['dashboard', 'clinic', options.clinicId],
+          strategy
+        );
+      }
+    },
+    [manager, options.clinicId, options.config]
+  );
 
   const realtime = useDashboardRealtime(supabaseClient, {
     clinicId: options.clinicId,

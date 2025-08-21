@@ -1,12 +1,15 @@
 /**
  * 🔄 Real-time Types - NeonPro Healthcare
- * ====================================== 
+ * ======================================
  *
  * Type-safe definitions for Supabase real-time subscriptions
  * with healthcare-specific events and LGPD compliance
  */
 
-import type { RealtimeChannel, RealtimePostgresChangesPayload } from '@supabase/supabase-js';
+import type {
+  RealtimeChannel,
+  RealtimePostgresChangesPayload,
+} from '@supabase/supabase-js';
 import type { Database } from '../../../packages/db/src/types';
 
 // Healthcare database tables for real-time subscriptions
@@ -17,7 +20,8 @@ export type ProfessionalRow = Tables['professionals']['Row'];
 export type AuditLogRow = Tables['audit_logs']['Row'];
 
 // Real-time payload types
-export type RealtimePayload<T = Record<string, any>> = RealtimePostgresChangesPayload<T>;
+export type RealtimePayload<T = Record<string, any>> =
+  RealtimePostgresChangesPayload<T>;
 
 // Healthcare-specific event types
 export interface PatientRealtimePayload extends RealtimePayload<PatientRow> {
@@ -26,13 +30,15 @@ export interface PatientRealtimePayload extends RealtimePayload<PatientRow> {
   schema: 'public';
 }
 
-export interface AppointmentRealtimePayload extends RealtimePayload<AppointmentRow> {
+export interface AppointmentRealtimePayload
+  extends RealtimePayload<AppointmentRow> {
   eventType: 'INSERT' | 'UPDATE' | 'DELETE';
   table: 'appointments';
   schema: 'public';
 }
 
-export interface ProfessionalRealtimePayload extends RealtimePayload<ProfessionalRow> {
+export interface ProfessionalRealtimePayload
+  extends RealtimePayload<ProfessionalRow> {
   eventType: 'INSERT' | 'UPDATE' | 'DELETE';
   table: 'professionals';
   schema: 'public';
@@ -45,7 +51,7 @@ export interface AuditRealtimePayload extends RealtimePayload<AuditLogRow> {
 }
 
 // Union type for all healthcare real-time events
-export type HealthcareRealtimePayload = 
+export type HealthcareRealtimePayload =
   | PatientRealtimePayload
   | AppointmentRealtimePayload
   | ProfessionalRealtimePayload
@@ -78,7 +84,8 @@ export interface PatientSubscriptionConfig extends RealtimeSubscriptionConfig {
   lgpdConfig?: LGPDRealtimeConfig;
 }
 
-export interface AppointmentSubscriptionConfig extends RealtimeSubscriptionConfig {
+export interface AppointmentSubscriptionConfig
+  extends RealtimeSubscriptionConfig {
   table: 'appointments';
   appointmentId?: string;
   patientId?: string;
@@ -90,7 +97,8 @@ export interface AppointmentSubscriptionConfig extends RealtimeSubscriptionConfi
   };
 }
 
-export interface ProfessionalSubscriptionConfig extends RealtimeSubscriptionConfig {
+export interface ProfessionalSubscriptionConfig
+  extends RealtimeSubscriptionConfig {
   table: 'professionals';
   professionalId?: string;
   clinicId?: string;
@@ -107,7 +115,9 @@ export interface RealtimeChannelManager {
 }
 
 // Real-time event handlers
-export type RealtimeEventHandler<T = any> = (payload: RealtimePayload<T>) => void;
+export type RealtimeEventHandler<T = any> = (
+  payload: RealtimePayload<T>
+) => void;
 
 export interface RealtimeEventHandlers {
   onInsert?: RealtimeEventHandler;

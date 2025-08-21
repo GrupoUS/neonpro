@@ -357,7 +357,7 @@ test.describe('LGPD Compliance Complete Flow', () => {
     // Should create audit log entry
     await expect(
       page.locator('text=Incidente de violação de dados registrado')
-    ).toBeVisible();
+    ).toBeVisible()
   });
 
   test('should manage consent withdrawal process', async ({ page }) => {

@@ -6,10 +6,10 @@
  * with LGPD compliance and TanStack Query integration
  */
 
-import { useCallback } from 'react';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { useRealtimeQuery } from './use-realtime';
+import { useCallback } from 'react';
 import type { UseRealtimeQueryConfig } from '../types/realtime.types';
+import { useRealtimeQuery } from './use-realtime';
 
 /**
  * Healthcare-specific patient real-time hook
@@ -25,8 +25,11 @@ export function usePatientRealtime(
 ) {
   const config: UseRealtimeQueryConfig = {
     table: 'patients',
-    filter: options.patientId ? `id=eq.${options.patientId}` : 
-             options.clinicId ? `clinic_id=eq.${options.clinicId}` : undefined,
+    filter: options.patientId
+      ? `id=eq.${options.patientId}`
+      : options.clinicId
+        ? `clinic_id=eq.${options.clinicId}`
+        : undefined,
     queryKey: ['patients', options.patientId, options.clinicId].filter(Boolean),
     enabled: options.enabled,
     lgpdCompliance: true,
@@ -60,7 +63,7 @@ export function useAppointmentRealtime(
 ) {
   const buildFilter = useCallback(() => {
     const filters = [];
-    
+
     if (options.appointmentId) {
       filters.push(`id=eq.${options.appointmentId}`);
     }
@@ -77,14 +80,19 @@ export function useAppointmentRealtime(
       filters.push(`scheduled_at=gte.${options.dateRange.start}`);
       filters.push(`scheduled_at=lte.${options.dateRange.end}`);
     }
-    
+
     return filters.join(',');
   }, [options]);
 
   const config: UseRealtimeQueryConfig = {
     table: 'appointments',
     filter: buildFilter(),
-    queryKey: ['appointments', options.appointmentId, options.patientId, options.professionalId].filter(Boolean),
+    queryKey: [
+      'appointments',
+      options.appointmentId,
+      options.patientId,
+      options.professionalId,
+    ].filter(Boolean),
     enabled: options.enabled,
     lgpdCompliance: true,
     auditLogging: true,
@@ -115,7 +123,7 @@ export function useProfessionalRealtime(
 ) {
   const buildFilter = useCallback(() => {
     const filters = [];
-    
+
     if (options.professionalId) {
       filters.push(`id=eq.${options.professionalId}`);
     }
@@ -125,14 +133,18 @@ export function useProfessionalRealtime(
     if (options.specialty) {
       filters.push(`specialty=eq.${options.specialty}`);
     }
-    
+
     return filters.join(',');
   }, [options]);
 
   const config: UseRealtimeQueryConfig = {
     table: 'professionals',
     filter: buildFilter(),
-    queryKey: ['professionals', options.professionalId, options.clinicId].filter(Boolean),
+    queryKey: [
+      'professionals',
+      options.professionalId,
+      options.clinicId,
+    ].filter(Boolean),
     enabled: options.enabled,
     lgpdCompliance: true,
     auditLogging: true,
@@ -183,9 +195,10 @@ export function useDashboardRealtime(
     appointments: appointmentsRealtime,
     patients: patientsRealtime,
     professionals: professionalsRealtime,
-    isConnected: appointmentsRealtime.isConnected || 
-                 patientsRealtime.isConnected || 
-                 professionalsRealtime.isConnected,
+    isConnected:
+      appointmentsRealtime.isConnected ||
+      patientsRealtime.isConnected ||
+      professionalsRealtime.isConnected,
     errors: [
       appointmentsRealtime.error,
       patientsRealtime.error,
@@ -209,7 +222,7 @@ export function useAuditRealtime(
 ) {
   const buildFilter = useCallback(() => {
     const filters = [];
-    
+
     if (options.table) {
       filters.push(`table_name=eq.${options.table}`);
     }
@@ -219,7 +232,7 @@ export function useAuditRealtime(
     if (options.action) {
       filters.push(`action=eq.${options.action}`);
     }
-    
+
     return filters.join(',');
   }, [options]);
 
@@ -227,7 +240,12 @@ export function useAuditRealtime(
     table: 'audit_logs',
     event: 'INSERT', // Only listen to new audit entries
     filter: buildFilter(),
-    queryKey: ['audit_logs', options.table, options.userId, options.action].filter(Boolean),
+    queryKey: [
+      'audit_logs',
+      options.table,
+      options.userId,
+      options.action,
+    ].filter(Boolean),
     enabled: options.enabled,
     lgpdCompliance: true,
     auditLogging: false, // Don't audit the audit logs

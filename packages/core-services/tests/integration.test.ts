@@ -1,19 +1,19 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type {
+  AISchedulingConfig,
+  CreateInvoiceData,
+  CreateNotificationTemplateData,
+  CreatePatientData,
+  CreateStockItemData,
+  CreateTreatmentPlanData,
+} from '../src';
 import {
   AISchedulingService, // Corrigido nome do service
-  TreatmentService,
-  PatientService,
   BillingService,
   InventoryService,
   NotificationService,
-} from '../src';
-import type {
-  AISchedulingConfig,
-  CreateTreatmentPlanData,
-  CreatePatientData,
-  CreateInvoiceData,
-  CreateStockItemData,
-  CreateNotificationTemplateData,
+  PatientService,
+  TreatmentService,
 } from '../src';
 
 describe('Core Services Integration', () => {

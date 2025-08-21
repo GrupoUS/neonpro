@@ -1,7 +1,7 @@
 // LGPD Automation Tests
 // Using Vitest for testing framework
 
-import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock LGPD automation implementation
 class MockLGPDAutomation {
@@ -51,7 +51,7 @@ describe('LGPD Automation', () => {
     };
 
     const result = await automation.validateDataProcessing(mockData);
-    
+
     expect(result).toHaveProperty('isCompliant');
     expect(result).toHaveProperty('violations');
     expect(result).toHaveProperty('recommendations');
@@ -66,7 +66,7 @@ describe('LGPD Automation', () => {
     };
 
     const result = await automation.handleDataSubjectRequest(mockRequest);
-    
+
     expect(result.processed).toBe(true);
     expect(result.requestId).toBe(mockRequest.id);
     expect(result.status).toBe('completed');
@@ -74,7 +74,7 @@ describe('LGPD Automation', () => {
 
   it('should generate compliance reports', async () => {
     const result = await automation.generateComplianceReport();
-    
+
     expect(result).toHaveProperty('reportId');
     expect(result).toHaveProperty('compliance');
     expect(result).toHaveProperty('issues');

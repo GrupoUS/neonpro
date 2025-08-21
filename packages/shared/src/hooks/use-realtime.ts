@@ -6,29 +6,29 @@
  * with TanStack Query integration and LGPD compliance
  */
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import type { RealtimeChannel, SupabaseClient } from '@supabase/supabase-js';
 import { useQueryClient } from '@tanstack/react-query';
-import type { SupabaseClient, RealtimeChannel } from '@supabase/supabase-js';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type {
-  UseRealtimeConfig,
-  UseRealtimeQueryConfig,
+  HealthcareRealtimePayload,
+  LGPDRealtimeConfig,
   RealtimeEventHandler,
   RealtimeHealthCheck,
-  LGPDRealtimeConfig,
-  HealthcareRealtimePayload,
+  UseRealtimeConfig,
+  UseRealtimeQueryConfig,
 } from '../types/realtime.types';
 
 // LGPD compliance utilities
 const sanitizeRealtimeData = (data: any, sensitiveFields: string[] = []) => {
   if (!data || typeof data !== 'object') return data;
-  
+
   const sanitized = { ...data };
-  sensitiveFields.forEach(field => {
+  sensitiveFields.forEach((field) => {
     if (field in sanitized) {
       sanitized[field] = '***PROTECTED***';
     }
   });
-  
+
   return sanitized;
 };
 
@@ -39,10 +39,10 @@ const logRealtimeEvent = (
   lgpdConfig?: LGPDRealtimeConfig
 ) => {
   if (lgpdConfig?.enableAuditLogging) {
-    const logData = lgpdConfig.enableDataMinimization 
+    const logData = lgpdConfig.enableDataMinimization
       ? sanitizeRealtimeData(payload, lgpdConfig.sensitiveFields)
       : payload;
-      
+
     console.log(`[REALTIME-AUDIT] ${event} on ${table}:`, {
       timestamp: new Date().toISOString(),
       event,
@@ -67,38 +67,42 @@ export function useRealtime<T = any>(
   const channelRef = useRef<RealtimeChannel | null>(null);
   const queryClient = useQueryClient();
 
-  const handleRealtimeEvent = useCallback((
-    eventType: 'INSERT' | 'UPDATE' | 'DELETE',
-    payload: any,
-    handler?: RealtimeEventHandler<T>
-  ) => {
-    try {
-      // LGPD compliance logging
-      if (config.lgpdCompliance) {
-        logRealtimeEvent(eventType, config.table, payload, {
-          enableAuditLogging: config.auditLogging || false,
-          enableDataMinimization: true,
-          enableConsentValidation: true,
-          sensitiveFields: ['cpf', 'rg', 'email', 'phone', 'address'],
-        });
+  const handleRealtimeEvent = useCallback(
+    (
+      eventType: 'INSERT' | 'UPDATE' | 'DELETE',
+      payload: any,
+      handler?: RealtimeEventHandler<T>
+    ) => {
+      try {
+        // LGPD compliance logging
+        if (config.lgpdCompliance) {
+          logRealtimeEvent(eventType, config.table, payload, {
+            enableAuditLogging: config.auditLogging,
+            enableDataMinimization: true,
+            enableConsentValidation: true,
+            sensitiveFields: ['cpf', 'rg', 'email', 'phone', 'address'],
+          });
+        }
+
+        // Update timestamp
+        setLastUpdate(new Date());
+
+        // Call event handler
+        if (handler) {
+          handler(payload);
+        }
+
+        // Clear any previous errors
+        setError(null);
+      } catch (err) {
+        const error =
+          err instanceof Error ? err : new Error('Realtime event error');
+        setError(error);
+        config.onError?.(error);
       }
-
-      // Update timestamp
-      setLastUpdate(new Date());
-
-      // Call event handler
-      if (handler) {
-        handler(payload);
-      }
-
-      // Clear any previous errors
-      setError(null);
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error('Realtime event error');
-      setError(error);
-      config.onError?.(error);
-    }
-  }, [config]);
+    },
+    [config]
+  );
 
   useEffect(() => {
     if (!config.enabled) return;
@@ -115,7 +119,7 @@ export function useRealtime<T = any>(
         },
         (payload) => {
           const eventType = payload.eventType as 'INSERT' | 'UPDATE' | 'DELETE';
-          
+
           switch (eventType) {
             case 'INSERT':
               handleRealtimeEvent(eventType, payload, config.onInsert);
@@ -186,20 +190,26 @@ export function useRealtimeQuery<T = any>(
 ) {
   const queryClient = useQueryClient();
 
-  const invalidateQueries = useCallback((eventType: string) => {
-    const shouldInvalidate = 
-      (eventType === 'INSERT' && config.queryOptions?.invalidateOnInsert !== false) ||
-      (eventType === 'UPDATE' && config.queryOptions?.invalidateOnUpdate !== false) ||
-      (eventType === 'DELETE' && config.queryOptions?.invalidateOnDelete !== false);
+  const invalidateQueries = useCallback(
+    (eventType: string) => {
+      const shouldInvalidate =
+        (eventType === 'INSERT' &&
+          config.queryOptions?.invalidateOnInsert !== false) ||
+        (eventType === 'UPDATE' &&
+          config.queryOptions?.invalidateOnUpdate !== false) ||
+        (eventType === 'DELETE' &&
+          config.queryOptions?.invalidateOnDelete !== false);
 
-    if (shouldInvalidate) {
-      queryClient.invalidateQueries({ queryKey: config.queryKey });
-      
-      if (config.queryOptions?.backgroundRefetch) {
-        queryClient.refetchQueries({ queryKey: config.queryKey });
+      if (shouldInvalidate) {
+        queryClient.invalidateQueries({ queryKey: config.queryKey });
+
+        if (config.queryOptions?.backgroundRefetch) {
+          queryClient.refetchQueries({ queryKey: config.queryKey });
+        }
       }
-    }
-  }, [queryClient, config.queryKey, config.queryOptions]);
+    },
+    [queryClient, config.queryKey, config.queryOptions]
+  );
 
   const realtimeConfig: UseRealtimeConfig<T> = {
     ...config,
