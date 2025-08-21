@@ -22,16 +22,16 @@ const buttonVariants = cva(
           'hover:bg-accent hover:text-accent-foreground active:bg-accent/80',
         link: 'text-primary underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 focus-visible:ring-0',
 
-        // Healthcare-specific variants
+        // NEONPROV1 Healthcare-specific variants
         medical:
-          'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-sm hover:from-blue-700 hover:to-blue-800 focus-visible:ring-blue-500/30 active:from-blue-800 active:to-blue-900',
+          'bg-gradient-primary text-primary-foreground shadow-healthcare-md hover:shadow-healthcare-lg focus-visible:ring-primary/30 transition-all duration-300 active:scale-[0.98]',
         emergency:
-          'animate-pulse bg-gradient-to-r from-red-600 to-red-700 text-white shadow-sm hover:from-red-700 hover:to-red-800 focus-visible:ring-red-500/30 active:from-red-800 active:to-red-900',
+          'animate-pulse-healthcare bg-gradient-to-br from-destructive via-red-600 to-destructive text-destructive-foreground shadow-healthcare-lg hover:shadow-healthcare-xl focus-visible:ring-destructive/30 transition-all duration-300 active:scale-[0.98]',
         success:
-          'bg-gradient-to-r from-green-600 to-green-700 text-white shadow-sm hover:from-green-700 hover:to-green-800 focus-visible:ring-green-500/30 active:from-green-800 active:to-green-900',
+          'bg-gradient-to-br from-success via-green-500 to-success text-success-foreground shadow-healthcare-md hover:shadow-healthcare-lg focus-visible:ring-success/30 transition-all duration-300 active:scale-[0.98]',
         warning:
-          'bg-gradient-to-r from-orange-600 to-orange-700 text-white shadow-sm hover:from-orange-700 hover:to-orange-800 focus-visible:ring-orange-500/30 active:from-orange-800 active:to-orange-900',
-        info: 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-sm hover:from-blue-600 hover:to-cyan-600 focus-visible:ring-cyan-500/30 active:from-blue-700 active:to-cyan-700',
+          'bg-gradient-to-br from-warning via-orange-500 to-warning text-warning-foreground shadow-healthcare-md hover:shadow-healthcare-lg focus-visible:ring-warning/30 transition-all duration-300 active:scale-[0.98]',
+        info: 'bg-gradient-to-br from-info via-cyan-500 to-info text-info-foreground shadow-healthcare-md hover:shadow-healthcare-lg focus-visible:ring-info/30 transition-all duration-300 active:scale-[0.98]',
       },
       size: {
         default: 'h-10 px-4 py-2',

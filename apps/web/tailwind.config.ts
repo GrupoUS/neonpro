@@ -59,28 +59,44 @@ const config: Config = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
-        // Healthcare status colors
+        // Healthcare status colors - NEONPROV1 Enhanced
         'status-critical': 'hsl(var(--status-critical))',
         'status-urgent': 'hsl(var(--status-urgent))',
         'status-normal': 'hsl(var(--status-normal))',
         'status-inactive': 'hsl(var(--status-inactive))',
-        // LGPD compliance colors
+        // LGPD compliance colors - NEONPROV1 Professional
         'lgpd-compliant': 'hsl(var(--lgpd-compliant))',
         'lgpd-warning': 'hsl(var(--lgpd-warning))',
         'lgpd-violation': 'hsl(var(--lgpd-violation))',
-        // Chart colors
+        // Chart colors - NEONPROV1 Analytics Palette
         chart: {
           '1': 'hsl(var(--chart-1))',
           '2': 'hsl(var(--chart-2))',
           '3': 'hsl(var(--chart-3))',
           '4': 'hsl(var(--chart-4))',
           '5': 'hsl(var(--chart-5))',
+          '6': 'hsl(var(--chart-6))',
         },
       },
       borderRadius: {
-        lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)',
+        lg: 'var(--radius-lg)',
+        md: 'var(--radius-md)',
+        sm: 'var(--radius-sm)',
+        xl: 'var(--radius-xl)',
+        '2xl': 'var(--radius-2xl)',
+        DEFAULT: 'var(--radius)',
+      },
+      backgroundImage: {
+        'gradient-primary': 'var(--gradient-primary)',
+        'gradient-secondary': 'var(--gradient-secondary)',
+        'gradient-accent': 'var(--gradient-accent)',
+        'gradient-card': 'var(--gradient-card)',
+      },
+      boxShadow: {
+        'healthcare-sm': 'var(--shadow-sm)',
+        'healthcare-md': 'var(--shadow-md)',
+        'healthcare-lg': 'var(--shadow-lg)',
+        'healthcare-xl': 'var(--shadow-xl)',
       },
       keyframes: {
         'accordion-down': {
@@ -91,10 +107,30 @@ const config: Config = {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' },
         },
+        'pulse-healthcare': {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.7' },
+        },
+        'slide-in-right': {
+          '0%': { transform: 'translateX(100%)', opacity: '0' },
+          '100%': { transform: 'translateX(0)', opacity: '1' },
+        },
+        'slide-in-left': {
+          '0%': { transform: 'translateX(-100%)', opacity: '0' },
+          '100%': { transform: 'translateX(0)', opacity: '1' },
+        },
+        'fade-in-up': {
+          '0%': { transform: 'translateY(20px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        'pulse-healthcare': 'pulse-healthcare 2s ease-in-out infinite',
+        'slide-in-right': 'slide-in-right 0.3s ease-out',
+        'slide-in-left': 'slide-in-left 0.3s ease-out',
+        'fade-in-up': 'fade-in-up 0.3s ease-out',
       },
     },
   },
