@@ -15,12 +15,13 @@ import { cn } from '../../lib/utils';
 const tableVariants = cva('w-full border-collapse', {
   variants: {
     variant: {
-      default: 'overflow-hidden rounded-lg border border-border',
+      default:
+        'overflow-hidden rounded-lg border border-border bg-gradient-card shadow-healthcare-sm backdrop-blur-sm',
       medical:
-        'overflow-hidden rounded-lg border-2 border-primary/20 bg-blue-50/30 dark:bg-blue-950/10',
+        'overflow-hidden rounded-lg border border-primary/30 bg-gradient-to-br from-primary/5 via-primary/3 to-transparent shadow-healthcare-md backdrop-blur-sm',
       patient:
-        'overflow-hidden rounded-lg border-2 border-secondary/20 bg-green-50/30 dark:bg-green-950/10',
-      simple: 'border-0',
+        'overflow-hidden rounded-lg border border-secondary/30 bg-gradient-to-br from-secondary/5 via-secondary/3 to-transparent shadow-healthcare-md backdrop-blur-sm',
+      simple: 'border-0 bg-transparent',
     },
     size: {
       default: '',
@@ -52,7 +53,10 @@ const TableHeader = React.forwardRef<
   React.HTMLAttributes<HTMLTableSectionElement>
 >(({ className, ...props }, ref) => (
   <thead
-    className={cn('border-border bg-muted/50 [&_tr]:border-b', className)}
+    className={cn(
+      'border-border bg-gradient-to-br from-muted/80 via-muted/60 to-muted/40 backdrop-blur-sm [&_tr]:border-border/60 [&_tr]:border-b',
+      className
+    )}
     ref={ref}
     {...props}
   />
@@ -100,13 +104,16 @@ const TableRow = React.forwardRef<
   ) => (
     <tr
       className={cn(
-        'border-b transition-colors data-[state=selected]:bg-muted',
+        'border-border/60 border-b backdrop-blur-sm transition-all duration-300 data-[state=selected]:bg-muted/80',
         priority === 'critical' &&
-          'border-red-200 bg-red-50/50 dark:border-red-800 dark:bg-red-950/20',
-        priority === 'high' && 'bg-orange-50/50 dark:bg-orange-950/20',
+          'animate-pulse-healthcare border-destructive/30 bg-gradient-to-br from-destructive/10 via-destructive/5 to-transparent shadow-healthcare-sm',
+        priority === 'high' &&
+          'bg-gradient-to-br from-warning/8 via-warning/4 to-transparent',
         priority === 'low' && 'opacity-75',
-        interactive && 'cursor-pointer hover:bg-muted/50',
-        selected && 'border-primary/20 bg-primary/10',
+        interactive &&
+          'cursor-pointer transition-all duration-200 hover:scale-[1.01] hover:bg-gradient-to-br hover:from-muted/60 hover:via-muted/40 hover:to-transparent hover:shadow-healthcare-sm',
+        selected &&
+          'border-primary/30 bg-gradient-to-br from-primary/15 via-primary/10 to-primary/5 shadow-healthcare-sm',
         className
       )}
       data-priority={priority}
@@ -127,9 +134,9 @@ const TableHead = React.forwardRef<
 >(({ className, sortable, sortDirection, onSort, children, ...props }, ref) => (
   <th
     className={cn(
-      'h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0',
+      'h-12 px-4 text-left align-middle font-semibold text-foreground [&:has([role=checkbox])]:pr-0',
       sortable &&
-        'cursor-pointer select-none transition-colors hover:bg-muted/20',
+        'cursor-pointer select-none rounded-md transition-all duration-200 hover:bg-gradient-to-br hover:from-muted/40 hover:via-muted/30 hover:to-transparent hover:text-primary',
       className
     )}
     onClick={sortable ? onSort : undefined}
@@ -139,13 +146,13 @@ const TableHead = React.forwardRef<
     <div className="flex items-center gap-2">
       {children}
       {sortable && (
-        <div className="flex flex-col">
+        <div className="flex flex-col transition-all duration-200">
           {sortDirection === 'asc' ? (
-            <ChevronUp className="h-4 w-4" />
+            <ChevronUp className="h-4 w-4 text-primary" />
           ) : sortDirection === 'desc' ? (
-            <ChevronDown className="h-4 w-4" />
+            <ChevronDown className="h-4 w-4 text-primary" />
           ) : (
-            <div className="h-4 w-4 opacity-50">
+            <div className="h-4 w-4 opacity-50 transition-opacity hover:opacity-100">
               <ChevronUp className="h-2 w-2" />
               <ChevronDown className="h-2 w-2" />
             </div>
@@ -167,8 +174,10 @@ const TableCell = React.forwardRef<
   <td
     className={cn(
       'p-4 align-middle [&:has([role=checkbox])]:pr-0',
-      sensitive && 'bg-orange-50/30 dark:bg-orange-950/10',
-      lgpdProtected && 'bg-green-50/30 dark:bg-green-950/10',
+      sensitive &&
+        'bg-gradient-to-br from-warning/10 via-warning/5 to-transparent backdrop-blur-sm',
+      lgpdProtected &&
+        'bg-gradient-to-br from-success/8 via-success/4 to-transparent backdrop-blur-sm',
       className
     )}
     data-lgpd-protected={lgpdProtected}
@@ -177,15 +186,16 @@ const TableCell = React.forwardRef<
     {...props}
   >
     {sensitive && (
-      <div className="mb-1 flex items-center gap-1 text-orange-600 text-xs dark:text-orange-400">
-        <div className="h-2 w-2 rounded-full bg-orange-500" />
-        Dados Sensíveis
+      <div className="mb-1 flex items-center gap-1 text-warning text-xs">
+        <div className="h-2 w-2 animate-pulse rounded-full bg-warning" />
+        <span className="font-medium">Dados Sensíveis</span>
       </div>
     )}
     {children}
     {lgpdProtected && (
-      <div className="mt-1 text-green-600 text-xs opacity-60 dark:text-green-400">
-        Protegido pela LGPD
+      <div className="mt-1 flex items-center gap-1 text-success text-xs">
+        <div className="h-2 w-2 rounded-full bg-success" />
+        <span className="font-medium opacity-75">Protegido pela LGPD</span>
       </div>
     )}
   </td>

@@ -1,17 +1,17 @@
 /**
  * 🔐 Login Page Component - NeonPro Healthcare
  * ===========================================
- * 
+ *
  * Login page component for TanStack Router integration
  * with existing authentication system.
  */
 
 'use client';
 
-import React from 'react';
 import { useSearch } from '@tanstack/react-router';
-import { LoginForm } from '@/app/login/login-form';
 import { Heart } from 'lucide-react';
+import React from 'react';
+import { LoginForm } from '@/app/login/login-form';
 
 export function LoginPage() {
   const search = useSearch({ from: '/login' });
@@ -22,7 +22,7 @@ export function LoginPage() {
       <div className="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex dark:border-r">
         <div className="absolute inset-0 bg-zinc-900" />
         <div className="relative z-20 flex items-center font-medium text-lg">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 mr-3">
+          <div className="mr-3 flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-purple-600">
             <Heart className="h-5 w-5 text-white" />
           </div>
           NeonPro
@@ -46,7 +46,7 @@ export function LoginPage() {
             <p className="text-muted-foreground text-sm">
               Digite suas credenciais para continuar
               {redirectUrl && (
-                <span className="block mt-1 text-xs">
+                <span className="mt-1 block text-xs">
                   Você será redirecionado após o login
                 </span>
               )}

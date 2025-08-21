@@ -1,4 +1,4 @@
-import type * as SelectPrimitive from '@radix-ui/react-select';
+import * as SelectPrimitive from '@radix-ui/react-select';
 import { cva, type VariantProps } from 'class-variance-authority';
 import {
   AlertCircle,
@@ -14,21 +14,22 @@ import type * as React from 'react';
 import { cn } from '../../lib/utils';
 
 const selectTriggerVariants = cva(
-  'flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background transition-all duration-200 placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1',
+  'flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm shadow-healthcare-sm ring-offset-background backdrop-blur-sm transition-all duration-300 placeholder:text-muted-foreground hover:shadow-healthcare-md focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1',
   {
     variants: {
       variant: {
-        default: 'border-input',
+        default:
+          'border-input bg-background/80 hover:bg-background focus-visible:bg-background',
         medical:
-          'border-primary/30 bg-blue-50/30 focus:ring-primary/30 dark:bg-blue-950/10',
+          'border-primary/30 bg-gradient-to-br from-primary/5 via-primary/3 to-transparent backdrop-blur-sm hover:from-primary/8 hover:via-primary/5 focus:border-primary/50 focus:ring-primary/40',
         professional:
-          'border-purple-300 bg-purple-50/30 focus:ring-purple-500/30 dark:bg-purple-950/10',
+          'border-info/30 bg-gradient-to-br from-info/5 via-info/3 to-transparent backdrop-blur-sm hover:from-info/8 hover:via-info/5 focus:border-info/50 focus:ring-info/40',
         appointment:
-          'border-green-300 bg-green-50/30 focus:ring-green-500/30 dark:bg-green-950/10',
+          'border-secondary/30 bg-gradient-to-br from-secondary/5 via-secondary/3 to-transparent backdrop-blur-sm hover:from-secondary/8 hover:via-secondary/5 focus:border-secondary/50 focus:ring-secondary/40',
         critical:
-          'border-red-300 bg-red-50/30 focus:ring-red-500/30 dark:bg-red-950/10',
+          'border-destructive/30 bg-gradient-to-br from-destructive/8 via-destructive/5 to-transparent backdrop-blur-sm hover:from-destructive/12 hover:via-destructive/8 focus:border-destructive/50 focus:ring-destructive/40',
         success:
-          'border-green-300 bg-green-50/30 focus:ring-green-500/30 dark:bg-green-950/10',
+          'border-success/30 bg-gradient-to-br from-success/5 via-success/3 to-transparent backdrop-blur-sm hover:from-success/8 hover:via-success/5 focus:border-success/50 focus:ring-success/40',
       },
       selectSize: {
         default: 'h-10',
@@ -43,7 +44,7 @@ const selectTriggerVariants = cva(
   }
 );
 
-// Healthcare-specific select types
+// NEONPROV1 Healthcare-specific select types
 interface HealthcareSelectOption {
   value: string;
   label: string;
@@ -57,27 +58,6 @@ interface HealthcareSelectOption {
     category?: string;
   };
 }
-
-interface SelectProps
-  extends React.ComponentProps<typeof SelectPrimitive.Root>,
-    VariantProps<typeof selectTriggerVariants> {
-  placeholder?: string;
-  searchable?: boolean;
-  options?: HealthcareSelectOption[];
-  selectType?:
-    | 'professional'
-    | 'specialty'
-    | 'appointment-status'
-    | 'priority'
-    | 'general';
-  showIcons?: boolean;
-  showMetadata?: boolean;
-  emptyMessage?: string;
-}
-
-const Select = SelectPrimitive.Root;
-const SelectGroup = SelectPrimitive.Group;
-const SelectValue = SelectPrimitive.Value;
 
 import * as SelectPrimitive from '@radix-ui/react-select';
 import { cva, type VariantProps } from 'class-variance-authority';
@@ -95,21 +75,22 @@ import * as React from 'react';
 import { cn } from '../../lib/utils';
 
 const selectTriggerVariants = cva(
-  'flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background transition-all duration-200 placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1',
+  'flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm shadow-healthcare-sm ring-offset-background backdrop-blur-sm transition-all duration-300 placeholder:text-muted-foreground hover:shadow-healthcare-md focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1',
   {
     variants: {
       variant: {
-        default: 'border-input',
+        default:
+          'border-input bg-background/80 hover:bg-background focus-visible:bg-background',
         medical:
-          'border-primary/30 bg-blue-50/30 focus:ring-primary/30 dark:bg-blue-950/10',
+          'border-primary/30 bg-gradient-to-br from-primary/5 via-primary/3 to-transparent backdrop-blur-sm hover:from-primary/8 hover:via-primary/5 focus:border-primary/50 focus:ring-primary/40',
         professional:
-          'border-purple-300 bg-purple-50/30 focus:ring-purple-500/30 dark:bg-purple-950/10',
+          'border-info/30 bg-gradient-to-br from-info/5 via-info/3 to-transparent backdrop-blur-sm hover:from-info/8 hover:via-info/5 focus:border-info/50 focus:ring-info/40',
         appointment:
-          'border-green-300 bg-green-50/30 focus:ring-green-500/30 dark:bg-green-950/10',
+          'border-secondary/30 bg-gradient-to-br from-secondary/5 via-secondary/3 to-transparent backdrop-blur-sm hover:from-secondary/8 hover:via-secondary/5 focus:border-secondary/50 focus:ring-secondary/40',
         critical:
-          'border-red-300 bg-red-50/30 focus:ring-red-500/30 dark:bg-red-950/10',
+          'border-destructive/30 bg-gradient-to-br from-destructive/8 via-destructive/5 to-transparent backdrop-blur-sm hover:from-destructive/12 hover:via-destructive/8 focus:border-destructive/50 focus:ring-destructive/40',
         success:
-          'border-green-300 bg-green-50/30 focus:ring-green-500/30 dark:bg-green-950/10',
+          'border-success/30 bg-gradient-to-br from-success/5 via-success/3 to-transparent backdrop-blur-sm hover:from-success/8 hover:via-success/5 focus:border-success/50 focus:ring-success/40',
       },
       selectSize: {
         default: 'h-10',
@@ -124,7 +105,7 @@ const selectTriggerVariants = cva(
   }
 );
 
-// Healthcare-specific select types
+// NEONPROV1 Healthcare-specific select types
 interface HealthcareSelectOption {
   value: string;
   label: string;
@@ -159,7 +140,6 @@ interface SelectProps
 const Select = SelectPrimitive.Root;
 const SelectGroup = SelectPrimitive.Group;
 const SelectValue = SelectPrimitive.Value;
-
 const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger> &
@@ -172,7 +152,7 @@ const SelectTrigger = React.forwardRef<
   >
     {children}
     <SelectPrimitive.Icon asChild>
-      <ChevronDown className="h-4 w-4 opacity-50" />
+      <ChevronDown className="h-4 w-4 opacity-50 transition-transform duration-200 group-data-[state=open]:rotate-180" />
     </SelectPrimitive.Icon>
   </SelectPrimitive.Trigger>
 ));
@@ -184,7 +164,7 @@ const SelectScrollUpButton = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.ScrollUpButton
     className={cn(
-      'flex cursor-default items-center justify-center py-1',
+      'flex cursor-default items-center justify-center py-1 text-muted-foreground transition-colors hover:text-foreground',
       className
     )}
     ref={ref}
@@ -201,7 +181,7 @@ const SelectScrollDownButton = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.ScrollDownButton
     className={cn(
-      'flex cursor-default items-center justify-center py-1',
+      'flex cursor-default items-center justify-center py-1 text-muted-foreground transition-colors hover:text-foreground',
       className
     )}
     ref={ref}
@@ -219,7 +199,7 @@ const SelectContent = React.forwardRef<
   <SelectPrimitive.Portal>
     <SelectPrimitive.Content
       className={cn(
-        'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md data-[state=closed]:animate-out data-[state=open]:animate-in',
+        'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-lg border bg-popover text-popover-foreground shadow-healthcare-lg backdrop-blur-md transition-all duration-300 data-[state=closed]:animate-out data-[state=open]:animate-in',
         position === 'popper' &&
           'data-[side=left]:-translate-x-1 data-[side=top]:-translate-y-1 data-[side=right]:translate-x-1 data-[side=bottom]:translate-y-1',
         className
@@ -249,7 +229,10 @@ const SelectLabel = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Label>
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.Label
-    className={cn('py-1.5 pr-2 pl-8 font-semibold text-sm', className)}
+    className={cn(
+      'py-1.5 pr-2 pl-8 font-semibold text-muted-foreground text-sm',
+      className
+    )}
     ref={ref}
     {...props}
   />
@@ -271,11 +254,11 @@ const SelectItem = React.forwardRef<
     const getAvailabilityColor = (availability?: string) => {
       switch (availability) {
         case 'available':
-          return 'text-green-500';
+          return 'text-success';
         case 'busy':
-          return 'text-orange-500';
+          return 'text-warning';
         case 'offline':
-          return 'text-red-500';
+          return 'text-destructive';
         default:
           return 'text-muted-foreground';
       }
@@ -284,13 +267,13 @@ const SelectItem = React.forwardRef<
     const getUrgencyColor = (urgency?: string) => {
       switch (urgency) {
         case 'critical':
-          return 'text-red-500';
+          return 'text-destructive';
         case 'high':
-          return 'text-orange-500';
+          return 'text-warning';
         case 'normal':
-          return 'text-blue-500';
+          return 'text-primary';
         case 'low':
-          return 'text-green-500';
+          return 'text-success';
         default:
           return 'text-muted-foreground';
       }
@@ -299,7 +282,7 @@ const SelectItem = React.forwardRef<
     return (
       <SelectPrimitive.Item
         className={cn(
-          'relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pr-2 pl-8 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+          'relative flex w-full cursor-default select-none items-center rounded-md py-2 pr-2 pl-8 text-sm outline-none backdrop-blur-sm transition-all duration-200 hover:bg-accent/50 focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
           className
         )}
         ref={ref}
@@ -307,7 +290,7 @@ const SelectItem = React.forwardRef<
       >
         <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
           <SelectPrimitive.ItemIndicator>
-            <Check className="h-4 w-4" />
+            <Check className="h-4 w-4 text-primary" />
           </SelectPrimitive.ItemIndicator>
         </span>
 
@@ -321,13 +304,19 @@ const SelectItem = React.forwardRef<
           <div className="min-w-0 flex-1">
             <SelectPrimitive.ItemText>
               <div className="flex items-center justify-between">
-                <span className="truncate">{children}</span>
+                <span className="truncate font-medium">{children}</span>
 
                 {metadata?.availability && (
                   <span
                     className={cn(
-                      'ml-2 font-medium text-xs',
-                      getAvailabilityColor(metadata.availability)
+                      'ml-2 rounded-full bg-gradient-to-br px-1.5 py-0.5 font-medium text-xs backdrop-blur-sm',
+                      getAvailabilityColor(metadata.availability),
+                      metadata.availability === 'available' &&
+                        'from-success/10 to-success/5',
+                      metadata.availability === 'busy' &&
+                        'from-warning/10 to-warning/5',
+                      metadata.availability === 'offline' &&
+                        'from-destructive/10 to-destructive/5'
                     )}
                   >
                     {metadata.availability === 'available' && 'Disponível'}
@@ -339,8 +328,16 @@ const SelectItem = React.forwardRef<
                 {metadata?.urgency && (
                   <span
                     className={cn(
-                      'ml-2 font-medium text-xs',
-                      getUrgencyColor(metadata.urgency)
+                      'ml-2 rounded-full bg-gradient-to-br px-1.5 py-0.5 font-medium text-xs backdrop-blur-sm',
+                      getUrgencyColor(metadata.urgency),
+                      metadata.urgency === 'critical' &&
+                        'from-destructive/15 to-destructive/10',
+                      metadata.urgency === 'high' &&
+                        'from-warning/15 to-warning/10',
+                      metadata.urgency === 'normal' &&
+                        'from-primary/15 to-primary/10',
+                      metadata.urgency === 'low' &&
+                        'from-success/15 to-success/10'
                     )}
                   >
                     {metadata.urgency === 'critical' && 'Crítico'}
@@ -359,7 +356,7 @@ const SelectItem = React.forwardRef<
             )}
 
             {metadata?.specialty && (
-              <div className="mt-0.5 truncate text-blue-600 text-xs dark:text-blue-400">
+              <div className="mt-0.5 truncate font-medium text-secondary text-xs">
                 {metadata.specialty}
               </div>
             )}
@@ -375,14 +372,17 @@ const SelectSeparator = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Separator>
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.Separator
-    className={cn('-mx-1 my-1 h-px bg-muted', className)}
+    className={cn(
+      '-mx-1 my-1 h-px bg-gradient-to-r from-transparent via-border to-transparent',
+      className
+    )}
     ref={ref}
     {...props}
   />
 ));
 SelectSeparator.displayName = SelectPrimitive.Separator.displayName;
 
-// Healthcare-specific Select components
+// NEONPROV1 Healthcare-specific Select components
 interface HealthcareProfessionalSelectProps extends SelectProps {
   professionals?: Array<{
     id: string;
@@ -503,7 +503,6 @@ const AppointmentStatusSelect = React.forwardRef<
   );
 });
 AppointmentStatusSelect.displayName = 'AppointmentStatusSelect';
-
 interface PrioritySelectProps extends SelectProps {
   priorities?: Array<{
     value: string;
@@ -554,6 +553,7 @@ const PrioritySelect = React.forwardRef<
   );
 });
 PrioritySelect.displayName = 'PrioritySelect';
+
 export {
   Select,
   SelectGroup,
@@ -565,7 +565,7 @@ export {
   SelectSeparator,
   SelectScrollUpButton,
   SelectScrollDownButton,
-  // Healthcare-specific exports
+  // NEONPROV1 Healthcare-specific exports
   ProfessionalSelect,
   AppointmentStatusSelect,
   PrioritySelect,

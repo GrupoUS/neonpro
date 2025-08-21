@@ -3,8 +3,8 @@
  * Gerencia estado de autenticação, login, logout e refresh automático
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { authTokenManager, type AuthTokens } from './auth-token-manager';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { type AuthTokens, authTokenManager } from './auth-token-manager';
 
 export interface AuthUser {
   id: string;
@@ -55,7 +55,7 @@ export function useAuthToken() {
    */
   const updateAuthState = useCallback((newState: Partial<AuthState>) => {
     if (mountedRef.current) {
-      setAuthState(prev => ({ ...prev, ...newState }));
+      setAuthState((prev) => ({ ...prev, ...newState }));
     }
   }, []);
 
@@ -65,14 +65,14 @@ export function useAuthToken() {
   const loadCurrentUser = useCallback(async (): Promise<AuthUser | null> => {
     try {
       const token = await authTokenManager.getValidToken();
-      
+
       if (!token) {
         return null;
       }
 
       const response = await fetch('/api/v1/auth/me', {
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
       });
@@ -87,7 +87,7 @@ export function useAuthToken() {
       }
 
       const data = await response.json();
-      
+
       if (data.success && data.data) {
         return data.data as AuthUser;
       }
@@ -109,7 +109,7 @@ export function useAuthToken() {
     }
 
     const timeUntilExpiration = authTokenManager.getTimeUntilExpiration();
-    
+
     if (timeUntilExpiration > 0) {
       // Agenda refresh 2 minutos antes da expiração (ou metade do tempo se for menor)
       const refreshTime = Math.max(
@@ -121,7 +121,7 @@ export function useAuthToken() {
         refreshTimeoutRef.current = setTimeout(async () => {
           if (mountedRef.current && authTokenManager.hasRefreshToken()) {
             const refreshed = await authTokenManager.refreshAccessToken();
-            
+
             if (refreshed) {
               console.log('Token refreshed automatically');
               scheduleTokenRefresh(); // Agenda próximo refresh
@@ -149,14 +149,14 @@ export function useAuthToken() {
       // Verifica se há tokens válidos
       if (authTokenManager.hasValidTokens()) {
         const user = await loadCurrentUser();
-        
+
         if (user) {
           updateAuthState({
             user,
             isAuthenticated: true,
             isLoading: false,
           });
-          
+
           // Agenda refresh automático
           scheduleTokenRefresh();
           return;
@@ -184,57 +184,63 @@ export function useAuthToken() {
   /**
    * Função de login
    */
-  const login = useCallback(async (credentials: LoginCredentials): Promise<{ success: boolean; error?: string }> => {
-    updateAuthState({ isLoading: true, error: null });
+  const login = useCallback(
+    async (
+      credentials: LoginCredentials
+    ): Promise<{ success: boolean; error?: string }> => {
+      updateAuthState({ isLoading: true, error: null });
 
-    try {
-      const response = await fetch('/api/v1/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(credentials),
-      });
+      try {
+        const response = await fetch('/api/v1/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(credentials),
+        });
 
-      const data: LoginResponse = await response.json();
+        const data: LoginResponse = await response.json();
 
-      if (!response.ok || !data.success) {
-        const errorMessage = data.error || data.message || 'Erro no login';
+        if (!(response.ok && data.success)) {
+          const errorMessage = data.error || data.message || 'Erro no login';
+          updateAuthState({
+            isLoading: false,
+            error: errorMessage,
+          });
+          return { success: false, error: errorMessage };
+        }
+
+        if (data.data) {
+          // Armazenar tokens
+          authTokenManager.setTokens(data.data.tokens);
+
+          // Atualizar estado
+          updateAuthState({
+            user: data.data.user,
+            isAuthenticated: true,
+            isLoading: false,
+            error: null,
+          });
+
+          // Agendar refresh automático
+          scheduleTokenRefresh();
+
+          return { success: true };
+        }
+
+        return { success: false, error: 'Resposta inválida do servidor' };
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Erro de rede';
         updateAuthState({
           isLoading: false,
           error: errorMessage,
         });
         return { success: false, error: errorMessage };
       }
-
-      if (data.data) {
-        // Armazenar tokens
-        authTokenManager.setTokens(data.data.tokens);
-        
-        // Atualizar estado
-        updateAuthState({
-          user: data.data.user,
-          isAuthenticated: true,
-          isLoading: false,
-          error: null,
-        });
-
-        // Agendar refresh automático
-        scheduleTokenRefresh();
-
-        return { success: true };
-      }
-
-      return { success: false, error: 'Resposta inválida do servidor' };
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro de rede';
-      updateAuthState({
-        isLoading: false,
-        error: errorMessage,
-      });
-      return { success: false, error: errorMessage };
-    }
-  }, [scheduleTokenRefresh, updateAuthState]);
+    },
+    [scheduleTokenRefresh, updateAuthState]
+  );
 
   /**
    * Função de logout
@@ -251,13 +257,13 @@ export function useAuthToken() {
 
       // Tentar fazer logout no servidor
       const token = authTokenManager.getAccessToken();
-      
+
       if (token) {
         try {
           await fetch('/api/v1/auth/logout', {
             method: 'POST',
             headers: {
-              'Authorization': `Bearer ${token}`,
+              Authorization: `Bearer ${token}`,
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
@@ -323,16 +329,16 @@ export function useAuthToken() {
   return {
     // Estado
     ...authState,
-    
+
     // Ações
     login,
     logout,
-    
+
     // Utilidades
     getValidToken,
     getAuthHeader,
     refreshToken: authTokenManager.refreshAccessToken,
-    
+
     // Status de tokens
     hasValidTokens: authTokenManager.hasValidTokens(),
     willExpireSoon: authTokenManager.willExpireSoon(),

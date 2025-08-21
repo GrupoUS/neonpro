@@ -1,17 +1,17 @@
 /**
  * 📊 Dashboard Layout - NeonPro Healthcare
  * =======================================
- * 
+ *
  * Main dashboard layout with navigation, breadcrumbs,
  * and healthcare-specific context providers.
  */
 
 'use client';
 
-import React from 'react';
 import { Outlet } from '@tanstack/react-router';
-import { MainNavigation } from '@/components/main-navigation';
+import React from 'react';
 import { Breadcrumbs } from '@/components/breadcrumbs';
+import { MainNavigation } from '@/components/main-navigation';
 import { useAuth } from '@/contexts/auth-context';
 
 export function DashboardLayout() {
@@ -19,9 +19,9 @@ export function DashboardLayout() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-primary border-b-2" />
           <p className="text-muted-foreground">Carregando dashboard...</p>
         </div>
       </div>
@@ -32,11 +32,11 @@ export function DashboardLayout() {
     <div className="min-h-screen bg-background">
       {/* Main Navigation */}
       <MainNavigation />
-      
+
       {/* Main Content Area */}
       <div className="md:pl-64">
         {/* Top Header with Breadcrumbs */}
-        <header className="bg-card border-b sticky top-0 z-10">
+        <header className="sticky top-0 z-10 border-b bg-card">
           <div className="px-4 py-3">
             <Breadcrumbs />
           </div>

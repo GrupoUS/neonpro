@@ -6,16 +6,21 @@ import * as React from 'react';
 import { cn } from '../../lib/utils';
 
 const progressVariants = cva(
-  'relative h-2 w-full overflow-hidden rounded-full bg-secondary transition-all duration-300',
+  'relative h-2 w-full overflow-hidden rounded-full bg-gradient-to-r from-muted/80 via-muted/60 to-muted/80 shadow-healthcare-sm backdrop-blur-sm transition-all duration-500',
   {
     variants: {
       variant: {
-        default: '',
-        medical: 'bg-blue-100 dark:bg-blue-900/20',
-        treatment: 'bg-green-100 dark:bg-green-900/20',
-        critical: 'bg-red-100 dark:bg-red-900/20',
-        warning: 'bg-orange-100 dark:bg-orange-900/20',
-        success: 'bg-emerald-100 dark:bg-emerald-900/20',
+        default: 'from-muted/80 via-muted/60 to-muted/80',
+        medical:
+          'from-primary/20 via-primary/15 to-primary/20 backdrop-blur-sm',
+        treatment:
+          'from-secondary/20 via-secondary/15 to-secondary/20 backdrop-blur-sm',
+        critical:
+          'from-destructive/20 via-destructive/15 to-destructive/20 shadow-healthcare-md backdrop-blur-sm',
+        warning:
+          'from-warning/20 via-warning/15 to-warning/20 backdrop-blur-sm',
+        success:
+          'from-success/20 via-success/15 to-success/20 backdrop-blur-sm',
       },
       size: {
         default: 'h-2',
@@ -32,19 +37,24 @@ const progressVariants = cva(
 );
 
 const progressBarVariants = cva(
-  'h-full w-full flex-1 bg-primary transition-all duration-500 ease-out',
+  'h-full w-full flex-1 rounded-full shadow-sm transition-all duration-700 ease-out',
   {
     variants: {
       variant: {
-        default: 'bg-primary',
-        medical: 'bg-blue-600 dark:bg-blue-500',
-        treatment: 'bg-green-600 dark:bg-green-500',
-        critical: 'bg-red-600 dark:bg-red-500',
-        warning: 'bg-orange-600 dark:bg-orange-500',
-        success: 'bg-emerald-600 dark:bg-emerald-500',
+        default: 'bg-gradient-primary shadow-primary/20',
+        medical:
+          'bg-gradient-to-r from-primary via-primary/90 to-primary shadow-primary/30',
+        treatment:
+          'bg-gradient-to-r from-secondary via-secondary/90 to-secondary shadow-secondary/30',
+        critical:
+          'bg-gradient-to-r from-destructive via-destructive/90 to-destructive shadow-destructive/40',
+        warning:
+          'bg-gradient-to-r from-warning via-warning/90 to-warning shadow-warning/30',
+        success:
+          'bg-gradient-to-r from-success via-success/90 to-success shadow-success/30',
       },
       animated: {
-        true: 'animate-pulse bg-gradient-to-r',
+        true: 'relative animate-pulse-healthcare bg-gradient-to-r before:absolute before:inset-0 before:animate-slide-in-right before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent',
         false: '',
       },
     },

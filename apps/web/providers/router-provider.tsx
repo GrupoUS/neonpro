@@ -1,19 +1,19 @@
 /**
  * 🚦 TanStack Router Provider - NeonPro Healthcare
  * ===============================================
- * 
+ *
  * Router provider with authentication integration,
  * query client context, and healthcare-specific features.
  */
 
 'use client';
 
-import React from 'react';
-import { RouterProvider as TanStackRouterProvider } from '@tanstack/react-router';
-import { router } from '@/lib/router';
-import { useAuth } from '@/contexts/auth-context';
 import { useQueryClient } from '@tanstack/react-query';
+import { RouterProvider as TanStackRouterProvider } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/router-devtools';
+import React from 'react';
+import { useAuth } from '@/contexts/auth-context';
+import { router } from '@/lib/router';
 
 interface RouterProviderProps {
   children?: React.ReactNode;
@@ -52,7 +52,12 @@ export function RouterProvider({ children }: RouterProviderProps) {
 }
 
 // Router navigation hooks for use throughout the app
-export { useNavigate, useLocation, useParams, useSearch } from '@tanstack/react-router';
+export {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearch,
+} from '@tanstack/react-router';
 
 // Healthcare-specific navigation utilities
 export function useHealthcareNavigation() {
@@ -87,12 +92,12 @@ export function useHealthcareNavigation() {
     },
 
     // Navigate to patients with optional filters
-    navigateToPatients: (search?: { 
-      search?: string; 
+    navigateToPatients: (search?: {
+      search?: string;
       status?: 'active' | 'inactive' | 'pending';
       page?: number;
     }) => {
-      navigate({ 
+      navigate({
         to: '/patients',
         search: search || {},
       });
@@ -111,8 +116,13 @@ export function useHealthcareNavigation() {
     },
 
     // Navigate to patient details
-    navigateToPatient: (patientId: string, tab?: 'overview' | 'appointments' | 'medical-records') => {
-      const to = tab ? `/patients/${patientId}/${tab}` : `/patients/${patientId}`;
+    navigateToPatient: (
+      patientId: string,
+      tab?: 'overview' | 'appointments' | 'medical-records'
+    ) => {
+      const to = tab
+        ? `/patients/${patientId}/${tab}`
+        : `/patients/${patientId}`;
       navigate({ to });
     },
 
@@ -128,7 +138,7 @@ export function useHealthcareNavigation() {
 
     // Navigate with breadcrumb preservation
     navigateWithBreadcrumb: (to: string, breadcrumb?: string) => {
-      navigate({ 
+      navigate({
         to,
         search: breadcrumb ? { breadcrumb } : {},
       });
@@ -142,7 +152,10 @@ export function useRoutePermissions() {
 
   return {
     canAccessPatients: () => {
-      return user && ['clinic_owner', 'clinic_manager', 'professional'].includes(user.role);
+      return (
+        user &&
+        ['clinic_owner', 'clinic_manager', 'professional'].includes(user.role)
+      );
     },
 
     canAccessProfessionals: () => {
@@ -162,29 +175,35 @@ export function useRoutePermissions() {
     },
 
     canCreatePatient: () => {
-      return user && ['clinic_owner', 'clinic_manager', 'professional'].includes(user.role);
+      return (
+        user &&
+        ['clinic_owner', 'clinic_manager', 'professional'].includes(user.role)
+      );
     },
 
     canEditPatient: (patientId?: string) => {
       if (!user) return false;
-      
+
       // Clinic owners and managers can edit any patient
       if (['clinic_owner', 'clinic_manager'].includes(user.role)) {
         return true;
       }
-      
+
       // Professionals can edit their assigned patients
       if (user.role === 'professional') {
         // TODO: Check if patient is assigned to this professional
         return true;
       }
-      
+
       // Patients can only view their own profile (not edit through this route)
       return false;
     },
 
     canScheduleAppointment: () => {
-      return user && ['clinic_owner', 'clinic_manager', 'professional'].includes(user.role);
+      return (
+        user &&
+        ['clinic_owner', 'clinic_manager', 'professional'].includes(user.role)
+      );
     },
   };
 }
@@ -199,36 +218,36 @@ export function useBreadcrumbs() {
     const breadcrumbs = [{ label: 'Início', href: '/' }];
 
     let currentPath = '';
-    
+
     pathSegments.forEach((segment, index) => {
       currentPath += `/${segment}`;
-      
+
       // Replace parameter values with actual data if available
       let label = segment;
-      
+
       // Handle dynamic segments
       if (segment.startsWith('$')) {
         const paramKey = segment.substring(1);
         const paramValue = params[paramKey as keyof typeof params];
         label = paramValue ? String(paramValue) : segment;
       }
-      
+
       // Translate common segments to Portuguese
       const translations: Record<string, string> = {
-        'dashboard': 'Dashboard',
-        'patients': 'Pacientes',
-        'appointments': 'Consultas',
-        'professionals': 'Profissionais',
-        'compliance': 'Conformidade',
-        'settings': 'Configurações',
-        'new': 'Novo',
-        'edit': 'Editar',
-        'profile': 'Perfil',
-        'security': 'Segurança',
+        dashboard: 'Dashboard',
+        patients: 'Pacientes',
+        appointments: 'Consultas',
+        professionals: 'Profissionais',
+        compliance: 'Conformidade',
+        settings: 'Configurações',
+        new: 'Novo',
+        edit: 'Editar',
+        profile: 'Perfil',
+        security: 'Segurança',
       };
-      
+
       label = translations[label] || label;
-      
+
       breadcrumbs.push({
         label,
         href: currentPath,

@@ -36,11 +36,11 @@ placeholder =
     <select data-testid =
   "specialization-select">
       <option value =
-    Cardiologia < 'cardiology' < />inoopt < option;
-value = Neurologia < 'neurology' < />inoopt < option;
-value = Pediatria < 'pediatrics' < />inoopt < />ceelst < button;
+    Cardiologia < 'cardiology' < / 2;;<>iinnoooopptt{};
+value = Neurologia < 'neurology' < / 2;;<>iinnoooopptt{};
+value = Pediatria < 'pediatrics' < />inoopt < / > ceelst < button;
 type = 'submit';
-data-testid = Entrar < 'login-button' < />bnottu < />fmor;
+data-testid = Entrar < 'login-button' < />bnottu < / > fmor;
 )
 
 const MockProfessionalDashboard = ({ user }: { user: any }) => (
@@ -63,9 +63,9 @@ data-testid = CRM < 'crm-display';
     <div
 data-testid = "dashboard-stats">
       <div data-testid = Pacientes < 'patients-today';
-Hoje: 8 < />div < div;
+Hoje: 8 < / 2;;<>ddiivv{};
 data-testid = Consultas < 'appointments-pending';
-Pendentes: 3 < />div < div;
+Pendentes: 3 < / 2;;<>ddiivv{};
 data-testid = Próxima < 'next-appointment';
 : 14:30 - João Silva</div>
     </div>
@@ -119,22 +119,22 @@ data-testid = <span>CPF < 'patient-info';
     
     <div
 data-testid = <h3>Histórico < 'medical-history';
-Médico < /3>h < button;
+Médico < / 23;;<>bhnottu{};
 data-testid = Adicionar < 'add-record-btn';
-Registro < />bnottu < div;
+Registro < / 2;;<>bdinottuv{};
 data-testid = "medical-records">
         <div data-testid = Consulta < 'record-item';
-Cardiológica - 15 / 08 / 2025 < />div < />div < />div < div;
+Cardiológica - 15 / 08 / 2025 < />div < / > div < / 2;;<>ddiivv{};
 data-testid = <h3>Histórico < 'appointment-history';
 de;
-Consultas < /3>h < div;
+Consultas < / 23;;<>dhiv{};
 data-testid = "appointments">
         <div data-testid = 25 / 07 / 2025 - Consulta < 'past-appointment';
-inicial < />div < />div < />div < div;
+inicial < />div < / > div < / 2;;<>ddiivv{};
 data-testid = <h3>Status < 'consent-status';
 de;
 Consentimento;
-LGPD < /3>h < div;
+LGPD < / 23;;<>dhiv{};
 data-testid = <span>Tratamento < 'consent-info';
 : ✅ Consentido</span>
         <span>Análises: ✅ Consentido</span>
@@ -149,10 +149,11 @@ data-testid = <span>Tratamento < 'consent-info';
     <button
 onClick={() => onUpdate(patient)}
 data-testid = Salvar < 'save-changes-btn';
-Alterações < />bnottu < />div;
+Alterações < />bnottu < / > div;
 )
 
-describe('Professional Journey Workflow Tests - Final Validation', () => {
+describe('Professional Journey Workflow Tests - Final Validation', () =>
+{
   let queryClient: QueryClient;
 
   beforeEach(() => {
@@ -853,4 +854,5 @@ describe('Professional Journey Workflow Tests - Final Validation', () => {
       expect(callCount).toBeLessThanOrEqual(1);
     });
   });
-});
+}
+)

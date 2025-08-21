@@ -2,7 +2,7 @@
 
 /**
  * Complete System Validation Script
- * Validates BMAD-Archon integration and all healthcare components
+ * Validates Archon integration and all healthcare components
  * Run: npx tsx scripts/validation/complete-system-validation.ts
  */
 
@@ -22,7 +22,7 @@ class SystemValidator {
 
   async validate(): Promise<void> {
     await this.validateFileStructure();
-    await this.validateBMADConfiguration();
+    await this.validateAgentConfiguration();
     await this.validateArchonIntegration();
     await this.validateComplianceModules();
     await this.validateSecurityComponents();
@@ -55,13 +55,13 @@ class SystemValidator {
       }
     }
 
-    // Check BMAD agent files
-    const bmadAgents = ['sm-agent.yaml', 'dev-agent.yaml', 'qa-agent.yaml'];
-    for (const agent of bmadAgents) {
+    // Check agent files
+    const agentFiles = ['sm-agent.yaml', 'dev-agent.yaml', 'qa-agent.yaml'];
+    for (const agent of agentFiles) {
       try {
         await fs.access(`.bmad-core/agents/${agent}`);
       } catch {
-        errors.push(`Missing BMAD agent: ${agent}`);
+        errors.push(`Missing agent file: ${agent}`);
       }
     }
 
@@ -73,7 +73,7 @@ class SystemValidator {
     });
   }
 
-  private async validateBMADConfiguration(): Promise<void> {
+  private async validateAgentConfiguration(): Promise<void> {
     const errors: string[] = [];
     const warnings: string[] = [];
 
@@ -84,7 +84,9 @@ class SystemValidator {
         'utf-8'
       );
       if (!coreConfig.includes('neonpro-healthcare')) {
-        errors.push('BMAD core config missing healthcare domain specification');
+        errors.push(
+          'Agent core config missing healthcare domain specification'
+        );
       }
 
       // Validate workflow configuration
@@ -105,11 +107,11 @@ class SystemValidator {
         );
       }
     } catch (error) {
-      errors.push(`Failed to read BMAD configuration: ${error}`);
+      errors.push(`Failed to read agent configuration: ${error}`);
     }
 
     this.results.push({
-      component: 'BMAD Configuration',
+      component: 'Agent Configuration',
       passed: errors.length === 0,
       errors,
       warnings,

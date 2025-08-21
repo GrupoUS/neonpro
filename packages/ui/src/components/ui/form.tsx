@@ -9,8 +9,16 @@ import {
   User,
 } from 'lucide-react';
 import type * as React from 'react';
-import { createContext, forwardRef, useContext, useId } from 'react';
+import {
+  createContext,
+  forwardRef,
+  useCallback,
+  useContext,
+  useId,
+  useState,
+} from 'react';
 import { cn } from '../../lib/utils';
+import { FormInstruction, LGPDNotice, VisuallyHidden } from './visually-hidden';
 
 const formVariants = cva(
   'space-y-6 rounded-lg border bg-card p-6 shadow-sm transition-all duration-200',
@@ -64,6 +72,15 @@ interface FormContextValue {
   lgpdCompliant: boolean;
   sensitiveData: boolean;
   validationLevel: 'basic' | 'strict' | 'medical';
+  // Enhanced accessibility features
+  errors: Record<string, string>;
+  setErrors: (errors: Record<string, string>) => void;
+  announceToScreenReader: (
+    message: string,
+    priority?: 'polite' | 'assertive'
+  ) => void;
+  currentStep?: number;
+  totalSteps?: number;
 }
 
 const FormContext = createContext<FormContextValue | null>(null);
@@ -88,6 +105,14 @@ interface FormProps
   description?: string;
   icon?: React.ReactNode;
   onValidationChange?: (isValid: boolean, errors: string[]) => void;
+  // Enhanced accessibility props
+  currentStep?: number;
+  totalSteps?: number;
+  stepTitle?: string;
+  required?: boolean;
+  instructions?: string;
+  errorSummary?: boolean;
+  liveValidation?: boolean;
 }
 
 const Form = forwardRef<HTMLFormElement, FormProps>(
@@ -106,12 +131,34 @@ const Form = forwardRef<HTMLFormElement, FormProps>(
       description,
       icon,
       onValidationChange,
+      currentStep,
+      totalSteps,
+      stepTitle,
+      required = false,
+      instructions,
+      errorSummary = true,
+      liveValidation = true,
       children,
       ...props
     },
     ref
   ) => {
     const formId = useId();
+
+    // Enhanced state management for accessibility
+    const [errors, setErrors] = useState<Record<string, string>>({});
+    const [announcements, setAnnouncements] = useState<string>('');
+
+    // Screen reader announcement function
+    const announceToScreenReader = useCallback(
+      (message: string, priority: 'polite' | 'assertive' = 'polite') => {
+        setAnnouncements(message);
+
+        // Clear announcement after screen reader processes it
+        setTimeout(() => setAnnouncements(''), 3000);
+      },
+      []
+    );
 
     // Auto-determine variant based on form type
     const autoVariant =
@@ -136,6 +183,11 @@ const Form = forwardRef<HTMLFormElement, FormProps>(
       lgpdCompliant,
       sensitiveData,
       validationLevel,
+      errors,
+      setErrors,
+      announceToScreenReader,
+      currentStep,
+      totalSteps,
     };
 
     const getFormIcon = () => {
@@ -179,6 +231,10 @@ const Form = forwardRef<HTMLFormElement, FormProps>(
     return (
       <FormContext.Provider value={contextValue}>
         <form
+          aria-describedby={`${formId}-description ${instructions ? `${formId}-instructions` : ''} ${lgpdCompliant ? `${formId}-lgpd` : ''}`.trim()}
+          aria-labelledby={showHeader ? `${formId}-title` : undefined}
+          aria-live={liveValidation ? 'polite' : undefined}
+          aria-required={required}
           className={cn(
             formVariants({
               variant: autoVariant,
@@ -194,20 +250,124 @@ const Form = forwardRef<HTMLFormElement, FormProps>(
           id={formId}
           noValidate
           ref={ref}
+          role="form"
           {...props}
         >
+          {/* Screen reader announcements for form state changes */}
+          <VisuallyHidden aria-atomic="true" aria-live="polite" role="status">
+            {announcements}
+          </VisuallyHidden>
+
+          {/* Multi-step form progress indicator */}
+          {totalSteps && currentStep && (
+            <div
+              aria-valuemax={totalSteps}
+              aria-valuemin={1}
+              aria-valuenow={currentStep}
+              className="form-progress mb-4"
+              role="progressbar"
+            >
+              <VisuallyHidden>
+                Etapa {currentStep} de {totalSteps}:{' '}
+                {stepTitle || getFormTitle()}
+              </VisuallyHidden>
+              <div className="mb-2 flex items-center justify-between text-muted-foreground text-sm">
+                <span>
+                  Etapa {currentStep} de {totalSteps}
+                </span>
+                <span>
+                  {Math.round((currentStep / totalSteps) * 100)}% concluído
+                </span>
+              </div>
+              <div className="h-2 w-full rounded-full bg-muted">
+                <div
+                  className="h-2 rounded-full bg-primary transition-all duration-300"
+                  style={{ width: `${(currentStep / totalSteps) * 100}%` }}
+                />
+              </div>
+              {stepTitle && (
+                <div className="mt-2 font-medium text-foreground">
+                  {stepTitle}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Form instructions */}
+          {instructions && (
+            <>
+              <div
+                className="mb-4 rounded-md bg-muted/50 p-3"
+                id={`${formId}-instructions`}
+              >
+                <p className="text-muted-foreground text-sm">{instructions}</p>
+              </div>
+              <FormInstruction fieldId={formId} instruction={instructions} />
+            </>
+          )}
+
+          {/* Error summary for accessibility */}
+          {errorSummary && Object.keys(errors).length > 0 && (
+            <div
+              aria-labelledby={`${formId}-error-summary-title`}
+              className="mb-4 rounded-md border border-destructive/20 bg-destructive/10 p-4"
+              role="alert"
+            >
+              <h3
+                className="mb-2 flex items-center gap-2 font-medium text-destructive"
+                id={`${formId}-error-summary-title`}
+              >
+                <AlertCircle className="h-4 w-4" />
+                Erros encontrados no formulário
+              </h3>
+              <ul className="space-y-1 text-destructive text-sm">
+                {Object.entries(errors).map(([fieldId, error]) => (
+                  <li key={fieldId}>
+                    <a
+                      className="rounded underline hover:no-underline focus:ring-2 focus:ring-destructive focus:ring-offset-2"
+                      href={`#${fieldId}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        document.getElementById(fieldId)?.focus();
+                      }}
+                    >
+                      {error}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           {showHeader && (
             <div className="form-header border-border/50 border-b pb-4">
               <div className="mb-2 flex items-center gap-3">
-                <div className="rounded-lg bg-primary/10 p-2 text-primary">
+                <div
+                  aria-hidden="true"
+                  className="rounded-lg bg-primary/10 p-2 text-primary"
+                >
                   {getFormIcon()}
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-semibold text-foreground text-lg">
+                  <h3
+                    className="font-semibold text-foreground text-lg"
+                    id={`${formId}-title`}
+                  >
                     {getFormTitle()}
+                    {required && (
+                      <span
+                        aria-label="obrigatório"
+                        className="ml-1 text-destructive"
+                      >
+                        *
+                      </span>
+                    )}
                   </h3>
                   {description && (
-                    <p className="mt-1 text-muted-foreground text-sm">
+                    <p
+                      className="mt-1 text-muted-foreground text-sm"
+                      id={`${formId}-description`}
+                    >
                       {description}
                     </p>
                   )}
@@ -215,15 +375,38 @@ const Form = forwardRef<HTMLFormElement, FormProps>(
               </div>
 
               {lgpdCompliant && (
-                <div className="mt-3 flex items-center gap-2 rounded-lg bg-green-50/50 px-3 py-2 text-muted-foreground text-xs dark:bg-green-950/20">
-                  <Shield className="h-3 w-3 text-green-600" />
-                  <span>
-                    {sensitiveData
-                      ? 'Dados sensíveis protegidos pela LGPD com nível de segurança máximo'
-                      : 'Formulário em conformidade com a LGPD'}
-                  </span>
-                  <CheckCircle className="ml-auto h-3 w-3 text-green-600" />
-                </div>
+                <>
+                  <div
+                    aria-label="Informações de conformidade LGPD"
+                    className="mt-3 flex items-center gap-2 rounded-lg bg-green-50/50 px-3 py-2 text-muted-foreground text-xs dark:bg-green-950/20"
+                    id={`${formId}-lgpd`}
+                    role="region"
+                  >
+                    <Shield
+                      aria-hidden="true"
+                      className="h-3 w-3 text-green-600"
+                    />
+                    <span>
+                      {sensitiveData
+                        ? 'Dados sensíveis protegidos pela LGPD com nível de segurança máximo'
+                        : 'Formulário em conformidade com a LGPD'}
+                    </span>
+                    <CheckCircle
+                      aria-hidden="true"
+                      className="ml-auto h-3 w-3 text-green-600"
+                    />
+                  </div>
+
+                  {/* Hidden LGPD notice for screen readers */}
+                  <LGPDNotice
+                    context={sensitiveData ? 'processing' : 'collection'}
+                    notice={
+                      sensitiveData
+                        ? 'Este formulário processa dados sensíveis com proteções LGPD máximas. Seus dados são criptografados e processados com consentimento explícito.'
+                        : 'Este formulário coleta dados pessoais em conformidade total com a LGPD. Você pode exercer seus direitos a qualquer momento.'
+                    }
+                  />
+                </>
               )}
             </div>
           )}

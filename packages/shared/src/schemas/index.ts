@@ -1,4 +1,16 @@
+// Schema exports for NeonPro shared package
+// All schemas organized by domain with no duplications
+
 // Auth schemas and types
+export * from './auth.schema';
+export {
+  LoginRequestSchema,
+  LoginResponseSchema,
+  RegisterRequestSchema,
+  UserBaseSchema,
+  UserPermissionSchema,
+  UserRoleSchema,
+} from './auth.schema';
 
 // Appointment schemas and types
 export * from './appointment.schema';
@@ -12,47 +24,7 @@ export {
   UpdateAppointmentSchema,
   VitalSignsSchema,
 } from './appointment.schema';
-export * from './auth.schema';
-// Re-export commonly used base schemas
-export {
-  // Appointment
-  AppointmentBaseSchema,
-  AppointmentQuerySchema,
-  AppointmentStatusSchema,
-  AuditActionSchema,
-  // Compliance
-  AuditLogSchema,
-  ComplianceQuerySchema,
-  ConsentRecordSchema,
-  CreateAppointmentSchema,
-  CreatePatientSchema,
-  CreateProfessionalSchema,
-  CreateServiceSchema,
-  DataCategorySchema,
-  DataSubjectRequestSchema,
-  LoginRequestSchema,
-  LoginResponseSchema,
-  // Patient
-  PatientBaseSchema,
-  PatientQuerySchema,
-  // Professional
-  ProfessionalBaseSchema,
-  ProfessionalQuerySchema,
-  RegisterRequestSchema,
-  // Service
-  ServiceBaseSchema,
-  ServiceCategorySchema,
-  ServiceQuerySchema,
-  SpecializationSchema,
-  UpdateAppointmentSchema,
-  UpdatePatientSchema,
-  UpdateProfessionalSchema,
-  UpdateServiceSchema,
-  UserBaseSchema,
-  UserPermissionSchema,
-  // Auth
-  UserRoleSchema,
-} from './auth.schema';
+
 // Compliance schemas and types
 export * from './compliance.schema';
 export {
@@ -65,9 +37,9 @@ export {
   LgpdLegalBasisSchema,
   SecurityIncidentSchema,
 } from './compliance.schema';
+
 // Patient schemas and types
 export * from './patient.schema';
-
 export {
   AddressSchema as PatientAddressSchema,
   CpfSchema,
@@ -77,9 +49,9 @@ export {
   PatientQuerySchema,
   UpdatePatientSchema,
 } from './patient.schema';
+
 // Professional schemas and types
 export * from './professional.schema';
-
 export {
   CreateProfessionalSchema,
   ProfessionalBaseSchema,
@@ -89,6 +61,7 @@ export {
   UpdateProfessionalSchema,
   WorkingHoursSchema,
 } from './professional.schema';
+
 // Service schemas and types
 export * from './service.schema';
 export {

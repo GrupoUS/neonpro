@@ -16,63 +16,64 @@ import { forwardRef } from 'react';
 import { cn } from '../../lib/utils';
 
 const badgeVariants = cva(
-  'inline-flex items-center rounded-md border px-2.5 py-0.5 font-semibold text-xs transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
+  'inline-flex items-center rounded-md border px-2.5 py-0.5 font-semibold text-xs backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
   {
     variants: {
       variant: {
         default:
-          'border-transparent bg-primary text-primary-foreground shadow hover:bg-primary/80',
+          'border-transparent bg-gradient-primary text-primary-foreground shadow-healthcare-sm hover:scale-105 hover:shadow-healthcare-md',
         secondary:
-          'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80',
+          'border-transparent bg-gradient-to-br from-secondary via-secondary/90 to-secondary text-secondary-foreground shadow-healthcare-sm hover:scale-105 hover:shadow-healthcare-md',
         destructive:
-          'border-transparent bg-destructive text-destructive-foreground shadow hover:bg-destructive/80',
-        outline: 'border-border text-foreground',
+          'border-transparent bg-gradient-to-br from-destructive via-destructive/90 to-destructive text-destructive-foreground shadow-healthcare-sm hover:scale-105 hover:shadow-healthcare-md',
+        outline:
+          'border-border/60 bg-background/80 text-foreground backdrop-blur-sm hover:bg-accent/50',
 
-        // Healthcare status variants
+        // NEONPROV1 Healthcare status variants
         patient:
-          'border-transparent bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
+          'border-transparent bg-gradient-to-br from-primary/20 via-primary/15 to-primary/10 text-primary shadow-healthcare-sm backdrop-blur-sm hover:scale-105',
         appointment:
-          'border-transparent bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
+          'border-transparent bg-gradient-to-br from-secondary/20 via-secondary/15 to-secondary/10 text-secondary shadow-healthcare-sm backdrop-blur-sm hover:scale-105',
         professional:
-          'border-transparent bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400',
+          'border-transparent bg-gradient-to-br from-info/20 via-info/15 to-info/10 text-info shadow-healthcare-sm backdrop-blur-sm hover:scale-105',
 
-        // Medical priority variants
+        // NEONPROV1 Medical priority variants
         critical:
-          'animate-pulse border-transparent bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
+          'animate-pulse-healthcare border-transparent bg-gradient-to-br from-destructive/20 via-destructive/15 to-destructive/10 text-destructive shadow-healthcare-md ring-2 ring-destructive/20 backdrop-blur-sm',
         urgent:
-          'border-transparent bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400',
+          'border-transparent bg-gradient-to-br from-warning/20 via-warning/15 to-warning/10 text-warning shadow-healthcare-sm backdrop-blur-sm hover:scale-105',
         normal:
-          'border-transparent bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
-        low: 'border-transparent bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400',
+          'border-transparent bg-gradient-to-br from-primary/15 via-primary/10 to-primary/5 text-primary shadow-healthcare-sm backdrop-blur-sm hover:scale-105',
+        low: 'border-transparent bg-gradient-to-br from-muted-foreground/15 via-muted-foreground/10 to-muted-foreground/5 text-muted-foreground shadow-healthcare-sm backdrop-blur-sm hover:scale-105',
 
-        // Appointment status variants
+        // NEONPROV1 Appointment status variants
         scheduled:
-          'border-transparent bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
+          'border-transparent bg-gradient-to-br from-primary/15 via-primary/10 to-primary/5 text-primary shadow-healthcare-sm backdrop-blur-sm hover:scale-105',
         confirmed:
-          'border-transparent bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
+          'border-transparent bg-gradient-to-br from-success/15 via-success/10 to-success/5 text-success shadow-healthcare-sm backdrop-blur-sm hover:scale-105',
         'in-progress':
-          'border-transparent bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400',
+          'border-transparent bg-gradient-to-br from-warning/15 via-warning/10 to-warning/5 text-warning shadow-healthcare-sm backdrop-blur-sm hover:scale-105',
         completed:
-          'border-transparent bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400',
+          'border-transparent bg-gradient-to-br from-success/20 via-success/15 to-success/10 text-success shadow-healthcare-md backdrop-blur-sm hover:scale-105',
         cancelled:
-          'border-transparent bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
+          'border-transparent bg-gradient-to-br from-destructive/15 via-destructive/10 to-destructive/5 text-destructive shadow-healthcare-sm backdrop-blur-sm hover:scale-105',
         'no-show':
-          'border-transparent bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400',
+          'border-transparent bg-gradient-to-br from-muted-foreground/15 via-muted-foreground/10 to-muted-foreground/5 text-muted-foreground shadow-healthcare-sm backdrop-blur-sm hover:scale-105',
 
-        // Professional availability variants
+        // NEONPROV1 Professional availability variants
         available:
-          'border-transparent bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
-        busy: 'border-transparent bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400',
+          'border-transparent bg-gradient-to-br from-success/15 via-success/10 to-success/5 text-success shadow-healthcare-sm backdrop-blur-sm hover:scale-105',
+        busy: 'border-transparent bg-gradient-to-br from-warning/15 via-warning/10 to-warning/5 text-warning shadow-healthcare-sm backdrop-blur-sm hover:scale-105',
         offline:
-          'border-transparent bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400',
+          'border-transparent bg-gradient-to-br from-muted-foreground/15 via-muted-foreground/10 to-muted-foreground/5 text-muted-foreground shadow-healthcare-sm backdrop-blur-sm hover:scale-105',
 
-        // LGPD compliance variants
+        // NEONPROV1 LGPD compliance variants
         'lgpd-compliant':
-          'border-transparent bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
+          'border-transparent bg-gradient-to-br from-success/15 via-success/10 to-success/5 text-success shadow-healthcare-sm ring-1 ring-success/20 backdrop-blur-sm hover:scale-105',
         'lgpd-warning':
-          'border-transparent bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
+          'border-transparent bg-gradient-to-br from-warning/15 via-warning/10 to-warning/5 text-warning shadow-healthcare-sm ring-1 ring-warning/20 backdrop-blur-sm hover:scale-105',
         'lgpd-violation':
-          'border-transparent bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
+          'border-transparent bg-gradient-to-br from-destructive/15 via-destructive/10 to-destructive/5 text-destructive shadow-healthcare-md ring-1 ring-destructive/20 backdrop-blur-sm hover:scale-105',
       },
       size: {
         default: 'px-2.5 py-0.5 text-xs',

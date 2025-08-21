@@ -1,16 +1,16 @@
 /**
  * 🍞 Breadcrumbs Navigation - NeonPro Healthcare
  * =============================================
- * 
+ *
  * Dynamic breadcrumb navigation with healthcare context,
  * role-based visibility, and accessibility features.
  */
 
 'use client';
 
-import React from 'react';
 import { Link, useLocation, useParams } from '@tanstack/react-router';
 import { ChevronRight, Home } from 'lucide-react';
+import type React from 'react';
 import { cn } from '@/lib/utils';
 
 interface BreadcrumbItem {
@@ -27,60 +27,62 @@ export function Breadcrumbs({ className }: { className?: string }) {
   const generateBreadcrumbs = (): BreadcrumbItem[] => {
     const pathSegments = location.pathname.split('/').filter(Boolean);
     const breadcrumbs: BreadcrumbItem[] = [
-      { 
-        label: 'Início', 
-        href: '/', 
-        icon: Home 
-      }
+      {
+        label: 'Início',
+        href: '/',
+        icon: Home,
+      },
     ];
 
     let currentPath = '';
-    
+
     pathSegments.forEach((segment, index) => {
       currentPath += `/${segment}`;
-      
+
       // Replace parameter values with actual data if available
       let label = segment;
-      
+
       // Handle dynamic segments
       if (segment.startsWith('$')) {
         const paramKey = segment.substring(1);
         const paramValue = params[paramKey as keyof typeof params];
         label = paramValue ? String(paramValue) : segment;
       }
-      
+
       // Translate common segments to Portuguese
       const translations: Record<string, string> = {
-        'dashboard': 'Dashboard',
-        'patients': 'Pacientes',
-        'appointments': 'Consultas',
-        'professionals': 'Profissionais',
-        'compliance': 'Conformidade',
-        'settings': 'Configurações',
-        'analytics': 'Analytics',
-        'new': 'Novo',
-        'edit': 'Editar',
-        'profile': 'Perfil',
-        'security': 'Segurança',
-        'clinic': 'Clínica',
-        'integrations': 'Integrações',
-        'lgpd': 'LGPD',
-        'anvisa': 'ANVISA',
-        'cfm': 'CFM',
-        'reports': 'Relatórios',
-        'schedule': 'Agendar',
-        'calendar': 'Calendário',
-        'overview': 'Visão Geral',
+        dashboard: 'Dashboard',
+        patients: 'Pacientes',
+        appointments: 'Consultas',
+        professionals: 'Profissionais',
+        compliance: 'Conformidade',
+        settings: 'Configurações',
+        analytics: 'Analytics',
+        new: 'Novo',
+        edit: 'Editar',
+        profile: 'Perfil',
+        security: 'Segurança',
+        clinic: 'Clínica',
+        integrations: 'Integrações',
+        lgpd: 'LGPD',
+        anvisa: 'ANVISA',
+        cfm: 'CFM',
+        reports: 'Relatórios',
+        schedule: 'Agendar',
+        calendar: 'Calendário',
+        overview: 'Visão Geral',
         'medical-records': 'Prontuário',
-        'performance': 'Desempenho',
+        performance: 'Desempenho',
       };
-      
+
       label = translations[label] || label;
-      
+
       // Don't create links for certain segments that are not navigable
       const nonNavigableSegments = ['edit', 'new'];
-      const href = nonNavigableSegments.includes(segment) ? undefined : currentPath;
-      
+      const href = nonNavigableSegments.includes(segment)
+        ? undefined
+        : currentPath;
+
       breadcrumbs.push({
         label,
         href,
@@ -99,49 +101,51 @@ export function Breadcrumbs({ className }: { className?: string }) {
   }
 
   return (
-    <nav 
-      aria-label="Navegação estrutural" 
-      className={cn("flex items-center space-x-1 text-sm text-muted-foreground", className)}
+    <nav
+      aria-label="Navegação estrutural"
+      className={cn(
+        'flex items-center space-x-1 text-muted-foreground text-sm',
+        className
+      )}
     >
       <ol className="flex items-center space-x-1">
         {breadcrumbs.map((item, index) => {
           const isLast = index === breadcrumbs.length - 1;
-          
+
           return (
-            <li key={index} className="flex items-center">
+            <li className="flex items-center" key={index}>
               {index > 0 && (
-                <ChevronRight 
-                  className="h-4 w-4 mx-2" 
-                  aria-hidden="true" 
-                />
+                <ChevronRight aria-hidden="true" className="mx-2 h-4 w-4" />
               )}
-              
+
               {item.href && !isLast ? (
                 <Link
-                  to={item.href}
+                  aria-current={isLast ? 'page' : undefined}
                   className={cn(
-                    "flex items-center hover:text-foreground transition-colors",
-                    index === 0 && "hover:text-primary"
+                    'flex items-center transition-colors hover:text-foreground',
+                    index === 0 && 'hover:text-primary'
                   )}
-                  aria-current={isLast ? "page" : undefined}
+                  to={item.href}
                 >
                   {item.icon && index === 0 && (
-                    <item.icon className="h-4 w-4 mr-1" />
+                    <item.icon className="mr-1 h-4 w-4" />
                   )}
-                  <span className="truncate max-w-32">{item.label}</span>
+                  <span className="max-w-32 truncate">{item.label}</span>
                 </Link>
               ) : (
-                <span 
+                <span
+                  aria-current={isLast ? 'page' : undefined}
                   className={cn(
-                    "flex items-center",
-                    isLast ? "text-foreground font-medium" : "text-muted-foreground"
+                    'flex items-center',
+                    isLast
+                      ? 'font-medium text-foreground'
+                      : 'text-muted-foreground'
                   )}
-                  aria-current={isLast ? "page" : undefined}
                 >
                   {item.icon && index === 0 && (
-                    <item.icon className="h-4 w-4 mr-1" />
+                    <item.icon className="mr-1 h-4 w-4" />
                   )}
-                  <span className="truncate max-w-32">{item.label}</span>
+                  <span className="max-w-32 truncate">{item.label}</span>
                 </span>
               )}
             </li>
@@ -153,47 +157,58 @@ export function Breadcrumbs({ className }: { className?: string }) {
 }
 
 // Healthcare-specific breadcrumb variants
-export function PatientBreadcrumbs({ 
-  patientId, 
-  patientName, 
-  currentSection 
-}: { 
+export function PatientBreadcrumbs({
+  patientId,
+  patientName,
+  currentSection,
+}: {
   patientId: string;
   patientName?: string;
   currentSection?: string;
 }) {
   return (
-    <nav aria-label="Navegação do paciente" className="flex items-center space-x-1 text-sm text-muted-foreground">
+    <nav
+      aria-label="Navegação do paciente"
+      className="flex items-center space-x-1 text-muted-foreground text-sm"
+    >
       <ol className="flex items-center space-x-1">
         <li>
-          <Link to="/" className="flex items-center hover:text-foreground transition-colors">
-            <Home className="h-4 w-4 mr-1" />
+          <Link
+            className="flex items-center transition-colors hover:text-foreground"
+            to="/"
+          >
+            <Home className="mr-1 h-4 w-4" />
             Início
           </Link>
         </li>
         <li className="flex items-center">
-          <ChevronRight className="h-4 w-4 mx-2" aria-hidden="true" />
-          <Link to="/patients" className="hover:text-foreground transition-colors">
+          <ChevronRight aria-hidden="true" className="mx-2 h-4 w-4" />
+          <Link
+            className="transition-colors hover:text-foreground"
+            to="/patients"
+          >
             Pacientes
           </Link>
         </li>
         <li className="flex items-center">
-          <ChevronRight className="h-4 w-4 mx-2" aria-hidden="true" />
-          <Link 
-            to={`/patients/${patientId}`} 
+          <ChevronRight aria-hidden="true" className="mx-2 h-4 w-4" />
+          <Link
+            aria-current={currentSection ? undefined : 'page'}
             className={cn(
-              "truncate max-w-32",
-              currentSection ? "hover:text-foreground transition-colors" : "text-foreground font-medium"
+              'max-w-32 truncate',
+              currentSection
+                ? 'transition-colors hover:text-foreground'
+                : 'font-medium text-foreground'
             )}
-            aria-current={!currentSection ? "page" : undefined}
+            to={`/patients/${patientId}`}
           >
             {patientName || `Paciente ${patientId}`}
           </Link>
         </li>
         {currentSection && (
           <li className="flex items-center">
-            <ChevronRight className="h-4 w-4 mx-2" aria-hidden="true" />
-            <span className="text-foreground font-medium" aria-current="page">
+            <ChevronRight aria-hidden="true" className="mx-2 h-4 w-4" />
+            <span aria-current="page" className="font-medium text-foreground">
               {currentSection}
             </span>
           </li>
@@ -203,38 +218,53 @@ export function PatientBreadcrumbs({
   );
 }
 
-export function AppointmentBreadcrumbs({ 
-  appointmentId, 
-  patientName, 
-  appointmentDate 
-}: { 
+export function AppointmentBreadcrumbs({
+  appointmentId,
+  patientName,
+  appointmentDate,
+}: {
   appointmentId: string;
   patientName?: string;
   appointmentDate?: string;
 }) {
   const displayName = patientName || `Consulta ${appointmentId}`;
-  const displayDate = appointmentDate ? new Date(appointmentDate).toLocaleDateString('pt-BR') : '';
-  
+  const displayDate = appointmentDate
+    ? new Date(appointmentDate).toLocaleDateString('pt-BR')
+    : '';
+
   return (
-    <nav aria-label="Navegação da consulta" className="flex items-center space-x-1 text-sm text-muted-foreground">
+    <nav
+      aria-label="Navegação da consulta"
+      className="flex items-center space-x-1 text-muted-foreground text-sm"
+    >
       <ol className="flex items-center space-x-1">
         <li>
-          <Link to="/" className="flex items-center hover:text-foreground transition-colors">
-            <Home className="h-4 w-4 mr-1" />
+          <Link
+            className="flex items-center transition-colors hover:text-foreground"
+            to="/"
+          >
+            <Home className="mr-1 h-4 w-4" />
             Início
           </Link>
         </li>
         <li className="flex items-center">
-          <ChevronRight className="h-4 w-4 mx-2" aria-hidden="true" />
-          <Link to="/appointments" className="hover:text-foreground transition-colors">
+          <ChevronRight aria-hidden="true" className="mx-2 h-4 w-4" />
+          <Link
+            className="transition-colors hover:text-foreground"
+            to="/appointments"
+          >
             Consultas
           </Link>
         </li>
         <li className="flex items-center">
-          <ChevronRight className="h-4 w-4 mx-2" aria-hidden="true" />
-          <span className="text-foreground font-medium" aria-current="page">
-            <span className="truncate max-w-32">{displayName}</span>
-            {displayDate && <span className="text-muted-foreground ml-1">({displayDate})</span>}
+          <ChevronRight aria-hidden="true" className="mx-2 h-4 w-4" />
+          <span aria-current="page" className="font-medium text-foreground">
+            <span className="max-w-32 truncate">{displayName}</span>
+            {displayDate && (
+              <span className="ml-1 text-muted-foreground">
+                ({displayDate})
+              </span>
+            )}
           </span>
         </li>
       </ol>
@@ -243,16 +273,19 @@ export function AppointmentBreadcrumbs({
 }
 
 // Quick actions breadcrumb for emergency situations
-export function EmergencyBreadcrumbs({ 
-  currentAction 
-}: { 
+export function EmergencyBreadcrumbs({
+  currentAction,
+}: {
   currentAction: string;
 }) {
   return (
-    <nav aria-label="Ação de emergência" className="flex items-center space-x-1 text-sm">
-      <div className="flex items-center bg-red-50 text-red-700 px-2 py-1 rounded-md border border-red-200">
+    <nav
+      aria-label="Ação de emergência"
+      className="flex items-center space-x-1 text-sm"
+    >
+      <div className="flex items-center rounded-md border border-red-200 bg-red-50 px-2 py-1 text-red-700">
         <span className="font-medium">Emergência:</span>
-        <ChevronRight className="h-4 w-4 mx-1" aria-hidden="true" />
+        <ChevronRight aria-hidden="true" className="mx-1 h-4 w-4" />
         <span>{currentAction}</span>
       </div>
     </nav>

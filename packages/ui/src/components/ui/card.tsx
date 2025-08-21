@@ -5,27 +5,28 @@ import { forwardRef } from 'react';
 import { cn } from '../../lib/utils';
 
 const cardVariants = cva(
-  'flex flex-col gap-6 rounded-lg border bg-card text-card-foreground shadow-sm transition-all duration-200',
+  'flex flex-col gap-6 rounded-lg border bg-card text-card-foreground shadow-healthcare-sm backdrop-blur-sm transition-all duration-300',
   {
     variants: {
       variant: {
-        default: 'border-border',
+        default: 'border-border bg-gradient-card',
         patient:
-          'border-l-4 border-l-primary bg-gradient-to-r from-blue-50/50 to-transparent dark:from-blue-950/20',
+          'border-l-4 border-l-primary bg-gradient-to-br from-primary/5 via-primary/3 to-transparent shadow-healthcare-md backdrop-blur-sm',
         appointment:
-          'border-l-4 border-l-secondary bg-gradient-to-r from-green-50/50 to-transparent dark:from-green-950/20',
+          'border-l-4 border-l-secondary bg-gradient-to-br from-secondary/5 via-secondary/3 to-transparent shadow-healthcare-md backdrop-blur-sm',
         professional:
-          'border-l-4 border-l-info bg-gradient-to-r from-purple-50/50 to-transparent dark:from-purple-950/20',
+          'border-l-4 border-l-info bg-gradient-to-br from-info/5 via-info/3 to-transparent shadow-healthcare-md backdrop-blur-sm',
         alert:
-          'border-l-4 border-l-destructive bg-gradient-to-r from-red-50/50 to-transparent dark:from-red-950/20',
+          'border-l-4 border-l-destructive bg-gradient-to-br from-destructive/10 via-destructive/5 to-transparent shadow-healthcare-lg backdrop-blur-sm',
         warning:
-          'border-l-4 border-l-warning bg-gradient-to-r from-orange-50/50 to-transparent dark:from-orange-950/20',
+          'border-l-4 border-l-warning bg-gradient-to-br from-warning/10 via-warning/5 to-transparent shadow-healthcare-md backdrop-blur-sm',
         success:
-          'border-l-4 border-l-success bg-gradient-to-r from-green-50/50 to-transparent dark:from-green-950/20',
-        info: 'border-l-4 border-l-info bg-gradient-to-r from-blue-50/50 to-transparent dark:from-blue-950/20',
-        elevated: 'border-border shadow-md hover:shadow-lg',
+          'border-l-4 border-l-success bg-gradient-to-br from-success/5 via-success/3 to-transparent shadow-healthcare-md backdrop-blur-sm',
+        info: 'border-l-4 border-l-info bg-gradient-to-br from-info/5 via-info/3 to-transparent shadow-healthcare-md backdrop-blur-sm',
+        elevated:
+          'border-border/50 bg-gradient-card shadow-healthcare-lg backdrop-blur-md hover:shadow-healthcare-xl',
         interactive:
-          'cursor-pointer border-border transition-all duration-200 hover:border-primary/50 hover:shadow-md',
+          'cursor-pointer border-border/50 bg-gradient-card backdrop-blur-sm transition-all duration-300 hover:scale-[1.01] hover:border-primary/30 hover:shadow-healthcare-lg',
       },
       padding: {
         default: 'py-6',

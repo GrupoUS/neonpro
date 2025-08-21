@@ -5,8 +5,12 @@
 
 'use client';
 
-import React, { createContext, useContext, type ReactNode } from 'react';
-import { useAuthToken, type AuthUser, type LoginCredentials } from './use-auth-token';
+import React, { createContext, type ReactNode, useContext } from 'react';
+import {
+  type AuthUser,
+  type LoginCredentials,
+  useAuthToken,
+} from './use-auth-token';
 
 interface AuthContextType {
   // Estado
@@ -14,16 +18,18 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
-  
+
   // Ações
-  login: (credentials: LoginCredentials) => Promise<{ success: boolean; error?: string }>;
+  login: (
+    credentials: LoginCredentials
+  ) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
-  
+
   // Utilidades
   getValidToken: () => Promise<string | null>;
   getAuthHeader: () => Promise<string | null>;
   refreshToken: () => Promise<boolean>;
-  
+
   // Status de tokens
   hasValidTokens: boolean;
   willExpireSoon: boolean;
@@ -48,16 +54,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
     isAuthenticated: authHook.isAuthenticated,
     isLoading: authHook.isLoading,
     error: authHook.error,
-    
+
     // Ações
     login: authHook.login,
     logout: authHook.logout,
-    
+
     // Utilidades
     getValidToken: authHook.getValidToken,
     getAuthHeader: authHook.getAuthHeader,
     refreshToken: authHook.refreshToken,
-    
+
     // Status de tokens
     hasValidTokens: authHook.hasValidTokens,
     willExpireSoon: authHook.willExpireSoon,
@@ -65,9 +71,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   return (
-    <AuthContext.Provider value={contextValue}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
   );
 }
 
@@ -76,11 +80,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
  */
 export function useAuth(): AuthContextType {
   const context = useContext(AuthContext);
-  
+
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
-  
+
   return context;
 }
 
@@ -108,7 +112,7 @@ export function useAuthToken(): {
   getAuthHeader: () => Promise<string | null>;
 } {
   const { getValidToken, getAuthHeader } = useAuth();
-  
+
   return {
     getToken: getValidToken,
     getAuthHeader,

@@ -302,21 +302,21 @@ export const implementationGuide = {
     '2. Configure RPC client with correct API URL',
     '3. Implement hooks using RPC client methods',
     '4. Set up environment variables',
-    '5. Test the integration end-to-end'
+    '5. Test the integration end-to-end',
   ],
-  
+
   commonIssues: [
     'Missing AppType export in backend',
     'Incorrect API URL configuration',
     'Missing error handling in hooks',
     'Wrong import paths between packages',
-    'TypeScript configuration issues'
+    'TypeScript configuration issues',
   ],
-  
+
   testCommands: [
     'npm run test rpc-integration-test.ts',
     'npm run dev (start backend)',
     'npm run dev (start frontend)',
-    'Test /health endpoint: curl localhost:8080/health'
-  ]
+    'Test /health endpoint: curl localhost:8080/health',
+  ],
 };

@@ -3,7 +3,7 @@
  * Funcionalidades:
  * - Armazenamento seguro de tokens
  * - Refresh automático de tokens
- * - Persistência em localStorage  
+ * - Persistência em localStorage
  * - Validação de expiração
  * - Limpeza segura de dados sensíveis
  */
@@ -27,7 +27,7 @@ export class AuthTokenManager {
   private accessToken: string | null = null;
   private refreshToken: string | null = null;
   private expiresAt: number | null = null;
-  private tokenType: string = 'Bearer';
+  private tokenType = 'Bearer';
   private isRefreshing = false;
   private refreshPromise: Promise<boolean> | null = null;
   private refreshCallbacks: ((success: boolean) => void)[] = [];
@@ -35,7 +35,7 @@ export class AuthTokenManager {
   // Storage keys
   private static readonly STORAGE_KEYS = {
     ACCESS_TOKEN: 'neonpro_access_token',
-    REFRESH_TOKEN: 'neonpro_refresh_token', 
+    REFRESH_TOKEN: 'neonpro_refresh_token',
     EXPIRES_AT: 'neonpro_token_expires_at',
     TOKEN_TYPE: 'neonpro_token_type',
   } as const;
@@ -45,7 +45,7 @@ export class AuthTokenManager {
     if (typeof window !== 'undefined') {
       this.loadFromStorage();
     }
-  }  /**
+  } /**
    * Singleton pattern - ensure only one instance
    */
   static getInstance(): AuthTokenManager {
@@ -60,17 +60,25 @@ export class AuthTokenManager {
    */
   private loadFromStorage(): void {
     try {
-      const accessToken = localStorage.getItem(AuthTokenManager.STORAGE_KEYS.ACCESS_TOKEN);
-      const refreshToken = localStorage.getItem(AuthTokenManager.STORAGE_KEYS.REFRESH_TOKEN);
-      const expiresAt = localStorage.getItem(AuthTokenManager.STORAGE_KEYS.EXPIRES_AT);
-      const tokenType = localStorage.getItem(AuthTokenManager.STORAGE_KEYS.TOKEN_TYPE);
-      
+      const accessToken = localStorage.getItem(
+        AuthTokenManager.STORAGE_KEYS.ACCESS_TOKEN
+      );
+      const refreshToken = localStorage.getItem(
+        AuthTokenManager.STORAGE_KEYS.REFRESH_TOKEN
+      );
+      const expiresAt = localStorage.getItem(
+        AuthTokenManager.STORAGE_KEYS.EXPIRES_AT
+      );
+      const tokenType = localStorage.getItem(
+        AuthTokenManager.STORAGE_KEYS.TOKEN_TYPE
+      );
+
       if (accessToken && refreshToken && expiresAt) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
-        this.expiresAt = parseInt(expiresAt, 10);
+        this.expiresAt = Number.parseInt(expiresAt, 10);
         this.tokenType = tokenType || 'Bearer';
-        
+
         // Validate loaded tokens
         if (isNaN(this.expiresAt) || this.expiresAt < Date.now()) {
           console.warn('Loaded expired tokens, clearing storage');
@@ -81,7 +89,7 @@ export class AuthTokenManager {
       console.error('Error loading tokens from storage:', error);
       this.clearTokens();
     }
-  }  /**
+  } /**
    * Save tokens to localStorage with error handling
    */
   private saveToStorage(): void {
@@ -91,10 +99,22 @@ export class AuthTokenManager {
 
     try {
       if (this.accessToken && this.refreshToken && this.expiresAt) {
-        localStorage.setItem(AuthTokenManager.STORAGE_KEYS.ACCESS_TOKEN, this.accessToken);
-        localStorage.setItem(AuthTokenManager.STORAGE_KEYS.REFRESH_TOKEN, this.refreshToken);
-        localStorage.setItem(AuthTokenManager.STORAGE_KEYS.EXPIRES_AT, this.expiresAt.toString());
-        localStorage.setItem(AuthTokenManager.STORAGE_KEYS.TOKEN_TYPE, this.tokenType);
+        localStorage.setItem(
+          AuthTokenManager.STORAGE_KEYS.ACCESS_TOKEN,
+          this.accessToken
+        );
+        localStorage.setItem(
+          AuthTokenManager.STORAGE_KEYS.REFRESH_TOKEN,
+          this.refreshToken
+        );
+        localStorage.setItem(
+          AuthTokenManager.STORAGE_KEYS.EXPIRES_AT,
+          this.expiresAt.toString()
+        );
+        localStorage.setItem(
+          AuthTokenManager.STORAGE_KEYS.TOKEN_TYPE,
+          this.tokenType
+        );
       }
     } catch (error) {
       console.error('Error saving tokens to storage:', error);
@@ -112,13 +132,13 @@ export class AuthTokenManager {
     }
 
     try {
-      Object.values(AuthTokenManager.STORAGE_KEYS).forEach(key => {
+      Object.values(AuthTokenManager.STORAGE_KEYS).forEach((key) => {
         localStorage.removeItem(key);
       });
     } catch (error) {
       console.error('Error clearing storage:', error);
     }
-  }  /**
+  } /**
    * Set authentication tokens
    */
   setTokens(tokens: AuthTokens): void {
@@ -126,8 +146,8 @@ export class AuthTokenManager {
     this.refreshToken = tokens.refreshToken;
     this.tokenType = tokens.tokenType || 'Bearer';
     // Calculate expiration timestamp (with safety margin of 30 seconds)
-    this.expiresAt = Date.now() + ((tokens.expiresIn - 30) * 1000);
-    
+    this.expiresAt = Date.now() + (tokens.expiresIn - 30) * 1000;
+
     this.saveToStorage();
   }
 
@@ -135,7 +155,7 @@ export class AuthTokenManager {
    * Get current access token if valid
    */
   getAccessToken(): string | null {
-    if (!this.accessToken || !this.expiresAt) {
+    if (!(this.accessToken && this.expiresAt)) {
       return null;
     }
 
@@ -170,7 +190,7 @@ export class AuthTokenManager {
       return null;
     }
     return `${this.tokenType} ${token}`;
-  }  /**
+  } /**
    * Check if user has valid tokens
    */
   hasValidTokens(): boolean {
@@ -207,7 +227,7 @@ export class AuthTokenManager {
     if (!this.refreshToken) {
       console.warn('No refresh token available');
       return false;
-    }    // If already refreshing, wait for that operation
+    } // If already refreshing, wait for that operation
     if (this.isRefreshing && this.refreshPromise) {
       return await this.refreshPromise;
     }
@@ -221,14 +241,14 @@ export class AuthTokenManager {
 
     this.isRefreshing = true;
     this.refreshPromise = this.performTokenRefresh();
-    
+
     try {
       const result = await this.refreshPromise;
-      
+
       // Notify queued callbacks
-      this.refreshCallbacks.forEach(callback => callback(result));
+      this.refreshCallbacks.forEach((callback) => callback(result));
       this.refreshCallbacks = [];
-      
+
       return result;
     } finally {
       this.isRefreshing = false;
@@ -241,52 +261,57 @@ export class AuthTokenManager {
    */
   private async performTokenRefresh(): Promise<boolean> {
     try {
-      const response = await fetch('/api/v1/auth/refresh', {        method: 'POST',
+      const response = await fetch('/api/v1/auth/refresh', {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          refreshToken: this.refreshToken
-        })
+          refreshToken: this.refreshToken,
+        }),
       });
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => null);
-        console.error('Token refresh failed:', response.status, errorData?.message);
-        
+        console.error(
+          'Token refresh failed:',
+          response.status,
+          errorData?.message
+        );
+
         // If refresh token is invalid/expired, clear all tokens
         if (response.status === 401 || response.status === 403) {
           this.clearTokens();
         }
-        
+
         return false;
       }
 
       const data = await response.json();
-      
+
       if (data.success && data.data) {
         this.setTokens({
           accessToken: data.data.accessToken,
           refreshToken: data.data.refreshToken,
           expiresIn: data.data.expiresIn,
-          tokenType: data.data.tokenType
+          tokenType: data.data.tokenType,
         });
-        
+
         console.log('Token refresh successful');
         return true;
-      } else {
-        console.error('Invalid refresh response format:', data);
-        this.clearTokens();
-        return false;
-      }    } catch (error) {
+      }
+      console.error('Invalid refresh response format:', data);
+      this.clearTokens();
+      return false;
+    } catch (error) {
       console.error('Token refresh network error:', error);
-      
+
       // Only clear tokens on network errors if the error suggests auth failure
       if (error instanceof TypeError && error.message.includes('fetch')) {
         // Network error - don't clear tokens, might be temporary
         return false;
       }
-      
+
       this.clearTokens();
       return false;
     }
@@ -316,7 +341,7 @@ export class AuthTokenManager {
     // Token is expired or missing, try to refresh
     if (this.hasRefreshToken()) {
       const refreshSuccessful = await this.refreshAccessToken();
-      
+
       if (refreshSuccessful) {
         return this.getAccessToken();
       }
@@ -324,7 +349,7 @@ export class AuthTokenManager {
 
     // No valid token available
     return null;
-  }  /**
+  } /**
    * Get authorization header for API requests with automatic refresh
    */
   async getAuthorizationHeaderWithRefresh(): Promise<string | null> {
@@ -339,7 +364,7 @@ export class AuthTokenManager {
    * Get all token data for debugging/testing
    */
   getTokenData(): AuthTokenData | null {
-    if (!this.accessToken || !this.refreshToken || !this.expiresAt) {
+    if (!(this.accessToken && this.refreshToken && this.expiresAt)) {
       return null;
     }
 
@@ -347,17 +372,17 @@ export class AuthTokenManager {
       accessToken: this.accessToken,
       refreshToken: this.refreshToken,
       expiresAt: this.expiresAt,
-      tokenType: this.tokenType
+      tokenType: this.tokenType,
     };
   }
 
   /**
    * Check if tokens will expire soon (within specified minutes)
    */
-  willExpireSoon(minutes: number = 5): boolean {
+  willExpireSoon(minutes = 5): boolean {
     if (!this.expiresAt) return true;
     const timeUntilExpiration = this.expiresAt - Date.now();
-    return timeUntilExpiration <= (minutes * 60 * 1000);
+    return timeUntilExpiration <= minutes * 60 * 1000;
   }
 }
 

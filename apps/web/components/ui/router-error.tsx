@@ -1,18 +1,18 @@
 /**
  * ❌ Router Error Component - NeonPro Healthcare
  * ============================================
- * 
+ *
  * Global error boundary for routing errors
  * with recovery options and error reporting.
  */
 
 'use client';
 
-import React from 'react';
 import { Link } from '@tanstack/react-router';
 import { AlertTriangle, Home, RefreshCw } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import React from 'react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
 
 interface RouterErrorProps {
   error: Error;
@@ -36,13 +36,13 @@ export function RouterError({ error, reset }: RouterErrorProps) {
       timestamp: new Date().toISOString(),
       url: window.location.href,
     });
-    
+
     // TODO: Send to error tracking service (Sentry, LogRocket, etc.)
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <div className="max-w-md w-full text-center space-y-6">
+    <div className="flex min-h-screen items-center justify-center bg-background p-4">
+      <div className="w-full max-w-md space-y-6 text-center">
         <div className="flex justify-center">
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10">
             <AlertTriangle className="h-8 w-8 text-destructive" />
@@ -50,7 +50,7 @@ export function RouterError({ error, reset }: RouterErrorProps) {
         </div>
 
         <div className="space-y-2">
-          <h1 className="text-2xl font-bold">Erro de Navegação</h1>
+          <h1 className="font-bold text-2xl">Erro de Navegação</h1>
           <p className="text-muted-foreground">
             Ocorreu um erro inesperado durante a navegação.
           </p>
@@ -60,35 +60,35 @@ export function RouterError({ error, reset }: RouterErrorProps) {
           <AlertTriangle className="h-4 w-4" />
           <AlertTitle>Detalhes do Erro</AlertTitle>
           <AlertDescription className="mt-2">
-            <code className="text-sm bg-muted p-2 rounded block">
+            <code className="block rounded bg-muted p-2 text-sm">
               {error.message}
             </code>
           </AlertDescription>
         </Alert>
 
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+        <div className="flex flex-col justify-center gap-3 sm:flex-row">
           <Button onClick={handleRefresh} variant="default">
-            <RefreshCw className="h-4 w-4 mr-2" />
+            <RefreshCw className="mr-2 h-4 w-4" />
             Tentar Novamente
           </Button>
-          
+
           <Button asChild variant="outline">
             <Link to="/">
-              <Home className="h-4 w-4 mr-2" />
+              <Home className="mr-2 h-4 w-4" />
               Voltar ao Início
             </Link>
           </Button>
         </div>
 
-        <div className="pt-4 border-t">
-          <p className="text-sm text-muted-foreground mb-2">
+        <div className="border-t pt-4">
+          <p className="mb-2 text-muted-foreground text-sm">
             Se o problema persistir, entre em contato com o suporte.
           </p>
-          <Button 
-            onClick={handleReportError}
-            variant="ghost" 
-            size="sm"
+          <Button
             className="text-xs"
+            onClick={handleReportError}
+            size="sm"
+            variant="ghost"
           >
             Reportar Erro
           </Button>

@@ -23,11 +23,16 @@
     "test:unit:watch": "vitest",
     "test:unit:ui": "vitest --ui",
     "test:unit:coverage": "vitest run --coverage",
+    "test:integration": "vitest run --config vitest.config.integration.ts",
+    "test:integration:watch": "vitest --config vitest.config.integration.ts",
+    "test:integration:ui": "vitest --ui --config vitest.config.integration.ts",
+    "test:integration:coverage": "vitest run --coverage --config vitest.config.integration.ts",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:install": "playwright install --with-deps",
-    "test:all": "pnpm test:unit && pnpm test:e2e",
+    "test:all": "pnpm test:unit && pnpm test:integration && pnpm test:e2e",
+    "test:healthcare": "pnpm test:integration -- --testNamePattern=\"(Patient|LGPD|Emergency)\"",
     "ci": "pnpm format && pnpm lint:biome && pnpm type-check"
   },
   "devDependencies": {

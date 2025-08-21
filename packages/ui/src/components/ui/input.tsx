@@ -5,19 +5,20 @@ import { forwardRef, useCallback, useState } from 'react';
 import { cn } from '../../lib/utils';
 
 const inputVariants = cva(
-  'flex w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background transition-all duration-200 file:border-0 file:bg-transparent file:font-medium file:text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+  'flex w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background backdrop-blur-sm transition-all duration-300 file:border-0 file:bg-transparent file:font-medium file:text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
   {
     variants: {
       variant: {
-        default: 'border-input',
+        default:
+          'border-input bg-background/80 shadow-healthcare-sm hover:bg-background focus-visible:bg-background',
         medical:
-          'border-primary/30 bg-blue-50/30 focus-visible:ring-primary/30 dark:bg-blue-950/10',
+          'border-primary/30 bg-gradient-to-br from-primary/5 via-primary/3 to-transparent shadow-healthcare-sm backdrop-blur-sm hover:from-primary/8 hover:via-primary/5 focus-visible:border-primary/50 focus-visible:ring-primary/40',
         sensitive:
-          'border-orange-300 bg-orange-50/30 focus-visible:ring-orange-500/30 dark:bg-orange-950/10',
+          'border-warning/40 bg-gradient-to-br from-warning/8 via-warning/5 to-transparent shadow-healthcare-md backdrop-blur-sm hover:from-warning/12 hover:via-warning/8 focus-visible:border-warning/60 focus-visible:ring-warning/40',
         critical:
-          'border-red-300 bg-red-50/30 focus-visible:ring-red-500/30 dark:bg-red-950/10',
+          'border-destructive/40 bg-gradient-to-br from-destructive/8 via-destructive/5 to-transparent shadow-healthcare-md backdrop-blur-sm hover:from-destructive/12 hover:via-destructive/8 focus-visible:border-destructive/60 focus-visible:ring-destructive/40',
         success:
-          'border-green-300 bg-green-50/30 focus-visible:ring-green-500/30 dark:bg-green-950/10',
+          'border-success/40 bg-gradient-to-br from-success/8 via-success/5 to-transparent shadow-healthcare-sm backdrop-blur-sm hover:from-success/12 hover:via-success/8 focus-visible:border-success/60 focus-visible:ring-success/40',
       },
       inputSize: {
         default: 'h-10',
@@ -26,9 +27,12 @@ const inputVariants = cva(
       },
       validation: {
         none: '',
-        valid: 'border-green-500 focus-visible:ring-green-500/30',
-        invalid: 'border-red-500 focus-visible:ring-red-500/30',
-        warning: 'border-orange-500 focus-visible:ring-orange-500/30',
+        valid:
+          'border-success/60 bg-gradient-to-br from-success/10 via-success/5 to-transparent shadow-healthcare-sm focus-visible:ring-success/40',
+        invalid:
+          'border-destructive/60 bg-gradient-to-br from-destructive/10 via-destructive/5 to-transparent shadow-healthcare-md focus-visible:ring-destructive/40',
+        warning:
+          'border-warning/60 bg-gradient-to-br from-warning/10 via-warning/5 to-transparent shadow-healthcare-sm focus-visible:ring-warning/40',
       },
     },
     defaultVariants: {
@@ -212,17 +216,19 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     const ValidationIcon = () => {
       if (loading) {
         return (
-          <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+          <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent drop-shadow-sm" />
         );
       }
 
       switch (finalValidation) {
         case 'valid':
-          return <Check className="h-4 w-4 text-green-500" />;
+          return <Check className="h-4 w-4 text-success drop-shadow-sm" />;
         case 'invalid':
-          return <X className="h-4 w-4 text-red-500" />;
+          return <X className="h-4 w-4 text-destructive drop-shadow-sm" />;
         case 'warning':
-          return <AlertCircle className="h-4 w-4 text-orange-500" />;
+          return (
+            <AlertCircle className="h-4 w-4 text-warning drop-shadow-sm" />
+          );
         default:
           return null;
       }

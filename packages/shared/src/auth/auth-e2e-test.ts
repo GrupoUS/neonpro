@@ -32,7 +32,7 @@ export interface E2ETestResult {
  */
 export async function runAuthE2ETest(
   credentials: TestCredentials,
-  baseUrl: string = ''
+  baseUrl = ''
 ): Promise<E2ETestResult> {
   const result: E2ETestResult = {
     success: false,
@@ -60,7 +60,7 @@ export async function runAuthE2ETest(
     // Passo 1: Login
     console.log('📝 Testando login...');
     const loginStart = performance.now();
-    
+
     const loginResponse = await fetch(`${baseUrl}/api/v1/auth/login`, {
       method: 'POST',
       headers: {
@@ -77,8 +77,8 @@ export async function runAuthE2ETest(
     }
 
     const loginData = await loginResponse.json();
-    
-    if (!loginData.success || !loginData.data?.tokens) {
+
+    if (!(loginData.success && loginData.data?.tokens)) {
       result.errors.push('Login response format invalid');
       return result;
     }
@@ -90,12 +90,12 @@ export async function runAuthE2ETest(
 
     // Passo 2: Verificar armazenamento de tokens
     console.log('💾 Testando armazenamento de tokens...');
-    
+
     const hasTokens = authTokenManager.hasValidTokens();
     const accessToken = authTokenManager.getAccessToken();
     const refreshToken = authTokenManager.getRefreshToken();
 
-    if (!hasTokens || !accessToken || !refreshToken) {
+    if (!(hasTokens && accessToken && refreshToken)) {
       result.errors.push('Token storage failed');
       return result;
     }
@@ -105,22 +105,24 @@ export async function runAuthE2ETest(
 
     // Passo 3: Acessar rota protegida
     console.log('🔒 Testando acesso a rota protegida...');
-    
+
     const protectedResponse = await fetch(`${baseUrl}/api/v1/auth/me`, {
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
     });
 
     if (!protectedResponse.ok) {
-      result.errors.push(`Protected route access failed: ${protectedResponse.status}`);
+      result.errors.push(
+        `Protected route access failed: ${protectedResponse.status}`
+      );
       return result;
     }
 
     const userData = await protectedResponse.json();
-    
-    if (!userData.success || !userData.data) {
+
+    if (!(userData.success && userData.data)) {
       result.errors.push('Protected route response invalid');
       return result;
     }
@@ -131,7 +133,7 @@ export async function runAuthE2ETest(
     // Passo 4: Testar refresh de token
     console.log('🔄 Testando refresh de token...');
     const refreshStart = performance.now();
-    
+
     const refreshSuccess = await authTokenManager.refreshAccessToken();
     result.timing.refreshTime = performance.now() - refreshStart;
 
@@ -153,11 +155,11 @@ export async function runAuthE2ETest(
     // Passo 5: Testar logout
     console.log('👋 Testando logout...');
     const logoutStart = performance.now();
-    
+
     const logoutResponse = await fetch(`${baseUrl}/api/v1/auth/logout`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${newToken}`,
+        Authorization: `Bearer ${newToken}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -179,7 +181,7 @@ export async function runAuthE2ETest(
     // Verificar se não consegue mais acessar rota protegida
     const postLogoutResponse = await fetch(`${baseUrl}/api/v1/auth/me`, {
       headers: {
-        'Authorization': `Bearer ${newToken}`,
+        Authorization: `Bearer ${newToken}`,
         'Content-Type': 'application/json',
       },
     });
@@ -197,15 +199,15 @@ export async function runAuthE2ETest(
     console.log('🎉 Teste E2E de autenticação concluído com sucesso!');
 
     return result;
-
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error';
     result.errors.push(`Test execution error: ${errorMessage}`);
     console.error('❌ Erro durante teste E2E:', error);
-    
+
     // Limpar estado em caso de erro
     authTokenManager.clearTokens();
-    
+
     return result;
   }
 }
@@ -235,7 +237,7 @@ export async function testSessionPersistence(): Promise<boolean> {
 
     // Simular reload da página criando nova instância
     const newManager = new (authTokenManager.constructor as any)();
-    
+
     // Verificar se tokens foram carregados
     const persistedToken = newManager.getAccessToken();
     if (!persistedToken) {
@@ -245,10 +247,9 @@ export async function testSessionPersistence(): Promise<boolean> {
 
     // Limpar
     authTokenManager.clearTokens();
-    
+
     console.log('✅ Persistência de sessão funcionando');
     return true;
-
   } catch (error) {
     console.error('❌ Erro no teste de persistência:', error);
     return false;
@@ -260,7 +261,7 @@ export async function testSessionPersistence(): Promise<boolean> {
  */
 export async function runAllAuthTests(
   credentials: TestCredentials,
-  baseUrl: string = ''
+  baseUrl = ''
 ): Promise<{
   e2eTest: E2ETestResult;
   persistenceTest: boolean;
@@ -280,7 +281,7 @@ export async function runAllAuthTests(
 
   if (!overallSuccess) {
     console.log('\n❌ Erros encontrados:');
-    e2eTest.errors.forEach(error => console.log(`  - ${error}`));
+    e2eTest.errors.forEach((error) => console.log(`  - ${error}`));
   }
 
   return {

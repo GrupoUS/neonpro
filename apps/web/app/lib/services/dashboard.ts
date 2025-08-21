@@ -1,8 +1,8 @@
 import { createClient } from '@/lib/supabase/client';
 
 /**
- * BMAD (Business Management Analytics Dashboard) Service
- * Complete service for enterprise dashboard data and analytics
+ * NeonPro Healthcare Dashboard Service
+ * Complete service for healthcare dashboard data and analytics
  */
 
 // Core types for dashboard entities
@@ -135,7 +135,7 @@ export type DashboardAnalytics = {
   };
 };
 
-export class BMadDashboardService {
+export class NeonProDashboardService {
   private readonly supabase = createClient();
 
   /**
@@ -781,5 +781,5 @@ export class BMadDashboardService {
 }
 
 // Export singleton instance
-export const bmadDashboardService = new BMadDashboardService();
-export default bmadDashboardService;
+export const neonproDashboardService = new NeonProDashboardService();
+export default neonproDashboardService;

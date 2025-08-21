@@ -53,13 +53,13 @@ async function validateJWTToken(token: string): Promise<AuthUser | null> {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET) as any;
-    
+
     if (!decoded || typeof decoded !== 'object') {
       return null;
     }
 
     // Validar estrutura do token
-    if (!decoded.sub || !decoded.email) {
+    if (!(decoded.sub && decoded.email)) {
       return null;
     }
 
@@ -114,7 +114,7 @@ export const optionalAuth = createMiddleware(async (c, next) => {
 
   if (token) {
     const user = await validateJWTToken(token);
-    
+
     if (user) {
       c.set('auth', { user, token });
     }
@@ -129,7 +129,7 @@ export const optionalAuth = createMiddleware(async (c, next) => {
 export const requireRole = (requiredRole: string) => {
   return createMiddleware(async (c, next) => {
     const authContext = c.get('auth');
-    
+
     if (!authContext) {
       throw new HTTPException(401, {
         message: 'Autenticação obrigatória',
@@ -152,7 +152,7 @@ export const requireRole = (requiredRole: string) => {
 export const requirePermissions = (permissions: string[]) => {
   return createMiddleware(async (c, next) => {
     const authContext = c.get('auth');
-    
+
     if (!authContext) {
       throw new HTTPException(401, {
         message: 'Autenticação obrigatória',
@@ -160,7 +160,7 @@ export const requirePermissions = (permissions: string[]) => {
     }
 
     const user = authContext.user;
-    
+
     // Admin tem todas as permissões
     if (user.role === 'admin') {
       await next();
@@ -169,12 +169,16 @@ export const requirePermissions = (permissions: string[]) => {
 
     // TODO: Implementar sistema de permissões mais sofisticado
     // Por enquanto, apenas verifica roles básicas
-    const hasPermissions = permissions.every(permission => {
+    const hasPermissions = permissions.every((permission) => {
       switch (permission) {
         case 'read:patients':
-          return ['healthcare_professional', 'nurse', 'doctor'].includes(user.role || '');
+          return ['healthcare_professional', 'nurse', 'doctor'].includes(
+            user.role || ''
+          );
         case 'write:patients':
-          return ['healthcare_professional', 'doctor'].includes(user.role || '');
+          return ['healthcare_professional', 'doctor'].includes(
+            user.role || ''
+          );
         case 'read:analytics':
           return ['admin', 'manager'].includes(user.role || '');
         case 'write:system':
@@ -200,7 +204,7 @@ export const requirePermissions = (permissions: string[]) => {
  */
 export const requireTenant = createMiddleware(async (c, next) => {
   const authContext = c.get('auth');
-  
+
   if (!authContext) {
     throw new HTTPException(401, {
       message: 'Autenticação obrigatória',
@@ -208,7 +212,8 @@ export const requireTenant = createMiddleware(async (c, next) => {
   }
 
   const user = authContext.user;
-  const requestedTenantId = c.req.header('x-tenant-id') || c.req.param('tenantId');
+  const requestedTenantId =
+    c.req.header('x-tenant-id') || c.req.param('tenantId');
 
   if (!user.tenantId) {
     throw new HTTPException(403, {
@@ -258,7 +263,7 @@ export const adminRoute = [requireAuth, requireRole('admin')];
  * Middleware para profissionais de saúde
  */
 export const healthcareRoute = [
-  requireAuth, 
-  requireTenant, 
-  requirePermissions(['read:patients'])
+  requireAuth,
+  requireTenant,
+  requirePermissions(['read:patients']),
 ];

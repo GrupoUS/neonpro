@@ -1,18 +1,18 @@
 /**
  * 🔗 Router Integration - NeonPro Healthcare
  * ========================================
- * 
+ *
  * Integration component for TanStack Router with Next.js App Router
  * and existing authentication system.
  */
 
 'use client';
 
-import React from 'react';
-import { RouterProvider } from '@/providers/router-provider';
-import { router } from '@/lib/router';
-import { useAuth } from '@/contexts/auth-context';
 import { useQueryClient } from '@tanstack/react-query';
+import React from 'react';
+import { useAuth } from '@/contexts/auth-context';
+import { router } from '@/lib/router';
+import { RouterProvider } from '@/providers/router-provider';
 
 interface RouterIntegrationProps {
   children?: React.ReactNode;
@@ -47,9 +47,9 @@ export function RouterIntegration({ children }: RouterIntegrationProps) {
   // Show loading during initial auth check
   if (auth.loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-primary border-b-2" />
           <p className="text-muted-foreground">Inicializando sistema...</p>
         </div>
       </div>
@@ -90,10 +90,15 @@ export function useRoutingMode() {
   React.useEffect(() => {
     // Check if we're in a protected route that should use TanStack Router
     const pathname = window.location.pathname;
-    const protectedRoutes = ['/dashboard', '/patients', '/appointments', '/settings'];
-    
-    const shouldUseTanStackRouter = protectedRoutes.some(route => 
-      pathname === route || pathname.startsWith(route + '/')
+    const protectedRoutes = [
+      '/dashboard',
+      '/patients',
+      '/appointments',
+      '/settings',
+    ];
+
+    const shouldUseTanStackRouter = protectedRoutes.some(
+      (route) => pathname === route || pathname.startsWith(route + '/')
     );
 
     setUseTanStackRouter(shouldUseTanStackRouter);
@@ -103,10 +108,10 @@ export function useRoutingMode() {
 }
 
 // Component to conditionally render based on routing mode
-export function ConditionalRouter({ 
-  children, 
-  fallback 
-}: { 
+export function ConditionalRouter({
+  children,
+  fallback,
+}: {
   children: React.ReactNode;
   fallback?: React.ReactNode;
 }) {

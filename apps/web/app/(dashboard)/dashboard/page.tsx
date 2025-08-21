@@ -594,8 +594,8 @@ function SystemStatusSection() {
       </div>
     </NeonGradientCard>
   );
-} // BMad Master Dashboard - maintaining existing functionality
-function BMadMasterDashboard() {
+} // Healthcare Dashboard - maintaining existing functionality
+function HealthcareDashboard() {
   const { totalPatients, monthlyRevenue, upcomingAppointments } =
     useDashboardMetrics();
 
@@ -604,10 +604,10 @@ function BMadMasterDashboard() {
       <div className="container mx-auto p-6">
         <div className="mb-6 border border-green-400 p-4">
           <h1 className="mb-2 font-bold text-2xl">
-            BMAD MASTER CONTROL SYSTEM v2.1
+            NEONPRO HEALTHCARE CONTROL SYSTEM v2.1
           </h1>
           <p className="text-sm">
-            SISTEMA DE CONTROLE MESTRE - ACESSO RESTRITO
+            SISTEMA DE CONTROLE HOSPITALAR - ACESSO RESTRITO
           </p>
         </div>
 
@@ -670,14 +670,14 @@ function BMadMasterDashboard() {
   );
 } // Main Dashboard Component with dynamic data integration
 export default function DashboardPage() {
-  const [viewMode, setViewMode] = useState<'standard' | 'bmad-master'>(
+  const [viewMode, setViewMode] = useState<'standard' | 'healthcare'>(
     'standard'
   );
   const { user } = useAuth();
 
-  // Handle BMad Master mode
-  if (viewMode === 'bmad-master') {
-    return <BMadMasterDashboard />;
+  // Handle Healthcare mode
+  if (viewMode === 'healthcare') {
+    return <HealthcareDashboard />;
   }
 
   return (

@@ -43,7 +43,7 @@ meus;
 dados;
 para;
 fins;
-médicos < />abell < />div < div;
+médicos < />abell < / > div < div;
 data-testid = "consent-analytics">
       <input type = 'checkbox';
 data-testid="consent-analytics" />
@@ -51,9 +51,9 @@ data-testid="consent-analytics" />
 com;
 análises;
 estatísticas;
-anônimas < />abell < />div < button;
+anônimas < />abell < / > div < button;
 type = 'submit';
-data-testid = Cadastrar < 'submit-registration' < />bnottu < />fmor;
+data-testid = Cadastrar < 'submit-registration' < />bnottu < / > fmor;
 )
 
 const MockAppointmentBooking = ({ onBooking }: { onBooking: (data: any) => void }) => (
@@ -61,14 +61,14 @@ const MockAppointmentBooking = ({ onBooking }: { onBooking: (data: any) => void 
     <select data-testid="professional-select">
       <option value=Dr. Silva - Cardiologista<"dr-silva" </option>
       <option
-value = Dr.Santos - Neurologista < 'dr-santos' < />inoopt < />ceelst < input;
+value = Dr.Santos - Neurologista < 'dr-santos' < />inoopt < / > ceelst < input;
 type = 'datetime-local';
 data-testid = "appointment-datetime" />
     <textarea data-testid = 'appointment-notes';
 placeholder="Observações" />
     <button onClick={() => onBooking(mockAppointment)}
 data-testid = Agendar < 'book-appointment';
-Consulta < />bnottu < />div;
+Consulta < />bnottu < / > div;
 )
 
 const MockPatientPortal = ({ patient }: { patient: any }) => (
@@ -85,7 +85,7 @@ data-testid = ID < 'patient-id';
     </div>
     <div
 data-testid = <h3>Suas < 'appointments-list';
-Consultas < /3>h < div;
+Consultas < / 23;;<>dhiv{};
 data-testid = Consulta < 'appointment-item';
 com;
 Dr.Silva - 25 / 08 / 2025;
@@ -106,7 +106,8 @@ Dr.Silva - 25 / 08 / 2025;
   </div>
 )
 
-describe('Patient Journey Workflow Tests - Final Validation', () => {
+describe('Patient Journey Workflow Tests - Final Validation', () =>
+{
   let queryClient: QueryClient;
 
   beforeEach(() => {
@@ -628,4 +629,5 @@ describe('Patient Journey Workflow Tests - Final Validation', () => {
       expect(screen.getByTestId('patient-portal')).toBeInTheDocument();
     });
   });
-});
+}
+)

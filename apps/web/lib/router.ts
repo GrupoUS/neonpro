@@ -1,26 +1,26 @@
 /**
  * 🚦 TanStack Router Configuration - NeonPro Healthcare
  * ===================================================
- * 
+ *
  * Complete routing configuration with authentication guards,
  * type-safe routes, and healthcare-specific workflow optimization.
  */
 
-import { 
-  createRouter, 
-  createRootRoute, 
-  createRoute,
-  redirect,
-  Outlet,
-  Link,
-  useNavigate
-} from '@tanstack/react-router';
-import { QueryClient } from '@tanstack/react-query';
-import { z } from 'zod';
-import type { UserRole } from '@neonpro/shared/schemas';
 import { apiClient } from '@neonpro/shared/api-client';
-import { useAuth } from '@/contexts/auth-context';
+import type { UserRole } from '@neonpro/shared/schemas';
+import type { QueryClient } from '@tanstack/react-query';
+import {
+  createRootRoute,
+  createRoute,
+  createRouter,
+  Link,
+  type Outlet,
+  redirect,
+  useNavigate,
+} from '@tanstack/react-router';
 import React from 'react';
+import { z } from 'zod';
+import { useAuth } from '@/contexts/auth-context';
 
 // Router context type with authentication and query client
 interface RouterContext {
@@ -47,7 +47,9 @@ export const PatientsSearchSchema = z.object({
 
 export const AppointmentsSearchSchema = z.object({
   date: z.string().optional(),
-  status: z.enum(['scheduled', 'confirmed', 'completed', 'cancelled']).optional(),
+  status: z
+    .enum(['scheduled', 'confirmed', 'completed', 'cancelled'])
+    .optional(),
   professional: z.string().optional(),
   search: z.string().optional(),
 });
@@ -65,7 +67,7 @@ export const requireAuth = async (context: RouterContext) => {
 export const requireRole = (roles: UserRole | UserRole[]) => {
   return async (context: RouterContext) => {
     await requireAuth(context);
-    
+
     if (!context.auth.hasRole(roles)) {
       throw redirect({
         to: '/unauthorized',
@@ -145,28 +147,28 @@ export const dashboardRoute = createRoute({
     // Dashboard Layout Component
     const DashboardLayout = () => {
       const { user } = useAuth();
-      
+
       return (
         <div className="min-h-screen bg-background">
           <header className="border-b bg-card">
             <div className="container mx-auto px-4 py-4">
               <nav className="flex items-center justify-between">
-                <Link to="/" className="flex items-center space-x-2">
-                  <span className="font-bold text-xl">NeonPro</span>
-                </Link>
-                <div className="flex items-center space-x-4">
-                  <span>Bem-vindo, {user?.name || 'Usuário'}</span>
+                <Link to="/"
+      className = "flex items-center space-x-2">
+                  <span className =
+        NeonPro < 'font-bold text-xl' < />anps < / > Likn < div;
+      className=<span>Bem-vindo<
+                  "flex items-center space-x-4" , {user?.name || 'Usuário'}</span>
                 </div>
               </nav>
             </div>
           </header>
-          <main className="container mx-auto px-4 py-8">
-            <Outlet />
-          </main>
-        </div>
-      );
+          <main
+      className=<Outlet /><
+      'container mx-auto px-4 py-8' < />aimn < / > div;
+      )
     };
-    
+
     return <DashboardLayout />;
   },
 });
@@ -178,32 +180,35 @@ export const dashboardIndexRoute = createRoute({
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold">Dashboard</h1>
-          <p className="text-muted-foreground">
-            Visão geral da sua clínica de estética
-          </p>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-card p-6 rounded-lg border">
-            <h3 className="font-semibold">Pacientes</h3>
-            <p className="text-2xl font-bold">150</p>
-          </div>
-          <div className="bg-card p-6 rounded-lg border">
-            <h3 className="font-semibold">Consultas Hoje</h3>
-            <p className="text-2xl font-bold">12</p>
-          </div>
-          <div className="bg-card p-6 rounded-lg border">
-            <h3 className="font-semibold">Receita Mensal</h3>
-            <p className="text-2xl font-bold">R$ 45.000</p>
-          </div>
-          <div className="bg-card p-6 rounded-lg border">
-            <h3 className="font-semibold">Profissionais</h3>
-            <p className="text-2xl font-bold">8</p>
-          </div>
-        </div>
-      </div>
-    );
+          <h1 className=Dashboard<"text-3xl font-bold" </h1>
+          <p
+    className = Visão < 'text-muted-foreground';
+    geral;
+    da;
+    sua;
+    clínica;
+    de;
+    estética < />p < / > div < div;
+    className =
+      "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className =
+      "bg-card p-6 rounded-lg border">
+            <h3 className =
+        Pacientes < 'font-semibold' < /  3;<>hp;
+    className = 'text-2xl font-bold' > 150 < />p < / > div < div;
+    className = "bg-card p-6 rounded-lg border">
+            <h3 className = Consultas < 'font-semibold';
+    Hoje < /  3;<>hp;
+    className = 'text-2xl font-bold' > 12 < />p < / > div < div;
+    className = "bg-card p-6 rounded-lg border">
+            <h3 className = Receita < 'font-semibold';
+    Mensal < /  3;<>hp;
+    className = R$ < 'text-2xl font-bold';
+    45.0 < />p < / > div < div;
+    className = "bg-card p-6 rounded-lg border">
+            <h3 className = Profissionais < 'font-semibold' < /  3;<>hp;
+    className = 'text-2xl font-bold' > 8 < />p < / > div < />div < / > div;
+    )
   },
 });
 
@@ -219,25 +224,26 @@ export const patientsRoute = createRoute({
         <header className="border-b bg-card">
           <div className="container mx-auto px-4 py-4">
             <nav className="flex items-center justify-between">
-              <Link to="/" className="flex items-center space-x-2">
-                <span className="font-bold text-xl">NeonPro</span>
-              </Link>
-              <div className="flex items-center space-x-4">
-                <Link to="/dashboard" className="text-sm hover:underline">
-                  Dashboard
-                </Link>
-                <Link to="/patients" className="text-sm hover:underline">
-                  Pacientes
-                </Link>
-              </div>
-            </nav>
-          </div>
-        </header>
-        <main className="container mx-auto px-4 py-8">
-          <Outlet />
-        </main>
-      </div>
-    );
+              <Link to="/"
+    className = "flex items-center space-x-2">
+                <span className =
+      NeonPro < 'font-bold text-xl' < />anps < / > Likn < div;
+    className = "flex items-center space-x-4">
+                <Link to = '/dashboard';
+    className = Dashboard < 'text-sm hover:underline' < /  ;<>LLiikknn;
+    to = '/patients';
+    className =
+      Pacientes <
+      'text-sm hover:underline' <
+      />Likn <
+      />div <
+      />anv <
+      />div <
+      />adeehr <
+    main;
+    className=<Outlet /><
+    'container mx-auto px-4 py-8' < />aimn < / > div;
+    )
   },
 });
 
@@ -249,26 +255,24 @@ export const patientsIndexRoute = createRoute({
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold">Pacientes</h1>
-            <p className="text-muted-foreground">
-              Gerencie seus pacientes
-            </p>
-          </div>
-          <Link 
-            to="/patients/new" 
-            className="bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90"
-          >
-            Novo Paciente
-          </Link>
-        </div>
-        
-        <div className="bg-card rounded-lg border p-6">
-          <p className="text-center text-muted-foreground">
-            Lista de pacientes será exibida aqui
-          </p>
-        </div>
-      </div>
-    );
+            <h1 className=Pacientes<"text-3xl font-bold" </h1>
+            <p
+    className = Gerencie < 'text-muted-foreground';
+    seus;
+    pacientes < />p < / > div < Link;
+    to = '/patients/new';
+    className =
+      Novo <
+      'bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90';
+    Paciente < />Likn < / > div < div;
+    className = "bg-card rounded-lg border p-6">
+          <p className = Lista < 'text-center text-muted-foreground';
+    de;
+    pacientes;
+    será;
+    exibida;
+    aqui < />p < / > div < /;>div;
+    )
   },
 });
 
@@ -279,19 +283,22 @@ export const patientNewRoute = createRoute({
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold">Novo Paciente</h1>
-          <p className="text-muted-foreground">
-            Cadastre um novo paciente
-          </p>
-        </div>
-        
-        <div className="bg-card rounded-lg border p-6">
-          <p className="text-center text-muted-foreground">
-            Formulário de cadastro de paciente será exibido aqui
-          </p>
-        </div>
-      </div>
-    );
+          <h1 className=Novo<"text-3xl font-bold"
+    Paciente < /  1;<>hp;
+    className = Cadastre < 'text-muted-foreground';
+    um;
+    novo;
+    paciente < />p < / > div < div;
+    className = "bg-card rounded-lg border p-6">
+          <p className = Formulário < 'text-center text-muted-foreground';
+    de;
+    cadastro;
+    de;
+    paciente;
+    será;
+    exibido;
+    aqui < />p < / > div < /;>div;
+    )
   },
 });
 
@@ -307,25 +314,26 @@ export const appointmentsRoute = createRoute({
         <header className="border-b bg-card">
           <div className="container mx-auto px-4 py-4">
             <nav className="flex items-center justify-between">
-              <Link to="/" className="flex items-center space-x-2">
-                <span className="font-bold text-xl">NeonPro</span>
-              </Link>
-              <div className="flex items-center space-x-4">
-                <Link to="/dashboard" className="text-sm hover:underline">
-                  Dashboard
-                </Link>
-                <Link to="/appointments" className="text-sm hover:underline">
-                  Consultas
-                </Link>
-              </div>
-            </nav>
-          </div>
-        </header>
-        <main className="container mx-auto px-4 py-8">
-          <Outlet />
-        </main>
-      </div>
-    );
+              <Link to="/"
+    className = "flex items-center space-x-2">
+                <span className =
+      NeonPro < 'font-bold text-xl' < />anps < / > Likn < div;
+    className = "flex items-center space-x-4">
+                <Link to = '/dashboard';
+    className = Dashboard < 'text-sm hover:underline' < /  ;<>LLiikknn;
+    to = '/appointments';
+    className =
+      Consultas <
+      'text-sm hover:underline' <
+      />Likn <
+      />div <
+      />anv <
+      />div <
+      />adeehr <
+    main;
+    className=<Outlet /><
+    'container mx-auto px-4 py-8' < />aimn < / > div;
+    )
   },
 });
 
@@ -336,19 +344,21 @@ export const appointmentsIndexRoute = createRoute({
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold">Consultas</h1>
-          <p className="text-muted-foreground">
-            Gerencie sua agenda de consultas
-          </p>
-        </div>
-        
-        <div className="bg-card rounded-lg border p-6">
-          <p className="text-center text-muted-foreground">
-            Calendário de consultas será exibido aqui
-          </p>
-        </div>
-      </div>
-    );
+          <h1 className=Consultas<"text-3xl font-bold" </h1>
+          <p
+    className = Gerencie < 'text-muted-foreground';
+    sua;
+    agenda;
+    de;
+    consultas < />p < / > div < div;
+    className = "bg-card rounded-lg border p-6">
+          <p className = Calendário < 'text-center text-muted-foreground';
+    de;
+    consultas;
+    será;
+    exibido;
+    aqui < />p < / > div < /;>div;
+    )
   },
 });
 
@@ -364,19 +374,26 @@ export const unauthorizedRoute = createRoute({
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
           <h1 className="text-4xl font-bold text-destructive mb-4">403</h1>
-          <h2 className="text-2xl font-semibold mb-2">Acesso Negado</h2>
-          <p className="text-muted-foreground mb-6">
-            Você não tem permissão para acessar esta página.
+          <h2
+    className = Acesso < 'text-2xl font-semibold mb-2';
+    Negado < /  2;<>hp;
+    className = Você < 'text-muted-foreground mb-6';
+    não;
+    tem;
+    permissão;
+    para;
+    acessar;
+    esta;
+    página.
           </p>
-          <Link 
-            to="/dashboard" 
-            className="bg-primary text-primary-foreground px-6 py-2 rounded-lg hover:bg-primary/90"
-          >
-            Voltar ao Dashboard
-          </Link>
-        </div>
-      </div>
-    );
+          <Link
+    to = '/dashboard';
+    className =
+      Voltar <
+      'bg-primary text-primary-foreground px-6 py-2 rounded-lg hover:bg-primary/90';
+    ao;
+    Dashboard < />Likn < / > div < /;>div;
+    )
   },
 });
 
@@ -395,7 +412,7 @@ export const router = createRouter({
   routeTree,
   defaultPreload: 'intent',
   defaultPreloadStaleTime: 0,
-  
+
   context: {
     queryClient: undefined!, // Will be set by provider
     auth: {
@@ -404,38 +421,41 @@ export const router = createRouter({
       hasRole: () => false,
     },
   },
-  
+
   // Global error handling
   defaultErrorComponent: ({ error }) => {
     console.error('Router error:', error);
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-destructive mb-4">Erro</h1>
-          <p className="text-muted-foreground mb-6">
-            Ocorreu um erro na navegação: {error.message}
-          </p>
-          <Link 
-            to="/" 
-            className="bg-primary text-primary-foreground px-6 py-2 rounded-lg hover:bg-primary/90"
-          >
-            Voltar ao Início
-          </Link>
-        </div>
-      </div>
-    );
+          <h1 className=Erro<"text-4xl font-bold text-destructive mb-4" </h1>
+          <p
+    className = Ocorreu < 'text-muted-foreground mb-6';
+    um;
+    erro;
+    na;
+    error.message < /  ;<>Liknp;
+    to = '/';
+    className =
+      Voltar <
+      'bg-primary text-primary-foreground px-6 py-2 rounded-lg hover:bg-primary/90';
+    ao;
+    Início < />Likn < / > div < /;>div;
+    )
   },
-  
+
   // Global loading component
   defaultPendingComponent: () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Carregando...</p>
-        </div>
+          <div className=</div><"animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4" 
+          <p
+    className = Carregando < 'text-muted-foreground';
+    ...</p>
+    </div>
       </div>
-    );
+    )
   },
 });
 
