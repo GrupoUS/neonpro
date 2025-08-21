@@ -95,15 +95,6 @@
       "MAGIC_TIMEOUT": "25000"
     }
   },
-	  "archon": {
-      "command": "cmd",
-      "args": [
-        "/C",
-        "npx",
-        "mcp-remote",
-        "http://localhost:8051/mcp"
-      ]
-    },
     "vercel": {
       "url": "https://mcp.vercel.com",
       "type": "http",

@@ -1,2 +1,2478 @@
-<testsuites id="" name="" tests="0" failures="0" skipped="0" errors="0" time="0.47675">
+<testsuites id="" name="" tests="73" failures="73" skipped="0" errors="0" time="196.42434400000002">
+<testsuite name="tests\auth\authentication-v2.spec.ts" timestamp="2025-08-21T19:15:28.471Z" hostname="desktop-chrome" tests="14" failures="14" skipped="0" time="35.754" errors="0">
+<testcase name="Healthcare Professional Authentication › should display login page with healthcare branding" classname="tests\auth\authentication-v2.spec.ts" time="2.634">
+<failure message="authentication-v2.spec.ts:19:7 should display login page with healthcare branding" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\authentication-v2.spec.ts:19:7 › Healthcare Professional Authentication › should display login page with healthcare branding 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+      11 | test.describe('Healthcare Professional Authentication', () => {
+      12 |   test.beforeEach(async ({ page }) => {
+    > 13 |     await page.goto('/login');
+         |                ^
+      14 |
+      15 |     // Wait for page to be fully loaded
+      16 |     await page.waitForLoadState('networkidle');
+        at D:\neonpro\tools\testing\e2e\tests\auth\authentication-v2.spec.ts:13:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--99daf-ge-with-healthcare-branding-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--99daf-ge-with-healthcare-branding-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--99daf-ge-with-healthcare-branding-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--99daf-ge-with-healthcare-branding-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Healthcare Professional Authentication › should validate professional credentials format" classname="tests\auth\authentication-v2.spec.ts" time="2.567">
+<failure message="authentication-v2.spec.ts:36:7 should validate professional credentials format" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\authentication-v2.spec.ts:36:7 › Healthcare Professional Authentication › should validate professional credentials format 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+      11 | test.describe('Healthcare Professional Authentication', () => {
+      12 |   test.beforeEach(async ({ page }) => {
+    > 13 |     await page.goto('/login');
+         |                ^
+      14 |
+      15 |     // Wait for page to be fully loaded
+      16 |     await page.waitForLoadState('networkidle');
+        at D:\neonpro\tools\testing\e2e\tests\auth\authentication-v2.spec.ts:13:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--0992e-essional-credentials-format-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--0992e-essional-credentials-format-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--0992e-essional-credentials-format-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--0992e-essional-credentials-format-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Healthcare Professional Authentication › should authenticate healthcare professional successfully" classname="tests\auth\authentication-v2.spec.ts" time="2.549">
+<failure message="authentication-v2.spec.ts:48:7 should authenticate healthcare professional successfully" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\authentication-v2.spec.ts:48:7 › Healthcare Professional Authentication › should authenticate healthcare professional successfully 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+      11 | test.describe('Healthcare Professional Authentication', () => {
+      12 |   test.beforeEach(async ({ page }) => {
+    > 13 |     await page.goto('/login');
+         |                ^
+      14 |
+      15 |     // Wait for page to be fully loaded
+      16 |     await page.waitForLoadState('networkidle');
+        at D:\neonpro\tools\testing\e2e\tests\auth\authentication-v2.spec.ts:13:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--5fc1c-e-professional-successfully-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--5fc1c-e-professional-successfully-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--5fc1c-e-professional-successfully-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--5fc1c-e-professional-successfully-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Healthcare Professional Authentication › should handle invalid professional credentials" classname="tests\auth\authentication-v2.spec.ts" time="2.549">
+<failure message="authentication-v2.spec.ts:84:7 should handle invalid professional credentials" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\authentication-v2.spec.ts:84:7 › Healthcare Professional Authentication › should handle invalid professional credentials 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+      11 | test.describe('Healthcare Professional Authentication', () => {
+      12 |   test.beforeEach(async ({ page }) => {
+    > 13 |     await page.goto('/login');
+         |                ^
+      14 |
+      15 |     // Wait for page to be fully loaded
+      16 |     await page.waitForLoadState('networkidle');
+        at D:\neonpro\tools\testing\e2e\tests\auth\authentication-v2.spec.ts:13:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--f796e-id-professional-credentials-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--f796e-id-professional-credentials-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--f796e-id-professional-credentials-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--f796e-id-professional-credentials-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Healthcare Professional Authentication › should handle session persistence across page refreshes" classname="tests\auth\authentication-v2.spec.ts" time="2.533">
+<failure message="authentication-v2.spec.ts:103:7 should handle session persistence across page refreshes" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\authentication-v2.spec.ts:103:7 › Healthcare Professional Authentication › should handle session persistence across page refreshes 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+      11 | test.describe('Healthcare Professional Authentication', () => {
+      12 |   test.beforeEach(async ({ page }) => {
+    > 13 |     await page.goto('/login');
+         |                ^
+      14 |
+      15 |     // Wait for page to be fully loaded
+      16 |     await page.waitForLoadState('networkidle');
+        at D:\neonpro\tools\testing\e2e\tests\auth\authentication-v2.spec.ts:13:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--f6f98-tence-across-page-refreshes-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--f6f98-tence-across-page-refreshes-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--f6f98-tence-across-page-refreshes-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--f6f98-tence-across-page-refreshes-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Healthcare Professional Authentication › should redirect to login when accessing protected healthcare routes" classname="tests\auth\authentication-v2.spec.ts" time="2.557">
+<failure message="authentication-v2.spec.ts:125:7 should redirect to login when accessing protected healthcare routes" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\authentication-v2.spec.ts:125:7 › Healthcare Professional Authentication › should redirect to login when accessing protected healthcare routes 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+      11 | test.describe('Healthcare Professional Authentication', () => {
+      12 |   test.beforeEach(async ({ page }) => {
+    > 13 |     await page.goto('/login');
+         |                ^
+      14 |
+      15 |     // Wait for page to be fully loaded
+      16 |     await page.waitForLoadState('networkidle');
+        at D:\neonpro\tools\testing\e2e\tests\auth\authentication-v2.spec.ts:13:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--6b67b-protected-healthcare-routes-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--6b67b-protected-healthcare-routes-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--6b67b-protected-healthcare-routes-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--6b67b-protected-healthcare-routes-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Multi-Factor Authentication (Healthcare Compliance) › should enforce MFA for sensitive operations" classname="tests\auth\authentication-v2.spec.ts" time="2.53">
+<failure message="authentication-v2.spec.ts:145:7 should enforce MFA for sensitive operations" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\authentication-v2.spec.ts:145:7 › Multi-Factor Authentication (Healthcare Compliance) › should enforce MFA for sensitive operations 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+      139 | test.describe('Multi-Factor Authentication (Healthcare Compliance)', () => {
+      140 |   test.beforeEach(async ({ page }) => {
+    > 141 |     await page.goto('/login');
+          |                ^
+      142 |     await page.waitForLoadState('networkidle');
+      143 |   });
+      144 |
+        at D:\neonpro\tools\testing\e2e\tests\auth\authentication-v2.spec.ts:141:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--3cf8d-FA-for-sensitive-operations-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--3cf8d-FA-for-sensitive-operations-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--3cf8d-FA-for-sensitive-operations-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--3cf8d-FA-for-sensitive-operations-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Emergency Access Protocol › should handle emergency authentication bypass" classname="tests\auth\authentication-v2.spec.ts" time="2.532">
+<failure message="authentication-v2.spec.ts:176:7 should handle emergency authentication bypass" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\authentication-v2.spec.ts:176:7 › Emergency Access Protocol › should handle emergency authentication bypass 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+      175 | test.describe('Emergency Access Protocol', () => {
+      176 |   test('should handle emergency authentication bypass', async ({ page }) => {
+    > 177 |     await page.goto('/login');
+          |                ^
+      178 |
+      179 |     // Click emergency access button
+      180 |     await page.click('[data-testid="emergency-access-btn"]');
+        at D:\neonpro\tools\testing\e2e\tests\auth\authentication-v2.spec.ts:177:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--4c88d-gency-authentication-bypass-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--4c88d-gency-authentication-bypass-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--4c88d-gency-authentication-bypass-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--4c88d-gency-authentication-bypass-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Professional License Validation › should validate CRM status and specialties" classname="tests\auth\authentication-v2.spec.ts" time="2.539">
+<failure message="authentication-v2.spec.ts:219:7 should validate CRM status and specialties" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\authentication-v2.spec.ts:219:7 › Professional License Validation › should validate CRM status and specialties 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+      218 | test.describe('Professional License Validation', () => {
+      219 |   test('should validate CRM status and specialties', async ({ page }) => {
+    > 220 |     await page.goto('/login');
+          |                ^
+      221 |
+      222 |     await page.fill('input[type="email"]', 'especialista@neonpro.com');
+      223 |     await page.fill('input[type="password"]', 'SpecialistTest2024!');
+        at D:\neonpro\tools\testing\e2e\tests\auth\authentication-v2.spec.ts:220:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--9874e--CRM-status-and-specialties-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--9874e--CRM-status-and-specialties-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--9874e--CRM-status-and-specialties-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--9874e--CRM-status-and-specialties-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Professional License Validation › should handle expired professional license" classname="tests\auth\authentication-v2.spec.ts" time="2.553">
+<failure message="authentication-v2.spec.ts:253:7 should handle expired professional license" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\authentication-v2.spec.ts:253:7 › Professional License Validation › should handle expired professional license 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+      252 |
+      253 |   test('should handle expired professional license', async ({ page }) => {
+    > 254 |     await page.goto('/login');
+          |                ^
+      255 |
+      256 |     // Use credentials with expired license
+      257 |     await page.fill('input[type="email"]', 'expired@neonpro.com');
+        at D:\neonpro\tools\testing\e2e\tests\auth\authentication-v2.spec.ts:254:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--ba26a-xpired-professional-license-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--ba26a-xpired-professional-license-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--ba26a-xpired-professional-license-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--ba26a-xpired-professional-license-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Security &amp; Compliance › should enforce password policy for healthcare professionals" classname="tests\auth\authentication-v2.spec.ts" time="2.551">
+<failure message="authentication-v2.spec.ts:283:7 should enforce password policy for healthcare professionals" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\authentication-v2.spec.ts:283:7 › Security & Compliance › should enforce password policy for healthcare professionals 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/register
+    Call log:
+      - navigating to "http://localhost:3000/register", waiting until "load"
+
+
+      284 |     page,
+      285 |   }) => {
+    > 286 |     await page.goto('/register');
+          |                ^
+      287 |
+      288 |     await page.fill('[data-testid="professional-name"]', 'Dr. Novo Médico');
+      289 |     await page.fill('input[type="email"]', 'novo@neonpro.com');
+        at D:\neonpro\tools\testing\e2e\tests\auth\authentication-v2.spec.ts:286:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--70dcf-or-healthcare-professionals-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--70dcf-or-healthcare-professionals-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--70dcf-or-healthcare-professionals-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--70dcf-or-healthcare-professionals-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Security &amp; Compliance › should implement audit logging for authentication events" classname="tests\auth\authentication-v2.spec.ts" time="2.566">
+<failure message="authentication-v2.spec.ts:319:7 should implement audit logging for authentication events" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\authentication-v2.spec.ts:319:7 › Security & Compliance › should implement audit logging for authentication events 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/admin/audit-logs
+    Call log:
+      - navigating to "http://localhost:3000/admin/audit-logs", waiting until "load"
+
+
+      320 |     page,
+      321 |   }) => {
+    > 322 |     await page.goto('/admin/audit-logs');
+          |                ^
+      323 |
+      324 |     // Should require admin authentication
+      325 |     await page.fill('input[type="email"]', 'admin@neonpro.com');
+        at D:\neonpro\tools\testing\e2e\tests\auth\authentication-v2.spec.ts:322:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--d5e70-g-for-authentication-events-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--d5e70-g-for-authentication-events-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--d5e70-g-for-authentication-events-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--d5e70-g-for-authentication-events-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Accessibility &amp; Performance › should be accessible for healthcare professionals with disabilities" classname="tests\auth\authentication-v2.spec.ts" time="2.564">
+<failure message="authentication-v2.spec.ts:351:7 should be accessible for healthcare professionals with disabilities" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\authentication-v2.spec.ts:351:7 › Accessibility & Performance › should be accessible for healthcare professionals with disabilities 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+      352 |     page,
+      353 |   }) => {
+    > 354 |     await page.goto('/login');
+          |                ^
+      355 |
+      356 |     // Test keyboard navigation
+      357 |     await page.keyboard.press('Tab');
+        at D:\neonpro\tools\testing\e2e\tests\auth\authentication-v2.spec.ts:354:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--77726-essionals-with-disabilities-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--77726-essionals-with-disabilities-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--77726-essionals-with-disabilities-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--77726-essionals-with-disabilities-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Accessibility &amp; Performance › should load within performance budget for healthcare environment" classname="tests\auth\authentication-v2.spec.ts" time="2.53">
+<failure message="authentication-v2.spec.ts:385:7 should load within performance budget for healthcare environment" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\authentication-v2.spec.ts:385:7 › Accessibility & Performance › should load within performance budget for healthcare environment 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+      388 |     const startTime = Date.now();
+      389 |
+    > 390 |     await page.goto('/login');
+          |                ^
+      391 |     await page.waitForLoadState('networkidle');
+      392 |
+      393 |     const loadTime = Date.now() - startTime;
+        at D:\neonpro\tools\testing\e2e\tests\auth\authentication-v2.spec.ts:390:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--1d07a--for-healthcare-environment-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--1d07a--for-healthcare-environment-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--1d07a--for-healthcare-environment-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--1d07a--for-healthcare-environment-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="tests\auth\authentication.spec.ts" timestamp="2025-08-21T19:15:28.471Z" hostname="desktop-chrome" tests="13" failures="13" skipped="0" time="1.952" errors="0">
+<testcase name="🔐 Authentication Flow - Critical E2E › 🚪 Login/Logout Complete Flow › should complete full login flow with valid credentials" classname="tests\auth\authentication.spec.ts" time="0.154">
+<failure message="authentication.spec.ts:18:9 should complete full login flow with valid credentials" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\authentication.spec.ts:18:9 › 🔐 Authentication Flow - Critical E2E › 🚪 Login/Logout Complete Flow › should complete full login flow with valid credentials 
+
+    Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.
+        at UtilityScript.evaluate (<anonymous>:293:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at UtilityScript.evaluate (<anonymous>:293:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at D:\neonpro\tools\testing\e2e\tests\auth\authentication.spec.ts:12:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--8d28c-flow-with-valid-credentials-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--8d28c-flow-with-valid-credentials-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--8d28c-flow-with-valid-credentials-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--8d28c-flow-with-valid-credentials-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🔐 Authentication Flow - Critical E2E › 🚪 Login/Logout Complete Flow › should complete logout flow and clear session" classname="tests\auth\authentication.spec.ts" time="0.14">
+<failure message="authentication.spec.ts:48:9 should complete logout flow and clear session" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\authentication.spec.ts:48:9 › 🔐 Authentication Flow - Critical E2E › 🚪 Login/Logout Complete Flow › should complete logout flow and clear session 
+
+    Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.
+        at UtilityScript.evaluate (<anonymous>:293:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at UtilityScript.evaluate (<anonymous>:293:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at D:\neonpro\tools\testing\e2e\tests\auth\authentication.spec.ts:12:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--97064-gout-flow-and-clear-session-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--97064-gout-flow-and-clear-session-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--97064-gout-flow-and-clear-session-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--97064-gout-flow-and-clear-session-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🔐 Authentication Flow - Critical E2E › 🚪 Login/Logout Complete Flow › should reject invalid credentials with proper error handling" classname="tests\auth\authentication.spec.ts" time="0.156">
+<failure message="authentication.spec.ts:77:9 should reject invalid credentials with proper error handling" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\authentication.spec.ts:77:9 › 🔐 Authentication Flow - Critical E2E › 🚪 Login/Logout Complete Flow › should reject invalid credentials with proper error handling 
+
+    Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.
+        at UtilityScript.evaluate (<anonymous>:293:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at UtilityScript.evaluate (<anonymous>:293:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at D:\neonpro\tools\testing\e2e\tests\auth\authentication.spec.ts:12:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--1e5d6--with-proper-error-handling-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--1e5d6--with-proper-error-handling-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--1e5d6--with-proper-error-handling-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--1e5d6--with-proper-error-handling-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🔐 Authentication Flow - Critical E2E › 🔒 Session Persistence › should maintain session across browser refresh" classname="tests\auth\authentication.spec.ts" time="0.144">
+<failure message="authentication.spec.ts:98:9 should maintain session across browser refresh" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\authentication.spec.ts:98:9 › 🔐 Authentication Flow - Critical E2E › 🔒 Session Persistence › should maintain session across browser refresh 
+
+    Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.
+        at UtilityScript.evaluate (<anonymous>:293:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at UtilityScript.evaluate (<anonymous>:293:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at D:\neonpro\tools\testing\e2e\tests\auth\authentication.spec.ts:12:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--2fe11-sion-across-browser-refresh-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--2fe11-sion-across-browser-refresh-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--2fe11-sion-across-browser-refresh-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--2fe11-sion-across-browser-refresh-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🔐 Authentication Flow - Critical E2E › 🔒 Session Persistence › should handle session timeout gracefully" classname="tests\auth\authentication.spec.ts" time="0.142">
+<failure message="authentication.spec.ts:115:9 should handle session timeout gracefully" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\authentication.spec.ts:115:9 › 🔐 Authentication Flow - Critical E2E › 🔒 Session Persistence › should handle session timeout gracefully 
+
+    Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.
+        at UtilityScript.evaluate (<anonymous>:293:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at UtilityScript.evaluate (<anonymous>:293:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at D:\neonpro\tools\testing\e2e\tests\auth\authentication.spec.ts:12:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--7efc3--session-timeout-gracefully-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--7efc3--session-timeout-gracefully-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--7efc3--session-timeout-gracefully-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--7efc3--session-timeout-gracefully-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🔐 Authentication Flow - Critical E2E › 👥 Role-based Access Control › should grant admin access to all areas" classname="tests\auth\authentication.spec.ts" time="0.149">
+<failure message="authentication.spec.ts:139:9 should grant admin access to all areas" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\authentication.spec.ts:139:9 › 🔐 Authentication Flow - Critical E2E › 👥 Role-based Access Control › should grant admin access to all areas 
+
+    Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.
+        at UtilityScript.evaluate (<anonymous>:293:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at UtilityScript.evaluate (<anonymous>:293:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at D:\neonpro\tools\testing\e2e\tests\auth\authentication.spec.ts:12:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--ab45d-t-admin-access-to-all-areas-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--ab45d-t-admin-access-to-all-areas-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--ab45d-t-admin-access-to-all-areas-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--ab45d-t-admin-access-to-all-areas-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🔐 Authentication Flow - Critical E2E › 👥 Role-based Access Control › should restrict professional access appropriately" classname="tests\auth\authentication.spec.ts" time="0.157">
+<failure message="authentication.spec.ts:171:9 should restrict professional access appropriately" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\authentication.spec.ts:171:9 › 🔐 Authentication Flow - Critical E2E › 👥 Role-based Access Control › should restrict professional access appropriately 
+
+    Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.
+        at UtilityScript.evaluate (<anonymous>:293:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at UtilityScript.evaluate (<anonymous>:293:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at D:\neonpro\tools\testing\e2e\tests\auth\authentication.spec.ts:12:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--70008-sional-access-appropriately-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--70008-sional-access-appropriately-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--70008-sional-access-appropriately-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--70008-sional-access-appropriately-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🔐 Authentication Flow - Critical E2E › 👥 Role-based Access Control › should restrict staff access to basic functions" classname="tests\auth\authentication.spec.ts" time="0.145">
+<failure message="authentication.spec.ts:194:9 should restrict staff access to basic functions" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\authentication.spec.ts:194:9 › 🔐 Authentication Flow - Critical E2E › 👥 Role-based Access Control › should restrict staff access to basic functions 
+
+    Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.
+        at UtilityScript.evaluate (<anonymous>:293:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at UtilityScript.evaluate (<anonymous>:293:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at D:\neonpro\tools\testing\e2e\tests\auth\authentication.spec.ts:12:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--d9ae7-f-access-to-basic-functions-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--d9ae7-f-access-to-basic-functions-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--d9ae7-f-access-to-basic-functions-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--d9ae7-f-access-to-basic-functions-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🔐 Authentication Flow - Critical E2E › 🔐 Security Validations › should validate form inputs and prevent injection" classname="tests\auth\authentication.spec.ts" time="0.151">
+<failure message="authentication.spec.ts:220:9 should validate form inputs and prevent injection" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\authentication.spec.ts:220:9 › 🔐 Authentication Flow - Critical E2E › 🔐 Security Validations › should validate form inputs and prevent injection 
+
+    Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.
+        at UtilityScript.evaluate (<anonymous>:293:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at UtilityScript.evaluate (<anonymous>:293:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at D:\neonpro\tools\testing\e2e\tests\auth\authentication.spec.ts:12:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--05a9e-nputs-and-prevent-injection-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--05a9e-nputs-and-prevent-injection-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--05a9e-nputs-and-prevent-injection-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--05a9e-nputs-and-prevent-injection-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🔐 Authentication Flow - Critical E2E › 🔐 Security Validations › should enforce rate limiting on failed attempts" classname="tests\auth\authentication.spec.ts" time="0.157">
+<failure message="authentication.spec.ts:233:9 should enforce rate limiting on failed attempts" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\authentication.spec.ts:233:9 › 🔐 Authentication Flow - Critical E2E › 🔐 Security Validations › should enforce rate limiting on failed attempts 
+
+    Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.
+        at UtilityScript.evaluate (<anonymous>:293:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at UtilityScript.evaluate (<anonymous>:293:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at D:\neonpro\tools\testing\e2e\tests\auth\authentication.spec.ts:12:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--b8361-limiting-on-failed-attempts-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--b8361-limiting-on-failed-attempts-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--b8361-limiting-on-failed-attempts-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--b8361-limiting-on-failed-attempts-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🔐 Authentication Flow - Critical E2E › 🔐 Security Validations › should handle password requirements validation" classname="tests\auth\authentication.spec.ts" time="0.142">
+<failure message="authentication.spec.ts:252:9 should handle password requirements validation" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\authentication.spec.ts:252:9 › 🔐 Authentication Flow - Critical E2E › 🔐 Security Validations › should handle password requirements validation 
+
+    Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.
+        at UtilityScript.evaluate (<anonymous>:293:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at UtilityScript.evaluate (<anonymous>:293:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at D:\neonpro\tools\testing\e2e\tests\auth\authentication.spec.ts:12:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--121fb-ord-requirements-validation-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--121fb-ord-requirements-validation-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--121fb-ord-requirements-validation-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--121fb-ord-requirements-validation-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🔐 Authentication Flow - Critical E2E › 🚨 Error Handling › should handle network errors gracefully" classname="tests\auth\authentication.spec.ts" time="0.155">
+<failure message="authentication.spec.ts:273:9 should handle network errors gracefully" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\authentication.spec.ts:273:9 › 🔐 Authentication Flow - Critical E2E › 🚨 Error Handling › should handle network errors gracefully 
+
+    Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.
+        at UtilityScript.evaluate (<anonymous>:293:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at UtilityScript.evaluate (<anonymous>:293:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at D:\neonpro\tools\testing\e2e\tests\auth\authentication.spec.ts:12:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--d3e67-e-network-errors-gracefully-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--d3e67-e-network-errors-gracefully-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--d3e67-e-network-errors-gracefully-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--d3e67-e-network-errors-gracefully-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🔐 Authentication Flow - Critical E2E › 🚨 Error Handling › should show proper loading states during authentication" classname="tests\auth\authentication.spec.ts" time="0.16">
+<failure message="authentication.spec.ts:289:9 should show proper loading states during authentication" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\authentication.spec.ts:289:9 › 🔐 Authentication Flow - Critical E2E › 🚨 Error Handling › should show proper loading states during authentication 
+
+    Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.
+        at UtilityScript.evaluate (<anonymous>:293:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at UtilityScript.evaluate (<anonymous>:293:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at D:\neonpro\tools\testing\e2e\tests\auth\authentication.spec.ts:12:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--4ace1-tates-during-authentication-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-authentication--4ace1-tates-during-authentication-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--4ace1-tates-during-authentication-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-authentication--4ace1-tates-during-authentication-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="tests\auth\login.spec.ts" timestamp="2025-08-21T19:15:28.471Z" hostname="desktop-chrome" tests="5" failures="5" skipped="0" time="12.722" errors="0">
+<testcase name="Authentication - Login Flow › should login successfully with valid credentials" classname="tests\auth\login.spec.ts" time="2.536">
+<failure message="login.spec.ts:7:7 should login successfully with valid credentials" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\login.spec.ts:7:7 › Authentication - Login Flow › should login successfully with valid credentials 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+       7 |   test('should login successfully with valid credentials', async ({ page }) => {
+       8 |     // Navigate to login page
+    >  9 |     await page.goto('/login');
+         |                ^
+      10 |
+      11 |     // Wait for login form to load
+      12 |     await expect(page.getByRole('heading', { name: /entrar/i })).toBeVisible();
+        at D:\neonpro\tools\testing\e2e\tests\auth\login.spec.ts:9:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-login-Authentic-52090-ully-with-valid-credentials-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-login-Authentic-52090-ully-with-valid-credentials-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-login-Authentic-52090-ully-with-valid-credentials-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-login-Authentic-52090-ully-with-valid-credentials-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Authentication - Login Flow › should show error for invalid credentials" classname="tests\auth\login.spec.ts" time="2.562">
+<failure message="login.spec.ts:31:7 should show error for invalid credentials" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\login.spec.ts:31:7 › Authentication - Login Flow › should show error for invalid credentials 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+      31 |   test('should show error for invalid credentials', async ({ page }) => {
+      32 |     // Navigate to login page
+    > 33 |     await page.goto('/login');
+         |                ^
+      34 |
+      35 |     // Fill login form with invalid credentials
+      36 |     await page.getByLabel(/email/i).fill('invalid@email.com');
+        at D:\neonpro\tools\testing\e2e\tests\auth\login.spec.ts:33:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-login-Authentic-44d17-ror-for-invalid-credentials-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-login-Authentic-44d17-ror-for-invalid-credentials-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-login-Authentic-44d17-ror-for-invalid-credentials-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-login-Authentic-44d17-ror-for-invalid-credentials-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Authentication - Login Flow › should validate required fields" classname="tests\auth\login.spec.ts" time="2.547">
+<failure message="login.spec.ts:49:7 should validate required fields" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\login.spec.ts:49:7 › Authentication - Login Flow › should validate required fields 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+      49 |   test('should validate required fields', async ({ page }) => {
+      50 |     // Navigate to login page
+    > 51 |     await page.goto('/login');
+         |                ^
+      52 |
+      53 |     // Try to submit empty form
+      54 |     await page.getByRole('button', { name: /entrar/i }).click();
+        at D:\neonpro\tools\testing\e2e\tests\auth\login.spec.ts:51:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-login-Authentic-889b2-ld-validate-required-fields-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-login-Authentic-889b2-ld-validate-required-fields-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-login-Authentic-889b2-ld-validate-required-fields-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-login-Authentic-889b2-ld-validate-required-fields-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Authentication - Login Flow › should validate email format" classname="tests\auth\login.spec.ts" time="2.566">
+<failure message="login.spec.ts:61:7 should validate email format" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\login.spec.ts:61:7 › Authentication - Login Flow › should validate email format 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+      61 |   test('should validate email format', async ({ page }) => {
+      62 |     // Navigate to login page
+    > 63 |     await page.goto('/login');
+         |                ^
+      64 |
+      65 |     // Fill invalid email format
+      66 |     await page.getByLabel(/email/i).fill('invalid-email');
+        at D:\neonpro\tools\testing\e2e\tests\auth\login.spec.ts:63:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-login-Authentic-1dc99-hould-validate-email-format-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-login-Authentic-1dc99-hould-validate-email-format-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-login-Authentic-1dc99-hould-validate-email-format-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-login-Authentic-1dc99-hould-validate-email-format-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Authentication - Logout Flow › should logout successfully" classname="tests\auth\login.spec.ts" time="2.511">
+<failure message="login.spec.ts:78:7 should logout successfully" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\login.spec.ts:78:7 › Authentication - Logout Flow › should logout successfully 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/dashboard
+    Call log:
+      - navigating to "http://localhost:3000/dashboard", waiting until "load"
+
+
+      78 |   test('should logout successfully', async ({ page }) => {
+      79 |     // Navigate to dashboard (assuming user is logged in)
+    > 80 |     await page.goto('/dashboard');
+         |                ^
+      81 |
+      82 |     // Click logout button/menu
+      83 |     await page.getByRole('button', { name: /sair/i }).click();
+        at D:\neonpro\tools\testing\e2e\tests\auth\login.spec.ts:80:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-login-Authentic-822b7--should-logout-successfully-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-login-Authentic-822b7--should-logout-successfully-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-login-Authentic-822b7--should-logout-successfully-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-login-Authentic-822b7--should-logout-successfully-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="tests\auth\role-based-access.spec.ts" timestamp="2025-08-21T19:15:28.471Z" hostname="desktop-chrome" tests="19" failures="19" skipped="0" time="48.333" errors="0">
+<testcase name="Doctor Role Access Control › should have full access to patient medical records" classname="tests\auth\role-based-access.spec.ts" time="2.539">
+<failure message="role-based-access.spec.ts:50:7 should have full access to patient medical records" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\role-based-access.spec.ts:50:7 › Doctor Role Access Control › should have full access to patient medical records 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+      37 | test.describe('Doctor Role Access Control', () => {
+      38 |   test.beforeEach(async ({ page }) => {
+    > 39 |     await page.goto('/login');
+         |                ^
+      40 |
+      41 |     // Login as doctor
+      42 |     await page.fill('input[type="email"]', testUsers.doctor.email);
+        at D:\neonpro\tools\testing\e2e\tests\auth\role-based-access.spec.ts:39:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-role-based-acce-463dc--to-patient-medical-records-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-role-based-acce-463dc--to-patient-medical-records-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-role-based-acce-463dc--to-patient-medical-records-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-role-based-acce-463dc--to-patient-medical-records-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Doctor Role Access Control › should be able to create and modify prescriptions" classname="tests\auth\role-based-access.spec.ts" time="2.536">
+<failure message="role-based-access.spec.ts:84:7 should be able to create and modify prescriptions" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\role-based-access.spec.ts:84:7 › Doctor Role Access Control › should be able to create and modify prescriptions 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+      37 | test.describe('Doctor Role Access Control', () => {
+      38 |   test.beforeEach(async ({ page }) => {
+    > 39 |     await page.goto('/login');
+         |                ^
+      40 |
+      41 |     // Login as doctor
+      42 |     await page.fill('input[type="email"]', testUsers.doctor.email);
+        at D:\neonpro\tools\testing\e2e\tests\auth\role-based-access.spec.ts:39:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-role-based-acce-550a9-te-and-modify-prescriptions-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-role-based-acce-550a9-te-and-modify-prescriptions-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-role-based-acce-550a9-te-and-modify-prescriptions-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-role-based-acce-550a9-te-and-modify-prescriptions-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Doctor Role Access Control › should access administrative functions for their patients" classname="tests\auth\role-based-access.spec.ts" time="2.598">
+<failure message="role-based-access.spec.ts:123:7 should access administrative functions for their patients" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\role-based-access.spec.ts:123:7 › Doctor Role Access Control › should access administrative functions for their patients 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+      37 | test.describe('Doctor Role Access Control', () => {
+      38 |   test.beforeEach(async ({ page }) => {
+    > 39 |     await page.goto('/login');
+         |                ^
+      40 |
+      41 |     // Login as doctor
+      42 |     await page.fill('input[type="email"]', testUsers.doctor.email);
+        at D:\neonpro\tools\testing\e2e\tests\auth\role-based-access.spec.ts:39:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-role-based-acce-c5c6b-unctions-for-their-patients-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-role-based-acce-c5c6b-unctions-for-their-patients-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-role-based-acce-c5c6b-unctions-for-their-patients-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-role-based-acce-c5c6b-unctions-for-their-patients-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Doctor Role Access Control › should have emergency override capabilities" classname="tests\auth\role-based-access.spec.ts" time="2.548">
+<failure message="role-based-access.spec.ts:151:7 should have emergency override capabilities" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\role-based-access.spec.ts:151:7 › Doctor Role Access Control › should have emergency override capabilities 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+      37 | test.describe('Doctor Role Access Control', () => {
+      38 |   test.beforeEach(async ({ page }) => {
+    > 39 |     await page.goto('/login');
+         |                ^
+      40 |
+      41 |     // Login as doctor
+      42 |     await page.fill('input[type="email"]', testUsers.doctor.email);
+        at D:\neonpro\tools\testing\e2e\tests\auth\role-based-access.spec.ts:39:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-role-based-acce-59a12-gency-override-capabilities-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-role-based-acce-59a12-gency-override-capabilities-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-role-based-acce-59a12-gency-override-capabilities-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-role-based-acce-59a12-gency-override-capabilities-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Nurse Role Access Control › should have limited access to patient medical records" classname="tests\auth\role-based-access.spec.ts" time="2.515">
+<failure message="role-based-access.spec.ts:194:7 should have limited access to patient medical records" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\role-based-access.spec.ts:194:7 › Nurse Role Access Control › should have limited access to patient medical records 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+      181 | test.describe('Nurse Role Access Control', () => {
+      182 |   test.beforeEach(async ({ page }) => {
+    > 183 |     await page.goto('/login');
+          |                ^
+      184 |
+      185 |     // Login as nurse
+      186 |     await page.fill('input[type="email"]', testUsers.nurse.email);
+        at D:\neonpro\tools\testing\e2e\tests\auth\role-based-access.spec.ts:183:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-role-based-acce-a6090--to-patient-medical-records-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-role-based-acce-a6090--to-patient-medical-records-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-role-based-acce-a6090--to-patient-medical-records-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-role-based-acce-a6090--to-patient-medical-records-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Nurse Role Access Control › should be able to manage vital signs and nursing care" classname="tests\auth\role-based-access.spec.ts" time="2.548">
+<failure message="role-based-access.spec.ts:223:7 should be able to manage vital signs and nursing care" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\role-based-access.spec.ts:223:7 › Nurse Role Access Control › should be able to manage vital signs and nursing care 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+      181 | test.describe('Nurse Role Access Control', () => {
+      182 |   test.beforeEach(async ({ page }) => {
+    > 183 |     await page.goto('/login');
+          |                ^
+      184 |
+      185 |     // Login as nurse
+      186 |     await page.fill('input[type="email"]', testUsers.nurse.email);
+        at D:\neonpro\tools\testing\e2e\tests\auth\role-based-access.spec.ts:183:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-role-based-acce-007b3-ital-signs-and-nursing-care-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-role-based-acce-007b3-ital-signs-and-nursing-care-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-role-based-acce-007b3-ital-signs-and-nursing-care-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-role-based-acce-007b3-ital-signs-and-nursing-care-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Nurse Role Access Control › should NOT be able to create prescriptions" classname="tests\auth\role-based-access.spec.ts" time="2.558">
+<failure message="role-based-access.spec.ts:248:7 should NOT be able to create prescriptions" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\role-based-access.spec.ts:248:7 › Nurse Role Access Control › should NOT be able to create prescriptions 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+      181 | test.describe('Nurse Role Access Control', () => {
+      182 |   test.beforeEach(async ({ page }) => {
+    > 183 |     await page.goto('/login');
+          |                ^
+      184 |
+      185 |     // Login as nurse
+      186 |     await page.fill('input[type="email"]', testUsers.nurse.email);
+        at D:\neonpro\tools\testing\e2e\tests\auth\role-based-access.spec.ts:183:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-role-based-acce-446c5-ble-to-create-prescriptions-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-role-based-acce-446c5-ble-to-create-prescriptions-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-role-based-acce-446c5-ble-to-create-prescriptions-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-role-based-acce-446c5-ble-to-create-prescriptions-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Nurse Role Access Control › should be able to schedule appointments" classname="tests\auth\role-based-access.spec.ts" time="2.55">
+<failure message="role-based-access.spec.ts:262:7 should be able to schedule appointments" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\role-based-access.spec.ts:262:7 › Nurse Role Access Control › should be able to schedule appointments 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+      181 | test.describe('Nurse Role Access Control', () => {
+      182 |   test.beforeEach(async ({ page }) => {
+    > 183 |     await page.goto('/login');
+          |                ^
+      184 |
+      185 |     // Login as nurse
+      186 |     await page.fill('input[type="email"]', testUsers.nurse.email);
+        at D:\neonpro\tools\testing\e2e\tests\auth\role-based-access.spec.ts:183:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-role-based-acce-80719-le-to-schedule-appointments-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-role-based-acce-80719-le-to-schedule-appointments-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-role-based-acce-80719-le-to-schedule-appointments-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-role-based-acce-80719-le-to-schedule-appointments-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Administrator Role Access Control › should have full system administration access" classname="tests\auth\role-based-access.spec.ts" time="2.557">
+<failure message="role-based-access.spec.ts:303:7 should have full system administration access" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\role-based-access.spec.ts:303:7 › Administrator Role Access Control › should have full system administration access 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+      291 | test.describe('Administrator Role Access Control', () => {
+      292 |   test.beforeEach(async ({ page }) => {
+    > 293 |     await page.goto('/login');
+          |                ^
+      294 |
+      295 |     // Login as admin
+      296 |     await page.fill('input[type="email"]', testUsers.admin.email);
+        at D:\neonpro\tools\testing\e2e\tests\auth\role-based-access.spec.ts:293:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-role-based-acce-30907-ystem-administration-access-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-role-based-acce-30907-ystem-administration-access-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-role-based-acce-30907-ystem-administration-access-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-role-based-acce-30907-ystem-administration-access-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Administrator Role Access Control › should manage healthcare professional accounts" classname="tests\auth\role-based-access.spec.ts" time="2.534">
+<failure message="role-based-access.spec.ts:319:7 should manage healthcare professional accounts" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\role-based-access.spec.ts:319:7 › Administrator Role Access Control › should manage healthcare professional accounts 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+      291 | test.describe('Administrator Role Access Control', () => {
+      292 |   test.beforeEach(async ({ page }) => {
+    > 293 |     await page.goto('/login');
+          |                ^
+      294 |
+      295 |     // Login as admin
+      296 |     await page.fill('input[type="email"]', testUsers.admin.email);
+        at D:\neonpro\tools\testing\e2e\tests\auth\role-based-access.spec.ts:293:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-role-based-acce-81bbe-hcare-professional-accounts-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-role-based-acce-81bbe-hcare-professional-accounts-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-role-based-acce-81bbe-hcare-professional-accounts-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-role-based-acce-81bbe-hcare-professional-accounts-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Administrator Role Access Control › should access comprehensive audit logs" classname="tests\auth\role-based-access.spec.ts" time="2.543">
+<failure message="role-based-access.spec.ts:347:7 should access comprehensive audit logs" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\role-based-access.spec.ts:347:7 › Administrator Role Access Control › should access comprehensive audit logs 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+      291 | test.describe('Administrator Role Access Control', () => {
+      292 |   test.beforeEach(async ({ page }) => {
+    > 293 |     await page.goto('/login');
+          |                ^
+      294 |
+      295 |     // Login as admin
+      296 |     await page.fill('input[type="email"]', testUsers.admin.email);
+        at D:\neonpro\tools\testing\e2e\tests\auth\role-based-access.spec.ts:293:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-role-based-acce-79b9b-ss-comprehensive-audit-logs-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-role-based-acce-79b9b-ss-comprehensive-audit-logs-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-role-based-acce-79b9b-ss-comprehensive-audit-logs-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-role-based-acce-79b9b-ss-comprehensive-audit-logs-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Administrator Role Access Control › should NOT access patient medical records directly" classname="tests\auth\role-based-access.spec.ts" time="2.553">
+<failure message="role-based-access.spec.ts:371:7 should NOT access patient medical records directly" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\role-based-access.spec.ts:371:7 › Administrator Role Access Control › should NOT access patient medical records directly 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+      291 | test.describe('Administrator Role Access Control', () => {
+      292 |   test.beforeEach(async ({ page }) => {
+    > 293 |     await page.goto('/login');
+          |                ^
+      294 |
+      295 |     // Login as admin
+      296 |     await page.fill('input[type="email"]', testUsers.admin.email);
+        at D:\neonpro\tools\testing\e2e\tests\auth\role-based-access.spec.ts:293:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-role-based-acce-9ded6-nt-medical-records-directly-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-role-based-acce-9ded6-nt-medical-records-directly-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-role-based-acce-9ded6-nt-medical-records-directly-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-role-based-acce-9ded6-nt-medical-records-directly-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Secretary Role Access Control › should manage appointments and scheduling" classname="tests\auth\role-based-access.spec.ts" time="2.549">
+<failure message="role-based-access.spec.ts:403:7 should manage appointments and scheduling" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\role-based-access.spec.ts:403:7 › Secretary Role Access Control › should manage appointments and scheduling 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+      391 | test.describe('Secretary Role Access Control', () => {
+      392 |   test.beforeEach(async ({ page }) => {
+    > 393 |     await page.goto('/login');
+          |                ^
+      394 |
+      395 |     // Login as secretary
+      396 |     await page.fill('input[type="email"]', testUsers.secretary.email);
+        at D:\neonpro\tools\testing\e2e\tests\auth\role-based-access.spec.ts:393:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-role-based-acce-388f1-appointments-and-scheduling-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-role-based-acce-388f1-appointments-and-scheduling-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-role-based-acce-388f1-appointments-and-scheduling-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-role-based-acce-388f1-appointments-and-scheduling-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Secretary Role Access Control › should access basic patient contact information only" classname="tests\auth\role-based-access.spec.ts" time="2.529">
+<failure message="role-based-access.spec.ts:429:7 should access basic patient contact information only" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\role-based-access.spec.ts:429:7 › Secretary Role Access Control › should access basic patient contact information only 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+      391 | test.describe('Secretary Role Access Control', () => {
+      392 |   test.beforeEach(async ({ page }) => {
+    > 393 |     await page.goto('/login');
+          |                ^
+      394 |
+      395 |     // Login as secretary
+      396 |     await page.fill('input[type="email"]', testUsers.secretary.email);
+        at D:\neonpro\tools\testing\e2e\tests\auth\role-based-access.spec.ts:393:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-role-based-acce-f3827-nt-contact-information-only-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-role-based-acce-f3827-nt-contact-information-only-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-role-based-acce-f3827-nt-contact-information-only-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-role-based-acce-f3827-nt-contact-information-only-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Secretary Role Access Control › should manage financial and billing information" classname="tests\auth\role-based-access.spec.ts" time="2.575">
+<failure message="role-based-access.spec.ts:456:7 should manage financial and billing information" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\role-based-access.spec.ts:456:7 › Secretary Role Access Control › should manage financial and billing information 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+      391 | test.describe('Secretary Role Access Control', () => {
+      392 |   test.beforeEach(async ({ page }) => {
+    > 393 |     await page.goto('/login');
+          |                ^
+      394 |
+      395 |     // Login as secretary
+      396 |     await page.fill('input[type="email"]', testUsers.secretary.email);
+        at D:\neonpro\tools\testing\e2e\tests\auth\role-based-access.spec.ts:393:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-role-based-acce-9a166-ial-and-billing-information-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-role-based-acce-9a166-ial-and-billing-information-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-role-based-acce-9a166-ial-and-billing-information-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-role-based-acce-9a166-ial-and-billing-information-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Secretary Role Access Control › should NOT access prescription or medical diagnosis features" classname="tests\auth\role-based-access.spec.ts" time="2.546">
+<failure message="role-based-access.spec.ts:480:7 should NOT access prescription or medical diagnosis features" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\role-based-access.spec.ts:480:7 › Secretary Role Access Control › should NOT access prescription or medical diagnosis features 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+      391 | test.describe('Secretary Role Access Control', () => {
+      392 |   test.beforeEach(async ({ page }) => {
+    > 393 |     await page.goto('/login');
+          |                ^
+      394 |
+      395 |     // Login as secretary
+      396 |     await page.fill('input[type="email"]', testUsers.secretary.email);
+        at D:\neonpro\tools\testing\e2e\tests\auth\role-based-access.spec.ts:393:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-role-based-acce-99e47--medical-diagnosis-features-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-role-based-acce-99e47--medical-diagnosis-features-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-role-based-acce-99e47--medical-diagnosis-features-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-role-based-acce-99e47--medical-diagnosis-features-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Cross-Role Permissions and Escalation › should handle role escalation requests" classname="tests\auth\role-based-access.spec.ts" time="2.509">
+<failure message="role-based-access.spec.ts:501:7 should handle role escalation requests" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\role-based-access.spec.ts:501:7 › Cross-Role Permissions and Escalation › should handle role escalation requests 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+      501 |   test('should handle role escalation requests', async ({ page }) => {
+      502 |     // Login as nurse
+    > 503 |     await page.goto('/login');
+          |                ^
+      504 |     await page.fill('input[type="email"]', testUsers.nurse.email);
+      505 |     await page.fill('input[type="password"]', testUsers.nurse.password);
+      506 |     await page.fill('[data-testid="coren-number"]', testUsers.nurse.coren);
+        at D:\neonpro\tools\testing\e2e\tests\auth\role-based-access.spec.ts:503:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-role-based-acce-3296c-le-role-escalation-requests-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-role-based-acce-3296c-le-role-escalation-requests-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-role-based-acce-3296c-le-role-escalation-requests-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-role-based-acce-3296c-le-role-escalation-requests-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Cross-Role Permissions and Escalation › should audit all role-based access attempts" classname="tests\auth\role-based-access.spec.ts" time="2.528">
+<failure message="role-based-access.spec.ts:534:7 should audit all role-based access attempts" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\role-based-access.spec.ts:534:7 › Cross-Role Permissions and Escalation › should audit all role-based access attempts 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+      534 |   test('should audit all role-based access attempts', async ({ page }) => {
+      535 |     // Login as admin to check audit logs
+    > 536 |     await page.goto('/login');
+          |                ^
+      537 |     await page.fill('input[type="email"]', testUsers.admin.email);
+      538 |     await page.fill('input[type="password"]', testUsers.admin.password);
+      539 |     await page.click('button[type="submit"]');
+        at D:\neonpro\tools\testing\e2e\tests\auth\role-based-access.spec.ts:536:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-role-based-acce-9cdb3--role-based-access-attempts-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-role-based-acce-9cdb3--role-based-access-attempts-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-role-based-acce-9cdb3--role-based-access-attempts-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-role-based-acce-9cdb3--role-based-access-attempts-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Cross-Role Permissions and Escalation › should enforce time-based role restrictions" classname="tests\auth\role-based-access.spec.ts" time="2.518">
+<failure message="role-based-access.spec.ts:557:7 should enforce time-based role restrictions" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\auth\role-based-access.spec.ts:557:7 › Cross-Role Permissions and Escalation › should enforce time-based role restrictions 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+      557 |   test('should enforce time-based role restrictions', async ({ page }) => {
+      558 |     // Login as doctor
+    > 559 |     await page.goto('/login');
+          |                ^
+      560 |     await page.fill('input[type="email"]', testUsers.doctor.email);
+      561 |     await page.fill('input[type="password"]', testUsers.doctor.password);
+      562 |     await page.fill('[data-testid="crm-number"]', testUsers.doctor.crm);
+        at D:\neonpro\tools\testing\e2e\tests\auth\role-based-access.spec.ts:559:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-role-based-acce-bcd4b-ime-based-role-restrictions-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-auth-role-based-acce-bcd4b-ime-based-role-restrictions-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-auth-role-based-acce-bcd4b-ime-based-role-restrictions-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-auth-role-based-acce-bcd4b-ime-based-role-restrictions-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="tests\patient-management\create-patient.spec.ts" timestamp="2025-08-21T19:15:28.471Z" hostname="desktop-chrome" tests="3" failures="3" skipped="0" time="7.635" errors="0">
+<testcase name="Patient Management - Create Patient › should create new patient successfully" classname="tests\patient-management\create-patient.spec.ts" time="2.532">
+<failure message="create-patient.spec.ts:17:7 should create new patient successfully" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\patient-management\create-patient.spec.ts:17:7 › Patient Management - Create Patient › should create new patient successfully 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/patients
+    Call log:
+      - navigating to "http://localhost:3000/patients", waiting until "load"
+
+
+       7 |   test.beforeEach(async ({ page }) => {
+       8 |     // Navigate to patients page
+    >  9 |     await page.goto('/patients');
+         |                ^
+      10 |
+      11 |     // Wait for page to load
+      12 |     await expect(
+        at D:\neonpro\tools\testing\e2e\tests\patient-management\create-patient.spec.ts:9:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-c-b204f-te-new-patient-successfully-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-c-b204f-te-new-patient-successfully-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-patient-management-c-b204f-te-new-patient-successfully-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-patient-management-c-b204f-te-new-patient-successfully-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Patient Management - Create Patient › should validate required fields" classname="tests\patient-management\create-patient.spec.ts" time="2.546">
+<failure message="create-patient.spec.ts:61:7 should validate required fields" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\patient-management\create-patient.spec.ts:61:7 › Patient Management - Create Patient › should validate required fields 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/patients
+    Call log:
+      - navigating to "http://localhost:3000/patients", waiting until "load"
+
+
+       7 |   test.beforeEach(async ({ page }) => {
+       8 |     // Navigate to patients page
+    >  9 |     await page.goto('/patients');
+         |                ^
+      10 |
+      11 |     // Wait for page to load
+      12 |     await expect(
+        at D:\neonpro\tools\testing\e2e\tests\patient-management\create-patient.spec.ts:9:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-c-fcca6-ld-validate-required-fields-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-c-fcca6-ld-validate-required-fields-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-patient-management-c-fcca6-ld-validate-required-fields-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-patient-management-c-fcca6-ld-validate-required-fields-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Patient Management - Create Patient › should validate CPF format" classname="tests\patient-management\create-patient.spec.ts" time="2.557">
+<failure message="create-patient.spec.ts:75:7 should validate CPF format" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\patient-management\create-patient.spec.ts:75:7 › Patient Management - Create Patient › should validate CPF format 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/patients
+    Call log:
+      - navigating to "http://localhost:3000/patients", waiting until "load"
+
+
+       7 |   test.beforeEach(async ({ page }) => {
+       8 |     // Navigate to patients page
+    >  9 |     await page.goto('/patients');
+         |                ^
+      10 |
+      11 |     // Wait for page to load
+      12 |     await expect(
+        at D:\neonpro\tools\testing\e2e\tests\patient-management\create-patient.spec.ts:9:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-c-31fce--should-validate-CPF-format-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-c-31fce--should-validate-CPF-format-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-patient-management-c-31fce--should-validate-CPF-format-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-patient-management-c-31fce--should-validate-CPF-format-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="tests\patient-management\patient-registration.spec.ts" timestamp="2025-08-21T19:15:28.471Z" hostname="desktop-chrome" tests="19" failures="19" skipped="0" time="48.156" errors="0">
+<testcase name="👥 Patient Registration - Critical E2E › 📝 Complete Registration with CPF Validation › should complete full patient registration with valid data" classname="tests\patient-management\patient-registration.spec.ts" time="2.563">
+<failure message="patient-registration.spec.ts:20:9 should complete full patient registration with valid data" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\patient-management\patient-registration.spec.ts:20:9 › 👥 Patient Registration - Critical E2E › 📝 Complete Registration with CPF Validation › should complete full patient registration with valid data 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+       9 |   test.beforeEach(async ({ page }) => {
+      10 |     // Login as healthcare staff with patient registration permissions
+    > 11 |     await page.goto('/login');
+         |                ^
+      12 |     await page.fill('[data-testid="email"], input[type="email"]', 'recepcionista@neonpro.com.br');
+      13 |     await page.fill('[data-testid="password"], input[type="password"]', 'StaffSecure123!');
+      14 |     await page.click('[data-testid="login-submit"], button[type="submit"]');
+        at D:\neonpro\tools\testing\e2e\tests\patient-management\patient-registration.spec.ts:11:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-p-368b1-egistration-with-valid-data-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-p-368b1-egistration-with-valid-data-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-patient-management-p-368b1-egistration-with-valid-data-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-patient-management-p-368b1-egistration-with-valid-data-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="👥 Patient Registration - Critical E2E › 📝 Complete Registration with CPF Validation › should validate CPF format and prevent invalid CPF registration" classname="tests\patient-management\patient-registration.spec.ts" time="2.527">
+<failure message="patient-registration.spec.ts:65:9 should validate CPF format and prevent invalid CPF registration" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\patient-management\patient-registration.spec.ts:65:9 › 👥 Patient Registration - Critical E2E › 📝 Complete Registration with CPF Validation › should validate CPF format and prevent invalid CPF registration 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+       9 |   test.beforeEach(async ({ page }) => {
+      10 |     // Login as healthcare staff with patient registration permissions
+    > 11 |     await page.goto('/login');
+         |                ^
+      12 |     await page.fill('[data-testid="email"], input[type="email"]', 'recepcionista@neonpro.com.br');
+      13 |     await page.fill('[data-testid="password"], input[type="password"]', 'StaffSecure123!');
+      14 |     await page.click('[data-testid="login-submit"], button[type="submit"]');
+        at D:\neonpro\tools\testing\e2e\tests\patient-management\patient-registration.spec.ts:11:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-p-699b0-nt-invalid-CPF-registration-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-p-699b0-nt-invalid-CPF-registration-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-patient-management-p-699b0-nt-invalid-CPF-registration-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-patient-management-p-699b0-nt-invalid-CPF-registration-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="👥 Patient Registration - Critical E2E › 📝 Complete Registration with CPF Validation › should prevent duplicate CPF registration" classname="tests\patient-management\patient-registration.spec.ts" time="2.537">
+<failure message="patient-registration.spec.ts:91:9 should prevent duplicate CPF registration" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\patient-management\patient-registration.spec.ts:91:9 › 👥 Patient Registration - Critical E2E › 📝 Complete Registration with CPF Validation › should prevent duplicate CPF registration 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+       9 |   test.beforeEach(async ({ page }) => {
+      10 |     // Login as healthcare staff with patient registration permissions
+    > 11 |     await page.goto('/login');
+         |                ^
+      12 |     await page.fill('[data-testid="email"], input[type="email"]', 'recepcionista@neonpro.com.br');
+      13 |     await page.fill('[data-testid="password"], input[type="password"]', 'StaffSecure123!');
+      14 |     await page.click('[data-testid="login-submit"], button[type="submit"]');
+        at D:\neonpro\tools\testing\e2e\tests\patient-management\patient-registration.spec.ts:11:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-p-d389f--duplicate-CPF-registration-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-p-d389f--duplicate-CPF-registration-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-patient-management-p-d389f--duplicate-CPF-registration-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-patient-management-p-d389f--duplicate-CPF-registration-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="👥 Patient Registration - Critical E2E › 📝 Complete Registration with CPF Validation › should validate required fields before proceeding" classname="tests\patient-management\patient-registration.spec.ts" time="2.541">
+<failure message="patient-registration.spec.ts:114:9 should validate required fields before proceeding" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\patient-management\patient-registration.spec.ts:114:9 › 👥 Patient Registration - Critical E2E › 📝 Complete Registration with CPF Validation › should validate required fields before proceeding 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+       9 |   test.beforeEach(async ({ page }) => {
+      10 |     // Login as healthcare staff with patient registration permissions
+    > 11 |     await page.goto('/login');
+         |                ^
+      12 |     await page.fill('[data-testid="email"], input[type="email"]', 'recepcionista@neonpro.com.br');
+      13 |     await page.fill('[data-testid="password"], input[type="password"]', 'StaffSecure123!');
+      14 |     await page.click('[data-testid="login-submit"], button[type="submit"]');
+        at D:\neonpro\tools\testing\e2e\tests\patient-management\patient-registration.spec.ts:11:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-p-ede02-ed-fields-before-proceeding-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-p-ede02-ed-fields-before-proceeding-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-patient-management-p-ede02-ed-fields-before-proceeding-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-patient-management-p-ede02-ed-fields-before-proceeding-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="👥 Patient Registration - Critical E2E › 🔒 LGPD Consent Capture › should capture comprehensive LGPD consent with detailed explanations" classname="tests\patient-management\patient-registration.spec.ts" time="2.527">
+<failure message="patient-registration.spec.ts:131:9 should capture comprehensive LGPD consent with detailed explanations" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\patient-management\patient-registration.spec.ts:131:9 › 👥 Patient Registration - Critical E2E › 🔒 LGPD Consent Capture › should capture comprehensive LGPD consent with detailed explanations 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+       9 |   test.beforeEach(async ({ page }) => {
+      10 |     // Login as healthcare staff with patient registration permissions
+    > 11 |     await page.goto('/login');
+         |                ^
+      12 |     await page.fill('[data-testid="email"], input[type="email"]', 'recepcionista@neonpro.com.br');
+      13 |     await page.fill('[data-testid="password"], input[type="password"]', 'StaffSecure123!');
+      14 |     await page.click('[data-testid="login-submit"], button[type="submit"]');
+        at D:\neonpro\tools\testing\e2e\tests\patient-management\patient-registration.spec.ts:11:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-p-f20a4--with-detailed-explanations-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-p-f20a4--with-detailed-explanations-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-patient-management-p-f20a4--with-detailed-explanations-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-patient-management-p-f20a4--with-detailed-explanations-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="👥 Patient Registration - Critical E2E › 🔒 LGPD Consent Capture › should require mandatory LGPD consents for registration" classname="tests\patient-management\patient-registration.spec.ts" time="2.527">
+<failure message="patient-registration.spec.ts:181:9 should require mandatory LGPD consents for registration" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\patient-management\patient-registration.spec.ts:181:9 › 👥 Patient Registration - Critical E2E › 🔒 LGPD Consent Capture › should require mandatory LGPD consents for registration 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+       9 |   test.beforeEach(async ({ page }) => {
+      10 |     // Login as healthcare staff with patient registration permissions
+    > 11 |     await page.goto('/login');
+         |                ^
+      12 |     await page.fill('[data-testid="email"], input[type="email"]', 'recepcionista@neonpro.com.br');
+      13 |     await page.fill('[data-testid="password"], input[type="password"]', 'StaffSecure123!');
+      14 |     await page.click('[data-testid="login-submit"], button[type="submit"]');
+        at D:\neonpro\tools\testing\e2e\tests\patient-management\patient-registration.spec.ts:11:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-p-2d02e-D-consents-for-registration-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-p-2d02e-D-consents-for-registration-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-patient-management-p-2d02e-D-consents-for-registration-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-patient-management-p-2d02e-D-consents-for-registration-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="👥 Patient Registration - Critical E2E › 🔒 LGPD Consent Capture › should provide consent withdrawal options" classname="tests\patient-management\patient-registration.spec.ts" time="2.548">
+<failure message="patient-registration.spec.ts:216:9 should provide consent withdrawal options" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\patient-management\patient-registration.spec.ts:216:9 › 👥 Patient Registration - Critical E2E › 🔒 LGPD Consent Capture › should provide consent withdrawal options 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+       9 |   test.beforeEach(async ({ page }) => {
+      10 |     // Login as healthcare staff with patient registration permissions
+    > 11 |     await page.goto('/login');
+         |                ^
+      12 |     await page.fill('[data-testid="email"], input[type="email"]', 'recepcionista@neonpro.com.br');
+      13 |     await page.fill('[data-testid="password"], input[type="password"]', 'StaffSecure123!');
+      14 |     await page.click('[data-testid="login-submit"], button[type="submit"]');
+        at D:\neonpro\tools\testing\e2e\tests\patient-management\patient-registration.spec.ts:11:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-p-d259c--consent-withdrawal-options-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-p-d259c--consent-withdrawal-options-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-patient-management-p-d259c--consent-withdrawal-options-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-patient-management-p-d259c--consent-withdrawal-options-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="👥 Patient Registration - Critical E2E › 🔒 LGPD Consent Capture › should create audit trail for LGPD consent events" classname="tests\patient-management\patient-registration.spec.ts" time="2.558">
+<failure message="patient-registration.spec.ts:247:9 should create audit trail for LGPD consent events" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\patient-management\patient-registration.spec.ts:247:9 › 👥 Patient Registration - Critical E2E › 🔒 LGPD Consent Capture › should create audit trail for LGPD consent events 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+       9 |   test.beforeEach(async ({ page }) => {
+      10 |     // Login as healthcare staff with patient registration permissions
+    > 11 |     await page.goto('/login');
+         |                ^
+      12 |     await page.fill('[data-testid="email"], input[type="email"]', 'recepcionista@neonpro.com.br');
+      13 |     await page.fill('[data-testid="password"], input[type="password"]', 'StaffSecure123!');
+      14 |     await page.click('[data-testid="login-submit"], button[type="submit"]');
+        at D:\neonpro\tools\testing\e2e\tests\patient-management\patient-registration.spec.ts:11:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-p-ebb02-ail-for-LGPD-consent-events-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-p-ebb02-ail-for-LGPD-consent-events-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-patient-management-p-ebb02-ail-for-LGPD-consent-events-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-patient-management-p-ebb02-ail-for-LGPD-consent-events-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="👥 Patient Registration - Critical E2E › 🏥 Medical History and Allergies › should capture comprehensive medical history" classname="tests\patient-management\patient-registration.spec.ts" time="2.542">
+<failure message="patient-registration.spec.ts:286:9 should capture comprehensive medical history" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\patient-management\patient-registration.spec.ts:286:9 › 👥 Patient Registration - Critical E2E › 🏥 Medical History and Allergies › should capture comprehensive medical history 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+       9 |   test.beforeEach(async ({ page }) => {
+      10 |     // Login as healthcare staff with patient registration permissions
+    > 11 |     await page.goto('/login');
+         |                ^
+      12 |     await page.fill('[data-testid="email"], input[type="email"]', 'recepcionista@neonpro.com.br');
+      13 |     await page.fill('[data-testid="password"], input[type="password"]', 'StaffSecure123!');
+      14 |     await page.click('[data-testid="login-submit"], button[type="submit"]');
+        at D:\neonpro\tools\testing\e2e\tests\patient-management\patient-registration.spec.ts:11:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-p-a6be8-mprehensive-medical-history-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-p-a6be8-mprehensive-medical-history-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-patient-management-p-a6be8-mprehensive-medical-history-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-patient-management-p-a6be8-mprehensive-medical-history-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="👥 Patient Registration - Critical E2E › 🏥 Medical History and Allergies › should capture and validate allergy information with severity levels" classname="tests\patient-management\patient-registration.spec.ts" time="2.532">
+<failure message="patient-registration.spec.ts:339:9 should capture and validate allergy information with severity levels" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\patient-management\patient-registration.spec.ts:339:9 › 👥 Patient Registration - Critical E2E › 🏥 Medical History and Allergies › should capture and validate allergy information with severity levels 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+       9 |   test.beforeEach(async ({ page }) => {
+      10 |     // Login as healthcare staff with patient registration permissions
+    > 11 |     await page.goto('/login');
+         |                ^
+      12 |     await page.fill('[data-testid="email"], input[type="email"]', 'recepcionista@neonpro.com.br');
+      13 |     await page.fill('[data-testid="password"], input[type="password"]', 'StaffSecure123!');
+      14 |     await page.click('[data-testid="login-submit"], button[type="submit"]');
+        at D:\neonpro\tools\testing\e2e\tests\patient-management\patient-registration.spec.ts:11:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-p-d15b5-mation-with-severity-levels-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-p-d15b5-mation-with-severity-levels-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-patient-management-p-d15b5-mation-with-severity-levels-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-patient-management-p-d15b5-mation-with-severity-levels-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="👥 Patient Registration - Critical E2E › 🏥 Medical History and Allergies › should handle patients with no known allergies properly" classname="tests\patient-management\patient-registration.spec.ts" time="2.525">
+<failure message="patient-registration.spec.ts:393:9 should handle patients with no known allergies properly" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\patient-management\patient-registration.spec.ts:393:9 › 👥 Patient Registration - Critical E2E › 🏥 Medical History and Allergies › should handle patients with no known allergies properly 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+       9 |   test.beforeEach(async ({ page }) => {
+      10 |     // Login as healthcare staff with patient registration permissions
+    > 11 |     await page.goto('/login');
+         |                ^
+      12 |     await page.fill('[data-testid="email"], input[type="email"]', 'recepcionista@neonpro.com.br');
+      13 |     await page.fill('[data-testid="password"], input[type="password"]', 'StaffSecure123!');
+      14 |     await page.click('[data-testid="login-submit"], button[type="submit"]');
+        at D:\neonpro\tools\testing\e2e\tests\patient-management\patient-registration.spec.ts:11:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-p-1bb67-no-known-allergies-properly-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-p-1bb67-no-known-allergies-properly-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-patient-management-p-1bb67-no-known-allergies-properly-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-patient-management-p-1bb67-no-known-allergies-properly-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="👥 Patient Registration - Critical E2E › 🏥 Medical History and Allergies › should validate critical allergy information completeness" classname="tests\patient-management\patient-registration.spec.ts" time="2.516">
+<failure message="patient-registration.spec.ts:422:9 should validate critical allergy information completeness" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\patient-management\patient-registration.spec.ts:422:9 › 👥 Patient Registration - Critical E2E › 🏥 Medical History and Allergies › should validate critical allergy information completeness 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+       9 |   test.beforeEach(async ({ page }) => {
+      10 |     // Login as healthcare staff with patient registration permissions
+    > 11 |     await page.goto('/login');
+         |                ^
+      12 |     await page.fill('[data-testid="email"], input[type="email"]', 'recepcionista@neonpro.com.br');
+      13 |     await page.fill('[data-testid="password"], input[type="password"]', 'StaffSecure123!');
+      14 |     await page.click('[data-testid="login-submit"], button[type="submit"]');
+        at D:\neonpro\tools\testing\e2e\tests\patient-management\patient-registration.spec.ts:11:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-p-b04fa-gy-information-completeness-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-p-b04fa-gy-information-completeness-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-patient-management-p-b04fa-gy-information-completeness-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-patient-management-p-b04fa-gy-information-completeness-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="👥 Patient Registration - Critical E2E › ✅ Complete Registration Workflow › should complete end-to-end patient registration with all components" classname="tests\patient-management\patient-registration.spec.ts" time="2.525">
+<failure message="patient-registration.spec.ts:461:9 should complete end-to-end patient registration with all components" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\patient-management\patient-registration.spec.ts:461:9 › 👥 Patient Registration - Critical E2E › ✅ Complete Registration Workflow › should complete end-to-end patient registration with all components 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+       9 |   test.beforeEach(async ({ page }) => {
+      10 |     // Login as healthcare staff with patient registration permissions
+    > 11 |     await page.goto('/login');
+         |                ^
+      12 |     await page.fill('[data-testid="email"], input[type="email"]', 'recepcionista@neonpro.com.br');
+      13 |     await page.fill('[data-testid="password"], input[type="password"]', 'StaffSecure123!');
+      14 |     await page.click('[data-testid="login-submit"], button[type="submit"]');
+        at D:\neonpro\tools\testing\e2e\tests\patient-management\patient-registration.spec.ts:11:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-p-490c6-tration-with-all-components-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-p-490c6-tration-with-all-components-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-patient-management-p-490c6-tration-with-all-components-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-patient-management-p-490c6-tration-with-all-components-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="👥 Patient Registration - Critical E2E › ✅ Complete Registration Workflow › should generate patient ID and medical record number" classname="tests\patient-management\patient-registration.spec.ts" time="2.518">
+<failure message="patient-registration.spec.ts:556:9 should generate patient ID and medical record number" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\patient-management\patient-registration.spec.ts:556:9 › 👥 Patient Registration - Critical E2E › ✅ Complete Registration Workflow › should generate patient ID and medical record number 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+       9 |   test.beforeEach(async ({ page }) => {
+      10 |     // Login as healthcare staff with patient registration permissions
+    > 11 |     await page.goto('/login');
+         |                ^
+      12 |     await page.fill('[data-testid="email"], input[type="email"]', 'recepcionista@neonpro.com.br');
+      13 |     await page.fill('[data-testid="password"], input[type="password"]', 'StaffSecure123!');
+      14 |     await page.click('[data-testid="login-submit"], button[type="submit"]');
+        at D:\neonpro\tools\testing\e2e\tests\patient-management\patient-registration.spec.ts:11:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-p-9f239-D-and-medical-record-number-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-p-9f239-D-and-medical-record-number-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-patient-management-p-9f239-D-and-medical-record-number-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-patient-management-p-9f239-D-and-medical-record-number-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="👥 Patient Registration - Critical E2E › ✅ Complete Registration Workflow › should integrate with appointment scheduling system" classname="tests\patient-management\patient-registration.spec.ts" time="2.527">
+<failure message="patient-registration.spec.ts:599:9 should integrate with appointment scheduling system" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\patient-management\patient-registration.spec.ts:599:9 › 👥 Patient Registration - Critical E2E › ✅ Complete Registration Workflow › should integrate with appointment scheduling system 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+       9 |   test.beforeEach(async ({ page }) => {
+      10 |     // Login as healthcare staff with patient registration permissions
+    > 11 |     await page.goto('/login');
+         |                ^
+      12 |     await page.fill('[data-testid="email"], input[type="email"]', 'recepcionista@neonpro.com.br');
+      13 |     await page.fill('[data-testid="password"], input[type="password"]', 'StaffSecure123!');
+      14 |     await page.click('[data-testid="login-submit"], button[type="submit"]');
+        at D:\neonpro\tools\testing\e2e\tests\patient-management\patient-registration.spec.ts:11:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-p-b039c-pointment-scheduling-system-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-p-b039c-pointment-scheduling-system-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-patient-management-p-b039c-pointment-scheduling-system-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-patient-management-p-b039c-pointment-scheduling-system-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="👥 Patient Registration - Critical E2E › ✅ Complete Registration Workflow › should handle registration errors gracefully" classname="tests\patient-management\patient-registration.spec.ts" time="2.52">
+<failure message="patient-registration.spec.ts:635:9 should handle registration errors gracefully" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\patient-management\patient-registration.spec.ts:635:9 › 👥 Patient Registration - Critical E2E › ✅ Complete Registration Workflow › should handle registration errors gracefully 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+       9 |   test.beforeEach(async ({ page }) => {
+      10 |     // Login as healthcare staff with patient registration permissions
+    > 11 |     await page.goto('/login');
+         |                ^
+      12 |     await page.fill('[data-testid="email"], input[type="email"]', 'recepcionista@neonpro.com.br');
+      13 |     await page.fill('[data-testid="password"], input[type="password"]', 'StaffSecure123!');
+      14 |     await page.click('[data-testid="login-submit"], button[type="submit"]');
+        at D:\neonpro\tools\testing\e2e\tests\patient-management\patient-registration.spec.ts:11:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-p-308ab-istration-errors-gracefully-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-p-308ab-istration-errors-gracefully-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-patient-management-p-308ab-istration-errors-gracefully-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-patient-management-p-308ab-istration-errors-gracefully-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="👥 Patient Registration - Critical E2E › 🚀 Performance &amp; Validation › should complete registration within performance targets" classname="tests\patient-management\patient-registration.spec.ts" time="2.523">
+<failure message="patient-registration.spec.ts:678:9 should complete registration within performance targets" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\patient-management\patient-registration.spec.ts:678:9 › 👥 Patient Registration - Critical E2E › 🚀 Performance & Validation › should complete registration within performance targets 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+       9 |   test.beforeEach(async ({ page }) => {
+      10 |     // Login as healthcare staff with patient registration permissions
+    > 11 |     await page.goto('/login');
+         |                ^
+      12 |     await page.fill('[data-testid="email"], input[type="email"]', 'recepcionista@neonpro.com.br');
+      13 |     await page.fill('[data-testid="password"], input[type="password"]', 'StaffSecure123!');
+      14 |     await page.click('[data-testid="login-submit"], button[type="submit"]');
+        at D:\neonpro\tools\testing\e2e\tests\patient-management\patient-registration.spec.ts:11:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-p-86263--within-performance-targets-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-p-86263--within-performance-targets-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-patient-management-p-86263--within-performance-targets-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-patient-management-p-86263--within-performance-targets-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="👥 Patient Registration - Critical E2E › 🚀 Performance &amp; Validation › should provide accessibility compliance in registration form" classname="tests\patient-management\patient-registration.spec.ts" time="2.558">
+<failure message="patient-registration.spec.ts:713:9 should provide accessibility compliance in registration form" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\patient-management\patient-registration.spec.ts:713:9 › 👥 Patient Registration - Critical E2E › 🚀 Performance & Validation › should provide accessibility compliance in registration form 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+       9 |   test.beforeEach(async ({ page }) => {
+      10 |     // Login as healthcare staff with patient registration permissions
+    > 11 |     await page.goto('/login');
+         |                ^
+      12 |     await page.fill('[data-testid="email"], input[type="email"]', 'recepcionista@neonpro.com.br');
+      13 |     await page.fill('[data-testid="password"], input[type="password"]', 'StaffSecure123!');
+      14 |     await page.click('[data-testid="login-submit"], button[type="submit"]');
+        at D:\neonpro\tools\testing\e2e\tests\patient-management\patient-registration.spec.ts:11:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-p-0cca5-liance-in-registration-form-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-p-0cca5-liance-in-registration-form-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-patient-management-p-0cca5-liance-in-registration-form-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-patient-management-p-0cca5-liance-in-registration-form-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="👥 Patient Registration - Critical E2E › 🚀 Performance &amp; Validation › should handle concurrent registration attempts" classname="tests\patient-management\patient-registration.spec.ts" time="2.542">
+<failure message="patient-registration.spec.ts:746:9 should handle concurrent registration attempts" type="FAILURE">
+<![CDATA[  [desktop-chrome] › tests\patient-management\patient-registration.spec.ts:746:9 › 👥 Patient Registration - Critical E2E › 🚀 Performance & Validation › should handle concurrent registration attempts 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+    Call log:
+      - navigating to "http://localhost:3000/login", waiting until "load"
+
+
+       9 |   test.beforeEach(async ({ page }) => {
+      10 |     // Login as healthcare staff with patient registration permissions
+    > 11 |     await page.goto('/login');
+         |                ^
+      12 |     await page.fill('[data-testid="email"], input[type="email"]', 'recepcionista@neonpro.com.br');
+      13 |     await page.fill('[data-testid="password"], input[type="password"]', 'StaffSecure123!');
+      14 |     await page.click('[data-testid="login-submit"], button[type="submit"]');
+        at D:\neonpro\tools\testing\e2e\tests\patient-management\patient-registration.spec.ts:11:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-p-41570-rrent-registration-attempts-desktop-chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\..\test-results\tests-patient-management-p-41570-rrent-registration-attempts-desktop-chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\test-results\tests-patient-management-p-41570-rrent-registration-attempts-desktop-chrome\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\test-results\tests-patient-management-p-41570-rrent-registration-attempts-desktop-chrome\video.webm]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
 </testsuites>

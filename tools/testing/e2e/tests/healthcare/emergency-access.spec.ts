@@ -1,9 +1,15 @@
-import { expect, test } from '@playwright/test';
-
 /**
  * 🚨 CRITICAL Emergency Access E2E Tests for NeonPro Healthcare
+ * 
+ * PRIORITY: CRITICAL - Life-saving emergency access scenarios
+ * COVERAGE: Emergency override, rapid patient access, audit compliance
+ * COMPLIANCE: CFM emergency protocols, LGPD emergency provisions, Art. 11
+ * 
  * Tests emergency scenarios requiring rapid access to critical patient data
+ * with proper audit trails and compliance with Brazilian healthcare regulations.
  */
+
+import { expect, test } from '@playwright/test';
 
 test.describe('🚨 Emergency Access - Critical E2E', () => {
   test.beforeEach(async ({ page }) => {
@@ -50,6 +56,40 @@ test.describe('🚨 Emergency Access - Critical E2E', () => {
       console.log(`Emergency login completed in ${totalTime}ms`);
     });
 
+    test('should handle life-threatening emergency access bypass', async ({ page }) => {
+      // Click emergency access button on login screen
+      await page.goto('/login');
+      await expect(page.locator('[data-testid="emergency-access-btn"]')).toBeVisible();
+      await page.click('[data-testid="emergency-access-btn"]');
+
+      // Should show emergency authentication modal
+      await expect(page.locator('[data-testid="emergency-auth-modal"]')).toBeVisible();
+      await expect(page.locator('h2')).toContainText('ACESSO DE EMERGÊNCIA');
+      await expect(page.locator('text=Para situações de risco à vida')).toBeVisible();
+
+      // Emergency credentials
+      await page.fill('[data-testid="emergency-id"]', 'EMRG001');
+      await page.fill('[data-testid="emergency-code"]', 'VIDA2024');
+
+      // Critical incident description
+      await page.fill('[data-testid="incident-description"]', 'Paciente em parada cardiorrespiratória - necessário acesso imediato ao histórico médico');
+
+      // Emergency contact verification
+      await page.fill('[data-testid="authorizing-doctor"]', 'Dr. Silva - CRM/SP 123456');
+      await page.fill('[data-testid="emergency-contact"]', '(11) 99999-9999');
+
+      // Confirm emergency access
+      await page.click('[data-testid="emergency-access-confirm"]');
+
+      // Should bypass normal authentication
+      await expect(page).toHaveURL(/\/emergency-dashboard/, { timeout: 10000 });
+
+      // Emergency dashboard should be active
+      await expect(page.locator('[data-testid="emergency-banner"]')).toBeVisible();
+      await expect(page.locator('text=MODO EMERGÊNCIA ATIVO')).toBeVisible();
+      await expect(page.locator('[data-testid="emergency-timer"]')).toBeVisible();
+    });
+
     test('should bypass normal authentication restrictions in emergency mode', async ({ page }) => {
       await page.goto('/emergency');
       
@@ -72,22 +112,27 @@ test.describe('🚨 Emergency Access - Critical E2E', () => {
       await expect(page.locator('[data-testid="emergency-session"]')).toHaveClass(/emergency|critical/);
     });
 
-    test('should validate emergency credentials properly', async ({ page }) => {
-      await page.goto('/emergency');
-      
-      // Try with invalid emergency code
-      await page.fill('[data-testid="emergency-code"]', 'INVALID123');
-      await page.fill('[data-testid="professional-id"]', 'CRM12345');
-      await page.fill('[data-testid="emergency-password"]', 'EmergencySecure123!');
-      await page.click('[data-testid="emergency-login"]');
-      
-      // Should show emergency access denied
-      await expect(page.locator('[data-testid="emergency-access-denied"]')).toBeVisible();
-      await expect(page.locator(':has-text("Código de emergência inválido")')).toBeVisible();
-      
-      // Should remain on emergency login page
-      expect(page.url()).toMatch(/emergency/);
-      expect(page.url()).not.toMatch(/dashboard/);
+    test('should validate emergency credentials and prevent abuse', async ({ page }) => {
+      await page.goto('/login');
+      await page.click('[data-testid="emergency-access-btn"]');
+
+      // Test invalid emergency ID
+      await page.fill('[data-testid="emergency-id"]', 'INVALID123');
+      await page.fill('[data-testid="emergency-code"]', 'VIDA2024');
+      await page.fill('[data-testid="incident-description"]', 'Teste de validação com descrição adequada');
+      await page.click('[data-testid="emergency-access-confirm"]');
+
+      // Should show validation error
+      await expect(page.locator('[data-testid="emergency-auth-error"]')).toBeVisible();
+      await expect(page.locator('text=ID de emergência inválido')).toBeVisible();
+
+      // Test insufficient incident description
+      await page.fill('[data-testid="emergency-id"]', 'EMRG001');
+      await page.fill('[data-testid="incident-description"]', 'Teste'); // Too short
+      await page.click('[data-testid="emergency-access-confirm"]');
+
+      await expect(page.locator('text=Descrição do incidente insuficiente')).toBeVisible();
+      await expect(page.locator('text=Mínimo de 20 caracteres necessários')).toBeVisible();
     });
   });
 
@@ -127,6 +172,48 @@ test.describe('🚨 Emergency Access - Critical E2E', () => {
       if (await medicalAlerts.count() > 0) {
         await expect(medicalAlerts).toHaveClass(/alert|warning|critical/);
       }
+    });
+
+    test('should provide rapid patient data access in emergency mode', async ({ page }) => {
+      // Start emergency session
+      await page.goto('/login');
+      await page.click('[data-testid="emergency-access-btn"]');
+      await page.fill('[data-testid="emergency-id"]', 'EMRG001');
+      await page.fill('[data-testid="emergency-code"]', 'VIDA2024');
+      await page.fill('[data-testid="incident-description"]', 'AVC - necessário histórico de medicamentos');
+      await page.click('[data-testid="emergency-access-confirm"]');
+
+      await page.waitForURL('/emergency-dashboard');
+
+      // Quick patient search by CPF (most common emergency scenario)
+      await page.fill('[data-testid="emergency-patient-search"]', '123.456.789-00');
+      await page.press('[data-testid="emergency-patient-search"]', 'Enter');
+
+      // Should show rapid search results
+      await expect(page.locator('[data-testid="emergency-patient-results"]')).toBeVisible();
+      await expect(page.locator('[data-testid="patient-basic-info"]')).toBeVisible();
+
+      // Click patient to access emergency view
+      await page.click('[data-testid="emergency-patient-access"]');
+
+      // Emergency patient view should load rapidly (< 3 seconds)
+      const startTime = Date.now();
+      await expect(page.locator('[data-testid="emergency-patient-view"]')).toBeVisible();
+      const loadTime = Date.now() - startTime;
+      expect(loadTime).toBeLessThan(3000);
+
+      // Critical information should be prominently displayed
+      await expect(page.locator('[data-testid="critical-allergies"]')).toBeVisible();
+      await expect(page.locator('[data-testid="current-medications"]')).toBeVisible();
+      await expect(page.locator('[data-testid="critical-conditions"]')).toBeVisible();
+      await expect(page.locator('[data-testid="emergency-contacts"]')).toBeVisible();
+
+      // Blood type and critical alerts
+      await expect(page.locator('[data-testid="blood-type"]')).toBeVisible();
+      await expect(page.locator('[data-testid="critical-alerts"]')).toBeVisible();
+
+      // Recent vital signs
+      await expect(page.locator('[data-testid="recent-vitals"]')).toBeVisible();
     });
 
     test('should display patient allergies and contraindications prominently', async ({ page }) => {
@@ -197,40 +284,63 @@ test.describe('🚨 Emergency Access - Critical E2E', () => {
         await expect(interactionWarnings).toHaveClass(/warning|alert/);
       }
     });
+  });
 
-    test('should provide access to recent medical history', async ({ page }) => {
-      // Emergency login
-      await page.goto('/emergency');
-      await page.fill('[data-testid="emergency-code"]', 'EMRG2024');
-      await page.fill('[data-testid="professional-id"]', 'CRM12345');
-      await page.fill('[data-testid="emergency-password"]', 'EmergencySecure123!');
-      await page.click('[data-testid="emergency-login"]');
-      await page.waitForURL('**/emergency/dashboard');
-      
-      await page.fill('[data-testid="patient-search-emergency"]', 'Carlos Santos História');
-      await page.click('[data-testid="emergency-search-btn"]');
-      await page.waitForSelector('[data-testid="emergency-patient-data"]');
-      
-      // Verify recent medical history
-      await expect(page.locator('[data-testid="recent-history"]')).toBeVisible();
-      
-      // Should show recent visits/procedures
-      const recentVisits = page.locator('[data-testid="recent-visits"]');
-      await expect(recentVisits).toBeVisible();
-      
-      // Recent diagnoses
-      await expect(page.locator('[data-testid="recent-diagnoses"]')).toBeVisible();
-      
-      // Recent procedures
-      const recentProcedures = page.locator('[data-testid="recent-procedures"]');
-      if (await recentProcedures.count() > 0) {
-        await expect(recentProcedures).toBeVisible();
-      }
-      
-      // Emergency-relevant medical conditions
-      await expect(page.locator('[data-testid="chronic-conditions"]')).toBeVisible();
+  test.describe('💊 Emergency Prescription Authorization', () => {
+    test('should handle emergency prescription authorization', async ({ page }) => {
+      // Setup emergency session
+      await page.goto('/login');
+      await page.click('[data-testid="emergency-access-btn"]');
+      await page.fill('[data-testid="emergency-id"]', 'EMRG001');
+      await page.fill('[data-testid="emergency-code"]', 'VIDA2024');
+      await page.fill('[data-testid="incident-description"]', 'Infarto agudo - medicação urgente necessária');
+      await page.click('[data-testid="emergency-access-confirm"]');
+
+      await page.waitForURL('/emergency-dashboard');
+
+      // Access patient
+      await page.fill('[data-testid="emergency-patient-search"]', '123.456.789-00');
+      await page.press('[data-testid="emergency-patient-search"]', 'Enter');
+      await page.click('[data-testid="emergency-patient-access"]');
+
+      // Emergency prescription access
+      await page.click('[data-testid="emergency-prescription-btn"]');
+      await expect(page.locator('[data-testid="emergency-prescription-form"]')).toBeVisible();
+
+      // Should show emergency medication options
+      await expect(page.locator('[data-testid="emergency-medications"]')).toBeVisible();
+
+      // Select emergency medication
+      await page.click('[data-testid="medication-select"]');
+      await page.click('[data-testid="medication-atenolol"]');
+
+      await page.fill('[data-testid="dosage"]', '25mg');
+      await page.click('[data-testid="frequency"]');
+      await page.click('[data-testid="frequency-12h"]');
+
+      // Emergency justification (required)
+      await page.fill('[data-testid="emergency-justification"]', 'Infarto agudo do miocárdio - betabloqueador para redução da frequência cardíaca');
+
+      // Emergency override authorization
+      await page.fill('[data-testid="authorizing-physician"]', 'Dr. Emergência - CRM/SP 999888');
+
+      // Should bypass normal prescription validation in emergency
+      await expect(page.locator('[data-testid="emergency-override-warning"]')).toBeVisible();
+      await expect(page.locator('text=Prescrição emergencial - validação posterior')).toBeVisible();
+
+      await page.click('[data-testid="authorize-emergency-prescription"]');
+
+      // Should create emergency prescription
+      await expect(page.locator('text=Prescrição emergencial autorizada')).toBeVisible();
+      await expect(page.locator('[data-testid="emergency-prescription-id"]')).toBeVisible();
+
+      // Should require post-emergency validation
+      await expect(page.locator('[data-testid="post-emergency-validation"]')).toBeVisible();
+      await expect(page.locator('text=Validação médica necessária em 24h')).toBeVisible();
     });
-  });  test.describe('📋 Audit Trail Logging', () => {
+  });
+
+  test.describe('📋 Audit Trail Logging', () => {
     test('should log all emergency access events', async ({ page }) => {
       // Emergency login
       await page.goto('/emergency');
@@ -289,43 +399,51 @@ test.describe('🚨 Emergency Access - Critical E2E', () => {
       await expect(page.locator('[data-testid="justification-logged"]')).toContainText('Justificativa registrada');
     });
 
-    test('should create detailed audit logs with all required information', async ({ page }) => {
-      // Emergency login
-      await page.goto('/emergency');
-      await page.fill('[data-testid="emergency-code"]', 'EMRG2024');
-      await page.fill('[data-testid="professional-id"]', 'CRM12345');
-      await page.fill('[data-testid="emergency-password"]', 'EmergencySecure123!');
-      await page.click('[data-testid="emergency-login"]');
-      await page.waitForURL('**/emergency/dashboard');
-      
-      // Access patient data with justification
-      await page.fill('[data-testid="patient-search-emergency"]', 'Maria Silva Santos');
-      await page.click('[data-testid="emergency-search-btn"]');
-      
-      // Provide justification
-      await page.fill('[data-testid="emergency-justification"]', 'Emergência médica - paciente em parada cardíaca');
-      await page.selectOption('[data-testid="emergency-type"]', 'cardiac-arrest');
-      await page.click('[data-testid="confirm-emergency-access"]');
-      
-      await page.waitForSelector('[data-testid="emergency-patient-data"]');
-      
-      // Navigate to audit log to verify entry
-      await page.click('[data-testid="view-audit-log"]');
-      
-      // Verify comprehensive audit entry
-      const auditEntry = page.locator('[data-testid="latest-audit-entry"]');
-      await expect(auditEntry).toBeVisible();
-      
-      // Required audit information
-      await expect(auditEntry).toContainText('EMERGENCY_ACCESS');
-      await expect(auditEntry).toContainText('CRM12345'); // Professional ID
-      await expect(auditEntry).toContainText('Maria Silva Santos'); // Patient accessed
-      await expect(auditEntry).toContainText('Emergência médica - paciente em parada cardíaca'); // Justification
-      await expect(auditEntry).toContainText('cardiac-arrest'); // Emergency type
-      await expect(auditEntry).toContainText(new Date().toISOString().split('T')[0]); // Date
-      
-      // IP address and session information should be logged
-      await expect(auditEntry).toContainText(/IP:|Session:/);
+    test('should generate comprehensive emergency audit logs', async ({ page }) => {
+      // Complete an emergency session
+      await page.goto('/login');
+      await page.click('[data-testid="emergency-access-btn"]');
+      await page.fill('[data-testid="emergency-id"]', 'EMRG001');
+      await page.fill('[data-testid="emergency-code"]', 'VIDA2024');
+      await page.fill('[data-testid="incident-description"]', 'Auditoria de teste - acesso emergencial completo');
+      await page.click('[data-testid="emergency-access-confirm"]');
+
+      await page.waitForURL('/emergency-dashboard');
+
+      // Perform various emergency actions
+      await page.fill('[data-testid="emergency-patient-search"]', '123.456.789-00');
+      await page.press('[data-testid="emergency-patient-search"]', 'Enter');
+      await page.click('[data-testid="emergency-patient-access"]');
+
+      // Access different sections
+      await page.click('[data-testid="emergency-history-tab"]');
+      await page.click('[data-testid="add-emergency-note"]');
+      await page.fill('[data-testid="emergency-note-text"]', 'Teste de auditoria');
+      await page.click('[data-testid="save-emergency-note"]');
+
+      // End emergency session
+      await page.click('[data-testid="end-emergency-session"]');
+      await expect(page.locator('[data-testid="end-session-confirmation"]')).toBeVisible();
+
+      await page.fill('[data-testid="session-summary"]', 'Atendimento emergencial concluído. Paciente estabilizado.');
+      await page.click('[data-testid="confirm-end-session"]');
+
+      // Should redirect to audit summary
+      await expect(page).toHaveURL(/\/emergency-audit-summary/);
+
+      // Audit summary should show all actions
+      await expect(page.locator('[data-testid="emergency-session-summary"]')).toBeVisible();
+      await expect(page.locator('[data-testid="session-duration"]')).toBeVisible();
+      await expect(page.locator('[data-testid="actions-performed"]')).toBeVisible();
+
+      // Should show compliance information
+      await expect(page.locator('[data-testid="lgpd-compliance-note"]')).toBeVisible();
+      await expect(page.locator('text=Acesso justificado por situação de emergência')).toBeVisible();
+      await expect(page.locator('text=Conforme Art. 11 da LGPD')).toBeVisible();
+
+      // Should require supervisor review
+      await expect(page.locator('[data-testid="supervisor-review-required"]')).toBeVisible();
+      await expect(page.locator('text=Revisão supervisora necessária em 24h')).toBeVisible();
     });
 
     test('should maintain audit integrity and prevent tampering', async ({ page }) => {
@@ -517,6 +635,42 @@ test.describe('🚨 Emergency Access - Critical E2E', () => {
       }
     });
 
+    test('should enforce emergency session time limits and auto-logout', async ({ page }) => {
+      // Start emergency session
+      await page.goto('/login');
+      await page.click('[data-testid="emergency-access-btn"]');
+      await page.fill('[data-testid="emergency-id"]', 'EMRG001');
+      await page.fill('[data-testid="emergency-code"]', 'VIDA2024');
+      await page.fill('[data-testid="incident-description"]', 'Teste de limite de sessão');
+      await page.click('[data-testid="emergency-access-confirm"]');
+
+      await page.waitForURL('/emergency-dashboard');
+
+      // Should show session timer
+      await expect(page.locator('[data-testid="session-countdown"]')).toBeVisible();
+
+      // Check initial timer value (should be 30 minutes = 1800 seconds)
+      const initialTimer = await page.locator('[data-testid="session-countdown"]').textContent();
+      expect(initialTimer).toMatch(/29:|30:/); // Should start around 29-30 minutes
+
+      // Should show warning messages
+      await expect(page.locator('[data-testid="session-limit-warning"]')).toBeVisible();
+      await expect(page.locator('text=Sessão limitada a 30 minutos')).toBeVisible();
+
+      // Test extension request
+      await page.click('[data-testid="extend-session-btn"]');
+      await expect(page.locator('[data-testid="extension-request-form"]')).toBeVisible();
+
+      await page.fill('[data-testid="extension-justification"]', 'Procedimento ainda em andamento - paciente em estado crítico');
+      await page.fill('[data-testid="supervising-physician"]', 'Dr. Supervisor - CRM/SP 777666');
+
+      await page.click('[data-testid="request-extension"]');
+
+      // Should show extension request submitted
+      await expect(page.locator('text=Solicitação de extensão enviada')).toBeVisible();
+      await expect(page.locator('text=Aguardando aprovação')).toBeVisible();
+    });
+
     test('should automatically log out after emergency session expires', async ({ page }) => {
       // This test would require either mocking time or using a shorter session duration
       // For demonstration, we'll test the logout mechanism exists
@@ -545,6 +699,44 @@ test.describe('🚨 Emergency Access - Critical E2E', () => {
       // Should clear all session data
       const sessionData = await page.evaluate(() => localStorage.getItem('emergency-session'));
       expect(sessionData).toBeNull();
+    });
+
+    test('should handle multiple concurrent emergency sessions', async ({ page, context }) => {
+      // First emergency session
+      await page.goto('/login');
+      await page.click('[data-testid="emergency-access-btn"]');
+      await page.fill('[data-testid="emergency-id"]', 'EMRG001');
+      await page.fill('[data-testid="emergency-code"]', 'VIDA2024');
+      await page.fill('[data-testid="incident-description"]', 'Emergência 1 - Infarto');
+      await page.click('[data-testid="emergency-access-confirm"]');
+
+      await page.waitForURL('/emergency-dashboard');
+
+      // Create second browser context for concurrent session
+      const page2 = await context.newPage();
+      await page2.goto('/login');
+
+      // Second emergency session
+      await page2.click('[data-testid="emergency-access-btn"]');
+      await page2.fill('[data-testid="emergency-id"]', 'EMRG002');
+      await page2.fill('[data-testid="emergency-code"]', 'VIDA2024');
+      await page2.fill('[data-testid="incident-description"]', 'Emergência 2 - Acidente de trânsito');
+      await page2.click('[data-testid="emergency-access-confirm"]');
+
+      await page2.waitForURL('/emergency-dashboard');
+
+      // Both sessions should be active independently
+      await expect(page.locator('[data-testid="emergency-banner"]')).toBeVisible();
+      await expect(page2.locator('[data-testid="emergency-banner"]')).toBeVisible();
+
+      // Each should have its own session timer
+      await expect(page.locator('[data-testid="session-countdown"]')).toBeVisible();
+      await expect(page2.locator('[data-testid="session-countdown"]')).toBeVisible();
+
+      // Should maintain separate audit trails
+      const sessionId1 = await page.locator('[data-testid="session-id"]').textContent();
+      const sessionId2 = await page2.locator('[data-testid="session-id"]').textContent();
+      expect(sessionId1).not.toBe(sessionId2);
     });
   });
 });

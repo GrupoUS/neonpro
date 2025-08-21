@@ -11,9 +11,15 @@ tools/testing/
 │   ├── setup/              # Test setup configurations
 │   ├── setup.ts            # Main test setup file
 │   └── README.md           # Unit testing guidelines
-├── e2e/                     # End-to-end tests (migrated from playwright/)
+├── e2e/                     # End-to-end tests ✅ CONSOLIDATED LOCATION
+│   ├── tests/              # ✅ All E2E test files (constitutional structure)
+│   │   ├── auth/           # Authentication & authorization tests
+│   │   ├── healthcare/     # Healthcare-specific workflow tests
+│   │   ├── patient-management/ # Patient management E2E tests
+│   │   ├── core/           # Core system functionality tests
+│   │   ├── security/       # Security & compliance tests
+│   │   └── performance/    # Performance & accessibility tests
 │   ├── fixtures/           # Test fixtures and data
-│   ├── tests/              # E2E test files
 │   ├── utils/              # E2E testing utilities
 │   └── README.md           # E2E testing guidelines
 ├── mocks/                   # Test mocks (migrated from __mocks__/)

@@ -1,40 +1,130 @@
-# E2E Testing Guidelines - NeonPro Healthcare
+# 🎭 NeonPro E2E Tests - Constitutional Structure
 
-## Overview
-End-to-end testing for NeonPro healthcare workflows using Playwright with focus on user journeys, healthcare compliance, and cross-browser compatibility.
+## 📍 Nova Localização Centralizada
 
-## Directory Structure
+**✅ MIGRAÇÃO CONCLUÍDA**: Todos os testes E2E foram migrados e consolidados em:
 ```
-e2e/
-├── fixtures/           # Test fixtures and data
-├── tests/              # E2E test files  
-├── utils/              # E2E testing utilities
-├── pages/              # Page object models
-└── healthcare/         # Healthcare-specific E2E tests
+tools/testing/e2e/tests/
 ```
 
-## Healthcare E2E Scenarios
+### 🏗️ Estrutura Constitutional (Source Tree Compliance)
 
-### Patient Management Workflows
-- Patient registration with LGPD consent
-- Appointment scheduling and management
-- Medical record access and updates
-- Treatment tracking and reporting
+```
+e2e/tests/
+├── auth/                           # 🔐 Authentication & Authorization
+│   ├── authentication.spec.ts     # ✅ CONSOLIDATED - Login/logout/session management
+│   ├── login.spec.ts              # Basic login flows
+│   └── role-based-access.spec.ts  # Healthcare role permissions
+├── healthcare/                     # 🏥 Healthcare-Specific Workflows
+│   ├── appointment-booking.spec.ts # ✅ CONSOLIDATED - Complete booking workflow
+│   ├── medical-records.spec.ts    # Patient records management
+│   └── prescription-mgmt.spec.ts  # Prescription workflows
+├── patient-management/             # 👥 Patient Management
+│   ├── create-patient.spec.ts     # Patient registration
+│   └── patient-registration.spec.ts # Extended registration workflows
+├── core/                          # ⚙️ Core System Functionality
+│   └── [system core tests]
+├── security/                      # 🛡️ Security & Compliance
+│   └── [security validation tests]
+└── performance/                   # 📊 Performance & Accessibility
+    └── [performance tests]
+```
 
-### Compliance Workflows  
-- ANVISA device registration validation
-- CFM professional verification
-- Audit trail generation and validation
-- Privacy controls and data subject rights
+## 🔄 Consolidação Concluída
 
-## Test Execution
+### ✅ Arquivos Consolidados:
+
+1. **authentication.spec.ts** - Combinou:
+   - ✅ Robustez técnica (seletores múltiplos, networkidle, state management)
+   - ✅ Cenários healthcare específicos (CRM, licenças profissionais)
+   - ✅ Compliance LGPD/ANVISA/CFM
+   - ✅ Acessibilidade e performance
+
+2. **appointment-booking.spec.ts** - Combinou:
+   - ✅ Fluxo completo de agendamento robusto
+   - ✅ Validação de credenciais profissionais
+   - ✅ Cenários médicos específicos (procedimentos, emergências)
+   - ✅ Sistema de notificações e lembretes
+
+### 🗑️ Arquivos Removidos:
+- ❌ `authentication-v2.spec.ts` (consolidado no original)
+- ❌ `appointment-booking-v2.spec.ts` (consolidado no original)
+
+## 🎯 Princípios da Consolidação
+
+### Mantivemos:
+- ✅ **Robustez Técnica**: Múltiplas estratégias de seletores, wait conditions robustas
+- ✅ **Healthcare Focus**: Validações específicas de saúde, terminologia médica
+- ✅ **Compliance**: Cenários LGPD, ANVISA, CFM
+- ✅ **Acessibilidade**: Suporte a usuários com deficiência
+- ✅ **Performance**: Budget de performance para ambientes de saúde
+
+### Eliminamos:
+- ❌ Código duplicado
+- ❌ Inconsistências entre versões
+- ❌ Seletores frágeis
+- ❌ Redundâncias desnecessárias
+
+## 🚀 Como Executar
+
+### Testes E2E Consolidados:
 ```bash
-# Run all E2E tests
+# Todos os testes E2E
 pnpm test:e2e
 
-# Run healthcare-specific E2E tests
-pnpm test:e2e:healthcare
+# Testes específicos por categoria
+pnpm test:e2e --grep "Authentication"     # Testes de autenticação
+pnpm test:e2e --grep "Healthcare"         # Testes de workflows de saúde
+pnpm test:e2e --grep "Patient"            # Testes de gestão de pacientes
 
-# Run compliance E2E tests  
-pnpm test:e2e:compliance
+# Com interface gráfica
+pnpm exec playwright test --ui
+
+# Gerar relatório
+pnpm exec playwright show-report
 ```
+
+### Configuração:
+- **Playwright Config**: `d:\neonpro\playwright.config.ts` (centralizada)
+- **Test Directory**: `tools/testing/e2e` (constitutional)
+- **Browser Support**: Chrome, Firefox, Safari (healthcare compatibility)
+
+## 📋 Próximos Passos
+
+### ✅ Concluído:
+1. ✅ Migração para localização constitutional (`tools/testing/e2e/`)
+2. ✅ Consolidação de duplicados (-v2 files)
+3. ✅ Validação de funcionamento (testes executam corretamente)
+4. ✅ Atualização de documentação
+
+### 🔄 Em Progresso:
+- 📝 Documentação completa dos cenários consolidados
+- 🔍 Verificação de redundâncias adicionais
+
+### 📅 Próximos:
+- 🧪 Otimização de performance dos testes
+- 📊 Métricas de cobertura healthcare-specific
+- 🤖 Integração com CI/CD pipeline
+- 📱 Testes mobile e responsividade
+
+## 🏥 Healthcare Testing Standards
+
+### Compliance Testing:
+- **LGPD**: Proteção de dados de pacientes
+- **ANVISA**: Regulamentações de software médico
+- **CFM**: Compliance com Conselho Federal de Medicina
+
+### Professional Validation:
+- **CRM**: Validação de registros médicos
+- **COREN**: Validação de registros de enfermagem
+- **Licenças**: Verificação de validade profissional
+
+### Healthcare Workflows:
+- **Agendamentos**: Fluxos médicos completos
+- **Prontuários**: Gestão de registros médicos
+- **Prescrições**: Workflows de medicação
+- **Emergências**: Cenários de urgência
+
+---
+
+**📞 Suporte**: Para dúvidas sobre os testes E2E consolidados, consulte o time de QA ou o desenvolvedor responsável pela migração.
