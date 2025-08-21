@@ -9,8 +9,8 @@
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
-  // Test directory - simplified structure
-  testDir: './e2e/tests',
+  // Test directory - constitutional structure
+  testDir: './tools/testing/e2e',
 
   // Essential test patterns only - E2E TESTS ONLY
   testMatch: [

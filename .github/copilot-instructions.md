@@ -28,7 +28,7 @@ applyTo: "**/*"
 - Prioritize functionality over production-ready patterns
 - Focus on user experience and feature completeness
 - When updating code, don't reference what is changing (avoid keywords like LEGACY, CHANGED, REMOVED), instead focus on comments that document just the functionality of the code
-
+- Sempre verifique as tasks disponíveis no archon mcp antes de criar novas tasks para implementar as tasks existentes. Atualize o status de cada task quando for completada.
 # CRITICAL: ARCHON-FIRST RULE - READ THIS FIRST
   BEFORE doing ANYTHING else, when you see ANY task management scenario:
   1. STOP and check if Archon MCP server is available
@@ -842,6 +842,11 @@ process:
   - Assess complexity level (1-10)
   - Define strategic approach
   - Break down into manageable components
+specialized_agents:
+  - trigger: "Complexity ≥5 OR healthcare/compliance requirements"
+  - action: "Use Task tool with subagent_type: apex-researcher"
+  - context: "Full project scope + technical constraints"
+  - purpose: "Deep analysis of requirements and constraints"
 quality_gate: "Requirements clarity ≥9/10"
   approach: "Deep analysis with constitutional principles"
   output: "Step-by-step implementation plan with validation points"
@@ -850,7 +855,26 @@ quality_gate: "Requirements clarity ≥9/10"
 ### Phase 2: Research First
 ```yaml
 trigger: "Complexity ≥3 or insufficient knowledge"
+primary_agent:
+  tool: "Task"
+  subagent_type: "apex-researcher"
+  description: "Deep research phase"
+  prompt: "Analyze requirements and research best practices"
 process:
+  1_deep_research:
+    agent_invocation: "Use Task tool with apex-researcher"
+    tasks:
+      - "Analyze technical requirements and constraints"
+      - "Research best practices and patterns"
+      - "Validate compliance requirements (LGPD/healthcare)"
+      - "Cross-reference with Context7 + Tavily + Exa"
+  2_ui_ux_research:
+    trigger: "IF frontend/UI components involved"
+    agent_invocation: "Use Task tool with apex-ui-ux-designer"
+    tasks:
+      - "Research design patterns and accessibility"
+      - "Analyze user experience requirements" 
+      - "Validate WCAG 2.1 AA+ compliance"
   investigation: "Define 3-5 key questions"
   documentation: "context7 → Official docs and best practices"
   validation: "tavily → Current patterns and security updates"
@@ -886,6 +910,30 @@ quality_gate: "Research completeness ≥9/10"
 
 ### Phase 3: Context Engineering & Planning
 ```yaml
+AGENT_ORCHESTRATION:
+  planning_lead:
+    invocation: "Use Task tool with subagent_type: apex-dev"
+    responsibility: "Overall architecture and implementation planning"
+  
+  specialized_support:
+    ui_ux:
+      trigger: "Frontend components OR user interface"
+      invocation: "Use Task tool with subagent_type: apex-ui-ux-designer"
+      responsibilities:
+        - "Design system architecture"
+        - "Component hierarchy planning"
+        - "Accessibility planning"
+        - "User experience optimization"
+    
+    research:
+      trigger: "Unknown patterns OR new technology"
+      invocation: "Use Task tool with subagent_type: apex-researcher"
+      responsibilities:
+        - "Deep dive into documentation"
+        - "Security validation"
+        - "Performance benchmarks"
+        - "Compliance verification"
+
 ONE_SHOT_TEMPLATE:
   role: "[Specific: Frontend Developer | Backend Engineer | Full-Stack]"
   context: "#workspace + #codebase + [relevant files]"
@@ -893,6 +941,7 @@ ONE_SHOT_TEMPLATE:
   constraints: "[Technical limitations, performance requirements]"
   output: "[Code | Documentation | Architecture | Analysis]"
   success_criteria: "[Measurable outcomes, quality thresholds]"
+  agent_assignment: "Route to apex-dev, apex-researcher, or apex-ui-ux-designer based on task type"
   self_verification: |
     - [ ] All requirements addressed
     - [ ] Quality standard ≥9.8/10 met
@@ -906,25 +955,69 @@ ONE_SHOT_TEMPLATE:
 TASK_PLANNING:
   structure:
     - Break down into atomic executable tasks
-    - Assign optimal tools for each task
+    - Assign optimal agents and tools for each task
     - Define validation checkpoints
     - Create dependency mapping
     - Set measurable success criteria
 THINK_AND_PLAN:
-  inner_monologue: "What is user asking? Best approach? Challenges?"
-  high_level_plan: "Outline major steps to solve problem"
-  todo_list: "Create markdown at #folder:E:\\vscode\\tasks.md"
+  inner_monologue: "What is user asking? Best approach? Which agent is optimal?"
+  high_level_plan: "Outline major steps and agent assignments"
 quality_gate: "Plan completeness ≥9.5/10"
 ```
 
 ### Phase 4: Implementation
 ```yaml
 EXECUTION_PATTERNS:
-  L1_2_simple: "Direct implementation with basic validation"
-  L3_4_moderate: "Phased execution with checkpoints"
-  L5_6_complex: "Think validation every 5 steps"
-  L7_8_enterprise: "Full orchestration with continuous review"
-  L9_10_critical: "Maximum rigor with compliance checks"
+  default_agent: "Use Task tool with apex-dev for coordination"
+  complexity_routing:
+    L1_2_simple:
+      agent: "Current agent (no delegation needed)"
+      validation: "Basic checks"
+    L3_4_moderate:
+      primary: "Task tool with apex-dev"
+      support: "Task tool with apex-researcher for unknowns"
+    L5_6_complex:
+      lead: "Task tool with apex-dev for coordination"
+      ui: "Task tool with apex-ui-ux-designer for frontend"
+      research: "Task tool with apex-researcher for validation"
+      checkpoints: "Think validation every 5 steps"
+    L7_8_enterprise:
+      orchestrator: "Task tool with apex-dev"
+      team:
+        - "apex-researcher: Architecture validation"
+        - "apex-ui-ux-designer: UI/UX implementation"
+      review: "Full orchestration with continuous review"
+    L9_10_critical:
+      full_team: "All three agents in coordination"
+      workflow: "Research → Design → Develop → Validate"
+      rigor: "Maximum rigor with compliance checks"
+
+AGENT_TRIGGERS:
+  automatic_delegation:
+    apex-researcher:
+      conditions:
+        - "Unknown library or framework"
+        - "Performance optimization needed"
+        - "Security vulnerability assessment"
+        - "Compliance validation (LGPD/healthcare)"
+      invocation: "Task tool with apex-researcher"
+    
+    apex-dev:
+      conditions:
+        - "Any coding task ≥L3"
+        - "Architecture decisions"
+        - "API design and implementation"
+        - "Database schema and RLS policies"
+      invocation: "Task tool with apex-dev"
+    
+    apex-ui-ux-designer:
+      conditions:
+        - "Component design"
+        - "User flow optimization"
+        - "Accessibility requirements"
+        - "Design system updates"
+      invocation: "Task tool with apex-ui-ux-designer"
+
 DEVELOPMENT_FLOW:
   planning: "sequential-thinking → Architecture design"
   research: "context7 → Framework documentation"
@@ -938,6 +1031,68 @@ CONTEXT_COHERENCE:
   recovery: "Context recovery mechanisms for drift detection"
 quality_gate: "Implementation quality ≥9.5/10"
 ```
+
+## AGENT INVOCATION SYNTAX
+
+### Correct Task Agent Invocation (apex-*)
+```yaml
+DIRECT_INVOCATION:
+  method_1_explicit:
+    description: "Explicit Task tool call"
+    example: |
+      Use Task tool with:
+      - subagent_type: "apex-dev"
+      - description: "Implement feature X"
+      - prompt: "Full implementation details..."
+  
+  method_2_natural:
+    description: "Natural language trigger"
+    examples:
+      - "Use apex-dev to implement the authentication system"
+      - "Have apex-researcher analyze the performance requirements"  
+      - "Ask apex-ui-ux-designer to create the component design"
+
+AUTOMATIC_TRIGGERS:
+  apex-researcher:
+    conditions:
+      - "Research task detected"
+      - "Unknown library or framework"
+      - "Compliance validation needed"
+      - "Performance analysis required"
+    auto_invoke: "Task tool with apex-researcher"
+  
+  apex-dev:
+    conditions:
+      - "Implementation task ≥L3"
+      - "Code generation required"
+      - "Architecture decisions"
+      - "API or database work"
+    auto_invoke: "Task tool with apex-dev"
+  
+  apex-ui-ux-designer:
+    conditions:
+      - "UI/UX design needed"
+      - "Component creation"
+      - "Accessibility requirements"
+      - "Design system work"
+    auto_invoke: "Task tool with apex-ui-ux-designer"
+
+QUALITY_STANDARDS:
+  apex-researcher:
+    - "≥3 sources validated"
+    - "Security implications assessed" 
+    - "Performance impact analyzed"
+  
+  apex-dev:
+    - "Code quality ≥9.5/10"
+    - "Tests passing 100%"
+    - "Documentation complete"
+  
+  apex-ui-ux-designer:
+    - "WCAG 2.1 AA+ compliant"
+    - "Responsive design verified"
+    - "Component reusability ≥80%"
+```
 </workflow-patterns>
 
 <quality-gates>
@@ -945,7 +1100,7 @@ quality_gate: "Implementation quality ≥9.5/10"
 ```yaml
 ENFORCEMENT_GATES:
   arquiteture_analisys: "Always check architecture against best practices"
-  design_patterns: "Use established patterns appropriately at #folder:E:\\neonpro\\docs\\shards\\architecture"
+  design_patterns: "Use established patterns appropriately at @docs\architecture"
   technology_excellence: "Framework best practices, performance optimization"
 QA_MANDATORY:
   post_modification_checks:

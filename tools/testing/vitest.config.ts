@@ -7,7 +7,7 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
-    setupFiles: ['./tools/testing/healthcare-setup.ts'],
+    setupFiles: ['./healthcare-setup.ts'],
     include: ['**/*.{test,spec}.{ts,tsx}', '**/__tests__/**/*.{ts,tsx}'],
     exclude: [
       '**/node_modules/**',
