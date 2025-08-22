@@ -35,10 +35,30 @@ export const BusinessHoursSchema = z
       ),
   })
   .refine((data) => {
-    if (!data.isOpen) return true;
+    if (!(data.isOpen && data.openTime && data.closeTime)) return true;
 
-    const [openHour, openMin] = data.openTime.split(':').map(Number);
-    const [closeHour, closeMin] = data.closeTime.split(':').map(Number);
+    const openTimeParts = data.openTime.split(':').map(Number);
+    const closeTimeParts = data.closeTime.split(':').map(Number);
+
+    if (openTimeParts.length !== 2 || closeTimeParts.length !== 2) return false;
+
+    const openHour = openTimeParts[0];
+    const openMin = openTimeParts[1];
+    const closeHour = closeTimeParts[0];
+    const closeMin = closeTimeParts[1];
+
+    if (
+      typeof openHour !== 'number' ||
+      typeof openMin !== 'number' ||
+      typeof closeHour !== 'number' ||
+      typeof closeMin !== 'number' ||
+      isNaN(openHour) ||
+      isNaN(openMin) ||
+      isNaN(closeHour) ||
+      isNaN(closeMin)
+    )
+      return false;
+
     const openMinutes = openHour * 60 + openMin;
     const closeMinutes = closeHour * 60 + closeMin;
 
@@ -235,7 +255,7 @@ export const ClinicResponseSchema = ClinicBaseSchema.extend({
   staff: z.array(ClinicStaffSchema).default([]),
 
   // Remove sensitive data
-  cnpj: z.string().transform((val) => '**.***.***/****-**'),
+  cnpj: z.string().transform((_val) => '**.***.***/****-**'),
 });
 
 // Search/filter clinics

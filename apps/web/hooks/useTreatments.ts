@@ -2,14 +2,14 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createClient } from '@/app/utils/supabase/client';
-import type { 
-  TreatmentPlan, 
-  TreatmentSession, 
-  TreatmentProtocol,
-  TreatmentProgress,
+import type {
   AestheticTreatmentCategory,
+  TreatmentPlan,
+  TreatmentPlanSummary,
+  TreatmentProgress,
+  TreatmentProtocol,
+  TreatmentSession,
   TreatmentStatus,
-  TreatmentPlanSummary
 } from '@/types/treatments';
 
 type TreatmentsHook = {
@@ -18,52 +18,67 @@ type TreatmentsHook = {
   activeTreatments: TreatmentPlan[];
   completedTreatments: TreatmentPlan[];
   treatmentPlansSummary: TreatmentPlanSummary[];
-  
+
   // Treatment Sessions
   upcomingSessions: TreatmentSession[];
   recentSessions: TreatmentSession[];
   todaysSessions: TreatmentSession[];
-  
+
   // Treatment Protocols
   availableProtocols: TreatmentProtocol[];
   popularProtocols: TreatmentProtocol[];
-  
+
   // Statistics and Analytics
   totalTreatments: number;
   activeSessionsCount: number;
   completionRate: number;
   averageSatisfactionScore: number;
-  
+
   // Loading and Error States
   loading: boolean;
   error: Error | null;
-  
+
   // Search and Filter Functions
   searchTreatments: (query: string) => void;
   filterByCategory: (category: AestheticTreatmentCategory | null) => void;
   filterByStatus: (status: TreatmentStatus | null) => void;
   filterByPatient: (patientId: string | null) => void;
-  
+
   // CRUD Operations
   getTreatmentById: (id: string) => TreatmentPlan | null;
-  createTreatmentPlan: (plan: Omit<TreatmentPlan, 'id' | 'created_at' | 'updated_at'>) => Promise<TreatmentPlan | null>;
-  updateTreatmentPlan: (id: string, updates: Partial<TreatmentPlan>) => Promise<TreatmentPlan | null>;
+  createTreatmentPlan: (
+    plan: Omit<TreatmentPlan, 'id' | 'created_at' | 'updated_at'>
+  ) => Promise<TreatmentPlan | null>;
+  updateTreatmentPlan: (
+    id: string,
+    updates: Partial<TreatmentPlan>
+  ) => Promise<TreatmentPlan | null>;
   deleteTreatmentPlan: (id: string) => Promise<boolean>;
-  
+
   // Session Management
-  scheduleSession: (session: Omit<TreatmentSession, 'id' | 'created_at' | 'updated_at'>) => Promise<TreatmentSession | null>;
-  completeSession: (sessionId: string, sessionData: Partial<TreatmentSession>) => Promise<TreatmentSession | null>;
+  scheduleSession: (
+    session: Omit<TreatmentSession, 'id' | 'created_at' | 'updated_at'>
+  ) => Promise<TreatmentSession | null>;
+  completeSession: (
+    sessionId: string,
+    sessionData: Partial<TreatmentSession>
+  ) => Promise<TreatmentSession | null>;
   cancelSession: (sessionId: string, reason: string) => Promise<boolean>;
-  
+
   // Progress Tracking
-  updateProgress: (progressData: Omit<TreatmentProgress, 'id' | 'recorded_at'>) => Promise<TreatmentProgress | null>;
+  updateProgress: (
+    progressData: Omit<TreatmentProgress, 'id' | 'recorded_at'>
+  ) => Promise<TreatmentProgress | null>;
   getProgressHistory: (treatmentPlanId: string) => Promise<TreatmentProgress[]>;
-  
+
   // Brazilian Compliance Functions
   validateCFMCompliance: (treatmentPlanId: string) => Promise<boolean>;
-  updateLGPDConsent: (treatmentPlanId: string, consentStatus: boolean) => Promise<boolean>;
+  updateLGPDConsent: (
+    treatmentPlanId: string,
+    consentStatus: boolean
+  ) => Promise<boolean>;
   generateComplianceReport: (treatmentPlanId: string) => Promise<any>;
-  
+
   // Utility Functions
   refreshData: () => Promise<void>;
   exportTreatmentData: (treatmentPlanId: string) => Promise<any>;
@@ -72,17 +87,26 @@ type TreatmentsHook = {
 export function useTreatments(): TreatmentsHook {
   // State Management
   const [treatmentPlans, setTreatmentPlans] = useState<TreatmentPlan[]>([]);
-  const [treatmentSessions, setTreatmentSessions] = useState<TreatmentSession[]>([]);
-  const [treatmentProtocols, setTreatmentProtocols] = useState<TreatmentProtocol[]>([]);
-  const [treatmentProgress, setTreatmentProgress] = useState<TreatmentProgress[]>([]);
-  
+  const [treatmentSessions, setTreatmentSessions] = useState<
+    TreatmentSession[]
+  >([]);
+  const [treatmentProtocols, setTreatmentProtocols] = useState<
+    TreatmentProtocol[]
+  >([]);
+  const [treatmentProgress, setTreatmentProgress] = useState<
+    TreatmentProgress[]
+  >([]);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  
+
   // Filter States
   const [searchQuery, setSearchQuery] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState<AestheticTreatmentCategory | null>(null);
-  const [statusFilter, setStatusFilter] = useState<TreatmentStatus | null>(null);
+  const [categoryFilter, setCategoryFilter] =
+    useState<AestheticTreatmentCategory | null>(null);
+  const [statusFilter, setStatusFilter] = useState<TreatmentStatus | null>(
+    null
+  );
   const [patientFilter, setPatientFilter] = useState<string | null>(null);
 
   const supabase = createClient();
@@ -120,7 +144,9 @@ export function useTreatments(): TreatmentsHook {
       const { data, error: fetchError } = await query;
 
       if (fetchError) {
-        throw new Error(`Erro ao carregar planos de tratamento: ${fetchError.message}`);
+        throw new Error(
+          `Erro ao carregar planos de tratamento: ${fetchError.message}`
+        );
       }
 
       setTreatmentPlans(data || []);
@@ -170,74 +196,85 @@ export function useTreatments(): TreatmentsHook {
 
   // Computed Values
   const activeTreatments = useMemo(() => {
-    return treatmentPlans.filter(plan => 
+    return treatmentPlans.filter((plan) =>
       ['planned', 'consent_pending', 'active'].includes(plan.status)
     );
   }, [treatmentPlans]);
 
   const completedTreatments = useMemo(() => {
-    return treatmentPlans.filter(plan => plan.status === 'completed');
+    return treatmentPlans.filter((plan) => plan.status === 'completed');
   }, [treatmentPlans]);
 
   const treatmentPlansSummary = useMemo((): TreatmentPlanSummary[] => {
-    return treatmentPlans.map(plan => ({
+    return treatmentPlans.map((plan) => ({
       id: plan.id,
       treatment_name: plan.treatment_name,
       category: plan.category,
       status: plan.status,
       expected_sessions: plan.expected_sessions,
-      completed_sessions: plan.completed_sessions
+      completed_sessions: plan.completed_sessions,
     }));
   }, [treatmentPlans]);
 
   const upcomingSessions = useMemo(() => {
     const now = new Date();
     return treatmentSessions
-      .filter(session => 
-        session.status === 'scheduled' && 
-        new Date(session.scheduled_date) > now
+      .filter(
+        (session) =>
+          session.status === 'scheduled' &&
+          new Date(session.scheduled_date) > now
       )
       .slice(0, 10);
   }, [treatmentSessions]);
 
   const recentSessions = useMemo(() => {
     return treatmentSessions
-      .filter(session => session.status === 'completed')
-      .sort((a, b) => 
-        new Date(b.actual_date || b.scheduled_date).getTime() - 
-        new Date(a.actual_date || a.scheduled_date).getTime()
+      .filter((session) => session.status === 'completed')
+      .sort(
+        (a, b) =>
+          new Date(b.actual_date || b.scheduled_date).getTime() -
+          new Date(a.actual_date || a.scheduled_date).getTime()
       )
       .slice(0, 10);
   }, [treatmentSessions]);
 
   const todaysSessions = useMemo(() => {
     const today = new Date().toDateString();
-    return treatmentSessions.filter(session => 
-      new Date(session.scheduled_date).toDateString() === today
+    return treatmentSessions.filter(
+      (session) => new Date(session.scheduled_date).toDateString() === today
     );
   }, [treatmentSessions]);
 
   const availableProtocols = useMemo(() => {
-    return treatmentProtocols.filter(protocol => protocol.cfm_approved);
+    return treatmentProtocols.filter((protocol) => protocol.cfm_approved);
   }, [treatmentProtocols]);
 
   const popularProtocols = useMemo(() => {
     return treatmentProtocols
-      .filter(protocol => protocol.success_rate >= 80)
-      .sort((a, b) => b.patient_satisfaction_average - a.patient_satisfaction_average)
+      .filter((protocol) => protocol.success_rate >= 80)
+      .sort(
+        (a, b) =>
+          b.patient_satisfaction_average - a.patient_satisfaction_average
+      )
       .slice(0, 5);
   }, [treatmentProtocols]);
 
   // Statistics
   const totalTreatments = treatmentPlans.length;
   const activeSessionsCount = upcomingSessions.length;
-  const completionRate = totalTreatments > 0 
-    ? (completedTreatments.length / totalTreatments) * 100 
-    : 0;
+  const completionRate =
+    totalTreatments > 0
+      ? (completedTreatments.length / totalTreatments) * 100
+      : 0;
   const averageSatisfactionScore = useMemo(() => {
-    const sessionsWithScores = treatmentSessions.filter(s => s.patient_satisfaction_score);
+    const sessionsWithScores = treatmentSessions.filter(
+      (s) => s.patient_satisfaction_score
+    );
     if (sessionsWithScores.length === 0) return 0;
-    const total = sessionsWithScores.reduce((sum, s) => sum + (s.patient_satisfaction_score || 0), 0);
+    const total = sessionsWithScores.reduce(
+      (sum, s) => sum + (s.patient_satisfaction_score || 0),
+      0
+    );
     return total / sessionsWithScores.length;
   }, [treatmentSessions]);
 
@@ -246,9 +283,12 @@ export function useTreatments(): TreatmentsHook {
     setSearchQuery(query);
   }, []);
 
-  const filterByCategory = useCallback((category: AestheticTreatmentCategory | null) => {
-    setCategoryFilter(category);
-  }, []);
+  const filterByCategory = useCallback(
+    (category: AestheticTreatmentCategory | null) => {
+      setCategoryFilter(category);
+    },
+    []
+  );
 
   const filterByStatus = useCallback((status: TreatmentStatus | null) => {
     setStatusFilter(status);
@@ -259,144 +299,192 @@ export function useTreatments(): TreatmentsHook {
   }, []);
 
   // CRUD Operations
-  const getTreatmentById = useCallback((id: string): TreatmentPlan | null => {
-    return treatmentPlans.find(plan => plan.id === id) || null;
-  }, [treatmentPlans]);
+  const getTreatmentById = useCallback(
+    (id: string): TreatmentPlan | null => {
+      return treatmentPlans.find((plan) => plan.id === id) || null;
+    },
+    [treatmentPlans]
+  );
 
-  const createTreatmentPlan = useCallback(async (
-    plan: Omit<TreatmentPlan, 'id' | 'created_at' | 'updated_at'>
-  ): Promise<TreatmentPlan | null> => {
-    try {
-      const { data, error } = await supabase
-        .from('treatment_plans')
-        .insert([plan])
-        .select()
-        .single();
+  const createTreatmentPlan = useCallback(
+    async (
+      plan: Omit<TreatmentPlan, 'id' | 'created_at' | 'updated_at'>
+    ): Promise<TreatmentPlan | null> => {
+      try {
+        const { data, error } = await supabase
+          .from('treatment_plans')
+          .insert([plan])
+          .select()
+          .single();
 
-      if (error) {
-        throw new Error(`Erro ao criar plano de tratamento: ${error.message}`);
+        if (error) {
+          throw new Error(
+            `Erro ao criar plano de tratamento: ${error.message}`
+          );
+        }
+
+        return data;
+      } catch (err) {
+        setError(err as Error);
+        return null;
       }
+    },
+    [supabase]
+  );
 
-      return data;
-    } catch (err) {
-      setError(err as Error);
-      return null;
-    }
-  }, [supabase]);
+  const updateTreatmentPlan = useCallback(
+    async (
+      id: string,
+      updates: Partial<TreatmentPlan>
+    ): Promise<TreatmentPlan | null> => {
+      try {
+        const { data, error } = await supabase
+          .from('treatment_plans')
+          .update({ ...updates, updated_at: new Date().toISOString() })
+          .eq('id', id)
+          .select()
+          .single();
 
-  const updateTreatmentPlan = useCallback(async (
-    id: string, 
-    updates: Partial<TreatmentPlan>
-  ): Promise<TreatmentPlan | null> => {
-    try {
-      const { data, error } = await supabase
-        .from('treatment_plans')
-        .update({ ...updates, updated_at: new Date().toISOString() })
-        .eq('id', id)
-        .select()
-        .single();
+        if (error) {
+          throw new Error(
+            `Erro ao atualizar plano de tratamento: ${error.message}`
+          );
+        }
 
-      if (error) {
-        throw new Error(`Erro ao atualizar plano de tratamento: ${error.message}`);
+        return data;
+      } catch (err) {
+        setError(err as Error);
+        return null;
       }
+    },
+    [supabase]
+  );
 
-      return data;
-    } catch (err) {
-      setError(err as Error);
-      return null;
-    }
-  }, [supabase]);
+  const deleteTreatmentPlan = useCallback(
+    async (id: string): Promise<boolean> => {
+      try {
+        const { error } = await supabase
+          .from('treatment_plans')
+          .delete()
+          .eq('id', id);
 
-  const deleteTreatmentPlan = useCallback(async (id: string): Promise<boolean> => {
-    try {
-      const { error } = await supabase
-        .from('treatment_plans')
-        .delete()
-        .eq('id', id);
+        if (error) {
+          throw new Error(
+            `Erro ao excluir plano de tratamento: ${error.message}`
+          );
+        }
 
-      if (error) {
-        throw new Error(`Erro ao excluir plano de tratamento: ${error.message}`);
+        return true;
+      } catch (err) {
+        setError(err as Error);
+        return false;
       }
-
-      return true;
-    } catch (err) {
-      setError(err as Error);
-      return false;
-    }
-  }, [supabase]);
+    },
+    [supabase]
+  );
 
   // Session Management Functions (placeholder implementations)
-  const scheduleSession = useCallback(async (
-    session: Omit<TreatmentSession, 'id' | 'created_at' | 'updated_at'>
-  ): Promise<TreatmentSession | null> => {
-    // Implementation would go here
-    console.log('Scheduling session:', session);
-    return null;
-  }, []);
+  const scheduleSession = useCallback(
+    async (
+      session: Omit<TreatmentSession, 'id' | 'created_at' | 'updated_at'>
+    ): Promise<TreatmentSession | null> => {
+      // Implementation would go here
+      console.log('Scheduling session:', session);
+      return null;
+    },
+    []
+  );
 
-  const completeSession = useCallback(async (
-    sessionId: string, 
-    sessionData: Partial<TreatmentSession>
-  ): Promise<TreatmentSession | null> => {
-    // Implementation would go here
-    console.log('Completing session:', sessionId, sessionData);
-    return null;
-  }, []);
+  const completeSession = useCallback(
+    async (
+      sessionId: string,
+      sessionData: Partial<TreatmentSession>
+    ): Promise<TreatmentSession | null> => {
+      // Implementation would go here
+      console.log('Completing session:', sessionId, sessionData);
+      return null;
+    },
+    []
+  );
 
-  const cancelSession = useCallback(async (sessionId: string, reason: string): Promise<boolean> => {
-    // Implementation would go here
-    console.log('Cancelling session:', sessionId, reason);
-    return true;
-  }, []);
+  const cancelSession = useCallback(
+    async (sessionId: string, reason: string): Promise<boolean> => {
+      // Implementation would go here
+      console.log('Cancelling session:', sessionId, reason);
+      return true;
+    },
+    []
+  );
 
   // Progress Tracking Functions (placeholder implementations)
-  const updateProgress = useCallback(async (
-    progressData: Omit<TreatmentProgress, 'id' | 'recorded_at'>
-  ): Promise<TreatmentProgress | null> => {
-    // Implementation would go here
-    console.log('Updating progress:', progressData);
-    return null;
-  }, []);
+  const updateProgress = useCallback(
+    async (
+      progressData: Omit<TreatmentProgress, 'id' | 'recorded_at'>
+    ): Promise<TreatmentProgress | null> => {
+      // Implementation would go here
+      console.log('Updating progress:', progressData);
+      return null;
+    },
+    []
+  );
 
-  const getProgressHistory = useCallback(async (treatmentPlanId: string): Promise<TreatmentProgress[]> => {
-    // Implementation would go here
-    console.log('Getting progress history for:', treatmentPlanId);
-    return [];
-  }, []);
+  const getProgressHistory = useCallback(
+    async (treatmentPlanId: string): Promise<TreatmentProgress[]> => {
+      // Implementation would go here
+      console.log('Getting progress history for:', treatmentPlanId);
+      return [];
+    },
+    []
+  );
 
   // Brazilian Compliance Functions (placeholder implementations)
-  const validateCFMCompliance = useCallback(async (treatmentPlanId: string): Promise<boolean> => {
-    // Implementation would validate CFM compliance
-    console.log('Validating CFM compliance for:', treatmentPlanId);
-    return true;
-  }, []);
+  const validateCFMCompliance = useCallback(
+    async (treatmentPlanId: string): Promise<boolean> => {
+      // Implementation would validate CFM compliance
+      console.log('Validating CFM compliance for:', treatmentPlanId);
+      return true;
+    },
+    []
+  );
 
-  const updateLGPDConsent = useCallback(async (treatmentPlanId: string, consentStatus: boolean): Promise<boolean> => {
-    // Implementation would update LGPD consent
-    console.log('Updating LGPD consent for:', treatmentPlanId, consentStatus);
-    return true;
-  }, []);
+  const updateLGPDConsent = useCallback(
+    async (
+      treatmentPlanId: string,
+      consentStatus: boolean
+    ): Promise<boolean> => {
+      // Implementation would update LGPD consent
+      console.log('Updating LGPD consent for:', treatmentPlanId, consentStatus);
+      return true;
+    },
+    []
+  );
 
-  const generateComplianceReport = useCallback(async (treatmentPlanId: string): Promise<any> => {
-    // Implementation would generate compliance report
-    console.log('Generating compliance report for:', treatmentPlanId);
-    return {};
-  }, []);
+  const generateComplianceReport = useCallback(
+    async (treatmentPlanId: string): Promise<any> => {
+      // Implementation would generate compliance report
+      console.log('Generating compliance report for:', treatmentPlanId);
+      return {};
+    },
+    []
+  );
 
   // Utility Functions
   const refreshData = useCallback(async () => {
     await Promise.all([
       fetchTreatmentPlans(),
       fetchTreatmentSessions(),
-      fetchTreatmentProtocols()
+      fetchTreatmentProtocols(),
     ]);
   }, [fetchTreatmentPlans, fetchTreatmentSessions, fetchTreatmentProtocols]);
 
-  const exportTreatmentData = useCallback(async (treatmentPlanId: string): Promise<any> => {
-    // Implementation would export treatment data
-    console.log('Exporting treatment data for:', treatmentPlanId);
-    return {};
-  }, []);
+  const exportTreatmentData = useCallback(
+    async (treatmentPlanId: string): Promise<any> => {
+      // Implementation would export treatment data
+      console.log('Exporting treatment data for:', treatmentPlanId);
+      return {};
+    },
+    []
+  );
 
   // Effects
   useEffect(() => {
@@ -421,11 +509,16 @@ export function useTreatments(): TreatmentsHook {
         },
         (payload) => {
           if (payload.eventType === 'INSERT') {
-            setTreatmentPlans((prev) => [payload.new as TreatmentPlan, ...prev]);
+            setTreatmentPlans((prev) => [
+              payload.new as TreatmentPlan,
+              ...prev,
+            ]);
           } else if (payload.eventType === 'UPDATE') {
             setTreatmentPlans((prev) =>
               prev.map((plan) =>
-                plan.id === payload.new.id ? (payload.new as TreatmentPlan) : plan
+                plan.id === payload.new.id
+                  ? (payload.new as TreatmentPlan)
+                  : plan
               )
             );
           } else if (payload.eventType === 'DELETE') {
@@ -448,11 +541,16 @@ export function useTreatments(): TreatmentsHook {
         },
         (payload) => {
           if (payload.eventType === 'INSERT') {
-            setTreatmentSessions((prev) => [...prev, payload.new as TreatmentSession]);
+            setTreatmentSessions((prev) => [
+              ...prev,
+              payload.new as TreatmentSession,
+            ]);
           } else if (payload.eventType === 'UPDATE') {
             setTreatmentSessions((prev) =>
               prev.map((session) =>
-                session.id === payload.new.id ? (payload.new as TreatmentSession) : session
+                session.id === payload.new.id
+                  ? (payload.new as TreatmentSession)
+                  : session
               )
             );
           } else if (payload.eventType === 'DELETE') {
@@ -476,52 +574,52 @@ export function useTreatments(): TreatmentsHook {
     activeTreatments,
     completedTreatments,
     treatmentPlansSummary,
-    
+
     // Treatment Sessions
     upcomingSessions,
     recentSessions,
     todaysSessions,
-    
+
     // Treatment Protocols
     availableProtocols,
     popularProtocols,
-    
+
     // Statistics and Analytics
     totalTreatments,
     activeSessionsCount,
     completionRate,
     averageSatisfactionScore,
-    
+
     // Loading and Error States
     loading,
     error,
-    
+
     // Search and Filter Functions
     searchTreatments,
     filterByCategory,
     filterByStatus,
     filterByPatient,
-    
+
     // CRUD Operations
     getTreatmentById,
     createTreatmentPlan,
     updateTreatmentPlan,
     deleteTreatmentPlan,
-    
+
     // Session Management
     scheduleSession,
     completeSession,
     cancelSession,
-    
+
     // Progress Tracking
     updateProgress,
     getProgressHistory,
-    
+
     // Brazilian Compliance Functions
     validateCFMCompliance,
     updateLGPDConsent,
     generateComplianceReport,
-    
+
     // Utility Functions
     refreshData,
     exportTreatmentData,

@@ -3,7 +3,7 @@
  * Validação final de conformidade healthcare antes do deploy em produção
  */
 
-import { describe, it, expect, beforeAll } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 
 describe('Healthcare Compliance Final Validation', () => {
   describe('Patient Data Protection (LGPD)', () => {
@@ -12,9 +12,9 @@ describe('Healthcare Compliance Final Validation', () => {
       const dataEncryption = {
         patientDataEncrypted: true,
         encryptionStandard: 'AES-256',
-        keyManagement: 'secure'
+        keyManagement: 'secure',
       };
-      
+
       expect(dataEncryption.patientDataEncrypted).toBe(true);
       expect(dataEncryption.encryptionStandard).toBe('AES-256');
       expect(dataEncryption.keyManagement).toBe('secure');
@@ -24,9 +24,9 @@ describe('Healthcare Compliance Final Validation', () => {
       const auditLogging = {
         accessLogEnabled: true,
         dataModificationLogged: true,
-        userActivityTracked: true
+        userActivityTracked: true,
       };
-      
+
       expect(auditLogging.accessLogEnabled).toBe(true);
       expect(auditLogging.dataModificationLogged).toBe(true);
       expect(auditLogging.userActivityTracked).toBe(true);
@@ -36,9 +36,9 @@ describe('Healthcare Compliance Final Validation', () => {
       const consentManagement = {
         consentRequired: true,
         consentTracked: true,
-        withdrawalAllowed: true
+        withdrawalAllowed: true,
       };
-      
+
       expect(consentManagement.consentRequired).toBe(true);
       expect(consentManagement.consentTracked).toBe(true);
       expect(consentManagement.withdrawalAllowed).toBe(true);
@@ -50,9 +50,9 @@ describe('Healthcare Compliance Final Validation', () => {
       const licenseValidation = {
         licenseCheckEnabled: true,
         licenseStatusValidated: true,
-        licensingBoardIntegration: true
+        licensingBoardIntegration: true,
       };
-      
+
       expect(licenseValidation.licenseCheckEnabled).toBe(true);
       expect(licenseValidation.licenseStatusValidated).toBe(true);
       expect(licenseValidation.licensingBoardIntegration).toBe(true);
@@ -62,9 +62,9 @@ describe('Healthcare Compliance Final Validation', () => {
       const scopeEnforcement = {
         practiceScope: 'defined',
         accessControlByScope: true,
-        specialtyValidation: true
+        specialtyValidation: true,
       };
-      
+
       expect(scopeEnforcement.practiceScope).toBe('defined');
       expect(scopeEnforcement.accessControlByScope).toBe(true);
       expect(scopeEnforcement.specialtyValidation).toBe(true);
@@ -76,9 +76,9 @@ describe('Healthcare Compliance Final Validation', () => {
       const emergencyAccess = {
         emergencyProtocolActive: true,
         accessTimeTarget: '<10s',
-        auditedEmergencyAccess: true
+        auditedEmergencyAccess: true,
       };
-      
+
       expect(emergencyAccess.emergencyProtocolActive).toBe(true);
       expect(emergencyAccess.accessTimeTarget).toBe('<10s');
       expect(emergencyAccess.auditedEmergencyAccess).toBe(true);
@@ -88,9 +88,9 @@ describe('Healthcare Compliance Final Validation', () => {
       const emergencyAudit = {
         emergencyAccessLogged: true,
         justificationRequired: true,
-        reviewProcessActive: true
+        reviewProcessActive: true,
       };
-      
+
       expect(emergencyAudit.emergencyAccessLogged).toBe(true);
       expect(emergencyAudit.justificationRequired).toBe(true);
       expect(emergencyAudit.reviewProcessActive).toBe(true);
@@ -102,9 +102,9 @@ describe('Healthcare Compliance Final Validation', () => {
       const tenantIsolation = {
         dataIsolationActive: true,
         crossTenantAccessPrevented: true,
-        tenantSpecificAccess: true
+        tenantSpecificAccess: true,
       };
-      
+
       expect(tenantIsolation.dataIsolationActive).toBe(true);
       expect(tenantIsolation.crossTenantAccessPrevented).toBe(true);
       expect(tenantIsolation.tenantSpecificAccess).toBe(true);
@@ -114,9 +114,9 @@ describe('Healthcare Compliance Final Validation', () => {
       const configIsolation = {
         tenantConfigSeparated: true,
         customizationIsolated: true,
-        settingsProtected: true
+        settingsProtected: true,
       };
-      
+
       expect(configIsolation.tenantConfigSeparated).toBe(true);
       expect(configIsolation.customizationIsolated).toBe(true);
       expect(configIsolation.settingsProtected).toBe(true);
@@ -128,9 +128,9 @@ describe('Healthcare Compliance Final Validation', () => {
       const interoperability = {
         hl7Supported: true,
         fhirCompliant: true,
-        dataExchangeStandards: 'compliant'
+        dataExchangeStandards: 'compliant',
       };
-      
+
       expect(interoperability.hl7Supported).toBe(true);
       expect(interoperability.fhirCompliant).toBe(true);
       expect(interoperability.dataExchangeStandards).toBe('compliant');
@@ -140,9 +140,9 @@ describe('Healthcare Compliance Final Validation', () => {
       const dataIntegrity = {
         medicalRecordsIntegrity: true,
         dataValidationActive: true,
-        backupSystemActive: true
+        backupSystemActive: true,
       };
-      
+
       expect(dataIntegrity.medicalRecordsIntegrity).toBe(true);
       expect(dataIntegrity.dataValidationActive).toBe(true);
       expect(dataIntegrity.backupSystemActive).toBe(true);
@@ -155,9 +155,9 @@ describe('Healthcare Compliance Final Validation', () => {
         lgpdCompliance: '65%', // Atual após correção
         hipaaReadiness: true,
         cfmCompliance: true,
-        overallStatus: 'compliant'
+        overallStatus: 'compliant',
       };
-      
+
       expect(complianceStatus.lgpdCompliance).toBe('65%');
       expect(complianceStatus.hipaaReadiness).toBe(true);
       expect(complianceStatus.cfmCompliance).toBe(true);
@@ -169,9 +169,9 @@ describe('Healthcare Compliance Final Validation', () => {
         healthcareCompliance: true,
         securityValidated: true,
         performanceTargetsMet: true,
-        qualityScore: 7.8
+        qualityScore: 7.8,
       };
-      
+
       expect(productionReadiness.healthcareCompliance).toBe(true);
       expect(productionReadiness.securityValidated).toBe(true);
       expect(productionReadiness.performanceTargetsMet).toBe(true);

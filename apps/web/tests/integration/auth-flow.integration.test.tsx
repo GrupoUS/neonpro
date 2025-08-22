@@ -15,22 +15,36 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 // Mock Supabase client
 const mockSupabaseClient = {
   auth: {
-    signInWithPassword: vi.fn(),
-    signOut: vi.fn(),
-    getSession: vi.fn(),
-    getUser: vi.fn(),
-    onAuthStateChange: vi.fn(),
-    refreshSession: vi.fn(),
+    signInWithPassword: vi.fn().mockResolvedValue({
+      data: { user: { id: 'user-123' }, session: { access_token: 'token' } },
+      error: null,
+    }),
+    signOut: vi.fn().mockResolvedValue({ error: null }),
+    getSession: vi.fn().mockResolvedValue({
+      data: { session: { access_token: 'token' } },
+      error: null,
+    }),
+    getUser: vi.fn().mockResolvedValue({
+      data: { user: { id: 'user-123' } },
+      error: null,
+    }),
+    onAuthStateChange: vi.fn().mockReturnValue({
+      data: { subscription: { unsubscribe: vi.fn() } },
+    }),
+    refreshSession: vi.fn().mockResolvedValue({
+      data: { session: { access_token: 'new-token' } },
+      error: null,
+    }),
   },
-  from: vi.fn(() => ({
-    select: vi.fn(() => ({
-      eq: vi.fn(() => ({
-        single: vi.fn(),
-      })),
-    })),
-    insert: vi.fn(),
-    update: vi.fn(),
-    delete: vi.fn(),
+  from: vi.fn().mockImplementation((table: string) => ({
+    select: vi.fn().mockReturnValue({
+      eq: vi.fn().mockReturnValue({
+        single: vi.fn().mockResolvedValue({ data: null, error: null }),
+      }),
+    }),
+    insert: vi.fn().mockResolvedValue({ data: null, error: null }),
+    update: vi.fn().mockResolvedValue({ data: null, error: null }),
+    delete: vi.fn().mockResolvedValue({ error: null }),
   })),
 };
 
@@ -126,6 +140,36 @@ describe('Authentication Flow Integration', () => {
     mockAuthHook.user = null;
     mockAuthHook.session = null;
     mockAuthHook.loading = false;
+
+    // Configure auth hook to call Supabase
+    mockAuthHook.signIn.mockImplementation(async (email, password) => {
+      const result = await mockSupabaseClient.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (!result.error) {
+        mockAuthHook.user = result.data.user;
+        mockAuthHook.session = result.data.session;
+      }
+      return result;
+    });
+
+    mockAuthHook.signOut.mockImplementation(async () => {
+      const result = await mockSupabaseClient.auth.signOut();
+      if (!result.error) {
+        mockAuthHook.user = null;
+        mockAuthHook.session = null;
+      }
+      return result;
+    });
+
+    mockAuthHook.refreshSession.mockImplementation(async () => {
+      const result = await mockSupabaseClient.auth.refreshSession();
+      if (!result.error) {
+        mockAuthHook.session = result.data.session;
+      }
+      return result;
+    });
   });
 
   afterEach(() => {

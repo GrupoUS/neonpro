@@ -87,6 +87,10 @@ export type DataPortabilityRequest = z.infer<
 export type PortabilityResult = {
   requestId: string;
   status: 'COMPLETED' | 'PARTIAL' | 'FAILED' | 'PROCESSING';
+  tenantId?: string;
+  patientId?: string;
+  data?: any;
+  metadata?: Record<string, any>;
   exportedData: {
     categories: PatientDataClassification[];
     records: number;
@@ -789,8 +793,8 @@ export class DataPortabilityService {
       requestId: result.requestId,
       tenantId: result.tenantId,
       patientId: result.patientId,
-      exportedAt: result.exportedAt,
-      recordCount: result.data.length,
+      exportedData: result.exportedData,
+      recordCount: result.data?.length || 0,
       version: '1.0',
     });
 

@@ -194,7 +194,8 @@ MedicalDefinition.displayName = 'MedicalDefinition';
 /**
  * LGPDNotice - Hidden LGPD/privacy notices
  */
-interface LGPDNoticeProps extends Omit<VisuallyHiddenProps, 'medicalContext' | 'children'> {
+interface LGPDNoticeProps
+  extends Omit<VisuallyHiddenProps, 'medicalContext' | 'children'> {
   context: 'collection' | 'processing' | 'storage' | 'sharing' | 'rights';
   notice?: string;
   children?: React.ReactNode;

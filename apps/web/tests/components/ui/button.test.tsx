@@ -41,12 +41,7 @@ describe('Button Component - NeonPro Healthcare UI', () => {
     });
 
     it('should render healthcare-specific button variants', () => {
-      const variants = [
-        'medical',
-        'emergency', 
-        'success',
-        'warning',
-      ] as const;
+      const variants = ['medical', 'emergency', 'success', 'warning'] as const;
 
       variants.forEach((variant) => {
         render(
@@ -59,7 +54,7 @@ describe('Button Component - NeonPro Healthcare UI', () => {
 
         const button = screen.getByTestId(`button-${variant}`);
         expect(button).toBeInTheDocument();
-        
+
         // Check for variant-specific classes in the className
         const className = button.className;
         if (variant === 'medical') {
@@ -90,7 +85,7 @@ describe('Button Component - NeonPro Healthcare UI', () => {
 
         const button = screen.getByTestId(`button-${size}`);
         const className = button.className;
-        
+
         // Check for size-specific classes
         if (size === 'sm') {
           expect(className).toContain('h-8');
@@ -227,10 +222,7 @@ describe('Button Component - NeonPro Healthcare UI', () => {
     it('should handle emergency button with high priority styling', () => {
       render(
         <ThemeWrapper>
-          <Button
-            data-testid="critical-emergency-button"
-            priority="critical"
-          >
+          <Button data-testid="critical-emergency-button" priority="critical">
             PARADA CARDÍACA
           </Button>
         </ThemeWrapper>
@@ -251,9 +243,9 @@ describe('Button Component - NeonPro Healthcare UI', () => {
       render(
         <ThemeWrapper>
           <Button
-            data-testid="confirm-button"
             confirmAction={true}
             confirmMessage="Confirma exclusão do paciente?"
+            data-testid="confirm-button"
             onClick={mockClick}
             variant="warning"
           >
@@ -273,7 +265,7 @@ describe('Button Component - NeonPro Healthcare UI', () => {
     it('should display LGPD compliance indicators', () => {
       render(
         <ThemeWrapper>
-          <Button data-testid="lgpd-button" data-lgpd-compliant="true">
+          <Button data-lgpd-compliant="true" data-testid="lgpd-button">
             Processar Dados do Paciente
           </Button>
         </ThemeWrapper>

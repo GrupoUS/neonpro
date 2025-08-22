@@ -1,10 +1,10 @@
 /**
  * Database Performance Testing for NeonPro Healthcare
- * 
+ *
  * Tests Supabase database performance, query optimization, and healthcare-specific operations
  */
 
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { performance } from 'perf_hooks';
 
 export interface DatabasePerformanceMetrics {
@@ -184,12 +184,11 @@ export class DatabasePerformanceTester {
         
         const { error } = await client.from('patients').select('count').limit(1);
         
-        if (!error) {
+        if (error) {
+          break;
+        } 
           successfulConnections++;
           connections.push(client);
-        } else {
-          break;
-        }
       }
       
       return successfulConnections;

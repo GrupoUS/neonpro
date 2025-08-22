@@ -100,7 +100,7 @@ const healthcareMasks = {
   },
   pressure: (value: string) => {
     return value
-      .replace(/[^\d\/]/g, '')
+      .replace(/[^\d/]/g, '')
       .replace(/(\d{2,3})(\d)/, '$1/$2')
       .replace(/(\d{2,3}\/\d{2,3})\d+?$/, '$1');
   },

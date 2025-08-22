@@ -390,7 +390,7 @@ export type FormValidation = {
   custom?: (value: any) => string | null;
 };
 
-export type FormField = {
+export type FormFieldConfig = {
   name: string;
   label: string;
   type:

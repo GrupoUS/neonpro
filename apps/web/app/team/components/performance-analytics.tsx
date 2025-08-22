@@ -21,7 +21,8 @@ import {
   Users,
   Zap,
 } from 'lucide-react';
-import { useState, useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -30,6 +31,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
 import {
   Select,
   SelectContent,
@@ -45,19 +47,12 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import type {
-  TeamPerformanceMetrics,
   ComplianceStatus,
   HealthcareProfessional,
+  TeamPerformanceMetrics,
 } from '@/types/team-coordination';
 
 // Mock analytics data for Brazilian healthcare context
@@ -187,12 +182,42 @@ const mockIndividualPerformance = [
 ];
 
 const mockMonthlyTrends = [
-  { month: 'Jan', patientSatisfaction: 8.2, efficiency: 83.1, compliance: 91.5 },
-  { month: 'Fev', patientSatisfaction: 8.4, efficiency: 84.3, compliance: 92.8 },
-  { month: 'Mar', patientSatisfaction: 8.1, efficiency: 82.9, compliance: 90.2 },
-  { month: 'Abr', patientSatisfaction: 8.6, efficiency: 85.7, compliance: 93.4 },
-  { month: 'Mai', patientSatisfaction: 8.8, efficiency: 86.2, compliance: 94.1 },
-  { month: 'Jun', patientSatisfaction: 8.7, efficiency: 87.3, compliance: 93.8 },
+  {
+    month: 'Jan',
+    patientSatisfaction: 8.2,
+    efficiency: 83.1,
+    compliance: 91.5,
+  },
+  {
+    month: 'Fev',
+    patientSatisfaction: 8.4,
+    efficiency: 84.3,
+    compliance: 92.8,
+  },
+  {
+    month: 'Mar',
+    patientSatisfaction: 8.1,
+    efficiency: 82.9,
+    compliance: 90.2,
+  },
+  {
+    month: 'Abr',
+    patientSatisfaction: 8.6,
+    efficiency: 85.7,
+    compliance: 93.4,
+  },
+  {
+    month: 'Mai',
+    patientSatisfaction: 8.8,
+    efficiency: 86.2,
+    compliance: 94.1,
+  },
+  {
+    month: 'Jun',
+    patientSatisfaction: 8.7,
+    efficiency: 87.3,
+    compliance: 93.8,
+  },
 ];
 
 // Helper functions
@@ -223,7 +248,9 @@ interface PerformanceAnalyticsProps {
   emergencyMode?: boolean;
 }
 
-export function PerformanceAnalytics({ emergencyMode = false }: PerformanceAnalyticsProps) {
+export function PerformanceAnalytics({
+  emergencyMode = false,
+}: PerformanceAnalyticsProps) {
   const [activeTab, setActiveTab] = useState('kpis');
   const [selectedPeriod, setSelectedPeriod] = useState('current-month');
   const [selectedDepartment, setSelectedDepartment] = useState('all');
@@ -251,14 +278,14 @@ export function PerformanceAnalytics({ emergencyMode = false }: PerformanceAnaly
       {/* Header with Export Actions */}
       <div className="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
         <div>
-          <h2 className="text-2xl font-bold">Analytics de Performance</h2>
+          <h2 className="font-bold text-2xl">Analytics de Performance</h2>
           <p className="text-muted-foreground">
             KPIs, métricas de compliance e relatórios detalhados
           </p>
         </div>
-        
+
         <div className="flex items-center space-x-2">
-          <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
+          <Select onValueChange={setSelectedPeriod} value={selectedPeriod}>
             <SelectTrigger className="w-40">
               <SelectValue />
             </SelectTrigger>
@@ -269,13 +296,13 @@ export function PerformanceAnalytics({ emergencyMode = false }: PerformanceAnaly
               <SelectItem value="year">Ano</SelectItem>
             </SelectContent>
           </Select>
-          
+
           <Button size="sm" variant="outline">
             <Download className="mr-2 h-4 w-4" />
             Exportar PDF
           </Button>
-          
-          <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+
+          <Button className="bg-blue-600 hover:bg-blue-700" size="sm">
             <FileText className="mr-2 h-4 w-4" />
             Relatório Detalhado
           </Button>
@@ -284,11 +311,11 @@ export function PerformanceAnalytics({ emergencyMode = false }: PerformanceAnaly
 
       {/* Emergency Mode Alert */}
       {emergencyMode && (
-        <div className="bg-red-100 border-l-4 border-red-500 p-4 rounded-r-md">
+        <div className="rounded-r-md border-red-500 border-l-4 bg-red-100 p-4">
           <div className="flex items-center">
-            <AlertTriangle className="h-5 w-5 text-red-500 mr-3" />
+            <AlertTriangle className="mr-3 h-5 w-5 text-red-500" />
             <div>
-              <p className="text-red-800 font-medium">
+              <p className="font-medium text-red-800">
                 Modo de Emergência - Dados em Tempo Real
               </p>
               <p className="text-red-700 text-sm">
@@ -300,52 +327,57 @@ export function PerformanceAnalytics({ emergencyMode = false }: PerformanceAnaly
       )}
 
       {/* Analytics Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+      <Tabs
+        className="space-y-6"
+        onValueChange={setActiveTab}
+        value={activeTab}
+      >
         <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4">
-          <TabsTrigger value="kpis" className="text-sm">
+          <TabsTrigger className="text-sm" value="kpis">
             <BarChart3 className="mr-2 h-4 w-4" />
             KPIs Principais
           </TabsTrigger>
-          <TabsTrigger value="compliance" className="text-sm">
+          <TabsTrigger className="text-sm" value="compliance">
             <Shield className="mr-2 h-4 w-4" />
             Compliance
           </TabsTrigger>
-          <TabsTrigger value="individual" className="text-sm">
+          <TabsTrigger className="text-sm" value="individual">
             <Users className="mr-2 h-4 w-4" />
             Performance Individual
           </TabsTrigger>
-          <TabsTrigger value="trends" className="text-sm">
+          <TabsTrigger className="text-sm" value="trends">
             <LineChart className="mr-2 h-4 w-4" />
             Tendências
           </TabsTrigger>
-        </TabsList>        {/* KPIs Tab */}
-        <TabsContent value="kpis" className="space-y-6">
+        </TabsList>{' '}
+        {/* KPIs Tab */}
+        <TabsContent className="space-y-6" value="kpis">
           {/* Main KPI Cards */}
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {/* Patient Satisfaction */}
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
+                <CardTitle className="font-medium text-sm">
                   Satisfação do Paciente
                 </CardTitle>
                 <Heart className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-blue-600">
+                <div className="font-bold text-2xl text-blue-600">
                   {mockTeamKPIs.patientSatisfaction.current}/10
                 </div>
-                <div className="flex items-center space-x-2 text-xs text-muted-foreground">
+                <div className="flex items-center space-x-2 text-muted-foreground text-xs">
                   {getTrendIcon(mockTeamKPIs.patientSatisfaction.trend)}
                   <span>
                     {mockTeamKPIs.patientSatisfaction.change > 0 ? '+' : ''}
                     {mockTeamKPIs.patientSatisfaction.change} vs mês anterior
                   </span>
                 </div>
-                <Progress 
-                  value={(mockTeamKPIs.patientSatisfaction.current / 10) * 100} 
+                <Progress
                   className="mt-3"
+                  value={(mockTeamKPIs.patientSatisfaction.current / 10) * 100}
                 />
-                <p className="text-xs text-muted-foreground mt-2">
+                <p className="mt-2 text-muted-foreground text-xs">
                   Meta: {mockTeamKPIs.patientSatisfaction.target}/10
                 </p>
               </CardContent>
@@ -354,27 +386,33 @@ export function PerformanceAnalytics({ emergencyMode = false }: PerformanceAnaly
             {/* Response Time */}
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
+                <CardTitle className="font-medium text-sm">
                   Tempo de Resposta
                 </CardTitle>
                 <Clock className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-green-600">
+                <div className="font-bold text-2xl text-green-600">
                   {mockTeamKPIs.averageResponseTime.current} min
                 </div>
-                <div className="flex items-center space-x-2 text-xs text-muted-foreground">
+                <div className="flex items-center space-x-2 text-muted-foreground text-xs">
                   {getTrendIcon(mockTeamKPIs.averageResponseTime.trend)}
                   <span>
                     {mockTeamKPIs.averageResponseTime.change > 0 ? '+' : ''}
-                    {Math.abs(mockTeamKPIs.averageResponseTime.change)} min vs mês anterior
+                    {Math.abs(mockTeamKPIs.averageResponseTime.change)} min vs
+                    mês anterior
                   </span>
                 </div>
-                <Progress 
-                  value={100 - (mockTeamKPIs.averageResponseTime.current / mockTeamKPIs.averageResponseTime.target * 100)} 
+                <Progress
                   className="mt-3"
+                  value={
+                    100 -
+                    (mockTeamKPIs.averageResponseTime.current /
+                      mockTeamKPIs.averageResponseTime.target) *
+                      100
+                  }
                 />
-                <p className="text-xs text-muted-foreground mt-2">
+                <p className="mt-2 text-muted-foreground text-xs">
                   Meta: ≤ {mockTeamKPIs.averageResponseTime.target} min
                 </p>
               </CardContent>
@@ -383,26 +421,26 @@ export function PerformanceAnalytics({ emergencyMode = false }: PerformanceAnaly
             {/* Treatment Success Rate */}
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
+                <CardTitle className="font-medium text-sm">
                   Taxa de Sucesso
                 </CardTitle>
                 <Star className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-green-600">
+                <div className="font-bold text-2xl text-green-600">
                   {mockTeamKPIs.treatmentSuccessRate.current}%
                 </div>
-                <div className="flex items-center space-x-2 text-xs text-muted-foreground">
+                <div className="flex items-center space-x-2 text-muted-foreground text-xs">
                   {getTrendIcon(mockTeamKPIs.treatmentSuccessRate.trend)}
                   <span>
                     +{mockTeamKPIs.treatmentSuccessRate.change}% vs mês anterior
                   </span>
                 </div>
-                <Progress 
-                  value={mockTeamKPIs.treatmentSuccessRate.current} 
+                <Progress
                   className="mt-3"
+                  value={mockTeamKPIs.treatmentSuccessRate.current}
                 />
-                <p className="text-xs text-muted-foreground mt-2">
+                <p className="mt-2 text-muted-foreground text-xs">
                   Meta: ≥ {mockTeamKPIs.treatmentSuccessRate.target}%
                 </p>
               </CardContent>
@@ -411,26 +449,26 @@ export function PerformanceAnalytics({ emergencyMode = false }: PerformanceAnaly
             {/* Team Efficiency */}
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
+                <CardTitle className="font-medium text-sm">
                   Eficiência da Equipe
                 </CardTitle>
                 <Zap className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-blue-600">
+                <div className="font-bold text-2xl text-blue-600">
                   {mockTeamKPIs.teamEfficiency.current}%
                 </div>
-                <div className="flex items-center space-x-2 text-xs text-muted-foreground">
+                <div className="flex items-center space-x-2 text-muted-foreground text-xs">
                   {getTrendIcon(mockTeamKPIs.teamEfficiency.trend)}
                   <span>
                     +{mockTeamKPIs.teamEfficiency.change}% vs mês anterior
                   </span>
                 </div>
-                <Progress 
-                  value={mockTeamKPIs.teamEfficiency.current} 
+                <Progress
                   className="mt-3"
+                  value={mockTeamKPIs.teamEfficiency.current}
                 />
-                <p className="text-xs text-muted-foreground mt-2">
+                <p className="mt-2 text-muted-foreground text-xs">
                   Meta: ≥ {mockTeamKPIs.teamEfficiency.target}%
                 </p>
               </CardContent>
@@ -450,36 +488,52 @@ export function PerformanceAnalytics({ emergencyMode = false }: PerformanceAnaly
               <CardContent className="space-y-4">
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Pacientes Atendidos</span>
-                    <span className="text-lg font-bold text-blue-600">324</span>
+                    <span className="font-medium text-sm">
+                      Pacientes Atendidos
+                    </span>
+                    <span className="font-bold text-blue-600 text-lg">324</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Procedimentos Realizados</span>
-                    <span className="text-lg font-bold text-green-600">186</span>
+                    <span className="font-medium text-sm">
+                      Procedimentos Realizados
+                    </span>
+                    <span className="font-bold text-green-600 text-lg">
+                      186
+                    </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Taxa de Ocupação</span>
-                    <span className="text-lg font-bold text-yellow-600">87%</span>
+                    <span className="font-medium text-sm">
+                      Taxa de Ocupação
+                    </span>
+                    <span className="font-bold text-lg text-yellow-600">
+                      87%
+                    </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Tempo Médio de Espera</span>
-                    <span className="text-lg font-bold text-orange-600">23 min</span>
+                    <span className="font-medium text-sm">
+                      Tempo Médio de Espera
+                    </span>
+                    <span className="font-bold text-lg text-orange-600">
+                      23 min
+                    </span>
                   </div>
                 </div>
-                
-                <div className="pt-4 border-t">
-                  <h4 className="font-medium text-sm mb-3">Alertas de Performance</h4>
+
+                <div className="border-t pt-4">
+                  <h4 className="mb-3 font-medium text-sm">
+                    Alertas de Performance
+                  </h4>
                   <div className="space-y-2">
                     <div className="flex items-center space-x-2 text-sm">
-                      <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                      <div className="h-2 w-2 rounded-full bg-yellow-500" />
                       <span>2 profissionais com CME pendente</span>
                     </div>
                     <div className="flex items-center space-x-2 text-sm">
-                      <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                      <div className="h-2 w-2 rounded-full bg-red-500" />
                       <span>1 licença CFM expirando em 15 dias</span>
                     </div>
                     <div className="flex items-center space-x-2 text-sm">
-                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <div className="h-2 w-2 rounded-full bg-green-500" />
                       <span>Compliance LGPD em dia</span>
                     </div>
                   </div>
@@ -490,7 +544,9 @@ export function PerformanceAnalytics({ emergencyMode = false }: PerformanceAnaly
             {/* Department Comparison */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Comparação por Departamento</CardTitle>
+                <CardTitle className="text-lg">
+                  Comparação por Departamento
+                </CardTitle>
                 <CardDescription>
                   Performance relativa entre setores
                 </CardDescription>
@@ -498,30 +554,58 @@ export function PerformanceAnalytics({ emergencyMode = false }: PerformanceAnaly
               <CardContent>
                 <div className="space-y-4">
                   {[
-                    { name: 'UTI', efficiency: 94, satisfaction: 9.1, color: 'bg-green-500' },
-                    { name: 'Emergência', efficiency: 87, satisfaction: 8.6, color: 'bg-blue-500' },
-                    { name: 'Centro Cirúrgico', efficiency: 91, satisfaction: 9.3, color: 'bg-purple-500' },
-                    { name: 'Cardiologia', efficiency: 89, satisfaction: 8.9, color: 'bg-orange-500' },
-                    { name: 'Enfermaria', efficiency: 85, satisfaction: 8.4, color: 'bg-yellow-500' },
+                    {
+                      name: 'UTI',
+                      efficiency: 94,
+                      satisfaction: 9.1,
+                      color: 'bg-green-500',
+                    },
+                    {
+                      name: 'Emergência',
+                      efficiency: 87,
+                      satisfaction: 8.6,
+                      color: 'bg-blue-500',
+                    },
+                    {
+                      name: 'Centro Cirúrgico',
+                      efficiency: 91,
+                      satisfaction: 9.3,
+                      color: 'bg-purple-500',
+                    },
+                    {
+                      name: 'Cardiologia',
+                      efficiency: 89,
+                      satisfaction: 8.9,
+                      color: 'bg-orange-500',
+                    },
+                    {
+                      name: 'Enfermaria',
+                      efficiency: 85,
+                      satisfaction: 8.4,
+                      color: 'bg-yellow-500',
+                    },
                   ].map((dept) => (
-                    <div key={dept.name} className="space-y-2">
+                    <div className="space-y-2" key={dept.name}>
                       <div className="flex items-center justify-between text-sm">
                         <span className="font-medium">{dept.name}</span>
                         <div className="flex items-center space-x-4">
-                          <span className="text-xs text-muted-foreground">
+                          <span className="text-muted-foreground text-xs">
                             Eficiência: {dept.efficiency}%
                           </span>
-                          <span className="text-xs text-muted-foreground">
+                          <span className="text-muted-foreground text-xs">
                             Satisfação: {dept.satisfaction}
                           </span>
                         </div>
                       </div>
                       <div className="flex space-x-2">
                         <div className="flex-1">
-                          <Progress value={dept.efficiency} className="h-2" />
+                          <Progress className="h-2" value={dept.efficiency} />
                         </div>
                         <div className="flex-1">
-                          <Progress value={(dept.satisfaction / 10) * 100} className="h-2" />
+                          <Progress
+                            className="h-2"
+                            value={(dept.satisfaction / 10) * 100}
+                          />
                         </div>
                       </div>
                     </div>
@@ -530,30 +614,38 @@ export function PerformanceAnalytics({ emergencyMode = false }: PerformanceAnaly
               </CardContent>
             </Card>
           </div>
-        </TabsContent>        {/* Compliance Tab */}
-        <TabsContent value="compliance" className="space-y-6">
+        </TabsContent>{' '}
+        {/* Compliance Tab */}
+        <TabsContent className="space-y-6" value="compliance">
           {/* Compliance Overview Cards */}
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {/* CFM Compliance */}
-            <Card className={getComplianceBgColor(mockComplianceData.cfm.complianceRate)}>
+            <Card
+              className={getComplianceBgColor(
+                mockComplianceData.cfm.complianceRate
+              )}
+            >
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
+                <CardTitle className="font-medium text-sm">
                   CFM (Licenças Médicas)
                 </CardTitle>
                 <Shield className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className={`text-2xl font-bold ${getComplianceColor(mockComplianceData.cfm.complianceRate)}`}>
+                <div
+                  className={`font-bold text-2xl ${getComplianceColor(mockComplianceData.cfm.complianceRate)}`}
+                >
                   {mockComplianceData.cfm.complianceRate}%
                 </div>
-                <div className="text-xs text-muted-foreground mt-1">
-                  {mockComplianceData.cfm.validLicenses}/{mockComplianceData.cfm.totalProfessionals} licenças válidas
+                <div className="mt-1 text-muted-foreground text-xs">
+                  {mockComplianceData.cfm.validLicenses}/
+                  {mockComplianceData.cfm.totalProfessionals} licenças válidas
                 </div>
-                <Progress 
-                  value={mockComplianceData.cfm.complianceRate} 
+                <Progress
                   className="mt-3"
+                  value={mockComplianceData.cfm.complianceRate}
                 />
-                <div className="flex items-center justify-between text-xs mt-2">
+                <div className="mt-2 flex items-center justify-between text-xs">
                   <span className="text-yellow-600">
                     {mockComplianceData.cfm.expiringWithin30Days} expirando
                   </span>
@@ -565,25 +657,32 @@ export function PerformanceAnalytics({ emergencyMode = false }: PerformanceAnaly
             </Card>
 
             {/* CLT Compliance */}
-            <Card className={getComplianceBgColor(mockComplianceData.clt.complianceRate)}>
+            <Card
+              className={getComplianceBgColor(
+                mockComplianceData.clt.complianceRate
+              )}
+            >
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
+                <CardTitle className="font-medium text-sm">
                   CLT (Leis Trabalhistas)
                 </CardTitle>
                 <Calendar className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className={`text-2xl font-bold ${getComplianceColor(mockComplianceData.clt.complianceRate)}`}>
+                <div
+                  className={`font-bold text-2xl ${getComplianceColor(mockComplianceData.clt.complianceRate)}`}
+                >
                   {mockComplianceData.clt.complianceRate}%
                 </div>
-                <div className="text-xs text-muted-foreground mt-1">
-                  {mockComplianceData.clt.compliantShifts}/{mockComplianceData.clt.totalEmployees} escalas conformes
+                <div className="mt-1 text-muted-foreground text-xs">
+                  {mockComplianceData.clt.compliantShifts}/
+                  {mockComplianceData.clt.totalEmployees} escalas conformes
                 </div>
-                <Progress 
-                  value={mockComplianceData.clt.complianceRate} 
+                <Progress
                   className="mt-3"
+                  value={mockComplianceData.clt.complianceRate}
                 />
-                <div className="flex items-center justify-between text-xs mt-2">
+                <div className="mt-2 flex items-center justify-between text-xs">
                   <span className="text-orange-600">
                     {mockComplianceData.clt.overtimeViolations} horas extras
                   </span>
@@ -595,27 +694,36 @@ export function PerformanceAnalytics({ emergencyMode = false }: PerformanceAnaly
             </Card>
 
             {/* LGPD Compliance */}
-            <Card className={getComplianceBgColor(mockComplianceData.lgpd.complianceRate)}>
+            <Card
+              className={getComplianceBgColor(
+                mockComplianceData.lgpd.complianceRate
+              )}
+            >
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
+                <CardTitle className="font-medium text-sm">
                   LGPD (Proteção Dados)
                 </CardTitle>
                 <Shield className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className={`text-2xl font-bold ${getComplianceColor(mockComplianceData.lgpd.complianceRate)}`}>
+                <div
+                  className={`font-bold text-2xl ${getComplianceColor(mockComplianceData.lgpd.complianceRate)}`}
+                >
                   {mockComplianceData.lgpd.complianceRate}%
                 </div>
-                <div className="text-xs text-muted-foreground mt-1">
-                  {mockComplianceData.lgpd.compliantActivities}/{mockComplianceData.lgpd.dataProcessingActivities} atividades conformes
+                <div className="mt-1 text-muted-foreground text-xs">
+                  {mockComplianceData.lgpd.compliantActivities}/
+                  {mockComplianceData.lgpd.dataProcessingActivities} atividades
+                  conformes
                 </div>
-                <Progress 
-                  value={mockComplianceData.lgpd.complianceRate} 
+                <Progress
                   className="mt-3"
+                  value={mockComplianceData.lgpd.complianceRate}
                 />
-                <div className="flex items-center justify-between text-xs mt-2">
+                <div className="mt-2 flex items-center justify-between text-xs">
                   <span className="text-yellow-600">
-                    {mockComplianceData.lgpd.pendingConsents} consentimentos pendentes
+                    {mockComplianceData.lgpd.pendingConsents} consentimentos
+                    pendentes
                   </span>
                   <span className="text-green-600">
                     {mockComplianceData.lgpd.dataBreaches} violações
@@ -625,25 +733,33 @@ export function PerformanceAnalytics({ emergencyMode = false }: PerformanceAnaly
             </Card>
 
             {/* ANVISA Compliance */}
-            <Card className={getComplianceBgColor(mockComplianceData.anvisa.complianceRate)}>
+            <Card
+              className={getComplianceBgColor(
+                mockComplianceData.anvisa.complianceRate
+              )}
+            >
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
+                <CardTitle className="font-medium text-sm">
                   ANVISA (Equipamentos)
                 </CardTitle>
                 <Heart className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className={`text-2xl font-bold ${getComplianceColor(mockComplianceData.anvisa.complianceRate)}`}>
+                <div
+                  className={`font-bold text-2xl ${getComplianceColor(mockComplianceData.anvisa.complianceRate)}`}
+                >
                   {mockComplianceData.anvisa.complianceRate}%
                 </div>
-                <div className="text-xs text-muted-foreground mt-1">
-                  {mockComplianceData.anvisa.compliantEquipment}/{mockComplianceData.anvisa.medicalEquipment} equipamentos conformes
+                <div className="mt-1 text-muted-foreground text-xs">
+                  {mockComplianceData.anvisa.compliantEquipment}/
+                  {mockComplianceData.anvisa.medicalEquipment} equipamentos
+                  conformes
                 </div>
-                <Progress 
-                  value={mockComplianceData.anvisa.complianceRate} 
+                <Progress
                   className="mt-3"
+                  value={mockComplianceData.anvisa.complianceRate}
                 />
-                <div className="flex items-center justify-between text-xs mt-2">
+                <div className="mt-2 flex items-center justify-between text-xs">
                   <span className="text-orange-600">
                     {mockComplianceData.anvisa.maintenanceDue} manutenção devida
                   </span>
@@ -660,7 +776,9 @@ export function PerformanceAnalytics({ emergencyMode = false }: PerformanceAnaly
             {/* CFM License Details */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Detalhes CFM - Licenças Médicas</CardTitle>
+                <CardTitle className="text-lg">
+                  Detalhes CFM - Licenças Médicas
+                </CardTitle>
                 <CardDescription>
                   Status das licenças do Conselho Federal de Medicina
                 </CardDescription>
@@ -668,39 +786,51 @@ export function PerformanceAnalytics({ emergencyMode = false }: PerformanceAnaly
               <CardContent>
                 <div className="space-y-4">
                   <div className="space-y-3">
-                    <div className="flex items-center justify-between p-3 bg-green-50 rounded border border-green-200">
+                    <div className="flex items-center justify-between rounded border border-green-200 bg-green-50 p-3">
                       <div>
-                        <p className="font-medium text-sm text-green-800">Licenças Válidas</p>
-                        <p className="text-xs text-green-600">Em conformidade total</p>
+                        <p className="font-medium text-green-800 text-sm">
+                          Licenças Válidas
+                        </p>
+                        <p className="text-green-600 text-xs">
+                          Em conformidade total
+                        </p>
                       </div>
-                      <Badge className="bg-green-100 text-green-800 border-green-300">
+                      <Badge className="border-green-300 bg-green-100 text-green-800">
                         {mockComplianceData.cfm.validLicenses}
                       </Badge>
                     </div>
-                    
-                    <div className="flex items-center justify-between p-3 bg-yellow-50 rounded border border-yellow-200">
+
+                    <div className="flex items-center justify-between rounded border border-yellow-200 bg-yellow-50 p-3">
                       <div>
-                        <p className="font-medium text-sm text-yellow-800">Expirando em 30 dias</p>
-                        <p className="text-xs text-yellow-600">Renovação necessária</p>
+                        <p className="font-medium text-sm text-yellow-800">
+                          Expirando em 30 dias
+                        </p>
+                        <p className="text-xs text-yellow-600">
+                          Renovação necessária
+                        </p>
                       </div>
-                      <Badge className="bg-yellow-100 text-yellow-800 border-yellow-300">
+                      <Badge className="border-yellow-300 bg-yellow-100 text-yellow-800">
                         {mockComplianceData.cfm.expiringWithin30Days}
                       </Badge>
                     </div>
-                    
-                    <div className="flex items-center justify-between p-3 bg-red-50 rounded border border-red-200">
+
+                    <div className="flex items-center justify-between rounded border border-red-200 bg-red-50 p-3">
                       <div>
-                        <p className="font-medium text-sm text-red-800">Licenças Expiradas</p>
-                        <p className="text-xs text-red-600">Ação imediata necessária</p>
+                        <p className="font-medium text-red-800 text-sm">
+                          Licenças Expiradas
+                        </p>
+                        <p className="text-red-600 text-xs">
+                          Ação imediata necessária
+                        </p>
                       </div>
-                      <Badge className="bg-red-100 text-red-800 border-red-300">
+                      <Badge className="border-red-300 bg-red-100 text-red-800">
                         {mockComplianceData.cfm.expired}
                       </Badge>
                     </div>
                   </div>
-                  
-                  <div className="pt-3 border-t">
-                    <Button size="sm" className="w-full">
+
+                  <div className="border-t pt-3">
+                    <Button className="w-full" size="sm">
                       <FileText className="mr-2 h-4 w-4" />
                       Relatório CFM Detalhado
                     </Button>
@@ -712,7 +842,9 @@ export function PerformanceAnalytics({ emergencyMode = false }: PerformanceAnaly
             {/* LGPD Compliance Details */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Detalhes LGPD - Proteção de Dados</CardTitle>
+                <CardTitle className="text-lg">
+                  Detalhes LGPD - Proteção de Dados
+                </CardTitle>
                 <CardDescription>
                   Status de conformidade com a Lei Geral de Proteção de Dados
                 </CardDescription>
@@ -720,43 +852,56 @@ export function PerformanceAnalytics({ emergencyMode = false }: PerformanceAnaly
               <CardContent>
                 <div className="space-y-4">
                   <div className="space-y-3">
-                    <div className="flex items-center justify-between p-3 bg-blue-50 rounded border border-blue-200">
+                    <div className="flex items-center justify-between rounded border border-blue-200 bg-blue-50 p-3">
                       <div>
-                        <p className="font-medium text-sm text-blue-800">Atividades de Tratamento</p>
-                        <p className="text-xs text-blue-600">Mapeadas e documentadas</p>
+                        <p className="font-medium text-blue-800 text-sm">
+                          Atividades de Tratamento
+                        </p>
+                        <p className="text-blue-600 text-xs">
+                          Mapeadas e documentadas
+                        </p>
                       </div>
-                      <Badge className="bg-blue-100 text-blue-800 border-blue-300">
-                        {mockComplianceData.lgpd.compliantActivities}/{mockComplianceData.lgpd.dataProcessingActivities}
+                      <Badge className="border-blue-300 bg-blue-100 text-blue-800">
+                        {mockComplianceData.lgpd.compliantActivities}/
+                        {mockComplianceData.lgpd.dataProcessingActivities}
                       </Badge>
                     </div>
-                    
-                    <div className="flex items-center justify-between p-3 bg-yellow-50 rounded border border-yellow-200">
+
+                    <div className="flex items-center justify-between rounded border border-yellow-200 bg-yellow-50 p-3">
                       <div>
-                        <p className="font-medium text-sm text-yellow-800">Consentimentos Pendentes</p>
-                        <p className="text-xs text-yellow-600">Aguardando coleta</p>
+                        <p className="font-medium text-sm text-yellow-800">
+                          Consentimentos Pendentes
+                        </p>
+                        <p className="text-xs text-yellow-600">
+                          Aguardando coleta
+                        </p>
                       </div>
-                      <Badge className="bg-yellow-100 text-yellow-800 border-yellow-300">
+                      <Badge className="border-yellow-300 bg-yellow-100 text-yellow-800">
                         {mockComplianceData.lgpd.pendingConsents}
                       </Badge>
                     </div>
-                    
-                    <div className="flex items-center justify-between p-3 bg-green-50 rounded border border-green-200">
+
+                    <div className="flex items-center justify-between rounded border border-green-200 bg-green-50 p-3">
                       <div>
-                        <p className="font-medium text-sm text-green-800">Violações de Dados</p>
-                        <p className="text-xs text-green-600">Nenhuma no período</p>
+                        <p className="font-medium text-green-800 text-sm">
+                          Violações de Dados
+                        </p>
+                        <p className="text-green-600 text-xs">
+                          Nenhuma no período
+                        </p>
                       </div>
-                      <Badge className="bg-green-100 text-green-800 border-green-300">
+                      <Badge className="border-green-300 bg-green-100 text-green-800">
                         {mockComplianceData.lgpd.dataBreaches}
                       </Badge>
                     </div>
                   </div>
-                  
-                  <div className="pt-3 border-t space-y-2">
-                    <Button size="sm" className="w-full" variant="outline">
+
+                  <div className="space-y-2 border-t pt-3">
+                    <Button className="w-full" size="sm" variant="outline">
                       <Shield className="mr-2 h-4 w-4" />
                       Auditoria LGPD
                     </Button>
-                    <Button size="sm" className="w-full">
+                    <Button className="w-full" size="sm">
                       <Download className="mr-2 h-4 w-4" />
                       Relatório de Conformidade
                     </Button>
@@ -769,53 +914,55 @@ export function PerformanceAnalytics({ emergencyMode = false }: PerformanceAnaly
           {/* Compliance Actions Required */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Ações de Compliance Necessárias</CardTitle>
+              <CardTitle className="text-lg">
+                Ações de Compliance Necessárias
+              </CardTitle>
               <CardDescription>
                 Itens que requerem atenção imediata para manter conformidade
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                <div className="flex items-start space-x-3 p-3 bg-red-50 border border-red-200 rounded">
-                  <AlertTriangle className="h-5 w-5 text-red-600 mt-0.5" />
+                <div className="flex items-start space-x-3 rounded border border-red-200 bg-red-50 p-3">
+                  <AlertTriangle className="mt-0.5 h-5 w-5 text-red-600" />
                   <div className="flex-1">
-                    <p className="font-medium text-sm text-red-800">
+                    <p className="font-medium text-red-800 text-sm">
                       Dr. Carlos Mendes - CFM expira em 15 dias
                     </p>
-                    <p className="text-xs text-red-600 mt-1">
+                    <p className="mt-1 text-red-600 text-xs">
                       Contatar profissional para renovação da licença CFM
                     </p>
-                    <Button size="sm" className="mt-2" variant="destructive">
+                    <Button className="mt-2" size="sm" variant="destructive">
                       Ação Imediata
                     </Button>
                   </div>
                 </div>
-                
-                <div className="flex items-start space-x-3 p-3 bg-yellow-50 border border-yellow-200 rounded">
-                  <Clock className="h-5 w-5 text-yellow-600 mt-0.5" />
+
+                <div className="flex items-start space-x-3 rounded border border-yellow-200 bg-yellow-50 p-3">
+                  <Clock className="mt-0.5 h-5 w-5 text-yellow-600" />
                   <div className="flex-1">
                     <p className="font-medium text-sm text-yellow-800">
                       Escalas CLT - 2 violações de horas extras identificadas
                     </p>
-                    <p className="text-xs text-yellow-600 mt-1">
+                    <p className="mt-1 text-xs text-yellow-600">
                       Revisar escalas de trabalho para conformidade CLT
                     </p>
-                    <Button size="sm" className="mt-2" variant="outline">
+                    <Button className="mt-2" size="sm" variant="outline">
                       Revisar Escalas
                     </Button>
                   </div>
                 </div>
-                
-                <div className="flex items-start space-x-3 p-3 bg-blue-50 border border-blue-200 rounded">
-                  <Shield className="h-5 w-5 text-blue-600 mt-0.5" />
+
+                <div className="flex items-start space-x-3 rounded border border-blue-200 bg-blue-50 p-3">
+                  <Shield className="mt-0.5 h-5 w-5 text-blue-600" />
                   <div className="flex-1">
-                    <p className="font-medium text-sm text-blue-800">
+                    <p className="font-medium text-blue-800 text-sm">
                       LGPD - 3 consentimentos de pacientes pendentes
                     </p>
-                    <p className="text-xs text-blue-600 mt-1">
+                    <p className="mt-1 text-blue-600 text-xs">
                       Atualizar consentimentos para uso de dados pessoais
                     </p>
-                    <Button size="sm" className="mt-2" variant="outline">
+                    <Button className="mt-2" size="sm" variant="outline">
                       Gerenciar Consentimentos
                     </Button>
                   </div>
@@ -823,8 +970,9 @@ export function PerformanceAnalytics({ emergencyMode = false }: PerformanceAnaly
               </div>
             </CardContent>
           </Card>
-        </TabsContent>        {/* Individual Performance Tab */}
-        <TabsContent value="individual" className="space-y-6">
+        </TabsContent>{' '}
+        {/* Individual Performance Tab */}
+        <TabsContent className="space-y-6" value="individual">
           {/* Performance Filters */}
           <Card>
             <CardHeader>
@@ -834,8 +982,11 @@ export function PerformanceAnalytics({ emergencyMode = false }: PerformanceAnaly
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center space-x-4 mb-4">
-                <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
+              <div className="mb-4 flex items-center space-x-4">
+                <Select
+                  onValueChange={setSelectedDepartment}
+                  value={selectedDepartment}
+                >
                   <SelectTrigger className="w-48">
                     <SelectValue placeholder="Departamento" />
                   </SelectTrigger>
@@ -847,8 +998,8 @@ export function PerformanceAnalytics({ emergencyMode = false }: PerformanceAnaly
                     <SelectItem value="surgery">Centro Cirúrgico</SelectItem>
                   </SelectContent>
                 </Select>
-                
-                <Select value={sortBy} onValueChange={setSortBy}>
+
+                <Select onValueChange={setSortBy} value={sortBy}>
                   <SelectTrigger className="w-48">
                     <SelectValue placeholder="Ordenar por" />
                   </SelectTrigger>
@@ -888,52 +1039,73 @@ export function PerformanceAnalytics({ emergencyMode = false }: PerformanceAnaly
                       <TableCell>
                         <div>
                           <p className="font-medium">{professional.name}</p>
-                          <p className="text-xs text-muted-foreground">{professional.role}</p>
+                          <p className="text-muted-foreground text-xs">
+                            {professional.role}
+                          </p>
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge 
-                          variant={professional.cfmLicense.includes('Expira') ? 'destructive' : 
-                                 professional.cfmLicense === 'N/A' ? 'secondary' : 'default'}
+                        <Badge
                           className="text-xs"
+                          variant={
+                            professional.cfmLicense.includes('Expira')
+                              ? 'destructive'
+                              : professional.cfmLicense === 'N/A'
+                                ? 'secondary'
+                                : 'default'
+                          }
                         >
                           {professional.cfmLicense}
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <span className="font-medium">{professional.patientLoad}</span>
+                        <span className="font-medium">
+                          {professional.patientLoad}
+                        </span>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center space-x-2">
-                          <span className="font-medium">{professional.satisfactionScore}</span>
+                          <span className="font-medium">
+                            {professional.satisfactionScore}
+                          </span>
                           <div className="flex">
                             {[1, 2, 3, 4, 5].map((star) => (
                               <Star
-                                key={star}
                                 className={`h-3 w-3 ${
-                                  star <= Math.floor(professional.satisfactionScore)
-                                    ? 'text-yellow-400 fill-current'
+                                  star <=
+                                  Math.floor(professional.satisfactionScore)
+                                    ? 'fill-current text-yellow-400'
                                     : 'text-gray-300'
                                 }`}
+                                key={star}
                               />
                             ))}
                           </div>
                         </div>
                       </TableCell>
                       <TableCell>
-                        <span className="font-medium">{professional.proceduresCompleted}</span>
+                        <span className="font-medium">
+                          {professional.proceduresCompleted}
+                        </span>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center space-x-2">
-                          <span className={`font-medium ${getComplianceColor(professional.complianceRate)}`}>
+                          <span
+                            className={`font-medium ${getComplianceColor(professional.complianceRate)}`}
+                          >
                             {professional.complianceRate}%
                           </span>
-                          <Progress value={professional.complianceRate} className="w-16 h-2" />
+                          <Progress
+                            className="h-2 w-16"
+                            value={professional.complianceRate}
+                          />
                         </div>
                       </TableCell>
                       <TableCell>
                         <div>
-                          <span className="font-medium">{professional.hoursWorked}h</span>
+                          <span className="font-medium">
+                            {professional.hoursWorked}h
+                          </span>
                           {professional.overtimeHours > 0 && (
                             <p className="text-xs text-yellow-600">
                               +{professional.overtimeHours}h extra
@@ -943,16 +1115,23 @@ export function PerformanceAnalytics({ emergencyMode = false }: PerformanceAnaly
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center space-x-2">
-                          <span className={`text-sm font-medium ${
-                            professional.cmeCredits >= professional.cmeRequired 
-                              ? 'text-green-600' 
-                              : 'text-red-600'
-                          }`}>
+                          <span
+                            className={`font-medium text-sm ${
+                              professional.cmeCredits >=
+                              professional.cmeRequired
+                                ? 'text-green-600'
+                                : 'text-red-600'
+                            }`}
+                          >
                             {professional.cmeCredits}/{professional.cmeRequired}
                           </span>
-                          <Progress 
-                            value={(professional.cmeCredits / professional.cmeRequired) * 100} 
-                            className="w-12 h-2" 
+                          <Progress
+                            className="h-2 w-12"
+                            value={
+                              (professional.cmeCredits /
+                                professional.cmeRequired) *
+                              100
+                            }
                           />
                         </div>
                       </TableCell>
@@ -963,13 +1142,14 @@ export function PerformanceAnalytics({ emergencyMode = false }: PerformanceAnaly
             </CardContent>
           </Card>
         </TabsContent>
-
         {/* Trends Tab */}
-        <TabsContent value="trends" className="space-y-6">
+        <TabsContent className="space-y-6" value="trends">
           {/* Performance Trends Chart */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Tendências de Performance</CardTitle>
+              <CardTitle className="text-lg">
+                Tendências de Performance
+              </CardTitle>
               <CardDescription>
                 Evolução dos principais indicadores nos últimos 6 meses
               </CardDescription>
@@ -977,55 +1157,75 @@ export function PerformanceAnalytics({ emergencyMode = false }: PerformanceAnaly
             <CardContent>
               <div className="space-y-6">
                 {/* Mock Chart Area - In production, use a proper chart library */}
-                <div className="h-64 bg-gray-50 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300">
+                <div className="flex h-64 items-center justify-center rounded-lg border-2 border-gray-300 border-dashed bg-gray-50">
                   <div className="text-center">
-                    <LineChart className="h-12 w-12 text-gray-400 mx-auto mb-2" />
-                    <p className="text-gray-500 font-medium">Gráfico de Tendências</p>
-                    <p className="text-sm text-gray-400">Integração com biblioteca de gráficos necessária</p>
+                    <LineChart className="mx-auto mb-2 h-12 w-12 text-gray-400" />
+                    <p className="font-medium text-gray-500">
+                      Gráfico de Tendências
+                    </p>
+                    <p className="text-gray-400 text-sm">
+                      Integração com biblioteca de gráficos necessária
+                    </p>
                   </div>
                 </div>
-                
+
                 {/* Trend Summary */}
                 <div className="grid gap-4 md:grid-cols-3">
-                  <div className="p-4 bg-green-50 rounded border border-green-200">
+                  <div className="rounded border border-green-200 bg-green-50 p-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-green-800">Satisfação do Paciente</p>
-                        <p className="text-xs text-green-600">Tendência crescente</p>
+                        <p className="font-medium text-green-800 text-sm">
+                          Satisfação do Paciente
+                        </p>
+                        <p className="text-green-600 text-xs">
+                          Tendência crescente
+                        </p>
                       </div>
                       <TrendingUp className="h-8 w-8 text-green-600" />
                     </div>
                     <div className="mt-2">
-                      <p className="text-lg font-bold text-green-700">+3.6%</p>
-                      <p className="text-xs text-green-600">vs período anterior</p>
+                      <p className="font-bold text-green-700 text-lg">+3.6%</p>
+                      <p className="text-green-600 text-xs">
+                        vs período anterior
+                      </p>
                     </div>
                   </div>
-                  
-                  <div className="p-4 bg-blue-50 rounded border border-blue-200">
+
+                  <div className="rounded border border-blue-200 bg-blue-50 p-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-blue-800">Eficiência da Equipe</p>
-                        <p className="text-xs text-blue-600">Melhoria constante</p>
+                        <p className="font-medium text-blue-800 text-sm">
+                          Eficiência da Equipe
+                        </p>
+                        <p className="text-blue-600 text-xs">
+                          Melhoria constante
+                        </p>
                       </div>
                       <TrendingUp className="h-8 w-8 text-blue-600" />
                     </div>
                     <div className="mt-2">
-                      <p className="text-lg font-bold text-blue-700">+5.1%</p>
-                      <p className="text-xs text-blue-600">vs período anterior</p>
+                      <p className="font-bold text-blue-700 text-lg">+5.1%</p>
+                      <p className="text-blue-600 text-xs">
+                        vs período anterior
+                      </p>
                     </div>
                   </div>
-                  
-                  <div className="p-4 bg-yellow-50 rounded border border-yellow-200">
+
+                  <div className="rounded border border-yellow-200 bg-yellow-50 p-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-yellow-800">Compliance Geral</p>
+                        <p className="font-medium text-sm text-yellow-800">
+                          Compliance Geral
+                        </p>
                         <p className="text-xs text-yellow-600">Estável</p>
                       </div>
                       <LineChart className="h-8 w-8 text-yellow-600" />
                     </div>
                     <div className="mt-2">
-                      <p className="text-lg font-bold text-yellow-700">+1.2%</p>
-                      <p className="text-xs text-yellow-600">vs período anterior</p>
+                      <p className="font-bold text-lg text-yellow-700">+1.2%</p>
+                      <p className="text-xs text-yellow-600">
+                        vs período anterior
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -1036,61 +1236,66 @@ export function PerformanceAnalytics({ emergencyMode = false }: PerformanceAnaly
           {/* Insights and Recommendations */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Insights e Recomendações</CardTitle>
+              <CardTitle className="text-lg">
+                Insights e Recomendações
+              </CardTitle>
               <CardDescription>
                 Análise inteligente baseada nas tendências identificadas
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="flex items-start space-x-3 p-4 bg-green-50 border border-green-200 rounded">
-                  <CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5" />
+                <div className="flex items-start space-x-3 rounded border border-green-200 bg-green-50 p-4">
+                  <CheckCircle2 className="mt-0.5 h-5 w-5 text-green-600" />
                   <div>
-                    <p className="font-medium text-sm text-green-800">
+                    <p className="font-medium text-green-800 text-sm">
                       Melhoria na Satisfação do Paciente
                     </p>
-                    <p className="text-xs text-green-600 mt-1">
-                      A implementação de protocolos de comunicação resultou em aumento de 3.6% 
-                      na satisfação. Continue investindo em treinamento de comunicação.
+                    <p className="mt-1 text-green-600 text-xs">
+                      A implementação de protocolos de comunicação resultou em
+                      aumento de 3.6% na satisfação. Continue investindo em
+                      treinamento de comunicação.
                     </p>
                   </div>
                 </div>
-                
-                <div className="flex items-start space-x-3 p-4 bg-blue-50 border border-blue-200 rounded">
-                  <Activity className="h-5 w-5 text-blue-600 mt-0.5" />
+
+                <div className="flex items-start space-x-3 rounded border border-blue-200 bg-blue-50 p-4">
+                  <Activity className="mt-0.5 h-5 w-5 text-blue-600" />
                   <div>
-                    <p className="font-medium text-sm text-blue-800">
+                    <p className="font-medium text-blue-800 text-sm">
                       Eficiência Operacional em Alta
                     </p>
-                    <p className="text-xs text-blue-600 mt-1">
-                      A otimização de escalas e recursos elevou a eficiência em 5.1%. 
-                      Considere expandir essas práticas para outros departamentos.
+                    <p className="mt-1 text-blue-600 text-xs">
+                      A otimização de escalas e recursos elevou a eficiência em
+                      5.1%. Considere expandir essas práticas para outros
+                      departamentos.
                     </p>
                   </div>
                 </div>
-                
-                <div className="flex items-start space-x-3 p-4 bg-orange-50 border border-orange-200 rounded">
-                  <AlertTriangle className="h-5 w-5 text-orange-600 mt-0.5" />
+
+                <div className="flex items-start space-x-3 rounded border border-orange-200 bg-orange-50 p-4">
+                  <AlertTriangle className="mt-0.5 h-5 w-5 text-orange-600" />
                   <div>
-                    <p className="font-medium text-sm text-orange-800">
+                    <p className="font-medium text-orange-800 text-sm">
                       Atenção: CME em Atraso
                     </p>
-                    <p className="text-xs text-orange-600 mt-1">
-                      25% dos profissionais estão com CME pendente. Implemente lembretes 
-                      automáticos e facilite o acesso a cursos online.
+                    <p className="mt-1 text-orange-600 text-xs">
+                      25% dos profissionais estão com CME pendente. Implemente
+                      lembretes automáticos e facilite o acesso a cursos online.
                     </p>
                   </div>
                 </div>
-                
-                <div className="flex items-start space-x-3 p-4 bg-purple-50 border border-purple-200 rounded">
-                  <Star className="h-5 w-5 text-purple-600 mt-0.5" />
+
+                <div className="flex items-start space-x-3 rounded border border-purple-200 bg-purple-50 p-4">
+                  <Star className="mt-0.5 h-5 w-5 text-purple-600" />
                   <div>
-                    <p className="font-medium text-sm text-purple-800">
+                    <p className="font-medium text-purple-800 text-sm">
                       Reconhecimento de Performance
                     </p>
-                    <p className="text-xs text-purple-600 mt-1">
-                      Enf. Ana Paula e Dra. Maria Silva destacam-se consistentemente. 
-                      Considere reconhecimento formal e oportunidades de mentoria.
+                    <p className="mt-1 text-purple-600 text-xs">
+                      Enf. Ana Paula e Dra. Maria Silva destacam-se
+                      consistentemente. Considere reconhecimento formal e
+                      oportunidades de mentoria.
                     </p>
                   </div>
                 </div>

@@ -1,3 +1,4 @@
+import { HEALTHCARE_DATA_RETENTION_DAYS } from '@neonpro/types/constants/healthcare-constants';
 import { addDays } from 'date-fns';
 import { z } from 'zod';
 
@@ -461,8 +462,6 @@ export class LgpdService {
       riskFactors.push('International data transfer');
       mitigationMeasures.push('Adequacy decision or appropriate safeguards');
     }
-
-    import { HEALTHCARE_DATA_RETENTION_DAYS } from '@neonpro/types/constants/healthcare-constants';
 
     if (processingActivity.retentionPeriod > HEALTHCARE_DATA_RETENTION_DAYS) {
       // > 7 years

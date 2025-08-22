@@ -20,6 +20,10 @@ import {
   Zap,
 } from 'lucide-react';
 import { useState } from 'react';
+// Import our treatment components
+import AestheticTreatmentPlan from '@/components/treatments/AestheticTreatmentPlan';
+import BeforeAfterSecureGallery from '@/components/treatments/BeforeAfterSecureGallery';
+import CosmeticConsentBrazilian from '@/components/treatments/CosmeticConsentBrazilian';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -39,22 +43,28 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-
-// Import our treatment components
-import AestheticTreatmentPlan from '@/components/treatments/AestheticTreatmentPlan';
-import CosmeticConsentBrazilian from '@/components/treatments/CosmeticConsentBrazilian';
-import BeforeAfterSecureGallery from '@/components/treatments/BeforeAfterSecureGallery';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 // Import hooks
 import { useTreatments } from '@/hooks/useTreatments';
-import type { 
-  TreatmentPlan, 
+import type {
   AestheticTreatmentCategory,
-  TreatmentStatus 
+  TreatmentPlan,
+  TreatmentStatus,
 } from '@/types/treatments';
 
 // Visual components maintaining NeonPro design
@@ -102,9 +112,14 @@ export default function TreatmentsPage() {
   // State management
   const [viewMode, setViewMode] = useState<ViewMode>('overview');
   const [searchQuery, setSearchQuery] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState<AestheticTreatmentCategory | 'all'>('all');
-  const [statusFilter, setStatusFilter] = useState<TreatmentStatus | 'all'>('all');
-  const [selectedTreatment, setSelectedTreatment] = useState<TreatmentPlan | null>(null);
+  const [categoryFilter, setCategoryFilter] = useState<
+    AestheticTreatmentCategory | 'all'
+  >('all');
+  const [statusFilter, setStatusFilter] = useState<TreatmentStatus | 'all'>(
+    'all'
+  );
+  const [selectedTreatment, setSelectedTreatment] =
+    useState<TreatmentPlan | null>(null);
   const [showNewTreatmentDialog, setShowNewTreatmentDialog] = useState(false);
 
   // Handle search
@@ -116,13 +131,15 @@ export default function TreatmentsPage() {
   // Handle category filter
   const handleCategoryFilter = (category: string) => {
     setCategoryFilter(category as AestheticTreatmentCategory | 'all');
-    filterByCategory(category === 'all' ? null : category as AestheticTreatmentCategory);
+    filterByCategory(
+      category === 'all' ? null : (category as AestheticTreatmentCategory)
+    );
   };
 
   // Handle status filter
   const handleStatusFilter = (status: string) => {
     setStatusFilter(status as TreatmentStatus | 'all');
-    filterByStatus(status === 'all' ? null : status as TreatmentStatus);
+    filterByStatus(status === 'all' ? null : (status as TreatmentStatus));
   };
 
   // Mock data for demonstration (in real implementation, this would come from the hook)
@@ -134,7 +151,8 @@ export default function TreatmentsPage() {
     treatment_type: 'multi_session',
     category: 'facial',
     status: 'active',
-    description: 'Tratamento de rejuvenescimento facial utilizando laser fracionado para melhoria da textura da pele.',
+    description:
+      'Tratamento de rejuvenescimento facial utilizando laser fracionado para melhoria da textura da pele.',
     expected_sessions: 6,
     completed_sessions: 2,
     session_interval_days: 21,
@@ -147,12 +165,16 @@ export default function TreatmentsPage() {
     data_retention_days: 2555,
     expected_outcomes: {},
     risk_assessment: {},
-    total_cost: 3500.00,
+    total_cost: 3500.0,
     payment_plan: null,
     insurance_coverage: null,
     start_date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-    estimated_completion_date: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(),
-    next_session_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+    estimated_completion_date: new Date(
+      Date.now() + 90 * 24 * 60 * 60 * 1000
+    ).toISOString(),
+    next_session_date: new Date(
+      Date.now() + 7 * 24 * 60 * 60 * 1000
+    ).toISOString(),
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     created_by: 'system',
@@ -177,9 +199,12 @@ export default function TreatmentsPage() {
       {/* Page Header */}
       <div className="flex items-center justify-between space-y-2">
         <div>
-          <h2 className="font-bold text-3xl tracking-tight">Gestão de Tratamentos</h2>
+          <h2 className="font-bold text-3xl tracking-tight">
+            Gestão de Tratamentos
+          </h2>
           <p className="text-muted-foreground">
-            Sistema completo para medicina estética brasileira com conformidade LGPD e CFM
+            Sistema completo para medicina estética brasileira com conformidade
+            LGPD e CFM
           </p>
         </div>
         <div className="flex items-center space-x-2">
@@ -195,32 +220,34 @@ export default function TreatmentsPage() {
       </div>
 
       {/* Overview Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         <NeonGradientCard>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-slate-300">
+            <CardTitle className="font-medium text-slate-300 text-sm">
               Tratamentos Ativos
             </CardTitle>
             <Activity className="h-4 w-4 text-blue-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white">{activeTreatments.length}</div>
-            <p className="text-xs text-slate-400">
-              +2 novos esta semana
-            </p>
+            <div className="font-bold text-2xl text-white">
+              {activeTreatments.length}
+            </div>
+            <p className="text-slate-400 text-xs">+2 novos esta semana</p>
           </CardContent>
         </NeonGradientCard>
 
         <NeonGradientCard>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-slate-300">
+            <CardTitle className="font-medium text-slate-300 text-sm">
               Sessões Hoje
             </CardTitle>
             <Calendar className="h-4 w-4 text-green-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white">{todaysSessions.length}</div>
-            <p className="text-xs text-slate-400">
+            <div className="font-bold text-2xl text-white">
+              {todaysSessions.length}
+            </div>
+            <p className="text-slate-400 text-xs">
               {upcomingSessions.length} agendadas
             </p>
           </CardContent>
@@ -228,37 +255,41 @@ export default function TreatmentsPage() {
 
         <NeonGradientCard>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-slate-300">
+            <CardTitle className="font-medium text-slate-300 text-sm">
               Taxa de Conclusão
             </CardTitle>
             <TrendingUp className="h-4 w-4 text-purple-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white">{completionRate.toFixed(1)}%</div>
-            <p className="text-xs text-slate-400">
-              +5.2% vs mês anterior
-            </p>
+            <div className="font-bold text-2xl text-white">
+              {completionRate.toFixed(1)}%
+            </div>
+            <p className="text-slate-400 text-xs">+5.2% vs mês anterior</p>
           </CardContent>
         </NeonGradientCard>
 
         <NeonGradientCard>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-slate-300">
+            <CardTitle className="font-medium text-slate-300 text-sm">
               Satisfação Média
             </CardTitle>
             <Star className="h-4 w-4 text-yellow-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white">{averageSatisfactionScore.toFixed(1)}/10</div>
-            <p className="text-xs text-slate-400">
-              Excelente qualidade
-            </p>
+            <div className="font-bold text-2xl text-white">
+              {averageSatisfactionScore.toFixed(1)}/10
+            </div>
+            <p className="text-slate-400 text-xs">Excelente qualidade</p>
           </CardContent>
         </NeonGradientCard>
       </div>
 
       {/* Main Content Tabs */}
-      <Tabs value={viewMode} onValueChange={(value) => setViewMode(value as ViewMode)} className="space-y-4">
+      <Tabs
+        className="space-y-4"
+        onValueChange={(value) => setViewMode(value as ViewMode)}
+        value={viewMode}
+      >
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="overview">Visão Geral</TabsTrigger>
           <TabsTrigger value="treatments">Tratamentos</TabsTrigger>
@@ -267,8 +298,8 @@ export default function TreatmentsPage() {
         </TabsList>
 
         {/* Overview Tab */}
-        <TabsContent value="overview" className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <TabsContent className="space-y-4" value="overview">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             {/* Active Treatments Overview */}
             <Card>
               <CardHeader>
@@ -283,45 +314,62 @@ export default function TreatmentsPage() {
               <CardContent>
                 <div className="space-y-4">
                   {activeTreatments.slice(0, 3).map((treatment, index) => (
-                    <div key={treatment.id || index} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div
+                      className="flex items-center justify-between rounded-lg border p-3"
+                      key={treatment.id || index}
+                    >
                       <div className="flex-1">
-                        <p className="font-medium">{treatment.treatment_name || 'Tratamento de Exemplo'}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {treatment.completed_sessions || 2}/{treatment.expected_sessions || 6} sessões
+                        <p className="font-medium">
+                          {treatment.treatment_name || 'Tratamento de Exemplo'}
+                        </p>
+                        <p className="text-muted-foreground text-sm">
+                          {treatment.completed_sessions || 2}/
+                          {treatment.expected_sessions || 6} sessões
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Progress 
-                          value={((treatment.completed_sessions || 2) / (treatment.expected_sessions || 6)) * 100} 
-                          className="w-20 h-2" 
+                        <Progress
+                          className="h-2 w-20"
+                          value={
+                            ((treatment.completed_sessions || 2) /
+                              (treatment.expected_sessions || 6)) *
+                            100
+                          }
                         />
                         <Badge variant="outline">
-                          {Math.round(((treatment.completed_sessions || 2) / (treatment.expected_sessions || 6)) * 100)}%
+                          {Math.round(
+                            ((treatment.completed_sessions || 2) /
+                              (treatment.expected_sessions || 6)) *
+                              100
+                          )}
+                          %
                         </Badge>
                       </div>
                     </div>
                   ))}
-                  
+
                   {activeTreatments.length === 0 && (
-                    <div className="text-center py-6">
-                      <Heart className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
-                      <p className="text-muted-foreground">Nenhum tratamento ativo no momento</p>
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
+                    <div className="py-6 text-center">
+                      <Heart className="mx-auto mb-2 h-12 w-12 text-muted-foreground" />
+                      <p className="text-muted-foreground">
+                        Nenhum tratamento ativo no momento
+                      </p>
+                      <Button
                         className="mt-2"
                         onClick={() => setShowNewTreatmentDialog(true)}
+                        size="sm"
+                        variant="outline"
                       >
                         Criar Primeiro Tratamento
                       </Button>
                     </div>
                   )}
-                  
+
                   {activeTreatments.length > 3 && (
-                    <Button 
-                      variant="outline" 
+                    <Button
                       className="w-full"
                       onClick={() => setViewMode('treatments')}
+                      variant="outline"
                     >
                       Ver Todos os Tratamentos ({activeTreatments.length})
                     </Button>
@@ -337,27 +385,37 @@ export default function TreatmentsPage() {
                   <Calendar className="h-5 w-5" />
                   Sessões de Hoje
                 </CardTitle>
-                <CardDescription>
-                  Agenda do dia atual
-                </CardDescription>
+                <CardDescription>Agenda do dia atual</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {todaysSessions.slice(0, 4).map((session, index) => (
-                    <div key={session.id || index} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div
+                      className="flex items-center justify-between rounded-lg border p-3"
+                      key={session.id || index}
+                    >
                       <div>
-                        <p className="font-medium">Sessão {session.session_number || index + 1}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {new Date(session.scheduled_date || Date.now()).toLocaleTimeString('pt-BR', {
+                        <p className="font-medium">
+                          Sessão {session.session_number || index + 1}
+                        </p>
+                        <p className="text-muted-foreground text-sm">
+                          {new Date(
+                            session.scheduled_date || Date.now()
+                          ).toLocaleTimeString('pt-BR', {
                             hour: '2-digit',
                             minute: '2-digit',
                           })}
                         </p>
                       </div>
-                      <Badge variant={
-                        session.status === 'completed' ? 'default' : 
-                        session.status === 'cancelled' ? 'destructive' : 'outline'
-                      }>
+                      <Badge
+                        variant={
+                          session.status === 'completed'
+                            ? 'default'
+                            : session.status === 'cancelled'
+                              ? 'destructive'
+                              : 'outline'
+                        }
+                      >
                         {session.status === 'scheduled' && 'Agendada'}
                         {session.status === 'completed' && 'Concluída'}
                         {session.status === 'cancelled' && 'Cancelada'}
@@ -366,19 +424,21 @@ export default function TreatmentsPage() {
                       </Badge>
                     </div>
                   ))}
-                  
+
                   {todaysSessions.length === 0 && (
-                    <div className="text-center py-6">
-                      <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
-                      <p className="text-muted-foreground">Nenhuma sessão agendada para hoje</p>
+                    <div className="py-6 text-center">
+                      <Calendar className="mx-auto mb-2 h-12 w-12 text-muted-foreground" />
+                      <p className="text-muted-foreground">
+                        Nenhuma sessão agendada para hoje
+                      </p>
                     </div>
                   )}
-                  
+
                   {todaysSessions.length > 4 && (
-                    <Button 
-                      variant="outline" 
+                    <Button
                       className="w-full"
                       onClick={() => setViewMode('sessions')}
+                      variant="outline"
                     >
                       Ver Todas as Sessões ({todaysSessions.length})
                     </Button>
@@ -401,17 +461,17 @@ export default function TreatmentsPage() {
             </CardHeader>
             <CardContent>
               <AestheticTreatmentPlan
+                onScheduleSession={(id) => console.log('Schedule session:', id)}
+                onViewProgress={(id) => console.log('View progress:', id)}
                 treatmentPlan={mockTreatmentPlan}
                 variant="card"
-                onViewProgress={(id) => console.log('View progress:', id)}
-                onScheduleSession={(id) => console.log('Schedule session:', id)}
               />
             </CardContent>
           </Card>
         </TabsContent>
 
         {/* Treatments Tab */}
-        <TabsContent value="treatments" className="space-y-4">
+        <TabsContent className="space-y-4" value="treatments">
           {/* Filters */}
           <Card>
             <CardHeader>
@@ -422,28 +482,39 @@ export default function TreatmentsPage() {
                 <div className="flex items-center space-x-2">
                   <Search className="h-4 w-4 text-muted-foreground" />
                   <Input
+                    className="w-64"
+                    onChange={(e) => handleSearch(e.target.value)}
                     placeholder="Buscar tratamentos..."
                     value={searchQuery}
-                    onChange={(e) => handleSearch(e.target.value)}
-                    className="w-64"
                   />
                 </div>
-                
-                <Select value={categoryFilter} onValueChange={handleCategoryFilter}>
+
+                <Select
+                  onValueChange={handleCategoryFilter}
+                  value={categoryFilter}
+                >
                   <SelectTrigger className="w-48">
                     <SelectValue placeholder="Categoria" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todas as Categorias</SelectItem>
                     <SelectItem value="facial">Tratamentos Faciais</SelectItem>
-                    <SelectItem value="body_contouring">Contorno Corporal</SelectItem>
-                    <SelectItem value="skin_rejuvenation">Rejuvenescimento</SelectItem>
-                    <SelectItem value="hair_restoration">Restauração Capilar</SelectItem>
-                    <SelectItem value="intimate_health">Saúde Íntima</SelectItem>
+                    <SelectItem value="body_contouring">
+                      Contorno Corporal
+                    </SelectItem>
+                    <SelectItem value="skin_rejuvenation">
+                      Rejuvenescimento
+                    </SelectItem>
+                    <SelectItem value="hair_restoration">
+                      Restauração Capilar
+                    </SelectItem>
+                    <SelectItem value="intimate_health">
+                      Saúde Íntima
+                    </SelectItem>
                   </SelectContent>
                 </Select>
 
-                <Select value={statusFilter} onValueChange={handleStatusFilter}>
+                <Select onValueChange={handleStatusFilter} value={statusFilter}>
                   <SelectTrigger className="w-40">
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
@@ -461,21 +532,21 @@ export default function TreatmentsPage() {
           </Card>
 
           {/* Treatments List */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             {loading ? (
               // Loading skeleton
               [...Array(4)].map((_, i) => (
                 <Card key={i}>
                   <CardHeader>
                     <div className="space-y-2">
-                      <div className="h-4 bg-muted animate-pulse rounded" />
-                      <div className="h-3 bg-muted animate-pulse rounded w-2/3" />
+                      <div className="h-4 animate-pulse rounded bg-muted" />
+                      <div className="h-3 w-2/3 animate-pulse rounded bg-muted" />
                     </div>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-2">
-                      <div className="h-2 bg-muted animate-pulse rounded" />
-                      <div className="h-3 bg-muted animate-pulse rounded w-1/2" />
+                      <div className="h-2 animate-pulse rounded bg-muted" />
+                      <div className="h-3 w-1/2 animate-pulse rounded bg-muted" />
                     </div>
                   </CardContent>
                 </Card>
@@ -484,20 +555,24 @@ export default function TreatmentsPage() {
               treatmentPlans.map((treatment) => (
                 <AestheticTreatmentPlan
                   key={treatment.id}
+                  onScheduleSession={(id) =>
+                    console.log('Schedule session:', id)
+                  }
+                  onViewProgress={(id) => console.log('View progress:', id)}
                   treatmentPlan={treatment}
                   variant="summary"
-                  onViewProgress={(id) => console.log('View progress:', id)}
-                  onScheduleSession={(id) => console.log('Schedule session:', id)}
                 />
               ))
             ) : (
               // Show mock data for demonstration
               <div className="col-span-full">
                 <AestheticTreatmentPlan
+                  onScheduleSession={(id) =>
+                    console.log('Schedule session:', id)
+                  }
+                  onViewProgress={(id) => console.log('View progress:', id)}
                   treatmentPlan={mockTreatmentPlan}
                   variant="summary"
-                  onViewProgress={(id) => console.log('View progress:', id)}
-                  onScheduleSession={(id) => console.log('Schedule session:', id)}
                 />
               </div>
             )}
@@ -505,7 +580,7 @@ export default function TreatmentsPage() {
         </TabsContent>
 
         {/* Sessions Tab */}
-        <TabsContent value="sessions" className="space-y-4">
+        <TabsContent className="space-y-4" value="sessions">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -517,11 +592,14 @@ export default function TreatmentsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-center py-12">
-                <Calendar className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Calendário de Sessões</h3>
-                <p className="text-muted-foreground mb-4">
-                  Interface de agendamento e gerenciamento de sessões será implementada aqui.
+              <div className="py-12 text-center">
+                <Calendar className="mx-auto mb-4 h-16 w-16 text-muted-foreground" />
+                <h3 className="mb-2 font-semibold text-lg">
+                  Calendário de Sessões
+                </h3>
+                <p className="mb-4 text-muted-foreground">
+                  Interface de agendamento e gerenciamento de sessões será
+                  implementada aqui.
                 </p>
                 <Button variant="outline">
                   <Plus className="mr-2 h-4 w-4" />
@@ -533,8 +611,8 @@ export default function TreatmentsPage() {
         </TabsContent>
 
         {/* Compliance Tab */}
-        <TabsContent value="compliance" className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <TabsContent className="space-y-4" value="compliance">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             {/* LGPD Compliance */}
             <Card>
               <CardHeader>
@@ -554,7 +632,7 @@ export default function TreatmentsPage() {
                     100%
                   </Badge>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <span className="text-sm">Dados Anonimizados</span>
                   <Badge variant="default">
@@ -562,12 +640,11 @@ export default function TreatmentsPage() {
                     Conforme
                   </Badge>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <span className="text-sm">Retenção de Dados</span>
                   <Badge variant="outline">
-                    <Clock className="mr-1 h-3 w-3" />
-                    7 anos
+                    <Clock className="mr-1 h-3 w-3" />7 anos
                   </Badge>
                 </div>
 
@@ -576,7 +653,7 @@ export default function TreatmentsPage() {
                 <Alert>
                   <Shield className="h-4 w-4" />
                   <AlertDescription>
-                    Todos os tratamentos estão em conformidade com a LGPD. 
+                    Todos os tratamentos estão em conformidade com a LGPD.
                     Próxima auditoria agendada para dezembro de 2024.
                   </AlertDescription>
                 </Alert>
@@ -602,7 +679,7 @@ export default function TreatmentsPage() {
                     100%
                   </Badge>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <span className="text-sm">Protocolos Aprovados</span>
                   <Badge variant="default">
@@ -610,7 +687,7 @@ export default function TreatmentsPage() {
                     Todos
                   </Badge>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <span className="text-sm">Revisão Ética</span>
                   <Badge variant="outline">
@@ -624,7 +701,7 @@ export default function TreatmentsPage() {
                 <Alert>
                   <Users className="h-4 w-4" />
                   <AlertDescription>
-                    Todos os procedimentos seguem as diretrizes éticas do CFM. 
+                    Todos os procedimentos seguem as diretrizes éticas do CFM.
                     Certificações profissionais atualizadas.
                   </AlertDescription>
                 </Alert>
@@ -645,10 +722,12 @@ export default function TreatmentsPage() {
             </CardHeader>
             <CardContent>
               <CosmeticConsentBrazilian
-                treatmentPlan={mockTreatmentPlan}
                 mode="new"
+                onConsentGranted={(consent) =>
+                  console.log('Consent granted:', consent)
+                }
                 showProgress={true}
-                onConsentGranted={(consent) => console.log('Consent granted:', consent)}
+                treatmentPlan={mockTreatmentPlan}
               />
             </CardContent>
           </Card>
@@ -666,14 +745,18 @@ export default function TreatmentsPage() {
             </CardHeader>
             <CardContent>
               <BeforeAfterSecureGallery
-                treatmentSessionId="session-1"
-                photos={[]}
-                consentStatus="granted"
                 canEdit={true}
                 canShare={true}
+                consentStatus="granted"
                 enableComparison={true}
-                onPhotoUpload={(file, type) => console.log('Photo upload:', file, type)}
-                onPhotoShare={(id, hours) => console.log('Photo share:', id, hours)}
+                onPhotoShare={(id, hours) =>
+                  console.log('Photo share:', id, hours)
+                }
+                onPhotoUpload={(file, type) =>
+                  console.log('Photo upload:', file, type)
+                }
+                photos={[]}
+                treatmentSessionId="session-1"
               />
             </CardContent>
           </Card>
@@ -681,38 +764,43 @@ export default function TreatmentsPage() {
       </Tabs>
 
       {/* New Treatment Dialog */}
-      <Dialog open={showNewTreatmentDialog} onOpenChange={setShowNewTreatmentDialog}>
+      <Dialog
+        onOpenChange={setShowNewTreatmentDialog}
+        open={showNewTreatmentDialog}
+      >
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Novo Plano de Tratamento</DialogTitle>
             <DialogDescription>
-              Criar um novo plano de tratamento estético com conformidade brasileira
+              Criar um novo plano de tratamento estético com conformidade
+              brasileira
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="space-y-4">
             <Alert>
               <Plus className="h-4 w-4" />
               <AlertDescription>
-                Esta funcionalidade será implementada com formulário completo de criação de tratamentos,
-                incluindo seleção de protocolos, configuração de sessões e validação de conformidade.
+                Esta funcionalidade será implementada com formulário completo de
+                criação de tratamentos, incluindo seleção de protocolos,
+                configuração de sessões e validação de conformidade.
               </AlertDescription>
             </Alert>
-            
+
             <div className="flex gap-2 pt-4">
-              <Button 
-                variant="outline" 
-                onClick={() => setShowNewTreatmentDialog(false)}
+              <Button
                 className="flex-1"
+                onClick={() => setShowNewTreatmentDialog(false)}
+                variant="outline"
               >
                 Cancelar
               </Button>
-              <Button 
+              <Button
+                className="flex-1"
                 onClick={() => {
                   // Would implement treatment creation here
                   setShowNewTreatmentDialog(false);
                 }}
-                className="flex-1"
               >
                 Criar Tratamento
               </Button>

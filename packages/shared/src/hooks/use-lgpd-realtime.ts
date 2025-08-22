@@ -22,8 +22,10 @@ import {
 import { type UseRealtimeConfig, useRealtime } from './use-realtime';
 
 // LGPD-compliant realtime hook configuration
-export interface UseLGPDRealtimeConfig extends UseRealtimeConfig {
-  userId?: string;
+export interface UseLGPDRealtimeConfig
+  extends Omit<UseRealtimeConfig, 'enabled'> {
+  userId: string;
+  enabled?: boolean;
   dataCategory: LGPDDataCategory;
   processingPurpose: LGPDProcessingPurpose;
   lgpdConfig: LGPDRealtimeConfig;
@@ -99,10 +101,9 @@ export function useLGPDConsentStatus(
 /**
  * LGPD-compliant real-time hook with automatic data processing
  */
-export function useLGPDRealtime<T = any>(
-  supabaseClient: SupabaseClient,
-  config: UseLGPDRealtimeConfig
-) {
+export function useLGPDRealtime<
+  T extends Record<string, any> = Record<string, any>,
+>(supabaseClient: SupabaseClient, config: UseLGPDRealtimeConfig) {
   const [processedData, setProcessedData] = useState<T | null>(null);
   const [dataProcessingError, setDataProcessingError] = useState<Error | null>(
     null
@@ -151,7 +152,7 @@ export function useLGPDRealtime<T = any>(
           );
         }
 
-        setProcessedData(processedPayload as T);
+        setProcessedData(processedPayload.new as T);
         setDataProcessingError(null);
 
         // Notify about processed data
@@ -196,7 +197,9 @@ export function useLGPDRealtime<T = any>(
   // Enhanced realtime config with LGPD handlers
   const lgpdRealtimeConfig: UseRealtimeConfig<T> = {
     ...config,
-    enabled: config.enabled && (config.validateConsent === false || hasConsent),
+    enabled:
+      (config.enabled ?? true) &&
+      (config.validateConsent === false || hasConsent),
     lgpdCompliance: true,
     auditLogging: config.lgpdConfig.auditLogging,
     onInsert: createLGPDEventHandler(config.onInsert),
@@ -263,18 +266,20 @@ export function useLGPDPatientRealtime(
 
   const config: UseLGPDRealtimeConfig = {
     table: 'patients',
-    filter: options.patientId
-      ? `id=eq.${options.patientId}`
+    ...(options.patientId
+      ? { filter: `id=eq.${options.patientId}` }
       : options.clinicId
-        ? `clinic_id=eq.${options.clinicId}`
-        : undefined,
-    enabled: options.enabled,
-    userId: options.userId,
+        ? { filter: `clinic_id=eq.${options.clinicId}` }
+        : {}),
+    enabled: options.enabled ?? true,
+    userId: options.userId ?? '',
     dataCategory: LGPDDataCategory.SENSITIVE,
     processingPurpose: LGPDProcessingPurpose.HEALTHCARE_DELIVERY,
     lgpdConfig,
-    onUpdate: options.onPatientUpdate,
-    onConsentDenied: options.onConsentDenied,
+    ...(options.onPatientUpdate && { onUpdate: options.onPatientUpdate }),
+    ...(options.onConsentDenied && {
+      onConsentDenied: options.onConsentDenied,
+    }),
     validateConsent: true,
   };
 
@@ -338,13 +343,17 @@ export function useLGPDAppointmentRealtime(
   const config: UseLGPDRealtimeConfig = {
     table: 'appointments',
     filter: buildFilter(),
-    enabled: options.enabled,
-    userId: options.userId,
+    enabled: options.enabled ?? true,
+    userId: options.userId ?? '',
     dataCategory: LGPDDataCategory.PERSONAL,
     processingPurpose: LGPDProcessingPurpose.APPOINTMENT_MANAGEMENT,
     lgpdConfig,
-    onUpdate: options.onAppointmentUpdate,
-    onConsentDenied: options.onConsentDenied,
+    ...(options.onAppointmentUpdate && {
+      onUpdate: options.onAppointmentUpdate,
+    }),
+    ...(options.onConsentDenied && {
+      onConsentDenied: options.onConsentDenied,
+    }),
     validateConsent: true,
   };
 
@@ -384,13 +393,13 @@ export function useLGPDAnalytics(
 
   const config: UseLGPDRealtimeConfig = {
     table: 'analytics_events',
-    filter: options.clinicId ? `clinic_id=eq.${options.clinicId}` : undefined,
-    enabled: options.enabled,
-    userId: options.userId,
+    ...(options.clinicId && { filter: `clinic_id=eq.${options.clinicId}` }),
+    enabled: options.enabled ?? true,
+    userId: options.userId ?? '',
     dataCategory: LGPDDataCategory.AGGREGATE,
     processingPurpose: LGPDProcessingPurpose.ANALYTICS,
     lgpdConfig,
-    onInsert: options.onAnalyticsUpdate,
+    ...(options.onAnalyticsUpdate && { onInsert: options.onAnalyticsUpdate }),
     validateConsent: false, // Aggregate analytics don't require individual consent
   };
 

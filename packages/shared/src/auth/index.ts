@@ -3,6 +3,8 @@
  * Sistema completo de autenticação integrado com AuthTokenManager
  */
 
+// Types
+export type { AuthContext } from '../types/hono.types';
 // Middleware (Backend)
 export {
   adminRoute,
@@ -31,7 +33,6 @@ export {
   type AuthTokens,
   authTokenManager,
 } from './auth-token-manager';
-
 // Route Protection
 export {
   ProtectedRoute,
@@ -39,7 +40,6 @@ export {
   usePermissions,
   withAuth,
 } from './protected-route';
-
 // React Hooks and Context
 export {
   type AuthState,
@@ -48,6 +48,3 @@ export {
   type LoginResponse,
   useAuthToken,
 } from './use-auth-token';
-
-// Types
-export type { AuthContext } from '../types/hono.types';

@@ -1,6 +1,17 @@
 // Schema exports for NeonPro shared package
 // All schemas organized by domain with no duplications
 
+// Appointment schemas only
+export {
+  AppointmentBaseSchema,
+  AppointmentQuerySchema,
+  AppointmentStatusSchema,
+  AppointmentTypeSchema,
+  CreateAppointmentSchema,
+  PrescriptionSchema,
+  UpdateAppointmentSchema,
+  VitalSignsSchema,
+} from './appointment.schema';
 // Auth schemas only (no type exports to avoid conflicts)
 export {
   LoginRequestSchema,
@@ -12,18 +23,6 @@ export {
   UserPermissionSchema,
   UserRoleSchema,
 } from './auth.schema';
-
-// Appointment schemas only  
-export {
-  AppointmentBaseSchema,
-  AppointmentQuerySchema,
-  AppointmentStatusSchema,
-  AppointmentTypeSchema,
-  CreateAppointmentSchema,
-  PrescriptionSchema,
-  UpdateAppointmentSchema,
-  VitalSignsSchema,
-} from './appointment.schema';
 
 // Compliance schemas only
 export {

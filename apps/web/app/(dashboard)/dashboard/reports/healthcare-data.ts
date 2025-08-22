@@ -4,8 +4,8 @@
 // LGPD Compliance Data
 export const lgpdComplianceData = {
   overview: {
-    totalDataSubjects: 12847,
-    activeConsents: 11923,
+    totalDataSubjects: 12_847,
+    activeConsents: 11_923,
     withdrawnConsents: 924,
     pendingRequests: 15,
     dataBreaches: 0,
@@ -50,7 +50,7 @@ export const lgpdComplianceData = {
   privacyPolicies: {
     lastUpdate: '2024-01-10',
     version: '3.2',
-    acknowledgments: 11456,
+    acknowledgments: 11_456,
     pendingAcknowledments: 234,
   },
 };
@@ -155,11 +155,11 @@ export const cfmProfessionalData = {
     totalProcedures: 5692,
     monthlyAverage: 245,
     specialtyProcedures: {
-      'Botox': 1234,
-      'Preenchimento': 856,
-      'Laser': 643,
-      'Peeling': 432,
-      'Consultas': 2527,
+      Botox: 1234,
+      Preenchimento: 856,
+      Laser: 643,
+      Peeling: 432,
+      Consultas: 2527,
     },
   },
 };
@@ -199,9 +199,9 @@ export const ansPerformanceData = {
 // Financial Data with Brazilian formatting
 export const financialData = {
   revenue: {
-    monthly: 487650.00,
-    quarterly: 1425300.00,
-    yearly: 5847200.00,
+    monthly: 487_650.0,
+    quarterly: 1_425_300.0,
+    yearly: 5_847_200.0,
     growth: {
       monthly: 12.4,
       quarterly: 18.7,
@@ -209,37 +209,42 @@ export const financialData = {
     },
   },
   paymentMethods: {
-    pix: { amount: 145230.00, percentage: 29.8, transactions: 234 },
-    creditCard: { amount: 234560.00, percentage: 48.1, transactions: 456 },
-    debitCard: { amount: 87450.00, percentage: 17.9, transactions: 189 },
-    cash: { amount: 20410.00, percentage: 4.2, transactions: 67 },
+    pix: { amount: 145_230.0, percentage: 29.8, transactions: 234 },
+    creditCard: { amount: 234_560.0, percentage: 48.1, transactions: 456 },
+    debitCard: { amount: 87_450.0, percentage: 17.9, transactions: 189 },
+    cash: { amount: 20_410.0, percentage: 4.2, transactions: 67 },
   },
   insurance: {
     sus: { amount: 0, percentage: 0, patients: 0 },
-    private: { amount: 234560.00, percentage: 48.1, patients: 1247 },
-    particular: { amount: 253090.00, percentage: 51.9, patients: 1456 },
+    private: { amount: 234_560.0, percentage: 48.1, patients: 1247 },
+    particular: { amount: 253_090.0, percentage: 51.9, patients: 1456 },
   },
   profitability: {
     grossMargin: 68.4,
     netMargin: 23.7,
-    ebitda: 115678.00,
-    operationalCosts: 154230.00,
+    ebitda: 115_678.0,
+    operationalCosts: 154_230.0,
   },
   taxes: {
-    irpj: 23456.00,
-    csll: 15234.00,
-    pis: 3567.00,
-    cofins: 16234.00,
-    iss: 24567.00,
-    inss: 45678.00,
-    total: 128736.00,
+    irpj: 23_456.0,
+    csll: 15_234.0,
+    pis: 3567.0,
+    cofins: 16_234.0,
+    iss: 24_567.0,
+    inss: 45_678.0,
+    total: 128_736.0,
   },
   serviceAnalysis: [
-    { service: 'Botox', revenue: 145230.00, margin: 72.3, sessions: 234 },
-    { service: 'Preenchimento', revenue: 123450.00, margin: 68.9, sessions: 156 },
-    { service: 'Laser CO2', revenue: 98760.00, margin: 74.2, sessions: 123 },
-    { service: 'Peeling', revenue: 65430.00, margin: 65.1, sessions: 189 },
-    { service: 'Consulta', revenue: 54780.00, margin: 85.4, sessions: 456 },
+    { service: 'Botox', revenue: 145_230.0, margin: 72.3, sessions: 234 },
+    {
+      service: 'Preenchimento',
+      revenue: 123_450.0,
+      margin: 68.9,
+      sessions: 156,
+    },
+    { service: 'Laser CO2', revenue: 98_760.0, margin: 74.2, sessions: 123 },
+    { service: 'Peeling', revenue: 65_430.0, margin: 65.1, sessions: 189 },
+    { service: 'Consulta', revenue: 54_780.0, margin: 85.4, sessions: 456 },
   ],
 };
 
@@ -294,7 +299,12 @@ export const clinicalData = {
   performanceIndicators: [
     { metric: 'Tempo de Consulta', target: 30, actual: 28, unit: 'minutos' },
     { metric: 'Taxa de No-Show', target: 5, actual: 3.2, unit: '%' },
-    { metric: 'Satisfação Pós-Tratamento', target: 90, actual: 94.2, unit: '%' },
+    {
+      metric: 'Satisfação Pós-Tratamento',
+      target: 90,
+      actual: 94.2,
+      unit: '%',
+    },
     { metric: 'Retorno em 7 dias', target: 15, actual: 12.3, unit: '%' },
   ],
 };
@@ -317,7 +327,7 @@ export const patientDemographics = {
     'São Paulo': { count: 1423, percentage: 50.0 },
     'Rio de Janeiro': { count: 569, percentage: 20.0 },
     'Minas Gerais': { count: 427, percentage: 15.0 },
-    'Outros': { count: 428, percentage: 15.0 },
+    Outros: { count: 428, percentage: 15.0 },
   },
   treatmentHistory: {
     newPatients: 456,
@@ -371,7 +381,7 @@ export const staffPerformanceData = {
       patients: 1247,
       procedures: 2847,
       satisfaction: 4.9,
-      revenue: 345670.00,
+      revenue: 345_670.0,
     },
     {
       name: 'Dra. Maria Oliveira',
@@ -380,7 +390,7 @@ export const staffPerformanceData = {
       patients: 1156,
       procedures: 2234,
       satisfaction: 4.7,
-      revenue: 298450.00,
+      revenue: 298_450.0,
     },
     {
       name: 'Enfª Ana Paula',
@@ -394,7 +404,7 @@ export const staffPerformanceData = {
   ],
   teamMetrics: {
     averageSatisfaction: 4.8,
-    totalRevenue: 644120.00,
+    totalRevenue: 644_120.0,
     productivityIndex: 94.2,
     trainingCompliance: 98.5,
   },
@@ -417,7 +427,7 @@ export const reportData = {
 export const formatCurrency = (value: number): string => {
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
-    currency: 'BRL'
+    currency: 'BRL',
   }).format(value);
 };
 
@@ -425,7 +435,7 @@ export const formatPercentage = (value: number): string => {
   return new Intl.NumberFormat('pt-BR', {
     style: 'percent',
     minimumFractionDigits: 1,
-    maximumFractionDigits: 1
+    maximumFractionDigits: 1,
   }).format(value / 100);
 };
 

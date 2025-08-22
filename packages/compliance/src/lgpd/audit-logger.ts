@@ -75,6 +75,7 @@ export type LGPDAuditConfig = z.infer<typeof LGPDAuditConfigSchema>;
  */
 export class LGPDAuditLogger {
   private readonly config: LGPDAuditConfig;
+  private readonly db: Database;
 
   constructor(config: LGPDAuditConfig, db: Database) {
     this.config = config;

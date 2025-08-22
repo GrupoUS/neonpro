@@ -4,7 +4,7 @@
  * Target: ≥65% compliance (corrigido de 15%)
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 describe('LGPD Compliance Final Validation', () => {
   describe('Data Subject Rights (Art. 18 LGPD)', () => {
@@ -13,9 +13,9 @@ describe('LGPD Compliance Final Validation', () => {
         dataAccess: true,
         dataPortability: true,
         accessRequestProcess: 'automated',
-        responseTime: '<15 days'
+        responseTime: '<15 days',
       };
-      
+
       expect(accessRights.dataAccess).toBe(true);
       expect(accessRights.dataPortability).toBe(true);
       expect(accessRights.accessRequestProcess).toBe('automated');
@@ -27,9 +27,9 @@ describe('LGPD Compliance Final Validation', () => {
         dataCorrection: true,
         selfService: true,
         auditTrail: true,
-        verificationProcess: 'active'
+        verificationProcess: 'active',
       };
-      
+
       expect(rectificationRights.dataCorrection).toBe(true);
       expect(rectificationRights.selfService).toBe(true);
       expect(rectificationRights.auditTrail).toBe(true);
@@ -41,9 +41,9 @@ describe('LGPD Compliance Final Validation', () => {
         dataErasure: true,
         anonymization: true,
         dependencyCheck: true,
-        retentionPolicy: 'compliant'
+        retentionPolicy: 'compliant',
       };
-      
+
       expect(erasureRights.dataErasure).toBe(true);
       expect(erasureRights.anonymization).toBe(true);
       expect(erasureRights.dependencyCheck).toBe(true);
@@ -57,9 +57,9 @@ describe('LGPD Compliance Final Validation', () => {
         explicitConsent: true,
         granularConsent: true,
         consentRecords: true,
-        withdrawalMechanism: 'available'
+        withdrawalMechanism: 'available',
       };
-      
+
       expect(consentCollection.explicitConsent).toBe(true);
       expect(consentCollection.granularConsent).toBe(true);
       expect(consentCollection.consentRecords).toBe(true);
@@ -71,9 +71,9 @@ describe('LGPD Compliance Final Validation', () => {
         easyWithdrawal: true,
         immediateEffect: true,
         noDiscrimination: true,
-        confirmationProvided: true
+        confirmationProvided: true,
       };
-      
+
       expect(consentWithdrawal.easyWithdrawal).toBe(true);
       expect(consentWithdrawal.immediateEffect).toBe(true);
       expect(consentWithdrawal.noDiscrimination).toBe(true);
@@ -85,9 +85,9 @@ describe('LGPD Compliance Final Validation', () => {
         healthDataProtection: true,
         explicitConsent: true,
         minimumDataProcessing: true,
-        professionalSecrecy: true
+        professionalSecrecy: true,
       };
-      
+
       expect(specialCategoryData.healthDataProtection).toBe(true);
       expect(specialCategoryData.explicitConsent).toBe(true);
       expect(specialCategoryData.minimumDataProcessing).toBe(true);
@@ -102,9 +102,9 @@ describe('LGPD Compliance Final Validation', () => {
         dataCategories: 'specified',
         retentionPeriod: 'defined',
         recipientCategories: 'identified',
-        dataSubjectRights: 'explained'
+        dataSubjectRights: 'explained',
       };
-      
+
       expect(privacyNotice.processingPurpose).toBe('clear');
       expect(privacyNotice.dataCategories).toBe('specified');
       expect(privacyNotice.retentionPeriod).toBe('defined');
@@ -117,9 +117,9 @@ describe('LGPD Compliance Final Validation', () => {
         legalBasis: 'identified',
         necessityJustification: true,
         proportionalityAssessment: true,
-        purposeLimitation: true
+        purposeLimitation: true,
       };
-      
+
       expect(lawfulProcessing.legalBasis).toBe('identified');
       expect(lawfulProcessing.necessityJustification).toBe(true);
       expect(lawfulProcessing.proportionalityAssessment).toBe(true);
@@ -133,9 +133,9 @@ describe('LGPD Compliance Final Validation', () => {
         dataEncryption: 'AES-256',
         accessControl: true,
         systemSecurity: true,
-        securityIncidentPlan: true
+        securityIncidentPlan: true,
       };
-      
+
       expect(technicalSecurity.dataEncryption).toBe('AES-256');
       expect(technicalSecurity.accessControl).toBe(true);
       expect(technicalSecurity.systemSecurity).toBe(true);
@@ -147,9 +147,9 @@ describe('LGPD Compliance Final Validation', () => {
         staffTraining: true,
         dataProtectionPolicies: true,
         incidentResponsePlan: true,
-        regularSecurityReview: true
+        regularSecurityReview: true,
       };
-      
+
       expect(organizationalSecurity.staffTraining).toBe(true);
       expect(organizationalSecurity.dataProtectionPolicies).toBe(true);
       expect(organizationalSecurity.incidentResponsePlan).toBe(true);
@@ -163,9 +163,9 @@ describe('LGPD Compliance Final Validation', () => {
         privacyByDesign: true,
         privacyByDefault: true,
         recordsOfProcessing: true,
-        dataProtectionOfficer: true
+        dataProtectionOfficer: true,
       };
-      
+
       expect(controllerObligations.privacyByDesign).toBe(true);
       expect(controllerObligations.privacyByDefault).toBe(true);
       expect(controllerObligations.recordsOfProcessing).toBe(true);
@@ -177,9 +177,9 @@ describe('LGPD Compliance Final Validation', () => {
         dataProcessingAgreements: true,
         adequateSafeguards: true,
         processorCompliance: true,
-        internationalTransferSafeguards: true
+        internationalTransferSafeguards: true,
       };
-      
+
       expect(processorAgreements.dataProcessingAgreements).toBe(true);
       expect(processorAgreements.adequateSafeguards).toBe(true);
       expect(processorAgreements.processorCompliance).toBe(true);
@@ -193,9 +193,9 @@ describe('LGPD Compliance Final Validation', () => {
         medicalDataProtection: true,
         patientConsentManagement: true,
         medicalSecrecyCompliance: true,
-        emergencyAccessProtocols: true
+        emergencyAccessProtocols: true,
       };
-      
+
       expect(healthcareCompliance.medicalDataProtection).toBe(true);
       expect(healthcareCompliance.patientConsentManagement).toBe(true);
       expect(healthcareCompliance.medicalSecrecyCompliance).toBe(true);
@@ -207,9 +207,9 @@ describe('LGPD Compliance Final Validation', () => {
         cfmComplianceIntegration: true,
         professionalEthicsCompliance: true,
         patientPrivacyProtection: true,
-        medicalRecordIntegrity: true
+        medicalRecordIntegrity: true,
       };
-      
+
       expect(professionalObligations.cfmComplianceIntegration).toBe(true);
       expect(professionalObligations.professionalEthicsCompliance).toBe(true);
       expect(professionalObligations.patientPrivacyProtection).toBe(true);
@@ -223,11 +223,15 @@ describe('LGPD Compliance Final Validation', () => {
         currentComplianceScore: 65, // Atual após correções
         targetComplianceScore: 65,
         improvementFromPrevious: 50, // 65% - 15% = 50% improvement
-        productionReadiness: true
+        productionReadiness: true,
       };
-      
-      expect(complianceMetrics.currentComplianceScore).toBeGreaterThanOrEqual(65);
-      expect(complianceMetrics.currentComplianceScore).toBeGreaterThanOrEqual(complianceMetrics.targetComplianceScore);
+
+      expect(complianceMetrics.currentComplianceScore).toBeGreaterThanOrEqual(
+        65
+      );
+      expect(complianceMetrics.currentComplianceScore).toBeGreaterThanOrEqual(
+        complianceMetrics.targetComplianceScore
+      );
       expect(complianceMetrics.improvementFromPrevious).toBeGreaterThan(0);
       expect(complianceMetrics.productionReadiness).toBe(true);
     });
@@ -238,9 +242,9 @@ describe('LGPD Compliance Final Validation', () => {
         consentManagement: 'implemented',
         securityMeasures: 'implemented',
         transparencyMeasures: 'implemented',
-        incidentResponse: 'implemented'
+        incidentResponse: 'implemented',
       };
-      
+
       expect(implementationStatus.dataSubjectRights).toBe('implemented');
       expect(implementationStatus.consentManagement).toBe('implemented');
       expect(implementationStatus.securityMeasures).toBe('implemented');

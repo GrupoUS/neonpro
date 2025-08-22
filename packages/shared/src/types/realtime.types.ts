@@ -6,49 +6,48 @@
  * with healthcare-specific events and LGPD compliance
  */
 
+import type { Database } from '@neonpro/db';
 import type {
   RealtimeChannel,
   RealtimePostgresChangesPayload,
 } from '@supabase/supabase-js';
-import type { Database } from '@neonpro/db';
 
 // Healthcare database tables for real-time subscriptions
 export type Tables = Database['public']['Tables'];
 export type PatientRow = Tables['patients']['Row'];
 export type AppointmentRow = Tables['appointments']['Row'];
-export type ProfessionalRow = Tables['professionals']['Row'];
-export type AuditLogRow = Tables['audit_logs']['Row'];
+export type ProfessionalRow = Tables['healthcare_professionals']['Row'];
+export type AuditLogRow = Tables['healthcare_audit_logs']['Row'];
 
-// Real-time payload types
-export type RealtimePayload<T = Record<string, any>> =
-  RealtimePostgresChangesPayload<T>;
+// Real-time payload types - Using Record constraint to satisfy TypeScript
+export type RealtimePayload<
+  T extends Record<string, any> = Record<string, any>,
+> = RealtimePostgresChangesPayload<T>;
 
-// Healthcare-specific event types
-export interface PatientRealtimePayload extends RealtimePayload<PatientRow> {
+// Healthcare-specific event types - Using type alias instead of interface to avoid extension issues
+export type PatientRealtimePayload = RealtimePayload<PatientRow> & {
   eventType: 'INSERT' | 'UPDATE' | 'DELETE';
   table: 'patients';
   schema: 'public';
-}
+};
 
-export interface AppointmentRealtimePayload
-  extends RealtimePayload<AppointmentRow> {
+export type AppointmentRealtimePayload = RealtimePayload<AppointmentRow> & {
   eventType: 'INSERT' | 'UPDATE' | 'DELETE';
   table: 'appointments';
   schema: 'public';
-}
+};
 
-export interface ProfessionalRealtimePayload
-  extends RealtimePayload<ProfessionalRow> {
+export type ProfessionalRealtimePayload = RealtimePayload<ProfessionalRow> & {
   eventType: 'INSERT' | 'UPDATE' | 'DELETE';
   table: 'professionals';
   schema: 'public';
-}
+};
 
-export interface AuditRealtimePayload extends RealtimePayload<AuditLogRow> {
+export type AuditRealtimePayload = RealtimePayload<AuditLogRow> & {
   eventType: 'INSERT';
   table: 'audit_logs';
   schema: 'public';
-}
+};
 
 // Union type for all healthcare real-time events
 export type HealthcareRealtimePayload =
@@ -114,10 +113,10 @@ export interface RealtimeChannelManager {
   getActiveChannels: () => string[];
 }
 
-// Real-time event handlers
-export type RealtimeEventHandler<T = any> = (
-  payload: RealtimePayload<T>
-) => void;
+// Real-time event handlers - Using Record constraint for generic type
+export type RealtimeEventHandler<
+  T extends Record<string, any> = Record<string, any>,
+> = (payload: RealtimePayload<T>) => void;
 
 export interface RealtimeEventHandlers {
   onInsert?: RealtimeEventHandler;
@@ -139,7 +138,9 @@ export interface RealtimeHealthCheck {
 }
 
 // Real-time hooks configuration
-export interface UseRealtimeConfig<T = any> {
+export interface UseRealtimeConfig<
+  T extends Record<string, any> = Record<string, any>,
+> {
   table: string;
   filter?: string;
   event?: 'INSERT' | 'UPDATE' | 'DELETE' | '*';
@@ -147,7 +148,7 @@ export interface UseRealtimeConfig<T = any> {
   onInsert?: RealtimeEventHandler<T>;
   onDelete?: RealtimeEventHandler<T>;
   onError?: (error: Error) => void;
-  enabled?: boolean;
+  enabled: boolean;
   lgpdCompliance?: boolean;
   auditLogging?: boolean;
 }
@@ -161,7 +162,10 @@ export interface RealtimeQueryOptions {
   backgroundRefetch?: boolean;
 }
 
-export interface UseRealtimeQueryConfig<T = any> extends UseRealtimeConfig<T> {
+// TanStack Query integration types - Using Record constraint
+export interface UseRealtimeQueryConfig<
+  T extends Record<string, any> = Record<string, any>,
+> extends UseRealtimeConfig<T> {
   queryKey: string[];
   queryOptions?: RealtimeQueryOptions;
 }

@@ -25,6 +25,7 @@ const mockPrismaClient = {
     create: vi.fn(),
     findMany: vi.fn(),
     update: vi.fn(),
+    delete: vi.fn(),
   },
   auditLog: {
     create: vi.fn(),

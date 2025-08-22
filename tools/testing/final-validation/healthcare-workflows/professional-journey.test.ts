@@ -36,8 +36,8 @@ placeholder =
     <select data-testid =
   "specialization-select">
       <option value =
-    Cardiologia < 'cardiology' < / 2;;<>iinnoooopptt{};
-value = Neurologia < 'neurology' < / 2;;<>iinnoooopptt{};
+    Cardiologia < 'cardiology' < / 2;;;<>iinnoooopptt{};
+value = Neurologia < 'neurology' < / 2;;;<>iinnoooopptt{};
 value = Pediatria < 'pediatrics' < />inoopt < / > ceelst < button;
 type = 'submit';
 data-testid = Entrar < 'login-button' < />bnottu < / > fmor;
@@ -63,9 +63,9 @@ data-testid = CRM < 'crm-display';
     <div
 data-testid = "dashboard-stats">
       <div data-testid = Pacientes < 'patients-today';
-Hoje: 8 < / 2;;<>ddiivv{};
+Hoje: 8 < / 2;;;<>ddiivv{};
 data-testid = Consultas < 'appointments-pending';
-Pendentes: 3 < / 2;;<>ddiivv{};
+Pendentes: 3 < / 2;;;<>ddiivv{};
 data-testid = Próxima < 'next-appointment';
 : 14:30 - João Silva</div>
     </div>
@@ -119,22 +119,22 @@ data-testid = <span>CPF < 'patient-info';
     
     <div
 data-testid = <h3>Histórico < 'medical-history';
-Médico < / 23;;<>bhnottu{};
+Médico < / 23;;;<>bhnottu{};
 data-testid = Adicionar < 'add-record-btn';
-Registro < / 2;;<>bdinottuv{};
+Registro < / 2;;;<>bdinottuv{};
 data-testid = "medical-records">
         <div data-testid = Consulta < 'record-item';
-Cardiológica - 15 / 08 / 2025 < />div < / > div < / 2;;<>ddiivv{};
+Cardiológica - 15 / 08 / 2025 < />div < / > div < / 2;;;<>ddiivv{};
 data-testid = <h3>Histórico < 'appointment-history';
 de;
-Consultas < / 23;;<>dhiv{};
+Consultas < / 23;;;<>dhiv{};
 data-testid = "appointments">
         <div data-testid = 25 / 07 / 2025 - Consulta < 'past-appointment';
-inicial < />div < / > div < / 2;;<>ddiivv{};
+inicial < />div < / > div < / 2;;;<>ddiivv{};
 data-testid = <h3>Status < 'consent-status';
 de;
 Consentimento;
-LGPD < / 23;;<>dhiv{};
+LGPD < / 23;;;<>dhiv{};
 data-testid = <span>Tratamento < 'consent-info';
 : ✅ Consentido</span>
         <span>Análises: ✅ Consentido</span>

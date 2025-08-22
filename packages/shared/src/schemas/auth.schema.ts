@@ -63,7 +63,7 @@ export const MFAMethodSchema = z.enum([
   'sms',
   'email',
   'authenticator',
-  'backup_codes'
+  'backup_codes',
 ]);
 
 export type UserRole = z.infer<typeof UserRoleSchema>;

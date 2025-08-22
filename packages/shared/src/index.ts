@@ -8,60 +8,55 @@
 
 // Export schemas with specific re-exports to avoid conflicts
 export {
-  // Auth schemas
-  LoginRequestSchema,
-  LoginResponseSchema,
-  RegisterRequestSchema,
-  UserBaseSchema,
-  UserPermissionSchema,
-  UserRoleSchema,
-  
+  // Service schemas
+  AnvisaRiskClassificationSchema,
   // Appointment schemas
   AppointmentBaseSchema,
   AppointmentQuerySchema,
   AppointmentStatusSchema,
   AppointmentTypeSchema,
-  CreateAppointmentSchema,
-  PrescriptionSchema,
-  UpdateAppointmentSchema,
-  VitalSignsSchema,
-  
   // Compliance schemas
   AuditActionSchema,
   AuditLogSchema,
   ComplianceQuerySchema,
   ConsentRecordSchema,
+  CpfSchema,
+  CreateAppointmentSchema,
+  CreatePatientSchema,
+  // Professional schemas
+  CreateProfessionalSchema,
+  CreateServiceSchema,
   DataCategorySchema,
   DataSubjectRequestSchema,
   LgpdLegalBasisSchema,
-  SecurityIncidentSchema,
-  
+  // Auth schemas
+  LoginRequestSchema,
+  LoginResponseSchema,
   // Patient schemas
   PatientAddressSchema,
-  CpfSchema,
-  CreatePatientSchema,
   PatientBaseSchema,
   PatientGenderSchema,
   PatientQuerySchema,
-  UpdatePatientSchema,
-  
-  // Professional schemas
-  CreateProfessionalSchema,
+  PrescriptionSchema,
   ProfessionalBaseSchema,
   ProfessionalQuerySchema,
   ProfessionalTypeSchema,
-  SpecializationSchema,
-  UpdateProfessionalSchema,
-  WorkingHoursSchema,
-  
-  // Service schemas
-  AnvisaRiskClassificationSchema,
-  CreateServiceSchema,
+  RegisterRequestSchema,
+  SecurityIncidentSchema,
   ServiceBaseSchema,
   ServiceCategorySchema,
   ServiceQuerySchema,
   ServiceTypeSchema,
+  SpecializationSchema,
+  UpdateAppointmentSchema,
+  UpdatePatientSchema,
+  UpdateProfessionalSchema,
   UpdateServiceSchema,
+  UserBaseSchema,
+  UserPermissionSchema,
+  UserRoleSchema,
+  VitalSignsSchema,
+  WorkingHoursSchema,
 } from './schemas';
 
 // Export types with specific re-exports to avoid conflicts
@@ -75,19 +70,44 @@ export type {
   Appointment,
   AppointmentResponse,
   AppointmentsListResponse,
+  // Response types
+  AuthErrorResponse,
   BaseEntity,
   BusinessHours,
+  CacheConfig,
   Clinic,
   ClinicResponse,
+  ConflictErrorResponse,
   ContactInfo,
+  CrudOperations,
+  DomainEvent,
+  EndpointMethod,
+  EndpointPath,
+  // Entity types
+  Entity,
+  EntityId,
+  EntityType,
+  EnvironmentConfig,
   ErrorResponse,
   FileDocument,
+  FilterCondition,
+  FilterOperator,
+  FormData,
+  FormErrors,
   GeoCoordinates,
   HealthCheckResponse,
+  HealthConfig,
   HttpMethod,
+  ISODate,
+  ISODateTime,
   ListResponse,
   LoginResponse,
+  NonNullable,
+  NotFoundErrorResponse,
   Notification,
+  Nullable,
+  // Utility types
+  Optional,
   PaginatedResponse,
   PaginationMeta,
   PaginationParams,
@@ -98,49 +118,21 @@ export type {
   Professional,
   ProfessionalResponse,
   ProfessionalsListResponse,
+  RateLimitErrorResponse,
   RefreshTokenResponse,
   RegisterResponse,
   RequestContext,
+  Required,
+  SearchFilter,
   SearchParams,
+  ServerErrorResponse,
   SuccessResponse,
+  TimeString,
   TreatmentRecord,
   User,
-  ValidationError,
-  
-  // Entity types
-  Entity,
-  EntityType,
-  
-  // Response types
-  AuthErrorResponse,
-  ConflictErrorResponse,
-  NotFoundErrorResponse,
-  RateLimitErrorResponse,
-  ServerErrorResponse,
-  ValidationErrorResponse,
-  
-  // Utility types
-  Optional,
-  Required,
-  Nullable,
-  NonNullable,
   UUID,
-  EntityId,
-  ISODate,
-  ISODateTime,
-  TimeString,
-  FormData,
-  FormErrors,
-  EndpointMethod,
-  EndpointPath,
-  CrudOperations,
-  FilterOperator,
-  FilterCondition,
-  SearchFilter,
-  DomainEvent,
-  HealthConfig,
-  CacheConfig,
-  EnvironmentConfig,
+  ValidationError,
+  ValidationErrorResponse,
 } from './types';
 
 // Package version and metadata
@@ -432,3 +424,8 @@ export type SuccessMessage = keyof typeof SUCCESS_MESSAGES;
 
 // API Client export
 export * from './api-client';
+
+// Hooks exports
+export * from './hooks/use-healthcare-realtime';
+export * from './hooks/use-lgpd-realtime';
+export * from './hooks/use-realtime';

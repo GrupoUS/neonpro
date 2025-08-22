@@ -1,21 +1,21 @@
 'use client';
 
 import {
+  AlertTriangle,
   BarChart3,
   Calendar,
   CreditCard,
   FileCheck,
   FileText,
   Heart,
+  HelpCircle,
   LayoutDashboard,
+  LogOut,
   Settings,
   Shield,
-  Users,
-  LogOut,
-  HelpCircle,
   Stethoscope,
-  AlertTriangle,
   UserCheck,
+  Users,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -122,18 +122,18 @@ export function HealthcareSidebar() {
   const pathname = usePathname();
 
   return (
-    <Sidebar className="border-r border-healthcare-border bg-sidebar-bg">
+    <Sidebar className="border-healthcare-border border-r bg-sidebar-bg">
       {/* Healthcare Header */}
-      <SidebarHeader className="border-b border-healthcare-border">
+      <SidebarHeader className="border-healthcare-border border-b">
         <div className="flex items-center gap-3 px-3 py-4">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-healthcare-primary">
             <Stethoscope className="h-5 w-5 text-white" />
           </div>
           <div className="flex flex-col">
-            <span className="font-serif text-lg font-bold text-sidebar-text">
+            <span className="font-bold font-serif text-lg text-sidebar-text">
               NeonPro
             </span>
-            <span className="text-xs text-sidebar-text/60">
+            <span className="text-sidebar-text/60 text-xs">
               Healthcare Management
             </span>
           </div>
@@ -143,7 +143,7 @@ export function HealthcareSidebar() {
       <SidebarContent className="px-2">
         {/* Principal Navigation */}
         <SidebarGroup>
-          <SidebarGroupLabel className="text-sidebar-text/70 font-medium">
+          <SidebarGroupLabel className="font-medium text-sidebar-text/70">
             Principal
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -157,27 +157,36 @@ export function HealthcareSidebar() {
                   <SidebarMenuItem key={item.href}>
                     <SidebarMenuButton
                       asChild
-                      isActive={isActive}
-                      tooltip={item.description}
                       className={`group transition-all duration-200 ${
                         isEmergency
                           ? isActive
                             ? 'bg-red-600 text-white shadow-md'
-                            : 'text-red-400 hover:bg-red-600 hover:text-white border border-red-400/30'
-                          : isActive 
-                            ? 'bg-sidebar-active text-white shadow-md' 
+                            : 'border border-red-400/30 text-red-400 hover:bg-red-600 hover:text-white'
+                          : isActive
+                            ? 'bg-sidebar-active text-white shadow-md'
                             : 'text-sidebar-text hover:bg-sidebar-hover hover:text-white'
                       }`}
+                      isActive={isActive}
+                      tooltip={item.description}
                     >
-                      <Link href={item.href} className="flex items-center gap-3">
-                        <Icon className={`h-4 w-4 ${
-                          isEmergency 
-                            ? isActive ? 'text-white' : 'text-red-400'
-                            : isActive ? 'text-white' : 'text-sidebar-text/70'
-                        }`} />
+                      <Link
+                        className="flex items-center gap-3"
+                        href={item.href}
+                      >
+                        <Icon
+                          className={`h-4 w-4 ${
+                            isEmergency
+                              ? isActive
+                                ? 'text-white'
+                                : 'text-red-400'
+                              : isActive
+                                ? 'text-white'
+                                : 'text-sidebar-text/70'
+                          }`}
+                        />
                         <span className="font-medium">{item.title}</span>
                         {isEmergency && (
-                          <span className="ml-auto text-xs font-bold">🚨</span>
+                          <span className="ml-auto font-bold text-xs">🚨</span>
                         )}
                       </Link>
                     </SidebarMenuButton>
@@ -192,7 +201,7 @@ export function HealthcareSidebar() {
 
         {/* Analytics & Reports */}
         <SidebarGroup>
-          <SidebarGroupLabel className="text-sidebar-text/70 font-medium">
+          <SidebarGroupLabel className="font-medium text-sidebar-text/70">
             Análises & Relatórios
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -205,16 +214,21 @@ export function HealthcareSidebar() {
                   <SidebarMenuItem key={item.href}>
                     <SidebarMenuButton
                       asChild
-                      isActive={isActive}
-                      tooltip={item.description}
                       className={`group transition-all duration-200 hover:bg-sidebar-hover ${
-                        isActive 
-                          ? 'bg-sidebar-active text-white shadow-md' 
+                        isActive
+                          ? 'bg-sidebar-active text-white shadow-md'
                           : 'text-sidebar-text hover:text-white'
                       }`}
+                      isActive={isActive}
+                      tooltip={item.description}
                     >
-                      <Link href={item.href} className="flex items-center gap-3">
-                        <Icon className={`h-4 w-4 ${isActive ? 'text-white' : 'text-sidebar-text/70'}`} />
+                      <Link
+                        className="flex items-center gap-3"
+                        href={item.href}
+                      >
+                        <Icon
+                          className={`h-4 w-4 ${isActive ? 'text-white' : 'text-sidebar-text/70'}`}
+                        />
                         <span className="font-medium">{item.title}</span>
                       </Link>
                     </SidebarMenuButton>
@@ -229,7 +243,7 @@ export function HealthcareSidebar() {
 
         {/* System & Settings */}
         <SidebarGroup>
-          <SidebarGroupLabel className="text-sidebar-text/70 font-medium">
+          <SidebarGroupLabel className="font-medium text-sidebar-text/70">
             Sistema
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -242,16 +256,21 @@ export function HealthcareSidebar() {
                   <SidebarMenuItem key={item.href}>
                     <SidebarMenuButton
                       asChild
-                      isActive={isActive}
-                      tooltip={item.description}
                       className={`group transition-all duration-200 hover:bg-sidebar-hover ${
-                        isActive 
-                          ? 'bg-sidebar-active text-white shadow-md' 
+                        isActive
+                          ? 'bg-sidebar-active text-white shadow-md'
                           : 'text-sidebar-text hover:text-white'
                       }`}
+                      isActive={isActive}
+                      tooltip={item.description}
                     >
-                      <Link href={item.href} className="flex items-center gap-3">
-                        <Icon className={`h-4 w-4 ${isActive ? 'text-white' : 'text-sidebar-text/70'}`} />
+                      <Link
+                        className="flex items-center gap-3"
+                        href={item.href}
+                      >
+                        <Icon
+                          className={`h-4 w-4 ${isActive ? 'text-white' : 'text-sidebar-text/70'}`}
+                        />
                         <span className="font-medium">{item.title}</span>
                       </Link>
                     </SidebarMenuButton>
@@ -264,16 +283,16 @@ export function HealthcareSidebar() {
       </SidebarContent>
 
       {/* Healthcare Footer */}
-      <SidebarFooter className="border-t border-healthcare-border px-2">
+      <SidebarFooter className="border-healthcare-border border-t px-2">
         <SidebarMenu>
           {/* Help */}
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
+              className="text-sidebar-text transition-all duration-200 hover:bg-sidebar-hover hover:text-white"
               tooltip="Central de ajuda"
-              className="text-sidebar-text hover:bg-sidebar-hover hover:text-white transition-all duration-200"
             >
-              <Link href="/help" className="flex items-center gap-3">
+              <Link className="flex items-center gap-3" href="/help">
                 <HelpCircle className="h-4 w-4 text-sidebar-text/70" />
                 <span className="font-medium">Ajuda</span>
               </Link>
@@ -283,21 +302,21 @@ export function HealthcareSidebar() {
           {/* User Profile */}
           <SidebarMenuItem>
             <SidebarMenuButton
-              className="text-sidebar-text hover:bg-sidebar-hover hover:text-white transition-all duration-200 p-3"
+              className="p-3 text-sidebar-text transition-all duration-200 hover:bg-sidebar-hover hover:text-white"
               tooltip="Perfil do usuário"
             >
-              <div className="flex items-center gap-3 w-full">
+              <div className="flex w-full items-center gap-3">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src="" alt="User" />
-                  <AvatarFallback className="bg-healthcare-primary text-white text-sm font-medium">
+                  <AvatarImage alt="User" src="" />
+                  <AvatarFallback className="bg-healthcare-primary font-medium text-sm text-white">
                     AD
                   </AvatarFallback>
                 </Avatar>
-                <div className="flex flex-col text-left min-w-0">
-                  <span className="text-sm font-medium text-sidebar-text truncate">
+                <div className="flex min-w-0 flex-col text-left">
+                  <span className="truncate font-medium text-sidebar-text text-sm">
                     Dr. Admin
                   </span>
-                  <span className="text-xs text-sidebar-text/60 truncate">
+                  <span className="truncate text-sidebar-text/60 text-xs">
                     admin@neonpro.com
                   </span>
                 </div>
@@ -309,10 +328,10 @@ export function HealthcareSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
+              className="text-sidebar-text transition-all duration-200 hover:bg-red-500/10 hover:text-red-400"
               tooltip="Sair do sistema"
-              className="text-sidebar-text hover:bg-red-500/10 hover:text-red-400 transition-all duration-200"
             >
-              <button className="flex items-center gap-3 w-full">
+              <button className="flex w-full items-center gap-3">
                 <LogOut className="h-4 w-4" />
                 <span className="font-medium">Sair</span>
               </button>

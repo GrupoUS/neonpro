@@ -356,9 +356,9 @@ export class LGPDConsentValidator {
   }
 
   private static async checkConsentInDatabase(
-    userId: string,
+    _userId: string,
     processingPurpose: LGPDProcessingPurpose,
-    dataCategory: LGPDDataCategory
+    _dataCategory: LGPDDataCategory
   ): Promise<{
     status: LGPDConsentStatus;
     expiresAt?: Date;

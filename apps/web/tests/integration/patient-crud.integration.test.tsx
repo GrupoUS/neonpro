@@ -35,36 +35,47 @@ interface Patient {
 
 // Mock Supabase client with patient operations
 const mockSupabaseClient = {
-  from: vi.fn((table: string) => ({
-    select: vi.fn(() => ({
-      eq: vi.fn(() => ({
-        single: vi.fn(),
-        order: vi.fn(() => ({
-          limit: vi.fn(),
-        })),
-      })),
-      neq: vi.fn(),
-      ilike: vi.fn(),
-      order: vi.fn(() => ({
-        limit: vi.fn(),
-      })),
-    })),
-    insert: vi.fn(() => ({
-      select: vi.fn(() => ({
-        single: vi.fn(),
-      })),
-    })),
-    update: vi.fn(() => ({
-      eq: vi.fn(() => ({
-        select: vi.fn(() => ({
-          single: vi.fn(),
-        })),
-      })),
-    })),
-    delete: vi.fn(() => ({
-      eq: vi.fn(),
-    })),
-  })),
+  from: vi.fn().mockImplementation((table: string) => {
+    const mockChain = {
+      select: vi.fn().mockReturnValue({
+        eq: vi.fn().mockReturnValue({
+          single: vi.fn().mockResolvedValue({ data: null, error: null }),
+          order: vi.fn().mockReturnValue({
+            limit: vi.fn().mockResolvedValue({ data: [], error: null }),
+          }),
+        }),
+        neq: vi.fn().mockReturnValue({
+          order: vi.fn().mockReturnValue({
+            limit: vi.fn().mockResolvedValue({ data: [], error: null }),
+          }),
+        }),
+        ilike: vi.fn().mockReturnValue({
+          order: vi.fn().mockReturnValue({
+            limit: vi.fn().mockResolvedValue({ data: [], error: null }),
+          }),
+        }),
+        order: vi.fn().mockReturnValue({
+          limit: vi.fn().mockResolvedValue({ data: [], error: null }),
+        }),
+      }),
+      insert: vi.fn().mockReturnValue({
+        select: vi.fn().mockReturnValue({
+          single: vi.fn().mockResolvedValue({ data: null, error: null }),
+        }),
+      }),
+      update: vi.fn().mockReturnValue({
+        eq: vi.fn().mockReturnValue({
+          select: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({ data: null, error: null }),
+          }),
+        }),
+      }),
+      delete: vi.fn().mockReturnValue({
+        eq: vi.fn().mockResolvedValue({ error: null }),
+      }),
+    };
+    return mockChain;
+  }),
   auth: {
     getUser: vi.fn().mockResolvedValue({
       data: {
@@ -90,12 +101,17 @@ const mockPatientsHook = {
 
 // Mock CPF validation utility
 const mockCpfValidator = {
-  isValid: vi.fn(),
-  format: vi.fn(),
+  isValid: vi.fn().mockReturnValue(true),
+  format: vi.fn().mockImplementation((cpf: string) => cpf),
 };
 
 vi.mock('@supabase/supabase-js', () => ({
   createClient: () => mockSupabaseClient,
+}));
+
+vi.mock('../../utils/cpf-validator', () => ({
+  default: mockCpfValidator,
+  CpfValidator: mockCpfValidator,
 }));
 
 vi.mock('../../hooks/enhanced/use-patients', () => ({
@@ -160,6 +176,39 @@ describe('Patient CRUD Integration Tests', () => {
     // Setup default mock behaviors
     mockCpfValidator.isValid.mockReturnValue(true);
     mockCpfValidator.format.mockImplementation((cpf: string) => cpf);
+
+    // Configure patient hook to call Supabase mocks
+    mockPatientsHook.createPatient.mockImplementation(async (patientData) => {
+      // Trigger CPF validation
+      const isValidCpf = mockCpfValidator.isValid(patientData.cpf);
+      if (!isValidCpf) {
+        throw { message: 'CPF inválido', code: 'INVALID_CPF' };
+      }
+
+      // Trigger Supabase calls
+      const table = mockSupabaseClient.from('patients');
+      await table.insert([patientData]).select().single();
+
+      return { data: { ...patientData, id: 'patient-123' }, error: null };
+    });
+
+    mockPatientsHook.getPatient.mockImplementation(async (id) => {
+      const table = mockSupabaseClient.from('patients');
+      await table.select('*').eq('id', id).single();
+      return { data: createdPatient, error: null };
+    });
+
+    mockPatientsHook.updatePatient.mockImplementation(async (id, data) => {
+      const table = mockSupabaseClient.from('patients');
+      await table.update(data).eq('id', id).select().single();
+      return { data: { ...createdPatient, ...data }, error: null };
+    });
+
+    mockPatientsHook.deletePatient.mockImplementation(async (id) => {
+      const table = mockSupabaseClient.from('patients');
+      await table.delete().eq('id', id);
+      return { error: null };
+    });
   });
 
   afterEach(() => {

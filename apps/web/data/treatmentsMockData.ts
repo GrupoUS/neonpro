@@ -4,12 +4,12 @@
  */
 
 import type {
-  TreatmentPlan,
-  TreatmentSession,
-  TreatmentProtocol,
-  TreatmentPhoto,
   PatientConsent,
+  TreatmentPhoto,
+  TreatmentPlan,
   TreatmentProgress,
+  TreatmentProtocol,
+  TreatmentSession,
 } from '@/types/treatments';
 
 // Mock Treatment Plans - Brazilian Aesthetic Medicine
@@ -22,7 +22,8 @@ export const mockTreatmentPlans: TreatmentPlan[] = [
     treatment_type: 'multi_session',
     category: 'facial',
     status: 'active',
-    description: 'Tratamento de rejuvenescimento facial utilizando laser CO2 fracionado para melhoria da textura da pele, redução de rugas e uniformização do tom.',
+    description:
+      'Tratamento de rejuvenescimento facial utilizando laser CO2 fracionado para melhoria da textura da pele, redução de rugas e uniformização do tom.',
     expected_sessions: 4,
     completed_sessions: 1,
     session_interval_days: 30,
@@ -43,14 +44,27 @@ export const mockTreatmentPlans: TreatmentPlan[] = [
     },
     risk_assessment: {
       risk_level: 'medium',
-      common_side_effects: ['Vermelhidão temporária', 'Descamação leve', 'Sensibilidade solar'],
-      rare_complications: ['Hiperpigmentação', 'Hipopigmentação', 'Cicatrização irregular'],
-      contraindications: ['Gravidez', 'Lactação', 'Uso de isotretinoína', 'Bronzeamento recente'],
+      common_side_effects: [
+        'Vermelhidão temporária',
+        'Descamação leve',
+        'Sensibilidade solar',
+      ],
+      rare_complications: [
+        'Hiperpigmentação',
+        'Hipopigmentação',
+        'Cicatrização irregular',
+      ],
+      contraindications: [
+        'Gravidez',
+        'Lactação',
+        'Uso de isotretinoína',
+        'Bronzeamento recente',
+      ],
     },
-    total_cost: 4800.00,
+    total_cost: 4800.0,
     payment_plan: {
       installments: 4,
-      installment_value: 1200.00,
+      installment_value: 1200.0,
       payment_method: 'credit_card',
     },
     insurance_coverage: null,
@@ -70,7 +84,8 @@ export const mockTreatmentPlans: TreatmentPlan[] = [
     treatment_type: 'multi_session',
     category: 'body_contouring',
     status: 'active',
-    description: 'Redução de gordura localizada através de criolipólise em região abdominal e flancos, visando contorno corporal e redução de medidas.',
+    description:
+      'Redução de gordura localizada através de criolipólise em região abdominal e flancos, visando contorno corporal e redução de medidas.',
     expected_sessions: 3,
     completed_sessions: 2,
     session_interval_days: 45,
@@ -90,14 +105,21 @@ export const mockTreatmentPlans: TreatmentPlan[] = [
     },
     risk_assessment: {
       risk_level: 'low',
-      common_side_effects: ['Vermelhidão', 'Inchaço temporário', 'Dormência leve'],
-      rare_complications: ['Hiperplasia adiposa paradoxal', 'Neuropatia sensitiva'],
+      common_side_effects: [
+        'Vermelhidão',
+        'Inchaço temporário',
+        'Dormência leve',
+      ],
+      rare_complications: [
+        'Hiperplasia adiposa paradoxal',
+        'Neuropatia sensitiva',
+      ],
       contraindications: ['Gravidez', 'Crioglobulinemia', 'Urticária ao frio'],
     },
-    total_cost: 2700.00,
+    total_cost: 2700.0,
     payment_plan: {
       installments: 3,
-      installment_value: 900.00,
+      installment_value: 900.0,
       payment_method: 'bank_transfer',
     },
     insurance_coverage: null,

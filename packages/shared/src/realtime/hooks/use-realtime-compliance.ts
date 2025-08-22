@@ -9,9 +9,11 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from 'react';
 import { getRealtimeManager } from '../connection-manager';
 
-type ComplianceLog = Database['public']['Tables']['compliance_logs']['Row'];
-type DataProcessingLog =
-  Database['public']['Tables']['data_processing_logs']['Row'];
+// Use available compliance-related tables
+type AuditLogRow = Database['public']['Tables']['healthcare_audit_logs']['Row'];
+
+// Compliance log is based on healthcare audit log structure
+type ComplianceLog = AuditLogRow;
 
 export interface ComplianceEventType {
   LGPD_CONSENT_GRANTED: 'lgpd_consent_granted';
@@ -160,27 +162,37 @@ export function useRealtimeCompliance(
 
       if (!eventData) return 'LGPD_DATA_ACCESS';
 
-      // Map based on event categories
-      if (eventData.event_type?.includes('consent')) {
-        return eventData.action === 'granted'
+      // Map based on action categories
+      if (eventData.action?.includes('consent')) {
+        return eventData.action === 'consent_granted'
           ? 'LGPD_CONSENT_GRANTED'
           : 'LGPD_CONSENT_REVOKED';
       }
 
-      if (eventData.event_type?.includes('data_deletion')) {
+      if (
+        eventData.action?.includes('deletion') ||
+        eventData.action?.includes('delete')
+      ) {
         return 'LGPD_DATA_DELETION';
       }
 
-      if (eventData.event_type?.includes('anvisa')) {
-        if (eventData.severity === 'CRITICAL') return 'ANVISA_VIOLATION';
+      if (eventData.action?.includes('anvisa')) {
+        const metadata = (eventData.metadata as Record<string, any>) || {};
+        if (metadata.severity === 'CRITICAL') return 'ANVISA_VIOLATION';
         return 'ANVISA_COMPLIANCE_CHECK';
       }
 
-      if (eventData.event_type?.includes('breach')) {
+      if (
+        eventData.action?.includes('breach') ||
+        eventData.action?.includes('vazamento')
+      ) {
         return 'DATA_BREACH_DETECTED';
       }
 
-      if (eventData.event_type?.includes('unauthorized')) {
+      if (
+        eventData.action?.includes('unauthorized') ||
+        eventData.action?.includes('nao_autorizado')
+      ) {
         return 'UNAUTHORIZED_ACCESS';
       }
 
@@ -199,9 +211,11 @@ export function useRealtimeCompliance(
 
       // Critical severity scenarios
       if (
-        eventData?.event_type?.includes('breach') ||
-        eventData?.event_type?.includes('unauthorized') ||
-        eventData?.event_type?.includes('violation')
+        eventData?.action?.includes('breach') ||
+        eventData?.action?.includes('unauthorized') ||
+        eventData?.action?.includes('violation') ||
+        eventData?.action?.includes('vazamento') ||
+        eventData?.action?.includes('nao_autorizado')
       ) {
         return 'CRITICAL';
       }
@@ -209,13 +223,14 @@ export function useRealtimeCompliance(
       // High severity for consent revocations and deletions
       if (
         eventType === 'DELETE' ||
-        eventData?.event_type?.includes('consent_revoked')
+        eventData?.action?.includes('consent_revoked') ||
+        eventData?.action?.includes('deletion')
       ) {
         return 'HIGH';
       }
 
       // Medium severity for ANVISA compliance checks
-      if (eventData?.event_type?.includes('anvisa')) {
+      if (eventData?.action?.includes('anvisa')) {
         return 'MEDIUM';
       }
 
@@ -286,7 +301,7 @@ export function useRealtimeCompliance(
 
           switch (eventType) {
             case 'INSERT':
-              if (newData && newData.tenant_id === tenantId) {
+              if (newData && newData.clinic_id === tenantId) {
                 return [newData, ...oldCache].slice(0, 1000); // Keep only last 1000 events
               }
               return oldCache;
@@ -312,9 +327,13 @@ export function useRealtimeCompliance(
       );
 
       // Update compliance statistics
-      queryClient.invalidateQueries(['compliance-stats', tenantId]);
-      queryClient.invalidateQueries(['compliance-score', tenantId]);
-      queryClient.invalidateQueries(['audit-trail', tenantId]);
+      queryClient.invalidateQueries({
+        queryKey: ['compliance-stats', tenantId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['compliance-score', tenantId],
+      });
+      queryClient.invalidateQueries({ queryKey: ['audit-trail', tenantId] });
     },
     [queryClient, tenantId]
   );
@@ -369,9 +388,7 @@ export function useRealtimeCompliance(
     const unsubscribe = realtimeManager.subscribe(
       `compliance-logs:${filter}`,
       {
-        event: 'postgres_changes',
-        schema: 'public',
-        table: 'compliance_logs',
+        table: 'healthcare_audit_logs',
         filter,
       },
       handleComplianceChange
@@ -412,31 +429,36 @@ export function useRealtimeCompliance(
         generatedAt: new Date().toISOString(),
         tenantId,
         period: {
-          start: logs[logs.length - 1]?.created_at || new Date().toISOString(),
+          start: logs[logs.length - 1]?.timestamp || new Date().toISOString(),
           end: new Date().toISOString(),
         },
         summary: {
           totalEvents,
           criticalEvents,
           complianceScore,
-          lastEventDate: lastEvent?.created_at,
+          lastEventDate: lastEvent?.timestamp,
         },
         eventBreakdown: {
-          lgpdEvents: logs.filter((log) => log.event_type?.includes('lgpd'))
+          lgpdEvents: logs.filter((log) => log.action?.includes('lgpd')).length,
+          anvisaEvents: logs.filter((log) => log.action?.includes('anvisa'))
             .length,
-          anvisaEvents: logs.filter((log) => log.event_type?.includes('anvisa'))
-            .length,
-          breachEvents: logs.filter((log) => log.event_type?.includes('breach'))
+          breachEvents: logs.filter((log) => log.action?.includes('breach'))
             .length,
           unauthorizedAccess: logs.filter((log) =>
-            log.event_type?.includes('unauthorized')
+            log.action?.includes('unauthorized')
           ).length,
         },
         severityBreakdown: {
-          critical: logs.filter((log) => log.severity === 'CRITICAL').length,
-          high: logs.filter((log) => log.severity === 'HIGH').length,
-          medium: logs.filter((log) => log.severity === 'MEDIUM').length,
-          low: logs.filter((log) => log.severity === 'LOW').length,
+          critical: logs.filter(
+            (log) => (log.metadata as any)?.severity === 'CRITICAL'
+          ).length,
+          high: logs.filter((log) => (log.metadata as any)?.severity === 'HIGH')
+            .length,
+          medium: logs.filter(
+            (log) => (log.metadata as any)?.severity === 'MEDIUM'
+          ).length,
+          low: logs.filter((log) => (log.metadata as any)?.severity === 'LOW')
+            .length,
         },
         actionableItems: auditTrail.filter(
           (item) => item.requires_action && !item.processed
@@ -475,17 +497,19 @@ export function useRealtimeCompliance(
         );
       }
 
-      const criticalCount = logs.filter(
-        (log) => log.severity === 'CRITICAL'
-      ).length;
+      const criticalCount = logs.filter((log) => {
+        const metadata = (log.metadata as Record<string, any>) || {};
+        return metadata.severity === 'CRITICAL';
+      }).length;
       if (criticalCount > 0) {
         recommendations.push(
           `${criticalCount} eventos críticos detectados. Investigação imediata necessária.`
         );
       }
 
-      const breachCount = logs.filter((log) =>
-        log.event_type?.includes('breach')
+      const breachCount = logs.filter(
+        (log) =>
+          log.action?.includes('breach') || log.action?.includes('vazamento')
       ).length;
       if (breachCount > 0) {
         recommendations.push(
@@ -493,8 +517,10 @@ export function useRealtimeCompliance(
         );
       }
 
-      const unauthorizedCount = logs.filter((log) =>
-        log.event_type?.includes('unauthorized')
+      const unauthorizedCount = logs.filter(
+        (log) =>
+          log.action?.includes('unauthorized') ||
+          log.action?.includes('nao_autorizado')
       ).length;
       if (unauthorizedCount > 5) {
         recommendations.push(
@@ -517,27 +543,32 @@ export function useRealtimeCompliance(
    * Trigger manual audit
    */
   const triggerManualAudit = useCallback(() => {
-    const auditEvent = {
+    const auditEvent: ComplianceLog = {
       id: `manual_audit_${Date.now()}`,
-      tenant_id: tenantId,
-      event_type: 'manual_audit_triggered',
-      severity: 'MEDIUM' as const,
+      user_id: tenantId, // Using tenantId as user_id for manual audits
+      action: 'manual_audit_triggered',
+      resource_type: 'compliance_system',
+      resource_id: null,
       metadata: {
         triggeredAt: new Date().toISOString(),
         triggeredBy: 'manual_request',
         complianceScore,
         totalEvents,
         criticalEvents,
+        severity: 'MEDIUM', // Store severity in metadata since it's not in schema
       },
-      created_at: new Date().toISOString(),
+      ip_address: '127.0.0.1', // Default for system-triggered events
+      user_agent: 'NeonPro-Compliance-System',
+      clinic_id: tenantId,
+      timestamp: new Date().toISOString(),
     };
 
     // Add manual audit to cache
     queryClient.setQueryData(
       ['compliance-logs', tenantId],
       (oldCache: ComplianceLog[] | undefined) => {
-        if (!oldCache) return [auditEvent as ComplianceLog];
-        return [auditEvent as ComplianceLog, ...oldCache];
+        if (!oldCache) return [auditEvent];
+        return [auditEvent, ...oldCache];
       }
     );
 
@@ -600,30 +631,46 @@ export function useComplianceAnalytics(tenantId: string) {
     const lastMonth = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
 
     const recentLogs = logs.filter(
-      (log) => new Date(log.created_at) >= lastWeek
+      (log) => new Date(log.timestamp) >= lastWeek
     );
     const monthlyLogs = logs.filter(
-      (log) => new Date(log.created_at) >= lastMonth
+      (log) => new Date(log.timestamp) >= lastMonth
     );
 
     return {
       weekly: {
         totalEvents: recentLogs.length,
-        criticalEvents: recentLogs.filter((log) => log.severity === 'CRITICAL')
-          .length,
-        lgpdEvents: recentLogs.filter((log) => log.event_type?.includes('lgpd'))
-          .length,
-        anvisaEvents: recentLogs.filter((log) =>
-          log.event_type?.includes('anvisa')
-        ).length,
+        criticalEvents: recentLogs.filter((log) => {
+          const metadata = (log.metadata as Record<string, any>) || {};
+          return metadata.severity === 'CRITICAL';
+        }).length,
+        lgpdEvents: recentLogs.filter((log) => {
+          const metadata = (log.metadata as Record<string, any>) || {};
+          return (
+            metadata.event_type?.includes('lgpd') ||
+            log.action?.includes('lgpd')
+          );
+        }).length,
+        anvisaEvents: recentLogs.filter((log) => {
+          const metadata = (log.metadata as Record<string, any>) || {};
+          return (
+            metadata.event_type?.includes('anvisa') ||
+            log.action?.includes('anvisa')
+          );
+        }).length,
       },
       monthly: {
         totalEvents: monthlyLogs.length,
-        criticalEvents: monthlyLogs.filter((log) => log.severity === 'CRITICAL')
-          .length,
+        criticalEvents: monthlyLogs.filter((log) => {
+          const metadata = (log.metadata as Record<string, any>) || {};
+          return metadata.severity === 'CRITICAL';
+        }).length,
         trend: calculateTrend(monthlyLogs),
         avgDailyCritical:
-          monthlyLogs.filter((log) => log.severity === 'CRITICAL').length / 30,
+          monthlyLogs.filter((log) => {
+            const metadata = (log.metadata as Record<string, any>) || {};
+            return metadata.severity === 'CRITICAL';
+          }).length / 30,
       },
       compliance: {
         lgpdCompliance: calculateLGPDCompliance(logs),
@@ -641,12 +688,14 @@ export function useComplianceAnalytics(tenantId: string) {
       const firstHalf = logs.slice(0, half);
       const secondHalf = logs.slice(half);
 
-      const firstCritical = firstHalf.filter(
-        (log) => log.severity === 'CRITICAL'
-      ).length;
-      const secondCritical = secondHalf.filter(
-        (log) => log.severity === 'CRITICAL'
-      ).length;
+      const firstCritical = firstHalf.filter((log) => {
+        const metadata = (log.metadata as Record<string, any>) || {};
+        return metadata.severity === 'CRITICAL';
+      }).length;
+      const secondCritical = secondHalf.filter((log) => {
+        const metadata = (log.metadata as Record<string, any>) || {};
+        return metadata.severity === 'CRITICAL';
+      }).length;
 
       if (secondCritical < firstCritical * 0.8) return 'improving';
       if (secondCritical > firstCritical * 1.2) return 'declining';
@@ -657,12 +706,18 @@ export function useComplianceAnalytics(tenantId: string) {
 
   const calculateLGPDCompliance = useCallback(
     (logs: ComplianceLog[]): number => {
-      const lgpdLogs = logs.filter((log) => log.event_type?.includes('lgpd'));
+      const lgpdLogs = logs.filter((log) => {
+        const metadata = (log.metadata as Record<string, any>) || {};
+        return (
+          metadata.event_type?.includes('lgpd') || log.action?.includes('lgpd')
+        );
+      });
       if (lgpdLogs.length === 0) return 100;
 
-      const violations = lgpdLogs.filter(
-        (log) => log.severity === 'HIGH' || log.severity === 'CRITICAL'
-      ).length;
+      const violations = lgpdLogs.filter((log) => {
+        const metadata = (log.metadata as Record<string, any>) || {};
+        return metadata.severity === 'HIGH' || metadata.severity === 'CRITICAL';
+      }).length;
       return Math.max(0, 100 - (violations / lgpdLogs.length) * 50);
     },
     []
@@ -670,14 +725,19 @@ export function useComplianceAnalytics(tenantId: string) {
 
   const calculateANVISACompliance = useCallback(
     (logs: ComplianceLog[]): number => {
-      const anvisaLogs = logs.filter((log) =>
-        log.event_type?.includes('anvisa')
-      );
+      const anvisaLogs = logs.filter((log) => {
+        const metadata = (log.metadata as Record<string, any>) || {};
+        return (
+          metadata.event_type?.includes('anvisa') ||
+          log.action?.includes('anvisa')
+        );
+      });
       if (anvisaLogs.length === 0) return 100;
 
-      const violations = anvisaLogs.filter(
-        (log) => log.severity === 'HIGH' || log.severity === 'CRITICAL'
-      ).length;
+      const violations = anvisaLogs.filter((log) => {
+        const metadata = (log.metadata as Record<string, any>) || {};
+        return metadata.severity === 'HIGH' || metadata.severity === 'CRITICAL';
+      }).length;
       return Math.max(0, 100 - (violations / anvisaLogs.length) * 60);
     },
     []
@@ -687,11 +747,20 @@ export function useComplianceAnalytics(tenantId: string) {
     if (logs.length === 0) return 100;
 
     const criticalPenalty =
-      logs.filter((log) => log.severity === 'CRITICAL').length * 15;
+      logs.filter((log) => {
+        const metadata = (log.metadata as Record<string, any>) || {};
+        return metadata.severity === 'CRITICAL';
+      }).length * 15;
     const highPenalty =
-      logs.filter((log) => log.severity === 'HIGH').length * 8;
+      logs.filter((log) => {
+        const metadata = (log.metadata as Record<string, any>) || {};
+        return metadata.severity === 'HIGH';
+      }).length * 8;
     const mediumPenalty =
-      logs.filter((log) => log.severity === 'MEDIUM').length * 3;
+      logs.filter((log) => {
+        const metadata = (log.metadata as Record<string, any>) || {};
+        return metadata.severity === 'MEDIUM';
+      }).length * 3;
 
     return Math.max(0, 100 - criticalPenalty - highPenalty - mediumPenalty);
   }, []);

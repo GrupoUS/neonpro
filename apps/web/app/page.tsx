@@ -1,5 +1,7 @@
 'use client';
 
+'use client';
+
 import {
   Activity,
   ArrowRight,
@@ -45,21 +47,21 @@ export default function HomePage() {
     useAppointments();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+    <div className="min-h-screen bg-background">
       {/* Hero Section */}
       <section className="relative">
         {/* Navigation */}
-        <nav className="container mx-auto flex items-center justify-between p-6">
+        <nav className="container mx-auto flex items-center justify-between p-6 border-b border-border/50">
           <div className="flex items-center space-x-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-purple-600">
-              <Heart className="h-6 w-6 text-white" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg neonpro-gradient neonpro-glow">
+              <Heart className="h-6 w-6 text-primary-foreground" />
             </div>
-            <h1 className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text font-bold text-2xl text-transparent">
-              NeonPro
+            <h1 className="font-bold text-2xl text-primary">
+              NeonPro Healthcare
             </h1>
           </div>
           <Button
-            className="border-0 bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700"
+            className="neonpro-button-primary"
             onClick={() => router.push('/login')}
           >
             Acessar Sistema
@@ -68,51 +70,91 @@ export default function HomePage() {
         </nav>
 
         {/* Hero Content */}
-        <div className="container mx-auto px-6 py-20 text-center">
-          <h1 className="mb-6 font-bold text-5xl text-white lg:text-6xl">
-            Sistema Completo para
-            <span className="block bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-              Clínicas Estéticas
-            </span>
-          </h1>
-          <p className="mx-auto mb-8 max-w-2xl text-slate-300 text-xl">
-            Gestão inteligente com compliance LGPD, ANVISA e CFM. Transforme sua
-            clínica com tecnologia de ponta e resultados reais.
-          </p>
+        <div className="container mx-auto px-6 py-24 text-center">
+          <div className="mx-auto max-w-4xl">
+            <h1 className="mb-6 font-bold text-5xl text-foreground lg:text-6xl leading-tight">
+              Revolução Digital para
+              <span className="block mt-2 text-primary neonpro-glow">
+                Clínicas Estéticas Brasileiras
+              </span>
+            </h1>
+            <p className="mx-auto mb-12 max-w-3xl text-muted-foreground text-xl leading-relaxed">
+              Gestão inteligente com compliance total LGPD, ANVISA e CFM. 
+              Transforme sua clínica com tecnologia de ponta, resultados reais 
+              e a confiança do mercado brasileiro de medicina estética.
+            </p>
 
-          <div className="mb-8 flex flex-wrap justify-center gap-3">
-            <Badge className="border-green-500/30 bg-green-500/20 text-green-400">
-              <Shield className="mr-1 h-3 w-3" />
-              LGPD Compliant
-            </Badge>
-            <Badge className="border-blue-500/30 bg-blue-500/20 text-blue-400">
-              <Stethoscope className="mr-1 h-3 w-3" />
-              ANVISA Aprovado
-            </Badge>
-            <Badge className="border-purple-500/30 bg-purple-500/20 text-purple-400">
-              <FileText className="mr-1 h-3 w-3" />
-              CFM Certificado
-            </Badge>
+            {/* Trust Indicators */}
+            <div className="mb-12 flex flex-wrap justify-center gap-4">
+              <div className="compliance-badge">
+                <Shield className="mr-2 h-4 w-4" />
+                LGPD Compliant
+              </div>
+              <div className="compliance-badge">
+                <Stethoscope className="mr-2 h-4 w-4" />
+                ANVISA Aprovado
+              </div>
+              <div className="compliance-badge">
+                <FileText className="mr-2 h-4 w-4" />
+                CFM Certificado
+              </div>
+              <div className="compliance-badge">
+                <Star className="mr-2 h-4 w-4" />
+                ISO 27001
+              </div>
+            </div>
+
+            {/* CTA Section */}
+            <div className="flex flex-col items-center justify-center gap-6 sm:flex-row">
+              <Button
+                className="neonpro-button-primary text-lg px-8 py-4"
+                onClick={() => router.push('/signup')}
+                size="lg"
+              >
+                Começar Gratuitamente
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+              <Button
+                className="border-primary/20 text-foreground hover:bg-primary/5 text-lg px-8 py-4"
+                size="lg"
+                variant="outline"
+              >
+                <Calendar className="mr-2 h-5 w-5" />
+                Agendar Demonstração
+              </Button>
+            </div>
+
+            {/* Trust Line */}
+            <p className="mt-8 text-muted-foreground text-sm">
+              ✓ Teste grátis por 30 dias • ✓ Sem cartão de crédito • ✓ Suporte especializado em saúde
+            </p>
           </div>
         </div>
       </section>
       {/* Real-time Metrics Section */}
       <section className="container mx-auto px-6 pb-20">
-        <h2 className="mb-12 text-center font-bold text-3xl text-white">
-          Resultados em Tempo Real
-        </h2>
+        <div className="text-center mb-12">
+          <h2 className="font-bold text-3xl text-foreground mb-4">
+            Performance em Tempo Real
+          </h2>
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+            Acompanhe o crescimento da sua clínica com métricas atualizadas automaticamente
+          </p>
+        </div>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           {/* Revenue Card */}
-          <Card className="border-blue-500/20 bg-white/10 backdrop-blur-sm">
+          <Card className="neonpro-card group">
             <CardHeader className="pb-2">
-              <CardTitle className="flex items-center text-white">
-                <BarChart3 className="mr-2 h-5 w-5 text-blue-400" />
+              <CardTitle className="flex items-center text-foreground">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 mr-3 group-hover:neonpro-glow transition-all">
+                  <BarChart3 className="h-4 w-4 text-primary" />
+                </div>
                 Receita Mensal
               </CardTitle>
-              <CardDescription className="text-slate-300">
+              <CardDescription className="text-muted-foreground">
                 {metricsLoading ? (
-                  <Skeleton className="h-4 w-20 bg-white/20" />
+                  <Skeleton className="h-4 w-20 bg-muted" />
                 ) : (
                   `${revenueGrowth >= 0 ? '+' : ''}${revenueGrowth.toFixed(1)}% este mês`
                 )}
@@ -120,14 +162,14 @@ export default function HomePage() {
             </CardHeader>
             <CardContent>
               {metricsLoading ? (
-                <Skeleton className="h-8 w-32 bg-white/20" />
+                <Skeleton className="h-8 w-32 bg-muted" />
               ) : (
                 <div className="flex items-center">
-                  <p className="font-bold text-3xl text-white">
+                  <p className="font-bold text-3xl text-foreground">
                     R$ {monthlyRevenue.toLocaleString('pt-BR')}
                   </p>
                   {revenueGrowth >= 0 && (
-                    <TrendingUp className="ml-2 h-5 w-5 text-green-400" />
+                    <TrendingUp className="ml-2 h-5 w-5 text-primary" />
                   )}
                 </div>
               )}
@@ -135,21 +177,23 @@ export default function HomePage() {
           </Card>
 
           {/* Patients Card */}
-          <Card className="border-green-500/20 bg-white/10 backdrop-blur-sm">
+          <Card className="neonpro-card group">
             <CardHeader className="pb-2">
-              <CardTitle className="flex items-center text-white">
-                <Users className="mr-2 h-5 w-5 text-green-400" />
+              <CardTitle className="flex items-center text-foreground">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-chart-5/10 mr-3 group-hover:neonpro-glow transition-all">
+                  <Users className="h-4 w-4 text-chart-5" />
+                </div>
                 Total Pacientes
               </CardTitle>
-              <CardDescription className="text-slate-300">
+              <CardDescription className="text-muted-foreground">
                 Cadastros ativos
               </CardDescription>
             </CardHeader>
             <CardContent>
               {metricsLoading ? (
-                <Skeleton className="h-8 w-16 bg-white/20" />
+                <Skeleton className="h-8 w-16 bg-muted" />
               ) : (
-                <p className="font-bold text-3xl text-white">
+                <p className="font-bold text-3xl text-foreground">
                   {totalPatients.toLocaleString('pt-BR')}
                 </p>
               )}
@@ -157,21 +201,23 @@ export default function HomePage() {
           </Card>
 
           {/* Appointments Card */}
-          <Card className="border-purple-500/20 bg-white/10 backdrop-blur-sm">
+          <Card className="neonpro-card group">
             <CardHeader className="pb-2">
-              <CardTitle className="flex items-center text-white">
-                <Calendar className="mr-2 h-5 w-5 text-purple-400" />
+              <CardTitle className="flex items-center text-foreground">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-chart-3/10 mr-3 group-hover:neonpro-glow transition-all">
+                  <Calendar className="h-4 w-4 text-chart-3" />
+                </div>
                 Consultas Agendadas
               </CardTitle>
-              <CardDescription className="text-slate-300">
+              <CardDescription className="text-muted-foreground">
                 Próximos 30 dias
               </CardDescription>
             </CardHeader>
             <CardContent>
               {metricsLoading ? (
-                <Skeleton className="h-8 w-12 bg-white/20" />
+                <Skeleton className="h-8 w-12 bg-muted" />
               ) : (
-                <p className="font-bold text-3xl text-white">
+                <p className="font-bold text-3xl text-foreground">
                   {upcomingAppointments}
                 </p>
               )}
@@ -179,21 +225,23 @@ export default function HomePage() {
           </Card>
 
           {/* Today's Appointments */}
-          <Card className="border-orange-500/20 bg-white/10 backdrop-blur-sm">
+          <Card className="neonpro-card group">
             <CardHeader className="pb-2">
-              <CardTitle className="flex items-center text-white">
-                <Clock className="mr-2 h-5 w-5 text-orange-400" />
+              <CardTitle className="flex items-center text-foreground">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-chart-4/10 mr-3 group-hover:neonpro-glow transition-all">
+                  <Clock className="h-4 w-4 text-chart-4" />
+                </div>
                 Consultas Hoje
               </CardTitle>
-              <CardDescription className="text-slate-300">
+              <CardDescription className="text-muted-foreground">
                 Agenda do dia
               </CardDescription>
             </CardHeader>
             <CardContent>
               {appointmentsLoading ? (
-                <Skeleton className="h-8 w-12 bg-white/20" />
+                <Skeleton className="h-8 w-12 bg-muted" />
               ) : (
-                <p className="font-bold text-3xl text-white">
+                <p className="font-bold text-3xl text-foreground">
                   {todaysAppointments.length}
                 </p>
               )}
@@ -203,104 +251,112 @@ export default function HomePage() {
       </section>{' '}
       {/* Features Section */}
       <section className="container mx-auto px-6 pb-20">
-        <h2 className="mb-12 text-center font-bold text-3xl text-white">
-          Recursos Avançados
-        </h2>
+        <div className="text-center mb-12">
+          <h2 className="font-bold text-3xl text-foreground mb-4">
+            Recursos Especializados para Medicina Estética
+          </h2>
+          <p className="text-muted-foreground text-lg max-w-3xl mx-auto">
+            Ferramentas desenvolvidas especificamente para as necessidades do mercado brasileiro de estética e bem-estar
+          </p>
+        </div>
 
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
           {/* Feature 1: Smart Scheduling */}
-          <Card className="border-green-500/20 bg-white/10 backdrop-blur-sm">
+          <Card className="neonpro-card group">
             <CardHeader>
-              <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-500/20">
-                  <Calendar className="h-6 w-6 text-green-400" />
+              <div className="flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 group-hover:neonpro-glow transition-all">
+                  <Calendar className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <CardTitle className="text-white">
+                  <CardTitle className="text-foreground text-xl">
                     Agendamento Inteligente
                   </CardTitle>
-                  <CardDescription className="text-slate-300">
-                    IA para otimizar sua agenda
+                  <CardDescription className="text-muted-foreground">
+                    IA especializada para clínicas estéticas
                   </CardDescription>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
-              <p className="text-slate-300">
-                Sistema avançado com lembretes automáticos, gestão de filas de
-                espera e otimização inteligente baseada em histórico e
-                preferências.
+              <p className="text-muted-foreground leading-relaxed">
+                Sistema avançado com lembretes automáticos via WhatsApp, gestão de filas de 
+                espera para procedimentos específicos e otimização inteligente baseada em 
+                preferências de horário e histórico de tratamentos.
               </p>
             </CardContent>
           </Card>
 
           {/* Feature 2: Patient Management */}
-          <Card className="border-blue-500/20 bg-white/10 backdrop-blur-sm">
+          <Card className="neonpro-card group">
             <CardHeader>
-              <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-500/20">
-                  <Users className="h-6 w-6 text-blue-400" />
+              <div className="flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-chart-2/10 group-hover:neonpro-glow transition-all">
+                  <Users className="h-6 w-6 text-chart-2" />
                 </div>
                 <div>
-                  <CardTitle className="text-white">Gestão Completa</CardTitle>
-                  <CardDescription className="text-slate-300">
-                    Prontuários eletrônicos seguros
+                  <CardTitle className="text-foreground text-xl">Gestão de Pacientes</CardTitle>
+                  <CardDescription className="text-muted-foreground">
+                    Prontuários estéticos completos e seguros
                   </CardDescription>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
-              <p className="text-slate-300">
-                Prontuários digitais com histórico completo, anexos de imagens,
-                evolução de tratamentos e compliance total com regulamentações.
+              <p className="text-muted-foreground leading-relaxed">
+                Prontuários digitais especializados com histórico de procedimentos estéticos, 
+                anexos de imagens antes/depois, evolução de tratamentos e compliance total 
+                com LGPD, ANVISA e CFM.
               </p>
             </CardContent>
           </Card>
 
           {/* Feature 3: Analytics */}
-          <Card className="border-purple-500/20 bg-white/10 backdrop-blur-sm">
+          <Card className="neonpro-card group">
             <CardHeader>
-              <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-500/20">
-                  <BarChart3 className="h-6 w-6 text-purple-400" />
+              <div className="flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-chart-3/10 group-hover:neonpro-glow transition-all">
+                  <BarChart3 className="h-6 w-6 text-chart-3" />
                 </div>
                 <div>
-                  <CardTitle className="text-white">
-                    Analytics Avançado
+                  <CardTitle className="text-foreground text-xl">
+                    Analytics Estético
                   </CardTitle>
-                  <CardDescription className="text-slate-300">
-                    Insights para crescimento
+                  <CardDescription className="text-muted-foreground">
+                    Insights especializados para crescimento
                   </CardDescription>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
-              <p className="text-slate-300">
-                Relatórios financeiros detalhados, análise de performance, ROI
-                por tratamento e previsões baseadas em IA.
+              <p className="text-muted-foreground leading-relaxed">
+                Relatórios financeiros detalhados por procedimento, análise de sazonalidade 
+                estética, ROI por tratamento, taxa de retorno de pacientes e previsões 
+                baseadas em IA para o mercado brasileiro.
               </p>
             </CardContent>
           </Card>
 
           {/* Feature 4: Compliance */}
-          <Card className="border-orange-500/20 bg-white/10 backdrop-blur-sm">
+          <Card className="neonpro-card group">
             <CardHeader>
-              <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-orange-500/20">
-                  <Shield className="h-6 w-6 text-orange-400" />
+              <div className="flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-chart-4/10 group-hover:neonpro-glow transition-all">
+                  <Shield className="h-6 w-6 text-chart-4" />
                 </div>
                 <div>
-                  <CardTitle className="text-white">Compliance Total</CardTitle>
-                  <CardDescription className="text-slate-300">
-                    Segurança e conformidade
+                  <CardTitle className="text-foreground text-xl">Compliance Brasileiro</CardTitle>
+                  <CardDescription className="text-muted-foreground">
+                    Conformidade especializada em saúde
                   </CardDescription>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
-              <p className="text-slate-300">
-                Conformidade automática com LGPD, ANVISA e CFM. Auditoria em
-                tempo real e relatórios de conformidade para fiscalizações.
+              <p className="text-muted-foreground leading-relaxed">
+                Conformidade automática com LGPD, ANVISA e CFM. Auditoria em tempo real, 
+                relatórios específicos para fiscalizações sanitárias e documentação 
+                automática para processos regulatórios do setor estético.
               </p>
             </CardContent>
           </Card>
@@ -310,13 +366,15 @@ export default function HomePage() {
       <section className="container mx-auto px-6 pb-20">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
           {/* Recent Patients */}
-          <Card className="border-cyan-500/20 bg-white/10 backdrop-blur-sm">
+          <Card className="neonpro-card">
             <CardHeader>
-              <CardTitle className="flex items-center text-white">
-                <Users className="mr-2 h-5 w-5 text-cyan-400" />
+              <CardTitle className="flex items-center text-foreground">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 mr-3">
+                  <Users className="h-4 w-4 text-primary" />
+                </div>
                 Pacientes Recentes
               </CardTitle>
-              <CardDescription className="text-slate-300">
+              <CardDescription className="text-muted-foreground">
                 Últimos cadastros na plataforma
               </CardDescription>
             </CardHeader>
@@ -325,10 +383,10 @@ export default function HomePage() {
                 <div className="space-y-3">
                   {[1, 2, 3, 4, 5].map((i) => (
                     <div className="flex items-center space-x-3" key={i}>
-                      <Skeleton className="h-10 w-10 rounded-full bg-white/20" />
+                      <Skeleton className="h-10 w-10 rounded-full bg-muted" />
                       <div className="space-y-1">
-                        <Skeleton className="h-4 w-32 bg-white/20" />
-                        <Skeleton className="h-3 w-24 bg-white/20" />
+                        <Skeleton className="h-4 w-32 bg-muted" />
+                        <Skeleton className="h-3 w-24 bg-muted" />
                       </div>
                     </div>
                   ))}
@@ -337,19 +395,19 @@ export default function HomePage() {
                 <div className="space-y-3">
                   {recentPatients.slice(0, 5).map((patient) => (
                     <div
-                      className="flex items-center space-x-3 rounded-lg p-2 hover:bg-white/5"
+                      className="flex items-center space-x-3 rounded-lg p-3 hover:bg-muted/50 transition-colors"
                       key={patient.id}
                     >
                       <Avatar className="h-10 w-10">
-                        <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white">
+                        <AvatarFallback className="neonpro-gradient text-primary-foreground">
                           {patient.name?.charAt(0).toUpperCase() || 'P'}
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <p className="font-medium text-white">
+                        <p className="font-medium text-foreground">
                           {patient.name || 'Nome não informado'}
                         </p>
-                        <p className="text-slate-300 text-sm">
+                        <p className="text-muted-foreground text-sm">
                           {new Date(patient.created_at).toLocaleDateString(
                             'pt-BR'
                           )}
@@ -366,7 +424,7 @@ export default function HomePage() {
 
               {!patientsLoading && recentPatients.length > 5 && (
                 <Button
-                  className="mt-4 w-full text-blue-400 hover:bg-blue-500/20 hover:text-blue-300"
+                  className="mt-4 w-full text-primary hover:bg-primary/10"
                   onClick={() => router.push('/login')}
                   variant="ghost"
                 >
@@ -378,13 +436,15 @@ export default function HomePage() {
           </Card>
 
           {/* Today's Schedule */}
-          <Card className="border-pink-500/20 bg-white/10 backdrop-blur-sm">
+          <Card className="neonpro-card">
             <CardHeader>
-              <CardTitle className="flex items-center text-white">
-                <Activity className="mr-2 h-5 w-5 text-pink-400" />
+              <CardTitle className="flex items-center text-foreground">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-chart-4/10 mr-3">
+                  <Activity className="h-4 w-4 text-chart-4" />
+                </div>
                 Agenda de Hoje
               </CardTitle>
-              <CardDescription className="text-slate-300">
+              <CardDescription className="text-muted-foreground">
                 Consultas programadas para hoje
               </CardDescription>
             </CardHeader>
@@ -393,12 +453,12 @@ export default function HomePage() {
                 <div className="space-y-3">
                   {[1, 2, 3].map((i) => (
                     <div
-                      className="space-y-2 rounded-lg border border-white/10 p-3"
+                      className="space-y-2 rounded-lg border border-border p-3"
                       key={i}
                     >
-                      <Skeleton className="h-4 w-20 bg-white/20" />
-                      <Skeleton className="h-4 w-32 bg-white/20" />
-                      <Skeleton className="h-3 w-24 bg-white/20" />
+                      <Skeleton className="h-4 w-20 bg-muted" />
+                      <Skeleton className="h-4 w-32 bg-muted" />
+                      <Skeleton className="h-3 w-24 bg-muted" />
                     </div>
                   ))}
                 </div>
@@ -406,11 +466,11 @@ export default function HomePage() {
                 <div className="space-y-3">
                   {todaysAppointments.slice(0, 3).map((appointment) => (
                     <div
-                      className="rounded-lg border border-white/10 p-3 hover:bg-white/5"
+                      className="rounded-lg border border-border p-4 hover:bg-muted/50 transition-colors"
                       key={appointment.id}
                     >
-                      <div className="flex items-center justify-between">
-                        <p className="font-medium text-white">
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="font-semibold text-foreground">
                           {new Date(
                             appointment.appointment_date
                           ).toLocaleTimeString('pt-BR', {
@@ -418,15 +478,15 @@ export default function HomePage() {
                             minute: '2-digit',
                           })}
                         </p>
-                        <Badge className="border-green-500/30 bg-green-500/20 text-green-400">
+                        <Badge className="neonpro-badge-success">
                           {appointment.status}
                         </Badge>
                       </div>
-                      <p className="text-slate-300 text-sm">
+                      <p className="text-foreground text-sm font-medium mb-1">
                         {appointment.patients?.name ||
                           'Paciente não identificado'}
                       </p>
-                      <p className="text-slate-400 text-xs">
+                      <p className="text-muted-foreground text-xs">
                         {appointment.services?.name ||
                           'Serviço não especificado'}
                       </p>
@@ -435,8 +495,8 @@ export default function HomePage() {
                 </div>
               ) : (
                 <div className="py-8 text-center">
-                  <Calendar className="mx-auto mb-4 h-12 w-12 text-slate-500" />
-                  <p className="text-slate-300">
+                  <Calendar className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
+                  <p className="text-muted-foreground">
                     Nenhuma consulta agendada para hoje
                   </p>
                 </div>
@@ -444,7 +504,7 @@ export default function HomePage() {
 
               {!appointmentsLoading && todaysAppointments.length > 3 && (
                 <Button
-                  className="mt-4 w-full text-pink-400 hover:bg-pink-500/20 hover:text-pink-300"
+                  className="mt-4 w-full text-primary hover:bg-primary/10"
                   onClick={() => router.push('/login')}
                   variant="ghost"
                 >
@@ -459,103 +519,155 @@ export default function HomePage() {
       {/* Trust/Social Proof Section */}
       <section className="container mx-auto px-6 pb-20">
         <div className="text-center">
-          <h3 className="mb-8 font-bold text-2xl text-white">
-            Confiança e Segurança Garantidas
+          <h3 className="mb-6 font-bold text-3xl text-foreground">
+            Confiança e Segurança para o Mercado Brasileiro
           </h3>
-          <div className="mb-8 flex flex-wrap justify-center gap-4">
-            <Badge className="border-green-500/30 bg-green-500/20 px-4 py-2 text-green-400 text-sm">
-              <Shield className="mr-2 h-4 w-4" />
-              LGPD Compliant
-            </Badge>
-            <Badge className="border-blue-500/30 bg-blue-500/20 px-4 py-2 text-blue-400 text-sm">
-              <Stethoscope className="mr-2 h-4 w-4" />
-              ANVISA Aprovado
-            </Badge>
-            <Badge className="border-purple-500/30 bg-purple-500/20 px-4 py-2 text-purple-400 text-sm">
-              <FileText className="mr-2 h-4 w-4" />
-              CFM Certificado
-            </Badge>
-            <Badge className="border-orange-500/30 bg-orange-500/20 px-4 py-2 text-orange-400 text-sm">
-              <Star className="mr-2 h-4 w-4" />
-              ISO 27001
-            </Badge>
+          <p className="mb-12 text-muted-foreground text-lg max-w-3xl mx-auto">
+            Desenvolvido com foco nas regulamentações brasileiras e necessidades específicas 
+            do setor de medicina estética nacional
+          </p>
+
+          {/* Enhanced Compliance Badges */}
+          <div className="mb-16 grid grid-cols-2 gap-4 md:grid-cols-4">
+            <div className="compliance-badge flex-col py-6">
+              <Shield className="h-8 w-8 mb-2 mx-auto" />
+              <div className="font-semibold">LGPD</div>
+              <div className="text-xs opacity-80">Lei Geral de Proteção</div>
+            </div>
+            <div className="compliance-badge flex-col py-6">
+              <Stethoscope className="h-8 w-8 mb-2 mx-auto" />
+              <div className="font-semibold">ANVISA</div>
+              <div className="text-xs opacity-80">Vigilância Sanitária</div>
+            </div>
+            <div className="compliance-badge flex-col py-6">
+              <FileText className="h-8 w-8 mb-2 mx-auto" />
+              <div className="font-semibold">CFM</div>
+              <div className="text-xs opacity-80">Conselho Federal</div>
+            </div>
+            <div className="compliance-badge flex-col py-6">
+              <Star className="h-8 w-8 mb-2 mx-auto" />
+              <div className="font-semibold">ISO 27001</div>
+              <div className="text-xs opacity-80">Segurança Info.</div>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-            <div className="text-center">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-green-500 to-blue-600">
-                <Shield className="h-8 w-8 text-white" />
-              </div>
-              <h4 className="mb-2 font-semibold text-lg text-white">
-                Dados Protegidos
-              </h4>
-              <p className="text-slate-300">
-                Criptografia de ponta a ponta e compliance total com LGPD
-              </p>
-            </div>
+          {/* Trust Pillars */}
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+            <Card className="neonpro-card text-center group">
+              <CardContent className="pt-6">
+                <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full neonpro-gradient group-hover:neonpro-glow transition-all">
+                  <Shield className="h-10 w-10 text-primary-foreground" />
+                </div>
+                <h4 className="mb-4 font-semibold text-xl text-foreground">
+                  Proteção de Dados Médicos
+                </h4>
+                <p className="text-muted-foreground leading-relaxed">
+                  Criptografia de nível bancário, backup automático em nuvem brasileira 
+                  e compliance total com LGPD para dados sensíveis de saúde
+                </p>
+              </CardContent>
+            </Card>
 
-            <div className="text-center">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600">
-                <Heart className="h-8 w-8 text-white" />
-              </div>
-              <h4 className="mb-2 font-semibold text-lg text-white">
-                Especializado em Estética
-              </h4>
-              <p className="text-slate-300">
-                Desenvolvido especificamente para clínicas de estética e
-                bem-estar
-              </p>
-            </div>
+            <Card className="neonpro-card text-center group">
+              <CardContent className="pt-6">
+                <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full neonpro-gradient group-hover:neonpro-glow transition-all">
+                  <Heart className="h-10 w-10 text-primary-foreground" />
+                </div>
+                <h4 className="mb-4 font-semibold text-xl text-foreground">
+                  Especialista em Medicina Estética
+                </h4>
+                <p className="text-muted-foreground leading-relaxed">
+                  Desenvolvido por especialistas para o mercado brasileiro de estética, 
+                  com funcionalidades específicas para procedimentos e regulamentações locais
+                </p>
+              </CardContent>
+            </Card>
 
-            <div className="text-center">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-pink-600">
-                <Star className="h-8 w-8 text-white" />
-              </div>
-              <h4 className="mb-2 font-semibold text-lg text-white">
-                Suporte 24/7
-              </h4>
-              <p className="text-slate-300">
-                Equipe especializada disponível para ajudar sua clínica
-              </p>
-            </div>
+            <Card className="neonpro-card text-center group">
+              <CardContent className="pt-6">
+                <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full neonpro-gradient group-hover:neonpro-glow transition-all">
+                  <Star className="h-10 w-10 text-primary-foreground" />
+                </div>
+                <h4 className="mb-4 font-semibold text-xl text-foreground">
+                  Suporte Especializado 24/7
+                </h4>
+                <p className="text-muted-foreground leading-relaxed">
+                  Equipe técnica especializada em saúde, treinamento personalizado 
+                  e suporte prioritário para clínicas em todo o Brasil
+                </p>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
       {/* Call to Action Section */}
-      <section className="border-white/10 border-t bg-gradient-to-r from-blue-600/20 to-purple-600/20 py-20">
+      <section className="border-t border-border bg-gradient-to-r from-primary/5 to-chart-5/5 py-24">
         <div className="container mx-auto px-6 text-center">
-          <h3 className="mb-4 font-bold text-4xl text-white">
-            Pronto para Transformar sua Clínica?
-          </h3>
-          <p className="mx-auto mb-8 max-w-2xl text-slate-300 text-xl">
-            Junte-se a centenas de clínicas que já confiam no NeonPro para
-            gerenciar seus negócios com eficiência, segurança e resultados
-            comprovados.
-          </p>
+          <div className="mx-auto max-w-4xl">
+            <h3 className="mb-6 font-bold text-4xl text-foreground lg:text-5xl">
+              Transforme sua Clínica Estética Hoje
+            </h3>
+            <p className="mx-auto mb-12 max-w-3xl text-muted-foreground text-xl leading-relaxed">
+              Junte-se a centenas de clínicas brasileiras que já confiam no NeonPro Healthcare 
+              para gerenciar seus negócios com eficiência, segurança total e resultados comprovados 
+              no mercado de medicina estética.
+            </p>
 
-          <div className="flex flex-col justify-center gap-4 sm:flex-row">
-            <Button
-              className="border-0 bg-gradient-to-r from-blue-500 to-purple-600 px-8 py-3 text-white hover:from-blue-600 hover:to-purple-700"
-              onClick={() => router.push('/login')}
-              size="lg"
-            >
-              Começar Gratuitamente
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <Button
-              className="border-white/20 px-8 py-3 text-white hover:bg-white/10"
-              size="lg"
-              variant="outline"
-            >
-              <Calendar className="mr-2 h-5 w-5" />
-              Agendar Demonstração
-            </Button>
+            <div className="flex flex-col justify-center gap-6 sm:flex-row mb-8">
+              <Button
+                className="neonpro-button-primary text-lg px-10 py-4"
+                onClick={() => router.push('/signup')}
+                size="lg"
+              >
+                Começar Gratuitamente
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+              <Button
+                className="border-primary/20 text-foreground hover:bg-primary/5 text-lg px-10 py-4"
+                size="lg"
+                variant="outline"
+              >
+                <Calendar className="mr-2 h-5 w-5" />
+                Demonstração Personalizada
+              </Button>
+            </div>
+
+            {/* Enhanced Trust Line */}
+            <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
+              <div className="trust-indicator">
+                Teste grátis por 30 dias
+              </div>
+              <div className="trust-indicator">
+                Sem cartão de crédito
+              </div>
+              <div className="trust-indicator">
+                Suporte especializado em saúde
+              </div>
+              <div className="trust-indicator">
+                Treinamento incluído
+              </div>
+            </div>
+
+            {/* Social Proof Numbers */}
+            <div className="mt-12 grid grid-cols-2 gap-8 md:grid-cols-4">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-primary mb-2">500+</div>
+                <div className="text-sm text-muted-foreground">Clínicas Atendidas</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-primary mb-2">50k+</div>
+                <div className="text-sm text-muted-foreground">Pacientes Gerenciados</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-primary mb-2">99.9%</div>
+                <div className="text-sm text-muted-foreground">Uptime Garantido</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-primary mb-2">24/7</div>
+                <div className="text-sm text-muted-foreground">Suporte Disponível</div>
+              </div>
+            </div>
           </div>
-
-          <p className="mt-6 text-slate-400 text-sm">
-            Teste grátis por 30 dias • Sem cartão de crédito • Suporte
-            especializado
-          </p>
         </div>
       </section>
     </div>

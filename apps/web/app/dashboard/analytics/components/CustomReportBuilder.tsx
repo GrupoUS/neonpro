@@ -1,42 +1,62 @@
 'use client';
 
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
-  Plus,
-  Save,
+  Activity,
+  BarChart3,
+  Calendar,
+  Clock,
+  Copy,
+  DollarSign,
   Download,
   Eye,
-  Settings,
-  Trash2,
-  Copy,
-  Calendar,
-  Mail,
-  Users,
-  BarChart3,
-  LineChart,
-  PieChart,
-  Activity,
-  DollarSign,
-  Filter,
-  Layers,
-  Grid,
-  Type,
-  Image,
-  Clock,
-  Share,
   FileText,
+  Filter,
+  Grid,
+  Image,
+  Layers,
+  LineChart,
+  Mail,
   MoreVertical,
+  PieChart,
+  Plus,
+  Save,
+  Settings,
+  Share,
+  Trash2,
+  Type,
+  Users,
 } from 'lucide-react';
-import { useState, useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 
 // Types for the Report Builder
@@ -73,22 +93,28 @@ interface ReportSchedule {
 }
 
 // Visual components maintaining NeonPro design
-const NeonGradientCard = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
+const NeonGradientCard = ({
+  children,
+  className = '',
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) => (
   <motion.div
-    initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     className={`relative overflow-hidden rounded-xl border border-slate-800 bg-gradient-to-br from-slate-900/90 to-blue-900/30 backdrop-blur-sm ${className}`}
+    initial={{ opacity: 0, y: 20 }}
   >
     <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-50" />
     <div className="relative z-10 p-6">{children}</div>
   </motion.div>
 );
 
-const CosmicGlowButton = ({ 
-  children, 
-  variant = 'primary', 
-  size = 'md', 
-  onClick, 
+const CosmicGlowButton = ({
+  children,
+  variant = 'primary',
+  size = 'md',
+  onClick,
   className = '',
   disabled = false,
 }: {
@@ -100,11 +126,16 @@ const CosmicGlowButton = ({
   disabled?: boolean;
 }) => {
   const variants = {
-    primary: 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700',
-    secondary: 'bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800',
-    success: 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700',
-    warning: 'bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700',
-    danger: 'bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700',
+    primary:
+      'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700',
+    secondary:
+      'bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800',
+    success:
+      'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700',
+    warning:
+      'bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700',
+    danger:
+      'bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700',
   };
 
   const sizes = {
@@ -115,11 +146,11 @@ const CosmicGlowButton = ({
 
   return (
     <motion.button
+      className={`inline-flex items-center gap-2 rounded-lg font-semibold text-white shadow-lg transition-all duration-300 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50 ${variants[variant]} ${sizes[size]} ${className}`}
+      disabled={disabled}
+      onClick={onClick}
       whileHover={{ scale: disabled ? 1 : 1.02 }}
       whileTap={{ scale: disabled ? 1 : 0.98 }}
-      onClick={onClick}
-      disabled={disabled}
-      className={`inline-flex items-center gap-2 rounded-lg font-semibold text-white shadow-lg transition-all duration-300 hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed ${variants[variant]} ${sizes[size]} ${className}`}
     >
       {children}
     </motion.button>
@@ -127,34 +158,65 @@ const CosmicGlowButton = ({
 };
 
 // Element Palette Component
-const ElementPalette = ({ onAddElement }: { onAddElement: (type: string) => void }) => {
+const ElementPalette = ({
+  onAddElement,
+}: {
+  onAddElement: (type: string) => void;
+}) => {
   const elementTypes = [
-    { type: 'chart', label: 'Gráfico', icon: BarChart3, description: 'Gráficos de linha, barra, pizza' },
-    { type: 'table', label: 'Tabela', icon: Grid, description: 'Tabelas de dados' },
-    { type: 'metric', label: 'Métrica', icon: Activity, description: 'KPIs e indicadores' },
-    { type: 'text', label: 'Texto', icon: Type, description: 'Títulos e parágrafos' },
-    { type: 'image', label: 'Imagem', icon: Image, description: 'Logotipos e gráficos' },
+    {
+      type: 'chart',
+      label: 'Gráfico',
+      icon: BarChart3,
+      description: 'Gráficos de linha, barra, pizza',
+    },
+    {
+      type: 'table',
+      label: 'Tabela',
+      icon: Grid,
+      description: 'Tabelas de dados',
+    },
+    {
+      type: 'metric',
+      label: 'Métrica',
+      icon: Activity,
+      description: 'KPIs e indicadores',
+    },
+    {
+      type: 'text',
+      label: 'Texto',
+      icon: Type,
+      description: 'Títulos e parágrafos',
+    },
+    {
+      type: 'image',
+      label: 'Imagem',
+      icon: Image,
+      description: 'Logotipos e gráficos',
+    },
   ];
 
   return (
     <div className="space-y-3">
-      <h3 className="text-lg font-semibold text-white">Elementos</h3>
+      <h3 className="font-semibold text-lg text-white">Elementos</h3>
       <div className="space-y-2">
         {elementTypes.map((element) => {
           const Icon = element.icon;
           return (
             <motion.div
+              className="cursor-pointer rounded-lg border border-slate-700 bg-white/5 p-3 transition-all duration-200 hover:border-blue-400"
               key={element.type}
+              onClick={() => onAddElement(element.type)}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => onAddElement(element.type)}
-              className="p-3 bg-white/5 rounded-lg border border-slate-700 hover:border-blue-400 cursor-pointer transition-all duration-200"
             >
               <div className="flex items-center space-x-3">
                 <Icon className="h-5 w-5 text-blue-400" />
                 <div className="flex-1">
-                  <div className="text-white font-medium">{element.label}</div>
-                  <div className="text-slate-400 text-xs">{element.description}</div>
+                  <div className="font-medium text-white">{element.label}</div>
+                  <div className="text-slate-400 text-xs">
+                    {element.description}
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -220,7 +282,7 @@ export default function CustomReportBuilder() {
   };
 
   const deleteElement = (id: string) => {
-    setElements(elements.filter(el => el.id !== id));
+    setElements(elements.filter((el) => el.id !== id));
     if (selectedElement === id) {
       setSelectedElement(null);
     }
@@ -233,7 +295,11 @@ export default function CustomReportBuilder() {
 
   const saveReport = () => {
     // Implementation for saving reports
-    console.log('Saving report...', { reportName, reportDescription, elements });
+    console.log('Saving report...', {
+      reportName,
+      reportDescription,
+      elements,
+    });
   };
 
   const previewReport = () => {
@@ -247,30 +313,50 @@ export default function CustomReportBuilder() {
         {/* Header */}
         <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
           <div>
-            <h1 className="text-3xl font-bold text-white">Custom Report Builder</h1>
-            <p className="text-slate-400">Crie relatórios personalizados com interface drag-and-drop</p>
+            <h1 className="font-bold text-3xl text-white">
+              Custom Report Builder
+            </h1>
+            <p className="text-slate-400">
+              Crie relatórios personalizados com interface drag-and-drop
+            </p>
           </div>
-          
+
           <div className="flex items-center space-x-4">
-            <CosmicGlowButton onClick={previewReport} size="sm" variant="secondary">
+            <CosmicGlowButton
+              onClick={previewReport}
+              size="sm"
+              variant="secondary"
+            >
               <Eye className="mr-2 h-4 w-4" />
               Visualizar
             </CosmicGlowButton>
-            
+
             <CosmicGlowButton onClick={saveReport} size="sm" variant="success">
               <Save className="mr-2 h-4 w-4" />
               Salvar
             </CosmicGlowButton>
-            
+
             <div className="flex items-center space-x-1">
-              <CosmicGlowButton onClick={() => exportReport('pdf')} size="sm" variant="primary">
+              <CosmicGlowButton
+                onClick={() => exportReport('pdf')}
+                size="sm"
+                variant="primary"
+              >
                 <Download className="mr-2 h-4 w-4" />
                 PDF
               </CosmicGlowButton>
-              <CosmicGlowButton onClick={() => exportReport('excel')} size="sm" variant="primary">
+              <CosmicGlowButton
+                onClick={() => exportReport('excel')}
+                size="sm"
+                variant="primary"
+              >
                 Excel
               </CosmicGlowButton>
-              <CosmicGlowButton onClick={() => exportReport('csv')} size="sm" variant="primary">
+              <CosmicGlowButton
+                onClick={() => exportReport('csv')}
+                size="sm"
+                variant="primary"
+              >
                 CSV
               </CosmicGlowButton>
             </div>
@@ -278,46 +364,64 @@ export default function CustomReportBuilder() {
         </div>
 
         {/* Main Content */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 bg-slate-800/50 border-slate-700">
-            <TabsTrigger value="builder" className="data-[state=active]:bg-blue-600">
+        <Tabs className="w-full" onValueChange={setActiveTab} value={activeTab}>
+          <TabsList className="grid w-full grid-cols-3 border-slate-700 bg-slate-800/50">
+            <TabsTrigger
+              className="data-[state=active]:bg-blue-600"
+              value="builder"
+            >
               Construtor
             </TabsTrigger>
-            <TabsTrigger value="templates" className="data-[state=active]:bg-blue-600">
+            <TabsTrigger
+              className="data-[state=active]:bg-blue-600"
+              value="templates"
+            >
               Templates
             </TabsTrigger>
-            <TabsTrigger value="scheduler" className="data-[state=active]:bg-blue-600">
+            <TabsTrigger
+              className="data-[state=active]:bg-blue-600"
+              value="scheduler"
+            >
               Agendamentos
             </TabsTrigger>
           </TabsList>
 
           {/* Report Builder Tab */}
-          <TabsContent value="builder" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          <TabsContent className="space-y-6" value="builder">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
               {/* Left Sidebar - Tools */}
               <div className="lg:col-span-1">
                 <NeonGradientCard>
                   <div className="space-y-6">
                     {/* Report Info */}
                     <div className="space-y-3">
-                      <h3 className="text-lg font-semibold text-white">Configurações</h3>
+                      <h3 className="font-semibold text-lg text-white">
+                        Configurações
+                      </h3>
                       <div className="space-y-2">
-                        <Label htmlFor="report-name" className="text-slate-300">Nome do Relatório</Label>
+                        <Label className="text-slate-300" htmlFor="report-name">
+                          Nome do Relatório
+                        </Label>
                         <Input
+                          className="border-slate-600 bg-slate-800 text-white"
                           id="report-name"
-                          value={reportName}
                           onChange={(e) => setReportName(e.target.value)}
-                          className="bg-slate-800 border-slate-600 text-white"
+                          value={reportName}
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="report-description" className="text-slate-300">Descrição</Label>
+                        <Label
+                          className="text-slate-300"
+                          htmlFor="report-description"
+                        >
+                          Descrição
+                        </Label>
                         <Textarea
+                          className="border-slate-600 bg-slate-800 text-white"
                           id="report-description"
-                          value={reportDescription}
                           onChange={(e) => setReportDescription(e.target.value)}
-                          className="bg-slate-800 border-slate-600 text-white"
                           rows={3}
+                          value={reportDescription}
                         />
                       </div>
                     </div>
@@ -328,13 +432,21 @@ export default function CustomReportBuilder() {
                     {/* Element Properties */}
                     {selectedElement && (
                       <div className="space-y-3">
-                        <h3 className="text-lg font-semibold text-white">Propriedades</h3>
-                        <div className="p-3 bg-white/5 rounded-lg">
+                        <h3 className="font-semibold text-lg text-white">
+                          Propriedades
+                        </h3>
+                        <div className="rounded-lg bg-white/5 p-3">
                           <p className="text-slate-300 text-sm">
-                            Elemento selecionado: {elements.find(el => el.id === selectedElement)?.title}
+                            Elemento selecionado:{' '}
+                            {
+                              elements.find((el) => el.id === selectedElement)
+                                ?.title
+                            }
                           </p>
                           <div className="mt-2 space-y-2">
-                            <Label className="text-slate-400">Configurações avançadas estarão aqui</Label>
+                            <Label className="text-slate-400">
+                              Configurações avançadas estarão aqui
+                            </Label>
                           </div>
                         </div>
                       </div>
@@ -348,48 +460,60 @@ export default function CustomReportBuilder() {
                 <NeonGradientCard>
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-lg font-semibold text-white">Canvas do Relatório</h3>
+                      <h3 className="font-semibold text-lg text-white">
+                        Canvas do Relatório
+                      </h3>
                       <div className="flex items-center space-x-2">
-                        <Badge variant="outline" className="text-blue-400 border-blue-400">
+                        <Badge
+                          className="border-blue-400 text-blue-400"
+                          variant="outline"
+                        >
                           {elements.length} elementos
                         </Badge>
                         <Button
+                          className="border-slate-600 text-slate-300 hover:bg-red-500/20"
+                          onClick={() => setElements([])}
                           size="sm"
                           variant="outline"
-                          onClick={() => setElements([])}
-                          className="border-slate-600 text-slate-300 hover:bg-red-500/20"
                         >
-                          <Trash2 className="h-4 w-4 mr-1" />
+                          <Trash2 className="mr-1 h-4 w-4" />
                           Limpar
                         </Button>
                       </div>
                     </div>
 
                     {/* Canvas Area */}
-                    <div className="relative h-96 bg-slate-800/30 border-2 border-dashed border-slate-600 rounded-lg overflow-hidden">
+                    <div className="relative h-96 overflow-hidden rounded-lg border-2 border-slate-600 border-dashed bg-slate-800/30">
                       {elements.length === 0 ? (
                         <div className="absolute inset-0 flex items-center justify-center">
                           <div className="text-center text-slate-400">
-                            <Layers className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                            <Layers className="mx-auto mb-4 h-12 w-12 opacity-50" />
                             <p>Arraste elementos da paleta para começar</p>
                           </div>
                         </div>
                       ) : (
                         <div className="space-y-2 p-4">
                           {elements.map((element, index) => (
-                            <div key={element.id} className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-slate-700">
+                            <div
+                              className="flex items-center justify-between rounded-lg border border-slate-700 bg-white/5 p-3"
+                              key={element.id}
+                            >
                               <div className="flex items-center space-x-3">
                                 <BarChart3 className="h-5 w-5 text-blue-400" />
                                 <div>
-                                  <div className="text-white font-medium">{element.title}</div>
-                                  <div className="text-slate-400 text-sm">Tipo: {element.type}</div>
+                                  <div className="font-medium text-white">
+                                    {element.title}
+                                  </div>
+                                  <div className="text-slate-400 text-sm">
+                                    Tipo: {element.type}
+                                  </div>
                                 </div>
                               </div>
                               <Button
+                                className="h-8 w-8 p-0 hover:bg-red-500/20"
+                                onClick={() => deleteElement(element.id)}
                                 size="sm"
                                 variant="ghost"
-                                onClick={() => deleteElement(element.id)}
-                                className="h-8 w-8 p-0 hover:bg-red-500/20"
                               >
                                 <Trash2 className="h-4 w-4 text-red-400" />
                               </Button>
@@ -402,15 +526,24 @@ export default function CustomReportBuilder() {
                     {/* Canvas Tools */}
                     <div className="flex items-center justify-between">
                       <div className="text-slate-400 text-sm">
-                        Clique nos elementos da paleta para adicionar ao relatório
+                        Clique nos elementos da paleta para adicionar ao
+                        relatório
                       </div>
                       <div className="flex items-center space-x-2">
-                        <Button size="sm" variant="outline" className="border-slate-600 text-slate-300">
-                          <Grid className="h-4 w-4 mr-1" />
+                        <Button
+                          className="border-slate-600 text-slate-300"
+                          size="sm"
+                          variant="outline"
+                        >
+                          <Grid className="mr-1 h-4 w-4" />
                           Grade
                         </Button>
-                        <Button size="sm" variant="outline" className="border-slate-600 text-slate-300">
-                          <Layers className="h-4 w-4 mr-1" />
+                        <Button
+                          className="border-slate-600 text-slate-300"
+                          size="sm"
+                          variant="outline"
+                        >
+                          <Layers className="mr-1 h-4 w-4" />
                           Camadas
                         </Button>
                       </div>
@@ -426,32 +559,41 @@ export default function CustomReportBuilder() {
             <NeonGradientCard>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-white">Templates de Relatório</h3>
+                  <h3 className="font-semibold text-lg text-white">
+                    Templates de Relatório
+                  </h3>
                   <CosmicGlowButton size="sm">
-                    <Plus className="h-4 w-4 mr-1" />
+                    <Plus className="mr-1 h-4 w-4" />
                     Novo Template
                   </CosmicGlowButton>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {mockTemplates.map((template) => (
                     <motion.div
+                      className="cursor-pointer rounded-lg border border-slate-700 bg-white/5 p-4 transition-all duration-200 hover:border-blue-400"
                       key={template.id}
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      className="p-4 bg-white/5 rounded-lg border border-slate-700 hover:border-blue-400 cursor-pointer transition-all duration-200"
                     >
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
-                          <h4 className="text-white font-medium">{template.name}</h4>
-                          <Badge variant="outline" className="text-blue-400 border-blue-400">
+                          <h4 className="font-medium text-white">
+                            {template.name}
+                          </h4>
+                          <Badge
+                            className="border-blue-400 text-blue-400"
+                            variant="outline"
+                          >
                             {template.category}
                           </Badge>
                         </div>
-                        
-                        <p className="text-slate-400 text-sm">{template.description}</p>
-                        
-                        <div className="flex items-center justify-between text-xs text-slate-500">
+
+                        <p className="text-slate-400 text-sm">
+                          {template.description}
+                        </p>
+
+                        <div className="flex items-center justify-between text-slate-500 text-xs">
                           <span>{template.usageCount} usos</span>
                           <div className="flex items-center space-x-1">
                             <span>★</span>
@@ -471,17 +613,21 @@ export default function CustomReportBuilder() {
             <NeonGradientCard>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-white">Agendamentos de Relatório</h3>
+                  <h3 className="font-semibold text-lg text-white">
+                    Agendamentos de Relatório
+                  </h3>
                   <CosmicGlowButton size="sm">
-                    <Calendar className="h-4 w-4 mr-1" />
+                    <Calendar className="mr-1 h-4 w-4" />
                     Novo Agendamento
                   </CosmicGlowButton>
                 </div>
 
-                <div className="text-center py-8 text-slate-400">
-                  <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <div className="py-8 text-center text-slate-400">
+                  <Calendar className="mx-auto mb-4 h-12 w-12 opacity-50" />
                   <p>Nenhum agendamento configurado</p>
-                  <p className="text-sm mt-2">Crie agendamentos para envio automático de relatórios</p>
+                  <p className="mt-2 text-sm">
+                    Crie agendamentos para envio automático de relatórios
+                  </p>
                 </div>
               </div>
             </NeonGradientCard>

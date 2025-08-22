@@ -1,6 +1,6 @@
 /**
  * 🎭 Playwright Test Configuration with Monitoring
- * 
+ *
  * Enhanced configuration with integrated performance monitoring
  */
 
@@ -12,18 +12,18 @@ export const test = base.extend({
   // Monitor each test
   monitoredPage: async ({ page }, use, testInfo) => {
     const startTime = Date.now();
-    
+
     // Collect network metrics
     let networkRequests = 0;
     page.on('request', () => networkRequests++);
-    
+
     // Use the page
     await use(page);
-    
+
     // Collect metrics after test completion
     const endTime = Date.now();
     testInfo.duration = endTime - startTime;
-    
+
     // Save metrics
     await e2eMonitor.collectMetrics({
       ...testInfo,
@@ -54,12 +54,16 @@ export const healthcareHelpers = {
   async validateLGPDCompliance(page: any) {
     // Check for consent checkboxes
     await expect(page.locator('[data-testid="lgpd-consent"]')).toBeVisible();
-    
+
     // Check for privacy policy link
-    await expect(page.locator('[data-testid="privacy-policy-link"]')).toBeVisible();
-    
+    await expect(
+      page.locator('[data-testid="privacy-policy-link"]')
+    ).toBeVisible();
+
     // Check for data subject rights information
-    await expect(page.locator('[data-testid="data-rights-info"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="data-rights-info"]')
+    ).toBeVisible();
   },
 
   /**
@@ -68,10 +72,12 @@ export const healthcareHelpers = {
   async validateANVISACompliance(page: any) {
     // Check for medical license validation
     await expect(page.locator('[data-testid="medical-license"]')).toBeVisible();
-    
+
     // Check for regulatory warnings
-    await expect(page.locator('[data-testid="regulatory-warning"]')).toBeVisible();
-    
+    await expect(
+      page.locator('[data-testid="regulatory-warning"]')
+    ).toBeVisible();
+
     // Check for audit trail indicators
     await expect(page.locator('[data-testid="audit-trail"]')).toBeVisible();
   },
@@ -81,13 +87,17 @@ export const healthcareHelpers = {
    */
   async validatePerformanceThresholds(page: any) {
     // Measure page load time
-    const navigationStart = await page.evaluate(() => performance.timing.navigationStart);
-    const loadComplete = await page.evaluate(() => performance.timing.loadEventEnd);
+    const navigationStart = await page.evaluate(
+      () => performance.timing.navigationStart
+    );
+    const loadComplete = await page.evaluate(
+      () => performance.timing.loadEventEnd
+    );
     const loadTime = loadComplete - navigationStart;
-    
+
     // Healthcare systems should load within 3 seconds
     expect(loadTime).toBeLessThan(3000);
-    
+
     // Check for accessibility compliance
     await expect(page.locator('[aria-label]')).toHaveCount({ min: 1 });
   },
@@ -104,7 +114,7 @@ export const performanceHelpers = {
         const observer = new PerformanceObserver((list) => {
           const entries = list.getEntries();
           const vitals: any = {};
-          
+
           entries.forEach((entry: any) => {
             if (entry.entryType === 'largest-contentful-paint') {
               vitals.lcp = entry.startTime;
@@ -112,20 +122,24 @@ export const performanceHelpers = {
             if (entry.entryType === 'first-input') {
               vitals.fid = entry.processingStart - entry.startTime;
             }
-            if (entry.entryType === 'layout-shift') {
-              if (!entry.hadRecentInput) {
-                vitals.cls = (vitals.cls || 0) + entry.value;
-              }
+            if (entry.entryType === 'layout-shift' && !entry.hadRecentInput) {
+              vitals.cls = (vitals.cls || 0) + entry.value;
             }
           });
-          
+
           if (Object.keys(vitals).length === 3) {
             resolve(vitals);
           }
         });
-        
-        observer.observe({ entryTypes: ['largest-contentful-paint', 'first-input', 'layout-shift'] });
-        
+
+        observer.observe({
+          entryTypes: [
+            'largest-contentful-paint',
+            'first-input',
+            'layout-shift',
+          ],
+        });
+
         // Fallback timeout
         setTimeout(() => resolve({}), 5000);
       });
@@ -145,7 +159,7 @@ export const performanceHelpers = {
         loadComplete: timing.loadEventEnd - timing.navigationStart,
       };
     });
-    
+
     return metrics;
   },
 };

@@ -8,19 +8,16 @@
 
 import { hc } from 'hono/client';
 import type { z } from 'zod';
-
 // Import backend app types
 // import type { AppType } from '../../apps/api/src/index';
 // Import validation schemas
 import {
+  type AuditActionSchema,
   LoginRequestSchema,
   LoginResponseSchema,
   RefreshTokenRequestSchema,
   RefreshTokenResponseSchema,
   type UserBaseSchema,
-} from './schemas';
-import {
-  type AuditActionSchema,
 } from './schemas';
 import type { RpcClient } from './types';
 
@@ -419,7 +416,7 @@ export const ApiUtils = {
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Number.parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    return Number.parseFloat((bytes / k ** i).toFixed(2)) + ' ' + sizes[i];
   },
 
   // Check if error is a network error that should be retried
@@ -442,7 +439,6 @@ export function createApiClient(config: Partial<ApiClientConfig> = {}) {
 
   // Create Hono RPC client
   const client = hc<any>(finalConfig.baseUrl, {
-
     fetch: async (input: RequestInfo | URL, init?: RequestInit) => {
       const requestStart = Date.now();
       const requestId = ApiUtils.generateRequestId();
@@ -560,9 +556,7 @@ export function createApiClient(config: Partial<ApiClientConfig> = {}) {
               ip_address: ApiUtils.getClientIP(),
               user_agent: ApiUtils.getUserAgent(),
               success: response.ok,
-              error_message: response.ok
-                ? ''
-                : `HTTP ${response.status}`,
+              error_message: response.ok ? '' : `HTTP ${response.status}`,
               request_duration: duration,
               request_size: init?.body ? JSON.stringify(init.body).length : 0,
               response_size: Number.parseInt(

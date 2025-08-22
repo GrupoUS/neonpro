@@ -2,31 +2,37 @@
 
 import { motion } from 'framer-motion';
 import {
+  Activity,
+  AlertCircle,
   AlertTriangle,
+  BarChart3,
+  Bell,
+  Calendar,
   CheckCircle,
+  ChevronRight,
   Clock,
+  Download,
   FileText,
   Heart,
+  Info,
+  RefreshCw,
+  Settings,
   Shield,
   TrendingUp,
   Users,
   Zap,
-  Calendar,
-  Bell,
-  Activity,
-  BarChart3,
-  Settings,
-  Download,
-  RefreshCw,
-  ChevronRight,
-  AlertCircle,
-  Info,
 } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -68,11 +74,14 @@ type NeonGradientCardProps = {
   className?: string;
 };
 
-const NeonGradientCard = ({ children, className = '' }: NeonGradientCardProps) => (
+const NeonGradientCard = ({
+  children,
+  className = '',
+}: NeonGradientCardProps) => (
   <motion.div
-    initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     className={`relative overflow-hidden rounded-xl border border-healthcare-border bg-gradient-to-br from-slate-900/90 to-blue-900/30 backdrop-blur-sm ${className}`}
+    initial={{ opacity: 0, y: 20 }}
   >
     <div className="absolute inset-0 bg-gradient-to-r from-healthcare-primary/10 to-blue-500/10 opacity-50" />
     <div className="relative z-10 p-6">{children}</div>
@@ -97,11 +106,16 @@ const CosmicGlowButton = ({
   disabled = false,
 }: CosmicGlowButtonProps) => {
   const variants = {
-    primary: 'bg-gradient-to-r from-healthcare-primary to-blue-600 hover:from-healthcare-primary/80 hover:to-blue-700',
-    secondary: 'bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800',
-    success: 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700',
-    warning: 'bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700',
-    danger: 'bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700',
+    primary:
+      'bg-gradient-to-r from-healthcare-primary to-blue-600 hover:from-healthcare-primary/80 hover:to-blue-700',
+    secondary:
+      'bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800',
+    success:
+      'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700',
+    warning:
+      'bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700',
+    danger:
+      'bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700',
   };
 
   const sizes = {
@@ -112,11 +126,11 @@ const CosmicGlowButton = ({
 
   return (
     <motion.button
+      className={`inline-flex items-center gap-2 rounded-lg font-semibold text-white shadow-lg transition-all duration-300 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50 ${variants[variant]} ${sizes[size]} ${className}`}
+      disabled={disabled}
+      onClick={onClick}
       whileHover={{ scale: disabled ? 1 : 1.02 }}
       whileTap={{ scale: disabled ? 1 : 0.98 }}
-      onClick={onClick}
-      disabled={disabled}
-      className={`inline-flex items-center gap-2 rounded-lg font-semibold text-white shadow-lg transition-all duration-300 hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed ${variants[variant]} ${sizes[size]} ${className}`}
     >
       {children}
     </motion.button>
@@ -164,7 +178,8 @@ const complianceAlerts: ComplianceAlert[] = [
     id: 'lgpd-consent-review',
     type: 'important',
     title: 'Revisão de Consentimentos LGPD',
-    description: 'Revisar e atualizar formulários de consentimento para pacientes',
+    description:
+      'Revisar e atualizar formulários de consentimento para pacientes',
     dueDate: '2024-01-25',
     category: 'LGPD',
     actionRequired: true,
@@ -228,7 +243,8 @@ const actionItems: ActionItem[] = [
 // Compliance Overview Section
 function ComplianceOverview() {
   const overallScore = Math.round(
-    complianceMetrics.reduce((acc, metric) => acc + metric.score, 0) / complianceMetrics.length
+    complianceMetrics.reduce((acc, metric) => acc + metric.score, 0) /
+      complianceMetrics.length
   );
 
   const getScoreColor = (score: number) => {
@@ -247,31 +263,45 @@ function ComplianceOverview() {
   return (
     <NeonGradientCard>
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-white mb-4">
+        <h2 className="mb-4 font-bold text-2xl text-white">
           Score de Compliance Geral
         </h2>
-        <div className={`text-6xl font-bold mb-2 ${getScoreColor(overallScore)}`}>
+        <div
+          className={`mb-2 font-bold text-6xl ${getScoreColor(overallScore)}`}
+        >
           {overallScore}%
         </div>
-        <p className="text-slate-300 mb-6">
+        <p className="mb-6 text-slate-300">
           Status: {getScoreStatus(overallScore)}
         </p>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           {complianceMetrics.map((metric) => (
-            <div key={metric.id} className="bg-white/5 rounded-lg p-4">
-              <h3 className="text-sm font-medium text-slate-300 mb-2">
+            <div className="rounded-lg bg-white/5 p-4" key={metric.id}>
+              <h3 className="mb-2 font-medium text-slate-300 text-sm">
                 {metric.title}
               </h3>
-              <div className={`text-2xl font-bold ${getScoreColor(metric.score)}`}>
+              <div
+                className={`font-bold text-2xl ${getScoreColor(metric.score)}`}
+              >
                 {metric.score}%
               </div>
-              <div className="flex items-center justify-center mt-2">
-                {metric.trend === 'up' && <TrendingUp className="h-4 w-4 text-green-400" />}
-                {metric.trend === 'down' && <TrendingUp className="h-4 w-4 text-red-400 rotate-180" />}
-                {metric.trend === 'stable' && <Activity className="h-4 w-4 text-yellow-400" />}
-                <span className="text-xs text-slate-400 ml-1">
-                  {metric.trend === 'up' ? 'Melhorando' : metric.trend === 'down' ? 'Declinando' : 'Estável'}
+              <div className="mt-2 flex items-center justify-center">
+                {metric.trend === 'up' && (
+                  <TrendingUp className="h-4 w-4 text-green-400" />
+                )}
+                {metric.trend === 'down' && (
+                  <TrendingUp className="h-4 w-4 rotate-180 text-red-400" />
+                )}
+                {metric.trend === 'stable' && (
+                  <Activity className="h-4 w-4 text-yellow-400" />
+                )}
+                <span className="ml-1 text-slate-400 text-xs">
+                  {metric.trend === 'up'
+                    ? 'Melhorando'
+                    : metric.trend === 'down'
+                      ? 'Declinando'
+                      : 'Estável'}
                 </span>
               </div>
             </div>
@@ -280,45 +310,59 @@ function ComplianceOverview() {
       </div>
     </NeonGradientCard>
   );
-}// Critical Alerts Section
+} // Critical Alerts Section
 function CriticalAlerts() {
-  const criticalAlerts = complianceAlerts.filter(alert => alert.type === 'critical');
-  const importantAlerts = complianceAlerts.filter(alert => alert.type === 'important');
+  const criticalAlerts = complianceAlerts.filter(
+    (alert) => alert.type === 'critical'
+  );
+  const importantAlerts = complianceAlerts.filter(
+    (alert) => alert.type === 'important'
+  );
 
   const getAlertIcon = (type: string) => {
     switch (type) {
-      case 'critical': return <AlertTriangle className="h-5 w-5 text-red-400" />;
-      case 'important': return <AlertCircle className="h-5 w-5 text-yellow-400" />;
-      default: return <Info className="h-5 w-5 text-blue-400" />;
+      case 'critical':
+        return <AlertTriangle className="h-5 w-5 text-red-400" />;
+      case 'important':
+        return <AlertCircle className="h-5 w-5 text-yellow-400" />;
+      default:
+        return <Info className="h-5 w-5 text-blue-400" />;
     }
   };
 
   const getAlertColor = (type: string) => {
     switch (type) {
-      case 'critical': return 'border-red-500/50 bg-red-500/10';
-      case 'important': return 'border-yellow-500/50 bg-yellow-500/10';
-      default: return 'border-blue-500/50 bg-blue-500/10';
+      case 'critical':
+        return 'border-red-500/50 bg-red-500/10';
+      case 'important':
+        return 'border-yellow-500/50 bg-yellow-500/10';
+      default:
+        return 'border-blue-500/50 bg-blue-500/10';
     }
   };
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case 'LGPD': return 'bg-blue-500';
-      case 'ANVISA': return 'bg-green-500';
-      case 'CFM': return 'bg-purple-500';
-      default: return 'bg-gray-500';
+      case 'LGPD':
+        return 'bg-blue-500';
+      case 'ANVISA':
+        return 'bg-green-500';
+      case 'CFM':
+        return 'bg-purple-500';
+      default:
+        return 'bg-gray-500';
     }
   };
 
   return (
     <NeonGradientCard>
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold text-white flex items-center">
-          <Bell className="h-5 w-5 mr-2" />
+      <div className="mb-6 flex items-center justify-between">
+        <h2 className="flex items-center font-bold text-white text-xl">
+          <Bell className="mr-2 h-5 w-5" />
           Alertas Críticos e Importantes
         </h2>
-        <CosmicGlowButton variant="secondary" size="sm">
-          <RefreshCw className="h-4 w-4 mr-2" />
+        <CosmicGlowButton size="sm" variant="secondary">
+          <RefreshCw className="mr-2 h-4 w-4" />
           Atualizar
         </CosmicGlowButton>
       </div>
@@ -326,36 +370,43 @@ function CriticalAlerts() {
       <div className="space-y-4">
         {complianceAlerts.slice(0, 5).map((alert) => (
           <motion.div
-            key={alert.id}
-            initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className={`p-4 rounded-lg border ${getAlertColor(alert.type)}`}
+            className={`rounded-lg border p-4 ${getAlertColor(alert.type)}`}
+            initial={{ opacity: 0, x: -20 }}
+            key={alert.id}
           >
             <div className="flex items-start justify-between">
               <div className="flex items-start space-x-3">
                 {getAlertIcon(alert.type)}
                 <div className="flex-1">
-                  <div className="flex items-center space-x-2 mb-1">
+                  <div className="mb-1 flex items-center space-x-2">
                     <h3 className="font-semibold text-white">{alert.title}</h3>
-                    <Badge className={`${getCategoryColor(alert.category)} text-white text-xs`}>
+                    <Badge
+                      className={`${getCategoryColor(alert.category)} text-white text-xs`}
+                    >
                       {alert.category}
                     </Badge>
                   </div>
-                  <p className="text-slate-300 text-sm mb-2">{alert.description}</p>
-                  <div className="flex items-center space-x-4 text-xs text-slate-400">
+                  <p className="mb-2 text-slate-300 text-sm">
+                    {alert.description}
+                  </p>
+                  <div className="flex items-center space-x-4 text-slate-400 text-xs">
                     <span className="flex items-center">
-                      <Clock className="h-3 w-3 mr-1" />
-                      Prazo: {new Date(alert.dueDate).toLocaleDateString('pt-BR')}
+                      <Clock className="mr-1 h-3 w-3" />
+                      Prazo:{' '}
+                      {new Date(alert.dueDate).toLocaleDateString('pt-BR')}
                     </span>
                     {alert.actionRequired && (
-                      <span className="text-red-400 font-medium">Ação Requerida</span>
+                      <span className="font-medium text-red-400">
+                        Ação Requerida
+                      </span>
                     )}
                   </div>
                 </div>
               </div>
               <CosmicGlowButton
-                variant={alert.type === 'critical' ? 'danger' : 'warning'}
                 size="sm"
+                variant={alert.type === 'critical' ? 'danger' : 'warning'}
               >
                 <ChevronRight className="h-4 w-4" />
               </CosmicGlowButton>
@@ -365,8 +416,8 @@ function CriticalAlerts() {
       </div>
 
       {complianceAlerts.length === 0 && (
-        <div className="text-center py-8 text-slate-400">
-          <CheckCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
+        <div className="py-8 text-center text-slate-400">
+          <CheckCircle className="mx-auto mb-4 h-12 w-12 opacity-50" />
           <p>Nenhum alerta crítico no momento</p>
           <p className="text-sm">Todos os sistemas estão em conformidade</p>
         </div>
@@ -385,44 +436,63 @@ function LGPDComplianceModule() {
   ];
 
   const recentActivities = [
-    { action: 'Consentimento atualizado', patient: 'Paciente #1234', time: '2h atrás' },
-    { action: 'Solicitação de dados processada', patient: 'Paciente #5678', time: '4h atrás' },
-    { action: 'Revisão de política de privacidade', patient: 'Sistema', time: '1 dia atrás' },
+    {
+      action: 'Consentimento atualizado',
+      patient: 'Paciente #1234',
+      time: '2h atrás',
+    },
+    {
+      action: 'Solicitação de dados processada',
+      patient: 'Paciente #5678',
+      time: '4h atrás',
+    },
+    {
+      action: 'Revisão de política de privacidade',
+      patient: 'Sistema',
+      time: '1 dia atrás',
+    },
   ];
 
   return (
     <NeonGradientCard>
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold text-white flex items-center">
-          <Shield className="h-5 w-5 mr-2 text-blue-400" />
+      <div className="mb-6 flex items-center justify-between">
+        <h2 className="flex items-center font-bold text-white text-xl">
+          <Shield className="mr-2 h-5 w-5 text-blue-400" />
           LGPD - Proteção de Dados
         </h2>
         <div className="flex space-x-2">
-          <CosmicGlowButton variant="primary" size="sm">
-            <FileText className="h-4 w-4 mr-2" />
+          <CosmicGlowButton size="sm" variant="primary">
+            <FileText className="mr-2 h-4 w-4" />
             Relatório LGPD
           </CosmicGlowButton>
-          <CosmicGlowButton variant="secondary" size="sm">
+          <CosmicGlowButton size="sm" variant="secondary">
             <Settings className="h-4 w-4" />
           </CosmicGlowButton>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-4">
         {lgpdMetrics.map((metric, index) => (
-          <div key={index} className="bg-white/5 rounded-lg p-3 text-center">
-            <div className="text-lg font-bold text-white">{metric.value}</div>
-            <div className="text-sm text-slate-300">{metric.label}</div>
+          <div className="rounded-lg bg-white/5 p-3 text-center" key={index}>
+            <div className="font-bold text-lg text-white">{metric.value}</div>
+            <div className="text-slate-300 text-sm">{metric.label}</div>
           </div>
         ))}
       </div>
 
       <div className="space-y-3">
-        <h3 className="font-semibold text-white text-sm">Atividades Recentes</h3>
+        <h3 className="font-semibold text-sm text-white">
+          Atividades Recentes
+        </h3>
         {recentActivities.map((activity, index) => (
-          <div key={index} className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
+          <div
+            className="flex items-center justify-between rounded-lg bg-white/5 p-3"
+            key={index}
+          >
             <div>
-              <p className="text-white text-sm font-medium">{activity.action}</p>
+              <p className="font-medium text-sm text-white">
+                {activity.action}
+              </p>
               <p className="text-slate-400 text-xs">{activity.patient}</p>
             </div>
             <span className="text-slate-400 text-xs">{activity.time}</span>
@@ -450,60 +520,76 @@ function ANVISAComplianceModule() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'valid': return 'text-green-400';
-      case 'renewing': return 'text-yellow-400';
-      case 'expired': return 'text-red-400';
-      default: return 'text-slate-400';
+      case 'valid':
+        return 'text-green-400';
+      case 'renewing':
+        return 'text-yellow-400';
+      case 'expired':
+        return 'text-red-400';
+      default:
+        return 'text-slate-400';
     }
   };
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case 'valid': return 'Válida';
-      case 'renewing': return 'Renovando';
-      case 'expired': return 'Expirada';
-      default: return 'Desconhecido';
+      case 'valid':
+        return 'Válida';
+      case 'renewing':
+        return 'Renovando';
+      case 'expired':
+        return 'Expirada';
+      default:
+        return 'Desconhecido';
     }
   };
 
   return (
     <NeonGradientCard>
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold text-white flex items-center">
-          <Heart className="h-5 w-5 mr-2 text-green-400" />
+      <div className="mb-6 flex items-center justify-between">
+        <h2 className="flex items-center font-bold text-white text-xl">
+          <Heart className="mr-2 h-5 w-5 text-green-400" />
           ANVISA - Vigilância Sanitária
         </h2>
         <div className="flex space-x-2">
-          <CosmicGlowButton variant="success" size="sm">
-            <Download className="h-4 w-4 mr-2" />
+          <CosmicGlowButton size="sm" variant="success">
+            <Download className="mr-2 h-4 w-4" />
             Certificados
           </CosmicGlowButton>
-          <CosmicGlowButton variant="secondary" size="sm">
+          <CosmicGlowButton size="sm" variant="secondary">
             <Settings className="h-4 w-4" />
           </CosmicGlowButton>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-4">
         {anvisaMetrics.map((metric, index) => (
-          <div key={index} className="bg-white/5 rounded-lg p-3 text-center">
-            <div className="text-lg font-bold text-white">{metric.value}</div>
-            <div className="text-sm text-slate-300">{metric.label}</div>
+          <div className="rounded-lg bg-white/5 p-3 text-center" key={index}>
+            <div className="font-bold text-lg text-white">{metric.value}</div>
+            <div className="text-slate-300 text-sm">{metric.label}</div>
           </div>
         ))}
       </div>
 
       <div className="space-y-3">
-        <h3 className="font-semibold text-white text-sm">Status das Licenças</h3>
+        <h3 className="font-semibold text-sm text-white">
+          Status das Licenças
+        </h3>
         {licenses.map((license, index) => (
-          <div key={index} className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
+          <div
+            className="flex items-center justify-between rounded-lg bg-white/5 p-3"
+            key={index}
+          >
             <div>
-              <p className="text-white text-sm font-medium">{license.name}</p>
+              <p className="font-medium text-sm text-white">{license.name}</p>
               <p className="text-slate-400 text-xs">
-                Expira em: {new Date(license.expiry).toLocaleDateString('pt-BR')}
+                Expira em:{' '}
+                {new Date(license.expiry).toLocaleDateString('pt-BR')}
               </p>
             </div>
-            <span className={`text-sm font-medium ${getStatusColor(license.status)}`}>
+            <span
+              className={`font-medium text-sm ${getStatusColor(license.status)}`}
+            >
               {getStatusText(license.status)}
             </span>
           </div>
@@ -511,7 +597,7 @@ function ANVISAComplianceModule() {
       </div>
     </NeonGradientCard>
   );
-}// CFM Professional Module
+} // CFM Professional Module
 function CFMComplianceModule() {
   const cfmMetrics = [
     { label: 'Licenças Médicas Válidas', value: '12/12', status: 'excellent' },
@@ -521,48 +607,70 @@ function CFMComplianceModule() {
   ];
 
   const professionals = [
-    { name: 'Dr. João Silva', crm: 'CRM-SP 123456', specialty: 'Cardiologia', cmeCredits: '85%' },
-    { name: 'Dra. Maria Santos', crm: 'CRM-SP 234567', specialty: 'Pediatria', cmeCredits: '92%' },
-    { name: 'Dr. Carlos Oliveira', crm: 'CRM-SP 345678', specialty: 'Ortopedia', cmeCredits: '78%' },
+    {
+      name: 'Dr. João Silva',
+      crm: 'CRM-SP 123456',
+      specialty: 'Cardiologia',
+      cmeCredits: '85%',
+    },
+    {
+      name: 'Dra. Maria Santos',
+      crm: 'CRM-SP 234567',
+      specialty: 'Pediatria',
+      cmeCredits: '92%',
+    },
+    {
+      name: 'Dr. Carlos Oliveira',
+      crm: 'CRM-SP 345678',
+      specialty: 'Ortopedia',
+      cmeCredits: '78%',
+    },
   ];
 
   return (
     <NeonGradientCard>
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold text-white flex items-center">
-          <Users className="h-5 w-5 mr-2 text-purple-400" />
+      <div className="mb-6 flex items-center justify-between">
+        <h2 className="flex items-center font-bold text-white text-xl">
+          <Users className="mr-2 h-5 w-5 text-purple-400" />
           CFM - Medicina Profissional
         </h2>
         <div className="flex space-x-2">
-          <CosmicGlowButton variant="primary" size="sm">
-            <BarChart3 className="h-4 w-4 mr-2" />
+          <CosmicGlowButton size="sm" variant="primary">
+            <BarChart3 className="mr-2 h-4 w-4" />
             Relatório CME
           </CosmicGlowButton>
-          <CosmicGlowButton variant="secondary" size="sm">
+          <CosmicGlowButton size="sm" variant="secondary">
             <Settings className="h-4 w-4" />
           </CosmicGlowButton>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-4">
         {cfmMetrics.map((metric, index) => (
-          <div key={index} className="bg-white/5 rounded-lg p-3 text-center">
-            <div className="text-lg font-bold text-white">{metric.value}</div>
-            <div className="text-sm text-slate-300">{metric.label}</div>
+          <div className="rounded-lg bg-white/5 p-3 text-center" key={index}>
+            <div className="font-bold text-lg text-white">{metric.value}</div>
+            <div className="text-slate-300 text-sm">{metric.label}</div>
           </div>
         ))}
       </div>
 
       <div className="space-y-3">
-        <h3 className="font-semibold text-white text-sm">Equipe Médica</h3>
+        <h3 className="font-semibold text-sm text-white">Equipe Médica</h3>
         {professionals.map((prof, index) => (
-          <div key={index} className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
+          <div
+            className="flex items-center justify-between rounded-lg bg-white/5 p-3"
+            key={index}
+          >
             <div>
-              <p className="text-white text-sm font-medium">{prof.name}</p>
-              <p className="text-slate-400 text-xs">{prof.crm} - {prof.specialty}</p>
+              <p className="font-medium text-sm text-white">{prof.name}</p>
+              <p className="text-slate-400 text-xs">
+                {prof.crm} - {prof.specialty}
+              </p>
             </div>
             <div className="text-right">
-              <span className="text-sm font-medium text-white">{prof.cmeCredits}</span>
+              <span className="font-medium text-sm text-white">
+                {prof.cmeCredits}
+              </span>
               <p className="text-slate-400 text-xs">CME Completo</p>
             </div>
           </div>
@@ -576,65 +684,88 @@ function CFMComplianceModule() {
 function ActionItemsSection() {
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'critical': return 'text-red-400 border-red-500/50 bg-red-500/10';
-      case 'high': return 'text-orange-400 border-orange-500/50 bg-orange-500/10';
-      case 'medium': return 'text-yellow-400 border-yellow-500/50 bg-yellow-500/10';
-      case 'low': return 'text-green-400 border-green-500/50 bg-green-500/10';
-      default: return 'text-slate-400 border-slate-500/50 bg-slate-500/10';
+      case 'critical':
+        return 'text-red-400 border-red-500/50 bg-red-500/10';
+      case 'high':
+        return 'text-orange-400 border-orange-500/50 bg-orange-500/10';
+      case 'medium':
+        return 'text-yellow-400 border-yellow-500/50 bg-yellow-500/10';
+      case 'low':
+        return 'text-green-400 border-green-500/50 bg-green-500/10';
+      default:
+        return 'text-slate-400 border-slate-500/50 bg-slate-500/10';
     }
   };
 
   const getPriorityIcon = (priority: string) => {
     switch (priority) {
-      case 'critical': return <AlertTriangle className="h-4 w-4" />;
-      case 'high': return <AlertCircle className="h-4 w-4" />;
-      case 'medium': return <Clock className="h-4 w-4" />;
-      case 'low': return <Info className="h-4 w-4" />;
-      default: return <Activity className="h-4 w-4" />;
+      case 'critical':
+        return <AlertTriangle className="h-4 w-4" />;
+      case 'high':
+        return <AlertCircle className="h-4 w-4" />;
+      case 'medium':
+        return <Clock className="h-4 w-4" />;
+      case 'low':
+        return <Info className="h-4 w-4" />;
+      default:
+        return <Activity className="h-4 w-4" />;
     }
   };
 
   const getPriorityText = (priority: string) => {
     switch (priority) {
-      case 'critical': return 'Crítico';
-      case 'high': return 'Alto';
-      case 'medium': return 'Médio';
-      case 'low': return 'Baixo';
-      default: return 'Indefinido';
+      case 'critical':
+        return 'Crítico';
+      case 'high':
+        return 'Alto';
+      case 'medium':
+        return 'Médio';
+      case 'low':
+        return 'Baixo';
+      default:
+        return 'Indefinido';
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'completed': return 'text-green-400';
-      case 'in_progress': return 'text-blue-400';
-      case 'pending': return 'text-yellow-400';
-      default: return 'text-slate-400';
+      case 'completed':
+        return 'text-green-400';
+      case 'in_progress':
+        return 'text-blue-400';
+      case 'pending':
+        return 'text-yellow-400';
+      default:
+        return 'text-slate-400';
     }
   };
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case 'completed': return 'Concluído';
-      case 'in_progress': return 'Em Andamento';
-      case 'pending': return 'Pendente';
-      default: return 'Indefinido';
+      case 'completed':
+        return 'Concluído';
+      case 'in_progress':
+        return 'Em Andamento';
+      case 'pending':
+        return 'Pendente';
+      default:
+        return 'Indefinido';
     }
   };
 
   return (
     <NeonGradientCard>
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold text-white flex items-center">
-          <Zap className="h-5 w-5 mr-2 text-yellow-400" />
+      <div className="mb-6 flex items-center justify-between">
+        <h2 className="flex items-center font-bold text-white text-xl">
+          <Zap className="mr-2 h-5 w-5 text-yellow-400" />
           Itens de Ação Prioritários
         </h2>
         <div className="flex space-x-2">
-          <CosmicGlowButton variant="primary" size="sm">
-            <FileText className="h-4 w-4 mr-2" />
+          <CosmicGlowButton size="sm" variant="primary">
+            <FileText className="mr-2 h-4 w-4" />
             Nova Ação
           </CosmicGlowButton>
-          <CosmicGlowButton variant="secondary" size="sm">
+          <CosmicGlowButton size="sm" variant="secondary">
             <Settings className="h-4 w-4" />
           </CosmicGlowButton>
         </div>
@@ -643,40 +774,53 @@ function ActionItemsSection() {
       <div className="space-y-4">
         {actionItems.map((item) => (
           <motion.div
-            key={item.id}
-            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className={`p-4 rounded-lg border ${getPriorityColor(item.priority)}`}
+            className={`rounded-lg border p-4 ${getPriorityColor(item.priority)}`}
+            initial={{ opacity: 0, y: 10 }}
+            key={item.id}
           >
             <div className="flex items-start justify-between">
-              <div className="flex items-start space-x-3 flex-1">
+              <div className="flex flex-1 items-start space-x-3">
                 <div className="flex items-center space-x-2">
                   {getPriorityIcon(item.priority)}
-                  <Badge className={`${item.category === 'LGPD' ? 'bg-blue-500' : item.category === 'ANVISA' ? 'bg-green-500' : 'bg-purple-500'} text-white text-xs`}>
+                  <Badge
+                    className={`${item.category === 'LGPD' ? 'bg-blue-500' : item.category === 'ANVISA' ? 'bg-green-500' : 'bg-purple-500'} text-white text-xs`}
+                  >
                     {item.category}
                   </Badge>
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-semibold text-white text-sm mb-1">{item.title}</h3>
-                  <p className="text-slate-300 text-xs mb-2">{item.description}</p>
-                  <div className="flex items-center space-x-4 text-xs text-slate-400">
+                  <h3 className="mb-1 font-semibold text-sm text-white">
+                    {item.title}
+                  </h3>
+                  <p className="mb-2 text-slate-300 text-xs">
+                    {item.description}
+                  </p>
+                  <div className="flex items-center space-x-4 text-slate-400 text-xs">
                     <span>Responsável: {item.assignedTo}</span>
                     <span>Tempo estimado: {item.estimatedTime}</span>
-                    <span>Prazo: {new Date(item.dueDate).toLocaleDateString('pt-BR')}</span>
+                    <span>
+                      Prazo:{' '}
+                      {new Date(item.dueDate).toLocaleDateString('pt-BR')}
+                    </span>
                   </div>
                 </div>
               </div>
               <div className="flex flex-col items-end space-y-2">
-                <span className={`text-xs font-medium ${getPriorityColor(item.priority).split(' ')[0]}`}>
+                <span
+                  className={`font-medium text-xs ${getPriorityColor(item.priority).split(' ')[0]}`}
+                >
                   {getPriorityText(item.priority)}
                 </span>
-                <span className={`text-xs font-medium ${getStatusColor(item.status)}`}>
+                <span
+                  className={`font-medium text-xs ${getStatusColor(item.status)}`}
+                >
                   {getStatusText(item.status)}
                 </span>
                 <CosmicGlowButton
-                  variant={item.status === 'completed' ? 'success' : 'primary'}
-                  size="sm"
                   disabled={item.status === 'completed'}
+                  size="sm"
+                  variant={item.status === 'completed' ? 'success' : 'primary'}
                 >
                   {item.status === 'completed' ? 'Concluído' : 'Ação'}
                 </CosmicGlowButton>
@@ -692,28 +836,61 @@ function ActionItemsSection() {
 // Regulatory Calendar
 function RegulatoryCalendar() {
   const upcomingDeadlines = [
-    { title: 'Renovação ANVISA', date: '2024-01-25', category: 'ANVISA', type: 'critical' },
-    { title: 'Relatório LGPD Trimestral', date: '2024-01-31', category: 'LGPD', type: 'important' },
-    { title: 'Auditoria Interna', date: '2024-02-15', category: 'Qualidade', type: 'routine' },
-    { title: 'Renovação CRM Dr. Silva', date: '2024-02-28', category: 'CFM', type: 'important' },
-    { title: 'Treinamento LGPD Equipe', date: '2024-03-05', category: 'LGPD', type: 'routine' },
+    {
+      title: 'Renovação ANVISA',
+      date: '2024-01-25',
+      category: 'ANVISA',
+      type: 'critical',
+    },
+    {
+      title: 'Relatório LGPD Trimestral',
+      date: '2024-01-31',
+      category: 'LGPD',
+      type: 'important',
+    },
+    {
+      title: 'Auditoria Interna',
+      date: '2024-02-15',
+      category: 'Qualidade',
+      type: 'routine',
+    },
+    {
+      title: 'Renovação CRM Dr. Silva',
+      date: '2024-02-28',
+      category: 'CFM',
+      type: 'important',
+    },
+    {
+      title: 'Treinamento LGPD Equipe',
+      date: '2024-03-05',
+      category: 'LGPD',
+      type: 'routine',
+    },
   ];
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case 'critical': return 'border-l-red-500 bg-red-500/10';
-      case 'important': return 'border-l-yellow-500 bg-yellow-500/10';
-      case 'routine': return 'border-l-blue-500 bg-blue-500/10';
-      default: return 'border-l-slate-500 bg-slate-500/10';
+      case 'critical':
+        return 'border-l-red-500 bg-red-500/10';
+      case 'important':
+        return 'border-l-yellow-500 bg-yellow-500/10';
+      case 'routine':
+        return 'border-l-blue-500 bg-blue-500/10';
+      default:
+        return 'border-l-slate-500 bg-slate-500/10';
     }
   };
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case 'LGPD': return 'bg-blue-500';
-      case 'ANVISA': return 'bg-green-500';
-      case 'CFM': return 'bg-purple-500';
-      default: return 'bg-gray-500';
+      case 'LGPD':
+        return 'bg-blue-500';
+      case 'ANVISA':
+        return 'bg-green-500';
+      case 'CFM':
+        return 'bg-purple-500';
+      default:
+        return 'bg-gray-500';
     }
   };
 
@@ -727,17 +904,17 @@ function RegulatoryCalendar() {
 
   return (
     <NeonGradientCard>
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold text-white flex items-center">
-          <Calendar className="h-5 w-5 mr-2 text-blue-400" />
+      <div className="mb-6 flex items-center justify-between">
+        <h2 className="flex items-center font-bold text-white text-xl">
+          <Calendar className="mr-2 h-5 w-5 text-blue-400" />
           Calendário Regulatório
         </h2>
         <div className="flex space-x-2">
-          <CosmicGlowButton variant="primary" size="sm">
-            <Calendar className="h-4 w-4 mr-2" />
+          <CosmicGlowButton size="sm" variant="primary">
+            <Calendar className="mr-2 h-4 w-4" />
             Ver Calendário
           </CosmicGlowButton>
-          <CosmicGlowButton variant="secondary" size="sm">
+          <CosmicGlowButton size="sm" variant="secondary">
             <Bell className="h-4 w-4" />
           </CosmicGlowButton>
         </div>
@@ -748,27 +925,41 @@ function RegulatoryCalendar() {
           const daysUntil = getDaysUntil(deadline.date);
           return (
             <div
+              className={`rounded-r-lg border-l-4 p-4 ${getTypeColor(deadline.type)}`}
               key={index}
-              className={`p-4 border-l-4 rounded-r-lg ${getTypeColor(deadline.type)}`}
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <div>
-                    <h3 className="font-semibold text-white text-sm">{deadline.title}</h3>
+                    <h3 className="font-semibold text-sm text-white">
+                      {deadline.title}
+                    </h3>
                     <p className="text-slate-300 text-xs">
                       {new Date(deadline.date).toLocaleDateString('pt-BR')}
                     </p>
                   </div>
-                  <Badge className={`${getCategoryColor(deadline.category)} text-white text-xs`}>
+                  <Badge
+                    className={`${getCategoryColor(deadline.category)} text-white text-xs`}
+                  >
                     {deadline.category}
                   </Badge>
                 </div>
                 <div className="text-right">
-                  <div className={`text-sm font-medium ${daysUntil <= 7 ? 'text-red-400' : daysUntil <= 30 ? 'text-yellow-400' : 'text-green-400'}`}>
-                    {daysUntil < 0 ? 'Vencido' : daysUntil === 0 ? 'Hoje' : `${daysUntil} dias`}
+                  <div
+                    className={`font-medium text-sm ${daysUntil <= 7 ? 'text-red-400' : daysUntil <= 30 ? 'text-yellow-400' : 'text-green-400'}`}
+                  >
+                    {daysUntil < 0
+                      ? 'Vencido'
+                      : daysUntil === 0
+                        ? 'Hoje'
+                        : `${daysUntil} dias`}
                   </div>
                   <p className="text-slate-400 text-xs">
-                    {daysUntil < 0 ? 'Ação urgente' : daysUntil <= 7 ? 'Urgente' : 'No prazo'}
+                    {daysUntil < 0
+                      ? 'Ação urgente'
+                      : daysUntil <= 7
+                        ? 'Urgente'
+                        : 'No prazo'}
                   </p>
                 </div>
               </div>
@@ -778,7 +969,7 @@ function RegulatoryCalendar() {
       </div>
     </NeonGradientCard>
   );
-}// Main Compliance Dashboard Page
+} // Main Compliance Dashboard Page
 export default function ComplianceAutomationPage() {
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -787,7 +978,7 @@ export default function ComplianceAutomationPage() {
   useEffect(() => {
     const interval = setInterval(() => {
       setLastUpdated(new Date());
-    }, 60000); // Update every minute
+    }, 60_000); // Update every minute
 
     return () => clearInterval(interval);
   }, []);
@@ -795,13 +986,14 @@ export default function ComplianceAutomationPage() {
   const handleRefresh = async () => {
     setIsRefreshing(true);
     // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     setLastUpdated(new Date());
     setIsRefreshing(false);
   };
 
   const overallComplianceScore = Math.round(
-    complianceMetrics.reduce((acc, metric) => acc + metric.score, 0) / complianceMetrics.length
+    complianceMetrics.reduce((acc, metric) => acc + metric.score, 0) /
+      complianceMetrics.length
   );
 
   return (
@@ -810,37 +1002,45 @@ export default function ComplianceAutomationPage() {
         {/* Header with accessibility attributes */}
         <header className="flex items-center justify-between" role="banner">
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">
+            <h1 className="mb-2 font-bold text-3xl text-white">
               Central de Compliance Regulatório
             </h1>
             <p className="text-slate-300">
               Monitoramento em tempo real - LGPD, ANVISA e CFM
             </p>
-            <p className="text-slate-400 text-sm mt-1">
+            <p className="mt-1 text-slate-400 text-sm">
               Última atualização: {lastUpdated.toLocaleString('pt-BR')}
             </p>
           </div>
           <div className="flex items-center space-x-4">
-            <div className={`flex items-center space-x-2 px-3 py-2 rounded-lg ${
-              overallComplianceScore >= 90 ? 'bg-green-500/20 text-green-400' :
-              overallComplianceScore >= 80 ? 'bg-yellow-500/20 text-yellow-400' :
-              'bg-red-500/20 text-red-400'
-            }`}>
-              <span className="text-sm font-medium">Compliance:</span>
-              <span className="text-lg font-bold">{overallComplianceScore}%</span>
+            <div
+              className={`flex items-center space-x-2 rounded-lg px-3 py-2 ${
+                overallComplianceScore >= 90
+                  ? 'bg-green-500/20 text-green-400'
+                  : overallComplianceScore >= 80
+                    ? 'bg-yellow-500/20 text-yellow-400'
+                    : 'bg-red-500/20 text-red-400'
+              }`}
+            >
+              <span className="font-medium text-sm">Compliance:</span>
+              <span className="font-bold text-lg">
+                {overallComplianceScore}%
+              </span>
             </div>
             <CosmicGlowButton
-              variant="secondary"
-              size="sm"
-              onClick={handleRefresh}
-              disabled={isRefreshing}
               className="flex items-center"
+              disabled={isRefreshing}
+              onClick={handleRefresh}
+              size="sm"
+              variant="secondary"
             >
-              <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+              <RefreshCw
+                className={`mr-2 h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`}
+              />
               {isRefreshing ? 'Atualizando...' : 'Atualizar'}
             </CosmicGlowButton>
-            <CosmicGlowButton variant="primary" size="sm">
-              <Download className="h-4 w-4 mr-2" />
+            <CosmicGlowButton size="sm" variant="primary">
+              <Download className="mr-2 h-4 w-4" />
               Relatório Completo
             </CosmicGlowButton>
           </div>
@@ -850,30 +1050,42 @@ export default function ComplianceAutomationPage() {
         <main role="main">
           {/* Compliance Overview */}
           <section aria-labelledby="overview-heading" className="mb-8">
-            <h2 id="overview-heading" className="sr-only">Visão Geral de Compliance</h2>
+            <h2 className="sr-only" id="overview-heading">
+              Visão Geral de Compliance
+            </h2>
             <ComplianceOverview />
           </section>
 
           {/* Critical Alerts */}
           <section aria-labelledby="alerts-heading" className="mb-8">
-            <h2 id="alerts-heading" className="sr-only">Alertas Críticos e Importantes</h2>
+            <h2 className="sr-only" id="alerts-heading">
+              Alertas Críticos e Importantes
+            </h2>
             <CriticalAlerts />
           </section>
 
           {/* Compliance Modules Grid */}
           <section aria-labelledby="modules-heading" className="mb-8">
-            <h2 id="modules-heading" className="sr-only">Módulos de Compliance Regulatório</h2>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              <div role="region" aria-labelledby="lgpd-heading">
-                <h3 id="lgpd-heading" className="sr-only">Módulo LGPD</h3>
+            <h2 className="sr-only" id="modules-heading">
+              Módulos de Compliance Regulatório
+            </h2>
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+              <div aria-labelledby="lgpd-heading" role="region">
+                <h3 className="sr-only" id="lgpd-heading">
+                  Módulo LGPD
+                </h3>
                 <LGPDComplianceModule />
               </div>
-              <div role="region" aria-labelledby="anvisa-heading">
-                <h3 id="anvisa-heading" className="sr-only">Módulo ANVISA</h3>
+              <div aria-labelledby="anvisa-heading" role="region">
+                <h3 className="sr-only" id="anvisa-heading">
+                  Módulo ANVISA
+                </h3>
                 <ANVISAComplianceModule />
               </div>
-              <div role="region" aria-labelledby="cfm-heading">
-                <h3 id="cfm-heading" className="sr-only">Módulo CFM</h3>
+              <div aria-labelledby="cfm-heading" role="region">
+                <h3 className="sr-only" id="cfm-heading">
+                  Módulo CFM
+                </h3>
                 <CFMComplianceModule />
               </div>
             </div>
@@ -881,14 +1093,20 @@ export default function ComplianceAutomationPage() {
 
           {/* Action Items and Calendar */}
           <section aria-labelledby="actions-calendar-heading" className="mb-8">
-            <h2 id="actions-calendar-heading" className="sr-only">Ações e Calendário Regulatório</h2>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <div role="region" aria-labelledby="actions-heading">
-                <h3 id="actions-heading" className="sr-only">Itens de Ação Prioritários</h3>
+            <h2 className="sr-only" id="actions-calendar-heading">
+              Ações e Calendário Regulatório
+            </h2>
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+              <div aria-labelledby="actions-heading" role="region">
+                <h3 className="sr-only" id="actions-heading">
+                  Itens de Ação Prioritários
+                </h3>
                 <ActionItemsSection />
               </div>
-              <div role="region" aria-labelledby="calendar-heading">
-                <h3 id="calendar-heading" className="sr-only">Calendário Regulatório</h3>
+              <div aria-labelledby="calendar-heading" role="region">
+                <h3 className="sr-only" id="calendar-heading">
+                  Calendário Regulatório
+                </h3>
                 <RegulatoryCalendar />
               </div>
             </div>
@@ -896,46 +1114,48 @@ export default function ComplianceAutomationPage() {
 
           {/* Quick Actions */}
           <section aria-labelledby="quick-actions-heading" className="mb-8">
-            <h2 id="quick-actions-heading" className="sr-only">Ações Rápidas</h2>
+            <h2 className="sr-only" id="quick-actions-heading">
+              Ações Rápidas
+            </h2>
             <NeonGradientCard>
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-white flex items-center">
-                  <Zap className="h-5 w-5 mr-2 text-yellow-400" />
+              <div className="mb-6 flex items-center justify-between">
+                <h2 className="flex items-center font-bold text-white text-xl">
+                  <Zap className="mr-2 h-5 w-5 text-yellow-400" />
                   Ações Rápidas de Compliance
                 </h2>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <CosmicGlowButton 
-                  variant="primary" 
-                  className="flex flex-col items-center justify-center p-6 h-auto"
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+                <CosmicGlowButton
                   aria-label="Gerar relatório LGPD"
+                  className="flex h-auto flex-col items-center justify-center p-6"
+                  variant="primary"
                 >
-                  <Shield className="h-8 w-8 mb-2" />
-                  <span className="text-sm font-medium">Relatório LGPD</span>
+                  <Shield className="mb-2 h-8 w-8" />
+                  <span className="font-medium text-sm">Relatório LGPD</span>
                 </CosmicGlowButton>
-                <CosmicGlowButton 
-                  variant="success" 
-                  className="flex flex-col items-center justify-center p-6 h-auto"
+                <CosmicGlowButton
                   aria-label="Verificar licenças ANVISA"
+                  className="flex h-auto flex-col items-center justify-center p-6"
+                  variant="success"
                 >
-                  <Heart className="h-8 w-8 mb-2" />
-                  <span className="text-sm font-medium">Licenças ANVISA</span>
+                  <Heart className="mb-2 h-8 w-8" />
+                  <span className="font-medium text-sm">Licenças ANVISA</span>
                 </CosmicGlowButton>
-                <CosmicGlowButton 
-                  variant="secondary" 
-                  className="flex flex-col items-center justify-center p-6 h-auto"
+                <CosmicGlowButton
                   aria-label="Monitorar equipe médica CFM"
+                  className="flex h-auto flex-col items-center justify-center p-6"
+                  variant="secondary"
                 >
-                  <Users className="h-8 w-8 mb-2" />
-                  <span className="text-sm font-medium">Equipe CFM</span>
+                  <Users className="mb-2 h-8 w-8" />
+                  <span className="font-medium text-sm">Equipe CFM</span>
                 </CosmicGlowButton>
-                <CosmicGlowButton 
-                  variant="warning" 
-                  className="flex flex-col items-center justify-center p-6 h-auto"
+                <CosmicGlowButton
                   aria-label="Agendar auditoria"
+                  className="flex h-auto flex-col items-center justify-center p-6"
+                  variant="warning"
                 >
-                  <Calendar className="h-8 w-8 mb-2" />
-                  <span className="text-sm font-medium">Agendar Auditoria</span>
+                  <Calendar className="mb-2 h-8 w-8" />
+                  <span className="font-medium text-sm">Agendar Auditoria</span>
                 </CosmicGlowButton>
               </div>
             </NeonGradientCard>
@@ -943,13 +1163,17 @@ export default function ComplianceAutomationPage() {
 
           {/* System Status Footer */}
           <section aria-labelledby="system-status-heading">
-            <h2 id="system-status-heading" className="sr-only">Status do Sistema de Compliance</h2>
+            <h2 className="sr-only" id="system-status-heading">
+              Status do Sistema de Compliance
+            </h2>
             <NeonGradientCard>
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center space-x-2">
                     <CheckCircle className="h-5 w-5 text-green-400" />
-                    <span className="text-white font-medium">Sistema Online</span>
+                    <span className="font-medium text-white">
+                      Sistema Online
+                    </span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Shield className="h-5 w-5 text-blue-400" />
@@ -957,7 +1181,9 @@ export default function ComplianceAutomationPage() {
                   </div>
                   <div className="flex items-center space-x-2">
                     <Activity className="h-5 w-5 text-green-400" />
-                    <span className="text-slate-300">Backups Sincronizados</span>
+                    <span className="text-slate-300">
+                      Backups Sincronizados
+                    </span>
                   </div>
                 </div>
                 <div className="text-right">
@@ -975,12 +1201,12 @@ export default function ComplianceAutomationPage() {
 
         {/* Accessibility Live Region for Updates */}
         <div
-          role="status"
-          aria-live="polite"
           aria-label="Atualizações de compliance"
+          aria-live="polite"
           className="sr-only"
+          role="status"
         >
-          {isRefreshing && "Atualizando dados de compliance..."}
+          {isRefreshing && 'Atualizando dados de compliance...'}
         </div>
       </div>
     </div>

@@ -5,7 +5,7 @@
 
 import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock Login Form Component (placeholder for actual implementation)
 interface LoginFormProps {
@@ -33,8 +33,13 @@ const LoginForm = ({ onSubmit }: LoginFormProps) => (
 );
 
 describe('Authentication', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   afterEach(() => {
     cleanup();
+    vi.restoreAllMocks();
   });
 
   it('should render login form', () => {

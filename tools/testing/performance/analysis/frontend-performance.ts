@@ -1,11 +1,11 @@
 /**
  * Frontend Performance Testing for NeonPro Healthcare
- * 
+ *
  * Tests React component performance, bundle optimization, and user experience metrics
  */
 
-import puppeteer, { Browser, Page } from 'puppeteer';
 import { performance } from 'perf_hooks';
+import puppeteer, { type Browser, type Page } from 'puppeteer';
 
 export interface FrontendPerformanceMetrics {
   coreWebVitals: CoreWebVitals;

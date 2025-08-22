@@ -3,32 +3,30 @@
  * Comprehensive system for aesthetic medicine workflows with LGPD/CFM compliance
  */
 
-// Main treatment components
-export { default as AestheticTreatmentPlan } from './AestheticTreatmentPlan';
-export { default as CosmeticConsentBrazilian } from './CosmeticConsentBrazilian';
-export { default as BeforeAfterSecureGallery } from './BeforeAfterSecureGallery';
-
-// Type exports for convenience
-export type {
-  TreatmentPlan,
-  TreatmentSession,
-  TreatmentProtocol,
-  TreatmentPhoto,
-  PatientConsent,
-  TreatmentProgress,
-  AestheticTreatmentCategory,
-  TreatmentStatus,
-  TreatmentPlanType,
-  CFMComplianceStatus,
-  LGPDPhotoConsentStatus,
-} from '@/types/treatments';
-
 // Hook exports
 export { useTreatments } from '@/hooks/useTreatments';
+// Type exports for convenience
+export type {
+  AestheticTreatmentCategory,
+  CFMComplianceStatus,
+  LGPDPhotoConsentStatus,
+  PatientConsent,
+  TreatmentPhoto,
+  TreatmentPlan,
+  TreatmentPlanType,
+  TreatmentProgress,
+  TreatmentProtocol,
+  TreatmentSession,
+  TreatmentStatus,
+} from '@/types/treatments';
+// Main treatment components
+export { default as AestheticTreatmentPlan } from './AestheticTreatmentPlan';
+export { default as BeforeAfterSecureGallery } from './BeforeAfterSecureGallery';
+export { default as CosmeticConsentBrazilian } from './CosmeticConsentBrazilian';
 
 /**
  * Component Usage Examples:
- * 
+ *
  * // Treatment Plan Display
  * <AestheticTreatmentPlan
  *   treatmentPlan={plan}
@@ -36,14 +34,14 @@ export { useTreatments } from '@/hooks/useTreatments';
  *   onViewProgress={handleViewProgress}
  *   onScheduleSession={handleScheduleSession}
  * />
- * 
+ *
  * // LGPD/CFM Consent Management
  * <CosmeticConsentBrazilian
  *   treatmentPlan={plan}
  *   mode="new"
  *   onConsentGranted={handleConsentGranted}
  * />
- * 
+ *
  * // Secure Photo Gallery
  * <BeforeAfterSecureGallery
  *   treatmentSessionId={sessionId}
@@ -52,7 +50,7 @@ export { useTreatments } from '@/hooks/useTreatments';
  *   canEdit={true}
  *   onPhotoUpload={handlePhotoUpload}
  * />
- * 
+ *
  * // Data Hook
  * const {
  *   treatmentPlans,

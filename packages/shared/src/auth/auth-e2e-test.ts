@@ -156,7 +156,7 @@ export async function runAuthE2ETest(
     console.log('👋 Testando logout...');
     const logoutStart = performance.now();
 
-    const logoutResponse = await fetch(`${baseUrl}/api/v1/auth/logout`, {
+    await fetch(`${baseUrl}/api/v1/auth/logout`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${newToken}`,

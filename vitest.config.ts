@@ -16,6 +16,13 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./vitest.setup.ts'],
 
+    // JSDOM environment options - simplified to avoid serialization errors
+    environmentOptions: {
+      jsdom: {
+        resources: 'usable',
+      },
+    },
+
     // Focus only on implemented tests - UNIT TESTS ONLY
     include: [
       // Patient Management tests (100% implemented)
@@ -57,11 +64,11 @@ export default defineConfig({
       'apps/web/lib/lgpd/automation/**',
     ],
 
-    // Optimized performance
-    pool: 'threads',
+    // Optimized performance - use forks to avoid serialization issues
+    pool: 'forks',
     poolOptions: {
-      threads: {
-        singleThread: true,
+      forks: {
+        singleFork: true,
       },
     },
 
@@ -101,6 +108,23 @@ export default defineConfig({
     },
   },
 
+  // React version conflict resolution
+  server: {
+    deps: {
+      // Externalize React to prevent multiple instances
+      external: ['react', 'react-dom'],
+      // Inline testing libraries to ensure single instances
+      inline: [
+        '@testing-library/react',
+        '@testing-library/jest-dom',
+        '@testing-library/user-event',
+        '@neonpro/ui',
+        '@neonpro/shared',
+        '@neonpro/utils',
+      ],
+    },
+  },
+
   // Simplified resolve configuration
   resolve: {
     alias: {
@@ -116,6 +140,9 @@ export default defineConfig({
       '@/middleware': path.resolve(__dirname, './apps/api/src/middleware'),
       '@/routes': path.resolve(__dirname, './apps/api/src/routes'),
       '@/types': path.resolve(__dirname, './apps/api/src/types'),
+      // Force React resolution to single instance
+      'react': path.resolve(__dirname, './node_modules/react'),
+      'react-dom': path.resolve(__dirname, './node_modules/react-dom'),
     },
   },
 

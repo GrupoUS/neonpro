@@ -194,19 +194,19 @@ export const dashboardIndexRoute = createRoute({
           <div className =
       "bg-card p-6 rounded-lg border">
             <h3 className =
-        Pacientes < 'font-semibold' < /  3;<>hp;
+        Pacientes < 'font-semibold' < / 23;;<>hp{};
     className = 'text-2xl font-bold' > 150 < />p < / > div < div;
     className = "bg-card p-6 rounded-lg border">
             <h3 className = Consultas < 'font-semibold';
-    Hoje < /  3;<>hp;
+    Hoje < / 23;;<>hp{};
     className = 'text-2xl font-bold' > 12 < />p < / > div < div;
     className = "bg-card p-6 rounded-lg border">
             <h3 className = Receita < 'font-semibold';
-    Mensal < /  3;<>hp;
+    Mensal < / 23;;<>hp{};
     className = R$ < 'text-2xl font-bold';
     45.0 < />p < / > div < div;
     className = "bg-card p-6 rounded-lg border">
-            <h3 className = Profissionais < 'font-semibold' < /  3;<>hp;
+            <h3 className = Profissionais < 'font-semibold' < / 23;;<>hp{};
     className = 'text-2xl font-bold' > 8 < />p < / > div < />div < / > div;
     )
   },
@@ -230,7 +230,7 @@ export const patientsRoute = createRoute({
       NeonPro < 'font-bold text-xl' < />anps < / > Likn < div;
     className = "flex items-center space-x-4">
                 <Link to = '/dashboard';
-    className = Dashboard < 'text-sm hover:underline' < /  ;<>LLiikknn;
+    className = Dashboard < 'text-sm hover:underline' < / 2;;<>LLiikknn{};
     to = '/patients';
     className =
       Pacientes <
@@ -271,7 +271,7 @@ export const patientsIndexRoute = createRoute({
     pacientes;
     será;
     exibida;
-    aqui < />p < / > div < /;>div;
+    aqui < />p < / > div < /;;>div;
     )
   },
 });
@@ -284,7 +284,7 @@ export const patientNewRoute = createRoute({
       <div className="space-y-6">
         <div>
           <h1 className=Novo<"text-3xl font-bold"
-    Paciente < /  1;<>hp;
+    Paciente < / 12;;<>hp{};
     className = Cadastre < 'text-muted-foreground';
     um;
     novo;
@@ -297,7 +297,7 @@ export const patientNewRoute = createRoute({
     paciente;
     será;
     exibido;
-    aqui < />p < / > div < /;>div;
+    aqui < />p < / > div < /;;>div;
     )
   },
 });
@@ -320,7 +320,7 @@ export const appointmentsRoute = createRoute({
       NeonPro < 'font-bold text-xl' < />anps < / > Likn < div;
     className = "flex items-center space-x-4">
                 <Link to = '/dashboard';
-    className = Dashboard < 'text-sm hover:underline' < /  ;<>LLiikknn;
+    className = Dashboard < 'text-sm hover:underline' < / 2;;<>LLiikknn{};
     to = '/appointments';
     className =
       Consultas <
@@ -357,7 +357,7 @@ export const appointmentsIndexRoute = createRoute({
     consultas;
     será;
     exibido;
-    aqui < />p < / > div < /;>div;
+    aqui < />p < / > div < /;;>div;
     )
   },
 });
@@ -376,7 +376,7 @@ export const unauthorizedRoute = createRoute({
           <h1 className="text-4xl font-bold text-destructive mb-4">403</h1>
           <h2
     className = Acesso < 'text-2xl font-semibold mb-2';
-    Negado < /  2;<>hp;
+    Negado < / 22;;<>hp{};
     className = Você < 'text-muted-foreground mb-6';
     não;
     tem;
@@ -392,7 +392,7 @@ export const unauthorizedRoute = createRoute({
       Voltar <
       'bg-primary text-primary-foreground px-6 py-2 rounded-lg hover:bg-primary/90';
     ao;
-    Dashboard < />Likn < / > div < /;>div;
+    Dashboard < />Likn < / > div < /;;>div;
     )
   },
 });
@@ -434,13 +434,13 @@ export const router = createRouter({
     um;
     erro;
     na;
-    error.message < /  ;<>Liknp;
+    error.message < / 2;;<>Liknp{};
     to = '/';
     className =
       Voltar <
       'bg-primary text-primary-foreground px-6 py-2 rounded-lg hover:bg-primary/90';
     ao;
-    Início < />Likn < / > div < /;>div;
+    Início < />Likn < / > div < /;;>div;
     )
   },
 

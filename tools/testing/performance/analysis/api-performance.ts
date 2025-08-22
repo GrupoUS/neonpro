@@ -1,6 +1,6 @@
 /**
  * API Performance Testing for NeonPro Healthcare
- * 
+ *
  * Tests Hono.dev backend API performance, load testing, and healthcare endpoints
  */
 
@@ -60,7 +60,7 @@ export class ApiPerformanceTester {
     endpoint: string,
     method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'GET',
     payload?: any,
-    iterations: number = 100
+    iterations = 100
   ): Promise<EndpointMetrics> {
     const responseTimes: number[] = [];
     let errorCount = 0;
@@ -68,15 +68,17 @@ export class ApiPerformanceTester {
 
     for (let i = 0; i < iterations; i++) {
       const requestStart = performance.now();
-      
+
       try {
         const response = await fetch(`${this.baseUrl}${endpoint}`, {
           method,
           headers: {
             'Content-Type': 'application/json',
-            ...(this.authToken && { Authorization: `Bearer ${this.authToken}` })
+            ...(this.authToken && {
+              Authorization: `Bearer ${this.authToken}`,
+            }),
           },
-          ...(payload && { body: JSON.stringify(payload) })
+          ...(payload && { body: JSON.stringify(payload) }),
         });
 
         const requestEnd = performance.now();
@@ -87,35 +89,46 @@ export class ApiPerformanceTester {
         }
       } catch (error) {
         errorCount++;
-        responseTimes.push(10000); // 10s timeout penalty
+        responseTimes.push(10_000); // 10s timeout penalty
       }
     }
 
     const totalTime = performance.now() - startTime;
-    
+
     responseTimes.sort((a, b) => a - b);
-    
+
     return {
       endpoint,
       method,
-      averageResponseTime: responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length,
+      averageResponseTime:
+        responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length,
       maxResponseTime: Math.max(...responseTimes),
       minResponseTime: Math.min(...responseTimes),
       errorRate: errorCount / iterations,
-      requestsPerSecond: iterations / (totalTime / 1000)
+      requestsPerSecond: iterations / (totalTime / 1000),
     };
-  }  /**
+  } /**
    * Test healthcare-specific API endpoints
    */
   async testHealthcareEndpoints(): Promise<HealthcareApiMetrics> {
     const results: HealthcareApiMetrics = {
       patientEndpoints: await this.testEndpoint('/api/patients', 'GET'),
       appointmentEndpoints: await this.testEndpoint('/api/appointments', 'GET'),
-      medicalRecordEndpoints: await this.testEndpoint('/api/medical-records', 'GET'),
-      authenticationEndpoints: await this.testEndpoint('/api/auth/validate', 'POST', {
-        token: this.authToken
-      }),
-      emergencyEndpoints: await this.testEndpoint('/api/emergency/patient-data', 'GET')
+      medicalRecordEndpoints: await this.testEndpoint(
+        '/api/medical-records',
+        'GET'
+      ),
+      authenticationEndpoints: await this.testEndpoint(
+        '/api/auth/validate',
+        'POST',
+        {
+          token: this.authToken,
+        }
+      ),
+      emergencyEndpoints: await this.testEndpoint(
+        '/api/emergency/patient-data',
+        'GET'
+      ),
     };
 
     return results;
@@ -129,73 +142,77 @@ export class ApiPerformanceTester {
     const responseTimes: number[] = [];
     let totalRequests = 0;
     let totalErrors = 0;
-    
+
     const startTime = performance.now();
-    const endTime = startTime + (duration * 1000);
-    
+    const endTime = startTime + duration * 1000;
+
     // Simulate concurrent users with ramp-up
     const userPromises: Promise<void>[] = [];
-    
+
     for (let user = 0; user < concurrentUsers; user++) {
       const userDelay = (rampUpTime * 1000 * user) / concurrentUsers;
-      
+
       userPromises.push(
-        this.simulateUser(userDelay, endTime, responseTimes).then(results => {
+        this.simulateUser(userDelay, endTime, responseTimes).then((results) => {
           totalRequests += results.requests;
           totalErrors += results.errors;
         })
       );
     }
-    
+
     await Promise.all(userPromises);
-    
+
     const totalTime = performance.now() - startTime;
     responseTimes.sort((a, b) => a - b);
-    
+
     return {
       responseTime: {
-        average: responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length,
+        average:
+          responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length,
         p50: this.percentile(responseTimes, 0.5),
         p95: this.percentile(responseTimes, 0.95),
-        p99: this.percentile(responseTimes, 0.99)
+        p99: this.percentile(responseTimes, 0.99),
       },
       throughput: totalRequests / (totalTime / 1000),
       errorRate: totalErrors / totalRequests,
       memoryUsage: 0, // Would need process monitoring
-      cpuUsage: 0 // Would need process monitoring
+      cpuUsage: 0, // Would need process monitoring
     };
-  }  private async simulateUser(
-    startDelay: number, 
-    endTime: number, 
+  }
+  private async simulateUser(
+    startDelay: number,
+    endTime: number,
     responseTimes: number[]
   ): Promise<{ requests: number; errors: number }> {
-    await new Promise(resolve => setTimeout(resolve, startDelay));
-    
+    await new Promise((resolve) => setTimeout(resolve, startDelay));
+
     let requests = 0;
     let errors = 0;
-    
+
     while (performance.now() < endTime) {
       const requestStart = performance.now();
-      
+
       try {
         const response = await fetch(`${this.baseUrl}/api/health`);
         const requestEnd = performance.now();
-        
+
         responseTimes.push(requestEnd - requestStart);
         requests++;
-        
+
         if (!response.ok) {
           errors++;
         }
       } catch (error) {
         errors++;
-        responseTimes.push(10000); // Timeout penalty
+        responseTimes.push(10_000); // Timeout penalty
       }
-      
+
       // Brief pause between requests (simulating user behavior)
-      await new Promise(resolve => setTimeout(resolve, 100 + Math.random() * 400));
+      await new Promise((resolve) =>
+        setTimeout(resolve, 100 + Math.random() * 400)
+      );
     }
-    
+
     return { requests, errors };
   }
 
@@ -216,9 +233,9 @@ export class ApiPerformanceTester {
       timestamp: new Date().toISOString(),
       summary: metrics,
       healthcareEndpoints: healthcareMetrics,
-      recommendations: this.generateRecommendations(metrics, healthcareMetrics)
+      recommendations: this.generateRecommendations(metrics, healthcareMetrics),
     };
-    
+
     // Would implement file writing here
     console.log('API Performance Report:', report);
   }
@@ -228,19 +245,25 @@ export class ApiPerformanceTester {
     healthcareMetrics: HealthcareApiMetrics
   ): string[] {
     const recommendations: string[] = [];
-    
+
     if (metrics.responseTime.p95 > 100) {
-      recommendations.push('P95 response time exceeds 100ms. Consider API optimization.');
+      recommendations.push(
+        'P95 response time exceeds 100ms. Consider API optimization.'
+      );
     }
-    
+
     if (metrics.errorRate > 0.01) {
-      recommendations.push('Error rate exceeds 1%. Investigate error handling.');
+      recommendations.push(
+        'Error rate exceeds 1%. Investigate error handling.'
+      );
     }
-    
+
     if (healthcareMetrics.emergencyEndpoints.averageResponseTime > 500) {
-      recommendations.push('Emergency endpoints are slow. Critical for patient safety.');
+      recommendations.push(
+        'Emergency endpoints are slow. Critical for patient safety.'
+      );
     }
-    
+
     return recommendations;
   }
 }

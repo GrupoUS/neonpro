@@ -35,6 +35,11 @@ export const toastHelpers = {
           ? `${item} foi criado com sucesso.`
           : 'Item criado com sucesso.',
       }),
+    signup: () =>
+      toast({
+        title: 'Conta criada com sucesso!',
+        description: 'Verifique seu email para confirmar sua conta e começar a usar o NeonPro Healthcare.',
+      }),
   },
 
   // Error messages

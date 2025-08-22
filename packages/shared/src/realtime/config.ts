@@ -105,15 +105,23 @@ export const getEnvironmentConfig = (): Partial<HealthcareRealtimeConfig> => {
       connection: {
         maxRetries: 3,
         retryDelay: 500,
+        heartbeatInterval: 30_000,
         healthThreshold: 60, // More lenient in development
+        reconnectOnFocus: true,
       },
       notifications: {
         enableAudio: false, // Disable audio in development
+        enableToast: true,
+        emergencyVolume: 1.0,
+        standardVolume: 0.7,
         toastDuration: 3000,
+        emergencyDuration: 10_000,
       },
       performance: {
         cacheSize: 500,
+        batchSize: 10,
         throttleMs: 50,
+        maxConcurrentSubscriptions: 5,
       },
     },
 
@@ -122,13 +130,22 @@ export const getEnvironmentConfig = (): Partial<HealthcareRealtimeConfig> => {
         maxRetries: 1,
         retryDelay: 100,
         heartbeatInterval: 5000,
+        healthThreshold: 50,
+        reconnectOnFocus: false,
       },
       notifications: {
         enableAudio: false,
         enableToast: false,
+        emergencyVolume: 0,
+        standardVolume: 0,
+        toastDuration: 1000,
+        emergencyDuration: 1000,
       },
       compliance: {
         enableAuditLog: false,
+        lgpdRetention: 30,
+        anvisaRetention: 365,
+        criticalAlertThreshold: 10,
         autoReportGeneration: false,
       },
     },
@@ -137,14 +154,20 @@ export const getEnvironmentConfig = (): Partial<HealthcareRealtimeConfig> => {
       connection: {
         maxRetries: 10,
         retryDelay: 2000,
+        heartbeatInterval: 15_000,
         healthThreshold: 90, // Strict requirements in production
+        reconnectOnFocus: true,
       },
       healthcare: {
         emergencyTimeout: 3000, // Even faster in production
         criticalEventRetention: 10_000,
+        auditLogRetention: 2555, // 7 years for compliance
+        complianceScoreThreshold: 95,
       },
       performance: {
         cacheSize: 2000,
+        batchSize: 50,
+        throttleMs: 10,
         maxConcurrentSubscriptions: 20,
       },
     },

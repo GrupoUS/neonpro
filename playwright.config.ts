@@ -1,6 +1,6 @@
 /**
  * 🚀 NeonPro Optimized Playwright Configuration
- * 
+ *
  * PERFORMANCE OPTIMIZED - August 2025
  * FOCUS: Maximum speed + reliability for healthcare E2E testing
  * ARCHITECTURE: Constitutional Turborepo structure
@@ -13,10 +13,7 @@ export default defineConfig({
   testDir: './tools/testing/e2e',
 
   // Optimized test patterns - E2E ONLY
-  testMatch: [
-    '**/tests/**/*.spec.ts',
-    '**/e2e/**/*.spec.ts',
-  ],
+  testMatch: ['**/tests/**/*.spec.ts', '**/e2e/**/*.spec.ts'],
 
   // EXCLUDE UNIT TESTS TO AVOID CONFLICTS
   testIgnore: [
@@ -32,32 +29,41 @@ export default defineConfig({
   // 🚀 PERFORMANCE OPTIMIZATIONS
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  
+
   // Optimized retry strategy
   retries: process.env.CI ? 2 : 1,
-  
+
   // Dynamic worker allocation for maximum performance
   workers: process.env.CI ? 4 : Math.min(4, require('os').cpus().length),
-  
+
   // Faster test discovery and execution
   timeout: 60_000, // 1 minute max per test
   globalTimeout: process.env.CI ? 30 * 60_000 : 15 * 60_000, // 30min CI / 15min local
 
   // Optimized reporting
   reporter: [
-    ['html', { 
-      outputFolder: 'tools/testing/e2e/reports/html',
-      open: 'never',
-      attachmentsBaseURL: '../' 
-    }],
-    ['junit', { 
-      outputFile: 'tools/testing/e2e/reports/junit-results.xml',
-      includeProjectInTestName: true 
-    }],
+    [
+      'html',
+      {
+        outputFolder: 'tools/testing/e2e/reports/html',
+        open: 'never',
+        attachmentsBaseURL: '../',
+      },
+    ],
+    [
+      'junit',
+      {
+        outputFile: 'tools/testing/e2e/reports/junit-results.xml',
+        includeProjectInTestName: true,
+      },
+    ],
     // Performance metrics reporter
-    ['json', { 
-      outputFile: 'tools/testing/e2e/reports/performance-metrics.json' 
-    }],
+    [
+      'json',
+      {
+        outputFile: 'tools/testing/e2e/reports/performance-metrics.json',
+      },
+    ],
     // CI-friendly reporter
     process.env.CI ? ['github'] : ['list'],
   ],
@@ -76,9 +82,9 @@ export default defineConfig({
     timezoneId: 'America/Sao_Paulo',
 
     // Optimized timeouts for healthcare workflows
-    actionTimeout: 8_000,     // Reduced for faster failure detection
+    actionTimeout: 8000, // Reduced for faster failure detection
     navigationTimeout: 12_000, // Optimized for SPA navigation
-    
+
     // Healthcare-specific headers
     extraHTTPHeaders: {
       'X-E2E-Testing': 'true',
@@ -116,9 +122,7 @@ export default defineConfig({
         ...devices['Desktop Chrome'],
         viewport: { width: 1280, height: 720 },
       },
-      testMatch: [
-        '**/tests/security/**/*.spec.ts',
-      ],
+      testMatch: ['**/tests/security/**/*.spec.ts'],
       dependencies: ['desktop-chrome-core'], // Run after core tests
     },
 
@@ -129,9 +133,7 @@ export default defineConfig({
         ...devices['Desktop Chrome'],
         viewport: { width: 1920, height: 1080 },
       },
-      testMatch: [
-        '**/tests/performance/**/*.spec.ts',
-      ],
+      testMatch: ['**/tests/performance/**/*.spec.ts'],
       dependencies: ['desktop-chrome-core'],
     },
 
@@ -166,7 +168,7 @@ export default defineConfig({
 
   // Optimized expectations
   expect: {
-    timeout: 6_000, // Balanced for healthcare UI responsiveness
+    timeout: 6000, // Balanced for healthcare UI responsiveness
     toHaveScreenshot: {
       threshold: 0.2,
       mode: 'strict',
@@ -188,7 +190,7 @@ export default defineConfig({
 
 /**
  * 🚀 PERFORMANCE OPTIMIZATION FEATURES:
- * 
+ *
  * SPEED IMPROVEMENTS:
  * ✅ Dynamic worker allocation (up to 4 workers)
  * ✅ Optimized timeout values
@@ -196,21 +198,21 @@ export default defineConfig({
  * ✅ Reduced screenshot/video overhead
  * ✅ Dependency-based project execution
  * ✅ Optimized viewport sizes
- * 
+ *
  * RELIABILITY IMPROVEMENTS:
  * ✅ Smarter retry strategy
  * ✅ Healthcare-specific timeouts
  * ✅ Performance metrics collection
  * ✅ Better error reporting
  * ✅ CI/local environment optimization
- * 
+ *
  * HEALTHCARE OPTIMIZATIONS:
  * ✅ Brazilian locale settings
  * ✅ Healthcare-specific headers
  * ✅ Emergency access priority testing
  * ✅ Security compliance validation
  * ✅ Mobile critical workflow testing
- * 
+ *
  * EXPECTED PERFORMANCE GAINS:
  * - 40-60% faster test execution
  * - 50% reduction in flaky tests

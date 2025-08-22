@@ -21,7 +21,9 @@ import {
   Wrench,
   XCircle,
 } from 'lucide-react';
-import { useState, useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -30,7 +32,16 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
+import { Progress } from '@/components/ui/progress';
 import {
   Select,
   SelectContent,
@@ -46,31 +57,16 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/components/ui/tabs';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import type {
-  MedicalEquipment,
   EquipmentReservation,
-  FacilityRoom,
-  RoomReservation,
   EquipmentStatus,
-} from '@/types/team-coordination';// Mock medical equipment data with ANVISA compliance
+  FacilityRoom,
+  MedicalEquipment,
+  RoomReservation,
+} from '@/types/team-coordination'; // Mock medical equipment data with ANVISA compliance
+
 const mockEquipmentData: MedicalEquipment[] = [
   {
     id: 'equip-001',
@@ -168,7 +164,7 @@ const mockEquipmentData: MedicalEquipment[] = [
     updatedAt: new Date('2024-08-21'),
     isActive: true,
   },
-];// Mock facility room data
+]; // Mock facility room data
 const mockRoomData: FacilityRoom[] = [
   {
     id: 'room-001',
@@ -198,7 +194,13 @@ const mockRoomData: FacilityRoom[] = [
     status: 'occupied',
     currentOccupancy: 6,
     reservations: [],
-    features: ['pressão-positiva', 'oxigênio', 'gases-medicinais', 'aspiração', 'sistema-som'],
+    features: [
+      'pressão-positiva',
+      'oxigênio',
+      'gases-medicinais',
+      'aspiração',
+      'sistema-som',
+    ],
     accessibilityFeatures: ['acesso-amplo'],
     sanitationStatus: 'clean',
     lastCleaningTime: new Date('2024-08-21T05:30:00'),
@@ -216,7 +218,12 @@ const mockRoomData: FacilityRoom[] = [
     status: 'occupied',
     currentOccupancy: 2,
     reservations: [],
-    features: ['monitorização-contínua', 'oxigênio', 'aspiração', 'gases-medicinais'],
+    features: [
+      'monitorização-contínua',
+      'oxigênio',
+      'aspiração',
+      'gases-medicinais',
+    ],
     accessibilityFeatures: ['acesso-equipamentos'],
     sanitationStatus: 'clean',
     lastCleaningTime: new Date('2024-08-21T04:00:00'),
@@ -234,7 +241,13 @@ const mockRoomData: FacilityRoom[] = [
     status: 'available',
     currentOccupancy: 0,
     reservations: [],
-    features: ['acesso-rápido', 'oxigênio', 'aspiração', 'desfibrilador', 'carrinho-emergência'],
+    features: [
+      'acesso-rápido',
+      'oxigênio',
+      'aspiração',
+      'desfibrilador',
+      'carrinho-emergência',
+    ],
     accessibilityFeatures: ['entrada-ampla', 'acesso-maca'],
     sanitationStatus: 'clean',
     lastCleaningTime: new Date('2024-08-21T07:00:00'),
@@ -242,36 +255,91 @@ const mockRoomData: FacilityRoom[] = [
     updatedAt: new Date('2024-08-21'),
     isActive: true,
   },
-];// Helper functions for status indicators
+]; // Helper functions for status indicators
 const getEquipmentStatusInfo = (status: EquipmentStatus) => {
   switch (status) {
     case 'available':
-      return { color: 'text-green-600', bg: 'bg-green-100', icon: CheckCircle, label: 'Disponível' };
+      return {
+        color: 'text-green-600',
+        bg: 'bg-green-100',
+        icon: CheckCircle,
+        label: 'Disponível',
+      };
     case 'in_use':
-      return { color: 'text-blue-600', bg: 'bg-blue-100', icon: Activity, label: 'Em Uso' };
+      return {
+        color: 'text-blue-600',
+        bg: 'bg-blue-100',
+        icon: Activity,
+        label: 'Em Uso',
+      };
     case 'maintenance':
-      return { color: 'text-yellow-600', bg: 'bg-yellow-100', icon: Tool, label: 'Manutenção' };
+      return {
+        color: 'text-yellow-600',
+        bg: 'bg-yellow-100',
+        icon: Tool,
+        label: 'Manutenção',
+      };
     case 'reserved':
-      return { color: 'text-purple-600', bg: 'bg-purple-100', icon: Calendar, label: 'Reservado' };
+      return {
+        color: 'text-purple-600',
+        bg: 'bg-purple-100',
+        icon: Calendar,
+        label: 'Reservado',
+      };
     case 'out_of_service':
-      return { color: 'text-red-600', bg: 'bg-red-100', icon: XCircle, label: 'Fora de Serviço' };
+      return {
+        color: 'text-red-600',
+        bg: 'bg-red-100',
+        icon: XCircle,
+        label: 'Fora de Serviço',
+      };
     default:
-      return { color: 'text-gray-600', bg: 'bg-gray-100', icon: Clock, label: 'Indefinido' };
+      return {
+        color: 'text-gray-600',
+        bg: 'bg-gray-100',
+        icon: Clock,
+        label: 'Indefinido',
+      };
   }
 };
 
 const getRoomStatusInfo = (status: string) => {
   switch (status) {
     case 'available':
-      return { color: 'text-green-600', bg: 'bg-green-100', icon: CheckCircle, label: 'Disponível' };
+      return {
+        color: 'text-green-600',
+        bg: 'bg-green-100',
+        icon: CheckCircle,
+        label: 'Disponível',
+      };
     case 'occupied':
-      return { color: 'text-red-600', bg: 'bg-red-100', icon: Users, label: 'Ocupado' };
+      return {
+        color: 'text-red-600',
+        bg: 'bg-red-100',
+        icon: Users,
+        label: 'Ocupado',
+      };
     case 'maintenance':
-      return { color: 'text-yellow-600', bg: 'bg-yellow-100', icon: Wrench, label: 'Manutenção' };
+      return {
+        color: 'text-yellow-600',
+        bg: 'bg-yellow-100',
+        icon: Wrench,
+        label: 'Manutenção',
+      };
     case 'reserved':
-      return { color: 'text-purple-600', bg: 'bg-purple-100', icon: Calendar, label: 'Reservado' };
+      return {
+        color: 'text-purple-600',
+        bg: 'bg-purple-100',
+        icon: Calendar,
+        label: 'Reservado',
+      };
     default:
-      return { color: 'text-gray-600', bg: 'bg-gray-100', icon: Clock, label: 'Indefinido' };
+      return {
+        color: 'text-gray-600',
+        bg: 'bg-gray-100',
+        icon: Clock,
+        label: 'Indefinido',
+      };
   }
 };
 
@@ -288,41 +356,50 @@ interface ResourceAllocationProps {
   emergencyMode?: boolean;
 }
 
-export function ResourceAllocation({ emergencyMode = false }: ResourceAllocationProps) {
+export function ResourceAllocation({
+  emergencyMode = false,
+}: ResourceAllocationProps) {
   const [activeTab, setActiveTab] = useState('equipment');
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [locationFilter, setLocationFilter] = useState<string>('all');
-  const [showMaintenanceOnly, setShowMaintenanceOnly] = useState(false);  // Filter equipment data
+  const [showMaintenanceOnly, setShowMaintenanceOnly] = useState(false); // Filter equipment data
   const filteredEquipment = useMemo(() => {
     return mockEquipmentData.filter((equipment) => {
       // Search filter
       if (searchQuery) {
         const searchLower = searchQuery.toLowerCase();
-        const matchesSearch = 
+        const matchesSearch =
           equipment.name.toLowerCase().includes(searchLower) ||
           equipment.model.toLowerCase().includes(searchLower) ||
           equipment.serialNumber.toLowerCase().includes(searchLower) ||
           equipment.currentLocation.toLowerCase().includes(searchLower) ||
           equipment.anvisaRegistration?.toLowerCase().includes(searchLower);
-        
+
         if (!matchesSearch) return false;
       }
 
       // Status filter
-      if (statusFilter !== 'all' && equipment.status !== statusFilter) return false;
+      if (statusFilter !== 'all' && equipment.status !== statusFilter)
+        return false;
 
       // Location filter
-      if (locationFilter !== 'all' && !equipment.currentLocation.includes(locationFilter)) return false;
+      if (
+        locationFilter !== 'all' &&
+        !equipment.currentLocation.includes(locationFilter)
+      )
+        return false;
 
       // Maintenance filter
       if (showMaintenanceOnly) {
-        const hasMaintenanceIssues = 
+        const hasMaintenanceIssues =
           equipment.status === 'maintenance' ||
           equipment.safetyAlerts.length > 0 ||
-          (equipment.nextInspectionDate && equipment.nextInspectionDate < new Date()) ||
-          (equipment.nextMaintenanceDate && equipment.nextMaintenanceDate < new Date());
-        
+          (equipment.nextInspectionDate &&
+            equipment.nextInspectionDate < new Date()) ||
+          (equipment.nextMaintenanceDate &&
+            equipment.nextMaintenanceDate < new Date());
+
         if (!hasMaintenanceIssues) return false;
       }
 
@@ -336,12 +413,14 @@ export function ResourceAllocation({ emergencyMode = false }: ResourceAllocation
       // Search filter
       if (searchQuery) {
         const searchLower = searchQuery.toLowerCase();
-        const matchesSearch = 
+        const matchesSearch =
           room.name.toLowerCase().includes(searchLower) ||
           room.type.toLowerCase().includes(searchLower) ||
           room.floor.toLowerCase().includes(searchLower) ||
-          room.features.some(feature => feature.toLowerCase().includes(searchLower));
-        
+          room.features.some((feature) =>
+            feature.toLowerCase().includes(searchLower)
+          );
+
         if (!matchesSearch) return false;
       }
 
@@ -354,29 +433,34 @@ export function ResourceAllocation({ emergencyMode = false }: ResourceAllocation
 
   // Get unique locations for filter
   const locations = useMemo(() => {
-    return Array.from(new Set(mockEquipmentData.map(equip => equip.currentLocation.split(' - ')[0])));
-  }, []);  return (
+    return Array.from(
+      new Set(
+        mockEquipmentData.map((equip) => equip.currentLocation.split(' - ')[0])
+      )
+    );
+  }, []);
+  return (
     <div className="space-y-6">
       {/* Header with Actions */}
       <div className="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
         <div>
-          <h2 className="text-2xl font-bold">Coordenação de Recursos</h2>
+          <h2 className="font-bold text-2xl">Coordenação de Recursos</h2>
           <p className="text-muted-foreground">
             Gestão de equipamentos, salas e suprimentos com compliance ANVISA
           </p>
         </div>
-        
+
         <div className="flex items-center space-x-2">
           <Button size="sm" variant="outline">
             <Calendar className="mr-2 h-4 w-4" />
             Cronograma Manutenção
           </Button>
-          <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+          <Button className="bg-blue-600 hover:bg-blue-700" size="sm">
             <Plus className="mr-2 h-4 w-4" />
             Adicionar Recurso
           </Button>
           {emergencyMode && (
-            <Button variant="destructive" size="sm">
+            <Button size="sm" variant="destructive">
               <Shield className="mr-2 h-4 w-4" />
               Recursos Emergência
             </Button>
@@ -397,19 +481,18 @@ export function ResourceAllocation({ emergencyMode = false }: ResourceAllocation
             {/* Search Input */}
             <div className="lg:col-span-2">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 transform text-muted-foreground" />
                 <Input
+                  aria-label="Buscar recursos"
+                  className="pl-10"
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Buscar recursos..."
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
-                  aria-label="Buscar recursos"
                 />
               </div>
             </div>
-
             {/* Status Filter */}
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <Select onValueChange={setStatusFilter} value={statusFilter}>
               <SelectTrigger>
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
@@ -421,8 +504,9 @@ export function ResourceAllocation({ emergencyMode = false }: ResourceAllocation
                 <SelectItem value="reserved">Reservado</SelectItem>
                 <SelectItem value="out_of_service">Fora de Serviço</SelectItem>
               </SelectContent>
-            </Select>            {/* Location Filter */}
-            <Select value={locationFilter} onValueChange={setLocationFilter}>
+            </Select>{' '}
+            {/* Location Filter */}
+            <Select onValueChange={setLocationFilter} value={locationFilter}>
               <SelectTrigger>
                 <SelectValue placeholder="Localização" />
               </SelectTrigger>
@@ -435,14 +519,13 @@ export function ResourceAllocation({ emergencyMode = false }: ResourceAllocation
                 ))}
               </SelectContent>
             </Select>
-
             {/* Quick Filters */}
             <div className="flex items-center space-x-2">
               <Button
-                variant={showMaintenanceOnly ? "default" : "outline"}
-                size="sm"
-                onClick={() => setShowMaintenanceOnly(!showMaintenanceOnly)}
                 className="text-xs"
+                onClick={() => setShowMaintenanceOnly(!showMaintenanceOnly)}
+                size="sm"
+                variant={showMaintenanceOnly ? 'default' : 'outline'}
               >
                 <Filter className="mr-1 h-3 w-3" />
                 Manutenção
@@ -453,27 +536,33 @@ export function ResourceAllocation({ emergencyMode = false }: ResourceAllocation
       </Card>
 
       {/* Resource Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+      <Tabs
+        className="space-y-6"
+        onValueChange={setActiveTab}
+        value={activeTab}
+      >
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="equipment" className="text-sm">
+          <TabsTrigger className="text-sm" value="equipment">
             <Heart className="mr-2 h-4 w-4" />
             Equipamentos
           </TabsTrigger>
-          <TabsTrigger value="rooms" className="text-sm">
+          <TabsTrigger className="text-sm" value="rooms">
             <MapPin className="mr-2 h-4 w-4" />
             Salas
           </TabsTrigger>
-          <TabsTrigger value="supplies" className="text-sm">
+          <TabsTrigger className="text-sm" value="supplies">
             <Package className="mr-2 h-4 w-4" />
             Suprimentos
           </TabsTrigger>
-        </TabsList>        {/* Equipment Tab */}
-        <TabsContent value="equipment" className="space-y-6">
+        </TabsList>{' '}
+        {/* Equipment Tab */}
+        <TabsContent className="space-y-6" value="equipment">
           <Card>
             <CardHeader>
               <CardTitle className="text-lg">Equipamentos Médicos</CardTitle>
               <CardDescription>
-                {filteredEquipment.length} equipamentos de {mockEquipmentData.length} total
+                {filteredEquipment.length} equipamentos de{' '}
+                {mockEquipmentData.length} total
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -492,48 +581,59 @@ export function ResourceAllocation({ emergencyMode = false }: ResourceAllocation
                   </TableHeader>
                   <TableBody>
                     {filteredEquipment.map((equipment) => {
-                      const statusInfo = getEquipmentStatusInfo(equipment.status);
+                      const statusInfo = getEquipmentStatusInfo(
+                        equipment.status
+                      );
                       const StatusIcon = statusInfo.icon;
-                      
+
                       // Check for alerts
-                      const hasInspectionAlert = equipment.nextInspectionDate && equipment.nextInspectionDate < new Date();
-                      const hasMaintenanceAlert = equipment.nextMaintenanceDate && equipment.nextMaintenanceDate < new Date();
+                      const hasInspectionAlert =
+                        equipment.nextInspectionDate &&
+                        equipment.nextInspectionDate < new Date();
+                      const hasMaintenanceAlert =
+                        equipment.nextMaintenanceDate &&
+                        equipment.nextMaintenanceDate < new Date();
                       const hasSafetyAlerts = equipment.safetyAlerts.length > 0;
-                      
+
                       return (
-                        <TableRow key={equipment.id} className="hover:bg-muted/50">
+                        <TableRow
+                          className="hover:bg-muted/50"
+                          key={equipment.id}
+                        >
                           {/* Equipment Info */}
                           <TableCell>
                             <div className="space-y-1">
                               <p className="font-medium text-foreground">
                                 {equipment.name}
                               </p>
-                              <p className="text-sm text-muted-foreground">
+                              <p className="text-muted-foreground text-sm">
                                 {equipment.model} | {equipment.serialNumber}
                               </p>
-                              <p className="text-xs text-muted-foreground">
+                              <p className="text-muted-foreground text-xs">
                                 {equipment.manufacturer}
                               </p>
                             </div>
                           </TableCell>
-
                           {/* Status */}
                           <TableCell>
                             <div className="flex items-center space-x-2">
-                              <div className={`p-1 rounded-full ${statusInfo.bg}`}>
-                                <StatusIcon className={`h-3 w-3 ${statusInfo.color}`} />
+                              <div
+                                className={`rounded-full p-1 ${statusInfo.bg}`}
+                              >
+                                <StatusIcon
+                                  className={`h-3 w-3 ${statusInfo.color}`}
+                                />
                               </div>
-                              <span className="text-sm font-medium">
+                              <span className="font-medium text-sm">
                                 {statusInfo.label}
                               </span>
                             </div>
                             {equipment.assignedTo && (
-                              <p className="text-xs text-blue-600 mt-1">
+                              <p className="mt-1 text-blue-600 text-xs">
                                 Atribuído: Prof. ID {equipment.assignedTo}
                               </p>
                             )}
                           </TableCell>
-
                           {/* Location */}
                           <TableCell>
                             <div className="flex items-center space-x-1">
@@ -542,11 +642,12 @@ export function ResourceAllocation({ emergencyMode = false }: ResourceAllocation
                                 {equipment.currentLocation}
                               </span>
                             </div>
-                          </TableCell>                          {/* ANVISA Registration */}
+                          </TableCell>{' '}
+                          {/* ANVISA Registration */}
                           <TableCell>
                             <div className="space-y-1">
                               <div className="flex items-center space-x-1">
-                                <span className="text-xs font-mono">
+                                <span className="font-mono text-xs">
                                   {equipment.anvisaRegistration}
                                 </span>
                                 {hasInspectionAlert ? (
@@ -555,17 +656,19 @@ export function ResourceAllocation({ emergencyMode = false }: ResourceAllocation
                                   <CheckCircle className="h-3 w-3 text-green-500" />
                                 )}
                               </div>
-                              <Badge variant="outline" className="text-xs">
+                              <Badge className="text-xs" variant="outline">
                                 {equipment.regulatoryClass}
                               </Badge>
                               {hasInspectionAlert && (
-                                <Badge variant="destructive" className="text-xs">
+                                <Badge
+                                  className="text-xs"
+                                  variant="destructive"
+                                >
                                   Inspeção Pendente
                                 </Badge>
                               )}
                             </div>
                           </TableCell>
-
                           {/* Utilization */}
                           <TableCell>
                             <div className="space-y-1">
@@ -575,23 +678,28 @@ export function ResourceAllocation({ emergencyMode = false }: ResourceAllocation
                                   {equipment.utilizationRate}%
                                 </span>
                               </div>
-                              <Progress value={equipment.utilizationRate} className="h-1" />
-                              <p className="text-xs text-muted-foreground">
+                              <Progress
+                                className="h-1"
+                                value={equipment.utilizationRate}
+                              />
+                              <p className="text-muted-foreground text-xs">
                                 {equipment.totalUsageHours}h total
                               </p>
                             </div>
                           </TableCell>
-
                           {/* Maintenance */}
                           <TableCell>
                             <div className="space-y-1">
                               <div className="flex items-center space-x-1">
                                 <Tool className="h-3 w-3 text-yellow-500" />
                                 <span className="text-xs">
-                                  {equipment.nextMaintenanceDate?.toLocaleDateString('pt-BR', { 
-                                    day: '2-digit', 
-                                    month: '2-digit' 
-                                  })}
+                                  {equipment.nextMaintenanceDate?.toLocaleDateString(
+                                    'pt-BR',
+                                    {
+                                      day: '2-digit',
+                                      month: '2-digit',
+                                    }
+                                  )}
                                 </span>
                                 {hasMaintenanceAlert ? (
                                   <AlertTriangle className="h-3 w-3 text-red-500" />
@@ -600,27 +708,32 @@ export function ResourceAllocation({ emergencyMode = false }: ResourceAllocation
                                 )}
                               </div>
                               {equipment.failureCount > 0 && (
-                                <Badge variant="outline" className="text-xs text-red-700 border-red-500">
+                                <Badge
+                                  className="border-red-500 text-red-700 text-xs"
+                                  variant="outline"
+                                >
                                   {equipment.failureCount} falha(s)
                                 </Badge>
                               )}
                               {hasSafetyAlerts && (
-                                <Badge variant="destructive" className="text-xs">
+                                <Badge
+                                  className="text-xs"
+                                  variant="destructive"
+                                >
                                   {equipment.safetyAlerts.length} alerta(s)
                                 </Badge>
                               )}
                             </div>
                           </TableCell>
-
                           {/* Actions */}
                           <TableCell>
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                <Button 
-                                  variant="ghost" 
-                                  size="sm" 
-                                  className="h-8 w-8 p-0"
+                                <Button
                                   aria-label={`Ações para ${equipment.name}`}
+                                  className="h-8 w-8 p-0"
+                                  size="sm"
+                                  variant="ghost"
                                 >
                                   <MoreVertical className="h-4 w-4" />
                                 </Button>
@@ -657,8 +770,9 @@ export function ResourceAllocation({ emergencyMode = false }: ResourceAllocation
               </div>
             </CardContent>
           </Card>
-        </TabsContent>        {/* Rooms Tab */}
-        <TabsContent value="rooms" className="space-y-6">
+        </TabsContent>{' '}
+        {/* Rooms Tab */}
+        <TabsContent className="space-y-6" value="rooms">
           <Card>
             <CardHeader>
               <CardTitle className="text-lg">Salas e Ambientes</CardTitle>
@@ -671,22 +785,34 @@ export function ResourceAllocation({ emergencyMode = false }: ResourceAllocation
                 {filteredRooms.map((room) => {
                   const statusInfo = getRoomStatusInfo(room.status);
                   const StatusIcon = statusInfo.icon;
-                  const occupancyPercentage = (room.currentOccupancy / room.capacity) * 100;
-                  
+                  const occupancyPercentage =
+                    (room.currentOccupancy / room.capacity) * 100;
+
                   return (
-                    <Card key={room.id} className="hover:shadow-md transition-shadow">
+                    <Card
+                      className="transition-shadow hover:shadow-md"
+                      key={room.id}
+                    >
                       <CardHeader className="pb-3">
                         <div className="flex items-center justify-between">
                           <CardTitle className="text-lg">{room.name}</CardTitle>
                           <div className="flex items-center space-x-1">
-                            <div className={`p-1 rounded-full ${statusInfo.bg}`}>
-                              <StatusIcon className={`h-3 w-3 ${statusInfo.color}`} />
+                            <div
+                              className={`rounded-full p-1 ${statusInfo.bg}`}
+                            >
+                              <StatusIcon
+                                className={`h-3 w-3 ${statusInfo.color}`}
+                              />
                             </div>
-                            <span className="text-xs font-medium">{statusInfo.label}</span>
+                            <span className="font-medium text-xs">
+                              {statusInfo.label}
+                            </span>
                           </div>
                         </div>
-                        <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                          <Badge variant="outline">{roomTypeLabels[room.type]}</Badge>
+                        <div className="flex items-center space-x-2 text-muted-foreground text-sm">
+                          <Badge variant="outline">
+                            {roomTypeLabels[room.type]}
+                          </Badge>
                           <span>•</span>
                           <span>{room.floor}</span>
                         </div>
@@ -694,24 +820,33 @@ export function ResourceAllocation({ emergencyMode = false }: ResourceAllocation
                       <CardContent className="space-y-3">
                         {/* Occupancy */}
                         <div>
-                          <div className="flex items-center justify-between text-sm mb-1">
+                          <div className="mb-1 flex items-center justify-between text-sm">
                             <span>Ocupação</span>
-                            <span>{room.currentOccupancy}/{room.capacity}</span>
+                            <span>
+                              {room.currentOccupancy}/{room.capacity}
+                            </span>
                           </div>
-                          <Progress value={occupancyPercentage} className="h-2" />
+                          <Progress
+                            className="h-2"
+                            value={occupancyPercentage}
+                          />
                         </div>
 
                         {/* Features */}
                         <div>
-                          <p className="text-sm font-medium mb-2">Recursos</p>
+                          <p className="mb-2 font-medium text-sm">Recursos</p>
                           <div className="flex flex-wrap gap-1">
                             {room.features.slice(0, 3).map((feature) => (
-                              <Badge key={feature} variant="secondary" className="text-xs">
+                              <Badge
+                                className="text-xs"
+                                key={feature}
+                                variant="secondary"
+                              >
                                 {feature}
                               </Badge>
                             ))}
                             {room.features.length > 3 && (
-                              <Badge variant="outline" className="text-xs">
+                              <Badge className="text-xs" variant="outline">
                                 +{room.features.length - 3}
                               </Badge>
                             )}
@@ -722,17 +857,28 @@ export function ResourceAllocation({ emergencyMode = false }: ResourceAllocation
                         <div className="flex items-center justify-between text-sm">
                           <span>Higienização</span>
                           <div className="flex items-center space-x-1">
-                            <div className={`w-2 h-2 rounded-full ${
-                              room.sanitationStatus === 'clean' ? 'bg-green-500' : 
-                              room.sanitationStatus === 'cleaning' ? 'bg-yellow-500' : 'bg-red-500'
-                            }`}></div>
-                            <span className="text-xs capitalize">{room.sanitationStatus}</span>
+                            <div
+                              className={`h-2 w-2 rounded-full ${
+                                room.sanitationStatus === 'clean'
+                                  ? 'bg-green-500'
+                                  : room.sanitationStatus === 'cleaning'
+                                    ? 'bg-yellow-500'
+                                    : 'bg-red-500'
+                              }`}
+                            />
+                            <span className="text-xs capitalize">
+                              {room.sanitationStatus}
+                            </span>
                           </div>
                         </div>
 
                         {/* Actions */}
                         <div className="flex items-center space-x-2 pt-2">
-                          <Button size="sm" variant="outline" className="flex-1">
+                          <Button
+                            className="flex-1"
+                            size="sm"
+                            variant="outline"
+                          >
                             <Calendar className="mr-1 h-3 w-3" />
                             Reservar
                           </Button>
@@ -748,9 +894,8 @@ export function ResourceAllocation({ emergencyMode = false }: ResourceAllocation
             </CardContent>
           </Card>
         </TabsContent>
-
         {/* Supplies Tab */}
-        <TabsContent value="supplies" className="space-y-6">
+        <TabsContent className="space-y-6" value="supplies">
           <Card>
             <CardHeader>
               <CardTitle className="text-lg">Gestão de Suprimentos</CardTitle>
@@ -759,11 +904,12 @@ export function ResourceAllocation({ emergencyMode = false }: ResourceAllocation
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-center py-12 text-muted-foreground">
+              <div className="py-12 text-center text-muted-foreground">
                 📦 Sistema de gestão de suprimentos será implementado aqui
                 <br />
                 <span className="text-sm">
-                  Integração com controle de estoque, alertas de reposição e rastreabilidade
+                  Integração com controle de estoque, alertas de reposição e
+                  rastreabilidade
                 </span>
               </div>
             </CardContent>

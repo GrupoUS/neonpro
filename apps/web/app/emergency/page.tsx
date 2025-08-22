@@ -1,29 +1,30 @@
 'use client';
 
-import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { 
-  Search, 
-  Mic, 
-  Scan, 
-  Phone, 
-  AlertTriangle, 
-  Pill, 
-  Heart,
+import {
+  Activity,
+  AlertTriangle,
+  Calendar,
   Clock,
+  Heart,
+  Mic,
+  MicIcon,
+  Phone,
+  Pill,
+  QrCode,
+  Scan,
+  Search,
+  Shield,
   User,
   Wifi,
   WifiOff,
-  Shield,
-  Calendar,
-  Activity,
-  MicIcon,
-  QrCode
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import type React from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 
 // Emergency patient interface for critical medical information
@@ -86,14 +87,14 @@ const EmergencySearchBar: React.FC<{
   isVoiceActive: boolean;
   isScannerActive: boolean;
   isSearching: boolean;
-}> = ({ 
-  value, 
-  onChange, 
-  onVoiceToggle, 
-  onScannerToggle, 
-  isVoiceActive, 
+}> = ({
+  value,
+  onChange,
+  onVoiceToggle,
+  onScannerToggle,
+  isVoiceActive,
   isScannerActive,
-  isSearching 
+  isSearching,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -107,7 +108,7 @@ const EmergencySearchBar: React.FC<{
   return (
     <Card className="border-2 border-red-200 bg-white shadow-lg">
       <CardHeader className="pb-4">
-        <CardTitle className="text-xl font-bold text-red-600 flex items-center gap-2">
+        <CardTitle className="flex items-center gap-2 font-bold text-red-600 text-xl">
           <AlertTriangle className="h-6 w-6" />
           Busca de Emergência
         </CardTitle>
@@ -115,54 +116,61 @@ const EmergencySearchBar: React.FC<{
       <CardContent className="space-y-4">
         <div className="flex gap-2">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+            <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-5 w-5 transform text-muted-foreground" />
             <Input
+              aria-describedby="search-help"
+              aria-label="Campo de busca de emergência para pacientes"
+              className="h-14 border-2 pl-10 text-lg focus:border-red-500"
+              disabled={isSearching}
+              onChange={(e) => onChange(e.target.value)}
+              placeholder="Buscar paciente por nome, CPF ou RG..."
               ref={inputRef}
               type="text"
-              placeholder="Buscar paciente por nome, CPF ou RG..."
               value={value}
-              onChange={(e) => onChange(e.target.value)}
-              className="pl-10 h-14 text-lg border-2 focus:border-red-500"
-              aria-label="Campo de busca de emergência para pacientes"
-              aria-describedby="search-help"
-              disabled={isSearching}
             />
             {isSearching && (
-              <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-red-500"></div>
+              <div className="-translate-y-1/2 absolute top-1/2 right-3 transform">
+                <div className="h-5 w-5 animate-spin rounded-full border-red-500 border-b-2" />
               </div>
             )}
           </div>
-          
+
           {/* Voice Command Button */}
           <Button
-            size="lg"
-            variant={isVoiceActive ? "destructive" : "outline"}
-            onClick={onVoiceToggle}
-            className="h-14 px-6 border-2"
-            aria-label={isVoiceActive ? "Desativar comando de voz" : "Ativar comando de voz"}
+            aria-label={
+              isVoiceActive
+                ? 'Desativar comando de voz'
+                : 'Ativar comando de voz'
+            }
             aria-pressed={isVoiceActive}
+            className="h-14 border-2 px-6"
+            onClick={onVoiceToggle}
+            size="lg"
+            variant={isVoiceActive ? 'destructive' : 'outline'}
           >
-            <MicIcon className="h-5 w-5 mr-2" />
+            <MicIcon className="mr-2 h-5 w-5" />
             {isVoiceActive ? 'Ouvindo...' : 'Voz'}
           </Button>
 
           {/* Barcode Scanner Button */}
           <Button
-            size="lg"
-            variant={isScannerActive ? "destructive" : "outline"}
-            onClick={onScannerToggle}
-            className="h-14 px-6 border-2"
-            aria-label={isScannerActive ? "Fechar scanner" : "Abrir scanner de código"}
+            aria-label={
+              isScannerActive ? 'Fechar scanner' : 'Abrir scanner de código'
+            }
             aria-pressed={isScannerActive}
+            className="h-14 border-2 px-6"
+            onClick={onScannerToggle}
+            size="lg"
+            variant={isScannerActive ? 'destructive' : 'outline'}
           >
-            <QrCode className="h-5 w-5 mr-2" />
+            <QrCode className="mr-2 h-5 w-5" />
             Scanner
           </Button>
         </div>
-        
-        <div id="search-help" className="text-sm text-muted-foreground">
-          Digite o nome, CPF ou RG do paciente. Use voz ou scanner para entrada alternativa.
+
+        <div className="text-muted-foreground text-sm" id="search-help">
+          Digite o nome, CPF ou RG do paciente. Use voz ou scanner para entrada
+          alternativa.
         </div>
       </CardContent>
     </Card>
@@ -179,14 +187,14 @@ const PatientCriticalInfo: React.FC<{
       <Card className="border-2 border-blue-200">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-xl font-bold text-foreground">
+            <CardTitle className="font-bold text-foreground text-xl">
               {patient.name}
             </CardTitle>
-            <Badge variant="outline" className="text-sm">
+            <Badge className="text-sm" variant="outline">
               ID: {patient.id}
             </Badge>
           </div>
-          <div className="text-sm text-muted-foreground space-x-4">
+          <div className="space-x-4 text-muted-foreground text-sm">
             <span>CPF: {patient.cpf}</span>
             <span>•</span>
             <span>RG: {patient.rg}</span>
@@ -199,21 +207,22 @@ const PatientCriticalInfo: React.FC<{
       {/* Critical Allergies - RED ALERT */}
       <Card className="border-2 border-red-500 bg-red-50">
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg font-bold text-red-700 flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5" />
-            🔴 ALERGIAS CRÍTICAS
+          <CardTitle className="flex items-center gap-2 font-bold text-lg text-red-700">
+            <AlertTriangle className="h-5 w-5" />🔴 ALERGIAS CRÍTICAS
           </CardTitle>
         </CardHeader>
         <CardContent>
           {patient.allergies.length > 0 ? (
             <div className="space-y-2">
               {patient.allergies.map((allergy, index) => (
-                <Alert key={index} className="border-red-400 bg-red-100">
+                <Alert className="border-red-400 bg-red-100" key={index}>
                   <AlertTriangle className="h-4 w-4 text-red-600" />
-                  <AlertDescription className="text-red-800 font-medium">
+                  <AlertDescription className="font-medium text-red-800">
                     <span className="font-bold">{allergy.type}</span>
                     {allergy.severity === 'critical' && (
-                      <Badge variant="destructive" className="ml-2">CRÍTICA</Badge>
+                      <Badge className="ml-2" variant="destructive">
+                        CRÍTICA
+                      </Badge>
                     )}
                     <br />
                     {allergy.description}
@@ -230,25 +239,29 @@ const PatientCriticalInfo: React.FC<{
       {/* Current Medications - ORANGE */}
       <Card className="border-2 border-orange-500 bg-orange-50">
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg font-bold text-orange-700 flex items-center gap-2">
-            <Pill className="h-5 w-5" />
-            🟠 MEDICAÇÕES ATUAIS
+          <CardTitle className="flex items-center gap-2 font-bold text-lg text-orange-700">
+            <Pill className="h-5 w-5" />🟠 MEDICAÇÕES ATUAIS
           </CardTitle>
         </CardHeader>
         <CardContent>
           {patient.medications.length > 0 ? (
             <div className="grid gap-3 md:grid-cols-2">
               {patient.medications.map((medication, index) => (
-                <div key={index} className="p-3 bg-orange-100 rounded-lg border border-orange-300">
-                  <div className="font-bold text-orange-800">{medication.name}</div>
-                  <div className="text-sm text-orange-700">
+                <div
+                  className="rounded-lg border border-orange-300 bg-orange-100 p-3"
+                  key={index}
+                >
+                  <div className="font-bold text-orange-800">
+                    {medication.name}
+                  </div>
+                  <div className="text-orange-700 text-sm">
                     Dosagem: {medication.dosage}
                   </div>
-                  <div className="text-sm text-orange-700">
+                  <div className="text-orange-700 text-sm">
                     Frequência: {medication.frequency}
                   </div>
                   {medication.lastTaken && (
-                    <div className="text-xs text-orange-600 mt-1">
+                    <div className="mt-1 text-orange-600 text-xs">
                       Última dose: {medication.lastTaken}
                     </div>
                   )}
@@ -264,30 +277,45 @@ const PatientCriticalInfo: React.FC<{
       {/* Medical Cautions - YELLOW */}
       <Card className="border-2 border-yellow-500 bg-yellow-50">
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg font-bold text-yellow-700 flex items-center gap-2">
-            <Shield className="h-5 w-5" />
-            🟡 CONTRAINDICAÇÕES
+          <CardTitle className="flex items-center gap-2 font-bold text-lg text-yellow-700">
+            <Shield className="h-5 w-5" />🟡 CONTRAINDICAÇÕES
           </CardTitle>
         </CardHeader>
         <CardContent>
           {patient.contraindications.length > 0 ? (
             <div className="space-y-2">
               {patient.contraindications.map((contraindication, index) => (
-                <div key={index} className="p-3 bg-yellow-100 rounded-lg border border-yellow-300">
-                  <div className="font-bold text-yellow-800">{contraindication.type}</div>
-                  <div className="text-sm text-yellow-700">{contraindication.description}</div>
-                  <Badge 
-                    variant={contraindication.severity === 'high' ? 'destructive' : 'secondary'}
+                <div
+                  className="rounded-lg border border-yellow-300 bg-yellow-100 p-3"
+                  key={index}
+                >
+                  <div className="font-bold text-yellow-800">
+                    {contraindication.type}
+                  </div>
+                  <div className="text-sm text-yellow-700">
+                    {contraindication.description}
+                  </div>
+                  <Badge
                     className="mt-1"
+                    variant={
+                      contraindication.severity === 'high'
+                        ? 'destructive'
+                        : 'secondary'
+                    }
                   >
-                    {contraindication.severity === 'high' ? 'Alta' : 
-                     contraindication.severity === 'moderate' ? 'Moderada' : 'Baixa'}
+                    {contraindication.severity === 'high'
+                      ? 'Alta'
+                      : contraindication.severity === 'moderate'
+                        ? 'Moderada'
+                        : 'Baixa'}
                   </Badge>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-yellow-600">Nenhuma contraindicação registrada</p>
+            <p className="text-yellow-600">
+              Nenhuma contraindicação registrada
+            </p>
           )}
         </CardContent>
       </Card>
@@ -295,26 +323,38 @@ const PatientCriticalInfo: React.FC<{
       {/* Medical Conditions */}
       <Card className="border-2 border-green-200 bg-green-50">
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg font-bold text-green-700 flex items-center gap-2">
-            <Heart className="h-5 w-5" />
-            🩺 CONDIÇÕES MÉDICAS
+          <CardTitle className="flex items-center gap-2 font-bold text-green-700 text-lg">
+            <Heart className="h-5 w-5" />🩺 CONDIÇÕES MÉDICAS
           </CardTitle>
         </CardHeader>
         <CardContent>
           {patient.medicalConditions.length > 0 ? (
             <div className="grid gap-2 md:grid-cols-2">
               {patient.medicalConditions.map((condition, index) => (
-                <div key={index} className="p-3 bg-green-100 rounded-lg border border-green-300">
-                  <div className="font-bold text-green-800">{condition.condition}</div>
-                  <Badge 
-                    variant={condition.status === 'active' ? 'destructive' : 
-                            condition.status === 'controlled' ? 'secondary' : 'outline'}
+                <div
+                  className="rounded-lg border border-green-300 bg-green-100 p-3"
+                  key={index}
+                >
+                  <div className="font-bold text-green-800">
+                    {condition.condition}
+                  </div>
+                  <Badge
                     className="mt-1"
+                    variant={
+                      condition.status === 'active'
+                        ? 'destructive'
+                        : condition.status === 'controlled'
+                          ? 'secondary'
+                          : 'outline'
+                    }
                   >
-                    {condition.status === 'active' ? 'Ativa' : 
-                     condition.status === 'controlled' ? 'Controlada' : 'Resolvida'}
+                    {condition.status === 'active'
+                      ? 'Ativa'
+                      : condition.status === 'controlled'
+                        ? 'Controlada'
+                        : 'Resolvida'}
                   </Badge>
-                  <div className="text-xs text-green-600 mt-1">
+                  <div className="mt-1 text-green-600 text-xs">
                     Atualização: {condition.lastUpdate}
                   </div>
                 </div>
@@ -337,8 +377,10 @@ const EmergencyContacts: React.FC<{
     // In a real implementation, this would trigger the phone call
     if (confirm(`Ligar para ${contactName} (${phoneNumber})?`)) {
       // Emergency audit log
-      console.log(`Emergency call initiated to ${contactName} at ${phoneNumber} at ${new Date().toISOString()}`);
-      
+      console.log(
+        `Emergency call initiated to ${contactName} at ${phoneNumber} at ${new Date().toISOString()}`
+      );
+
       // Attempt to use tel: protocol
       window.open(`tel:${phoneNumber}`, '_self');
     }
@@ -347,45 +389,50 @@ const EmergencyContacts: React.FC<{
   return (
     <Card className="border-2 border-blue-200">
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg font-bold text-blue-700 flex items-center gap-2">
-          <Phone className="h-5 w-5" />
-          📞 CONTATOS DE EMERGÊNCIA
+        <CardTitle className="flex items-center gap-2 font-bold text-blue-700 text-lg">
+          <Phone className="h-5 w-5" />📞 CONTATOS DE EMERGÊNCIA
         </CardTitle>
       </CardHeader>
       <CardContent>
         {contacts.length > 0 ? (
           <div className="space-y-3">
             {contacts.map((contact, index) => (
-              <div 
-                key={index} 
-                className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200"
+              <div
+                className="flex items-center justify-between rounded-lg border border-blue-200 bg-blue-50 p-3"
+                key={index}
               >
                 <div className="flex-1">
-                  <div className="font-bold text-blue-800 flex items-center gap-2">
+                  <div className="flex items-center gap-2 font-bold text-blue-800">
                     {contact.name}
                     {contact.isPrimary && (
-                      <Badge variant="default" className="bg-blue-600">
+                      <Badge className="bg-blue-600" variant="default">
                         PRINCIPAL
                       </Badge>
                     )}
                   </div>
-                  <div className="text-sm text-blue-700">{contact.relationship}</div>
-                  <div className="text-sm font-mono text-blue-600">{contact.phone}</div>
+                  <div className="text-blue-700 text-sm">
+                    {contact.relationship}
+                  </div>
+                  <div className="font-mono text-blue-600 text-sm">
+                    {contact.phone}
+                  </div>
                 </div>
                 <Button
-                  size="lg"
-                  onClick={() => handleCall(contact.phone, contact.name)}
-                  className="bg-green-600 hover:bg-green-700 text-white h-12 px-6"
                   aria-label={`Ligar para ${contact.name}`}
+                  className="h-12 bg-green-600 px-6 text-white hover:bg-green-700"
+                  onClick={() => handleCall(contact.phone, contact.name)}
+                  size="lg"
                 >
-                  <Phone className="h-5 w-5 mr-2" />
+                  <Phone className="mr-2 h-5 w-5" />
                   Ligar
                 </Button>
               </div>
             ))}
           </div>
         ) : (
-          <p className="text-blue-600">Nenhum contato de emergência registrado</p>
+          <p className="text-blue-600">
+            Nenhum contato de emergência registrado
+          </p>
         )}
       </CardContent>
     </Card>
@@ -395,22 +442,45 @@ const EmergencyContacts: React.FC<{
 // Crisis scheduler component
 const CrisisScheduler: React.FC = () => {
   const [availableDoctors] = useState([
-    { id: '1', name: 'Dr. Ana Silva', specialty: 'Emergência', available: true, nextSlot: '10:30' },
-    { id: '2', name: 'Dr. Carlos Santos', specialty: 'Cardiologia', available: true, nextSlot: '11:00' },
-    { id: '3', name: 'Dra. Maria Costa', specialty: 'Neurologia', available: false, nextSlot: '14:30' },
+    {
+      id: '1',
+      name: 'Dr. Ana Silva',
+      specialty: 'Emergência',
+      available: true,
+      nextSlot: '10:30',
+    },
+    {
+      id: '2',
+      name: 'Dr. Carlos Santos',
+      specialty: 'Cardiologia',
+      available: true,
+      nextSlot: '11:00',
+    },
+    {
+      id: '3',
+      name: 'Dra. Maria Costa',
+      specialty: 'Neurologia',
+      available: false,
+      nextSlot: '14:30',
+    },
   ]);
 
-  const handleEmergencyBooking = useCallback((doctorId: string, doctorName: string) => {
-    if (confirm(`Confirmar agendamento de emergência com ${doctorName}?`)) {
-      console.log(`Emergency appointment booked with ${doctorName} at ${new Date().toISOString()}`);
-      alert(`Agendamento de emergência confirmado com ${doctorName}`);
-    }
-  }, []);
+  const handleEmergencyBooking = useCallback(
+    (doctorId: string, doctorName: string) => {
+      if (confirm(`Confirmar agendamento de emergência com ${doctorName}?`)) {
+        console.log(
+          `Emergency appointment booked with ${doctorName} at ${new Date().toISOString()}`
+        );
+        alert(`Agendamento de emergência confirmado com ${doctorName}`);
+      }
+    },
+    []
+  );
 
   return (
     <Card className="border-2 border-purple-200">
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg font-bold text-purple-700 flex items-center gap-2">
+        <CardTitle className="flex items-center gap-2 font-bold text-lg text-purple-700">
           <Calendar className="h-5 w-5" />
           Agendamento de Emergência
         </CardTitle>
@@ -418,30 +488,32 @@ const CrisisScheduler: React.FC = () => {
       <CardContent>
         <div className="space-y-3">
           {availableDoctors.map((doctor) => (
-            <div 
+            <div
+              className="flex items-center justify-between rounded-lg border border-purple-200 bg-purple-50 p-3"
               key={doctor.id}
-              className="flex items-center justify-between p-3 bg-purple-50 rounded-lg border border-purple-200"
             >
               <div className="flex-1">
                 <div className="font-bold text-purple-800">{doctor.name}</div>
-                <div className="text-sm text-purple-700">{doctor.specialty}</div>
-                <div className="text-sm text-purple-600">
+                <div className="text-purple-700 text-sm">
+                  {doctor.specialty}
+                </div>
+                <div className="text-purple-600 text-sm">
                   Próximo horário: {doctor.nextSlot}
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <Badge 
-                  variant={doctor.available ? 'default' : 'secondary'}
+                <Badge
                   className={doctor.available ? 'bg-green-600' : 'bg-gray-500'}
+                  variant={doctor.available ? 'default' : 'secondary'}
                 >
                   {doctor.available ? 'Disponível' : 'Ocupado'}
                 </Badge>
                 <Button
-                  size="sm"
-                  onClick={() => handleEmergencyBooking(doctor.id, doctor.name)}
-                  disabled={!doctor.available}
-                  className="bg-red-600 hover:bg-red-700 text-white"
                   aria-label={`Agendar emergência com ${doctor.name}`}
+                  className="bg-red-600 text-white hover:bg-red-700"
+                  disabled={!doctor.available}
+                  onClick={() => handleEmergencyBooking(doctor.id, doctor.name)}
+                  size="sm"
                 >
                   Agendar
                 </Button>
@@ -462,7 +534,8 @@ const OfflineIndicator: React.FC<{
 }> = ({ isOnline, cacheStatus, lastSync }) => {
   const getStatusColor = () => {
     if (!isOnline) return 'text-red-600 bg-red-50 border-red-200';
-    if (cacheStatus === 'stale') return 'text-yellow-600 bg-yellow-50 border-yellow-200';
+    if (cacheStatus === 'stale')
+      return 'text-yellow-600 bg-yellow-50 border-yellow-200';
     return 'text-green-600 bg-green-50 border-green-200';
   };
 
@@ -484,9 +557,7 @@ const OfflineIndicator: React.FC<{
             )}
             <span className="font-medium">{getStatusText()}</span>
           </div>
-          <div className="text-sm">
-            Última sincronização: {lastSync}
-          </div>
+          <div className="text-sm">Última sincronização: {lastSync}</div>
         </div>
       </CardContent>
     </Card>
@@ -519,72 +590,74 @@ export default function EmergencyAccessPage() {
       {
         type: 'Penicilina',
         severity: 'critical',
-        description: 'Reação anafilática grave - usar epinefrina imediatamente'
+        description: 'Reação anafilática grave - usar epinefrina imediatamente',
       },
       {
         type: 'Látex',
         severity: 'high',
-        description: 'Dermatite de contato severa'
-      }
+        description: 'Dermatite de contato severa',
+      },
     ],
     medications: [
       {
         name: 'Losartana',
         dosage: '50mg',
         frequency: '1x ao dia',
-        lastTaken: 'Hoje 08:00'
+        lastTaken: 'Hoje 08:00',
       },
       {
         name: 'Sinvastatina',
         dosage: '20mg',
         frequency: '1x ao dia (noite)',
-        lastTaken: 'Ontem 22:00'
-      }
+        lastTaken: 'Ontem 22:00',
+      },
     ],
     contraindications: [
       {
         type: 'Aspirina',
         description: 'Histórico de sangramento gastrointestinal',
-        severity: 'high'
-      }
+        severity: 'high',
+      },
     ],
     emergencyContacts: [
       {
         name: 'Maria Silva Santos',
         relationship: 'Esposa',
         phone: '(11) 88888-8888',
-        isPrimary: true
+        isPrimary: true,
       },
       {
         name: 'Pedro Silva Santos',
         relationship: 'Filho',
         phone: '(11) 77777-7777',
-        isPrimary: false
-      }
+        isPrimary: false,
+      },
     ],
     medicalConditions: [
       {
         condition: 'Hipertensão Arterial',
         status: 'controlled',
-        lastUpdate: '10/01/2024'
+        lastUpdate: '10/01/2024',
       },
       {
         condition: 'Dislipidemia',
         status: 'controlled',
-        lastUpdate: '10/01/2024'
-      }
+        lastUpdate: '10/01/2024',
+      },
     ],
-    lastAccessed: new Date().toISOString()
+    lastAccessed: new Date().toISOString(),
   };
 
   // Handle online status changes
   useEffect(() => {
     const handleOnlineStatusChange = () => {
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         isOnline: navigator.onLine,
         cacheStatus: navigator.onLine ? 'fresh' : 'offline',
-        lastSync: navigator.onLine ? new Date().toLocaleString('pt-BR') : prev.lastSync
+        lastSync: navigator.onLine
+          ? new Date().toLocaleString('pt-BR')
+          : prev.lastSync,
       }));
     };
 
@@ -599,40 +672,43 @@ export default function EmergencyAccessPage() {
 
   // Handle search
   const handleSearch = useCallback(async (query: string) => {
-    setState(prev => ({ ...prev, searchQuery: query, isSearching: true }));
+    setState((prev) => ({ ...prev, searchQuery: query, isSearching: true }));
 
     // Simulate search delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     // Mock search - in real implementation, this would search the database
-    if (query.toLowerCase().includes('joão') || query.includes('123.456.789-00')) {
-      setState(prev => ({ 
-        ...prev, 
+    if (
+      query.toLowerCase().includes('joão') ||
+      query.includes('123.456.789-00')
+    ) {
+      setState((prev) => ({
+        ...prev,
         selectedPatient: mockPatient,
-        isSearching: false 
+        isSearching: false,
       }));
     } else if (query.length > 0) {
-      setState(prev => ({ 
-        ...prev, 
+      setState((prev) => ({
+        ...prev,
         selectedPatient: null,
-        isSearching: false 
+        isSearching: false,
       }));
       alert('Paciente não encontrado. Verifique o nome, CPF ou RG informado.');
     } else {
-      setState(prev => ({ 
-        ...prev, 
+      setState((prev) => ({
+        ...prev,
         selectedPatient: null,
-        isSearching: false 
+        isSearching: false,
       }));
     }
   }, []);
 
   // Handle voice toggle
   const handleVoiceToggle = useCallback(() => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       voiceActive: !prev.voiceActive,
-      scannerActive: false // Close scanner when opening voice
+      scannerActive: false, // Close scanner when opening voice
     }));
 
     // In real implementation, this would start/stop voice recognition
@@ -641,17 +717,17 @@ export default function EmergencyAccessPage() {
       // Simulate voice recognition after 3 seconds
       setTimeout(() => {
         handleSearch('João Silva');
-        setState(prev => ({ ...prev, voiceActive: false }));
+        setState((prev) => ({ ...prev, voiceActive: false }));
       }, 3000);
     }
   }, [state.voiceActive, handleSearch]);
 
   // Handle scanner toggle
   const handleScannerToggle = useCallback(() => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       scannerActive: !prev.scannerActive,
-      voiceActive: false // Close voice when opening scanner
+      voiceActive: false, // Close voice when opening scanner
     }));
 
     // In real implementation, this would start/stop barcode scanner
@@ -660,7 +736,7 @@ export default function EmergencyAccessPage() {
       // Simulate barcode scan after 2 seconds
       setTimeout(() => {
         handleSearch('123.456.789-00');
-        setState(prev => ({ ...prev, scannerActive: false }));
+        setState((prev) => ({ ...prev, scannerActive: false }));
       }, 2000);
     }
   }, [state.scannerActive, handleSearch]);
@@ -671,18 +747,20 @@ export default function EmergencyAccessPage() {
       // Ctrl+S for search focus
       if (event.ctrlKey && event.key === 's') {
         event.preventDefault();
-        const searchInput = document.querySelector('input[type="text"]') as HTMLInputElement;
+        const searchInput = document.querySelector(
+          'input[type="text"]'
+        ) as HTMLInputElement;
         if (searchInput) {
           searchInput.focus();
         }
       }
-      
+
       // Ctrl+V for voice
       if (event.ctrlKey && event.key === 'v') {
         event.preventDefault();
         handleVoiceToggle();
       }
-      
+
       // Ctrl+B for barcode
       if (event.ctrlKey && event.key === 'b') {
         event.preventDefault();
@@ -698,32 +776,34 @@ export default function EmergencyAccessPage() {
     <div className="min-h-screen bg-bg-secondary/30 p-4" lang="pt-BR">
       <div className="mx-auto max-w-6xl space-y-6">
         {/* Emergency Header */}
-        <div className="text-center py-6 bg-red-600 text-white rounded-lg shadow-lg">
-          <h1 className="text-4xl font-bold font-serif flex items-center justify-center gap-3">
+        <div className="rounded-lg bg-red-600 py-6 text-center text-white shadow-lg">
+          <h1 className="flex items-center justify-center gap-3 font-bold font-serif text-4xl">
             <AlertTriangle className="h-8 w-8" />
             Acesso de Emergência
           </h1>
-          <p className="text-xl mt-2 opacity-90">
+          <p className="mt-2 text-xl opacity-90">
             Sistema de Acesso Rápido a Informações Críticas de Pacientes
           </p>
         </div>
 
         {/* System Status */}
-        <OfflineIndicator 
-          isOnline={state.isOnline}
+        <OfflineIndicator
           cacheStatus={state.cacheStatus}
+          isOnline={state.isOnline}
           lastSync={state.lastSync}
         />
 
         {/* Emergency Search */}
         <EmergencySearchBar
-          value={state.searchQuery}
-          onChange={(value) => setState(prev => ({ ...prev, searchQuery: value }))}
-          onVoiceToggle={handleVoiceToggle}
-          onScannerToggle={handleScannerToggle}
-          isVoiceActive={state.voiceActive}
           isScannerActive={state.scannerActive}
           isSearching={state.isSearching}
+          isVoiceActive={state.voiceActive}
+          onChange={(value) =>
+            setState((prev) => ({ ...prev, searchQuery: value }))
+          }
+          onScannerToggle={handleScannerToggle}
+          onVoiceToggle={handleVoiceToggle}
+          value={state.searchQuery}
         />
 
         {/* Voice/Scanner Active Indicators */}
@@ -731,7 +811,8 @@ export default function EmergencyAccessPage() {
           <Alert className="border-blue-400 bg-blue-50">
             <Mic className="h-4 w-4 text-blue-600" />
             <AlertDescription className="text-blue-800">
-              <strong>Comando de voz ativo.</strong> Diga o nome do paciente, CPF ou RG.
+              <strong>Comando de voz ativo.</strong> Diga o nome do paciente,
+              CPF ou RG.
             </AlertDescription>
           </Alert>
         )}
@@ -740,7 +821,8 @@ export default function EmergencyAccessPage() {
           <Alert className="border-purple-400 bg-purple-50">
             <Scan className="h-4 w-4 text-purple-600" />
             <AlertDescription className="text-purple-800">
-              <strong>Scanner ativo.</strong> Posicione o código de barras ou QR code do paciente.
+              <strong>Scanner ativo.</strong> Posicione o código de barras ou QR
+              code do paciente.
             </AlertDescription>
           </Alert>
         )}
@@ -749,19 +831,19 @@ export default function EmergencyAccessPage() {
         {state.searchQuery && (
           <div className="flex justify-center">
             <Button
-              size="lg"
-              onClick={() => handleSearch(state.searchQuery)}
+              className="h-12 bg-red-600 px-8 text-lg text-white hover:bg-red-700"
               disabled={state.isSearching}
-              className="bg-red-600 hover:bg-red-700 text-white h-12 px-8 text-lg"
+              onClick={() => handleSearch(state.searchQuery)}
+              size="lg"
             >
               {state.isSearching ? (
                 <>
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                  <div className="mr-2 h-5 w-5 animate-spin rounded-full border-white border-b-2" />
                   Buscando...
                 </>
               ) : (
                 <>
-                  <Search className="h-5 w-5 mr-2" />
+                  <Search className="mr-2 h-5 w-5" />
                   Buscar Paciente
                 </>
               )}
@@ -773,7 +855,7 @@ export default function EmergencyAccessPage() {
         {state.selectedPatient && (
           <>
             <Separator />
-            
+
             <div className="grid gap-6 lg:grid-cols-3">
               {/* Critical Patient Info - 2 columns */}
               <div className="lg:col-span-2">
@@ -782,7 +864,9 @@ export default function EmergencyAccessPage() {
 
               {/* Emergency Actions - 1 column */}
               <div className="space-y-4">
-                <EmergencyContacts contacts={state.selectedPatient.emergencyContacts} />
+                <EmergencyContacts
+                  contacts={state.selectedPatient.emergencyContacts}
+                />
                 <CrisisScheduler />
               </div>
             </div>
@@ -790,29 +874,31 @@ export default function EmergencyAccessPage() {
         )}
 
         {/* Emergency Instructions */}
-        {!state.selectedPatient && !state.searchQuery && (
+        {!(state.selectedPatient || state.searchQuery) && (
           <Card className="border-2 border-gray-200">
             <CardHeader>
-              <CardTitle className="text-xl font-bold text-foreground flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 font-bold text-foreground text-xl">
                 <Activity className="h-6 w-6" />
                 Instruções de Emergência
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
-                <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                  <h3 className="font-bold text-blue-800 mb-2">Busca Rápida</h3>
-                  <ul className="text-sm text-blue-700 space-y-1">
+                <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
+                  <h3 className="mb-2 font-bold text-blue-800">Busca Rápida</h3>
+                  <ul className="space-y-1 text-blue-700 text-sm">
                     <li>• Digite nome, CPF ou RG</li>
                     <li>• Use comando de voz (Ctrl+V)</li>
                     <li>• Scanner de código (Ctrl+B)</li>
                     <li>• Foco na busca (Ctrl+S)</li>
                   </ul>
                 </div>
-                
-                <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-                  <h3 className="font-bold text-green-800 mb-2">Informações Críticas</h3>
-                  <ul className="text-sm text-green-700 space-y-1">
+
+                <div className="rounded-lg border border-green-200 bg-green-50 p-4">
+                  <h3 className="mb-2 font-bold text-green-800">
+                    Informações Críticas
+                  </h3>
+                  <ul className="space-y-1 text-green-700 text-sm">
                     <li>• 🔴 Alergias life-threatening</li>
                     <li>• 🟠 Medicações atuais</li>
                     <li>• 🟡 Contraindicações</li>
@@ -824,8 +910,9 @@ export default function EmergencyAccessPage() {
               <Alert className="border-orange-400 bg-orange-50">
                 <Shield className="h-4 w-4 text-orange-600" />
                 <AlertDescription className="text-orange-800">
-                  <strong>Protocolo de Emergência:</strong> Todos os acessos são registrados para auditoria. 
-                  Em caso de falha do sistema, consulte os protocolos em papel disponíveis na recepção.
+                  <strong>Protocolo de Emergência:</strong> Todos os acessos são
+                  registrados para auditoria. Em caso de falha do sistema,
+                  consulte os protocolos em papel disponíveis na recepção.
                 </AlertDescription>
               </Alert>
             </CardContent>
@@ -833,13 +920,17 @@ export default function EmergencyAccessPage() {
         )}
 
         {/* Emergency Footer */}
-        <div className="text-center py-4 text-sm text-muted-foreground border-t">
+        <div className="border-t py-4 text-center text-muted-foreground text-sm">
           <p>
-            NeonPro Healthcare Emergency Access • Versão 1.0 • 
-            <span className="font-mono"> {new Date().toLocaleString('pt-BR')}</span>
+            NeonPro Healthcare Emergency Access • Versão 1.0 •
+            <span className="font-mono">
+              {' '}
+              {new Date().toLocaleString('pt-BR')}
+            </span>
           </p>
           <p className="mt-1">
-            🔒 Acesso monitorado e auditado conforme LGPD • ☎️ Suporte 24h: 0800-NEONPRO
+            🔒 Acesso monitorado e auditado conforme LGPD • ☎️ Suporte 24h:
+            0800-NEONPRO
           </p>
         </div>
       </div>

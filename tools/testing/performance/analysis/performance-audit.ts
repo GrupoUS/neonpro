@@ -1,12 +1,12 @@
 /**
  * Performance Audit Suite for NeonPro Healthcare
- * 
+ *
  * Comprehensive performance testing and optimization utilities
  */
 
 import lighthouse from 'lighthouse';
-import puppeteer from 'puppeteer';
 import { performance } from 'perf_hooks';
+import puppeteer from 'puppeteer';
 
 export interface PerformanceMetrics {
   pageLoadTime: number;
@@ -33,7 +33,7 @@ export class PerformanceAuditor {
   async initialize(): Promise<void> {
     this.browser = await puppeteer.launch({
       headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
   }
 
@@ -59,8 +59,8 @@ export class PerformanceAuditor {
       settings: {
         maxWaitForFcp: 15 * 1000,
         maxWaitForLoad: 35 * 1000,
-        formFactor: 'desktop'
-      }
+        formFactor: 'desktop',
+      },
     });
 
     const lhr = result?.lhr;
@@ -75,52 +75,65 @@ export class PerformanceAuditor {
       seo: Math.round(lhr.categories.seo.score! * 100),
       metrics: {
         pageLoadTime: lhr.audits['speed-index'].numericValue || 0,
-        firstContentfulPaint: lhr.audits['first-contentful-paint'].numericValue || 0,
-        largestContentfulPaint: lhr.audits['largest-contentful-paint'].numericValue || 0,
+        firstContentfulPaint:
+          lhr.audits['first-contentful-paint'].numericValue || 0,
+        largestContentfulPaint:
+          lhr.audits['largest-contentful-paint'].numericValue || 0,
         firstInputDelay: lhr.audits['max-potential-fid'].numericValue || 0,
-        cumulativeLayoutShift: lhr.audits['cumulative-layout-shift'].numericValue || 0,
+        cumulativeLayoutShift:
+          lhr.audits['cumulative-layout-shift'].numericValue || 0,
         timeToInteractive: lhr.audits['interactive'].numericValue || 0,
-        speedIndex: lhr.audits['speed-index'].numericValue || 0
-      }
+        speedIndex: lhr.audits['speed-index'].numericValue || 0,
+      },
     };
   }
 
   /**
    * Test healthcare-specific performance metrics
    */
-  async testHealthcareMetrics(baseUrl: string): Promise<HealthcarePerformanceMetrics> {
+  async testHealthcareMetrics(
+    baseUrl: string
+  ): Promise<HealthcarePerformanceMetrics> {
     if (!this.browser) throw new Error('Browser not initialized');
-    
+
     const page = await this.browser.newPage();
-    
+
     try {
       // Test emergency access time
       const emergencyStart = performance.now();
       await page.goto(`${baseUrl}/emergency-access`);
-      await page.waitForSelector('[data-testid="emergency-form"]', { timeout: 10000 });
+      await page.waitForSelector('[data-testid="emergency-form"]', {
+        timeout: 10_000,
+      });
       const emergencyEnd = performance.now();
 
       // Test patient data loading
       const patientStart = performance.now();
       await page.goto(`${baseUrl}/patients`);
-      await page.waitForSelector('[data-testid="patient-list"]', { timeout: 5000 });
+      await page.waitForSelector('[data-testid="patient-list"]', {
+        timeout: 5000,
+      });
       const patientEnd = performance.now();
 
       // Test appointment loading
       const appointmentStart = performance.now();
       await page.goto(`${baseUrl}/appointments`);
-      await page.waitForSelector('[data-testid="appointment-calendar"]', { timeout: 5000 });
+      await page.waitForSelector('[data-testid="appointment-calendar"]', {
+        timeout: 5000,
+      });
       const appointmentEnd = performance.now();
 
       // Test form submission
       await page.goto(`${baseUrl}/patients/new`);
       await page.waitForSelector('[data-testid="patient-form"]');
-      
+
       const formStart = performance.now();
       await page.fill('[name="name"]', 'Test Patient');
       await page.fill('[name="email"]', 'test@example.com');
       await page.click('[type="submit"]');
-      await page.waitForSelector('[data-testid="success-message"]', { timeout: 3000 });
+      await page.waitForSelector('[data-testid="success-message"]', {
+        timeout: 3000,
+      });
       const formEnd = performance.now();
 
       return {
@@ -129,7 +142,7 @@ export class PerformanceAuditor {
         appointmentLoadTime: appointmentEnd - appointmentStart,
         formSubmissionTime: formEnd - formStart,
         realTimeUpdateLatency: 0, // Will be tested separately
-        databaseQueryTime: 0 // Will be tested separately
+        databaseQueryTime: 0, // Will be tested separately
       };
     } finally {
       await page.close();
@@ -172,7 +185,7 @@ export class PerformanceAuditor {
     return {
       responseTime: totalTime / requests,
       throughput: requests / (totalTime / 1000),
-      errorRate: errorCount / (successCount + errorCount)
+      errorRate: errorCount / (successCount + errorCount),
     };
   }
 }

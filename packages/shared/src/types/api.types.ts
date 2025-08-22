@@ -408,19 +408,25 @@ export interface FileDocument extends BaseEntity {
 export interface ClinicResponse extends ApiResponse<Clinic> {}
 export interface PatientResponse extends ApiResponse<Patient> {}
 export interface AppointmentResponse extends ApiResponse<Appointment> {}
-export interface LoginResponse extends ApiResponse<{
-  user: User;
-  token: string;
-  expires_at: string;
-}> {}
-export interface RegisterResponse extends ApiResponse<{
-  user: User;
-  verification_required: boolean;
-}> {}
+export interface LoginResponse
+  extends ApiResponse<{
+    user: User;
+    token: string;
+    expires_at: string;
+  }> {}
+export interface RegisterResponse
+  extends ApiResponse<{
+    user: User;
+    verification_required: boolean;
+  }> {}
 
 export type SuccessResponse<T = unknown> = ApiResponse<T> & { success: true };
 export type ErrorResponse = ApiResponse<never> & { success: false };
-export type HealthCheckResponse = ApiResponse<{ status: string; timestamp: string; version: string }>;
+export type HealthCheckResponse = ApiResponse<{
+  status: string;
+  timestamp: string;
+  version: string;
+}>;
 
 export interface ListResponse<T> {
   items: T[];

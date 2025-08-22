@@ -196,7 +196,7 @@ function DashboardPage() {
 }
 
 // Versão protegida do Dashboard usando HOC
-const ProtectedDashboard = withAuth(DashboardPage, {
+export const ProtectedDashboard = withAuth(DashboardPage, {
   requiredRole: 'healthcare_professional',
 });
 

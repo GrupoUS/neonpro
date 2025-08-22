@@ -1,5 +1,7 @@
 'use client';
 
+'use client';
+
 import type { AuthError, Session, User } from '@supabase/supabase-js';
 import {
   createContext,
@@ -24,7 +26,14 @@ type AuthContextType = {
   }>;
   signUp: (
     email: string,
-    password: string
+    password: string,
+    additionalData?: {
+      fullName: string;
+      cpf: string;
+      phone: string;
+      clinicName: string;
+      userType: string;
+    }
   ) => Promise<{
     data: any;
     error: AuthError | null;
@@ -116,7 +125,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
-  const signUp = async (email: string, password: string) => {
+  const signUp = async (
+    email: string, 
+    password: string, 
+    additionalData?: {
+      fullName: string;
+      cpf: string;
+      phone: string;
+      clinicName: string;
+      userType: string;
+    }
+  ) => {
     setLoading(true);
     try {
       const { data, error } = await supabase.auth.signUp({
@@ -124,8 +143,42 @@ export function AuthProvider({ children }: AuthProviderProps) {
         password,
         options: {
           emailRedirectTo: `${window.location.origin}/auth/callback`,
+          data: additionalData ? {
+            full_name: additionalData.fullName,
+            cpf: additionalData.cpf,
+            phone: additionalData.phone,
+            clinic_name: additionalData.clinicName,
+            user_type: additionalData.userType,
+          } : undefined,
         },
       });
+
+      // If signup successful and we have additional data, save to profiles table
+      if (data?.user && !error && additionalData) {
+        try {
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .insert({
+              id: data.user.id,
+              full_name: additionalData.fullName,
+              cpf: additionalData.cpf,
+              phone: additionalData.phone,
+              clinic_name: additionalData.clinicName,
+              user_type: additionalData.userType,
+              email: email,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            });
+
+          if (profileError) {
+            console.error('Error saving profile:', profileError);
+            // Don't fail the signup for profile errors
+          }
+        } catch (profileError) {
+          console.error('Error saving profile:', profileError);
+          // Don't fail the signup for profile errors
+        }
+      }
 
       return { data, error };
     } catch (error) {

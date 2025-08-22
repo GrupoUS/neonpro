@@ -60,6 +60,8 @@ export type {
 } from './entities.types';
 // Entity types
 export * from './entities.types';
+// Hono types for RPC client
+export type { RpcClient } from './hono.types';
 export type {
   AuthErrorResponse,
   ConflictErrorResponse,
@@ -70,9 +72,6 @@ export type {
 } from './responses.types';
 // Response types
 export * from './responses.types';
-
-// Hono types for RPC client
-export type { RpcClient } from './hono.types';
 
 // Utility types for common patterns
 export type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;

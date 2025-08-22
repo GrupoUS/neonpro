@@ -1,23 +1,35 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { 
-  Shield, 
-  Download, 
-  Trash2, 
-  Edit, 
-  Eye, 
+import {
   AlertTriangle,
   CheckCircle,
   Clock,
+  Download,
+  Edit,
+  Eye,
   FileText,
-  Settings
+  Settings,
+  Shield,
+  Trash2,
 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Progress } from '@/components/ui/progress';
 
 interface DataProcessingRecord {
   id: string;
@@ -47,18 +59,26 @@ interface DataSubjectRights {
 }
 
 export default function LGPDComplianceDashboard() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'data' | 'consent' | 'rights'>('overview');
-  const [dataProcessing, setDataProcessing] = useState<DataProcessingRecord[]>([]);
+  const [activeTab, setActiveTab] = useState<
+    'overview' | 'data' | 'consent' | 'rights'
+  >('overview');
+  const [dataProcessing, setDataProcessing] = useState<DataProcessingRecord[]>(
+    []
+  );
   const [consents, setConsents] = useState<ConsentRecord[]>([]);
   const [rights, setRights] = useState<DataSubjectRights>({
     access: { available: true },
-    rectification: { available: true }, 
+    rectification: { available: true },
     erasure: { available: true },
-    portability: { available: true }
+    portability: { available: true },
   });
   const [showDialog, setShowDialog] = useState(false);
-  const [dialogContent, setDialogContent] = useState<{title: string; description: string}>({
-    title: '', description: ''
+  const [dialogContent, setDialogContent] = useState<{
+    title: string;
+    description: string;
+  }>({
+    title: '',
+    description: '',
   });
 
   useEffect(() => {
@@ -76,18 +96,18 @@ export default function LGPDComplianceDashboard() {
         dataCollected: ['Nome', 'CPF', 'Histórico médico', 'Exames'],
         retentionPeriod: 20 * 365, // 20 years for medical data
         lastUpdated: new Date(),
-        status: 'active'
+        status: 'active',
       },
       {
-        id: '2', 
+        id: '2',
         category: 'identifying',
         purpose: 'Identificação e comunicação',
         lawfulBasis: 'Execução de contrato (Art. 7, II)',
         dataCollected: ['Nome', 'E-mail', 'Telefone', 'Endereço'],
         retentionPeriod: 5 * 365,
         lastUpdated: new Date(),
-        status: 'active'
-      }
+        status: 'active',
+      },
     ]);
 
     setConsents([
@@ -96,16 +116,17 @@ export default function LGPDComplianceDashboard() {
         type: 'data_processing',
         status: 'granted',
         grantedAt: new Date(),
-        description: 'Processamento de dados para prestação de serviços médicos'
+        description:
+          'Processamento de dados para prestação de serviços médicos',
       },
       {
         id: '2',
-        type: 'marketing', 
+        type: 'marketing',
         status: 'withdrawn',
         grantedAt: new Date('2024-01-01'),
         withdrawnAt: new Date(),
-        description: 'Comunicações de marketing e promoções'
-      }
+        description: 'Comunicações de marketing e promoções',
+      },
     ]);
   };
 
@@ -114,147 +135,184 @@ export default function LGPDComplianceDashboard() {
       case 'access':
         setDialogContent({
           title: 'Direito de Acesso (Art. 15, LGPD)',
-          description: 'Solicitação de acesso aos seus dados pessoais processada. Você receberá um relatório completo em até 15 dias.'
+          description:
+            'Solicitação de acesso aos seus dados pessoais processada. Você receberá um relatório completo em até 15 dias.',
         });
         break;
       case 'rectification':
         setDialogContent({
-          title: 'Direito de Retificação (Art. 16, LGPD)', 
-          description: 'Solicitação de correção de dados processada. Entre em contato com nosso DPO para especificar as correções necessárias.'
+          title: 'Direito de Retificação (Art. 16, LGPD)',
+          description:
+            'Solicitação de correção de dados processada. Entre em contato com nosso DPO para especificar as correções necessárias.',
         });
         break;
       case 'erasure':
         setDialogContent({
           title: 'Direito ao Apagamento (Art. 16, LGPD)',
-          description: 'ATENÇÃO: Esta ação apagará permanentemente seus dados médicos. Dados essenciais podem ser mantidos por obrigação legal.'
+          description:
+            'ATENÇÃO: Esta ação apagará permanentemente seus dados médicos. Dados essenciais podem ser mantidos por obrigação legal.',
         });
         break;
       case 'portability':
         setDialogContent({
           title: 'Direito à Portabilidade (Art. 18, LGPD)',
-          description: 'Seus dados serão exportados em formato estruturado. O download estará disponível em até 7 dias.'
+          description:
+            'Seus dados serão exportados em formato estruturado. O download estará disponível em até 7 dias.',
         });
         break;
     }
     setShowDialog(true);
-    
+
     // Update rights status
-    setRights(prev => ({
+    setRights((prev) => ({
       ...prev,
       [rightType]: {
         ...prev[rightType],
         lastRequested: new Date(),
-        status: 'processing'
-      }
+        status: 'processing',
+      },
     }));
-  };  const getBadgeVariant = (status: string) => {
+  };
+  const getBadgeVariant = (status: string) => {
     switch (status) {
-      case 'active': case 'granted': return 'default';
-      case 'withdrawn': case 'deleted': return 'destructive';
-      case 'pending': case 'processing': return 'secondary';
-      default: return 'outline';
+      case 'active':
+      case 'granted':
+        return 'default';
+      case 'withdrawn':
+      case 'deleted':
+        return 'destructive';
+      case 'pending':
+      case 'processing':
+        return 'secondary';
+      default:
+        return 'outline';
     }
   };
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
-      case 'health': return <Shield className="h-4 w-4" />;
-      case 'identifying': return <Eye className="h-4 w-4" />;
-      case 'behavioral': return <Settings className="h-4 w-4" />;
-      case 'financial': return <FileText className="h-4 w-4" />;
-      default: return <FileText className="h-4 w-4" />;
+      case 'health':
+        return <Shield className="h-4 w-4" />;
+      case 'identifying':
+        return <Eye className="h-4 w-4" />;
+      case 'behavioral':
+        return <Settings className="h-4 w-4" />;
+      case 'financial':
+        return <FileText className="h-4 w-4" />;
+      default:
+        return <FileText className="h-4 w-4" />;
     }
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6 space-y-6">
+    <div className="mx-auto max-w-6xl space-y-6 p-6">
       <div className="flex items-center space-x-3">
         <Shield className="h-8 w-8 text-blue-600" />
         <div>
-          <h1 className="text-2xl font-bold">Painel de Conformidade LGPD</h1>
-          <p className="text-gray-600">Gerencie seus direitos e dados pessoais conforme a Lei Geral de Proteção de Dados</p>
+          <h1 className="font-bold text-2xl">Painel de Conformidade LGPD</h1>
+          <p className="text-gray-600">
+            Gerencie seus direitos e dados pessoais conforme a Lei Geral de
+            Proteção de Dados
+          </p>
         </div>
       </div>
-
       {/* Navigation Tabs */}
-      <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
+      <div className="flex space-x-1 rounded-lg bg-gray-100 p-1">
         {[
-          { key: 'overview', label: 'Visão Geral', icon: <Eye className="h-4 w-4" /> },
-          { key: 'data', label: 'Meus Dados', icon: <FileText className="h-4 w-4" /> },
-          { key: 'consent', label: 'Consentimentos', icon: <CheckCircle className="h-4 w-4" /> },
-          { key: 'rights', label: 'Direitos', icon: <Shield className="h-4 w-4" /> }
-        ].map(tab => (
+          {
+            key: 'overview',
+            label: 'Visão Geral',
+            icon: <Eye className="h-4 w-4" />,
+          },
+          {
+            key: 'data',
+            label: 'Meus Dados',
+            icon: <FileText className="h-4 w-4" />,
+          },
+          {
+            key: 'consent',
+            label: 'Consentimentos',
+            icon: <CheckCircle className="h-4 w-4" />,
+          },
+          {
+            key: 'rights',
+            label: 'Direitos',
+            icon: <Shield className="h-4 w-4" />,
+          },
+        ].map((tab) => (
           <Button
-            key={tab.key}
-            variant={activeTab === tab.key ? 'default' : 'ghost'}
-            onClick={() => setActiveTab(tab.key as any)}
             className="flex items-center space-x-2"
+            key={tab.key}
+            onClick={() => setActiveTab(tab.key as any)}
+            variant={activeTab === tab.key ? 'default' : 'ghost'}
           >
             {tab.icon}
             <span>{tab.label}</span>
           </Button>
         ))}
       </div>
-
       {/* Overview Tab */}
       {activeTab === 'overview' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium flex items-center">
-                <FileText className="h-4 w-4 mr-2" />
+              <CardTitle className="flex items-center font-medium text-sm">
+                <FileText className="mr-2 h-4 w-4" />
                 Dados Processados
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{dataProcessing.filter(d => d.status === 'active').length}</div>
-              <p className="text-xs text-gray-600">Categorias ativas</p>
+              <div className="font-bold text-2xl">
+                {dataProcessing.filter((d) => d.status === 'active').length}
+              </div>
+              <p className="text-gray-600 text-xs">Categorias ativas</p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium flex items-center">
-                <CheckCircle className="h-4 w-4 mr-2" />
+              <CardTitle className="flex items-center font-medium text-sm">
+                <CheckCircle className="mr-2 h-4 w-4" />
                 Consentimentos
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-green-600">
-                {consents.filter(c => c.status === 'granted').length}
+              <div className="font-bold text-2xl text-green-600">
+                {consents.filter((c) => c.status === 'granted').length}
               </div>
-              <p className="text-xs text-gray-600">Ativos de {consents.length}</p>
+              <p className="text-gray-600 text-xs">
+                Ativos de {consents.length}
+              </p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium flex items-center">
-                <Shield className="h-4 w-4 mr-2" />
+              <CardTitle className="flex items-center font-medium text-sm">
+                <Shield className="mr-2 h-4 w-4" />
                 Compliance Score
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-blue-600">98%</div>
-              <Progress value={98} className="mt-2" />
+              <div className="font-bold text-2xl text-blue-600">98%</div>
+              <Progress className="mt-2" value={98} />
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium flex items-center">
-                <Clock className="h-4 w-4 mr-2" />
+              <CardTitle className="flex items-center font-medium text-sm">
+                <Clock className="mr-2 h-4 w-4" />
                 Retenção Média
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">12.5</div>
-              <p className="text-xs text-gray-600">anos</p>
+              <div className="font-bold text-2xl">12.5</div>
+              <p className="text-gray-600 text-xs">anos</p>
             </CardContent>
           </Card>
         </div>
       )}
-
       {/* Data Processing Tab */}
       {activeTab === 'data' && (
         <div className="space-y-4">
@@ -265,35 +323,44 @@ export default function LGPDComplianceDashboard() {
                   <div className="flex items-center space-x-3">
                     {getCategoryIcon(record.category)}
                     <div>
-                      <CardTitle className="text-lg">{record.purpose}</CardTitle>
+                      <CardTitle className="text-lg">
+                        {record.purpose}
+                      </CardTitle>
                       <CardDescription>{record.lawfulBasis}</CardDescription>
                     </div>
                   </div>
                   <Badge variant={getBadgeVariant(record.status)}>
-                    {record.status === 'active' ? 'Ativo' : 
-                     record.status === 'deleted' ? 'Excluído' : 'Anonimizado'}
+                    {record.status === 'active'
+                      ? 'Ativo'
+                      : record.status === 'deleted'
+                        ? 'Excluído'
+                        : 'Anonimizado'}
                   </Badge>
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                   <div>
-                    <h4 className="font-semibold text-sm mb-2">Dados Coletados</h4>
-                    <ul className="text-sm text-gray-600 space-y-1">
+                    <h4 className="mb-2 font-semibold text-sm">
+                      Dados Coletados
+                    </h4>
+                    <ul className="space-y-1 text-gray-600 text-sm">
                       {record.dataCollected.map((data, idx) => (
                         <li key={idx}>• {data}</li>
                       ))}
                     </ul>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-sm mb-2">Retenção</h4>
-                    <p className="text-sm text-gray-600">
+                    <h4 className="mb-2 font-semibold text-sm">Retenção</h4>
+                    <p className="text-gray-600 text-sm">
                       {Math.floor(record.retentionPeriod / 365)} anos
                     </p>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-sm mb-2">Última Atualização</h4>
-                    <p className="text-sm text-gray-600">
+                    <h4 className="mb-2 font-semibold text-sm">
+                      Última Atualização
+                    </h4>
+                    <p className="text-gray-600 text-sm">
                       {record.lastUpdated.toLocaleDateString('pt-BR')}
                     </p>
                   </div>
@@ -302,7 +369,8 @@ export default function LGPDComplianceDashboard() {
             </Card>
           ))}
         </div>
-      )}      {/* Consent Management Tab */}
+      )}{' '}
+      {/* Consent Management Tab */}
       {activeTab === 'consent' && (
         <div className="space-y-4">
           {consents.map((consent) => (
@@ -311,42 +379,68 @@ export default function LGPDComplianceDashboard() {
                 <div className="flex items-center justify-between">
                   <div>
                     <CardTitle className="text-lg">
-                      {consent.type === 'data_processing' ? 'Processamento de Dados' :
-                       consent.type === 'marketing' ? 'Marketing' :
-                       consent.type === 'analytics' ? 'Analytics' : 'Pesquisa'}
+                      {consent.type === 'data_processing'
+                        ? 'Processamento de Dados'
+                        : consent.type === 'marketing'
+                          ? 'Marketing'
+                          : consent.type === 'analytics'
+                            ? 'Analytics'
+                            : 'Pesquisa'}
                     </CardTitle>
                     <CardDescription>{consent.description}</CardDescription>
                   </div>
                   <Badge variant={getBadgeVariant(consent.status)}>
-                    {consent.status === 'granted' ? 'Concedido' :
-                     consent.status === 'withdrawn' ? 'Retirado' : 'Pendente'}
+                    {consent.status === 'granted'
+                      ? 'Concedido'
+                      : consent.status === 'withdrawn'
+                        ? 'Retirado'
+                        : 'Pendente'}
                   </Badge>
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between">
-                  <div className="text-sm text-gray-600">
+                  <div className="text-gray-600 text-sm">
                     {consent.grantedAt && (
-                      <p>Concedido em: {consent.grantedAt.toLocaleDateString('pt-BR')}</p>
+                      <p>
+                        Concedido em:{' '}
+                        {consent.grantedAt.toLocaleDateString('pt-BR')}
+                      </p>
                     )}
                     {consent.withdrawnAt && (
-                      <p>Retirado em: {consent.withdrawnAt.toLocaleDateString('pt-BR')}</p>
+                      <p>
+                        Retirado em:{' '}
+                        {consent.withdrawnAt.toLocaleDateString('pt-BR')}
+                      </p>
                     )}
                   </div>
-                  <Button 
-                    variant={consent.status === 'granted' ? 'destructive' : 'default'}
-                    size="sm"
+                  <Button
                     onClick={() => {
                       // Handle consent withdrawal/grant
-                      const newStatus = consent.status === 'granted' ? 'withdrawn' : 'granted';
-                      setConsents(prev => prev.map(c => 
-                        c.id === consent.id 
-                          ? { ...c, status: newStatus, [newStatus === 'withdrawn' ? 'withdrawnAt' : 'grantedAt']: new Date() }
-                          : c
-                      ));
+                      const newStatus =
+                        consent.status === 'granted' ? 'withdrawn' : 'granted';
+                      setConsents((prev) =>
+                        prev.map((c) =>
+                          c.id === consent.id
+                            ? {
+                                ...c,
+                                status: newStatus,
+                                [newStatus === 'withdrawn'
+                                  ? 'withdrawnAt'
+                                  : 'grantedAt']: new Date(),
+                              }
+                            : c
+                        )
+                      );
                     }}
+                    size="sm"
+                    variant={
+                      consent.status === 'granted' ? 'destructive' : 'default'
+                    }
                   >
-                    {consent.status === 'granted' ? 'Retirar Consentimento' : 'Conceder Consentimento'}
+                    {consent.status === 'granted'
+                      ? 'Retirar Consentimento'
+                      : 'Conceder Consentimento'}
                   </Button>
                 </div>
               </CardContent>
@@ -354,10 +448,9 @@ export default function LGPDComplianceDashboard() {
           ))}
         </div>
       )}
-
       {/* Data Subject Rights Tab */}
       {activeTab === 'rights' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
@@ -365,20 +458,22 @@ export default function LGPDComplianceDashboard() {
                 <span>Direito de Acesso (Art. 15)</span>
               </CardTitle>
               <CardDescription>
-                Solicite uma cópia de todos os seus dados pessoais que processamos.
+                Solicite uma cópia de todos os seus dados pessoais que
+                processamos.
               </CardDescription>
             </CardHeader>
             <CardContent>
               {rights.access.lastRequested && (
-                <p className="text-sm text-gray-600 mb-3">
-                  Última solicitação: {rights.access.lastRequested.toLocaleDateString('pt-BR')}
+                <p className="mb-3 text-gray-600 text-sm">
+                  Última solicitação:{' '}
+                  {rights.access.lastRequested.toLocaleDateString('pt-BR')}
                 </p>
               )}
-              <Button 
-                onClick={() => handleDataSubjectRight('access')}
+              <Button
                 className="w-full"
+                onClick={() => handleDataSubjectRight('access')}
               >
-                <Download className="h-4 w-4 mr-2" />
+                <Download className="mr-2 h-4 w-4" />
                 Solicitar Acesso aos Dados
               </Button>
             </CardContent>
@@ -396,16 +491,19 @@ export default function LGPDComplianceDashboard() {
             </CardHeader>
             <CardContent>
               {rights.rectification.lastRequested && (
-                <p className="text-sm text-gray-600 mb-3">
-                  Última solicitação: {rights.rectification.lastRequested.toLocaleDateString('pt-BR')}
+                <p className="mb-3 text-gray-600 text-sm">
+                  Última solicitação:{' '}
+                  {rights.rectification.lastRequested.toLocaleDateString(
+                    'pt-BR'
+                  )}
                 </p>
               )}
-              <Button 
-                onClick={() => handleDataSubjectRight('rectification')}
+              <Button
                 className="w-full"
+                onClick={() => handleDataSubjectRight('rectification')}
                 variant="outline"
               >
-                <Edit className="h-4 w-4 mr-2" />
+                <Edit className="mr-2 h-4 w-4" />
                 Solicitar Correção
               </Button>
             </CardContent>
@@ -418,25 +516,29 @@ export default function LGPDComplianceDashboard() {
                 <span>Direito ao Apagamento (Art. 16)</span>
               </CardTitle>
               <CardDescription>
-                Solicite a exclusão dos seus dados pessoais (sujeito a obrigações legais).
+                Solicite a exclusão dos seus dados pessoais (sujeito a
+                obrigações legais).
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center space-x-2 mb-3 text-amber-600">
+              <div className="mb-3 flex items-center space-x-2 text-amber-600">
                 <AlertTriangle className="h-4 w-4" />
-                <span className="text-sm">Dados médicos podem ter retenção obrigatória</span>
+                <span className="text-sm">
+                  Dados médicos podem ter retenção obrigatória
+                </span>
               </div>
               {rights.erasure.lastRequested && (
-                <p className="text-sm text-gray-600 mb-3">
-                  Última solicitação: {rights.erasure.lastRequested.toLocaleDateString('pt-BR')}
+                <p className="mb-3 text-gray-600 text-sm">
+                  Última solicitação:{' '}
+                  {rights.erasure.lastRequested.toLocaleDateString('pt-BR')}
                 </p>
               )}
-              <Button 
-                onClick={() => handleDataSubjectRight('erasure')}
+              <Button
                 className="w-full"
+                onClick={() => handleDataSubjectRight('erasure')}
                 variant="destructive"
               >
-                <Trash2 className="h-4 w-4 mr-2" />
+                <Trash2 className="mr-2 h-4 w-4" />
                 Solicitar Exclusão
               </Button>
             </CardContent>
@@ -454,32 +556,32 @@ export default function LGPDComplianceDashboard() {
             </CardHeader>
             <CardContent>
               {rights.portability.lastRequested && (
-                <p className="text-sm text-gray-600 mb-3">
-                  Última solicitação: {rights.portability.lastRequested.toLocaleDateString('pt-BR')}
+                <p className="mb-3 text-gray-600 text-sm">
+                  Última solicitação:{' '}
+                  {rights.portability.lastRequested.toLocaleDateString('pt-BR')}
                 </p>
               )}
-              <Button 
-                onClick={() => handleDataSubjectRight('portability')}
+              <Button
                 className="w-full"
+                onClick={() => handleDataSubjectRight('portability')}
                 variant="outline"
               >
-                <Download className="h-4 w-4 mr-2" />
+                <Download className="mr-2 h-4 w-4" />
                 Exportar Dados
               </Button>
             </CardContent>
           </Card>
         </div>
       )}
-
       {/* Confirmation Dialog */}
-      <Dialog open={showDialog} onOpenChange={setShowDialog}>
+      <Dialog onOpenChange={setShowDialog} open={showDialog}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{dialogContent.title}</DialogTitle>
             <DialogDescription>{dialogContent.description}</DialogDescription>
           </DialogHeader>
           <div className="flex justify-end space-x-2 pt-4">
-            <Button variant="outline" onClick={() => setShowDialog(false)}>
+            <Button onClick={() => setShowDialog(false)} variant="outline">
               Cancelar
             </Button>
             <Button onClick={() => setShowDialog(false)}>

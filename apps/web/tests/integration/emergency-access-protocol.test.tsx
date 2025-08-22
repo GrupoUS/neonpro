@@ -177,6 +177,36 @@ describe('Emergency Access Protocol Integration Tests', () => {
         mutations: { retry: false },
       },
     });
+
+    // Configure emergency service to call notification service
+    mockEmergencyService.requestEmergencyAccess.mockImplementation(
+      async (request) => {
+        // Trigger notification for critical emergencies
+        if (request.priority === 'critical') {
+          await mockNotificationService.sendEmergencyAlert({
+            patient_id: request.patient_id,
+            emergency_type: request.emergency_type,
+            location: request.location,
+          });
+        }
+
+        return {
+          success: true,
+          request_id: 'emergency-req-123',
+          auto_approved: request.priority === 'critical',
+          access_granted_immediately: request.priority === 'critical',
+          expires_in_minutes: 30,
+          audit_trail_id: 'audit-emergency-123',
+        };
+      }
+    );
+
+    // Set default notification service responses
+    mockNotificationService.sendEmergencyAlert.mockResolvedValue({
+      alert_sent: true,
+      recipients: ['emergency_supervisor', 'head_doctor', 'security'],
+      alert_id: 'emergency-alert-123',
+    });
   });
 
   afterEach(() => {

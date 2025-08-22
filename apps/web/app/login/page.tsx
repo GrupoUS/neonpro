@@ -9,61 +9,125 @@ export const metadata: Metadata = {
 export default function LoginPage() {
   return (
     <div className="container relative hidden h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
-      <div className="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex dark:border-r">
-        <div className="absolute inset-0 bg-zinc-900" />
-        <div className="relative z-20 flex items-center font-medium text-lg">
-          <svg
-            className="mr-2 h-6 w-6"
-            fill="none"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
-          </svg>
-          NeonPro
+      <div className="relative hidden h-full flex-col bg-gradient-to-br from-primary/5 to-chart-5/5 p-10 text-foreground lg:flex border-r border-border">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-chart-5/5" />
+        <div className="relative z-20 flex items-center font-medium text-xl">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg neonpro-gradient neonpro-glow mr-3">
+            <svg
+              className="h-5 w-5 text-primary-foreground"
+              fill="none"
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+            </svg>
+          </div>
+          <span className="text-primary font-bold">NeonPro Healthcare</span>
         </div>
-        <div className="relative z-20 mt-auto">
-          <blockquote className="space-y-2">
-            <p className="text-lg">
-              &ldquo;Sistema completo de gestão empresarial com foco em saúde e
-              compliance.&rdquo;
+
+        {/* Enhanced Healthcare Branding */}
+        <div className="relative z-20 mt-auto space-y-8">
+          <blockquote className="space-y-4">
+            <p className="text-lg text-foreground leading-relaxed font-medium">
+              &ldquo;Tecnologia de ponta para clínicas estéticas brasileiras. 
+              Gestão completa, segura e em total conformidade com LGPD, ANVISA e CFM.&rdquo;
             </p>
-            <footer className="text-sm">Equipe NeonPro</footer>
+            <footer className="text-muted-foreground font-medium">
+              Dr. Ana Carolina Silva, Clínica Estética Premium - São Paulo
+            </footer>
           </blockquote>
+
+          {/* Trust Indicators */}
+          <div className="space-y-4">
+            <h4 className="text-sm font-semibold text-foreground/90 uppercase tracking-wide">
+              Certificações e Compliance
+            </h4>
+            <div className="space-y-3">
+              <div className="trust-indicator">
+                <span className="text-foreground/80">Conformidade LGPD completa</span>
+              </div>
+              <div className="trust-indicator">
+                <span className="text-foreground/80">Aprovação ANVISA para dados de saúde</span>
+              </div>
+              <div className="trust-indicator">
+                <span className="text-foreground/80">Certificação ISO 27001 de segurança</span>
+              </div>
+              <div className="trust-indicator">
+                <span className="text-foreground/80">Suporte especializado 24/7</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <div className="lg:p-8">
-        <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
-          <div className="flex flex-col space-y-2 text-center">
-            <h1 className="font-semibold text-2xl tracking-tight">
-              Acesse sua conta
+      <div className="lg:p-8 bg-background">
+        <div className="mx-auto flex w-full flex-col justify-center space-y-8 sm:w-[400px]">
+          {/* Enhanced Header */}
+          <div className="flex flex-col space-y-3 text-center">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl neonpro-gradient neonpro-glow">
+              <svg
+                className="h-6 w-6 text-primary-foreground"
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+              </svg>
+            </div>
+            <h1 className="font-bold text-3xl tracking-tight text-foreground">
+              Bem-vindo de Volta
             </h1>
-            <p className="text-muted-foreground text-sm">
-              Digite suas credenciais para continuar
+            <p className="text-muted-foreground leading-relaxed">
+              Acesse sua conta NeonPro Healthcare para gerenciar sua clínica 
+              com segurança e eficiência
             </p>
           </div>
+
+          {/* Login Form */}
           <LoginForm />
-          <p className="px-8 text-center text-muted-foreground text-sm">
-            Ao clicar em continuar, você concorda com nossos{' '}
-            <a
-              className="underline underline-offset-4 hover:text-primary"
-              href="/terms"
-            >
-              Termos de Serviço
-            </a>{' '}
-            e{' '}
-            <a
-              className="underline underline-offset-4 hover:text-primary"
-              href="/privacy"
-            >
-              Política de Privacidade
-            </a>
-            .
-          </p>
+
+          {/* Enhanced Legal Notice */}
+          <div className="space-y-4">
+            <p className="px-4 text-center text-muted-foreground text-xs leading-relaxed">
+              Ao continuar, você concorda com nossos{' '}
+              <a
+                className="underline underline-offset-4 hover:text-primary font-medium"
+                href="/terms"
+              >
+                Termos de Serviço
+              </a>
+              ,{' '}
+              <a
+                className="underline underline-offset-4 hover:text-primary font-medium"
+                href="/privacy"
+              >
+                Política de Privacidade LGPD
+              </a>
+              {' '}e{' '}
+              <a
+                className="underline underline-offset-4 hover:text-primary font-medium"
+                href="/compliance"
+              >
+                Diretrizes de Conformidade
+              </a>
+              .
+            </p>
+
+            {/* Security Notice */}
+            <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 text-center">
+              <p className="text-xs text-foreground/80">
+                🔒 Conexão segura com criptografia de nível bancário • 
+                Dados protegidos conforme LGPD • Auditoria contínua de segurança
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>

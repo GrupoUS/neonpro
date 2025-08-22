@@ -479,7 +479,7 @@ const FormField = forwardRef<
   React.HTMLAttributes<HTMLDivElement> & { name: string }
 >(({ className, name, children, ...props }, ref) => {
   return (
-    <div ref={ref} className={cn('space-y-2', className)} {...props}>
+    <div className={cn('space-y-2', className)} ref={ref} {...props}>
       {children}
     </div>
   );
@@ -490,9 +490,7 @@ const FormItem = forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => {
-  return (
-    <div ref={ref} className={cn('space-y-2', className)} {...props} />
-  );
+  return <div className={cn('space-y-2', className)} ref={ref} {...props} />;
 });
 FormItem.displayName = 'FormItem';
 
@@ -502,11 +500,11 @@ const FormLabel = forwardRef<
 >(({ className, ...props }, ref) => {
   return (
     <label
-      ref={ref}
       className={cn(
-        'text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
+        'font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
         className
       )}
+      ref={ref}
       {...props}
     />
   );
@@ -527,8 +525,8 @@ const FormDescription = forwardRef<
 >(({ className, ...props }, ref) => {
   return (
     <p
+      className={cn('text-muted-foreground text-sm', className)}
       ref={ref}
-      className={cn('text-sm text-muted-foreground', className)}
       {...props}
     />
   );
@@ -541,8 +539,8 @@ const FormMessage = forwardRef<
 >(({ className, children, ...props }, ref) => {
   return (
     <p
+      className={cn('font-medium text-destructive text-sm', className)}
       ref={ref}
-      className={cn('text-sm font-medium text-destructive', className)}
       {...props}
     >
       {children}

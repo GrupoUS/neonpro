@@ -32,6 +32,10 @@ vi.mock('@neonpro/shared/api-client', () => ({
   ApiHelpers: {
     handleApiResponse: vi.fn(),
     handleApiError: vi.fn(),
+    isAuthError: vi.fn((error: any) => {
+      // Mock implementation that mimics the real isAuthError behavior
+      return error?.code === 'UNAUTHORIZED' || error?.status === 401;
+    }),
   },
 }));
 
@@ -444,7 +448,7 @@ describe('usePatients Hook - NeonPro Healthcare Patient Management', () => {
 
       expect(result.current.getPatients).toHaveBeenCalled();
       expect(patientsQuery.refetch).toHaveBeenCalled();
-      
+
       const patients = patientsQuery.data?.patients;
       expect(patients?.every((p) => p.tenantId === 'clinic-1')).toBe(true);
     });

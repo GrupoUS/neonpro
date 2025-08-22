@@ -685,10 +685,10 @@ export function useAuth() {
   return {
     // Core authentication state
     ...authStatus,
-    
+
     // Auth utilities
     ...authUtils,
-    
+
     // Authentication actions
     login: login.mutate,
     loginAsync: login.mutateAsync,
@@ -696,12 +696,12 @@ export function useAuth() {
     logoutAsync: logout.mutateAsync,
     register: register.mutate,
     registerAsync: register.mutateAsync,
-    
+
     // Profile management
     profile: profile.data,
     updateProfile: updateProfile.mutate,
     updateProfileAsync: updateProfile.mutateAsync,
-    
+
     // Password management
     changePassword: changePassword.mutate,
     changePasswordAsync: changePassword.mutateAsync,
@@ -709,11 +709,11 @@ export function useAuth() {
     forgotPasswordAsync: forgotPassword.mutateAsync,
     resetPassword: resetPassword.mutate,
     resetPasswordAsync: resetPassword.mutateAsync,
-    
+
     // Token management
     refreshToken: refreshToken.mutate,
     refreshTokenAsync: refreshToken.mutateAsync,
-    
+
     // Loading states
     isLoggingIn: login.isPending,
     isLoggingOut: logout.isPending,
@@ -723,7 +723,7 @@ export function useAuth() {
     isForgettingPassword: forgotPassword.isPending,
     isResettingPassword: resetPassword.isPending,
     isRefreshingToken: refreshToken.isPending,
-    
+
     // Error states
     loginError: login.error,
     logoutError: logout.error,

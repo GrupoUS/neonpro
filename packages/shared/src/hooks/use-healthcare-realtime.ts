@@ -23,18 +23,22 @@ export function usePatientRealtime(
     onPatientUpdate?: (patient: any) => void;
   }
 ) {
+  const filter = options.patientId
+    ? `id=eq.${options.patientId}`
+    : options.clinicId
+      ? `clinic_id=eq.${options.clinicId}`
+      : '';
+
   const config: UseRealtimeQueryConfig = {
     table: 'patients',
-    filter: options.patientId
-      ? `id=eq.${options.patientId}`
-      : options.clinicId
-        ? `clinic_id=eq.${options.clinicId}`
-        : undefined,
-    queryKey: ['patients', options.patientId, options.clinicId].filter(Boolean),
-    enabled: options.enabled,
+    ...(filter && { filter }),
+    queryKey: ['patients', options.patientId, options.clinicId].filter(
+      Boolean
+    ) as string[],
+    enabled: options.enabled ?? true,
     lgpdCompliance: true,
     auditLogging: true,
-    onUpdate: options.onPatientUpdate,
+    ...(options.onPatientUpdate && { onUpdate: options.onPatientUpdate }),
     queryOptions: {
       invalidateOnInsert: true,
       invalidateOnUpdate: true,
@@ -92,11 +96,13 @@ export function useAppointmentRealtime(
       options.appointmentId,
       options.patientId,
       options.professionalId,
-    ].filter(Boolean),
-    enabled: options.enabled,
+    ].filter(Boolean) as string[],
+    enabled: options.enabled ?? true,
     lgpdCompliance: true,
     auditLogging: true,
-    onUpdate: options.onAppointmentUpdate,
+    ...(options.onAppointmentUpdate && {
+      onUpdate: options.onAppointmentUpdate,
+    }),
     queryOptions: {
       invalidateOnInsert: true,
       invalidateOnUpdate: true,
@@ -144,11 +150,13 @@ export function useProfessionalRealtime(
       'professionals',
       options.professionalId,
       options.clinicId,
-    ].filter(Boolean),
-    enabled: options.enabled,
+    ].filter(Boolean) as string[],
+    enabled: options.enabled ?? true,
     lgpdCompliance: true,
     auditLogging: true,
-    onUpdate: options.onProfessionalUpdate,
+    ...(options.onProfessionalUpdate && {
+      onUpdate: options.onProfessionalUpdate,
+    }),
     queryOptions: {
       invalidateOnInsert: true,
       invalidateOnUpdate: true,
@@ -174,21 +182,27 @@ export function useDashboardRealtime(
 ) {
   // Listen to multiple tables for dashboard metrics
   const appointmentsRealtime = useAppointmentRealtime(supabaseClient, {
-    clinicId: options.clinicId,
-    enabled: options.enabled,
-    onAppointmentUpdate: options.onMetricsUpdate,
+    ...(options.clinicId && { clinicId: options.clinicId }),
+    ...(options.enabled !== undefined && { enabled: options.enabled }),
+    ...(options.onMetricsUpdate && {
+      onAppointmentUpdate: options.onMetricsUpdate,
+    }),
   });
 
   const patientsRealtime = usePatientRealtime(supabaseClient, {
-    clinicId: options.clinicId,
-    enabled: options.enabled,
-    onPatientUpdate: options.onMetricsUpdate,
+    ...(options.clinicId && { clinicId: options.clinicId }),
+    ...(options.enabled !== undefined && { enabled: options.enabled }),
+    ...(options.onMetricsUpdate && {
+      onPatientUpdate: options.onMetricsUpdate,
+    }),
   });
 
   const professionalsRealtime = useProfessionalRealtime(supabaseClient, {
-    clinicId: options.clinicId,
-    enabled: options.enabled,
-    onProfessionalUpdate: options.onMetricsUpdate,
+    ...(options.clinicId && { clinicId: options.clinicId }),
+    ...(options.enabled !== undefined && { enabled: options.enabled }),
+    ...(options.onMetricsUpdate && {
+      onProfessionalUpdate: options.onMetricsUpdate,
+    }),
   });
 
   return {
@@ -245,11 +259,11 @@ export function useAuditRealtime(
       options.table,
       options.userId,
       options.action,
-    ].filter(Boolean),
-    enabled: options.enabled,
+    ].filter(Boolean) as string[],
+    enabled: options.enabled ?? true,
     lgpdCompliance: true,
     auditLogging: false, // Don't audit the audit logs
-    onInsert: options.onAuditUpdate,
+    ...(options.onAuditUpdate && { onInsert: options.onAuditUpdate }),
     queryOptions: {
       invalidateOnInsert: true,
       invalidateOnUpdate: false,

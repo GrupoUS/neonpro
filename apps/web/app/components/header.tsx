@@ -13,46 +13,65 @@ import { SidebarTrigger } from '@/components/ui/sidebar';
 
 export function Header() {
   return (
-    <header className="flex h-16 items-center justify-between border-b border-healthcare-border bg-background px-6">
+    <header className="flex h-16 items-center justify-between border-healthcare-border border-b bg-background px-6">
       <div className="flex items-center space-x-4">
         <SidebarTrigger />
-        <h1 className="font-serif text-xl font-semibold text-healthcare-text-primary">
+        <h1 className="font-semibold font-serif text-healthcare-text-primary text-xl">
           Dashboard NeonPro
         </h1>
       </div>
 
       <div className="flex items-center space-x-4">
         {/* Search */}
-        <Button size="icon" variant="ghost" className="text-healthcare-text-secondary hover:text-healthcare-primary hover:bg-healthcare-primary/10">
+        <Button
+          className="text-healthcare-text-secondary hover:bg-healthcare-primary/10 hover:text-healthcare-primary"
+          size="icon"
+          variant="ghost"
+        >
           <Search className="h-4 w-4" />
         </Button>
 
         {/* Notifications */}
-        <Button size="icon" variant="ghost" className="text-healthcare-text-secondary hover:text-healthcare-primary hover:bg-healthcare-primary/10">
+        <Button
+          className="text-healthcare-text-secondary hover:bg-healthcare-primary/10 hover:text-healthcare-primary"
+          size="icon"
+          variant="ghost"
+        >
           <Bell className="h-4 w-4" />
         </Button>
 
         {/* Settings */}
-        <Button size="icon" variant="ghost" className="text-healthcare-text-secondary hover:text-healthcare-primary hover:bg-healthcare-primary/10">
+        <Button
+          className="text-healthcare-text-secondary hover:bg-healthcare-primary/10 hover:text-healthcare-primary"
+          size="icon"
+          variant="ghost"
+        >
           <Settings className="h-4 w-4" />
         </Button>
 
         {/* User Menu */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button className="relative h-8 w-8 rounded-full hover:bg-healthcare-primary/10" variant="ghost">
+            <Button
+              className="relative h-8 w-8 rounded-full hover:bg-healthcare-primary/10"
+              variant="ghost"
+            >
               <Avatar className="h-8 w-8">
                 <AvatarImage alt="@usuario" src="/avatars/01.png" />
-                <AvatarFallback className="bg-healthcare-primary text-white font-medium">
+                <AvatarFallback className="bg-healthcare-primary font-medium text-white">
                   AD
                 </AvatarFallback>
               </Avatar>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56 border-healthcare-border" forceMount>
+          <DropdownMenuContent
+            align="end"
+            className="w-56 border-healthcare-border"
+            forceMount
+          >
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
-                <p className="font-medium text-sm leading-none text-healthcare-text-primary">
+                <p className="font-medium text-healthcare-text-primary text-sm leading-none">
                   Dr. Administrador
                 </p>
                 <p className="text-healthcare-text-muted text-xs leading-none">

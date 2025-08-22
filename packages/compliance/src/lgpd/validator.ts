@@ -70,6 +70,7 @@ export type LGPDValidationResult = z.infer<typeof LGPDValidationResultSchema>;
  */
 export class LGPDValidator {
   private readonly config: LGPDValidationConfig;
+  private readonly db: Database;
 
   constructor(config: LGPDValidationConfig, db: Database) {
     this.config = config;

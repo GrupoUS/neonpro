@@ -7,13 +7,13 @@ import { AuthProvider } from '@/contexts/auth-context';
 import { QueryProvider } from '../providers/query-provider';
 
 // Font configurations for professional healthcare typography
-const inter = Inter({ 
+const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
   display: 'swap',
 });
 
-const jetbrainsMono = JetBrains_Mono({ 
+const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
   variable: '--font-jetbrains-mono',
   display: 'swap',

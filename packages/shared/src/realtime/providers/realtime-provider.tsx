@@ -4,7 +4,6 @@
  * Gerencia conexão global e estado para toda aplicação
  */
 
-import type { Database } from '@neonpro/db';
 import React, {
   createContext,
   type ReactNode,
@@ -95,6 +94,8 @@ export function RealtimeProvider({
       };
     } catch (error) {
       console.error('[RealtimeProvider] Initialization error:', error);
+      // Return empty cleanup function
+      return () => {};
     }
   }, [tenantId, enableHealthcareMode, customConfig]); /**
    * Manual reconnection

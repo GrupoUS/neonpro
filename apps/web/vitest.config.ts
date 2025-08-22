@@ -19,6 +19,7 @@ export default defineConfig({
       '@/lib': path.resolve(__dirname, './lib'),
       '@/components': path.resolve(__dirname, './components'),
       '@/hooks': path.resolve(__dirname, './hooks'),
+      '@neonpro/shared': path.resolve(__dirname, '../../packages/shared/src'),
     },
   },
 });

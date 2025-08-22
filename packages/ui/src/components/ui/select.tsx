@@ -1,3 +1,5 @@
+// Direct fixes for ForwardRef components
+
 import * as SelectPrimitive from '@radix-ui/react-select';
 import { cva, type VariantProps } from 'class-variance-authority';
 import {
@@ -74,7 +76,8 @@ interface SelectProps
   showIcons?: boolean;
   showMetadata?: boolean;
   emptyMessage?: string;
-}const Select = SelectPrimitive.Root;
+}
+const Select = SelectPrimitive.Root;
 const SelectGroup = SelectPrimitive.Group;
 const SelectValue = SelectPrimitive.Value;
 
@@ -111,7 +114,8 @@ const SelectScrollUpButton = React.forwardRef<
     <ChevronUp className="h-4 w-4" />
   </SelectPrimitive.ScrollUpButton>
 ));
-SelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName;const SelectScrollDownButton = React.forwardRef<
+SelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName;
+const SelectScrollDownButton = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.ScrollDownButton>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollDownButton>
 >(({ className, ...props }, ref) => (
@@ -126,7 +130,8 @@ SelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName;co
     <ChevronDown className="h-4 w-4" />
   </SelectPrimitive.ScrollDownButton>
 ));
-SelectScrollDownButton.displayName = SelectPrimitive.ScrollDownButton.displayName;
+SelectScrollDownButton.displayName =
+  SelectPrimitive.ScrollDownButton.displayName;
 
 const SelectContent = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Content>,
@@ -135,9 +140,9 @@ const SelectContent = React.forwardRef<
   <SelectPrimitive.Portal>
     <SelectPrimitive.Content
       className={cn(
-        'relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
+        'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md data-[state=closed]:animate-out data-[state=open]:animate-in',
         position === 'popper' &&
-          'data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1',
+          'data-[side=left]:-translate-x-1 data-[side=top]:-translate-y-1 data-[side=right]:translate-x-1 data-[side=bottom]:translate-y-1',
         className
       )}
       position={position}
@@ -158,12 +163,13 @@ const SelectContent = React.forwardRef<
     </SelectPrimitive.Content>
   </SelectPrimitive.Portal>
 ));
-SelectContent.displayName = SelectPrimitive.Content.displayName;const SelectLabel = React.forwardRef<
+SelectContent.displayName = SelectPrimitive.Content.displayName;
+const SelectLabel = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Label>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Label>
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.Label
-    className={cn('py-1.5 pl-8 pr-2 text-sm font-semibold', className)}
+    className={cn('py-1.5 pr-2 pl-8 font-semibold text-sm', className)}
     ref={ref}
     {...props}
   />
@@ -178,7 +184,7 @@ const SelectItem = React.forwardRef<
 >(({ className, children, showIcon = true, ...props }, ref) => (
   <SelectPrimitive.Item
     className={cn(
-      'relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+      'relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pr-2 pl-8 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
       className
     )}
     ref={ref}
@@ -206,8 +212,9 @@ const SelectSeparator = React.forwardRef<
     {...props}
   />
 ));
-SelectSeparator.displayName = SelectPrimitive.Separator.displayName;// Healthcare Professional Select Component
-interface HealthcareProfessionalSelectProps extends SelectProps {
+SelectSeparator.displayName = SelectPrimitive.Separator.displayName; // Healthcare Professional Select Component
+interface HealthcareProfessionalSelectProps
+  extends React.ComponentProps<typeof SelectPrimitive.Root> {
   professionals?: Array<{
     id: string;
     name: string;
@@ -216,6 +223,7 @@ interface HealthcareProfessionalSelectProps extends SelectProps {
     availability: 'available' | 'busy' | 'offline';
     crm?: string;
   }>;
+  placeholder?: string;
 }
 
 const ProfessionalSelect = React.forwardRef<
@@ -226,9 +234,38 @@ const ProfessionalSelect = React.forwardRef<
     { professionals = [], placeholder = 'Selecione um profissional', ...props },
     ref
   ) => {
+    // Extract only valid SelectPrimitive.Root props
+    const {
+      value,
+      defaultValue,
+      onValueChange,
+      open,
+      defaultOpen,
+      onOpenChange,
+      dir,
+      name,
+      autoComplete,
+      disabled,
+      required,
+    } = props;
+
+    const selectRootProps = {
+      value,
+      defaultValue,
+      onValueChange,
+      open,
+      defaultOpen,
+      onOpenChange,
+      dir,
+      name,
+      autoComplete,
+      disabled,
+      required,
+    };
+
     return (
-      <Select {...props}>
-        <SelectTrigger variant="professional" ref={ref}>
+      <SelectPrimitive.Root {...selectRootProps}>
+        <SelectTrigger ref={ref} variant="professional">
           <User className="mr-2 h-4 w-4" />
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
@@ -241,13 +278,14 @@ const ProfessionalSelect = React.forwardRef<
                   <span
                     className={cn(
                       'h-2 w-2 rounded-full',
-                      professional.availability === 'available' && 'bg-green-500',
+                      professional.availability === 'available' &&
+                        'bg-green-500',
                       professional.availability === 'busy' && 'bg-yellow-500',
                       professional.availability === 'offline' && 'bg-red-500'
                     )}
                   />
                 </div>
-                <span className="text-xs text-muted-foreground">
+                <span className="text-muted-foreground text-xs">
                   {professional.specialty}
                   {professional.cfm && ` • CFM: ${professional.cfm}`}
                 </span>
@@ -255,18 +293,23 @@ const ProfessionalSelect = React.forwardRef<
             </SelectItem>
           ))}
         </SelectContent>
-      </Select>
+      </SelectPrimitive.Root>
     );
   }
-);
-ProfessionalSelect.displayName = 'ProfessionalSelect';// Appointment Status Select Component
-interface AppointmentStatusSelectProps extends SelectProps {
+) as React.ForwardRefExoticComponent<
+  HealthcareProfessionalSelectProps &
+    React.RefAttributes<React.ElementRef<typeof SelectPrimitive.Root>>
+>;
+ProfessionalSelect.displayName = 'ProfessionalSelect'; // Appointment Status Select Component
+interface AppointmentStatusSelectProps
+  extends React.ComponentProps<typeof SelectPrimitive.Root> {
   statuses?: Array<{
     value: string;
     label: string;
     color: 'green' | 'yellow' | 'blue' | 'red' | 'gray';
     icon?: React.ReactNode;
   }>;
+  placeholder?: string;
 }
 
 const AppointmentStatusSelect = React.forwardRef<
@@ -274,19 +317,78 @@ const AppointmentStatusSelect = React.forwardRef<
   AppointmentStatusSelectProps
 >(({ statuses, placeholder = 'Status do agendamento', ...props }, ref) => {
   const defaultStatuses = [
-    { value: 'scheduled', label: 'Agendado', color: 'blue' as const },
-    { value: 'confirmed', label: 'Confirmado', color: 'green' as const },
-    { value: 'in_progress', label: 'Em Andamento', color: 'yellow' as const },
-    { value: 'completed', label: 'Concluído', color: 'green' as const },
-    { value: 'cancelled', label: 'Cancelado', color: 'red' as const },
-    { value: 'no_show', label: 'Faltou', color: 'gray' as const },
+    {
+      value: 'scheduled',
+      label: 'Agendado',
+      color: 'blue' as const,
+      icon: undefined,
+    },
+    {
+      value: 'confirmed',
+      label: 'Confirmado',
+      color: 'green' as const,
+      icon: undefined,
+    },
+    {
+      value: 'in_progress',
+      label: 'Em Andamento',
+      color: 'yellow' as const,
+      icon: undefined,
+    },
+    {
+      value: 'completed',
+      label: 'Concluído',
+      color: 'green' as const,
+      icon: undefined,
+    },
+    {
+      value: 'cancelled',
+      label: 'Cancelado',
+      color: 'red' as const,
+      icon: undefined,
+    },
+    {
+      value: 'no_show',
+      label: 'Faltou',
+      color: 'gray' as const,
+      icon: undefined,
+    },
   ];
 
   const statusOptions = statuses || defaultStatuses;
 
+  // Extract only valid SelectPrimitive.Root props
+  const {
+    value,
+    defaultValue,
+    onValueChange,
+    open,
+    defaultOpen,
+    onOpenChange,
+    dir,
+    name,
+    autoComplete,
+    disabled,
+    required,
+  } = props;
+
+  const selectRootProps = {
+    value,
+    defaultValue,
+    onValueChange,
+    open,
+    defaultOpen,
+    onOpenChange,
+    dir,
+    name,
+    autoComplete,
+    disabled,
+    required,
+  };
+
   return (
-    <Select {...props}>
-      <SelectTrigger variant="appointment" ref={ref}>
+    <SelectPrimitive.Root {...selectRootProps}>
+      <SelectTrigger ref={ref} variant="appointment">
         <Calendar className="mr-2 h-4 w-4" />
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
@@ -304,23 +406,28 @@ const AppointmentStatusSelect = React.forwardRef<
                   status.color === 'gray' && 'bg-gray-500'
                 )}
               />
-              {status.icon}
+              {status.icon && status.icon}
               <span>{status.label}</span>
             </div>
           </SelectItem>
         ))}
       </SelectContent>
-    </Select>
+    </SelectPrimitive.Root>
   );
-});
-AppointmentStatusSelect.displayName = 'AppointmentStatusSelect';// Priority Select Component
-interface PrioritySelectProps extends SelectProps {
+}) as React.ForwardRefExoticComponent<
+  AppointmentStatusSelectProps &
+    React.RefAttributes<React.ElementRef<typeof SelectPrimitive.Root>>
+>;
+AppointmentStatusSelect.displayName = 'AppointmentStatusSelect'; // Priority Select Component
+interface PrioritySelectProps
+  extends React.ComponentProps<typeof SelectPrimitive.Root> {
   priorities?: Array<{
     value: string;
     label: string;
     urgency: 'low' | 'normal' | 'high' | 'critical';
     icon?: React.ReactNode;
   }>;
+  placeholder?: string;
 }
 
 const PrioritySelect = React.forwardRef<
@@ -328,17 +435,56 @@ const PrioritySelect = React.forwardRef<
   PrioritySelectProps
 >(({ priorities, placeholder = 'Selecione a prioridade', ...props }, ref) => {
   const defaultPriorities = [
-    { value: 'low', label: 'Baixa', urgency: 'low' as const },
-    { value: 'normal', label: 'Normal', urgency: 'normal' as const },
-    { value: 'high', label: 'Alta', urgency: 'high' as const },
-    { value: 'critical', label: 'Crítica', urgency: 'critical' as const },
+    { value: 'low', label: 'Baixa', urgency: 'low' as const, icon: undefined },
+    {
+      value: 'normal',
+      label: 'Normal',
+      urgency: 'normal' as const,
+      icon: undefined,
+    },
+    { value: 'high', label: 'Alta', urgency: 'high' as const, icon: undefined },
+    {
+      value: 'critical',
+      label: 'Crítica',
+      urgency: 'critical' as const,
+      icon: undefined,
+    },
   ];
 
   const priorityOptions = priorities || defaultPriorities;
 
+  // Extract only valid SelectPrimitive.Root props
+  const {
+    value,
+    defaultValue,
+    onValueChange,
+    open,
+    defaultOpen,
+    onOpenChange,
+    dir,
+    name,
+    autoComplete,
+    disabled,
+    required,
+  } = props;
+
+  const selectRootProps = {
+    value,
+    defaultValue,
+    onValueChange,
+    open,
+    defaultOpen,
+    onOpenChange,
+    dir,
+    name,
+    autoComplete,
+    disabled,
+    required,
+  };
+
   return (
-    <Select {...props}>
-      <SelectTrigger variant="appointment" ref={ref}>
+    <SelectPrimitive.Root {...selectRootProps}>
+      <SelectTrigger ref={ref} variant="appointment">
         <AlertCircle className="mr-2 h-4 w-4" />
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
@@ -355,16 +501,19 @@ const PrioritySelect = React.forwardRef<
                   priority.urgency === 'critical' && 'bg-red-500'
                 )}
               />
-              {priority.icon}
+              {priority.icon && priority.icon}
               <span>{priority.label}</span>
             </div>
           </SelectItem>
         ))}
       </SelectContent>
-    </Select>
+    </SelectPrimitive.Root>
   );
-});
-PrioritySelect.displayName = 'PrioritySelect';// Exports
+}) as React.ForwardRefExoticComponent<
+  PrioritySelectProps &
+    React.RefAttributes<React.ElementRef<typeof SelectPrimitive.Root>>
+>;
+PrioritySelect.displayName = 'PrioritySelect'; // Exports
 export {
   Select,
   SelectGroup,

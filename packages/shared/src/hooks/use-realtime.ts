@@ -6,17 +6,23 @@
  * with TanStack Query integration and LGPD compliance
  */
 
-import type { RealtimeChannel, SupabaseClient } from '@supabase/supabase-js';
+import type {
+  RealtimeChannel,
+  RealtimePostgresChangesPayload,
+  SupabaseClient,
+} from '@supabase/supabase-js';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type {
-  HealthcareRealtimePayload,
   LGPDRealtimeConfig,
   RealtimeEventHandler,
   RealtimeHealthCheck,
   UseRealtimeConfig,
   UseRealtimeQueryConfig,
 } from '../types/realtime.types';
+
+// Re-export types for other hooks
+export type { UseRealtimeConfig } from '../types/realtime.types';
 
 // LGPD compliance utilities
 const sanitizeRealtimeData = (data: any, sensitiveFields: string[] = []) => {
@@ -57,15 +63,13 @@ const logRealtimeEvent = (
  * Base real-time hook with LGPD compliance
  * Manages Supabase real-time subscriptions with healthcare data protection
  */
-export function useRealtime<T = any>(
-  supabaseClient: SupabaseClient,
-  config: UseRealtimeConfig<T>
-) {
+export function useRealtime<
+  T extends Record<string, any> = Record<string, any>,
+>(supabaseClient: SupabaseClient, config: UseRealtimeConfig<T>) {
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
   const channelRef = useRef<RealtimeChannel | null>(null);
-  const queryClient = useQueryClient();
 
   const handleRealtimeEvent = useCallback(
     (
@@ -77,7 +81,7 @@ export function useRealtime<T = any>(
         // LGPD compliance logging
         if (config.lgpdCompliance) {
           logRealtimeEvent(eventType, config.table, payload, {
-            enableAuditLogging: config.auditLogging,
+            enableAuditLogging: config.auditLogging ?? false,
             enableDataMinimization: true,
             enableConsentValidation: true,
             sensitiveFields: ['cpf', 'rg', 'email', 'phone', 'address'],
@@ -105,19 +109,20 @@ export function useRealtime<T = any>(
   );
 
   useEffect(() => {
-    if (!config.enabled) return;
+    const enabledState = config.enabled ?? true;
+    if (!enabledState) return;
 
     const channel = supabaseClient
       .channel(`realtime:${config.table}`)
       .on(
-        'postgres_changes',
+        'postgres_changes' as any,
         {
           event: config.event || '*',
           schema: 'public',
           table: config.table,
           filter: config.filter,
         },
-        (payload) => {
+        (payload: RealtimePostgresChangesPayload<T>) => {
           const eventType = payload.eventType as 'INSERT' | 'UPDATE' | 'DELETE';
 
           switch (eventType) {
@@ -166,9 +171,9 @@ export function useRealtime<T = any>(
   const healthCheck: RealtimeHealthCheck = {
     isConnected,
     activeSubscriptions: channelRef.current ? 1 : 0,
-    lastPing: lastUpdate,
+    ...(lastUpdate && { lastPing: lastUpdate }),
     errorCount: error ? 1 : 0,
-    lastError: error,
+    ...(error && { lastError: error }),
   };
 
   return {
@@ -184,10 +189,9 @@ export function useRealtime<T = any>(
  * Real-time hook with TanStack Query integration
  * Automatically invalidates queries and provides optimistic updates
  */
-export function useRealtimeQuery<T = any>(
-  supabaseClient: SupabaseClient,
-  config: UseRealtimeQueryConfig<T>
-) {
+export function useRealtimeQuery<
+  T extends Record<string, any> = Record<string, any>,
+>(supabaseClient: SupabaseClient, config: UseRealtimeQueryConfig<T>) {
   const queryClient = useQueryClient();
 
   const invalidateQueries = useCallback(

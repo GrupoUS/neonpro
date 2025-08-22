@@ -72,13 +72,13 @@ export function LoginForm() {
     }
   };
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader className="space-y-1">
-        <CardTitle className="text-center font-bold text-2xl">
-          Entrar no NeonPro
+    <Card className="neonpro-card w-full">
+      <CardHeader className="space-y-3 text-center">
+        <CardTitle className="font-bold text-xl text-foreground">
+          Acessar Plataforma
         </CardTitle>
-        <CardDescription className="text-center">
-          Digite seus dados para acessar sua conta
+        <CardDescription className="text-muted-foreground">
+          Digite suas credenciais para continuar no sistema de gestão
         </CardDescription>
       </CardHeader>
 
@@ -139,17 +139,17 @@ export function LoginForm() {
           </div>
 
           <Button
-            className="w-full"
+            className="neonpro-button-primary w-full"
             disabled={loading || isSubmitting || !email || !password}
             type="submit"
           >
             {isSubmitting || loading ? (
               <>
                 <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-                Entrando...
+                Entrando na plataforma...
               </>
             ) : (
-              'Entrar'
+              'Acessar Sistema'
             )}
           </Button>
         </form>
@@ -165,7 +165,7 @@ export function LoginForm() {
         </div>
 
         <Button
-          className="w-full"
+          className="w-full border-border hover:bg-muted/50"
           disabled={loading || isSubmitting}
           onClick={handleGoogleLogin}
           type="button"
@@ -179,29 +179,31 @@ export function LoginForm() {
           Continuar com Google
         </Button>
 
-        <div className="text-center text-sm">
-          <span className="text-muted-foreground">Não tem uma conta? </span>
-          <Button
-            className="h-auto p-0 font-normal"
-            disabled={loading || isSubmitting}
-            onClick={() => router.push('/signup')}
-            type="button"
-            variant="link"
-          >
-            Criar conta
-          </Button>
-        </div>
+        <div className="space-y-4 text-center">
+          <div className="text-sm">
+            <span className="text-muted-foreground">Não tem uma conta? </span>
+            <Button
+              className="h-auto p-0 font-semibold text-primary hover:text-primary/80"
+              disabled={loading || isSubmitting}
+              onClick={() => router.push('/signup')}
+              type="button"
+              variant="link"
+            >
+              Criar conta gratuita
+            </Button>
+          </div>
 
-        <div className="text-center">
-          <Button
-            className="h-auto p-0 font-normal text-muted-foreground text-sm"
-            disabled={loading || isSubmitting}
-            onClick={() => router.push('/auth/forgot-password')}
-            type="button"
-            variant="link"
-          >
-            Esqueceu a senha?
-          </Button>
+          <div>
+            <Button
+              className="h-auto p-0 font-medium text-muted-foreground hover:text-foreground text-sm"
+              disabled={loading || isSubmitting}
+              onClick={() => router.push('/auth/forgot-password')}
+              type="button"
+              variant="link"
+            >
+              Esqueceu sua senha?
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>

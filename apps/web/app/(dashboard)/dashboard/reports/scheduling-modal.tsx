@@ -2,29 +2,40 @@
 
 import { motion } from 'framer-motion';
 import {
+  AlertTriangle,
   Calendar,
+  CheckCircle,
   Clock,
   Mail,
-  Users,
-  Settings,
-  CheckCircle,
-  AlertTriangle,
-  X,
   Plus,
+  Settings,
   Trash2,
+  Users,
+  X,
 } from 'lucide-react';
 import { useState } from 'react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 
 // Types for scheduling
-type ScheduleFrequency = 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'yearly';
+type ScheduleFrequency =
+  | 'daily'
+  | 'weekly'
+  | 'monthly'
+  | 'quarterly'
+  | 'yearly';
 type ScheduleStatus = 'active' | 'paused' | 'error';
 type DeliveryMethod = 'email' | 'download' | 'both';
 
@@ -90,12 +101,12 @@ const existingSchedules: ScheduleConfig[] = [
   },
 ];
 
-export default function SchedulingModal({ 
-  isOpen, 
-  onClose, 
-  reportId, 
-  reportName, 
-  onScheduleCreated 
+export default function SchedulingModal({
+  isOpen,
+  onClose,
+  reportId,
+  reportName,
+  onScheduleCreated,
 }: SchedulingModalProps) {
   const [frequency, setFrequency] = useState<ScheduleFrequency>('monthly');
   const [time, setTime] = useState('08:00');
@@ -134,7 +145,7 @@ export default function SchedulingModal({
       time,
       dayOfWeek: frequency === 'weekly' ? dayOfWeek : undefined,
       dayOfMonth: frequency === 'monthly' ? dayOfMonth : undefined,
-      recipients: recipients.filter(email => email.trim() !== ''),
+      recipients: recipients.filter((email) => email.trim() !== ''),
       format,
       deliveryMethod,
       status: 'active',
@@ -150,11 +161,11 @@ export default function SchedulingModal({
   const calculateNextRun = (): string => {
     const now = new Date();
     const nextRun = new Date();
-    
+
     // Set time
     const [hours, minutes] = time.split(':').map(Number);
     nextRun.setHours(hours, minutes, 0, 0);
-    
+
     // Adjust date based on frequency
     switch (frequency) {
       case 'daily':
@@ -163,7 +174,9 @@ export default function SchedulingModal({
         }
         break;
       case 'weekly':
-        nextRun.setDate(nextRun.getDate() + (7 - nextRun.getDay() + dayOfWeek) % 7);
+        nextRun.setDate(
+          nextRun.getDate() + ((7 - nextRun.getDay() + dayOfWeek) % 7)
+        );
         if (nextRun <= now) {
           nextRun.setDate(nextRun.getDate() + 7);
         }
@@ -188,16 +201,24 @@ export default function SchedulingModal({
         }
         break;
     }
-    
+
     return nextRun.toISOString();
   };
 
   const getStatusBadge = (status: ScheduleStatus) => {
     switch (status) {
       case 'active':
-        return <Badge className="bg-green-500/10 text-green-400 border-green-400">Ativo</Badge>;
+        return (
+          <Badge className="border-green-400 bg-green-500/10 text-green-400">
+            Ativo
+          </Badge>
+        );
       case 'paused':
-        return <Badge className="bg-yellow-500/10 text-yellow-400 border-yellow-400">Pausado</Badge>;
+        return (
+          <Badge className="border-yellow-400 bg-yellow-500/10 text-yellow-400">
+            Pausado
+          </Badge>
+        );
       case 'error':
         return <Badge variant="destructive">Erro</Badge>;
     }
@@ -208,48 +229,58 @@ export default function SchedulingModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-slate-900 border border-slate-800 rounded-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden"
+        className="mx-4 max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-xl border border-slate-800 bg-slate-900"
+        initial={{ opacity: 0, scale: 0.9 }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-slate-800">
+        <div className="flex items-center justify-between border-slate-800 border-b p-6">
           <div>
-            <h2 className="text-xl font-bold text-white">Agendamento de Relatórios</h2>
-            <p className="text-sm text-slate-400">
-              Automatize a geração e distribuição de: <strong>{reportName}</strong>
+            <h2 className="font-bold text-white text-xl">
+              Agendamento de Relatórios
+            </h2>
+            <p className="text-slate-400 text-sm">
+              Automatize a geração e distribuição de:{' '}
+              <strong>{reportName}</strong>
             </p>
           </div>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={onClose}
+          <Button
             className="text-slate-400 hover:text-white"
+            onClick={onClose}
+            size="sm"
+            variant="ghost"
           >
             <X className="h-4 w-4" />
           </Button>
         </div>
 
         {/* Content */}
-        <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid grid-cols-2 w-full mb-6">
+        <div className="max-h-[calc(90vh-120px)] overflow-y-auto p-6">
+          <Tabs onValueChange={setActiveTab} value={activeTab}>
+            <TabsList className="mb-6 grid w-full grid-cols-2">
               <TabsTrigger value="create">Criar Agendamento</TabsTrigger>
-              <TabsTrigger value="existing">Agendamentos Existentes</TabsTrigger>
+              <TabsTrigger value="existing">
+                Agendamentos Existentes
+              </TabsTrigger>
             </TabsList>
 
             {/* Create Schedule Tab */}
-            <TabsContent value="create" className="space-y-6">
+            <TabsContent className="space-y-6" value="create">
               {/* Frequency Selection */}
               <div className="space-y-4">
-                <Label className="text-white font-medium">Frequência</Label>
-                <Select value={frequency} onValueChange={(value: ScheduleFrequency) => setFrequency(value)}>
-                  <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
+                <Label className="font-medium text-white">Frequência</Label>
+                <Select
+                  onValueChange={(value: ScheduleFrequency) =>
+                    setFrequency(value)
+                  }
+                  value={frequency}
+                >
+                  <SelectTrigger className="border-slate-700 bg-slate-800 text-white">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-slate-800 border-slate-700">
+                  <SelectContent className="border-slate-700 bg-slate-800">
                     <SelectItem value="daily">Diário</SelectItem>
                     <SelectItem value="weekly">Semanal</SelectItem>
                     <SelectItem value="monthly">Mensal</SelectItem>
@@ -260,25 +291,30 @@ export default function SchedulingModal({
               </div>
 
               {/* Time and Date Configuration */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                 <div className="space-y-2">
-                  <Label className="text-white font-medium">Horário</Label>
+                  <Label className="font-medium text-white">Horário</Label>
                   <Input
+                    className="border-slate-700 bg-slate-800 text-white"
+                    onChange={(e) => setTime(e.target.value)}
                     type="time"
                     value={time}
-                    onChange={(e) => setTime(e.target.value)}
-                    className="bg-slate-800 border-slate-700 text-white"
                   />
                 </div>
 
                 {frequency === 'weekly' && (
                   <div className="space-y-2">
-                    <Label className="text-white font-medium">Dia da Semana</Label>
-                    <Select value={dayOfWeek.toString()} onValueChange={(value) => setDayOfWeek(Number(value))}>
-                      <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
+                    <Label className="font-medium text-white">
+                      Dia da Semana
+                    </Label>
+                    <Select
+                      onValueChange={(value) => setDayOfWeek(Number(value))}
+                      value={dayOfWeek.toString()}
+                    >
+                      <SelectTrigger className="border-slate-700 bg-slate-800 text-white">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="bg-slate-800 border-slate-700">
+                      <SelectContent className="border-slate-700 bg-slate-800">
                         <SelectItem value="1">Segunda-feira</SelectItem>
                         <SelectItem value="2">Terça-feira</SelectItem>
                         <SelectItem value="3">Quarta-feira</SelectItem>
@@ -293,17 +329,22 @@ export default function SchedulingModal({
 
                 {frequency === 'monthly' && (
                   <div className="space-y-2">
-                    <Label className="text-white font-medium">Dia do Mês</Label>
-                    <Select value={dayOfMonth.toString()} onValueChange={(value) => setDayOfMonth(Number(value))}>
-                      <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
+                    <Label className="font-medium text-white">Dia do Mês</Label>
+                    <Select
+                      onValueChange={(value) => setDayOfMonth(Number(value))}
+                      value={dayOfMonth.toString()}
+                    >
+                      <SelectTrigger className="border-slate-700 bg-slate-800 text-white">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="bg-slate-800 border-slate-700">
-                        {Array.from({ length: 28 }, (_, i) => i + 1).map(day => (
-                          <SelectItem key={day} value={day.toString()}>
-                            Dia {day}
-                          </SelectItem>
-                        ))}
+                      <SelectContent className="border-slate-700 bg-slate-800">
+                        {Array.from({ length: 28 }, (_, i) => i + 1).map(
+                          (day) => (
+                            <SelectItem key={day} value={day.toString()}>
+                              Dia {day}
+                            </SelectItem>
+                          )
+                        )}
                       </SelectContent>
                     </Select>
                   </div>
@@ -313,34 +354,38 @@ export default function SchedulingModal({
               {/* Recipients */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <Label className="text-white font-medium">Destinatários</Label>
+                  <Label className="font-medium text-white">
+                    Destinatários
+                  </Label>
                   <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleAddRecipient}
                     className="border-slate-700 text-slate-300 hover:bg-slate-700"
+                    onClick={handleAddRecipient}
+                    size="sm"
+                    variant="outline"
                   >
-                    <Plus className="h-3 w-3 mr-1" />
+                    <Plus className="mr-1 h-3 w-3" />
                     Adicionar
                   </Button>
                 </div>
-                
+
                 <div className="space-y-2">
                   {recipients.map((email, index) => (
-                    <div key={index} className="flex gap-2">
+                    <div className="flex gap-2" key={index}>
                       <Input
-                        type="email"
+                        className="flex-1 border-slate-700 bg-slate-800 text-white"
+                        onChange={(e) =>
+                          handleRecipientChange(index, e.target.value)
+                        }
                         placeholder="email@exemplo.com"
+                        type="email"
                         value={email}
-                        onChange={(e) => handleRecipientChange(index, e.target.value)}
-                        className="bg-slate-800 border-slate-700 text-white flex-1"
                       />
                       {recipients.length > 1 && (
                         <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleRemoveRecipient(index)}
                           className="border-slate-700 text-slate-300 hover:bg-slate-700"
+                          onClick={() => handleRemoveRecipient(index)}
+                          size="sm"
+                          variant="outline"
                         >
                           <Trash2 className="h-3 w-3" />
                         </Button>
@@ -351,14 +396,19 @@ export default function SchedulingModal({
               </div>
 
               {/* Format and Delivery */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label className="text-white font-medium">Formato</Label>
-                  <Select value={format} onValueChange={(value: 'pdf' | 'excel' | 'both') => setFormat(value)}>
-                    <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
+                  <Label className="font-medium text-white">Formato</Label>
+                  <Select
+                    onValueChange={(value: 'pdf' | 'excel' | 'both') =>
+                      setFormat(value)
+                    }
+                    value={format}
+                  >
+                    <SelectTrigger className="border-slate-700 bg-slate-800 text-white">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-slate-800 border-slate-700">
+                    <SelectContent className="border-slate-700 bg-slate-800">
                       <SelectItem value="pdf">PDF apenas</SelectItem>
                       <SelectItem value="excel">Excel apenas</SelectItem>
                       <SelectItem value="both">PDF e Excel</SelectItem>
@@ -367,12 +417,19 @@ export default function SchedulingModal({
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-white font-medium">Método de Entrega</Label>
-                  <Select value={deliveryMethod} onValueChange={(value: DeliveryMethod) => setDeliveryMethod(value)}>
-                    <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
+                  <Label className="font-medium text-white">
+                    Método de Entrega
+                  </Label>
+                  <Select
+                    onValueChange={(value: DeliveryMethod) =>
+                      setDeliveryMethod(value)
+                    }
+                    value={deliveryMethod}
+                  >
+                    <SelectTrigger className="border-slate-700 bg-slate-800 text-white">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-slate-800 border-slate-700">
+                    <SelectContent className="border-slate-700 bg-slate-800">
                       <SelectItem value="email">Email apenas</SelectItem>
                       <SelectItem value="download">Download apenas</SelectItem>
                       <SelectItem value="both">Email e Download</SelectItem>
@@ -383,12 +440,14 @@ export default function SchedulingModal({
 
               {/* LGPD Compliance */}
               <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 rounded-lg bg-slate-800/50 border border-slate-700">
+                <div className="flex items-center justify-between rounded-lg border border-slate-700 bg-slate-800/50 p-4">
                   <div className="flex items-center gap-3">
                     <CheckCircle className="h-5 w-5 text-green-400" />
                     <div>
-                      <p className="text-white font-medium">Conformidade LGPD</p>
-                      <p className="text-sm text-slate-400">
+                      <p className="font-medium text-white">
+                        Conformidade LGPD
+                      </p>
+                      <p className="text-slate-400 text-sm">
                         Aplicar políticas de retenção e anonimização
                       </p>
                     </div>
@@ -401,12 +460,17 @@ export default function SchedulingModal({
 
                 {lgpdCompliant && (
                   <div className="space-y-2">
-                    <Label className="text-white font-medium">Retenção (dias)</Label>
-                    <Select value={retentionDays.toString()} onValueChange={(value) => setRetentionDays(Number(value))}>
-                      <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
+                    <Label className="font-medium text-white">
+                      Retenção (dias)
+                    </Label>
+                    <Select
+                      onValueChange={(value) => setRetentionDays(Number(value))}
+                      value={retentionDays.toString()}
+                    >
+                      <SelectTrigger className="border-slate-700 bg-slate-800 text-white">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="bg-slate-800 border-slate-700">
+                      <SelectContent className="border-slate-700 bg-slate-800">
                         <SelectItem value="7">7 dias</SelectItem>
                         <SelectItem value="30">30 dias</SelectItem>
                         <SelectItem value="90">90 dias</SelectItem>
@@ -422,25 +486,26 @@ export default function SchedulingModal({
               <Alert>
                 <AlertTriangle className="h-4 w-4" />
                 <AlertDescription>
-                  <strong>Aviso LGPD:</strong> Este agendamento processará dados pessoais. 
-                  Certifique-se de que existe base legal adequada e consentimento dos titulares 
-                  para o compartilhamento automático dos relatórios.
+                  <strong>Aviso LGPD:</strong> Este agendamento processará dados
+                  pessoais. Certifique-se de que existe base legal adequada e
+                  consentimento dos titulares para o compartilhamento automático
+                  dos relatórios.
                 </AlertDescription>
               </Alert>
 
               {/* Action Buttons */}
               <div className="flex gap-3 pt-4">
                 <Button
+                  className="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700"
                   onClick={handleCreateSchedule}
-                  className="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white"
                 >
-                  <Calendar className="h-4 w-4 mr-2" />
+                  <Calendar className="mr-2 h-4 w-4" />
                   Criar Agendamento
                 </Button>
                 <Button
-                  variant="outline"
-                  onClick={onClose}
                   className="border-slate-700 text-slate-300 hover:bg-slate-700"
+                  onClick={onClose}
+                  variant="outline"
                 >
                   Cancelar
                 </Button>
@@ -448,30 +513,36 @@ export default function SchedulingModal({
             </TabsContent>
 
             {/* Existing Schedules Tab */}
-            <TabsContent value="existing" className="space-y-4">
+            <TabsContent className="space-y-4" value="existing">
               {existingSchedules.map((schedule) => (
                 <div
+                  className="rounded-lg border border-slate-700 bg-slate-800/50 p-4"
                   key={schedule.id}
-                  className="p-4 rounded-lg bg-slate-800/50 border border-slate-700"
                 >
-                  <div className="flex items-start justify-between mb-3">
+                  <div className="mb-3 flex items-start justify-between">
                     <div>
-                      <h4 className="font-medium text-white">{schedule.reportName}</h4>
-                      <p className="text-sm text-slate-400 capitalize">
+                      <h4 className="font-medium text-white">
+                        {schedule.reportName}
+                      </h4>
+                      <p className="text-slate-400 text-sm capitalize">
                         {schedule.frequency} às {schedule.time}
                       </p>
                     </div>
                     {getStatusBadge(schedule.status)}
                   </div>
 
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                  <div className="grid grid-cols-2 gap-4 text-sm md:grid-cols-4">
                     <div>
                       <p className="text-slate-400">Próxima execução</p>
-                      <p className="text-white">{formatNextRun(schedule.nextRun)}</p>
+                      <p className="text-white">
+                        {formatNextRun(schedule.nextRun)}
+                      </p>
                     </div>
                     <div>
                       <p className="text-slate-400">Destinatários</p>
-                      <p className="text-white">{schedule.recipients.length} pessoa(s)</p>
+                      <p className="text-white">
+                        {schedule.recipients.length} pessoa(s)
+                      </p>
                     </div>
                     <div>
                       <p className="text-slate-400">Formato</p>
@@ -480,20 +551,29 @@ export default function SchedulingModal({
                     <div>
                       <p className="text-slate-400">LGPD</p>
                       <p className="text-white">
-                        {schedule.lgpdCompliant ? 
-                          <CheckCircle className="h-4 w-4 text-green-400 inline" /> : 
-                          <AlertTriangle className="h-4 w-4 text-yellow-400 inline" />
-                        }
+                        {schedule.lgpdCompliant ? (
+                          <CheckCircle className="inline h-4 w-4 text-green-400" />
+                        ) : (
+                          <AlertTriangle className="inline h-4 w-4 text-yellow-400" />
+                        )}
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex gap-2 mt-3">
-                    <Button size="sm" variant="outline" className="border-slate-700 text-slate-300 hover:bg-slate-700">
-                      <Settings className="h-3 w-3 mr-1" />
+                  <div className="mt-3 flex gap-2">
+                    <Button
+                      className="border-slate-700 text-slate-300 hover:bg-slate-700"
+                      size="sm"
+                      variant="outline"
+                    >
+                      <Settings className="mr-1 h-3 w-3" />
                       Editar
                     </Button>
-                    <Button size="sm" variant="outline" className="border-slate-700 text-slate-300 hover:bg-slate-700">
+                    <Button
+                      className="border-slate-700 text-slate-300 hover:bg-slate-700"
+                      size="sm"
+                      variant="outline"
+                    >
                       {schedule.status === 'active' ? 'Pausar' : 'Ativar'}
                     </Button>
                   </div>

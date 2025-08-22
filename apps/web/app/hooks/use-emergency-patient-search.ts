@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 // Emergency patient data interface
 export interface EmergencyPatient {
@@ -64,7 +64,10 @@ interface SearchOptions {
 // Hook return interface
 interface UseEmergencyPatientSearchReturn {
   patients: EmergencyPatient[];
-  searchPatient: (query: string, options?: SearchOptions) => Promise<EmergencyPatient[]>;
+  searchPatient: (
+    query: string,
+    options?: SearchOptions
+  ) => Promise<EmergencyPatient[]>;
   getPatientById: (id: string) => Promise<EmergencyPatient | null>;
   getRecentPatients: () => EmergencyPatient[];
   isLoading: boolean;
@@ -89,27 +92,28 @@ const mockEmergencyPatients: EmergencyPatient[] = [
     insurance: {
       provider: 'Bradesco Saúde',
       planNumber: 'BR-123456789',
-      validUntil: '31/12/2024'
+      validUntil: '31/12/2024',
     },
     allergies: [
       {
         type: 'Penicilina',
         severity: 'critical',
-        description: 'Reação anafilática grave - usar epinefrina imediatamente. Histórico de edema de glote.',
-        registeredDate: '10/01/2020'
+        description:
+          'Reação anafilática grave - usar epinefrina imediatamente. Histórico de edema de glote.',
+        registeredDate: '10/01/2020',
       },
       {
         type: 'Látex',
         severity: 'high',
         description: 'Dermatite de contato severa com formação de bolhas',
-        registeredDate: '15/05/2021'
+        registeredDate: '15/05/2021',
       },
       {
         type: 'Frutos do mar',
         severity: 'moderate',
         description: 'Urticária e náuseas',
-        registeredDate: '20/08/2022'
-      }
+        registeredDate: '20/08/2022',
+      },
     ],
     medications: [
       {
@@ -118,7 +122,7 @@ const mockEmergencyPatients: EmergencyPatient[] = [
         frequency: '1x ao dia (manhã)',
         lastTaken: 'Hoje 08:00',
         prescribedBy: 'Dr. Carlos Oliveira - Cardiologia',
-        startDate: '01/01/2023'
+        startDate: '01/01/2023',
       },
       {
         name: 'Sinvastatina',
@@ -126,29 +130,30 @@ const mockEmergencyPatients: EmergencyPatient[] = [
         frequency: '1x ao dia (noite)',
         lastTaken: 'Ontem 22:00',
         prescribedBy: 'Dr. Carlos Oliveira - Cardiologia',
-        startDate: '01/01/2023'
+        startDate: '01/01/2023',
       },
       {
         name: 'EpiPen (Epinefrina)',
         dosage: '0.3mg',
         frequency: 'SOS - emergência alérgica',
         prescribedBy: 'Dra. Ana Maria - Alergologia',
-        startDate: '10/01/2020'
-      }
+        startDate: '10/01/2020',
+      },
     ],
     contraindications: [
       {
         type: 'Aspirina (AAS)',
-        description: 'Histórico de sangramento gastrointestinal grave. Usar paracetamol como alternativa.',
+        description:
+          'Histórico de sangramento gastrointestinal grave. Usar paracetamol como alternativa.',
         severity: 'high',
-        registeredDate: '05/03/2019'
+        registeredDate: '05/03/2019',
       },
       {
         type: 'Anti-inflamatórios não esteroidais (AINEs)',
         description: 'Risco de sangramento e interação com Losartana',
         severity: 'moderate',
-        registeredDate: '01/01/2023'
-      }
+        registeredDate: '01/01/2023',
+      },
     ],
     emergencyContacts: [
       {
@@ -156,43 +161,43 @@ const mockEmergencyPatients: EmergencyPatient[] = [
         relationship: 'Esposa',
         phone: '(11) 88888-8888',
         isPrimary: true,
-        address: 'Rua das Flores, 123 - São Paulo/SP'
+        address: 'Rua das Flores, 123 - São Paulo/SP',
       },
       {
         name: 'Pedro Silva Santos',
         relationship: 'Filho',
         phone: '(11) 77777-7777',
         isPrimary: false,
-        address: 'Av. Paulista, 1000 - São Paulo/SP'
+        address: 'Av. Paulista, 1000 - São Paulo/SP',
       },
       {
         name: 'Dr. Carlos Oliveira',
         relationship: 'Médico Cardiologista',
         phone: '(11) 3333-4444',
-        isPrimary: false
-      }
+        isPrimary: false,
+      },
     ],
     medicalConditions: [
       {
         condition: 'Hipertensão Arterial Sistêmica',
         status: 'controlled',
         lastUpdate: '10/01/2024',
-        severity: 'moderate'
+        severity: 'moderate',
       },
       {
         condition: 'Dislipidemia',
         status: 'controlled',
         lastUpdate: '10/01/2024',
-        severity: 'low'
+        severity: 'low',
       },
       {
         condition: 'Alergia Medicamentosa Múltipla',
         status: 'active',
         lastUpdate: '20/08/2022',
-        severity: 'critical'
-      }
+        severity: 'critical',
+      },
     ],
-    lastAccessed: new Date().toISOString()
+    lastAccessed: new Date().toISOString(),
   },
   {
     id: 'PAT-EMG-002',
@@ -208,8 +213,8 @@ const mockEmergencyPatients: EmergencyPatient[] = [
         type: 'Sulfa',
         severity: 'high',
         description: 'Erupção cutânea grave',
-        registeredDate: '15/10/2018'
-      }
+        registeredDate: '15/10/2018',
+      },
     ],
     medications: [
       {
@@ -218,7 +223,7 @@ const mockEmergencyPatients: EmergencyPatient[] = [
         frequency: '2x ao dia (manhã e noite)',
         lastTaken: 'Hoje 07:30',
         prescribedBy: 'Dr. Roberto Diabetes - Endocrinologia',
-        startDate: '01/05/1995'
+        startDate: '01/05/1995',
       },
       {
         name: 'Metformina',
@@ -226,52 +231,52 @@ const mockEmergencyPatients: EmergencyPatient[] = [
         frequency: '2x ao dia (almoço e jantar)',
         lastTaken: 'Ontem 19:00',
         prescribedBy: 'Dr. Roberto Diabetes - Endocrinologia',
-        startDate: '01/01/2020'
-      }
+        startDate: '01/01/2020',
+      },
     ],
     contraindications: [
       {
         type: 'Corticosteroides',
         description: 'Aumenta significativamente a glicemia',
         severity: 'high',
-        registeredDate: '01/05/1995'
-      }
+        registeredDate: '01/05/1995',
+      },
     ],
     emergencyContacts: [
       {
         name: 'José Costa Filho',
         relationship: 'Marido',
         phone: '(11) 44444-4444',
-        isPrimary: true
+        isPrimary: true,
       },
       {
         name: 'Ana Costa Silva',
         relationship: 'Filha',
         phone: '(11) 33333-3333',
-        isPrimary: false
-      }
+        isPrimary: false,
+      },
     ],
     medicalConditions: [
       {
         condition: 'Diabetes Mellitus Tipo 1',
         status: 'active',
         lastUpdate: '15/01/2024',
-        severity: 'critical'
+        severity: 'critical',
       },
       {
         condition: 'Retinopatia Diabética',
         status: 'controlled',
         lastUpdate: '10/12/2023',
-        severity: 'moderate'
-      }
+        severity: 'moderate',
+      },
     ],
-    lastAccessed: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
-  }
+    lastAccessed: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+  },
 ];
 
 /**
  * Emergency Patient Search Hook
- * 
+ *
  * Provides comprehensive patient search functionality optimized for emergency scenarios.
  * Features offline capability, caching, and prioritized critical information access.
  */
@@ -279,114 +284,135 @@ export function useEmergencyPatientSearch(): UseEmergencyPatientSearchReturn {
   const [patients, setPatients] = useState<EmergencyPatient[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [cacheStatus, setCacheStatus] = useState<'fresh' | 'stale' | 'offline'>('fresh');
+  const [cacheStatus, setCacheStatus] = useState<'fresh' | 'stale' | 'offline'>(
+    'fresh'
+  );
   const [lastSync, setLastSync] = useState<Date | null>(new Date());
 
   // Get recent patients (sorted by last accessed)
   const getRecentPatients = useCallback((): EmergencyPatient[] => {
     return mockEmergencyPatients
-      .sort((a, b) => new Date(b.lastAccessed).getTime() - new Date(a.lastAccessed).getTime())
+      .sort(
+        (a, b) =>
+          new Date(b.lastAccessed).getTime() -
+          new Date(a.lastAccessed).getTime()
+      )
       .slice(0, 5);
   }, []);
 
   // Search patients by query
-  const searchPatient = useCallback(async (
-    query: string, 
-    options: SearchOptions = {}
-  ): Promise<EmergencyPatient[]> => {
-    setIsLoading(true);
-    setError(null);
+  const searchPatient = useCallback(
+    async (
+      query: string,
+      options: SearchOptions = {}
+    ): Promise<EmergencyPatient[]> => {
+      setIsLoading(true);
+      setError(null);
 
-    try {
-      // Simulate network delay for realistic testing
-      await new Promise(resolve => setTimeout(resolve, 500));
+      try {
+        // Simulate network delay for realistic testing
+        await new Promise((resolve) => setTimeout(resolve, 500));
 
-      if (!query.trim()) {
-        setPatients([]);
-        return [];
-      }
+        if (!query.trim()) {
+          setPatients([]);
+          return [];
+        }
 
-      const searchTerm = query.toLowerCase().trim();
-      
-      // Search by name, CPF, RG, or phone
-      const filteredPatients = mockEmergencyPatients.filter(patient => {
-        const nameMatch = patient.name.toLowerCase().includes(searchTerm);
-        const cpfMatch = patient.cpf.replace(/\D/g, '').includes(searchTerm.replace(/\D/g, ''));
-        const rgMatch = patient.rg.replace(/\D/g, '').includes(searchTerm.replace(/\D/g, ''));
-        const phoneMatch = patient.phone.replace(/\D/g, '').includes(searchTerm.replace(/\D/g, ''));
-        const idMatch = patient.id.toLowerCase().includes(searchTerm);
+        const searchTerm = query.toLowerCase().trim();
 
-        return nameMatch || cpfMatch || rgMatch || phoneMatch || idMatch;
-      });
+        // Search by name, CPF, RG, or phone
+        const filteredPatients = mockEmergencyPatients.filter((patient) => {
+          const nameMatch = patient.name.toLowerCase().includes(searchTerm);
+          const cpfMatch = patient.cpf
+            .replace(/\D/g, '')
+            .includes(searchTerm.replace(/\D/g, ''));
+          const rgMatch = patient.rg
+            .replace(/\D/g, '')
+            .includes(searchTerm.replace(/\D/g, ''));
+          const phoneMatch = patient.phone
+            .replace(/\D/g, '')
+            .includes(searchTerm.replace(/\D/g, ''));
+          const idMatch = patient.id.toLowerCase().includes(searchTerm);
 
-      // Apply search options
-      let results = filteredPatients;
-      
-      if (options.emergencyOnly) {
-        results = results.filter(patient => 
-          patient.allergies.some(allergy => allergy.severity === 'critical') ||
-          patient.medicalConditions.some(condition => condition.severity === 'critical')
-        );
-      }
+          return nameMatch || cpfMatch || rgMatch || phoneMatch || idMatch;
+        });
 
-      if (options.maxResults) {
-        results = results.slice(0, options.maxResults);
-      }
+        // Apply search options
+        let results = filteredPatients;
 
-      // Update last accessed for found patients
-      results.forEach(patient => {
-        patient.lastAccessed = new Date().toISOString();
-      });
+        if (options.emergencyOnly) {
+          results = results.filter(
+            (patient) =>
+              patient.allergies.some(
+                (allergy) => allergy.severity === 'critical'
+              ) ||
+              patient.medicalConditions.some(
+                (condition) => condition.severity === 'critical'
+              )
+          );
+        }
 
-      setPatients(results);
-      setLastSync(new Date());
-      setCacheStatus('fresh');
-      
-      return results;
+        if (options.maxResults) {
+          results = results.slice(0, options.maxResults);
+        }
 
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro na busca de pacientes';
-      setError(errorMessage);
-      
-      // Fall back to cached data in case of error
-      setCacheStatus('offline');
-      return [];
-      
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+        // Update last accessed for found patients
+        results.forEach((patient) => {
+          patient.lastAccessed = new Date().toISOString();
+        });
 
-  // Get patient by ID
-  const getPatientById = useCallback(async (id: string): Promise<EmergencyPatient | null> => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      // Simulate network delay
-      await new Promise(resolve => setTimeout(resolve, 300));
-
-      const patient = mockEmergencyPatients.find(p => p.id === id);
-      
-      if (patient) {
-        // Update last accessed
-        patient.lastAccessed = new Date().toISOString();
+        setPatients(results);
         setLastSync(new Date());
         setCacheStatus('fresh');
+
+        return results;
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : 'Erro na busca de pacientes';
+        setError(errorMessage);
+
+        // Fall back to cached data in case of error
+        setCacheStatus('offline');
+        return [];
+      } finally {
+        setIsLoading(false);
       }
+    },
+    []
+  );
 
-      return patient || null;
+  // Get patient by ID
+  const getPatientById = useCallback(
+    async (id: string): Promise<EmergencyPatient | null> => {
+      setIsLoading(true);
+      setError(null);
 
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao carregar paciente';
-      setError(errorMessage);
-      setCacheStatus('offline');
-      return null;
-      
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+      try {
+        // Simulate network delay
+        await new Promise((resolve) => setTimeout(resolve, 300));
+
+        const patient = mockEmergencyPatients.find((p) => p.id === id);
+
+        if (patient) {
+          // Update last accessed
+          patient.lastAccessed = new Date().toISOString();
+          setLastSync(new Date());
+          setCacheStatus('fresh');
+        }
+
+        return patient || null;
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : 'Erro ao carregar paciente';
+        setError(errorMessage);
+        setCacheStatus('offline');
+        return null;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    []
+  );
 
   // Clear error state
   const clearError = useCallback(() => {
@@ -394,7 +420,10 @@ export function useEmergencyPatientSearch(): UseEmergencyPatientSearchReturn {
   }, []);
 
   // Memoize recent patients for performance
-  const recentPatients = useMemo(() => getRecentPatients(), [getRecentPatients]);
+  const recentPatients = useMemo(
+    () => getRecentPatients(),
+    [getRecentPatients]
+  );
 
   return {
     patients,
@@ -405,6 +434,6 @@ export function useEmergencyPatientSearch(): UseEmergencyPatientSearchReturn {
     error,
     clearError,
     cacheStatus,
-    lastSync
+    lastSync,
   };
 }

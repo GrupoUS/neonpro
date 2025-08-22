@@ -9,14 +9,16 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from 'react';
 import { getRealtimeManager } from '../connection-manager';
 
-type Patient = Database['public']['Tables']['patients']['Row'];
-type PatientInsert = Database['public']['Tables']['patients']['Insert'];
-type PatientUpdate = Database['public']['Tables']['patients']['Update'];
+// Explicitly use database patient type (snake_case) not entities type (camelCase)
+type PatientRow = Database['public']['Tables']['patients']['Row'];
+// Remove unused imports for now until we align the types properly
+// type PatientInsert = Database['public']['Tables']['patients']['Insert'];
+// type PatientUpdate = Database['public']['Tables']['patients']['Update'];
 
 export interface RealtimePatientPayload {
   eventType: 'INSERT' | 'UPDATE' | 'DELETE';
-  new?: Patient;
-  old?: Patient;
+  new?: PatientRow;
+  old?: PatientRow;
   errors?: string[];
 }
 
@@ -65,8 +67,8 @@ export function useRealtimePatients(
       try {
         const realtimePayload: RealtimePatientPayload = {
           eventType: payload.eventType,
-          new: payload.new as Patient,
-          old: payload.old as Patient,
+          new: payload.new as PatientRow,
+          old: payload.old as PatientRow,
         };
 
         // Update metrics
@@ -103,45 +105,50 @@ export function useRealtimePatients(
       const { eventType, new: newData, old: oldData } = payload;
 
       // Update patients list cache
-      queryClient.setQueryData(queryKey, (oldCache: Patient[] | undefined) => {
-        if (!oldCache) return oldCache;
+      queryClient.setQueryData(
+        queryKey,
+        (oldCache: PatientRow[] | undefined) => {
+          if (!oldCache) return oldCache;
 
-        switch (eventType) {
-          case 'INSERT':
-            if (newData && newData.tenant_id === tenantId) {
-              return [...oldCache, newData];
-            }
-            return oldCache;
+          switch (eventType) {
+            case 'INSERT':
+              if (newData && newData.clinic_id === tenantId) {
+                return [...oldCache, newData];
+              }
+              return oldCache;
 
-          case 'UPDATE':
-            if (newData) {
-              return oldCache.map((patient) =>
-                patient.id === newData.id ? newData : patient
-              );
-            }
-            return oldCache;
+            case 'UPDATE':
+              if (newData) {
+                return oldCache.map((patient) =>
+                  patient.id === newData.id ? newData : patient
+                );
+              }
+              return oldCache;
 
-          case 'DELETE':
-            if (oldData) {
-              return oldCache.filter((patient) => patient.id !== oldData.id);
-            }
-            return oldCache;
+            case 'DELETE':
+              if (oldData) {
+                return oldCache.filter((patient) => patient.id !== oldData.id);
+              }
+              return oldCache;
 
-          default:
-            return oldCache;
+            default:
+              return oldCache;
+          }
         }
-      });
+      );
 
       // Update individual patient cache if exists
       if (newData) {
         queryClient.setQueryData(['patient', newData.id], newData);
       } else if (oldData && eventType === 'DELETE') {
-        queryClient.removeQueries(['patient', oldData.id]);
+        queryClient.removeQueries({ queryKey: ['patient', oldData.id] });
       }
 
       // Invalidate related queries for fresh data
-      queryClient.invalidateQueries(['patient-analytics', tenantId]);
-      queryClient.invalidateQueries(['patient-stats', tenantId]);
+      queryClient.invalidateQueries({
+        queryKey: ['patient-analytics', tenantId],
+      });
+      queryClient.invalidateQueries({ queryKey: ['patient-stats', tenantId] });
     },
     [queryClient, queryKey, tenantId]
   );
@@ -155,12 +162,10 @@ export function useRealtimePatients(
     const realtimeManager = getRealtimeManager();
 
     const unsubscribe = realtimeManager.subscribe(
-      `patients:tenant_id=eq.${tenantId}`,
+      `patients:clinic_id=eq.${tenantId}`,
       {
-        event: 'postgres_changes',
-        schema: 'public',
         table: 'patients',
-        filter: `tenant_id=eq.${tenantId}`,
+        filter: `clinic_id=eq.${tenantId}`,
       },
       handlePatientChange
     );
@@ -219,11 +224,11 @@ export function useOptimisticPatients(tenantId: string) {
   const queryClient = useQueryClient();
 
   const optimisticUpdate = useCallback(
-    (patientId: string, updates: Partial<Patient>) => {
+    (patientId: string, updates: Partial<PatientRow>) => {
       // Update patients list optimistically
       queryClient.setQueryData(
         ['patients', tenantId],
-        (oldCache: Patient[] | undefined) => {
+        (oldCache: PatientRow[] | undefined) => {
           if (!oldCache) return oldCache;
           return oldCache.map((patient) =>
             patient.id === patientId ? { ...patient, ...updates } : patient
@@ -234,7 +239,7 @@ export function useOptimisticPatients(tenantId: string) {
       // Update individual patient cache
       queryClient.setQueryData(
         ['patient', patientId],
-        (oldData: Patient | undefined) => {
+        (oldData: PatientRow | undefined) => {
           if (!oldData) return oldData;
           return { ...oldData, ...updates };
         }
@@ -246,8 +251,8 @@ export function useOptimisticPatients(tenantId: string) {
   const rollbackUpdate = useCallback(
     (patientId: string) => {
       // Invalidate caches to fetch fresh data
-      queryClient.invalidateQueries(['patients', tenantId]);
-      queryClient.invalidateQueries(['patient', patientId]);
+      queryClient.invalidateQueries({ queryKey: ['patients', tenantId] });
+      queryClient.invalidateQueries({ queryKey: ['patient', patientId] });
     },
     [queryClient, tenantId]
   );
