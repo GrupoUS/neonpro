@@ -6,6 +6,8 @@
  * do sistema NeonPro Healthcare.
  */
 
+// Import Notification from database package
+import type { Notification } from '@neonpro/db';
 import type {
   ApiResponse,
   PaginatedResponse,
@@ -36,7 +38,6 @@ export type {
   ListResponse,
   // Response types
   LoginResponse,
-  Notification,
   PaginatedResponse,
   PaginationMeta,
   PaginationParams,
@@ -52,6 +53,9 @@ export type {
   User,
   ValidationError,
 } from './api.types';
+
+// Re-export Notification from database package
+export type { Notification };
 // API types
 export * from './api.types';
 export type {

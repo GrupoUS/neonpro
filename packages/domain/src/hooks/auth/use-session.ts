@@ -125,8 +125,8 @@ export function useSession(options: UseSessionOptions = {}): UseSessionReturn {
   const [devices, setDevices] = useState<DeviceRegistration[]>([]);
 
   const router = useRouter();
-  const refreshTimeoutRef = useRef<NodeJS.Timeout>();
-  const securityCheckRef = useRef<NodeJS.Timeout>();
+  const refreshTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const securityCheckRef = useRef<NodeJS.Timeout | null>(null);
 
   // Session validation
   const validateSession =

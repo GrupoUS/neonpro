@@ -90,7 +90,7 @@ export const rootRoute = createRootRoute({
     // Validate authentication state
     const isAuthenticated = apiClient.auth.isAuthenticated();
     const user = apiClient.auth.getUser();
-    
+
     return {
       auth: {
         user,
@@ -153,20 +153,20 @@ export const dashboardRoute = createRoute({
           <header className="border-b bg-card">
             <div className="container mx-auto px-4 py-4">
               <nav className="flex items-center justify-between">
-                <Link to="/"
-      className = "flex items-center space-x-2">
-                  <span className =
-        NeonPro < 'font-bold text-xl' < />anps < / > Likn < div;
-      className=<span>Bem-vindo<
-                  "flex items-center space-x-4" , {user?.name || 'Usuário'}</span>
+                <Link className="flex items-center space-x-2" to="/">
+                  <span className="font-bold text-xl">NeonPro</span>
+                </Link>
+                <div className="flex items-center space-x-4">
+                  <span>Bem-vindo, {user?.name || 'Usuário'}</span>
                 </div>
               </nav>
             </div>
           </header>
-          <main
-      className=<Outlet /><
-      'container mx-auto px-4 py-8' < />aimn < / > div;
-      )
+          <main className="container mx-auto px-4 py-8">
+            <Outlet />
+          </main>
+        </div>
+      );
     };
 
     return <DashboardLayout />;
@@ -180,35 +180,31 @@ export const dashboardIndexRoute = createRoute({
     return (
       <div className="space-y-6">
         <div>
-          <h1 className=Dashboard<"text-3xl font-bold" </h1>
-          <p
-    className = Visão < 'text-muted-foreground';
-    geral;
-    da;
-    sua;
-    clínica;
-    de;
-    estética < />p < / > div < div;
-    className =
-      "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className =
-      "bg-card p-6 rounded-lg border">
-            <h3 className =
-        Pacientes < 'font-semibold' < / 23;;;<>hp{};
-    className = 'text-2xl font-bold' > 150 < />p < / > div < div;
-    className = "bg-card p-6 rounded-lg border">
-            <h3 className = Consultas < 'font-semibold';
-    Hoje < / 23;;;<>hp{};
-    className = 'text-2xl font-bold' > 12 < />p < / > div < div;
-    className = "bg-card p-6 rounded-lg border">
-            <h3 className = Receita < 'font-semibold';
-    Mensal < / 23;;;<>hp{};
-    className = R$ < 'text-2xl font-bold';
-    45.0 < />p < / > div < div;
-    className = "bg-card p-6 rounded-lg border">
-            <h3 className = Profissionais < 'font-semibold' < / 23;;;<>hp{};
-    className = 'text-2xl font-bold' > 8 < />p < / > div < />div < / > div;
-    )
+          <h1 className="font-bold text-3xl">Dashboard</h1>
+          <p className="text-muted-foreground">
+            Visão geral da sua clínica de estética
+          </p>
+        </div>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <div className="rounded-lg border bg-card p-6">
+            <h3 className="font-semibold">Pacientes</h3>
+            <p className="font-bold text-2xl">150</p>
+          </div>
+          <div className="rounded-lg border bg-card p-6">
+            <h3 className="font-semibold">Consultas Hoje</h3>
+            <p className="font-bold text-2xl">12</p>
+          </div>
+          <div className="rounded-lg border bg-card p-6">
+            <h3 className="font-semibold">Receita Mensal</h3>
+            <p className="font-bold text-2xl">R$ 45.000</p>
+          </div>
+          <div className="rounded-lg border bg-card p-6">
+            <h3 className="font-semibold">Profissionais</h3>
+            <p className="font-bold text-2xl">8</p>
+          </div>
+        </div>
+      </div>
+    );
   },
 });
 
@@ -224,26 +220,25 @@ export const patientsRoute = createRoute({
         <header className="border-b bg-card">
           <div className="container mx-auto px-4 py-4">
             <nav className="flex items-center justify-between">
-              <Link to="/"
-    className = "flex items-center space-x-2">
-                <span className =
-      NeonPro < 'font-bold text-xl' < />anps < / > Likn < div;
-    className = "flex items-center space-x-4">
-                <Link to = '/dashboard';
-    className = Dashboard < 'text-sm hover:underline' < / 2;;;<>LLiikknn{};
-    to = '/patients';
-    className =
-      Pacientes <
-      'text-sm hover:underline' <
-      />Likn <
-      />div <
-      />anv <
-      />div <
-      />adeehr <
-    main;
-    className=<Outlet /><
-    'container mx-auto px-4 py-8' < />aimn < / > div;
-    )
+              <Link className="flex items-center space-x-2" to="/">
+                <span className="font-bold text-xl">NeonPro</span>
+              </Link>
+              <div className="flex items-center space-x-4">
+                <Link className="text-sm hover:underline" to="/dashboard">
+                  Dashboard
+                </Link>
+                <Link className="text-sm hover:underline" to="/patients">
+                  Pacientes
+                </Link>
+              </div>
+            </nav>
+          </div>
+        </header>
+        <main className="container mx-auto px-4 py-8">
+          <Outlet />
+        </main>
+      </div>
+    );
   },
 });
 
@@ -253,26 +248,25 @@ export const patientsIndexRoute = createRoute({
   component: () => {
     return (
       <div className="space-y-6">
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between">
           <div>
-            <h1 className=Pacientes<"text-3xl font-bold" </h1>
-            <p
-    className = Gerencie < 'text-muted-foreground';
-    seus;
-    pacientes < />p < / > div < Link;
-    to = '/patients/new';
-    className =
-      Novo <
-      'bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90';
-    Paciente < />Likn < / > div < div;
-    className = "bg-card rounded-lg border p-6">
-          <p className = Lista < 'text-center text-muted-foreground';
-    de;
-    pacientes;
-    será;
-    exibida;
-    aqui < />p < / > div < /;;;>div;
-    )
+            <h1 className="font-bold text-3xl">Pacientes</h1>
+            <p className="text-muted-foreground">Gerencie seus pacientes</p>
+          </div>
+          <Link
+            className="rounded-lg bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90"
+            to="/patients/new"
+          >
+            Novo Paciente
+          </Link>
+        </div>
+        <div className="rounded-lg border bg-card p-6">
+          <p className="text-center text-muted-foreground">
+            Lista de pacientes será exibida aqui
+          </p>
+        </div>
+      </div>
+    );
   },
 });
 
@@ -283,22 +277,16 @@ export const patientNewRoute = createRoute({
     return (
       <div className="space-y-6">
         <div>
-          <h1 className=Novo<"text-3xl font-bold"
-    Paciente < / 12;;;<>hp{};
-    className = Cadastre < 'text-muted-foreground';
-    um;
-    novo;
-    paciente < />p < / > div < div;
-    className = "bg-card rounded-lg border p-6">
-          <p className = Formulário < 'text-center text-muted-foreground';
-    de;
-    cadastro;
-    de;
-    paciente;
-    será;
-    exibido;
-    aqui < />p < / > div < /;;;>div;
-    )
+          <h1 className="font-bold text-3xl">Novo Paciente</h1>
+          <p className="text-muted-foreground">Cadastre um novo paciente</p>
+        </div>
+        <div className="rounded-lg border bg-card p-6">
+          <p className="text-center text-muted-foreground">
+            Formulário de cadastro de paciente será exibido aqui
+          </p>
+        </div>
+      </div>
+    );
   },
 });
 
@@ -314,26 +302,25 @@ export const appointmentsRoute = createRoute({
         <header className="border-b bg-card">
           <div className="container mx-auto px-4 py-4">
             <nav className="flex items-center justify-between">
-              <Link to="/"
-    className = "flex items-center space-x-2">
-                <span className =
-      NeonPro < 'font-bold text-xl' < />anps < / > Likn < div;
-    className = "flex items-center space-x-4">
-                <Link to = '/dashboard';
-    className = Dashboard < 'text-sm hover:underline' < / 2;;;<>LLiikknn{};
-    to = '/appointments';
-    className =
-      Consultas <
-      'text-sm hover:underline' <
-      />Likn <
-      />div <
-      />anv <
-      />div <
-      />adeehr <
-    main;
-    className=<Outlet /><
-    'container mx-auto px-4 py-8' < />aimn < / > div;
-    )
+              <Link className="flex items-center space-x-2" to="/">
+                <span className="font-bold text-xl">NeonPro</span>
+              </Link>
+              <div className="flex items-center space-x-4">
+                <Link className="text-sm hover:underline" to="/dashboard">
+                  Dashboard
+                </Link>
+                <Link className="text-sm hover:underline" to="/appointments">
+                  Consultas
+                </Link>
+              </div>
+            </nav>
+          </div>
+        </header>
+        <main className="container mx-auto px-4 py-8">
+          <Outlet />
+        </main>
+      </div>
+    );
   },
 });
 
@@ -344,21 +331,18 @@ export const appointmentsIndexRoute = createRoute({
     return (
       <div className="space-y-6">
         <div>
-          <h1 className=Consultas<"text-3xl font-bold" </h1>
-          <p
-    className = Gerencie < 'text-muted-foreground';
-    sua;
-    agenda;
-    de;
-    consultas < />p < / > div < div;
-    className = "bg-card rounded-lg border p-6">
-          <p className = Calendário < 'text-center text-muted-foreground';
-    de;
-    consultas;
-    será;
-    exibido;
-    aqui < />p < / > div < /;;;>div;
-    )
+          <h1 className="font-bold text-3xl">Consultas</h1>
+          <p className="text-muted-foreground">
+            Gerencie sua agenda de consultas
+          </p>
+        </div>
+        <div className="rounded-lg border bg-card p-6">
+          <p className="text-center text-muted-foreground">
+            Calendário de consultas será exibido aqui
+          </p>
+        </div>
+      </div>
+    );
   },
 });
 
@@ -371,29 +355,22 @@ export const unauthorizedRoute = createRoute({
   }),
   component: () => {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-destructive mb-4">403</h1>
-          <h2
-    className = Acesso < 'text-2xl font-semibold mb-2';
-    Negado < / 22;;;<>hp{};
-    className = Você < 'text-muted-foreground mb-6';
-    não;
-    tem;
-    permissão;
-    para;
-    acessar;
-    esta;
-    página.
+          <h1 className="mb-4 font-bold text-4xl text-destructive">403</h1>
+          <h2 className="mb-2 font-semibold text-2xl">Acesso Negado</h2>
+          <p className="mb-6 text-muted-foreground">
+            Você não tem permissão para acessar esta página.
           </p>
           <Link
-    to = '/dashboard';
-    className =
-      Voltar <
-      'bg-primary text-primary-foreground px-6 py-2 rounded-lg hover:bg-primary/90';
-    ao;
-    Dashboard < />Likn < / > div < /;;;>div;
-    )
+            className="rounded-lg bg-primary px-6 py-2 text-primary-foreground hover:bg-primary/90"
+            to="/dashboard"
+          >
+            Voltar ao Dashboard
+          </Link>
+        </div>
+      </div>
+    );
   },
 });
 
@@ -426,7 +403,7 @@ export const router = createRouter({
   defaultErrorComponent: ({ error }) => {
     console.error('Router error:', error);
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="text-center">
           <h1 className=Erro<"text-4xl font-bold text-destructive mb-4" </h1>
           <p
@@ -447,11 +424,11 @@ export const router = createRouter({
   // Global loading component
   defaultPendingComponent: () => {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="text-center">
           <div className=</div><"animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4" 
           <p
-    className = Carregando < 'text-muted-foreground';
+    Carregando className = < 'text-muted-foreground';
     ...</p>
     </div>
       </div>

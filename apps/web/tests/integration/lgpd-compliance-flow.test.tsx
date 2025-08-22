@@ -58,39 +58,10 @@ interface AuditTrailEntry {
   data_categories?: string[];
 }
 
-// Mock LGPD service
-const mockLGPDService = {
-  validateDataProcessing: vi.fn(),
-  recordConsent: vi.fn(),
-  revokeConsent: vi.fn(),
-  processDataSubjectRequest: vi.fn(),
-  exportPatientData: vi.fn(),
-  anonymizePatientData: vi.fn(),
-  createAuditEntry: vi.fn(),
-  getAuditTrail: vi.fn(),
-  checkRetentionPolicy: vi.fn(),
-  validatePurposeLimitation: vi.fn(),
-};
+// Use global mocks from vitest.setup.ts
+const mockLGPDService = (globalThis as any).mockLgpdService;
+const mockSupabaseClient = (globalThis as any).mockSupabaseClient;
 
-// Mock Supabase client for LGPD operations
-const mockSupabaseClient = {
-  from: vi.fn((table: string) => {
-    const mockQuery = {
-      select: vi.fn().mockReturnThis(),
-      insert: vi.fn().mockReturnThis(),
-      update: vi.fn().mockReturnThis(),
-      delete: vi.fn().mockReturnThis(),
-      eq: vi.fn().mockReturnThis(),
-      neq: vi.fn().mockReturnThis(),
-      gte: vi.fn().mockReturnThis(),
-      lte: vi.fn().mockReturnThis(),
-      order: vi.fn().mockReturnThis(),
-      limit: vi.fn().mockReturnThis(),
-      single: vi.fn(),
-    };
-    return mockQuery;
-  }),
-};
 vi.mock('@supabase/supabase-js', () => ({
   createClient: () => mockSupabaseClient,
 }));
@@ -571,7 +542,7 @@ describe('LGPD Compliance Flow Integration Tests', () => {
       expect(result.policy_compliant).toBe(true);
       expect(result.retention_periods.medical_records).toBe('10_years');
       expect(result.healthcare_exceptions).toContain(
-        'Medical records retained for 10 years'
+        'Medical records retained for 10 years as per Brazilian medical law'
       );
       expect(result.upcoming_expirations).toHaveLength(1);
     });

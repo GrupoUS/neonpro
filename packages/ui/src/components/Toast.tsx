@@ -45,8 +45,8 @@ export function Toast({
       className={cn(
         'group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all',
         variant === 'destructive'
-          ? 'border-red-500 bg-red-50'
-          : 'border-gray-200 bg-white'
+          ? 'border-destructive bg-destructive/10'
+          : 'border-border bg-card'
       )}
       {...props}
     >
@@ -55,7 +55,7 @@ export function Toast({
           <div
             className={cn(
               'font-semibold text-sm',
-              variant === 'destructive' ? 'text-red-900' : 'text-gray-900'
+              variant === 'destructive' ? 'text-destructive' : 'text-foreground'
             )}
           >
             {title}
@@ -65,7 +65,7 @@ export function Toast({
           <div
             className={cn(
               'text-sm opacity-90',
-              variant === 'destructive' ? 'text-red-800' : 'text-gray-700'
+              variant === 'destructive' ? 'text-destructive' : 'text-muted-foreground'
             )}
           >
             {description}

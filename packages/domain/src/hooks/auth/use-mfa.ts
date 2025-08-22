@@ -146,7 +146,7 @@ export const useMFA = () => {
           sessionId,
         });
 
-        const result = verifyMfa(verificationRequest);
+        const result = await verifyMfa(verificationRequest);
 
         if (result.success) {
           // Update enabled state

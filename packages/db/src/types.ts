@@ -293,6 +293,103 @@ export type Database = {
           timestamp?: string;
         };
       };
+
+      // Notifications system
+      notifications: {
+        Row: {
+          id: string;
+          user_id: string;
+          clinic_id: string | null;
+          title: string;
+          message: string;
+          type:
+            | 'info'
+            | 'warning'
+            | 'error'
+            | 'success'
+            | 'appointment'
+            | 'payment'
+            | 'system';
+          data: Json | null;
+          related_entity_type:
+            | 'appointment'
+            | 'patient'
+            | 'payment'
+            | 'user'
+            | null;
+          related_entity_id: string | null;
+          is_read: boolean;
+          read_at: string | null;
+          channels: string[];
+          delivery_status: Json;
+          scheduled_for: string | null;
+          expires_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          clinic_id?: string | null;
+          title: string;
+          message: string;
+          type:
+            | 'info'
+            | 'warning'
+            | 'error'
+            | 'success'
+            | 'appointment'
+            | 'payment'
+            | 'system';
+          data?: Json | null;
+          related_entity_type?:
+            | 'appointment'
+            | 'patient'
+            | 'payment'
+            | 'user'
+            | null;
+          related_entity_id?: string | null;
+          is_read?: boolean;
+          read_at?: string | null;
+          channels?: string[];
+          delivery_status?: Json;
+          scheduled_for?: string | null;
+          expires_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          clinic_id?: string | null;
+          title?: string;
+          message?: string;
+          type?:
+            | 'info'
+            | 'warning'
+            | 'error'
+            | 'success'
+            | 'appointment'
+            | 'payment'
+            | 'system';
+          data?: Json | null;
+          related_entity_type?:
+            | 'appointment'
+            | 'patient'
+            | 'payment'
+            | 'user'
+            | null;
+          related_entity_id?: string | null;
+          is_read?: boolean;
+          read_at?: string | null;
+          channels?: string[];
+          delivery_status?: Json;
+          scheduled_for?: string | null;
+          expires_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
     };
 
     Views: {
@@ -321,6 +418,7 @@ export type Appointment = Database['public']['Tables']['appointments']['Row'];
 export type Clinic = Database['public']['Tables']['clinics']['Row'];
 export type HealthcareAuditLog =
   Database['public']['Tables']['healthcare_audit_logs']['Row'];
+export type Notification = Database['public']['Tables']['notifications']['Row'];
 
 // Insert types for forms
 export type PatientInsert = Database['public']['Tables']['patients']['Insert'];
@@ -328,6 +426,8 @@ export type AppointmentInsert =
   Database['public']['Tables']['appointments']['Insert'];
 export type HealthcareProfessionalInsert =
   Database['public']['Tables']['healthcare_professionals']['Insert'];
+export type NotificationInsert =
+  Database['public']['Tables']['notifications']['Insert'];
 
 // Update types for edits
 export type PatientUpdate = Database['public']['Tables']['patients']['Update'];
@@ -335,3 +435,5 @@ export type AppointmentUpdate =
   Database['public']['Tables']['appointments']['Update'];
 export type HealthcareProfessionalUpdate =
   Database['public']['Tables']['healthcare_professionals']['Update'];
+export type NotificationUpdate =
+  Database['public']['Tables']['notifications']['Update'];

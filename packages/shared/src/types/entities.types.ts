@@ -351,46 +351,6 @@ export interface Appointment extends BaseEntity, SoftDeletable, Auditable {
   clinic?: Clinic;
 }
 
-// Notification Entity
-export interface Notification extends BaseEntity {
-  // Target
-  userId: string;
-  clinicId?: string;
-
-  // Content
-  title: string;
-  message: string;
-  type:
-    | 'info'
-    | 'warning'
-    | 'error'
-    | 'success'
-    | 'appointment'
-    | 'payment'
-    | 'system';
-
-  // Metadata
-  data?: Record<string, unknown>;
-  relatedEntityType?: 'appointment' | 'patient' | 'payment' | 'user';
-  relatedEntityId?: string;
-
-  // Status
-  isRead: boolean;
-  readAt?: string;
-
-  // Delivery
-  channels: ('email' | 'sms' | 'push' | 'in_app')[];
-  deliveryStatus: {
-    email?: 'pending' | 'sent' | 'delivered' | 'failed';
-    sms?: 'pending' | 'sent' | 'delivered' | 'failed';
-    push?: 'pending' | 'sent' | 'delivered' | 'failed';
-  };
-
-  // Scheduling
-  scheduledFor?: string; // for future notifications
-  expiresAt?: string;
-}
-
 // Treatment Record Entity
 export interface TreatmentRecord extends BaseEntity, Auditable {
   appointmentId: string;
@@ -501,7 +461,6 @@ export type Entity =
   | Professional
   | Clinic
   | Appointment
-  | Notification
   | TreatmentRecord
   | Payment
   | FileDocument;

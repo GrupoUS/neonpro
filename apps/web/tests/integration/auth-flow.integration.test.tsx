@@ -180,6 +180,12 @@ describe('Authentication Flow Integration', () => {
 
       mockAuthHook.signIn.mockImplementation(
         async (email: string, password: string) => {
+          // Simulate actual hook behavior by calling global mock
+          const authResult = await mockSupabaseClient.auth.signInWithPassword({
+            email,
+            password,
+          });
+
           mockAuthHook.user = mockUser;
           mockAuthHook.session = mockSession;
           return {
@@ -429,6 +435,9 @@ describe('Authentication Flow Integration', () => {
       });
 
       mockAuthHook.signOut.mockImplementation(async () => {
+        // Simulate actual hook behavior by calling global mock
+        await mockSupabaseClient.auth.signOut();
+
         mockAuthHook.user = null;
         mockAuthHook.session = null;
       });

@@ -4,21 +4,17 @@
  * Integra com toast system e audio alerts para urgências médicas
  */
 
-import type { Database } from '@neonpro/db';
+import type { Notification } from '@neonpro/db';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getRealtimeManager } from '../connection-manager';
 
-// Using healthcare_audit_logs as the base for notifications until notifications table is created
-type NotificationRow =
-  Database['public']['Tables']['healthcare_audit_logs']['Row'];
+// Using the actual notifications table
+type NotificationRow = Notification;
 
 // Extended notification interface with additional properties
-export interface Notification extends NotificationRow {
-  message: string;
-  read_at?: string;
+export interface ExtendedNotification extends NotificationRow {
   priority?: keyof NotificationPriority;
-  title?: string; // Added missing title property
 }
 
 export interface NotificationPriority {
@@ -30,8 +26,8 @@ export interface NotificationPriority {
 
 export interface RealtimeNotificationPayload {
   eventType: 'INSERT' | 'UPDATE' | 'DELETE';
-  new?: Notification;
-  old?: Notification;
+  new?: ExtendedNotification;
+  old?: ExtendedNotification;
   errors?: string[];
 }
 
@@ -81,9 +77,8 @@ export function useRealtimeNotifications(
   const [isConnected, setIsConnected] = useState(false);
   const [connectionHealth, setConnectionHealth] = useState(0);
   const [unreadCount, setUnreadCount] = useState(0);
-  const [lastNotification, setLastNotification] = useState<Notification | null>(
-    null
-  );
+  const [lastNotification, setLastNotification] =
+    useState<NotificationRow | null>(null);
   const [emergencyCount, setEmergencyCount] = useState(0);
   const [unsubscribeFn, setUnsubscribeFn] = useState<(() => void) | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -96,16 +91,14 @@ export function useRealtimeNotifications(
       try {
         const realtimePayload: RealtimeNotificationPayload = {
           eventType: payload.eventType,
-          new: payload.new as Notification & {
-            priority?: keyof NotificationPriority;
-          },
-          old: payload.old as Notification,
+          new: payload.new as ExtendedNotification,
+          old: payload.old as ExtendedNotification,
         };
 
         // Update state metrics
         if (realtimePayload.eventType === 'INSERT' && realtimePayload.new) {
           setUnreadCount((prev) => prev + 1);
-          setLastNotification(realtimePayload.new as Notification);
+          setLastNotification(realtimePayload.new as NotificationRow);
 
           // Track emergency notifications
           if (realtimePayload.new.priority === 'EMERGENCY') {
@@ -217,9 +210,7 @@ export function useRealtimeNotifications(
    * Show toast notification
    */
   const showToastNotification = useCallback(
-    (
-      notification: Notification & { priority?: keyof NotificationPriority }
-    ) => {
+    (notification: ExtendedNotification) => {
       if (!enableToast || typeof window === 'undefined') return;
 
       // Use toast system (assuming react-hot-toast or similar)
@@ -274,14 +265,14 @@ export function useRealtimeNotifications(
       // Update notifications list cache
       queryClient.setQueryData(
         ['notifications', tenantId, userId],
-        (oldCache: Notification[] | undefined) => {
+        (oldCache: NotificationRow[] | undefined) => {
           if (!oldCache) return oldCache;
 
           switch (eventType) {
             case 'INSERT':
               if (newData && newData.clinic_id === tenantId) {
                 // Insert newest first
-                return [newData as Notification, ...oldCache];
+                return [newData as NotificationRow, ...oldCache];
               }
               return oldCache;
 
@@ -289,7 +280,7 @@ export function useRealtimeNotifications(
               if (newData) {
                 return oldCache.map((notification) =>
                   notification.id === newData.id
-                    ? (newData as Notification)
+                    ? (newData as NotificationRow)
                     : notification
                 );
               }
@@ -347,7 +338,7 @@ export function useRealtimeNotifications(
     const unsubscribe = realtimeManager.subscribe(
       `notifications:${filter}`,
       {
-        table: 'healthcare_audit_logs', // Using healthcare_audit_logs as notifications table doesn't exist
+        table: 'notifications', // Now using the actual notifications table
         filter,
       },
       handleNotificationChange
@@ -380,7 +371,7 @@ export function useRealtimeNotifications(
         // Optimistic update
         queryClient.setQueryData(
           ['notifications', tenantId, userId],
-          (oldCache: Notification[] | undefined) => {
+          (oldCache: NotificationRow[] | undefined) => {
             if (!oldCache) return oldCache;
             return oldCache.map((notification) =>
               notification.id === notificationId
@@ -396,7 +387,7 @@ export function useRealtimeNotifications(
         // Update individual notification cache
         queryClient.setQueryData(
           ['notification', notificationId],
-          (oldData: Notification | undefined) => {
+          (oldData: NotificationRow | undefined) => {
             if (!oldData) return oldData;
             return { ...oldData, read_at: new Date().toISOString() };
           }
@@ -423,7 +414,7 @@ export function useRealtimeNotifications(
       // Optimistic update
       queryClient.setQueryData(
         ['notifications', tenantId, userId],
-        (oldCache: Notification[] | undefined) => {
+        (oldCache: NotificationRow[] | undefined) => {
           if (!oldCache) return oldCache;
           return oldCache.map((notification) => ({
             ...notification,

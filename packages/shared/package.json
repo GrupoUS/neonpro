@@ -37,8 +37,8 @@
     "dist/**/*"
   ],
   "scripts": {
-    "build": "tsup src/index.ts src/api-client.ts --format esm,cjs --dts --clean",
-    "dev": "tsup src/index.ts --format esm,cjs --dts --watch",
+    "build": "tsup src/index.ts src/api-client.ts --format esm,cjs --dts --clean --tsconfig ./tsconfig.build.json",
+    "dev": "tsup src/index.ts --format esm,cjs --dts --watch --tsconfig ./tsconfig.build.json",
     "type-check": "tsc --noEmit",
     "lint": "biome check src",
     "lint:fix": "biome check src --apply"

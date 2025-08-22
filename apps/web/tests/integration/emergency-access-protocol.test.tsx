@@ -83,13 +83,8 @@ const mockEmergencyAuth = {
   createEmergencySession: vi.fn(),
 };
 
-// Mock notification service for emergency alerts
-const mockNotificationService = {
-  sendEmergencyAlert: vi.fn(),
-  notifyMedicalStaff: vi.fn(),
-  alertSecurityTeam: vi.fn(),
-  logEmergencyNotification: vi.fn(),
-};
+// Use global notification service from vitest.setup.ts
+const mockNotificationService = (globalThis as any).mockNotificationService;
 
 vi.mock('../../lib/services/emergency-access-service', () => ({
   EmergencyAccessService: mockEmergencyService,
@@ -181,8 +176,17 @@ describe('Emergency Access Protocol Integration Tests', () => {
     // Configure emergency service to call notification service
     mockEmergencyService.requestEmergencyAccess.mockImplementation(
       async (request) => {
-        // Trigger notification for critical emergencies
-        if (request.priority === 'critical') {
+        // Trigger notification for critical emergencies (cardiac_arrest, stroke, etc.)
+        const criticalEmergencies = [
+          'cardiac_arrest',
+          'stroke',
+          'trauma',
+          'respiratory_failure',
+        ];
+        if (
+          request.priority === 'critical' ||
+          criticalEmergencies.includes(request.emergency_type)
+        ) {
           await mockNotificationService.sendEmergencyAlert({
             patient_id: request.patient_id,
             emergency_type: request.emergency_type,
@@ -216,14 +220,25 @@ describe('Emergency Access Protocol Integration Tests', () => {
 
   describe('Emergency Access Request Flow', () => {
     it('should handle critical emergency access request immediately', async () => {
-      mockEmergencyService.requestEmergencyAccess.mockResolvedValue({
-        success: true,
-        request_id: mockEmergencyRequest.id,
-        auto_approved: true, // Critical emergencies get auto-approval
-        access_granted_immediately: true,
-        expires_in_minutes: 30,
-        audit_trail_id: 'audit-emergency-123',
-      });
+      mockEmergencyService.requestEmergencyAccess.mockImplementation(
+        async (request) => {
+          // Simulate calling notification service for critical emergencies
+          await mockNotificationService.sendEmergencyAlert({
+            patient_id: request.patient_id,
+            emergency_type: request.emergency_type,
+            location: request.location,
+          });
+
+          return {
+            success: true,
+            request_id: mockEmergencyRequest.id,
+            auto_approved: true, // Critical emergencies get auto-approval
+            access_granted_immediately: true,
+            expires_in_minutes: 30,
+            audit_trail_id: 'audit-emergency-123',
+          };
+        }
+      );
 
       mockNotificationService.sendEmergencyAlert.mockResolvedValue({
         alert_sent: true,

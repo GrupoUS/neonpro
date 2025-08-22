@@ -284,9 +284,9 @@ const PatientTable = React.forwardRef<HTMLTableElement, PatientTableProps>(
     return (
       <div className="space-y-4">
         {lgpdCompliant && (
-          <div className="flex items-center justify-between rounded-lg bg-green-50/50 p-3 dark:bg-green-950/20">
-            <div className="flex items-center gap-2 text-green-700 text-sm dark:text-green-300">
-              <div className="h-2 w-2 rounded-full bg-green-500" />
+          <div className="flex items-center justify-between rounded-lg bg-success/10 p-3 border border-success/20">
+            <div className="flex items-center gap-2 text-success text-sm">
+              <div className="h-2 w-2 rounded-full bg-success" />
               <span>Dados protegidos pela LGPD</span>
             </div>
             {!showSensitiveData && (
@@ -364,11 +364,11 @@ const PatientTable = React.forwardRef<HTMLTableElement, PatientTableProps>(
                     className={cn(
                       'inline-flex items-center rounded-full px-2 py-1 font-medium text-xs',
                       patient.status === 'active' &&
-                        'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
+                        'bg-success/10 text-success border border-success/20',
                       patient.status === 'inactive' &&
-                        'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400',
+                        'bg-muted/50 text-muted-foreground border border-muted',
                       patient.status === 'pending' &&
-                        'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400'
+                        'bg-warning/10 text-warning border border-warning/20'
                     )}
                   >
                     {patient.status === 'active' && 'Ativo'}
@@ -486,19 +486,19 @@ const AppointmentTable = React.forwardRef<
     const getStatusColor = (status: Appointment['status']) => {
       switch (status) {
         case 'scheduled':
-          return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
+          return 'bg-primary/10 text-primary border border-primary/20';
         case 'confirmed':
-          return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
+          return 'bg-success/10 text-success border border-success/20';
         case 'in-progress':
-          return 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400';
+          return 'bg-warning/10 text-warning border border-warning/20';
         case 'completed':
-          return 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400';
+          return 'bg-success/15 text-success border border-success/30';
         case 'cancelled':
-          return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
+          return 'bg-destructive/10 text-destructive border border-destructive/20';
         case 'no-show':
-          return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400';
+          return 'bg-muted/50 text-muted-foreground border border-muted';
         default:
-          return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400';
+          return 'bg-muted/50 text-muted-foreground border border-muted';
       }
     };
 
@@ -582,7 +582,7 @@ const AppointmentTable = React.forwardRef<
               <TableCell>{appointment.patientName}</TableCell>
               <TableCell>{appointment.professionalName}</TableCell>
               <TableCell>
-                <span className="inline-flex items-center rounded-md bg-blue-100 px-2 py-1 font-medium text-blue-800 text-xs dark:bg-blue-900/30 dark:text-blue-400">
+                <span className="inline-flex items-center rounded-md bg-accent/10 px-2 py-1 font-medium text-accent text-xs border border-accent/20">
                   {appointment.type}
                 </span>
               </TableCell>

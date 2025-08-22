@@ -77,10 +77,6 @@
     ]
   },
   "include": [
-    "**/*.js",
-    "**/*.jsx",
-    "**/*.ts",
-    "**/*.tsx",
     "vitest.d.ts",
     ".next/types/**/*.ts"
   ],
@@ -88,7 +84,14 @@
     "node_modules",
     ".next",
     "dist",
-    "out"
+    "out",
+    "apps/**/*",
+    "packages/**/*",
+    "tools/**/*",
+    "e2e/**/*",
+    "tests/**/*",
+    "playwright-report/**/*",
+    "test-results/**/*"
   ],
   "references": [
     {

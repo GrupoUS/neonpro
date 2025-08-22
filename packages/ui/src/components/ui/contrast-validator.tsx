@@ -382,7 +382,7 @@ export const validateColorPalette = (
  * Component wrapper that adds contrast validation to any element
  */
 interface ContrastWrapperProps extends ContrastValidatorProps {
-  element?: keyof JSX.IntrinsicElements;
+  element?: keyof React.JSX.IntrinsicElements;
   style?: React.CSSProperties;
 }
 
@@ -405,7 +405,7 @@ const ContrastWrapper = React.forwardRef<HTMLElement, ContrastWrapperProps>(
     };
 
     return React.createElement(
-      Element,
+      Element as any,
       { ref, style: computedStyle },
       <ContrastValidator
         backgroundColor={backgroundColor}

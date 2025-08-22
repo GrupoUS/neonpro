@@ -6,6 +6,7 @@
  * com estruturas padronizadas para cada endpoint.
  */
 
+import type { Notification } from '@neonpro/db';
 import type { TimeSlot } from '../schemas/appointment.schema';
 import type { AuthToken, AuthUser } from '../schemas/auth.schema';
 import type { ApiMeta, ApiResponse, PaginationMeta } from './api.types';
@@ -13,7 +14,6 @@ import type {
   Appointment,
   Clinic,
   FileDocument,
-  Notification,
   Patient,
   Payment,
   Professional,

@@ -4,40 +4,38 @@
 
 @layer base {
   :root {
-    /* NeonPro Healthcare - Paleta Pantone Profissional */
-    /* Cores Principais - Baseadas na Paleta Pantone Aprovada */
-    --primary: 41 67 89; /* #294359 - PANTONE 2168 C (azul profissional) */
-    --primary-dark: 17 32 49; /* #112031 - PANTONE 5395 C (verde escuro) */
-    --primary-light: 180 172 156; /* #B4AC9C - PANTONE 7535 C (cinza bege) */
-    --primary-foreground: 255 255 255; /* Branco para contraste */
+    /* NEONPROV1 - Tema Unificado com Paleta Pantone Healthcare */
+    /* Cores Principais NEONPROV1 */
+    --primary: 172 148 105; /* #AC9469 - PANTONE 4007 C (dourado premium) */
+    --primary-foreground: 17 32 49; /* #112031 - PANTONE 5395 C (contraste) */
+    
+    --secondary: 17 32 49; /* #112031 - PANTONE 5395 C (verde escuro profissional) */
+    --secondary-foreground: 210 208 200; /* #D2D0C8 - PANTONE 400 C */
+    
+    --accent: 41 67 89; /* #294359 - PANTONE 2168 C (azul médico) */
+    --accent-foreground: 255 255 255; /* Branco para contraste */
 
-    /* Cores Secundárias */
-    --secondary: 210 208 200; /* #D2D0C8 - PANTONE 400 C (cinza claro) */
-    --secondary-foreground: 17 32 49; /* #112031 - PANTONE 5395 C */
-    --accent: 172 148 105; /* #AC9469 - PANTONE 4007 C (dourado profissional) */
-    --accent-foreground: 17 32 49; /* #112031 - PANTONE 5395 C */
-
-    /* Cores de Fundo - Paleta Profissional */
-    --bg-primary: 255 255 255; /* #ffffff - Fundo principal limpo */
+    /* Cores de Fundo - NEONPROV1 Unificado */
+    --background: 255 255 255; /* #ffffff - Fundo principal limpo */
+    --foreground: 17 32 49; /* #112031 - PANTONE 5395 C (texto principal) */
+    --bg-primary: 255 255 255; /* #ffffff - Fundo principal */
     --bg-secondary: 210 208 200; /* #D2D0C8 - PANTONE 400 C */
     --bg-tertiary: 180 172 156; /* #B4AC9C - PANTONE 7535 C */
-    --background: 255 255 255; /* #ffffff - Fundo principal */
-    --foreground: 17 32 49; /* #112031 - PANTONE 5395 C */
 
-    /* Cores de Status - Profissionais */
-    --success: 41 67 89; /* #294359 - PANTONE 2168 C (sucesso) */
+    /* Cores de Status - NEONPROV1 Sistema Unificado */
+    --success: 41 67 89; /* #294359 - PANTONE 2168 C (sucesso médico) */
     --success-foreground: 255 255 255; /* Branco */
-    --warning: 172 148 105; /* #AC9469 - PANTONE 4007 C (aviso) */
+    --warning: 172 148 105; /* #AC9469 - PANTONE 4007 C (aviso dourado) */
     --warning-foreground: 17 32 49; /* #112031 - PANTONE 5395 C */
-    --danger: 139 69 19; /* #8b4513 - Tom terra para erro */
-    --danger-foreground: 255 255 255; /* Branco */
-    --destructive: 139 69 19; /* #8b4513 - Tom terra para destrutivo */
+    --destructive: 139 69 19; /* #8b4513 - Tom terra para erro */
     --destructive-foreground: 255 255 255; /* Branco */
+    --info: 41 67 89; /* #294359 - PANTONE 2168 C (info = success) */
+    --info-foreground: 255 255 255; /* Branco */
 
-    /* Cores de Texto - Profissionais */
-    --text-primary: 17 32 49; /* #112031 - PANTONE 5395 C */
-    --text-secondary: 41 67 89; /* #294359 - PANTONE 2168 C */
-    --text-muted: 180 172 156; /* #B4AC9C - PANTONE 7535 C */
+    /* Cores de Texto - NEONPROV1 Hierarquia Unificada */
+    --text-primary: 17 32 49; /* #112031 - PANTONE 5395 C (texto principal) */
+    --text-secondary: 41 67 89; /* #294359 - PANTONE 2168 C (texto secundário) */
+    --text-muted: 180 172 156; /* #B4AC9C - PANTONE 7535 C (texto esmaecido) */
 
     /* Bordas e UI - Tons Profissionais */
     --border: 210 208 200; /* #D2D0C8 - PANTONE 400 C */
@@ -51,23 +49,23 @@
     --sidebar-hover: 41 67 89; /* #294359 - PANTONE 2168 C */
     --sidebar-active: 172 148 105; /* #AC9469 - PANTONE 4007 C */
 
-    /* UI Component Colors - Pantone Profissional */
+    /* UI Component Colors - NEONPROV1 Sistema Limpo */
     --card: 255 255 255; /* #ffffff - Fundo de card limpo */
     --card-foreground: 17 32 49; /* #112031 - PANTONE 5395 C */
     --popover: 255 255 255; /* #ffffff - Fundo popover */
     --popover-foreground: 17 32 49; /* #112031 - PANTONE 5395 C */
-    --muted: 210 208 200; /* #D2D0C8 - PANTONE 400 C */
-    --muted-foreground: 180 172 156; /* #B4AC9C - PANTONE 7535 C */
+    --muted: 180 172 156; /* #B4AC9C - PANTONE 7535 C (fundo suave) */
+    --muted-foreground: 41 67 89; /* #294359 - PANTONE 2168 C (texto muted) */
 
-    /* Sidebar & Navigation Colors - Pantone */
-    --sidebar-background: 17 32 49; /* #112031 - PANTONE 5395 C */
-    --sidebar-foreground: 210 208 200; /* #D2D0C8 - PANTONE 400 C */
-    --sidebar-primary: 172 148 105; /* #AC9469 - PANTONE 4007 C */
+    /* Sidebar & Navigation Colors - NEONPROV1 Elegante */
+    --sidebar-background: 17 32 49; /* #112031 - PANTONE 5395 C (fundo escuro) */
+    --sidebar-foreground: 210 208 200; /* #D2D0C8 - PANTONE 400 C (texto claro) */
+    --sidebar-primary: 172 148 105; /* #AC9469 - PANTONE 4007 C (destaque dourado) */
     --sidebar-primary-foreground: 17 32 49; /* #112031 - PANTONE 5395 C */
-    --sidebar-accent: 41 67 89; /* #294359 - PANTONE 2168 C */
+    --sidebar-accent: 41 67 89; /* #294359 - PANTONE 2168 C (azul médico) */
     --sidebar-accent-foreground: 255 255 255; /* #ffffff */
-    --sidebar-border: 41 67 89; /* #294359 - PANTONE 2168 C */
-    --sidebar-ring: 172 148 105; /* #AC9469 - PANTONE 4007 C */
+    --sidebar-border: 180 172 156; /* #B4AC9C - PANTONE 7535 C (borda suave) */
+    --sidebar-ring: 172 148 105; /* #AC9469 - PANTONE 4007 C (foco dourado) */
 
     /* Chart & Visualization Colors - Paleta Pantone */
     --chart-1: 41 67 89; /* #294359 - PANTONE 2168 C */
@@ -97,36 +95,37 @@
   }
 
   .dark {
-    /* Modo Escuro Profissional - Paleta Pantone */
-    --background: 17 32 49; /* #112031 - PANTONE 5395 C */
-    --foreground: 210 208 200; /* #D2D0C8 - PANTONE 400 C */
-    --primary: 172 148 105; /* #AC9469 - PANTONE 4007 C */
+    /* NEONPROV1 Dark Mode - Paleta Consistente */
+    --background: 17 32 49; /* #112031 - PANTONE 5395 C (fundo escuro) */
+    --foreground: 210 208 200; /* #D2D0C8 - PANTONE 400 C (texto claro) */
+    --primary: 172 148 105; /* #AC9469 - PANTONE 4007 C (dourado mantém) */
     --primary-foreground: 17 32 49; /* #112031 - PANTONE 5395 C */
     
-    --secondary: 41 67 89; /* #294359 - PANTONE 2168 C */
+    --secondary: 41 67 89; /* #294359 - PANTONE 2168 C (azul escuro) */
     --secondary-foreground: 210 208 200; /* #D2D0C8 - PANTONE 400 C */
-    --accent: 172 148 105; /* #AC9469 - PANTONE 4007 C */
-    --accent-foreground: 17 32 49; /* #112031 - PANTONE 5395 C */
+    --accent: 41 67 89; /* #294359 - PANTONE 2168 C (azul médico) */
+    --accent-foreground: 255 255 255; /* Branco para contraste */
 
-    --card: 41 67 89; /* #294359 - PANTONE 2168 C */
+    --card: 41 67 89; /* #294359 - PANTONE 2168 C (cards azuis) */
     --card-foreground: 210 208 200; /* #D2D0C8 - PANTONE 400 C */
     --popover: 41 67 89; /* #294359 - PANTONE 2168 C */
-    --popover-foreground: 180 172 156; /* #B4AC9C - PANTONE 7535 C */
+    --popover-foreground: 210 208 200; /* #D2D0C8 - PANTONE 400 C */
 
-    --border: 180 172 156; /* #B4AC9C - PANTONE 7535 C */
-    --input: 41 67 89; /* #294359 - PANTONE 2168 C */
-    --ring: 172 148 105; /* #AC9469 - PANTONE 4007 C */
+    --border: 180 172 156; /* #B4AC9C - PANTONE 7535 C (bordas suaves) */
+    --input: 41 67 89; /* #294359 - PANTONE 2168 C (inputs azuis) */
+    --ring: 172 148 105; /* #AC9469 - PANTONE 4007 C (foco dourado) */
 
     --destructive: 139 69 19; /* #8b4513 - Tom terra destrutivo */
     --destructive-foreground: 210 208 200; /* #D2D0C8 - PANTONE 400 C */
 
+    --muted: 180 172 156; /* #B4AC9C - PANTONE 7535 C (fundo muted) */
+    --muted-foreground: 210 208 200; /* #D2D0C8 - PANTONE 400 C */
+    
+    /* Sidebar dark mode consistente */
     --sidebar-background: 17 32 49; /* #112031 - PANTONE 5395 C */
-    --sidebar-foreground: 180 172 156; /* #B4AC9C - PANTONE 7535 C */
+    --sidebar-foreground: 210 208 200; /* #D2D0C8 - PANTONE 400 C */
     --sidebar-primary: 172 148 105; /* #AC9469 - PANTONE 4007 C */
     --sidebar-primary-foreground: 17 32 49; /* #112031 - PANTONE 5395 C */
-    
-    --muted: 180 172 156; /* #B4AC9C - PANTONE 7535 C */
-    --muted-foreground: 210 208 200; /* #D2D0C8 - PANTONE 400 C */
   }
 }
 
@@ -361,6 +360,62 @@
       opacity: 1;
     }
   }
+}
+
+/* NEONPROV1 - Classes Utilitárias Especializadas */
+@layer utilities {
+  /* Sistema de Status Unificado NEONPROV1 */
+  .status-success { @apply bg-success/10 text-success border-success/20; }
+  .status-warning { @apply bg-warning/10 text-warning border-warning/20; }
+  .status-danger { @apply bg-destructive/10 text-destructive border-destructive/20; }
+  .status-info { @apply bg-info/10 text-info border-info/20; }
+  .status-neutral { @apply bg-muted text-muted-foreground border-border; }
+  
+  /* NEONPROV1 Premium Effects */
+  .neonpro-gradient {
+    background: linear-gradient(135deg, rgb(var(--primary)) 0%, rgb(var(--accent)) 100%);
+  }
+  
+  .neonpro-shadow {
+    box-shadow: 0 10px 25px -3px rgba(var(--primary) / 0.1), 0 4px 6px -2px rgba(var(--primary) / 0.05);
+  }
+  
+  .neonpro-hover {
+    @apply transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5;
+  }
+  
+  .neonpro-card {
+    @apply bg-card text-card-foreground border border-border rounded-lg p-6 neonpro-shadow transition-all;
+  }
+  
+  .neonpro-card:hover {
+    @apply neonpro-shadow;
+    transform: translateY(-2px);
+    box-shadow: 0 20px 40px -6px rgba(var(--primary) / 0.15), 0 8px 16px -4px rgba(var(--primary) / 0.1);
+  }
+  
+  /* NEONPROV1 Botões Premium */
+  .neonpro-btn-primary {
+    @apply inline-flex items-center justify-center px-6 py-3 text-sm font-semibold rounded-lg;
+    @apply bg-primary text-primary-foreground hover:bg-primary/90;
+    @apply transition-all duration-200 focus:ring-2 focus:ring-primary focus:ring-offset-2;
+  }
+  
+  .neonpro-btn-primary:hover {
+    background: linear-gradient(135deg, rgb(var(--primary)) 0%, rgb(var(--accent)) 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 20px -4px rgba(var(--primary) / 0.25);
+  }
+  
+  /* NEONPROV1 Text Hierarchy */
+  .neonpro-text-primary { @apply text-foreground font-medium; }
+  .neonpro-text-secondary { @apply text-muted-foreground; }
+  .neonpro-text-muted { @apply text-text-muted; }
+  
+  /* NEONPROV1 Backgrounds */
+  .neonpro-bg-subtle { @apply bg-muted/50; }
+  .neonpro-bg-card { @apply bg-card; }
+  .neonpro-bg-sidebar { @apply bg-sidebar-background; }
 }
 
 /* Print styles for healthcare reports */

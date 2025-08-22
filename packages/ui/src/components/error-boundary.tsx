@@ -46,16 +46,21 @@ export class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className="error-boundary">
-          <h2>Oops! Algo deu errado</h2>
-          <p>Um erro inesperado aconteceu. Nossa equipe foi notificada.</p>
+        <div className="flex flex-col items-center justify-center min-h-96 p-8 rounded-lg border border-destructive/30 bg-gradient-to-br from-destructive/10 via-destructive/5 to-transparent shadow-healthcare-md backdrop-blur-sm">
+          <h2 className="text-2xl font-bold text-destructive mb-4">Oops! Algo deu errado</h2>
+          <p className="text-muted-foreground text-center mb-6 max-w-md">Um erro inesperado aconteceu. Nossa equipe foi notificada.</p>
 
-          <button onClick={this.handleRetry}>Tentar novamente</button>
+          <button 
+            onClick={this.handleRetry}
+            className="inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground px-6 py-2 text-sm font-medium shadow-healthcare-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+          >
+            Tentar novamente
+          </button>
 
           {this.props.showDetails && this.state.error && (
-            <details>
-              <summary>Detalhes técnicos</summary>
-              <pre style={{ whiteSpace: 'pre-wrap' }}>
+            <details className="mt-6 w-full max-w-2xl">
+              <summary className="cursor-pointer text-muted-foreground text-sm font-medium hover:text-foreground">Detalhes técnicos</summary>
+              <pre className="mt-2 p-4 bg-muted/50 border border-border rounded-md text-xs overflow-auto whitespace-pre-wrap text-foreground">
                 {this.state.error.toString()}
                 {this.state.errorInfo?.componentStack}
               </pre>
@@ -104,25 +109,34 @@ export class CriticalErrorBoundary extends Component<
   render() {
     if (this.state.hasError) {
       return (
-        <div className="critical-error-boundary">
-          <h1>Erro Crítico</h1>
-          <h2>{this.props.title}</h2>
-          <p>
-            Um erro crítico ocorreu nesta seção. Recarregue a página para tentar
-            novamente.
-          </p>
+        <div className="flex flex-col items-center justify-center min-h-screen p-8 bg-gradient-to-br from-destructive/20 via-destructive/10 to-transparent">
+          <div className="max-w-md w-full text-center space-y-6 rounded-lg border border-destructive bg-card p-8 shadow-healthcare-lg backdrop-blur-sm">
+            <div className="space-y-2">
+              <h1 className="text-3xl font-bold text-destructive">Erro Crítico</h1>
+              <h2 className="text-xl font-semibold text-foreground">{this.props.title}</h2>
+            </div>
+            
+            <p className="text-muted-foreground">
+              Um erro crítico ocorreu nesta seção. Recarregue a página para tentar novamente.
+            </p>
 
-          <button onClick={this.handleReload}>Recarregar página</button>
+            <button 
+              onClick={this.handleReload}
+              className="inline-flex items-center justify-center rounded-md bg-destructive text-destructive-foreground px-6 py-3 text-sm font-medium shadow-healthcare-md hover:bg-destructive/90 focus:outline-none focus:ring-2 focus:ring-destructive/20 transition-all duration-200"
+            >
+              Recarregar página
+            </button>
 
-          {this.state.error && (
-            <details>
-              <summary>Detalhes do erro</summary>
-              <pre style={{ whiteSpace: 'pre-wrap' }}>
-                {this.state.error.toString()}
-                {this.state.errorInfo?.componentStack}
-              </pre>
-            </details>
-          )}
+            {this.state.error && (
+              <details className="mt-8 w-full text-left">
+                <summary className="cursor-pointer text-muted-foreground text-sm font-medium hover:text-foreground">Detalhes do erro</summary>
+                <pre className="mt-2 p-4 bg-muted/50 border border-border rounded-md text-xs overflow-auto whitespace-pre-wrap text-foreground">
+                  {this.state.error.toString()}
+                  {this.state.errorInfo?.componentStack}
+                </pre>
+              </details>
+            )}
+          </div>
         </div>
       );
     }

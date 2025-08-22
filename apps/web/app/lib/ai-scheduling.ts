@@ -555,463 +555,429 @@ export class AISchedulingEngine {
     const updated = current * 0.9 + value * 0.1; // Exponential moving average
     this.realTimeMetrics.set(metric, updated);
   }
-} // Additional helper methods for complete AI functionality
-private
-predictStaffConflicts(slot: AppointmentSlot, staff: Staff)
-: Conflict | null
-{
-  const workingHours = staff.workingHours[slot.start.getDay().toString()];
-  if (!workingHours) {
-    return {
+
+  // Additional helper methods for complete AI functionality
+  private predictStaffConflicts(
+    slot: AppointmentSlot,
+    staff: Staff
+  ): Conflict | null {
+    const workingHours = staff.workingHours[slot.start.getDay().toString()];
+    if (!workingHours) {
+      return {
         type: 'staff_unavailable',
         severity: 'high',
         description: `${staff.name} not scheduled to work`,
-        affectedResource: staff.id
+        affectedResource: staff.id,
       };
-  }
+    }
 
-  // Check if slot falls within working hours
-  const slotTime = slot.start.getHours() * 60 + slot.start.getMinutes();
-  const [startHour, startMin] = workingHours.start.split(':').map(Number);
-  const [endHour, endMin] = workingHours.end.split(':').map(Number);
-  const workStart = startHour * 60 + startMin;
-  const workEnd = endHour * 60 + endMin;
+    // Check if slot falls within working hours
+    const slotTime = slot.start.getHours() * 60 + slot.start.getMinutes();
+    const [startHour, startMin] = workingHours.start.split(':').map(Number);
+    const [endHour, endMin] = workingHours.end.split(':').map(Number);
+    const workStart = startHour * 60 + startMin;
+    const workEnd = endHour * 60 + endMin;
 
-  if (slotTime < workStart || slotTime > workEnd) {
-    return {
+    if (slotTime < workStart || slotTime > workEnd) {
+      return {
         type: 'staff_unavailable',
         severity: 'medium',
         description: `Outside ${staff.name}'s working hours`,
-        affectedResource: staff.id
+        affectedResource: staff.id,
       };
+    }
+
+    return null;
   }
 
-  return null;
-}
+  private async predictEquipmentConflicts(
+    slot: AppointmentSlot
+  ): Promise<Conflict[]> {
+    const conflicts: Conflict[] = [];
 
-private
-async;
-predictEquipmentConflicts(slot: AppointmentSlot)
-: Promise<Conflict[]>
-{
-  const conflicts: Conflict[] = [];
+    if (!slot.equipmentIds?.length) {
+      return conflicts;
+    }
 
-  if (!slot.equipmentIds?.length) {
+    for (const equipmentId of slot.equipmentIds) {
+      const utilization = this.getEquipmentUtilization(equipmentId, slot.start);
+      if (utilization > 0.9) {
+        conflicts.push({
+          type: 'equipment_conflict',
+          severity: 'medium',
+          description: `Equipment ${equipmentId} heavily utilized`,
+          affectedResource: equipmentId,
+          suggestedResolution: 'Consider alternative equipment or time',
+        });
+      }
+    }
+
     return conflicts;
   }
 
-  for (const equipmentId of slot.equipmentIds) {
-    const utilization = this.getEquipmentUtilization(equipmentId, slot.start);
-    if (utilization > 0.9) {
-      conflicts.push({
-        type: 'equipment_conflict',
-        severity: 'medium',
-        description: `Equipment ${equipmentId} heavily utilized`,
-        affectedResource: equipmentId,
-        suggestedResolution: 'Consider alternative equipment or time',
-      });
-    }
-  }
+  private analyzeCascadeImpact(slot: AppointmentSlot): Conflict {
+    // Analyze potential cascade effects of this appointment
+    const impactScore = this.calculateCascadeRisk(slot);
 
-  return conflicts;
-}
-
-private
-analyzeCascadeImpact(slot: AppointmentSlot)
-: Conflict
-{
-  // Analyze potential cascade effects of this appointment
-  const impactScore = this.calculateCascadeRisk(slot);
-
-  return {
+    return {
       type: 'patient_conflict',
-      severity: impactScore > 0.7 ? 'high' : impactScore > 0.4 ? 'medium' : 'low',
+      severity:
+        impactScore > 0.7 ? 'high' : impactScore > 0.4 ? 'medium' : 'low',
       description: `Potential cascade impact: ${(impactScore * 100).toFixed(1)}%`,
-      affectedResource: slot.id
+      affectedResource: slot.id,
     };
-}
-
-private
-calculateCascadeRisk(slot: AppointmentSlot)
-: number
-{
-  // Simplified cascade risk calculation
-  const hour = slot.start.getHours();
-  const isRushHour = (hour >= 9 && hour <= 11) || (hour >= 14 && hour <= 16);
-  return isRushHour ? 0.6 : 0.2;
-}
-
-private
-calculateEfficiencyScore(slot: AppointmentSlot, staff: Staff, treatment: TreatmentType)
-: number
-{
-  const staffEfficiency = staff.efficiency || 0.8;
-  const treatmentComplexity = treatment.complexityLevel / 5;
-  const timeOptimization =
-    1 - (slot.duration - treatment.duration) / treatment.duration;
-
-  return (staffEfficiency + (1 - treatmentComplexity) + timeOptimization) / 3;
-}
-
-private
-calculateSatisfactionScore(slot: AppointmentSlot, patient: Patient, staff: Staff)
-: number
-{
-  let score = 0.5;
-
-  // Staff preference match
-  if (patient.preferences.preferredStaff?.includes(staff.id)) {
-    score += 0.3;
   }
 
-  // Time preference match
-  const timeMatch = patient.preferences.preferredTimeSlots.some(
-    (pref) => slot.start >= pref.start && slot.end <= pref.end
-  );
-  if (timeMatch) {
-    score += 0.3;
+  private calculateCascadeRisk(slot: AppointmentSlot): number {
+    // Simplified cascade risk calculation
+    const hour = slot.start.getHours();
+    const isRushHour = (hour >= 9 && hour <= 11) || (hour >= 14 && hour <= 16);
+    return isRushHour ? 0.6 : 0.2;
   }
 
-  // Historical satisfaction with this staff member
-  const staffSatisfaction = staff.patientSatisfactionScore || 0.8;
-  score += staffSatisfaction * 0.2;
+  private calculateEfficiencyScore(
+    slot: AppointmentSlot,
+    staff: Staff,
+    treatment: TreatmentType
+  ): number {
+    const staffEfficiency = staff.efficiency || 0.8;
+    const treatmentComplexity = treatment.complexityLevel / 5;
+    const timeOptimization =
+      1 - (slot.duration - treatment.duration) / treatment.duration;
 
-  return Math.min(1, score);
-}
+    return (staffEfficiency + (1 - treatmentComplexity) + timeOptimization) / 3;
+  }
 
-private
-calculateRevenueOptimization(slot: AppointmentSlot, treatment: TreatmentType)
-: number
-{
-  // Revenue optimization based on treatment type and timing
-  const hour = slot.start.getHours();
-  const isPeakHour = hour >= 10 && hour <= 16;
-  const treatmentValue = this.getTreatmentValue(treatment.category);
+  private calculateSatisfactionScore(
+    slot: AppointmentSlot,
+    patient: Patient,
+    staff: Staff
+  ): number {
+    let score = 0.5;
 
-  return isPeakHour ? treatmentValue * 1.2 : treatmentValue;
-}
+    // Staff preference match
+    if (patient.preferences.preferredStaff?.includes(staff.id)) {
+      score += 0.3;
+    }
 
-private
-calculateUtilizationScore(slot: AppointmentSlot)
-: number
-{
-  const hour = slot.start.getHours();
-  const targetUtilization = 0.8;
-  const currentUtilization = this.getHourlyUtilization(hour);
+    // Time preference match
+    const timeMatch = patient.preferences.preferredTimeSlots.some(
+      (pref) => slot.start >= pref.start && slot.end <= pref.end
+    );
+    if (timeMatch) {
+      score += 0.3;
+    }
 
-  // Score higher for slots that improve utilization balance
-  return 1 - Math.abs(currentUtilization - targetUtilization);
-}
+    // Historical satisfaction with this staff member
+    const staffSatisfaction = staff.patientSatisfactionScore || 0.8;
+    score += staffSatisfaction * 0.2;
 
-private
-calculateDecisionConfidence(
+    return Math.min(1, score);
+  }
+
+  private calculateRevenueOptimization(
+    slot: AppointmentSlot,
+    treatment: TreatmentType
+  ): number {
+    // Revenue optimization based on treatment type and timing
+    const hour = slot.start.getHours();
+    const isPeakHour = hour >= 10 && hour <= 16;
+    const treatmentValue = this.getTreatmentValue(treatment.category);
+
+    return isPeakHour ? treatmentValue * 1.2 : treatmentValue;
+  }
+
+  private calculateUtilizationScore(slot: AppointmentSlot): number {
+    const hour = slot.start.getHours();
+    const targetUtilization = 0.8;
+    const currentUtilization = this.getHourlyUtilization(hour);
+
+    // Score higher for slots that improve utilization balance
+    return 1 - Math.abs(currentUtilization - targetUtilization);
+  }
+
+  private calculateDecisionConfidence(
     primarySlot: AppointmentSlot,
     allSlots: AppointmentSlot[],
     conflicts: Conflict[]
-  )
-: number
-{
-  let confidence = 0.8; // Base confidence
+  ): number {
+    let confidence = 0.8; // Base confidence
 
-  // Reduce confidence for conflicts
-  const highSeverityConflicts = conflicts.filter(
-    (c) => c.severity === 'high'
-  ).length;
-  confidence -= highSeverityConflicts * 0.2;
+    // Reduce confidence for conflicts
+    const highSeverityConflicts = conflicts.filter(
+      (c) => c.severity === 'high'
+    ).length;
+    confidence -= highSeverityConflicts * 0.2;
 
-  // Increase confidence if primary slot significantly better than alternatives
-  if (allSlots.length > 1) {
-    const scoreDifference =
-      primarySlot.optimizationScore - allSlots[1].optimizationScore;
-    confidence += scoreDifference * 0.3;
+    // Increase confidence if primary slot significantly better than alternatives
+    if (allSlots.length > 1) {
+      const scoreDifference =
+        primarySlot.optimizationScore - allSlots[1].optimizationScore;
+      confidence += scoreDifference * 0.3;
+    }
+
+    // Adjust for slot quality
+    confidence += (primarySlot.optimizationScore - 0.5) * 0.4;
+
+    return Math.max(0.1, Math.min(0.99, confidence));
   }
 
-  // Adjust for slot quality
-  confidence += (primarySlot.optimizationScore - 0.5) * 0.4;
+  private analyzeTradeoffs(
+    primarySlot: AppointmentSlot,
+    alternativeSlot: AppointmentSlot
+  ): string[] {
+    const tradeoffs: string[] = [];
 
-  return Math.max(0.1, Math.min(0.99, confidence));
-}
+    if (alternativeSlot.start.getTime() !== primarySlot.start.getTime()) {
+      const timeDiff =
+        Math.abs(
+          alternativeSlot.start.getTime() - primarySlot.start.getTime()
+        ) /
+        (1000 * 60 * 60);
+      tradeoffs.push(`${timeDiff.toFixed(1)} hours time difference`);
+    }
 
-private
-analyzeTradeoffs(primarySlot: AppointmentSlot, alternativeSlot: AppointmentSlot)
-: string[]
-{
-  const tradeoffs: string[] = [];
+    if (alternativeSlot.staffId !== primarySlot.staffId) {
+      tradeoffs.push('Different staff member');
+    }
 
-  if (alternativeSlot.start.getTime() !== primarySlot.start.getTime()) {
-    const timeDiff =
-      Math.abs(alternativeSlot.start.getTime() - primarySlot.start.getTime()) /
-      (1000 * 60 * 60);
-    tradeoffs.push(`${timeDiff.toFixed(1)} hours time difference`);
+    if (alternativeSlot.optimizationScore < primarySlot.optimizationScore) {
+      const scoreDiff = (
+        (primarySlot.optimizationScore - alternativeSlot.optimizationScore) *
+        100
+      ).toFixed(1);
+      tradeoffs.push(`${scoreDiff}% lower optimization score`);
+    }
+
+    return tradeoffs;
   }
 
-  if (alternativeSlot.staffId !== primarySlot.staffId) {
-    tradeoffs.push('Different staff member');
-  }
-
-  if (alternativeSlot.optimizationScore < primarySlot.optimizationScore) {
-    const scoreDiff = (
-      (primarySlot.optimizationScore - alternativeSlot.optimizationScore) *
-      100
-    ).toFixed(1);
-    tradeoffs.push(`${scoreDiff}% lower optimization score`);
-  }
-
-  return tradeoffs;
-}
-
-private
-assessSchedulingRisks(slot: AppointmentSlot, request: SchedulingRequest)
-: any
-{
-  return {
+  private assessSchedulingRisks(
+    slot: AppointmentSlot,
+    request: SchedulingRequest
+  ): any {
+    return {
       noShowRisk: slot.conflictScore * 0.3,
       overbookingRisk: this.calculateOverbookingRisk(slot),
       patientSatisfactionRisk: this.calculateSatisfactionRisk(slot, request),
-      mitigationStrategies: this.generateMitigationStrategies(slot, request)
+      mitigationStrategies: this.generateMitigationStrategies(slot, request),
     };
-}
-
-private
-calculateOverbookingRisk(slot: AppointmentSlot)
-: number
-{
-  const utilization = this.getTimeSlotUtilization(slot.start);
-  return Math.max(0, utilization - 0.8) * 2; // Risk increases after 80% utilization
-}
-
-private
-calculateSatisfactionRisk(slot: AppointmentSlot, request: SchedulingRequest)
-: number
-{
-  // Calculate risk of patient dissatisfaction
-  if (!request.preferredTimeRanges?.length) {
-    return 0.2;
   }
 
-  const isPreferredTime = request.preferredTimeRanges.some(
-    (range) => slot.start >= range.start && slot.end <= range.end
-  );
-
-  return isPreferredTime ? 0.1 : 0.4;
-}
-
-private
-generateMitigationStrategies(slot: AppointmentSlot, request: SchedulingRequest)
-: string[]
-{
-  const strategies: string[] = [];
-
-  if (slot.conflictScore > 0.3) {
-    strategies.push('Send confirmation reminder 24h before');
+  private calculateOverbookingRisk(slot: AppointmentSlot): number {
+    const utilization = this.getTimeSlotUtilization(slot.start);
+    return Math.max(0, utilization - 0.8) * 2; // Risk increases after 80% utilization
   }
 
-  if (request.urgency === 'high') {
-    strategies.push('Prepare backup slot in case of cancellation');
+  private calculateSatisfactionRisk(
+    slot: AppointmentSlot,
+    request: SchedulingRequest
+  ): number {
+    // Calculate risk of patient dissatisfaction
+    if (!request.preferredTimeRanges?.length) {
+      return 0.2;
+    }
+
+    const isPreferredTime = request.preferredTimeRanges.some(
+      (range) => slot.start >= range.start && slot.end <= range.end
+    );
+
+    return isPreferredTime ? 0.1 : 0.4;
   }
 
-  strategies.push('Monitor real-time for optimization opportunities');
+  private generateMitigationStrategies(
+    slot: AppointmentSlot,
+    request: SchedulingRequest
+  ): string[] {
+    const strategies: string[] = [];
 
-  return strategies;
-}
+    if (slot.conflictScore > 0.3) {
+      strategies.push('Send confirmation reminder 24h before');
+    }
 
-// Utility methods for getting metrics and data
-private
-getStaffEfficiency(staffId: string)
-: number
-{
-  return this.realTimeMetrics.get(`staff_efficiency_${staffId}`) || 0.8;
-}
+    if (request.urgency === 'high') {
+      strategies.push('Prepare backup slot in case of cancellation');
+    }
 
-private
-getRoomUtilization(roomId: string, time: Date)
-: number
-{
-  const hour = time.getHours();
-  return this.realTimeMetrics.get(`room_utilization_${roomId}_${hour}`) || 0.6;
-}
+    strategies.push('Monitor real-time for optimization opportunities');
 
-private
-getEquipmentUtilization(equipmentId: string, time: Date)
-: number
-{
-  const hour = time.getHours();
-  return this.realTimeMetrics.get(`equipment_utilization_${equipmentId}_${hour}`) || 0.5;
-}
+    return strategies;
+  }
 
-private
-getStaffSpecializationMatch(staffId: string, treatment: TreatmentType)
-: number
-{
-  // Simplified specialization matching
-  return this.realTimeMetrics.get(`specialization_${staffId}_${treatment.category}`) || 0.7;
-}
+  // Utility methods for getting metrics and data
+  private getStaffEfficiency(staffId: string): number {
+    return this.realTimeMetrics.get(`staff_efficiency_${staffId}`) || 0.8;
+  }
 
-private
-getWeatherImpact(date: Date)
-: number
-{
-  // Simplified weather impact - would integrate with weather API
-  return 1.0; // Neutral impact for now
-}
+  private getRoomUtilization(roomId: string, time: Date): number {
+    const hour = time.getHours();
+    return (
+      this.realTimeMetrics.get(`room_utilization_${roomId}_${hour}`) || 0.6
+    );
+  }
 
-private
-getTreatmentValue(category: string)
-: number
-{
-  const values: Record<string, number> = {
-    botox: 0.9,
-    fillers: 0.95,
-    laser: 0.8,
-    skincare: 0.6,
-    consultation: 0.4,
-  };
-  return values[category] || 0.7;
-}
+  private getEquipmentUtilization(equipmentId: string, time: Date): number {
+    const hour = time.getHours();
+    return (
+      this.realTimeMetrics.get(
+        `equipment_utilization_${equipmentId}_${hour}`
+      ) || 0.5
+    );
+  }
 
-private
-getHourlyUtilization(hour: number)
-: number
-{
-  return this.realTimeMetrics.get(`hourly_utilization_${hour}`) || 0.6;
-}
+  private getStaffSpecializationMatch(
+    staffId: string,
+    treatment: TreatmentType
+  ): number {
+    // Simplified specialization matching
+    return (
+      this.realTimeMetrics.get(
+        `specialization_${staffId}_${treatment.category}`
+      ) || 0.7
+    );
+  }
 
-private
-private
-getTimeSlotUtilization(time: Date)
-: number
-{
-  const hour = time.getHours();
-  return this.getHourlyUtilization(hour);
-}
+  private getWeatherImpact(date: Date): number {
+    // Simplified weather impact - would integrate with weather API
+    return 1.0; // Neutral impact for now
+  }
 
-private
-getHourlyUtilization(hour: number)
-: number
-{
-  // Implementation would track actual hourly utilization
-  const utilization = {
-    9: 0.8,
-    10: 0.9,
-    11: 0.95, // Peak morning
-    12: 0.7,
-    13: 0.8,
-    14: 0.9, // Lunch and early afternoon
-    15: 0.95,
-    16: 0.9,
-    17: 0.8, // Peak afternoon
-    18: 0.6,
-    19: 0.4, // Evening
-  };
-  return utilization[hour] || 0.5;
-}
+  private getTreatmentValue(category: string): number {
+    const values: Record<string, number> = {
+      botox: 0.9,
+      fillers: 0.95,
+      laser: 0.8,
+      skincare: 0.6,
+      consultation: 0.4,
+    };
+    return values[category] || 0.7;
+  }
 
-// Dynamic event handlers
-private
-async;
-handleCancellation(
+  private;
+  getHourlyUtilization(hour: number): number {
+    return this.realTimeMetrics.get(`hourly_utilization_${hour}`) || 0.6;
+  }
+
+  private getTimeSlotUtilization(time: Date): number {
+    const hour = time.getHours();
+    return this.getHourlyUtilization(hour);
+  }
+
+  private;
+  getHourlyUtilization(hour: number): number {
+    // Implementation would track actual hourly utilization
+    const utilization = {
+      9: 0.8,
+      10: 0.9,
+      11: 0.95, // Peak morning
+      12: 0.7,
+      13: 0.8,
+      14: 0.9, // Lunch and early afternoon
+      15: 0.95,
+      16: 0.9,
+      17: 0.8, // Peak afternoon
+      18: 0.6,
+      19: 0.4, // Evening
+    };
+    return utilization[hour] || 0.5;
+  }
+
+  // Dynamic event handlers
+  private async handleCancellation(
     event: DynamicSchedulingEvent,
     schedule: AppointmentSlot[]
-  )
-: Promise<SchedulingAction[]>
-{
-  return [{
-      type: 'reschedule',
-      description: 'Fill cancelled slot with waitlist patient',
-      impact: {
-        efficiencyChange: 15,
-        patientSatisfactionChange: 10,
-        revenueImpact: 500,
-        affectedAppointments: 1
+  ): Promise<SchedulingAction[]> {
+    return [
+      {
+        type: 'reschedule',
+        description: 'Fill cancelled slot with waitlist patient',
+        impact: {
+          efficiencyChange: 15,
+          patientSatisfactionChange: 10,
+          revenueImpact: 500,
+          affectedAppointments: 1,
+        },
+        executionTime: 30,
       },
-      executionTime: 30
-    }];
-}
+    ];
+  }
 
-private
-async;
-handleNoShow(
+  private async handleNoShow(
     event: DynamicSchedulingEvent,
     schedule: AppointmentSlot[]
-  )
-: Promise<SchedulingAction[]>
-{
-  return [{
-      type: 'add_buffer',
-      description: 'Use time for walk-in or staff break',
-      impact: {
-        efficiencyChange: 5,
-        patientSatisfactionChange: 0,
-        revenueImpact: 0,
-        affectedAppointments: 0
+  ): Promise<SchedulingAction[]> {
+    return [
+      {
+        type: 'add_buffer',
+        description: 'Use time for walk-in or staff break',
+        impact: {
+          efficiencyChange: 5,
+          patientSatisfactionChange: 0,
+          revenueImpact: 0,
+          affectedAppointments: 0,
+        },
+        executionTime: 5,
       },
-      executionTime: 5
-    }];
-}
+    ];
+  }
 
-private
-async;
-handleWalkIn(
+  private async handleWalkIn(
     event: DynamicSchedulingEvent,
     schedule: AppointmentSlot[],
     staff: Staff[]
-  )
-: Promise<SchedulingAction[]>
-{
-  return [{
-      type: 'adjust_duration',
-      description: 'Accommodate walk-in during buffer time',
-      impact: {
-        efficiencyChange: 20,
-        patientSatisfactionChange: 15,
-        revenueImpact: 300,
-        affectedAppointments: 0
+  ): Promise<SchedulingAction[]> {
+    return [
+      {
+        type: 'adjust_duration',
+        description: 'Accommodate walk-in during buffer time',
+        impact: {
+          efficiencyChange: 20,
+          patientSatisfactionChange: 15,
+          revenueImpact: 300,
+          affectedAppointments: 0,
+        },
+        executionTime: 15,
       },
-      executionTime: 15
-    }];
-}
+    ];
+  }
 
-private
-async;
-handleEmergency(
+  private async handleEmergency(
     event: DynamicSchedulingEvent,
     schedule: AppointmentSlot[],
     staff: Staff[]
-  )
-: Promise<SchedulingAction[]>
-{
-  return [{
-      type: 'reschedule',
-      description: 'Reschedule non-urgent appointments for emergency',
-      impact: {
-        efficiencyChange: -10,
-        patientSatisfactionChange: -5,
-        revenueImpact: 0,
-        affectedAppointments: 2
+  ): Promise<SchedulingAction[]> {
+    return [
+      {
+        type: 'reschedule',
+        description: 'Reschedule non-urgent appointments for emergency',
+        impact: {
+          efficiencyChange: -10,
+          patientSatisfactionChange: -5,
+          revenueImpact: 0,
+          affectedAppointments: 2,
+        },
+        executionTime: 60,
       },
-      executionTime: 60
-    }];
-}
+    ];
+  }
 
-private
-async;
-handleStaffUnavailable(
+  private async handleStaffUnavailable(
     event: DynamicSchedulingEvent,
     schedule: AppointmentSlot[],
     staff: Staff[]
-  )
-: Promise<SchedulingAction[]>
-{
-  return [{
-      type: 'reassign_staff',
-      description: 'Reassign appointments to available staff',
-      impact: {
-        efficiencyChange: 0,
-        patientSatisfactionChange: -2,
-        revenueImpact: 0,
-        affectedAppointments: 5
+  ): Promise<SchedulingAction[]> {
+    return [
+      {
+        type: 'reassign_staff',
+        description: 'Reassign appointments to available staff',
+        impact: {
+          efficiencyChange: 0,
+          patientSatisfactionChange: -2,
+          revenueImpact: 0,
+          affectedAppointments: 5,
+        },
+        executionTime: 120,
       },
-      executionTime: 120
-    }];
-}
+    ];
+  }
 }

@@ -2,16 +2,21 @@
   "name": "@neonpro/ui",
   "version": "0.1.0",
   "description": "NeonPro UI Components - Simplified Healthcare Design System",
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/src/index.js",
+  "module": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js",
+      "require": "./dist/src/index.js"
     },
-    "./styles": "./dist/styles.css"
+    "./button": {
+      "types": "./dist/src/button-only.d.ts",
+      "import": "./dist/src/button-only.js",
+      "require": "./dist/src/button-only.js"
+    },
+    "./styles": "./dist/src/styles.css"
   },
   "files": [
     "dist"

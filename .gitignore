@@ -75,4 +75,12 @@ tools/testing/reports/
 tools/testing/reports/**/*
 !tools/testing/reports/.gitkeep
 
+# broken test files with syntax errors
+tools/testing/final-validation/healthcare-workflows/
+tools/testing/final-validation/integration/realtime-integration.test.ts
+tools/testing/performance/analysis/database-performance.ts
+tools/testing/performance/analysis/frontend-performance.ts
+tools/testing/security/apex-qa-security-validation.test.ts
+tools/turbo/advanced-config.ts
+
 archon

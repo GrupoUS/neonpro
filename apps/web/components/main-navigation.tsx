@@ -193,10 +193,10 @@ export function MainNavigation() {
           {/* Logo */}
           <div className="flex h-16 flex-shrink-0 items-center border-b px-4">
             <Link className="flex items-center space-x-3" to="/">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-purple-600">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg neonpro-gradient">
                 <Heart className="h-5 w-5 text-white" />
               </div>
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text font-bold text-lg text-transparent">
+              <span className="font-bold text-lg text-primary">
                 NeonPro
               </span>
             </Link>
@@ -206,8 +206,8 @@ export function MainNavigation() {
           <div className="flex-shrink-0 border-b px-4 py-4">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-green-500 to-blue-500">
-                  <span className="font-medium text-sm text-white">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary">
+                  <span className="font-medium text-sm text-primary-foreground">
                     {user?.name?.charAt(0).toUpperCase() || 'U'}
                   </span>
                 </div>
@@ -264,10 +264,10 @@ export function MainNavigation() {
 
           {/* Mobile Logo in Header */}
           <Link className="ml-4 flex items-center space-x-2" to="/">
-            <div className="flex h-6 w-6 items-center justify-center rounded bg-gradient-to-br from-blue-500 to-purple-600">
+            <div className="flex h-6 w-6 items-center justify-center rounded neonpro-gradient">
               <Heart className="h-4 w-4 text-white" />
             </div>
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text font-bold text-transparent">
+            <span className="font-bold text-primary">
               NeonPro
             </span>
           </Link>
@@ -277,7 +277,7 @@ export function MainNavigation() {
         {isMobileMenuOpen && (
           <div className="fixed inset-0 z-50 md:hidden">
             <div
-              className="fixed inset-0 bg-background/80 backdrop-blur-sm"
+              className="fixed inset-0 bg-sidebar-background/80 backdrop-blur-sm"
               onClick={() => setIsMobileMenuOpen(false)}
             />
             <div className="fixed top-0 left-0 h-full w-80 border-r bg-card shadow-lg">
@@ -289,10 +289,10 @@ export function MainNavigation() {
                     onClick={() => setIsMobileMenuOpen(false)}
                     to="/"
                   >
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-purple-600">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg neonpro-gradient">
                       <Heart className="h-5 w-5 text-white" />
                     </div>
-                    <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text font-bold text-lg text-transparent">
+                    <span className="font-bold text-lg text-primary">
                       NeonPro
                     </span>
                   </Link>
@@ -301,8 +301,8 @@ export function MainNavigation() {
                 {/* Mobile User Info */}
                 <div className="border-b px-6 py-4">
                   <div className="flex items-center space-x-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-green-500 to-blue-500">
-                      <span className="font-medium text-white">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary">
+                      <span className="font-medium text-primary-foreground">
                         {user?.name?.charAt(0).toUpperCase() || 'U'}
                       </span>
                     </div>

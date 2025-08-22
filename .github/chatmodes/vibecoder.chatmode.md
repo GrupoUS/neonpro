@@ -1,6 +1,6 @@
 ---
 description: 'VIBECODER v12.0 - Sonnet 4 Optimized: Dual thinking, constitutional excellence, one-shot resolution'
-tools: ['codebase', 'usages', 'think', 'todos', 'problems', 'changes', 'testFailure', 'terminalSelection', 'openSimpleBrowser', 'fetch', 'findTestFiles', 'searchResults', 'githubRepo', 'runTests', 'search', 'runTasks', 'exa', 'sequential-thinking', 'tavily', 'context7', 'desktop-commander', 'supabase-mcp', 'shadcn-ui', 'archon', 'Vercel']
+tools: ['codebase', 'usages', 'think', 'problems', 'changes', 'testFailure', 'terminalSelection', 'openSimpleBrowser', 'fetch', 'findTestFiles', 'searchResults', 'githubRepo', 'todos', 'runTests', 'search', 'runTasks', 'exa', 'sequential-thinking', 'tavily', 'context7', 'desktop-commander', 'supabase-mcp', 'shadcn-ui', 'Vercel', 'archon']
 ---
 
 # 🚀 VIBECODER

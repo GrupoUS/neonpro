@@ -26,12 +26,12 @@ const buttonVariants = cva(
         medical:
           'bg-gradient-primary text-primary-foreground shadow-healthcare-md transition-all duration-300 hover:shadow-healthcare-lg focus-visible:ring-primary/30 active:scale-[0.98]',
         emergency:
-          'animate-pulse-healthcare bg-gradient-to-br from-destructive via-red-600 to-destructive text-destructive-foreground shadow-healthcare-lg transition-all duration-300 hover:shadow-healthcare-xl focus-visible:ring-destructive/30 active:scale-[0.98]',
+          'animate-pulse-healthcare bg-gradient-to-br from-destructive via-destructive/80 to-destructive text-destructive-foreground shadow-healthcare-lg transition-all duration-300 hover:shadow-healthcare-xl focus-visible:ring-destructive/30 active:scale-[0.98]',
         success:
-          'bg-gradient-to-br from-success via-green-500 to-success text-success-foreground shadow-healthcare-md transition-all duration-300 hover:shadow-healthcare-lg focus-visible:ring-success/30 active:scale-[0.98]',
+          'bg-gradient-to-br from-success via-success/80 to-success text-success-foreground shadow-healthcare-md transition-all duration-300 hover:shadow-healthcare-lg focus-visible:ring-success/30 active:scale-[0.98]',
         warning:
-          'bg-gradient-to-br from-warning via-orange-500 to-warning text-warning-foreground shadow-healthcare-md transition-all duration-300 hover:shadow-healthcare-lg focus-visible:ring-warning/30 active:scale-[0.98]',
-        info: 'bg-gradient-to-br from-info via-cyan-500 to-info text-info-foreground shadow-healthcare-md transition-all duration-300 hover:shadow-healthcare-lg focus-visible:ring-info/30 active:scale-[0.98]',
+          'bg-gradient-to-br from-warning via-warning/80 to-warning text-warning-foreground shadow-healthcare-md transition-all duration-300 hover:shadow-healthcare-lg focus-visible:ring-warning/30 active:scale-[0.98]',
+        info: 'bg-gradient-to-br from-accent via-accent/80 to-accent text-accent-foreground shadow-healthcare-md transition-all duration-300 hover:shadow-healthcare-lg focus-visible:ring-accent/30 active:scale-[0.98]',
       },
       size: {
         default: 'h-10 px-4 py-2',

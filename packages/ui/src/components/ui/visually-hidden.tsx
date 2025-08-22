@@ -61,7 +61,7 @@ interface VisuallyHiddenProps extends React.HTMLAttributes<HTMLSpanElement> {
   /**
    * Element tag to render (default: span)
    */
-  as?: keyof JSX.IntrinsicElements;
+  as?: keyof React.JSX.IntrinsicElements;
 }
 
 /**
@@ -142,7 +142,7 @@ const VisuallyHidden = React.forwardRef<HTMLElement, VisuallyHiddenProps>(
     const contextAttributes = getContextAttributes();
 
     return React.createElement(
-      Component,
+      Component as any,
       {
         ref,
         className: cn(

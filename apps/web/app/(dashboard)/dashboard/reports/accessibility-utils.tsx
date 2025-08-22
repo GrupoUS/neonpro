@@ -439,31 +439,21 @@ export function useReducedMotion() {
 // Skip links component for complex interfaces
 export function SkipLinks() {
   return (
-    <div className="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 focus:z-50 focus:bg-blue-600 focus:text-white focus:p-2 focus:rounded">
-      <a href="#main-content"
-  className = Pular < 'mr-4';
-  para;
-  conteúdo;
-  principal < /  ;<>aa;
-  href = '#report-categories';
-  className = Pular < 'mr-4';
-  para;
-  categorias;
-  de;
-  relatórios < /  ;<>aa;
-  href = '#search-filters';
-  className = Pular < 'mr-4';
-  para;
-  filtros;
-  de;
-  busca < /  ;<>aa;
-  href = '#export-actions';
-  className = Pular < 'mr-4';
-  para;
-  ações;
-  de;
-  exportação < />a < / > div;
-  )
+    <div className="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 focus:z-50 focus:rounded focus:bg-blue-600 focus:p-2 focus:text-white">
+      <a className="mr-4" href="#main-content">
+        Pular para conteúdo principal
+      </a>
+      <a className="mr-4" href="#report-categories">
+        Pular para categorias de relatórios
+      </a>
+      <a className="mr-4" href="#search-filters">
+        Pular para filtros de busca
+      </a>
+      <a className="mr-4" href="#export-actions">
+        Pular para ações de exportação
+      </a>
+    </div>
+  );
 }
 
 // Healthcare-specific accessibility validation

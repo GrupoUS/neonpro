@@ -102,8 +102,7 @@
       "lru-cache": [
         "./lib/placeholders/lru-cache"
       ]
-    },
-    "noEmit": true
+    }
   },
   "include": [
     "**/*.ts",

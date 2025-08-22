@@ -1,3 +1,5 @@
+'use client';
+
 import { Button } from '@neonpro/ui/button';
 
 export default function Home() {
