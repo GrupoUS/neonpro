@@ -9,15 +9,15 @@
  * @vitest-environment jsdom
  */
 
-import type { QueryClient } from '@tanstack/react-query';
-import { act, renderHook } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { QueryClient } from "@tanstack/react-query";
+import { act, renderHook } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
-  AllTheProviders,
-  createMockSubscription,
-  createMockSubscriptionHook,
-  createTestQueryClient,
-} from '../../utils/test-utils';
+	AllTheProviders,
+	createMockSubscription,
+	createMockSubscriptionHook,
+	createTestQueryClient,
+} from "../../utils/test-utils";
 
 // Mock the subscription hooks (to be imported when they exist)
 const mockUseSubscriptionStatus = () => createMockSubscriptionHook();
@@ -26,80 +26,79 @@ const mockUseSubscriptionStatus = () => createMockSubscriptionHook();
 // Hook Tests
 // ============================================================================
 
-describe('Subscription Hooks', () => {
-  let queryClient: QueryClient;
+describe("Subscription Hooks", () => {
+	let queryClient: QueryClient;
 
-  beforeEach(() => {
-    queryClient = createTestQueryClient();
-    vi.clearAllMocks();
-  });
+	beforeEach(() => {
+		queryClient = createTestQueryClient();
+		vi.clearAllMocks();
+	});
 
-  // ============================================================================
-  // useSubscriptionStatus Tests
-  // ============================================================================
+	// ============================================================================
+	// useSubscriptionStatus Tests
+	// ============================================================================
 
-  describe('useSubscriptionStatus', () => {
-    it('should return subscription data correctly', () => {
-      const { result } = renderHook(() => mockUseSubscriptionStatus(), {
-        wrapper: ({ children }: { children: React.ReactNode }) =>
-          AllTheProviders({ queryClient, children }),
-      });
+	describe("useSubscriptionStatus", () => {
+		it("should return subscription data correctly", () => {
+			const { result } = renderHook(() => mockUseSubscriptionStatus(), {
+				wrapper: ({ children }: { children: React.ReactNode }) => AllTheProviders({ queryClient, children }),
+			});
 
-      expect(result.current.data).toBeDefined();
-      expect(result.current.isLoading).toBe(false);
-      expect(result.current.isError).toBe(false);
-    });
+			expect(result.current.data).toBeDefined();
+			expect(result.current.isLoading).toBe(false);
+			expect(result.current.isError).toBe(false);
+		});
 
-    it('should handle loading state correctly', () => {
-      const mockHook = createMockSubscriptionHook({ isLoading: true });
+		it("should handle loading state correctly", () => {
+			const mockHook = createMockSubscriptionHook({ isLoading: true });
 
-      expect(mockHook.isLoading).toBe(true);
-      expect(mockHook.data).toBeDefined();
-    });
+			expect(mockHook.isLoading).toBe(true);
+			expect(mockHook.data).toBeDefined();
+		});
 
-    it('should handle error states correctly', () => {
-      const mockError = new Error('Failed to fetch subscription');
-      const mockHook = createMockSubscriptionHook({
-        isError: true,
-        error: mockError,
-      });
+		it("should handle error states correctly", () => {
+			const mockError = new Error("Failed to fetch subscription");
+			const mockHook = createMockSubscriptionHook({
+				isError: true,
+				error: mockError,
+			});
 
-      expect(mockHook.isError).toBe(true);
-      expect(mockHook.error).toBe(mockError);
-    });
+			expect(mockHook.isError).toBe(true);
+			expect(mockHook.error).toBe(mockError);
+		});
 
-    it('should support refetching subscription data', async () => {
-      const mockRefetch = vi.fn().mockResolvedValue({
-        data: createMockSubscription(),
-      });
+		it("should support refetching subscription data", async () => {
+			const mockRefetch = vi.fn().mockResolvedValue({
+				data: createMockSubscription(),
+			});
 
-      const mockHook = createMockSubscriptionHook({ refetch: mockRefetch });
+			const mockHook = createMockSubscriptionHook({ refetch: mockRefetch });
 
-      await act(async () => {
-        await mockHook.refetch();
-      });
+			await act(async () => {
+				await mockHook.refetch();
+			});
 
-      expect(mockRefetch).toHaveBeenCalledTimes(1);
-    });
-  });
+			expect(mockRefetch).toHaveBeenCalledTimes(1);
+		});
+	});
 
-  // ============================================================================
-  // Real-time Updates Tests
-  // ============================================================================
+	// ============================================================================
+	// Real-time Updates Tests
+	// ============================================================================
 
-  describe('useSubscriptionEvents', () => {
-    it('should handle subscription change events', () => {
-      const mockEventHandler = vi.fn();
-      const mockEvent = {
-        type: 'subscription_updated',
-        data: createMockSubscription(),
-      };
+	describe("useSubscriptionEvents", () => {
+		it("should handle subscription change events", () => {
+			const mockEventHandler = vi.fn();
+			const mockEvent = {
+				type: "subscription_updated",
+				data: createMockSubscription(),
+			};
 
-      // Simulate event handling
-      mockEventHandler(mockEvent);
+			// Simulate event handling
+			mockEventHandler(mockEvent);
 
-      expect(mockEventHandler).toHaveBeenCalledWith(mockEvent);
-      expect(mockEventHandler).toHaveBeenCalledTimes(1);
-    });
-  });
+			expect(mockEventHandler).toHaveBeenCalledWith(mockEvent);
+			expect(mockEventHandler).toHaveBeenCalledTimes(1);
+		});
+	});
 });

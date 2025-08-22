@@ -4,163 +4,163 @@
  */
 
 type CacheConfig = {
-  maxAge: number;
-  staleWhileRevalidate?: number;
-  mustRevalidate?: boolean;
-  private?: boolean;
-  healthcareSensitive?: boolean;
+	maxAge: number;
+	staleWhileRevalidate?: number;
+	mustRevalidate?: boolean;
+	private?: boolean;
+	healthcareSensitive?: boolean;
 };
 
 type EdgeOptimization = {
-  region: string;
-  latency: number;
-  healthcareCompliant: boolean;
-  dataResidency: boolean;
+	region: string;
+	latency: number;
+	healthcareCompliant: boolean;
+	dataResidency: boolean;
 };
 
 export class HealthcareInfrastructureOptimizer {
-  private readonly cacheStrategies = new Map<string, CacheConfig>();
-  private edgeRegions: EdgeOptimization[] = [];
+	private readonly cacheStrategies = new Map<string, CacheConfig>();
+	private edgeRegions: EdgeOptimization[] = [];
 
-  constructor() {
-    this.initializeHealthcareCacheStrategies();
-    this.initializeEdgeRegions();
-  }
+	constructor() {
+		this.initializeHealthcareCacheStrategies();
+		this.initializeEdgeRegions();
+	}
 
-  /**
-   * Initialize healthcare-specific cache strategies
-   */
-  private initializeHealthcareCacheStrategies(): void {
-    // Static assets - long cache for non-sensitive content
-    this.cacheStrategies.set('static-assets', {
-      maxAge: 31_536_000, // 1 year
-      healthcareSensitive: false,
-    });
+	/**
+	 * Initialize healthcare-specific cache strategies
+	 */
+	private initializeHealthcareCacheStrategies(): void {
+		// Static assets - long cache for non-sensitive content
+		this.cacheStrategies.set("static-assets", {
+			maxAge: 31_536_000, // 1 year
+			healthcareSensitive: false,
+		});
 
-    // UI Components - medium cache for interface elements
-    this.cacheStrategies.set('ui-components', {
-      maxAge: 86_400, // 1 day
-      staleWhileRevalidate: 3600, // 1 hour
-      healthcareSensitive: false,
-    });
+		// UI Components - medium cache for interface elements
+		this.cacheStrategies.set("ui-components", {
+			maxAge: 86_400, // 1 day
+			staleWhileRevalidate: 3600, // 1 hour
+			healthcareSensitive: false,
+		});
 
-    // Patient data - no cache for sensitive medical information
-    this.cacheStrategies.set('patient-data', {
-      maxAge: 0,
-      mustRevalidate: true,
-      private: true,
-      healthcareSensitive: true,
-    });
+		// Patient data - no cache for sensitive medical information
+		this.cacheStrategies.set("patient-data", {
+			maxAge: 0,
+			mustRevalidate: true,
+			private: true,
+			healthcareSensitive: true,
+		});
 
-    // Medical forms - short cache for form templates
-    this.cacheStrategies.set('medical-forms', {
-      maxAge: 3600, // 1 hour
-      staleWhileRevalidate: 300, // 5 minutes
-      healthcareSensitive: false,
-    });
+		// Medical forms - short cache for form templates
+		this.cacheStrategies.set("medical-forms", {
+			maxAge: 3600, // 1 hour
+			staleWhileRevalidate: 300, // 5 minutes
+			healthcareSensitive: false,
+		});
 
-    // Appointment data - very short cache
-    this.cacheStrategies.set('appointments', {
-      maxAge: 300, // 5 minutes
-      mustRevalidate: true,
-      private: true,
-      healthcareSensitive: true,
-    });
+		// Appointment data - very short cache
+		this.cacheStrategies.set("appointments", {
+			maxAge: 300, // 5 minutes
+			mustRevalidate: true,
+			private: true,
+			healthcareSensitive: true,
+		});
 
-    // Medication database - medium cache for reference data
-    this.cacheStrategies.set('medication-reference', {
-      maxAge: 86_400, // 1 day
-      staleWhileRevalidate: 7200, // 2 hours
-      healthcareSensitive: false,
-    });
+		// Medication database - medium cache for reference data
+		this.cacheStrategies.set("medication-reference", {
+			maxAge: 86_400, // 1 day
+			staleWhileRevalidate: 7200, // 2 hours
+			healthcareSensitive: false,
+		});
 
-    // Audit logs - no cache for compliance data
-    this.cacheStrategies.set('audit-logs', {
-      maxAge: 0,
-      mustRevalidate: true,
-      private: true,
-      healthcareSensitive: true,
-    });
-  }
+		// Audit logs - no cache for compliance data
+		this.cacheStrategies.set("audit-logs", {
+			maxAge: 0,
+			mustRevalidate: true,
+			private: true,
+			healthcareSensitive: true,
+		});
+	}
 
-  /**
-   * Initialize edge computing regions for healthcare compliance
-   */
-  private initializeEdgeRegions(): void {
-    this.edgeRegions = [
-      {
-        region: 'sa-east-1', // São Paulo
-        latency: 20,
-        healthcareCompliant: true,
-        dataResidency: true, // Brazil data residency
-      },
-      {
-        region: 'us-east-1', // Virginia
-        latency: 150,
-        healthcareCompliant: true,
-        dataResidency: false,
-      },
-      {
-        region: 'eu-west-1', // Ireland
-        latency: 200,
-        healthcareCompliant: true,
-        dataResidency: false,
-      },
-    ];
-  }
+	/**
+	 * Initialize edge computing regions for healthcare compliance
+	 */
+	private initializeEdgeRegions(): void {
+		this.edgeRegions = [
+			{
+				region: "sa-east-1", // São Paulo
+				latency: 20,
+				healthcareCompliant: true,
+				dataResidency: true, // Brazil data residency
+			},
+			{
+				region: "us-east-1", // Virginia
+				latency: 150,
+				healthcareCompliant: true,
+				dataResidency: false,
+			},
+			{
+				region: "eu-west-1", // Ireland
+				latency: 200,
+				healthcareCompliant: true,
+				dataResidency: false,
+			},
+		];
+	}
 
-  /**
-   * Get cache headers for a given resource type
-   */
-  getCacheHeaders(resourceType: string): Record<string, string> {
-    const config = this.cacheStrategies.get(resourceType);
-    if (!config) {
-      return {};
-    }
+	/**
+	 * Get cache headers for a given resource type
+	 */
+	getCacheHeaders(resourceType: string): Record<string, string> {
+		const config = this.cacheStrategies.get(resourceType);
+		if (!config) {
+			return {};
+		}
 
-    const headers: Record<string, string> = {};
+		const headers: Record<string, string> = {};
 
-    if (config.healthcareSensitive) {
-      // Sensitive healthcare data - no caching
-      headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, private';
-      headers.Pragma = 'no-cache';
-      headers.Expires = '0';
-    } else {
-      // Non-sensitive data - optimized caching
-      let cacheControl = `max-age=${config.maxAge}`;
+		if (config.healthcareSensitive) {
+			// Sensitive healthcare data - no caching
+			headers["Cache-Control"] = "no-store, no-cache, must-revalidate, private";
+			headers.Pragma = "no-cache";
+			headers.Expires = "0";
+		} else {
+			// Non-sensitive data - optimized caching
+			let cacheControl = `max-age=${config.maxAge}`;
 
-      if (config.staleWhileRevalidate) {
-        cacheControl += `, stale-while-revalidate=${config.staleWhileRevalidate}`;
-      }
+			if (config.staleWhileRevalidate) {
+				cacheControl += `, stale-while-revalidate=${config.staleWhileRevalidate}`;
+			}
 
-      if (config.mustRevalidate) {
-        cacheControl += ', must-revalidate';
-      }
+			if (config.mustRevalidate) {
+				cacheControl += ", must-revalidate";
+			}
 
-      if (config.private) {
-        cacheControl += ', private';
-      } else {
-        cacheControl += ', public';
-      }
+			if (config.private) {
+				cacheControl += ", private";
+			} else {
+				cacheControl += ", public";
+			}
 
-      headers['Cache-Control'] = cacheControl;
-    }
+			headers["Cache-Control"] = cacheControl;
+		}
 
-    // Add healthcare-specific headers
-    if (config.healthcareSensitive) {
-      headers['X-Healthcare-Sensitive'] = 'true';
-      headers['X-Content-Type-Options'] = 'nosniff';
-      headers['X-Frame-Options'] = 'DENY';
-    }
+		// Add healthcare-specific headers
+		if (config.healthcareSensitive) {
+			headers["X-Healthcare-Sensitive"] = "true";
+			headers["X-Content-Type-Options"] = "nosniff";
+			headers["X-Frame-Options"] = "DENY";
+		}
 
-    return headers;
-  }
+		return headers;
+	}
 
-  /**
-   * Generate Next.js cache configuration
-   */
-  generateNextJSCacheConfig(): string {
-    return `
+	/**
+	 * Generate Next.js cache configuration
+	 */
+	generateNextJSCacheConfig(): string {
+		return `
 // Healthcare-optimized Next.js cache configuration
 // Generated on ${new Date().toISOString()}
 
@@ -251,13 +251,13 @@ const nextConfig = {
 
 module.exports = nextConfig;
 `;
-  }
+	}
 
-  /**
-   * Generate CDN configuration for healthcare
-   */
-  generateCDNConfig(): string {
-    return `
+	/**
+	 * Generate CDN configuration for healthcare
+	 */
+	generateCDNConfig(): string {
+		return `
 # Healthcare CDN Configuration for Vercel Edge Network
 # Optimized for medical applications and compliance
 
@@ -305,13 +305,13 @@ module.exports = nextConfig;
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: geolocation=(), microphone=(), camera=()
 `;
-  }
+	}
 
-  /**
-   * Generate service worker for healthcare applications
-   */
-  generateServiceWorker(): string {
-    return `
+	/**
+	 * Generate service worker for healthcare applications
+	 */
+	generateServiceWorker(): string {
+		return `
 // Healthcare Service Worker
 // Optimized for medical applications with offline capabilities
 // Generated on ${new Date().toISOString()}
@@ -504,13 +504,13 @@ function clearStoredSyncData() {
   return Promise.resolve();
 }
 `;
-  }
+	}
 
-  /**
-   * Optimize images for healthcare applications
-   */
-  generateImageOptimizationConfig(): string {
-    return `
+	/**
+	 * Optimize images for healthcare applications
+	 */
+	generateImageOptimizationConfig(): string {
+		return `
 // Healthcare Image Optimization Configuration
 // Optimized for medical images and DICOM compatibility
 
@@ -581,13 +581,13 @@ const healthcareImageConfig = {
 
 module.exports = healthcareImageConfig;
 `;
-  }
+	}
 
-  /**
-   * Generate performance monitoring configuration
-   */
-  generatePerformanceMonitoring(): string {
-    return `
+	/**
+	 * Generate performance monitoring configuration
+	 */
+	generatePerformanceMonitoring(): string {
+		return `
 // Healthcare Performance Monitoring Configuration
 // Real-time monitoring for medical application performance
 
@@ -679,46 +679,44 @@ class HealthcarePerformanceMonitor {
 
 export default HealthcarePerformanceMonitor;
 `;
-  }
+	}
 
-  /**
-   * Get recommended edge region for healthcare data
-   */
-  getOptimalEdgeRegion(userLocation?: string): EdgeOptimization {
-    // For healthcare, prefer Brazil region for data residency compliance
-    const brazilRegion = this.edgeRegions.find(
-      (region) => region.region === 'sa-east-1'
-    );
-    if (brazilRegion && userLocation?.includes('BR')) {
-      return brazilRegion;
-    }
+	/**
+	 * Get recommended edge region for healthcare data
+	 */
+	getOptimalEdgeRegion(userLocation?: string): EdgeOptimization {
+		// For healthcare, prefer Brazil region for data residency compliance
+		const brazilRegion = this.edgeRegions.find((region) => region.region === "sa-east-1");
+		if (brazilRegion && userLocation?.includes("BR")) {
+			return brazilRegion;
+		}
 
-    // Return closest compliant region
-    const compliantRegions = this.edgeRegions
-      .filter((region) => region.healthcareCompliant)
-      .sort((a, b) => a.latency - b.latency);
+		// Return closest compliant region
+		const compliantRegions = this.edgeRegions
+			.filter((region) => region.healthcareCompliant)
+			.sort((a, b) => a.latency - b.latency);
 
-    return (
-      compliantRegions[0] ||
-      this.edgeRegions[0] || {
-        region: 'us-east-1',
-        latency: 100,
-        healthcareCompliant: true,
-        dataResidency: false,
-      }
-    );
-  }
+		return (
+			compliantRegions[0] ||
+			this.edgeRegions[0] || {
+				region: "us-east-1",
+				latency: 100,
+				healthcareCompliant: true,
+				dataResidency: false,
+			}
+		);
+	}
 
-  /**
-   * Generate infrastructure performance report
-   */
-  generateInfrastructureReport(): string {
-    const cacheStrategiesCount = this.cacheStrategies.size;
-    const healthcareSensitiveCount = Array.from(
-      this.cacheStrategies.values()
-    ).filter((config) => config.healthcareSensitive).length;
+	/**
+	 * Generate infrastructure performance report
+	 */
+	generateInfrastructureReport(): string {
+		const cacheStrategiesCount = this.cacheStrategies.size;
+		const healthcareSensitiveCount = Array.from(this.cacheStrategies.values()).filter(
+			(config) => config.healthcareSensitive
+		).length;
 
-    return `
+		return `
 🏥 HEALTHCARE INFRASTRUCTURE PERFORMANCE REPORT
 ===============================================
 
@@ -729,14 +727,14 @@ export default HealthcarePerformanceMonitor;
 
 📍 Edge Computing Regions:
 ${this.edgeRegions
-  .map(
-    (region) => `
+	.map(
+		(region) => `
 - ${region.region}: ${region.latency}ms
-  Healthcare Compliant: ${region.healthcareCompliant ? '✅' : '❌'}
-  Data Residency: ${region.dataResidency ? '✅ Brazil' : '❌ International'}
+  Healthcare Compliant: ${region.healthcareCompliant ? "✅" : "❌"}
+  Data Residency: ${region.dataResidency ? "✅ Brazil" : "❌ International"}
 `
-  )
-  .join('')}
+	)
+	.join("")}
 
 🎯 Optimization Status:
 - CDN Configuration: ✅ Healthcare-optimized
@@ -752,7 +750,7 @@ ${this.edgeRegions
 
 ✅ Infrastructure is optimized for healthcare performance and compliance!
 `;
-  }
+	}
 }
 
 export default HealthcareInfrastructureOptimizer;

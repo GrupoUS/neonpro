@@ -511,56 +511,56 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
  * TypeScript interface for RLS policy configuration
  */
 export type RLSPolicyConfig = {
-  tableName: string;
-  policyName: string;
-  operation: 'SELECT' | 'INSERT' | 'UPDATE' | 'DELETE';
-  using?: string;
-  withCheck?: string;
-  description: string;
+	tableName: string;
+	policyName: string;
+	operation: "SELECT" | "INSERT" | "UPDATE" | "DELETE";
+	using?: string;
+	withCheck?: string;
+	description: string;
 };
 
 /**
  * Healthcare RLS policy utilities
  */
 export const rlsUtils = {
-  /**
-   * Validate RLS policy syntax
-   */
-  validatePolicy: (policy: RLSPolicyConfig): boolean => {
-    return Boolean(
-      policy.tableName &&
-        policy.policyName &&
-        policy.operation &&
-        policy.description &&
-        (policy.using || policy.withCheck)
-    );
-  },
+	/**
+	 * Validate RLS policy syntax
+	 */
+	validatePolicy: (policy: RLSPolicyConfig): boolean => {
+		return Boolean(
+			policy.tableName &&
+				policy.policyName &&
+				policy.operation &&
+				policy.description &&
+				(policy.using || policy.withCheck)
+		);
+	},
 
-  /**
-   * Generate RLS policy SQL
-   */
-  generatePolicySQL: (policy: RLSPolicyConfig): string => {
-    let sql = `CREATE POLICY "${policy.policyName}" ON ${policy.tableName}\n`;
-    sql += `  FOR ${policy.operation}`;
+	/**
+	 * Generate RLS policy SQL
+	 */
+	generatePolicySQL: (policy: RLSPolicyConfig): string => {
+		let sql = `CREATE POLICY "${policy.policyName}" ON ${policy.tableName}\n`;
+		sql += `  FOR ${policy.operation}`;
 
-    if (policy.using) {
-      sql += ` USING (\n    ${policy.using}\n  )`;
-    }
+		if (policy.using) {
+			sql += ` USING (\n    ${policy.using}\n  )`;
+		}
 
-    if (policy.withCheck) {
-      sql += ` WITH CHECK (\n    ${policy.withCheck}\n  )`;
-    }
+		if (policy.withCheck) {
+			sql += ` WITH CHECK (\n    ${policy.withCheck}\n  )`;
+		}
 
-    sql += ';';
+		sql += ";";
 
-    return sql;
-  },
+		return sql;
+	},
 
-  /**
-   * Test RLS policy effectiveness
-   */
-  testPolicySQL: (tableName: string, testUserId: string): string => {
-    return `
+	/**
+	 * Test RLS policy effectiveness
+	 */
+	testPolicySQL: (tableName: string, testUserId: string): string => {
+		return `
 -- Test RLS policies for ${tableName}
 SET row_security = on;
 SET ROLE authenticated;
@@ -575,16 +575,16 @@ EXPLAIN (COSTS FALSE) INSERT INTO ${tableName} (id) VALUES (gen_random_uuid());
 -- Reset
 RESET ROLE;
     `;
-  },
+	},
 };
 
 export default {
-  PATIENT_RLS_POLICIES,
-  MEDICAL_RECORDS_RLS_POLICIES,
-  PROCEDURES_RLS_POLICIES,
-  CONSENT_RLS_POLICIES,
-  AUDIT_LOGS_RLS_POLICIES,
-  STAFF_ACCESS_RLS_POLICIES,
-  APPLY_ALL_RLS_POLICIES,
-  rlsUtils,
+	PATIENT_RLS_POLICIES,
+	MEDICAL_RECORDS_RLS_POLICIES,
+	PROCEDURES_RLS_POLICIES,
+	CONSENT_RLS_POLICIES,
+	AUDIT_LOGS_RLS_POLICIES,
+	STAFF_ACCESS_RLS_POLICIES,
+	APPLY_ALL_RLS_POLICIES,
+	rlsUtils,
 };

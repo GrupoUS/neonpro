@@ -4,125 +4,116 @@
  * Story 6.1: Real-time Stock Tracking + Barcode/QR Integration
  */
 
-'use client';
+"use client";
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from "react";
 
 // Placeholder types until real types are available
 type InventoryItem = {
-  id: string;
-  name: string;
-  quantity: number;
-  barcode?: string;
+	id: string;
+	name: string;
+	quantity: number;
+	barcode?: string;
 };
 
 type InventoryState = {
-  items: InventoryItem[];
-  loading: boolean;
-  error: string | null;
+	items: InventoryItem[];
+	loading: boolean;
+	error: string | null;
 };
 
 type UseInventoryOptions = {
-  enableRealTime?: boolean;
-  autoLoadData?: boolean;
-  alertRefreshInterval?: number;
+	enableRealTime?: boolean;
+	autoLoadData?: boolean;
+	alertRefreshInterval?: number;
 };
 
 type UseInventoryReturn = {
-  // State
-  state: InventoryState;
-  // Loading states
-  loading: boolean;
-  error: string | null;
+	// State
+	state: InventoryState;
+	// Loading states
+	loading: boolean;
+	error: string | null;
 
-  // Actions
-  refreshData: () => Promise<void>;
-  addItem: (item: Partial<InventoryItem>) => Promise<void>;
-  updateItem: (id: string, updates: Partial<InventoryItem>) => Promise<void>;
-  deleteItem: (id: string) => Promise<void>;
+	// Actions
+	refreshData: () => Promise<void>;
+	addItem: (item: Partial<InventoryItem>) => Promise<void>;
+	updateItem: (id: string, updates: Partial<InventoryItem>) => Promise<void>;
+	deleteItem: (id: string) => Promise<void>;
 };
 
-export function useInventory(
-  options: UseInventoryOptions = {}
-): UseInventoryReturn {
-  const [state, setState] = useState<InventoryState>({
-    items: [],
-    loading: false,
-    error: null,
-  });
+export function useInventory(options: UseInventoryOptions = {}): UseInventoryReturn {
+	const [state, setState] = useState<InventoryState>({
+		items: [],
+		loading: false,
+		error: null,
+	});
 
-  const refreshData = useCallback(async () => {
-    setState((prev) => ({ ...prev, loading: true, error: null }));
+	const refreshData = useCallback(async () => {
+		setState((prev) => ({ ...prev, loading: true, error: null }));
 
-    try {
-      // Placeholder implementation
-      const mockItems: InventoryItem[] = [
-        { id: '1', name: 'Sample Item', quantity: 10 },
-      ];
+		try {
+			// Placeholder implementation
+			const mockItems: InventoryItem[] = [{ id: "1", name: "Sample Item", quantity: 10 }];
 
-      setState((prev) => ({
-        ...prev,
-        items: mockItems,
-        loading: false,
-      }));
-    } catch (error) {
-      setState((prev) => ({
-        ...prev,
-        error: error instanceof Error ? error.message : 'Unknown error',
-        loading: false,
-      }));
-    }
-  }, []);
+			setState((prev) => ({
+				...prev,
+				items: mockItems,
+				loading: false,
+			}));
+		} catch (error) {
+			setState((prev) => ({
+				...prev,
+				error: error instanceof Error ? error.message : "Unknown error",
+				loading: false,
+			}));
+		}
+	}, []);
 
-  const addItem = useCallback(async (item: Partial<InventoryItem>) => {
-    // Placeholder implementation
-    const newItem: InventoryItem = {
-      id: Date.now().toString(),
-      name: item.name || 'New Item',
-      quantity: item.quantity || 0,
-      barcode: item.barcode,
-    };
+	const addItem = useCallback(async (item: Partial<InventoryItem>) => {
+		// Placeholder implementation
+		const newItem: InventoryItem = {
+			id: Date.now().toString(),
+			name: item.name || "New Item",
+			quantity: item.quantity || 0,
+			barcode: item.barcode,
+		};
 
-    setState((prev) => ({
-      ...prev,
-      items: [...prev.items, newItem],
-    }));
-  }, []);
+		setState((prev) => ({
+			...prev,
+			items: [...prev.items, newItem],
+		}));
+	}, []);
 
-  const updateItem = useCallback(
-    async (id: string, updates: Partial<InventoryItem>) => {
-      setState((prev) => ({
-        ...prev,
-        items: prev.items.map((item) =>
-          item.id === id ? { ...item, ...updates } : item
-        ),
-      }));
-    },
-    []
-  );
+	const updateItem = useCallback(async (id: string, updates: Partial<InventoryItem>) => {
+		setState((prev) => ({
+			...prev,
+			items: prev.items.map((item) => (item.id === id ? { ...item, ...updates } : item)),
+		}));
+	}, []);
 
-  const deleteItem = useCallback(async (id: string) => {
-    setState((prev) => ({
-      ...prev,
-      items: prev.items.filter((item) => item.id !== id),
-    }));
-  }, []);
+	const deleteItem = useCallback(async (id: string) => {
+		setState((prev) => ({
+			...prev,
+			items: prev.items.filter((item) => item.id !== id),
+		}));
+	}, []);
 
-  useEffect(() => {
-    if (options.autoLoadData !== false) {
-      refreshData();
-    }
-  }, [refreshData, options.autoLoadData]);
+	useEffect(() => {
+		if (options.autoLoadData !== false) {
+			refreshData();
+		}
+	}, [refreshData, options.autoLoadData]);
 
-  return {
-    state,
-    loading: state.loading,
-    error: state.error,
-    refreshData,
-    addItem,
-    updateItem,
-    deleteItem,
-  };
+	return {
+		state,
+		loading: state.loading,
+		error: state.error,
+		refreshData,
+		addItem,
+		updateItem,
+		deleteItem,
+	};
 }
 
 export default useInventory;

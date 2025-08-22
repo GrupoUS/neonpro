@@ -5,5 +5,5 @@
  * @compliance LGPD + ANVISA + CFM
  */
 
-export * from './rbac';
-export * from './supabase';
+export * from "./rbac";
+export * from "./supabase";

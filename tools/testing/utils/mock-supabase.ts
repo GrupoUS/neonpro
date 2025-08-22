@@ -4,179 +4,177 @@
  */
 
 export type MockQueryResult = {
-  data?: any;
-  error?: any;
-  count?: number;
+	data?: any;
+	error?: any;
+	count?: number;
 };
 
 export type MockSupabaseClient = {
-  from: jest.MockedFunction<any>;
-  rpc: jest.MockedFunction<any>;
-  auth: {
-    getUser: jest.MockedFunction<any>;
-    signInWithPassword: jest.MockedFunction<any>;
-    signOut: jest.MockedFunction<any>;
-  };
-  storage: {
-    from: jest.MockedFunction<any>;
-  };
+	from: jest.MockedFunction<any>;
+	rpc: jest.MockedFunction<any>;
+	auth: {
+		getUser: jest.MockedFunction<any>;
+		signInWithPassword: jest.MockedFunction<any>;
+		signOut: jest.MockedFunction<any>;
+	};
+	storage: {
+		from: jest.MockedFunction<any>;
+	};
 };
 
 /**
  * Creates a mock Supabase client with all common operations
  */
 export function createMockSupabaseClient(): MockSupabaseClient {
-  const mockClient: MockSupabaseClient = {
-    from: jest.fn().mockReturnThis(),
-    rpc: jest.fn().mockResolvedValue({ data: null, error: null }),
-    auth: {
-      getUser: jest.fn().mockResolvedValue({
-        data: { user: { id: 'test-user-id' } },
-        error: null,
-      }),
-      signInWithPassword: jest.fn().mockResolvedValue({
-        data: { user: { id: 'test-user-id' } },
-        error: null,
-      }),
-      signOut: jest.fn().mockResolvedValue({ error: null }),
-    },
-    storage: {
-      from: jest.fn().mockReturnThis(),
-    },
-  };
+	const mockClient: MockSupabaseClient = {
+		from: jest.fn().mockReturnThis(),
+		rpc: jest.fn().mockResolvedValue({ data: null, error: null }),
+		auth: {
+			getUser: jest.fn().mockResolvedValue({
+				data: { user: { id: "test-user-id" } },
+				error: null,
+			}),
+			signInWithPassword: jest.fn().mockResolvedValue({
+				data: { user: { id: "test-user-id" } },
+				error: null,
+			}),
+			signOut: jest.fn().mockResolvedValue({ error: null }),
+		},
+		storage: {
+			from: jest.fn().mockReturnThis(),
+		},
+	};
 
-  // Chain-able query methods
-  const chainableMethods = {
-    select: jest.fn().mockReturnThis(),
-    insert: jest.fn().mockReturnThis(),
-    update: jest.fn().mockReturnThis(),
-    delete: jest.fn().mockReturnThis(),
-    upsert: jest.fn().mockReturnThis(),
-    eq: jest.fn().mockReturnThis(),
-    neq: jest.fn().mockReturnThis(),
-    gt: jest.fn().mockReturnThis(),
-    gte: jest.fn().mockReturnThis(),
-    lt: jest.fn().mockReturnThis(),
-    lte: jest.fn().mockReturnThis(),
-    like: jest.fn().mockReturnThis(),
-    ilike: jest.fn().mockReturnThis(),
-    is: jest.fn().mockReturnThis(),
-    in: jest.fn().mockReturnThis(),
-    contains: jest.fn().mockReturnThis(),
-    containedBy: jest.fn().mockReturnThis(),
-    rangeGt: jest.fn().mockReturnThis(),
-    rangeGte: jest.fn().mockReturnThis(),
-    rangeLt: jest.fn().mockReturnThis(),
-    rangeLte: jest.fn().mockReturnThis(),
-    rangeAdjacent: jest.fn().mockReturnThis(),
-    overlaps: jest.fn().mockReturnThis(),
-    textSearch: jest.fn().mockReturnThis(),
-    match: jest.fn().mockReturnThis(),
-    not: jest.fn().mockReturnThis(),
-    or: jest.fn().mockReturnThis(),
-    filter: jest.fn().mockReturnThis(),
-    order: jest.fn().mockReturnThis(),
-    limit: jest.fn().mockReturnThis(),
-    range: jest.fn().mockReturnThis(),
-    abortSignal: jest.fn().mockReturnThis(),
-    single: jest.fn().mockReturnThis(),
-    maybeSingle: jest.fn().mockReturnThis(),
-    csv: jest.fn().mockReturnThis(),
-    explain: jest.fn().mockReturnThis(),
-    rollback: jest.fn().mockReturnThis(),
-    returns: jest.fn().mockReturnThis(),
-  };
+	// Chain-able query methods
+	const chainableMethods = {
+		select: jest.fn().mockReturnThis(),
+		insert: jest.fn().mockReturnThis(),
+		update: jest.fn().mockReturnThis(),
+		delete: jest.fn().mockReturnThis(),
+		upsert: jest.fn().mockReturnThis(),
+		eq: jest.fn().mockReturnThis(),
+		neq: jest.fn().mockReturnThis(),
+		gt: jest.fn().mockReturnThis(),
+		gte: jest.fn().mockReturnThis(),
+		lt: jest.fn().mockReturnThis(),
+		lte: jest.fn().mockReturnThis(),
+		like: jest.fn().mockReturnThis(),
+		ilike: jest.fn().mockReturnThis(),
+		is: jest.fn().mockReturnThis(),
+		in: jest.fn().mockReturnThis(),
+		contains: jest.fn().mockReturnThis(),
+		containedBy: jest.fn().mockReturnThis(),
+		rangeGt: jest.fn().mockReturnThis(),
+		rangeGte: jest.fn().mockReturnThis(),
+		rangeLt: jest.fn().mockReturnThis(),
+		rangeLte: jest.fn().mockReturnThis(),
+		rangeAdjacent: jest.fn().mockReturnThis(),
+		overlaps: jest.fn().mockReturnThis(),
+		textSearch: jest.fn().mockReturnThis(),
+		match: jest.fn().mockReturnThis(),
+		not: jest.fn().mockReturnThis(),
+		or: jest.fn().mockReturnThis(),
+		filter: jest.fn().mockReturnThis(),
+		order: jest.fn().mockReturnThis(),
+		limit: jest.fn().mockReturnThis(),
+		range: jest.fn().mockReturnThis(),
+		abortSignal: jest.fn().mockReturnThis(),
+		single: jest.fn().mockReturnThis(),
+		maybeSingle: jest.fn().mockReturnThis(),
+		csv: jest.fn().mockReturnThis(),
+		explain: jest.fn().mockReturnThis(),
+		rollback: jest.fn().mockReturnThis(),
+		returns: jest.fn().mockReturnThis(),
+	};
 
-  // Apply chainable methods to the client
-  Object.entries(chainableMethods).forEach(([method, mock]) => {
-    Object.defineProperty(mockClient, method, {
-      value: mock,
-      writable: true,
-      configurable: true,
-    });
-  });
+	// Apply chainable methods to the client
+	Object.entries(chainableMethods).forEach(([method, mock]) => {
+		Object.defineProperty(mockClient, method, {
+			value: mock,
+			writable: true,
+			configurable: true,
+		});
+	});
 
-  // Add chainable methods to from() return value
-  mockClient.from.mockImplementation(() => {
-    const queryBuilder = { ...chainableMethods };
+	// Add chainable methods to from() return value
+	mockClient.from.mockImplementation(() => {
+		const queryBuilder = { ...chainableMethods };
 
-    // Default successful responses for common operations
-    queryBuilder.select.mockResolvedValue({ data: [], error: null });
-    queryBuilder.insert.mockResolvedValue({ data: [], error: null });
-    queryBuilder.update.mockResolvedValue({ data: [], error: null });
-    queryBuilder.delete.mockResolvedValue({ data: [], error: null });
-    queryBuilder.upsert.mockResolvedValue({ data: [], error: null });
+		// Default successful responses for common operations
+		queryBuilder.select.mockResolvedValue({ data: [], error: null });
+		queryBuilder.insert.mockResolvedValue({ data: [], error: null });
+		queryBuilder.update.mockResolvedValue({ data: [], error: null });
+		queryBuilder.delete.mockResolvedValue({ data: [], error: null });
+		queryBuilder.upsert.mockResolvedValue({ data: [], error: null });
 
-    return queryBuilder;
-  });
+		return queryBuilder;
+	});
 
-  return mockClient;
+	return mockClient;
 } /**
  * Creates a mock Supabase client with preset successful responses
  */
-export function createSuccessfulMockSupabaseClient(
-  data: any = []
-): MockSupabaseClient {
-  const client = createMockSupabaseClient();
+export function createSuccessfulMockSupabaseClient(data: any = []): MockSupabaseClient {
+	const client = createMockSupabaseClient();
 
-  // Override with successful responses
-  client.from.mockImplementation(() => ({
-    select: jest.fn().mockResolvedValue({ data, error: null }),
-    insert: jest.fn().mockResolvedValue({ data, error: null }),
-    update: jest.fn().mockResolvedValue({ data, error: null }),
-    delete: jest.fn().mockResolvedValue({ data, error: null }),
-    upsert: jest.fn().mockResolvedValue({ data, error: null }),
-    eq: jest.fn().mockReturnThis(),
-    neq: jest.fn().mockReturnThis(),
-    gt: jest.fn().mockReturnThis(),
-    gte: jest.fn().mockReturnThis(),
-    lt: jest.fn().mockReturnThis(),
-    lte: jest.fn().mockReturnThis(),
-    like: jest.fn().mockReturnThis(),
-    ilike: jest.fn().mockReturnThis(),
-    is: jest.fn().mockReturnThis(),
-    in: jest.fn().mockReturnThis(),
-    order: jest.fn().mockReturnThis(),
-    limit: jest.fn().mockReturnThis(),
-    range: jest.fn().mockReturnThis(),
-    single: jest.fn().mockReturnThis(),
-    maybeSingle: jest.fn().mockReturnThis(),
-  }));
+	// Override with successful responses
+	client.from.mockImplementation(() => ({
+		select: jest.fn().mockResolvedValue({ data, error: null }),
+		insert: jest.fn().mockResolvedValue({ data, error: null }),
+		update: jest.fn().mockResolvedValue({ data, error: null }),
+		delete: jest.fn().mockResolvedValue({ data, error: null }),
+		upsert: jest.fn().mockResolvedValue({ data, error: null }),
+		eq: jest.fn().mockReturnThis(),
+		neq: jest.fn().mockReturnThis(),
+		gt: jest.fn().mockReturnThis(),
+		gte: jest.fn().mockReturnThis(),
+		lt: jest.fn().mockReturnThis(),
+		lte: jest.fn().mockReturnThis(),
+		like: jest.fn().mockReturnThis(),
+		ilike: jest.fn().mockReturnThis(),
+		is: jest.fn().mockReturnThis(),
+		in: jest.fn().mockReturnThis(),
+		order: jest.fn().mockReturnThis(),
+		limit: jest.fn().mockReturnThis(),
+		range: jest.fn().mockReturnThis(),
+		single: jest.fn().mockReturnThis(),
+		maybeSingle: jest.fn().mockReturnThis(),
+	}));
 
-  return client;
+	return client;
 }
 
 /**
  * Creates a mock Supabase client with preset error responses
  */
 export function createErrorMockSupabaseClient(error: any): MockSupabaseClient {
-  const client = createMockSupabaseClient();
+	const client = createMockSupabaseClient();
 
-  // Override with error responses
-  client.from.mockImplementation(() => ({
-    select: jest.fn().mockResolvedValue({ data: null, error }),
-    insert: jest.fn().mockResolvedValue({ data: null, error }),
-    update: jest.fn().mockResolvedValue({ data: null, error }),
-    delete: jest.fn().mockResolvedValue({ data: null, error }),
-    upsert: jest.fn().mockResolvedValue({ data: null, error }),
-    eq: jest.fn().mockReturnThis(),
-    neq: jest.fn().mockReturnThis(),
-    gt: jest.fn().mockReturnThis(),
-    gte: jest.fn().mockReturnThis(),
-    lt: jest.fn().mockReturnThis(),
-    lte: jest.fn().mockReturnThis(),
-    like: jest.fn().mockReturnThis(),
-    ilike: jest.fn().mockReturnThis(),
-    is: jest.fn().mockReturnThis(),
-    in: jest.fn().mockReturnThis(),
-    order: jest.fn().mockReturnThis(),
-    limit: jest.fn().mockReturnThis(),
-    range: jest.fn().mockReturnThis(),
-    single: jest.fn().mockReturnThis(),
-    maybeSingle: jest.fn().mockReturnThis(),
-  }));
+	// Override with error responses
+	client.from.mockImplementation(() => ({
+		select: jest.fn().mockResolvedValue({ data: null, error }),
+		insert: jest.fn().mockResolvedValue({ data: null, error }),
+		update: jest.fn().mockResolvedValue({ data: null, error }),
+		delete: jest.fn().mockResolvedValue({ data: null, error }),
+		upsert: jest.fn().mockResolvedValue({ data: null, error }),
+		eq: jest.fn().mockReturnThis(),
+		neq: jest.fn().mockReturnThis(),
+		gt: jest.fn().mockReturnThis(),
+		gte: jest.fn().mockReturnThis(),
+		lt: jest.fn().mockReturnThis(),
+		lte: jest.fn().mockReturnThis(),
+		like: jest.fn().mockReturnThis(),
+		ilike: jest.fn().mockReturnThis(),
+		is: jest.fn().mockReturnThis(),
+		in: jest.fn().mockReturnThis(),
+		order: jest.fn().mockReturnThis(),
+		limit: jest.fn().mockReturnThis(),
+		range: jest.fn().mockReturnThis(),
+		single: jest.fn().mockReturnThis(),
+		maybeSingle: jest.fn().mockReturnThis(),
+	}));
 
-  return client;
+	return client;
 }
 
 // Export for backward compatibility
@@ -186,167 +184,149 @@ export { createMockSupabaseClient as createMockSupabaseC }; /**
  */
 
 export function createMockPatientData(overrides: any = {}) {
-  return {
-    id: 'patient-12345',
-    name: 'João Silva',
-    age: 45,
-    cpf: '123.456.789-00',
-    email: 'joao.silva@email.com',
-    phone: '+55 11 99999-9999',
-    demographicFactors: {
-      gender: 'masculino',
-      ethnicity: 'pardo',
-      socioeconomicStatus: 'media',
-      region: 'sudeste',
-      urbanRural: 'urbano',
-    },
-    medicalHistory: {
-      chronicConditions: ['hipertensão'],
-      previousSurgeries: [],
-      allergies: [],
-      medications: ['losartana'],
-      familyHistory: ['diabetes', 'hipertensão'],
-    },
-    vitalSigns: {
-      heartRate: 75,
-      bloodPressure: '130/85',
-      temperature: 36.5,
-      respiratoryRate: 16,
-      oxygenSaturation: 98,
-    },
-    riskFactors: {
-      smoking: false,
-      alcoholConsumption: 'moderado',
-      physicalActivity: 'regular',
-      diet: 'balanceada',
-    },
-    insuranceInfo: {
-      provider: 'SUS',
-      policyNumber: 'SUS-12345',
-      coverage: 'completa',
-    },
-    emergencyContact: {
-      name: 'Maria Silva',
-      relationship: 'esposa',
-      phone: '+55 11 88888-8888',
-    },
-    consent: {
-      dataProcessing: true,
-      research: true,
-      marketing: false,
-      timestamp: new Date().toISOString(),
-    },
-    ...overrides,
-  };
+	return {
+		id: "patient-12345",
+		name: "João Silva",
+		age: 45,
+		cpf: "123.456.789-00",
+		email: "joao.silva@email.com",
+		phone: "+55 11 99999-9999",
+		demographicFactors: {
+			gender: "masculino",
+			ethnicity: "pardo",
+			socioeconomicStatus: "media",
+			region: "sudeste",
+			urbanRural: "urbano",
+		},
+		medicalHistory: {
+			chronicConditions: ["hipertensão"],
+			previousSurgeries: [],
+			allergies: [],
+			medications: ["losartana"],
+			familyHistory: ["diabetes", "hipertensão"],
+		},
+		vitalSigns: {
+			heartRate: 75,
+			bloodPressure: "130/85",
+			temperature: 36.5,
+			respiratoryRate: 16,
+			oxygenSaturation: 98,
+		},
+		riskFactors: {
+			smoking: false,
+			alcoholConsumption: "moderado",
+			physicalActivity: "regular",
+			diet: "balanceada",
+		},
+		insuranceInfo: {
+			provider: "SUS",
+			policyNumber: "SUS-12345",
+			coverage: "completa",
+		},
+		emergencyContact: {
+			name: "Maria Silva",
+			relationship: "esposa",
+			phone: "+55 11 88888-8888",
+		},
+		consent: {
+			dataProcessing: true,
+			research: true,
+			marketing: false,
+			timestamp: new Date().toISOString(),
+		},
+		...overrides,
+	};
 }
 
 export function createLowRiskPatientData() {
-  return createMockPatientData({
-    age: 30,
-    medicalHistory: {
-      chronicConditions: [],
-      previousSurgeries: [],
-      allergies: [],
-      medications: [],
-      familyHistory: [],
-    },
-    vitalSigns: {
-      heartRate: 70,
-      bloodPressure: '120/80',
-      temperature: 36.5,
-      respiratoryRate: 16,
-      oxygenSaturation: 99,
-    },
-    riskFactors: {
-      smoking: false,
-      alcoholConsumption: 'nenhum',
-      physicalActivity: 'regular',
-      diet: 'balanceada',
-    },
-  });
+	return createMockPatientData({
+		age: 30,
+		medicalHistory: {
+			chronicConditions: [],
+			previousSurgeries: [],
+			allergies: [],
+			medications: [],
+			familyHistory: [],
+		},
+		vitalSigns: {
+			heartRate: 70,
+			bloodPressure: "120/80",
+			temperature: 36.5,
+			respiratoryRate: 16,
+			oxygenSaturation: 99,
+		},
+		riskFactors: {
+			smoking: false,
+			alcoholConsumption: "nenhum",
+			physicalActivity: "regular",
+			diet: "balanceada",
+		},
+	});
 }
 
 export function createHighRiskPatientData() {
-  return createMockPatientData({
-    age: 70,
-    medicalHistory: {
-      chronicConditions: ['diabetes', 'hipertensão', 'doença cardíaca'],
-      previousSurgeries: ['bypass', 'angioplastia'],
-      allergies: ['penicilina'],
-      medications: ['metformina', 'losartana', 'atorvastatina'],
-      familyHistory: ['diabetes', 'hipertensão', 'doença cardíaca', 'avc'],
-    },
-    vitalSigns: {
-      heartRate: 95,
-      bloodPressure: '160/95',
-      temperature: 37.0,
-      respiratoryRate: 20,
-      oxygenSaturation: 94,
-    },
-    riskFactors: {
-      smoking: true,
-      alcoholConsumption: 'alto',
-      physicalActivity: 'sedentário',
-      diet: 'inadequada',
-    },
-  });
+	return createMockPatientData({
+		age: 70,
+		medicalHistory: {
+			chronicConditions: ["diabetes", "hipertensão", "doença cardíaca"],
+			previousSurgeries: ["bypass", "angioplastia"],
+			allergies: ["penicilina"],
+			medications: ["metformina", "losartana", "atorvastatina"],
+			familyHistory: ["diabetes", "hipertensão", "doença cardíaca", "avc"],
+		},
+		vitalSigns: {
+			heartRate: 95,
+			bloodPressure: "160/95",
+			temperature: 37.0,
+			respiratoryRate: 20,
+			oxygenSaturation: 94,
+		},
+		riskFactors: {
+			smoking: true,
+			alcoholConsumption: "alto",
+			physicalActivity: "sedentário",
+			diet: "inadequada",
+		},
+	});
 }
 export function createCriticalPatientData() {
-  return createMockPatientData({
-    age: 85,
-    medicalHistory: {
-      chronicConditions: [
-        'diabetes',
-        'hipertensão',
-        'doença cardíaca',
-        'insuficiência renal',
-        'DPOC',
-      ],
-      previousSurgeries: ['bypass', 'angioplastia', 'marca-passo'],
-      allergies: ['penicilina', 'sulfa'],
-      medications: [
-        'metformina',
-        'losartana',
-        'atorvastatina',
-        'furosemida',
-        'digoxina',
-      ],
-      familyHistory: [
-        'diabetes',
-        'hipertensão',
-        'doença cardíaca',
-        'avc',
-        'câncer',
-      ],
-    },
-    vitalSigns: {
-      heartRate: 110,
-      bloodPressure: '180/100',
-      temperature: 38.5,
-      respiratoryRate: 24,
-      oxygenSaturation: 88,
-    },
-    riskFactors: {
-      smoking: true,
-      alcoholConsumption: 'alto',
-      physicalActivity: 'sedentário',
-      diet: 'inadequada',
-    },
-    emergencyFlags: {
-      criticalRisk: true,
-      immediateAttention: true,
-      intensiveCareRecommended: true,
-    },
-  });
+	return createMockPatientData({
+		age: 85,
+		medicalHistory: {
+			chronicConditions: ["diabetes", "hipertensão", "doença cardíaca", "insuficiência renal", "DPOC"],
+			previousSurgeries: ["bypass", "angioplastia", "marca-passo"],
+			allergies: ["penicilina", "sulfa"],
+			medications: ["metformina", "losartana", "atorvastatina", "furosemida", "digoxina"],
+			familyHistory: ["diabetes", "hipertensão", "doença cardíaca", "avc", "câncer"],
+		},
+		vitalSigns: {
+			heartRate: 110,
+			bloodPressure: "180/100",
+			temperature: 38.5,
+			respiratoryRate: 24,
+			oxygenSaturation: 88,
+		},
+		riskFactors: {
+			smoking: true,
+			alcoholConsumption: "alto",
+			physicalActivity: "sedentário",
+			diet: "inadequada",
+		},
+		emergencyFlags: {
+			criticalRisk: true,
+			immediateAttention: true,
+			intensiveCareRecommended: true,
+		},
+	});
 }
 
 export default {
-  createMockSupabaseClient,
-  createSuccessfulMockSupabaseClient,
-  createErrorMockSupabaseClient,
-  createMockSupabaseC: createMockSupabaseClient,
-  createMockPatientData,
-  createLowRiskPatientData,
-  createHighRiskPatientData,
-  createCriticalPatientData,
+	createMockSupabaseClient,
+	createSuccessfulMockSupabaseClient,
+	createErrorMockSupabaseClient,
+	createMockSupabaseC: createMockSupabaseClient,
+	createMockPatientData,
+	createLowRiskPatientData,
+	createHighRiskPatientData,
+	createCriticalPatientData,
 };

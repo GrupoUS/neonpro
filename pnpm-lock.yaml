@@ -12,6 +12,15 @@ overrides:
 
 importers:
 
+  '-w':
+    devDependencies:
+      '@playwright/test':
+        specifier: ^1.55.0
+        version: 1.55.0
+      '@types/node':
+        specifier: ^24.3.0
+        version: 24.3.0
+
   .:
     dependencies:
       '@tanstack/react-query':
@@ -4911,6 +4920,14 @@ packages:
     dependencies:
       playwright: 1.54.2
 
+  /@playwright/test@1.55.0:
+    resolution: {integrity: sha512-04IXzPwHrW69XusN/SIdDdKZBzMfOT9UNT/YiJit/xpy2VuAoB8NHc8Aplb96zsWDddLnbkPL3TsmrS04ZU2xQ==}
+    engines: {node: '>=18'}
+    hasBin: true
+    dependencies:
+      playwright: 1.55.0
+    dev: true
+
   /@polka/url@1.0.0-next.29:
     resolution: {integrity: sha512-wwQAWhWSuHaag8c4q/KN/vCoeOJYshAIvMQwD4GpSb3OiZklFfvAgmj0VCBBImRpuF/aFgIRzllXlVX93Jevww==}
 
@@ -8514,6 +8531,12 @@ packages:
     dependencies:
       undici-types: 6.21.0
 
+  /@types/node@24.3.0:
+    resolution: {integrity: sha512-aPTXCrfwnDLj4VvXrm+UUCQjNEvJgNA8s5F1cvwQU+3KNltTOkBm1j30uNLyqqPNe7gE3KFzImYoZEfLhp4Yow==}
+    dependencies:
+      undici-types: 7.10.0
+    dev: true
+
   /@types/nodemailer@7.0.0:
     resolution: {integrity: sha512-APKHivjoJ1OyLrlhdJ/QJpnj78OaGSHQ18J12CeOVbffvBgUjqBiIzCW2lnRuwQiLxCpahgMf+T7G2dZBvgeYw==}
     dependencies:
@@ -8903,7 +8926,7 @@ packages:
       estree-walker: 3.0.3
       magic-string: 0.30.17
       msw: 2.10.5(@types/node@22.17.2)(typescript@5.9.2)
-      vite: 7.1.2(@types/node@20.19.11)
+      vite: 7.1.2(@types/node@22.17.2)
     dev: true
 
   /@vitest/pretty-format@2.1.9:
@@ -14727,6 +14750,12 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
+  /playwright-core@1.55.0:
+    resolution: {integrity: sha512-GvZs4vU3U5ro2nZpeiwyb0zuFaqb9sUiAJuyrWpcGouD8y9/HLgGbNRjIph7zU9D3hnPaisMl9zG9CgFi/biIg==}
+    engines: {node: '>=18'}
+    hasBin: true
+    dev: true
+
   /playwright@1.54.2:
     resolution: {integrity: sha512-Hu/BMoA1NAdRUuulyvQC0pEqZ4vQbGfn8f7wPXcnqQmM+zct9UliKxsIkLNmz/ku7LElUNqmaiv1TG/aL5ACsw==}
     engines: {node: '>=18'}
@@ -14735,6 +14764,16 @@ packages:
       playwright-core: 1.54.2
     optionalDependencies:
       fsevents: 2.3.2
+
+  /playwright@1.55.0:
+    resolution: {integrity: sha512-sdCWStblvV1YU909Xqx0DhOjPZE4/5lJsIS84IfN9dAZfcl/CIZ5O8l3o0j7hPMjDvqoTF8ZUcc+i/GL5erstA==}
+    engines: {node: '>=18'}
+    hasBin: true
+    dependencies:
+      playwright-core: 1.55.0
+    optionalDependencies:
+      fsevents: 2.3.2
+    dev: true
 
   /png-js@1.0.0:
     resolution: {integrity: sha512-k+YsbhpA9e+EFfKjTCH3VW6aoKlyNYI6NYdTfDL4CIvFnvsuO84ttonmZE7rc+v23SLTH8XX+5w/Ak9v0xGY4g==}
@@ -17398,6 +17437,10 @@ packages:
 
   /undici-types@6.21.0:
     resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
+
+  /undici-types@7.10.0:
+    resolution: {integrity: sha512-t5Fy/nfn+14LuOc2KNYg75vZqClpAiqscVvMygNnlsHBFpSXdJaYtXMcdNLpl/Qvc3P2cB3s6lOV51nqsFq4ag==}
+    dev: true
 
   /undici@5.28.4:
     resolution: {integrity: sha512-72RFADWFqKmUb2hmmvNODKL3p9hcB6Gt2DOQMis1SEBaV6a4MH8soBvzg+95CYhCKPFedut2JY9bMfrDl9D23g==}

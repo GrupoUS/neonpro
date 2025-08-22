@@ -1,372 +1,349 @@
 // Integration Test Setup and Configuration
 // Centralized setup for all integration tests in NeonPro Healthcare
 
-import { QueryClient } from '@tanstack/react-query';
-import { afterAll, afterEach, beforeAll, beforeEach } from 'vitest';
+import { QueryClient } from "@tanstack/react-query";
+import { afterAll, afterEach, beforeAll, beforeEach } from "vitest";
 
 // Global test configuration
 export const TEST_CONFIG = {
-  database: {
-    test_database_url:
-      process.env.TEST_DATABASE_URL ||
-      'postgresql://test:test@localhost:5432/neonpro_test',
-    connection_timeout: 10_000,
-    query_timeout: 5000,
-  },
-  supabase: {
-    test_project_url:
-      process.env.TEST_SUPABASE_URL || 'https://test.supabase.co',
-    test_anon_key: process.env.TEST_SUPABASE_ANON_KEY || 'test-anon-key',
-    test_service_role_key:
-      process.env.TEST_SUPABASE_SERVICE_ROLE_KEY || 'test-service-key',
-  },
-  api: {
-    test_api_base_url: process.env.TEST_API_BASE_URL || 'http://localhost:3001',
-    request_timeout: 10_000,
-    retry_attempts: 3,
-  },
-  performance: {
-    api_response_threshold_ms: 500,
-    database_query_threshold_ms: 100,
-    realtime_latency_threshold_ms: 200,
-  },
-  compliance: {
-    audit_trail_required: true,
-    lgpd_validation_enabled: true,
-    emergency_access_logging: true,
-  },
+	database: {
+		test_database_url: process.env.TEST_DATABASE_URL || "postgresql://test:test@localhost:5432/neonpro_test",
+		connection_timeout: 10_000,
+		query_timeout: 5000,
+	},
+	supabase: {
+		test_project_url: process.env.TEST_SUPABASE_URL || "https://test.supabase.co",
+		test_anon_key: process.env.TEST_SUPABASE_ANON_KEY || "test-anon-key",
+		test_service_role_key: process.env.TEST_SUPABASE_SERVICE_ROLE_KEY || "test-service-key",
+	},
+	api: {
+		test_api_base_url: process.env.TEST_API_BASE_URL || "http://localhost:3001",
+		request_timeout: 10_000,
+		retry_attempts: 3,
+	},
+	performance: {
+		api_response_threshold_ms: 500,
+		database_query_threshold_ms: 100,
+		realtime_latency_threshold_ms: 200,
+	},
+	compliance: {
+		audit_trail_required: true,
+		lgpd_validation_enabled: true,
+		emergency_access_logging: true,
+	},
 };
 
 // Test data factory for consistent test data
 export class TestDataFactory {
-  static createMockPatient(overrides: Partial<any> = {}) {
-    return {
-      id: `test-patient-${Date.now()}`,
-      name: 'João Silva Santos',
-      cpf: '123.456.789-00',
-      email: 'joao.test@email.com',
-      phone: '(11) 99999-9999',
-      birth_date: '1985-03-15',
-      gender: 'male',
-      clinic_id: 'test-clinic-1',
-      lgpd_consent: true,
-      lgpd_consent_date: new Date().toISOString(),
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      ...overrides,
-    };
-  }
+	static createMockPatient(overrides: Partial<any> = {}) {
+		return {
+			id: `test-patient-${Date.now()}`,
+			name: "João Silva Santos",
+			cpf: "123.456.789-00",
+			email: "joao.test@email.com",
+			phone: "(11) 99999-9999",
+			birth_date: "1985-03-15",
+			gender: "male",
+			clinic_id: "test-clinic-1",
+			lgpd_consent: true,
+			lgpd_consent_date: new Date().toISOString(),
+			created_at: new Date().toISOString(),
+			updated_at: new Date().toISOString(),
+			...overrides,
+		};
+	}
 
-  static createMockDoctor(overrides: Partial<any> = {}) {
-    return {
-      id: `test-doctor-${Date.now()}`,
-      name: 'Dr. Maria Silva',
-      email: 'dra.maria.test@clinic.com',
-      crm: 'CRM-SP-123456',
-      specialty: 'Cardiologia',
-      clinic_id: 'test-clinic-1',
-      role: 'doctor',
-      emergency_qualified: true,
-      ...overrides,
-    };
-  }
+	static createMockDoctor(overrides: Partial<any> = {}) {
+		return {
+			id: `test-doctor-${Date.now()}`,
+			name: "Dr. Maria Silva",
+			email: "dra.maria.test@clinic.com",
+			crm: "CRM-SP-123456",
+			specialty: "Cardiologia",
+			clinic_id: "test-clinic-1",
+			role: "doctor",
+			emergency_qualified: true,
+			...overrides,
+		};
+	}
 
-  static createMockAppointment(overrides: Partial<any> = {}) {
-    return {
-      id: `test-appointment-${Date.now()}`,
-      patient_id: 'test-patient-123',
-      doctor_id: 'test-doctor-456',
-      scheduled_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-      duration: 30,
-      status: 'scheduled',
-      clinic_id: 'test-clinic-1',
-      ...overrides,
-    };
-  }
+	static createMockAppointment(overrides: Partial<any> = {}) {
+		return {
+			id: `test-appointment-${Date.now()}`,
+			patient_id: "test-patient-123",
+			doctor_id: "test-doctor-456",
+			scheduled_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+			duration: 30,
+			status: "scheduled",
+			clinic_id: "test-clinic-1",
+			...overrides,
+		};
+	}
 
-  static createMockEmergencyAccess(overrides: Partial<any> = {}) {
-    return {
-      id: `test-emergency-${Date.now()}`,
-      patient_id: 'test-patient-123',
-      requesting_user_id: 'test-nurse-789',
-      emergency_type: 'cardiac_arrest',
-      justification: 'Test emergency access for cardiac arrest simulation',
-      location: 'Test Emergency Room',
-      priority: 'critical',
-      status: 'approved',
-      expires_at: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
-      ...overrides,
-    };
-  }
+	static createMockEmergencyAccess(overrides: Partial<any> = {}) {
+		return {
+			id: `test-emergency-${Date.now()}`,
+			patient_id: "test-patient-123",
+			requesting_user_id: "test-nurse-789",
+			emergency_type: "cardiac_arrest",
+			justification: "Test emergency access for cardiac arrest simulation",
+			location: "Test Emergency Room",
+			priority: "critical",
+			status: "approved",
+			expires_at: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+			...overrides,
+		};
+	}
 }
 
 // Query Client factory for tests
 export function createTestQueryClient(): QueryClient {
-  return new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        cacheTime: 0,
-        staleTime: 0,
-      },
-      mutations: {
-        retry: false,
-      },
-    },
-  });
+	return new QueryClient({
+		defaultOptions: {
+			queries: {
+				retry: false,
+				cacheTime: 0,
+				staleTime: 0,
+			},
+			mutations: {
+				retry: false,
+			},
+		},
+	});
 }
 
 // Database cleanup utilities
 export class TestDatabaseCleanup {
-  static async cleanupTestData() {
-    // Mock cleanup implementation
-    console.log('Cleaning up test data...');
+	static async cleanupTestData() {
+		// Mock cleanup implementation
+		console.log("Cleaning up test data...");
 
-    // In real implementation, this would:
-    // 1. Delete test patients
-    // 2. Delete test appointments
-    // 3. Delete test audit logs
-    // 4. Reset sequences
-    // 5. Clear cache
-  }
+		// In real implementation, this would:
+		// 1. Delete test patients
+		// 2. Delete test appointments
+		// 3. Delete test audit logs
+		// 4. Reset sequences
+		// 5. Clear cache
+	}
 
-  static async seedTestData() {
-    // Mock seed implementation
-    console.log('Seeding test data...');
+	static async seedTestData() {
+		// Mock seed implementation
+		console.log("Seeding test data...");
 
-    // In real implementation, this would:
-    // 1. Create test clinics
-    // 2. Create test users
-    // 3. Create sample patients
-    // 4. Set up test permissions
-  }
+		// In real implementation, this would:
+		// 1. Create test clinics
+		// 2. Create test users
+		// 3. Create sample patients
+		// 4. Set up test permissions
+	}
 } // Performance monitoring utilities
 export class TestPerformanceMonitor {
-  private static measurements: Map<string, number[]> = new Map();
+	private static measurements: Map<string, number[]> = new Map();
 
-  static startMeasurement(testName: string): () => number {
-    const startTime = performance.now();
+	static startMeasurement(testName: string): () => number {
+		const startTime = performance.now();
 
-    return () => {
-      const endTime = performance.now();
-      const duration = endTime - startTime;
+		return () => {
+			const endTime = performance.now();
+			const duration = endTime - startTime;
 
-      if (!TestPerformanceMonitor.measurements.has(testName)) {
-        TestPerformanceMonitor.measurements.set(testName, []);
-      }
+			if (!TestPerformanceMonitor.measurements.has(testName)) {
+				TestPerformanceMonitor.measurements.set(testName, []);
+			}
 
-      TestPerformanceMonitor.measurements.get(testName)!.push(duration);
-      return duration;
-    };
-  }
+			TestPerformanceMonitor.measurements.get(testName)!.push(duration);
+			return duration;
+		};
+	}
 
-  static getAverageTime(testName: string): number {
-    const times = TestPerformanceMonitor.measurements.get(testName) || [];
-    return times.length > 0
-      ? times.reduce((a, b) => a + b, 0) / times.length
-      : 0;
-  }
+	static getAverageTime(testName: string): number {
+		const times = TestPerformanceMonitor.measurements.get(testName) || [];
+		return times.length > 0 ? times.reduce((a, b) => a + b, 0) / times.length : 0;
+	}
 
-  static validatePerformance(testName: string, thresholdMs: number): boolean {
-    const avgTime = TestPerformanceMonitor.getAverageTime(testName);
-    return avgTime <= thresholdMs;
-  }
+	static validatePerformance(testName: string, thresholdMs: number): boolean {
+		const avgTime = TestPerformanceMonitor.getAverageTime(testName);
+		return avgTime <= thresholdMs;
+	}
 
-  static generatePerformanceReport(): string {
-    let report = '## Integration Tests Performance Report\n\n';
+	static generatePerformanceReport(): string {
+		let report = "## Integration Tests Performance Report\n\n";
 
-    for (const [testName, times] of TestPerformanceMonitor.measurements) {
-      const avg = times.reduce((a, b) => a + b, 0) / times.length;
-      const min = Math.min(...times);
-      const max = Math.max(...times);
+		for (const [testName, times] of TestPerformanceMonitor.measurements) {
+			const avg = times.reduce((a, b) => a + b, 0) / times.length;
+			const min = Math.min(...times);
+			const max = Math.max(...times);
 
-      report += `### ${testName}\n`;
-      report += `- Average: ${avg.toFixed(2)}ms\n`;
-      report += `- Min: ${min.toFixed(2)}ms\n`;
-      report += `- Max: ${max.toFixed(2)}ms\n`;
-      report += `- Executions: ${times.length}\n\n`;
-    }
+			report += `### ${testName}\n`;
+			report += `- Average: ${avg.toFixed(2)}ms\n`;
+			report += `- Min: ${min.toFixed(2)}ms\n`;
+			report += `- Max: ${max.toFixed(2)}ms\n`;
+			report += `- Executions: ${times.length}\n\n`;
+		}
 
-    return report;
-  }
+		return report;
+	}
 }
 
 // LGPD compliance testing utilities
 export class TestLGPDCompliance {
-  static validateConsentRequirement(testData: any): boolean {
-    return testData.lgpd_consent === true && testData.lgpd_consent_date != null;
-  }
+	static validateConsentRequirement(testData: any): boolean {
+		return testData.lgpd_consent === true && testData.lgpd_consent_date != null;
+	}
 
-  static validateDataMinimization(
-    requestedData: string[],
-    actualData: any
-  ): boolean {
-    const actualKeys = Object.keys(actualData);
-    return requestedData.every((field) => actualKeys.includes(field));
-  }
+	static validateDataMinimization(requestedData: string[], actualData: any): boolean {
+		const actualKeys = Object.keys(actualData);
+		return requestedData.every((field) => actualKeys.includes(field));
+	}
 
-  static validateAuditTrail(operation: string, auditEntry: any): boolean {
-    const requiredFields = [
-      'user_id',
-      'timestamp',
-      'action',
-      'resource',
-      'legal_basis',
-    ];
-    return requiredFields.every((field) => auditEntry[field] != null);
-  }
+	static validateAuditTrail(operation: string, auditEntry: any): boolean {
+		const requiredFields = ["user_id", "timestamp", "action", "resource", "legal_basis"];
+		return requiredFields.every((field) => auditEntry[field] != null);
+	}
 
-  static mockCPFValidation(cpf: string): { valid: boolean; formatted: string } {
-    // Mock CPF validation for testing
-    const cleanCpf = cpf.replace(/[^\d]/g, '');
-    const isValid = cleanCpf.length === 11 && cleanCpf !== '00000000000';
+	static mockCPFValidation(cpf: string): { valid: boolean; formatted: string } {
+		// Mock CPF validation for testing
+		const cleanCpf = cpf.replace(/[^\d]/g, "");
+		const isValid = cleanCpf.length === 11 && cleanCpf !== "00000000000";
 
-    const formatted = cleanCpf.replace(
-      /(\d{3})(\d{3})(\d{3})(\d{2})/,
-      '$1.$2.$3-$4'
-    );
+		const formatted = cleanCpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
 
-    return { valid: isValid, formatted };
-  }
+		return { valid: isValid, formatted };
+	}
 }
 
 // Emergency access testing utilities
 export class TestEmergencyAccess {
-  static validateEmergencyJustification(
-    emergencyType: string,
-    justification: string
-  ): boolean {
-    const criticalTypes = ['cardiac_arrest', 'trauma', 'overdose'];
-    const isCritical = criticalTypes.includes(emergencyType);
-    const hasValidJustification = justification.length > 20; // Minimum explanation
+	static validateEmergencyJustification(emergencyType: string, justification: string): boolean {
+		const criticalTypes = ["cardiac_arrest", "trauma", "overdose"];
+		const isCritical = criticalTypes.includes(emergencyType);
+		const hasValidJustification = justification.length > 20; // Minimum explanation
 
-    return isCritical || hasValidJustification;
-  }
+		return isCritical || hasValidJustification;
+	}
 
-  static calculateEmergencyResponseTime(
-    startTime: number,
-    endTime: number
-  ): {
-    responseTime: number;
-    meetsRequirement: boolean;
-  } {
-    const responseTime = endTime - startTime;
-    const meetsRequirement = responseTime <= 10_000; // 10 seconds max
+	static calculateEmergencyResponseTime(
+		startTime: number,
+		endTime: number
+	): {
+		responseTime: number;
+		meetsRequirement: boolean;
+	} {
+		const responseTime = endTime - startTime;
+		const meetsRequirement = responseTime <= 10_000; // 10 seconds max
 
-    return { responseTime, meetsRequirement };
-  }
+		return { responseTime, meetsRequirement };
+	}
 
-  static mockEmergencyNotification(recipients: string[]): {
-    sent: boolean;
-    deliveryStatus: Record<string, boolean>;
-  } {
-    const deliveryStatus: Record<string, boolean> = {};
+	static mockEmergencyNotification(recipients: string[]): {
+		sent: boolean;
+		deliveryStatus: Record<string, boolean>;
+	} {
+		const deliveryStatus: Record<string, boolean> = {};
 
-    recipients.forEach((recipient) => {
-      deliveryStatus[recipient] = Math.random() > 0.1; // 90% delivery success rate
-    });
+		recipients.forEach((recipient) => {
+			deliveryStatus[recipient] = Math.random() > 0.1; // 90% delivery success rate
+		});
 
-    const allDelivered = Object.values(deliveryStatus).every(
-      (delivered) => delivered
-    );
+		const allDelivered = Object.values(deliveryStatus).every((delivered) => delivered);
 
-    return {
-      sent: allDelivered,
-      deliveryStatus,
-    };
-  }
+		return {
+			sent: allDelivered,
+			deliveryStatus,
+		};
+	}
 }
 
 // Healthcare-specific test utilities
 export class TestHealthcareUtilities {
-  static mockBrazilianHealthcareData() {
-    return {
-      states: ['SP', 'RJ', 'MG', 'RS', 'PR', 'SC', 'BA', 'GO'],
-      specialties: [
-        'Cardiologia',
-        'Neurologia',
-        'Ortopedia',
-        'Pediatria',
-        'Ginecologia',
-        'Psiquiatria',
-        'Dermatologia',
-        'Endocrinologia',
-      ],
-      councils: [
-        { name: 'CRM', full_name: 'Conselho Regional de Medicina' },
-        { name: 'COREN', full_name: 'Conselho Regional de Enfermagem' },
-        { name: 'CRF', full_name: 'Conselho Regional de Farmácia' },
-        { name: 'CREFITO', full_name: 'Conselho Regional de Fisioterapia' },
-      ],
-      controlledMedications: [
-        { name: 'Rivotril', class: 'B1', anvisa_code: '1234567890123' },
-        { name: 'Ritalina', class: 'A3', anvisa_code: '2345678901234' },
-        { name: 'Morfina', class: 'A1', anvisa_code: '3456789012345' },
-      ],
-    };
-  }
+	static mockBrazilianHealthcareData() {
+		return {
+			states: ["SP", "RJ", "MG", "RS", "PR", "SC", "BA", "GO"],
+			specialties: [
+				"Cardiologia",
+				"Neurologia",
+				"Ortopedia",
+				"Pediatria",
+				"Ginecologia",
+				"Psiquiatria",
+				"Dermatologia",
+				"Endocrinologia",
+			],
+			councils: [
+				{ name: "CRM", full_name: "Conselho Regional de Medicina" },
+				{ name: "COREN", full_name: "Conselho Regional de Enfermagem" },
+				{ name: "CRF", full_name: "Conselho Regional de Farmácia" },
+				{ name: "CREFITO", full_name: "Conselho Regional de Fisioterapia" },
+			],
+			controlledMedications: [
+				{ name: "Rivotril", class: "B1", anvisa_code: "1234567890123" },
+				{ name: "Ritalina", class: "A3", anvisa_code: "2345678901234" },
+				{ name: "Morfina", class: "A1", anvisa_code: "3456789012345" },
+			],
+		};
+	}
 
-  static generateMockCRM(state = 'SP'): string {
-    const number = Math.floor(Math.random() * 900_000) + 100_000;
-    return `CRM-${state}-${number}`;
-  }
+	static generateMockCRM(state = "SP"): string {
+		const number = Math.floor(Math.random() * 900_000) + 100_000;
+		return `CRM-${state}-${number}`;
+	}
 
-  static validateProfessionalRegistration(crm: string): {
-    valid: boolean;
-    state: string;
-    number: string;
-  } {
-    const crmPattern = /^CRM-([A-Z]{2})-(\d{6})$/;
-    const match = crm.match(crmPattern);
+	static validateProfessionalRegistration(crm: string): {
+		valid: boolean;
+		state: string;
+		number: string;
+	} {
+		const crmPattern = /^CRM-([A-Z]{2})-(\d{6})$/;
+		const match = crm.match(crmPattern);
 
-    if (!match) {
-      return { valid: false, state: '', number: '' };
-    }
+		if (!match) {
+			return { valid: false, state: "", number: "" };
+		}
 
-    return {
-      valid: true,
-      state: match[1],
-      number: match[2],
-    };
-  }
+		return {
+			valid: true,
+			state: match[1],
+			number: match[2],
+		};
+	}
 }
 
 // Global test setup and teardown
 export function setupIntegrationTests() {
-  beforeAll(async () => {
-    console.log('🚀 Starting Integration Tests Setup...');
-    await TestDatabaseCleanup.seedTestData();
-    console.log('✅ Integration Tests Setup Complete');
-  });
+	beforeAll(async () => {
+		console.log("🚀 Starting Integration Tests Setup...");
+		await TestDatabaseCleanup.seedTestData();
+		console.log("✅ Integration Tests Setup Complete");
+	});
 
-  afterAll(async () => {
-    console.log('🧹 Cleaning up Integration Tests...');
-    await TestDatabaseCleanup.cleanupTestData();
+	afterAll(async () => {
+		console.log("🧹 Cleaning up Integration Tests...");
+		await TestDatabaseCleanup.cleanupTestData();
 
-    // Generate performance report
-    const report = TestPerformanceMonitor.generatePerformanceReport();
-    console.log('\n' + report);
+		// Generate performance report
+		const report = TestPerformanceMonitor.generatePerformanceReport();
+		console.log("\n" + report);
 
-    console.log('✅ Integration Tests Cleanup Complete');
-  });
+		console.log("✅ Integration Tests Cleanup Complete");
+	});
 
-  beforeEach(() => {
-    // Reset any global state if needed
-  });
+	beforeEach(() => {
+		// Reset any global state if needed
+	});
 
-  afterEach(() => {
-    // Clean up individual test state
-  });
+	afterEach(() => {
+		// Clean up individual test state
+	});
 }
 
 // Export all utilities for easy importing in tests
 export default {
-  TEST_CONFIG,
-  TestDataFactory,
-  TestPerformanceMonitor,
-  TestLGPDCompliance,
-  TestEmergencyAccess,
-  TestHealthcareUtilities,
-  createTestQueryClient,
-  setupIntegrationTests,
+	TEST_CONFIG,
+	TestDataFactory,
+	TestPerformanceMonitor,
+	TestLGPDCompliance,
+	TestEmergencyAccess,
+	TestHealthcareUtilities,
+	createTestQueryClient,
+	setupIntegrationTests,
 };

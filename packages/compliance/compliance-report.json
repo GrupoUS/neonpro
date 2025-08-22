@@ -4,9 +4,7 @@
   "complianceFrameworks": {
     "LGPD": {
       "name": "Lei Geral de Proteção de Dados",
-      "tasks": [
-        "compliance:lgpd"
-      ],
+      "tasks": ["compliance:lgpd"],
       "requirements": [
         "data encryption",
         "consent management",
@@ -15,9 +13,7 @@
     },
     "ANVISA": {
       "name": "Agência Nacional de Vigilância Sanitária",
-      "tasks": [
-        "compliance:anvisa"
-      ],
+      "tasks": ["compliance:anvisa"],
       "requirements": [
         "treatment validation",
         "medical device compliance",
@@ -26,9 +22,7 @@
     },
     "CFM": {
       "name": "Conselho Federal de Medicina",
-      "tasks": [
-        "compliance:cfm"
-      ],
+      "tasks": ["compliance:cfm"],
       "requirements": [
         "medical professional validation",
         "telemedicine compliance",

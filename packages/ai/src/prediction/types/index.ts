@@ -7,189 +7,178 @@
 // ==================== CORE MODEL TYPES ====================
 
 export type ModelType =
-  | 'treatment-outcome'
-  | 'duration-estimation'
-  | 'success-probability'
-  | 'risk-assessment'
-  | 'botox-optimization'
-  | 'filler-volume'
-  | 'laser-settings';
+	| "treatment-outcome"
+	| "duration-estimation"
+	| "success-probability"
+	| "risk-assessment"
+	| "botox-optimization"
+	| "filler-volume"
+	| "laser-settings";
 
 export type PredictionConfig = {
-  modelPath: string;
-  inputShape: number[];
-  outputShape: number[];
-  accuracy: number;
-  version: string;
+	modelPath: string;
+	inputShape: number[];
+	outputShape: number[];
+	accuracy: number;
+	version: string;
 };
 
 export type ModelMetadata = {
-  type: ModelType;
-  version: string;
-  accuracy: number;
-  loadedAt: Date;
-  inputShape: number[];
-  outputShape: number[];
+	type: ModelType;
+	version: string;
+	accuracy: number;
+	loadedAt: Date;
+	inputShape: number[];
+	outputShape: number[];
 }; // ==================== PATIENT DATA TYPES ====================
 
 export type PatientProfile = {
-  id: string;
-  age: number;
-  gender: 'male' | 'female' | 'other';
-  skinType: SkinType;
-  medicalHistory: MedicalHistory;
-  lifestyle: LifestyleFactors;
-  previousTreatments: TreatmentHistory[];
-  goals: TreatmentGoals;
-  consentStatus: LGPDConsent;
+	id: string;
+	age: number;
+	gender: "male" | "female" | "other";
+	skinType: SkinType;
+	medicalHistory: MedicalHistory;
+	lifestyle: LifestyleFactors;
+	previousTreatments: TreatmentHistory[];
+	goals: TreatmentGoals;
+	consentStatus: LGPDConsent;
 };
 
 export type SkinType =
-  | 'fitzpatrick-1' // Very fair, always burns
-  | 'fitzpatrick-2' // Fair, usually burns
-  | 'fitzpatrick-3' // Medium, sometimes burns
-  | 'fitzpatrick-4' // Olive, rarely burns
-  | 'fitzpatrick-5' // Brown, very rarely burns
-  | 'fitzpatrick-6'; // Dark brown/black, never burns
+	| "fitzpatrick-1" // Very fair, always burns
+	| "fitzpatrick-2" // Fair, usually burns
+	| "fitzpatrick-3" // Medium, sometimes burns
+	| "fitzpatrick-4" // Olive, rarely burns
+	| "fitzpatrick-5" // Brown, very rarely burns
+	| "fitzpatrick-6"; // Dark brown/black, never burns
 
 export type MedicalHistory = {
-  allergies: string[];
-  medications: Medication[];
-  conditions: MedicalCondition[];
-  pregnancyStatus?: boolean;
-  breastfeedingStatus?: boolean;
-  autoimmuneDiseases: string[];
-  bloodThinnersUse: boolean;
-  keloidProneness: boolean;
+	allergies: string[];
+	medications: Medication[];
+	conditions: MedicalCondition[];
+	pregnancyStatus?: boolean;
+	breastfeedingStatus?: boolean;
+	autoimmuneDiseases: string[];
+	bloodThinnersUse: boolean;
+	keloidProneness: boolean;
 };
 
 export type Medication = {
-  name: string;
-  dosage: string;
-  frequency: string;
-  isBloodThinner: boolean;
-  affectsHealing: boolean;
+	name: string;
+	dosage: string;
+	frequency: string;
+	isBloodThinner: boolean;
+	affectsHealing: boolean;
 };
 export type MedicalCondition = {
-  name: string;
-  severity: 'mild' | 'moderate' | 'severe';
-  treatmentRelevant: boolean;
-  contraindication: boolean;
+	name: string;
+	severity: "mild" | "moderate" | "severe";
+	treatmentRelevant: boolean;
+	contraindication: boolean;
 };
 
 export type LifestyleFactors = {
-  smoking: boolean;
-  smokingFrequency?: 'occasional' | 'daily' | 'heavy';
-  alcohol: boolean;
-  alcoholFrequency?: 'occasional' | 'moderate' | 'heavy';
-  sunExposure: 'minimal' | 'moderate' | 'high';
-  skincare: SkincareRoutine;
-  exerciseLevel: 'sedentary' | 'light' | 'moderate' | 'high';
-  stressLevel: number; // 1-10 scale
-  sleepQuality: number; // 1-10 scale
+	smoking: boolean;
+	smokingFrequency?: "occasional" | "daily" | "heavy";
+	alcohol: boolean;
+	alcoholFrequency?: "occasional" | "moderate" | "heavy";
+	sunExposure: "minimal" | "moderate" | "high";
+	skincare: SkincareRoutine;
+	exerciseLevel: "sedentary" | "light" | "moderate" | "high";
+	stressLevel: number; // 1-10 scale
+	sleepQuality: number; // 1-10 scale
 };
 
 export type SkincareRoutine = {
-  cleansing: boolean;
-  moisturizing: boolean;
-  sunscreenUse: boolean;
-  retinoidUse: boolean;
-  exfoliation: boolean;
-  professionalTreatments: string[];
+	cleansing: boolean;
+	moisturizing: boolean;
+	sunscreenUse: boolean;
+	retinoidUse: boolean;
+	exfoliation: boolean;
+	professionalTreatments: string[];
 };
 
 // ==================== TREATMENT TYPES ====================
 
 export type TreatmentRequest = {
-  patientId: string;
-  treatmentType: TreatmentType;
-  targetAreas: TargetArea[];
-  goals: TreatmentGoals;
-  urgency: 'low' | 'moderate' | 'high';
-  budgetRange: BudgetRange;
-  timeframe: TimeframePreference;
+	patientId: string;
+	treatmentType: TreatmentType;
+	targetAreas: TargetArea[];
+	goals: TreatmentGoals;
+	urgency: "low" | "moderate" | "high";
+	budgetRange: BudgetRange;
+	timeframe: TimeframePreference;
 };
 export type TreatmentType =
-  | 'botox'
-  | 'dermal-fillers'
-  | 'laser-resurfacing'
-  | 'laser-hair-removal'
-  | 'chemical-peel'
-  | 'microneedling'
-  | 'coolsculpting'
-  | 'radiofrequency'
-  | 'photofacial'
-  | 'thread-lift';
+	| "botox"
+	| "dermal-fillers"
+	| "laser-resurfacing"
+	| "laser-hair-removal"
+	| "chemical-peel"
+	| "microneedling"
+	| "coolsculpting"
+	| "radiofrequency"
+	| "photofacial"
+	| "thread-lift";
 
 export type TargetArea = {
-  region: FacialRegion | BodyRegion;
-  concern: AestheticConcern;
-  severity: number; // 1-10 scale
-  priority: number; // 1-5 scale
+	region: FacialRegion | BodyRegion;
+	concern: AestheticConcern;
+	severity: number; // 1-10 scale
+	priority: number; // 1-5 scale
 };
 
 export type FacialRegion =
-  | 'forehead'
-  | 'glabella'
-  | 'crows-feet'
-  | 'under-eyes'
-  | 'cheeks'
-  | 'nasolabial-folds'
-  | 'marionette-lines'
-  | 'lips'
-  | 'jawline'
-  | 'neck';
+	| "forehead"
+	| "glabella"
+	| "crows-feet"
+	| "under-eyes"
+	| "cheeks"
+	| "nasolabial-folds"
+	| "marionette-lines"
+	| "lips"
+	| "jawline"
+	| "neck";
 
-export type BodyRegion =
-  | 'abdomen'
-  | 'thighs'
-  | 'arms'
-  | 'back'
-  | 'chest'
-  | 'flanks'
-  | 'buttocks';
+export type BodyRegion = "abdomen" | "thighs" | "arms" | "back" | "chest" | "flanks" | "buttocks";
 
 export type AestheticConcern =
-  | 'wrinkles'
-  | 'fine-lines'
-  | 'volume-loss'
-  | 'sagging'
-  | 'pigmentation'
-  | 'acne-scars'
-  | 'texture'
-  | 'excess-fat'
-  | 'cellulite'
-  | 'unwanted-hair';
+	| "wrinkles"
+	| "fine-lines"
+	| "volume-loss"
+	| "sagging"
+	| "pigmentation"
+	| "acne-scars"
+	| "texture"
+	| "excess-fat"
+	| "cellulite"
+	| "unwanted-hair";
 
 export type TreatmentGoals = {
-  primary: string;
-  secondary: string[];
-  expectations: ExpectationLevel;
-  maintenance: boolean;
-  naturalLook: boolean;
+	primary: string;
+	secondary: string[];
+	expectations: ExpectationLevel;
+	maintenance: boolean;
+	naturalLook: boolean;
 };
 
-export type ExpectationLevel = 'subtle' | 'moderate' | 'dramatic';
+export type ExpectationLevel = "subtle" | "moderate" | "dramatic";
 
-export type TimeframePreference =
-  | 'immediate'
-  | 'within-month'
-  | 'within-quarter'
-  | 'flexible';
+export type TimeframePreference = "immediate" | "within-month" | "within-quarter" | "flexible";
 
 export type TreatmentHistory = {
-  treatmentType: TreatmentType;
-  date: Date;
-  provider: string;
-  outcome: 'excellent' | 'good' | 'fair' | 'poor';
-  sideEffects?: string[];
+	treatmentType: TreatmentType;
+	date: Date;
+	provider: string;
+	outcome: "excellent" | "good" | "fair" | "poor";
+	sideEffects?: string[];
 };
 
-export type LGPDConsent = 'granted' | 'denied' | 'pending' | 'withdrawn';
+export type LGPDConsent = "granted" | "denied" | "pending" | "withdrawn";
 
 export type BudgetRange = {
-  min: number;
-  max: number;
-  currency: string;
-  flexible: boolean;
+	min: number;
+	max: number;
+	currency: string;
+	flexible: boolean;
 };

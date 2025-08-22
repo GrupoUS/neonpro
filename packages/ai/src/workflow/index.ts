@@ -12,6 +12,6 @@
 
 // Placeholder exports for workflow automation
 export const WorkflowConfig = {
-  version: '1.0.0',
-  features: ['automation', 'optimization', 'compliance'],
+	version: "1.0.0",
+	features: ["automation", "optimization", "compliance"],
 } as const;

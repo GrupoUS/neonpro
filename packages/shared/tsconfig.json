@@ -27,18 +27,7 @@
     "allowUnreachableCode": false,
     "tsBuildInfoFile": "./dist/.tsbuildinfo"
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx"
-  ],
-  "references": [
-    { "path": "../db" },
-    { "path": "../types" }
-  ],
-  "exclude": [
-    "dist",
-    "node_modules",
-    "**/*.test.ts",
-    "**/*.spec.ts"
-  ]
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "references": [{ "path": "../db" }, { "path": "../types" }],
+  "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.spec.ts"]
 }

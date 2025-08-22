@@ -4,216 +4,203 @@
  * Otimizado para ambiente healthcare com LGPD compliance
  */
 
-import type { Database } from '@neonpro/db';
-import { useQueryClient } from '@tanstack/react-query';
-import { useCallback, useEffect, useState } from 'react';
-import { getRealtimeManager } from '../connection-manager';
+import type { Database } from "@neonpro/db";
+import { useQueryClient } from "@tanstack/react-query";
+import { useCallback, useEffect, useState } from "react";
+import { getRealtimeManager } from "../connection-manager";
 
 // Explicitly use database patient type (snake_case) not entities type (camelCase)
-type PatientRow = Database['public']['Tables']['patients']['Row'];
+type PatientRow = Database["public"]["Tables"]["patients"]["Row"];
 // Remove unused imports for now until we align the types properly
 // type PatientInsert = Database['public']['Tables']['patients']['Insert'];
 // type PatientUpdate = Database['public']['Tables']['patients']['Update'];
 
 export interface RealtimePatientPayload {
-  eventType: 'INSERT' | 'UPDATE' | 'DELETE';
-  new?: PatientRow;
-  old?: PatientRow;
-  errors?: string[];
+	eventType: "INSERT" | "UPDATE" | "DELETE";
+	new?: PatientRow;
+	old?: PatientRow;
+	errors?: string[];
 }
 
 export interface UseRealtimePatientsOptions {
-  tenantId: string;
-  enabled?: boolean;
-  onPatientChange?: (payload: RealtimePatientPayload) => void;
-  onError?: (error: Error) => void;
-  queryKey?: string[];
+	tenantId: string;
+	enabled?: boolean;
+	onPatientChange?: (payload: RealtimePatientPayload) => void;
+	onError?: (error: Error) => void;
+	queryKey?: string[];
 }
 
 export interface UseRealtimePatientsReturn {
-  isConnected: boolean;
-  connectionHealth: number;
-  lastUpdate: Date | null;
-  totalUpdates: number;
-  subscribe: () => void;
-  unsubscribe: () => void;
+	isConnected: boolean;
+	connectionHealth: number;
+	lastUpdate: Date | null;
+	totalUpdates: number;
+	subscribe: () => void;
+	unsubscribe: () => void;
 } /**
  * MANDATORY Real-time Patient Hook
  * Combina Supabase Realtime com TanStack Query cache management
  */
-export function useRealtimePatients(
-  options: UseRealtimePatientsOptions
-): UseRealtimePatientsReturn {
-  const {
-    tenantId,
-    enabled = true,
-    onPatientChange,
-    onError,
-    queryKey = ['patients', tenantId],
-  } = options;
+export function useRealtimePatients(options: UseRealtimePatientsOptions): UseRealtimePatientsReturn {
+	const { tenantId, enabled = true, onPatientChange, onError, queryKey = ["patients", tenantId] } = options;
 
-  const queryClient = useQueryClient();
-  const [isConnected, setIsConnected] = useState(false);
-  const [connectionHealth, setConnectionHealth] = useState(0);
-  const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
-  const [totalUpdates, setTotalUpdates] = useState(0);
-  const [unsubscribeFn, setUnsubscribeFn] = useState<(() => void) | null>(null);
+	const queryClient = useQueryClient();
+	const [isConnected, setIsConnected] = useState(false);
+	const [connectionHealth, setConnectionHealth] = useState(0);
+	const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
+	const [totalUpdates, setTotalUpdates] = useState(0);
+	const [unsubscribeFn, setUnsubscribeFn] = useState<(() => void) | null>(null);
 
-  /**
-   * Handle realtime patient changes
-   */
-  const handlePatientChange = useCallback(
-    (payload: any) => {
-      try {
-        const realtimePayload: RealtimePatientPayload = {
-          eventType: payload.eventType,
-          new: payload.new as PatientRow,
-          old: payload.old as PatientRow,
-        };
+	/**
+	 * Handle realtime patient changes
+	 */
+	const handlePatientChange = useCallback(
+		(payload: any) => {
+			try {
+				const realtimePayload: RealtimePatientPayload = {
+					eventType: payload.eventType,
+					new: payload.new as PatientRow,
+					old: payload.old as PatientRow,
+				};
 
-        // Update metrics
-        setLastUpdate(new Date());
-        setTotalUpdates((prev) => prev + 1);
+				// Update metrics
+				setLastUpdate(new Date());
+				setTotalUpdates((prev) => prev + 1);
 
-        // Update TanStack Query cache
-        updateQueryCache(realtimePayload);
+				// Update TanStack Query cache
+				updateQueryCache(realtimePayload);
 
-        // Call user callback
-        if (onPatientChange) {
-          onPatientChange(realtimePayload);
-        }
+				// Call user callback
+				if (onPatientChange) {
+					onPatientChange(realtimePayload);
+				}
 
-        // Log for healthcare audit trail
-        console.log(`[RealtimePatients] ${payload.eventType} event:`, {
-          patientId: realtimePayload.new?.id || realtimePayload.old?.id,
-          tenantId,
-          timestamp: new Date().toISOString(),
-        });
-      } catch (error) {
-        console.error('[RealtimePatients] Payload processing error:', error);
-        if (onError) {
-          onError(error as Error);
-        }
-      }
-    },
-    [onPatientChange, onError, tenantId]
-  ); /**
-   * Update TanStack Query cache based on realtime changes
-   */
-  const updateQueryCache = useCallback(
-    (payload: RealtimePatientPayload) => {
-      const { eventType, new: newData, old: oldData } = payload;
+				// Log for healthcare audit trail
+				console.log(`[RealtimePatients] ${payload.eventType} event:`, {
+					patientId: realtimePayload.new?.id || realtimePayload.old?.id,
+					tenantId,
+					timestamp: new Date().toISOString(),
+				});
+			} catch (error) {
+				console.error("[RealtimePatients] Payload processing error:", error);
+				if (onError) {
+					onError(error as Error);
+				}
+			}
+		},
+		[onPatientChange, onError, tenantId]
+	); /**
+	 * Update TanStack Query cache based on realtime changes
+	 */
+	const updateQueryCache = useCallback(
+		(payload: RealtimePatientPayload) => {
+			const { eventType, new: newData, old: oldData } = payload;
 
-      // Update patients list cache
-      queryClient.setQueryData(
-        queryKey,
-        (oldCache: PatientRow[] | undefined) => {
-          if (!oldCache) return oldCache;
+			// Update patients list cache
+			queryClient.setQueryData(queryKey, (oldCache: PatientRow[] | undefined) => {
+				if (!oldCache) return oldCache;
 
-          switch (eventType) {
-            case 'INSERT':
-              if (newData && newData.clinic_id === tenantId) {
-                return [...oldCache, newData];
-              }
-              return oldCache;
+				switch (eventType) {
+					case "INSERT":
+						if (newData && newData.clinic_id === tenantId) {
+							return [...oldCache, newData];
+						}
+						return oldCache;
 
-            case 'UPDATE':
-              if (newData) {
-                return oldCache.map((patient) =>
-                  patient.id === newData.id ? newData : patient
-                );
-              }
-              return oldCache;
+					case "UPDATE":
+						if (newData) {
+							return oldCache.map((patient) => (patient.id === newData.id ? newData : patient));
+						}
+						return oldCache;
 
-            case 'DELETE':
-              if (oldData) {
-                return oldCache.filter((patient) => patient.id !== oldData.id);
-              }
-              return oldCache;
+					case "DELETE":
+						if (oldData) {
+							return oldCache.filter((patient) => patient.id !== oldData.id);
+						}
+						return oldCache;
 
-            default:
-              return oldCache;
-          }
-        }
-      );
+					default:
+						return oldCache;
+				}
+			});
 
-      // Update individual patient cache if exists
-      if (newData) {
-        queryClient.setQueryData(['patient', newData.id], newData);
-      } else if (oldData && eventType === 'DELETE') {
-        queryClient.removeQueries({ queryKey: ['patient', oldData.id] });
-      }
+			// Update individual patient cache if exists
+			if (newData) {
+				queryClient.setQueryData(["patient", newData.id], newData);
+			} else if (oldData && eventType === "DELETE") {
+				queryClient.removeQueries({ queryKey: ["patient", oldData.id] });
+			}
 
-      // Invalidate related queries for fresh data
-      queryClient.invalidateQueries({
-        queryKey: ['patient-analytics', tenantId],
-      });
-      queryClient.invalidateQueries({ queryKey: ['patient-stats', tenantId] });
-    },
-    [queryClient, queryKey, tenantId]
-  );
+			// Invalidate related queries for fresh data
+			queryClient.invalidateQueries({
+				queryKey: ["patient-analytics", tenantId],
+			});
+			queryClient.invalidateQueries({ queryKey: ["patient-stats", tenantId] });
+		},
+		[queryClient, queryKey, tenantId]
+	);
 
-  /**
-   * Subscribe to realtime patient updates
-   */
-  const subscribe = useCallback(() => {
-    if (!enabled || unsubscribeFn) return;
+	/**
+	 * Subscribe to realtime patient updates
+	 */
+	const subscribe = useCallback(() => {
+		if (!enabled || unsubscribeFn) return;
 
-    const realtimeManager = getRealtimeManager();
+		const realtimeManager = getRealtimeManager();
 
-    const unsubscribe = realtimeManager.subscribe(
-      `patients:clinic_id=eq.${tenantId}`,
-      {
-        table: 'patients',
-        filter: `clinic_id=eq.${tenantId}`,
-      },
-      handlePatientChange
-    );
+		const unsubscribe = realtimeManager.subscribe(
+			`patients:clinic_id=eq.${tenantId}`,
+			{
+				table: "patients",
+				filter: `clinic_id=eq.${tenantId}`,
+			},
+			handlePatientChange
+		);
 
-    setUnsubscribeFn(() => unsubscribe);
-  }, [enabled, tenantId, handlePatientChange, unsubscribeFn]); /**
-   * Unsubscribe from realtime patient updates
-   */
-  const unsubscribe = useCallback(() => {
-    if (unsubscribeFn) {
-      unsubscribeFn();
-      setUnsubscribeFn(null);
-    }
-  }, [unsubscribeFn]);
+		setUnsubscribeFn(() => unsubscribe);
+	}, [enabled, tenantId, handlePatientChange, unsubscribeFn]); /**
+	 * Unsubscribe from realtime patient updates
+	 */
+	const unsubscribe = useCallback(() => {
+		if (unsubscribeFn) {
+			unsubscribeFn();
+			setUnsubscribeFn(null);
+		}
+	}, [unsubscribeFn]);
 
-  /**
-   * Monitor connection status
-   */
-  useEffect(() => {
-    if (!enabled) return;
+	/**
+	 * Monitor connection status
+	 */
+	useEffect(() => {
+		if (!enabled) return;
 
-    const realtimeManager = getRealtimeManager();
+		const realtimeManager = getRealtimeManager();
 
-    const unsubscribeStatus = realtimeManager.onStatusChange((status) => {
-      setIsConnected(status.isConnected);
-      setConnectionHealth(status.healthScore);
-    });
+		const unsubscribeStatus = realtimeManager.onStatusChange((status) => {
+			setIsConnected(status.isConnected);
+			setConnectionHealth(status.healthScore);
+		});
 
-    // Auto-subscribe if enabled
-    if (enabled) {
-      subscribe();
-    }
+		// Auto-subscribe if enabled
+		if (enabled) {
+			subscribe();
+		}
 
-    // Cleanup on unmount
-    return () => {
-      unsubscribe();
-      unsubscribeStatus();
-    };
-  }, [enabled, subscribe, unsubscribe]);
+		// Cleanup on unmount
+		return () => {
+			unsubscribe();
+			unsubscribeStatus();
+		};
+	}, [enabled, subscribe, unsubscribe]);
 
-  return {
-    isConnected,
-    connectionHealth,
-    lastUpdate,
-    totalUpdates,
-    subscribe,
-    unsubscribe,
-  };
+	return {
+		isConnected,
+		connectionHealth,
+		lastUpdate,
+		totalUpdates,
+		subscribe,
+		unsubscribe,
+	};
 }
 
 /**
@@ -221,44 +208,36 @@ export function useRealtimePatients(
  * Permite updates imediatos no UI antes da confirmação do servidor
  */
 export function useOptimisticPatients(tenantId: string) {
-  const queryClient = useQueryClient();
+	const queryClient = useQueryClient();
 
-  const optimisticUpdate = useCallback(
-    (patientId: string, updates: Partial<PatientRow>) => {
-      // Update patients list optimistically
-      queryClient.setQueryData(
-        ['patients', tenantId],
-        (oldCache: PatientRow[] | undefined) => {
-          if (!oldCache) return oldCache;
-          return oldCache.map((patient) =>
-            patient.id === patientId ? { ...patient, ...updates } : patient
-          );
-        }
-      );
+	const optimisticUpdate = useCallback(
+		(patientId: string, updates: Partial<PatientRow>) => {
+			// Update patients list optimistically
+			queryClient.setQueryData(["patients", tenantId], (oldCache: PatientRow[] | undefined) => {
+				if (!oldCache) return oldCache;
+				return oldCache.map((patient) => (patient.id === patientId ? { ...patient, ...updates } : patient));
+			});
 
-      // Update individual patient cache
-      queryClient.setQueryData(
-        ['patient', patientId],
-        (oldData: PatientRow | undefined) => {
-          if (!oldData) return oldData;
-          return { ...oldData, ...updates };
-        }
-      );
-    },
-    [queryClient, tenantId]
-  );
+			// Update individual patient cache
+			queryClient.setQueryData(["patient", patientId], (oldData: PatientRow | undefined) => {
+				if (!oldData) return oldData;
+				return { ...oldData, ...updates };
+			});
+		},
+		[queryClient, tenantId]
+	);
 
-  const rollbackUpdate = useCallback(
-    (patientId: string) => {
-      // Invalidate caches to fetch fresh data
-      queryClient.invalidateQueries({ queryKey: ['patients', tenantId] });
-      queryClient.invalidateQueries({ queryKey: ['patient', patientId] });
-    },
-    [queryClient, tenantId]
-  );
+	const rollbackUpdate = useCallback(
+		(patientId: string) => {
+			// Invalidate caches to fetch fresh data
+			queryClient.invalidateQueries({ queryKey: ["patients", tenantId] });
+			queryClient.invalidateQueries({ queryKey: ["patient", patientId] });
+		},
+		[queryClient, tenantId]
+	);
 
-  return {
-    optimisticUpdate,
-    rollbackUpdate,
-  };
+	return {
+		optimisticUpdate,
+		rollbackUpdate,
+	};
 }

@@ -1,33 +1,33 @@
 // Baseline monitoring for system health
 export type BaselineMetric = {
-  name: string;
-  value: number;
-  baseline: number;
-  threshold: number;
-  status: 'healthy' | 'warning' | 'critical';
+	name: string;
+	value: number;
+	baseline: number;
+	threshold: number;
+	status: "healthy" | "warning" | "critical";
 };
 
 export class BaselineMonitoringService {
-  static checkSystemHealth(): BaselineMetric[] {
-    return [
-      {
-        name: 'response_time',
-        value: 45,
-        baseline: 50,
-        threshold: 100,
-        status: 'healthy',
-      },
-      {
-        name: 'error_rate',
-        value: 0.1,
-        baseline: 0.5,
-        threshold: 1.0,
-        status: 'healthy',
-      },
-    ];
-  }
+	static checkSystemHealth(): BaselineMetric[] {
+		return [
+			{
+				name: "response_time",
+				value: 45,
+				baseline: 50,
+				threshold: 100,
+				status: "healthy",
+			},
+			{
+				name: "error_rate",
+				value: 0.1,
+				baseline: 0.5,
+				threshold: 1.0,
+				status: "healthy",
+			},
+		];
+	}
 
-  static recordBaseline(_metric: string, _value: number): void {}
+	static recordBaseline(_metric: string, _value: number): void {}
 }
 
 export default BaselineMonitoringService;

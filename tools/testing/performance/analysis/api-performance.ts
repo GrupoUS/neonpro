@@ -4,266 +4,243 @@
  * Tests Hono.dev backend API performance, load testing, and healthcare endpoints
  */
 
-import { performance } from 'perf_hooks';
+import { performance } from "perf_hooks";
 
 export interface ApiPerformanceMetrics {
-  responseTime: {
-    p50: number;
-    p95: number;
-    p99: number;
-    average: number;
-  };
-  throughput: number;
-  errorRate: number;
-  memoryUsage: number;
-  cpuUsage: number;
+	responseTime: {
+		p50: number;
+		p95: number;
+		p99: number;
+		average: number;
+	};
+	throughput: number;
+	errorRate: number;
+	memoryUsage: number;
+	cpuUsage: number;
 }
 
 export interface HealthcareApiMetrics {
-  patientEndpoints: EndpointMetrics;
-  appointmentEndpoints: EndpointMetrics;
-  medicalRecordEndpoints: EndpointMetrics;
-  authenticationEndpoints: EndpointMetrics;
-  emergencyEndpoints: EndpointMetrics;
+	patientEndpoints: EndpointMetrics;
+	appointmentEndpoints: EndpointMetrics;
+	medicalRecordEndpoints: EndpointMetrics;
+	authenticationEndpoints: EndpointMetrics;
+	emergencyEndpoints: EndpointMetrics;
 }
 
 export interface EndpointMetrics {
-  endpoint: string;
-  method: string;
-  averageResponseTime: number;
-  maxResponseTime: number;
-  minResponseTime: number;
-  errorRate: number;
-  requestsPerSecond: number;
+	endpoint: string;
+	method: string;
+	averageResponseTime: number;
+	maxResponseTime: number;
+	minResponseTime: number;
+	errorRate: number;
+	requestsPerSecond: number;
 }
 
 export interface LoadTestConfig {
-  baseUrl: string;
-  concurrentUsers: number;
-  duration: number; // seconds
-  rampUpTime: number; // seconds
+	baseUrl: string;
+	concurrentUsers: number;
+	duration: number; // seconds
+	rampUpTime: number; // seconds
 }
 
 export class ApiPerformanceTester {
-  private baseUrl: string;
-  private authToken?: string;
+	private baseUrl: string;
+	private authToken?: string;
 
-  constructor(baseUrl: string, authToken?: string) {
-    this.baseUrl = baseUrl;
-    this.authToken = authToken;
-  }
+	constructor(baseUrl: string, authToken?: string) {
+		this.baseUrl = baseUrl;
+		this.authToken = authToken;
+	}
 
-  /**
-   * Test single endpoint performance
-   */
-  async testEndpoint(
-    endpoint: string,
-    method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'GET',
-    payload?: any,
-    iterations = 100
-  ): Promise<EndpointMetrics> {
-    const responseTimes: number[] = [];
-    let errorCount = 0;
-    const startTime = performance.now();
+	/**
+	 * Test single endpoint performance
+	 */
+	async testEndpoint(
+		endpoint: string,
+		method: "GET" | "POST" | "PUT" | "DELETE" = "GET",
+		payload?: any,
+		iterations = 100
+	): Promise<EndpointMetrics> {
+		const responseTimes: number[] = [];
+		let errorCount = 0;
+		const startTime = performance.now();
 
-    for (let i = 0; i < iterations; i++) {
-      const requestStart = performance.now();
+		for (let i = 0; i < iterations; i++) {
+			const requestStart = performance.now();
 
-      try {
-        const response = await fetch(`${this.baseUrl}${endpoint}`, {
-          method,
-          headers: {
-            'Content-Type': 'application/json',
-            ...(this.authToken && {
-              Authorization: `Bearer ${this.authToken}`,
-            }),
-          },
-          ...(payload && { body: JSON.stringify(payload) }),
-        });
+			try {
+				const response = await fetch(`${this.baseUrl}${endpoint}`, {
+					method,
+					headers: {
+						"Content-Type": "application/json",
+						...(this.authToken && {
+							Authorization: `Bearer ${this.authToken}`,
+						}),
+					},
+					...(payload && { body: JSON.stringify(payload) }),
+				});
 
-        const requestEnd = performance.now();
-        responseTimes.push(requestEnd - requestStart);
+				const requestEnd = performance.now();
+				responseTimes.push(requestEnd - requestStart);
 
-        if (!response.ok) {
-          errorCount++;
-        }
-      } catch (error) {
-        errorCount++;
-        responseTimes.push(10_000); // 10s timeout penalty
-      }
-    }
+				if (!response.ok) {
+					errorCount++;
+				}
+			} catch (error) {
+				errorCount++;
+				responseTimes.push(10_000); // 10s timeout penalty
+			}
+		}
 
-    const totalTime = performance.now() - startTime;
+		const totalTime = performance.now() - startTime;
 
-    responseTimes.sort((a, b) => a - b);
+		responseTimes.sort((a, b) => a - b);
 
-    return {
-      endpoint,
-      method,
-      averageResponseTime:
-        responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length,
-      maxResponseTime: Math.max(...responseTimes),
-      minResponseTime: Math.min(...responseTimes),
-      errorRate: errorCount / iterations,
-      requestsPerSecond: iterations / (totalTime / 1000),
-    };
-  } /**
-   * Test healthcare-specific API endpoints
-   */
-  async testHealthcareEndpoints(): Promise<HealthcareApiMetrics> {
-    const results: HealthcareApiMetrics = {
-      patientEndpoints: await this.testEndpoint('/api/patients', 'GET'),
-      appointmentEndpoints: await this.testEndpoint('/api/appointments', 'GET'),
-      medicalRecordEndpoints: await this.testEndpoint(
-        '/api/medical-records',
-        'GET'
-      ),
-      authenticationEndpoints: await this.testEndpoint(
-        '/api/auth/validate',
-        'POST',
-        {
-          token: this.authToken,
-        }
-      ),
-      emergencyEndpoints: await this.testEndpoint(
-        '/api/emergency/patient-data',
-        'GET'
-      ),
-    };
+		return {
+			endpoint,
+			method,
+			averageResponseTime: responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length,
+			maxResponseTime: Math.max(...responseTimes),
+			minResponseTime: Math.min(...responseTimes),
+			errorRate: errorCount / iterations,
+			requestsPerSecond: iterations / (totalTime / 1000),
+		};
+	} /**
+	 * Test healthcare-specific API endpoints
+	 */
+	async testHealthcareEndpoints(): Promise<HealthcareApiMetrics> {
+		const results: HealthcareApiMetrics = {
+			patientEndpoints: await this.testEndpoint("/api/patients", "GET"),
+			appointmentEndpoints: await this.testEndpoint("/api/appointments", "GET"),
+			medicalRecordEndpoints: await this.testEndpoint("/api/medical-records", "GET"),
+			authenticationEndpoints: await this.testEndpoint("/api/auth/validate", "POST", {
+				token: this.authToken,
+			}),
+			emergencyEndpoints: await this.testEndpoint("/api/emergency/patient-data", "GET"),
+		};
 
-    return results;
-  }
+		return results;
+	}
 
-  /**
-   * Run load testing simulation
-   */
-  async runLoadTest(config: LoadTestConfig): Promise<ApiPerformanceMetrics> {
-    const { concurrentUsers, duration, rampUpTime } = config;
-    const responseTimes: number[] = [];
-    let totalRequests = 0;
-    let totalErrors = 0;
+	/**
+	 * Run load testing simulation
+	 */
+	async runLoadTest(config: LoadTestConfig): Promise<ApiPerformanceMetrics> {
+		const { concurrentUsers, duration, rampUpTime } = config;
+		const responseTimes: number[] = [];
+		let totalRequests = 0;
+		let totalErrors = 0;
 
-    const startTime = performance.now();
-    const endTime = startTime + duration * 1000;
+		const startTime = performance.now();
+		const endTime = startTime + duration * 1000;
 
-    // Simulate concurrent users with ramp-up
-    const userPromises: Promise<void>[] = [];
+		// Simulate concurrent users with ramp-up
+		const userPromises: Promise<void>[] = [];
 
-    for (let user = 0; user < concurrentUsers; user++) {
-      const userDelay = (rampUpTime * 1000 * user) / concurrentUsers;
+		for (let user = 0; user < concurrentUsers; user++) {
+			const userDelay = (rampUpTime * 1000 * user) / concurrentUsers;
 
-      userPromises.push(
-        this.simulateUser(userDelay, endTime, responseTimes).then((results) => {
-          totalRequests += results.requests;
-          totalErrors += results.errors;
-        })
-      );
-    }
+			userPromises.push(
+				this.simulateUser(userDelay, endTime, responseTimes).then((results) => {
+					totalRequests += results.requests;
+					totalErrors += results.errors;
+				})
+			);
+		}
 
-    await Promise.all(userPromises);
+		await Promise.all(userPromises);
 
-    const totalTime = performance.now() - startTime;
-    responseTimes.sort((a, b) => a - b);
+		const totalTime = performance.now() - startTime;
+		responseTimes.sort((a, b) => a - b);
 
-    return {
-      responseTime: {
-        average:
-          responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length,
-        p50: this.percentile(responseTimes, 0.5),
-        p95: this.percentile(responseTimes, 0.95),
-        p99: this.percentile(responseTimes, 0.99),
-      },
-      throughput: totalRequests / (totalTime / 1000),
-      errorRate: totalErrors / totalRequests,
-      memoryUsage: 0, // Would need process monitoring
-      cpuUsage: 0, // Would need process monitoring
-    };
-  }
-  private async simulateUser(
-    startDelay: number,
-    endTime: number,
-    responseTimes: number[]
-  ): Promise<{ requests: number; errors: number }> {
-    await new Promise((resolve) => setTimeout(resolve, startDelay));
+		return {
+			responseTime: {
+				average: responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length,
+				p50: this.percentile(responseTimes, 0.5),
+				p95: this.percentile(responseTimes, 0.95),
+				p99: this.percentile(responseTimes, 0.99),
+			},
+			throughput: totalRequests / (totalTime / 1000),
+			errorRate: totalErrors / totalRequests,
+			memoryUsage: 0, // Would need process monitoring
+			cpuUsage: 0, // Would need process monitoring
+		};
+	}
+	private async simulateUser(
+		startDelay: number,
+		endTime: number,
+		responseTimes: number[]
+	): Promise<{ requests: number; errors: number }> {
+		await new Promise((resolve) => setTimeout(resolve, startDelay));
 
-    let requests = 0;
-    let errors = 0;
+		let requests = 0;
+		let errors = 0;
 
-    while (performance.now() < endTime) {
-      const requestStart = performance.now();
+		while (performance.now() < endTime) {
+			const requestStart = performance.now();
 
-      try {
-        const response = await fetch(`${this.baseUrl}/api/health`);
-        const requestEnd = performance.now();
+			try {
+				const response = await fetch(`${this.baseUrl}/api/health`);
+				const requestEnd = performance.now();
 
-        responseTimes.push(requestEnd - requestStart);
-        requests++;
+				responseTimes.push(requestEnd - requestStart);
+				requests++;
 
-        if (!response.ok) {
-          errors++;
-        }
-      } catch (error) {
-        errors++;
-        responseTimes.push(10_000); // Timeout penalty
-      }
+				if (!response.ok) {
+					errors++;
+				}
+			} catch (error) {
+				errors++;
+				responseTimes.push(10_000); // Timeout penalty
+			}
 
-      // Brief pause between requests (simulating user behavior)
-      await new Promise((resolve) =>
-        setTimeout(resolve, 100 + Math.random() * 400)
-      );
-    }
+			// Brief pause between requests (simulating user behavior)
+			await new Promise((resolve) => setTimeout(resolve, 100 + Math.random() * 400));
+		}
 
-    return { requests, errors };
-  }
+		return { requests, errors };
+	}
 
-  private percentile(sortedArray: number[], percentile: number): number {
-    const index = Math.ceil(sortedArray.length * percentile) - 1;
-    return sortedArray[index] || 0;
-  }
+	private percentile(sortedArray: number[], percentile: number): number {
+		const index = Math.ceil(sortedArray.length * percentile) - 1;
+		return sortedArray[index] || 0;
+	}
 
-  /**
-   * Generate performance test report
-   */
-  async generateReport(
-    metrics: ApiPerformanceMetrics,
-    healthcareMetrics: HealthcareApiMetrics,
-    outputPath: string
-  ): Promise<void> {
-    const report = {
-      timestamp: new Date().toISOString(),
-      summary: metrics,
-      healthcareEndpoints: healthcareMetrics,
-      recommendations: this.generateRecommendations(metrics, healthcareMetrics),
-    };
+	/**
+	 * Generate performance test report
+	 */
+	async generateReport(
+		metrics: ApiPerformanceMetrics,
+		healthcareMetrics: HealthcareApiMetrics,
+		outputPath: string
+	): Promise<void> {
+		const report = {
+			timestamp: new Date().toISOString(),
+			summary: metrics,
+			healthcareEndpoints: healthcareMetrics,
+			recommendations: this.generateRecommendations(metrics, healthcareMetrics),
+		};
 
-    // Would implement file writing here
-    console.log('API Performance Report:', report);
-  }
+		// Would implement file writing here
+		console.log("API Performance Report:", report);
+	}
 
-  private generateRecommendations(
-    metrics: ApiPerformanceMetrics,
-    healthcareMetrics: HealthcareApiMetrics
-  ): string[] {
-    const recommendations: string[] = [];
+	private generateRecommendations(metrics: ApiPerformanceMetrics, healthcareMetrics: HealthcareApiMetrics): string[] {
+		const recommendations: string[] = [];
 
-    if (metrics.responseTime.p95 > 100) {
-      recommendations.push(
-        'P95 response time exceeds 100ms. Consider API optimization.'
-      );
-    }
+		if (metrics.responseTime.p95 > 100) {
+			recommendations.push("P95 response time exceeds 100ms. Consider API optimization.");
+		}
 
-    if (metrics.errorRate > 0.01) {
-      recommendations.push(
-        'Error rate exceeds 1%. Investigate error handling.'
-      );
-    }
+		if (metrics.errorRate > 0.01) {
+			recommendations.push("Error rate exceeds 1%. Investigate error handling.");
+		}
 
-    if (healthcareMetrics.emergencyEndpoints.averageResponseTime > 500) {
-      recommendations.push(
-        'Emergency endpoints are slow. Critical for patient safety.'
-      );
-    }
+		if (healthcareMetrics.emergencyEndpoints.averageResponseTime > 500) {
+			recommendations.push("Emergency endpoints are slow. Critical for patient safety.");
+		}
 
-    return recommendations;
-  }
+		return recommendations;
+	}
 }

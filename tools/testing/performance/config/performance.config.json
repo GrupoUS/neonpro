@@ -116,10 +116,7 @@
     "alerting": {
       "criticalThreshold": 80,
       "warningThreshold": 90,
-      "recipients": [
-        "devops@neonpro.health",
-        "performance-team@neonpro.health"
-      ]
+      "recipients": ["devops@neonpro.health", "performance-team@neonpro.health"]
     },
     "retention": {
       "dailyReports": 30,

@@ -15,16 +15,16 @@
  */
 
 // Healthcare Chatbot (LGPD Privacy Protection)
-export * from './chatbot';
+export * from "./chatbot";
 // AI Ethics and Constitutional Compliance
-export * from './ethics';
+export * from "./ethics";
 // Follow-up Recommendations (CFM Compliance)
-export * from './follow-up';
+export * from "./follow-up";
 // Treatment Outcome Prediction
-export * from './prediction';
+export * from "./prediction";
 // Intelligent Scheduling
-export * from './scheduling';
+export * from "./scheduling";
 // Core Types and Interfaces
-export * from './types';
+export * from "./types";
 // Advanced Workflow Automation
-export * from './workflow';
+export * from "./workflow";

@@ -88,14 +88,20 @@
         "SERENA_TIMEOUT": "30000"
       }
     },
-  "@21st-dev/magic": {
-    "command": "cmd",
-    "args": ["/C", "npx", "-y", "@21st-dev/magic@latest", "API_KEY=\"2c5c6b6e07d502a308d18336327de5985e4f130e5cc6a7e3c9832760fa519986\""],
-    "env": {
-      "MAGIC_TIMEOUT": "25000"
-    }
-  },
-      "browsermcp": {
+    "@21st-dev/magic": {
+      "command": "cmd",
+      "args": [
+        "/C",
+        "npx",
+        "-y",
+        "@21st-dev/magic@latest",
+        "API_KEY=\"2c5c6b6e07d502a308d18336327de5985e4f130e5cc6a7e3c9832760fa519986\""
+      ],
+      "env": {
+        "MAGIC_TIMEOUT": "25000"
+      }
+    },
+    "browsermcp": {
       "command": "npx",
       "args": ["@browsermcp/mcp@latest"]
     },

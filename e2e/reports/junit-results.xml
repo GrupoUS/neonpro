@@ -1,0 +1,1796 @@
+<testsuites id="" name="" tests="429" failures="0" skipped="429" errors="0" time="0.36683699999999997">
+<testsuite name="tests\accessibility-healthcare.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="chromium-desktop" tests="5" failures="0" skipped="5" time="0" errors="0">
+<testcase name="[chromium-desktop] Healthcare Accessibility Compliance › should meet WCAG 2.1 AA standards for patient dashboard" classname="tests\accessibility-healthcare.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] Healthcare Accessibility Compliance › should provide accessible forms for LGPD consent" classname="tests\accessibility-healthcare.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] Healthcare Accessibility Compliance › should support screen readers for ANVISA compliance data" classname="tests\accessibility-healthcare.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] Healthcare Accessibility Compliance › should provide accessible CFM professional validation interface" classname="tests\accessibility-healthcare.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] Healthcare Accessibility Compliance › should maintain accessibility during data loading states" classname="tests\accessibility-healthcare.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="tests\auth\authentication.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="chromium-desktop" tests="21" failures="0" skipped="21" time="0" errors="0">
+<testcase name="[chromium-desktop] 🔐 Authentication Flow - Critical E2E › 🚪 Login/Logout Complete Flow › should complete full login flow with valid credentials" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🔐 Authentication Flow - Critical E2E › 🚪 Login/Logout Complete Flow › should complete logout flow and clear session" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🔐 Authentication Flow - Critical E2E › 🚪 Login/Logout Complete Flow › should reject invalid credentials with proper error handling" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🔐 Authentication Flow - Critical E2E › 🏥 Healthcare Professional Authentication › should display healthcare-specific login elements" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🔐 Authentication Flow - Critical E2E › 🏥 Healthcare Professional Authentication › should validate professional credentials format" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🔐 Authentication Flow - Critical E2E › 🏥 Healthcare Professional Authentication › should authenticate healthcare professional with CRM validation" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🔐 Authentication Flow - Critical E2E › 🏥 Healthcare Professional Authentication › should handle expired professional license scenario" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🔐 Authentication Flow - Critical E2E › 🔒 Session Persistence &amp; Security › should maintain session across browser refresh" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🔐 Authentication Flow - Critical E2E › 🔒 Session Persistence &amp; Security › should handle session timeout gracefully" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🔐 Authentication Flow - Critical E2E › 🔒 Session Persistence &amp; Security › should enforce password policy for healthcare professionals" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🔐 Authentication Flow - Critical E2E › 🔒 Session Persistence &amp; Security › should implement audit logging for authentication events" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🔐 Authentication Flow - Critical E2E › 👥 Role-based Access Control › should grant admin access to all areas" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🔐 Authentication Flow - Critical E2E › 👥 Role-based Access Control › should restrict professional access appropriately" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🔐 Authentication Flow - Critical E2E › 👥 Role-based Access Control › should restrict staff access to basic functions" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🔐 Authentication Flow - Critical E2E › 🔐 Security Validations &amp; Compliance › should validate form inputs and prevent injection" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🔐 Authentication Flow - Critical E2E › 🔐 Security Validations &amp; Compliance › should enforce rate limiting on failed attempts" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🔐 Authentication Flow - Critical E2E › 🔐 Security Validations &amp; Compliance › should handle password requirements validation" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🔐 Authentication Flow - Critical E2E › 🚨 Error Handling &amp; User Experience › should handle network errors gracefully" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🔐 Authentication Flow - Critical E2E › 🚨 Error Handling &amp; User Experience › should show proper loading states during authentication" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🔐 Authentication Flow - Critical E2E › ♿ Accessibility &amp; Performance › should be accessible for healthcare professionals with disabilities" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🔐 Authentication Flow - Critical E2E › ♿ Accessibility &amp; Performance › should load within performance budget for healthcare environment" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="tests\auth\role-based-access.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="chromium-desktop" tests="19" failures="0" skipped="19" time="0" errors="0">
+<testcase name="[chromium-desktop] Doctor Role Access Control › should have full access to patient medical records" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] Doctor Role Access Control › should be able to create and modify prescriptions" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] Doctor Role Access Control › should access administrative functions for their patients" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] Doctor Role Access Control › should have emergency override capabilities" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] Nurse Role Access Control › should have limited access to patient medical records" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] Nurse Role Access Control › should be able to manage vital signs and nursing care" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] Nurse Role Access Control › should NOT be able to create prescriptions" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] Nurse Role Access Control › should be able to schedule appointments" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] Administrator Role Access Control › should have full system administration access" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] Administrator Role Access Control › should manage healthcare professional accounts" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] Administrator Role Access Control › should access comprehensive audit logs" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] Administrator Role Access Control › should NOT access patient medical records directly" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] Secretary Role Access Control › should manage appointments and scheduling" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] Secretary Role Access Control › should access basic patient contact information only" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] Secretary Role Access Control › should manage financial and billing information" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] Secretary Role Access Control › should NOT access prescription or medical diagnosis features" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] Cross-Role Permissions and Escalation › should handle role escalation requests" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] Cross-Role Permissions and Escalation › should audit all role-based access attempts" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] Cross-Role Permissions and Escalation › should enforce time-based role restrictions" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="tests\core\basic-functionality.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="chromium-desktop" tests="6" failures="0" skipped="6" time="0" errors="0">
+<testcase name="[chromium-desktop] NeonPro Healthcare Platform - Core E2E › should load the homepage successfully" classname="tests\core\basic-functionality.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] NeonPro Healthcare Platform - Core E2E › should have proper navigation elements" classname="tests\core\basic-functionality.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] NeonPro Healthcare Platform - Core E2E › should be accessible via keyboard navigation" classname="tests\core\basic-functionality.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] NeonPro Healthcare Platform - Core E2E › should handle page errors gracefully" classname="tests\core\basic-functionality.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] NeonPro Healthcare Platform - Responsive Design › should work on mobile viewport" classname="tests\core\basic-functionality.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] NeonPro Healthcare Platform - Responsive Design › should work on tablet viewport" classname="tests\core\basic-functionality.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="tests\healthcare\appointment-booking.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="chromium-desktop" tests="15" failures="0" skipped="15" time="0" errors="0">
+<testcase name="[chromium-desktop] 📅 Appointment Booking - Critical E2E › 🔍 Search Availability &amp; Booking Flow › should display available appointment slots with healthcare context" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 📅 Appointment Booking - Critical E2E › 🔍 Search Availability &amp; Booking Flow › should book new appointment with complete healthcare workflow" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 📅 Appointment Booking - Critical E2E › 🔍 Search Availability &amp; Booking Flow › should handle appointment conflicts and availability checks" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 📅 Appointment Booking - Critical E2E › 🔍 Search Availability &amp; Booking Flow › should validate required fields in appointment form" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 📅 Appointment Booking - Critical E2E › 📋 Appointment Management › should display existing appointments in calendar view" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 📅 Appointment Booking - Critical E2E › 📋 Appointment Management › should reschedule existing appointment" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 📅 Appointment Booking - Critical E2E › 📋 Appointment Management › should cancel appointment with proper confirmation" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 📅 Appointment Booking - Critical E2E › 🏥 Healthcare-Specific Features › should support medical procedure scheduling" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 📅 Appointment Booking - Critical E2E › 🏥 Healthcare-Specific Features › should handle emergency appointment scheduling" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 📅 Appointment Booking - Critical E2E › 🏥 Healthcare-Specific Features › should validate professional availability and credentials" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 📅 Appointment Booking - Critical E2E › 📱 Patient Notifications &amp; Communication › should send appointment confirmation notifications" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 📅 Appointment Booking - Critical E2E › 📱 Patient Notifications &amp; Communication › should handle appointment reminders configuration" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 📅 Appointment Booking - Critical E2E › 📊 Reporting &amp; Analytics › should display appointment statistics for healthcare professionals" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 📅 Appointment Booking - Critical E2E › ♿ Accessibility &amp; Performance › should be accessible for users with disabilities" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 📅 Appointment Booking - Critical E2E › ♿ Accessibility &amp; Performance › should load appointment calendar within performance budget" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="tests\healthcare\complete-workflows.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="chromium-desktop" tests="6" failures="0" skipped="6" time="0" errors="0">
+<testcase name="[chromium-desktop] 🏥 Complete Healthcare Workflow E2E › 👤 Complete Patient Registration Journey" classname="tests\healthcare\complete-workflows.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🏥 Complete Healthcare Workflow E2E › 📅 Complete Appointment Booking Flow" classname="tests\healthcare\complete-workflows.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🏥 Complete Healthcare Workflow E2E › ⚕️ Professional Workflow - Medical Consultation" classname="tests\healthcare\complete-workflows.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🏥 Complete Healthcare Workflow E2E › 🏢 Clinic Administration Workflow" classname="tests\healthcare\complete-workflows.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🏥 Complete Healthcare Workflow E2E › 🔒 LGPD Compliance User Journey" classname="tests\healthcare\complete-workflows.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🏥 Complete Healthcare Workflow E2E › 📱 Mobile Responsive Patient Journey" classname="tests\healthcare\complete-workflows.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="tests\healthcare\compliance-workflows.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="chromium-desktop" tests="6" failures="0" skipped="6" time="0" errors="0">
+<testcase name="[chromium-desktop] 🏥 Healthcare Compliance Workflows › LGPD Compliance: Data consent management" classname="tests\healthcare\compliance-workflows.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🏥 Healthcare Compliance Workflows › ANVISA Compliance: Professional registration validation" classname="tests\healthcare\compliance-workflows.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🏥 Healthcare Compliance Workflows › CFM Compliance: Medical procedure documentation" classname="tests\healthcare\compliance-workflows.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🏥 Healthcare Compliance Workflows › Data Security: Patient data access controls" classname="tests\healthcare\compliance-workflows.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🏥 Healthcare Compliance Workflows › Emergency Access: Override procedures" classname="tests\healthcare\compliance-workflows.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🏥 Healthcare Compliance Workflows › Appointment Workflow: Complete healthcare journey" classname="tests\healthcare\compliance-workflows.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="tests\healthcare\emergency-access.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="chromium-desktop" tests="20" failures="0" skipped="20" time="0" errors="0">
+<testcase name="[chromium-desktop] 🚨 Emergency Access - Critical E2E › ⚡ Emergency Login (&lt;10s) › should complete emergency login within 10 seconds" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🚨 Emergency Access - Critical E2E › ⚡ Emergency Login (&lt;10s) › should handle life-threatening emergency access bypass" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🚨 Emergency Access - Critical E2E › ⚡ Emergency Login (&lt;10s) › should bypass normal authentication restrictions in emergency mode" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🚨 Emergency Access - Critical E2E › ⚡ Emergency Login (&lt;10s) › should validate emergency credentials and prevent abuse" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🚨 Emergency Access - Critical E2E › 🔍 Critical Data Access › should provide immediate access to critical patient data" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🚨 Emergency Access - Critical E2E › 🔍 Critical Data Access › should provide rapid patient data access in emergency mode" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🚨 Emergency Access - Critical E2E › 🔍 Critical Data Access › should display patient allergies and contraindications prominently" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🚨 Emergency Access - Critical E2E › 🔍 Critical Data Access › should show current medications and dosages" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🚨 Emergency Access - Critical E2E › 💊 Emergency Prescription Authorization › should handle emergency prescription authorization" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🚨 Emergency Access - Critical E2E › 📋 Audit Trail Logging › should log all emergency access events" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🚨 Emergency Access - Critical E2E › 📋 Audit Trail Logging › should require justification for emergency access" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🚨 Emergency Access - Critical E2E › 📋 Audit Trail Logging › should generate comprehensive emergency audit logs" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🚨 Emergency Access - Critical E2E › 📋 Audit Trail Logging › should maintain audit integrity and prevent tampering" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🚨 Emergency Access - Critical E2E › ⏱️ Performance &amp; Reliability › should handle concurrent emergency access requests" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🚨 Emergency Access - Critical E2E › ⏱️ Performance &amp; Reliability › should maintain performance under emergency conditions" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🚨 Emergency Access - Critical E2E › ⏱️ Performance &amp; Reliability › should handle system failures gracefully in emergency mode" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🚨 Emergency Access - Critical E2E › 🔒 Security &amp; Compliance › should enforce emergency access time limits" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🚨 Emergency Access - Critical E2E › 🔒 Security &amp; Compliance › should enforce emergency session time limits and auto-logout" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🚨 Emergency Access - Critical E2E › 🔒 Security &amp; Compliance › should automatically log out after emergency session expires" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🚨 Emergency Access - Critical E2E › 🔒 Security &amp; Compliance › should handle multiple concurrent emergency sessions" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="tests\healthcare\patient-registration.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="chromium-desktop" tests="19" failures="0" skipped="19" time="0" errors="0">
+<testcase name="[chromium-desktop] 👥 Patient Registration - Critical E2E › 📝 Complete Registration with CPF Validation › should complete full patient registration with valid data" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 👥 Patient Registration - Critical E2E › 📝 Complete Registration with CPF Validation › should validate CPF format and prevent invalid CPF registration" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 👥 Patient Registration - Critical E2E › 📝 Complete Registration with CPF Validation › should prevent duplicate CPF registration" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 👥 Patient Registration - Critical E2E › 📝 Complete Registration with CPF Validation › should validate required fields before proceeding" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 👥 Patient Registration - Critical E2E › 🔒 LGPD Consent Capture › should capture comprehensive LGPD consent with detailed explanations" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 👥 Patient Registration - Critical E2E › 🔒 LGPD Consent Capture › should require mandatory LGPD consents for registration" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 👥 Patient Registration - Critical E2E › 🔒 LGPD Consent Capture › should provide consent withdrawal options" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 👥 Patient Registration - Critical E2E › 🔒 LGPD Consent Capture › should create audit trail for LGPD consent events" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 👥 Patient Registration - Critical E2E › 🏥 Medical History and Allergies › should capture comprehensive medical history" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 👥 Patient Registration - Critical E2E › 🏥 Medical History and Allergies › should capture and validate allergy information with severity levels" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 👥 Patient Registration - Critical E2E › 🏥 Medical History and Allergies › should handle patients with no known allergies properly" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 👥 Patient Registration - Critical E2E › 🏥 Medical History and Allergies › should validate critical allergy information completeness" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 👥 Patient Registration - Critical E2E › ✅ Complete Registration Workflow › should complete end-to-end patient registration with all components" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 👥 Patient Registration - Critical E2E › ✅ Complete Registration Workflow › should generate patient ID and medical record number" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 👥 Patient Registration - Critical E2E › ✅ Complete Registration Workflow › should integrate with appointment scheduling system" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 👥 Patient Registration - Critical E2E › ✅ Complete Registration Workflow › should handle registration errors gracefully" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 👥 Patient Registration - Critical E2E › 🚀 Performance &amp; Validation › should complete registration within performance targets" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 👥 Patient Registration - Critical E2E › 🚀 Performance &amp; Validation › should provide accessibility compliance in registration form" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 👥 Patient Registration - Critical E2E › 🚀 Performance &amp; Validation › should handle concurrent registration attempts" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="tests\homepage.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="chromium-desktop" tests="3" failures="0" skipped="3" time="0" errors="0">
+<testcase name="[chromium-desktop] NeonPro Application › should load the homepage" classname="tests\homepage.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] NeonPro Application › should have navigation menu" classname="tests\homepage.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] NeonPro Application › should be responsive on mobile" classname="tests\homepage.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="tests\performance\performance-security.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="chromium-desktop" tests="11" failures="0" skipped="11" time="0" errors="0">
+<testcase name="[chromium-desktop] ⚡ Performance &amp; Security E2E Tests › Performance: Page load times under 3 seconds" classname="tests\performance\performance-security.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] ⚡ Performance &amp; Security E2E Tests › Performance: API response times under 500ms" classname="tests\performance\performance-security.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] ⚡ Performance &amp; Security E2E Tests › Security: XSS protection" classname="tests\performance\performance-security.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] ⚡ Performance &amp; Security E2E Tests › Security: SQL injection protection" classname="tests\performance\performance-security.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] ⚡ Performance &amp; Security E2E Tests › Security: Authentication bypass attempts" classname="tests\performance\performance-security.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] ⚡ Performance &amp; Security E2E Tests › Security: Session management" classname="tests\performance\performance-security.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] ⚡ Performance &amp; Security E2E Tests › Performance: Large dataset handling" classname="tests\performance\performance-security.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] ⚡ Performance &amp; Security E2E Tests › Accessibility: Keyboard navigation" classname="tests\performance\performance-security.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] ⚡ Performance &amp; Security E2E Tests › Accessibility: Screen reader compatibility" classname="tests\performance\performance-security.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] ⚡ Performance &amp; Security E2E Tests › Mobile Responsiveness: Touch interactions" classname="tests\performance\performance-security.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] ⚡ Performance &amp; Security E2E Tests › Error Handling: Network failures" classname="tests\performance\performance-security.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="tests\security\security-compliance.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="chromium-desktop" tests="7" failures="0" skipped="7" time="0" errors="0">
+<testcase name="[chromium-desktop] 🔒 Security &amp; Compliance Testing › 🛡️ Authentication Security Tests" classname="tests\security\security-compliance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🔒 Security &amp; Compliance Testing › 🔐 Authorization Enforcement Tests" classname="tests\security\security-compliance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🔒 Security &amp; Compliance Testing › 📋 LGPD Compliance Tests" classname="tests\security\security-compliance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🔒 Security &amp; Compliance Testing › 🌐 Security Headers Tests" classname="tests\security\security-compliance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🔒 Security &amp; Compliance Testing › 💉 Input Validation &amp; Injection Tests" classname="tests\security\security-compliance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🔒 Security &amp; Compliance Testing › 🏥 Healthcare-Specific Security Tests" classname="tests\security\security-compliance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🔒 Security &amp; Compliance Testing › 🔍 API Security Testing" classname="tests\security\security-compliance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="tests\security\security-healthcare-specific.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="chromium-desktop" tests="5" failures="0" skipped="5" time="0" errors="0">
+<testcase name="[chromium-desktop] 🏥 Healthcare Security Compliance › should enforce LGPD data protection in patient views" classname="tests\security\security-healthcare-specific.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🏥 Healthcare Security Compliance › should validate ANVISA device security requirements" classname="tests\security\security-healthcare-specific.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🏥 Healthcare Security Compliance › should enforce CFM professional authentication" classname="tests\security\security-healthcare-specific.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🏥 Healthcare Security Compliance › should maintain audit trail for all healthcare actions" classname="tests\security\security-healthcare-specific.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[chromium-desktop] 🏥 Healthcare Security Compliance › should protect against unauthorized data access" classname="tests\security\security-healthcare-specific.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="tests\accessibility-healthcare.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="webkit-desktop" tests="5" failures="0" skipped="5" time="0" errors="0">
+<testcase name="[webkit-desktop] Healthcare Accessibility Compliance › should meet WCAG 2.1 AA standards for patient dashboard" classname="tests\accessibility-healthcare.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] Healthcare Accessibility Compliance › should provide accessible forms for LGPD consent" classname="tests\accessibility-healthcare.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] Healthcare Accessibility Compliance › should support screen readers for ANVISA compliance data" classname="tests\accessibility-healthcare.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] Healthcare Accessibility Compliance › should provide accessible CFM professional validation interface" classname="tests\accessibility-healthcare.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] Healthcare Accessibility Compliance › should maintain accessibility during data loading states" classname="tests\accessibility-healthcare.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="tests\auth\authentication.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="webkit-desktop" tests="21" failures="0" skipped="21" time="0" errors="0">
+<testcase name="[webkit-desktop] 🔐 Authentication Flow - Critical E2E › 🚪 Login/Logout Complete Flow › should complete full login flow with valid credentials" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🔐 Authentication Flow - Critical E2E › 🚪 Login/Logout Complete Flow › should complete logout flow and clear session" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🔐 Authentication Flow - Critical E2E › 🚪 Login/Logout Complete Flow › should reject invalid credentials with proper error handling" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🔐 Authentication Flow - Critical E2E › 🏥 Healthcare Professional Authentication › should display healthcare-specific login elements" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🔐 Authentication Flow - Critical E2E › 🏥 Healthcare Professional Authentication › should validate professional credentials format" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🔐 Authentication Flow - Critical E2E › 🏥 Healthcare Professional Authentication › should authenticate healthcare professional with CRM validation" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🔐 Authentication Flow - Critical E2E › 🏥 Healthcare Professional Authentication › should handle expired professional license scenario" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🔐 Authentication Flow - Critical E2E › 🔒 Session Persistence &amp; Security › should maintain session across browser refresh" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🔐 Authentication Flow - Critical E2E › 🔒 Session Persistence &amp; Security › should handle session timeout gracefully" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🔐 Authentication Flow - Critical E2E › 🔒 Session Persistence &amp; Security › should enforce password policy for healthcare professionals" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🔐 Authentication Flow - Critical E2E › 🔒 Session Persistence &amp; Security › should implement audit logging for authentication events" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🔐 Authentication Flow - Critical E2E › 👥 Role-based Access Control › should grant admin access to all areas" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🔐 Authentication Flow - Critical E2E › 👥 Role-based Access Control › should restrict professional access appropriately" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🔐 Authentication Flow - Critical E2E › 👥 Role-based Access Control › should restrict staff access to basic functions" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🔐 Authentication Flow - Critical E2E › 🔐 Security Validations &amp; Compliance › should validate form inputs and prevent injection" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🔐 Authentication Flow - Critical E2E › 🔐 Security Validations &amp; Compliance › should enforce rate limiting on failed attempts" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🔐 Authentication Flow - Critical E2E › 🔐 Security Validations &amp; Compliance › should handle password requirements validation" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🔐 Authentication Flow - Critical E2E › 🚨 Error Handling &amp; User Experience › should handle network errors gracefully" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🔐 Authentication Flow - Critical E2E › 🚨 Error Handling &amp; User Experience › should show proper loading states during authentication" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🔐 Authentication Flow - Critical E2E › ♿ Accessibility &amp; Performance › should be accessible for healthcare professionals with disabilities" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🔐 Authentication Flow - Critical E2E › ♿ Accessibility &amp; Performance › should load within performance budget for healthcare environment" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="tests\auth\role-based-access.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="webkit-desktop" tests="19" failures="0" skipped="19" time="0" errors="0">
+<testcase name="[webkit-desktop] Doctor Role Access Control › should have full access to patient medical records" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] Doctor Role Access Control › should be able to create and modify prescriptions" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] Doctor Role Access Control › should access administrative functions for their patients" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] Doctor Role Access Control › should have emergency override capabilities" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] Nurse Role Access Control › should have limited access to patient medical records" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] Nurse Role Access Control › should be able to manage vital signs and nursing care" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] Nurse Role Access Control › should NOT be able to create prescriptions" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] Nurse Role Access Control › should be able to schedule appointments" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] Administrator Role Access Control › should have full system administration access" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] Administrator Role Access Control › should manage healthcare professional accounts" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] Administrator Role Access Control › should access comprehensive audit logs" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] Administrator Role Access Control › should NOT access patient medical records directly" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] Secretary Role Access Control › should manage appointments and scheduling" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] Secretary Role Access Control › should access basic patient contact information only" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] Secretary Role Access Control › should manage financial and billing information" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] Secretary Role Access Control › should NOT access prescription or medical diagnosis features" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] Cross-Role Permissions and Escalation › should handle role escalation requests" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] Cross-Role Permissions and Escalation › should audit all role-based access attempts" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] Cross-Role Permissions and Escalation › should enforce time-based role restrictions" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="tests\core\basic-functionality.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="webkit-desktop" tests="6" failures="0" skipped="6" time="0" errors="0">
+<testcase name="[webkit-desktop] NeonPro Healthcare Platform - Core E2E › should load the homepage successfully" classname="tests\core\basic-functionality.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] NeonPro Healthcare Platform - Core E2E › should have proper navigation elements" classname="tests\core\basic-functionality.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] NeonPro Healthcare Platform - Core E2E › should be accessible via keyboard navigation" classname="tests\core\basic-functionality.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] NeonPro Healthcare Platform - Core E2E › should handle page errors gracefully" classname="tests\core\basic-functionality.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] NeonPro Healthcare Platform - Responsive Design › should work on mobile viewport" classname="tests\core\basic-functionality.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] NeonPro Healthcare Platform - Responsive Design › should work on tablet viewport" classname="tests\core\basic-functionality.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="tests\healthcare\appointment-booking.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="webkit-desktop" tests="15" failures="0" skipped="15" time="0" errors="0">
+<testcase name="[webkit-desktop] 📅 Appointment Booking - Critical E2E › 🔍 Search Availability &amp; Booking Flow › should display available appointment slots with healthcare context" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 📅 Appointment Booking - Critical E2E › 🔍 Search Availability &amp; Booking Flow › should book new appointment with complete healthcare workflow" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 📅 Appointment Booking - Critical E2E › 🔍 Search Availability &amp; Booking Flow › should handle appointment conflicts and availability checks" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 📅 Appointment Booking - Critical E2E › 🔍 Search Availability &amp; Booking Flow › should validate required fields in appointment form" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 📅 Appointment Booking - Critical E2E › 📋 Appointment Management › should display existing appointments in calendar view" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 📅 Appointment Booking - Critical E2E › 📋 Appointment Management › should reschedule existing appointment" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 📅 Appointment Booking - Critical E2E › 📋 Appointment Management › should cancel appointment with proper confirmation" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 📅 Appointment Booking - Critical E2E › 🏥 Healthcare-Specific Features › should support medical procedure scheduling" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 📅 Appointment Booking - Critical E2E › 🏥 Healthcare-Specific Features › should handle emergency appointment scheduling" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 📅 Appointment Booking - Critical E2E › 🏥 Healthcare-Specific Features › should validate professional availability and credentials" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 📅 Appointment Booking - Critical E2E › 📱 Patient Notifications &amp; Communication › should send appointment confirmation notifications" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 📅 Appointment Booking - Critical E2E › 📱 Patient Notifications &amp; Communication › should handle appointment reminders configuration" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 📅 Appointment Booking - Critical E2E › 📊 Reporting &amp; Analytics › should display appointment statistics for healthcare professionals" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 📅 Appointment Booking - Critical E2E › ♿ Accessibility &amp; Performance › should be accessible for users with disabilities" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 📅 Appointment Booking - Critical E2E › ♿ Accessibility &amp; Performance › should load appointment calendar within performance budget" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="tests\healthcare\complete-workflows.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="webkit-desktop" tests="6" failures="0" skipped="6" time="0" errors="0">
+<testcase name="[webkit-desktop] 🏥 Complete Healthcare Workflow E2E › 👤 Complete Patient Registration Journey" classname="tests\healthcare\complete-workflows.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🏥 Complete Healthcare Workflow E2E › 📅 Complete Appointment Booking Flow" classname="tests\healthcare\complete-workflows.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🏥 Complete Healthcare Workflow E2E › ⚕️ Professional Workflow - Medical Consultation" classname="tests\healthcare\complete-workflows.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🏥 Complete Healthcare Workflow E2E › 🏢 Clinic Administration Workflow" classname="tests\healthcare\complete-workflows.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🏥 Complete Healthcare Workflow E2E › 🔒 LGPD Compliance User Journey" classname="tests\healthcare\complete-workflows.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🏥 Complete Healthcare Workflow E2E › 📱 Mobile Responsive Patient Journey" classname="tests\healthcare\complete-workflows.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="tests\healthcare\compliance-workflows.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="webkit-desktop" tests="6" failures="0" skipped="6" time="0" errors="0">
+<testcase name="[webkit-desktop] 🏥 Healthcare Compliance Workflows › LGPD Compliance: Data consent management" classname="tests\healthcare\compliance-workflows.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🏥 Healthcare Compliance Workflows › ANVISA Compliance: Professional registration validation" classname="tests\healthcare\compliance-workflows.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🏥 Healthcare Compliance Workflows › CFM Compliance: Medical procedure documentation" classname="tests\healthcare\compliance-workflows.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🏥 Healthcare Compliance Workflows › Data Security: Patient data access controls" classname="tests\healthcare\compliance-workflows.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🏥 Healthcare Compliance Workflows › Emergency Access: Override procedures" classname="tests\healthcare\compliance-workflows.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🏥 Healthcare Compliance Workflows › Appointment Workflow: Complete healthcare journey" classname="tests\healthcare\compliance-workflows.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="tests\healthcare\emergency-access.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="webkit-desktop" tests="20" failures="0" skipped="20" time="0" errors="0">
+<testcase name="[webkit-desktop] 🚨 Emergency Access - Critical E2E › ⚡ Emergency Login (&lt;10s) › should complete emergency login within 10 seconds" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🚨 Emergency Access - Critical E2E › ⚡ Emergency Login (&lt;10s) › should handle life-threatening emergency access bypass" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🚨 Emergency Access - Critical E2E › ⚡ Emergency Login (&lt;10s) › should bypass normal authentication restrictions in emergency mode" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🚨 Emergency Access - Critical E2E › ⚡ Emergency Login (&lt;10s) › should validate emergency credentials and prevent abuse" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🚨 Emergency Access - Critical E2E › 🔍 Critical Data Access › should provide immediate access to critical patient data" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🚨 Emergency Access - Critical E2E › 🔍 Critical Data Access › should provide rapid patient data access in emergency mode" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🚨 Emergency Access - Critical E2E › 🔍 Critical Data Access › should display patient allergies and contraindications prominently" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🚨 Emergency Access - Critical E2E › 🔍 Critical Data Access › should show current medications and dosages" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🚨 Emergency Access - Critical E2E › 💊 Emergency Prescription Authorization › should handle emergency prescription authorization" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🚨 Emergency Access - Critical E2E › 📋 Audit Trail Logging › should log all emergency access events" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🚨 Emergency Access - Critical E2E › 📋 Audit Trail Logging › should require justification for emergency access" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🚨 Emergency Access - Critical E2E › 📋 Audit Trail Logging › should generate comprehensive emergency audit logs" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🚨 Emergency Access - Critical E2E › 📋 Audit Trail Logging › should maintain audit integrity and prevent tampering" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🚨 Emergency Access - Critical E2E › ⏱️ Performance &amp; Reliability › should handle concurrent emergency access requests" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🚨 Emergency Access - Critical E2E › ⏱️ Performance &amp; Reliability › should maintain performance under emergency conditions" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🚨 Emergency Access - Critical E2E › ⏱️ Performance &amp; Reliability › should handle system failures gracefully in emergency mode" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🚨 Emergency Access - Critical E2E › 🔒 Security &amp; Compliance › should enforce emergency access time limits" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🚨 Emergency Access - Critical E2E › 🔒 Security &amp; Compliance › should enforce emergency session time limits and auto-logout" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🚨 Emergency Access - Critical E2E › 🔒 Security &amp; Compliance › should automatically log out after emergency session expires" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🚨 Emergency Access - Critical E2E › 🔒 Security &amp; Compliance › should handle multiple concurrent emergency sessions" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="tests\healthcare\patient-registration.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="webkit-desktop" tests="19" failures="0" skipped="19" time="0" errors="0">
+<testcase name="[webkit-desktop] 👥 Patient Registration - Critical E2E › 📝 Complete Registration with CPF Validation › should complete full patient registration with valid data" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 👥 Patient Registration - Critical E2E › 📝 Complete Registration with CPF Validation › should validate CPF format and prevent invalid CPF registration" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 👥 Patient Registration - Critical E2E › 📝 Complete Registration with CPF Validation › should prevent duplicate CPF registration" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 👥 Patient Registration - Critical E2E › 📝 Complete Registration with CPF Validation › should validate required fields before proceeding" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 👥 Patient Registration - Critical E2E › 🔒 LGPD Consent Capture › should capture comprehensive LGPD consent with detailed explanations" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 👥 Patient Registration - Critical E2E › 🔒 LGPD Consent Capture › should require mandatory LGPD consents for registration" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 👥 Patient Registration - Critical E2E › 🔒 LGPD Consent Capture › should provide consent withdrawal options" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 👥 Patient Registration - Critical E2E › 🔒 LGPD Consent Capture › should create audit trail for LGPD consent events" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 👥 Patient Registration - Critical E2E › 🏥 Medical History and Allergies › should capture comprehensive medical history" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 👥 Patient Registration - Critical E2E › 🏥 Medical History and Allergies › should capture and validate allergy information with severity levels" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 👥 Patient Registration - Critical E2E › 🏥 Medical History and Allergies › should handle patients with no known allergies properly" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 👥 Patient Registration - Critical E2E › 🏥 Medical History and Allergies › should validate critical allergy information completeness" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 👥 Patient Registration - Critical E2E › ✅ Complete Registration Workflow › should complete end-to-end patient registration with all components" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 👥 Patient Registration - Critical E2E › ✅ Complete Registration Workflow › should generate patient ID and medical record number" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 👥 Patient Registration - Critical E2E › ✅ Complete Registration Workflow › should integrate with appointment scheduling system" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 👥 Patient Registration - Critical E2E › ✅ Complete Registration Workflow › should handle registration errors gracefully" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 👥 Patient Registration - Critical E2E › 🚀 Performance &amp; Validation › should complete registration within performance targets" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 👥 Patient Registration - Critical E2E › 🚀 Performance &amp; Validation › should provide accessibility compliance in registration form" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 👥 Patient Registration - Critical E2E › 🚀 Performance &amp; Validation › should handle concurrent registration attempts" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="tests\homepage.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="webkit-desktop" tests="3" failures="0" skipped="3" time="0" errors="0">
+<testcase name="[webkit-desktop] NeonPro Application › should load the homepage" classname="tests\homepage.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] NeonPro Application › should have navigation menu" classname="tests\homepage.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] NeonPro Application › should be responsive on mobile" classname="tests\homepage.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="tests\performance\performance-security.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="webkit-desktop" tests="11" failures="0" skipped="11" time="0" errors="0">
+<testcase name="[webkit-desktop] ⚡ Performance &amp; Security E2E Tests › Performance: Page load times under 3 seconds" classname="tests\performance\performance-security.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] ⚡ Performance &amp; Security E2E Tests › Performance: API response times under 500ms" classname="tests\performance\performance-security.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] ⚡ Performance &amp; Security E2E Tests › Security: XSS protection" classname="tests\performance\performance-security.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] ⚡ Performance &amp; Security E2E Tests › Security: SQL injection protection" classname="tests\performance\performance-security.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] ⚡ Performance &amp; Security E2E Tests › Security: Authentication bypass attempts" classname="tests\performance\performance-security.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] ⚡ Performance &amp; Security E2E Tests › Security: Session management" classname="tests\performance\performance-security.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] ⚡ Performance &amp; Security E2E Tests › Performance: Large dataset handling" classname="tests\performance\performance-security.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] ⚡ Performance &amp; Security E2E Tests › Accessibility: Keyboard navigation" classname="tests\performance\performance-security.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] ⚡ Performance &amp; Security E2E Tests › Accessibility: Screen reader compatibility" classname="tests\performance\performance-security.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] ⚡ Performance &amp; Security E2E Tests › Mobile Responsiveness: Touch interactions" classname="tests\performance\performance-security.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] ⚡ Performance &amp; Security E2E Tests › Error Handling: Network failures" classname="tests\performance\performance-security.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="tests\security\security-compliance.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="webkit-desktop" tests="7" failures="0" skipped="7" time="0" errors="0">
+<testcase name="[webkit-desktop] 🔒 Security &amp; Compliance Testing › 🛡️ Authentication Security Tests" classname="tests\security\security-compliance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🔒 Security &amp; Compliance Testing › 🔐 Authorization Enforcement Tests" classname="tests\security\security-compliance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🔒 Security &amp; Compliance Testing › 📋 LGPD Compliance Tests" classname="tests\security\security-compliance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🔒 Security &amp; Compliance Testing › 🌐 Security Headers Tests" classname="tests\security\security-compliance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🔒 Security &amp; Compliance Testing › 💉 Input Validation &amp; Injection Tests" classname="tests\security\security-compliance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🔒 Security &amp; Compliance Testing › 🏥 Healthcare-Specific Security Tests" classname="tests\security\security-compliance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🔒 Security &amp; Compliance Testing › 🔍 API Security Testing" classname="tests\security\security-compliance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="tests\security\security-healthcare-specific.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="webkit-desktop" tests="5" failures="0" skipped="5" time="0" errors="0">
+<testcase name="[webkit-desktop] 🏥 Healthcare Security Compliance › should enforce LGPD data protection in patient views" classname="tests\security\security-healthcare-specific.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🏥 Healthcare Security Compliance › should validate ANVISA device security requirements" classname="tests\security\security-healthcare-specific.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🏥 Healthcare Security Compliance › should enforce CFM professional authentication" classname="tests\security\security-healthcare-specific.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🏥 Healthcare Security Compliance › should maintain audit trail for all healthcare actions" classname="tests\security\security-healthcare-specific.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[webkit-desktop] 🏥 Healthcare Security Compliance › should protect against unauthorized data access" classname="tests\security\security-healthcare-specific.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="tests\accessibility-healthcare.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="firefox-desktop" tests="5" failures="0" skipped="5" time="0" errors="0">
+<testcase name="[firefox-desktop] Healthcare Accessibility Compliance › should meet WCAG 2.1 AA standards for patient dashboard" classname="tests\accessibility-healthcare.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] Healthcare Accessibility Compliance › should provide accessible forms for LGPD consent" classname="tests\accessibility-healthcare.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] Healthcare Accessibility Compliance › should support screen readers for ANVISA compliance data" classname="tests\accessibility-healthcare.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] Healthcare Accessibility Compliance › should provide accessible CFM professional validation interface" classname="tests\accessibility-healthcare.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] Healthcare Accessibility Compliance › should maintain accessibility during data loading states" classname="tests\accessibility-healthcare.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="tests\auth\authentication.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="firefox-desktop" tests="21" failures="0" skipped="21" time="0" errors="0">
+<testcase name="[firefox-desktop] 🔐 Authentication Flow - Critical E2E › 🚪 Login/Logout Complete Flow › should complete full login flow with valid credentials" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🔐 Authentication Flow - Critical E2E › 🚪 Login/Logout Complete Flow › should complete logout flow and clear session" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🔐 Authentication Flow - Critical E2E › 🚪 Login/Logout Complete Flow › should reject invalid credentials with proper error handling" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🔐 Authentication Flow - Critical E2E › 🏥 Healthcare Professional Authentication › should display healthcare-specific login elements" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🔐 Authentication Flow - Critical E2E › 🏥 Healthcare Professional Authentication › should validate professional credentials format" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🔐 Authentication Flow - Critical E2E › 🏥 Healthcare Professional Authentication › should authenticate healthcare professional with CRM validation" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🔐 Authentication Flow - Critical E2E › 🏥 Healthcare Professional Authentication › should handle expired professional license scenario" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🔐 Authentication Flow - Critical E2E › 🔒 Session Persistence &amp; Security › should maintain session across browser refresh" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🔐 Authentication Flow - Critical E2E › 🔒 Session Persistence &amp; Security › should handle session timeout gracefully" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🔐 Authentication Flow - Critical E2E › 🔒 Session Persistence &amp; Security › should enforce password policy for healthcare professionals" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🔐 Authentication Flow - Critical E2E › 🔒 Session Persistence &amp; Security › should implement audit logging for authentication events" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🔐 Authentication Flow - Critical E2E › 👥 Role-based Access Control › should grant admin access to all areas" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🔐 Authentication Flow - Critical E2E › 👥 Role-based Access Control › should restrict professional access appropriately" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🔐 Authentication Flow - Critical E2E › 👥 Role-based Access Control › should restrict staff access to basic functions" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🔐 Authentication Flow - Critical E2E › 🔐 Security Validations &amp; Compliance › should validate form inputs and prevent injection" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🔐 Authentication Flow - Critical E2E › 🔐 Security Validations &amp; Compliance › should enforce rate limiting on failed attempts" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🔐 Authentication Flow - Critical E2E › 🔐 Security Validations &amp; Compliance › should handle password requirements validation" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🔐 Authentication Flow - Critical E2E › 🚨 Error Handling &amp; User Experience › should handle network errors gracefully" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🔐 Authentication Flow - Critical E2E › 🚨 Error Handling &amp; User Experience › should show proper loading states during authentication" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🔐 Authentication Flow - Critical E2E › ♿ Accessibility &amp; Performance › should be accessible for healthcare professionals with disabilities" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🔐 Authentication Flow - Critical E2E › ♿ Accessibility &amp; Performance › should load within performance budget for healthcare environment" classname="tests\auth\authentication.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="tests\auth\role-based-access.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="firefox-desktop" tests="19" failures="0" skipped="19" time="0" errors="0">
+<testcase name="[firefox-desktop] Doctor Role Access Control › should have full access to patient medical records" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] Doctor Role Access Control › should be able to create and modify prescriptions" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] Doctor Role Access Control › should access administrative functions for their patients" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] Doctor Role Access Control › should have emergency override capabilities" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] Nurse Role Access Control › should have limited access to patient medical records" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] Nurse Role Access Control › should be able to manage vital signs and nursing care" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] Nurse Role Access Control › should NOT be able to create prescriptions" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] Nurse Role Access Control › should be able to schedule appointments" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] Administrator Role Access Control › should have full system administration access" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] Administrator Role Access Control › should manage healthcare professional accounts" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] Administrator Role Access Control › should access comprehensive audit logs" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] Administrator Role Access Control › should NOT access patient medical records directly" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] Secretary Role Access Control › should manage appointments and scheduling" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] Secretary Role Access Control › should access basic patient contact information only" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] Secretary Role Access Control › should manage financial and billing information" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] Secretary Role Access Control › should NOT access prescription or medical diagnosis features" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] Cross-Role Permissions and Escalation › should handle role escalation requests" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] Cross-Role Permissions and Escalation › should audit all role-based access attempts" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] Cross-Role Permissions and Escalation › should enforce time-based role restrictions" classname="tests\auth\role-based-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="tests\core\basic-functionality.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="firefox-desktop" tests="6" failures="0" skipped="6" time="0" errors="0">
+<testcase name="[firefox-desktop] NeonPro Healthcare Platform - Core E2E › should load the homepage successfully" classname="tests\core\basic-functionality.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] NeonPro Healthcare Platform - Core E2E › should have proper navigation elements" classname="tests\core\basic-functionality.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] NeonPro Healthcare Platform - Core E2E › should be accessible via keyboard navigation" classname="tests\core\basic-functionality.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] NeonPro Healthcare Platform - Core E2E › should handle page errors gracefully" classname="tests\core\basic-functionality.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] NeonPro Healthcare Platform - Responsive Design › should work on mobile viewport" classname="tests\core\basic-functionality.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] NeonPro Healthcare Platform - Responsive Design › should work on tablet viewport" classname="tests\core\basic-functionality.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="tests\healthcare\appointment-booking.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="firefox-desktop" tests="15" failures="0" skipped="15" time="0" errors="0">
+<testcase name="[firefox-desktop] 📅 Appointment Booking - Critical E2E › 🔍 Search Availability &amp; Booking Flow › should display available appointment slots with healthcare context" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 📅 Appointment Booking - Critical E2E › 🔍 Search Availability &amp; Booking Flow › should book new appointment with complete healthcare workflow" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 📅 Appointment Booking - Critical E2E › 🔍 Search Availability &amp; Booking Flow › should handle appointment conflicts and availability checks" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 📅 Appointment Booking - Critical E2E › 🔍 Search Availability &amp; Booking Flow › should validate required fields in appointment form" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 📅 Appointment Booking - Critical E2E › 📋 Appointment Management › should display existing appointments in calendar view" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 📅 Appointment Booking - Critical E2E › 📋 Appointment Management › should reschedule existing appointment" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 📅 Appointment Booking - Critical E2E › 📋 Appointment Management › should cancel appointment with proper confirmation" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 📅 Appointment Booking - Critical E2E › 🏥 Healthcare-Specific Features › should support medical procedure scheduling" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 📅 Appointment Booking - Critical E2E › 🏥 Healthcare-Specific Features › should handle emergency appointment scheduling" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 📅 Appointment Booking - Critical E2E › 🏥 Healthcare-Specific Features › should validate professional availability and credentials" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 📅 Appointment Booking - Critical E2E › 📱 Patient Notifications &amp; Communication › should send appointment confirmation notifications" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 📅 Appointment Booking - Critical E2E › 📱 Patient Notifications &amp; Communication › should handle appointment reminders configuration" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 📅 Appointment Booking - Critical E2E › 📊 Reporting &amp; Analytics › should display appointment statistics for healthcare professionals" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 📅 Appointment Booking - Critical E2E › ♿ Accessibility &amp; Performance › should be accessible for users with disabilities" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 📅 Appointment Booking - Critical E2E › ♿ Accessibility &amp; Performance › should load appointment calendar within performance budget" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="tests\healthcare\complete-workflows.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="firefox-desktop" tests="6" failures="0" skipped="6" time="0" errors="0">
+<testcase name="[firefox-desktop] 🏥 Complete Healthcare Workflow E2E › 👤 Complete Patient Registration Journey" classname="tests\healthcare\complete-workflows.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🏥 Complete Healthcare Workflow E2E › 📅 Complete Appointment Booking Flow" classname="tests\healthcare\complete-workflows.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🏥 Complete Healthcare Workflow E2E › ⚕️ Professional Workflow - Medical Consultation" classname="tests\healthcare\complete-workflows.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🏥 Complete Healthcare Workflow E2E › 🏢 Clinic Administration Workflow" classname="tests\healthcare\complete-workflows.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🏥 Complete Healthcare Workflow E2E › 🔒 LGPD Compliance User Journey" classname="tests\healthcare\complete-workflows.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🏥 Complete Healthcare Workflow E2E › 📱 Mobile Responsive Patient Journey" classname="tests\healthcare\complete-workflows.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="tests\healthcare\compliance-workflows.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="firefox-desktop" tests="6" failures="0" skipped="6" time="0" errors="0">
+<testcase name="[firefox-desktop] 🏥 Healthcare Compliance Workflows › LGPD Compliance: Data consent management" classname="tests\healthcare\compliance-workflows.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🏥 Healthcare Compliance Workflows › ANVISA Compliance: Professional registration validation" classname="tests\healthcare\compliance-workflows.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🏥 Healthcare Compliance Workflows › CFM Compliance: Medical procedure documentation" classname="tests\healthcare\compliance-workflows.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🏥 Healthcare Compliance Workflows › Data Security: Patient data access controls" classname="tests\healthcare\compliance-workflows.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🏥 Healthcare Compliance Workflows › Emergency Access: Override procedures" classname="tests\healthcare\compliance-workflows.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🏥 Healthcare Compliance Workflows › Appointment Workflow: Complete healthcare journey" classname="tests\healthcare\compliance-workflows.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="tests\healthcare\emergency-access.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="firefox-desktop" tests="20" failures="0" skipped="20" time="0" errors="0">
+<testcase name="[firefox-desktop] 🚨 Emergency Access - Critical E2E › ⚡ Emergency Login (&lt;10s) › should complete emergency login within 10 seconds" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🚨 Emergency Access - Critical E2E › ⚡ Emergency Login (&lt;10s) › should handle life-threatening emergency access bypass" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🚨 Emergency Access - Critical E2E › ⚡ Emergency Login (&lt;10s) › should bypass normal authentication restrictions in emergency mode" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🚨 Emergency Access - Critical E2E › ⚡ Emergency Login (&lt;10s) › should validate emergency credentials and prevent abuse" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🚨 Emergency Access - Critical E2E › 🔍 Critical Data Access › should provide immediate access to critical patient data" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🚨 Emergency Access - Critical E2E › 🔍 Critical Data Access › should provide rapid patient data access in emergency mode" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🚨 Emergency Access - Critical E2E › 🔍 Critical Data Access › should display patient allergies and contraindications prominently" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🚨 Emergency Access - Critical E2E › 🔍 Critical Data Access › should show current medications and dosages" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🚨 Emergency Access - Critical E2E › 💊 Emergency Prescription Authorization › should handle emergency prescription authorization" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🚨 Emergency Access - Critical E2E › 📋 Audit Trail Logging › should log all emergency access events" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🚨 Emergency Access - Critical E2E › 📋 Audit Trail Logging › should require justification for emergency access" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🚨 Emergency Access - Critical E2E › 📋 Audit Trail Logging › should generate comprehensive emergency audit logs" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🚨 Emergency Access - Critical E2E › 📋 Audit Trail Logging › should maintain audit integrity and prevent tampering" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🚨 Emergency Access - Critical E2E › ⏱️ Performance &amp; Reliability › should handle concurrent emergency access requests" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🚨 Emergency Access - Critical E2E › ⏱️ Performance &amp; Reliability › should maintain performance under emergency conditions" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🚨 Emergency Access - Critical E2E › ⏱️ Performance &amp; Reliability › should handle system failures gracefully in emergency mode" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🚨 Emergency Access - Critical E2E › 🔒 Security &amp; Compliance › should enforce emergency access time limits" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🚨 Emergency Access - Critical E2E › 🔒 Security &amp; Compliance › should enforce emergency session time limits and auto-logout" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🚨 Emergency Access - Critical E2E › 🔒 Security &amp; Compliance › should automatically log out after emergency session expires" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🚨 Emergency Access - Critical E2E › 🔒 Security &amp; Compliance › should handle multiple concurrent emergency sessions" classname="tests\healthcare\emergency-access.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="tests\healthcare\patient-registration.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="firefox-desktop" tests="19" failures="0" skipped="19" time="0" errors="0">
+<testcase name="[firefox-desktop] 👥 Patient Registration - Critical E2E › 📝 Complete Registration with CPF Validation › should complete full patient registration with valid data" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 👥 Patient Registration - Critical E2E › 📝 Complete Registration with CPF Validation › should validate CPF format and prevent invalid CPF registration" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 👥 Patient Registration - Critical E2E › 📝 Complete Registration with CPF Validation › should prevent duplicate CPF registration" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 👥 Patient Registration - Critical E2E › 📝 Complete Registration with CPF Validation › should validate required fields before proceeding" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 👥 Patient Registration - Critical E2E › 🔒 LGPD Consent Capture › should capture comprehensive LGPD consent with detailed explanations" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 👥 Patient Registration - Critical E2E › 🔒 LGPD Consent Capture › should require mandatory LGPD consents for registration" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 👥 Patient Registration - Critical E2E › 🔒 LGPD Consent Capture › should provide consent withdrawal options" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 👥 Patient Registration - Critical E2E › 🔒 LGPD Consent Capture › should create audit trail for LGPD consent events" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 👥 Patient Registration - Critical E2E › 🏥 Medical History and Allergies › should capture comprehensive medical history" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 👥 Patient Registration - Critical E2E › 🏥 Medical History and Allergies › should capture and validate allergy information with severity levels" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 👥 Patient Registration - Critical E2E › 🏥 Medical History and Allergies › should handle patients with no known allergies properly" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 👥 Patient Registration - Critical E2E › 🏥 Medical History and Allergies › should validate critical allergy information completeness" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 👥 Patient Registration - Critical E2E › ✅ Complete Registration Workflow › should complete end-to-end patient registration with all components" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 👥 Patient Registration - Critical E2E › ✅ Complete Registration Workflow › should generate patient ID and medical record number" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 👥 Patient Registration - Critical E2E › ✅ Complete Registration Workflow › should integrate with appointment scheduling system" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 👥 Patient Registration - Critical E2E › ✅ Complete Registration Workflow › should handle registration errors gracefully" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 👥 Patient Registration - Critical E2E › 🚀 Performance &amp; Validation › should complete registration within performance targets" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 👥 Patient Registration - Critical E2E › 🚀 Performance &amp; Validation › should provide accessibility compliance in registration form" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 👥 Patient Registration - Critical E2E › 🚀 Performance &amp; Validation › should handle concurrent registration attempts" classname="tests\healthcare\patient-registration.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="tests\homepage.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="firefox-desktop" tests="3" failures="0" skipped="3" time="0" errors="0">
+<testcase name="[firefox-desktop] NeonPro Application › should load the homepage" classname="tests\homepage.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] NeonPro Application › should have navigation menu" classname="tests\homepage.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] NeonPro Application › should be responsive on mobile" classname="tests\homepage.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="tests\performance\performance-security.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="firefox-desktop" tests="11" failures="0" skipped="11" time="0" errors="0">
+<testcase name="[firefox-desktop] ⚡ Performance &amp; Security E2E Tests › Performance: Page load times under 3 seconds" classname="tests\performance\performance-security.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] ⚡ Performance &amp; Security E2E Tests › Performance: API response times under 500ms" classname="tests\performance\performance-security.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] ⚡ Performance &amp; Security E2E Tests › Security: XSS protection" classname="tests\performance\performance-security.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] ⚡ Performance &amp; Security E2E Tests › Security: SQL injection protection" classname="tests\performance\performance-security.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] ⚡ Performance &amp; Security E2E Tests › Security: Authentication bypass attempts" classname="tests\performance\performance-security.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] ⚡ Performance &amp; Security E2E Tests › Security: Session management" classname="tests\performance\performance-security.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] ⚡ Performance &amp; Security E2E Tests › Performance: Large dataset handling" classname="tests\performance\performance-security.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] ⚡ Performance &amp; Security E2E Tests › Accessibility: Keyboard navigation" classname="tests\performance\performance-security.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] ⚡ Performance &amp; Security E2E Tests › Accessibility: Screen reader compatibility" classname="tests\performance\performance-security.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] ⚡ Performance &amp; Security E2E Tests › Mobile Responsiveness: Touch interactions" classname="tests\performance\performance-security.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] ⚡ Performance &amp; Security E2E Tests › Error Handling: Network failures" classname="tests\performance\performance-security.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="tests\security\security-compliance.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="firefox-desktop" tests="7" failures="0" skipped="7" time="0" errors="0">
+<testcase name="[firefox-desktop] 🔒 Security &amp; Compliance Testing › 🛡️ Authentication Security Tests" classname="tests\security\security-compliance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🔒 Security &amp; Compliance Testing › 🔐 Authorization Enforcement Tests" classname="tests\security\security-compliance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🔒 Security &amp; Compliance Testing › 📋 LGPD Compliance Tests" classname="tests\security\security-compliance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🔒 Security &amp; Compliance Testing › 🌐 Security Headers Tests" classname="tests\security\security-compliance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🔒 Security &amp; Compliance Testing › 💉 Input Validation &amp; Injection Tests" classname="tests\security\security-compliance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🔒 Security &amp; Compliance Testing › 🏥 Healthcare-Specific Security Tests" classname="tests\security\security-compliance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🔒 Security &amp; Compliance Testing › 🔍 API Security Testing" classname="tests\security\security-compliance.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="tests\security\security-healthcare-specific.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="firefox-desktop" tests="5" failures="0" skipped="5" time="0" errors="0">
+<testcase name="[firefox-desktop] 🏥 Healthcare Security Compliance › should enforce LGPD data protection in patient views" classname="tests\security\security-healthcare-specific.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🏥 Healthcare Security Compliance › should validate ANVISA device security requirements" classname="tests\security\security-healthcare-specific.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🏥 Healthcare Security Compliance › should enforce CFM professional authentication" classname="tests\security\security-healthcare-specific.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🏥 Healthcare Security Compliance › should maintain audit trail for all healthcare actions" classname="tests\security\security-healthcare-specific.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="[firefox-desktop] 🏥 Healthcare Security Compliance › should protect against unauthorized data access" classname="tests\security\security-healthcare-specific.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+</testsuites>

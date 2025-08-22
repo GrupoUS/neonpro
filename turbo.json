@@ -1,10 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalPassThroughEnv": [
-    "NODE_ENV",
-    "VERCEL_ENV",
-    "CI"
-  ],
+  "globalPassThroughEnv": ["NODE_ENV", "VERCEL_ENV", "CI"],
   "globalDependencies": [
     "**/.env.*local",
     "**/package.json",
@@ -37,18 +33,10 @@
         "!**/*.test.*",
         "!**/*.spec.*"
       ],
-      "outputs": [
-        ".next/**",
-        "!.next/cache/**",
-        "dist/**",
-        "build/**"
-      ]
+      "outputs": [".next/**", "!.next/cache/**", "dist/**", "build/**"]
     },
     "lint": {
-      "inputs": [
-        "**/*.{ts,tsx,js,jsx}",
-        "biome.jsonc"
-      ]
+      "inputs": ["**/*.{ts,tsx,js,jsx}", "biome.jsonc"]
     },
     "type-check": {
       "dependsOn": ["^build"],
@@ -66,10 +54,7 @@
       "cache": false
     },
     "format": {
-      "inputs": [
-        "**/*.{ts,tsx,js,jsx,json,md}",
-        "biome.jsonc"
-      ]
+      "inputs": ["**/*.{ts,tsx,js,jsx,json,md}", "biome.jsonc"]
     }
   }
 }

@@ -4,12 +4,12 @@
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "node",
-    
+
     // ESM and module configurations
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    
+
     // Strict type checking (healthcare compliance)
     "strict": true,
     "noUncheckedIndexedAccess": true,
@@ -17,7 +17,7 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     // "noUncheckedSideEffectImports": true, // Temporary disabled
-    
+
     // Build configurations
     "skipLibCheck": true,
     "declaration": true,
@@ -25,14 +25,14 @@
     "outDir": "./dist",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    
+
     // Type checking only (tsup handles building)
     "noEmit": true,
-    
+
     // Libraries for Node.js environment
     "lib": ["ESNext"],
     "types": ["node", "vitest/globals"],
-    
+
     // Path mapping
     "baseUrl": ".",
     "paths": {
@@ -56,7 +56,7 @@
   "exclude": [
     "node_modules",
     "dist",
-    "**/*.test.ts", 
+    "**/*.test.ts",
     "**/*.spec.ts",
     "main.py",
     "routers/"

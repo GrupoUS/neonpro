@@ -1,19 +1,19 @@
 // ApiRoute Module
 export type ApiRouteConfig = {
-  enabled: boolean;
-  data?: unknown;
+	enabled: boolean;
+	data?: unknown;
 };
 
 export const ApiRoute_DEFAULT: ApiRouteConfig = {
-  enabled: true,
-  data: null,
+	enabled: true,
+	data: null,
 };
 
 export function createApiRoute() {
-  return ApiRoute_DEFAULT;
+	return ApiRoute_DEFAULT;
 }
 
 export default {
-  config: ApiRoute_DEFAULT,
-  create: createApiRoute,
+	config: ApiRoute_DEFAULT,
+	create: createApiRoute,
 };

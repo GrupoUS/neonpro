@@ -1,17 +1,17 @@
 // Common shared types
 export type BaseEntity = {
-  id: string;
-  created_at: string;
-  updated_at: string;
+	id: string;
+	created_at: string;
+	updated_at: string;
 };
 
 export type PaginationParams = {
-  page?: number;
-  limit?: number;
+	page?: number;
+	limit?: number;
 };
 
 export type ApiResponse<T> = {
-  data: T;
-  message?: string;
-  success: boolean;
+	data: T;
+	message?: string;
+	success: boolean;
 };

@@ -10,86 +10,86 @@
 
 // Security API - Main interface for security operations
 export const SecurityAPI = {
-  // Security Events
-  createSecurityEvent: async (event: any) => {
-    // Implementation will be added based on requirements
-    return { success: true, event };
-  },
+	// Security Events
+	createSecurityEvent: async (event: any) => {
+		// Implementation will be added based on requirements
+		return { success: true, event };
+	},
 
-  getSecurityEvents: async (filters?: any) => {
-    // Implementation will be added based on requirements
-    return { success: true, events: [] };
-  },
+	getSecurityEvents: async (filters?: any) => {
+		// Implementation will be added based on requirements
+		return { success: true, events: [] };
+	},
 
-  // Security Alerts
-  createSecurityAlert: async (alert: any) => {
-    // Implementation will be added based on requirements
-    return { success: true, alert };
-  },
+	// Security Alerts
+	createSecurityAlert: async (alert: any) => {
+		// Implementation will be added based on requirements
+		return { success: true, alert };
+	},
 
-  getSecurityAlerts: async (filters?: any) => {
-    // Implementation will be added based on requirements
-    return { success: true, alerts: [] };
-  },
+	getSecurityAlerts: async (filters?: any) => {
+		// Implementation will be added based on requirements
+		return { success: true, alerts: [] };
+	},
 
-  updateAlert: async (alertId: string, updates: any) => {
-    // Implementation will be added based on requirements
-    return { success: true, alertId, updates };
-  },
+	updateAlert: async (alertId: string, updates: any) => {
+		// Implementation will be added based on requirements
+		return { success: true, alertId, updates };
+	},
 
-  // Audit Logs
-  createAuditLog: async (log: any) => {
-    // Implementation will be added based on requirements
-    return { success: true, log };
-  },
+	// Audit Logs
+	createAuditLog: async (log: any) => {
+		// Implementation will be added based on requirements
+		return { success: true, log };
+	},
 
-  getAuditLogs: async (filters?: any) => {
-    // Implementation will be added based on requirements
-    return { success: true, logs: [] };
-  },
+	getAuditLogs: async (filters?: any) => {
+		// Implementation will be added based on requirements
+		return { success: true, logs: [] };
+	},
 
-  // Session Management
-  getActiveSessions: async (userId?: string) => {
-    // Implementation will be added based on requirements
-    return { success: true, sessions: [] };
-  },
+	// Session Management
+	getActiveSessions: async (userId?: string) => {
+		// Implementation will be added based on requirements
+		return { success: true, sessions: [] };
+	},
 
-  terminateSession: async (sessionId: string) => {
-    // Implementation will be added based on requirements
-    return { success: true, sessionId };
-  },
+	terminateSession: async (sessionId: string) => {
+		// Implementation will be added based on requirements
+		return { success: true, sessionId };
+	},
 
-  // Security Metrics
-  getSecurityMetrics: async (timeRange?: string) => {
-    // Implementation will be added based on requirements
-    return { success: true, metrics: {} };
-  },
+	// Security Metrics
+	getSecurityMetrics: async (timeRange?: string) => {
+		// Implementation will be added based on requirements
+		return { success: true, metrics: {} };
+	},
 
-  // Compliance
-  generateComplianceReport: async (type: string) => {
-    // Implementation will be added based on requirements
-    return { success: true, report: {} };
-  },
+	// Compliance
+	generateComplianceReport: async (type: string) => {
+		// Implementation will be added based on requirements
+		return { success: true, report: {} };
+	},
 
-  // Rate Limiting
-  checkRateLimit: async (key: string) => {
-    // Implementation will be added based on requirements
-    return { success: true, allowed: true };
-  },
+	// Rate Limiting
+	checkRateLimit: async (key: string) => {
+		// Implementation will be added based on requirements
+		return { success: true, allowed: true };
+	},
 
-  // Authentication Security
-  validateAuthenticationSecurity: async (request: any) => {
-    // Implementation will be added based on requirements
-    return { success: true, valid: true };
-  },
+	// Authentication Security
+	validateAuthenticationSecurity: async (request: any) => {
+		// Implementation will be added based on requirements
+		return { success: true, valid: true };
+	},
 };
 
 // Export individual security modules
-export * from './csrf-protection';
+export * from "./csrf-protection";
 // Export hooks
-export * from './hooks/useSessionSecurity';
-export * from './lgpd-manager';
-export * from './rate-limit';
-export * from './security-config';
-export * from './security-events';
-export * from './security-middleware';
+export * from "./hooks/useSessionSecurity";
+export * from "./lgpd-manager";
+export * from "./rate-limit";
+export * from "./security-config";
+export * from "./security-events";
+export * from "./security-middleware";

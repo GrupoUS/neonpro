@@ -6,24 +6,24 @@
  * with Next.js App Router compatibility.
  */
 
-'use client';
+"use client";
 
-import { Outlet } from '@tanstack/react-router';
-import { TanStackRouterDevtools } from '@tanstack/router-devtools';
-import React from 'react';
-import { Toaster } from '@/components/ui/toaster';
+import { Outlet } from "@tanstack/react-router";
+import { TanStackRouterDevtools } from "@tanstack/router-devtools";
+import React from "react";
+import { Toaster } from "@/components/ui/toaster";
 
 export function RootLayout() {
-  return (
-    <div className="min-h-screen bg-background">
-      {/* Main Router Content */}
-      <Outlet />
+	return (
+		<div className="min-h-screen bg-background">
+			{/* Main Router Content */}
+			<Outlet />
 
-      {/* Global Toaster for notifications */}
-      <Toaster />
+			{/* Global Toaster for notifications */}
+			<Toaster />
 
-      {/* Development tools */}
-      {process.env.NODE_ENV === 'development' && <TanStackRouterDevtools />}
-    </div>
-  );
+			{/* Development tools */}
+			{process.env.NODE_ENV === "development" && <TanStackRouterDevtools />}
+		</div>
+	);
 }

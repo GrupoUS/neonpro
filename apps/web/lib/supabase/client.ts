@@ -4,14 +4,14 @@
  * Healthcare compliance with real-time capabilities
  */
 
-import { createClient as createDbClient } from '@neonpro/db';
+import { createClient as createDbClient } from "@neonpro/db";
 
 /**
  * Create Supabase browser client for Client Components
  * Implements proper browser-side authentication and real-time
  */
 export function createClient() {
-  return createDbClient();
+	return createDbClient();
 }
 
 /**
@@ -19,10 +19,10 @@ export function createClient() {
  * Optimized for appointment updates and patient notifications
  */
 export function createRealtimeClient() {
-  const client = createDbClient();
+	const client = createDbClient();
 
-  // Healthcare-specific real-time configuration
-  // Additional configuration would be handled in the base client
+	// Healthcare-specific real-time configuration
+	// Additional configuration would be handled in the base client
 
-  return client;
+	return client;
 }

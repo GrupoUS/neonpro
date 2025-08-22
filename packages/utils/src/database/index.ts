@@ -5,6 +5,6 @@
  * @compliance LGPD + ANVISA + CFM
  */
 
-export * from './anonymization';
-export * from './audit';
-export * from './rls';
+export * from "./anonymization";
+export * from "./audit";
+export * from "./rls";

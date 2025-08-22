@@ -4,89 +4,89 @@
  * TODO: Restore full functionality after fixing @neonpro/shared exports
  */
 
-import type { SupabaseClient } from '@supabase/supabase-js';
-import { type QueryClient, useQueryClient } from '@tanstack/react-query';
-import { useCallback, useEffect } from 'react';
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { type QueryClient, useQueryClient } from "@tanstack/react-query";
+import { useCallback, useEffect } from "react";
 
 // Enhanced query invalidation strategies
 export type InvalidationStrategy = {
-  immediate?: boolean;
-  debounced?: boolean;
-  debounceMs?: number;
-  background?: boolean;
-  optimistic?: boolean;
+	immediate?: boolean;
+	debounced?: boolean;
+	debounceMs?: number;
+	background?: boolean;
+	optimistic?: boolean;
 };
 
 // Real-time query configuration
 export interface RealtimeQueryConfig {
-  enabled: boolean;
-  invalidationStrategy: InvalidationStrategy;
-  lgpdCompliance: boolean;
-  auditLogging: boolean;
+	enabled: boolean;
+	invalidationStrategy: InvalidationStrategy;
+	lgpdCompliance: boolean;
+	auditLogging: boolean;
 }
 
 /**
  * Enhanced query client utilities for real-time integration
  */
 export class RealtimeQueryManager {
-  private queryClient: QueryClient;
-  private supabaseClient: SupabaseClient;
-  private activeChannels: Map<string, any> = new Map();
+	private queryClient: QueryClient;
+	private supabaseClient: SupabaseClient;
+	private activeChannels: Map<string, any> = new Map();
 
-  constructor(queryClient: QueryClient, supabaseClient: SupabaseClient) {
-    this.queryClient = queryClient;
-    this.supabaseClient = supabaseClient;
-  }
+	constructor(queryClient: QueryClient, supabaseClient: SupabaseClient) {
+		this.queryClient = queryClient;
+		this.supabaseClient = supabaseClient;
+	}
 
-  /**
-   * Invalidate queries with strategy
-   */
-  invalidateWithStrategy(queryKeys: string[], strategy: InvalidationStrategy) {
-    if (strategy.immediate) {
-      this.queryClient.invalidateQueries({ queryKey: queryKeys });
-    }
+	/**
+	 * Invalidate queries with strategy
+	 */
+	invalidateWithStrategy(queryKeys: string[], strategy: InvalidationStrategy) {
+		if (strategy.immediate) {
+			this.queryClient.invalidateQueries({ queryKey: queryKeys });
+		}
 
-    if (strategy.debounced) {
-      // Debounced invalidation implementation would go here
-      setTimeout(() => {
-        this.queryClient.invalidateQueries({ queryKey: queryKeys });
-      }, strategy.debounceMs || 500);
-    }
-  }
+		if (strategy.debounced) {
+			// Debounced invalidation implementation would go here
+			setTimeout(() => {
+				this.queryClient.invalidateQueries({ queryKey: queryKeys });
+			}, strategy.debounceMs || 500);
+		}
+	}
 
-  /**
-   * Audit data access for LGPD compliance
-   */
-  auditDataAccess(entityType: string, entityId: string, operation: string) {
-    console.log(`LGPD Audit: ${operation} on ${entityType}:${entityId}`);
-    // TODO: Implement proper audit logging
-  }
+	/**
+	 * Audit data access for LGPD compliance
+	 */
+	auditDataAccess(entityType: string, entityId: string, operation: string) {
+		console.log(`LGPD Audit: ${operation} on ${entityType}:${entityId}`);
+		// TODO: Implement proper audit logging
+	}
 
-  /**
-   * Cleanup all active channels
-   */
-  cleanup() {
-    this.activeChannels.forEach((channel) => {
-      this.supabaseClient.removeChannel(channel);
-    });
-    this.activeChannels.clear();
-  }
+	/**
+	 * Cleanup all active channels
+	 */
+	cleanup() {
+		this.activeChannels.forEach((channel) => {
+			this.supabaseClient.removeChannel(channel);
+		});
+		this.activeChannels.clear();
+	}
 }
 
 /**
  * Hook for managing real-time query invalidation
  */
 export function useRealtimeQueryManager(supabaseClient: SupabaseClient) {
-  const queryClient = useQueryClient();
-  const manager = new RealtimeQueryManager(queryClient, supabaseClient);
+	const queryClient = useQueryClient();
+	const manager = new RealtimeQueryManager(queryClient, supabaseClient);
 
-  useEffect(() => {
-    return () => {
-      manager.cleanup();
-    };
-  }, [manager]);
+	useEffect(() => {
+		return () => {
+			manager.cleanup();
+		};
+	}, [manager]);
 
-  return manager;
+	return manager;
 }
 
 /**
@@ -94,23 +94,23 @@ export function useRealtimeQueryManager(supabaseClient: SupabaseClient) {
  * TODO: Restore full functionality
  */
 export function useRealtimePatients(
-  supabaseClient: SupabaseClient,
-  options: {
-    patientId?: string;
-    clinicId?: string;
-    config?: RealtimeQueryConfig;
-  }
+	supabaseClient: SupabaseClient,
+	options: {
+		patientId?: string;
+		clinicId?: string;
+		config?: RealtimeQueryConfig;
+	}
 ) {
-  const manager = useRealtimeQueryManager(supabaseClient);
+	const manager = useRealtimeQueryManager(supabaseClient);
 
-  return {
-    realtime: {
-      isConnected: false,
-      lastUpdate: null,
-      error: null,
-    },
-    manager,
-  };
+	return {
+		realtime: {
+			isConnected: false,
+			lastUpdate: null,
+			error: null,
+		},
+		manager,
+	};
 }
 
 /**
@@ -118,26 +118,26 @@ export function useRealtimePatients(
  * TODO: Restore full functionality
  */
 export function useRealtimeAppointments(
-  supabaseClient: SupabaseClient,
-  options: {
-    appointmentId?: string;
-    patientId?: string;
-    professionalId?: string;
-    clinicId?: string;
-    dateRange?: { start: string; end: string };
-    config?: RealtimeQueryConfig;
-  }
+	supabaseClient: SupabaseClient,
+	options: {
+		appointmentId?: string;
+		patientId?: string;
+		professionalId?: string;
+		clinicId?: string;
+		dateRange?: { start: string; end: string };
+		config?: RealtimeQueryConfig;
+	}
 ) {
-  const manager = useRealtimeQueryManager(supabaseClient);
+	const manager = useRealtimeQueryManager(supabaseClient);
 
-  return {
-    realtime: {
-      isConnected: false,
-      lastUpdate: null,
-      error: null,
-    },
-    manager,
-  };
+	return {
+		realtime: {
+			isConnected: false,
+			lastUpdate: null,
+			error: null,
+		},
+		manager,
+	};
 }
 
 /**
@@ -145,23 +145,23 @@ export function useRealtimeAppointments(
  * TODO: Restore full functionality
  */
 export function useRealtimeProfessionals(
-  supabaseClient: SupabaseClient,
-  options: {
-    professionalId?: string;
-    clinicId?: string;
-    config?: RealtimeQueryConfig;
-  }
+	supabaseClient: SupabaseClient,
+	options: {
+		professionalId?: string;
+		clinicId?: string;
+		config?: RealtimeQueryConfig;
+	}
 ) {
-  const manager = useRealtimeQueryManager(supabaseClient);
+	const manager = useRealtimeQueryManager(supabaseClient);
 
-  return {
-    realtime: {
-      isConnected: false,
-      lastUpdate: null,
-      error: null,
-    },
-    manager,
-  };
+	return {
+		realtime: {
+			isConnected: false,
+			lastUpdate: null,
+			error: null,
+		},
+		manager,
+	};
 }
 
 /**
@@ -169,20 +169,20 @@ export function useRealtimeProfessionals(
  * TODO: Restore full functionality
  */
 export function useRealtimeDashboard(
-  supabaseClient: SupabaseClient,
-  options: {
-    clinicId?: string;
-    config?: RealtimeQueryConfig;
-  }
+	supabaseClient: SupabaseClient,
+	options: {
+		clinicId?: string;
+		config?: RealtimeQueryConfig;
+	}
 ) {
-  const manager = useRealtimeQueryManager(supabaseClient);
+	const manager = useRealtimeQueryManager(supabaseClient);
 
-  return {
-    realtime: {
-      isConnected: false,
-      lastUpdate: null,
-      error: null,
-    },
-    manager,
-  };
+	return {
+		realtime: {
+			isConnected: false,
+			lastUpdate: null,
+			error: null,
+		},
+		manager,
+	};
 }

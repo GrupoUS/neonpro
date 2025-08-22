@@ -1,747 +1,672 @@
-'use client';
+"use client";
 
-import jsPDF from 'jspdf';
-import * as XLSX from 'xlsx';
-import {
-  formatCNPJ,
-  formatCPF,
-  formatCurrency,
-  formatDate,
-  formatPercentage,
-  reportData,
-} from './healthcare-data';
+import jsPDF from "jspdf";
+import * as XLSX from "xlsx";
+import { formatCNPJ, formatCPF, formatCurrency, formatDate, formatPercentage, reportData } from "./healthcare-data";
 
 // PDF Export Configuration
 const PDF_CONFIG = {
-  margin: 20,
-  pageWidth: 210, // A4 width in mm
-  pageHeight: 297, // A4 height in mm
-  fontSize: {
-    title: 16,
-    subtitle: 14,
-    heading: 12,
-    body: 10,
-    small: 8,
-  },
-  colors: {
-    primary: '#1e40af',
-    secondary: '#64748b',
-    accent: '#3b82f6',
-    text: '#1f2937',
-    light: '#f8fafc',
-  },
+	margin: 20,
+	pageWidth: 210, // A4 width in mm
+	pageHeight: 297, // A4 height in mm
+	fontSize: {
+		title: 16,
+		subtitle: 14,
+		heading: 12,
+		body: 10,
+		small: 8,
+	},
+	colors: {
+		primary: "#1e40af",
+		secondary: "#64748b",
+		accent: "#3b82f6",
+		text: "#1f2937",
+		light: "#f8fafc",
+	},
 };
 
 // Professional PDF Template Generator
 export class HealthcarePDFGenerator {
-  private doc: jsPDF;
-  private yPosition: number;
+	private doc: jsPDF;
+	private yPosition: number;
 
-  constructor() {
-    this.doc = new jsPDF();
-    this.yPosition = PDF_CONFIG.margin;
-  }
+	constructor() {
+		this.doc = new jsPDF();
+		this.yPosition = PDF_CONFIG.margin;
+	}
 
-  // Add header with clinic branding
-  private addHeader(title: string, subtitle?: string) {
-    const { doc } = this;
+	// Add header with clinic branding
+	private addHeader(title: string, subtitle?: string) {
+		const { doc } = this;
 
-    // Logo/Brand area
-    doc.setFillColor(30, 64, 175); // Primary blue
-    doc.rect(0, 0, PDF_CONFIG.pageWidth, 25, 'F');
+		// Logo/Brand area
+		doc.setFillColor(30, 64, 175); // Primary blue
+		doc.rect(0, 0, PDF_CONFIG.pageWidth, 25, "F");
 
-    // Clinic name
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(PDF_CONFIG.fontSize.title);
-    doc.text('NeonPro Healthcare', PDF_CONFIG.margin, 15);
+		// Clinic name
+		doc.setTextColor(255, 255, 255);
+		doc.setFontSize(PDF_CONFIG.fontSize.title);
+		doc.text("NeonPro Healthcare", PDF_CONFIG.margin, 15);
 
-    // Report title
-    doc.setTextColor(0, 0, 0);
-    doc.setFontSize(PDF_CONFIG.fontSize.title);
-    this.yPosition = 40;
-    doc.text(title, PDF_CONFIG.margin, this.yPosition);
+		// Report title
+		doc.setTextColor(0, 0, 0);
+		doc.setFontSize(PDF_CONFIG.fontSize.title);
+		this.yPosition = 40;
+		doc.text(title, PDF_CONFIG.margin, this.yPosition);
 
-    if (subtitle) {
-      this.yPosition += 10;
-      doc.setFontSize(PDF_CONFIG.fontSize.subtitle);
-      doc.setTextColor(100, 116, 139);
-      doc.text(subtitle, PDF_CONFIG.margin, this.yPosition);
-    }
+		if (subtitle) {
+			this.yPosition += 10;
+			doc.setFontSize(PDF_CONFIG.fontSize.subtitle);
+			doc.setTextColor(100, 116, 139);
+			doc.text(subtitle, PDF_CONFIG.margin, this.yPosition);
+		}
 
-    this.yPosition += 20;
-  }
+		this.yPosition += 20;
+	}
 
-  // Add footer with compliance info
-  private addFooter() {
-    const { doc } = this;
-    const footerY = PDF_CONFIG.pageHeight - 20;
+	// Add footer with compliance info
+	private addFooter() {
+		const { doc } = this;
+		const footerY = PDF_CONFIG.pageHeight - 20;
 
-    doc.setFontSize(PDF_CONFIG.fontSize.small);
-    doc.setTextColor(100, 116, 139);
+		doc.setFontSize(PDF_CONFIG.fontSize.small);
+		doc.setTextColor(100, 116, 139);
 
-    // LGPD compliance notice
-    doc.text(
-      'Este relatório está em conformidade com a LGPD e regulamentações ANVISA/CFM',
-      PDF_CONFIG.margin,
-      footerY
-    );
+		// LGPD compliance notice
+		doc.text("Este relatório está em conformidade com a LGPD e regulamentações ANVISA/CFM", PDF_CONFIG.margin, footerY);
 
-    // Generation timestamp
-    const timestamp = new Date().toLocaleString('pt-BR');
-    doc.text(`Gerado em: ${timestamp}`, PDF_CONFIG.margin, footerY + 5);
+		// Generation timestamp
+		const timestamp = new Date().toLocaleString("pt-BR");
+		doc.text(`Gerado em: ${timestamp}`, PDF_CONFIG.margin, footerY + 5);
 
-    // Digital signature placeholder
-    doc.text(
-      'Assinatura Digital: NeonPro Healthcare System',
-      PDF_CONFIG.margin,
-      footerY + 10
-    );
-  }
+		// Digital signature placeholder
+		doc.text("Assinatura Digital: NeonPro Healthcare System", PDF_CONFIG.margin, footerY + 10);
+	}
 
-  // Add section with data table
-  private addDataTable(
-    title: string,
-    data: Array<{ label: string; value: string }>
-  ) {
-    const { doc } = this;
+	// Add section with data table
+	private addDataTable(title: string, data: Array<{ label: string; value: string }>) {
+		const { doc } = this;
 
-    // Section title
-    doc.setFontSize(PDF_CONFIG.fontSize.heading);
-    doc.setTextColor(30, 64, 175);
-    doc.text(title, PDF_CONFIG.margin, this.yPosition);
-    this.yPosition += 15;
+		// Section title
+		doc.setFontSize(PDF_CONFIG.fontSize.heading);
+		doc.setTextColor(30, 64, 175);
+		doc.text(title, PDF_CONFIG.margin, this.yPosition);
+		this.yPosition += 15;
 
-    // Table headers
-    doc.setFillColor(248, 250, 252);
-    doc.rect(PDF_CONFIG.margin, this.yPosition - 5, 170, 8, 'F');
+		// Table headers
+		doc.setFillColor(248, 250, 252);
+		doc.rect(PDF_CONFIG.margin, this.yPosition - 5, 170, 8, "F");
 
-    doc.setFontSize(PDF_CONFIG.fontSize.body);
-    doc.setTextColor(31, 41, 55);
-    doc.text('Métrica', PDF_CONFIG.margin + 2, this.yPosition);
-    doc.text('Valor', PDF_CONFIG.margin + 100, this.yPosition);
+		doc.setFontSize(PDF_CONFIG.fontSize.body);
+		doc.setTextColor(31, 41, 55);
+		doc.text("Métrica", PDF_CONFIG.margin + 2, this.yPosition);
+		doc.text("Valor", PDF_CONFIG.margin + 100, this.yPosition);
 
-    this.yPosition += 10;
+		this.yPosition += 10;
 
-    // Table rows
-    data.forEach((row, index) => {
-      if (index % 2 === 0) {
-        doc.setFillColor(248, 250, 252);
-        doc.rect(PDF_CONFIG.margin, this.yPosition - 5, 170, 8, 'F');
-      }
+		// Table rows
+		data.forEach((row, index) => {
+			if (index % 2 === 0) {
+				doc.setFillColor(248, 250, 252);
+				doc.rect(PDF_CONFIG.margin, this.yPosition - 5, 170, 8, "F");
+			}
 
-      doc.setFontSize(PDF_CONFIG.fontSize.body);
-      doc.setTextColor(31, 41, 55);
-      doc.text(row.label, PDF_CONFIG.margin + 2, this.yPosition);
-      doc.text(row.value, PDF_CONFIG.margin + 100, this.yPosition);
+			doc.setFontSize(PDF_CONFIG.fontSize.body);
+			doc.setTextColor(31, 41, 55);
+			doc.text(row.label, PDF_CONFIG.margin + 2, this.yPosition);
+			doc.text(row.value, PDF_CONFIG.margin + 100, this.yPosition);
 
-      this.yPosition += 8;
-    });
+			this.yPosition += 8;
+		});
 
-    this.yPosition += 10;
-  }
+		this.yPosition += 10;
+	}
 
-  // Check if new page is needed
-  private checkNewPage() {
-    if (this.yPosition > PDF_CONFIG.pageHeight - 50) {
-      this.doc.addPage();
-      this.yPosition = PDF_CONFIG.margin;
-    }
-  }
+	// Check if new page is needed
+	private checkNewPage() {
+		if (this.yPosition > PDF_CONFIG.pageHeight - 50) {
+			this.doc.addPage();
+			this.yPosition = PDF_CONFIG.margin;
+		}
+	}
 
-  // Generate LGPD Compliance Report
-  generateLGPDReport(): Uint8Array {
-    const data = reportData.lgpd;
+	// Generate LGPD Compliance Report
+	generateLGPDReport(): Uint8Array {
+		const data = reportData.lgpd;
 
-    this.addHeader(
-      'Relatório de Conformidade LGPD',
-      'Análise Completa de Proteção de Dados'
-    );
+		this.addHeader("Relatório de Conformidade LGPD", "Análise Completa de Proteção de Dados");
 
-    // Overview section
-    this.addDataTable('Visão Geral da Conformidade', [
-      {
-        label: 'Total de Titulares',
-        value: data.overview.totalDataSubjects.toLocaleString('pt-BR'),
-      },
-      {
-        label: 'Consentimentos Ativos',
-        value: data.overview.activeConsents.toLocaleString('pt-BR'),
-      },
-      {
-        label: 'Consentimentos Retirados',
-        value: data.overview.withdrawnConsents.toLocaleString('pt-BR'),
-      },
-      {
-        label: 'Solicitações Pendentes',
-        value: data.overview.pendingRequests.toString(),
-      },
-      {
-        label: 'Score de Conformidade',
-        value: `${data.overview.complianceScore}%`,
-      },
-      { label: 'Última Auditoria', value: formatDate(data.overview.lastAudit) },
-      {
-        label: 'Próxima Auditoria',
-        value: formatDate(data.overview.nextAudit),
-      },
-    ]);
+		// Overview section
+		this.addDataTable("Visão Geral da Conformidade", [
+			{
+				label: "Total de Titulares",
+				value: data.overview.totalDataSubjects.toLocaleString("pt-BR"),
+			},
+			{
+				label: "Consentimentos Ativos",
+				value: data.overview.activeConsents.toLocaleString("pt-BR"),
+			},
+			{
+				label: "Consentimentos Retirados",
+				value: data.overview.withdrawnConsents.toLocaleString("pt-BR"),
+			},
+			{
+				label: "Solicitações Pendentes",
+				value: data.overview.pendingRequests.toString(),
+			},
+			{
+				label: "Score de Conformidade",
+				value: `${data.overview.complianceScore}%`,
+			},
+			{ label: "Última Auditoria", value: formatDate(data.overview.lastAudit) },
+			{
+				label: "Próxima Auditoria",
+				value: formatDate(data.overview.nextAudit),
+			},
+		]);
 
-    this.checkNewPage();
+		this.checkNewPage();
 
-    // Consent metrics
-    this.addDataTable('Métricas de Consentimento', [
-      {
-        label: 'Marketing - Concedidos',
-        value: data.consentMetrics.marketing.granted.toLocaleString('pt-BR'),
-      },
-      {
-        label: 'Analytics - Concedidos',
-        value: data.consentMetrics.analytics.granted.toLocaleString('pt-BR'),
-      },
-      {
-        label: 'Terceiros - Concedidos',
-        value: data.consentMetrics.thirdParty.granted.toLocaleString('pt-BR'),
-      },
-      {
-        label: 'Pesquisa - Concedidos',
-        value: data.consentMetrics.research.granted.toLocaleString('pt-BR'),
-      },
-    ]);
+		// Consent metrics
+		this.addDataTable("Métricas de Consentimento", [
+			{
+				label: "Marketing - Concedidos",
+				value: data.consentMetrics.marketing.granted.toLocaleString("pt-BR"),
+			},
+			{
+				label: "Analytics - Concedidos",
+				value: data.consentMetrics.analytics.granted.toLocaleString("pt-BR"),
+			},
+			{
+				label: "Terceiros - Concedidos",
+				value: data.consentMetrics.thirdParty.granted.toLocaleString("pt-BR"),
+			},
+			{
+				label: "Pesquisa - Concedidos",
+				value: data.consentMetrics.research.granted.toLocaleString("pt-BR"),
+			},
+		]);
 
-    this.checkNewPage();
+		this.checkNewPage();
 
-    // Data requests section
-    this.doc.setFontSize(PDF_CONFIG.fontSize.heading);
-    this.doc.setTextColor(30, 64, 175);
-    this.doc.text(
-      'Solicitações de Dados Recentes',
-      PDF_CONFIG.margin,
-      this.yPosition
-    );
-    this.yPosition += 15;
+		// Data requests section
+		this.doc.setFontSize(PDF_CONFIG.fontSize.heading);
+		this.doc.setTextColor(30, 64, 175);
+		this.doc.text("Solicitações de Dados Recentes", PDF_CONFIG.margin, this.yPosition);
+		this.yPosition += 15;
 
-    data.dataRequests.forEach((request) => {
-      const requestData = [
-        { label: 'ID da Solicitação', value: request.id },
-        { label: 'Tipo', value: request.type },
-        { label: 'Status', value: request.status },
-        {
-          label: 'Data da Solicitação',
-          value: formatDate(request.requestDate),
-        },
-        { label: 'CPF do Solicitante', value: request.requesterCPF },
-        { label: 'Categoria de Dados', value: request.dataCategory },
-      ];
+		data.dataRequests.forEach((request) => {
+			const requestData = [
+				{ label: "ID da Solicitação", value: request.id },
+				{ label: "Tipo", value: request.type },
+				{ label: "Status", value: request.status },
+				{
+					label: "Data da Solicitação",
+					value: formatDate(request.requestDate),
+				},
+				{ label: "CPF do Solicitante", value: request.requesterCPF },
+				{ label: "Categoria de Dados", value: request.dataCategory },
+			];
 
-      if (request.completionDate) {
-        requestData.push({
-          label: 'Data de Conclusão',
-          value: formatDate(request.completionDate),
-        });
-      }
+			if (request.completionDate) {
+				requestData.push({
+					label: "Data de Conclusão",
+					value: formatDate(request.completionDate),
+				});
+			}
 
-      this.addDataTable(`Solicitação ${request.id}`, requestData);
-      this.checkNewPage();
-    });
+			this.addDataTable(`Solicitação ${request.id}`, requestData);
+			this.checkNewPage();
+		});
 
-    this.addFooter();
-    return this.doc.output('arraybuffer');
-  }
+		this.addFooter();
+		return this.doc.output("arraybuffer");
+	}
 
-  // Generate Financial Report
-  generateFinancialReport(): Uint8Array {
-    const data = reportData.financial;
+	// Generate Financial Report
+	generateFinancialReport(): Uint8Array {
+		const data = reportData.financial;
 
-    this.addHeader(
-      'Relatório Financeiro',
-      'Análise de Receitas e Conformidade Fiscal'
-    );
+		this.addHeader("Relatório Financeiro", "Análise de Receitas e Conformidade Fiscal");
 
-    // Revenue overview
-    this.addDataTable('Receitas', [
-      { label: 'Receita Mensal', value: formatCurrency(data.revenue.monthly) },
-      {
-        label: 'Receita Trimestral',
-        value: formatCurrency(data.revenue.quarterly),
-      },
-      { label: 'Receita Anual', value: formatCurrency(data.revenue.yearly) },
-      { label: 'Crescimento Mensal', value: `${data.revenue.growth.monthly}%` },
-      {
-        label: 'Crescimento Trimestral',
-        value: `${data.revenue.growth.quarterly}%`,
-      },
-      { label: 'Crescimento Anual', value: `${data.revenue.growth.yearly}%` },
-    ]);
+		// Revenue overview
+		this.addDataTable("Receitas", [
+			{ label: "Receita Mensal", value: formatCurrency(data.revenue.monthly) },
+			{
+				label: "Receita Trimestral",
+				value: formatCurrency(data.revenue.quarterly),
+			},
+			{ label: "Receita Anual", value: formatCurrency(data.revenue.yearly) },
+			{ label: "Crescimento Mensal", value: `${data.revenue.growth.monthly}%` },
+			{
+				label: "Crescimento Trimestral",
+				value: `${data.revenue.growth.quarterly}%`,
+			},
+			{ label: "Crescimento Anual", value: `${data.revenue.growth.yearly}%` },
+		]);
 
-    this.checkNewPage();
+		this.checkNewPage();
 
-    // Payment methods
-    this.addDataTable('Métodos de Pagamento', [
-      {
-        label: 'PIX',
-        value: `${formatCurrency(data.paymentMethods.pix.amount)} (${data.paymentMethods.pix.percentage}%)`,
-      },
-      {
-        label: 'Cartão de Crédito',
-        value: `${formatCurrency(data.paymentMethods.creditCard.amount)} (${data.paymentMethods.creditCard.percentage}%)`,
-      },
-      {
-        label: 'Cartão de Débito',
-        value: `${formatCurrency(data.paymentMethods.debitCard.amount)} (${data.paymentMethods.debitCard.percentage}%)`,
-      },
-      {
-        label: 'Dinheiro',
-        value: `${formatCurrency(data.paymentMethods.cash.amount)} (${data.paymentMethods.cash.percentage}%)`,
-      },
-    ]);
+		// Payment methods
+		this.addDataTable("Métodos de Pagamento", [
+			{
+				label: "PIX",
+				value: `${formatCurrency(data.paymentMethods.pix.amount)} (${data.paymentMethods.pix.percentage}%)`,
+			},
+			{
+				label: "Cartão de Crédito",
+				value: `${formatCurrency(data.paymentMethods.creditCard.amount)} (${data.paymentMethods.creditCard.percentage}%)`,
+			},
+			{
+				label: "Cartão de Débito",
+				value: `${formatCurrency(data.paymentMethods.debitCard.amount)} (${data.paymentMethods.debitCard.percentage}%)`,
+			},
+			{
+				label: "Dinheiro",
+				value: `${formatCurrency(data.paymentMethods.cash.amount)} (${data.paymentMethods.cash.percentage}%)`,
+			},
+		]);
 
-    this.checkNewPage();
+		this.checkNewPage();
 
-    // Tax compliance
-    this.addDataTable('Tributos e Impostos', [
-      { label: 'IRPJ', value: formatCurrency(data.taxes.irpj) },
-      { label: 'CSLL', value: formatCurrency(data.taxes.csll) },
-      { label: 'PIS', value: formatCurrency(data.taxes.pis) },
-      { label: 'COFINS', value: formatCurrency(data.taxes.cofins) },
-      { label: 'ISS', value: formatCurrency(data.taxes.iss) },
-      { label: 'INSS', value: formatCurrency(data.taxes.inss) },
-      { label: 'Total de Tributos', value: formatCurrency(data.taxes.total) },
-    ]);
+		// Tax compliance
+		this.addDataTable("Tributos e Impostos", [
+			{ label: "IRPJ", value: formatCurrency(data.taxes.irpj) },
+			{ label: "CSLL", value: formatCurrency(data.taxes.csll) },
+			{ label: "PIS", value: formatCurrency(data.taxes.pis) },
+			{ label: "COFINS", value: formatCurrency(data.taxes.cofins) },
+			{ label: "ISS", value: formatCurrency(data.taxes.iss) },
+			{ label: "INSS", value: formatCurrency(data.taxes.inss) },
+			{ label: "Total de Tributos", value: formatCurrency(data.taxes.total) },
+		]);
 
-    this.addFooter();
-    return this.doc.output('arraybuffer');
-  }
+		this.addFooter();
+		return this.doc.output("arraybuffer");
+	}
 
-  // Generate Clinical Report
-  generateClinicalReport(): Uint8Array {
-    const data = reportData.clinical;
+	// Generate Clinical Report
+	generateClinicalReport(): Uint8Array {
+		const data = reportData.clinical;
 
-    this.addHeader(
-      'Relatório Clínico',
-      'Resultados de Tratamento e Satisfação do Paciente'
-    );
+		this.addHeader("Relatório Clínico", "Resultados de Tratamento e Satisfação do Paciente");
 
-    // Treatment outcomes
-    this.addDataTable('Resultados de Tratamento', [
-      {
-        label: 'Taxa de Sucesso',
-        value: `${data.treatmentOutcomes.successRate}%`,
-      },
-      {
-        label: 'Taxa de Complicações',
-        value: `${data.treatmentOutcomes.complicationRate}%`,
-      },
-      {
-        label: 'Satisfação do Paciente',
-        value: `${data.treatmentOutcomes.patientSatisfaction}/5.0`,
-      },
-      {
-        label: 'Taxa de Conclusão',
-        value: `${data.treatmentOutcomes.treatmentCompletionRate}%`,
-      },
-      {
-        label: 'Adesão ao Follow-up',
-        value: `${data.treatmentOutcomes.followUpCompliance}%`,
-      },
-    ]);
+		// Treatment outcomes
+		this.addDataTable("Resultados de Tratamento", [
+			{
+				label: "Taxa de Sucesso",
+				value: `${data.treatmentOutcomes.successRate}%`,
+			},
+			{
+				label: "Taxa de Complicações",
+				value: `${data.treatmentOutcomes.complicationRate}%`,
+			},
+			{
+				label: "Satisfação do Paciente",
+				value: `${data.treatmentOutcomes.patientSatisfaction}/5.0`,
+			},
+			{
+				label: "Taxa de Conclusão",
+				value: `${data.treatmentOutcomes.treatmentCompletionRate}%`,
+			},
+			{
+				label: "Adesão ao Follow-up",
+				value: `${data.treatmentOutcomes.followUpCompliance}%`,
+			},
+		]);
 
-    this.checkNewPage();
+		this.checkNewPage();
 
-    // Patient satisfaction breakdown
-    this.addDataTable('Satisfação do Paciente - Detalhada', [
-      {
-        label: 'Satisfação Geral',
-        value: `${data.patientSatisfaction.overall}/5.0`,
-      },
-      {
-        label: 'Tratamento',
-        value: `${data.patientSatisfaction.breakdown.treatment}/5.0`,
-      },
-      {
-        label: 'Atendimento',
-        value: `${data.patientSatisfaction.breakdown.service}/5.0`,
-      },
-      {
-        label: 'Instalações',
-        value: `${data.patientSatisfaction.breakdown.facilities}/5.0`,
-      },
-      {
-        label: 'Equipe',
-        value: `${data.patientSatisfaction.breakdown.staff}/5.0`,
-      },
-      {
-        label: 'Agendamento',
-        value: `${data.patientSatisfaction.breakdown.scheduling}/5.0`,
-      },
-      { label: 'NPS', value: data.patientSatisfaction.nps.toString() },
-    ]);
+		// Patient satisfaction breakdown
+		this.addDataTable("Satisfação do Paciente - Detalhada", [
+			{
+				label: "Satisfação Geral",
+				value: `${data.patientSatisfaction.overall}/5.0`,
+			},
+			{
+				label: "Tratamento",
+				value: `${data.patientSatisfaction.breakdown.treatment}/5.0`,
+			},
+			{
+				label: "Atendimento",
+				value: `${data.patientSatisfaction.breakdown.service}/5.0`,
+			},
+			{
+				label: "Instalações",
+				value: `${data.patientSatisfaction.breakdown.facilities}/5.0`,
+			},
+			{
+				label: "Equipe",
+				value: `${data.patientSatisfaction.breakdown.staff}/5.0`,
+			},
+			{
+				label: "Agendamento",
+				value: `${data.patientSatisfaction.breakdown.scheduling}/5.0`,
+			},
+			{ label: "NPS", value: data.patientSatisfaction.nps.toString() },
+		]);
 
-    this.checkNewPage();
+		this.checkNewPage();
 
-    // Adverse events
-    if (data.adverseEvents.length > 0) {
-      this.doc.setFontSize(PDF_CONFIG.fontSize.heading);
-      this.doc.setTextColor(30, 64, 175);
-      this.doc.text('Eventos Adversos', PDF_CONFIG.margin, this.yPosition);
-      this.yPosition += 15;
+		// Adverse events
+		if (data.adverseEvents.length > 0) {
+			this.doc.setFontSize(PDF_CONFIG.fontSize.heading);
+			this.doc.setTextColor(30, 64, 175);
+			this.doc.text("Eventos Adversos", PDF_CONFIG.margin, this.yPosition);
+			this.yPosition += 15;
 
-      data.adverseEvents.forEach((event) => {
-        this.addDataTable(`Evento ${event.id}`, [
-          { label: 'Data', value: formatDate(event.date) },
-          { label: 'Tipo', value: event.type },
-          { label: 'Severidade', value: event.severity },
-          { label: 'Tratamento', value: event.treatment },
-          { label: 'Desfecho', value: event.outcome },
-          {
-            label: 'Reportado ANVISA',
-            value: event.reportedToAnvisa ? 'Sim' : 'Não',
-          },
-        ]);
-        this.checkNewPage();
-      });
-    }
+			data.adverseEvents.forEach((event) => {
+				this.addDataTable(`Evento ${event.id}`, [
+					{ label: "Data", value: formatDate(event.date) },
+					{ label: "Tipo", value: event.type },
+					{ label: "Severidade", value: event.severity },
+					{ label: "Tratamento", value: event.treatment },
+					{ label: "Desfecho", value: event.outcome },
+					{
+						label: "Reportado ANVISA",
+						value: event.reportedToAnvisa ? "Sim" : "Não",
+					},
+				]);
+				this.checkNewPage();
+			});
+		}
 
-    this.addFooter();
-    return this.doc.output('arraybuffer');
-  }
+		this.addFooter();
+		return this.doc.output("arraybuffer");
+	}
 }
 
 // Excel Export Functions
 export class HealthcareExcelExporter {
-  // Generate comprehensive Excel workbook with multiple sheets
-  static generateComprehensiveReport(): Uint8Array {
-    const workbook = XLSX.utils.book_new();
+	// Generate comprehensive Excel workbook with multiple sheets
+	static generateComprehensiveReport(): Uint8Array {
+		const workbook = XLSX.utils.book_new();
 
-    // LGPD Compliance Sheet
-    const lgpdData = HealthcareExcelExporter.prepareLGPDData();
-    const lgpdSheet = XLSX.utils.aoa_to_sheet(lgpdData);
-    XLSX.utils.book_append_sheet(workbook, lgpdSheet, 'Conformidade LGPD');
+		// LGPD Compliance Sheet
+		const lgpdData = HealthcareExcelExporter.prepareLGPDData();
+		const lgpdSheet = XLSX.utils.aoa_to_sheet(lgpdData);
+		XLSX.utils.book_append_sheet(workbook, lgpdSheet, "Conformidade LGPD");
 
-    // Financial Data Sheet
-    const financialData = HealthcareExcelExporter.prepareFinancialData();
-    const financialSheet = XLSX.utils.aoa_to_sheet(financialData);
-    XLSX.utils.book_append_sheet(workbook, financialSheet, 'Dados Financeiros');
+		// Financial Data Sheet
+		const financialData = HealthcareExcelExporter.prepareFinancialData();
+		const financialSheet = XLSX.utils.aoa_to_sheet(financialData);
+		XLSX.utils.book_append_sheet(workbook, financialSheet, "Dados Financeiros");
 
-    // Clinical Data Sheet
-    const clinicalData = HealthcareExcelExporter.prepareClinicalData();
-    const clinicalSheet = XLSX.utils.aoa_to_sheet(clinicalData);
-    XLSX.utils.book_append_sheet(workbook, clinicalSheet, 'Dados Clínicos');
+		// Clinical Data Sheet
+		const clinicalData = HealthcareExcelExporter.prepareClinicalData();
+		const clinicalSheet = XLSX.utils.aoa_to_sheet(clinicalData);
+		XLSX.utils.book_append_sheet(workbook, clinicalSheet, "Dados Clínicos");
 
-    // Patient Demographics Sheet
-    const demographicsData = HealthcareExcelExporter.prepareDemographicsData();
-    const demographicsSheet = XLSX.utils.aoa_to_sheet(demographicsData);
-    XLSX.utils.book_append_sheet(
-      workbook,
-      demographicsSheet,
-      'Demografia Pacientes'
-    );
+		// Patient Demographics Sheet
+		const demographicsData = HealthcareExcelExporter.prepareDemographicsData();
+		const demographicsSheet = XLSX.utils.aoa_to_sheet(demographicsData);
+		XLSX.utils.book_append_sheet(workbook, demographicsSheet, "Demografia Pacientes");
 
-    return XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-  }
+		return XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+	}
 
-  private static prepareLGPDData(): any[][] {
-    const data = reportData.lgpd;
-    return [
-      ['Relatório de Conformidade LGPD - NeonPro Healthcare'],
-      ['Gerado em:', new Date().toLocaleString('pt-BR')],
-      [],
-      ['VISÃO GERAL'],
-      ['Métrica', 'Valor'],
-      ['Total de Titulares', data.overview.totalDataSubjects],
-      ['Consentimentos Ativos', data.overview.activeConsents],
-      ['Consentimentos Retirados', data.overview.withdrawnConsents],
-      ['Solicitações Pendentes', data.overview.pendingRequests],
-      ['Score de Conformidade (%)', data.overview.complianceScore],
-      ['Última Auditoria', formatDate(data.overview.lastAudit)],
-      ['Próxima Auditoria', formatDate(data.overview.nextAudit)],
-      [],
-      ['MÉTRICAS DE CONSENTIMENTO'],
-      ['Categoria', 'Concedidos', 'Retirados', 'Pendentes'],
-      [
-        'Marketing',
-        data.consentMetrics.marketing.granted,
-        data.consentMetrics.marketing.withdrawn,
-        data.consentMetrics.marketing.pending,
-      ],
-      [
-        'Analytics',
-        data.consentMetrics.analytics.granted,
-        data.consentMetrics.analytics.withdrawn,
-        data.consentMetrics.analytics.pending,
-      ],
-      [
-        'Terceiros',
-        data.consentMetrics.thirdParty.granted,
-        data.consentMetrics.thirdParty.withdrawn,
-        data.consentMetrics.thirdParty.pending,
-      ],
-      [
-        'Pesquisa',
-        data.consentMetrics.research.granted,
-        data.consentMetrics.research.withdrawn,
-        data.consentMetrics.research.pending,
-      ],
-      [],
-      ['SOLICITAÇÕES DE DADOS'],
-      ['ID', 'Tipo', 'Status', 'Data Solicitação', 'CPF', 'Categoria'],
-      ...data.dataRequests.map((req) => [
-        req.id,
-        req.type,
-        req.status,
-        formatDate(req.requestDate),
-        req.requesterCPF,
-        req.dataCategory,
-      ]),
-    ];
-  }
+	private static prepareLGPDData(): any[][] {
+		const data = reportData.lgpd;
+		return [
+			["Relatório de Conformidade LGPD - NeonPro Healthcare"],
+			["Gerado em:", new Date().toLocaleString("pt-BR")],
+			[],
+			["VISÃO GERAL"],
+			["Métrica", "Valor"],
+			["Total de Titulares", data.overview.totalDataSubjects],
+			["Consentimentos Ativos", data.overview.activeConsents],
+			["Consentimentos Retirados", data.overview.withdrawnConsents],
+			["Solicitações Pendentes", data.overview.pendingRequests],
+			["Score de Conformidade (%)", data.overview.complianceScore],
+			["Última Auditoria", formatDate(data.overview.lastAudit)],
+			["Próxima Auditoria", formatDate(data.overview.nextAudit)],
+			[],
+			["MÉTRICAS DE CONSENTIMENTO"],
+			["Categoria", "Concedidos", "Retirados", "Pendentes"],
+			[
+				"Marketing",
+				data.consentMetrics.marketing.granted,
+				data.consentMetrics.marketing.withdrawn,
+				data.consentMetrics.marketing.pending,
+			],
+			[
+				"Analytics",
+				data.consentMetrics.analytics.granted,
+				data.consentMetrics.analytics.withdrawn,
+				data.consentMetrics.analytics.pending,
+			],
+			[
+				"Terceiros",
+				data.consentMetrics.thirdParty.granted,
+				data.consentMetrics.thirdParty.withdrawn,
+				data.consentMetrics.thirdParty.pending,
+			],
+			[
+				"Pesquisa",
+				data.consentMetrics.research.granted,
+				data.consentMetrics.research.withdrawn,
+				data.consentMetrics.research.pending,
+			],
+			[],
+			["SOLICITAÇÕES DE DADOS"],
+			["ID", "Tipo", "Status", "Data Solicitação", "CPF", "Categoria"],
+			...data.dataRequests.map((req) => [
+				req.id,
+				req.type,
+				req.status,
+				formatDate(req.requestDate),
+				req.requesterCPF,
+				req.dataCategory,
+			]),
+		];
+	}
 
-  private static prepareFinancialData(): any[][] {
-    const data = reportData.financial;
-    return [
-      ['Relatório Financeiro - NeonPro Healthcare'],
-      ['Gerado em:', new Date().toLocaleString('pt-BR')],
-      [],
-      ['RECEITAS'],
-      ['Período', 'Valor (R$)', 'Crescimento (%)'],
-      ['Mensal', data.revenue.monthly, data.revenue.growth.monthly],
-      ['Trimestral', data.revenue.quarterly, data.revenue.growth.quarterly],
-      ['Anual', data.revenue.yearly, data.revenue.growth.yearly],
-      [],
-      ['MÉTODOS DE PAGAMENTO'],
-      ['Método', 'Valor (R$)', 'Percentual (%)', 'Transações'],
-      [
-        'PIX',
-        data.paymentMethods.pix.amount,
-        data.paymentMethods.pix.percentage,
-        data.paymentMethods.pix.transactions,
-      ],
-      [
-        'Cartão de Crédito',
-        data.paymentMethods.creditCard.amount,
-        data.paymentMethods.creditCard.percentage,
-        data.paymentMethods.creditCard.transactions,
-      ],
-      [
-        'Cartão de Débito',
-        data.paymentMethods.debitCard.amount,
-        data.paymentMethods.debitCard.percentage,
-        data.paymentMethods.debitCard.transactions,
-      ],
-      [
-        'Dinheiro',
-        data.paymentMethods.cash.amount,
-        data.paymentMethods.cash.percentage,
-        data.paymentMethods.cash.transactions,
-      ],
-      [],
-      ['ANÁLISE DE SERVIÇOS'],
-      ['Serviço', 'Receita (R$)', 'Margem (%)', 'Sessões'],
-      ...data.serviceAnalysis.map((service) => [
-        service.service,
-        service.revenue,
-        service.margin,
-        service.sessions,
-      ]),
-      [],
-      ['TRIBUTOS'],
-      ['Tributo', 'Valor (R$)'],
-      ['IRPJ', data.taxes.irpj],
-      ['CSLL', data.taxes.csll],
-      ['PIS', data.taxes.pis],
-      ['COFINS', data.taxes.cofins],
-      ['ISS', data.taxes.iss],
-      ['INSS', data.taxes.inss],
-      ['Total', data.taxes.total],
-    ];
-  }
+	private static prepareFinancialData(): any[][] {
+		const data = reportData.financial;
+		return [
+			["Relatório Financeiro - NeonPro Healthcare"],
+			["Gerado em:", new Date().toLocaleString("pt-BR")],
+			[],
+			["RECEITAS"],
+			["Período", "Valor (R$)", "Crescimento (%)"],
+			["Mensal", data.revenue.monthly, data.revenue.growth.monthly],
+			["Trimestral", data.revenue.quarterly, data.revenue.growth.quarterly],
+			["Anual", data.revenue.yearly, data.revenue.growth.yearly],
+			[],
+			["MÉTODOS DE PAGAMENTO"],
+			["Método", "Valor (R$)", "Percentual (%)", "Transações"],
+			["PIX", data.paymentMethods.pix.amount, data.paymentMethods.pix.percentage, data.paymentMethods.pix.transactions],
+			[
+				"Cartão de Crédito",
+				data.paymentMethods.creditCard.amount,
+				data.paymentMethods.creditCard.percentage,
+				data.paymentMethods.creditCard.transactions,
+			],
+			[
+				"Cartão de Débito",
+				data.paymentMethods.debitCard.amount,
+				data.paymentMethods.debitCard.percentage,
+				data.paymentMethods.debitCard.transactions,
+			],
+			[
+				"Dinheiro",
+				data.paymentMethods.cash.amount,
+				data.paymentMethods.cash.percentage,
+				data.paymentMethods.cash.transactions,
+			],
+			[],
+			["ANÁLISE DE SERVIÇOS"],
+			["Serviço", "Receita (R$)", "Margem (%)", "Sessões"],
+			...data.serviceAnalysis.map((service) => [service.service, service.revenue, service.margin, service.sessions]),
+			[],
+			["TRIBUTOS"],
+			["Tributo", "Valor (R$)"],
+			["IRPJ", data.taxes.irpj],
+			["CSLL", data.taxes.csll],
+			["PIS", data.taxes.pis],
+			["COFINS", data.taxes.cofins],
+			["ISS", data.taxes.iss],
+			["INSS", data.taxes.inss],
+			["Total", data.taxes.total],
+		];
+	}
 
-  private static prepareClinicalData(): any[][] {
-    const data = reportData.clinical;
-    return [
-      ['Relatório Clínico - NeonPro Healthcare'],
-      ['Gerado em:', new Date().toLocaleString('pt-BR')],
-      [],
-      ['RESULTADOS DE TRATAMENTO'],
-      ['Métrica', 'Valor (%)'],
-      ['Taxa de Sucesso', data.treatmentOutcomes.successRate],
-      ['Taxa de Complicações', data.treatmentOutcomes.complicationRate],
-      ['Taxa de Conclusão', data.treatmentOutcomes.treatmentCompletionRate],
-      ['Adesão ao Follow-up', data.treatmentOutcomes.followUpCompliance],
-      [],
-      ['SATISFAÇÃO DO PACIENTE'],
-      ['Aspecto', 'Nota (0-5)'],
-      ['Geral', data.patientSatisfaction.overall],
-      ['Tratamento', data.patientSatisfaction.breakdown.treatment],
-      ['Atendimento', data.patientSatisfaction.breakdown.service],
-      ['Instalações', data.patientSatisfaction.breakdown.facilities],
-      ['Equipe', data.patientSatisfaction.breakdown.staff],
-      ['Agendamento', data.patientSatisfaction.breakdown.scheduling],
-      ['NPS', data.patientSatisfaction.nps],
-      [],
-      ['EVENTOS ADVERSOS'],
-      ['ID', 'Data', 'Tipo', 'Severidade', 'Tratamento', 'Desfecho', 'ANVISA'],
-      ...data.adverseEvents.map((event) => [
-        event.id,
-        formatDate(event.date),
-        event.type,
-        event.severity,
-        event.treatment,
-        event.outcome,
-        event.reportedToAnvisa ? 'Sim' : 'Não',
-      ]),
-    ];
-  }
+	private static prepareClinicalData(): any[][] {
+		const data = reportData.clinical;
+		return [
+			["Relatório Clínico - NeonPro Healthcare"],
+			["Gerado em:", new Date().toLocaleString("pt-BR")],
+			[],
+			["RESULTADOS DE TRATAMENTO"],
+			["Métrica", "Valor (%)"],
+			["Taxa de Sucesso", data.treatmentOutcomes.successRate],
+			["Taxa de Complicações", data.treatmentOutcomes.complicationRate],
+			["Taxa de Conclusão", data.treatmentOutcomes.treatmentCompletionRate],
+			["Adesão ao Follow-up", data.treatmentOutcomes.followUpCompliance],
+			[],
+			["SATISFAÇÃO DO PACIENTE"],
+			["Aspecto", "Nota (0-5)"],
+			["Geral", data.patientSatisfaction.overall],
+			["Tratamento", data.patientSatisfaction.breakdown.treatment],
+			["Atendimento", data.patientSatisfaction.breakdown.service],
+			["Instalações", data.patientSatisfaction.breakdown.facilities],
+			["Equipe", data.patientSatisfaction.breakdown.staff],
+			["Agendamento", data.patientSatisfaction.breakdown.scheduling],
+			["NPS", data.patientSatisfaction.nps],
+			[],
+			["EVENTOS ADVERSOS"],
+			["ID", "Data", "Tipo", "Severidade", "Tratamento", "Desfecho", "ANVISA"],
+			...data.adverseEvents.map((event) => [
+				event.id,
+				formatDate(event.date),
+				event.type,
+				event.severity,
+				event.treatment,
+				event.outcome,
+				event.reportedToAnvisa ? "Sim" : "Não",
+			]),
+		];
+	}
 
-  private static prepareDemographicsData(): any[][] {
-    const data = reportData.demographics;
-    return [
-      ['Demografia de Pacientes - NeonPro Healthcare'],
-      ['Gerado em:', new Date().toLocaleString('pt-BR')],
-      [],
-      ['DISTRIBUIÇÃO POR IDADE'],
-      ['Faixa Etária', 'Quantidade', 'Percentual (%)'],
-      ...Object.entries(data.ageDistribution).map(([age, info]) => [
-        age,
-        info.count,
-        info.percentage,
-      ]),
-      [],
-      ['DISTRIBUIÇÃO POR GÊNERO'],
-      ['Gênero', 'Quantidade', 'Percentual (%)'],
-      [
-        'Feminino',
-        data.genderDistribution.female.count,
-        data.genderDistribution.female.percentage,
-      ],
-      [
-        'Masculino',
-        data.genderDistribution.male.count,
-        data.genderDistribution.male.percentage,
-      ],
-      [],
-      ['DISTRIBUIÇÃO POR REGIÃO'],
-      ['Estado', 'Quantidade', 'Percentual (%)'],
-      ...Object.entries(data.regionDistribution).map(([region, info]) => [
-        region,
-        info.count,
-        info.percentage,
-      ]),
-    ];
-  }
+	private static prepareDemographicsData(): any[][] {
+		const data = reportData.demographics;
+		return [
+			["Demografia de Pacientes - NeonPro Healthcare"],
+			["Gerado em:", new Date().toLocaleString("pt-BR")],
+			[],
+			["DISTRIBUIÇÃO POR IDADE"],
+			["Faixa Etária", "Quantidade", "Percentual (%)"],
+			...Object.entries(data.ageDistribution).map(([age, info]) => [age, info.count, info.percentage]),
+			[],
+			["DISTRIBUIÇÃO POR GÊNERO"],
+			["Gênero", "Quantidade", "Percentual (%)"],
+			["Feminino", data.genderDistribution.female.count, data.genderDistribution.female.percentage],
+			["Masculino", data.genderDistribution.male.count, data.genderDistribution.male.percentage],
+			[],
+			["DISTRIBUIÇÃO POR REGIÃO"],
+			["Estado", "Quantidade", "Percentual (%)"],
+			...Object.entries(data.regionDistribution).map(([region, info]) => [region, info.count, info.percentage]),
+		];
+	}
 }
 
 // CSV Export Functions
 export const generateCSVReport = (reportType: string): string => {
-  switch (reportType) {
-    case 'lgpd':
-      return generateLGPDCSV();
-    case 'financial':
-      return generateFinancialCSV();
-    case 'clinical':
-      return generateClinicalCSV();
-    default:
-      return '';
-  }
+	switch (reportType) {
+		case "lgpd":
+			return generateLGPDCSV();
+		case "financial":
+			return generateFinancialCSV();
+		case "clinical":
+			return generateClinicalCSV();
+		default:
+			return "";
+	}
 };
 
 const generateLGPDCSV = (): string => {
-  const data = reportData.lgpd;
-  const rows = [
-    ['Métrica LGPD', 'Valor'],
-    ['Total de Titulares', data.overview.totalDataSubjects],
-    ['Consentimentos Ativos', data.overview.activeConsents],
-    ['Consentimentos Retirados', data.overview.withdrawnConsents],
-    ['Score de Conformidade', `${data.overview.complianceScore}%`],
-    ['Última Auditoria', formatDate(data.overview.lastAudit)],
-  ];
+	const data = reportData.lgpd;
+	const rows = [
+		["Métrica LGPD", "Valor"],
+		["Total de Titulares", data.overview.totalDataSubjects],
+		["Consentimentos Ativos", data.overview.activeConsents],
+		["Consentimentos Retirados", data.overview.withdrawnConsents],
+		["Score de Conformidade", `${data.overview.complianceScore}%`],
+		["Última Auditoria", formatDate(data.overview.lastAudit)],
+	];
 
-  return rows.map((row) => row.join(',')).join('\n');
+	return rows.map((row) => row.join(",")).join("\n");
 };
 
 const generateFinancialCSV = (): string => {
-  const data = reportData.financial;
-  const rows = [
-    ['Métrica Financeira', 'Valor'],
-    ['Receita Mensal', formatCurrency(data.revenue.monthly)],
-    ['Receita Trimestral', formatCurrency(data.revenue.quarterly)],
-    ['Receita Anual', formatCurrency(data.revenue.yearly)],
-    ['Crescimento Mensal', `${data.revenue.growth.monthly}%`],
-  ];
+	const data = reportData.financial;
+	const rows = [
+		["Métrica Financeira", "Valor"],
+		["Receita Mensal", formatCurrency(data.revenue.monthly)],
+		["Receita Trimestral", formatCurrency(data.revenue.quarterly)],
+		["Receita Anual", formatCurrency(data.revenue.yearly)],
+		["Crescimento Mensal", `${data.revenue.growth.monthly}%`],
+	];
 
-  return rows.map((row) => row.join(',')).join('\n');
+	return rows.map((row) => row.join(",")).join("\n");
 };
 
 const generateClinicalCSV = (): string => {
-  const data = reportData.clinical;
-  const rows = [
-    ['Métrica Clínica', 'Valor'],
-    ['Taxa de Sucesso', `${data.treatmentOutcomes.successRate}%`],
-    ['Taxa de Complicações', `${data.treatmentOutcomes.complicationRate}%`],
-    ['Satisfação Geral', `${data.patientSatisfaction.overall}/5.0`],
-    ['NPS', data.patientSatisfaction.nps],
-  ];
+	const data = reportData.clinical;
+	const rows = [
+		["Métrica Clínica", "Valor"],
+		["Taxa de Sucesso", `${data.treatmentOutcomes.successRate}%`],
+		["Taxa de Complicações", `${data.treatmentOutcomes.complicationRate}%`],
+		["Satisfação Geral", `${data.patientSatisfaction.overall}/5.0`],
+		["NPS", data.patientSatisfaction.nps],
+	];
 
-  return rows.map((row) => row.join(',')).join('\n');
+	return rows.map((row) => row.join(",")).join("\n");
 };
 
 // Email and Sharing Functions
-export const emailReport = async (
-  reportId: string,
-  recipients: string[],
-  format: 'pdf' | 'excel'
-) => {
-  // Mock email functionality - in production, integrate with email service
-  console.log(
-    `Enviando relatório ${reportId} em formato ${format} para:`,
-    recipients
-  );
+export const emailReport = async (reportId: string, recipients: string[], format: "pdf" | "excel") => {
+	// Mock email functionality - in production, integrate with email service
+	console.log(`Enviando relatório ${reportId} em formato ${format} para:`, recipients);
 
-  // LGPD compliance check
-  const lgpdNotice = `
+	// LGPD compliance check
+	const lgpdNotice = `
     AVISO LGPD: Este relatório contém dados pessoais protegidos pela Lei Geral de Proteção de Dados.
     O compartilhamento deve seguir as bases legais estabelecidas e consentimento dos titulares.
   `;
 
-  return {
-    success: true,
-    message: 'Relatório enviado com sucesso',
-    lgpdNotice,
-    timestamp: new Date().toISOString(),
-  };
+	return {
+		success: true,
+		message: "Relatório enviado com sucesso",
+		lgpdNotice,
+		timestamp: new Date().toISOString(),
+	};
 };
 
-export const generateSecureShareLink = (
-  reportId: string,
-  expirationHours = 24
-): string => {
-  // Mock secure sharing - in production, implement proper token generation
-  const token = btoa(`${reportId}-${Date.now()}-${Math.random()}`);
-  const baseUrl = window.location.origin;
+export const generateSecureShareLink = (reportId: string, expirationHours = 24): string => {
+	// Mock secure sharing - in production, implement proper token generation
+	const token = btoa(`${reportId}-${Date.now()}-${Math.random()}`);
+	const baseUrl = window.location.origin;
 
-  return `${baseUrl}/reports/share/${token}?expires=${expirationHours}h`;
+	return `${baseUrl}/reports/share/${token}?expires=${expirationHours}h`;
 };
 
 // Download handlers
-export const downloadReport = (
-  data: Uint8Array | string,
-  filename: string,
-  type: 'pdf' | 'excel' | 'csv'
-) => {
-  const mimeTypes = {
-    pdf: 'application/pdf',
-    excel: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    csv: 'text/csv',
-  };
+export const downloadReport = (data: Uint8Array | string, filename: string, type: "pdf" | "excel" | "csv") => {
+	const mimeTypes = {
+		pdf: "application/pdf",
+		excel: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+		csv: "text/csv",
+	};
 
-  const blob = new Blob([data], { type: mimeTypes[type] });
-  const url = URL.createObjectURL(blob);
+	const blob = new Blob([data], { type: mimeTypes[type] });
+	const url = URL.createObjectURL(blob);
 
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = filename;
-  document.body.appendChild(link);
-  link.click();
+	const link = document.createElement("a");
+	link.href = url;
+	link.download = filename;
+	document.body.appendChild(link);
+	link.click();
 
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
+	document.body.removeChild(link);
+	URL.revokeObjectURL(url);
 };

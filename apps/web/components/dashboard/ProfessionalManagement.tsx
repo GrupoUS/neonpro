@@ -3,41 +3,41 @@
  * Healthcare professional administration interface
  */
 
-import React from 'react';
+import React from "react";
 
 export interface ProfessionalManagementProps {
-  professionals?: any[];
-  loading?: boolean;
-  error?: string;
+	professionals?: any[];
+	loading?: boolean;
+	error?: string;
 }
 
 export default function ProfessionalManagement({
-  professionals = [],
-  loading = false,
-  error,
+	professionals = [],
+	loading = false,
+	error,
 }: ProfessionalManagementProps) {
-  if (loading) {
-    return <div>Loading professionals...</div>;
-  }
+	if (loading) {
+		return <div>Loading professionals...</div>;
+	}
 
-  if (error) {
-    return <div>Error loading professionals: {error}</div>;
-  }
+	if (error) {
+		return <div>Error loading professionals: {error}</div>;
+	}
 
-  return (
-    <div className="professional-management">
-      <h2>Professional Management</h2>
-      <div className="professionals-list">
-        {professionals.length === 0 ? (
-          <p>No professionals found</p>
-        ) : (
-          professionals.map((prof, index) => (
-            <div className="professional-card" key={index}>
-              Professional {index + 1}
-            </div>
-          ))
-        )}
-      </div>
-    </div>
-  );
+	return (
+		<div className="professional-management">
+			<h2>Professional Management</h2>
+			<div className="professionals-list">
+				{professionals.length === 0 ? (
+					<p>No professionals found</p>
+				) : (
+					professionals.map((prof, index) => (
+						<div className="professional-card" key={index}>
+							Professional {index + 1}
+						</div>
+					))
+				)}
+			</div>
+		</div>
+	);
 }

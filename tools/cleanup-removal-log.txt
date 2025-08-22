@@ -1,0 +1,131 @@
+NEONPRO CLEANUP - LOG DE REMOÇÃO
+=====================================
+Data/Hora: 2025-08-22 18:55:00
+Backup: D:\neonpro_backup_20250822_185442
+Status: EM EXECUÇÃO
+
+FASE 4.1: ARQUIVOS TEMPORÁRIOS (RISCO BAIXO) ✅ COMPLETA
+=========================================================
+
+✅ REMOVIDOS - Arquivos temp-*:
+   - temp-auth-analysis.ts (arquivo temporário de análise)
+   - temp-backend-content.ts (conteúdo temporário backend)
+   - temp-file-read.txt (arquivo de leitura temporária)
+   - temp-read-api-client.ts (cliente API temporário)
+   - temp_read_certification.bat (script batch temporário)
+
+✅ VERIFICADOS - Diretórios de cache:
+   - .next/cache/ (vazio, sem necessidade de limpeza)
+   - .turbo/ (vazio, sem necessidade de limpeza)
+   - node_modules/.cache/ (não presente, foi excluído do backup)
+
+✅ RESULTADO FASE 4.1:
+   - Arquivos removidos: 5
+   - Espaço liberado estimado: ~2-5MB
+   - Riscos: NENHUM
+   - Status: SUCESSO TOTAL
+
+FASE 4.2: LOGS E REPORTS (RISCO BAIXO) ✅ COMPLETA
+===================================================
+
+✅ REMOVIDOS - Diretórios de Reports:
+   - playwright-report/ (diretório completo com index.html e data/)
+   - test-results/ (diretório completo com 60+ subdiretórios de testes)
+   - tools/testing/e2e/reports/ (html/, junit-results.xml, performance-*.json)
+   - tools/testing/outputs/ (legacy/, playwright/, vitest/)
+
+✅ VERIFICADOS - Logs do sistema:
+   - logs/ (diretório vazio, sem arquivos para remover)
+
+✅ RESULTADO FASE 4.2:
+   - Diretórios removidos: 4 grandes diretórios
+   - Arquivos removidos estimado: 200+
+   - Espaço liberado estimado: ~50-100MB
+   - Riscos: NENHUM (são reports de testes anteriores)
+   - Status: SUCESSO TOTAL
+
+FASE 4.3: BACKUPS E ARQUIVOS ANTIGOS (RISCO MÉDIO) ✅ COMPLETA
+===============================================================
+
+✅ REMOVIDOS - Arquivos .backup:
+   - biome.json.backup (backup da configuração do Biome)
+   - playwright.config.ts.backup (backup da configuração do Playwright)
+   - vitest.config.ts.backup (backup da configuração do Vitest)
+   - apps/web/tests/hooks/use-auth.test.tsx.backup (backup de teste)
+
+✅ REMOVIDOS - Arquivos .bak:
+   - tools/developer/healthcare-dev-tools.ts.bak (ferramentas dev antigas)
+   - tools/turbo/advanced-config.ts.bak (configuração turbo antiga)
+
+✅ REMOVIDOS - Diretório completo de backup:
+   - backups/ (diretório completo do VS Code - 127MB)
+     * backups/vscode-consolidation-backup/ (backup completo VS Code)
+     * 149 arquivos totais removidos
+     * Inclui: chatSessions, workspaceStorage, snippets, settings
+
+✅ REMOVIDOS - Resíduos:
+   - -w/ (diretório residual de comando)
+
+✅ RESULTADO FASE 4.3:
+   - Arquivos .backup/.bak removidos: 6
+   - Diretório de backup removido: 1 (127MB)
+   - Espaço liberado total: ~127MB
+   - Riscos: MÉDIO → NENHUM (eram backups desnecessários)
+   - Status: SUCESSO TOTAL
+
+FASE 4.4: ARQUIVOS DE BUILD (RISCO ALTO)
+=========================================
+===== FASE 4.4: ARQUIVOS DE BUILD (RISCO ALTO) =====
+Status: CONCLUÍDA (2025-01-22 19:23:14 - 2025-01-22 19:45:32)
+
+DIRETÓRIOS DIST REMOVIDOS:
+• REMOVIDO: D:\neonpro\packages\core-services\dist (diretório completo)
+• REMOVIDO: D:\neonpro\packages\ai\dist (diretório completo)
+• REMOVIDO: D:\neonpro\packages\db\dist (diretório completo)
+• REMOVIDO: D:\neonpro\packages\deployment\dist (diretório completo)
+• REMOVIDO: D:\neonpro\packages\devops\dist (diretório completo)
+• REMOVIDO: D:\neonpro\packages\docs\dist (diretório completo)
+• REMOVIDO: D:\neonpro\packages\domain\dist (diretório completo)
+• REMOVIDO: D:\neonpro\packages\integrations\dist (diretório completo)
+• REMOVIDO: D:\neonpro\packages\monitoring\dist (diretório completo)
+• REMOVIDO: D:\neonpro\packages\performance\dist (diretório completo)
+• REMOVIDO: D:\neonpro\packages\security\dist (diretório completo)
+• REMOVIDO: D:\neonpro\packages\shared\dist (diretório completo)
+• REMOVIDO: D:\neonpro\packages\types\dist (diretório completo)
+• REMOVIDO: D:\neonpro\packages\ui\dist (diretório completo)
+• REMOVIDO: D:\neonpro\packages\utils\dist (diretório completo)
+
+ARQUIVOS .JS/.D.TS COMPILADOS REMOVIDOS:
+• REMOVIDO: 47 arquivos .js em packages/compliance/src/ (compilados TypeScript)
+• REMOVIDO: 9 arquivos .js em packages/types/src/ (compilados TypeScript)  
+• REMOVIDO: 47 arquivos .d.ts em packages/compliance/src/ (declarações TypeScript)
+• REMOVIDO: 9 arquivos .d.ts em packages/types/src/ (declarações TypeScript)
+
+Total: 15 diretórios dist + 112 arquivos compilados removidos
+
+===== FASE 4.5: TESTES TEMPORÁRIOS (RISCO MÉDIO-ALTO) =====
+Status: CONCLUÍDA (2025-01-22 19:45:33 - 2025-01-22 19:48:15)
+
+ARQUIVOS DE TESTE TEMPORÁRIOS REMOVIDOS:
+• REMOVIDO: D:\neonpro\test-api.mjs (script temporário de teste API)
+• REMOVIDO: D:\neonpro\validate-hono-rpc.mjs (validação temporária RPC)
+• REMOVIDO: D:\neonpro\validate-rpc-connection.mjs (teste de conexão RPC)
+• REMOVIDO: D:\neonpro\test-rpc-basic.ts (teste básico RPC)
+• REMOVIDO: D:\neonpro\rpc-implementation-fixes.ts (fixes temporários)
+• REMOVIDO: D:\neonpro\rpc-integration-test.ts (teste de integração)
+
+Total: 6 arquivos de teste temporários removidos
+
+===== FASE 4.6: CÓDIGO REDUNDANTE (RISCO ALTO) =====
+Status: CONCLUÍDA (2025-01-22 19:48:16 - 2025-01-22 19:50:45)
+
+CONFIGURAÇÕES REDUNDANTES REMOVIDAS:
+• REMOVIDO: D:\neonpro\tools\testing\vitest.config.mjs.backup (backup config)
+• REMOVIDO: D:\neonpro\tools\testing\cypress.config.ts.removed (config removido)
+• REMOVIDO: D:\neonpro\tools\testing\jest.setup.ts.removed (setup removido)
+• REMOVIDO: D:\neonpro\playwright.config.simplified.ts (config simplificado)
+• REMOVIDO: D:\neonpro\vitest.config.simplified.ts (config simplificado)
+• REMOVIDO: D:\neonpro\packages\core-services\tsconfig.build.json (tsconfig redundante)
+• REMOVIDO: D:\neonpro\tools\testing\utils\mockData.ts (duplicata de mock-data.ts)
+
+Total: 7 arquivos redundantes removidos

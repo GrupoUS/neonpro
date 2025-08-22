@@ -26,10 +26,21 @@
       },
       "style": {
         "noUnusedTemplateLiteral": "warn",
-        "useImportType": "error"
+        "useImportType": "error",
+        "noMagicNumbers": "off"
       },
       "performance": {
         "noAccumulatingSpread": "error"
+      },
+      "suspicious": {
+        "noExplicitAny": "warn",
+        "useAwait": "warn"
+      },
+      "nursery": {
+        "useConsistentTypeDefinitions": "warn"
+      },
+      "complexity": {
+        "useOptionalChain": "warn"
       }
     }
   },
@@ -60,6 +71,15 @@
   },
   "overrides": [
     {
+      "includes": ["**/tsconfig*.json", "**/jsconfig*.json"],
+      "json": {
+        "parser": {
+          "allowComments": true,
+          "allowTrailingCommas": true
+        }
+      }
+    },
+    {
       "includes": [
         "**/node_modules/**",
         "**/dist/**",
@@ -79,6 +99,7 @@
         "**/supabase/migrations/**",
         "**/archon/original_archon/**",
         "**/serena/test/**",
+        "**/serena/**",
         "**/temp-broken-files/**",
         "**/.tmp.*/**",
         "**/pnpm-lock.yaml",
@@ -94,11 +115,12 @@
         "**/backend-*.txt"
       ],
       "formatter": {
-        "enabled": true
+        "enabled": false
       },
       "linter": {
-        "enabled": true
+        "enabled": false
       }
     }
-  ]
+  ],
+  "extends": ["ultracite"]
 }

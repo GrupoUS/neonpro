@@ -4,222 +4,208 @@
  * Story 3.3: Security Hardening & Audit
  */
 
-import { type NextRequest, NextResponse } from 'next/server';
-import { securityAPI } from './index';
+import { type NextRequest, NextResponse } from "next/server";
+import { securityAPI } from "./index";
 
 // Types
 type SecurityContext = {
-  userId?: string;
-  sessionId?: string;
-  ipAddress?: string;
-  userAgent?: string;
-  endpoint?: string;
-  method?: string;
+	userId?: string;
+	sessionId?: string;
+	ipAddress?: string;
+	userAgent?: string;
+	endpoint?: string;
+	method?: string;
 };
 
 type SecurityConfig = {
-  enableRateLimit: boolean;
-  rateLimitRequests: number;
-  rateLimitWindow: number;
-  enableAuditLog: boolean;
-  enableThreatDetection: boolean;
-  blockedIPs: string[];
-  allowedOrigins: string[];
+	enableRateLimit: boolean;
+	rateLimitRequests: number;
+	rateLimitWindow: number;
+	enableAuditLog: boolean;
+	enableThreatDetection: boolean;
+	blockedIPs: string[];
+	allowedOrigins: string[];
 };
 
 // Default security configuration
 const defaultSecurityConfig: SecurityConfig = {
-  enableRateLimit: true,
-  rateLimitRequests: 100,
-  rateLimitWindow: 60_000, // 1 minute
-  enableAuditLog: true,
-  enableThreatDetection: true,
-  blockedIPs: [],
-  allowedOrigins: ['http://localhost:3000', 'https://*.neonpro.com'],
+	enableRateLimit: true,
+	rateLimitRequests: 100,
+	rateLimitWindow: 60_000, // 1 minute
+	enableAuditLog: true,
+	enableThreatDetection: true,
+	blockedIPs: [],
+	allowedOrigins: ["http://localhost:3000", "https://*.neonpro.com"],
 };
 
 // Security middleware class
 export class SecurityMiddleware {
-  private config: SecurityConfig;
-  private readonly rateLimitStore: Map<
-    string,
-    { count: number; resetTime: number }
-  > = new Map();
+	private config: SecurityConfig;
+	private readonly rateLimitStore: Map<string, { count: number; resetTime: number }> = new Map();
 
-  constructor(config: Partial<SecurityConfig> = {}) {
-    this.config = { ...defaultSecurityConfig, ...config };
-  }
+	constructor(config: Partial<SecurityConfig> = {}) {
+		this.config = { ...defaultSecurityConfig, ...config };
+	}
 
-  // Main middleware function
-  async middleware(request: NextRequest): Promise<NextResponse | null> {
-    const context = this.extractSecurityContext(request);
+	// Main middleware function
+	async middleware(request: NextRequest): Promise<NextResponse | null> {
+		const context = this.extractSecurityContext(request);
 
-    try {
-      // 1. IP blocking check
-      if (this.isBlockedIP(context.ipAddress)) {
-        await this.logSecurityEvent('blocked_ip_access', context, 'warning');
-        return new NextResponse('Access Denied', { status: 403 });
-      }
+		try {
+			// 1. IP blocking check
+			if (this.isBlockedIP(context.ipAddress)) {
+				await this.logSecurityEvent("blocked_ip_access", context, "warning");
+				return new NextResponse("Access Denied", { status: 403 });
+			}
 
-      // 2. Rate limiting
-      if (this.config.enableRateLimit && this.isRateLimited(context)) {
-        await this.logSecurityEvent('rate_limit_exceeded', context, 'warning');
-        return new NextResponse('Rate Limit Exceeded', { status: 429 });
-      }
+			// 2. Rate limiting
+			if (this.config.enableRateLimit && this.isRateLimited(context)) {
+				await this.logSecurityEvent("rate_limit_exceeded", context, "warning");
+				return new NextResponse("Rate Limit Exceeded", { status: 429 });
+			}
 
-      // 3. CORS validation
-      if (!this.isValidOrigin(request)) {
-        await this.logSecurityEvent('invalid_origin', context, 'warning');
-        return new NextResponse('Invalid Origin', { status: 403 });
-      }
+			// 3. CORS validation
+			if (!this.isValidOrigin(request)) {
+				await this.logSecurityEvent("invalid_origin", context, "warning");
+				return new NextResponse("Invalid Origin", { status: 403 });
+			}
 
-      // 4. Threat detection
-      if (
-        this.config.enableThreatDetection &&
-        this.detectThreat(request, context)
-      ) {
-        await this.logSecurityEvent('threat_detected', context, 'critical');
-        return new NextResponse('Threat Detected', { status: 403 });
-      }
+			// 4. Threat detection
+			if (this.config.enableThreatDetection && this.detectThreat(request, context)) {
+				await this.logSecurityEvent("threat_detected", context, "critical");
+				return new NextResponse("Threat Detected", { status: 403 });
+			}
 
-      // 5. Audit logging
-      if (this.config.enableAuditLog) {
-        await this.logSecurityEvent('api_access', context, 'info');
-      }
+			// 5. Audit logging
+			if (this.config.enableAuditLog) {
+				await this.logSecurityEvent("api_access", context, "info");
+			}
 
-      return null; // Continue to next middleware/handler
-    } catch (_error) {
-      await this.logSecurityEvent('middleware_error', context, 'error');
-      return new NextResponse('Internal Security Error', { status: 500 });
-    }
-  }
+			return null; // Continue to next middleware/handler
+		} catch (_error) {
+			await this.logSecurityEvent("middleware_error", context, "error");
+			return new NextResponse("Internal Security Error", { status: 500 });
+		}
+	}
 
-  // Extract security context from request
-  private extractSecurityContext(request: NextRequest): SecurityContext {
-    const url = new URL(request.url);
-    return {
-      ipAddress:
-        request.headers.get('x-forwarded-for') ||
-        request.headers.get('x-real-ip') ||
-        'unknown',
-      userAgent: request.headers.get('user-agent') || 'unknown',
-      endpoint: url.pathname,
-      method: request.method,
-    };
-  }
+	// Extract security context from request
+	private extractSecurityContext(request: NextRequest): SecurityContext {
+		const url = new URL(request.url);
+		return {
+			ipAddress: request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "unknown",
+			userAgent: request.headers.get("user-agent") || "unknown",
+			endpoint: url.pathname,
+			method: request.method,
+		};
+	}
 
-  // Check if IP is blocked
-  private isBlockedIP(ipAddress?: string): boolean {
-    if (!ipAddress) {
-      return false;
-    }
-    return this.config.blockedIPs.includes(ipAddress);
-  }
+	// Check if IP is blocked
+	private isBlockedIP(ipAddress?: string): boolean {
+		if (!ipAddress) {
+			return false;
+		}
+		return this.config.blockedIPs.includes(ipAddress);
+	}
 
-  // Rate limiting check
-  private isRateLimited(context: SecurityContext): boolean {
-    if (!context.ipAddress) {
-      return false;
-    }
+	// Rate limiting check
+	private isRateLimited(context: SecurityContext): boolean {
+		if (!context.ipAddress) {
+			return false;
+		}
 
-    const key = context.ipAddress;
-    const now = Date.now();
-    const entry = this.rateLimitStore.get(key);
+		const key = context.ipAddress;
+		const now = Date.now();
+		const entry = this.rateLimitStore.get(key);
 
-    if (!entry || now > entry.resetTime) {
-      this.rateLimitStore.set(key, {
-        count: 1,
-        resetTime: now + this.config.rateLimitWindow,
-      });
-      return false;
-    }
+		if (!entry || now > entry.resetTime) {
+			this.rateLimitStore.set(key, {
+				count: 1,
+				resetTime: now + this.config.rateLimitWindow,
+			});
+			return false;
+		}
 
-    if (entry.count >= this.config.rateLimitRequests) {
-      return true;
-    }
+		if (entry.count >= this.config.rateLimitRequests) {
+			return true;
+		}
 
-    entry.count++;
-    return false;
-  }
+		entry.count++;
+		return false;
+	}
 
-  // CORS origin validation
-  private isValidOrigin(request: NextRequest): boolean {
-    const origin = request.headers.get('origin');
-    if (!origin) {
-      return true; // Allow requests without origin (like server-to-server)
-    }
+	// CORS origin validation
+	private isValidOrigin(request: NextRequest): boolean {
+		const origin = request.headers.get("origin");
+		if (!origin) {
+			return true; // Allow requests without origin (like server-to-server)
+		}
 
-    return this.config.allowedOrigins.some((allowed) => {
-      if (allowed.includes('*')) {
-        const pattern = allowed.replace(/\*/g, '.*');
-        return new RegExp(pattern).test(origin);
-      }
-      return allowed === origin;
-    });
-  }
+		return this.config.allowedOrigins.some((allowed) => {
+			if (allowed.includes("*")) {
+				const pattern = allowed.replace(/\*/g, ".*");
+				return new RegExp(pattern).test(origin);
+			}
+			return allowed === origin;
+		});
+	}
 
-  // Simple threat detection
-  private detectThreat(
-    request: NextRequest,
-    context: SecurityContext
-  ): boolean {
-    // Check for common attack patterns
-    const suspiciousPatterns = [
-      /\.\.\//, // Directory traversal
-      /<script/i, // XSS attempts
-      /union.*select/i, // SQL injection
-      /\beval\(/i, // Code injection
-    ];
+	// Simple threat detection
+	private detectThreat(request: NextRequest, context: SecurityContext): boolean {
+		// Check for common attack patterns
+		const suspiciousPatterns = [
+			/\.\.\//, // Directory traversal
+			/<script/i, // XSS attempts
+			/union.*select/i, // SQL injection
+			/\beval\(/i, // Code injection
+		];
 
-    const url = request.url;
-    const userAgent = context.userAgent || '';
+		const url = request.url;
+		const userAgent = context.userAgent || "";
 
-    return suspiciousPatterns.some(
-      (pattern) => pattern.test(url) || pattern.test(userAgent)
-    );
-  }
+		return suspiciousPatterns.some((pattern) => pattern.test(url) || pattern.test(userAgent));
+	}
 
-  // Log security events
-  private async logSecurityEvent(
-    eventType: string,
-    context: SecurityContext,
-    severity: 'info' | 'warning' | 'error' | 'critical'
-  ): Promise<void> {
-    try {
-      await securityAPI.createSecurityEvent({
-        event_type: eventType,
-        severity,
-        title: `Security Event: ${eventType}`,
-        description: `${eventType} detected from ${context.ipAddress}`,
-        user_id: context.userId,
-        session_id: context.sessionId,
-        ip_address: context.ipAddress,
-        user_agent: context.userAgent,
-        event_data: {
-          endpoint: context.endpoint,
-          method: context.method,
-        },
-      });
-    } catch (_error) {}
-  }
+	// Log security events
+	private async logSecurityEvent(
+		eventType: string,
+		context: SecurityContext,
+		severity: "info" | "warning" | "error" | "critical"
+	): Promise<void> {
+		try {
+			await securityAPI.createSecurityEvent({
+				event_type: eventType,
+				severity,
+				title: `Security Event: ${eventType}`,
+				description: `${eventType} detected from ${context.ipAddress}`,
+				user_id: context.userId,
+				session_id: context.sessionId,
+				ip_address: context.ipAddress,
+				user_agent: context.userAgent,
+				event_data: {
+					endpoint: context.endpoint,
+					method: context.method,
+				},
+			});
+		} catch (_error) {}
+	}
 
-  // Utility methods for configuration
-  addBlockedIP(ip: string): void {
-    if (!this.config.blockedIPs.includes(ip)) {
-      this.config.blockedIPs.push(ip);
-    }
-  }
+	// Utility methods for configuration
+	addBlockedIP(ip: string): void {
+		if (!this.config.blockedIPs.includes(ip)) {
+			this.config.blockedIPs.push(ip);
+		}
+	}
 
-  removeBlockedIP(ip: string): void {
-    const index = this.config.blockedIPs.indexOf(ip);
-    if (index > -1) {
-      this.config.blockedIPs.splice(index, 1);
-    }
-  }
+	removeBlockedIP(ip: string): void {
+		const index = this.config.blockedIPs.indexOf(ip);
+		if (index > -1) {
+			this.config.blockedIPs.splice(index, 1);
+		}
+	}
 
-  updateConfig(newConfig: Partial<SecurityConfig>): void {
-    this.config = { ...this.config, ...newConfig };
-  }
+	updateConfig(newConfig: Partial<SecurityConfig>): void {
+		this.config = { ...this.config, ...newConfig };
+	}
 }
 
 // Export default instance

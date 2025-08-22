@@ -17,9 +17,5 @@
     "**/__tests__/**/*.ts",
     "**/__tests__/**/*.tsx"
   ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "build"
-  ]
+  "exclude": ["node_modules", "dist", "build"]
 }

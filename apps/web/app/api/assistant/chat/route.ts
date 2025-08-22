@@ -1,94 +1,88 @@
-import { anthropic } from '@ai-sdk/anthropic';
-import { openai } from '@ai-sdk/openai';
-import { convertToCoreMessages, streamText } from 'ai';
-import { type NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { anthropic } from "@ai-sdk/anthropic";
+import { openai } from "@ai-sdk/openai";
+import { convertToCoreMessages, streamText } from "ai";
+import { type NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/app/utils/supabase/server";
 
 // Configuração dos modelos
 const MODELS = {
-  gpt4: openai('gpt-4o'),
-  claude: anthropic('claude-3-5-sonnet-20241022'),
-  gpt35: openai('gpt-3.5-turbo'),
+	gpt4: openai("gpt-4o"),
+	claude: anthropic("claude-3-5-sonnet-20241022"),
+	gpt35: openai("gpt-3.5-turbo"),
 } as const;
 
 type ModelType = keyof typeof MODELS;
 
 export async function POST(request: NextRequest) {
-  try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-    if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+	try {
+		const supabase = await createClient();
+		const {
+			data: { user },
+			error: authError,
+		} = await supabase.auth.getUser();
+		if (authError || !user) {
+			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+		}
 
-    const { messages, conversationId, model = 'gpt4' } = await request.json();
+		const { messages, conversationId, model = "gpt4" } = await request.json();
 
-    // Validar modelo
-    if (!MODELS[model as ModelType]) {
-      return NextResponse.json({ error: 'Invalid model' }, { status: 400 });
-    }
+		// Validar modelo
+		if (!MODELS[model as ModelType]) {
+			return NextResponse.json({ error: "Invalid model" }, { status: 400 });
+		}
 
-    // Buscar ou criar conversa
-    let conversation;
-    if (conversationId) {
-      const { data: existingConversation, error: convError } = await supabase
-        .from('assistant_conversations')
-        .select('*')
-        .eq('id', conversationId)
-        .eq('user_id', user.id)
-        .single();
+		// Buscar ou criar conversa
+		let conversation;
+		if (conversationId) {
+			const { data: existingConversation, error: convError } = await supabase
+				.from("assistant_conversations")
+				.select("*")
+				.eq("id", conversationId)
+				.eq("user_id", user.id)
+				.single();
 
-      if (convError || !existingConversation) {
-        return NextResponse.json(
-          { error: 'Conversation not found' },
-          { status: 404 }
-        );
-      }
-      conversation = existingConversation;
-    } else {
-      // Criar nova conversa
-      const { data: newConversation, error: createError } = await supabase
-        .from('assistant_conversations')
-        .insert({
-          user_id: user.id,
-          title: messages[0]?.content?.substring(0, 50) || 'Nova Conversa',
-          model_used: model,
-          is_active: true,
-        })
-        .select()
-        .single();
+			if (convError || !existingConversation) {
+				return NextResponse.json({ error: "Conversation not found" }, { status: 404 });
+			}
+			conversation = existingConversation;
+		} else {
+			// Criar nova conversa
+			const { data: newConversation, error: createError } = await supabase
+				.from("assistant_conversations")
+				.insert({
+					user_id: user.id,
+					title: messages[0]?.content?.substring(0, 50) || "Nova Conversa",
+					model_used: model,
+					is_active: true,
+				})
+				.select()
+				.single();
 
-      if (createError || !newConversation) {
-        return NextResponse.json(
-          { error: 'Failed to create conversation' },
-          { status: 500 }
-        );
-      }
-      conversation = newConversation;
-    }
+			if (createError || !newConversation) {
+				return NextResponse.json({ error: "Failed to create conversation" }, { status: 500 });
+			}
+			conversation = newConversation;
+		}
 
-    // Buscar contexto das preferências do usuário
-    const { data: preferences } = await supabase
-      .from('assistant_preferences')
-      .select('*')
-      .eq('user_id', user.id)
-      .single();
+		// Buscar contexto das preferências do usuário
+		const { data: preferences } = await supabase
+			.from("assistant_preferences")
+			.select("*")
+			.eq("user_id", user.id)
+			.single();
 
-    // Buscar contexto do perfil do usuário
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('full_name, role, specialty, clinic_name')
-      .eq('id', user.id)
-      .single();
+		// Buscar contexto do perfil do usuário
+		const { data: profile } = await supabase
+			.from("profiles")
+			.select("full_name, role, specialty, clinic_name")
+			.eq("id", user.id)
+			.single();
 
-    // Buscar contexto relevante da clínica (últimos 5 agendamentos, por exemplo)
-    const { data: recentAppointments } = await supabase
-      .from('appointments')
-      .select(
-        `
+		// Buscar contexto relevante da clínica (últimos 5 agendamentos, por exemplo)
+		const { data: recentAppointments } = await supabase
+			.from("appointments")
+			.select(
+				`
         id,
         date_time,
         status,
@@ -96,36 +90,36 @@ export async function POST(request: NextRequest) {
         notes,
         patients!inner(name, phone)
       `
-      )
-      .eq('user_id', user.id)
-      .order('date_time', { ascending: false })
-      .limit(5);
+			)
+			.eq("user_id", user.id)
+			.order("date_time", { ascending: false })
+			.limit(5);
 
-    // Construir prompt do sistema com contexto personalizado
-    const systemPrompt = `Você é o Assistente Virtual do NeonPro, uma plataforma de gestão para clínicas de estética e beleza.
+		// Construir prompt do sistema com contexto personalizado
+		const systemPrompt = `Você é o Assistente Virtual do NeonPro, uma plataforma de gestão para clínicas de estética e beleza.
 
 CONTEXTO DO USUÁRIO:
-- Nome: ${profile?.full_name || 'Usuário'}
-- Cargo: ${profile?.role || 'Profissional'}
-- Especialidade: ${profile?.specialty || 'Não informada'}
-- Clínica: ${profile?.clinic_name || 'Não informada'}
+- Nome: ${profile?.full_name || "Usuário"}
+- Cargo: ${profile?.role || "Profissional"}
+- Especialidade: ${profile?.specialty || "Não informada"}
+- Clínica: ${profile?.clinic_name || "Não informada"}
 
 PREFERÊNCIAS DO ASSISTENTE:
-- Personalidade: ${preferences?.personality || 'profissional e amigável'}
+- Personalidade: ${preferences?.personality || "profissional e amigável"}
 - Temperatura: ${preferences?.temperature || 0.7}
-- Idioma: ${preferences?.language || 'pt-BR'}
+- Idioma: ${preferences?.language || "pt-BR"}
 
 CONTEXTO RECENTE: ${
-      recentAppointments && recentAppointments.length > 0
-        ? `Últimos agendamentos:
+			recentAppointments && recentAppointments.length > 0
+				? `Últimos agendamentos:
 ${recentAppointments
-  .map(
-    (apt) =>
-      `- ${apt.date_time}: ${(apt.patients as any)?.name || 'Nome não informado'} - ${apt.service || 'Serviço não informado'} (${apt.status})`
-  )
-  .join('\n')}`
-        : 'Nenhum agendamento recente encontrado.'
-    }
+	.map(
+		(apt) =>
+			`- ${apt.date_time}: ${(apt.patients as any)?.name || "Nome não informado"} - ${apt.service || "Serviço não informado"} (${apt.status})`
+	)
+	.join("\n")}`
+				: "Nenhum agendamento recente encontrado."
+		}
 
 INSTRUÇÕES:
 1. Sempre responda em português brasileiro
@@ -138,50 +132,47 @@ INSTRUÇÕES:
 
 Seja sempre útil, preciso e contextualmente relevante para a gestão de clínicas de estética e beleza.`;
 
-    // Converter mensagens para o formato do AI SDK
-    const coreMessages = convertToCoreMessages(messages);
+		// Converter mensagens para o formato do AI SDK
+		const coreMessages = convertToCoreMessages(messages);
 
-    // Salvar mensagem do usuário
-    const userMessage = messages.at(-1);
-    await supabase.from('assistant_messages').insert({
-      conversation_id: conversation.id,
-      user_id: user.id,
-      role: 'user',
-      content: userMessage?.content || '',
-      model_used: model,
-    });
+		// Salvar mensagem do usuário
+		const userMessage = messages.at(-1);
+		await supabase.from("assistant_messages").insert({
+			conversation_id: conversation.id,
+			user_id: user.id,
+			role: "user",
+			content: userMessage?.content || "",
+			model_used: model,
+		});
 
-    // Gerar resposta com streaming
-    const result = await streamText({
-      model: MODELS[model as ModelType],
-      system: systemPrompt,
-      messages: coreMessages,
-      temperature: preferences?.temperature || 0.7,
-    });
+		// Gerar resposta com streaming
+		const result = await streamText({
+			model: MODELS[model as ModelType],
+			system: systemPrompt,
+			messages: coreMessages,
+			temperature: preferences?.temperature || 0.7,
+		});
 
-    // Log da interação
-    await (await supabase).from('assistant_logs').insert({
-      user_id: user.id,
-      conversation_id: conversation.id,
-      action: 'chat_request',
-      details: {
-        model,
-        message_count: messages.length,
-        context_used: {
-          has_preferences: Boolean(preferences),
-          has_profile: Boolean(profile),
-          recent_appointments_count: recentAppointments?.length || 0,
-        },
-      },
-    });
+		// Log da interação
+		await (await supabase).from("assistant_logs").insert({
+			user_id: user.id,
+			conversation_id: conversation.id,
+			action: "chat_request",
+			details: {
+				model,
+				message_count: messages.length,
+				context_used: {
+					has_preferences: Boolean(preferences),
+					has_profile: Boolean(profile),
+					recent_appointments_count: recentAppointments?.length || 0,
+				},
+			},
+		});
 
-    return result.toTextStreamResponse();
-  } catch (_error) {
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
+		return result.toTextStreamResponse();
+	} catch (_error) {
+		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+	}
 }
 
 export const validateCSRF = () => true;

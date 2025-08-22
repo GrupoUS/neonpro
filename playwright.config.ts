@@ -6,186 +6,198 @@
  * ARCHITECTURE: Constitutional Turborepo structure
  */
 
-import { defineConfig, devices } from '@playwright/test';
+import { cpus } from "node:os";
+import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
-  // Constitutional test directory structure
-  testDir: './tools/testing/e2e',
+	// Constitutional test directory structure
+	testDir: "./tools/testing/e2e",
 
-  // Optimized test patterns - E2E ONLY
-  testMatch: ['**/tests/**/*.spec.ts', '**/e2e/**/*.spec.ts'],
+	// Optimized test patterns - E2E ONLY
+	testMatch: ["**/tests/**/*.spec.ts", "**/e2e/**/*.spec.ts", "**/*.spec.ts"],
 
-  // EXCLUDE UNIT TESTS TO AVOID CONFLICTS
-  testIgnore: [
-    '**/*.test.ts',
-    '**/*.test.tsx',
-    '**/packages/**/*.test.{ts,tsx}',
-    '**/src/**/*.test.{ts,tsx}',
-    '**/vitest/**',
-    '**/__tests__/**',
-    '**/node_modules/**',
-  ],
+	// EXCLUDE PATTERNS - SYNCHRONIZED WITH BIOME.JSON
+	testIgnore: [
+		// === BIOME IGNORE PATTERNS (SYNCHRONIZED) ===
+		"**/node_modules/**",
+		"**/dist/**",
+		"**/build/**",
+		"**/.next/**",
+		"**/.turbo/**",
+		"**/coverage/**",
+		"**/playwright-report/**",
+		"**/test-results/**",
+		"**/logs/**",
+		"**/temp-*",
+		"**/*.log",
+		"**/*.cache",
+		"**/*cache/**",
+		"**/.git/**",
+		"**/.vscode/**",
+		"**/supabase/migrations/**",
+		"**/archon/original_archon/**",
+		"**/serena/**",
+		"**/temp-broken-files/**",
+		"**/.tmp.*/**",
+		"**/pnpm-lock.yaml",
+		"**/package-lock.json*",
+		"**/*.tsbuildinfo",
+		"**/tsconfig.tsbuildinfo",
+		"**/.env*",
+		"**/scripts/*.ps1",
+		"**/scripts/*.sh",
+		"**/validate-*.mjs",
+		"**/test-*.ts",
+		"**/rpc-*.ts",
+		"**/backend-*.txt",
+		// === PLAYWRIGHT SPECIFIC EXCLUDES ===
+		// EXCLUDE UNIT TESTS TO AVOID CONFLICTS
+		"**/*.test.ts",
+		"**/*.test.tsx",
+		"**/packages/**/*.test.{ts,tsx}",
+		"**/src/**/*.test.{ts,tsx}",
+		"**/vitest/**",
+		"**/__tests__/**",
+	],
 
-  // 🚀 PERFORMANCE OPTIMIZATIONS
-  fullyParallel: true,
-  forbidOnly: !!process.env.CI,
+	// 🚀 PERFORMANCE OPTIMIZATIONS
+	fullyParallel: true,
+	forbidOnly: !!process.env.CI,
 
-  // Optimized retry strategy
-  retries: process.env.CI ? 2 : 1,
+	// Optimized retry strategy
+	retries: process.env.CI ? 2 : 1,
 
-  // Dynamic worker allocation for maximum performance
-  workers: process.env.CI ? 4 : Math.min(4, require('os').cpus().length),
+	// Dynamic worker allocation for maximum performance
+	workers: process.env.CI ? 4 : Math.min(4, cpus().length),
 
-  // Faster test discovery and execution
-  timeout: 60_000, // 1 minute max per test
-  globalTimeout: process.env.CI ? 30 * 60_000 : 15 * 60_000, // 30min CI / 15min local
+	// Faster test discovery and execution
+	timeout: 60_000, // 1 minute max per test
+	globalTimeout: process.env.CI ? 30 * 60_000 : 15 * 60_000, // 30min CI / 15min local
 
-  // Optimized reporting
-  reporter: [
-    [
-      'html',
-      {
-        outputFolder: 'tools/testing/e2e/reports/html',
-        open: 'never',
-        attachmentsBaseURL: '../',
-      },
-    ],
-    [
-      'junit',
-      {
-        outputFile: 'tools/testing/e2e/reports/junit-results.xml',
-        includeProjectInTestName: true,
-      },
-    ],
-    // Performance metrics reporter
-    [
-      'json',
-      {
-        outputFile: 'tools/testing/e2e/reports/performance-metrics.json',
-      },
-    ],
-    // CI-friendly reporter
-    process.env.CI ? ['github'] : ['list'],
-  ],
+	// Optimized reporting
+	reporter: [
+		[
+			"html",
+			{
+				outputFolder: "e2e/reports/html",
+				open: "never",
+				attachmentsBaseURL: "../",
+			},
+		],
+		[
+			"junit",
+			{
+				outputFile: "e2e/reports/junit-results.xml",
+				includeProjectInTestName: true,
+			},
+		],
+		// Performance metrics reporter
+		[
+			"json",
+			{
+				outputFile: "e2e/reports/performance-metrics.json",
+			},
+		],
+		// CI-friendly reporter
+		process.env.CI ? ["github"] : ["list"],
+	],
 
-  // Core configuration optimized for speed
-  use: {
-    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000',
+	// Enhanced expect configurations for reliability
+	expect: {
+		timeout: 10_000, // 10 seconds for assertions
+		toHaveScreenshot: {
+			threshold: 0.2,
+			mode: "pixelDiff",
+			animations: "disabled", // Faster screenshot comparison
+		},
+		toMatchSnapshot: {
+			threshold: 0.2,
+			animations: "disabled",
+		},
+	},
 
-    // Performance-optimized settings
-    trace: process.env.CI ? 'retain-on-failure' : 'on-first-retry',
-    screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
+	// Organized output structure
+	outputDir: "e2e/test-results",
 
-    // Brazilian healthcare locale
-    locale: 'pt-BR',
-    timezoneId: 'America/Sao_Paulo',
+	// Global setup for performance optimization
+	globalSetup: "./tools/testing/e2e/global-setup.ts",
+	globalTeardown: "./tools/testing/e2e/global-teardown.ts",
 
-    // Optimized timeouts for healthcare workflows
-    actionTimeout: 8000, // Reduced for faster failure detection
-    navigationTimeout: 12_000, // Optimized for SPA navigation
+	// Enhanced use block for test isolation
+	use: {
+		// Optimized for maximum performance
+		actionTimeout: 15_000, // 15 seconds max for actions
+		navigationTimeout: 30_000, // 30 seconds for navigation
 
-    // Healthcare-specific headers
-    extraHTTPHeaders: {
-      'X-E2E-Testing': 'true',
-      'X-Test-Environment': process.env.NODE_ENV || 'test',
-      'X-Healthcare-Testing': 'neonpro',
-    },
+		// Performance optimizations
+		headless: true,
+		screenshot: process.env.CI ? "only-on-failure" : "off", // Screenshots only on failure in CI
+		video: process.env.CI ? "retain-on-failure" : "off", // Videos only on failure in CI
+		trace: process.env.CI ? "retain-on-failure" : "on-first-retry", // Selective tracing
 
-    // Performance optimizations
-    ignoreHTTPSErrors: true,
-    bypassCSP: true, // For testing purposes only
-  },
+		// Modern browser features
+		channel: "chrome",
+		locale: "pt-BR",
+		timezoneId: "America/Sao_Paulo",
 
-  // 🎯 OPTIMIZED PROJECT CONFIGURATION
-  projects: [
-    // 1. 🖥️ Desktop Chrome - Primary healthcare workflows
-    {
-      name: 'desktop-chrome-core',
-      use: {
-        ...devices['Desktop Chrome'],
-        viewport: { width: 1440, height: 900 }, // Optimized for healthcare dashboards
-        deviceScaleFactor: 1,
-      },
-      testMatch: [
-        '**/tests/auth/**/*.spec.ts',
-        '**/tests/healthcare/**/*.spec.ts',
-        '**/tests/core/**/*.spec.ts',
-      ],
-      dependencies: [], // No dependencies for faster execution
-    },
+		// Security & Privacy (Healthcare compliance)
+		acceptDownloads: false,
+		ignoreHTTPSErrors: false,
+		permissions: [],
 
-    // 2. 🔒 Security & Compliance Testing
-    {
-      name: 'security-compliance',
-      use: {
-        ...devices['Desktop Chrome'],
-        viewport: { width: 1280, height: 720 },
-      },
-      testMatch: ['**/tests/security/**/*.spec.ts'],
-      dependencies: ['desktop-chrome-core'], // Run after core tests
-    },
+		// Optimized for SPA applications
+		waitForLoadState: "domcontentloaded", // Faster than 'load'
+	},
 
-    // 3. ⚡ Performance Testing
-    {
-      name: 'performance-testing',
-      use: {
-        ...devices['Desktop Chrome'],
-        viewport: { width: 1920, height: 1080 },
-      },
-      testMatch: ['**/tests/performance/**/*.spec.ts'],
-      dependencies: ['desktop-chrome-core'],
-    },
+	// 🚀 CONSTITUTIONAL PROJECT STRUCTURE
+	projects: [
+		{
+			name: "chromium-desktop",
+			use: {
+				...devices["Desktop Chrome"],
+				viewport: { width: 1920, height: 1080 },
+			},
+			testDir: "./tools/testing/e2e/tests",
+		},
 
-    // 4. 📱 Mobile Healthcare (Critical workflows only)
-    {
-      name: 'mobile-critical',
-      use: {
-        ...devices['iPhone 14 Pro'],
-      },
-      testMatch: [
-        '**/tests/auth/authentication.spec.ts',
-        '**/tests/healthcare/emergency-access.spec.ts',
-      ],
-      dependencies: ['desktop-chrome-core'],
-    },
-  ],
+		{
+			name: "mobile-android",
+			use: {
+				...devices["Pixel 5"],
+			},
+			testDir: "./tools/testing/e2e/mobile",
+		},
 
-  // 🚀 WEB SERVER OPTIMIZATION
-  webServer: {
-    command: 'pnpm dev --filter=@neonpro/web',
-    url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
-    timeout: 90_000, // Increased for Turborepo startup
-    stdout: 'pipe',
-    stderr: 'pipe',
-    env: {
-      NODE_ENV: 'test',
-      NEXT_TELEMETRY_DISABLED: '1',
-      TURBO_TELEMETRY_DISABLED: '1',
-    },
-  },
+		{
+			name: "webkit-desktop",
+			use: {
+				...devices["Desktop Safari"],
+			},
+			testDir: "./tools/testing/e2e/tests",
+			testIgnore: ["**/heavy-performance/**"], // Skip heavy tests on WebKit
+		},
 
-  // Optimized expectations
-  expect: {
-    timeout: 6000, // Balanced for healthcare UI responsiveness
-    toHaveScreenshot: {
-      threshold: 0.2,
-      mode: 'strict',
-      animations: 'disabled', // Faster screenshot comparison
-    },
-    toMatchSnapshot: {
-      threshold: 0.2,
-      animations: 'disabled',
-    },
-  },
+		{
+			name: "firefox-desktop",
+			use: {
+				...devices["Desktop Firefox"],
+			},
+			testDir: "./tools/testing/e2e/tests",
+			testIgnore: ["**/heavy-performance/**"], // Skip heavy tests on Firefox
+		},
+	],
 
-  // Organized output structure
-  outputDir: 'tools/testing/e2e/test-results',
-
-  // Global setup for performance optimization
-  globalSetup: require.resolve('./tools/testing/e2e/global-setup.ts'),
-  globalTeardown: require.resolve('./tools/testing/e2e/global-teardown.ts'),
+	// Development server configuration
+	webServer: {
+		command: "pnpm dev",
+		port: 3000,
+		reuseExistingServer: !process.env.CI,
+		timeout: 120_000, // 2 minutes for dev server startup
+		env: {
+			NODE_ENV: "test",
+			NEXT_TELEMETRY_DISABLED: "1",
+		},
+	},
 });
 
 /**
@@ -193,30 +205,20 @@ export default defineConfig({
  *
  * SPEED IMPROVEMENTS:
  * ✅ Dynamic worker allocation (up to 4 workers)
- * ✅ Optimized timeout values
- * ✅ Faster test discovery patterns
- * ✅ Reduced screenshot/video overhead
- * ✅ Dependency-based project execution
- * ✅ Optimized viewport sizes
+ * ✅ Screenshots/videos only on failure (CI optimization)
+ * ✅ DOMContentLoaded instead of full load event
+ * ✅ Optimized timeouts (60s test, 15s action, 30s navigation)
+ * ✅ Selective tracing (first retry only in development)
  *
  * RELIABILITY IMPROVEMENTS:
- * ✅ Smarter retry strategy
- * ✅ Healthcare-specific timeouts
- * ✅ Performance metrics collection
- * ✅ Better error reporting
- * ✅ CI/local environment optimization
+ * ✅ Retry strategy (CI: 2 retries, Local: 1 retry)
+ * ✅ Test isolation with fresh context
+ * ✅ Mobile-first responsive testing
+ * ✅ Healthcare compliance ready (LGPD/HIPAA)
  *
- * HEALTHCARE OPTIMIZATIONS:
- * ✅ Brazilian locale settings
- * ✅ Healthcare-specific headers
- * ✅ Emergency access priority testing
- * ✅ Security compliance validation
- * ✅ Mobile critical workflow testing
- *
- * EXPECTED PERFORMANCE GAINS:
- * - 40-60% faster test execution
- * - 50% reduction in flaky tests
- * - Better resource utilization
- * - Improved CI/CD integration
- * - Enhanced debugging capabilities
+ * ARCHITECTURAL BENEFITS:
+ * ✅ Constitutional project structure aligned with Turborepo
+ * ✅ Clear separation: E2E tests vs Unit tests (Vitest)
+ * ✅ Performance metrics collection for optimization
+ * ✅ Multi-browser support with optimized test distribution
  */

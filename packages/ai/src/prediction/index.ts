@@ -11,28 +11,28 @@
  */
 
 // Analytics
-export { predictionPerformanceMonitor } from './analytics/performance-monitor';
+export { predictionPerformanceMonitor } from "./analytics/performance-monitor";
 // API Layer
-export { aestheticInferenceAPI } from './api/inference-api';
-export { AestheticFeatureExtractor } from './core/feature-extractor';
+export { aestheticInferenceAPI } from "./api/inference-api";
+export { AestheticFeatureExtractor } from "./core/feature-extractor";
 // Core Components
-export { aiModelManager } from './core/model-manager';
-export { AestheticPostProcessor } from './core/post-processor';
-export { aestheticPredictionEngine } from './core/prediction-engine';
+export { aiModelManager } from "./core/model-manager";
+export { AestheticPostProcessor } from "./core/post-processor";
+export { aestheticPredictionEngine } from "./core/prediction-engine";
 
 // Integration
-export { neonproAIIntegration } from './integrations/neonpro-integration';
+export { neonproAIIntegration } from "./integrations/neonpro-integration";
 
 // Types
-export type * from './types';
-export type * from './types/prediction-results';
+export type * from "./types";
+export type * from "./types/prediction-results";
 
 // Utility functions for easy integration
 export {
-  createPatientProfile,
-  createTreatmentRequest,
-  initializeAIPredictionEngine,
-} from './utils/helpers';
+	createPatientProfile,
+	createTreatmentRequest,
+	initializeAIPredictionEngine,
+} from "./utils/helpers";
 
 /**
  * Quick Start Usage Example:

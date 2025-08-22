@@ -1,5 +1,5 @@
-import CustomReportBuilder from '../components/CustomReportBuilder';
+import CustomReportBuilder from "../components/CustomReportBuilder";
 
 export default function ReportBuilderPage() {
-  return <CustomReportBuilder />;
+	return <CustomReportBuilder />;
 }
