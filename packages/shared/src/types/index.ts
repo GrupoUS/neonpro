@@ -6,6 +6,12 @@
  * do sistema NeonPro Healthcare.
  */
 
+import type {
+  ApiResponse,
+  PaginatedResponse,
+  PaginationParams,
+} from './api.types';
+
 // Re-export commonly used types for convenience
 export type {
   Address,
@@ -64,6 +70,9 @@ export type {
 } from './responses.types';
 // Response types
 export * from './responses.types';
+
+// Hono types for RPC client
+export type { RpcClient } from './hono.types';
 
 // Utility types for common patterns
 export type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;

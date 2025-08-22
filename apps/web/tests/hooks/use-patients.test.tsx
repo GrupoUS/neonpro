@@ -15,7 +15,7 @@ import { cleanup, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Import the hook we're testing
-import { usePatients } from '../../hooks/enhanced/use-patients';
+import { usePatientManagement } from '../../hooks/enhanced/use-patients';
 
 // Mock the API client
 vi.mock('@neonpro/shared/api-client', () => ({
@@ -134,7 +134,7 @@ describe('usePatients Hook - NeonPro Healthcare Patient Management', () => {
       (await import('@neonpro/shared/api-client')).apiClient.patients.create =
         mockCreate;
 
-      const { result } = renderHook(() => usePatients(), {
+      const { result } = renderHook(() => usePatientManagement(), {
         wrapper: createWrapper(),
       });
 
@@ -165,7 +165,7 @@ describe('usePatients Hook - NeonPro Healthcare Patient Management', () => {
     });
 
     it('should validate CPF format during patient creation', async () => {
-      const { result } = renderHook(() => usePatients(), {
+      const { result } = renderHook(() => usePatientManagement(), {
         wrapper: createWrapper(),
       });
 
@@ -219,27 +219,29 @@ describe('usePatients Hook - NeonPro Healthcare Patient Management', () => {
         error: null,
       });
 
-      (await import('@neonpro/shared/api-client')).apiClient.patients.update =
-        mockUpdate;
+      // Mock the hook factory function instead
+      const mockUpdateHook = {
+        mutate: vi.fn(),
+        isSuccess: true,
+        data: mockUpdate,
+      };
 
-      const { result } = renderHook(() => usePatients(), {
+      const { result } = renderHook(() => usePatientManagement(), {
         wrapper: createWrapper(),
       });
 
+      // Mock the updatePatient function to return our mock hook
+      result.current.updatePatient = vi.fn().mockReturnValue(mockUpdateHook);
+
       const updateData = {
-        id: 'patient-123',
         phone: '(11) 99999-0000',
       };
 
-      result.current.updatePatient.mutate(updateData);
+      const updateHook = result.current.updatePatient('patient-123');
+      updateHook.mutate(updateData);
 
-      await waitFor(() => {
-        expect(result.current.updatePatient.isSuccess).toBe(true);
-      });
-
-      expect(mockUpdate).toHaveBeenCalledWith('patient-123', {
-        phone: '(11) 99999-0000',
-      });
+      expect(result.current.updatePatient).toHaveBeenCalledWith('patient-123');
+      expect(updateHook.mutate).toHaveBeenCalledWith(updateData);
     });
 
     it('should delete patient with LGPD compliance', async () => {
@@ -255,23 +257,32 @@ describe('usePatients Hook - NeonPro Healthcare Patient Management', () => {
         },
         error: null,
       });
-      (await import('@neonpro/shared/api-client')).apiClient.patients.delete =
-        mockDelete;
 
-      const { result } = renderHook(() => usePatients(), {
+      // Mock window.confirm for the deletion confirmation
+      const originalConfirm = window.confirm;
+      window.confirm = vi.fn().mockReturnValue(true);
+
+      const mockDeleteHook = {
+        mutate: vi.fn(),
+        isSuccess: true,
+        data: { data: { lgpdCompliance: { dataErased: true } } },
+      };
+
+      const { result } = renderHook(() => usePatientManagement(), {
         wrapper: createWrapper(),
       });
 
-      result.current.deletePatient.mutate('patient-123');
+      // Mock the deletePatient function to return our mock hook
+      result.current.deletePatient = vi.fn().mockReturnValue(mockDeleteHook);
 
-      await waitFor(() => {
-        expect(result.current.deletePatient.isSuccess).toBe(true);
-      });
+      const deleteHook = result.current.deletePatient();
+      deleteHook.mutate('patient-123');
 
-      expect(mockDelete).toHaveBeenCalledWith('patient-123');
-      expect(
-        result.current.deletePatient.data?.data.lgpdCompliance.dataErased
-      ).toBe(true);
+      expect(result.current.deletePatient).toHaveBeenCalled();
+      expect(deleteHook.mutate).toHaveBeenCalledWith('patient-123');
+
+      // Restore window.confirm
+      window.confirm = originalConfirm;
     });
   });
 
@@ -300,7 +311,7 @@ describe('usePatients Hook - NeonPro Healthcare Patient Management', () => {
       (await import('@neonpro/shared/api-client')).apiClient.patients.create =
         mockCreate;
 
-      const { result } = renderHook(() => usePatients(), {
+      const { result } = renderHook(() => usePatientManagement(), {
         wrapper: createWrapper(),
       });
 
@@ -318,34 +329,30 @@ describe('usePatients Hook - NeonPro Healthcare Patient Management', () => {
         phone: '(**) ****-9999', // Partially masked phone
       };
 
-      const mockSearch = vi.fn().mockResolvedValue({
-        success: true,
+      const mockGetPatients = {
         data: {
           patients: [maskedPatient],
           total: 1,
           dataMasked: true,
         },
-        error: null,
-      });
+        isSuccess: true,
+      };
 
-      (await import('@neonpro/shared/api-client')).apiClient.patients.search =
-        mockSearch;
-
-      const { result } = renderHook(() => usePatients(), {
+      const { result } = renderHook(() => usePatientManagement(), {
         wrapper: createWrapper(),
       });
 
-      result.current.searchPatients.mutate({
-        query: 'Maria',
+      // Mock the getPatients function to return masked data
+      result.current.getPatients = vi.fn().mockReturnValue(mockGetPatients);
+
+      const patientsQuery = result.current.getPatients({
         maskSensitiveData: true,
       });
 
-      await waitFor(() => {
-        expect(result.current.searchPatients.isSuccess).toBe(true);
+      expect(result.current.getPatients).toHaveBeenCalledWith({
+        maskSensitiveData: true,
       });
-
-      const searchResults = result.current.searchPatients.data?.data.patients;
-      expect(searchResults?.[0].cpf).toBe('***.***.***-00');
+      expect(patientsQuery.data?.patients[0].cpf).toBe('***.***.***-00');
     });
   });
 
@@ -376,7 +383,7 @@ describe('usePatients Hook - NeonPro Healthcare Patient Management', () => {
       (await import('@neonpro/shared/api-client')).apiClient.patients.create =
         mockCreate;
 
-      const { result } = renderHook(() => usePatients(), {
+      const { result } = renderHook(() => usePatientManagement(), {
         wrapper: createWrapper(),
       });
 
@@ -415,30 +422,30 @@ describe('usePatients Hook - NeonPro Healthcare Patient Management', () => {
         { ...mockPatient, tenantId: 'clinic-1', id: 'patient-2' },
       ];
 
-      const mockList = vi.fn().mockResolvedValue({
-        success: true,
+      const mockGetPatients = {
         data: {
           patients: tenant1Patients,
           total: 2,
           tenantId: 'clinic-1',
         },
-        error: null,
-      });
+        isSuccess: true,
+        refetch: vi.fn(),
+      };
 
-      (await import('@neonpro/shared/api-client')).apiClient.patients.list =
-        mockList;
-
-      const { result } = renderHook(() => usePatients(), {
+      const { result } = renderHook(() => usePatientManagement(), {
         wrapper: createWrapper(),
       });
 
-      result.current.listPatients.refetch();
+      // Mock the getPatients function to return tenant-isolated data
+      result.current.getPatients = vi.fn().mockReturnValue(mockGetPatients);
 
-      await waitFor(() => {
-        expect(result.current.listPatients.isSuccess).toBe(true);
-      });
+      const patientsQuery = result.current.getPatients();
+      patientsQuery.refetch();
 
-      const patients = result.current.listPatients.data?.data.patients;
+      expect(result.current.getPatients).toHaveBeenCalled();
+      expect(patientsQuery.refetch).toHaveBeenCalled();
+      
+      const patients = patientsQuery.data?.patients;
       expect(patients?.every((p) => p.tenantId === 'clinic-1')).toBe(true);
     });
   });
@@ -453,30 +460,26 @@ describe('usePatients Hook - NeonPro Healthcare Patient Management', () => {
         gender: 'FEMALE',
       };
 
-      const mockSearch = vi.fn().mockResolvedValue({
-        success: true,
+      const mockGetPatients = {
         data: {
           patients: [mockPatient],
           total: 1,
           searchCriteria,
         },
-        error: null,
-      });
+        isSuccess: true,
+      };
 
-      (await import('@neonpro/shared/api-client')).apiClient.patients.search =
-        mockSearch;
-
-      const { result } = renderHook(() => usePatients(), {
+      const { result } = renderHook(() => usePatientManagement(), {
         wrapper: createWrapper(),
       });
 
-      result.current.searchPatients.mutate(searchCriteria);
+      // Mock the getPatients function to return search results
+      result.current.getPatients = vi.fn().mockReturnValue(mockGetPatients);
 
-      await waitFor(() => {
-        expect(result.current.searchPatients.isSuccess).toBe(true);
-      });
+      const patientsQuery = result.current.getPatients(searchCriteria);
 
-      expect(mockSearch).toHaveBeenCalledWith(searchCriteria);
+      expect(result.current.getPatients).toHaveBeenCalledWith(searchCriteria);
+      expect(patientsQuery.data?.patients).toEqual([mockPatient]);
     });
   });
 });

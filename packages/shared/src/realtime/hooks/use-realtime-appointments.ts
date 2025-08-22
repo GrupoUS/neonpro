@@ -4,7 +4,7 @@
  * Crítico para ambiente healthcare com notificações urgentes
  */
 
-import type { Database } from '@neonpro/types';
+import type { Database } from '@neonpro/db';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from 'react';
 import { getRealtimeManager } from '../connection-manager';

@@ -345,13 +345,13 @@ export class LGPDConsentValidator {
     // Cache the result
     LGPDConsentValidator.consentCache.set(cacheKey, {
       status: result.status,
-      expiresAt: result.expiresAt,
+      expiresAt: result.expiresAt || new Date(),
     });
 
     return {
       valid: result.status === LGPDConsentStatus.GRANTED,
       status: result.status,
-      reason: result.reason,
+      reason: result.reason || '',
     };
   }
 

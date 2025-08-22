@@ -218,7 +218,7 @@ export const aggregateMetricsByPeriod = (
   const result = Object.entries(grouped)
     .map(([period, items]) => ({
       period,
-      value: aggFunc(items),
+      value: aggFunc(items as any[]),
     }))
     .sort((a, b) => {
       // Handle different period formats
@@ -289,12 +289,13 @@ export const parseAnalyticsFilters = (params: URLSearchParams | any): any => {
     return params[key] ?? defaultValue;
   };
 
-  const result = {
+  const result: any = {
     period: getValue('period', 'last_30_days'),
     metric: getValue('metric', 'all'), // Default to 'all' as expected by tests
     groupBy: getValue('groupBy', undefined), // Always include groupBy property
     startDate: new Date(),
     endDate: new Date(),
+    filters: {}, // Always include filters property
   };
 
   // Add filters if present

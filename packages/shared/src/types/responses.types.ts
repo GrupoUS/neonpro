@@ -18,7 +18,6 @@ import type {
   Payment,
   Professional,
   TreatmentRecord,
-  User,
 } from './entities.types';
 
 // Generic paginated response

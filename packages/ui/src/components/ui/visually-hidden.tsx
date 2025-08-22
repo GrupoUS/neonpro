@@ -194,9 +194,10 @@ MedicalDefinition.displayName = 'MedicalDefinition';
 /**
  * LGPDNotice - Hidden LGPD/privacy notices
  */
-interface LGPDNoticeProps extends Omit<VisuallyHiddenProps, 'medicalContext'> {
+interface LGPDNoticeProps extends Omit<VisuallyHiddenProps, 'medicalContext' | 'children'> {
   context: 'collection' | 'processing' | 'storage' | 'sharing' | 'rights';
   notice?: string;
+  children?: React.ReactNode;
 }
 
 const LGPDNotice = React.forwardRef<HTMLElement, LGPDNoticeProps>(
@@ -259,11 +260,12 @@ EmergencyInstruction.displayName = 'EmergencyInstruction';
  * FormInstruction - Hidden form field instructions
  */
 interface FormInstructionProps
-  extends Omit<VisuallyHiddenProps, 'medicalContext'> {
+  extends Omit<VisuallyHiddenProps, 'medicalContext' | 'children'> {
   fieldId: string;
   instruction: string;
   required?: boolean;
   sensitive?: boolean;
+  children?: React.ReactNode;
 }
 
 const FormInstruction = React.forwardRef<HTMLElement, FormInstructionProps>(

@@ -13,6 +13,11 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        serif: ['Optima', 'Georgia', 'serif'],
+        mono: ['JetBrains Mono', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
@@ -77,6 +82,27 @@ const config: Config = {
           '5': 'hsl(var(--chart-5))',
           '6': 'hsl(var(--chart-6))',
         },
+        // Professional Healthcare Color System
+        'healthcare-primary': 'hsl(var(--primary))',
+        'healthcare-primary-dark': 'hsl(var(--primary-dark))',
+        'healthcare-primary-light': 'hsl(var(--primary-light))',
+        'healthcare-secondary': 'hsl(var(--secondary))',
+        'healthcare-accent': 'hsl(var(--accent))',
+        'healthcare-success': 'hsl(var(--success))',
+        'healthcare-warning': 'hsl(var(--warning))',
+        'healthcare-danger': 'hsl(var(--danger))',
+        'healthcare-bg-primary': 'hsl(var(--bg-primary))',
+        'healthcare-bg-secondary': 'hsl(var(--bg-secondary))',
+        'healthcare-bg-tertiary': 'hsl(var(--bg-tertiary))',
+        'healthcare-text-primary': 'hsl(var(--text-primary))',
+        'healthcare-text-secondary': 'hsl(var(--text-secondary))',
+        'healthcare-text-muted': 'hsl(var(--text-muted))',
+        'healthcare-border': 'hsl(var(--border))',
+        'healthcare-border-light': 'hsl(var(--border-light))',
+        'sidebar-bg': 'hsl(var(--sidebar-bg))',
+        'sidebar-text': 'hsl(var(--sidebar-text))',
+        'sidebar-hover': 'hsl(var(--sidebar-hover))',
+        'sidebar-active': 'hsl(var(--sidebar-active))',
       },
       borderRadius: {
         lg: 'var(--radius-lg)',

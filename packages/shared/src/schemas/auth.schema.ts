@@ -58,6 +58,18 @@ export const UserPermissionSchema = z.enum([
   'analytics:export_data',
 ]);
 
+// MFA Method Schema
+export const MFAMethodSchema = z.enum([
+  'sms',
+  'email',
+  'authenticator',
+  'backup_codes'
+]);
+
+export type UserRole = z.infer<typeof UserRoleSchema>;
+export type UserPermission = z.infer<typeof UserPermissionSchema>;
+export type MFAMethod = z.infer<typeof MFAMethodSchema>;
+
 // User Base Schema
 export const UserBaseSchema = z.object({
   id: z.string().uuid(),
@@ -414,9 +426,7 @@ export const JWTPayloadSchema = z.object({
   aud: z.string(),
 });
 
-// Type exports for use across the application
-export type UserRole = z.infer<typeof UserRoleSchema>;
-export type UserPermission = z.infer<typeof UserPermissionSchema>;
+// Type exports removed to avoid duplication - see top of file
 export type UserBase = z.infer<typeof UserBaseSchema>;
 export type LoginRequest = z.infer<typeof LoginRequestSchema>;
 export type LoginResponse = z.infer<typeof LoginResponseSchema>;
@@ -451,3 +461,7 @@ export type GetSessionsResponse = z.infer<typeof GetSessionsResponseSchema>;
 export type RevokeSessionRequest = z.infer<typeof RevokeSessionRequestSchema>;
 export type RevokeSessionResponse = z.infer<typeof RevokeSessionResponseSchema>;
 export type JWTPayload = z.infer<typeof JWTPayloadSchema>;
+
+// Additional exports for compatibility
+export type AuthToken = LoginResponse;
+export type AuthUser = UserBase;

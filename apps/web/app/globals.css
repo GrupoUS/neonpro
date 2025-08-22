@@ -4,60 +4,93 @@
 
 @layer base {
   :root {
-    /* TweakCN Healthcare Theme Colors */
-    /* Primary Theme Colors */
-    --background: 252 252 252; /* #fcfcfc */
-    --foreground: 23 23 23; /* #171717 */
-    --primary: 114 227 173; /* #72e3ad - Healthcare green */
-    --primary-foreground: 30 39 35; /* #1e2723 */
+    /* Professional Healthcare Color System */
+    /* Primary Healthcare Colors */
+    --primary: 22 160 133; /* #16a085 - Medical trust teal */
+    --primary-dark: 14 102 85; /* #0e6655 */
+    --primary-light: 72 201 176; /* #48c9b0 */
+    --primary-foreground: 255 255 255; /* #ffffff */
 
-    /* Secondary & Accent Colors */
-    --secondary: 253 253 253; /* #fdfdfd */
-    --secondary-foreground: 23 23 23; /* #171717 */
-    --accent: 237 237 237; /* #ededed */
-    --accent-foreground: 32 32 32; /* #202020 */
+    /* Secondary Colors */
+    --secondary: 44 62 80; /* #2c3e50 - Professional dark slate */
+    --secondary-foreground: 255 255 255; /* #ffffff */
+    --accent: 52 152 219; /* #3498db - Technology blue */
+    --accent-foreground: 255 255 255; /* #ffffff */
+
+    /* Background Colors */
+    --bg-primary: 255 255 255; /* #ffffff */
+    --bg-secondary: 248 249 250; /* #f8f9fa */
+    --bg-tertiary: 236 240 241; /* #ecf0f1 */
+    --background: 255 255 255; /* #ffffff */
+    --foreground: 44 62 80; /* #2c3e50 */
+
+    /* Status Colors */
+    --success: 39 174 96; /* #27ae60 - Health/Success */
+    --success-foreground: 255 255 255; /* #ffffff */
+    --warning: 243 156 18; /* #f39c12 - Attention */
+    --warning-foreground: 255 255 255; /* #ffffff */
+    --danger: 231 76 60; /* #e74c3c - Emergency/Alert */
+    --danger-foreground: 255 255 255; /* #ffffff */
+    --destructive: 231 76 60; /* #e74c3c - Emergency/Alert */
+    --destructive-foreground: 255 255 255; /* #ffffff */
+
+    /* Text Colors */
+    --text-primary: 44 62 80; /* #2c3e50 */
+    --text-secondary: 127 140 141; /* #7f8c8d */
+    --text-muted: 149 165 166; /* #95a5a6 */
+
+    /* Border & UI */
+    --border: 223 230 233; /* #dfe6e9 */
+    --border-light: 236 240 241; /* #ecf0f1 */
+    --input: 248 249 250; /* #f8f9fa */
+    --ring: 22 160 133; /* #16a085 - Medical trust teal */
+
+    /* Sidebar Colors */
+    --sidebar-bg: 44 62 80; /* #2c3e50 - Professional dark slate */
+    --sidebar-text: 236 240 241; /* #ecf0f1 */
+    --sidebar-hover: 52 73 94; /* #34495e */
+    --sidebar-active: 22 160 133; /* #16a085 - Medical trust teal */
 
     /* UI Component Colors */
-    --card: 252 252 252; /* #fcfcfc */
-    --card-foreground: 23 23 23; /* #171717 */
-    --popover: 252 252 252; /* #fcfcfc */
-    --popover-foreground: 82 82 82; /* #525252 */
-    --muted: 237 237 237; /* #ededed */
-    --muted-foreground: 32 32 32; /* #202020 */
-
-    /* Utility & Form Colors */
-    --border: 223 223 223; /* #dfdfdf */
-    --input: 246 246 246; /* #f6f6f6 */
-    --ring: 114 227 173; /* #72e3ad - Healthcare green */
-
-    /* Status & Feedback Colors */
-    --destructive: 202 50 20; /* #ca3214 */
-    --destructive-foreground: 255 252 252; /* #fffcfc */
-
-    /* Chart & Visualization Colors */
-    --chart-1: 114 227 173; /* #72e3ad - Healthcare green */
-    --chart-2: 59 130 246; /* #3b82f6 - Blue */
-    --chart-3: 139 92 246; /* #8b5cf6 - Purple */
-    --chart-4: 245 158 11; /* #f59e0b - Orange */
-    --chart-5: 16 185 129; /* #10b981 - Emerald */
+    --card: 255 255 255; /* #ffffff */
+    --card-foreground: 44 62 80; /* #2c3e50 */
+    --popover: 255 255 255; /* #ffffff */
+    --popover-foreground: 44 62 80; /* #2c3e50 */
+    --muted: 248 249 250; /* #f8f9fa */
+    --muted-foreground: 127 140 141; /* #7f8c8d */
 
     /* Sidebar & Navigation Colors */
-    --sidebar-background: 252 252 252; /* #fcfcfc */
-    --sidebar-foreground: 112 112 112; /* #707070 */
-    --sidebar-primary: 114 227 173; /* #72e3ad */
-    --sidebar-primary-foreground: 30 39 35; /* #1e2723 */
-    --sidebar-accent: 237 237 237; /* #ededed */
-    --sidebar-accent-foreground: 32 32 32; /* #202020 */
-    --sidebar-border: 223 223 223; /* #dfdfdf */
-    --sidebar-ring: 114 227 173; /* #72e3ad */
+    --sidebar-background: 44 62 80; /* #2c3e50 */
+    --sidebar-foreground: 236 240 241; /* #ecf0f1 */
+    --sidebar-primary: 22 160 133; /* #16a085 */
+    --sidebar-primary-foreground: 255 255 255; /* #ffffff */
+    --sidebar-accent: 52 73 94; /* #34495e */
+    --sidebar-accent-foreground: 236 240 241; /* #ecf0f1 */
+    --sidebar-border: 52 73 94; /* #34495e */
+    --sidebar-ring: 22 160 133; /* #16a085 */
 
-    /* Success & Info Colors for Healthcare */
-    --success: 16 185 129; /* #10b981 - Emerald */
-    --success-foreground: 255 255 255; /* #ffffff */
-    --info: 59 130 246; /* #3b82f6 - Blue */
+    /* Chart & Visualization Colors */
+    --chart-1: 22 160 133; /* #16a085 - Medical trust teal */
+    --chart-2: 52 152 219; /* #3498db - Technology blue */
+    --chart-3: 155 89 182; /* #9b59b6 - Purple */
+    --chart-4: 243 156 18; /* #f39c12 - Orange */
+    --chart-5: 39 174 96; /* #27ae60 - Success green */
+    --chart-6: 231 76 60; /* #e74c3c - Alert red */
+
+    /* Healthcare Status Colors - NEONPROV1 Enhanced */
+    --status-critical: 231 76 60; /* #e74c3c - Emergency */
+    --status-urgent: 243 156 18; /* #f39c12 - Urgent */
+    --status-normal: 39 174 96; /* #27ae60 - Normal */
+    --status-inactive: 149 165 166; /* #95a5a6 - Inactive */
+
+    /* LGPD Compliance Colors - NEONPROV1 Professional */
+    --lgpd-compliant: 39 174 96; /* #27ae60 - Compliant */
+    --lgpd-warning: 243 156 18; /* #f39c12 - Warning */
+    --lgpd-violation: 231 76 60; /* #e74c3c - Violation */
+
+    /* Info Colors */
+    --info: 52 152 219; /* #3498db - Technology blue */
     --info-foreground: 255 255 255; /* #ffffff */
-    --warning: 245 158 11; /* #f59e0b - Orange */
-    --warning-foreground: 255 255 255; /* #ffffff */
 
     /* Radius */
     --radius: 0.5rem;
@@ -100,8 +133,47 @@
   }
   
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
     font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Professional Healthcare Typography System */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif text-text-primary;
+    font-feature-settings: "kern" 1, "liga" 1;
+  }
+
+  h1 {
+    @apply text-3xl font-bold leading-tight tracking-tight;
+  }
+
+  h2 {
+    @apply text-2xl font-semibold leading-tight tracking-tight;
+  }
+
+  h3 {
+    @apply text-xl font-semibold leading-snug;
+  }
+
+  h4 {
+    @apply text-lg font-medium leading-snug;
+  }
+
+  h5 {
+    @apply text-base font-medium leading-normal;
+  }
+
+  h6 {
+    @apply text-sm font-medium leading-normal;
+  }
+
+  code, pre, kbd, samp {
+    @apply font-mono;
+  }
+
+  /* Professional body text */
+  p {
+    @apply font-sans text-text-primary leading-relaxed;
   }
 
   /* Healthcare specific styling */

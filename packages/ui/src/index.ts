@@ -24,8 +24,6 @@ export * from './components/ui/visually-hidden';
 
 // Constants exports
 export * from './constants';
-// Global CSS export
-export * from './globals.css';
 // Hooks exports
 export * from './hooks/use-debounce';
 export * from './hooks/use-mobile';

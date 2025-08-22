@@ -667,3 +667,71 @@ function getRoleBasedRedirect(role: UserRole): string {
       return '/dashboard';
   }
 }
+
+// 🔧 Main unified auth hook - combines all auth functionality
+export function useAuth() {
+  const authStatus = useAuthStatus();
+  const authUtils = useAuthUtils();
+  const login = useLogin();
+  const logout = useLogout();
+  const register = useRegister();
+  const profile = useProfile();
+  const changePassword = useChangePassword();
+  const forgotPassword = useForgotPassword();
+  const resetPassword = useResetPassword();
+  const updateProfile = useUpdateProfile();
+  const refreshToken = useRefreshToken();
+
+  return {
+    // Core authentication state
+    ...authStatus,
+    
+    // Auth utilities
+    ...authUtils,
+    
+    // Authentication actions
+    login: login.mutate,
+    loginAsync: login.mutateAsync,
+    logout: logout.mutate,
+    logoutAsync: logout.mutateAsync,
+    register: register.mutate,
+    registerAsync: register.mutateAsync,
+    
+    // Profile management
+    profile: profile.data,
+    updateProfile: updateProfile.mutate,
+    updateProfileAsync: updateProfile.mutateAsync,
+    
+    // Password management
+    changePassword: changePassword.mutate,
+    changePasswordAsync: changePassword.mutateAsync,
+    forgotPassword: forgotPassword.mutate,
+    forgotPasswordAsync: forgotPassword.mutateAsync,
+    resetPassword: resetPassword.mutate,
+    resetPasswordAsync: resetPassword.mutateAsync,
+    
+    // Token management
+    refreshToken: refreshToken.mutate,
+    refreshTokenAsync: refreshToken.mutateAsync,
+    
+    // Loading states
+    isLoggingIn: login.isPending,
+    isLoggingOut: logout.isPending,
+    isRegistering: register.isPending,
+    isUpdatingProfile: updateProfile.isPending,
+    isChangingPassword: changePassword.isPending,
+    isForgettingPassword: forgotPassword.isPending,
+    isResettingPassword: resetPassword.isPending,
+    isRefreshingToken: refreshToken.isPending,
+    
+    // Error states
+    loginError: login.error,
+    logoutError: logout.error,
+    registerError: register.error,
+    updateProfileError: updateProfile.error,
+    changePasswordError: changePassword.error,
+    forgotPasswordError: forgotPassword.error,
+    resetPasswordError: resetPassword.error,
+    refreshTokenError: refreshToken.error,
+  };
+}

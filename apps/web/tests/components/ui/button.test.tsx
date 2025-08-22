@@ -42,9 +42,8 @@ describe('Button Component - NeonPro Healthcare UI', () => {
 
     it('should render healthcare-specific button variants', () => {
       const variants = [
-        'primary',
-        'secondary',
-        'emergency',
+        'medical',
+        'emergency', 
         'success',
         'warning',
       ] as const;
@@ -60,13 +59,25 @@ describe('Button Component - NeonPro Healthcare UI', () => {
 
         const button = screen.getByTestId(`button-${variant}`);
         expect(button).toBeInTheDocument();
-        expect(button).toHaveClass(`btn-${variant}`);
+        
+        // Check for variant-specific classes in the className
+        const className = button.className;
+        if (variant === 'medical') {
+          expect(className).toContain('bg-gradient-primary');
+        } else if (variant === 'emergency') {
+          expect(className).toContain('animate-pulse-healthcare');
+          expect(className).toContain('from-destructive');
+        } else if (variant === 'success') {
+          expect(className).toContain('from-success');
+        } else if (variant === 'warning') {
+          expect(className).toContain('from-warning');
+        }
 
         cleanup();
       });
     });
     it('should handle different button sizes', () => {
-      const sizes = ['xs', 'sm', 'md', 'lg', 'xl'] as const;
+      const sizes = ['sm', 'default', 'lg'] as const;
 
       sizes.forEach((size) => {
         render(
@@ -78,7 +89,16 @@ describe('Button Component - NeonPro Healthcare UI', () => {
         );
 
         const button = screen.getByTestId(`button-${size}`);
-        expect(button).toHaveClass(`btn-${size}`);
+        const className = button.className;
+        
+        // Check for size-specific classes
+        if (size === 'sm') {
+          expect(className).toContain('h-8');
+        } else if (size === 'lg') {
+          expect(className).toContain('h-12');
+        } else {
+          expect(className).toContain('h-10'); // default size
+        }
 
         cleanup();
       });
@@ -127,7 +147,7 @@ describe('Button Component - NeonPro Healthcare UI', () => {
         <ThemeWrapper>
           <Button
             data-testid="loading-button"
-            isLoading={true}
+            loading={true}
             loadingText="Salvando paciente..."
           >
             Salvar Paciente
@@ -136,8 +156,9 @@ describe('Button Component - NeonPro Healthcare UI', () => {
       );
 
       const button = screen.getByTestId('loading-button');
-      expect(button).toBeDisabled();
+      expect(button).toHaveAttribute('aria-disabled', 'true');
       expect(button).toHaveTextContent('Salvando paciente...');
+      expect(button).toHaveAttribute('data-loading', 'true');
     });
   });
 
@@ -195,10 +216,11 @@ describe('Button Component - NeonPro Healthcare UI', () => {
       );
 
       const button = screen.getByTestId('emergency-button');
-      const computedStyle = window.getComputedStyle(button);
+      const className = button.className;
 
-      // Emergency buttons should have high contrast
-      expect(button).toHaveClass('btn-emergency');
+      // Emergency buttons should have the emergency variant styling
+      expect(className).toContain('from-destructive');
+      expect(className).toContain('animate-pulse-healthcare');
     });
   });
   describe('Healthcare-Specific Features', () => {
@@ -208,7 +230,6 @@ describe('Button Component - NeonPro Healthcare UI', () => {
           <Button
             data-testid="critical-emergency-button"
             priority="critical"
-            variant="emergency"
           >
             PARADA CARDÍACA
           </Button>
@@ -216,21 +237,24 @@ describe('Button Component - NeonPro Healthcare UI', () => {
       );
 
       const button = screen.getByTestId('critical-emergency-button');
-      expect(button).toHaveClass('btn-emergency', 'priority-critical');
+      // The component auto-maps critical priority to emergency variant
+      const className = button.className;
+      expect(className).toContain('from-destructive');
+      expect(button).toHaveAttribute('data-priority', 'critical');
       expect(button).toHaveAttribute('role', 'button');
     });
 
     it('should handle patient action confirmations', async () => {
-      const mockConfirm = vi.fn();
+      const mockClick = vi.fn();
       const user = userEvent.setup();
 
       render(
         <ThemeWrapper>
           <Button
-            confirmText="Confirma exclusão do paciente?"
             data-testid="confirm-button"
-            onConfirm={mockConfirm}
-            requireConfirmation={true}
+            confirmAction={true}
+            confirmMessage="Confirma exclusão do paciente?"
+            onClick={mockClick}
             variant="warning"
           >
             Excluir Paciente
@@ -241,14 +265,15 @@ describe('Button Component - NeonPro Healthcare UI', () => {
       const button = screen.getByTestId('confirm-button');
       await user.click(button);
 
-      // Should require confirmation before executing action
-      expect(mockConfirm).not.toHaveBeenCalled();
+      // The component should call window.confirm before executing the action
+      // Since we mocked window.confirm to return true, the action should be called
+      expect(mockClick).toHaveBeenCalledTimes(1);
     });
 
     it('should display LGPD compliance indicators', () => {
       render(
         <ThemeWrapper>
-          <Button data-testid="lgpd-button" showLGPDIndicator={true}>
+          <Button data-testid="lgpd-button" data-lgpd-compliant="true">
             Processar Dados do Paciente
           </Button>
         </ThemeWrapper>

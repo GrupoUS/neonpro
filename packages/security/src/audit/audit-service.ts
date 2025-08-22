@@ -581,7 +581,7 @@ export class AuditService {
  */
 export class MemoryAuditStore implements AuditStore {
   private events: (AuditEvent & { id: string })[] = [];
-  private readonly nextId = 1;
+  private nextId = 1;
 
   store(event: AuditEvent): Promise<string> {
     const id = (this.nextId++).toString();

@@ -10,7 +10,7 @@ import { hc } from 'hono/client';
 import type { z } from 'zod';
 
 // Import backend app types
-import type { AppType } from '../../apps/api/src/index';
+// import type { AppType } from '../../apps/api/src/index';
 // Import validation schemas
 import {
   LoginRequestSchema,
@@ -18,12 +18,11 @@ import {
   RefreshTokenRequestSchema,
   RefreshTokenResponseSchema,
   type UserBaseSchema,
-} from './schemas/auth.schema';
+} from './schemas';
 import {
   type AuditActionSchema,
-  AuditLogSchema,
-} from './schemas/compliance.schema';
-import type { RpcClient } from './types/hono.types';
+} from './schemas';
+import type { RpcClient } from './types';
 
 // Enhanced API Client configuration
 export interface ApiClientConfig {
@@ -420,7 +419,20 @@ export const ApiUtils = {
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Number.parseFloat((bytes / k ** i).toFixed(2)) + ' ' + sizes[i];
+    return Number.parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  },
+
+  // Check if error is a network error that should be retried
+  isNetworkError: (error: Error): boolean => {
+    // Network errors that should be retried
+    return (
+      error.name === 'TypeError' ||
+      error.name === 'NetworkError' ||
+      error.message.includes('fetch') ||
+      error.message.includes('network') ||
+      error.message.includes('timeout') ||
+      error.message.includes('connection')
+    );
   },
 };
 
@@ -429,8 +441,9 @@ export function createApiClient(config: Partial<ApiClientConfig> = {}) {
   const finalConfig = { ...DEFAULT_CONFIG, ...config };
 
   // Create Hono RPC client
-  const client = hc<AppType>(finalConfig.baseUrl, {
-    init: async (args) => {
+  const client = hc<any>(finalConfig.baseUrl, {
+
+    fetch: async (input: RequestInfo | URL, init?: RequestInit) => {
       const requestStart = Date.now();
       const requestId = ApiUtils.generateRequestId();
       const token = tokenManager.getAccessToken();
@@ -446,60 +459,41 @@ export function createApiClient(config: Partial<ApiClientConfig> = {}) {
       }
 
       // Build headers
-      const headers: Record<string, string> = {
+      const authHeaders: Record<string, string> = {
         ...finalConfig.headers,
         'X-Request-ID': requestId,
         'X-Timestamp': new Date().toISOString(),
       };
 
       if (token) {
-        headers.Authorization = `Bearer ${token}`;
+        authHeaders.Authorization = `Bearer ${token}`;
       }
 
       const sessionId = tokenManager.getSessionId();
       if (sessionId) {
-        headers['X-Session-ID'] = sessionId;
+        authHeaders['X-Session-ID'] = sessionId;
       }
 
       // Add user context
       const user = tokenManager.getUser();
       if (user) {
-        headers['X-User-ID'] = user.id;
-        headers['X-User-Role'] = user.role;
+        authHeaders['X-User-ID'] = user.id;
+        authHeaders['X-User-Role'] = user.role;
       }
 
-      let init: RequestInit = {
-        ...args,
+      // Merge headers with init
+      init = {
+        ...init,
         headers: {
-          ...args.headers,
-          ...headers,
+          ...(init?.headers || {}),
+          ...authHeaders,
         },
         signal: AbortSignal.timeout(finalConfig.timeout),
       };
 
-      // Create request context
-      const requestContext: RequestContext = {
-        url: typeof args === 'string' ? args : 'unknown',
-        method: init.method || 'GET',
-        headers,
-        body: init.body,
-        init,
-        attempt: 0,
-      };
-
-      // Apply custom request transformation
-      if (config.onRequest) {
-        init = await config.onRequest(requestContext);
-      }
-
-      return init;
-    },
-
-    fetch: async (input, init) => {
-      const requestStart = Date.now();
       let response: Response;
       let lastError: Error | null = null;
-      const url = typeof input === 'string' ? input : input.url;
+      const url = typeof input === 'string' ? input : input.toString();
 
       // Extract resource info for audit logging
       const urlParts = url.split('/');
@@ -559,15 +553,15 @@ export function createApiClient(config: Partial<ApiClientConfig> = {}) {
             const user = tokenManager.getUser();
             auditLogger.log({
               timestamp: new Date().toISOString(),
-              userId: user?.id,
-              sessionId: tokenManager.getSessionId() || undefined,
+              userId: user?.id || '',
+              sessionId: tokenManager.getSessionId() || '',
               action: action as z.infer<typeof AuditActionSchema>,
               resource_type: resourceType,
               ip_address: ApiUtils.getClientIP(),
               user_agent: ApiUtils.getUserAgent(),
               success: response.ok,
               error_message: response.ok
-                ? undefined
+                ? ''
                 : `HTTP ${response.status}`,
               request_duration: duration,
               request_size: init?.body ? JSON.stringify(init.body).length : 0,
@@ -587,8 +581,8 @@ export function createApiClient(config: Partial<ApiClientConfig> = {}) {
             const user = tokenManager.getUser();
             auditLogger.log({
               timestamp: new Date().toISOString(),
-              userId: user?.id,
-              sessionId: tokenManager.getSessionId() || undefined,
+              userId: user?.id || '',
+              sessionId: tokenManager.getSessionId() || '',
               action: action as z.infer<typeof AuditActionSchema>,
               resource_type: resourceType,
               ip_address: ApiUtils.getClientIP(),
@@ -692,7 +686,7 @@ export const apiClient = createApiClient();
 
 // Type exports
 export type ApiClient = ReturnType<typeof createApiClient>;
-export type { AppType, RpcClient };
+export type { RpcClient };
 
 // Export utilities and classes for advanced usage
 export {
@@ -873,5 +867,4 @@ export const ApiHelpers = {
   },
 };
 
-// Export enhanced helpers
-export { ApiHelpers };
+// ApiHelpers is already exported above, no need for redundant export

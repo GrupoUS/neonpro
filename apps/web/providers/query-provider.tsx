@@ -518,7 +518,7 @@ export function QueryProvider({ children }: { children: React.ReactNode }) {
 }
 
 // Export query keys and utilities for use in hooks
-export { QueryKeys, HealthcareQueryConfig };
+export { HealthcareQueryConfig };
 
 // Export utility functions for advanced usage
 export const QueryUtils = {
@@ -572,10 +572,10 @@ export const QueryUtils = {
   getQueryConfig,
   
   // Helper to create optimistic updates
-  createOptimisticUpdate: <T>(
+  createOptimisticUpdate: function<T>(
     queryKey: readonly unknown[],
     updateFn: (oldData: T | undefined) => T
-  ) => {
+  ) {
     return {
       queryKey,
       updater: updateFn

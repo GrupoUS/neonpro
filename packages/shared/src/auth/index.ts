@@ -5,7 +5,6 @@
 
 // Middleware (Backend)
 export {
-  type AuthContext,
   adminRoute,
   getAuthContext,
   getCurrentUser,
@@ -21,7 +20,7 @@ export {
   AuthProvider,
   type AuthProviderProps,
   useAuth,
-  useAuthToken as useAuthTokenHook,
+  useAuthTokenHelpers,
   useCurrentUser,
   useIsAuthenticated,
 } from './auth-provider';
@@ -40,8 +39,7 @@ export {
   usePermissions,
   withAuth,
 } from './protected-route';
-// Re-export AuthUser type for consistency
-export type { AuthUser } from './use-auth-token';
+
 // React Hooks and Context
 export {
   type AuthState,
@@ -50,3 +48,6 @@ export {
   type LoginResponse,
   useAuthToken,
 } from './use-auth-token';
+
+// Types
+export type { AuthContext } from '../types/hono.types';

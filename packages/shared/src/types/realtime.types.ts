@@ -10,7 +10,7 @@ import type {
   RealtimeChannel,
   RealtimePostgresChangesPayload,
 } from '@supabase/supabase-js';
-import type { Database } from '../../../packages/db/src/types';
+import type { Database } from '@neonpro/db';
 
 // Healthcare database tables for real-time subscriptions
 export type Tables = Database['public']['Tables'];

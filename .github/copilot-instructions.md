@@ -17,9 +17,8 @@ applyTo: "**/*"
 **MANDATORY FIRST STEP**: Always begin with sequential thinking tool (sequentialthinking) and the `think` native tool before any other action to break down problems, plan approaches, and verify solutions, use `think` each 5 steps to outline next steps and strategies.
 **CRITICAL OPERATING PRINCIPLES**:All violations trigger immediate halt + constitutional remediation. NEVER assume, always validate and verify before implementation.
 **PNPM over NPM**: Use PNPM instead of NPM to manage dependencies, run builds and tests. PNPM is faster, more efficient, and uses less disk space.
-**USE A PASTA E ARQUITETURA CORRETA**: Sempre que for criar um arquivo, use a pasta e arquitetura correta. Por exemplo se for criar algo no projeto neonpro use a pasta E:\neonpro.
-**Não crie conteúdo dos projetos na pasta vscode**: A pasta E:\vscode só serve para configuração das ides com regras e agentes. Não crie conteúdo dos projetos nessa pasta.
-**Sempre mantenha a arquitetura definida no source-tree**: Sempre que for criar um arquivo, use a pasta e arquitetura correta do "D:\neonpro\docs\shards\architecture\source-tree.md".
+**ARCHON-FIRST RULE**: Always use Archon MCP server for task management, knowledge management, and project organization. It is the primary system for all tasks and project management and docs consulting.
+**Sempre mantenha a arquitetura definida no source-tree**: Sempre que for criar um arquivo, use a pasta e arquitetura correta do "D:\neonpro\docs\architecture\source-tree.md".
 **CLEAN UP CONSTANTLY**: Sem que terminar uma task busque por arquivos e códigos duplicados, redundantes, inutilizados ou obsoletos para limpar, incorporar mantendo sempre o sistema limpo e organizado. Sempre corrija os paths necessários para evitar erros de redirecionamento.
 **No backwards compatibility** - remove deprecated code immediately
 **Detailed errors over graceful failures** - we want to identify and fix issues fast

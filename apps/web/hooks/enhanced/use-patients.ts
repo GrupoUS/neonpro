@@ -700,17 +700,5 @@ export function usePatientManagement(): PatientManagementContext {
   );
 }
 
-// Export specialized hooks for specific use cases
-export {
-  usePatient,
-  usePatients,
-  useClinicPatients,
-  useSearchPatients,
-  useCreatePatient,
-  useUpdatePatient,
-  useDeletePatient,
-  usePatientStats,
-  useExportPatientData,
-  usePatientUtils,
-  usePatientManagement,
-};
+// All hooks are exported individually using 'export function' above
+// No need for duplicate export block

@@ -2,8 +2,7 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "rootDir": "./src",
-    "composite": true,
+    "composite": false,
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
@@ -24,13 +23,22 @@
     "noImplicitOverride": true,
     "useUnknownInCatchVariables": true,
     "forceConsistentCasingInFileNames": true,
-    "allowUnreachableCode": false
+    "allowUnreachableCode": false,
+    "tsBuildInfoFile": "./dist/.tsbuildinfo"
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "src/**/*.ts",
+    "src/**/*.tsx"
+  ],
+  "references": [
+    { "path": "../db" },
+    { "path": "../types" }
   ],
   "exclude": [
     "dist",
-    "node_modules"
+    "node_modules",
+    "**/*.test.ts",
+    "**/*.spec.ts"
   ]
 }

@@ -29,6 +29,15 @@ export const AppointmentPrioritySchema = z.enum([
   'urgent', // Urgente
 ]);
 
+// Time Slot Schema
+export const TimeSlotSchema = z.object({
+  start_time: z.string().regex(/^\d{2}:\d{2}$/, 'Formato deve ser HH:MM'),
+  end_time: z.string().regex(/^\d{2}:\d{2}$/, 'Formato deve ser HH:MM'),
+  is_available: z.boolean().default(true),
+  professional_id: z.string().uuid().optional(),
+  date: z.string().date('Data deve estar em formato válido'),
+});
+
 // Payment Status Schema
 export const PaymentStatusSchema = z.enum([
   'pending', // Pendente
@@ -558,3 +567,4 @@ export type WeeklyScheduleResponse = z.infer<
   typeof WeeklyScheduleResponseSchema
 >;
 export type AppointmentStats = z.infer<typeof AppointmentStatsSchema>;
+export type TimeSlot = z.infer<typeof TimeSlotSchema>;

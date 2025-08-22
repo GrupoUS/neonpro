@@ -6,11 +6,142 @@
  * Exports centralizados para schemas, types e utilitários.
  */
 
-// Schemas (Zod validation schemas)
-export * from './schemas';
+// Export schemas with specific re-exports to avoid conflicts
+export {
+  // Auth schemas
+  LoginRequestSchema,
+  LoginResponseSchema,
+  RegisterRequestSchema,
+  UserBaseSchema,
+  UserPermissionSchema,
+  UserRoleSchema,
+  
+  // Appointment schemas
+  AppointmentBaseSchema,
+  AppointmentQuerySchema,
+  AppointmentStatusSchema,
+  AppointmentTypeSchema,
+  CreateAppointmentSchema,
+  PrescriptionSchema,
+  UpdateAppointmentSchema,
+  VitalSignsSchema,
+  
+  // Compliance schemas
+  AuditActionSchema,
+  AuditLogSchema,
+  ComplianceQuerySchema,
+  ConsentRecordSchema,
+  DataCategorySchema,
+  DataSubjectRequestSchema,
+  LgpdLegalBasisSchema,
+  SecurityIncidentSchema,
+  
+  // Patient schemas
+  PatientAddressSchema,
+  CpfSchema,
+  CreatePatientSchema,
+  PatientBaseSchema,
+  PatientGenderSchema,
+  PatientQuerySchema,
+  UpdatePatientSchema,
+  
+  // Professional schemas
+  CreateProfessionalSchema,
+  ProfessionalBaseSchema,
+  ProfessionalQuerySchema,
+  ProfessionalTypeSchema,
+  SpecializationSchema,
+  UpdateProfessionalSchema,
+  WorkingHoursSchema,
+  
+  // Service schemas
+  AnvisaRiskClassificationSchema,
+  CreateServiceSchema,
+  ServiceBaseSchema,
+  ServiceCategorySchema,
+  ServiceQuerySchema,
+  ServiceTypeSchema,
+  UpdateServiceSchema,
+} from './schemas';
 
-// Types (TypeScript interfaces and types)
-export * from './types';
+// Export types with specific re-exports to avoid conflicts
+export type {
+  // Core entity types - avoiding conflicts with schemas
+  Address,
+  ApiError,
+  ApiMeta,
+  ApiResponse,
+  ApiStatusCode,
+  Appointment,
+  AppointmentResponse,
+  AppointmentsListResponse,
+  BaseEntity,
+  BusinessHours,
+  Clinic,
+  ClinicResponse,
+  ContactInfo,
+  ErrorResponse,
+  FileDocument,
+  GeoCoordinates,
+  HealthCheckResponse,
+  HttpMethod,
+  ListResponse,
+  LoginResponse,
+  Notification,
+  PaginatedResponse,
+  PaginationMeta,
+  PaginationParams,
+  Patient,
+  PatientResponse,
+  PatientsListResponse,
+  Payment,
+  Professional,
+  ProfessionalResponse,
+  ProfessionalsListResponse,
+  RefreshTokenResponse,
+  RegisterResponse,
+  RequestContext,
+  SearchParams,
+  SuccessResponse,
+  TreatmentRecord,
+  User,
+  ValidationError,
+  
+  // Entity types
+  Entity,
+  EntityType,
+  
+  // Response types
+  AuthErrorResponse,
+  ConflictErrorResponse,
+  NotFoundErrorResponse,
+  RateLimitErrorResponse,
+  ServerErrorResponse,
+  ValidationErrorResponse,
+  
+  // Utility types
+  Optional,
+  Required,
+  Nullable,
+  NonNullable,
+  UUID,
+  EntityId,
+  ISODate,
+  ISODateTime,
+  TimeString,
+  FormData,
+  FormErrors,
+  EndpointMethod,
+  EndpointPath,
+  CrudOperations,
+  FilterOperator,
+  FilterCondition,
+  SearchFilter,
+  DomainEvent,
+  HealthConfig,
+  CacheConfig,
+  EnvironmentConfig,
+} from './types';
 
 // Package version and metadata
 export const PACKAGE_VERSION = '1.0.0';
@@ -180,20 +311,20 @@ export const utils = {
     // Validate CPF algorithm
     let sum = 0;
     for (let i = 0; i < 9; i++) {
-      sum += Number.parseInt(cleaned.charAt(i)) * (10 - i);
+      sum += Number(cleaned.charAt(i)) * (10 - i);
     }
     let remainder = (sum * 10) % 11;
     if (remainder === 10 || remainder === 11) remainder = 0;
-    if (remainder !== Number.parseInt(cleaned.charAt(9))) return false;
+    if (remainder !== Number(cleaned.charAt(9))) return false;
 
     sum = 0;
     for (let i = 0; i < 10; i++) {
-      sum += Number.parseInt(cleaned.charAt(i)) * (11 - i);
+      sum += Number(cleaned.charAt(i)) * (11 - i);
     }
     remainder = (sum * 10) % 11;
     if (remainder === 10 || remainder === 11) remainder = 0;
 
-    return remainder === Number.parseInt(cleaned.charAt(10));
+    return remainder === Number(cleaned.charAt(10));
   },
 
   isValidCNPJ: (cnpj: string): boolean => {
@@ -206,24 +337,24 @@ export const utils = {
     let sum = 0;
     let weight = 2;
     for (let i = 11; i >= 0; i--) {
-      sum += Number.parseInt(cleaned.charAt(i)) * weight;
+      sum += Number(cleaned.charAt(i)) * weight;
       weight = weight === 9 ? 2 : weight + 1;
     }
     let remainder = sum % 11;
     const digit1 = remainder < 2 ? 0 : 11 - remainder;
 
-    if (digit1 !== Number.parseInt(cleaned.charAt(12))) return false;
+    if (digit1 !== Number(cleaned.charAt(12))) return false;
 
     sum = 0;
     weight = 2;
     for (let i = 12; i >= 0; i--) {
-      sum += Number.parseInt(cleaned.charAt(i)) * weight;
+      sum += Number(cleaned.charAt(i)) * weight;
       weight = weight === 9 ? 2 : weight + 1;
     }
     remainder = sum % 11;
     const digit2 = remainder < 2 ? 0 : 11 - remainder;
 
-    return digit2 === Number.parseInt(cleaned.charAt(13));
+    return digit2 === Number(cleaned.charAt(13));
   },
 
   // Phone formatting
@@ -267,7 +398,8 @@ export const utils = {
   // Date utilities
   formatDate: (date: string | Date): string => {
     const d = new Date(date);
-    return d.toISOString().split('T')[0];
+    const parts = d.toISOString().split('T');
+    return parts[0] || '';
   },
 
   formatDateTime: (date: string | Date): string => {
@@ -297,3 +429,6 @@ export const utils = {
 // Type definitions export (for convenience)
 export type ErrorCode = keyof typeof ERROR_CODES;
 export type SuccessMessage = keyof typeof SUCCESS_MESSAGES;
+
+// API Client export
+export * from './api-client';

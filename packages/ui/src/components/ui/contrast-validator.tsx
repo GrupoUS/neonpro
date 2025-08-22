@@ -423,8 +423,6 @@ ContrastWrapper.displayName = 'ContrastWrapper';
 export {
   ContrastValidator,
   ContrastWrapper,
-  useContrastValidation,
-  validateColorPalette,
   calculateContrastRatio,
   type ContrastValidatorProps,
   type ContrastWrapperProps,

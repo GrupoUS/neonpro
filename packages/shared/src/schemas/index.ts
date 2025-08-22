@@ -1,19 +1,19 @@
 // Schema exports for NeonPro shared package
 // All schemas organized by domain with no duplications
 
-// Auth schemas and types
-export * from './auth.schema';
+// Auth schemas only (no type exports to avoid conflicts)
 export {
   LoginRequestSchema,
   LoginResponseSchema,
+  RefreshTokenRequestSchema,
+  RefreshTokenResponseSchema,
   RegisterRequestSchema,
   UserBaseSchema,
   UserPermissionSchema,
   UserRoleSchema,
 } from './auth.schema';
 
-// Appointment schemas and types
-export * from './appointment.schema';
+// Appointment schemas only  
 export {
   AppointmentBaseSchema,
   AppointmentQuerySchema,
@@ -25,8 +25,7 @@ export {
   VitalSignsSchema,
 } from './appointment.schema';
 
-// Compliance schemas and types
-export * from './compliance.schema';
+// Compliance schemas only
 export {
   AuditActionSchema,
   AuditLogSchema,
@@ -38,8 +37,7 @@ export {
   SecurityIncidentSchema,
 } from './compliance.schema';
 
-// Patient schemas and types
-export * from './patient.schema';
+// Patient schemas only (note: AddressSchema renamed to avoid conflicts)
 export {
   AddressSchema as PatientAddressSchema,
   CpfSchema,
@@ -50,8 +48,7 @@ export {
   UpdatePatientSchema,
 } from './patient.schema';
 
-// Professional schemas and types
-export * from './professional.schema';
+// Professional schemas only
 export {
   CreateProfessionalSchema,
   ProfessionalBaseSchema,
@@ -62,8 +59,7 @@ export {
   WorkingHoursSchema,
 } from './professional.schema';
 
-// Service schemas and types
-export * from './service.schema';
+// Service schemas only
 export {
   AnvisaRiskClassificationSchema,
   CreateServiceSchema,

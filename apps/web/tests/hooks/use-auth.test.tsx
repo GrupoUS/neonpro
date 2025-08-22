@@ -18,6 +18,20 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 // Import the hook we're testing
 import { useAuth } from '../../hooks/enhanced/use-auth';
 
+// Mock Next.js router
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    refresh: vi.fn(),
+    back: vi.fn(),
+    forward: vi.fn(),
+    prefetch: vi.fn(),
+  }),
+  useSearchParams: () => new URLSearchParams(),
+  usePathname: () => '/test-path',
+}));
+
 // Mock the API client
 vi.mock('@neonpro/shared/api-client', () => ({
   apiClient: {
@@ -30,6 +44,9 @@ vi.mock('@neonpro/shared/api-client', () => ({
       resetPassword: vi.fn(),
       changePassword: vi.fn(),
       updateProfile: vi.fn(),
+      getSessionId: vi.fn(() => 'test-session-id'),
+      isAuthenticated: vi.fn(() => true),
+      shouldRefresh: vi.fn(() => false),
     },
   },
   ApiHelpers: {
@@ -216,20 +233,20 @@ describe('useAuth Hook - NeonPro Healthcare Authentication', () => {
 
       // Setup expired token
       mockLocalStorage.getItem.mockReturnValue('expired-token');
-    });
-    const { result } = renderHook(() => useAuth(), {
-      wrapper: createWrapper(),
-    });
+      
+      const { result } = renderHook(() => useAuth(), {
+        wrapper: createWrapper(),
+      });
 
-    // Execute token refresh
-    await result.current.refreshToken();
+      // Execute token refresh
+      await result.current.refreshToken();
 
-    expect(mockRefreshToken).toHaveBeenCalled();
-    expect(mockLocalStorage.setItem).toHaveBeenCalledWith(
-      'neonpro_auth_token',
-      'new-access-token'
-    );
-  });
+      expect(mockRefreshToken).toHaveBeenCalled();
+      expect(mockLocalStorage.setItem).toHaveBeenCalledWith(
+        'neonpro_auth_token',
+        'new-access-token'
+      );
+    });
 
   it('should handle token refresh failure', async () => {
     const mockRefreshError = {

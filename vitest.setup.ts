@@ -34,6 +34,41 @@ Object.defineProperty(global, 'crypto', {
   },
 });
 
+// JSDOM polyfills for browser APIs
+Object.defineProperty(window, 'confirm', {
+  value: vi.fn(() => true),
+  writable: true,
+});
+
+Object.defineProperty(window, 'alert', {
+  value: vi.fn(),
+  writable: true,
+});
+
+// Mock HTMLFormElement.requestSubmit for form tests
+Object.defineProperty(HTMLFormElement.prototype, 'requestSubmit', {
+  value: function(this: HTMLFormElement) {
+    const event = new Event('submit', { bubbles: true, cancelable: true });
+    this.dispatchEvent(event);
+  },
+  writable: true,
+  configurable: true,
+});
+
+// Mock ResizeObserver
+global.ResizeObserver = vi.fn().mockImplementation(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
+}));
+
+// Mock IntersectionObserver
+global.IntersectionObserver = vi.fn().mockImplementation(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
+}));
+
 // Create a proper mock for fetch
 const mockFetch = vi.fn(() =>
   Promise.resolve({

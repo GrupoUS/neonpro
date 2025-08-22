@@ -107,7 +107,7 @@ export function useCurrentUser(): AuthUser | null {
 /**
  * Hook para obter token válido com refresh automático
  */
-export function useAuthToken(): {
+export function useAuthTokenHelpers(): {
   getToken: () => Promise<string | null>;
   getAuthHeader: () => Promise<string | null>;
 } {

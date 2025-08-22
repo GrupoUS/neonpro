@@ -7,33 +7,16 @@
  */
 
 import type { Context } from 'hono';
-import type { StatusCode } from 'hono/utils/http-status';
 import type { ApiResponse, RequestContext } from './api.types';
 
-// Hono Context extension with NeonPro specific data
-export interface NeonProContext extends Context {
-  // User context from auth middleware
-  get(key: 'user'): RequestContext['user'];
-  get(key: 'userId'): string;
-  get(key: 'userRole'): string;
-  get(key: 'userPermissions'): string[];
-  get(key: 'clinicId'): string | undefined;
-  get(key: 'professionalId'): string | undefined;
-
-  // Request context
-  get(key: 'requestId'): string;
-  get(key: 'auditLog'): any;
-  get(key: 'lgpdContext'): any;
-
-  // Database context
-  get(key: 'dbClient'): string;
-
-  // Generic getter
-  get<T>(key: string): T;
-
-  // Generic setter
-  set<T>(key: string, value: T): void;
+// Auth context interface for middleware
+export interface AuthContext {
+  user: RequestContext['user'];
+  token: string;
 }
+
+// Hono Context extension with NeonPro specific data - just a type alias
+export type NeonProContext = Context;
 
 // Hono Route Handler type with our context
 export type NeonProHandler<T = unknown> = (
@@ -108,6 +91,7 @@ export interface RpcClient {
   patients: {
     $get: (params?: { query?: PatientsQuery }) => Promise<Response>;
     $post: (data: { json: CreatePatientRequest }) => Promise<Response>;
+  } & {
     [key: `${string}`]: {
       $get: () => Promise<Response>;
       $put: (data: { json: UpdatePatientRequest }) => Promise<Response>;
@@ -119,13 +103,14 @@ export interface RpcClient {
   appointments: {
     $get: (params?: { query?: AppointmentsQuery }) => Promise<Response>;
     $post: (data: { json: CreateAppointmentRequest }) => Promise<Response>;
+    availability: {
+      $get: (params?: { query?: AvailabilityQuery }) => Promise<Response>;
+    };
+  } & {
     [key: `${string}`]: {
       $get: () => Promise<Response>;
       $put: (data: { json: UpdateAppointmentRequest }) => Promise<Response>;
       $delete: () => Promise<Response>;
-    };
-    availability: {
-      $get: (params?: { query?: AvailabilityQuery }) => Promise<Response>;
     };
   };
 
@@ -133,6 +118,7 @@ export interface RpcClient {
   professionals: {
     $get: (params?: { query?: ProfessionalsQuery }) => Promise<Response>;
     $post: (data: { json: CreateProfessionalRequest }) => Promise<Response>;
+  } & {
     [key: `${string}`]: {
       $get: () => Promise<Response>;
       $put: (data: { json: UpdateProfessionalRequest }) => Promise<Response>;
@@ -150,16 +136,17 @@ export interface RpcClient {
   services: {
     $get: (params?: { query?: ServicesQuery }) => Promise<Response>;
     $post: (data: { json: CreateServiceRequest }) => Promise<Response>;
+    category: {
+      [key: `${string}`]: {
+        $get: () => Promise<Response>;
+      };
+    };
+  } & {
     [key: `${string}`]: {
       $get: () => Promise<Response>;
       $put: (data: { json: UpdateServiceRequest }) => Promise<Response>;
       $delete: () => Promise<Response>;
       compliance: {
-        $get: () => Promise<Response>;
-      };
-    };
-    category: {
-      [key: `${string}`]: {
         $get: () => Promise<Response>;
       };
     };

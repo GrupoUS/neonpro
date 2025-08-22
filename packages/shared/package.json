@@ -11,21 +11,6 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.esm.js",
       "require": "./dist/index.js"
-    },
-    "./schemas": {
-      "types": "./dist/schemas/index.d.ts",
-      "import": "./dist/schemas/index.esm.js",
-      "require": "./dist/schemas/index.js"
-    },
-    "./types": {
-      "types": "./dist/types/index.d.ts",
-      "import": "./dist/types/index.esm.js",
-      "require": "./dist/types/index.js"
-    },
-    "./api-client": {
-      "types": "./dist/api-client.d.ts",
-      "import": "./dist/api-client.esm.js",
-      "require": "./dist/api-client.js"
     }
   },
   "files": [
@@ -39,12 +24,19 @@
     "lint:fix": "biome check src --apply"
   },
   "dependencies": {
+    "@neonpro/db": "workspace:*",
+    "@supabase/supabase-js": "^2.55.0",
+    "@tanstack/react-query": "^5.51.23",
     "hono": "^4.5.8",
+    "jsonwebtoken": "^9.0.2",
+    "react": "^18.3.1",
     "zod": "^3.23.8"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.8.3",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20.14.15",
+    "@types/react": "^18.3.3",
     "tsup": "^8.2.4",
     "typescript": "^5.5.4"
   },

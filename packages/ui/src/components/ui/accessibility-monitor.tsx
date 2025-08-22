@@ -120,7 +120,7 @@ const AccessibilityMonitor: React.FC<AccessibilityMonitorProps> = ({
   });
   const [isScanning, setIsScanning] = React.useState(false);
 
-  const scanTimeoutRef = React.useRef<NodeJS.Timeout>();
+  const scanTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
   /**
    * Scan for color contrast violations

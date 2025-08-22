@@ -283,3 +283,157 @@ export const isValidationError = (obj: unknown): obj is ValidationError => {
     'message' in obj
   );
 };
+
+// Additional entity types for compatibility
+export interface BaseEntity {
+  id: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Address {
+  street: string;
+  number: string;
+  complement?: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+  zip_code: string;
+  country: string;
+}
+
+export interface ContactInfo {
+  phone?: string;
+  email?: string;
+  mobile?: string;
+}
+
+export interface GeoCoordinates {
+  latitude: number;
+  longitude: number;
+}
+
+export interface BusinessHours {
+  day_of_week: number;
+  open_time: string;
+  close_time: string;
+  is_closed: boolean;
+}
+
+export interface Clinic extends BaseEntity {
+  name: string;
+  cnpj: string;
+  address: Address;
+  contact_info: ContactInfo;
+  business_hours: BusinessHours[];
+  is_active: boolean;
+}
+
+export interface Patient extends BaseEntity {
+  user_id: string;
+  name: string;
+  cpf: string;
+  birth_date: string;
+  contact_info: ContactInfo;
+  address?: Address;
+}
+
+export interface Professional extends BaseEntity {
+  user_id: string;
+  name: string;
+  cpf: string;
+  crm: string;
+  specialization: string;
+  bio?: string;
+  clinic_id: string;
+}
+
+export interface Appointment extends BaseEntity {
+  patient_id: string;
+  professional_id: string;
+  clinic_id: string;
+  scheduled_at: string;
+  duration_minutes: number;
+  status: string;
+  type: string;
+  notes?: string;
+}
+
+export interface User extends BaseEntity {
+  email: string;
+  first_name: string;
+  last_name: string;
+  role: string;
+  is_active: boolean;
+  is_verified: boolean;
+}
+
+export interface Notification extends BaseEntity {
+  user_id: string;
+  title: string;
+  message: string;
+  type: string;
+  is_read: boolean;
+  priority: string;
+}
+
+export interface Payment extends BaseEntity {
+  appointment_id: string;
+  amount: number;
+  currency: string;
+  status: string;
+  payment_method: string;
+  reference: string;
+}
+
+export interface TreatmentRecord extends BaseEntity {
+  appointment_id: string;
+  diagnosis: string;
+  treatment: string;
+  prescription?: string;
+  notes?: string;
+}
+
+export interface FileDocument extends BaseEntity {
+  name: string;
+  type: string;
+  size: number;
+  url: string;
+  owner_id: string;
+  entity_type: string;
+  entity_id: string;
+}
+
+// Response types
+export interface ClinicResponse extends ApiResponse<Clinic> {}
+export interface PatientResponse extends ApiResponse<Patient> {}
+export interface AppointmentResponse extends ApiResponse<Appointment> {}
+export interface LoginResponse extends ApiResponse<{
+  user: User;
+  token: string;
+  expires_at: string;
+}> {}
+export interface RegisterResponse extends ApiResponse<{
+  user: User;
+  verification_required: boolean;
+}> {}
+
+export type SuccessResponse<T = unknown> = ApiResponse<T> & { success: true };
+export type ErrorResponse = ApiResponse<never> & { success: false };
+export type HealthCheckResponse = ApiResponse<{ status: string; timestamp: string; version: string }>;
+
+export interface ListResponse<T> {
+  items: T[];
+  total: number;
+  page: number;
+  per_page: number;
+}
+
+export interface PaginatedResponse<T> extends ApiResponse<ListResponse<T>> {}
+
+export interface PaginationParams {
+  page?: number;
+  per_page?: number;
+  sort_by?: string;
+  sort_order?: 'asc' | 'desc';
+}

@@ -4,7 +4,7 @@
  * Integra com toast system e audio alerts para urgências médicas
  */
 
-import type { Database } from '@neonpro/types';
+import type { Database } from '@neonpro/db';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getRealtimeManager } from '../connection-manager';

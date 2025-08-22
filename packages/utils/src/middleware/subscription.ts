@@ -36,9 +36,9 @@ export const routeProtection = {
     subscription: SubscriptionStatus | null,
     route: string
   ): boolean => {
-    if (this.isPublicRoute(route)) return false;
+    if (routeProtection.isPublicRoute(route)) return false;
     if (
-      this.isPremiumRoute(route) &&
+      routeProtection.isPremiumRoute(route) &&
       (!subscription || subscription.status !== 'active')
     ) {
       return true;

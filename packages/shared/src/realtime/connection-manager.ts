@@ -4,7 +4,7 @@
  * Otimizado para ambiente healthcare com alta disponibilidade
  */
 
-import type { Database } from '@neonpro/types';
+import type { Database } from '@neonpro/db';
 import {
   createClient,
   type RealtimeChannel,

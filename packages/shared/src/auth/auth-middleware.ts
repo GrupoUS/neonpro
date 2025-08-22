@@ -6,6 +6,7 @@
 import { createMiddleware } from 'hono/factory';
 import { HTTPException } from 'hono/http-exception';
 import jwt from 'jsonwebtoken';
+import type { AuthContext } from '../types/hono.types';
 
 export interface AuthUser {
   id: string;
@@ -15,17 +16,13 @@ export interface AuthUser {
   tenantId?: string;
 }
 
-export interface AuthContext {
-  user: AuthUser;
-  token: string;
-}
-
-declare module 'hono' {
-  interface Context {
-    get(key: 'auth'): AuthContext;
-    set(key: 'auth', value: AuthContext): void;
-  }
-}
+// Module augmentation moved to types/hono.types.ts to avoid conflicts
+// declare module 'hono' {
+//   interface Context {
+//     get(key: 'auth'): AuthContext;
+//     set(key: 'auth', value: AuthContext): void;
+//   }
+// }
 
 /**
  * Extrai token do header Authorization
@@ -40,7 +37,7 @@ function extractTokenFromHeader(authHeader: string | undefined): string | null {
     return null;
   }
 
-  return parts[1];
+  return parts[1] || null;
 }
 
 /**

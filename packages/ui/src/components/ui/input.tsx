@@ -80,6 +80,30 @@ const healthcareMasks = {
       .replace(/(\d{2})(\d)/, '$1:$2')
       .replace(/(\d{2}:\d{2})\d+?$/, '$1');
   },
+  weight: (value: string) => {
+    return value
+      .replace(/[^\d.,]/g, '')
+      .replace(/,/g, '.')
+      .replace(/(\d{3})(\d)/, '$1.$2');
+  },
+  height: (value: string) => {
+    return value
+      .replace(/[^\d.,]/g, '')
+      .replace(/,/g, '.')
+      .replace(/(\d{1,3})\.(\d{2})\d*/, '$1.$2');
+  },
+  temperature: (value: string) => {
+    return value
+      .replace(/[^\d.,]/g, '')
+      .replace(/,/g, '.')
+      .replace(/(\d{2})\.(\d)\d*/, '$1.$2');
+  },
+  pressure: (value: string) => {
+    return value
+      .replace(/[^\d\/]/g, '')
+      .replace(/(\d{2,3})(\d)/, '$1/$2')
+      .replace(/(\d{2,3}\/\d{2,3})\d+?$/, '$1');
+  },
 };
 
 export interface InputProps
@@ -146,6 +170,10 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           cep: /^\d{5}-\d{3}$/,
           date: /^\d{2}\/\d{2}\/\d{4}$/,
           time: /^\d{2}:\d{2}$/,
+          weight: /^\d{1,3}(\.\d{1,2})?$/,
+          height: /^\d{1,3}(\.\d{2})?$/,
+          temperature: /^\d{2}(\.\d)?$/,
+          pressure: /^\d{2,3}\/\d{2,3}$/,
           email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
         };
 
@@ -317,4 +345,4 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 
 Input.displayName = 'Input';
 
-export { Input, inputVariants, healthcareMasks, type InputProps };
+export { Input, inputVariants, healthcareMasks };

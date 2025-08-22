@@ -178,15 +178,13 @@ export class HealthcareQueryUtils {
 
       // Apply healthcare-specific configuration based on data type
       staleTime: this.getQueryConfig(queryKey).staleTime,
-      gcTime: this.getQueryConfig(queryKey).gcTime,
-
       // Enhanced options
       ...options,
 
       // LGPD compliance: automatic cleanup for sensitive data
       gcTime: sensitiveData
         ? Math.min(options.gcTime || 0, HealthcareQueryConfig.patient.gcTime)
-        : options.gcTime,
+        : options.gcTime || this.getQueryConfig(queryKey).gcTime,
     });
   }
 

@@ -1,6 +1,7 @@
 import type React from 'react';
 import { Header } from '../components/header';
-import { Sidebar } from '../components/sidebar';
+import { HealthcareSidebar } from '../components/healthcare-sidebar';
+import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 
 export default function DashboardLayout({
   children,
@@ -8,12 +9,18 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex h-screen bg-background">
-      <Sidebar />
-      <div className="flex flex-1 flex-col overflow-hidden">
-        <Header />
-        <main className="flex-1 overflow-auto p-6">{children}</main>
+    <SidebarProvider>
+      <div className="flex min-h-screen w-full bg-background">
+        <HealthcareSidebar />
+        <SidebarInset>
+          <Header />
+          <main className="flex-1 overflow-auto p-6 bg-bg-secondary/30">
+            <div className="mx-auto max-w-7xl">
+              {children}
+            </div>
+          </main>
+        </SidebarInset>
       </div>
-    </div>
+    </SidebarProvider>
   );
 }

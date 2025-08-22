@@ -61,6 +61,12 @@
       ],
       "@neonpro/config/*": [
         "./packages/config/*"
+      ],
+      "@neonpro/shared": [
+        "./packages/shared/src"
+      ],
+      "@neonpro/shared/*": [
+        "./packages/shared/src/*"
       ]
     },
     "strictNullChecks": true,
@@ -102,6 +108,9 @@
     },
     {
       "path": "./packages/types"
+    },
+    {
+      "path": "./packages/shared"
     }
   ]
 }

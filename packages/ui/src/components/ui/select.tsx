@@ -10,67 +10,6 @@ import {
   Search,
   User,
 } from 'lucide-react';
-import type * as React from 'react';
-import { cn } from '../../lib/utils';
-
-const selectTriggerVariants = cva(
-  'flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm shadow-healthcare-sm ring-offset-background backdrop-blur-sm transition-all duration-300 placeholder:text-muted-foreground hover:shadow-healthcare-md focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1',
-  {
-    variants: {
-      variant: {
-        default:
-          'border-input bg-background/80 hover:bg-background focus-visible:bg-background',
-        medical:
-          'border-primary/30 bg-gradient-to-br from-primary/5 via-primary/3 to-transparent backdrop-blur-sm hover:from-primary/8 hover:via-primary/5 focus:border-primary/50 focus:ring-primary/40',
-        professional:
-          'border-info/30 bg-gradient-to-br from-info/5 via-info/3 to-transparent backdrop-blur-sm hover:from-info/8 hover:via-info/5 focus:border-info/50 focus:ring-info/40',
-        appointment:
-          'border-secondary/30 bg-gradient-to-br from-secondary/5 via-secondary/3 to-transparent backdrop-blur-sm hover:from-secondary/8 hover:via-secondary/5 focus:border-secondary/50 focus:ring-secondary/40',
-        critical:
-          'border-destructive/30 bg-gradient-to-br from-destructive/8 via-destructive/5 to-transparent backdrop-blur-sm hover:from-destructive/12 hover:via-destructive/8 focus:border-destructive/50 focus:ring-destructive/40',
-        success:
-          'border-success/30 bg-gradient-to-br from-success/5 via-success/3 to-transparent backdrop-blur-sm hover:from-success/8 hover:via-success/5 focus:border-success/50 focus:ring-success/40',
-      },
-      selectSize: {
-        default: 'h-10',
-        sm: 'h-8 text-xs',
-        lg: 'h-12',
-      },
-    },
-    defaultVariants: {
-      variant: 'default',
-      selectSize: 'default',
-    },
-  }
-);
-
-// NEONPROV1 Healthcare-specific select types
-interface HealthcareSelectOption {
-  value: string;
-  label: string;
-  description?: string;
-  icon?: React.ReactNode;
-  disabled?: boolean;
-  metadata?: {
-    specialty?: string;
-    availability?: 'available' | 'busy' | 'offline';
-    urgency?: 'low' | 'normal' | 'high' | 'critical';
-    category?: string;
-  };
-}
-
-import * as SelectPrimitive from '@radix-ui/react-select';
-import { cva, type VariantProps } from 'class-variance-authority';
-import {
-  AlertCircle,
-  Calendar,
-  Check,
-  ChevronDown,
-  ChevronUp,
-  Heart,
-  Search,
-  User,
-} from 'lucide-react';
 import * as React from 'react';
 import { cn } from '../../lib/utils';
 
@@ -135,11 +74,10 @@ interface SelectProps
   showIcons?: boolean;
   showMetadata?: boolean;
   emptyMessage?: string;
-}
-
-const Select = SelectPrimitive.Root;
+}const Select = SelectPrimitive.Root;
 const SelectGroup = SelectPrimitive.Group;
 const SelectValue = SelectPrimitive.Value;
+
 const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger> &
@@ -173,9 +111,7 @@ const SelectScrollUpButton = React.forwardRef<
     <ChevronUp className="h-4 w-4" />
   </SelectPrimitive.ScrollUpButton>
 ));
-SelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName;
-
-const SelectScrollDownButton = React.forwardRef<
+SelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName;const SelectScrollDownButton = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.ScrollDownButton>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollDownButton>
 >(({ className, ...props }, ref) => (
@@ -190,8 +126,8 @@ const SelectScrollDownButton = React.forwardRef<
     <ChevronDown className="h-4 w-4" />
   </SelectPrimitive.ScrollDownButton>
 ));
-SelectScrollDownButton.displayName =
-  SelectPrimitive.ScrollDownButton.displayName;
+SelectScrollDownButton.displayName = SelectPrimitive.ScrollDownButton.displayName;
+
 const SelectContent = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
@@ -199,9 +135,9 @@ const SelectContent = React.forwardRef<
   <SelectPrimitive.Portal>
     <SelectPrimitive.Content
       className={cn(
-        'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-lg border bg-popover text-popover-foreground shadow-healthcare-lg backdrop-blur-md transition-all duration-300 data-[state=closed]:animate-out data-[state=open]:animate-in',
+        'relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
         position === 'popper' &&
-          'data-[side=left]:-translate-x-1 data-[side=top]:-translate-y-1 data-[side=right]:translate-x-1 data-[side=bottom]:translate-y-1',
+          'data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1',
         className
       )}
       position={position}
@@ -222,172 +158,61 @@ const SelectContent = React.forwardRef<
     </SelectPrimitive.Content>
   </SelectPrimitive.Portal>
 ));
-SelectContent.displayName = SelectPrimitive.Content.displayName;
-
-const SelectLabel = React.forwardRef<
+SelectContent.displayName = SelectPrimitive.Content.displayName;const SelectLabel = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Label>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Label>
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.Label
-    className={cn(
-      'py-1.5 pr-2 pl-8 font-semibold text-muted-foreground text-sm',
-      className
-    )}
+    className={cn('py-1.5 pl-8 pr-2 text-sm font-semibold', className)}
     ref={ref}
     {...props}
   />
 ));
 SelectLabel.displayName = SelectPrimitive.Label.displayName;
+
 const SelectItem = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item> & {
     showIcon?: boolean;
-    icon?: React.ReactNode;
-    description?: string;
-    metadata?: HealthcareSelectOption['metadata'];
   }
->(
-  (
-    { className, children, showIcon, icon, description, metadata, ...props },
-    ref
-  ) => {
-    const getAvailabilityColor = (availability?: string) => {
-      switch (availability) {
-        case 'available':
-          return 'text-success';
-        case 'busy':
-          return 'text-warning';
-        case 'offline':
-          return 'text-destructive';
-        default:
-          return 'text-muted-foreground';
-      }
-    };
-
-    const getUrgencyColor = (urgency?: string) => {
-      switch (urgency) {
-        case 'critical':
-          return 'text-destructive';
-        case 'high':
-          return 'text-warning';
-        case 'normal':
-          return 'text-primary';
-        case 'low':
-          return 'text-success';
-        default:
-          return 'text-muted-foreground';
-      }
-    };
-
-    return (
-      <SelectPrimitive.Item
-        className={cn(
-          'relative flex w-full cursor-default select-none items-center rounded-md py-2 pr-2 pl-8 text-sm outline-none backdrop-blur-sm transition-all duration-200 hover:bg-accent/50 focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
-          className
-        )}
-        ref={ref}
-        {...props}
-      >
-        <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-          <SelectPrimitive.ItemIndicator>
-            <Check className="h-4 w-4 text-primary" />
-          </SelectPrimitive.ItemIndicator>
-        </span>
-
-        <div className="flex w-full items-center gap-2">
-          {(showIcon || icon) && (
-            <div className="flex-shrink-0 text-muted-foreground">
-              {icon || <User className="h-4 w-4" />}
-            </div>
-          )}
-
-          <div className="min-w-0 flex-1">
-            <SelectPrimitive.ItemText>
-              <div className="flex items-center justify-between">
-                <span className="truncate font-medium">{children}</span>
-
-                {metadata?.availability && (
-                  <span
-                    className={cn(
-                      'ml-2 rounded-full bg-gradient-to-br px-1.5 py-0.5 font-medium text-xs backdrop-blur-sm',
-                      getAvailabilityColor(metadata.availability),
-                      metadata.availability === 'available' &&
-                        'from-success/10 to-success/5',
-                      metadata.availability === 'busy' &&
-                        'from-warning/10 to-warning/5',
-                      metadata.availability === 'offline' &&
-                        'from-destructive/10 to-destructive/5'
-                    )}
-                  >
-                    {metadata.availability === 'available' && 'Disponível'}
-                    {metadata.availability === 'busy' && 'Ocupado'}
-                    {metadata.availability === 'offline' && 'Offline'}
-                  </span>
-                )}
-
-                {metadata?.urgency && (
-                  <span
-                    className={cn(
-                      'ml-2 rounded-full bg-gradient-to-br px-1.5 py-0.5 font-medium text-xs backdrop-blur-sm',
-                      getUrgencyColor(metadata.urgency),
-                      metadata.urgency === 'critical' &&
-                        'from-destructive/15 to-destructive/10',
-                      metadata.urgency === 'high' &&
-                        'from-warning/15 to-warning/10',
-                      metadata.urgency === 'normal' &&
-                        'from-primary/15 to-primary/10',
-                      metadata.urgency === 'low' &&
-                        'from-success/15 to-success/10'
-                    )}
-                  >
-                    {metadata.urgency === 'critical' && 'Crítico'}
-                    {metadata.urgency === 'high' && 'Alto'}
-                    {metadata.urgency === 'normal' && 'Normal'}
-                    {metadata.urgency === 'low' && 'Baixo'}
-                  </span>
-                )}
-              </div>
-            </SelectPrimitive.ItemText>
-
-            {description && (
-              <div className="mt-0.5 truncate text-muted-foreground text-xs">
-                {description}
-              </div>
-            )}
-
-            {metadata?.specialty && (
-              <div className="mt-0.5 truncate font-medium text-secondary text-xs">
-                {metadata.specialty}
-              </div>
-            )}
-          </div>
-        </div>
-      </SelectPrimitive.Item>
-    );
-  }
-);
+>(({ className, children, showIcon = true, ...props }, ref) => (
+  <SelectPrimitive.Item
+    className={cn(
+      'relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+      className
+    )}
+    ref={ref}
+    {...props}
+  >
+    {showIcon && (
+      <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+        <SelectPrimitive.ItemIndicator>
+          <Check className="h-4 w-4" />
+        </SelectPrimitive.ItemIndicator>
+      </span>
+    )}
+    <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
+  </SelectPrimitive.Item>
+));
 SelectItem.displayName = SelectPrimitive.Item.displayName;
+
 const SelectSeparator = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Separator>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Separator>
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.Separator
-    className={cn(
-      '-mx-1 my-1 h-px bg-gradient-to-r from-transparent via-border to-transparent',
-      className
-    )}
+    className={cn('-mx-1 my-1 h-px bg-muted', className)}
     ref={ref}
     {...props}
   />
 ));
-SelectSeparator.displayName = SelectPrimitive.Separator.displayName;
-
-// NEONPROV1 Healthcare-specific Select components
+SelectSeparator.displayName = SelectPrimitive.Separator.displayName;// Healthcare Professional Select Component
 interface HealthcareProfessionalSelectProps extends SelectProps {
   professionals?: Array<{
     id: string;
     name: string;
     specialty: string;
+    cfm?: string;
     availability: 'available' | 'busy' | 'offline';
     crm?: string;
   }>;
@@ -403,47 +228,44 @@ const ProfessionalSelect = React.forwardRef<
   ) => {
     return (
       <Select {...props}>
-        <SelectTrigger variant="professional">
+        <SelectTrigger variant="professional" ref={ref}>
+          <User className="mr-2 h-4 w-4" />
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>
-          <SelectGroup>
-            <SelectLabel>Profissionais de Saúde</SelectLabel>
-            {professionals.length === 0 ? (
-              <SelectItem disabled value="none">
-                Nenhum profissional disponível
-              </SelectItem>
-            ) : (
-              professionals.map((professional) => (
-                <SelectItem
-                  description={
-                    professional.crm ? `CRM: ${professional.crm}` : undefined
-                  }
-                  icon={<User className="h-4 w-4" />}
-                  key={professional.id}
-                  metadata={{
-                    specialty: professional.specialty,
-                    availability: professional.availability,
-                  }}
-                  showIcon
-                  value={professional.id}
-                >
-                  {professional.name}
-                </SelectItem>
-              ))
-            )}
-          </SelectGroup>
+          {professionals.map((professional) => (
+            <SelectItem key={professional.id} value={professional.id}>
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-2">
+                  <span className="font-medium">{professional.name}</span>
+                  <span
+                    className={cn(
+                      'h-2 w-2 rounded-full',
+                      professional.availability === 'available' && 'bg-green-500',
+                      professional.availability === 'busy' && 'bg-yellow-500',
+                      professional.availability === 'offline' && 'bg-red-500'
+                    )}
+                  />
+                </div>
+                <span className="text-xs text-muted-foreground">
+                  {professional.specialty}
+                  {professional.cfm && ` • CFM: ${professional.cfm}`}
+                </span>
+              </div>
+            </SelectItem>
+          ))}
         </SelectContent>
       </Select>
     );
   }
 );
-ProfessionalSelect.displayName = 'ProfessionalSelect';
+ProfessionalSelect.displayName = 'ProfessionalSelect';// Appointment Status Select Component
 interface AppointmentStatusSelectProps extends SelectProps {
   statuses?: Array<{
     value: string;
     label: string;
-    color: 'green' | 'blue' | 'orange' | 'red' | 'gray';
+    color: 'green' | 'yellow' | 'blue' | 'red' | 'gray';
+    icon?: React.ReactNode;
   }>;
 }
 
@@ -454,60 +276,50 @@ const AppointmentStatusSelect = React.forwardRef<
   const defaultStatuses = [
     { value: 'scheduled', label: 'Agendado', color: 'blue' as const },
     { value: 'confirmed', label: 'Confirmado', color: 'green' as const },
-    { value: 'in-progress', label: 'Em andamento', color: 'orange' as const },
+    { value: 'in_progress', label: 'Em Andamento', color: 'yellow' as const },
     { value: 'completed', label: 'Concluído', color: 'green' as const },
     { value: 'cancelled', label: 'Cancelado', color: 'red' as const },
-    { value: 'no-show', label: 'Faltou', color: 'gray' as const },
+    { value: 'no_show', label: 'Faltou', color: 'gray' as const },
   ];
 
   const statusOptions = statuses || defaultStatuses;
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'scheduled':
-        return <Calendar className="h-4 w-4" />;
-      case 'confirmed':
-        return <Check className="h-4 w-4" />;
-      case 'in-progress':
-        return <Heart className="h-4 w-4" />;
-      case 'completed':
-        return <Check className="h-4 w-4" />;
-      case 'cancelled':
-        return <AlertCircle className="h-4 w-4" />;
-      default:
-        return <Calendar className="h-4 w-4" />;
-    }
-  };
-
   return (
     <Select {...props}>
-      <SelectTrigger variant="appointment">
+      <SelectTrigger variant="appointment" ref={ref}>
+        <Calendar className="mr-2 h-4 w-4" />
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
-        <SelectGroup>
-          <SelectLabel>Status do Agendamento</SelectLabel>
-          {statusOptions.map((status) => (
-            <SelectItem
-              icon={getStatusIcon(status.value)}
-              key={status.value}
-              showIcon
-              value={status.value}
-            >
-              {status.label}
-            </SelectItem>
-          ))}
-        </SelectGroup>
+        {statusOptions.map((status) => (
+          <SelectItem key={status.value} value={status.value}>
+            <div className="flex items-center gap-2">
+              <span
+                className={cn(
+                  'h-2 w-2 rounded-full',
+                  status.color === 'green' && 'bg-green-500',
+                  status.color === 'yellow' && 'bg-yellow-500',
+                  status.color === 'blue' && 'bg-blue-500',
+                  status.color === 'red' && 'bg-red-500',
+                  status.color === 'gray' && 'bg-gray-500'
+                )}
+              />
+              {status.icon}
+              <span>{status.label}</span>
+            </div>
+          </SelectItem>
+        ))}
       </SelectContent>
     </Select>
   );
 });
-AppointmentStatusSelect.displayName = 'AppointmentStatusSelect';
+AppointmentStatusSelect.displayName = 'AppointmentStatusSelect';// Priority Select Component
 interface PrioritySelectProps extends SelectProps {
   priorities?: Array<{
     value: string;
     label: string;
     urgency: 'low' | 'normal' | 'high' | 'critical';
+    icon?: React.ReactNode;
   }>;
 }
 
@@ -516,44 +328,43 @@ const PrioritySelect = React.forwardRef<
   PrioritySelectProps
 >(({ priorities, placeholder = 'Selecione a prioridade', ...props }, ref) => {
   const defaultPriorities = [
-    { value: 'low', label: 'Baixa Prioridade', urgency: 'low' as const },
-    { value: 'normal', label: 'Prioridade Normal', urgency: 'normal' as const },
-    { value: 'high', label: 'Alta Prioridade', urgency: 'high' as const },
-    {
-      value: 'critical',
-      label: 'Prioridade Crítica',
-      urgency: 'critical' as const,
-    },
+    { value: 'low', label: 'Baixa', urgency: 'low' as const },
+    { value: 'normal', label: 'Normal', urgency: 'normal' as const },
+    { value: 'high', label: 'Alta', urgency: 'high' as const },
+    { value: 'critical', label: 'Crítica', urgency: 'critical' as const },
   ];
 
   const priorityOptions = priorities || defaultPriorities;
 
   return (
     <Select {...props}>
-      <SelectTrigger variant="critical">
+      <SelectTrigger variant="appointment" ref={ref}>
+        <AlertCircle className="mr-2 h-4 w-4" />
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
-        <SelectGroup>
-          <SelectLabel>Nível de Prioridade</SelectLabel>
-          {priorityOptions.map((priority) => (
-            <SelectItem
-              icon={<AlertCircle className="h-4 w-4" />}
-              key={priority.value}
-              metadata={{ urgency: priority.urgency }}
-              showIcon
-              value={priority.value}
-            >
-              {priority.label}
-            </SelectItem>
-          ))}
-        </SelectGroup>
+        {priorityOptions.map((priority) => (
+          <SelectItem key={priority.value} value={priority.value}>
+            <div className="flex items-center gap-2">
+              <span
+                className={cn(
+                  'h-2 w-2 rounded-full',
+                  priority.urgency === 'low' && 'bg-green-500',
+                  priority.urgency === 'normal' && 'bg-blue-500',
+                  priority.urgency === 'high' && 'bg-yellow-500',
+                  priority.urgency === 'critical' && 'bg-red-500'
+                )}
+              />
+              {priority.icon}
+              <span>{priority.label}</span>
+            </div>
+          </SelectItem>
+        ))}
       </SelectContent>
     </Select>
   );
 });
-PrioritySelect.displayName = 'PrioritySelect';
-
+PrioritySelect.displayName = 'PrioritySelect';// Exports
 export {
   Select,
   SelectGroup,
@@ -565,11 +376,9 @@ export {
   SelectSeparator,
   SelectScrollUpButton,
   SelectScrollDownButton,
-  // NEONPROV1 Healthcare-specific exports
   ProfessionalSelect,
   AppointmentStatusSelect,
   PrioritySelect,
-  selectTriggerVariants,
   type SelectProps,
   type HealthcareSelectOption,
   type HealthcareProfessionalSelectProps,

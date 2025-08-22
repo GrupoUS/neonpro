@@ -4,7 +4,7 @@
  * Gerencia conexão global e estado para toda aplicação
  */
 
-import type { Database } from '@neonpro/types';
+import type { Database } from '@neonpro/db';
 import React, {
   createContext,
   type ReactNode,
