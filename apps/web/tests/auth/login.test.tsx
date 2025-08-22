@@ -13,20 +13,20 @@ interface LoginFormProps {
 }
 
 const LoginForm = ({ onSubmit }: LoginFormProps) => (
-  <form data-testid="login-form" onSubmit={onSubmit}>
+  <form data-testid="auth-login-form" onSubmit={onSubmit}>
     <input
-      data-testid="login-email"
+      data-testid="auth-login-email"
       name="email"
       placeholder="Email"
       type="email"
     />
     <input
-      data-testid="login-password"
+      data-testid="auth-login-password"
       name="password"
       placeholder="Senha"
       type="password"
     />
-    <button data-testid="login-button" type="submit">
+    <button data-testid="auth-login-button" type="submit">
       Entrar
     </button>
   </form>
@@ -45,9 +45,9 @@ describe('Authentication', () => {
   it('should render login form', () => {
     render(<LoginForm onSubmit={vi.fn()} />);
 
-    expect(screen.getByTestId('login-email')).toBeInTheDocument();
-    expect(screen.getByTestId('login-password')).toBeInTheDocument();
-    expect(screen.getByTestId('login-button')).toBeInTheDocument();
+    expect(screen.getByTestId('auth-login-email')).toBeInTheDocument();
+    expect(screen.getByTestId('auth-login-password')).toBeInTheDocument();
+    expect(screen.getByTestId('auth-login-button')).toBeInTheDocument();
   });
 
   it('should handle login submission', async () => {
@@ -56,9 +56,9 @@ describe('Authentication', () => {
 
     render(<LoginForm onSubmit={mockSubmit} />);
 
-    const emailInput = screen.getByTestId('login-email');
-    const passwordInput = screen.getByTestId('login-password');
-    const submitButton = screen.getByTestId('login-button');
+    const emailInput = screen.getByTestId('auth-login-email');
+    const passwordInput = screen.getByTestId('auth-login-password');
+    const submitButton = screen.getByTestId('auth-login-button');
 
     await user.type(emailInput, 'user@example.com');
     await user.type(passwordInput, 'password123');

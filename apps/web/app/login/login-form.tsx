@@ -74,7 +74,7 @@ export function LoginForm() {
   return (
     <Card className="neonpro-card w-full">
       <CardHeader className="space-y-3 text-center">
-        <CardTitle className="font-bold text-xl text-foreground">
+        <CardTitle className="font-bold text-foreground text-xl">
           Acessar Plataforma
         </CardTitle>
         <CardDescription className="text-muted-foreground">
@@ -195,7 +195,7 @@ export function LoginForm() {
 
           <div>
             <Button
-              className="h-auto p-0 font-medium text-muted-foreground hover:text-foreground text-sm"
+              className="h-auto p-0 font-medium text-muted-foreground text-sm hover:text-foreground"
               disabled={loading || isSubmitting}
               onClick={() => router.push('/auth/forgot-password')}
               type="button"

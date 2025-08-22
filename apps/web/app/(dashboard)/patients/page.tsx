@@ -182,8 +182,8 @@ export default function PatientsPage() {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center">
-              <div className="rounded-lg bg-yellow-100 p-2">
-                <div className="h-6 w-6 rounded bg-yellow-600" />
+              <div className="rounded-lg bg-accent/10 p-2">
+                <div className="h-6 w-6 rounded bg-accent" />
               </div>
               <div className="ml-4">
                 <p className="font-medium text-gray-600 text-sm">Este Mês</p>

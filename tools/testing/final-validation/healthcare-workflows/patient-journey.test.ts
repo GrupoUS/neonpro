@@ -85,7 +85,7 @@ data-testid = ID < 'patient-id';
     </div>
     <div
 data-testid = <h3>Suas < 'appointments-list';
-Consultas < / 23;;;<>dhiv{};
+Consultas < / 23;;;;<>dhiv{};
 data-testid = Consulta < 'appointment-item';
 com;
 Dr.Silva - 25 / 08 / 2025;

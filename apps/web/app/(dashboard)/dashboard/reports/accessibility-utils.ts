@@ -444,25 +444,25 @@ export function SkipLinks() {
   className = Pular < 'mr-4';
   para;
   conteúdo;
-  principal < />a < a;
+  principal < /  ;<>aa;
   href = '#report-categories';
   className = Pular < 'mr-4';
   para;
   categorias;
   de;
-  relatórios < />a < a;
+  relatórios < /  ;<>aa;
   href = '#search-filters';
   className = Pular < 'mr-4';
   para;
   filtros;
   de;
-  busca < />a < a;
+  busca < /  ;<>aa;
   href = '#export-actions';
   className = Pular < 'mr-4';
   para;
   ações;
   de;
-  exportação < />a < />div;
+  exportação < />a < / > div;
   )
 }
 

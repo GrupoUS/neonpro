@@ -1,7 +1,7 @@
 /**
  * 🔐 Fixed Authentication Hook Tests - NeonPro Healthcare
  * ======================================================
- * 
+ *
  * Simplified tests that rely on vitest.setup.ts mocks
  */
 
@@ -10,7 +10,7 @@ import { cleanup, renderHook } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-// Import the hook we're testing 
+// Import the hook we're testing
 import { useAuth } from '../../hooks/enhanced/use-auth';
 
 // Mock Next.js router
@@ -32,9 +32,7 @@ describe('useAuth Hook - NeonPro Healthcare Authentication', () => {
 
   const createWrapper = () => {
     return ({ children }: { children: ReactNode }) => (
-      <QueryClientProvider client={queryClient}>
-        {children}
-      </QueryClientProvider>
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     );
   };
 

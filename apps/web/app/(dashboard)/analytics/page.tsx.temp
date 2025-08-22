@@ -240,7 +240,7 @@ export default function AnalyticsDashboardPage() {
   const statusColors = {
     optimal: 'text-green-600 bg-green-50 border-green-200',
     good: 'text-lime-600 bg-lime-50 border-lime-200',
-    degraded: 'text-amber-600 bg-amber-50 border-amber-200',
+    degraded: 'text-accent bg-accent/10 border-accent/20',
     critical: 'text-red-600 bg-red-50 border-red-200',
     failed: 'text-red-800 bg-red-100 border-red-300'
   };
@@ -355,7 +355,7 @@ export default function AnalyticsDashboardPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Prediction Accuracy</CardTitle>
-            <TrendingUp className="h-4 w-4 text-amber-600" />
+            <TrendingUp className="h-4 w-4 text-accent" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">

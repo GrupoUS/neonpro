@@ -112,7 +112,7 @@ const CosmicGlowButton = ({
     warning:
       'bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700',
     danger:
-      'bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700',
+      'bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary',
   };
 
   const sizes = {
@@ -341,7 +341,7 @@ const reportCategories = [
     name: 'Relatórios Clínicos',
     description: 'Resultados, satisfação e qualidade',
     icon: Activity,
-    color: 'from-purple-500 to-pink-600',
+    color: 'from-primary to-accent',
     bgColor: 'bg-purple-500/10',
     count: reportTemplates.filter((r) => r.category === 'clinical').length,
   },

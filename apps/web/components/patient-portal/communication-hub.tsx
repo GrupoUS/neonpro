@@ -258,7 +258,7 @@ function ConversationList({
           className={cn(
             'cursor-pointer border-l-4 transition-all hover:shadow-md',
             selectedId === conversation.id
-              ? 'border-pink-500 bg-pink-50'
+              ? 'border-primary bg-primary/10'
               : getPriorityColor(conversation.priority)
           )}
           key={conversation.id}
@@ -268,8 +268,8 @@ function ConversationList({
             <div className="flex items-center space-x-3">
               {/* Avatar */}
               <div className="relative">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-pink-100">
-                  <User className="h-5 w-5 text-pink-600" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20">
+                  <User className="h-5 w-5 text-primary" />
                 </div>
                 {conversation.participant.isOnline && (
                   <div className="-bottom-1 -right-1 absolute h-3 w-3 rounded-full border-2 border-white bg-green-500" />
@@ -292,7 +292,7 @@ function ConversationList({
                       {formatTime(conversation.lastMessage.timestamp)}
                     </span>
                     {conversation.unreadCount > 0 && (
-                      <Badge className="flex h-5 w-5 items-center justify-center rounded-full bg-pink-600 p-0 text-white text-xs">
+                      <Badge className="flex h-5 w-5 items-center justify-center rounded-full bg-primary p-0 text-white text-xs">
                         {conversation.unreadCount}
                       </Badge>
                     )}
@@ -332,7 +332,7 @@ function ChatWindow({ conversation }: any) {
       case 'delivered':
         return <CheckCircle className="h-3 w-3 text-gray-400" />;
       case 'read':
-        return <CheckCircle className="h-3 w-3 text-pink-600" />;
+        return <CheckCircle className="h-3 w-3 text-primary" />;
       default:
         return null;
     }
@@ -352,8 +352,8 @@ function ChatWindow({ conversation }: any) {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="relative">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-pink-100">
-                <User className="h-5 w-5 text-pink-600" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20">
+                <User className="h-5 w-5 text-primary" />
               </div>
               {conversation.participant.isOnline && (
                 <div className="-bottom-1 -right-1 absolute h-3 w-3 rounded-full border-2 border-white bg-green-500" />
@@ -400,7 +400,7 @@ function ChatWindow({ conversation }: any) {
               className={cn(
                 'max-w-xs space-y-1 rounded-lg px-4 py-2 lg:max-w-md',
                 msg.from === 'patient'
-                  ? 'bg-pink-600 text-white'
+                  ? 'bg-primary text-white'
                   : 'bg-gray-100 dark:bg-gray-800'
               )}
             >
@@ -409,7 +409,7 @@ function ChatWindow({ conversation }: any) {
                 className={cn(
                   'flex items-center justify-end space-x-1 text-xs',
                   msg.from === 'patient'
-                    ? 'text-pink-100'
+                    ? 'text-primary-light'
                     : 'text-muted-foreground'
                 )}
               >
@@ -445,7 +445,7 @@ function ChatWindow({ conversation }: any) {
               value={message}
             />
             <Button
-              className="bg-pink-600 hover:bg-pink-700"
+              className="bg-primary hover:bg-primary-dark"
               disabled={!message.trim()}
               onClick={handleSendMessage}
             >
@@ -464,9 +464,9 @@ function NotificationsList({ notifications }: any) {
       case 'appointment':
         return <Calendar className="h-5 w-5 text-blue-600" />;
       case 'result':
-        return <Star className="h-5 w-5 text-yellow-600" />;
+        return <Star className="h-5 w-5 text-accent" />;
       case 'care':
-        return <Heart className="h-5 w-5 text-pink-600" />;
+        return <Heart className="h-5 w-5 text-primary" />;
       case 'emergency':
         return <AlertTriangle className="h-5 w-5 text-red-600" />;
       default:
@@ -494,9 +494,7 @@ function NotificationsList({ notifications }: any) {
         <Card
           className={cn(
             'cursor-pointer transition-all hover:shadow-md',
-            notification.read
-              ? ''
-              : 'border-l-4 border-l-pink-500 bg-pink-50/50'
+            notification.read ? '' : 'border-l-4 border-l-primary bg-primary/10'
           )}
           key={notification.id}
         >
@@ -536,7 +534,7 @@ function NotificationsList({ notifications }: any) {
 
               <div className="flex items-center space-x-1">
                 {!notification.read && (
-                  <div className="h-2 w-2 rounded-full bg-pink-600" />
+                  <div className="h-2 w-2 rounded-full bg-primary" />
                 )}
                 <Button size="sm" variant="ghost">
                   <MoreVertical className="h-4 w-4" />
@@ -613,7 +611,7 @@ export function CommunicationHub() {
             <Search className="h-4 w-4" />
             Buscar
           </Button>
-          <Button className="bg-pink-600 hover:bg-pink-700">
+          <Button className="bg-primary hover:bg-primary-dark">
             <MessageCircle className="h-4 w-4" />
             Nova Mensagem
           </Button>
@@ -655,7 +653,7 @@ export function CommunicationHub() {
                 <p className="text-muted-foreground text-sm">Notificações</p>
                 <p className="font-bold text-2xl">2</p>
               </div>
-              <Bell className="h-8 w-8 text-yellow-500" />
+              <Bell className="h-8 w-8 text-accent" />
             </div>
           </CardContent>
         </Card>
@@ -787,11 +785,11 @@ export function CommunicationHub() {
                     </ul>
                   </div>
 
-                  <div className="rounded-lg bg-yellow-50 p-4 dark:bg-yellow-950/20">
-                    <h4 className="mb-2 font-medium text-yellow-700">
+                  <div className="rounded-lg bg-accent/10 p-4 dark:bg-accent/20">
+                    <h4 className="mb-2 font-medium text-accent">
                       Situações Urgentes (Contate em 24h)
                     </h4>
-                    <ul className="space-y-1 text-sm text-yellow-600">
+                    <ul className="space-y-1 text-accent text-sm">
                       <li>• Inchaço anormal após 48h</li>
                       <li>• Vermelhidão persistente</li>
                       <li>• Febre ou sinais de infecção</li>

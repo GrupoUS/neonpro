@@ -157,7 +157,7 @@ function AppointmentCard({
       case 'confirmed':
         return 'bg-green-100 text-green-800 border-green-200';
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+        return 'bg-accent/10 text-accent border-accent/20';
       case 'cancelled':
         return 'bg-red-100 text-red-800 border-red-200';
       case 'completed':
@@ -293,7 +293,7 @@ function AppointmentCard({
                         className={cn(
                           'text-sm',
                           i < appointment.rating
-                            ? 'text-yellow-400'
+                            ? 'text-accent'
                             : 'text-gray-300'
                         )}
                         key={i}
@@ -369,7 +369,7 @@ function NewAppointmentForm() {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center space-x-2">
-          <Plus className="h-5 w-5 text-pink-600" />
+          <Plus className="h-5 w-5 text-primary" />
           <span>Agendar Nova Consulta</span>
         </CardTitle>
         <CardDescription>
@@ -386,7 +386,7 @@ function NewAppointmentForm() {
                 className={cn(
                   'cursor-pointer transition-all hover:shadow-md',
                   selectedTreatment === treatment.id
-                    ? 'border-pink-500 bg-pink-50 dark:bg-pink-950/20'
+                    ? 'border-primary bg-primary/10 dark:bg-primary/20'
                     : 'hover:border-gray-300'
                 )}
                 key={treatment.id}
@@ -424,7 +424,7 @@ function NewAppointmentForm() {
                     className={cn(
                       'cursor-pointer transition-all hover:shadow-md',
                       selectedDate === slot.date && selectedTime === slot.time
-                        ? 'border-pink-500 bg-pink-50 dark:bg-pink-950/20'
+                        ? 'border-primary bg-primary/10 dark:bg-primary/20'
                         : 'hover:border-gray-300'
                     )}
                     key={index}
@@ -441,7 +441,7 @@ function NewAppointmentForm() {
                           month: 'short',
                         })}
                       </div>
-                      <div className="font-bold text-lg text-pink-600">
+                      <div className="font-bold text-lg text-primary">
                         {slot.time}
                       </div>
                     </CardContent>
@@ -508,7 +508,7 @@ function NewAppointmentForm() {
         {/* Action Buttons */}
         <div className="flex space-x-3">
           <Button
-            className="flex-1 bg-pink-600 hover:bg-pink-700"
+            className="flex-1 bg-primary hover:bg-primary-dark"
             disabled={!(selectedTreatment && selectedDate && selectedTime)}
           >
             Confirmar Agendamento
@@ -549,7 +549,7 @@ export function AppointmentManagement() {
             Filtros
           </Button>
           <Button
-            className="bg-pink-600 hover:bg-pink-700"
+            className="bg-primary hover:bg-primary-dark"
             onClick={() => setShowNewAppointment(!showNewAppointment)}
           >
             <Plus className="h-4 w-4" />
@@ -597,7 +597,7 @@ export function AppointmentManagement() {
                   Que tal agendar sua próxima sessão de tratamento?
                 </p>
                 <Button
-                  className="bg-pink-600 hover:bg-pink-700"
+                  className="bg-primary hover:bg-primary-dark"
                   onClick={() => setShowNewAppointment(true)}
                 >
                   <Plus className="h-4 w-4" />
@@ -648,7 +648,7 @@ export function AppointmentManagement() {
               className="flex h-auto flex-col items-center space-y-2 p-4"
               variant="outline"
             >
-              <Calendar className="h-6 w-6 text-pink-600" />
+              <Calendar className="h-6 w-6 text-primary" />
               <div className="text-center">
                 <div className="font-medium">Reagendar Consulta</div>
                 <div className="text-muted-foreground text-xs">

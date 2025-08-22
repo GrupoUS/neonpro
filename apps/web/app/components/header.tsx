@@ -16,7 +16,7 @@ export function Header() {
     <header className="flex h-16 items-center justify-between border-healthcare-border border-b bg-background px-6">
       <div className="flex items-center space-x-4">
         <SidebarTrigger />
-        <h1 className="font-semibold font-serif text-healthcare-text-primary text-xl">
+        <h1 className="font-semibold font-serif text-foreground text-xl">
           Dashboard NeonPro
         </h1>
       </div>
@@ -71,7 +71,7 @@ export function Header() {
           >
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
-                <p className="font-medium text-healthcare-text-primary text-sm leading-none">
+                <p className="font-medium text-foreground text-sm leading-none">
                   Dr. Administrador
                 </p>
                 <p className="text-healthcare-text-muted text-xs leading-none">
@@ -80,16 +80,16 @@ export function Header() {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator className="bg-healthcare-border" />
-            <DropdownMenuItem className="text-healthcare-text-primary hover:bg-healthcare-primary/10">
+            <DropdownMenuItem className="text-foreground hover:bg-healthcare-primary/10">
               <User className="mr-2 h-4 w-4" />
               <span>Perfil</span>
             </DropdownMenuItem>
-            <DropdownMenuItem className="text-healthcare-text-primary hover:bg-healthcare-primary/10">
+            <DropdownMenuItem className="text-foreground hover:bg-healthcare-primary/10">
               <Settings className="mr-2 h-4 w-4" />
               <span>Configurações</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator className="bg-healthcare-border" />
-            <DropdownMenuItem className="text-healthcare-text-primary hover:bg-red-500/10 hover:text-red-600">
+            <DropdownMenuItem className="text-foreground hover:bg-red-500/10 hover:text-red-600">
               <span>Sair</span>
             </DropdownMenuItem>
           </DropdownMenuContent>

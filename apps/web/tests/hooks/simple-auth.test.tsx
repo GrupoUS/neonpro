@@ -2,14 +2,14 @@
  * 🔧 Simple Authentication Test - Mock Validation
  */
 
+import { ApiHelpers, apiClient } from '@neonpro/shared/api-client';
 import { describe, expect, it } from 'vitest';
-import { apiClient, ApiHelpers } from '@neonpro/shared/api-client';
 
 describe('Mock Validation', () => {
   it('should have properly mocked ApiHelpers.formatError', () => {
     expect(ApiHelpers.formatError).toBeDefined();
     expect(typeof ApiHelpers.formatError).toBe('function');
-    
+
     const result = ApiHelpers.formatError('test error');
     expect(result).toBe('test error');
   });

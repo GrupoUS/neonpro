@@ -158,15 +158,13 @@ export default function TeamCoordinationPage() {
         <Card className="bg-gradient-to-r from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="font-medium text-sm">Em Pausa</CardTitle>
-            <Clock className="h-4 w-4 text-yellow-600" />
+            <Clock className="h-4 w-4 text-accent" />
           </CardHeader>
           <CardContent>
-            <div className="font-bold text-2xl text-yellow-700 dark:text-yellow-300">
+            <div className="font-bold text-2xl text-accent dark:text-accent-light">
               {mockTeamStats.onBreak}
             </div>
-            <p className="text-xs text-yellow-600 dark:text-yellow-400">
-              pausa CLT
-            </p>
+            <p className="text-accent text-xs dark:text-accent">pausa CLT</p>
           </CardContent>
         </Card>
         <Card className="bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20">
@@ -222,7 +220,7 @@ export default function TeamCoordinationPage() {
                 className={`${
                   alert.severity === 'critical'
                     ? 'border-red-500 bg-red-50 dark:bg-red-900/20'
-                    : 'border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20'
+                    : 'border-accent bg-accent/10 dark:bg-accent/20'
                 }`}
                 key={alert.id}
               >
@@ -230,14 +228,14 @@ export default function TeamCoordinationPage() {
                   className={`h-4 w-4 ${
                     alert.severity === 'critical'
                       ? 'text-red-600'
-                      : 'text-yellow-600'
+                      : 'text-accent'
                   }`}
                 />
                 <AlertDescription
                   className={
                     alert.severity === 'critical'
                       ? 'text-red-700 dark:text-red-300'
-                      : 'text-yellow-700 dark:text-yellow-300'
+                      : 'text-accent dark:text-accent'
                   }
                 >
                   <div className="flex items-center justify-between">

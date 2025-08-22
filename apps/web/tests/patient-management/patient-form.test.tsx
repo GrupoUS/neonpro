@@ -38,7 +38,7 @@ const PatientForm = ({ onSubmit, initialData }: PatientFormProps) => (
       name="phone"
       placeholder="Telefone"
     />
-    <button data-testid="submit-button" type="submit">
+    <button data-testid="patient-submit-button" type="submit">
       Salvar Paciente
     </button>
   </form>
@@ -55,7 +55,7 @@ describe('Patient Form', () => {
     expect(screen.getByTestId('patient-name')).toBeInTheDocument();
     expect(screen.getByTestId('patient-email')).toBeInTheDocument();
     expect(screen.getByTestId('patient-phone')).toBeInTheDocument();
-    expect(screen.getByTestId('submit-button')).toBeInTheDocument();
+    expect(screen.getByTestId('patient-submit-button')).toBeInTheDocument();
   });
 
   it('should handle form submission', async () => {
@@ -64,7 +64,7 @@ describe('Patient Form', () => {
 
     render(<PatientForm onSubmit={mockSubmit} />);
 
-    const submitButton = screen.getByTestId('submit-button');
+    const submitButton = screen.getByTestId('patient-submit-button');
     await user.click(submitButton);
 
     expect(mockSubmit).toHaveBeenCalled();

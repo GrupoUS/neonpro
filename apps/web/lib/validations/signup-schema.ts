@@ -1,36 +1,34 @@
-import { z } from 'zod';
-
-import { z } from 'zod';
+import { z, z } from 'zod';
 
 // Validação de CPF brasileiro
 const cpfRegex = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
 const cpfValidation = (cpf: string): boolean => {
   // Remove formatação
   const cleanCpf = cpf.replace(/[^\d]/g, '');
-  
+
   // Verifica se tem 11 dígitos
   if (cleanCpf.length !== 11) return false;
-  
+
   // Verifica se todos os dígitos são iguais
   if (/^(\d)\1{10}$/.test(cleanCpf)) return false;
-  
+
   // Validação dos dígitos verificadores
   let sum = 0;
   for (let i = 0; i < 9; i++) {
-    sum += parseInt(cleanCpf.charAt(i)) * (10 - i);
+    sum += Number.parseInt(cleanCpf.charAt(i)) * (10 - i);
   }
   let checkDigit = 11 - (sum % 11);
   if (checkDigit === 10 || checkDigit === 11) checkDigit = 0;
-  if (checkDigit !== parseInt(cleanCpf.charAt(9))) return false;
-  
+  if (checkDigit !== Number.parseInt(cleanCpf.charAt(9))) return false;
+
   sum = 0;
   for (let i = 0; i < 10; i++) {
-    sum += parseInt(cleanCpf.charAt(i)) * (11 - i);
+    sum += Number.parseInt(cleanCpf.charAt(i)) * (11 - i);
   }
   checkDigit = 11 - (sum % 11);
   if (checkDigit === 10 || checkDigit === 11) checkDigit = 0;
-  if (checkDigit !== parseInt(cleanCpf.charAt(10))) return false;
-  
+  if (checkDigit !== Number.parseInt(cleanCpf.charAt(10))) return false;
+
   return true;
 };
 
@@ -44,7 +42,10 @@ const passwordValidation = z
   .regex(/[A-Z]/, 'A senha deve conter pelo menos uma letra maiúscula')
   .regex(/[a-z]/, 'A senha deve conter pelo menos uma letra minúscula')
   .regex(/\d/, 'A senha deve conter pelo menos um número')
-  .regex(/[^A-Za-z0-9]/, 'A senha deve conter pelo menos um caractere especial');
+  .regex(
+    /[^A-Za-z0-9]/,
+    'A senha deve conter pelo menos um caractere especial'
+  );
 
 // Schema principal de signup
 export const signupSchema = z
@@ -55,42 +56,48 @@ export const signupSchema = z
       .min(2, 'Nome deve ter pelo menos 2 caracteres')
       .max(100, 'Nome deve ter no máximo 100 caracteres')
       .regex(/^[a-zA-ZÀ-ÿ\s]+$/, 'Nome deve conter apenas letras e espaços'),
-    
+
     email: z
       .string()
       .email('Email inválido')
       .max(255, 'Email deve ter no máximo 255 caracteres')
       .toLowerCase(),
-    
+
     password: passwordValidation,
-    
+
     confirmPassword: z.string(),
-    
+
     // Documentos brasileiros
     cpf: z
       .string()
       .regex(cpfRegex, 'CPF deve estar no formato 000.000.000-00')
       .refine(cpfValidation, 'CPF inválido'),
-    
+
     phone: z
       .string()
-      .regex(phoneRegex, 'Telefone deve estar no formato (00) 0000-0000 ou (00) 90000-0000'),
-    
+      .regex(
+        phoneRegex,
+        'Telefone deve estar no formato (00) 0000-0000 ou (00) 90000-0000'
+      ),
+
     // Dados profissionais
     clinicName: z
       .string()
       .min(2, 'Nome da clínica deve ter pelo menos 2 caracteres')
       .max(200, 'Nome da clínica deve ter no máximo 200 caracteres'),
-    
+
     userType: z.enum(['admin', 'professional', 'receptionist'], {
       required_error: 'Selecione o tipo de usuário',
     }),
-    
+
     // Consentimentos obrigatórios
     lgpdConsent: z
       .boolean()
-      .refine((val) => val === true, 'É obrigatório aceitar os termos de privacidade LGPD'),
-    
+      .refine(
+        (val) => val === true,
+        'É obrigatório aceitar os termos de privacidade LGPD'
+      ),
+
     terms: z
       .boolean()
       .refine((val) => val === true, 'É obrigatório aceitar os termos de uso'),
@@ -148,7 +155,7 @@ export const masks = {
       .replace(/(\d{3})(\d{1,2})/, '$1-$2')
       .replace(/(-\d{2})\d+?$/, '$1');
   },
-  
+
   phone: (value: string) => {
     return value
       .replace(/\D/g, '')
@@ -168,12 +175,14 @@ export const validatePhone = (phone: string): boolean => {
   return phoneRegex.test(phone);
 };
 
-export const validatePassword = (password: string): { 
-  isValid: boolean; 
-  errors: string[] 
+export const validatePassword = (
+  password: string
+): {
+  isValid: boolean;
+  errors: string[];
 } => {
   const errors: string[] = [];
-  
+
   if (password.length < 8) {
     errors.push('Pelo menos 8 caracteres');
   }
@@ -189,7 +198,7 @@ export const validatePassword = (password: string): {
   if (!/[^A-Za-z0-9]/.test(password)) {
     errors.push('Um caractere especial');
   }
-  
+
   return {
     isValid: errors.length === 0,
     errors,

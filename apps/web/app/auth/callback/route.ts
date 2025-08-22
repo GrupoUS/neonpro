@@ -1,38 +1,40 @@
 import { type NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { supabase } from '../../../lib/supabase';
 
 export async function GET(request: NextRequest) {
-  const { searchParams, origin } = new URL(request.url);
-  const code = searchParams.get('code');
-  const next = searchParams.get('next') ?? '/dashboard';
+  const requestUrl = new URL(request.url);
+  const code = requestUrl.searchParams.get('code');
+  const error = requestUrl.searchParams.get('error');
+
+  if (error) {
+    console.error('Auth callback error:', error);
+    return NextResponse.redirect(
+      `${requestUrl.origin}/login?error=auth_failed`
+    );
+  }
 
   if (code) {
-    const supabase = createClient();
-
     try {
-      const { error } = await supabase.auth.exchangeCodeForSession(code);
+      const { error: authError } =
+        await supabase.auth.exchangeCodeForSession(code);
 
-      if (error) {
-        return NextResponse.redirect(`${origin}/login?error=auth_error`);
+      if (authError) {
+        console.error('Exchange code error:', authError);
+        return NextResponse.redirect(
+          `${requestUrl.origin}/login?error=exchange_failed`
+        );
       }
-      const forwardedHost = request.headers.get('x-forwarded-host');
-      const isLocalEnv = process.env.NODE_ENV === 'development';
 
-      if (isLocalEnv) {
-        // In development, redirect to localhost
-        return NextResponse.redirect(`${origin}${next}`);
-      }
-      if (forwardedHost) {
-        // In production, redirect to the forwarded host
-        return NextResponse.redirect(`https://${forwardedHost}${next}`);
-      }
-      // Fallback to origin
-      return NextResponse.redirect(`${origin}${next}`);
-    } catch (_err) {
-      return NextResponse.redirect(`${origin}/login?error=unexpected_error`);
+      // Successful authentication - redirect to dashboard
+      return NextResponse.redirect(`${requestUrl.origin}/dashboard`);
+    } catch (err) {
+      console.error('Unexpected auth error:', err);
+      return NextResponse.redirect(
+        `${requestUrl.origin}/login?error=unexpected`
+      );
     }
   }
 
-  // Return the user to an error page with instructions
-  return NextResponse.redirect(`${origin}/login?error=no_code_provided`);
+  // No code parameter - redirect to login
+  return NextResponse.redirect(`${requestUrl.origin}/login`);
 }

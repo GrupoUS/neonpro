@@ -275,9 +275,9 @@ const PatientCriticalInfo: React.FC<{
       </Card>
 
       {/* Medical Cautions - YELLOW */}
-      <Card className="border-2 border-yellow-500 bg-yellow-50">
+      <Card className="border-2 border-accent bg-accent/10">
         <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 font-bold text-lg text-yellow-700">
+          <CardTitle className="flex items-center gap-2 font-bold text-accent text-lg">
             <Shield className="h-5 w-5" />🟡 CONTRAINDICAÇÕES
           </CardTitle>
         </CardHeader>
@@ -286,13 +286,13 @@ const PatientCriticalInfo: React.FC<{
             <div className="space-y-2">
               {patient.contraindications.map((contraindication, index) => (
                 <div
-                  className="rounded-lg border border-yellow-300 bg-yellow-100 p-3"
+                  className="rounded-lg border border-accent/30 bg-accent/20 p-3"
                   key={index}
                 >
-                  <div className="font-bold text-yellow-800">
+                  <div className="font-bold text-accent">
                     {contraindication.type}
                   </div>
-                  <div className="text-sm text-yellow-700">
+                  <div className="text-accent text-sm">
                     {contraindication.description}
                   </div>
                   <Badge
@@ -313,9 +313,7 @@ const PatientCriticalInfo: React.FC<{
               ))}
             </div>
           ) : (
-            <p className="text-yellow-600">
-              Nenhuma contraindicação registrada
-            </p>
+            <p className="text-accent">Nenhuma contraindicação registrada</p>
           )}
         </CardContent>
       </Card>
@@ -535,7 +533,7 @@ const OfflineIndicator: React.FC<{
   const getStatusColor = () => {
     if (!isOnline) return 'text-red-600 bg-red-50 border-red-200';
     if (cacheStatus === 'stale')
-      return 'text-yellow-600 bg-yellow-50 border-yellow-200';
+      return 'text-accent bg-accent/10 border-accent/20';
     return 'text-green-600 bg-green-50 border-green-200';
   };
 

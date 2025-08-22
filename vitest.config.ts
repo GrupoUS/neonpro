@@ -11,15 +11,26 @@ import { defineConfig } from 'vitest/config';
  */
 export default defineConfig({
   test: {
-    // Global configuration - simplified
+    // Global configuration - enhanced isolation
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./vitest.setup.ts'],
 
-    // JSDOM environment options - simplified to avoid serialization errors
+    // Enhanced test isolation to prevent DOM duplication
+    isolate: true,
+
+    // Sequential hook execution to prevent race conditions
+    sequence: {
+      hooks: 'list',
+    },
+
+    // JSDOM environment options - enhanced for test stability
     environmentOptions: {
       jsdom: {
         resources: 'usable',
+        // Enable better DOM cleanup
+        runScripts: 'dangerously',
+        pretendToBeVisual: true,
       },
     },
 
@@ -141,7 +152,7 @@ export default defineConfig({
       '@/routes': path.resolve(__dirname, './apps/api/src/routes'),
       '@/types': path.resolve(__dirname, './apps/api/src/types'),
       // Force React resolution to single instance
-      'react': path.resolve(__dirname, './node_modules/react'),
+      react: path.resolve(__dirname, './node_modules/react'),
       'react-dom': path.resolve(__dirname, './node_modules/react-dom'),
     },
   },

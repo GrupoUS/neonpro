@@ -11,42 +11,13 @@ import {
   waitFor,
 } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  getGlobalSupabaseMock,
+  resetAllGlobalMocks,
+} from '../../../../tests/test-utils';
 
-// Mock Supabase client
-const mockSupabaseClient = {
-  auth: {
-    signInWithPassword: vi.fn().mockResolvedValue({
-      data: { user: { id: 'user-123' }, session: { access_token: 'token' } },
-      error: null,
-    }),
-    signOut: vi.fn().mockResolvedValue({ error: null }),
-    getSession: vi.fn().mockResolvedValue({
-      data: { session: { access_token: 'token' } },
-      error: null,
-    }),
-    getUser: vi.fn().mockResolvedValue({
-      data: { user: { id: 'user-123' } },
-      error: null,
-    }),
-    onAuthStateChange: vi.fn().mockReturnValue({
-      data: { subscription: { unsubscribe: vi.fn() } },
-    }),
-    refreshSession: vi.fn().mockResolvedValue({
-      data: { session: { access_token: 'new-token' } },
-      error: null,
-    }),
-  },
-  from: vi.fn().mockImplementation((table: string) => ({
-    select: vi.fn().mockReturnValue({
-      eq: vi.fn().mockReturnValue({
-        single: vi.fn().mockResolvedValue({ data: null, error: null }),
-      }),
-    }),
-    insert: vi.fn().mockResolvedValue({ data: null, error: null }),
-    update: vi.fn().mockResolvedValue({ data: null, error: null }),
-    delete: vi.fn().mockResolvedValue({ error: null }),
-  })),
-};
+// Get the global mock that's configured in vitest.setup.ts
+let mockSupabaseClient: any;
 
 // Mock authentication hook
 const mockAuthHook = {
@@ -59,7 +30,7 @@ const mockAuthHook = {
 };
 
 vi.mock('@supabase/supabase-js', () => ({
-  createClient: () => mockSupabaseClient,
+  createClient: () => global.mockSupabaseClient,
 }));
 
 vi.mock('../../hooks/enhanced/use-auth', () => ({
@@ -80,22 +51,22 @@ const MockLoginComponent = () => {
   };
 
   return (
-    <form data-testid="login-form" onSubmit={handleSubmit}>
+    <form data-testid="integration-login-form" onSubmit={handleSubmit}>
       <input
-        data-testid="email-input"
+        data-testid="integration-email-input"
         name="email"
         placeholder="Email"
         required
         type="email"
       />
       <input
-        data-testid="password-input"
+        data-testid="integration-password-input"
         name="password"
         placeholder="Password"
         required
         type="password"
       />
-      <button data-testid="login-button" type="submit">
+      <button data-testid="integration-login-button" type="submit">
         Login
       </button>
     </form>
@@ -128,6 +99,10 @@ describe('Authentication Flow Integration', () => {
   let queryClient: QueryClient;
 
   beforeEach(() => {
+    // Reset global mocks and get reference
+    resetAllGlobalMocks();
+    mockSupabaseClient = getGlobalSupabaseMock();
+
     vi.clearAllMocks();
     queryClient = new QueryClient({
       defaultOptions: {
@@ -220,9 +195,9 @@ describe('Authentication Flow Integration', () => {
       );
 
       // Fill in login credentials
-      const emailInput = screen.getByTestId('email-input');
-      const passwordInput = screen.getByTestId('password-input');
-      const loginButton = screen.getByTestId('login-button');
+      const emailInput = screen.getByTestId('integration-email-input');
+      const passwordInput = screen.getByTestId('integration-password-input');
+      const loginButton = screen.getByTestId('integration-login-button');
 
       await act(async () => {
         fireEvent.change(emailInput, {
@@ -272,9 +247,9 @@ describe('Authentication Flow Integration', () => {
         </TestWrapper>
       );
 
-      const emailInput = screen.getByTestId('email-input');
-      const passwordInput = screen.getByTestId('password-input');
-      const loginButton = screen.getByTestId('login-button');
+      const emailInput = screen.getByTestId('integration-email-input');
+      const passwordInput = screen.getByTestId('integration-password-input');
+      const loginButton = screen.getByTestId('integration-login-button');
 
       await act(async () => {
         fireEvent.change(emailInput, { target: { value: 'wrong@email.com' } });

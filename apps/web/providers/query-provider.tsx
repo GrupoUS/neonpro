@@ -79,8 +79,7 @@ export const QueryKeys = {
       ['appointments', 'list', filters] as const,
     detail: (id: string) => ['appointments', 'detail', id] as const,
     calendar: (date: string) => ['appointments', 'calendar', date] as const,
-    upcoming: (userId: string) =>
-      ['appointments', 'upcoming', userId] as const,
+    upcoming: (userId: string) => ['appointments', 'upcoming', userId] as const,
     patient: (patientId: string) =>
       ['appointments', 'patient', patientId] as const,
     professional: (professionalId: string) =>

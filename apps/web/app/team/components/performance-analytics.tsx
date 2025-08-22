@@ -234,13 +234,13 @@ const getTrendIcon = (trend: 'up' | 'down' | 'stable') => {
 
 const getComplianceColor = (rate: number) => {
   if (rate >= 95) return 'text-green-600';
-  if (rate >= 90) return 'text-yellow-600';
+  if (rate >= 90) return 'text-accent';
   return 'text-red-600';
 };
 
 const getComplianceBgColor = (rate: number) => {
   if (rate >= 95) return 'bg-green-100 border-green-200';
-  if (rate >= 90) return 'bg-yellow-100 border-yellow-200';
+  if (rate >= 90) return 'bg-accent/10 border-accent/20';
   return 'bg-red-100 border-red-200';
 };
 
@@ -505,9 +505,7 @@ export function PerformanceAnalytics({
                     <span className="font-medium text-sm">
                       Taxa de Ocupação
                     </span>
-                    <span className="font-bold text-lg text-yellow-600">
-                      87%
-                    </span>
+                    <span className="font-bold text-accent text-lg">87%</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="font-medium text-sm">
@@ -525,7 +523,7 @@ export function PerformanceAnalytics({
                   </h4>
                   <div className="space-y-2">
                     <div className="flex items-center space-x-2 text-sm">
-                      <div className="h-2 w-2 rounded-full bg-yellow-500" />
+                      <div className="h-2 w-2 rounded-full bg-accent" />
                       <span>2 profissionais com CME pendente</span>
                     </div>
                     <div className="flex items-center space-x-2 text-sm">
@@ -582,7 +580,7 @@ export function PerformanceAnalytics({
                       name: 'Enfermaria',
                       efficiency: 85,
                       satisfaction: 8.4,
-                      color: 'bg-yellow-500',
+                      color: 'bg-accent',
                     },
                   ].map((dept) => (
                     <div className="space-y-2" key={dept.name}>

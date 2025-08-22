@@ -130,7 +130,7 @@ const CosmicGlowButton = ({
     warning:
       'bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700',
     danger:
-      'bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700',
+      'bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary',
   };
 
   const sizes = {
@@ -725,7 +725,7 @@ export default function AnalyticsPage() {
                         Distribuição da receita por tipo de serviço
                       </p>
                     </div>
-                    <DollarSign className="h-6 w-6 text-yellow-400" />
+                    <DollarSign className="h-6 w-6 text-accent" />
                   </div>
                   <SimplePieChart data={mockData.revenueByService} />
                 </div>
@@ -776,7 +776,7 @@ export default function AnalyticsPage() {
 
                     <div className="flex items-center justify-between rounded-lg bg-white/5 p-3">
                       <div className="flex items-center space-x-3">
-                        <div className="h-2 w-2 rounded-full bg-yellow-400" />
+                        <div className="h-2 w-2 rounded-full bg-accent" />
                         <span className="text-slate-300">Faltas</span>
                       </div>
                       <div className="text-right">
@@ -974,7 +974,7 @@ export default function AnalyticsPage() {
                         Distribuição por forma de pagamento
                       </p>
                     </div>
-                    <Target className="h-6 w-6 text-pink-400" />
+                    <Target className="h-6 w-6 text-accent" />
                   </div>
 
                   <SimplePieChart
@@ -1059,7 +1059,7 @@ export default function AnalyticsPage() {
                         Probabilidade de no-show por paciente
                       </p>
                     </div>
-                    <AlertTriangle className="h-6 w-6 text-yellow-400" />
+                    <AlertTriangle className="h-6 w-6 text-accent" />
                   </div>
 
                   <div className="space-y-3">
@@ -1100,7 +1100,7 @@ export default function AnalyticsPage() {
                                 prediction.risk === 'Alto'
                                   ? 'border-red-400 text-red-400'
                                   : prediction.risk === 'Médio'
-                                    ? 'border-yellow-400 text-yellow-400'
+                                    ? 'border-accent text-accent'
                                     : 'border-green-400 text-green-400'
                               }
                             `}
@@ -1205,8 +1205,7 @@ export default function AnalyticsPage() {
                         season: 'Verão',
                         procedures: 'Estética Corporal',
                         trend: '+45%',
-                        color:
-                          'bg-yellow-500/10 border-yellow-500/20 text-yellow-400',
+                        color: 'bg-accent/10 border-accent/20 text-accent',
                       },
                       {
                         season: 'Outono',
@@ -1311,7 +1310,7 @@ export default function AnalyticsPage() {
                             {item.status === 'completed' ? (
                               <CheckCircle2 className="h-4 w-4 text-green-400" />
                             ) : (
-                              <AlertTriangle className="h-4 w-4 text-yellow-400" />
+                              <AlertTriangle className="h-4 w-4 text-accent" />
                             )}
                             <span className="text-slate-300 text-sm">
                               {item.item}
@@ -1356,7 +1355,7 @@ export default function AnalyticsPage() {
                                   ? 'border-green-400 text-green-400'
                                   : metric.status === 'good'
                                     ? 'border-blue-400 text-blue-400'
-                                    : 'border-yellow-400 text-yellow-400'
+                                    : 'border-accent text-accent'
                               }
                             `}
                             variant="outline"
@@ -1452,7 +1451,7 @@ export default function AnalyticsPage() {
                             audit.status === 'success'
                               ? 'bg-green-400'
                               : audit.status === 'warning'
-                                ? 'bg-yellow-400'
+                                ? 'bg-accent'
                                 : 'bg-red-400'
                           }`}
                         />

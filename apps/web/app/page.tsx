@@ -51,9 +51,9 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="relative">
         {/* Navigation */}
-        <nav className="container mx-auto flex items-center justify-between p-6 border-b border-border/50">
+        <nav className="container mx-auto flex items-center justify-between border-border/50 border-b p-6">
           <div className="flex items-center space-x-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg neonpro-gradient neonpro-glow">
+            <div className="neonpro-gradient neonpro-glow flex h-10 w-10 items-center justify-center rounded-lg">
               <Heart className="h-6 w-6 text-primary-foreground" />
             </div>
             <h1 className="font-bold text-2xl text-primary">
@@ -72,16 +72,16 @@ export default function HomePage() {
         {/* Hero Content */}
         <div className="container mx-auto px-6 py-24 text-center">
           <div className="mx-auto max-w-4xl">
-            <h1 className="mb-6 font-bold text-5xl text-foreground lg:text-6xl leading-tight">
+            <h1 className="mb-6 font-bold text-5xl text-foreground leading-tight lg:text-6xl">
               Revolução Digital para
-              <span className="block mt-2 text-primary neonpro-glow">
+              <span className="neonpro-glow mt-2 block text-primary">
                 Clínicas Estéticas Brasileiras
               </span>
             </h1>
             <p className="mx-auto mb-12 max-w-3xl text-muted-foreground text-xl leading-relaxed">
-              Gestão inteligente com compliance total LGPD, ANVISA e CFM. 
-              Transforme sua clínica com tecnologia de ponta, resultados reais 
-              e a confiança do mercado brasileiro de medicina estética.
+              Gestão inteligente com compliance total LGPD, ANVISA e CFM.
+              Transforme sua clínica com tecnologia de ponta, resultados reais e
+              a confiança do mercado brasileiro de medicina estética.
             </p>
 
             {/* Trust Indicators */}
@@ -107,7 +107,7 @@ export default function HomePage() {
             {/* CTA Section */}
             <div className="flex flex-col items-center justify-center gap-6 sm:flex-row">
               <Button
-                className="neonpro-button-primary text-lg px-8 py-4"
+                className="neonpro-button-primary px-8 py-4 text-lg"
                 onClick={() => router.push('/signup')}
                 size="lg"
               >
@@ -115,7 +115,7 @@ export default function HomePage() {
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               <Button
-                className="border-primary/20 text-foreground hover:bg-primary/5 text-lg px-8 py-4"
+                className="border-primary/20 px-8 py-4 text-foreground text-lg hover:bg-primary/5"
                 size="lg"
                 variant="outline"
               >
@@ -126,19 +126,21 @@ export default function HomePage() {
 
             {/* Trust Line */}
             <p className="mt-8 text-muted-foreground text-sm">
-              ✓ Teste grátis por 30 dias • ✓ Sem cartão de crédito • ✓ Suporte especializado em saúde
+              ✓ Teste grátis por 30 dias • ✓ Sem cartão de crédito • ✓ Suporte
+              especializado em saúde
             </p>
           </div>
         </div>
       </section>
       {/* Real-time Metrics Section */}
       <section className="container mx-auto px-6 pb-20">
-        <div className="text-center mb-12">
-          <h2 className="font-bold text-3xl text-foreground mb-4">
+        <div className="mb-12 text-center">
+          <h2 className="mb-4 font-bold text-3xl text-foreground">
             Performance em Tempo Real
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Acompanhe o crescimento da sua clínica com métricas atualizadas automaticamente
+          <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+            Acompanhe o crescimento da sua clínica com métricas atualizadas
+            automaticamente
           </p>
         </div>
 
@@ -147,7 +149,7 @@ export default function HomePage() {
           <Card className="neonpro-card group">
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center text-foreground">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 mr-3 group-hover:neonpro-glow transition-all">
+                <div className="group-hover:neonpro-glow mr-3 flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 transition-all">
                   <BarChart3 className="h-4 w-4 text-primary" />
                 </div>
                 Receita Mensal
@@ -180,7 +182,7 @@ export default function HomePage() {
           <Card className="neonpro-card group">
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center text-foreground">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-chart-5/10 mr-3 group-hover:neonpro-glow transition-all">
+                <div className="group-hover:neonpro-glow mr-3 flex h-8 w-8 items-center justify-center rounded-lg bg-chart-5/10 transition-all">
                   <Users className="h-4 w-4 text-chart-5" />
                 </div>
                 Total Pacientes
@@ -204,7 +206,7 @@ export default function HomePage() {
           <Card className="neonpro-card group">
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center text-foreground">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-chart-3/10 mr-3 group-hover:neonpro-glow transition-all">
+                <div className="group-hover:neonpro-glow mr-3 flex h-8 w-8 items-center justify-center rounded-lg bg-chart-3/10 transition-all">
                   <Calendar className="h-4 w-4 text-chart-3" />
                 </div>
                 Consultas Agendadas
@@ -228,7 +230,7 @@ export default function HomePage() {
           <Card className="neonpro-card group">
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center text-foreground">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-chart-4/10 mr-3 group-hover:neonpro-glow transition-all">
+                <div className="group-hover:neonpro-glow mr-3 flex h-8 w-8 items-center justify-center rounded-lg bg-chart-4/10 transition-all">
                   <Clock className="h-4 w-4 text-chart-4" />
                 </div>
                 Consultas Hoje
@@ -251,12 +253,13 @@ export default function HomePage() {
       </section>{' '}
       {/* Features Section */}
       <section className="container mx-auto px-6 pb-20">
-        <div className="text-center mb-12">
-          <h2 className="font-bold text-3xl text-foreground mb-4">
+        <div className="mb-12 text-center">
+          <h2 className="mb-4 font-bold text-3xl text-foreground">
             Recursos Especializados para Medicina Estética
           </h2>
-          <p className="text-muted-foreground text-lg max-w-3xl mx-auto">
-            Ferramentas desenvolvidas especificamente para as necessidades do mercado brasileiro de estética e bem-estar
+          <p className="mx-auto max-w-3xl text-lg text-muted-foreground">
+            Ferramentas desenvolvidas especificamente para as necessidades do
+            mercado brasileiro de estética e bem-estar
           </p>
         </div>
 
@@ -265,7 +268,7 @@ export default function HomePage() {
           <Card className="neonpro-card group">
             <CardHeader>
               <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 group-hover:neonpro-glow transition-all">
+                <div className="group-hover:neonpro-glow flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 transition-all">
                   <Calendar className="h-6 w-6 text-primary" />
                 </div>
                 <div>
@@ -280,9 +283,10 @@ export default function HomePage() {
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground leading-relaxed">
-                Sistema avançado com lembretes automáticos via WhatsApp, gestão de filas de 
-                espera para procedimentos específicos e otimização inteligente baseada em 
-                preferências de horário e histórico de tratamentos.
+                Sistema avançado com lembretes automáticos via WhatsApp, gestão
+                de filas de espera para procedimentos específicos e otimização
+                inteligente baseada em preferências de horário e histórico de
+                tratamentos.
               </p>
             </CardContent>
           </Card>
@@ -291,11 +295,13 @@ export default function HomePage() {
           <Card className="neonpro-card group">
             <CardHeader>
               <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-chart-2/10 group-hover:neonpro-glow transition-all">
+                <div className="group-hover:neonpro-glow flex h-12 w-12 items-center justify-center rounded-lg bg-chart-2/10 transition-all">
                   <Users className="h-6 w-6 text-chart-2" />
                 </div>
                 <div>
-                  <CardTitle className="text-foreground text-xl">Gestão de Pacientes</CardTitle>
+                  <CardTitle className="text-foreground text-xl">
+                    Gestão de Pacientes
+                  </CardTitle>
                   <CardDescription className="text-muted-foreground">
                     Prontuários estéticos completos e seguros
                   </CardDescription>
@@ -304,9 +310,10 @@ export default function HomePage() {
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground leading-relaxed">
-                Prontuários digitais especializados com histórico de procedimentos estéticos, 
-                anexos de imagens antes/depois, evolução de tratamentos e compliance total 
-                com LGPD, ANVISA e CFM.
+                Prontuários digitais especializados com histórico de
+                procedimentos estéticos, anexos de imagens antes/depois,
+                evolução de tratamentos e compliance total com LGPD, ANVISA e
+                CFM.
               </p>
             </CardContent>
           </Card>
@@ -315,7 +322,7 @@ export default function HomePage() {
           <Card className="neonpro-card group">
             <CardHeader>
               <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-chart-3/10 group-hover:neonpro-glow transition-all">
+                <div className="group-hover:neonpro-glow flex h-12 w-12 items-center justify-center rounded-lg bg-chart-3/10 transition-all">
                   <BarChart3 className="h-6 w-6 text-chart-3" />
                 </div>
                 <div>
@@ -330,9 +337,9 @@ export default function HomePage() {
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground leading-relaxed">
-                Relatórios financeiros detalhados por procedimento, análise de sazonalidade 
-                estética, ROI por tratamento, taxa de retorno de pacientes e previsões 
-                baseadas em IA para o mercado brasileiro.
+                Relatórios financeiros detalhados por procedimento, análise de
+                sazonalidade estética, ROI por tratamento, taxa de retorno de
+                pacientes e previsões baseadas em IA para o mercado brasileiro.
               </p>
             </CardContent>
           </Card>
@@ -341,11 +348,13 @@ export default function HomePage() {
           <Card className="neonpro-card group">
             <CardHeader>
               <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-chart-4/10 group-hover:neonpro-glow transition-all">
+                <div className="group-hover:neonpro-glow flex h-12 w-12 items-center justify-center rounded-lg bg-chart-4/10 transition-all">
                   <Shield className="h-6 w-6 text-chart-4" />
                 </div>
                 <div>
-                  <CardTitle className="text-foreground text-xl">Compliance Brasileiro</CardTitle>
+                  <CardTitle className="text-foreground text-xl">
+                    Compliance Brasileiro
+                  </CardTitle>
                   <CardDescription className="text-muted-foreground">
                     Conformidade especializada em saúde
                   </CardDescription>
@@ -354,9 +363,10 @@ export default function HomePage() {
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground leading-relaxed">
-                Conformidade automática com LGPD, ANVISA e CFM. Auditoria em tempo real, 
-                relatórios específicos para fiscalizações sanitárias e documentação 
-                automática para processos regulatórios do setor estético.
+                Conformidade automática com LGPD, ANVISA e CFM. Auditoria em
+                tempo real, relatórios específicos para fiscalizações sanitárias
+                e documentação automática para processos regulatórios do setor
+                estético.
               </p>
             </CardContent>
           </Card>
@@ -369,7 +379,7 @@ export default function HomePage() {
           <Card className="neonpro-card">
             <CardHeader>
               <CardTitle className="flex items-center text-foreground">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 mr-3">
+                <div className="mr-3 flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
                   <Users className="h-4 w-4 text-primary" />
                 </div>
                 Pacientes Recentes
@@ -395,7 +405,7 @@ export default function HomePage() {
                 <div className="space-y-3">
                   {recentPatients.slice(0, 5).map((patient) => (
                     <div
-                      className="flex items-center space-x-3 rounded-lg p-3 hover:bg-muted/50 transition-colors"
+                      className="flex items-center space-x-3 rounded-lg p-3 transition-colors hover:bg-muted/50"
                       key={patient.id}
                     >
                       <Avatar className="h-10 w-10">
@@ -439,7 +449,7 @@ export default function HomePage() {
           <Card className="neonpro-card">
             <CardHeader>
               <CardTitle className="flex items-center text-foreground">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-chart-4/10 mr-3">
+                <div className="mr-3 flex h-8 w-8 items-center justify-center rounded-lg bg-chart-4/10">
                   <Activity className="h-4 w-4 text-chart-4" />
                 </div>
                 Agenda de Hoje
@@ -466,10 +476,10 @@ export default function HomePage() {
                 <div className="space-y-3">
                   {todaysAppointments.slice(0, 3).map((appointment) => (
                     <div
-                      className="rounded-lg border border-border p-4 hover:bg-muted/50 transition-colors"
+                      className="rounded-lg border border-border p-4 transition-colors hover:bg-muted/50"
                       key={appointment.id}
                     >
-                      <div className="flex items-center justify-between mb-2">
+                      <div className="mb-2 flex items-center justify-between">
                         <p className="font-semibold text-foreground">
                           {new Date(
                             appointment.appointment_date
@@ -482,7 +492,7 @@ export default function HomePage() {
                           {appointment.status}
                         </Badge>
                       </div>
-                      <p className="text-foreground text-sm font-medium mb-1">
+                      <p className="mb-1 font-medium text-foreground text-sm">
                         {appointment.patients?.name ||
                           'Paciente não identificado'}
                       </p>
@@ -522,30 +532,30 @@ export default function HomePage() {
           <h3 className="mb-6 font-bold text-3xl text-foreground">
             Confiança e Segurança para o Mercado Brasileiro
           </h3>
-          <p className="mb-12 text-muted-foreground text-lg max-w-3xl mx-auto">
-            Desenvolvido com foco nas regulamentações brasileiras e necessidades específicas 
-            do setor de medicina estética nacional
+          <p className="mx-auto mb-12 max-w-3xl text-lg text-muted-foreground">
+            Desenvolvido com foco nas regulamentações brasileiras e necessidades
+            específicas do setor de medicina estética nacional
           </p>
 
           {/* Enhanced Compliance Badges */}
           <div className="mb-16 grid grid-cols-2 gap-4 md:grid-cols-4">
             <div className="compliance-badge flex-col py-6">
-              <Shield className="h-8 w-8 mb-2 mx-auto" />
+              <Shield className="mx-auto mb-2 h-8 w-8" />
               <div className="font-semibold">LGPD</div>
               <div className="text-xs opacity-80">Lei Geral de Proteção</div>
             </div>
             <div className="compliance-badge flex-col py-6">
-              <Stethoscope className="h-8 w-8 mb-2 mx-auto" />
+              <Stethoscope className="mx-auto mb-2 h-8 w-8" />
               <div className="font-semibold">ANVISA</div>
               <div className="text-xs opacity-80">Vigilância Sanitária</div>
             </div>
             <div className="compliance-badge flex-col py-6">
-              <FileText className="h-8 w-8 mb-2 mx-auto" />
+              <FileText className="mx-auto mb-2 h-8 w-8" />
               <div className="font-semibold">CFM</div>
               <div className="text-xs opacity-80">Conselho Federal</div>
             </div>
             <div className="compliance-badge flex-col py-6">
-              <Star className="h-8 w-8 mb-2 mx-auto" />
+              <Star className="mx-auto mb-2 h-8 w-8" />
               <div className="font-semibold">ISO 27001</div>
               <div className="text-xs opacity-80">Segurança Info.</div>
             </div>
@@ -553,47 +563,50 @@ export default function HomePage() {
 
           {/* Trust Pillars */}
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            <Card className="neonpro-card text-center group">
+            <Card className="neonpro-card group text-center">
               <CardContent className="pt-6">
-                <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full neonpro-gradient group-hover:neonpro-glow transition-all">
+                <div className="neonpro-gradient group-hover:neonpro-glow mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full transition-all">
                   <Shield className="h-10 w-10 text-primary-foreground" />
                 </div>
-                <h4 className="mb-4 font-semibold text-xl text-foreground">
+                <h4 className="mb-4 font-semibold text-foreground text-xl">
                   Proteção de Dados Médicos
                 </h4>
                 <p className="text-muted-foreground leading-relaxed">
-                  Criptografia de nível bancário, backup automático em nuvem brasileira 
-                  e compliance total com LGPD para dados sensíveis de saúde
+                  Criptografia de nível bancário, backup automático em nuvem
+                  brasileira e compliance total com LGPD para dados sensíveis de
+                  saúde
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="neonpro-card text-center group">
+            <Card className="neonpro-card group text-center">
               <CardContent className="pt-6">
-                <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full neonpro-gradient group-hover:neonpro-glow transition-all">
+                <div className="neonpro-gradient group-hover:neonpro-glow mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full transition-all">
                   <Heart className="h-10 w-10 text-primary-foreground" />
                 </div>
-                <h4 className="mb-4 font-semibold text-xl text-foreground">
+                <h4 className="mb-4 font-semibold text-foreground text-xl">
                   Especialista em Medicina Estética
                 </h4>
                 <p className="text-muted-foreground leading-relaxed">
-                  Desenvolvido por especialistas para o mercado brasileiro de estética, 
-                  com funcionalidades específicas para procedimentos e regulamentações locais
+                  Desenvolvido por especialistas para o mercado brasileiro de
+                  estética, com funcionalidades específicas para procedimentos e
+                  regulamentações locais
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="neonpro-card text-center group">
+            <Card className="neonpro-card group text-center">
               <CardContent className="pt-6">
-                <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full neonpro-gradient group-hover:neonpro-glow transition-all">
+                <div className="neonpro-gradient group-hover:neonpro-glow mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full transition-all">
                   <Star className="h-10 w-10 text-primary-foreground" />
                 </div>
-                <h4 className="mb-4 font-semibold text-xl text-foreground">
+                <h4 className="mb-4 font-semibold text-foreground text-xl">
                   Suporte Especializado 24/7
                 </h4>
                 <p className="text-muted-foreground leading-relaxed">
-                  Equipe técnica especializada em saúde, treinamento personalizado 
-                  e suporte prioritário para clínicas em todo o Brasil
+                  Equipe técnica especializada em saúde, treinamento
+                  personalizado e suporte prioritário para clínicas em todo o
+                  Brasil
                 </p>
               </CardContent>
             </Card>
@@ -601,21 +614,22 @@ export default function HomePage() {
         </div>
       </section>
       {/* Call to Action Section */}
-      <section className="border-t border-border bg-gradient-to-r from-primary/5 to-chart-5/5 py-24">
+      <section className="border-border border-t bg-gradient-to-r from-primary/5 to-chart-5/5 py-24">
         <div className="container mx-auto px-6 text-center">
           <div className="mx-auto max-w-4xl">
             <h3 className="mb-6 font-bold text-4xl text-foreground lg:text-5xl">
               Transforme sua Clínica Estética Hoje
             </h3>
             <p className="mx-auto mb-12 max-w-3xl text-muted-foreground text-xl leading-relaxed">
-              Junte-se a centenas de clínicas brasileiras que já confiam no NeonPro Healthcare 
-              para gerenciar seus negócios com eficiência, segurança total e resultados comprovados 
-              no mercado de medicina estética.
+              Junte-se a centenas de clínicas brasileiras que já confiam no
+              NeonPro Healthcare para gerenciar seus negócios com eficiência,
+              segurança total e resultados comprovados no mercado de medicina
+              estética.
             </p>
 
-            <div className="flex flex-col justify-center gap-6 sm:flex-row mb-8">
+            <div className="mb-8 flex flex-col justify-center gap-6 sm:flex-row">
               <Button
-                className="neonpro-button-primary text-lg px-10 py-4"
+                className="neonpro-button-primary px-10 py-4 text-lg"
                 onClick={() => router.push('/signup')}
                 size="lg"
               >
@@ -623,7 +637,7 @@ export default function HomePage() {
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               <Button
-                className="border-primary/20 text-foreground hover:bg-primary/5 text-lg px-10 py-4"
+                className="border-primary/20 px-10 py-4 text-foreground text-lg hover:bg-primary/5"
                 size="lg"
                 variant="outline"
               >
@@ -633,38 +647,42 @@ export default function HomePage() {
             </div>
 
             {/* Enhanced Trust Line */}
-            <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
-              <div className="trust-indicator">
-                Teste grátis por 30 dias
-              </div>
-              <div className="trust-indicator">
-                Sem cartão de crédito
-              </div>
+            <div className="flex flex-wrap justify-center gap-6 text-muted-foreground text-sm">
+              <div className="trust-indicator">Teste grátis por 30 dias</div>
+              <div className="trust-indicator">Sem cartão de crédito</div>
               <div className="trust-indicator">
                 Suporte especializado em saúde
               </div>
-              <div className="trust-indicator">
-                Treinamento incluído
-              </div>
+              <div className="trust-indicator">Treinamento incluído</div>
             </div>
 
             {/* Social Proof Numbers */}
             <div className="mt-12 grid grid-cols-2 gap-8 md:grid-cols-4">
               <div className="text-center">
-                <div className="text-3xl font-bold text-primary mb-2">500+</div>
-                <div className="text-sm text-muted-foreground">Clínicas Atendidas</div>
+                <div className="mb-2 font-bold text-3xl text-primary">500+</div>
+                <div className="text-muted-foreground text-sm">
+                  Clínicas Atendidas
+                </div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-primary mb-2">50k+</div>
-                <div className="text-sm text-muted-foreground">Pacientes Gerenciados</div>
+                <div className="mb-2 font-bold text-3xl text-primary">50k+</div>
+                <div className="text-muted-foreground text-sm">
+                  Pacientes Gerenciados
+                </div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-primary mb-2">99.9%</div>
-                <div className="text-sm text-muted-foreground">Uptime Garantido</div>
+                <div className="mb-2 font-bold text-3xl text-primary">
+                  99.9%
+                </div>
+                <div className="text-muted-foreground text-sm">
+                  Uptime Garantido
+                </div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-primary mb-2">24/7</div>
-                <div className="text-sm text-muted-foreground">Suporte Disponível</div>
+                <div className="mb-2 font-bold text-3xl text-primary">24/7</div>
+                <div className="text-muted-foreground text-sm">
+                  Suporte Disponível
+                </div>
               </div>
             </div>
           </div>

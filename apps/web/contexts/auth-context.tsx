@@ -126,8 +126,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const signUp = async (
-    email: string, 
-    password: string, 
+    email: string,
+    password: string,
     additionalData?: {
       fullName: string;
       cpf: string;
@@ -143,13 +143,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
         password,
         options: {
           emailRedirectTo: `${window.location.origin}/auth/callback`,
-          data: additionalData ? {
-            full_name: additionalData.fullName,
-            cpf: additionalData.cpf,
-            phone: additionalData.phone,
-            clinic_name: additionalData.clinicName,
-            user_type: additionalData.userType,
-          } : undefined,
+          data: additionalData
+            ? {
+                full_name: additionalData.fullName,
+                cpf: additionalData.cpf,
+                phone: additionalData.phone,
+                clinic_name: additionalData.clinicName,
+                user_type: additionalData.userType,
+              }
+            : undefined,
         },
       });
 
@@ -165,7 +167,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
               phone: additionalData.phone,
               clinic_name: additionalData.clinicName,
               user_type: additionalData.userType,
-              email: email,
+              email,
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString(),
             });
