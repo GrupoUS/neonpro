@@ -37,10 +37,10 @@ const NeonGradientCard = ({
 }: NeonGradientCardProps) => (
   <motion.div
     animate={{ opacity: 1, y: 0 }}
-    className={`relative overflow-hidden rounded-xl border border-slate-800 bg-gradient-to-br from-slate-900/90 to-blue-900/30 backdrop-blur-sm ${className}`}
+    className={`neonpro-card relative overflow-hidden rounded-xl border border-border bg-card/90 backdrop-blur-sm ${className}`}
     initial={{ opacity: 0, y: 20 }}
   >
-    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-50" />
+    <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-accent/10 opacity-50" />
     <div className="relative z-10 p-6">{children}</div>
   </motion.div>
 );
@@ -63,15 +63,15 @@ const CosmicGlowButton = ({
 }: CosmicGlowButtonProps) => {
   const variants = {
     primary:
-      'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700',
+      'bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90',
     secondary:
-      'bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800',
+      'bg-gradient-to-r from-secondary to-secondary/80 hover:from-secondary/90 hover:to-secondary/70',
     success:
-      'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700',
+      'bg-gradient-to-r from-success to-success/80 hover:from-success/90 hover:to-success/70',
     warning:
-      'bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700',
+      'bg-gradient-to-r from-warning to-warning/80 hover:from-warning/90 hover:to-warning/70',
     danger:
-      'bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary',
+      'bg-gradient-to-r from-destructive to-destructive/80 hover:from-destructive/90 hover:to-destructive/70',
   };
 
   const sizes = {
@@ -117,12 +117,12 @@ function DashboardMetricsCards() {
         {[...new Array(4)].map((_, i) => (
           <NeonGradientCard key={i}>
             <div className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <Skeleton className="h-4 w-[120px] bg-white/20" />
-              <Skeleton className="h-5 w-5 bg-white/20" />
+              <Skeleton className="h-4 w-[120px] bg-muted/20" />
+              <Skeleton className="h-5 w-5 bg-muted/20" />
             </div>
             <div>
-              <Skeleton className="mb-2 h-8 w-[100px] bg-white/20" />
-              <Skeleton className="h-4 w-[80px] bg-white/20" />
+              <Skeleton className="mb-2 h-8 w-[100px] bg-muted/20" />
+              <Skeleton className="h-4 w-[80px] bg-muted/20" />
             </div>
           </NeonGradientCard>
         ))}
@@ -157,7 +157,7 @@ function DashboardMetricsCards() {
           : '0%',
       changeType: 'increase' as const,
       icon: Users,
-      gradient: 'from-blue-500 to-purple-600',
+      gradient: 'from-primary to-accent',
     },
     {
       title: 'Receita Mensal',
@@ -170,7 +170,7 @@ function DashboardMetricsCards() {
           ? ('increase' as const)
           : ('decrease' as const),
       icon: DollarSign,
-      gradient: 'from-green-500 to-emerald-600',
+      gradient: 'from-success to-success/80',
     },
     {
       title: 'Consultas Agendadas',
@@ -191,7 +191,7 @@ function DashboardMetricsCards() {
       change: '+2 este mês',
       changeType: 'increase' as const,
       icon: Activity,
-      gradient: 'from-orange-500 to-red-600',
+      gradient: 'from-warning to-warning/80',
     },
   ];
 
@@ -202,18 +202,18 @@ function DashboardMetricsCards() {
         return (
           <NeonGradientCard key={stat.title}>
             <div className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <h3 className="font-medium text-slate-300 text-sm tracking-tight">
+              <h3 className="font-medium text-muted-foreground text-sm tracking-tight">
                 {stat.title}
               </h3>
-              <Icon className="h-4 w-4 text-slate-400" />
+              <Icon className="h-4 w-4 text-muted" />
             </div>
             <div>
-              <div className="font-bold text-2xl text-white">{stat.value}</div>
-              <p className="flex items-center gap-1 text-slate-400 text-xs">
+              <div className="font-bold text-2xl text-foreground">{stat.value}</div>
+              <p className="flex items-center gap-1 text-muted text-xs">
                 {stat.changeType === 'increase' ? (
-                  <TrendingUp className="h-3 w-3 text-green-400" />
+                  <TrendingUp className="h-3 w-3 text-success" />
                 ) : (
-                  <TrendingDown className="h-3 w-3 text-red-400" />
+                  <TrendingDown className="h-3 w-3 text-destructive" />
                 )}
                 {stat.change} from last month
               </p>
@@ -239,12 +239,12 @@ function RecentPatientsSection() {
               className="flex items-center space-x-4 rounded-lg bg-white/5 p-3"
               key={i}
             >
-              <Skeleton className="h-10 w-10 rounded-full bg-white/20" />
+              <Skeleton className="h-10 w-10 rounded-full bg-muted/20" />
               <div className="flex-1 space-y-2">
-                <Skeleton className="h-4 w-[180px] bg-white/20" />
-                <Skeleton className="h-3 w-[140px] bg-white/20" />
+                <Skeleton className="h-4 w-[180px] bg-muted/20" />
+                <Skeleton className="h-3 w-[140px] bg-muted/20" />
               </div>
-              <Skeleton className="h-6 w-[60px] bg-white/20" />
+              <Skeleton className="h-6 w-[60px] bg-muted/20" />
             </div>
           ))}
         </div>
@@ -271,7 +271,7 @@ function RecentPatientsSection() {
   return (
     <NeonGradientCard>
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="font-bold text-white text-xl">Pacientes Recentes</h2>
+        <h2 className="font-bold text-foreground text-xl">Pacientes Recentes</h2>
         <CosmicGlowButton
           href="/dashboard/patients"
           size="sm"
@@ -284,21 +284,21 @@ function RecentPatientsSection() {
         {recentPatients?.slice(0, 5).map((patient) => (
           <motion.div
             animate={{ opacity: 1, x: 0 }}
-            className="flex cursor-pointer items-center space-x-4 rounded-lg bg-white/5 p-3 transition-colors hover:bg-white/10"
+            className="flex cursor-pointer items-center space-x-4 rounded-lg bg-muted/5 p-3 transition-colors hover:bg-muted/10"
             initial={{ opacity: 0, x: -20 }}
             key={patient.id}
           >
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600">
-              <span className="font-semibold text-sm text-white">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-primary to-accent">
+              <span className="font-semibold text-sm text-primary-foreground">
                 {patient.name?.charAt(0) || 'P'}
               </span>
             </div>
             <div className="flex-1">
-              <p className="font-medium text-white">{patient.name}</p>
-              <p className="text-slate-400 text-sm">{patient.email}</p>
+              <p className="font-medium text-foreground">{patient.name}</p>
+              <p className="text-muted-foreground text-sm">{patient.email}</p>
             </div>
             <Badge
-              className="border-slate-600 text-slate-300"
+              className="border-border text-muted-foreground"
               variant="outline"
             >
               {patient.phone || 'Sem contato'}
@@ -306,7 +306,7 @@ function RecentPatientsSection() {
           </motion.div>
         ))}
         {(!recentPatients || recentPatients.length === 0) && (
-          <div className="py-8 text-center text-slate-400">
+          <div className="py-8 text-center text-muted-foreground">
             <Users className="mx-auto mb-4 h-12 w-12 opacity-50" />
             <p>Nenhum paciente encontrado</p>
           </div>
@@ -356,12 +356,12 @@ function TodaysAppointmentsSection() {
               key={i}
             >
               <div className="flex-1 space-y-2">
-                <Skeleton className="h-4 w-[160px] bg-white/20" />
-                <Skeleton className="h-3 w-[120px] bg-white/20" />
+                <Skeleton className="h-4 w-[160px] bg-muted/20" />
+                <Skeleton className="h-3 w-[120px] bg-muted/20" />
               </div>
               <div className="space-y-1 text-right">
-                <Skeleton className="h-3 w-[50px] bg-white/20" />
-                <Skeleton className="h-5 w-[70px] bg-white/20" />
+                <Skeleton className="h-3 w-[50px] bg-muted/20" />
+                <Skeleton className="h-5 w-[70px] bg-muted/20" />
               </div>
             </div>
           ))}
@@ -386,7 +386,7 @@ function TodaysAppointmentsSection() {
   return (
     <NeonGradientCard>
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="font-bold text-white text-xl">Agenda de Hoje</h2>
+        <h2 className="font-bold text-foreground text-xl">Agenda de Hoje</h2>
         <CosmicGlowButton
           href="/dashboard/appointments"
           size="sm"
@@ -399,20 +399,20 @@ function TodaysAppointmentsSection() {
         {todaysAppointments?.slice(0, 6).map((appointment) => (
           <motion.div
             animate={{ opacity: 1, x: 0 }}
-            className="flex items-center justify-between rounded-lg bg-white/5 p-3 transition-colors hover:bg-white/10"
+            className="flex items-center justify-between rounded-lg bg-muted/5 p-3 transition-colors hover:bg-muted/10"
             initial={{ opacity: 0, x: -20 }}
             key={appointment.id}
           >
             <div>
-              <p className="font-medium text-white">
+              <p className="font-medium text-foreground">
                 {appointment.patients?.name || 'Paciente'}
               </p>
-              <p className="text-slate-400 text-sm">
+              <p className="text-muted-foreground text-sm">
                 {appointment.services?.name || 'Consulta'}
               </p>
             </div>
             <div className="text-right">
-              <p className="text-slate-300 text-sm">
+              <p className="text-muted-foreground text-sm">
                 {formatTime(appointment.appointment_date)}
               </p>
               <Badge variant={getStatusVariant(appointment.status)}>
@@ -422,7 +422,7 @@ function TodaysAppointmentsSection() {
           </motion.div>
         ))}
         {(!todaysAppointments || todaysAppointments.length === 0) && (
-          <div className="py-8 text-center text-slate-400">
+          <div className="py-8 text-center text-muted-foreground">
             <Calendar className="mx-auto mb-4 h-12 w-12 opacity-50" />
             <p>Nenhuma consulta agendada para hoje</p>
           </div>
@@ -479,7 +479,7 @@ function QuickActionsSection() {
 
   return (
     <NeonGradientCard>
-      <h2 className="mb-6 font-bold text-white text-xl">Ações Rápidas</h2>
+      <h2 className="mb-6 font-bold text-foreground text-xl">Ações Rápidas</h2>
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
         {quickActions.map((action) => {
           const Icon = action.icon;
@@ -557,19 +557,19 @@ function SystemStatusSection() {
   const getStatusColor = (status: 'success' | 'warning' | 'error') => {
     switch (status) {
       case 'success':
-        return 'text-green-400';
+        return 'text-success';
       case 'warning':
-        return 'text-accent';
+        return 'text-warning';
       case 'error':
-        return 'text-red-400';
+        return 'text-destructive';
       default:
-        return 'text-slate-400';
+        return 'text-muted-foreground';
     }
   };
 
   return (
     <NeonGradientCard>
-      <h2 className="mb-6 font-bold text-white text-xl">Status do Sistema</h2>
+      <h2 className="mb-6 font-bold text-foreground text-xl">Status do Sistema</h2>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {systemMetrics.map((metric) => {
           const Icon = metric.icon;
@@ -580,8 +580,8 @@ function SystemStatusSection() {
             >
               <Icon className={`h-5 w-5 ${getStatusColor(metric.status)}`} />
               <div className="flex-1">
-                <p className="font-medium text-sm text-white">{metric.label}</p>
-                <p className="text-slate-400 text-xs">{metric.description}</p>
+                <p className="font-medium text-sm text-foreground">{metric.label}</p>
+                <p className="text-muted-foreground text-xs">{metric.description}</p>
               </div>
               <span
                 className={`font-semibold text-sm ${getStatusColor(metric.status)}`}
@@ -600,9 +600,9 @@ function HealthcareDashboard() {
     useDashboardMetrics();
 
   return (
-    <div className="min-h-screen bg-black font-mono text-green-400">
+    <div className="min-h-screen bg-secondary font-mono text-primary">
       <div className="container mx-auto p-6">
-        <div className="mb-6 border border-green-400 p-4">
+        <div className="mb-6 border border-primary p-4">
           <h1 className="mb-2 font-bold text-2xl">
             NEONPRO HEALTHCARE CONTROL SYSTEM v2.1
           </h1>
@@ -612,13 +612,13 @@ function HealthcareDashboard() {
         </div>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-          <div className="border border-green-400 p-4">
+          <div className="border border-primary p-4">
             <h2 className="mb-2 font-bold text-lg">PACIENTES</h2>
             <div className="font-bold text-3xl">{totalPatients || 0}</div>
             <p className="text-sm">TOTAL REGISTRADO</p>
           </div>
 
-          <div className="border border-green-400 p-4">
+          <div className="border border-primary p-4">
             <h2 className="mb-2 font-bold text-lg">RECEITA</h2>
             <div className="font-bold text-2xl">
               R$ {monthlyRevenue?.toLocaleString('pt-BR') || '0'}
@@ -626,7 +626,7 @@ function HealthcareDashboard() {
             <p className="text-sm">MENSAL ATUAL</p>
           </div>
 
-          <div className="border border-green-400 p-4">
+          <div className="border border-primary p-4">
             <h2 className="mb-2 font-bold text-lg">AGENDAMENTOS</h2>
             <div className="font-bold text-3xl">
               {upcomingAppointments || 0}
@@ -635,31 +635,31 @@ function HealthcareDashboard() {
           </div>
         </div>
 
-        <div className="mt-6 border border-green-400 p-4">
+        <div className="mt-6 border border-primary p-4">
           <h2 className="mb-2 font-bold text-lg">STATUS SISTEMA</h2>
           <div className="space-y-2">
             <div className="flex justify-between">
               <span>DATABASE:</span>
-              <span className="text-green-400">ONLINE</span>
+              <span className="text-primary">ONLINE</span>
             </div>
             <div className="flex justify-between">
               <span>API SERVICES:</span>
-              <span className="text-green-400">OPERATIONAL</span>
+              <span className="text-primary">OPERATIONAL</span>
             </div>
             <div className="flex justify-between">
               <span>SECURITY:</span>
-              <span className="text-green-400">SECURED</span>
+              <span className="text-primary">SECURED</span>
             </div>
             <div className="flex justify-between">
               <span>BACKUP:</span>
-              <span className="text-green-400">SYNCHRONIZED</span>
+              <span className="text-primary">SYNCHRONIZED</span>
             </div>
           </div>
         </div>
 
         <div className="mt-6 text-center">
           <button
-            className="border border-green-400 px-6 py-2 transition-colors hover:bg-green-400 hover:text-black"
+            className="border border-primary px-6 py-2 transition-colors hover:bg-primary hover:text-secondary"
             onClick={() => window.location.reload()}
           >
             REFRESH SYSTEM
@@ -681,15 +681,15 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+    <div className="min-h-screen bg-gradient-to-br from-secondary via-accent to-secondary">
       <div className="container mx-auto space-y-8 p-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="mb-2 font-bold text-3xl text-white">
+            <h1 className="mb-2 font-bold text-3xl text-foreground">
               Dashboard - NeonPro
             </h1>
-            <p className="text-slate-400">
+            <p className="text-muted-foreground">
               Bem-vindo de volta,{' '}
               {user?.user_metadata?.full_name || user?.email || 'Usuário'}
             </p>
@@ -737,7 +737,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Footer */}
-        <div className="text-center text-slate-500 text-sm">
+        <div className="text-center text-muted text-sm">
           <p>NeonPro Healthcare Management System</p>
           <p>Dados atualizados em tempo real via Supabase</p>
         </div>

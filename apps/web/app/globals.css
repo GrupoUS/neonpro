@@ -4,128 +4,144 @@
 
 @layer base {
   :root {
-    /* NEONPROV1 - Tema Unificado com Paleta Pantone Healthcare */
-    /* Cores Principais NEONPROV1 */
-    --primary: 172 148 105; /* #AC9469 - PANTONE 4007 C (dourado premium) */
-    --primary-foreground: 17 32 49; /* #112031 - PANTONE 5395 C (contraste) */
+    /* NEONPROV1 Theme - Correct Colors */
+    --primary: oklch(0.5854 0.2041 277.1173);
+    --primary-foreground: oklch(1.0000 0 0);
     
-    --secondary: 17 32 49; /* #112031 - PANTONE 5395 C (verde escuro profissional) */
-    --secondary-foreground: 210 208 200; /* #D2D0C8 - PANTONE 400 C */
+    --secondary: oklch(0.8687 0.0043 56.3660);
+    --secondary-foreground: oklch(0.4461 0.0263 256.8018);
     
-    --accent: 41 67 89; /* #294359 - PANTONE 2168 C (azul médico) */
-    --accent-foreground: 255 255 255; /* Branco para contraste */
-
-    /* Cores de Fundo - NEONPROV1 Unificado */
-    --background: 255 255 255; /* #ffffff - Fundo principal limpo */
-    --foreground: 17 32 49; /* #112031 - PANTONE 5395 C (texto principal) */
-    --bg-primary: 255 255 255; /* #ffffff - Fundo principal */
-    --bg-secondary: 210 208 200; /* #D2D0C8 - PANTONE 400 C */
-    --bg-tertiary: 180 172 156; /* #B4AC9C - PANTONE 7535 C */
-
-    /* Cores de Status - NEONPROV1 Sistema Unificado */
-    --success: 41 67 89; /* #294359 - PANTONE 2168 C (sucesso médico) */
-    --success-foreground: 255 255 255; /* Branco */
-    --warning: 172 148 105; /* #AC9469 - PANTONE 4007 C (aviso dourado) */
-    --warning-foreground: 17 32 49; /* #112031 - PANTONE 5395 C */
-    --destructive: 139 69 19; /* #8b4513 - Tom terra para erro */
-    --destructive-foreground: 255 255 255; /* Branco */
-    --info: 41 67 89; /* #294359 - PANTONE 2168 C (info = success) */
-    --info-foreground: 255 255 255; /* Branco */
-
-    /* Cores de Texto - NEONPROV1 Hierarquia Unificada */
-    --text-primary: 17 32 49; /* #112031 - PANTONE 5395 C (texto principal) */
-    --text-secondary: 41 67 89; /* #294359 - PANTONE 2168 C (texto secundário) */
-    --text-muted: 180 172 156; /* #B4AC9C - PANTONE 7535 C (texto esmaecido) */
-
-    /* Bordas e UI - Tons Profissionais */
-    --border: 210 208 200; /* #D2D0C8 - PANTONE 400 C */
-    --border-light: 245 245 245; /* #f5f5f5 - Borda sutil */
-    --input: 255 255 255; /* #ffffff - Fundo de input */
-    --ring: 41 67 89; /* #294359 - PANTONE 2168 C */
-
-    /* Cores da Sidebar */
-    --sidebar-bg: 17 32 49; /* #112031 - PANTONE 5395 C */
-    --sidebar-text: 210 208 200; /* #D2D0C8 - PANTONE 400 C */
-    --sidebar-hover: 41 67 89; /* #294359 - PANTONE 2168 C */
-    --sidebar-active: 172 148 105; /* #AC9469 - PANTONE 4007 C */
-
-    /* UI Component Colors - NEONPROV1 Sistema Limpo */
-    --card: 255 255 255; /* #ffffff - Fundo de card limpo */
-    --card-foreground: 17 32 49; /* #112031 - PANTONE 5395 C */
-    --popover: 255 255 255; /* #ffffff - Fundo popover */
-    --popover-foreground: 17 32 49; /* #112031 - PANTONE 5395 C */
-    --muted: 180 172 156; /* #B4AC9C - PANTONE 7535 C (fundo suave) */
-    --muted-foreground: 41 67 89; /* #294359 - PANTONE 2168 C (texto muted) */
-
-    /* Sidebar & Navigation Colors - NEONPROV1 Elegante */
-    --sidebar-background: 17 32 49; /* #112031 - PANTONE 5395 C (fundo escuro) */
-    --sidebar-foreground: 210 208 200; /* #D2D0C8 - PANTONE 400 C (texto claro) */
-    --sidebar-primary: 172 148 105; /* #AC9469 - PANTONE 4007 C (destaque dourado) */
-    --sidebar-primary-foreground: 17 32 49; /* #112031 - PANTONE 5395 C */
-    --sidebar-accent: 41 67 89; /* #294359 - PANTONE 2168 C (azul médico) */
-    --sidebar-accent-foreground: 255 255 255; /* #ffffff */
-    --sidebar-border: 180 172 156; /* #B4AC9C - PANTONE 7535 C (borda suave) */
-    --sidebar-ring: 172 148 105; /* #AC9469 - PANTONE 4007 C (foco dourado) */
-
-    /* Chart & Visualization Colors - Paleta Pantone */
-    --chart-1: 41 67 89; /* #294359 - PANTONE 2168 C */
-    --chart-2: 172 148 105; /* #AC9469 - PANTONE 4007 C */
-    --chart-3: 180 172 156; /* #B4AC9C - PANTONE 7535 C */
-    --chart-4: 17 32 49; /* #112031 - PANTONE 5395 C */
-    --chart-5: 210 208 200; /* #D2D0C8 - PANTONE 400 C */
-    --chart-6: 139 69 19; /* #8b4513 - Tom terra complementar */
-
-    /* Healthcare Status Colors - Tons Profissionais */
-    --status-critical: 139 69 19; /* #8b4513 - Crítico em tom terra */
-    --status-urgent: 172 148 105; /* #AC9469 - PANTONE 4007 C urgente */
-    --status-normal: 41 67 89; /* #294359 - PANTONE 2168 C normal */
-    --status-inactive: 180 172 156; /* #B4AC9C - PANTONE 7535 C inativo */
-
-    /* LGPD Compliance Colors - Tons Profissionais */
-    --lgpd-compliant: 41 67 89; /* #294359 - PANTONE 2168 C em conformidade */
-    --lgpd-warning: 172 148 105; /* #AC9469 - PANTONE 4007 C aviso */
-    --lgpd-violation: 139 69 19; /* #8b4513 - Tom terra violação */
-
-    /* Info Colors */
-    --info: 41 67 89; /* #294359 - PANTONE 2168 C */
-    --info-foreground: 255 255 255; /* #ffffff */
-
-    /* Radius */
-    --radius: 0.5rem;
+    --accent: oklch(0.9376 0.0260 321.9388);
+    --accent-foreground: oklch(0.3729 0.0306 259.7328);
+    
+    --background: oklch(0.9232 0.0026 48.7171);
+    --foreground: oklch(0.2795 0.0368 260.0310);
+    
+    --card: oklch(0.9699 0.0013 106.4238);
+    --card-foreground: oklch(0.2795 0.0368 260.0310);
+    
+    --popover: oklch(0.9699 0.0013 106.4238);
+    --popover-foreground: oklch(0.2795 0.0368 260.0310);
+    
+    --muted: oklch(0.9232 0.0026 48.7171);
+    --muted-foreground: oklch(0.5510 0.0234 264.3637);
+    
+    --border: oklch(0.8687 0.0043 56.3660);
+    --input: oklch(0.8687 0.0043 56.3660);
+    --ring: oklch(0.5854 0.2041 277.1173);
+    
+    --destructive: oklch(0.6368 0.2078 25.3313);
+    --destructive-foreground: oklch(1.0000 0 0);
+    
+    /* Chart Colors */
+    --chart-1: oklch(0.5854 0.2041 277.1173);
+    --chart-2: oklch(0.5106 0.2301 276.9656);
+    --chart-3: oklch(0.4568 0.2146 277.0229);
+    --chart-4: oklch(0.3984 0.1773 277.3662);
+    --chart-5: oklch(0.3588 0.1354 278.6973);
+    
+    /* Sidebar Colors */
+    --sidebar: oklch(0.8687 0.0043 56.3660);
+    --sidebar-background: oklch(0.8687 0.0043 56.3660);
+    --sidebar-foreground: oklch(0.2795 0.0368 260.0310);
+    --sidebar-primary: oklch(0.5854 0.2041 277.1173);
+    --sidebar-primary-foreground: oklch(1.0000 0 0);
+    --sidebar-accent: oklch(0.9376 0.0260 321.9388);
+    --sidebar-accent-foreground: oklch(0.3729 0.0306 259.7328);
+    --sidebar-border: oklch(0.8687 0.0043 56.3660);
+    --sidebar-ring: oklch(0.5854 0.2041 277.1173);
+    
+    /* Typography & Styling */
+    --radius: 1.25rem;
+    --font-sans: Inter, sans-serif;
+    --font-serif: Lora, serif;
+    --font-mono: Libre Baskerville, serif;
+    
+    /* Shadows */
+    --shadow-color: hsl(240 4% 60%);
+    --shadow-opacity: 0.18;
+    --shadow-blur: 10px;
+    --shadow-spread: 4px;
+    --shadow-offset-x: 2px;
+    --shadow-offset-y: 2px;
+    --letter-spacing: 0em;
+    --spacing: 0.25rem;
+    --shadow-2xs: 2px 2px 10px 4px hsl(240 4% 60% / 0.09);
+    --shadow-xs: 2px 2px 10px 4px hsl(240 4% 60% / 0.09);
+    --shadow-sm: 2px 2px 10px 4px hsl(240 4% 60% / 0.18), 2px 1px 2px 3px hsl(240 4% 60% / 0.18);
+    --shadow: 2px 2px 10px 4px hsl(240 4% 60% / 0.18), 2px 1px 2px 3px hsl(240 4% 60% / 0.18);
+    --shadow-md: 2px 2px 10px 4px hsl(240 4% 60% / 0.18), 2px 2px 4px 3px hsl(240 4% 60% / 0.18);
+    --shadow-lg: 2px 2px 10px 4px hsl(240 4% 60% / 0.18), 2px 4px 6px 3px hsl(240 4% 60% / 0.18);
+    --shadow-xl: 2px 2px 10px 4px hsl(240 4% 60% / 0.18), 2px 8px 10px 3px hsl(240 4% 60% / 0.18);
+    --shadow-2xl: 2px 2px 10px 4px hsl(240 4% 60% / 0.45);
+    --tracking-normal: 0em;
   }
 
   .dark {
-    /* NEONPROV1 Dark Mode - Paleta Consistente */
-    --background: 17 32 49; /* #112031 - PANTONE 5395 C (fundo escuro) */
-    --foreground: 210 208 200; /* #D2D0C8 - PANTONE 400 C (texto claro) */
-    --primary: 172 148 105; /* #AC9469 - PANTONE 4007 C (dourado mantém) */
-    --primary-foreground: 17 32 49; /* #112031 - PANTONE 5395 C */
+    /* NEONPROV1 Dark Mode */
+    --background: oklch(0.2392 0.0388 252.5089);
+    --foreground: oklch(0.8569 0.0111 95.1836);
     
-    --secondary: 41 67 89; /* #294359 - PANTONE 2168 C (azul escuro) */
-    --secondary-foreground: 210 208 200; /* #D2D0C8 - PANTONE 400 C */
-    --accent: 41 67 89; /* #294359 - PANTONE 2168 C (azul médico) */
-    --accent-foreground: 255 255 255; /* Branco para contraste */
-
-    --card: 41 67 89; /* #294359 - PANTONE 2168 C (cards azuis) */
-    --card-foreground: 210 208 200; /* #D2D0C8 - PANTONE 400 C */
-    --popover: 41 67 89; /* #294359 - PANTONE 2168 C */
-    --popover-foreground: 210 208 200; /* #D2D0C8 - PANTONE 400 C */
-
-    --border: 180 172 156; /* #B4AC9C - PANTONE 7535 C (bordas suaves) */
-    --input: 41 67 89; /* #294359 - PANTONE 2168 C (inputs azuis) */
-    --ring: 172 148 105; /* #AC9469 - PANTONE 4007 C (foco dourado) */
-
-    --destructive: 139 69 19; /* #8b4513 - Tom terra destrutivo */
-    --destructive-foreground: 210 208 200; /* #D2D0C8 - PANTONE 400 C */
-
-    --muted: 180 172 156; /* #B4AC9C - PANTONE 7535 C (fundo muted) */
-    --muted-foreground: 210 208 200; /* #D2D0C8 - PANTONE 400 C */
+    --primary: oklch(0.6776 0.0653 81.7406);
+    --primary-foreground: oklch(0.8569 0.0111 95.1836);
     
-    /* Sidebar dark mode consistente */
-    --sidebar-background: 17 32 49; /* #112031 - PANTONE 5395 C */
-    --sidebar-foreground: 210 208 200; /* #D2D0C8 - PANTONE 400 C */
-    --sidebar-primary: 172 148 105; /* #AC9469 - PANTONE 4007 C */
-    --sidebar-primary-foreground: 17 32 49; /* #112031 - PANTONE 5395 C */
+    --secondary: oklch(0.2392 0.0388 252.5089);
+    --secondary-foreground: oklch(0.8569 0.0111 95.1836);
+    
+    --accent: oklch(0.3896 0.0074 59.4734);
+    --accent-foreground: oklch(0.8717 0.0093 258.3382);
+    
+    --card: oklch(0.2392 0.0388 252.5089);
+    --card-foreground: oklch(0.8569 0.0111 95.1836);
+    
+    --popover: oklch(0.2392 0.0388 252.5089);
+    --popover-foreground: oklch(0.8569 0.0111 95.1836);
+    
+    --muted: oklch(0.6776 0.0653 81.7406);
+    --muted-foreground: oklch(0.8569 0.0111 95.1836);
+    
+    --border: oklch(0.3359 0.0077 59.4197);
+    --input: oklch(0.3359 0.0077 59.4197);
+    --ring: oklch(0.6776 0.0653 81.7406);
+    
+    --destructive: oklch(0.6368 0.2078 25.3313);
+    --destructive-foreground: oklch(0.2244 0.0074 67.4370);
+    
+    /* Chart Colors Dark Mode */
+    --chart-1: oklch(0.6801 0.1583 276.9349);
+    --chart-2: oklch(0.5854 0.2041 277.1173);
+    --chart-3: oklch(0.5106 0.2301 276.9656);
+    --chart-4: oklch(0.4568 0.2146 277.0229);
+    --chart-5: oklch(0.3984 0.1773 277.3662);
+    
+    /* Sidebar Dark Mode */
+    --sidebar: oklch(0.2392 0.0388 252.5089);
+    --sidebar-background: oklch(0.2392 0.0388 252.5089);
+    --sidebar-foreground: oklch(0.9288 0.0126 255.5078);
+    --sidebar-primary: oklch(0.7466 0.0242 84.5921);
+    --sidebar-primary-foreground: oklch(0.3720 0.0497 245.2138);
+    --sidebar-accent: oklch(0.3896 0.0074 59.4734);
+    --sidebar-accent-foreground: oklch(0.8569 0.0111 95.1836);
+    --sidebar-border: oklch(0.6776 0.0653 81.7406);
+    --sidebar-ring: oklch(0.6776 0.0653 81.7406);
+    
+    /* Shadows Dark Mode */
+    --shadow-color: hsl(0 0% 0%);
+    --shadow-opacity: 0.18;
+    --shadow-blur: 10px;
+    --shadow-spread: 4px;
+    --shadow-offset-x: 2px;
+    --shadow-offset-y: 2px;
+    --letter-spacing: 0em;
+    --spacing: 0.25rem;
+    --shadow-2xs: 2px 2px 10px 4px hsl(0 0% 0% / 0.09);
+    --shadow-xs: 2px 2px 10px 4px hsl(0 0% 0% / 0.09);
+    --shadow-sm: 2px 2px 10px 4px hsl(0 0% 0% / 0.18), 2px 1px 2px 3px hsl(0 0% 0% / 0.18);
+    --shadow: 2px 2px 10px 4px hsl(0 0% 0% / 0.18), 2px 1px 2px 3px hsl(0 0% 0% / 0.18);
+    --shadow-md: 2px 2px 10px 4px hsl(0 0% 0% / 0.18), 2px 2px 4px 3px hsl(0 0% 0% / 0.18);
+    --shadow-lg: 2px 2px 10px 4px hsl(0 0% 0% / 0.18), 2px 4px 6px 3px hsl(0 0% 0% / 0.18);
+    --shadow-xl: 2px 2px 10px 4px hsl(0 0% 0% / 0.18), 2px 8px 10px 3px hsl(0 0% 0% / 0.18);
+    --shadow-2xl: 2px 2px 10px 4px hsl(0 0% 0% / 0.45);
   }
 }
 
@@ -139,296 +155,19 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
-  /* Professional Healthcare Typography System */
+  /* Typography System */
   h1, h2, h3, h4, h5, h6 {
     @apply font-serif text-foreground;
     font-feature-settings: "kern" 1, "liga" 1;
   }
 
-  h1 {
-    @apply text-3xl font-bold leading-tight tracking-tight;
-  }
+  h1 { @apply text-3xl font-bold leading-tight tracking-tight; }
+  h2 { @apply text-2xl font-semibold leading-tight tracking-tight; }
+  h3 { @apply text-xl font-semibold leading-snug; }
+  h4 { @apply text-lg font-medium leading-snug; }
+  h5 { @apply text-base font-medium leading-normal; }
+  h6 { @apply text-sm font-medium leading-normal; }
 
-  h2 {
-    @apply text-2xl font-semibold leading-tight tracking-tight;
-  }
-
-  h3 {
-    @apply text-xl font-semibold leading-snug;
-  }
-
-  h4 {
-    @apply text-lg font-medium leading-snug;
-  }
-
-  h5 {
-    @apply text-base font-medium leading-normal;
-  }
-
-  h6 {
-    @apply text-sm font-medium leading-normal;
-  }
-
-  code, pre, kbd, samp {
-    @apply font-mono;
-  }
-
-  /* Professional body text */
-  p {
-    @apply font-sans text-foreground leading-relaxed;
-  }
-
-  /* NeonPro Healthcare - Estilo Paleta Pantone */
-  .healthcare-gradient {
-    background: linear-gradient(135deg, rgb(var(--primary)) 0%, rgb(var(--accent)) 100%);
-  }
-
-  .neonpro-gradient {
-    background: linear-gradient(135deg, #294359 0%, #AC9469 100%);
-  }
-
-  .neonpro-glow {
-    box-shadow: 0 0 20px rgba(172, 148, 105, 0.3), 0 0 40px rgba(172, 148, 105, 0.1);
-  }
-
-  .healthcare-shadow {
-    box-shadow: 0 4px 6px -1px rgba(41, 67, 89, 0.1), 0 2px 4px -1px rgba(41, 67, 89, 0.06);
-  }
-
-  .neonpro-shadow {
-    box-shadow: 0 10px 25px -3px rgba(41, 67, 89, 0.1), 0 4px 6px -2px rgba(41, 67, 89, 0.05);
-  }
-
-  .healthcare-border {
-    border: 1px solid rgb(var(--primary) / 0.2);
-  }
-
-  .neonpro-border {
-    border: 1px solid rgb(var(--primary) / 0.2);
-  }
-
-  /* Improved focus states for accessibility */
-  .healthcare-focus {
-    @apply focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:outline-none;
-  }
-
-  /* Smooth transitions for better UX */
-  .healthcare-transition {
-    @apply transition-all duration-200 ease-in-out;
-  }
-
-  /* Status indicators for healthcare */
-  .status-active {
-    @apply bg-success/10 text-success border-success/20;
-  }
-
-  .status-inactive {
-    @apply bg-muted text-muted-foreground border-border;
-  }
-
-  .status-warning {
-    @apply bg-warning/10 text-warning border-warning/20;
-  }
-
-  .status-danger {
-    @apply bg-destructive/10 text-destructive border-destructive/20;
-  }
-}
-
-/* Typography enhancements for healthcare readability */
-@layer components {
-  .healthcare-heading {
-    @apply text-2xl font-semibold text-foreground leading-tight tracking-tight;
-  }
-
-  .healthcare-subheading {
-    @apply text-lg font-medium text-foreground/90 leading-relaxed;
-  }
-
-  .healthcare-body {
-    @apply text-sm text-foreground/80 leading-relaxed;
-  }
-
-  .healthcare-caption {
-    @apply text-xs text-muted-foreground font-medium uppercase tracking-wide;
-  }
-
-  /* Card components for healthcare data */
-  .healthcare-card {
-    @apply bg-card text-card-foreground border border-border rounded-lg p-6 healthcare-shadow healthcare-transition;
-  }
-
-  .healthcare-card:hover {
-    @apply healthcare-shadow;
-    box-shadow: 0 10px 15px -3px rgb(var(--primary) / 0.1), 0 4px 6px -2px rgb(var(--primary) / 0.05);
-  }
-
-  /* Form components optimized for healthcare */
-  .healthcare-input {
-    @apply w-full px-3 py-2 text-sm bg-input border border-border rounded-md healthcare-focus healthcare-transition;
-  }
-
-  .healthcare-button {
-    @apply inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md healthcare-focus healthcare-transition;
-  }
-
-  .healthcare-button-primary {
-    @apply healthcare-button bg-primary text-primary-foreground hover:bg-primary/90;
-  }
-
-  .healthcare-button-secondary {
-    @apply healthcare-button bg-secondary text-secondary-foreground hover:bg-secondary/80 border border-border;
-  }
-
-  /* NEONPROV1 Enhanced Components */
-  .neonpro-card {
-    @apply bg-card text-card-foreground border border-border rounded-lg p-6 neonpro-shadow healthcare-transition;
-  }
-
-  .neonpro-card:hover {
-    @apply neonpro-glow;
-    transform: translateY(-2px);
-  }
-
-  .neonpro-button-primary {
-    @apply inline-flex items-center justify-center px-6 py-3 text-sm font-semibold text-primary-foreground bg-primary rounded-lg healthcare-focus healthcare-transition;
-  }
-
-  .neonpro-button-primary:hover {
-    @apply neonpro-glow;
-    background: linear-gradient(135deg, rgb(var(--primary)) 0%, rgb(var(--accent)) 100%);
-    transform: translateY(-1px);
-  }
-
-  .neonpro-badge {
-    @apply inline-flex items-center px-3 py-1 text-xs font-medium rounded-full border;
-  }
-
-  .neonpro-badge-success {
-    @apply neonpro-badge bg-primary/10 text-primary border-primary/20;
-  }
-
-  .neonpro-badge-warning {
-    @apply neonpro-badge bg-warning/10 text-warning border-warning/20;
-  }
-
-  .neonpro-badge-danger {
-    @apply neonpro-badge bg-destructive/10 text-destructive border-destructive/20;
-  }
-
-  /* NEONPROV1 Trust Indicators */
-  .compliance-badge {
-    @apply inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg bg-primary/10 text-primary border border-primary/20 neonpro-shadow;
-  }
-
-  .trust-indicator {
-    @apply flex items-center space-x-2 text-sm text-foreground/80;
-  }
-
-  .trust-indicator::before {
-    content: "✓";
-    @apply flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold;
-  }
-}
-
-/* Animations for better UX */
-@layer utilities {
-  .animate-slide-in {
-    animation: slideIn 0.3s ease-out;
-  }
-
-  .animate-fade-in {
-    animation: fadeIn 0.2s ease-out;
-  }
-
-  @keyframes slideIn {
-    from {
-      opacity: 0;
-      transform: translateY(-10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-}
-
-/* NEONPROV1 - Classes Utilitárias Especializadas */
-@layer utilities {
-  /* Sistema de Status Unificado NEONPROV1 */
-  .status-success { @apply bg-success/10 text-success border-success/20; }
-  .status-warning { @apply bg-warning/10 text-warning border-warning/20; }
-  .status-danger { @apply bg-destructive/10 text-destructive border-destructive/20; }
-  .status-info { @apply bg-info/10 text-info border-info/20; }
-  .status-neutral { @apply bg-muted text-muted-foreground border-border; }
-  
-  /* NEONPROV1 Premium Effects */
-  .neonpro-gradient {
-    background: linear-gradient(135deg, rgb(var(--primary)) 0%, rgb(var(--accent)) 100%);
-  }
-  
-  .neonpro-shadow {
-    box-shadow: 0 10px 25px -3px rgba(var(--primary) / 0.1), 0 4px 6px -2px rgba(var(--primary) / 0.05);
-  }
-  
-  .neonpro-hover {
-    @apply transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5;
-  }
-  
-  .neonpro-card {
-    @apply bg-card text-card-foreground border border-border rounded-lg p-6 neonpro-shadow transition-all;
-  }
-  
-  .neonpro-card:hover {
-    @apply neonpro-shadow;
-    transform: translateY(-2px);
-    box-shadow: 0 20px 40px -6px rgba(var(--primary) / 0.15), 0 8px 16px -4px rgba(var(--primary) / 0.1);
-  }
-  
-  /* NEONPROV1 Botões Premium */
-  .neonpro-btn-primary {
-    @apply inline-flex items-center justify-center px-6 py-3 text-sm font-semibold rounded-lg;
-    @apply bg-primary text-primary-foreground hover:bg-primary/90;
-    @apply transition-all duration-200 focus:ring-2 focus:ring-primary focus:ring-offset-2;
-  }
-  
-  .neonpro-btn-primary:hover {
-    background: linear-gradient(135deg, rgb(var(--primary)) 0%, rgb(var(--accent)) 100%);
-    transform: translateY(-1px);
-    box-shadow: 0 10px 20px -4px rgba(var(--primary) / 0.25);
-  }
-  
-  /* NEONPROV1 Text Hierarchy */
-  .neonpro-text-primary { @apply text-foreground font-medium; }
-  .neonpro-text-secondary { @apply text-muted-foreground; }
-  .neonpro-text-muted { @apply text-text-muted; }
-  
-  /* NEONPROV1 Backgrounds */
-  .neonpro-bg-subtle { @apply bg-muted/50; }
-  .neonpro-bg-card { @apply bg-card; }
-  .neonpro-bg-sidebar { @apply bg-sidebar-background; }
-}
-
-/* Print styles for healthcare reports */
-@media print {
-  .print-hidden {
-    @apply hidden;
-  }
-
-  .print-full-width {
-    @apply w-full;
-  }
-
-  .healthcare-card {
-    @apply border border-gray-300 shadow-none;
-  }
+  code, pre, kbd, samp { @apply font-mono; }
+  p { @apply font-sans text-foreground leading-relaxed; }
 }

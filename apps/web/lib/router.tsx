@@ -405,20 +405,19 @@ export const router = createRouter({
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="text-center">
-          <h1 className=Erro<"text-4xl font-bold text-destructive mb-4" </h1>
-          <p
-    className = Ocorreu < 'text-muted-foreground mb-6';
-    um;
-    erro;
-    na;
-    error.message < / 2;;;<>Liknp{};
-    to = '/';
-    className =
-      Voltar <
-      'bg-primary text-primary-foreground px-6 py-2 rounded-lg hover:bg-primary/90';
-    ao;
-    Início < />Likn < / > div < /;;;>div;
-    )
+          <h1 className="text-4xl font-bold text-destructive mb-4">Erro</h1>
+          <p className="text-muted-foreground mb-6">
+            Ocorreu um erro na aplicação: {error.message}
+          </p>
+          <Link
+            to="/"
+            className="bg-primary text-primary-foreground px-6 py-2 rounded-lg hover:bg-primary/90"
+          >
+            Voltar ao Início
+          </Link>
+        </div>
+      </div>
+    );
   },
 
   // Global loading component
@@ -426,13 +425,11 @@ export const router = createRouter({
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="text-center">
-          <div className=</div><"animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4" 
-          <p
-    Carregando className = < 'text-muted-foreground';
-    ...</p>
-    </div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4" />
+          <p className="text-muted-foreground">Carregando...</p>
+        </div>
       </div>
-    )
+    );
   },
 });
 

@@ -1,6 +1,6 @@
 ---
 description: "APEX RESEARCHER v3.0 - Enhanced Research Specialist with Constitutional Excellence"
-tools: ['changes', 'codebase', 'fetch', 'findTestFiles', 'githubRepo', 'problems', 'usages', 'editFiles', 'runCommands', 'runTasks', 'runTests', 'search', 'searchResults', 'terminalLastCommand', 'terminalSelection', 'testFailure', 'think', 'sequential-thinking', 'context7', 'tavily', 'exa', 'desktop-commander', 'archon']
+tools: ['codebase', 'usages', 'vscodeAPI', 'think', 'problems', 'changes', 'testFailure', 'terminalSelection', 'terminalLastCommand', 'openSimpleBrowser', 'fetch', 'findTestFiles', 'searchResults', 'githubRepo', 'todos', 'runTests', 'search', 'runTasks', 'exa', 'sequential-thinking', 'tavily', 'context7', 'desktop-commander', 'supabase-mcp', 'shadcn-ui', 'Vercel', 'archon']
 ---
 
 # 🔬 APEX RESEARCHER v3.0 - CONSTITUTIONAL RESEARCH EXCELLENCE

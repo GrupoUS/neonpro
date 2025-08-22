@@ -6,7 +6,7 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "dev:api": "turbo run dev --filter=api",
-    "dev:web": "turbo run dev --filter=web", 
+    "dev:web": "turbo run dev --filter=web",
     "dev:full": "turbo run dev",
     "start": "turbo run start",
     "lint": "turbo run lint",
@@ -17,7 +17,6 @@
     "ci-check": "npx @biomejs/biome ci .",
     "type-check": "turbo run type-check",
     "clean": "turbo run clean",
-    
     "test": "vitest run",
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",
@@ -55,7 +54,7 @@
     "sonner": "^2.0.7",
     "turbo": "^1.13.4",
     "typescript": "^5.0.0",
-    "ultracite": "^5.2.3",
+    "ultracite": "^5.2.4",
     "vitest": "^3.2.4"
   },
   "packageManager": "pnpm@8.15.6",

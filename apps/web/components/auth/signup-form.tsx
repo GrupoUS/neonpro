@@ -206,7 +206,7 @@ export function SignupForm() {
           value={formData.fullName}
         />
         {errors.fullName && (
-          <p className="text-red-500 text-sm">{errors.fullName}</p>
+          <p className="text-destructive text-sm">{errors.fullName}</p>
         )}
       </div>
 
@@ -220,7 +220,7 @@ export function SignupForm() {
           type="email"
           value={formData.email}
         />
-        {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+        {errors.email && <p className="text-destructive text-sm">{errors.email}</p>}
       </div>
 
       <div className="space-y-2">
@@ -249,7 +249,7 @@ export function SignupForm() {
           </Button>
         </div>
         {errors.password && (
-          <p className="text-red-500 text-sm">{errors.password}</p>
+          <p className="text-destructive text-sm">{errors.password}</p>
         )}
       </div>
 
@@ -281,7 +281,7 @@ export function SignupForm() {
           </Button>
         </div>
         {errors.confirmPassword && (
-          <p className="text-red-500 text-sm">{errors.confirmPassword}</p>
+          <p className="text-destructive text-sm">{errors.confirmPassword}</p>
         )}
       </div>
     </div>
@@ -300,7 +300,7 @@ export function SignupForm() {
           type="text"
           value={formData.cpf}
         />
-        {errors.cpf && <p className="text-red-500 text-sm">{errors.cpf}</p>}
+        {errors.cpf && <p className="text-destructive text-sm">{errors.cpf}</p>}
       </div>
 
       <div className="space-y-2">
@@ -314,7 +314,7 @@ export function SignupForm() {
           type="text"
           value={formData.phone}
         />
-        {errors.phone && <p className="text-red-500 text-sm">{errors.phone}</p>}
+        {errors.phone && <p className="text-destructive text-sm">{errors.phone}</p>}
       </div>
 
       <div className="space-y-2">
@@ -328,7 +328,7 @@ export function SignupForm() {
           value={formData.clinicName}
         />
         {errors.clinicName && (
-          <p className="text-red-500 text-sm">{errors.clinicName}</p>
+          <p className="text-destructive text-sm">{errors.clinicName}</p>
         )}
       </div>
 
@@ -375,7 +375,7 @@ export function SignupForm() {
               13.709/2018.
             </label>
             {errors.lgpdConsent && (
-              <p className="mt-1 text-red-500">{errors.lgpdConsent}</p>
+              <p className="mt-1 text-destructive">{errors.lgpdConsent}</p>
             )}
           </div>
         </div>
@@ -409,7 +409,7 @@ export function SignupForm() {
               .
             </label>
             {errors.terms && (
-              <p className="mt-1 text-red-500">{errors.terms}</p>
+              <p className="mt-1 text-destructive">{errors.terms}</p>
             )}
           </div>
         </div>

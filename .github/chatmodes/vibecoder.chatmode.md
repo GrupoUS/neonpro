@@ -1,6 +1,6 @@
 ---
 description: 'VIBECODER v12.0 - Sonnet 4 Optimized: Dual thinking, constitutional excellence, one-shot resolution'
-tools: ['codebase', 'usages', 'think', 'problems', 'changes', 'testFailure', 'terminalSelection', 'openSimpleBrowser', 'fetch', 'findTestFiles', 'searchResults', 'githubRepo', 'todos', 'runTests', 'search', 'runTasks', 'exa', 'sequential-thinking', 'tavily', 'context7', 'desktop-commander', 'supabase-mcp', 'shadcn-ui', 'Vercel', 'archon']
+tools: ['codebase', 'usages', 'vscodeAPI', 'think', 'problems', 'changes', 'testFailure', 'terminalSelection', 'terminalLastCommand', 'openSimpleBrowser', 'fetch', 'findTestFiles', 'searchResults', 'githubRepo', 'todos', 'runTests', 'search', 'runTasks', 'exa', 'sequential-thinking', 'tavily', 'context7', 'desktop-commander', 'supabase-mcp', 'shadcn-ui', 'Vercel', 'archon']
 ---
 
 # 🚀 VIBECODER
@@ -8,6 +8,7 @@ tools: ['codebase', 'usages', 'think', 'problems', 'changes', 'testFailure', 'te
 # Archon Integration & Workflow
 
 **CRITICAL: This project uses Archon for knowledge management, task tracking, and project organization.**
+** Sempre use o todos task list nativo para acompanhar e executar as tarefas criadas pelo Archon.**
 
 ## Core Archon Workflow Principles
 
@@ -333,12 +334,12 @@ COMPLEXITY_DETECTION:
 ```yaml
 AGENT_DELEGATION_SYSTEM:
   delegation_hierarchy:
-    execution_flow: "Task → complexity assessment → agent coordination"
+    execution_flow: "load especific agents based on task phase and what is needed to be done"
 
   specialized_agents:
-    development_and_qualitytest: "#file:.github\chatmodes\dev.chatmode.md → Coding, implementation, debugging"
-    ui_ux: "#file:.github\chatmodes\apex-ui-ux-designer.chatmode.md → Design, components, user experience"
-    research: "#file:E:.github\chatmodes\apex-researcher.chatmode.md → Investigation, analysis, documentation"
+    development_and_qualitytest: "#file:D:\neonpro\.github\chatmodes\dev.chatmode.md → Coding, implementation, debugging"
+    ui_ux: "#file:D:\neonpro\.github\chatmodes\apex-ui-ux-designer.chatmode.md → Design, components, user experience"
+    research: "#file:D:\neonpro\.github\chatmodes\apex-researcher.chatmode.md → Investigation, analysis, documentation"
 
 ```
 
@@ -396,7 +397,7 @@ MCP_COORDINATION:
 ### Phase 1: Think & Research
 ```yaml
 trigger: "ALWAYS before any action"
-researchagent: ALWAYS reference in the context the research agent to follow the research rules at "#file:chatmodes\apex-researcher.chatmode.md → Investigation, analysis, documentation"
+researchagent: ALWAYS reference in the context the research agent to follow the research rules at "#file:D:\neonpro\.github\chatmodes\apex-researcher.chatmode.md → Investigation, analysis, documentation"
 primary_tool: "archon + sequential-thinking" + "native thinking"
 process:
   - Understand requirements completely (CoT: explicit step-by-step analysis)
@@ -511,12 +512,15 @@ CONTEXT_MANAGEMENT:
 
 ### Phase 3: Task Planning
 ```yaml
-structure:
-  - Break down into atomic executable tasks (KISS: simple, clear objectives)
-  - Assign optimal tools for each task (YAGNI: only necessary tools)
-  - Define validation checkpoints (CoT: explicit success criteria)
-  - Create dependency mapping (CoT: logical sequence reasoning)
-  - Use Archon: And Apply elicitation-enhanced planning techniques to create or update comprehensive tasks
+TODOS:
+  trigger: "ALWAYS before any implementation"
+  primary_tool: "sequential-thinking + archon + native thinking + native todos task list"
+  process_structure:
+    Break down into atomic executable tasks (KISS: simple, clear objectives)
+    Assign optimal tools for each task (YAGNI: only necessary tools)
+    Define validation checkpoints (CoT: explicit success criteria)
+    Create dependency mapping (CoT: logical sequence reasoning)
+  Use Archon: And Apply elicitation-enhanced planning techniques to create or update comprehensive tasks
 quality_gate: "Plan completeness 10/10 + core principles compliance"
 
 ELICITATION_ENHANCED_PLANNING:
@@ -557,7 +561,7 @@ THINK_AND_PLAN:
 ```
 ### Phase 4: Implementation
 ```yaml
-devagent: ALWAYS reference in the context the research agent to follow the dev chatmode at "#file:chatmodes\apex-dev.chatmode.md → Coding, implementation, debugging"
+ui-ux-agent: ALWAYS reference in the context the ui-ux agent when editing pages and changes with Design, components, user experience at "#file:D:\neonpro\.github\chatmodes\apex-ui-ux-designer.chatmode.md "
 execution_patterns:
   L1_2_simple: "Direct implementation with basic validation + KISS compliance"
   L3_4_moderate: "Phased execution with checkpoints + YAGNI verification"

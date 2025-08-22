@@ -117,12 +117,16 @@ const config: Config = {
         'gradient-secondary': 'var(--gradient-secondary)',
         'gradient-accent': 'var(--gradient-accent)',
         'gradient-card': 'var(--gradient-card)',
+        'neonpro-gradient': 'linear-gradient(135deg, theme(colors.background), theme(colors.primary.DEFAULT))',
+        'healthcare-gradient': 'linear-gradient(135deg, theme(colors.primary.DEFAULT), theme(colors.accent.DEFAULT))',
       },
       boxShadow: {
         'healthcare-sm': 'var(--shadow-sm)',
         'healthcare-md': 'var(--shadow-md)',
         'healthcare-lg': 'var(--shadow-lg)',
         'healthcare-xl': 'var(--shadow-xl)',
+        'neonpro-glow': '0 0 20px rgba(172, 148, 105, 0.3), 0 0 40px rgba(172, 148, 105, 0.1)',
+        'neonpro-card': '0 10px 25px -3px rgba(41, 67, 89, 0.1), 0 4px 6px -2px rgba(41, 67, 89, 0.05)',
       },
       keyframes: {
         'accordion-down': {

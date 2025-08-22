@@ -100,8 +100,8 @@ importers:
         specifier: ^5.0.0
         version: 5.9.2
       ultracite:
-        specifier: ^5.2.3
-        version: 5.2.3(@types/node@22.17.2)(@vitest/ui@3.2.4)(happy-dom@18.0.1)(jsdom@26.1.0)(msw@2.10.5)(typescript@5.9.2)
+        specifier: ^5.2.4
+        version: 5.2.4(@types/node@22.17.2)(@vitest/ui@3.2.4)(happy-dom@18.0.1)(jsdom@26.1.0)(msw@2.10.5)(typescript@5.9.2)
       vitest:
         specifier: ^3.2.4
         version: 3.2.4(@types/node@22.17.2)(@vitest/ui@3.2.4)(happy-dom@18.0.1)(jsdom@26.1.0)(msw@2.10.5)
@@ -8965,7 +8965,7 @@ packages:
       sirv: 3.0.1
       tinyglobby: 0.2.14
       tinyrainbow: 2.0.0
-      vitest: 3.2.4(@types/node@22.17.1)(@vitest/ui@3.2.4)(happy-dom@18.0.1)(jsdom@26.1.0)(msw@2.10.5)
+      vitest: 3.2.4(@types/node@22.17.2)(@vitest/ui@3.2.4)(happy-dom@18.0.1)(jsdom@26.1.0)(msw@2.10.5)
     dev: true
 
   /@vitest/utils@2.1.9:
@@ -17292,6 +17292,42 @@ packages:
 
   /ultracite@5.2.3(@types/node@22.17.2)(@vitest/ui@3.2.4)(happy-dom@18.0.1)(jsdom@26.1.0)(msw@2.10.5)(typescript@5.9.2):
     resolution: {integrity: sha512-sX0SQH1cTMGvCJobeszjhq9AwywTb3Uup1BiV/eEu6pQqAxqGEX2HMnAmS6Niw3h5xyB52elfRvSdUGyAYiP8Q==}
+    hasBin: true
+    dependencies:
+      '@clack/prompts': 0.11.0
+      deepmerge: 4.3.1
+      jsonc-parser: 3.3.1
+      nypm: 0.6.1
+      trpc-cli: 0.10.2(typescript@5.9.2)
+      vitest: 3.2.4(@types/node@22.17.2)(@vitest/ui@3.2.4)(happy-dom@18.0.1)(jsdom@26.1.0)(msw@2.10.5)
+      zod: 4.0.17
+    transitivePeerDependencies:
+      - '@edge-runtime/vm'
+      - '@inquirer/prompts'
+      - '@types/debug'
+      - '@types/node'
+      - '@vitest/browser'
+      - '@vitest/ui'
+      - happy-dom
+      - jiti
+      - jsdom
+      - less
+      - lightningcss
+      - msw
+      - omelette
+      - sass
+      - sass-embedded
+      - stylus
+      - sugarss
+      - supports-color
+      - terser
+      - tsx
+      - typescript
+      - yaml
+    dev: true
+
+  /ultracite@5.2.4(@types/node@22.17.2)(@vitest/ui@3.2.4)(happy-dom@18.0.1)(jsdom@26.1.0)(msw@2.10.5)(typescript@5.9.2):
+    resolution: {integrity: sha512-Gb65Dmf/LOwQZTg0W65WeJCLcBSsX1uFVW6bWmxpJjSrSahzcFMzbv6OxpFKbbgYRJCnwIHuCZ6l/zaR4RiGDw==}
     hasBin: true
     dependencies:
       '@clack/prompts': 0.11.0

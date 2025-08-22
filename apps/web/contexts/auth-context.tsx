@@ -236,9 +236,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
               popup.close();
               window.removeEventListener('message', messageListener);
               clearInterval(checkClosed);
-              // Refresh the session to get the new user
-              supabase.auth.getSession().then(() => {
-                resolve({ error: null });
+              
+              // Get the fresh session and update our state
+              supabase.auth.getSession().then(({ data: sessionData, error: sessionError }) => {
+                if (sessionError) {
+                  reject(sessionError);
+                  return;
+                }
+                
+                if (sessionData?.session) {
+                  // Update the local state immediately
+                  setSession(sessionData.session);
+                  setUser(sessionData.session.user);
+                  
+                  // Redirect to dashboard immediately
+                  window.location.href = '/dashboard';
+                }
+                
+                resolve({ data: sessionData, error: null });
               });
             } else if (event.data.type === 'OAUTH_ERROR') {
               popup.close();
@@ -267,7 +282,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     } finally {
       setLoading(false);
     }
-  };
+  };;
 
   const signOut = async () => {
     setLoading(true);

@@ -1,6 +1,3 @@
-// Placeholder file
-export const
-
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from '../types/supabase';
 
@@ -14,4 +11,3 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
     detectSessionInUrl: true,
   },
 });
-export default placeholder;

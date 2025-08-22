@@ -27,7 +27,7 @@ export default function PatientsPage() {
   if (error) {
     return (
       <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">
-        <div className="rounded-lg border p-4 text-red-500">
+        <div className="rounded-lg border p-4 text-destructive">
           Erro ao carregar pacientes: {error.message}
         </div>
       </div>
@@ -49,7 +49,7 @@ export default function PatientsPage() {
       {/* Search Bar */}
       <div className="flex items-center space-x-2">
         <div className="relative max-w-sm flex-1">
-          <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 transform text-gray-400" />
+          <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 transform text-muted-foreground" />
           <Input
             className="pl-9"
             onChange={(e) => handleSearch(e.target.value)}
@@ -89,8 +89,8 @@ export default function PatientsPage() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
-                      <span className="font-semibold text-blue-600 text-lg">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                      <span className="font-semibold text-primary text-lg">
                         {patient.name.charAt(0).toUpperCase()}
                       </span>
                     </div>
@@ -141,13 +141,13 @@ export default function PatientsPage() {
           <Card>
             <CardContent className="flex items-center justify-center py-12">
               <div className="text-center">
-                <Users className="mx-auto h-12 w-12 text-gray-400" />
-                <h3 className="mt-2 font-semibold text-gray-900 text-sm">
+                <Users className="mx-auto h-12 w-12 text-muted" />
+                <h3 className="mt-2 font-semibold text-foreground text-sm">
                   {searchQuery
                     ? 'Nenhum paciente encontrado'
                     : 'Nenhum paciente cadastrado'}
                 </h3>
-                <p className="mt-1 text-gray-500 text-sm">
+                <p className="mt-1 text-muted-foreground text-sm">
                   {searchQuery
                     ? 'Tente buscar com outros termos.'
                     : 'Comece adicionando seu primeiro paciente.'}

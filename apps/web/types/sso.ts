@@ -150,10 +150,10 @@ export type SSOMetrics = {
   activeUsers: number;
   averageSessionDuration: number;
   lastLogin: Date;
-  period: {;
-  start: Date;
-  end: Date;
-};
+  period: {
+    start: Date;
+    end: Date;
+  };
 }
 
 export type SSOProviderStatus = {
@@ -165,34 +165,35 @@ export type SSOProviderStatus = {
   uptime: number;
 };
 
-// Predefined SSO providersexport const SSO_PROVIDERS = {
-GOOGLE: 'google', MICROSOFT;
-: "microsoft",
+// Predefined SSO providers
+export const SSO_PROVIDERS = {
+  GOOGLE: 'google',
+  MICROSOFT: "microsoft",
   OKTA: "okta",
-    AUTH0: "auth0",
+  AUTH0: "auth0",
   AZURE_AD: "azure_ad",
-    SAML_GENERIC: "saml_generic",
+  SAML_GENERIC: "saml_generic",
   LDAP: "ldap"
-} as
-const;
+} as const;
 
 export type SSOProviderType =
   (typeof SSO_PROVIDERS)[keyof typeof SSO_PROVIDERS];
 
-// SAML specific typesexport interface SAMLAssertion {
-issuer: string;
-subject: string;
-audience: string;
-sessionIndex: string;
-attributes: Record<string, string | string[]>;
-{
-  notBefore: Date;
-  notOnOrAfter: Date;
-}
-{
-  algorithm: string;
-  value: string;
-}
+// SAML specific types
+export interface SAMLAssertion {
+  issuer: string;
+  subject: string;
+  audience: string;
+  sessionIndex: string;
+  attributes: Record<string, string | string[]>;
+  conditions: {
+    notBefore: Date;
+    notOnOrAfter: Date;
+  };
+  signature: {
+    algorithm: string;
+    value: string;
+  };
 }
 
 export type SAMLRequest = {
@@ -201,10 +202,10 @@ export type SAMLRequest = {
   destination: string;
   assertionConsumerServiceURL: string;
   protocolBinding: string;
-  nameIdPolicy: {;
-  format: string;
-  allowCreate: boolean;
-};
+  nameIdPolicy: {
+    format: string;
+    allowCreate: boolean;
+  };
 }
 
 export type SAMLResponse = {
@@ -212,9 +213,9 @@ export type SAMLResponse = {
   inResponseTo: string;
   issuer: string;
   destination: string;
-  status: {;
-  code: string;
-  message: string;
-};
-assertion: SAMLAssertion;
+  status: {
+    code: string;
+    message: string;
+  };
+  assertion: SAMLAssertion;
 }
