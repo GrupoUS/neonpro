@@ -74,7 +74,7 @@ export const generateTestPatient = () => ({
 export function renderWithHealthcareContext(
   ui: ReactElement,
   options: HealthcareRenderOptions = {}
-) {
+): ReturnType<typeof render> & { user: ReturnType<typeof userEvent.setup> } {
   const {
     user = generateTestUser('doctor'),
     tenantId = 'test-tenant',

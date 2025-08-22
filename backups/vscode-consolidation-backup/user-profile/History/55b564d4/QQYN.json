@@ -1,0 +1,233 @@
+{
+  // ===== BASIC VS CODE SETTINGS =====
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 1000,
+  "workbench.colorTheme": "Monokai",
+  "workbench.activityBar.location": "top",
+  "workbench.editor.restoreViewState": true,
+  "workbench.editor.wrapTabs": true,
+  "workbench.settings.enableNaturalLanguageSearch": true,
+  "workbench.settings.settingsSearchTocBehavior": "hide",
+  "workbench.experimental.cloudChanges.autoStore": "onShutdown",
+  "workbench.experimental.cloudChanges.partialMatches.enabled": true,
+  "workbench.experimental.share.enabled": true,
+  
+  // ===== ENHANCED EDITOR SETTINGS =====
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": false,
+  "editor.formatOnType": false,
+  "editor.fontFamily": "FiraCode Nerd Font",
+  "editor.fontSize": 16,
+  "editor.wordWrap": "on",
+  "editor.inlineSuggest.enabled": true,
+  "editor.inlineSuggest.suppressSuggestions": false,
+  "editor.pasteAs.showPasteSelector": "afterPaste",
+  "editor.inlineSuggest.experimental.triggerCommandOnProviderChange": true,
+  "editor.suggest.preview": true,
+  "editor.quickSuggestions": {
+    "other": true,
+    "comments": false,
+    "strings": false
+  },
+  "editor.suggestSelection": "first",
+  "editor.tabCompletion": "on",
+  "editor.wordBasedSuggestions": "matchingDocuments",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.biome": "explicit",
+    "source.organizeImports.biome": "explicit"
+  },
+  "editor.experimental.asyncTokenizationLogging": true,
+  "editor.experimental.asyncTokenizationVerification": true,
+  "editor.experimentalGpuAcceleration": "on",
+  
+  // ===== DIFF EDITOR SETTINGS =====
+  "diffEditor.experimental.showMoves": true,
+  "diffEditor.experimental.useTrueInlineView": true,
+  
+  // ===== GIT SETTINGS =====
+  "git.enableSmartCommit": true,
+  "git.autofetch": true,
+  "git.confirmSync": false,
+  
+  // ===== EXPLORER SETTINGS =====
+  "explorer.confirmDelete": false,
+  
+  // ===== TERMINAL SETTINGS =====
+  "terminal.integrated.enableMultiLinePasteWarning": "never",
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  
+  // ===== TYPESCRIPT/JAVASCRIPT SETTINGS =====
+  "typescript.preferences.includePackageJsonAutoImports": "on",
+  "typescript.preferences.quoteStyle": "single",
+  "typescript.suggest.autoImports": true,
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "javascript.preferences.quoteStyle": "single",
+  "javascript.suggest.autoImports": true,
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  
+  // ===== ENHANCED BIOME FORMATTER SETTINGS =====
+  "editor.defaultFormatter": "biomejs.biome",
+  "biome.enabled": true,
+  "ultracite.enabled": true,
+  // "biome.lspBin": "./node_modules/@biomejs/biome/bin/biome", // Removed - let extension auto-detect
+  "biome.rename": true,
+  "biome.suggestInstallingGlobally": false,
+  "[javascript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[css]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[graphql]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  
+  // ===== PERFORMANCE OPTIMIZATIONS =====
+  "emmet.showExpandedAbbreviation": "never",
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/.git/**": true,
+    "**/.turbo/**": true,
+    "**/.next/**": true,
+    "**/dist/**": true,
+    "**/build/**": true,
+    "**/coverage/**": true,
+    "**/playwright-report/**": true,
+    "**/test-results/**": true,
+    "**/logs/**": true,
+    "**/temp-*": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/.next": true,
+    "**/.turbo": true,
+    "**/coverage": true,
+    "**/playwright-report": true,
+    "**/test-results": true,
+    "**/logs": true,
+    "**/temp-*": true,
+    "**/.git": true,
+    "**/pnpm-lock.yaml": true,
+    "**/package-lock.json": true
+  },
+  
+  // ===== TESTING SETTINGS =====
+  "testing.automaticallyOpenPeekView": "never",
+  "testing.followRunningTest": false,
+  "testing.alwaysRevealTestOnStateChange": false,
+  "testing.automaticallyOpenTestResults": "neverOpen",
+  "testing.defaultGutterClickAction": "run",
+  "playwright.showTrace": false,
+  "playwright.reuseBrowser": false,
+  
+  // ===== GITHUB COPILOT CORE SETTINGS =====
+  "github.copilot.enable": {
+    "*": true,
+    "chat": true,
+    "codesearch": true,
+    "yaml": true,
+    "markdown": true,
+    "json": true,
+    "jsonc": true,
+    "typescript": true,
+    "javascript": true,
+    "python": true,
+    "scminput": true
+  },
+  
+  // ===== GITHUB COPILOT CHAT SETTINGS =====
+  "github.copilot.chat.agent.thinkingTool": true,
+  "github.copilot.chat.codesearch.enabled": true,
+  "github.copilot.chat.editor.temporalContext.enabled": true,
+  "github.copilot.chat.edits.temporalContext.enabled": true,
+  "github.copilot.chat.enableRetryAfterFilteredResponse": true,
+  "github.copilot.chat.languageContext.fix.typescript.enabled": true,
+  "github.copilot.chat.languageContext.inline.typescript.enabled": true,
+  "github.copilot.chat.languageContext.typescript.enabled": true,
+  "github.copilot.chat.notebook.followCellExecution.enabled": true,
+  "github.copilot.chat.useProjectContext": true,
+  "github.copilot.chat.useWorkspaceContext": true,
+  "github.copilot.chat.agent.currentEditorContext.enabled": true,
+  "github.copilot.chat.agent.runTasks": true,
+  "github.copilot.chat.agent.autoFix": true,
+  "chat.tools.autoApprove": true,
+  
+  // ===== GITHUB COPILOT INSTRUCTION FILES =====
+  "github.copilot.chat.codeGeneration.useInstructionFiles": true,
+  "github.copilot.chat.codeGeneration.useModelContextProtocol": true,
+  "github.copilot.chat.experimental.codeGeneration.useModelContextProtocol": true,
+  "github.copilot.chat.codeGeneration.useChatModes": true,
+  "github.copilot.chat.experimental.codeGeneration.useChatModes": true,
+  "github.copilot.chat.experimental.codeGeneration.useInstructionFiles": true,
+  
+  // ===== GITHUB COPILOT ADVANCED SETTINGS =====
+  "github.copilot.advanced": {
+    "secret_key": "default",
+    "length": 1000,
+    "temperature": 0.3,
+    "top_p": 0.95,
+    "stops": {
+      "*": [],
+      "python": [
+        "\nclass",
+        "\ndef",
+        "\nif __name__ ==",
+        "\n#"
+      ]
+    },
+    "indentationMode": {
+      "*": "spaces",
+      "makefile": "tabs",
+      "go": "tabs"
+    },
+    "chat.experimental": true,
+    "chat.experimental.codeGeneration.useModelContextProtocol": true,
+    "chat.experimental.codeGeneration.useInstructionFiles": true,
+    "chat.experimental.enableRetryAfterFilteredResponse": true,
+    "chat.experimental.newWorkspace.useContext7": true,
+    "context.includeWorkspace": true
+  },
+  
+  // ===== CHAT & MCP SETTINGS =====
+  "chat.agent.enabled": true,
+  "chat.agent.maxRequests": 500,
+  "chat.agentSessionsViewLocation": "view",
+  "chat.extensionTools.enabled": true,
+  "chat.mcp.discovery.enabled": true,
+  "chat.mcp.autostart": "newAndOutdated",
+  "chat.mcp.restartOnFailure": true,
+  "chat.mcp.keepAlive": true,
+  "chat.implicitContext.enabled": {
+    "*": "always"
+  },
+  "chat.todoListTool.enabled": true,
+  "extensions.autoUpdate": true,
+  "extensions.autoCheckUpdates": true,
+  "coderabbit.agentType": "Claude Code",
+  "editor.aiStats.enabled": true,
+  "window.newWindowProfile": "Default",
+  "chat.modeFilesLocations": {
+    ".github\\chatmodes": true,
+    "D:\\neonpro\\.github\\chatmodes": true
+  },
+  "security.workspace.trust.untrustedFiles": "open",
+  "github.copilot.nextEditSuggestions.enabled": true,
+  "workbench.startupEditor": "none"
+}

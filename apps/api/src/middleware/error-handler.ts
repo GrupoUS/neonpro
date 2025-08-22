@@ -433,5 +433,4 @@ export const createError = {
     ),
 };
 
-// Export types and utilities
-export { NeonProError, ErrorType };
+// Types and utilities are already exported when defined above

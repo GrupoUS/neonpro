@@ -1,0 +1,56 @@
+{
+  // ===== PROJECT-SPECIFIC SETTINGS =====
+  // NeonPro Healthcare Platform Configuration
+  // These settings are specific to this monorepo and healthcare compliance requirements
+  
+  // 🏥 HEALTHCARE PROJECT CONTEXT
+  "typescript.tsdk": "node_modules/typescript/lib",
+  
+  // 🎯 PROJECT-SPECIFIC PERFORMANCE
+  // These exclusions are specific to NeonPro monorepo structure
+  "files.exclude": {
+    "**/archon/original_archon/**": true,
+    "**/serena/**": true,
+    "**/logs/**": true,
+    "**/temp-*": true
+  },
+  
+  // 🔒 HEALTHCARE COMPLIANCE
+  // Project-specific paths for compliance validation
+  "eslint.workingDirectories": [
+    "apps/web",
+    "apps/api", 
+    "packages/compliance",
+    "packages/auth"
+  ],
+  
+  // 🏗️ MONOREPO SPECIFIC
+  "typescript.preferences.includePackageJsonAutoImports": "on",
+  "typescript.workspaceSymbols.scope": "currentProject",
+  
+  // 🧪 TESTING CONFIGURATION
+  // Specific to NeonPro testing structure
+  "vitest.include": [
+    "**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"
+  ],
+  "vitest.exclude": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/cypress/**",
+    "**/e2e/**"
+  ],
+  
+  // 🏥 HEALTHCARE WORKSPACE SETTINGS
+  "workbench.colorCustomizations": {
+    "statusBar.background": "#16a085",
+    "statusBar.foreground": "#ffffff",
+    "statusBarItem.hoverBackground": "#1abc9c"
+  },
+  
+  // 📝 PROJECT-SPECIFIC EDITOR
+  "editor.rulers": [80, 120],
+  
+  // 🔍 PROJECT SEARCH SETTINGS
+  "search.useGlobalIgnoreFiles": true,
+  "search.useParentIgnoreFiles": true
+}

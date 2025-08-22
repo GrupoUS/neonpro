@@ -10,7 +10,8 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
+    "noEmit": false,
+    "composite": true,
     "downlevelIteration": true,
     "baseUrl": ".",
     "paths": {
@@ -22,6 +23,11 @@
       "@neonpro/types/*": ["../types/src/*"]
     }
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "coverage"]
+  "include": ["src/**/*", "../types/src/**/*"],
+  "exclude": ["node_modules", "dist", "coverage"],
+  "references": [
+    {
+      "path": "../types"
+    }
+  ]
 }

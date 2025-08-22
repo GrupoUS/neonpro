@@ -8,21 +8,22 @@
 
 import { zValidator } from '@hono/zod-validator';
 import {
-  ChangePasswordSchema,
-  ForgotPasswordSchema,
-  LoginSchema,
-  RefreshTokenSchema,
-  RegisterSchema,
-  ResetPasswordSchema,
+  ChangePasswordRequestSchema,
+  ForgotPasswordRequestSchema,
+  LoginRequestSchema,
+  RefreshTokenRequestSchema,
+  RegisterRequestSchema,
+  ResetPasswordRequestSchema,
 } from '@neonpro/shared/schemas';
-import type { ApiResponse, AuthToken, AuthUser } from '@neonpro/shared/types';
+import type { ApiResponse } from '@neonpro/shared/types';
+import type { AuthToken, AuthUser } from '@neonpro/shared/schemas';
 import { Hono } from 'hono';
 
 // Create auth router
 export const authRoutes = new Hono()
 
   // 🚪 Login endpoint
-  .post('/login', zValidator('json', LoginSchema), async (c) => {
+  .post('/login', zValidator('json', LoginRequestSchema), async (c) => {
     const { email, password, deviceInfo, mfaCode } = c.req.valid('json');
 
     try {
@@ -78,7 +79,7 @@ export const authRoutes = new Hono()
   })
 
   // 📝 Register endpoint
-  .post('/register', zValidator('json', RegisterSchema), async (c) => {
+  .post('/register', zValidator('json', RegisterRequestSchema), async (c) => {
     const userData = c.req.valid('json');
 
     try {
@@ -125,7 +126,7 @@ export const authRoutes = new Hono()
   })
 
   // 🔄 Refresh token endpoint
-  .post('/refresh', zValidator('json', RefreshTokenSchema), async (c) => {
+  .post('/refresh', zValidator('json', RefreshTokenRequestSchema), async (c) => {
     const { refreshToken } = c.req.valid('json');
 
     try {
@@ -235,7 +236,7 @@ export const authRoutes = new Hono()
   // 🔑 Forgot password endpoint
   .post(
     '/forgot-password',
-    zValidator('json', ForgotPasswordSchema),
+    zValidator('json', ForgotPasswordRequestSchema),
     async (c) => {
       const { email } = c.req.valid('json');
 
@@ -266,7 +267,7 @@ export const authRoutes = new Hono()
   // 🔐 Reset password endpoint
   .post(
     '/reset-password',
-    zValidator('json', ResetPasswordSchema),
+    zValidator('json', ResetPasswordRequestSchema),
     async (c) => {
       const { token, password } = c.req.valid('json');
 
@@ -298,7 +299,7 @@ export const authRoutes = new Hono()
   // 🔒 Change password endpoint (requires auth)
   .post(
     '/change-password',
-    zValidator('json', ChangePasswordSchema),
+    zValidator('json', ChangePasswordRequestSchema),
     async (c) => {
       const { currentPassword, newPassword } = c.req.valid('json');
 

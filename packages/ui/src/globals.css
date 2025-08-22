@@ -6,24 +6,24 @@
 @layer base {
   :root {
     /* NEONPROV1 Enhanced Color System - Healthcare Professional */
-    --background: 0 0% 100%;
-    --foreground: 224 71.4% 4.1%;
-    --card: 0 0% 100%;
-    --card-foreground: 224 71.4% 4.1%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 224 71.4% 4.1%;
+    --background: 203 36% 25%;
+    --foreground: 210 20% 98%;
+    --card: 45 12% 66%;
+    --card-foreground: 203 48% 13%;
+    --popover: 45 12% 66%;
+    --popover-foreground: 203 48% 13%;
     
-    /* Healthcare Primary - Professional Medical Blue */
-    --primary: 221.2 83.2% 53.3%;
+    /* NEONPROV1 Primary - Pantone Gold */
+    --primary: 42 25% 54%;
     --primary-foreground: 210 20% 98%;
     
-    /* Healthcare Secondary - Calming Healthcare Teal */
-    --secondary: 168 76% 42%;
+    /* NEONPROV1 Secondary - Pantone Deep Blue */
+    --secondary: 203 48% 13%;
     --secondary-foreground: 210 20% 98%;
     
-    /* Healthcare Accent - Clean Medical Gray */
-    --accent: 210 40% 98%;
-    --accent-foreground: 222.2 84% 4.9%;
+    /* NEONPROV1 Accent - Dark Brown */
+    --accent: 30 4% 27%;
+    --accent-foreground: 210 20% 98%;
     
     /* Muted - Subtle Professional Background */
     --muted: 210 40% 98%;
@@ -45,10 +45,10 @@
     --info: 199 89% 48%;
     --info-foreground: 210 20% 98%;
     
-    /* Border and Input - Clean Professional */
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
+    /* Border and Input - NEONPROV1 Professional */
+    --border: 45 12% 56%;
+    --input: 45 12% 56%;
+    --ring: 42 25% 54%;
     
     /* Healthcare Status Colors - Enhanced Accessibility */
     --status-critical: 0 72% 51%;
@@ -62,22 +62,22 @@
     --lgpd-violation: 0 72% 51%;
     
     /* Chart Colors for Healthcare Analytics - NEONPROV1 Palette */
-    --chart-1: 221.2 83.2% 53.3%;
-    --chart-2: 168 76% 42%;
-    --chart-3: 38 92% 50%;
-    --chart-4: 0 72% 51%;
-    --chart-5: 142 76% 36%;
-    --chart-6: 262.1 83.3% 57.8%;
+    --chart-1: 42 25% 54%;
+    --chart-2: 203 48% 13%;
+    --chart-3: 30 4% 27%;
+    --chart-4: 45 12% 66%;
+    --chart-5: 203 36% 25%;
+    --chart-6: 42 35% 64%;
     
     /* Accessibility Focus - Enhanced */
-    --focus-ring: 221.2 83.2% 53.3%;
-    --focus-ring-offset: 0 0% 100%;
+    --focus-ring: 42 25% 54%;
+    --focus-ring-offset: 203 36% 25%;
     
-    /* Healthcare Gradients - NEONPROV1 Professional */
-    --gradient-primary: linear-gradient(135deg, hsl(221.2 83.2% 53.3%) 0%, hsl(168 76% 42%) 100%);
-    --gradient-secondary: linear-gradient(135deg, hsl(168 76% 42%) 0%, hsl(221.2 83.2% 53.3%) 100%);
-    --gradient-accent: linear-gradient(135deg, hsl(210 40% 98%) 0%, hsl(214.3 31.8% 91.4%) 100%);
-    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(210 40% 98%) 100%);
+    /* NEONPROV1 Gradients - Professional */
+    --gradient-primary: linear-gradient(135deg, hsl(42 25% 54%) 0%, hsl(203 48% 13%) 100%);
+    --gradient-secondary: linear-gradient(135deg, hsl(203 48% 13%) 0%, hsl(42 25% 54%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(30 4% 27%) 0%, hsl(45 12% 66%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(45 12% 66%) 0%, hsl(203 36% 25%) 100%);
     
     /* Shadow System - Professional Healthcare */
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
@@ -101,23 +101,23 @@
 
   .dark {
     /* NEONPROV1 Dark Mode - Professional Healthcare Dark */
-    --background: 224 71.4% 4.1%;
+    --background: 203 48% 13%;
     --foreground: 210 20% 98%;
-    --card: 224 71.4% 4.1%;
+    --card: 203 36% 18%;
     --card-foreground: 210 20% 98%;
-    --popover: 224 71.4% 4.1%;
+    --popover: 203 36% 18%;
     --popover-foreground: 210 20% 98%;
     
-    /* Healthcare Primary - Professional Medical Blue (Dark) */
-    --primary: 221.2 83.2% 65%;
-    --primary-foreground: 224 71.4% 4.1%;
+    /* NEONPROV1 Primary - Pantone Gold (Dark) */
+    --primary: 42 25% 64%;
+    --primary-foreground: 203 48% 13%;
     
-    /* Healthcare Secondary - Calming Healthcare Teal (Dark) */
-    --secondary: 168 76% 55%;
-    --secondary-foreground: 224 71.4% 4.1%;
+    /* NEONPROV1 Secondary - Pantone Deep Blue (Dark) */
+    --secondary: 203 48% 23%;
+    --secondary-foreground: 210 20% 98%;
     
-    /* Healthcare Accent - Clean Medical Gray (Dark) */
-    --accent: 215 27.9% 16.9%;
+    /* NEONPROV1 Accent - Dark Brown (Dark) */
+    --accent: 30 4% 37%;
     --accent-foreground: 210 20% 98%;
     
     /* Muted - Subtle Professional Background (Dark) */
@@ -135,9 +135,9 @@
     --info-foreground: 210 20% 98%;
     
     /* Border and Input - Professional Dark */
-    --border: 215 27.9% 16.9%;
-    --input: 215 27.9% 16.9%;
-    --ring: 221.2 83.2% 65%;
+    --border: 203 36% 18%;
+    --input: 203 36% 18%;
+    --ring: 42 25% 64%;
     
     /* Healthcare Status Colors (Dark) - Enhanced Contrast */
     --status-critical: 0 72% 65%;
@@ -151,22 +151,22 @@
     --lgpd-violation: 0 72% 65%;
     
     /* Chart Colors (Dark) - NEONPROV1 Professional Palette */
-    --chart-1: 221.2 83.2% 65%;
-    --chart-2: 168 76% 55%;
-    --chart-3: 38 92% 65%;
-    --chart-4: 0 72% 65%;
-    --chart-5: 142 76% 55%;
-    --chart-6: 262.1 83.3% 67.8%;
+    --chart-1: 42 25% 64%;
+    --chart-2: 203 48% 23%;
+    --chart-3: 30 4% 37%;
+    --chart-4: 45 12% 76%;
+    --chart-5: 203 36% 35%;
+    --chart-6: 42 35% 74%;
     
     /* Accessibility Focus - Enhanced Dark Mode */
-    --focus-ring: 221.2 83.2% 65%;
-    --focus-ring-offset: 224 71.4% 4.1%;
+    --focus-ring: 42 25% 64%;
+    --focus-ring-offset: 203 48% 13%;
     
-    /* Healthcare Gradients - NEONPROV1 Dark Professional */
-    --gradient-primary: linear-gradient(135deg, hsl(221.2 83.2% 65%) 0%, hsl(168 76% 55%) 100%);
-    --gradient-secondary: linear-gradient(135deg, hsl(168 76% 55%) 0%, hsl(221.2 83.2% 65%) 100%);
-    --gradient-accent: linear-gradient(135deg, hsl(215 27.9% 16.9%) 0%, hsl(224 71.4% 4.1%) 100%);
-    --gradient-card: linear-gradient(135deg, hsl(224 71.4% 4.1%) 0%, hsl(215 27.9% 16.9%) 100%);
+    /* NEONPROV1 Gradients - Dark Professional */
+    --gradient-primary: linear-gradient(135deg, hsl(42 25% 64%) 0%, hsl(203 48% 23%) 100%);
+    --gradient-secondary: linear-gradient(135deg, hsl(203 48% 23%) 0%, hsl(42 25% 64%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(30 4% 37%) 0%, hsl(203 36% 18%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(203 36% 18%) 0%, hsl(30 4% 37%) 100%);
     
     /* Shadow System - Professional Healthcare Dark */
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.25);

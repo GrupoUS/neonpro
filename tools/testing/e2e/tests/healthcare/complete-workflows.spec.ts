@@ -7,7 +7,7 @@
  * - Professional workflows → Clinic management → Compliance validation
  */
 
-import { faker } from '@faker-js/faker/locale/pt_BR';
+import { fakerPT_BR as faker } from '@faker-js/faker';
 import { expect, test } from '@playwright/test';
 
 // Test data generators

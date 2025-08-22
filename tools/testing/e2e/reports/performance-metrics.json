@@ -159,13 +159,19 @@
   "suites": [],
   "errors": [
     {
-      "message": "Error: Timed out waiting 90000ms from config.webServer.",
-      "stack": "Error: Timed out waiting 90000ms from config.webServer."
+      "message": "Error: Cannot find module '@faker-js/faker/locale/pt_BR'\nRequire stack:\n- D:\\neonpro\\tools\\testing\\e2e\\tests\\healthcare\\complete-workflows.spec.ts\n- D:\\neonpro\\node_modules\\.pnpm\\playwright@1.54.2\\node_modules\\playwright\\lib\\transform\\transform.js\n- D:\\neonpro\\node_modules\\.pnpm\\playwright@1.54.2\\node_modules\\playwright\\lib\\common\\configLoader.js\n- D:\\neonpro\\node_modules\\.pnpm\\playwright@1.54.2\\node_modules\\playwright\\lib\\program.js\n- D:\\neonpro\\node_modules\\.pnpm\\@playwright+test@1.54.2\\node_modules\\@playwright\\test\\cli.js",
+      "stack": "Error: Cannot find module '@faker-js/faker/locale/pt_BR'\nRequire stack:\n- D:\\neonpro\\tools\\testing\\e2e\\tests\\healthcare\\complete-workflows.spec.ts\n- D:\\neonpro\\node_modules\\.pnpm\\playwright@1.54.2\\node_modules\\playwright\\lib\\transform\\transform.js\n- D:\\neonpro\\node_modules\\.pnpm\\playwright@1.54.2\\node_modules\\playwright\\lib\\common\\configLoader.js\n- D:\\neonpro\\node_modules\\.pnpm\\playwright@1.54.2\\node_modules\\playwright\\lib\\program.js\n- D:\\neonpro\\node_modules\\.pnpm\\@playwright+test@1.54.2\\node_modules\\@playwright\\test\\cli.js\n    at Object.<anonymous> (D:\\neonpro\\tools\\testing\\e2e\\tests\\healthcare\\complete-workflows.spec.ts:10:1)",
+      "location": {
+        "file": "D:\\neonpro\\tools\\testing\\e2e\\tests\\healthcare\\complete-workflows.spec.ts",
+        "column": 1,
+        "line": 10
+      },
+      "snippet": "\u001b[90m   at \u001b[39mtests\\healthcare\\complete-workflows.spec.ts:10\n\n\u001b[0m \u001b[90m  8 |\u001b[39m \u001b[90m */\u001b[39m\n \u001b[90m  9 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 10 |\u001b[39m \u001b[36mimport\u001b[39m { faker } \u001b[36mfrom\u001b[39m \u001b[32m'@faker-js/faker/locale/pt_BR'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 11 |\u001b[39m \u001b[36mimport\u001b[39m { expect\u001b[33m,\u001b[39m test } \u001b[36mfrom\u001b[39m \u001b[32m'@playwright/test'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 12 |\u001b[39m\n \u001b[90m 13 |\u001b[39m \u001b[90m// Test data generators\u001b[39m\u001b[0m"
     }
   ],
   "stats": {
-    "startTime": "2025-08-21T21:02:38.253Z",
-    "duration": 92004.023,
+    "startTime": "2025-08-22T21:17:21.707Z",
+    "duration": 11652.148,
     "expected": 0,
     "skipped": 0,
     "unexpected": 0,

@@ -1,0 +1,80 @@
+[
+    // ===== TERMINAL ENHANCEMENTS =====
+    {
+        "key": "shift+enter",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": {
+            "text": "\\\r\n"
+        },
+        "when": "terminalFocus"
+    },
+    
+    // ===== DEVELOPMENT TASK SHORTCUTS =====
+    {
+        "key": "ctrl+shift+b",
+        "command": "workbench.action.tasks.build",
+        "when": "!inDebugMode"
+    },
+    {
+        "key": "ctrl+shift+t",
+        "command": "workbench.action.tasks.test",
+        "when": "!inDebugMode"
+    },
+    {
+        "key": "ctrl+shift+r",
+        "command": "workbench.action.tasks.runTask",
+        "args": "🚀 Dev Server"
+    },
+    {
+        "key": "ctrl+shift+f",
+        "command": "workbench.action.tasks.runTask",
+        "args": "🎨 Format All"
+    },
+    {
+        "key": "ctrl+shift+l",
+        "command": "workbench.action.tasks.runTask",
+        "args": "🔍 Lint All"
+    },
+    {
+        "key": "ctrl+shift+q",
+        "command": "workbench.action.tasks.runTask",
+        "args": "🎯 Full Quality Check"
+    },
+    {
+        "key": "ctrl+shift+d",
+        "command": "workbench.action.tasks.runTask",
+        "args": "🚀 Deploy Ready"
+    },
+    {
+        "key": "ctrl+shift+c",
+        "command": "workbench.action.tasks.runTask",
+        "args": "🧹 Clean"
+    },
+    {
+        "key": "ctrl+shift+i",
+        "command": "workbench.action.tasks.runTask",
+        "args": "📦 Install Dependencies"
+    },
+    {
+        "key": "ctrl+shift+p",
+        "command": "workbench.action.tasks.runTask",
+        "args": "🚀 Start Production"
+    },
+    
+    // ===== COPILOT & CONFIGURATION SHORTCUTS =====
+    {
+        "key": "ctrl+alt+g",
+        "command": "workbench.action.openSettings",
+        "args": "@ext:github.copilot"
+    },
+    {
+        "key": "ctrl+alt+c",
+        "command": "workbench.action.files.openFile",
+        "args": "${workspaceFolder}/.github/copilot-instructions.md"
+    },
+    {
+        "key": "ctrl+alt+m",
+        "command": "workbench.action.files.openFolder", 
+        "args": "${workspaceFolder}/.github/chatmodes"
+    }
+]

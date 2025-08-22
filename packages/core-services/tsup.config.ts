@@ -59,5 +59,5 @@ export default defineConfig({
   bundle: true,
 
   // TypeScript config
-  tsconfig: './tsconfig.json',
+  tsconfig: './tsconfig.build.json',
 });

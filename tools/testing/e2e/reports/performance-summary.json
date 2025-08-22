@@ -1,0 +1,8 @@
+{
+  "timestamp": "2025-08-22T21:20:17.975Z",
+  "globalSetupTime": 1510,
+  "totalTestDuration": 0,
+  "environment": "development",
+  "workers": 4,
+  "projects": 4
+}

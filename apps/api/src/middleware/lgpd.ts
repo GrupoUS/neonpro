@@ -448,4 +448,4 @@ export const lgpdUtils = {
 };
 
 // Export consent store for admin/testing purposes
-export { consentStore, ConsentType, DataCategory, LawfulBasis };
+export { consentStore };

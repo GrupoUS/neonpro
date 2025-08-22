@@ -12,66 +12,97 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  // Create default super admin user for system setup
-  const _superAdmin = await prisma.user.upsert({
+  // Create default super admin profile for system setup
+  const _superAdmin = await prisma.profile.upsert({
     where: { email: 'admin@neonpro.health' },
     update: {},
     create: {
       email: 'admin@neonpro.health',
-      first_name: 'System',
-      last_name: 'Administrator',
+      full_name: 'System Administrator',
       role: 'SUPER_ADMIN',
-      status: 'ACTIVE',
-      cpf: '00000000000', // Test CPF
-      phone: '+5511999999999',
-      is_verified: true,
+      department: 'System',
       created_at: new Date(),
       updated_at: new Date(),
     },
   });
 
-  // Add basic healthcare specialties
-  const specialties = [
+  // Create sample healthcare professionals with specialties
+  const professionals = [
     {
-      name: 'Dermatologia Estética',
-      description: 'Tratamentos estéticos dermatológicos',
+      first_name: 'Dr. Ana',
+      last_name: 'Silva',
+      email: 'ana.silva@neonpro.health',
+      phone: '+5511998877665',
+      specialty: 'Dermatologia Estética',
+      registration: { crm: '123456', estado: 'SP' },
     },
     {
-      name: 'Harmonização Facial',
-      description: 'Procedimentos de harmonização facial',
-    },
-    { name: 'Tricologia', description: 'Tratamentos capilares especializados' },
-    {
-      name: 'Estética Corporal',
-      description: 'Procedimentos estéticos corporais',
+      first_name: 'Dr. Carlos',
+      last_name: 'Santos',
+      email: 'carlos.santos@neonpro.health',
+      phone: '+5511988776654',
+      specialty: 'Harmonização Facial',
+      registration: { crm: '789012', estado: 'SP' },
     },
   ];
 
-  for (const specialty of specialties) {
-    await prisma.specialty.upsert({
-      where: { name: specialty.name },
+  for (const professional of professionals) {
+    await prisma.professional.upsert({
+      where: { email: professional.email },
       update: {},
-      create: specialty,
+      create: professional,
     });
   }
 
-  // Add sample procedure categories
-  const categories = [
+  // Add sample service types (procedure categories)
+  const serviceTypes = [
     {
-      name: 'Injetáveis',
-      description: 'Procedimentos com substâncias injetáveis',
+      name: 'Toxina Botulínica',
+      description: 'Aplicação de toxina botulínica para harmonização facial',
+      duration_minutes: 60,
+      price: 800.0,
+      category: 'Injetáveis',
     },
-    { name: 'Laser', description: 'Tratamentos a laser' },
-    { name: 'Radiofrequência', description: 'Tratamentos com radiofrequência' },
-    { name: 'Peeling', description: 'Procedimentos de peeling' },
+    {
+      name: 'Preenchimento com Ácido Hialurônico',
+      description: 'Preenchimento facial com ácido hialurônico',
+      duration_minutes: 90,
+      price: 1200.0,
+      category: 'Injetáveis',
+    },
+    {
+      name: 'Laser Fracionado',
+      description: 'Tratamento de rejuvenescimento com laser fracionado',
+      duration_minutes: 45,
+      price: 600.0,
+      category: 'Laser',
+    },
+    {
+      name: 'Radiofrequência Facial',
+      description: 'Tratamento de flacidez com radiofrequência',
+      duration_minutes: 60,
+      price: 450.0,
+      category: 'Radiofrequência',
+    },
+    {
+      name: 'Peeling Químico',
+      description: 'Peeling químico para renovação da pele',
+      duration_minutes: 30,
+      price: 300.0,
+      category: 'Peeling',
+    },
   ];
 
-  for (const category of categories) {
-    await prisma.procedureCategory.upsert({
-      where: { name: category.name },
-      update: {},
-      create: category,
+  for (const serviceType of serviceTypes) {
+    const existingServiceType = await prisma.serviceType.findFirst({
+      where: { name: serviceType.name },
     });
+    
+    if (!existingServiceType) {
+      await prisma.serviceType.create({
+        data: serviceType,
+      });
+    }
   }
 }
 

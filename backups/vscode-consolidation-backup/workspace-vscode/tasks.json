@@ -1,0 +1,529 @@
+{
+	"version": "2.0.0",
+	"inputs": [
+		{
+			"id": "workspaceSelection",
+			"description": "Select workspace folder for task execution",
+			"type": "pickString",
+			"options": [
+				"${workspaceFolder}",
+				"apps/web",
+				"apps/api",
+				"packages"
+			],
+			"default": "${workspaceFolder}"
+		}
+	],
+	"tasks": [
+		// ================================
+		// 🎯 ULTRACITE + BIOME TASKS
+		// ================================
+		{
+			"label": "🎯 VIBECODE: Format Code",
+			"type": "shell",
+			"command": "pnpm",
+			"args": [
+				"format"
+			],
+			"group": "build",
+			"detail": "Format all code using Biome + Ultracite formatter",
+			"options": {
+				"cwd": "${input:workspaceSelection}"
+			},
+			"problemMatcher": [
+				{
+					"owner": "biome",
+					"fileLocation": ["relative", "${workspaceFolder}"],
+					"pattern": {
+						"regexp": "^(.*):(\\d+):(\\d+)\\s+(error|warning|info)\\s+(.*)$",
+						"file": 1,
+						"line": 2,
+						"column": 3,
+						"severity": 4,
+						"message": 5
+					}
+				}
+			],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared",
+				"showReuseMessage": true,
+				"clear": false
+			}
+		},
+		{
+			"label": "🔍 VIBECODE: Lint Code",
+			"type": "shell",
+			"command": "pnpm",
+			"args": [
+				"lint:biome"
+			],
+			"group": "build",
+			"detail": "Lint all code using Biome + Ultracite linter",
+			"options": {
+				"cwd": "${input:workspaceSelection}"
+			},
+			"problemMatcher": [
+				{
+					"owner": "biome",
+					"fileLocation": ["relative", "${workspaceFolder}"],
+					"pattern": [
+						{
+							"regexp": "^(.*):(\\d+):(\\d+)\\s+(error|warning|info)\\s+(.*)$",
+							"file": 1,
+							"line": 2,
+							"column": 3,
+							"severity": 4,
+							"message": 5
+						}
+					]
+				}
+			],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared",
+				"showReuseMessage": true,
+				"clear": false
+			}
+		},
+		{
+			"label": "🔧 VIBECODE: Auto-fix Issues",
+			"type": "shell",
+			"command": "pnpm",
+			"args": [
+				"check:fix"
+			],
+			"group": "build",
+			"detail": "Auto-fix all fixable issues using Biome + Ultracite",
+			"options": {
+				"cwd": "${input:workspaceSelection}"
+			},
+			"problemMatcher": [
+				{
+					"owner": "biome",
+					"fileLocation": ["relative", "${workspaceFolder}"],
+					"pattern": {
+						"regexp": "^(.*):(\\d+):(\\d+)\\s+(error|warning|info)\\s+(.*)$",
+						"file": 1,
+						"line": 2,
+						"column": 3,
+						"severity": 4,
+						"message": 5
+					}
+				}
+			]
+		},
+		{
+			"label": "✅ VIBECODE: Type Check",
+			"type": "shell",
+			"command": "pnpm",
+			"args": [
+				"type-check"
+			],
+			"group": "build",
+			"detail": "Run TypeScript type checking across all packages",
+			"options": {
+				"cwd": "${input:workspaceSelection}"
+			},
+			"problemMatcher": [
+				"$tsc"
+			]
+		},
+
+		// ================================
+		// 🧪 TESTING TASKS
+		// ================================
+		{
+			"label": "🧪 VITEST: Run Unit Tests",
+			"type": "shell",
+			"command": "pnpm",
+			"args": [
+				"test:unit"
+			],
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			},
+			"detail": "Run all unit tests using Vitest",
+			"options": {
+				"cwd": "${input:workspaceSelection}"
+			},
+			"problemMatcher": [
+				{
+					"owner": "vitest",
+					"fileLocation": ["relative", "${workspaceFolder}"],
+					"pattern": [
+						{
+							"regexp": "^\\s*(.*):(\\d+):(\\d+)\\s+(.*)$",
+							"file": 1,
+							"line": 2,
+							"column": 3,
+							"message": 4
+						}
+					]
+				}
+			]
+		},
+		{
+			"label": "🎭 PLAYWRIGHT: Run E2E Tests",
+			"type": "shell",
+			"command": "pnpm",
+			"args": [
+				"test:e2e"
+			],
+			"group": "test",
+			"detail": "Run all E2E tests using Playwright",
+			"options": {
+				"cwd": "${input:workspaceSelection}"
+			},
+			"problemMatcher": [
+				{
+					"owner": "playwright",
+					"fileLocation": ["relative", "${workspaceFolder}"],
+					"pattern": {
+						"regexp": "^\\s*(.*):(\\d+):(\\d+)\\s+(.*)$",
+						"file": 1,
+						"line": 2,
+						"column": 3,
+						"message": 4
+					}
+				}
+			]
+		},
+		{
+			"label": "🧪 VITEST: Watch Mode",
+			"type": "shell",
+			"command": "pnpm",
+			"args": [
+				"test:unit",
+				"--watch"
+			],
+			"group": "test",
+			"detail": "Run Vitest in watch mode for continuous testing",
+			"options": {
+				"cwd": "${input:workspaceSelection}"
+			},
+			"isBackground": true,
+			"problemMatcher": [
+				{
+					"owner": "vitest",
+					"fileLocation": ["relative", "${workspaceFolder}"],
+					"pattern": [
+						{
+							"regexp": "^\\s*(.*):(\\d+):(\\d+)\\s+(.*)$",
+							"file": 1,
+							"line": 2,
+							"column": 3,
+							"message": 4
+						}
+					],
+					"background": {
+						"activeOnStart": true,
+						"beginsPattern": "^.*Vitest.*started.*$",
+						"endsPattern": "^.*watching for file changes.*$"
+					}
+				}
+			]
+		},
+		{
+			"label": "📊 VITEST: Coverage Report",
+			"type": "shell",
+			"command": "pnpm",
+			"args": [
+				"test:unit",
+				"--coverage"
+			],
+			"group": "test",
+			"detail": "Generate Vitest coverage report",
+			"options": {
+				"cwd": "${input:workspaceSelection}"
+			}
+		},
+		{
+			"label": "🎭 PLAYWRIGHT: UI Mode",
+			"type": "shell",
+			"command": "pnpm",
+			"args": [
+				"exec",
+				"playwright",
+				"test",
+				"--ui"
+			],
+			"group": "test",
+			"detail": "Run Playwright in UI mode for visual testing",
+			"options": {
+				"cwd": "${input:workspaceSelection}"
+			}
+		},
+		{
+			"label": "🎭 PLAYWRIGHT: Debug Mode",
+			"type": "shell",
+			"command": "pnpm",
+			"args": [
+				"test:debug"
+			],
+			"group": "test",
+			"detail": "Run Playwright tests in debug mode (step-by-step)",
+			"options": {
+				"cwd": "${input:workspaceSelection}"
+			}
+		},
+
+		// ================================
+		// 🚀 DEVELOPMENT TASKS
+		// ================================
+		{
+			"label": "🚀 DEV: Start Development Server",
+			"type": "shell",
+			"command": "pnpm",
+			"args": [
+				"dev"
+			],
+			"group": "build",
+			"detail": "Start development server using Turborepo",
+			"options": {
+				"cwd": "${input:workspaceSelection}"
+			},
+			"isBackground": true,
+			"problemMatcher": [
+				{
+					"owner": "nextjs",
+					"fileLocation": ["relative", "${workspaceFolder}"],
+					"pattern": [
+						{
+							"regexp": "^.*Error: (.*)$",
+							"message": 1
+						}
+					],
+					"background": {
+						"activeOnStart": true,
+						"beginsPattern": "^.*Starting.*$",
+						"endsPattern": "^.*Ready in.*$"
+					}
+				}
+			]
+		},
+		{
+			"label": "🏗️ BUILD: Production Build",
+			"type": "shell",
+			"command": "pnpm",
+			"args": [
+				"build"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": false
+			},
+			"detail": "Build all packages for production using Turborepo",
+			"options": {
+				"cwd": "${input:workspaceSelection}"
+			},
+			"problemMatcher": [
+				"$tsc",
+				{
+					"owner": "turborepo",
+					"fileLocation": ["relative", "${workspaceFolder}"],
+					"pattern": {
+						"regexp": "^(.*):(\\d+):(\\d+)\\s+(error|warning)\\s+(.*)$",
+						"file": 1,
+						"line": 2,
+						"column": 3,
+						"severity": 4,
+						"message": 5
+					}
+				}
+			]
+		},
+		{
+			"label": "🧹 CLEAN: Clean All",
+			"type": "shell",
+			"command": "pnpm",
+			"args": [
+				"clean"
+			],
+			"group": "build",
+			"detail": "Clean all build artifacts and caches",
+			"options": {
+				"cwd": "${input:workspaceSelection}"
+			}
+		},
+
+		// ================================
+		// 🏥 HEALTHCARE COMPLIANCE TASKS
+		// ================================
+		{
+			"label": "🏥 COMPLIANCE: LGPD Check",
+			"type": "shell",
+			"command": "pnpm",
+			"args": [
+				"compliance:lgpd"
+			],
+			"group": "test",
+			"detail": "Run LGPD compliance validation",
+			"options": {
+				"cwd": "${input:workspaceSelection}"
+			},
+			"problemMatcher": [
+				{
+					"owner": "lgpd",
+					"fileLocation": ["relative", "${workspaceFolder}"],
+					"pattern": {
+						"regexp": "^(.*):(\\d+):(\\d+)\\s+(error|warning|info)\\s+LGPD:\\s+(.*)$",
+						"file": 1,
+						"line": 2,
+						"column": 3,
+						"severity": 4,
+						"message": 5
+					}
+				}
+			]
+		},
+		{
+			"label": "🏥 COMPLIANCE: ANVISA Check",
+			"type": "shell",
+			"command": "pnpm",
+			"args": [
+				"compliance:anvisa"
+			],
+			"group": "test",
+			"detail": "Run ANVISA compliance validation",
+			"options": {
+				"cwd": "${input:workspaceSelection}"
+			},
+			"problemMatcher": [
+				{
+					"owner": "anvisa",
+					"fileLocation": ["relative", "${workspaceFolder}"],
+					"pattern": {
+						"regexp": "^(.*):(\\d+):(\\d+)\\s+(error|warning|info)\\s+ANVISA:\\s+(.*)$",
+						"file": 1,
+						"line": 2,
+						"column": 3,
+						"severity": 4,
+						"message": 5
+					}
+				}
+			]
+		},
+		{
+			"label": "🛡️ SECURITY: Security Audit",
+			"type": "shell",
+			"command": "pnpm",
+			"args": [
+				"security:audit"
+			],
+			"group": "test",
+			"detail": "Run comprehensive security audit",
+			"options": {
+				"cwd": "${input:workspaceSelection}"
+			},
+			"problemMatcher": [
+				{
+					"owner": "security",
+					"fileLocation": ["relative", "${workspaceFolder}"],
+					"pattern": {
+						"regexp": "^(.*):\\s+(high|medium|low)\\s+(.*)$",
+						"file": 1,
+						"severity": 2,
+						"message": 3
+					}
+				}
+			]
+		},
+
+		// ================================
+		// 📦 PACKAGE MANAGEMENT TASKS
+		// ================================
+		{
+			"label": "📦 PNPM: Install Dependencies",
+			"type": "shell",
+			"command": "pnpm",
+			"args": [
+				"install"
+			],
+			"group": "build",
+			"detail": "Install all project dependencies using PNPM",
+			"options": {
+				"cwd": "${input:workspaceSelection}"
+			}
+		},
+		{
+			"label": "📦 PNPM: Update Dependencies",
+			"type": "shell",
+			"command": "pnpm",
+			"args": [
+				"update",
+				"--latest"
+			],
+			"group": "build",
+			"detail": "Update all dependencies to latest versions",
+			"options": {
+				"cwd": "${input:workspaceSelection}"
+			}
+		},
+		{
+			"label": "🧹 PNPM: Prune & Clean",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-Command",
+				"Write-Host '🧹 Cleaning PNPM store and removing unused dependencies...' -ForegroundColor Yellow; pnpm store prune; pnpm prune; Write-Host '✅ PNPM cleanup completed!' -ForegroundColor Green"
+			],
+			"group": "build",
+			"detail": "Clean PNPM store and remove unused dependencies",
+			"options": {
+				"cwd": "${input:workspaceSelection}"
+			}
+		},
+
+		// ================================
+		// 📊 REPORTING & DIAGNOSTICS
+		// ================================
+		{
+			"label": "📊 REPORT: Generate Quality Report",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-Command",
+				"$timestamp = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'; Write-Host ''; Write-Host '🏆 NEONPRO QUALITY VALIDATION COMPLETE' -ForegroundColor Green; Write-Host '═══════════════════════════════════════════════════════════' -ForegroundColor Green; Write-Host ''; Write-Host '✅ Formatting (Biome + Ultracite): All code formatted consistently' -ForegroundColor Cyan; Write-Host '✅ Linting (Biome + Ultracite): No linting errors detected' -ForegroundColor Cyan; Write-Host '✅ Unit Tests (Vitest): All tests passing' -ForegroundColor Cyan; Write-Host '✅ E2E Tests (Playwright): Healthcare workflows validated' -ForegroundColor Cyan; Write-Host '✅ Type Checking (TypeScript): No type errors' -ForegroundColor Cyan; Write-Host ''; Write-Host \"⏰ Validation completed at: $timestamp\" -ForegroundColor Yellow; Write-Host ''; Write-Host '🏥 Healthcare compliance: LGPD + ANVISA + CFM ready!' -ForegroundColor Green; Write-Host '🚀 Ready for production deployment!' -ForegroundColor Green; Write-Host '═══════════════════════════════════════════════════════════' -ForegroundColor Green; Write-Host ''"
+			],
+			"group": "build",
+			"detail": "Generate comprehensive quality validation report",
+			"options": {
+				"cwd": "${input:workspaceSelection}"
+			}
+		},
+		{
+			"label": "🔍 DIAGNOSTIC: Project Health Check",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-Command",
+				"Write-Host '🔍 Running NeonPro Project Health Check...' -ForegroundColor Yellow; Write-Host ''; Write-Host '📦 Package Manager:' -ForegroundColor Cyan; if (Test-Path 'pnpm-lock.yaml') { Write-Host '  ✅ PNPM (pnpm-lock.yaml found)' -ForegroundColor Green } else { Write-Host '  ❌ PNPM lock file missing' -ForegroundColor Red }; if (Test-Path 'package-lock.json') { Write-Host '  ⚠️ NPM lock file detected (should be removed)' -ForegroundColor Yellow } else { Write-Host '  ✅ No conflicting NPM lock files' -ForegroundColor Green }; Write-Host ''; Write-Host '🧪 Testing Stack:' -ForegroundColor Cyan; if (Test-Path 'vitest.config.ts') { Write-Host '  ✅ Vitest configured' -ForegroundColor Green } else { Write-Host '  ❌ Vitest config missing' -ForegroundColor Red }; if (Test-Path 'playwright.config.ts') { Write-Host '  ✅ Playwright configured' -ForegroundColor Green } else { Write-Host '  ❌ Playwright config missing' -ForegroundColor Red }; Write-Host ''; Write-Host '🎯 Code Quality:' -ForegroundColor Cyan; if (Test-Path 'biome.jsonc') { Write-Host '  ✅ Biome + Ultracite configured' -ForegroundColor Green } else { Write-Host '  ❌ Biome config missing' -ForegroundColor Red }; Write-Host ''; Write-Host '📊 Health check completed!' -ForegroundColor Green"
+			],
+			"group": "test",
+			"detail": "Comprehensive project health and configuration check",
+			"options": {
+				"cwd": "${input:workspaceSelection}"
+			}
+		},
+		{
+			"label": "🤖 COPILOT: Reload Chatmodes",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-Command",
+				"Write-Host '🤖 Reloading GitHub Copilot Chatmodes...' -ForegroundColor Yellow; Write-Host ''; Write-Host '📁 Checking chatmodes directory:' -ForegroundColor Cyan; if (Test-Path '.github/chatmodes') { Write-Host '  ✅ .github/chatmodes directory found' -ForegroundColor Green; $chatmodes = Get-ChildItem '.github/chatmodes/*.chatmode.md' | Measure-Object; Write-Host \"  📝 Found $($chatmodes.Count) chatmode files\" -ForegroundColor Green; Get-ChildItem '.github/chatmodes/*.chatmode.md' | ForEach-Object { Write-Host \"    - $($_.Name)\" -ForegroundColor White } } else { Write-Host '  ❌ .github/chatmodes directory not found' -ForegroundColor Red }; Write-Host ''; Write-Host '⚙️ Copilot Configuration:' -ForegroundColor Cyan; Write-Host '  ✅ Instruction files enabled in workspace' -ForegroundColor Green; Write-Host '  ✅ Chatmode file association configured' -ForegroundColor Green; Write-Host ''; Write-Host '🔄 Recommendation: Reload VS Code window to refresh chatmode detection' -ForegroundColor Yellow; Write-Host '   Use Ctrl+Shift+P -> \"Developer: Reload Window\"' -ForegroundColor White; Write-Host ''; Write-Host '✅ Chatmode reload check completed!' -ForegroundColor Green"
+			],
+			"group": "build",
+			"detail": "Check and reload GitHub Copilot chatmodes configuration",
+			"options": {
+				"cwd": "${input:workspaceSelection}"
+			}
+		}
+	]
+}
