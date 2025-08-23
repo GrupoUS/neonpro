@@ -4,7 +4,7 @@
  * Otimizado para ambiente healthcare brasileiro com LGPD/ANVISA compliance
  */
 
-export interface HealthcareRealtimeConfig {
+export type HealthcareRealtimeConfig = {
 	// Connection settings
 	connection: {
 		maxRetries: number;
@@ -48,7 +48,7 @@ export interface HealthcareRealtimeConfig {
 		criticalAlertThreshold: number;
 		autoReportGeneration: boolean;
 	};
-}
+};
 
 /**
  * Default configuration for NeonPro Healthcare

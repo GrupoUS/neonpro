@@ -1,12 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type {
-	AISchedulingConfig,
-	CreateInvoiceData,
-	CreateNotificationTemplateData,
-	CreatePatientData,
-	CreateStockItemData,
-	CreateTreatmentPlanData,
-} from "../src";
+import type { AISchedulingConfig, CreatePatientData } from "../src";
 import {
 	AISchedulingService, // Corrigido nome do service
 	BillingService,
@@ -25,7 +18,7 @@ describe("Core Services Integration", () => {
 	let notificationService: NotificationService;
 
 	// Mock repositories
-	const mockSchedulingRepo = {};
+	const _mockSchedulingRepo = {};
 	const mockTreatmentRepo = {};
 	const mockPatientRepo = {};
 	const mockBillingRepo = {};

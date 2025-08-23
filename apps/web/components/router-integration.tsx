@@ -14,9 +14,9 @@ import { useAuth } from "@/contexts/auth-context";
 import { router } from "@/lib/router";
 import { RouterProvider } from "@/providers/router-provider";
 
-interface RouterIntegrationProps {
+type RouterIntegrationProps = {
 	children?: React.ReactNode;
-}
+};
 
 export function RouterIntegration({ children }: RouterIntegrationProps) {
 	const queryClient = useQueryClient();
@@ -32,7 +32,9 @@ export function RouterIntegration({ children }: RouterIntegrationProps) {
 						user: auth.user,
 						isAuthenticated: !!auth.user && !auth.loading,
 						hasRole: (roles) => {
-							if (!auth.user) return false;
+							if (!auth.user) {
+								return false;
+							}
 							const roleArray = Array.isArray(roles) ? roles : [roles];
 							return roleArray.includes(auth.user.role);
 						},
@@ -89,7 +91,7 @@ export function useRoutingMode() {
 		const protectedRoutes = ["/dashboard", "/patients", "/appointments", "/settings"];
 
 		const shouldUseTanStackRouter = protectedRoutes.some(
-			(route) => pathname === route || pathname.startsWith(route + "/")
+			(route) => pathname === route || pathname.startsWith(`${route}/`)
 		);
 
 		setUseTanStackRouter(shouldUseTanStackRouter);

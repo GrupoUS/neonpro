@@ -4,24 +4,24 @@
  * Orchestrates all performance tests and generates comprehensive reports
  */
 
-import fs from "fs/promises";
-import path from "path";
+import fs from "node:fs/promises";
+import path from "node:path";
 import { ApiPerformanceTester } from "./analysis/api-performance";
 import { BundleOptimizer } from "./analysis/bundle-optimizer";
 import { DatabasePerformanceTester } from "./analysis/database-performance";
 import { FrontendPerformanceTester } from "./analysis/frontend-performance";
 import { PerformanceAuditor } from "./analysis/performance-audit";
 
-export interface PerformanceTestConfig {
+export type PerformanceTestConfig = {
 	baseUrl: string;
 	apiUrl: string;
 	buildPath: string;
 	outputPath: string;
 	testDuration: number;
 	concurrentUsers: number;
-}
+};
 
-export interface ComprehensivePerformanceReport {
+export type ComprehensivePerformanceReport = {
 	timestamp: string;
 	testConfig: PerformanceTestConfig;
 	lighthouse: any;
@@ -34,19 +34,19 @@ export interface ComprehensivePerformanceReport {
 	recommendations: string[];
 	passedTests: string[];
 	failedTests: string[];
-}
+};
 
-export interface PerformanceSummary {
+export type PerformanceSummary = {
 	overallScore: number;
 	criticalIssues: number;
 	warnings: number;
 	passedTargets: number;
 	totalTargets: number;
-}
+};
 
 export class PerformanceTestRunner {
-	private config: PerformanceTestConfig;
-	private outputDir: string;
+	private readonly config: PerformanceTestConfig;
+	private readonly outputDir: string;
 
 	constructor(config: PerformanceTestConfig) {
 		this.config = config;
@@ -57,8 +57,6 @@ export class PerformanceTestRunner {
 	 * Run comprehensive performance test suite
 	 */
 	async runAll(): Promise<ComprehensivePerformanceReport> {
-		console.log("🚀 Starting NeonPro Healthcare Performance Test Suite...\n");
-
 		await fs.mkdir(this.outputDir, { recursive: true });
 
 		const report: ComprehensivePerformanceReport = {
@@ -81,47 +79,21 @@ export class PerformanceTestRunner {
 			passedTests: [],
 			failedTests: [],
 		};
+		report.lighthouse = await this.runLighthouseTests();
+		report.database = await this.runDatabaseTests();
+		report.api = await this.runApiTests();
+		report.frontend = await this.runFrontendTests();
+		report.bundle = await this.runBundleAnalysis();
+		report.healthcare = await this.runHealthcareTests();
 
-		try {
-			// 1. Lighthouse Performance Audit
-			console.log("📊 Running Lighthouse Performance Audit...");
-			report.lighthouse = await this.runLighthouseTests();
+		// Generate summary and recommendations
+		report.summary = this.generateSummary(report);
+		report.recommendations = this.generateRecommendations(report);
 
-			// 2. Database Performance Tests
-			console.log("💾 Testing Database Performance...");
-			report.database = await this.runDatabaseTests();
+		// Save comprehensive report
+		await this.saveReport(report);
 
-			// 3. API Performance Tests
-			console.log("🌐 Testing API Performance...");
-			report.api = await this.runApiTests();
-
-			// 4. Frontend Performance Tests
-			console.log("⚛️ Testing Frontend Performance...");
-			report.frontend = await this.runFrontendTests();
-
-			// 5. Bundle Analysis
-			console.log("📦 Analyzing Bundle Performance...");
-			report.bundle = await this.runBundleAnalysis();
-
-			// 6. Healthcare-Specific Tests
-			console.log("🏥 Testing Healthcare-Specific Performance...");
-			report.healthcare = await this.runHealthcareTests();
-
-			// Generate summary and recommendations
-			report.summary = this.generateSummary(report);
-			report.recommendations = this.generateRecommendations(report);
-
-			// Save comprehensive report
-			await this.saveReport(report);
-
-			console.log("\n✅ Performance test suite completed!");
-			console.log(`📋 Report saved to: ${this.outputDir}/performance-report.json`);
-
-			return report;
-		} catch (error) {
-			console.error("❌ Performance test suite failed:", error);
-			throw error;
-		}
+		return report;
 	}
 	private async runLighthouseTests(): Promise<any> {
 		const auditor = new PerformanceAuditor();
@@ -258,8 +230,8 @@ export class PerformanceTestRunner {
 			await auditor.cleanup();
 		}
 	}
-	private passedTests: string[] = [];
-	private failedTests: string[] = [];
+	private readonly passedTests: string[] = [];
+	private readonly failedTests: string[] = [];
 
 	private addPassedTest(test: string): void {
 		this.passedTests.push(test);
@@ -278,14 +250,26 @@ export class PerformanceTestRunner {
 		let warnings = 0;
 
 		// Analyze for critical issues
-		if (report.lighthouse?.performance < 90) criticalIssues++;
-		if (report.healthcare?.emergencyAccessTime > 10_000) criticalIssues++;
-		if (report.api?.loadTestResults?.errorRate > 0.05) criticalIssues++;
+		if (report.lighthouse?.performance < 90) {
+			criticalIssues++;
+		}
+		if (report.healthcare?.emergencyAccessTime > 10_000) {
+			criticalIssues++;
+		}
+		if (report.api?.loadTestResults?.errorRate > 0.05) {
+			criticalIssues++;
+		}
 
 		// Analyze for warnings
-		if (report.bundle?.gzippedSize > 400 * 1024) warnings++;
-		if (report.frontend?.webVitals?.lcp > 2000) warnings++;
-		if (report.database?.connectionTime > 50) warnings++;
+		if (report.bundle?.gzippedSize > 400 * 1024) {
+			warnings++;
+		}
+		if (report.frontend?.webVitals?.lcp > 2000) {
+			warnings++;
+		}
+		if (report.database?.connectionTime > 50) {
+			warnings++;
+		}
 
 		return {
 			overallScore,

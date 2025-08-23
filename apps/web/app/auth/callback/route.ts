@@ -7,7 +7,6 @@ export async function GET(request: NextRequest) {
 	const error = requestUrl.searchParams.get("error");
 
 	if (error) {
-		console.error("Auth callback error:", error);
 		return NextResponse.redirect(`${requestUrl.origin}/login?error=auth_failed`);
 	}
 
@@ -16,14 +15,12 @@ export async function GET(request: NextRequest) {
 			const { error: authError } = await supabase.auth.exchangeCodeForSession(code);
 
 			if (authError) {
-				console.error("Exchange code error:", authError);
 				return NextResponse.redirect(`${requestUrl.origin}/login?error=exchange_failed`);
 			}
 
 			// Successful authentication - redirect to dashboard
 			return NextResponse.redirect(`${requestUrl.origin}/dashboard`);
-		} catch (err) {
-			console.error("Unexpected auth error:", err);
+		} catch (_err) {
 			return NextResponse.redirect(`${requestUrl.origin}/login?error=unexpected`);
 		}
 	}

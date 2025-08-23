@@ -86,7 +86,7 @@ test.describe("📅 Appointment Booking - Critical E2E", () => {
 					try {
 						await serviceSelect.selectOption(service);
 						break;
-					} catch (e) {}
+					} catch (_e) {}
 				}
 			}
 
@@ -341,7 +341,7 @@ test.describe("📅 Appointment Booking - Critical E2E", () => {
 					try {
 						await procedureType.selectOption(procedure);
 						break;
-					} catch (e) {}
+					} catch (_e) {}
 				}
 
 				// Procedures might require longer appointment slots

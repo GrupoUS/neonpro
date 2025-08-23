@@ -49,7 +49,7 @@ test.describe("🔒 Security & Compliance Testing", () => {
 			// Make multiple failed login attempts
 			for (let i = 0; i < 5; i++) {
 				await page.fill('[name="email"]', "test@test.com");
-				await page.fill('[name="password"]', "wrong" + i);
+				await page.fill('[name="password"]', `wrong${i}`);
 				await page.click('button[type="submit"]');
 				await page.waitForTimeout(1000);
 			}

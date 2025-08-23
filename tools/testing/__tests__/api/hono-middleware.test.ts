@@ -1,8 +1,8 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { logger } from "hono/logger";
 import { testClient } from "hono/testing";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { logger as neonLogger } from "../../../../apps/api/src/lib/logger.js";
 
 // Mock audit log storage
 const auditLogs: Array<{
@@ -120,7 +120,12 @@ const createMiddlewareApp = () => {
 
 		// Log LGPD-sensitive data access
 		if (method === "GET" || method === "PUT" || method === "DELETE") {
-			console.log(`LGPD: Acesso a dados pessoais por usuário ${user?.id} - ${method} ${c.req.path}`);
+			neonLogger.info(`LGPD: Acesso a dados pessoais por usuário ${user?.id} - ${method} ${c.req.path}`, {
+				userId: user?.id,
+				method,
+				endpoint: c.req.path,
+				type: "lgpd_access",
+			});
 		}
 
 		// Add LGPD headers
@@ -164,7 +169,11 @@ const createMiddlewareApp = () => {
 	app.onError((err, c) => {
 		const requestId = c.get("requestId");
 
-		console.error(`[${requestId}] Error:`, err.message);
+		neonLogger.error(`[${requestId}] Error: ${err.message}`, err, {
+			requestId,
+			endpoint: c.req.path,
+			method: c.req.method,
+		});
 
 		if (err.message === "Erro interno do servidor") {
 			return c.json(
@@ -206,11 +215,11 @@ const createMiddlewareApp = () => {
 
 describe("🛡️ NEONPRO Healthcare - Middleware Validation", () => {
 	let app: ReturnType<typeof createMiddlewareApp>;
-	let client: ReturnType<typeof testClient>;
+	let _client: ReturnType<typeof testClient>;
 
 	beforeEach(() => {
 		app = createMiddlewareApp();
-		client = testClient(app);
+		_client = testClient(app);
 		auditLogs.length = 0; // Clear audit logs
 		rateLimitStore.clear(); // Clear rate limit store
 		vi.clearAllMocks();
@@ -356,7 +365,7 @@ describe("🛡️ NEONPRO Healthcare - Middleware Validation", () => {
 
 			expect(auditLogs).toHaveLength(initialLogCount + 1);
 
-			const latestLog = auditLogs[auditLogs.length - 1];
+			const latestLog = auditLogs.at(-1);
 			expect(latestLog).toMatchObject({
 				id: expect.stringMatching(/^audit_\d+$/),
 				timestamp: expect.any(String),
@@ -381,7 +390,7 @@ describe("🛡️ NEONPRO Healthcare - Middleware Validation", () => {
 
 			expect(auditLogs).toHaveLength(initialLogCount + 1);
 
-			const latestLog = auditLogs[auditLogs.length - 1];
+			const latestLog = auditLogs.at(-1);
 			expect(latestLog.userId).toBe("user_123");
 		});
 	});
@@ -398,7 +407,7 @@ describe("🛡️ NEONPRO Healthcare - Middleware Validation", () => {
 			const res = await app.request("/health");
 			const requestId = res.headers.get("X-Request-ID");
 
-			const latestLog = auditLogs[auditLogs.length - 1];
+			const latestLog = auditLogs.at(-1);
 			expect(latestLog.requestId).toBe(requestId);
 		});
 	});

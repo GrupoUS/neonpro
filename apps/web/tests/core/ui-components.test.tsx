@@ -19,10 +19,10 @@ const Button = ({ children, variant = "default", ...props }: ButtonProps) => (
 );
 
 // Mock Card Component (placeholder for actual implementation)
-interface CardProps {
+type CardProps = {
 	children: React.ReactNode;
 	title?: string;
-}
+};
 
 const Card = ({ children, title }: CardProps) => (
 	<div className="card" data-testid="card">

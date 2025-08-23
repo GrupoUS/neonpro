@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock LGPD automation implementation
 class MockLGPDAutomation {
-	async validateDataProcessing(data: any) {
+	async validateDataProcessing(_data: any) {
 		return {
 			isCompliant: true,
 			violations: [],

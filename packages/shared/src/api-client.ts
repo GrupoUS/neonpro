@@ -22,7 +22,7 @@ import {
 import type { RpcClient } from "./types";
 
 // Enhanced API Client configuration
-export interface ApiClientConfig {
+export type ApiClientConfig = {
 	baseUrl: string;
 	timeout?: number;
 	retries?: number;
@@ -34,33 +34,33 @@ export interface ApiClientConfig {
 	onResponse?: (context: ResponseContext) => Promise<Response> | Response;
 	onError?: (context: ErrorContext) => void;
 	onAuditLog?: (log: AuditLogEntry) => void;
-}
+};
 
 // Request/Response context types
-export interface RequestContext {
+export type RequestContext = {
 	url: string;
 	method: string;
 	headers: Record<string, string>;
 	body?: unknown;
 	init: RequestInit;
 	attempt: number;
-}
+};
 
-export interface ResponseContext {
+export type ResponseContext = {
 	request: RequestContext;
 	response: Response;
 	duration: number;
-}
+};
 
-export interface ErrorContext {
+export type ErrorContext = {
 	request: RequestContext;
 	error: Error;
 	attempt: number;
 	isRetryable: boolean;
-}
+};
 
 // Audit logging
-export interface AuditLogEntry {
+export type AuditLogEntry = {
 	timestamp: string;
 	userId?: string;
 	sessionId?: string;
@@ -74,10 +74,10 @@ export interface AuditLogEntry {
 	request_duration?: number;
 	request_size?: number;
 	response_size?: number;
-}
+};
 
 // API Response wrapper with enhanced error handling
-export interface ApiResponse<T = unknown> {
+export type ApiResponse<T = unknown> = {
 	success: boolean;
 	data?: T;
 	message: string;
@@ -96,7 +96,7 @@ export interface ApiResponse<T = unknown> {
 		duration: number;
 		cached?: boolean;
 	};
-}
+};
 
 // Default configuration
 const DEFAULT_CONFIG: Required<Omit<ApiClientConfig, "onRequest" | "onResponse" | "onError" | "onAuditLog">> = {
@@ -173,7 +173,9 @@ class AuthTokenManager {
 	}
 
 	getRefreshToken(): string | null {
-		if (this.refreshToken) return this.refreshToken;
+		if (this.refreshToken) {
+			return this.refreshToken;
+		}
 
 		// Try to get from localStorage (browser)
 		if (typeof localStorage !== "undefined") {
@@ -184,7 +186,9 @@ class AuthTokenManager {
 	}
 
 	getSessionId(): string | null {
-		if (this.sessionId) return this.sessionId;
+		if (this.sessionId) {
+			return this.sessionId;
+		}
 
 		// Try to get from localStorage (browser)
 		if (typeof localStorage !== "undefined") {
@@ -195,7 +199,9 @@ class AuthTokenManager {
 	}
 
 	getUser(): z.infer<typeof UserBaseSchema> | null {
-		if (this.user) return this.user;
+		if (this.user) {
+			return this.user;
+		}
 
 		// Try to restore from localStorage (browser)
 		if (typeof localStorage !== "undefined") {
@@ -214,7 +220,9 @@ class AuthTokenManager {
 	}
 
 	isTokenValid(): boolean {
-		if (!this.tokenExpiry) return true; // Assume valid if no expiry info
+		if (!this.tokenExpiry) {
+			return true; // Assume valid if no expiry info
+		}
 
 		// Check if token expires in the next 5 minutes (refresh proactively)
 		const fiveMinutesFromNow = new Date(Date.now() + 5 * 60 * 1000);
@@ -329,7 +337,7 @@ class ResponseValidator {
 // Audit logger for compliance
 class AuditLogger {
 	private logs: AuditLogEntry[] = [];
-	private maxLogs = 1000; // Keep last 1000 logs in memory
+	private readonly maxLogs = 1000; // Keep last 1000 logs in memory
 
 	log(entry: AuditLogEntry) {
 		// Validate audit entry
@@ -353,9 +361,7 @@ class AuditLogger {
 				const auditData = JSON.stringify(validatedEntry);
 				window.navigator.sendBeacon("/api/v1/audit-log", auditData);
 			}
-		} catch (error) {
-			console.warn("Failed to log audit entry:", error);
-		}
+		} catch (_error) {}
 	}
 
 	getLogs(): AuditLogEntry[] {
@@ -374,7 +380,9 @@ const auditLogger = new AuditLogger();
 export const ApiUtils = {
 	// Get client IP (best effort)
 	getClientIP: (): string => {
-		if (typeof window === "undefined") return "unknown";
+		if (typeof window === "undefined") {
+			return "unknown";
+		}
 
 		// In production, this would typically come from headers set by your proxy/CDN
 		return "client-ip"; // Placeholder
@@ -400,11 +408,13 @@ export const ApiUtils = {
 
 	// Format bytes
 	formatBytes: (bytes: number): string => {
-		if (bytes === 0) return "0 Bytes";
+		if (bytes === 0) {
+			return "0 Bytes";
+		}
 		const k = 1024;
 		const sizes = ["Bytes", "KB", "MB", "GB"];
 		const i = Math.floor(Math.log(bytes) / Math.log(k));
-		return Number.parseFloat((bytes / k ** i).toFixed(2)) + " " + sizes[i];
+		return `${Number.parseFloat((bytes / k ** i).toFixed(2))} ${sizes[i]}`;
 	},
 
 	// Check if error is a network error that should be retried
@@ -436,10 +446,7 @@ export function createApiClient(config: Partial<ApiClientConfig> = {}) {
 			if (tokenManager.shouldRefresh()) {
 				try {
 					await tokenManager.refreshAccessToken(client);
-				} catch (error) {
-					// If refresh fails, we'll let the request proceed and handle 401 later
-					console.warn("Proactive token refresh failed:", error);
-				}
+				} catch (_error) {}
 			}
 
 			// Build headers
@@ -481,7 +488,7 @@ export function createApiClient(config: Partial<ApiClientConfig> = {}) {
 
 			// Extract resource info for audit logging
 			const urlParts = url.split("/");
-			const resourceType = urlParts[urlParts.length - 2] || "unknown";
+			const resourceType = urlParts.at(-2) || "unknown";
 			const action = (init?.method?.toLowerCase() as any) || "read";
 
 			// Retry logic
@@ -514,7 +521,7 @@ export function createApiClient(config: Partial<ApiClientConfig> = {}) {
 							};
 
 							response = await fetch(input, newInit);
-						} catch (refreshError) {
+						} catch (_refreshError) {
 							// Refresh failed, clear tokens and continue with original response
 							tokenManager.clearTokens();
 						}
@@ -547,7 +554,7 @@ export function createApiClient(config: Partial<ApiClientConfig> = {}) {
 							error_message: response.ok ? "" : `HTTP ${response.status}`,
 							request_duration: duration,
 							request_size: init?.body ? JSON.stringify(init.body).length : 0,
-							response_size: Number.parseInt(response.headers.get("content-length") || "0"),
+							response_size: Number.parseInt(response.headers.get("content-length") || "0", 10),
 						});
 					}
 
@@ -593,10 +600,14 @@ export function createApiClient(config: Partial<ApiClientConfig> = {}) {
 					}
 
 					// Don't retry on timeout or abort errors on last attempt
-					if (attempt === finalConfig.retries) break;
+					if (attempt === finalConfig.retries) {
+						break;
+					}
 
 					// Don't retry non-network errors
-					if (!ApiUtils.isNetworkError(lastError)) break;
+					if (!ApiUtils.isNetworkError(lastError)) {
+						break;
+					}
 
 					// Exponential backoff delay
 					const delay = Math.min(1000 * 2 ** attempt, 10_000);
@@ -759,9 +770,13 @@ export const ApiHelpers = {
 
 	// Format error message for display with validation details
 	formatError: (error: unknown): string => {
-		if (typeof error === "string") return error;
+		if (typeof error === "string") {
+			return error;
+		}
 
-		if (error instanceof Error) return error.message;
+		if (error instanceof Error) {
+			return error.message;
+		}
 
 		if (typeof error === "object" && error && "message" in error) {
 			return String((error as any).message);

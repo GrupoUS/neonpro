@@ -4,10 +4,10 @@ import { useState } from "react";
 import { supabase } from "../../lib/supabase";
 import { Button } from "../ui/button";
 
-interface GoogleAuthButtonProps {
+type GoogleAuthButtonProps = {
 	mode?: "signin" | "signup";
 	className?: string;
-}
+};
 
 export function GoogleAuthButton({ mode = "signin", className }: GoogleAuthButtonProps) {
 	const [isLoading, setIsLoading] = useState(false);
@@ -28,10 +28,8 @@ export function GoogleAuthButton({ mode = "signin", className }: GoogleAuthButto
 			});
 
 			if (error) {
-				console.error("Erro no login com Google:", error.message);
 			}
-		} catch (error) {
-			console.error("Erro inesperado:", error);
+		} catch (_error) {
 		} finally {
 			setIsLoading(false);
 		}

@@ -10,7 +10,6 @@
 
 import { useSearch } from "@tanstack/react-router";
 import { Activity, Calendar, Clock, DollarSign, TrendingUp, Users } from "lucide-react";
-import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/contexts/auth-context";
@@ -18,7 +17,7 @@ import { useAuth } from "@/contexts/auth-context";
 export function DashboardOverview() {
 	const search = useSearch({ from: "/dashboard" });
 	const { user } = useAuth();
-	const activeTab = search?.tab || "overview";
+	const _activeTab = search?.tab || "overview";
 
 	return (
 		<div className="space-y-6">

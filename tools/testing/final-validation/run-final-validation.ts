@@ -7,19 +7,20 @@
  * Executes comprehensive test suite and generates production readiness certification
  */
 
-import { execSync } from "child_process";
-import { readFileSync, writeFileSync } from "fs";
-import { join } from "path";
+import { execSync } from "node:child_process";
+import { writeFileSync } from "node:fs";
+import { join } from "node:path";
+import { logger } from "../../../apps/api/src/lib/logger";
 
-interface TestSuiteResult {
+type TestSuiteResult = {
 	name: string;
 	status: "passed" | "failed" | "skipped";
 	duration: number;
 	coverage?: number;
 	details: string;
-}
+};
 
-interface ValidationReport {
+type ValidationReport = {
 	timestamp: string;
 	overallStatus: "CERTIFIED" | "FAILED" | "PARTIAL";
 	overallScore: number;
@@ -33,11 +34,11 @@ interface ValidationReport {
 	};
 	recommendations: string[];
 	certification: string;
-}
+};
 
 class FinalValidationRunner {
-	private results: TestSuiteResult[] = [];
-	private startTime: number;
+	private readonly results: TestSuiteResult[] = [];
+	private readonly startTime: number;
 
 	constructor() {
 		this.startTime = Date.now();
@@ -47,8 +48,8 @@ class FinalValidationRunner {
 		const suiteStartTime = Date.now();
 
 		try {
-			console.log(`\n🧪 Running ${name}...`);
-			console.log("-".repeat(60));
+			logger.info(`\n🧪 Running ${name}...`);
+			logger.info("-".repeat(60));
 
 			const output = execSync(command, {
 				encoding: "utf8",
@@ -68,9 +69,9 @@ class FinalValidationRunner {
 				details: `✅ All tests passed. Duration: ${duration}ms`,
 			};
 
-			console.log(`✅ ${name} completed successfully (${duration}ms)`);
+			logger.info(`✅ ${name} completed successfully (${duration}ms)`);
 			if (coverage !== undefined) {
-				console.log(`📊 Code Coverage: ${coverage}%`);
+				logger.info(`📊 Code Coverage: ${coverage}%`);
 			}
 
 			this.results.push(result);
@@ -85,8 +86,8 @@ class FinalValidationRunner {
 				details: `❌ Tests failed: ${error.message}`,
 			};
 
-			console.error(`❌ ${name} failed (${duration}ms)`);
-			console.error(error.message);
+			logger.error(`❌ ${name} failed (${duration}ms)`);
+			logger.error(error.message);
 
 			this.results.push(result);
 			return result;
@@ -99,10 +100,10 @@ class FinalValidationRunner {
 	}
 
 	async executeFullValidation(): Promise<ValidationReport> {
-		console.log("🏥 NeonPro Healthcare Platform - Final Validation Suite");
-		console.log("=".repeat(80));
-		console.log(`Started at: ${new Date().toISOString()}`);
-		console.log("=".repeat(80));
+		logger.info("🏥 NeonPro Healthcare Platform - Final Validation Suite");
+		logger.info("=".repeat(80));
+		logger.info(`Started at: ${new Date().toISOString()}`);
+		logger.info("=".repeat(80));
 
 		// Test Suite Execution Order
 		const testSuites = [
@@ -188,7 +189,9 @@ class FinalValidationRunner {
 		const passedTests = this.results.filter((r) => r.status === "passed").length;
 		const totalTests = this.results.length;
 
-		if (totalTests === 0) return 0;
+		if (totalTests === 0) {
+			return 0;
+		}
 
 		// Base score from test pass rate
 		const testScore = (passedTests / totalTests) * 100;
@@ -245,58 +248,58 @@ class FinalValidationRunner {
 	}
 
 	private outputReport(report: ValidationReport, duration: number): void {
-		console.log("\n" + "=".repeat(80));
-		console.log("📊 NEONPRO HEALTHCARE PLATFORM - FINAL VALIDATION REPORT");
-		console.log("=".repeat(80));
+		logger.info(`\n${"=".repeat(80)}`);
+		logger.info("📊 NEONPRO HEALTHCARE PLATFORM - FINAL VALIDATION REPORT");
+		logger.info("=".repeat(80));
 
-		console.log(`\n🕒 Validation completed in ${duration}ms`);
-		console.log(`📅 Timestamp: ${report.timestamp}`);
-		console.log(`🎯 Overall Status: ${report.overallStatus}`);
-		console.log(`⭐ Overall Score: ${report.overallScore}/10`);
+		logger.info(`\n🕒 Validation completed in ${duration}ms`);
+		logger.info(`📅 Timestamp: ${report.timestamp}`);
+		logger.info(`🎯 Overall Status: ${report.overallStatus}`);
+		logger.info(`⭐ Overall Score: ${report.overallScore}/10`);
 
-		console.log("\n📋 TEST SUITE RESULTS:");
-		console.log("-".repeat(50));
+		logger.info("\n📋 TEST SUITE RESULTS:");
+		logger.info("-".repeat(50));
 
 		report.testResults.forEach((result, index) => {
 			const status = result.status === "passed" ? "✅" : result.status === "failed" ? "❌" : "⚠️";
-			console.log(`${index + 1}. ${status} ${result.name} (${result.duration}ms)`);
+			logger.info(`${index + 1}. ${status} ${result.name} (${result.duration}ms)`);
 			if (result.coverage) {
-				console.log(`   📊 Coverage: ${result.coverage}%`);
+				logger.info(`   📊 Coverage: ${result.coverage}%`);
 			}
 		});
 
-		console.log("\n🏥 PRODUCTION READINESS METRICS:");
-		console.log("-".repeat(50));
-		console.log(`Code Quality: ${report.productionReadiness.codeQuality}/10`);
-		console.log(`Test Coverage: ${report.productionReadiness.testCoverage}%`);
-		console.log(`Performance Score: ${report.productionReadiness.performance}/100`);
-		console.log(`Security Score: ${report.productionReadiness.security}%`);
-		console.log(`Compliance Score: ${report.productionReadiness.compliance}%`);
+		logger.info("\n🏥 PRODUCTION READINESS METRICS:");
+		logger.info("-".repeat(50));
+		logger.info(`Code Quality: ${report.productionReadiness.codeQuality}/10`);
+		logger.info(`Test Coverage: ${report.productionReadiness.testCoverage}%`);
+		logger.info(`Performance Score: ${report.productionReadiness.performance}/100`);
+		logger.info(`Security Score: ${report.productionReadiness.security}%`);
+		logger.info(`Compliance Score: ${report.productionReadiness.compliance}%`);
 
 		if (report.recommendations.length > 0) {
-			console.log("\n💡 RECOMMENDATIONS:");
-			console.log("-".repeat(50));
+			logger.info("\n💡 RECOMMENDATIONS:");
+			logger.info("-".repeat(50));
 			report.recommendations.forEach((rec, index) => {
-				console.log(`${index + 1}. ${rec}`);
+				logger.info(`${index + 1}. ${rec}`);
 			});
 		}
 
-		console.log("\n🏅 FINAL CERTIFICATION:");
-		console.log("-".repeat(50));
-		console.log(report.certification);
+		logger.info("\n🏅 FINAL CERTIFICATION:");
+		logger.info("-".repeat(50));
+		logger.info(report.certification);
 
-		console.log("\n" + "=".repeat(80));
+		logger.info(`\n${"=".repeat(80)}`);
 
 		if (report.overallStatus === "CERTIFIED") {
-			console.log("🎉 NEONPRO HEALTHCARE PLATFORM IS READY FOR PRODUCTION DEPLOYMENT!");
-			console.log("🏥 System meets all enterprise healthcare quality standards.");
-			console.log("🛡️ Security, compliance, and performance requirements satisfied.");
-			console.log("✨ Ready to serve healthcare professionals and patients globally.");
+			logger.info("🎉 NEONPRO HEALTHCARE PLATFORM IS READY FOR PRODUCTION DEPLOYMENT!");
+			logger.info("🏥 System meets all enterprise healthcare quality standards.");
+			logger.info("🛡️ Security, compliance, and performance requirements satisfied.");
+			logger.info("✨ Ready to serve healthcare professionals and patients globally.");
 		} else {
-			console.log("⚠️ Please address the recommendations above before production deployment.");
+			logger.info("⚠️ Please address the recommendations above before production deployment.");
 		}
 
-		console.log("=".repeat(80));
+		logger.info("=".repeat(80));
 	}
 
 	private saveReport(report: ValidationReport): void {
@@ -305,12 +308,12 @@ class FinalValidationRunner {
 
 		// Save detailed JSON report
 		writeFileSync(reportPath, JSON.stringify(report, null, 2));
-		console.log(`📄 Detailed report saved: ${reportPath}`);
+		logger.info(`📄 Detailed report saved: ${reportPath}`);
 
 		// Generate markdown summary
 		const markdownSummary = this.generateMarkdownSummary(report);
 		writeFileSync(summaryPath, markdownSummary);
-		console.log(`📝 Summary report saved: ${summaryPath}`);
+		logger.info(`📝 Summary report saved: ${summaryPath}`);
 	}
 
 	private generateMarkdownSummary(report: ValidationReport): string {
@@ -405,7 +408,7 @@ async function main() {
 			process.exit(1);
 		}
 	} catch (error) {
-		console.error("❌ Fatal error during validation:", error);
+		logger.error("❌ Fatal error during validation:", error);
 		process.exit(1);
 	}
 }

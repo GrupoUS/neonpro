@@ -1,45 +1,14 @@
 "use client";
 
-import {
-	AlertTriangle,
-	Calendar,
-	Clock,
-	Copy,
-	Edit,
-	MoreVertical,
-	Plus,
-	RefreshCw,
-	Save,
-	Shield,
-	Users,
-	X,
-} from "lucide-react";
+import { AlertTriangle, Plus, RefreshCw, Save, Shield, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-import type { HealthcareProfessional, Schedule, ScheduleConflict, ShiftType } from "@/types/team-coordination"; // Mock schedule data for the current week
+import type { Schedule, ScheduleConflict } from "@/types/team-coordination"; // Mock schedule data for the current week
 
 const mockScheduleData: Schedule[] = [
 	{
@@ -228,9 +197,9 @@ const shiftTypeInfo = {
 	},
 };
 
-interface SchedulingSystemProps {
+type SchedulingSystemProps = {
 	emergencyMode?: boolean;
-}
+};
 
 export function SchedulingSystem({ emergencyMode = false }: SchedulingSystemProps) {
 	const [currentWeek, setCurrentWeek] = useState(new Date());
@@ -238,10 +207,12 @@ export function SchedulingSystem({ emergencyMode = false }: SchedulingSystemProp
 	const [viewMode, setViewMode] = useState<"week" | "day">("week");
 	const [draggedSchedule, setDraggedSchedule] = useState<Schedule | null>(null);
 	const [showConflicts, setShowConflicts] = useState(true);
-	const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-	const [selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(null); // Filter schedules by department
+	const [_isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+	const [_selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(null); // Filter schedules by department
 	const filteredSchedules = useMemo(() => {
-		if (selectedDepartment === "all") return mockScheduleData;
+		if (selectedDepartment === "all") {
+			return mockScheduleData;
+		}
 		return mockScheduleData.filter((schedule) => schedule.department === selectedDepartment);
 	}, [selectedDepartment]);
 
@@ -272,23 +243,16 @@ export function SchedulingSystem({ emergencyMode = false }: SchedulingSystemProp
 	};
 
 	const handleDrop = (targetDate: Date, targetHour: number) => {
-		if (!draggedSchedule) return;
+		if (!draggedSchedule) {
+			return;
+		}
 
 		// Create new schedule with updated time
 		const newStartTime = new Date(targetDate);
 		newStartTime.setHours(targetHour, 0, 0, 0);
 
 		const duration = draggedSchedule.endTime.getTime() - draggedSchedule.startTime.getTime();
-		const newEndTime = new Date(newStartTime.getTime() + duration);
-
-		// Here you would typically validate CLT compliance and check for conflicts
-		console.log("Moving schedule:", {
-			scheduleId: draggedSchedule.id,
-			newStartTime,
-			newEndTime,
-			originalStart: draggedSchedule.startTime,
-			originalEnd: draggedSchedule.endTime,
-		});
+		const _newEndTime = new Date(newStartTime.getTime() + duration);
 
 		// TODO: Implement actual schedule update logic
 		setDraggedSchedule(null);
@@ -509,7 +473,9 @@ export function SchedulingSystem({ emergencyMode = false }: SchedulingSystemProp
 													const shiftInfo = shiftTypeInfo[schedule.shiftType];
 													const isFirstHourOfShift = new Date(schedule.startTime).getHours() === hourIndex;
 
-													if (!isFirstHourOfShift) return null; // Only render on first hour
+													if (!isFirstHourOfShift) {
+														return null; // Only render on first hour
+													}
 
 													const durationHours =
 														(new Date(schedule.endTime).getTime() - new Date(schedule.startTime).getTime()) /

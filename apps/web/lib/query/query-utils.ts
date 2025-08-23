@@ -8,17 +8,6 @@
 
 // Import our enhanced API client and schemas
 import { type ApiClient, ApiHelpers, type ApiResponse, apiClient } from "@neonpro/shared/api-client";
-// Import validation schemas
-import {
-	type AppointmentBase,
-	AppointmentBaseSchema,
-	type PatientBase,
-	PatientBaseSchema,
-	type ProfessionalBase,
-	ProfessionalBaseSchema,
-	type ServiceBase,
-	ServiceBaseSchema,
-} from "@neonpro/shared/schemas";
 import {
 	type InfiniteData,
 	type QueryClient,
@@ -36,7 +25,7 @@ import { toast } from "sonner";
 import { HealthcareQueryConfig, QueryKeys } from "@/providers/query-provider";
 
 // Types for paginated responses
-export interface PaginatedResponse<T> {
+export type PaginatedResponse<T> = {
 	items: T[];
 	pagination: {
 		page: number;
@@ -47,7 +36,7 @@ export interface PaginatedResponse<T> {
 		has_prev: boolean;
 	};
 	summary?: Record<string, unknown>;
-}
+};
 
 // Generic query options with healthcare-specific defaults
 export interface HealthcareQueryOptions<TData, TError = unknown>
@@ -78,8 +67,8 @@ export interface HealthcareMutationOptions<TData, TError, TVariables, TContext =
 
 // Query utility class with healthcare-specific methods
 export class HealthcareQueryUtils {
-	private queryClient: QueryClient;
-	private apiClient: ApiClient;
+	private readonly queryClient: QueryClient;
+	private readonly apiClient: ApiClient;
 
 	constructor(queryClient: QueryClient, apiClient: ApiClient) {
 		this.queryClient = queryClient;
@@ -331,7 +320,7 @@ export class HealthcareQueryUtils {
 						throw new Error(response.message || "Infinite query failed");
 					}
 
-					return response.data!.items;
+					return response.data?.items;
 				} catch (error) {
 					if (enableAuditLogging) {
 						this.apiClient.audit.log({
@@ -352,7 +341,7 @@ export class HealthcareQueryUtils {
 				}
 			},
 
-			getNextPageParam: (lastPage, allPages, lastPageParam) => {
+			getNextPageParam: (lastPage, _allPages, lastPageParam) => {
 				// This would be implemented based on your pagination response structure
 				// For now, assuming the response tells us if there's a next page
 				return lastPage && lastPage.length > 0 ? lastPageParam + 1 : undefined;
@@ -375,7 +364,7 @@ export class HealthcareQueryUtils {
 		rollbackFn?: (error: unknown, variables: unknown, context: unknown) => void
 	) {
 		return {
-			onMutate: async (variables: unknown) => {
+			onMutate: async (_variables: unknown) => {
 				// Cancel outgoing refetches
 				await this.queryClient.cancelQueries({ queryKey });
 
@@ -408,15 +397,27 @@ export class HealthcareQueryUtils {
 
 	// Get query configuration based on query key
 	private getQueryConfig(queryKey: QueryKey) {
-		if (!queryKey || queryKey.length === 0) return HealthcareQueryConfig.default;
+		if (!queryKey || queryKey.length === 0) {
+			return HealthcareQueryConfig.default;
+		}
 
 		const firstKey = String(queryKey[0]).toLowerCase();
 
-		if (firstKey.includes("patient")) return HealthcareQueryConfig.patient;
-		if (firstKey.includes("appointment")) return HealthcareQueryConfig.appointment;
-		if (firstKey.includes("professional")) return HealthcareQueryConfig.professional;
-		if (firstKey.includes("service")) return HealthcareQueryConfig.service;
-		if (firstKey.includes("audit") || firstKey.includes("compliance")) return HealthcareQueryConfig.audit;
+		if (firstKey.includes("patient")) {
+			return HealthcareQueryConfig.patient;
+		}
+		if (firstKey.includes("appointment")) {
+			return HealthcareQueryConfig.appointment;
+		}
+		if (firstKey.includes("professional")) {
+			return HealthcareQueryConfig.professional;
+		}
+		if (firstKey.includes("service")) {
+			return HealthcareQueryConfig.service;
+		}
+		if (firstKey.includes("audit") || firstKey.includes("compliance")) {
+			return HealthcareQueryConfig.audit;
+		}
 
 		return HealthcareQueryConfig.default;
 	}

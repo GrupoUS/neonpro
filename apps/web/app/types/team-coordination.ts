@@ -55,7 +55,7 @@ export type CommunicationPriority = "low" | "normal" | "high" | "urgent" | "emer
 
 // ========== CFM & LICENSING INTERFACES ==========
 
-export interface CFMLicense {
+export type CFMLicense = {
 	cfmNumber: string; // CFM registration number
 	state: string; // Brazilian state (e.g., 'SP', 'RJ')
 	issueDate: Date; // License issue date
@@ -64,18 +64,18 @@ export interface CFMLicense {
 	lastRenewalDate: Date | null; // Last renewal date
 	disciplinaryActions: string[]; // Any disciplinary actions
 	telemedicineAuthorized: boolean; // Authorized for telemedicine
-}
+};
 
-export interface RQERegistration {
+export type RQERegistration = {
 	rqeNumber: string; // RQE specialist registration
 	specialty: string; // Medical specialty
 	certifyingBody: string; // Certifying organization
 	issueDate: Date; // Registration date
 	expiryDate: Date | null; // Expiry if applicable
 	status: LicenseStatus; // Registration status
-}
+};
 
-export interface CMECredit {
+export type CMECredit = {
 	id: string;
 	title: string; // Course/activity title
 	provider: string; // Education provider
@@ -84,11 +84,11 @@ export interface CMECredit {
 	certificateNumber: string; // Certificate number
 	category: string; // CME category
 	anvisaApproved: boolean; // ANVISA approval status
-}
+};
 
 // ========== STAFF & PROFESSIONAL INTERFACES ==========
 
-export interface HealthcareProfessional {
+export type HealthcareProfessional = {
 	id: string;
 	cpf: string; // Brazilian CPF (masked for privacy)
 	fullName: string; // Full professional name
@@ -146,17 +146,17 @@ export interface HealthcareProfessional {
 	updatedAt: Date;
 	lastLoginAt: Date | null;
 	isActive: boolean;
-}
+};
 
-export interface EmergencyContact {
+export type EmergencyContact = {
 	name: string;
 	relationship: string;
 	phone: string;
 	email?: string;
 	address?: string;
-}
+};
 
-export interface PerformanceMetric {
+export type PerformanceMetric = {
 	id: string;
 	type: PerformanceMetricType;
 	value: number;
@@ -166,11 +166,11 @@ export interface PerformanceMetric {
 	benchmarkValue: number | null; // Benchmark comparison
 	date: Date; // Metric date
 	notes?: string; // Additional notes
-}
+};
 
 // ========== SCHEDULING INTERFACES ==========
 
-export interface Schedule {
+export type Schedule = {
 	id: string;
 	professionalId: string;
 	startTime: Date;
@@ -210,9 +210,9 @@ export interface Schedule {
 	createdAt: Date;
 	updatedAt: Date;
 	createdBy: string; // User who created schedule
-}
+};
 
-export interface ScheduleConflict {
+export type ScheduleConflict = {
 	id: string;
 	type: "double_booking" | "clt_violation" | "equipment_conflict" | "room_conflict";
 	severity: "low" | "medium" | "high" | "critical";
@@ -223,11 +223,11 @@ export interface ScheduleConflict {
 	resolvedAt: Date | null;
 	resolvedBy: string | null;
 	createdAt: Date;
-}
+};
 
 // ========== RESOURCE MANAGEMENT INTERFACES ==========
 
-export interface MedicalEquipment {
+export type MedicalEquipment = {
 	id: string;
 	name: string;
 	model: string;
@@ -270,9 +270,9 @@ export interface MedicalEquipment {
 	createdAt: Date;
 	updatedAt: Date;
 	isActive: boolean;
-}
+};
 
-export interface EquipmentReservation {
+export type EquipmentReservation = {
 	id: string;
 	equipmentId: string;
 	professionalId: string;
@@ -285,9 +285,9 @@ export interface EquipmentReservation {
 	notes: string;
 	createdAt: Date;
 	createdBy: string;
-}
+};
 
-export interface FacilityRoom {
+export type FacilityRoom = {
 	id: string;
 	name: string;
 	type: "consultation" | "procedure" | "surgery" | "recovery" | "emergency";
@@ -310,9 +310,9 @@ export interface FacilityRoom {
 	createdAt: Date;
 	updatedAt: Date;
 	isActive: boolean;
-}
+};
 
-export interface RoomReservation {
+export type RoomReservation = {
 	id: string;
 	roomId: string;
 	professionalId: string;
@@ -326,11 +326,11 @@ export interface RoomReservation {
 	setupRequirements: string[]; // Special setup requirements
 	createdAt: Date;
 	createdBy: string;
-}
+};
 
 // ========== COMMUNICATION INTERFACES ==========
 
-export interface TeamMessage {
+export type TeamMessage = {
 	id: string;
 	senderId: string; // Sender professional ID
 	recipientIds: string[]; // Recipient professional IDs
@@ -363,9 +363,9 @@ export interface TeamMessage {
 	updatedAt: Date;
 	editedAt: Date | null; // Last edit timestamp
 	isDeleted: boolean;
-}
+};
 
-export interface MessageAttachment {
+export type MessageAttachment = {
 	id: string;
 	filename: string;
 	fileType: string;
@@ -375,9 +375,9 @@ export interface MessageAttachment {
 	uploadedAt: Date;
 	isEncrypted: boolean; // Encryption status
 	accessLevel: "public" | "team" | "restricted";
-}
+};
 
-export interface PatientHandoff {
+export type PatientHandoff = {
 	id: string;
 	patientId: string;
 	fromProfessionalId: string; // Transferring professional
@@ -407,11 +407,11 @@ export interface PatientHandoff {
 	createdAt: Date;
 	updatedAt: Date;
 	priority: CommunicationPriority;
-}
+};
 
 // ========== PERFORMANCE & ANALYTICS INTERFACES ==========
 
-export interface TeamPerformanceMetrics {
+export type TeamPerformanceMetrics = {
 	teamId: string;
 	period: "daily" | "weekly" | "monthly" | "quarterly";
 	startDate: Date;
@@ -448,9 +448,9 @@ export interface TeamPerformanceMetrics {
 
 	createdAt: Date;
 	updatedAt: Date;
-}
+};
 
-export interface ProfessionalPerformanceSnapshot {
+export type ProfessionalPerformanceSnapshot = {
 	professionalId: string;
 	patientSatisfaction: number;
 	proceduresCompleted: number;
@@ -459,17 +459,17 @@ export interface ProfessionalPerformanceSnapshot {
 	overtimeHours: number;
 	cmeProgress: number; // CME completion percentage
 	teamCollaborationScore: number; // Team collaboration rating
-}
+};
 
-export interface PerformanceTrend {
+export type PerformanceTrend = {
 	metric: string;
 	direction: "improving" | "declining" | "stable";
 	changePercentage: number;
 	significance: "low" | "medium" | "high";
 	description: string;
-}
+};
 
-export interface PerformanceAlert {
+export type PerformanceAlert = {
 	id: string;
 	type: "performance_decline" | "compliance_issue" | "safety_concern" | "workload_excess";
 	severity: "low" | "medium" | "high" | "critical";
@@ -480,11 +480,11 @@ export interface PerformanceAlert {
 	status: "open" | "in_progress" | "resolved";
 	createdAt: Date;
 	resolvedAt: Date | null;
-}
+};
 
 // ========== DASHBOARD & UI INTERFACES ==========
 
-export interface TeamDashboardConfig {
+export type TeamDashboardConfig = {
 	userId: string;
 	layout: DashboardLayout;
 	widgets: DashboardWidget[];
@@ -492,17 +492,17 @@ export interface TeamDashboardConfig {
 	preferences: DashboardPreferences;
 	createdAt: Date;
 	updatedAt: Date;
-}
+};
 
-export interface DashboardLayout {
+export type DashboardLayout = {
 	columns: number;
 	rows: number;
 	gridSize: "small" | "medium" | "large";
 	autoRefresh: boolean;
 	refreshInterval: number; // Seconds
-}
+};
 
-export interface DashboardWidget {
+export type DashboardWidget = {
 	id: string;
 	type: "staff_overview" | "schedule_grid" | "performance_chart" | "alerts" | "communication" | "resources";
 	title: string;
@@ -511,17 +511,17 @@ export interface DashboardWidget {
 	config: Record<string, any>; // Widget-specific configuration
 	isVisible: boolean;
 	permissions: string[]; // Required permissions to view
-}
+};
 
-export interface DashboardFilters {
+export type DashboardFilters = {
 	departments: string[];
 	roles: ProfessionalRole[];
 	dateRange: { start: Date; end: Date };
 	shiftTypes: ShiftType[];
 	showInactiveStaff: boolean;
-}
+};
 
-export interface DashboardPreferences {
+export type DashboardPreferences = {
 	theme: "light" | "dark" | "auto";
 	language: "pt-BR" | "en-US";
 	timezone: string;
@@ -529,9 +529,9 @@ export interface DashboardPreferences {
 	timeFormat: "12h" | "24h";
 	notifications: NotificationPreferences;
 	accessibility: AccessibilityPreferences;
-}
+};
 
-export interface NotificationPreferences {
+export type NotificationPreferences = {
 	emergencyAlerts: boolean;
 	scheduleChanges: boolean;
 	performanceAlerts: boolean;
@@ -539,20 +539,20 @@ export interface NotificationPreferences {
 	messageNotifications: boolean;
 	soundEnabled: boolean;
 	vibrationEnabled: boolean;
-}
+};
 
-export interface AccessibilityPreferences {
+export type AccessibilityPreferences = {
 	highContrast: boolean;
 	largeText: boolean;
 	reduceMotion: boolean;
 	screenReaderOptimized: boolean;
 	keyboardNavigationOnly: boolean;
 	colorBlindFriendly: boolean;
-}
+};
 
 // ========== API REQUEST/RESPONSE INTERFACES ==========
 
-export interface TeamCoordinationAPIResponse<T> {
+export type TeamCoordinationAPIResponse<T> = {
 	success: boolean;
 	data: T;
 	message: string;
@@ -568,9 +568,9 @@ export interface TeamCoordinationAPIResponse<T> {
 		requestId: string;
 		version: string;
 	};
-}
+};
 
-export interface CreateProfessionalRequest {
+export type CreateProfessionalRequest = {
 	fullName: string;
 	email: string;
 	phone: string;
@@ -581,9 +581,9 @@ export interface CreateProfessionalRequest {
 	contractType: "clt" | "pj" | "temporary" | "resident";
 	emergencyContact: EmergencyContact;
 	consentGiven: boolean;
-}
+};
 
-export interface UpdateScheduleRequest {
+export type UpdateScheduleRequest = {
 	professionalId: string;
 	startTime: Date;
 	endTime: Date;
@@ -595,9 +595,9 @@ export interface UpdateScheduleRequest {
 	assignedRooms?: string[];
 	notes?: string;
 	emergencyProtocols?: string[];
-}
+};
 
-export interface SendMessageRequest {
+export type SendMessageRequest = {
 	recipientIds: string[];
 	subject: string;
 	content: string;
@@ -608,11 +608,11 @@ export interface SendMessageRequest {
 	attachments?: File[];
 	requiresAcknowledgment: boolean;
 	isEmergency: boolean;
-}
+};
 
 // ========== UTILITY TYPES ==========
 
-export interface AuditLog {
+export type AuditLog = {
 	id: string;
 	userId: string;
 	action: string;
@@ -624,25 +624,25 @@ export interface AuditLog {
 	userAgent: string;
 	timestamp: Date;
 	lgpdCompliant: boolean;
-}
+};
 
-export interface SystemHealth {
+export type SystemHealth = {
 	status: "healthy" | "warning" | "critical";
 	services: ServiceStatus[];
 	uptime: number; // Uptime in seconds
 	lastCheck: Date;
 	alerts: SystemAlert[];
-}
+};
 
-export interface ServiceStatus {
+export type ServiceStatus = {
 	name: string;
 	status: "online" | "offline" | "degraded";
 	responseTime: number; // Response time in ms
 	lastCheck: Date;
 	errorCount: number;
-}
+};
 
-export interface SystemAlert {
+export type SystemAlert = {
 	id: string;
 	type: "system" | "security" | "compliance" | "performance";
 	severity: "low" | "medium" | "high" | "critical";
@@ -651,11 +651,11 @@ export interface SystemAlert {
 	acknowledged: boolean;
 	acknowledgedBy?: string;
 	acknowledgedAt?: Date;
-}
+};
 
 // ========== BRAZILIAN HEALTHCARE REGULATORY TYPES ==========
 
-export interface BrazilianHealthcareCompliance {
+export type BrazilianHealthcareCompliance = {
 	cfmCompliant: boolean; // CFM compliance status
 	anvisaCompliant: boolean; // ANVISA compliance status
 	cltCompliant: boolean; // CLT labor law compliance
@@ -665,9 +665,9 @@ export interface BrazilianHealthcareCompliance {
 	complianceScore: number; // Overall compliance score (0-100)
 	violations: ComplianceViolation[]; // Active violations
 	remedialActions: RemedialAction[]; // Required remedial actions
-}
+};
 
-export interface ComplianceViolation {
+export type ComplianceViolation = {
 	id: string;
 	type: "cfm" | "anvisa" | "clt" | "lgpd";
 	severity: "minor" | "major" | "critical";
@@ -680,9 +680,9 @@ export interface ComplianceViolation {
 	assignedTo: string;
 	resolutionNotes?: string;
 	resolvedDate?: Date;
-}
+};
 
-export interface RemedialAction {
+export type RemedialAction = {
 	id: string;
 	violationId: string;
 	description: string;
@@ -693,4 +693,4 @@ export interface RemedialAction {
 	completedDate?: Date;
 	evidence?: string[]; // Evidence of completion
 	notes?: string;
-}
+};

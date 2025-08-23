@@ -1,5 +1,5 @@
 import { cva, type VariantProps } from "class-variance-authority";
-import { Activity, AlertCircle, Calendar, CheckCircle, Clock, Heart, Shield, User, XCircle, Zap } from "lucide-react";
+import { Activity, AlertCircle, Calendar, CheckCircle, Clock, Shield, User, XCircle, Zap } from "lucide-react";
 import type * as React from "react";
 import { forwardRef } from "react";
 import { cn } from "../../lib/utils";
@@ -136,7 +136,9 @@ interface StatusBadgeProps extends Omit<BadgeProps, "variant"> {
 
 const StatusBadge = forwardRef<HTMLDivElement, StatusBadgeProps>(({ status, showIcon = true, ...props }, ref) => {
 	const getStatusIcon = () => {
-		if (!showIcon) return;
+		if (!showIcon) {
+			return;
+		}
 
 		switch (status) {
 			case "critical":
@@ -208,7 +210,9 @@ interface ProfessionalBadgeProps extends Omit<BadgeProps, "variant"> {
 const ProfessionalBadge = forwardRef<HTMLDivElement, ProfessionalBadgeProps>(
 	({ availability, specialty, showIcon = true, ...props }, ref) => {
 		const getAvailabilityIcon = () => {
-			if (!showIcon) return;
+			if (!showIcon) {
+				return;
+			}
 
 			switch (availability) {
 				case "available":
@@ -258,7 +262,9 @@ interface LGPDBadgeProps extends Omit<BadgeProps, "variant"> {
 const LGPDBadge = forwardRef<HTMLDivElement, LGPDBadgeProps>(
 	({ compliance, score, showIcon = true, ...props }, ref) => {
 		const getComplianceIcon = () => {
-			if (!showIcon) return;
+			if (!showIcon) {
+				return;
+			}
 
 			switch (compliance) {
 				case "compliant":
@@ -320,7 +326,9 @@ interface PriorityBadgeProps extends Omit<BadgeProps, "variant"> {
 
 const PriorityBadge = forwardRef<HTMLDivElement, PriorityBadgeProps>(({ priority, showIcon = true, ...props }, ref) => {
 	const getPriorityIcon = () => {
-		if (!showIcon) return;
+		if (!showIcon) {
+			return;
+		}
 
 		switch (priority) {
 			case "critical":

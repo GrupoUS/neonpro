@@ -2,11 +2,10 @@
 // Healthcare emergency access with LGPD compliance and audit trail
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Types for emergency access
-interface EmergencyAccessRequest {
+type EmergencyAccessRequest = {
 	id: string;
 	patient_id: string;
 	requesting_user_id: string;
@@ -21,9 +20,9 @@ interface EmergencyAccessRequest {
 	approved_at?: string;
 	expires_at: string;
 	clinic_id: string;
-}
+};
 
-interface EmergencyAccessGrant {
+type EmergencyAccessGrant = {
 	id: string;
 	request_id: string;
 	user_id: string;
@@ -35,9 +34,9 @@ interface EmergencyAccessGrant {
 	revoked_at?: string;
 	audit_trail_id: string;
 	legal_basis: "vital_interests" | "medical_emergency";
-}
+};
 
-interface EmergencyAuditEntry {
+type EmergencyAuditEntry = {
 	id: string;
 	emergency_request_id: string;
 	user_id: string;
@@ -50,7 +49,7 @@ interface EmergencyAuditEntry {
 	location: string;
 	emergency_justified: boolean;
 	legal_compliance: boolean;
-}
+};
 
 // Mock emergency access service
 const mockEmergencyService = {
@@ -133,7 +132,7 @@ const mockEmergencyGrant: EmergencyAccessGrant = {
 };
 
 // Test wrapper component
-const TestWrapper = ({ children }: { children: React.ReactNode }) => {
+const _TestWrapper = ({ children }: { children: React.ReactNode }) => {
 	const queryClient = new QueryClient({
 		defaultOptions: {
 			queries: { retry: false },

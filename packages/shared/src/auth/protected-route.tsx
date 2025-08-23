@@ -10,14 +10,14 @@ import type React from "react";
 import type { ReactNode } from "react";
 import { useAuth } from "./auth-provider";
 
-export interface ProtectedRouteProps {
+export type ProtectedRouteProps = {
 	children: ReactNode;
 	fallback?: ReactNode;
 	redirectTo?: string;
 	requireAuth?: boolean;
 	requiredRole?: string;
 	requiredPermissions?: string[];
-}
+};
 
 /**
  * Loading component padrão
@@ -132,7 +132,9 @@ export function usePermissions() {
 	const hasPermission = (_permission: string): boolean => {
 		// TODO: Implementar lógica de permissões mais sofisticada
 		// Por enquanto, admin tem todas as permissões
-		if (user?.role === "admin") return true;
+		if (user?.role === "admin") {
+			return true;
+		}
 
 		// Implementar verificação específica de permissões aqui
 		return false;

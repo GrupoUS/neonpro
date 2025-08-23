@@ -3,6 +3,8 @@
  * Comprehensive validation of all API endpoints with the new database service
  */
 
+import { logger } from "../../utils/logger";
+
 const API_BASE = "http://localhost:3003";
 
 async function testEndpoint(path, options = {}) {
@@ -51,4 +53,4 @@ async function runAllTests() {
 }
 
 // Run tests if this file is executed directly
-runAllTests().catch(console.error);
+runAllTests().catch(logger.error);

@@ -64,7 +64,7 @@ export const LGPDRealtimeConfigSchema = z.object({
 export type LGPDRealtimeConfig = z.infer<typeof LGPDRealtimeConfigSchema>;
 
 // LGPD audit log entry for real-time events
-export interface LGPDAuditLogEntry {
+export type LGPDAuditLogEntry = {
 	id: string;
 	timestamp: string;
 	userId?: string;
@@ -83,7 +83,7 @@ export interface LGPDAuditLogEntry {
 	retentionApplied: boolean;
 	anonymized: boolean;
 	pseudonymized: boolean;
-}
+};
 
 // Data anonymization/pseudonymization utilities
 export class LGPDDataProcessor {
@@ -113,7 +113,9 @@ export class LGPDDataProcessor {
 		payload: RealtimePostgresChangesPayload<any>,
 		config: LGPDRealtimeConfig
 	): RealtimePostgresChangesPayload<any> {
-		if (!config.anonymization) return payload;
+		if (!config.anonymization) {
+			return payload;
+		}
 
 		const anonymized = { ...payload };
 
@@ -135,7 +137,9 @@ export class LGPDDataProcessor {
 		payload: RealtimePostgresChangesPayload<any>,
 		config: LGPDRealtimeConfig
 	): RealtimePostgresChangesPayload<any> {
-		if (!config.pseudonymization) return payload;
+		if (!config.pseudonymization) {
+			return payload;
+		}
 
 		const pseudonymized = { ...payload };
 
@@ -171,7 +175,9 @@ export class LGPDDataProcessor {
 	}
 
 	private static anonymizeFields(data: any, sensitiveFields: string[]): any {
-		if (!data || typeof data !== "object") return data;
+		if (!data || typeof data !== "object") {
+			return data;
+		}
 
 		const anonymized = { ...data };
 
@@ -192,7 +198,9 @@ export class LGPDDataProcessor {
 	}
 
 	private static pseudonymizeFields(data: any, sensitiveFields: string[]): any {
-		if (!data || typeof data !== "object") return data;
+		if (!data || typeof data !== "object") {
+			return data;
+		}
 
 		const pseudonymized = { ...data };
 
@@ -206,7 +214,9 @@ export class LGPDDataProcessor {
 	}
 
 	private static extractFields(data: any, allowedFields: string[]): any {
-		if (!data || typeof data !== "object") return data;
+		if (!data || typeof data !== "object") {
+			return data;
+		}
 
 		const extracted: any = {};
 
@@ -222,13 +232,21 @@ export class LGPDDataProcessor {
 	private static generateAnonymousValue(fieldName: string, originalValue: any): string {
 		const fieldLower = fieldName.toLowerCase();
 
-		if (fieldLower.includes("email")) return "***@***.***";
+		if (fieldLower.includes("email")) {
+			return "***@***.***";
+		}
 		if (fieldLower.includes("phone") || fieldLower.includes("telefone") || fieldLower.includes("celular")) {
 			return "***-***-****";
 		}
-		if (fieldLower.includes("cpf")) return "***.***.**-**";
-		if (fieldLower.includes("rg")) return "**.***.**-*";
-		if (fieldLower.includes("cep")) return "*****-***";
+		if (fieldLower.includes("cpf")) {
+			return "***.***.**-**";
+		}
+		if (fieldLower.includes("rg")) {
+			return "**.***.**-*";
+		}
+		if (fieldLower.includes("cep")) {
+			return "*****-***";
+		}
 		if (fieldLower.includes("address") || fieldLower.includes("endereco")) {
 			return "*** *** *** ***";
 		}
@@ -242,10 +260,18 @@ export class LGPDDataProcessor {
 		const hash = LGPDDataProcessor.simpleHash(String(originalValue));
 		const fieldLower = fieldName.toLowerCase();
 
-		if (fieldLower.includes("email")) return `user${hash}@example.com`;
-		if (fieldLower.includes("phone") || fieldLower.includes("telefone")) return `+55${hash}`;
-		if (fieldLower.includes("cpf")) return `${hash.slice(0, 11)}`;
-		if (fieldLower.includes("rg")) return `${hash.slice(0, 9)}`;
+		if (fieldLower.includes("email")) {
+			return `user${hash}@example.com`;
+		}
+		if (fieldLower.includes("phone") || fieldLower.includes("telefone")) {
+			return `+55${hash}`;
+		}
+		if (fieldLower.includes("cpf")) {
+			return `${hash.slice(0, 11)}`;
+		}
+		if (fieldLower.includes("rg")) {
+			return `${hash.slice(0, 9)}`;
+		}
 
 		return `pseudo_${hash}`;
 	}
@@ -255,7 +281,7 @@ export class LGPDDataProcessor {
 		for (let i = 0; i < str.length; i++) {
 			const char = str.charCodeAt(i);
 			hash = (hash << 5) - hash + char;
-			hash = hash & hash; // Convert to 32bit integer
+			hash &= hash; // Convert to 32bit integer
 		}
 		return Math.abs(hash).toString().slice(0, 8);
 	}

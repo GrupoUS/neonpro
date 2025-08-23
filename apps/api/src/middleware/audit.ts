@@ -7,6 +7,7 @@
  */
 
 import type { Context, MiddlewareHandler } from "hono";
+import { logger } from "../lib/logger";
 
 // Audit log levels
 export enum AuditLevel {
@@ -97,7 +98,7 @@ const LGPD_SENSITIVE_OPERATIONS = {
 };
 
 // Audit log structure
-interface AuditLog {
+type AuditLog = {
 	auditId: string;
 	timestamp: string;
 	level: AuditLevel;
@@ -136,12 +137,12 @@ interface AuditLog {
 	// Geolocation (for compliance)
 	country?: string;
 	region?: string;
-}
+};
 
 // In-memory audit store for development (production should use database)
 class AuditStore {
-	private logs: AuditLog[] = [];
-	private maxLogs = 10_000; // Keep last 10k logs in memory
+	private readonly logs: AuditLog[] = [];
+	private readonly maxLogs = 10_000; // Keep last 10k logs in memory
 
 	add(log: AuditLog): void {
 		this.logs.push(log);
@@ -157,11 +158,19 @@ class AuditStore {
 
 	private persistLog(log: AuditLog): void {
 		// TODO: Implement database persistence
-		console.log("AUDIT LOG:", JSON.stringify(log, null, 2));
+		logger.info("Audit log entry", {
+			userId: log.userId,
+			action: log.action,
+			resource: log.resource,
+			timestamp: log.timestamp,
+			requestId: log.metadata?.requestId,
+		});
 	}
 
 	getLogs(filter?: Partial<AuditLog>): AuditLog[] {
-		if (!filter) return [...this.logs];
+		if (!filter) {
+			return [...this.logs];
+		}
 
 		return this.logs.filter((log) => {
 			return Object.entries(filter).every(([key, value]) => log[key as keyof AuditLog] === value);
@@ -232,7 +241,7 @@ const shouldAudit = (method: string, path: string): boolean => {
 
 	// Check pattern matches (for parameterized routes)
 	for (const pattern of Object.keys(LGPD_SENSITIVE_OPERATIONS)) {
-		const regex = new RegExp("^" + pattern.replace(/:\w+/g, "[^/]+") + "$");
+		const regex = new RegExp(`^${pattern.replace(/:\w+/g, "[^/]+")}$`);
 		if (regex.test(operationKey)) {
 			return true;
 		}
@@ -274,7 +283,7 @@ export const auditMiddleware = (): MiddlewareHandler => {
 			if (!operationConfig) {
 				// Find by pattern matching
 				for (const [pattern, config] of Object.entries(LGPD_SENSITIVE_OPERATIONS)) {
-					const regex = new RegExp("^" + pattern.replace(/:\w+/g, "[^/]+") + "$");
+					const regex = new RegExp(`^${pattern.replace(/:\w+/g, "[^/]+")}$`);
 					if (regex.test(operationKey)) {
 						operationConfig = config;
 						break;

@@ -134,11 +134,11 @@ const createPerformanceApp = () => {
 
 describe("⚡ NEONPRO Healthcare - Performance Validation", () => {
 	let app: ReturnType<typeof createPerformanceApp>;
-	let client: ReturnType<typeof testClient>;
+	let _client: ReturnType<typeof testClient>;
 
 	beforeEach(() => {
 		app = createPerformanceApp();
-		client = testClient(app);
+		_client = testClient(app);
 		vi.clearAllMocks();
 	});
 
@@ -229,10 +229,6 @@ describe("⚡ NEONPRO Healthcare - Performance Validation", () => {
 
 			// Average time should be reasonable
 			expect(avgTimePerRequest).toBeLessThan(performanceMetrics.avgResponseTimeThreshold);
-
-			console.log(
-				`Concurrent requests (${concurrentRequests}): Total ${totalTime}ms, Avg ${avgTimePerRequest.toFixed(2)}ms per request`
-			);
 		});
 
 		it("should maintain performance under moderate load", async () => {
@@ -258,8 +254,6 @@ describe("⚡ NEONPRO Healthcare - Performance Validation", () => {
 
 			// Should complete within reasonable time
 			expect(totalTime).toBeLessThan(5000); // 5 seconds for 25 requests
-
-			console.log(`Mixed load test (${concurrentRequests}): ${totalTime}ms total`);
 		});
 	});
 
@@ -313,8 +307,6 @@ describe("⚡ NEONPRO Healthcare - Performance Validation", () => {
 
 			// Memory increase should be minimal
 			expect(memoryIncrease).toBeLessThan(performanceMetrics.memoryUsageThreshold);
-
-			console.log(`Memory usage increase: ${memoryIncrease.toFixed(2)}MB`);
 		});
 
 		it("should handle garbage collection efficiently during stress", async () => {
@@ -335,8 +327,6 @@ describe("⚡ NEONPRO Healthcare - Performance Validation", () => {
 			const memoryIncrease = (finalMemory.heapUsed - initialMemory.heapUsed) / 1024 / 1024;
 
 			expect(memoryIncrease).toBeLessThan(performanceMetrics.memoryUsageThreshold);
-
-			console.log(`Stress test memory increase: ${memoryIncrease.toFixed(2)}MB after ${iterations} requests`);
 		});
 	});
 
@@ -353,7 +343,7 @@ describe("⚡ NEONPRO Healthcare - Performance Validation", () => {
 
 			const startTime = performance.now();
 
-			const requests = Array.from({ length: peakRequests }, (_, i) => {
+			const requests = Array.from({ length: peakRequests }, (_, _i) => {
 				const rand = Math.random();
 				let cumulativeWeight = 0;
 
@@ -375,10 +365,6 @@ describe("⚡ NEONPRO Healthcare - Performance Validation", () => {
 
 			expect(successRate).toBeGreaterThan(0.95); // 95% success rate minimum
 			expect(totalTime).toBeLessThan(8000); // Should complete within 8 seconds
-
-			console.log(
-				`Peak load test: ${totalTime}ms for ${peakRequests} requests, ${(successRate * 100).toFixed(1)}% success rate`
-			);
 		});
 
 		it("should maintain performance during sustained load", async () => {
@@ -402,10 +388,6 @@ describe("⚡ NEONPRO Healthcare - Performance Validation", () => {
 
 			expect(successRate).toBeGreaterThan(0.98); // 98% success rate for sustained load
 			expect(responses.length).toBeGreaterThan(0);
-
-			console.log(
-				`Sustained load test: ${responses.length} requests over ${duration}ms, ${(successRate * 100).toFixed(1)}% success rate`
-			);
 		});
 
 		it("should recover gracefully from load spikes", async () => {
@@ -437,12 +419,8 @@ describe("⚡ NEONPRO Healthcare - Performance Validation", () => {
 			expect(spikeSuccessRate).toBeGreaterThan(0.9); // 90% during spike
 			expect(normalSuccessRate).toBeGreaterThan(0.95); // Should recover to 95%
 
-			const spikeTime = Math.round(spikeEndTime - spikeStartTime);
-			const normalTime = Math.round(normalEndTime - normalStartTime);
-
-			console.log(
-				`Load spike recovery: Spike ${spikeTime}ms (${(spikeSuccessRate * 100).toFixed(1)}%), Normal ${normalTime}ms (${(normalSuccessRate * 100).toFixed(1)}%)`
-			);
+			const _spikeTime = Math.round(spikeEndTime - spikeStartTime);
+			const _normalTime = Math.round(normalEndTime - normalStartTime);
 		});
 	});
 });

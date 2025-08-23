@@ -1,28 +1,17 @@
 "use client";
 
 import {
-	AlertCircle,
 	AlertTriangle,
 	Archive,
 	Bell,
-	Book,
-	Calendar,
-	Calendar as CalendarIcon,
 	CheckCircle,
-	ChevronRight,
 	Clock,
 	Download,
 	Edit,
 	Eye,
 	FileCheck,
 	FileText,
-	Filter,
-	Info,
-	Mail,
-	MapPin,
-	Phone,
 	Plus,
-	RefreshCw,
 	Search,
 	Settings,
 	Shield,
@@ -31,21 +20,12 @@ import {
 	Users,
 	XCircle,
 } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
@@ -53,10 +33,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
 
 // Types for consent management
-interface ConsentRecord {
+type ConsentRecord = {
 	id: string;
 	patientId: string;
 	patientName: string;
@@ -86,9 +65,9 @@ interface ConsentRecord {
 		relationship: string;
 		signature: string;
 	};
-}
+};
 
-interface PatientRightsRequest {
+type PatientRightsRequest = {
 	id: string;
 	patientId: string;
 	patientName: string;
@@ -99,9 +78,9 @@ interface PatientRightsRequest {
 	response?: string;
 	completedDate?: string;
 	legalDeadline: string;
-}
+};
 
-interface AuditTrailEntry {
+type AuditTrailEntry = {
 	id: string;
 	timestamp: string;
 	action:
@@ -120,7 +99,7 @@ interface AuditTrailEntry {
 	userAgent: string;
 	legalBasis: string;
 	dataCategories: string[];
-}
+};
 
 // Mock data for consent management
 const mockConsentRecords: ConsentRecord[] = [
@@ -293,7 +272,7 @@ export default function ConsentManagementPage() {
 	const [filterStatus, setFilterStatus] = useState("all");
 	const [filterType, setFilterType] = useState("all");
 	const [selectedConsent, setSelectedConsent] = useState<ConsentRecord | null>(null);
-	const [isLoading, setIsLoading] = useState(false);
+	const [_isLoading, _setIsLoading] = useState(false);
 
 	// Filter functions
 	const filteredConsents = mockConsentRecords.filter((consent) => {
@@ -404,7 +383,7 @@ export default function ConsentManagementPage() {
 		<div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 md:p-6 lg:p-8">
 			<div className="mx-auto max-w-7xl">
 				{/* Header */}
-				<header className="mb-8" role="banner">
+				<header className="mb-8">
 					<div className="mb-4 flex items-center gap-3">
 						<div
 							aria-label="Ícone de gestão de consentimentos"
@@ -422,11 +401,7 @@ export default function ConsentManagementPage() {
 					</div>
 
 					{/* Quick stats */}
-					<section
-						aria-labelledby="stats-heading"
-						className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6"
-						role="region"
-					>
+					<section aria-labelledby="stats-heading" className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
 						<h2 className="sr-only" id="stats-heading">
 							Estatísticas de Consentimentos
 						</h2>
@@ -512,7 +487,7 @@ export default function ConsentManagementPage() {
 				</header>
 
 				{/* Main Content */}
-				<main aria-describedby="page-description" role="main">
+				<main aria-describedby="page-description">
 					<Tabs
 						aria-label="Seções do sistema de consentimentos"
 						className="space-y-6"

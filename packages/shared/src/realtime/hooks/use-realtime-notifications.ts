@@ -17,21 +17,21 @@ export interface ExtendedNotification extends NotificationRow {
 	priority?: keyof NotificationPriority;
 }
 
-export interface NotificationPriority {
+export type NotificationPriority = {
 	EMERGENCY: "emergency"; // Emergências médicas
 	HIGH: "high"; // Alterações críticas
 	MEDIUM: "medium"; // Lembretes importantes
 	LOW: "low"; // Informações gerais
-}
+};
 
-export interface RealtimeNotificationPayload {
+export type RealtimeNotificationPayload = {
 	eventType: "INSERT" | "UPDATE" | "DELETE";
 	new?: ExtendedNotification;
 	old?: ExtendedNotification;
 	errors?: string[];
-}
+};
 
-export interface UseRealtimeNotificationsOptions {
+export type UseRealtimeNotificationsOptions = {
 	tenantId: string;
 	userId?: string;
 	priority?: keyof NotificationPriority;
@@ -41,9 +41,9 @@ export interface UseRealtimeNotificationsOptions {
 	onNotification?: (payload: RealtimeNotificationPayload) => void;
 	onEmergencyNotification?: (payload: RealtimeNotificationPayload) => void;
 	onError?: (error: Error) => void;
-}
+};
 
-export interface UseRealtimeNotificationsReturn {
+export type UseRealtimeNotificationsReturn = {
 	isConnected: boolean;
 	connectionHealth: number;
 	unreadCount: number;
@@ -54,7 +54,7 @@ export interface UseRealtimeNotificationsReturn {
 	markAsRead: (notificationId: string) => void;
 	markAllAsRead: () => void;
 	playNotificationSound: (priority: keyof NotificationPriority) => void;
-} /**
+}; /**
  * MANDATORY Real-time Notification Hook
  * Sistema crítico para notificações healthcare com audio alerts
  */
@@ -125,29 +125,30 @@ export function useRealtimeNotifications(options: UseRealtimeNotificationsOption
 				if (onNotification) {
 					onNotification(realtimePayload);
 				}
-
-				// Healthcare audit trail
-				console.log(`[RealtimeNotifications] ${payload.eventType} event:`, {
-					notificationId: realtimePayload.new?.id || realtimePayload.old?.id,
-					priority: realtimePayload.new?.priority || "UNKNOWN",
-					tenantId,
-					userId,
-					timestamp: new Date().toISOString(),
-				});
 			} catch (error) {
-				console.error("[RealtimeNotifications] Payload processing error:", error);
 				if (onError) {
 					onError(error as Error);
 				}
 			}
 		},
-		[onNotification, onEmergencyNotification, onError, tenantId, userId, enableAudio, enableToast]
+		[
+			onNotification,
+			onEmergencyNotification,
+			onError,
+			enableAudio,
+			enableToast,
+			playNotificationSound,
+			showToastNotification, // Update TanStack Query cache
+			updateNotificationCache,
+		]
 	); /**
 	 * Play notification sound based on priority
 	 */
 	const playNotificationSound = useCallback(
 		(priority: keyof NotificationPriority) => {
-			if (!enableAudio || typeof window === "undefined") return;
+			if (!enableAudio || typeof window === "undefined") {
+				return;
+			}
 
 			try {
 				// Different sounds for different priorities
@@ -170,8 +171,7 @@ export function useRealtimeNotifications(options: UseRealtimeNotificationsOption
 				// Play sound with fallback
 				const playPromise = audioRef.current.play();
 				if (playPromise !== undefined) {
-					playPromise.catch((error) => {
-						console.warn("[RealtimeNotifications] Audio play failed:", error);
+					playPromise.catch((_error) => {
 						// Fallback to system notification sound
 						if ("Notification" in window && Notification.permission === "granted") {
 							new Notification("NeonPro Healthcare", {
@@ -182,9 +182,7 @@ export function useRealtimeNotifications(options: UseRealtimeNotificationsOption
 						}
 					});
 				}
-			} catch (error) {
-				console.error("[RealtimeNotifications] Audio alert error:", error);
-			}
+			} catch (_error) {}
 		},
 		[enableAudio]
 	);
@@ -194,7 +192,9 @@ export function useRealtimeNotifications(options: UseRealtimeNotificationsOption
 	 */
 	const showToastNotification = useCallback(
 		(notification: ExtendedNotification) => {
-			if (!enableToast || typeof window === "undefined") return;
+			if (!enableToast || typeof window === "undefined") {
+				return;
+			}
 
 			// Use toast system (assuming react-hot-toast or similar)
 			const toastConfig = {
@@ -221,7 +221,7 @@ export function useRealtimeNotifications(options: UseRealtimeNotificationsOption
 
 			window.dispatchEvent(toastEvent);
 		},
-		[enableToast]
+		[enableToast, getPriorityColor]
 	);
 
 	/**
@@ -244,7 +244,9 @@ export function useRealtimeNotifications(options: UseRealtimeNotificationsOption
 
 			// Update notifications list cache
 			queryClient.setQueryData(["notifications", tenantId, userId], (oldCache: NotificationRow[] | undefined) => {
-				if (!oldCache) return oldCache;
+				if (!oldCache) {
+					return oldCache;
+				}
 
 				switch (eventType) {
 					case "INSERT":
@@ -295,7 +297,9 @@ export function useRealtimeNotifications(options: UseRealtimeNotificationsOption
 	 * Subscribe to realtime notification updates
 	 */
 	const subscribe = useCallback(() => {
-		if (!enabled || unsubscribeFn) return;
+		if (!enabled || unsubscribeFn) {
+			return;
+		}
 
 		const realtimeManager = getRealtimeManager();
 
@@ -336,7 +340,9 @@ export function useRealtimeNotifications(options: UseRealtimeNotificationsOption
 			try {
 				// Optimistic update
 				queryClient.setQueryData(["notifications", tenantId, userId], (oldCache: NotificationRow[] | undefined) => {
-					if (!oldCache) return oldCache;
+					if (!oldCache) {
+						return oldCache;
+					}
 					return oldCache.map((notification) =>
 						notification.id === notificationId ? { ...notification, read_at: new Date().toISOString() } : notification
 					);
@@ -347,14 +353,15 @@ export function useRealtimeNotifications(options: UseRealtimeNotificationsOption
 
 				// Update individual notification cache
 				queryClient.setQueryData(["notification", notificationId], (oldData: NotificationRow | undefined) => {
-					if (!oldData) return oldData;
+					if (!oldData) {
+						return oldData;
+					}
 					return { ...oldData, read_at: new Date().toISOString() };
 				});
 
 				// Here you would typically make an API call to mark as read
 				// await markNotificationAsRead(notificationId);
-			} catch (error) {
-				console.error("[RealtimeNotifications] Mark as read error:", error);
+			} catch (_error) {
 				// Rollback on error
 				queryClient.invalidateQueries({
 					queryKey: ["notifications", tenantId, userId],
@@ -371,7 +378,9 @@ export function useRealtimeNotifications(options: UseRealtimeNotificationsOption
 		try {
 			// Optimistic update
 			queryClient.setQueryData(["notifications", tenantId, userId], (oldCache: NotificationRow[] | undefined) => {
-				if (!oldCache) return oldCache;
+				if (!oldCache) {
+					return oldCache;
+				}
 				return oldCache.map((notification) => ({
 					...notification,
 					read_at: notification.read_at || new Date().toISOString(),
@@ -383,8 +392,7 @@ export function useRealtimeNotifications(options: UseRealtimeNotificationsOption
 
 			// Here you would typically make an API call
 			// await markAllNotificationsAsRead(tenantId, userId);
-		} catch (error) {
-			console.error("[RealtimeNotifications] Mark all as read error:", error);
+		} catch (_error) {
 			// Rollback on error
 			queryClient.invalidateQueries({
 				queryKey: ["notifications", tenantId, userId],
@@ -394,7 +402,9 @@ export function useRealtimeNotifications(options: UseRealtimeNotificationsOption
 	 * Monitor connection status and auto-subscribe
 	 */
 	useEffect(() => {
-		if (!enabled) return;
+		if (!enabled) {
+			return;
+		}
 
 		const realtimeManager = getRealtimeManager();
 

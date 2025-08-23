@@ -14,11 +14,11 @@
  */
 
 import { type Browser, chromium, type Page } from "@playwright/test";
-import { checkA11y, getViolations, injectAxe } from "axe-playwright";
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { getViolations, injectAxe } from "axe-playwright";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 // WCAG 2.1 AA+ Color Contrast Requirements
-const COLOR_CONTRAST_STANDARDS = {
+const _COLOR_CONTRAST_STANDARDS = {
 	NORMAL_TEXT: 4.5, // AA standard for normal text
 	LARGE_TEXT: 3.0, // AA standard for large text (18pt+ or 14pt+ bold)
 	AAA_NORMAL: 7.0, // AAA standard for enhanced readability
@@ -33,19 +33,19 @@ const HEALTHCARE_A11Y_REQUIREMENTS = {
 	ALTERNATIVE_INPUT_METHODS: 3, // Keyboard, voice, touch support
 };
 
-interface AccessibilityTestResult {
+type AccessibilityTestResult = {
 	url: string;
 	violations: any[];
 	passes: number;
 	incomplete: number;
 	timestamp: string;
 	wcagLevel: "A" | "AA" | "AAA";
-}
+};
 
 class AccessibilityTester {
 	private browser?: Browser;
 	private page?: Page;
-	private testResults: AccessibilityTestResult[] = [];
+	private readonly testResults: AccessibilityTestResult[] = [];
 
 	async setup(): Promise<void> {
 		this.browser = await chromium.launch({
@@ -80,7 +80,9 @@ class AccessibilityTester {
 	}
 
 	async testPageAccessibility(url: string, wcagLevel: "A" | "AA" | "AAA" = "AA"): Promise<AccessibilityTestResult> {
-		if (!this.page) throw new Error("AccessibilityTester not initialized");
+		if (!this.page) {
+			throw new Error("AccessibilityTester not initialized");
+		}
 
 		await this.page.goto(url);
 		await injectAxe(this.page);
@@ -111,7 +113,9 @@ class AccessibilityTester {
 	}
 
 	async testKeyboardNavigation(url: string): Promise<boolean> {
-		if (!this.page) return false;
+		if (!this.page) {
+			return false;
+		}
 
 		await this.page.goto(url);
 
@@ -135,7 +139,9 @@ class AccessibilityTester {
 	}
 
 	getComplianceScore(): number {
-		if (this.testResults.length === 0) return 0;
+		if (this.testResults.length === 0) {
+			return 0;
+		}
 
 		const totalViolations = this.testResults.reduce((sum, result) => sum + result.violations.length, 0);
 		const totalTests = this.testResults.length;
@@ -171,12 +177,6 @@ describe("♿ WCAG 2.1 AA+ Accessibility Compliance", () => {
 				(v) => v.id === "label" || v.id === "form-field-multiple-labels"
 			);
 			expect(labelViolations.length).toBe(0);
-
-			console.log(`Patient Registration Form Accessibility:
-        - Total Violations: ${result.violations.length}
-        - Critical/Serious: ${criticalViolations.length}
-        - WCAG Level: ${result.wcagLevel}
-      `);
 		});
 
 		it("should validate medical history form accessibility", async () => {
@@ -222,8 +222,6 @@ describe("♿ WCAG 2.1 AA+ Accessibility Compliance", () => {
 				// Check for color contrast violations
 				const contrastViolations = result.violations.filter((v) => v.id === "color-contrast");
 				expect(contrastViolations.length).toBe(0);
-
-				console.log(`Color Contrast - ${page}: ${contrastViolations.length} violations`);
 			}
 		});
 
@@ -263,8 +261,6 @@ describe("♿ WCAG 2.1 AA+ Accessibility Compliance", () => {
 				expect(colorBlindnessTest.informationConveyedWithoutColor).toBe(true);
 				expect(colorBlindnessTest.criticalElementsDistinguishable).toBe(true);
 				expect(colorBlindnessTest.formValidationClear).toBe(true);
-
-				console.log(`Color Blindness Test (${type}): PASSED`);
 			}
 		});
 	});
@@ -289,8 +285,6 @@ describe("♿ WCAG 2.1 AA+ Accessibility Compliance", () => {
 				expect(keyboardFeatures.focusVisible).toBe(true);
 				expect(keyboardFeatures.skipLinksPresent).toBe(true);
 				expect(keyboardFeatures.keyboardTraps).toBe(false); // No keyboard traps
-
-				console.log(`Keyboard Navigation - ${page}: PASSED`);
 			}
 		});
 
@@ -301,8 +295,6 @@ describe("♿ WCAG 2.1 AA+ Accessibility Compliance", () => {
 			expect(emergencyAccessTest.accessTime).toBeLessThan(HEALTHCARE_A11Y_REQUIREMENTS.EMERGENCY_ACCESS_TIME);
 			expect(emergencyAccessTest.keyboardOnly).toBe(true);
 			expect(emergencyAccessTest.noMouseRequired).toBe(true);
-
-			console.log(`Emergency Keyboard Access Time: ${emergencyAccessTest.accessTime}ms`);
 		});
 
 		it("should manage focus properly in modal dialogs", async () => {
@@ -320,8 +312,6 @@ describe("♿ WCAG 2.1 AA+ Accessibility Compliance", () => {
 				expect(modalFocusTest.focusReturnedOnClose).toBe(true);
 				expect(modalFocusTest.firstElementFocused).toBe(true);
 				expect(modalFocusTest.escapeKeyCloses).toBe(true);
-
-				console.log(`Modal Focus Management - ${modalType}: PASSED`);
 			}
 		});
 	});
@@ -349,8 +339,6 @@ describe("♿ WCAG 2.1 AA+ Accessibility Compliance", () => {
 				const medicalDataAccessibility = await testMedicalDataAccessibility(interface_);
 				expect(medicalDataAccessibility.hasProperSemantics).toBe(true);
 				expect(medicalDataAccessibility.hasContextualLabels).toBe(true);
-
-				console.log(`ARIA Labels - ${interface_}: ${ariaViolations.length} violations`);
 			}
 		});
 
@@ -374,8 +362,6 @@ describe("♿ WCAG 2.1 AA+ Accessibility Compliance", () => {
 				}
 
 				expect(announcementTest.contentDescriptive).toBe(true);
-
-				console.log(`Screen Reader Announcement - ${info.type}: PASSED`);
 			}
 		});
 
@@ -393,8 +379,6 @@ describe("♿ WCAG 2.1 AA+ Accessibility Compliance", () => {
 				if (imageType.includes("chart") || imageType.includes("graph")) {
 					expect(imageAccessibility.hasLongDescription).toBe(true);
 				}
-
-				console.log(`Medical Image Accessibility - ${imageType}: PASSED`);
 			}
 		});
 	});
@@ -414,8 +398,6 @@ describe("♿ WCAG 2.1 AA+ Accessibility Compliance", () => {
 				expect(timingTest.hasExtensionOption).toBe(true);
 				expect(timingTest.timeLimit).toBeGreaterThanOrEqual(formTest.expectedTime);
 				expect(timingTest.autoSaveEnabled).toBe(true);
-
-				console.log(`Form Timing - ${formTest.form}: ${timingTest.timeLimit}ms limit`);
 			}
 		});
 
@@ -427,8 +409,6 @@ describe("♿ WCAG 2.1 AA+ Accessibility Compliance", () => {
 			expect(sessionTimeoutTest.hasExtendOption).toBe(true);
 			expect(sessionTimeoutTest.focusOnWarning).toBe(true);
 			expect(sessionTimeoutTest.screenReaderAnnounced).toBe(true);
-
-			console.log("Session Timeout Accessibility: PASSED");
 		});
 	});
 
@@ -447,8 +427,6 @@ describe("♿ WCAG 2.1 AA+ Accessibility Compliance", () => {
 				expect(responsiveTest.navigationUsable).toBe(true);
 				expect(responsiveTest.touchTargetsSized).toBe(true); // Min 44px
 				expect(responsiveTest.textScalable).toBe(true); // Up to 200%
-
-				console.log(`Responsive Accessibility - ${viewport.name}: PASSED`);
 			}
 		});
 
@@ -459,8 +437,6 @@ describe("♿ WCAG 2.1 AA+ Accessibility Compliance", () => {
 			expect(voiceNavigationTest.supportsGrammar).toBe(true);
 			expect(voiceNavigationTest.hasConfidenceThresholds).toBe(true);
 			expect(voiceNavigationTest.medicalTermsSupported).toBe(true);
-
-			console.log("Voice Navigation Support: PASSED");
 		});
 	});
 
@@ -471,17 +447,12 @@ describe("♿ WCAG 2.1 AA+ Accessibility Compliance", () => {
 			// Healthcare platforms should achieve 95%+ WCAG AA compliance
 			expect(complianceScore).toBeGreaterThanOrEqual(95);
 
-			console.log(`Overall WCAG Compliance Score: ${complianceScore}%`);
-
 			// Generate detailed report
 			const detailedReport = await generateAccessibilityComplianceReport();
 
 			expect(detailedReport.wcagAACompliance).toBeGreaterThanOrEqual(95);
 			expect(detailedReport.criticalViolations).toBe(0);
 			expect(detailedReport.healthcareSpecificCompliance).toBeGreaterThanOrEqual(90);
-
-			console.log("Detailed Accessibility Compliance Report:");
-			console.log(JSON.stringify(detailedReport, null, 2));
 		});
 
 		it("should validate accessibility for users with disabilities", async () => {
@@ -495,8 +466,6 @@ describe("♿ WCAG 2.1 AA+ Accessibility Compliance", () => {
 
 				expect(supportTest.adequateSupport).toBe(true);
 				expect(supportTest.alternativeMethodsAvailable).toBeGreaterThanOrEqual(2);
-
-				console.log(`Disability Support - ${disability}: PASSED`);
 			}
 
 			// Verify comprehensive disability support
@@ -517,7 +486,7 @@ async function testHealthcareAlert(alert: any) {
 	};
 }
 
-async function simulateColorBlindness(type: string, page: string) {
+async function simulateColorBlindness(_type: string, _page: string) {
 	return {
 		informationConveyedWithoutColor: true,
 		criticalElementsDistinguishable: true,
@@ -525,7 +494,7 @@ async function simulateColorBlindness(type: string, page: string) {
 	};
 }
 
-async function testKeyboardFeatures(page: string) {
+async function testKeyboardFeatures(_page: string) {
 	return {
 		tabOrderLogical: true,
 		focusVisible: true,
@@ -542,7 +511,7 @@ async function testEmergencyKeyboardAccess() {
 	};
 }
 
-async function testModalFocusManagement(modalType: string) {
+async function testModalFocusManagement(_modalType: string) {
 	return {
 		focusTrappedInModal: true,
 		focusReturnedOnClose: true,
@@ -551,7 +520,7 @@ async function testModalFocusManagement(modalType: string) {
 	};
 }
 
-async function testMedicalDataAccessibility(interface_: string) {
+async function testMedicalDataAccessibility(_interface_: string) {
 	return {
 		hasProperSemantics: true,
 		hasContextualLabels: true,
@@ -602,7 +571,7 @@ async function testSessionTimeoutAccessibility() {
 	};
 }
 
-async function testResponsiveAccessibility(viewport: any) {
+async function testResponsiveAccessibility(_viewport: any) {
 	return {
 		contentAccessible: true,
 		navigationUsable: true,

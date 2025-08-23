@@ -52,8 +52,6 @@ test.describe("🚨 Emergency Access - Critical E2E", () => {
 			// Verify emergency dashboard is loaded
 			await expect(page.locator('[data-testid="emergency-dashboard"]')).toBeVisible();
 			await expect(page.locator('[data-testid="patient-search-emergency"]')).toBeVisible();
-
-			console.log(`Emergency login completed in ${totalTime}ms`);
 		});
 
 		test("should handle life-threatening emergency access bypass", async ({ page }) => {
@@ -580,9 +578,6 @@ test.describe("🚨 Emergency Access - Critical E2E", () => {
 			// No search should take more than 8 seconds
 			const maxSearchTime = Math.max(...searchTimes);
 			expect(maxSearchTime).toBeLessThan(8000);
-
-			console.log(`Average emergency search time: ${avgSearchTime}ms`);
-			console.log(`Maximum emergency search time: ${maxSearchTime}ms`);
 		});
 
 		test("should handle system failures gracefully in emergency mode", async ({ page }) => {

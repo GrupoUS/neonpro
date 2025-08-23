@@ -3,22 +3,22 @@
  * Provides analytics functionality for the healthcare platform
  */
 
-export interface AnalyticsData {
+export type AnalyticsData = {
 	metrics: Record<string, number>;
 	timestamps: string[];
 	categories: string[];
-}
+};
 
-export interface AnalyticsQuery {
+export type AnalyticsQuery = {
 	dateRange: {
 		start: string;
 		end: string;
 	};
 	filters?: Record<string, any>;
-}
+};
 
 export class AnalyticsService {
-	async getAnalyticsData(query: AnalyticsQuery): Promise<AnalyticsData> {
+	async getAnalyticsData(_query: AnalyticsQuery): Promise<AnalyticsData> {
 		// Mock implementation for testing
 		return {
 			metrics: { visits: 100, conversions: 25 },
@@ -27,7 +27,7 @@ export class AnalyticsService {
 		};
 	}
 
-	async exportData(format: "csv" | "pdf" | "json"): Promise<Blob> {
+	async exportData(_format: "csv" | "pdf" | "json"): Promise<Blob> {
 		// Mock implementation
 		return new Blob(["mock data"], { type: "text/plain" });
 	}

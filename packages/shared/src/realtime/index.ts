@@ -130,12 +130,20 @@ export const RealtimeUtils = {
 		}
 
 		// Boost for patient-critical events
-		if (patientCritical) score += 20;
+		if (patientCritical) {
+			score += 20;
+		}
 
 		// Boost for specific event types
-		if (eventType.includes("emergency")) score += 30;
-		if (eventType.includes("breach")) score += 25;
-		if (eventType.includes("anvisa")) score += 15;
+		if (eventType.includes("emergency")) {
+			score += 30;
+		}
+		if (eventType.includes("breach")) {
+			score += 25;
+		}
+		if (eventType.includes("anvisa")) {
+			score += 15;
+		}
 
 		return Math.min(100, score);
 	},

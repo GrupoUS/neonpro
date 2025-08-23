@@ -3,13 +3,11 @@
  * Healthcare professional administration interface
  */
 
-import React from "react";
-
-export interface ProfessionalManagementProps {
+export type ProfessionalManagementProps = {
 	professionals?: any[];
 	loading?: boolean;
 	error?: string;
-}
+};
 
 export default function ProfessionalManagement({
 	professionals = [],
@@ -31,7 +29,7 @@ export default function ProfessionalManagement({
 				{professionals.length === 0 ? (
 					<p>No professionals found</p>
 				) : (
-					professionals.map((prof, index) => (
+					professionals.map((_prof, index) => (
 						<div className="professional-card" key={index}>
 							Professional {index + 1}
 						</div>

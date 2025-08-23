@@ -11,7 +11,7 @@
 
 import { createClient } from "@supabase/supabase-js";
 import { nanoid } from "nanoid";
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 // Test environment configuration
 const supabaseUrl = process.env.TEST_SUPABASE_URL || "https://test.supabase.co";
@@ -29,8 +29,6 @@ let testPatient: any;
 
 describe("🔗 Integration Tests - Database Operations", () => {
 	beforeAll(async () => {
-		console.log("🔗 Setting up integration test environment...");
-
 		// Create test user for authentication
 		const userEmail = `test-${nanoid(8)}@neonpro.test`;
 		const userPassword = "TestPassword123!";
@@ -47,16 +45,12 @@ describe("🔗 Integration Tests - Database Operations", () => {
 		});
 
 		if (authError && !authError.message.includes("already registered")) {
-			console.warn("Auth setup warning:", authError.message);
 		}
 
 		testUser = authData.user;
-		console.log("✅ Test user created");
 	});
 
 	afterAll(async () => {
-		console.log("🧹 Cleaning up integration test data...");
-
 		// Cleanup test data in reverse dependency order
 		if (testPatient?.id) {
 			await supabaseAdmin.from("patients").delete().eq("id", testPatient.id);
@@ -69,8 +63,6 @@ describe("🔗 Integration Tests - Database Operations", () => {
 		if (testUser?.id) {
 			await supabaseAdmin.auth.admin.deleteUser(testUser.id);
 		}
-
-		console.log("✅ Test cleanup completed");
 	});
 
 	describe("🏢 Clinic Management Integration", () => {
@@ -303,18 +295,16 @@ describe("🔗 Integration Tests - Database Operations", () => {
 
 			// Create multiple test records
 			const batchSize = 10;
-			const testRecords = Array(batchSize)
-				.fill(null)
-				.map((_, index) => ({
-					id: nanoid(),
-					clinic_id: testClinic.id,
-					name: `Batch Patient ${index}`,
-					email: `batch-${index}-${nanoid(4)}@test.com`,
-					lgpd_consent: {
-						data_processing: true,
-						granted_at: new Date().toISOString(),
-					},
-				}));
+			const testRecords = new Array(batchSize).fill(null).map((_, index) => ({
+				id: nanoid(),
+				clinic_id: testClinic.id,
+				name: `Batch Patient ${index}`,
+				email: `batch-${index}-${nanoid(4)}@test.com`,
+				lgpd_consent: {
+					data_processing: true,
+					granted_at: new Date().toISOString(),
+				},
+			}));
 
 			const { data, error } = await supabaseAdmin.from("patients").insert(testRecords).select();
 
@@ -332,22 +322,20 @@ describe("🔗 Integration Tests - Database Operations", () => {
 
 		it("should handle concurrent operations without conflicts", async () => {
 			const concurrentOps = 5;
-			const promises = Array(concurrentOps)
-				.fill(null)
-				.map(async (_, index) => {
-					const patientData = {
-						id: nanoid(),
-						clinic_id: testClinic.id,
-						name: `Concurrent Patient ${index}`,
-						email: `concurrent-${index}-${nanoid(4)}@test.com`,
-						lgpd_consent: {
-							data_processing: true,
-							granted_at: new Date().toISOString(),
-						},
-					};
+			const promises = new Array(concurrentOps).fill(null).map(async (_, index) => {
+				const patientData = {
+					id: nanoid(),
+					clinic_id: testClinic.id,
+					name: `Concurrent Patient ${index}`,
+					email: `concurrent-${index}-${nanoid(4)}@test.com`,
+					lgpd_consent: {
+						data_processing: true,
+						granted_at: new Date().toISOString(),
+					},
+				};
 
-					return supabaseAdmin.from("patients").insert(patientData).select().single();
-				});
+				return supabaseAdmin.from("patients").insert(patientData).select().single();
+			});
 
 			const results = await Promise.all(promises);
 

@@ -1,27 +1,8 @@
 "use client";
 
-import {
-	AlertTriangle,
-	Award,
-	Calendar,
-	CheckCircle,
-	Clock,
-	Download,
-	Eye,
-	FileCheck,
-	Lock,
-	MapPin,
-	Monitor,
-	Printer,
-	RefreshCw,
-	Shield,
-	Smartphone,
-	User,
-	Wifi,
-	XCircle,
-} from "lucide-react";
+import { Award, CheckCircle, Download, FileCheck, Printer, RefreshCw, Shield, User } from "lucide-react";
 import type React from "react";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -32,10 +13,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
-import { Textarea } from "@/components/ui/textarea";
 
 // Digital signature interfaces following Brazilian legal requirements
-interface DigitalCertificate {
+type DigitalCertificate = {
 	id: string;
 	issuer: string;
 	subject: string;
@@ -48,9 +28,9 @@ interface DigitalCertificate {
 	isTrusted: boolean;
 	certificateLevel: "A1" | "A3" | "A4"; // ICP-Brasil levels
 	documentType: "CPF" | "CNPJ" | "PF" | "PJ";
-}
+};
 
-interface SignatureMetadata {
+type SignatureMetadata = {
 	timestamp: string;
 	ipAddress: string;
 	userAgent: string;
@@ -70,9 +50,9 @@ interface SignatureMetadata {
 		timezone: string;
 		language: string;
 	};
-}
+};
 
-interface LegalValidation {
+type LegalValidation = {
 	mpCompliance: boolean; // MP 2.200-2/2001 compliance
 	lgpdCompliance: boolean; // LGPD compliance
 	cfmCompliance: boolean; // CFM compliance for medical procedures
@@ -81,9 +61,9 @@ interface LegalValidation {
 	integrityHash: string;
 	legalBasis: string;
 	auditTrailComplete: boolean;
-}
+};
 
-interface DigitalSignatureProps {
+type DigitalSignatureProps = {
 	consentId: string;
 	patientId: string;
 	consentType: string;
@@ -91,9 +71,9 @@ interface DigitalSignatureProps {
 	onSignatureComplete: (signature: DigitalSignatureData) => void;
 	onSignatureCancel: () => void;
 	isOpen: boolean;
-}
+};
 
-interface DigitalSignatureData {
+type DigitalSignatureData = {
 	signatureId: string;
 	signatureHash: string;
 	certificate: DigitalCertificate;
@@ -107,7 +87,7 @@ interface DigitalSignatureData {
 		cpf: string;
 		signature: string;
 	};
-}
+};
 
 // Mock digital certificates for demonstration
 const mockCertificates: DigitalCertificate[] = [
@@ -196,7 +176,7 @@ export function DigitalSignature({
 			cfmCompliance: consentType === "medical_procedure",
 			icpBrasilValid: certificate.certificateLevel === "A3" || certificate.certificateLevel === "A1",
 			timestampValid: true, // Would validate RFC 3161 timestamp
-			integrityHash: "SHA256:" + Math.random().toString(36).substring(2, 15),
+			integrityHash: `SHA256:${Math.random().toString(36).substring(2, 15)}`,
 			legalBasis: "consent",
 			auditTrailComplete: true,
 		};
@@ -209,7 +189,9 @@ export function DigitalSignature({
 
 	// Handle signature creation
 	const handleCreateSignature = async () => {
-		if (!selectedCertificate) return;
+		if (!selectedCertificate) {
+			return;
+		}
 
 		setIsLoading(true);
 		setCurrentStep("signature");
@@ -235,15 +217,14 @@ export function DigitalSignature({
 			setSignatureData(signature);
 			setCurrentStep("validation");
 			await validateSignature(signature);
-		} catch (error) {
-			console.error("Signature creation failed:", error);
+		} catch (_error) {
 		} finally {
 			setIsLoading(false);
 		}
 	};
 
 	// Validate signature
-	const validateSignature = async (signature: DigitalSignatureData) => {
+	const validateSignature = async (_signature: DigitalSignatureData) => {
 		setValidationProgress(0);
 
 		// Simulate validation steps
@@ -274,7 +255,9 @@ export function DigitalSignature({
 	// Canvas signature handling
 	const startDrawing = (event: React.MouseEvent<HTMLCanvasElement>) => {
 		const canvas = canvasRef.current;
-		if (!canvas) return;
+		if (!canvas) {
+			return;
+		}
 
 		const rect = canvas.getBoundingClientRect();
 		const x = event.clientX - rect.left;
@@ -289,7 +272,9 @@ export function DigitalSignature({
 
 	const draw = (event: React.MouseEvent<HTMLCanvasElement>) => {
 		const canvas = canvasRef.current;
-		if (!canvas) return;
+		if (!canvas) {
+			return;
+		}
 
 		const rect = canvas.getBoundingClientRect();
 		const x = event.clientX - rect.left;
@@ -304,7 +289,9 @@ export function DigitalSignature({
 
 	const clearSignature = () => {
 		const canvas = canvasRef.current;
-		if (!canvas) return;
+		if (!canvas) {
+			return;
+		}
 
 		const ctx = canvas.getContext("2d");
 		if (ctx) {
@@ -315,13 +302,17 @@ export function DigitalSignature({
 
 	const saveSignature = () => {
 		const canvas = canvasRef.current;
-		if (!canvas) return;
+		if (!canvas) {
+			return;
+		}
 
 		const dataURL = canvas.toDataURL("image/png");
 		setVisualSignature(dataURL);
 	};
 
-	if (!isOpen) return null;
+	if (!isOpen) {
+		return null;
+	}
 
 	return (
 		<Dialog onOpenChange={onSignatureCancel} open={isOpen}>

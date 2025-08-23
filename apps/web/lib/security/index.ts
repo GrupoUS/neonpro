@@ -16,7 +16,7 @@ export const SecurityAPI = {
 		return { success: true, event };
 	},
 
-	getSecurityEvents: async (filters?: any) => {
+	getSecurityEvents: async (_filters?: any) => {
 		// Implementation will be added based on requirements
 		return { success: true, events: [] };
 	},
@@ -27,7 +27,7 @@ export const SecurityAPI = {
 		return { success: true, alert };
 	},
 
-	getSecurityAlerts: async (filters?: any) => {
+	getSecurityAlerts: async (_filters?: any) => {
 		// Implementation will be added based on requirements
 		return { success: true, alerts: [] };
 	},
@@ -43,13 +43,13 @@ export const SecurityAPI = {
 		return { success: true, log };
 	},
 
-	getAuditLogs: async (filters?: any) => {
+	getAuditLogs: async (_filters?: any) => {
 		// Implementation will be added based on requirements
 		return { success: true, logs: [] };
 	},
 
 	// Session Management
-	getActiveSessions: async (userId?: string) => {
+	getActiveSessions: async (_userId?: string) => {
 		// Implementation will be added based on requirements
 		return { success: true, sessions: [] };
 	},
@@ -60,25 +60,25 @@ export const SecurityAPI = {
 	},
 
 	// Security Metrics
-	getSecurityMetrics: async (timeRange?: string) => {
+	getSecurityMetrics: async (_timeRange?: string) => {
 		// Implementation will be added based on requirements
 		return { success: true, metrics: {} };
 	},
 
 	// Compliance
-	generateComplianceReport: async (type: string) => {
+	generateComplianceReport: async (_type: string) => {
 		// Implementation will be added based on requirements
 		return { success: true, report: {} };
 	},
 
 	// Rate Limiting
-	checkRateLimit: async (key: string) => {
+	checkRateLimit: async (_key: string) => {
 		// Implementation will be added based on requirements
 		return { success: true, allowed: true };
 	},
 
 	// Authentication Security
-	validateAuthenticationSecurity: async (request: any) => {
+	validateAuthenticationSecurity: async (_request: any) => {
 		// Implementation will be added based on requirements
 		return { success: true, valid: true };
 	},

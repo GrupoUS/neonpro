@@ -7,27 +7,39 @@ const cpfValidation = (cpf: string): boolean => {
 	const cleanCpf = cpf.replace(/[^\d]/g, "");
 
 	// Verifica se tem 11 dígitos
-	if (cleanCpf.length !== 11) return false;
+	if (cleanCpf.length !== 11) {
+		return false;
+	}
 
 	// Verifica se todos os dígitos são iguais
-	if (/^(\d)\1{10}$/.test(cleanCpf)) return false;
+	if (/^(\d)\1{10}$/.test(cleanCpf)) {
+		return false;
+	}
 
 	// Validação dos dígitos verificadores
 	let sum = 0;
 	for (let i = 0; i < 9; i++) {
-		sum += Number.parseInt(cleanCpf.charAt(i)) * (10 - i);
+		sum += Number.parseInt(cleanCpf.charAt(i), 10) * (10 - i);
 	}
 	let checkDigit = 11 - (sum % 11);
-	if (checkDigit === 10 || checkDigit === 11) checkDigit = 0;
-	if (checkDigit !== Number.parseInt(cleanCpf.charAt(9))) return false;
+	if (checkDigit === 10 || checkDigit === 11) {
+		checkDigit = 0;
+	}
+	if (checkDigit !== Number.parseInt(cleanCpf.charAt(9), 10)) {
+		return false;
+	}
 
 	sum = 0;
 	for (let i = 0; i < 10; i++) {
-		sum += Number.parseInt(cleanCpf.charAt(i)) * (11 - i);
+		sum += Number.parseInt(cleanCpf.charAt(i), 10) * (11 - i);
 	}
 	checkDigit = 11 - (sum % 11);
-	if (checkDigit === 10 || checkDigit === 11) checkDigit = 0;
-	if (checkDigit !== Number.parseInt(cleanCpf.charAt(10))) return false;
+	if (checkDigit === 10 || checkDigit === 11) {
+		checkDigit = 0;
+	}
+	if (checkDigit !== Number.parseInt(cleanCpf.charAt(10), 10)) {
+		return false;
+	}
 
 	return true;
 };

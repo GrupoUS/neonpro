@@ -5,11 +5,12 @@
  * Generates comprehensive certification report with quality scores and compliance validation
  */
 
-import { performance } from "perf_hooks";
-import { beforeAll, describe, expect, it, vi } from "vitest";
+import { performance } from "node:perf_hooks";
+import { beforeAll, describe, expect, it } from "vitest";
+import { logger } from "../../../packages/core-services/src/utils/logger";
 
 // Production Readiness Metrics
-interface ProductionReadinessMetrics {
+type ProductionReadinessMetrics = {
 	codeQuality: {
 		score: number;
 		technicalDebt: "Low" | "Medium" | "High";
@@ -52,11 +53,11 @@ interface ProductionReadinessMetrics {
 		alerting: boolean;
 		supportProcesses: boolean;
 	};
-}
+};
 
 // Production Readiness Validator
 class ProductionReadinessValidator {
-	private metrics: ProductionReadinessMetrics;
+	private readonly metrics: ProductionReadinessMetrics;
 
 	constructor() {
 		this.metrics = {
@@ -273,13 +274,13 @@ describe("Final Production Readiness Certification - NeonPro Healthcare Platform
 	beforeAll(() => {
 		validator = new ProductionReadinessValidator();
 		startTime = performance.now();
-		console.log("\n🏥 NeonPro Healthcare Platform - Final Production Readiness Assessment");
-		console.log("=".repeat(80));
+		logger.info("\n🏥 NeonPro Healthcare Platform - Final Production Readiness Assessment");
+		logger.info("=".repeat(80));
 	});
 
 	describe("Comprehensive System Validation", () => {
 		it("should validate code quality meets production standards", async () => {
-			console.log("\n🔍 Validating Code Quality...");
+			logger.info("\n🔍 Validating Code Quality...");
 			await validator.validateCodeQuality();
 
 			const metrics = validator.getMetrics();
@@ -289,13 +290,13 @@ describe("Final Production Readiness Certification - NeonPro Healthcare Platform
 			expect(metrics.codeQuality.maintainability).toBeGreaterThan(90);
 			expect(metrics.codeQuality.complexity).toBeLessThan(20);
 
-			console.log(`   ✅ Code Quality Score: ${metrics.codeQuality.score}/10`);
-			console.log(`   ✅ Technical Debt: ${metrics.codeQuality.technicalDebt}`);
-			console.log(`   ✅ Maintainability: ${metrics.codeQuality.maintainability}%`);
+			logger.info(`   ✅ Code Quality Score: ${metrics.codeQuality.score}/10`);
+			logger.info(`   ✅ Technical Debt: ${metrics.codeQuality.technicalDebt}`);
+			logger.info(`   ✅ Maintainability: ${metrics.codeQuality.maintainability}%`);
 		});
 
 		it("should validate comprehensive test coverage", async () => {
-			console.log("\n🧪 Validating Test Coverage...");
+			logger.info("\n🧪 Validating Test Coverage...");
 			await validator.validateTestCoverage();
 
 			const metrics = validator.getMetrics();
@@ -305,14 +306,14 @@ describe("Final Production Readiness Certification - NeonPro Healthcare Platform
 			expect(metrics.testCoverage.integration).toBeGreaterThan(90);
 			expect(metrics.testCoverage.e2e).toBeGreaterThan(90);
 
-			console.log(`   ✅ Overall Coverage: ${metrics.testCoverage.overall}%`);
-			console.log(`   ✅ Critical Paths: ${metrics.testCoverage.critical_paths}%`);
-			console.log(`   ✅ Integration Tests: ${metrics.testCoverage.integration}%`);
-			console.log(`   ✅ End-to-End Tests: ${metrics.testCoverage.e2e}%`);
+			logger.info(`   ✅ Overall Coverage: ${metrics.testCoverage.overall}%`);
+			logger.info(`   ✅ Critical Paths: ${metrics.testCoverage.critical_paths}%`);
+			logger.info(`   ✅ Integration Tests: ${metrics.testCoverage.integration}%`);
+			logger.info(`   ✅ End-to-End Tests: ${metrics.testCoverage.e2e}%`);
 		});
 
 		it("should validate performance benchmarks for healthcare workloads", async () => {
-			console.log("\n⚡ Validating Performance Metrics...");
+			logger.info("\n⚡ Validating Performance Metrics...");
 			await validator.validatePerformance();
 
 			const metrics = validator.getMetrics();
@@ -322,14 +323,14 @@ describe("Final Production Readiness Certification - NeonPro Healthcare Platform
 			expect(metrics.performance.databasePerformance).toBeGreaterThan(85);
 			expect(metrics.performance.concurrentUsers).toBeGreaterThan(1000);
 
-			console.log(`   ✅ Core Web Vitals: ${metrics.performance.coreWebVitals}/100`);
-			console.log(`   ✅ API Response Time (P95): ${metrics.performance.apiResponseTime}ms`);
-			console.log(`   ✅ Database Performance: ${metrics.performance.databasePerformance}%`);
-			console.log(`   ✅ Concurrent Users Tested: ${metrics.performance.concurrentUsers}`);
+			logger.info(`   ✅ Core Web Vitals: ${metrics.performance.coreWebVitals}/100`);
+			logger.info(`   ✅ API Response Time (P95): ${metrics.performance.apiResponseTime}ms`);
+			logger.info(`   ✅ Database Performance: ${metrics.performance.databasePerformance}%`);
+			logger.info(`   ✅ Concurrent Users Tested: ${metrics.performance.concurrentUsers}`);
 		});
 
 		it("should validate security and vulnerability assessment", async () => {
-			console.log("\n🔒 Validating Security & Vulnerabilities...");
+			logger.info("\n🔒 Validating Security & Vulnerabilities...");
 			await validator.validateSecurity();
 
 			const metrics = validator.getMetrics();
@@ -339,14 +340,14 @@ describe("Final Production Readiness Certification - NeonPro Healthcare Platform
 			expect(["A", "A+"]).toContain(metrics.security.encryptionGrade);
 			expect(metrics.security.auditTrail).toBe(true);
 
-			console.log(`   ✅ Critical/High Vulnerabilities: ${metrics.security.vulnerabilities}`);
-			console.log(`   ✅ Security Compliance: ${metrics.security.complianceScore}%`);
-			console.log(`   ✅ Encryption Grade: ${metrics.security.encryptionGrade}`);
-			console.log(`   ✅ Audit Trail: ${metrics.security.auditTrail ? "Enabled" : "Disabled"}`);
+			logger.info(`   ✅ Critical/High Vulnerabilities: ${metrics.security.vulnerabilities}`);
+			logger.info(`   ✅ Security Compliance: ${metrics.security.complianceScore}%`);
+			logger.info(`   ✅ Encryption Grade: ${metrics.security.encryptionGrade}`);
+			logger.info(`   ✅ Audit Trail: ${metrics.security.auditTrail ? "Enabled" : "Disabled"}`);
 		});
 
 		it("should validate healthcare regulatory compliance", async () => {
-			console.log("\n📋 Validating Regulatory Compliance...");
+			logger.info("\n📋 Validating Regulatory Compliance...");
 			await validator.validateCompliance();
 
 			const metrics = validator.getMetrics();
@@ -356,14 +357,14 @@ describe("Final Production Readiness Certification - NeonPro Healthcare Platform
 			expect(metrics.compliance.cfmCompliance).toBeGreaterThan(95);
 			expect(metrics.compliance.accessibilityScore).toBeGreaterThan(95);
 
-			console.log(`   ✅ LGPD Compliance: ${metrics.compliance.lgpdCompliance}%`);
-			console.log(`   ✅ ANVISA Compliance: ${metrics.compliance.anvisaCompliance}%`);
-			console.log(`   ✅ CFM Compliance: ${metrics.compliance.cfmCompliance}%`);
-			console.log(`   ✅ Accessibility (WCAG 2.1 AA+): ${metrics.compliance.accessibilityScore}%`);
+			logger.info(`   ✅ LGPD Compliance: ${metrics.compliance.lgpdCompliance}%`);
+			logger.info(`   ✅ ANVISA Compliance: ${metrics.compliance.anvisaCompliance}%`);
+			logger.info(`   ✅ CFM Compliance: ${metrics.compliance.cfmCompliance}%`);
+			logger.info(`   ✅ Accessibility (WCAG 2.1 AA+): ${metrics.compliance.accessibilityScore}%`);
 		});
 
 		it("should validate deployment infrastructure readiness", async () => {
-			console.log("\n🚀 Validating Deployment Readiness...");
+			logger.info("\n🚀 Validating Deployment Readiness...");
 			await validator.validateDeployment();
 
 			const metrics = validator.getMetrics();
@@ -373,14 +374,14 @@ describe("Final Production Readiness Certification - NeonPro Healthcare Platform
 			expect(metrics.deployment.rollbackCapability).toBe(true);
 			expect(metrics.deployment.monitoringSetup).toBe(true);
 
-			console.log(`   ✅ Build Success: ${metrics.deployment.buildSuccess}`);
-			console.log(`   ✅ Environment Validation: ${metrics.deployment.environmentValidation}`);
-			console.log(`   ✅ Rollback Capability: ${metrics.deployment.rollbackCapability}`);
-			console.log(`   ✅ Monitoring Setup: ${metrics.deployment.monitoringSetup}`);
+			logger.info(`   ✅ Build Success: ${metrics.deployment.buildSuccess}`);
+			logger.info(`   ✅ Environment Validation: ${metrics.deployment.environmentValidation}`);
+			logger.info(`   ✅ Rollback Capability: ${metrics.deployment.rollbackCapability}`);
+			logger.info(`   ✅ Monitoring Setup: ${metrics.deployment.monitoringSetup}`);
 		});
 
 		it("should validate operational readiness and support systems", async () => {
-			console.log("\n🛠️  Validating Operational Readiness...");
+			logger.info("\n🛠️  Validating Operational Readiness...");
 			await validator.validateOperationalReadiness();
 
 			const metrics = validator.getMetrics();
@@ -390,50 +391,50 @@ describe("Final Production Readiness Certification - NeonPro Healthcare Platform
 			expect(metrics.operationalReadiness.alerting).toBe(true);
 			expect(metrics.operationalReadiness.supportProcesses).toBe(true);
 
-			console.log(`   ✅ Documentation Completeness: ${metrics.operationalReadiness.documentation}%`);
-			console.log(`   ✅ Monitoring Systems: ${metrics.operationalReadiness.monitoring}`);
-			console.log(`   ✅ Alerting Setup: ${metrics.operationalReadiness.alerting}`);
-			console.log(`   ✅ Support Processes: ${metrics.operationalReadiness.supportProcesses}`);
+			logger.info(`   ✅ Documentation Completeness: ${metrics.operationalReadiness.documentation}%`);
+			logger.info(`   ✅ Monitoring Systems: ${metrics.operationalReadiness.monitoring}`);
+			logger.info(`   ✅ Alerting Setup: ${metrics.operationalReadiness.alerting}`);
+			logger.info(`   ✅ Support Processes: ${metrics.operationalReadiness.supportProcesses}`);
 		});
 	});
 
 	describe("Production Certification Generation", () => {
 		it("should generate comprehensive production readiness certification", async () => {
-			console.log("\n🏆 Generating Production Readiness Certification...");
+			logger.info("\n🏆 Generating Production Readiness Certification...");
 
 			const certification = validator.generateCertificationReport();
 
-			console.log("\n" + "=".repeat(80));
-			console.log("📊 FINAL PRODUCTION READINESS ASSESSMENT RESULTS");
-			console.log("=".repeat(80));
+			logger.info(`\n${"=".repeat(80)}`);
+			logger.info("📊 FINAL PRODUCTION READINESS ASSESSMENT RESULTS");
+			logger.info("=".repeat(80));
 
-			console.log(`\n🎯 OVERALL QUALITY SCORE: ${certification.overallScore}/10`);
-			console.log(`🚀 PRODUCTION READY: ${certification.productionReady ? "YES" : "NO"}`);
-			console.log(`🏅 CERTIFICATION: ${certification.certification}`);
+			logger.info(`\n🎯 OVERALL QUALITY SCORE: ${certification.overallScore}/10`);
+			logger.info(`🚀 PRODUCTION READY: ${certification.productionReady ? "YES" : "NO"}`);
+			logger.info(`🏅 CERTIFICATION: ${certification.certification}`);
 
-			console.log("\n📈 DETAILED METRICS:");
-			console.log("-".repeat(50));
-			console.log(`Code Quality: ${certification.metrics.codeQuality.score}/10`);
-			console.log(`Test Coverage: ${certification.metrics.testCoverage.overall}%`);
-			console.log(`Performance Score: ${certification.metrics.performance.coreWebVitals}/100`);
-			console.log(`Security Score: ${certification.metrics.security.complianceScore}%`);
-			console.log(`LGPD Compliance: ${certification.metrics.compliance.lgpdCompliance}%`);
-			console.log(`ANVISA Compliance: ${certification.metrics.compliance.anvisaCompliance}%`);
-			console.log(`CFM Compliance: ${certification.metrics.compliance.cfmCompliance}%`);
+			logger.info("\n📈 DETAILED METRICS:");
+			logger.info("-".repeat(50));
+			logger.info(`Code Quality: ${certification.metrics.codeQuality.score}/10`);
+			logger.info(`Test Coverage: ${certification.metrics.testCoverage.overall}%`);
+			logger.info(`Performance Score: ${certification.metrics.performance.coreWebVitals}/100`);
+			logger.info(`Security Score: ${certification.metrics.security.complianceScore}%`);
+			logger.info(`LGPD Compliance: ${certification.metrics.compliance.lgpdCompliance}%`);
+			logger.info(`ANVISA Compliance: ${certification.metrics.compliance.anvisaCompliance}%`);
+			logger.info(`CFM Compliance: ${certification.metrics.compliance.cfmCompliance}%`);
 
 			if (certification.recommendations.length > 0) {
-				console.log("\n💡 RECOMMENDATIONS FOR IMPROVEMENT:");
-				console.log("-".repeat(50));
+				logger.info("\n💡 RECOMMENDATIONS FOR IMPROVEMENT:");
+				logger.info("-".repeat(50));
 				certification.recommendations.forEach((rec, index) => {
-					console.log(`${index + 1}. ${rec}`);
+					logger.info(`${index + 1}. ${rec}`);
 				});
 			} else {
-				console.log("\n✨ NO IMPROVEMENTS REQUIRED - SYSTEM IS PRODUCTION READY!");
+				logger.info("\n✨ NO IMPROVEMENTS REQUIRED - SYSTEM IS PRODUCTION READY!");
 			}
 
 			const validationTime = (performance.now() - startTime) / 1000;
-			console.log(`\n⏱️  Total Validation Time: ${validationTime.toFixed(2)} seconds`);
-			console.log("=".repeat(80));
+			logger.info(`\n⏱️  Total Validation Time: ${validationTime.toFixed(2)} seconds`);
+			logger.info("=".repeat(80));
 
 			// Final assertions for production readiness
 			expect(certification.overallScore).toBeGreaterThan(9.5);
@@ -449,9 +450,9 @@ describe("Final Production Readiness Certification - NeonPro Healthcare Platform
 			expect(certification.metrics.performance.apiResponseTime).toBeLessThan(100);
 			expect(certification.metrics.performance.coreWebVitals).toBeGreaterThan(95);
 
-			console.log("\n🎉 NEONPRO HEALTHCARE PLATFORM IS CERTIFIED FOR PRODUCTION DEPLOYMENT!");
-			console.log("🏥 Ready to serve healthcare professionals and patients with enterprise-grade quality.");
-			console.log("=".repeat(80));
+			logger.info("\n🎉 NEONPRO HEALTHCARE PLATFORM IS CERTIFIED FOR PRODUCTION DEPLOYMENT!");
+			logger.info("🏥 Ready to serve healthcare professionals and patients with enterprise-grade quality.");
+			logger.info("=".repeat(80));
 		});
 	});
 
@@ -474,10 +475,9 @@ describe("Final Production Readiness Certification - NeonPro Healthcare Platform
 			// All quality gates must pass
 			Object.entries(qualityGates).forEach(([gate, passed]) => {
 				expect(passed).toBe(true);
-				console.log(`✅ Quality Gate - ${gate}: PASSED`);
+				logger.info(`✅ Quality Gate - ${gate}: PASSED`);
 			});
-
-			console.log("\n🏆 ALL CRITICAL QUALITY GATES PASSED - PRODUCTION DEPLOYMENT APPROVED");
+			logger.info("\n🏆 ALL CRITICAL QUALITY GATES PASSED - PRODUCTION DEPLOYMENT APPROVED");
 		});
 
 		it("should validate healthcare-specific operational requirements", async () => {
@@ -496,10 +496,9 @@ describe("Final Production Readiness Certification - NeonPro Healthcare Platform
 
 			Object.entries(healthcareRequirements).forEach(([requirement, met]) => {
 				expect(met).toBe(true);
-				console.log(`🏥 Healthcare Requirement - ${requirement}: MET`);
+				logger.info(`🏥 Healthcare Requirement - ${requirement}: MET`);
 			});
-
-			console.log("\n💉 HEALTHCARE-SPECIFIC REQUIREMENTS FULLY SATISFIED");
+			logger.info("\n💉 HEALTHCARE-SPECIFIC REQUIREMENTS FULLY SATISFIED");
 		});
 	});
 });

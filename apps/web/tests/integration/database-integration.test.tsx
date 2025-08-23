@@ -105,7 +105,7 @@ const mockMedicalRecordData = {
 };
 
 // Test wrapper component
-const TestWrapper = ({ children }: { children: React.ReactNode }) => {
+const _TestWrapper = ({ children }: { children: React.ReactNode }) => {
 	const queryClient = new QueryClient({
 		defaultOptions: {
 			queries: { retry: false },

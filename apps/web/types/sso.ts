@@ -179,7 +179,7 @@ export const SSO_PROVIDERS = {
 export type SSOProviderType = (typeof SSO_PROVIDERS)[keyof typeof SSO_PROVIDERS];
 
 // SAML specific types
-export interface SAMLAssertion {
+export type SAMLAssertion = {
 	issuer: string;
 	subject: string;
 	audience: string;
@@ -193,7 +193,7 @@ export interface SAMLAssertion {
 		algorithm: string;
 		value: string;
 	};
-}
+};
 
 export type SAMLRequest = {
 	id: string;

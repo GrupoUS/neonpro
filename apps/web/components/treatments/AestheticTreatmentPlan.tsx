@@ -7,17 +7,12 @@ import {
 	Calendar,
 	CheckCircle,
 	Clock,
-	Eye,
 	FileText,
-	Heart,
 	Info,
 	MapPin,
 	Shield,
 	Star,
 	Target,
-	User,
-	Users,
-	Zap,
 } from "lucide-react";
 import { useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -55,7 +50,7 @@ const NeonGradientCard = ({ children, className = "" }: NeonGradientCardProps) =
 );
 
 // Props interface for the component
-interface AestheticTreatmentPlanProps {
+type AestheticTreatmentPlanProps = {
 	treatmentPlan: TreatmentPlan;
 	sessions?: TreatmentSession[];
 	onEditPlan?: (plan: TreatmentPlan) => void;
@@ -64,7 +59,7 @@ interface AestheticTreatmentPlanProps {
 	onManageConsent?: (planId: string) => void;
 	variant?: "card" | "detailed" | "summary";
 	className?: string;
-}
+};
 
 // Helper functions for Brazilian localization
 const getTreatmentCategoryLabel = (category: AestheticTreatmentCategory): string => {
@@ -161,7 +156,9 @@ const getLGPDConsentIcon = (status: LGPDPhotoConsentStatus) => {
 
 // Progress calculation helper
 const calculateProgress = (completedSessions: number, expectedSessions: number): number => {
-	if (expectedSessions === 0) return 0;
+	if (expectedSessions === 0) {
+		return 0;
+	}
 	return Math.min((completedSessions / expectedSessions) * 100, 100);
 };
 

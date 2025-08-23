@@ -11,55 +11,36 @@ import { ApiHelpers, type ApiResponse, apiClient } from "@neonpro/shared/api-cli
 // Import validation schemas and types
 import {
 	type Address,
-	// Supporting schemas
-	AddressSchema,
-	type Allergy,
-	AllergySchema,
-	type BloodType,
 	type CreatePatient,
 	CreatePatientSchema,
 	type EmergencyContact,
-	EmergencyContactSchema,
-	type Insurance,
-	InsuranceSchema,
-	type MaritalStatus,
-	type MedicalHistory,
-	MedicalHistorySchema,
 	type Medication,
-	MedicationSchema,
 	// Types
 	type PatientBase,
-	// Patient schemas
-	PatientBaseSchema,
 	type PatientDataExport,
 	type PatientDataExportResponse,
 	PatientDataExportResponseSchema,
 	PatientDataExportSchema,
-	type PatientGender,
 	type PatientQuery,
 	PatientQuerySchema,
 	type PatientResponse,
 	PatientResponseSchema,
-	type PatientStats,
 	PatientStatsSchema,
-	type PatientsListResponse,
 	PatientsListResponseSchema,
 	type UpdatePatient,
 	UpdatePatientSchema,
 } from "@neonpro/shared/schemas";
 import { useCallback, useMemo } from "react";
-import { toast } from "sonner";
 // Import our enhanced query utilities
 import {
 	HealthcareQueryConfig,
 	InvalidationHelpers,
-	type PaginatedResponse,
 	QueryKeys,
 	useHealthcareQueryUtils,
 } from "@/lib/query/query-utils";
 
 // Patient management context interface
-export interface PatientManagementContext {
+export type PatientManagementContext = {
 	// Basic operations
 	createPatient: ReturnType<typeof useCreatePatient>;
 	updatePatient: ReturnType<typeof useUpdatePatient>;
@@ -75,7 +56,7 @@ export interface PatientManagementContext {
 
 	// Utility functions
 	utils: ReturnType<typeof usePatientUtils>;
-}
+};
 
 // 👤 Get single patient with validation and audit logging
 export function usePatient(id: string) {
@@ -94,7 +75,7 @@ export function usePatient(id: string) {
 			if (!response.success) {
 				throw new Error(response.error?.code || "Failed to fetch patient");
 			}
-			return response.data!.patient;
+			return response.data?.patient;
 		},
 		enableAuditLogging: true,
 		sensitiveData: true,
@@ -135,9 +116,9 @@ export function usePatients(filters?: PatientQuery) {
 				throw new Error(response.error?.code || "Failed to fetch patients");
 			}
 			return {
-				patients: response.data!.patients,
-				pagination: response.data!.pagination,
-				summary: response.data!.summary,
+				patients: response.data?.patients,
+				pagination: response.data?.pagination,
+				summary: response.data?.summary,
 			};
 		},
 		enableAuditLogging: true,
@@ -189,7 +170,7 @@ export function useCreatePatient() {
 		// Invalidate patient lists after creation
 		invalidateQueries: [QueryKeys.patients.all(), QueryKeys.patients.stats()],
 
-		onSuccess: (response, variables) => {
+		onSuccess: (response, _variables) => {
 			// Log patient creation for audit
 			const user = apiClient.auth.getUser();
 			if (user && response.patient) {
@@ -249,7 +230,7 @@ export function useUpdatePatient(id: string) {
 			oldData ? { ...oldData, ...patientData } : (oldData as PatientBase)
 		),
 
-		onSuccess: (response, variables) => {
+		onSuccess: (_response, _variables) => {
 			// Log patient update for audit
 			const user = apiClient.auth.getUser();
 			if (user) {
@@ -292,7 +273,7 @@ export function useDeletePatient() {
 		// Invalidate all patient data
 		invalidateQueries: [QueryKeys.patients.all(), QueryKeys.patients.stats()],
 
-		onSuccess: (response, id) => {
+		onSuccess: (_response, id) => {
 			// Clear patient from cache
 			queryUtils.clearSensitiveUserData(id);
 
@@ -370,8 +351,8 @@ export function useClinicPatients(clinicId: string, filters?: Omit<PatientQuery,
 				throw new Error(response.error?.code || "Failed to fetch clinic patients");
 			}
 			return {
-				patients: response.data!.patients,
-				pagination: response.data!.pagination,
+				patients: response.data?.patients,
+				pagination: response.data?.pagination,
 			};
 		},
 		enableAuditLogging: true,
@@ -470,7 +451,7 @@ export function useSearchPatients() {
 					if (!response.success) {
 						throw new Error(response.error?.code || "Failed to search patients");
 					}
-					return response.data!.patients;
+					return response.data?.patients;
 				},
 				enableAuditLogging: true,
 				sensitiveData: true,
@@ -568,7 +549,9 @@ export function usePatientUtils() {
 
 			// Calculate BMI if height and weight available
 			calculateBMI: (patient: PatientBase): number | null => {
-				if (!(patient.height && patient.weight)) return null;
+				if (!(patient.height && patient.weight)) {
+					return null;
+				}
 
 				const heightInMeters = patient.height / 100;
 				return patient.weight / (heightInMeters * heightInMeters);
@@ -577,10 +560,15 @@ export function usePatientUtils() {
 			// Format BMI with classification
 			formatBMIWithClassification: (bmi: number): string => {
 				let classification = "";
-				if (bmi < 18.5) classification = "Abaixo do peso";
-				else if (bmi < 25) classification = "Peso normal";
-				else if (bmi < 30) classification = "Sobrepeso";
-				else classification = "Obesidade";
+				if (bmi < 18.5) {
+					classification = "Abaixo do peso";
+				} else if (bmi < 25) {
+					classification = "Peso normal";
+				} else if (bmi < 30) {
+					classification = "Sobrepeso";
+				} else {
+					classification = "Obesidade";
+				}
 
 				return `${bmi.toFixed(1)} (${classification})`;
 			},

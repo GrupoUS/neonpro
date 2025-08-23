@@ -1,4 +1,4 @@
-export interface AppEnv {
+export type AppEnv = {
 	Variables: {
 		dbClient: string;
 	};
@@ -8,4 +8,4 @@ export interface AppEnv {
 		SUPABASE_ANON_KEY?: string;
 		SUPABASE_SERVICE_ROLE_KEY?: string;
 	};
-}
+};

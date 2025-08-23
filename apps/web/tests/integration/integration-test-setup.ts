@@ -115,9 +115,6 @@ export function createTestQueryClient(): QueryClient {
 // Database cleanup utilities
 export class TestDatabaseCleanup {
 	static async cleanupTestData() {
-		// Mock cleanup implementation
-		console.log("Cleaning up test data...");
-
 		// In real implementation, this would:
 		// 1. Delete test patients
 		// 2. Delete test appointments
@@ -127,9 +124,6 @@ export class TestDatabaseCleanup {
 	}
 
 	static async seedTestData() {
-		// Mock seed implementation
-		console.log("Seeding test data...");
-
 		// In real implementation, this would:
 		// 1. Create test clinics
 		// 2. Create test users
@@ -151,7 +145,7 @@ export class TestPerformanceMonitor {
 				TestPerformanceMonitor.measurements.set(testName, []);
 			}
 
-			TestPerformanceMonitor.measurements.get(testName)!.push(duration);
+			TestPerformanceMonitor.measurements.get(testName)?.push(duration);
 			return duration;
 		};
 	}
@@ -196,7 +190,7 @@ export class TestLGPDCompliance {
 		return requestedData.every((field) => actualKeys.includes(field));
 	}
 
-	static validateAuditTrail(operation: string, auditEntry: any): boolean {
+	static validateAuditTrail(_operation: string, auditEntry: any): boolean {
 		const requiredFields = ["user_id", "timestamp", "action", "resource", "legal_basis"];
 		return requiredFields.every((field) => auditEntry[field] != null);
 	}
@@ -311,20 +305,14 @@ export class TestHealthcareUtilities {
 // Global test setup and teardown
 export function setupIntegrationTests() {
 	beforeAll(async () => {
-		console.log("🚀 Starting Integration Tests Setup...");
 		await TestDatabaseCleanup.seedTestData();
-		console.log("✅ Integration Tests Setup Complete");
 	});
 
 	afterAll(async () => {
-		console.log("🧹 Cleaning up Integration Tests...");
 		await TestDatabaseCleanup.cleanupTestData();
 
 		// Generate performance report
-		const report = TestPerformanceMonitor.generatePerformanceReport();
-		console.log("\n" + report);
-
-		console.log("✅ Integration Tests Cleanup Complete");
+		const _report = TestPerformanceMonitor.generatePerformanceReport();
 	});
 
 	beforeEach(() => {

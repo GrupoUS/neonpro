@@ -3,7 +3,7 @@
  * Validação final de conformidade healthcare antes do deploy em produção
  */
 
-import { beforeAll, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 
 describe("Healthcare Compliance Final Validation", () => {
 	describe("Patient Data Protection (LGPD)", () => {

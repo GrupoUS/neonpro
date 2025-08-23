@@ -50,7 +50,7 @@ export const professionalsRoutes = new Hono()
 	// Authentication middleware
 	.use("*", async (c, next) => {
 		const auth = c.req.header("Authorization");
-		if (!(auth && auth.startsWith("Bearer "))) {
+		if (!auth?.startsWith("Bearer ")) {
 			return c.json({ error: "UNAUTHORIZED", message: "Token de acesso obrigatório" }, 401);
 		}
 		await next();
@@ -86,9 +86,15 @@ export const professionalsRoutes = new Hono()
 					createdAt: new Date().toISOString(),
 				},
 			].filter((prof) => {
-				if (search && !prof.fullName.toLowerCase().includes(search.toLowerCase())) return false;
-				if (profession && prof.profession !== profession) return false;
-				if (isActive !== undefined && prof.isActive !== isActive) return false;
+				if (search && !prof.fullName.toLowerCase().includes(search.toLowerCase())) {
+					return false;
+				}
+				if (profession && prof.profession !== profession) {
+					return false;
+				}
+				if (isActive !== undefined && prof.isActive !== isActive) {
+					return false;
+				}
 				return true;
 			});
 
@@ -120,7 +126,7 @@ export const professionalsRoutes = new Hono()
 			};
 
 			return c.json(response, 200);
-		} catch (error) {
+		} catch (_error) {
 			return c.json(
 				{
 					success: false,
@@ -166,7 +172,7 @@ export const professionalsRoutes = new Hono()
 			};
 
 			return c.json(response, 200);
-		} catch (error) {
+		} catch (_error) {
 			return c.json(
 				{
 					success: false,
@@ -198,7 +204,7 @@ export const professionalsRoutes = new Hono()
 			};
 
 			return c.json(response, 201);
-		} catch (error) {
+		} catch (_error) {
 			return c.json(
 				{
 					success: false,
@@ -234,7 +240,7 @@ export const professionalsRoutes = new Hono()
 			};
 
 			return c.json(response, 200);
-		} catch (error) {
+		} catch (_error) {
 			return c.json(
 				{
 					success: false,
@@ -259,7 +265,7 @@ export const professionalsRoutes = new Hono()
 			};
 
 			return c.json(response, 200);
-		} catch (error) {
+		} catch (_error) {
 			return c.json(
 				{
 					success: false,
@@ -273,7 +279,7 @@ export const professionalsRoutes = new Hono()
 
 	// 📊 Get professional stats
 	.get("/:id/stats", async (c) => {
-		const id = c.req.param("id");
+		const _id = c.req.param("id");
 
 		try {
 			// TODO: Implement actual stats query
@@ -294,7 +300,7 @@ export const professionalsRoutes = new Hono()
 			};
 
 			return c.json(response, 200);
-		} catch (error) {
+		} catch (_error) {
 			return c.json(
 				{
 					success: false,
@@ -308,7 +314,7 @@ export const professionalsRoutes = new Hono()
 
 	// 📅 Get professional availability
 	.get("/:id/availability", async (c) => {
-		const id = c.req.param("id");
+		const _id = c.req.param("id");
 		const date = c.req.query("date"); // YYYY-MM-DD format
 
 		try {
@@ -326,7 +332,7 @@ export const professionalsRoutes = new Hono()
 			};
 
 			return c.json(response, 200);
-		} catch (error) {
+		} catch (_error) {
 			return c.json(
 				{
 					success: false,

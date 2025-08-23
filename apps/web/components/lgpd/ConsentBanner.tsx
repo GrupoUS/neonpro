@@ -5,9 +5,8 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
-interface ConsentOption {
+type ConsentOption = {
 	id: string;
 	type: "essential" | "functional" | "analytics" | "marketing";
 	title: string;
@@ -16,16 +15,16 @@ interface ConsentOption {
 	lawfulBasis: string;
 	examples: string[];
 	enabled: boolean;
-}
+};
 
-interface ConsentBannerProps {
+type ConsentBannerProps = {
 	isVisible: boolean;
 	onConsentComplete: (consents: Record<string, boolean>) => void;
 	onConsentDeclined: () => void;
-}
+};
 
 export default function ConsentBanner({ isVisible, onConsentComplete, onConsentDeclined }: ConsentBannerProps) {
-	const [showDetails, setShowDetails] = useState(false);
+	const [_showDetails, _setShowDetails] = useState(false);
 	const [consents, setConsents] = useState<Record<string, boolean>>({});
 	const [step, setStep] = useState<"banner" | "detailed" | "confirmation">("banner");
 
@@ -153,7 +152,9 @@ export default function ConsentBanner({ isVisible, onConsentComplete, onConsentD
 		}
 	};
 
-	if (!isVisible) return null;
+	if (!isVisible) {
+		return null;
+	}
 
 	return (
 		<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
@@ -397,7 +398,7 @@ export function useConsentBanner() {
 		if (storedConsents && consentTimestamp) {
 			// Check if consent is older than 1 year (need to re-confirm)
 			const oneYearAgo = Date.now() - 365 * 24 * 60 * 60 * 1000;
-			if (Number.parseInt(consentTimestamp) < oneYearAgo) {
+			if (Number.parseInt(consentTimestamp, 10) < oneYearAgo) {
 				setShowBanner(true);
 			} else {
 				setConsentsGiven(JSON.parse(storedConsents));

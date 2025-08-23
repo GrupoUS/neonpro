@@ -4,9 +4,9 @@
  * Tests Hono.dev backend API performance, load testing, and healthcare endpoints
  */
 
-import { performance } from "perf_hooks";
+import { performance } from "node:perf_hooks";
 
-export interface ApiPerformanceMetrics {
+export type ApiPerformanceMetrics = {
 	responseTime: {
 		p50: number;
 		p95: number;
@@ -17,17 +17,17 @@ export interface ApiPerformanceMetrics {
 	errorRate: number;
 	memoryUsage: number;
 	cpuUsage: number;
-}
+};
 
-export interface HealthcareApiMetrics {
+export type HealthcareApiMetrics = {
 	patientEndpoints: EndpointMetrics;
 	appointmentEndpoints: EndpointMetrics;
 	medicalRecordEndpoints: EndpointMetrics;
 	authenticationEndpoints: EndpointMetrics;
 	emergencyEndpoints: EndpointMetrics;
-}
+};
 
-export interface EndpointMetrics {
+export type EndpointMetrics = {
 	endpoint: string;
 	method: string;
 	averageResponseTime: number;
@@ -35,18 +35,18 @@ export interface EndpointMetrics {
 	minResponseTime: number;
 	errorRate: number;
 	requestsPerSecond: number;
-}
+};
 
-export interface LoadTestConfig {
+export type LoadTestConfig = {
 	baseUrl: string;
 	concurrentUsers: number;
 	duration: number; // seconds
 	rampUpTime: number; // seconds
-}
+};
 
 export class ApiPerformanceTester {
-	private baseUrl: string;
-	private authToken?: string;
+	private readonly baseUrl: string;
+	private readonly authToken?: string;
 
 	constructor(baseUrl: string, authToken?: string) {
 		this.baseUrl = baseUrl;
@@ -87,7 +87,7 @@ export class ApiPerformanceTester {
 				if (!response.ok) {
 					errorCount++;
 				}
-			} catch (error) {
+			} catch (_error) {
 				errorCount++;
 				responseTimes.push(10_000); // 10s timeout penalty
 			}
@@ -190,7 +190,7 @@ export class ApiPerformanceTester {
 				if (!response.ok) {
 					errors++;
 				}
-			} catch (error) {
+			} catch (_error) {
 				errors++;
 				responseTimes.push(10_000); // Timeout penalty
 			}
@@ -213,17 +213,14 @@ export class ApiPerformanceTester {
 	async generateReport(
 		metrics: ApiPerformanceMetrics,
 		healthcareMetrics: HealthcareApiMetrics,
-		outputPath: string
+		_outputPath: string
 	): Promise<void> {
-		const report = {
+		const _report = {
 			timestamp: new Date().toISOString(),
 			summary: metrics,
 			healthcareEndpoints: healthcareMetrics,
 			recommendations: this.generateRecommendations(metrics, healthcareMetrics),
 		};
-
-		// Would implement file writing here
-		console.log("API Performance Report:", report);
 	}
 
 	private generateRecommendations(metrics: ApiPerformanceMetrics, healthcareMetrics: HealthcareApiMetrics): string[] {

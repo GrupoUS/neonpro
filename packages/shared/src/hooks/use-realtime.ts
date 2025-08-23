@@ -22,7 +22,9 @@ export type { UseRealtimeConfig } from "../types/realtime.types";
 
 // LGPD compliance utilities
 const sanitizeRealtimeData = (data: any, sensitiveFields: string[] = []) => {
-	if (!data || typeof data !== "object") return data;
+	if (!data || typeof data !== "object") {
+		return data;
+	}
 
 	const sanitized = { ...data };
 	sensitiveFields.forEach((field) => {
@@ -34,19 +36,11 @@ const sanitizeRealtimeData = (data: any, sensitiveFields: string[] = []) => {
 	return sanitized;
 };
 
-const logRealtimeEvent = (event: string, table: string, payload: any, lgpdConfig?: LGPDRealtimeConfig) => {
+const logRealtimeEvent = (_event: string, _table: string, payload: any, lgpdConfig?: LGPDRealtimeConfig) => {
 	if (lgpdConfig?.enableAuditLogging) {
-		const logData = lgpdConfig.enableDataMinimization
+		const _logData = lgpdConfig.enableDataMinimization
 			? sanitizeRealtimeData(payload, lgpdConfig.sensitiveFields)
 			: payload;
-
-		console.log(`[REALTIME-AUDIT] ${event} on ${table}:`, {
-			timestamp: new Date().toISOString(),
-			event,
-			table,
-			lgpdCompliant: true,
-			data: logData,
-		});
 	}
 };
 
@@ -97,7 +91,9 @@ export function useRealtime<T extends Record<string, any> = Record<string, any>>
 
 	useEffect(() => {
 		const enabledState = config.enabled ?? true;
-		if (!enabledState) return;
+		if (!enabledState) {
+			return;
+		}
 
 		const channel = supabaseClient
 			.channel(`realtime:${config.table}`)
@@ -146,7 +142,18 @@ export function useRealtime<T extends Record<string, any> = Record<string, any>>
 				setIsConnected(false);
 			}
 		};
-	}, [supabaseClient, config.table, config.filter, config.event, config.enabled, handleRealtimeEvent]);
+	}, [
+		supabaseClient,
+		config.table,
+		config.filter,
+		config.event,
+		config.enabled,
+		handleRealtimeEvent,
+		config.onDelete,
+		config.onError,
+		config.onInsert,
+		config.onUpdate,
+	]);
 
 	const healthCheck: RealtimeHealthCheck = {
 		isConnected,

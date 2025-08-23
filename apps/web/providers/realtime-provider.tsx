@@ -19,7 +19,7 @@ import {
 import { createClient } from "@/lib/supabase/client";
 
 // Real-time context interface
-interface RealtimeContextValue {
+type RealtimeContextValue = {
 	supabaseClient: SupabaseClient;
 	manager: RealtimeQueryManager | null;
 	isEnabled: boolean;
@@ -28,7 +28,7 @@ interface RealtimeContextValue {
 	disableRealtime: () => void;
 	getConfig: () => RealtimeQueryConfig;
 	updateConfig: (config: Partial<RealtimeQueryConfig>) => void;
-}
+};
 
 // Create context
 const RealtimeContext = createContext<RealtimeContextValue | null>(null);

@@ -19,7 +19,7 @@ import { cn } from "../../lib/utils";
  * - Medical forms: minimum 7.0:1
  */
 
-interface ContrastValidatorProps {
+type ContrastValidatorProps = {
 	/**
 	 * Background color to test against
 	 */
@@ -69,7 +69,7 @@ interface ContrastValidatorProps {
 	 * Additional CSS classes
 	 */
 	className?: string;
-}
+};
 
 /**
  * Convert hex color to RGB values
@@ -113,11 +113,21 @@ const parseColor = (color: string): { r: number; g: number; b: number } | null =
 		const l = Number.parseInt(hslMatch[3], 10) / 100;
 
 		const hue2rgb = (p: number, q: number, t: number) => {
-			if (t < 0) t += 1;
-			if (t > 1) t -= 1;
-			if (t < 1 / 6) return p + (q - p) * 6 * t;
-			if (t < 1 / 2) return q;
-			if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+			if (t < 0) {
+				t += 1;
+			}
+			if (t > 1) {
+				t -= 1;
+			}
+			if (t < 1 / 6) {
+				return p + (q - p) * 6 * t;
+			}
+			if (t < 1 / 2) {
+				return q;
+			}
+			if (t < 2 / 3) {
+				return p + (q - p) * (2 / 3 - t) * 6;
+			}
 			return p;
 		};
 
@@ -149,7 +159,7 @@ const getRelativeLuminance = (rgb: { r: number; g: number; b: number }): number 
 	const { r, g, b } = rgb;
 
 	const [rSRGB, gSRGB, bSRGB] = [r, g, b].map((c) => {
-		c = c / 255;
+		c /= 255;
 		return c <= 0.039_28 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
 	});
 
@@ -163,7 +173,9 @@ const calculateContrastRatio = (color1: string, color2: string): number => {
 	const rgb1 = parseColor(color1);
 	const rgb2 = parseColor(color2);
 
-	if (!(rgb1 && rgb2)) return 0;
+	if (!(rgb1 && rgb2)) {
+		return 0;
+	}
 
 	const lum1 = getRelativeLuminance(rgb1);
 	const lum2 = getRelativeLuminance(rgb2);
@@ -182,7 +194,9 @@ const getMinimumRatio = (
 	medicalContext: "emergency" | "patient-data" | "form" | "general",
 	customMinimum?: number
 ): number => {
-	if (customMinimum) return customMinimum;
+	if (customMinimum) {
+		return customMinimum;
+	}
 
 	// Healthcare enhanced requirements
 	switch (medicalContext) {
@@ -192,7 +206,6 @@ const getMinimumRatio = (
 			return 7.0; // Sensitive data clarity
 		case "form":
 			return textSize === "large" ? 4.5 : 7.0; // Form clarity
-		case "general":
 		default:
 			return textSize === "large" ? 4.5 : 7.0; // Healthcare standard
 	}
@@ -231,16 +244,28 @@ const ContrastValidator = React.forwardRef<HTMLDivElement, ContrastValidatorProp
 		}, [backgroundColor, foregroundColor, requiredRatio, onValidationChange]);
 
 		const getIndicatorColor = () => {
-			if (contrastRatio >= 7.0) return "bg-green-500"; // Excellent
-			if (contrastRatio >= 4.5) return "bg-yellow-500"; // Good (AA)
-			if (contrastRatio >= 3.0) return "bg-orange-500"; // Poor (AA Large)
+			if (contrastRatio >= 7.0) {
+				return "bg-green-500"; // Excellent
+			}
+			if (contrastRatio >= 4.5) {
+				return "bg-yellow-500"; // Good (AA)
+			}
+			if (contrastRatio >= 3.0) {
+				return "bg-orange-500"; // Poor (AA Large)
+			}
 			return "bg-red-500"; // Failed
 		};
 
 		const getIndicatorText = () => {
-			if (contrastRatio >= 7.0) return "AAA";
-			if (contrastRatio >= 4.5) return "AA";
-			if (contrastRatio >= 3.0) return "AA Large";
+			if (contrastRatio >= 7.0) {
+				return "AAA";
+			}
+			if (contrastRatio >= 4.5) {
+				return "AA";
+			}
+			if (contrastRatio >= 3.0) {
+				return "AA Large";
+			}
 			return "Failed";
 		};
 
@@ -327,9 +352,13 @@ export const useContrastValidation = (
 		const isValid = ratio >= requiredRatio;
 
 		let level: "AAA" | "AA" | "AA Large" | "Failed" = "Failed";
-		if (ratio >= 7.0) level = "AAA";
-		else if (ratio >= 4.5) level = "AA";
-		else if (ratio >= 3.0) level = "AA Large";
+		if (ratio >= 7.0) {
+			level = "AAA";
+		} else if (ratio >= 4.5) {
+			level = "AA";
+		} else if (ratio >= 3.0) {
+			level = "AA Large";
+		}
 
 		setValidation({ ratio, isValid, level, requiredRatio });
 	}, [backgroundColor, foregroundColor, medicalContext, textSize]);

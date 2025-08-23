@@ -14,10 +14,10 @@
  */
 
 import { type Browser, chromium, type Page } from "@playwright/test";
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 // Security testing thresholds and configurations
-const PENETRATION_TEST_CONFIG = {
+const _PENETRATION_TEST_CONFIG = {
 	MAX_RESPONSE_TIME: 5000, // Max time for security responses
 	BRUTEFORCE_ATTEMPTS: 100, // Number of brute force attempts
 	SQL_INJECTION_PAYLOADS: 50, // Number of SQL injection tests
@@ -66,19 +66,19 @@ const ATTACK_PAYLOADS = {
 	],
 };
 
-interface SecurityTestResult {
+type SecurityTestResult = {
 	vulnerability: string;
 	severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
 	exploitable: boolean;
 	details: string;
 	remediation: string;
 	cvssScore?: number;
-}
+};
 
 class PenetrationTester {
 	private browser?: Browser;
 	private page?: Page;
-	private vulnerabilities: SecurityTestResult[] = [];
+	private readonly vulnerabilities: SecurityTestResult[] = [];
 
 	async setup(): Promise<void> {
 		this.browser = await chromium.launch({
@@ -177,7 +177,7 @@ class PenetrationTester {
 						cvssScore: 8.1,
 					});
 				}
-			} catch (error) {
+			} catch (_error) {
 				// Continue testing other payloads
 			}
 		}
@@ -236,8 +236,6 @@ describe("🎯 Comprehensive Penetration Testing", () => {
 				expect(sqlResults.length).toBe(0);
 
 				sqlResults.forEach((vuln) => penTester.recordVulnerability(vuln));
-
-				console.log(`SQL Injection Test - ${target.endpoint}: ${sqlResults.length} vulnerabilities found`);
 			}
 		});
 
@@ -281,7 +279,6 @@ describe("🎯 Comprehensive Penetration Testing", () => {
 			}
 
 			expect(weakAuthFound).toBe(0);
-			console.log(`Broken Authentication Test: ${weakAuthFound} weak credentials found`);
 		});
 
 		it("should test for sensitive data exposure (A02:2021)", async () => {
@@ -325,8 +322,6 @@ describe("🎯 Comprehensive Penetration Testing", () => {
 					}
 				}
 			}
-
-			console.log("Sensitive Data Exposure Test: Complete");
 		});
 
 		it("should test for cross-site scripting (A03:2021)", async () => {
@@ -338,8 +333,6 @@ describe("🎯 Comprehensive Penetration Testing", () => {
 				expect(xssResults.length).toBe(0);
 
 				xssResults.forEach((vuln) => penTester.recordVulnerability(vuln));
-
-				console.log(`XSS Test - ${endpoint}: ${xssResults.length} vulnerabilities found`);
 			}
 		});
 	});
@@ -364,8 +357,6 @@ describe("🎯 Comprehensive Penetration Testing", () => {
 				// Test unauthorized device control
 				const deviceControlTest = await testUnauthorizedDeviceControl(endpoint);
 				expect(deviceControlTest.controlGained).toBe(false);
-
-				console.log(`Medical Device Security - ${endpoint}: SECURED`);
 			}
 		});
 
@@ -394,8 +385,6 @@ describe("🎯 Comprehensive Penetration Testing", () => {
 				expect(bypassTest.createsAuditLog).toBe(true);
 				expect(bypassTest.hasTimeLimit).toBe(true);
 				expect(bypassTest.bypassSecurityProperly).toBe(true);
-
-				console.log(`Emergency Bypass Security - ${test.type}: VALIDATED`);
 			}
 		});
 
@@ -424,8 +413,6 @@ describe("🎯 Comprehensive Penetration Testing", () => {
 				expect(separationTest.dataLeakage).toBe(false);
 				expect(separationTest.crossPatientAccess).toBe(false);
 				expect(separationTest.properSegmentation).toBe(true);
-
-				console.log(`Patient Data Segregation - ${test.dataType}: SECURE`);
 			}
 		});
 
@@ -444,8 +431,6 @@ describe("🎯 Comprehensive Penetration Testing", () => {
 				expect(complianceTest.bypassPrevented).toBe(true);
 				expect(complianceTest.violationDetected).toBe(true);
 				expect(complianceTest.auditLogCreated).toBe(true);
-
-				console.log(`Compliance Bypass Prevention - ${bypassType}: PROTECTED`);
 			}
 		});
 	});
@@ -484,8 +469,6 @@ describe("🎯 Comprehensive Penetration Testing", () => {
 			// Session ID should change after successful authentication
 			expect(newSessionId).not.toBe(sessionId);
 			expect(newSessionId).toBeTruthy();
-
-			console.log("Session Fixation Test: PROTECTED");
 		});
 
 		it("should test concurrent session limits", async () => {
@@ -512,8 +495,6 @@ describe("🎯 Comprehensive Penetration Testing", () => {
 
 			// Should not exceed maximum allowed sessions
 			expect(sessions.length).toBeLessThanOrEqual(maxAllowedSessions);
-
-			console.log(`Concurrent Session Limit Test: ${sessions.length} sessions created`);
 		});
 
 		it("should test JWT token security", async () => {
@@ -530,8 +511,6 @@ describe("🎯 Comprehensive Penetration Testing", () => {
 
 				expect(jwtTest.vulnerabilityExploited).toBe(false);
 				expect(jwtTest.tokenValidationStrict).toBe(true);
-
-				console.log(`JWT Security Test - ${testType}: SECURE`);
 			}
 		});
 	});
@@ -561,8 +540,6 @@ describe("🎯 Comprehensive Penetration Testing", () => {
 					const hasSensitiveInfo = checkForSensitiveInformation(content);
 					expect(hasSensitiveInfo).toBe(false);
 				}
-
-				console.log(`Information Disclosure - ${test.path}: ${response.status}`);
 			}
 		});
 
@@ -574,8 +551,6 @@ describe("🎯 Comprehensive Penetration Testing", () => {
 			expect(sslTests.certificateValid).toBe(true);
 			expect(sslTests.hstsEnabled).toBe(true);
 			expect(sslTests.weakProtocolsDisabled).toBe(true);
-
-			console.log("SSL/TLS Security Configuration: SECURE");
 		});
 
 		it("should test HTTP security headers", async () => {
@@ -601,8 +576,6 @@ describe("🎯 Comprehensive Penetration Testing", () => {
 				} else if (expectedValue.exists) {
 					expect(headerValue).toBeTruthy();
 				}
-
-				console.log(`Security Header - ${headerName}: ${headerValue || "MISSING"}`);
 			});
 		});
 	});
@@ -620,19 +593,9 @@ describe("🎯 Comprehensive Penetration Testing", () => {
 			// Overall exploitable vulnerabilities should be minimal
 			expect(report.exploitable).toBeLessThanOrEqual(3);
 
-			console.log("Security Vulnerability Report:");
-			console.log(`- Critical: ${report.critical}`);
-			console.log(`- High: ${report.high}`);
-			console.log(`- Medium: ${report.medium}`);
-			console.log(`- Low: ${report.low}`);
-			console.log(`- Total: ${report.total}`);
-			console.log(`- Exploitable: ${report.exploitable}`);
-
 			// Generate detailed security report
 			const detailedReport = generateSecurityAssessmentReport(penTester.vulnerabilities);
 			expect(detailedReport.overallRiskScore).toBeLessThanOrEqual(3); // Low to Medium risk
-
-			console.log("Detailed Security Assessment Report Generated");
 		});
 
 		it("should validate security compliance against healthcare standards", async () => {
@@ -644,8 +607,6 @@ describe("🎯 Comprehensive Penetration Testing", () => {
 			expect(complianceValidation.cfmDataProtection).toBe(true);
 
 			expect(complianceValidation.overallComplianceScore).toBeGreaterThanOrEqual(95);
-
-			console.log(`Healthcare Security Compliance Score: ${complianceValidation.overallComplianceScore}%`);
 		});
 	});
 });
@@ -653,33 +614,35 @@ describe("🎯 Comprehensive Penetration Testing", () => {
 // Helper functions for penetration testing
 
 function extractSessionId(cookieHeader: string | null): string | null {
-	if (!cookieHeader) return null;
+	if (!cookieHeader) {
+		return null;
+	}
 	const match = cookieHeader.match(/sessionId=([^;]+)/);
 	return match ? match[1] : null;
 }
 
-async function testDeviceAuthBypass(endpoint: string) {
+async function testDeviceAuthBypass(_endpoint: string) {
 	return {
 		bypassSuccessful: false,
 		deviceSecured: true,
 	};
 }
 
-async function testMedicalDeviceCommandInjection(endpoint: string) {
+async function testMedicalDeviceCommandInjection(_endpoint: string) {
 	return {
 		vulnerabilityFound: false,
 		commandExecutionPrevented: true,
 	};
 }
 
-async function testUnauthorizedDeviceControl(endpoint: string) {
+async function testUnauthorizedDeviceControl(_endpoint: string) {
 	return {
 		controlGained: false,
 		authenticationRequired: true,
 	};
 }
 
-async function testEmergencyBypass(endpoint: string, type: string) {
+async function testEmergencyBypass(_endpoint: string, _type: string) {
 	return {
 		requiresValidation: true,
 		createsAuditLog: true,
@@ -688,7 +651,7 @@ async function testEmergencyBypass(endpoint: string, type: string) {
 	};
 }
 
-async function testPatientDataSeparation(test: any) {
+async function testPatientDataSeparation(_test: any) {
 	return {
 		dataLeakage: false,
 		crossPatientAccess: false,
@@ -696,7 +659,7 @@ async function testPatientDataSeparation(test: any) {
 	};
 }
 
-async function testComplianceBypass(bypassType: string) {
+async function testComplianceBypass(_bypassType: string) {
 	return {
 		bypassPrevented: true,
 		violationDetected: true,
@@ -704,7 +667,7 @@ async function testComplianceBypass(bypassType: string) {
 	};
 }
 
-async function testJWTSecurity(testType: string) {
+async function testJWTSecurity(_testType: string) {
 	return {
 		vulnerabilityExploited: false,
 		tokenValidationStrict: true,

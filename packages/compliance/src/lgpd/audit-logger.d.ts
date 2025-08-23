@@ -215,17 +215,17 @@ export declare const LGPDAuditConfigSchema: z.ZodObject<
 	"strip",
 	z.ZodTypeAny,
 	{
-		retention_period_days: number;
-		real_time_monitoring: boolean;
 		constitutional_validation: boolean;
+		real_time_monitoring: boolean;
+		retention_period_days: number;
 		privacy_preserving_logging: boolean;
 		integrity_verification: boolean;
 		automated_alerts: boolean;
 	},
 	{
-		retention_period_days?: number | undefined;
-		real_time_monitoring?: boolean | undefined;
 		constitutional_validation?: boolean | undefined;
+		real_time_monitoring?: boolean | undefined;
+		retention_period_days?: number | undefined;
 		privacy_preserving_logging?: boolean | undefined;
 		integrity_verification?: boolean | undefined;
 		automated_alerts?: boolean | undefined;
@@ -239,7 +239,6 @@ export type LGPDAuditConfig = z.infer<typeof LGPDAuditConfigSchema>;
  */
 export declare class LGPDAuditLogger {
 	private readonly config;
-	private readonly db;
 	constructor(config: LGPDAuditConfig, db: Database);
 	/**
 	 * Log data processing activity

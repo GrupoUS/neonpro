@@ -27,39 +27,39 @@ export type ApiStatusCode =
 	| 504; // Server Error
 
 // Base API Response structure
-export interface ApiResponse<T = unknown> {
+export type ApiResponse<T = unknown> = {
 	success: boolean;
 	data?: T;
 	message?: string;
 	error?: string;
 	errors?: Record<string, string[]>; // Validation errors
 	meta?: ApiMeta;
-}
+};
 
 // API Meta information (pagination, etc.)
-export interface ApiMeta {
+export type ApiMeta = {
 	pagination?: PaginationMeta;
 	total?: number;
 	count?: number;
 	timestamp?: string;
 	requestId?: string;
-}
+};
 
 // Pagination meta
-export interface PaginationMeta {
+export type PaginationMeta = {
 	page: number;
 	limit: number;
 	totalPages: number;
 	totalItems: number;
 	hasNext: boolean;
 	hasPrev: boolean;
-}
+};
 
 // Base pagination params
-export interface PaginationParams {
+export type PaginationParams = {
 	page?: number;
 	limit?: number;
-}
+};
 
 // Base search params
 export interface SearchParams extends PaginationParams {
@@ -69,56 +69,56 @@ export interface SearchParams extends PaginationParams {
 }
 
 // API Error structure
-export interface ApiError {
+export type ApiError = {
 	code: string;
 	message: string;
 	details?: Record<string, unknown>;
 	timestamp: string;
 	path?: string;
 	method?: HttpMethod;
-}
+};
 
 // Validation error structure
-export interface ValidationError {
+export type ValidationError = {
 	field: string;
 	message: string;
 	code: string;
 	value?: unknown;
-}
+};
 
 // Base entity ID type
 export type EntityId = string; // UUID
 
 // Date range type
-export interface DateRange {
+export type DateRange = {
 	startDate: string; // ISO date
 	endDate: string; // ISO date
-}
+};
 
 // Time range type
-export interface TimeRange {
+export type TimeRange = {
 	startTime: string; // HH:MM format
 	endTime: string; // HH:MM format
-}
+};
 
 // Geolocation type
-export interface GeoLocation {
+export type GeoLocation = {
 	latitude: number;
 	longitude: number;
 	accuracy?: number;
-}
+};
 
 // File upload type
-export interface FileUpload {
+export type FileUpload = {
 	filename: string;
 	mimetype: string;
 	size: number;
 	url?: string;
 	key?: string; // Storage key
-}
+};
 
 // Bulk operation result
-export interface BulkOperationResult<T = EntityId> {
+export type BulkOperationResult<T = EntityId> = {
 	success: T[];
 	failed: Array<{
 		item: T;
@@ -127,10 +127,10 @@ export interface BulkOperationResult<T = EntityId> {
 	totalProcessed: number;
 	successCount: number;
 	failureCount: number;
-}
+};
 
 // API endpoint paths (type-safe route definitions)
-export interface ApiRoutes {
+export type ApiRoutes = {
 	// Authentication
 	auth: {
 		login: "/auth/login";
@@ -179,10 +179,10 @@ export interface ApiRoutes {
 
 	// Health check
 	health: "/health";
-}
+};
 
 // Request context type (middleware data)
-export interface RequestContext {
+export type RequestContext = {
 	user?: {
 		id: EntityId;
 		email: string;
@@ -198,10 +198,10 @@ export interface RequestContext {
 	permissions?: string[];
 	requestId: string;
 	timestamp: string;
-}
+};
 
 // Audit trail type
-export interface AuditTrail {
+export type AuditTrail = {
 	action: string;
 	entityType: string;
 	entityId: EntityId;
@@ -216,18 +216,18 @@ export interface AuditTrail {
 	metadata?: Record<string, unknown>;
 	timestamp: string;
 	ipAddress: string;
-}
+};
 
 // Rate limiting info
-export interface RateLimit {
+export type RateLimit = {
 	limit: number;
 	remaining: number;
 	resetTime: string;
 	retryAfter?: number;
-}
+};
 
 // API Headers type
-export interface ApiHeaders {
+export type ApiHeaders = {
 	"Content-Type"?: string;
 	Authorization?: string;
 	"X-Request-ID"?: string;
@@ -235,7 +235,7 @@ export interface ApiHeaders {
 	"X-User-Agent"?: string;
 	"X-Forwarded-For"?: string;
 	"Accept-Language"?: string;
-}
+};
 
 // WebSocket message types
 export type WebSocketMessageType =
@@ -247,13 +247,13 @@ export type WebSocketMessageType =
 	| "system_alert"
 	| "heartbeat";
 
-export interface WebSocketMessage<T = unknown> {
+export type WebSocketMessage<T = unknown> = {
 	type: WebSocketMessageType;
 	data: T;
 	timestamp: string;
 	userId?: EntityId;
 	clinicId?: EntityId;
-}
+};
 
 // Export utility types
 export type ApiEndpoint<T = unknown> = (params?: T) => Promise<ApiResponse>;
@@ -274,13 +274,13 @@ export const isValidationError = (obj: unknown): obj is ValidationError => {
 };
 
 // Additional entity types for compatibility
-export interface BaseEntity {
+export type BaseEntity = {
 	id: string;
 	created_at: string;
 	updated_at: string;
-}
+};
 
-export interface Address {
+export type Address = {
 	street: string;
 	number: string;
 	complement?: string;
@@ -289,25 +289,25 @@ export interface Address {
 	state: string;
 	zip_code: string;
 	country: string;
-}
+};
 
-export interface ContactInfo {
+export type ContactInfo = {
 	phone?: string;
 	email?: string;
 	mobile?: string;
-}
+};
 
-export interface GeoCoordinates {
+export type GeoCoordinates = {
 	latitude: number;
 	longitude: number;
-}
+};
 
-export interface BusinessHours {
+export type BusinessHours = {
 	day_of_week: number;
 	open_time: string;
 	close_time: string;
 	is_closed: boolean;
-}
+};
 
 export interface Clinic extends BaseEntity {
 	name: string;
@@ -417,18 +417,18 @@ export type HealthCheckResponse = ApiResponse<{
 	version: string;
 }>;
 
-export interface ListResponse<T> {
+export type ListResponse<T> = {
 	items: T[];
 	total: number;
 	page: number;
 	per_page: number;
-}
+};
 
 export interface PaginatedResponse<T> extends ApiResponse<ListResponse<T>> {}
 
-export interface PaginationParams {
+export type PaginationParams = {
 	page?: number;
 	per_page?: number;
 	sort_by?: string;
 	sort_order?: "asc" | "desc";
-}
+};

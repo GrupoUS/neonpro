@@ -8,13 +8,13 @@ import { HTTPException } from "hono/http-exception";
 import jwt from "jsonwebtoken";
 import type { AuthContext } from "../types/hono.types";
 
-export interface AuthUser {
+export type AuthUser = {
 	id: string;
 	email: string;
 	name?: string;
 	role?: string;
 	tenantId?: string;
-}
+};
 
 // Module augmentation moved to types/hono.types.ts to avoid conflicts
 // declare module 'hono' {
@@ -67,8 +67,7 @@ async function validateJWTToken(token: string): Promise<AuthUser | null> {
 			role: decoded.role,
 			tenantId: decoded.tenant_id,
 		};
-	} catch (error) {
-		console.error("JWT validation error:", error);
+	} catch (_error) {
 		return null;
 	}
 }

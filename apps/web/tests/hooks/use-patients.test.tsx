@@ -21,12 +21,9 @@ vi.mock("@/lib/query/query-utils", async () => {
 		...actual,
 		useHealthcareQueryUtils: () => ({
 			createMutation: vi.fn().mockImplementation((options) => {
-				console.log("[TEST] createMutation called with options:", options);
-
 				// Create a mock mutation that simulates the behavior
 				const mockMutation = {
 					mutate: vi.fn().mockImplementation((variables) => {
-						console.log("[TEST] mutation.mutate called with:", variables);
 						// Simulate async behavior
 						setTimeout(() => {
 							if (options.onSuccess) {
@@ -55,28 +52,24 @@ vi.mock("@/lib/query/query-utils", async () => {
 
 				Object.defineProperty(mockMutation, "isPending", {
 					get: () => {
-						console.log("[TEST] Getting isPending:", currentState.isPending);
 						return currentState.isPending;
 					},
 				});
 
 				Object.defineProperty(mockMutation, "isSuccess", {
 					get: () => {
-						console.log("[TEST] Getting isSuccess:", currentState.isSuccess);
 						return currentState.isSuccess;
 					},
 				});
 
 				// Override mutate to change state
 				mockMutation.mutate = vi.fn().mockImplementation((variables) => {
-					console.log("[TEST] mutation.mutate called, setting states");
 					currentState.isPending = true;
 
 					// Simulate async completion
 					setTimeout(() => {
 						currentState.isPending = false;
 						currentState.isSuccess = true;
-						console.log("[TEST] Mutation completed, isSuccess set to true");
 
 						if (options.onSuccess) {
 							const mockResponse = { patient: { id: "test-id", ...variables } };
@@ -84,8 +77,6 @@ vi.mock("@/lib/query/query-utils", async () => {
 						}
 					}, 0);
 				});
-
-				console.log("[TEST] Returning mocked mutation:", mockMutation);
 				return mockMutation;
 			}),
 			createQuery: vi.fn(),
@@ -338,7 +329,7 @@ describe("usePatients Hook - NeonPro Healthcare Patient Management", () => {
 		});
 
 		it("should delete patient with LGPD compliance", async () => {
-			const mockDelete = vi.fn().mockResolvedValue({
+			const _mockDelete = vi.fn().mockResolvedValue({
 				success: true,
 				data: {
 					message: "Paciente removido com sucesso",
@@ -506,7 +497,7 @@ describe("usePatients Hook - NeonPro Healthcare Patient Management", () => {
 				cns: "123456789012345", // Valid CNS format
 			};
 
-			const mockValidation = vi.fn().mockResolvedValue({
+			const _mockValidation = vi.fn().mockResolvedValue({
 				success: true,
 				data: {
 					isValid: true,

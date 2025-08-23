@@ -4,20 +4,18 @@
  * Cleanup and performance metrics collection
  */
 
+import { writeFileSync } from "node:fs";
+import { join } from "node:path";
 import type { FullConfig } from "@playwright/test";
-import { writeFileSync } from "fs";
-import { join } from "path";
 
 async function globalTeardown(config: FullConfig) {
 	const startTime = Date.now();
-
-	console.log("🧹 NeonPro E2E Global Teardown Starting...");
 
 	try {
 		// Collect performance metrics
 		const metrics = {
 			timestamp: new Date().toISOString(),
-			globalSetupTime: Number.parseInt(process.env.GLOBAL_SETUP_TIME || "0"),
+			globalSetupTime: Number.parseInt(process.env.GLOBAL_SETUP_TIME || "0", 10),
 			totalTestDuration: Date.now() - startTime,
 			environment: process.env.NODE_ENV || "test",
 			workers: config.workers,
@@ -28,20 +26,9 @@ async function globalTeardown(config: FullConfig) {
 		// Save performance metrics
 		const metricsPath = join(process.cwd(), "tools", "testing", "e2e", "reports", "performance-summary.json");
 		writeFileSync(metricsPath, JSON.stringify(metrics, null, 2));
+	} catch (_error) {}
 
-		console.log("📊 Performance metrics saved to:", metricsPath);
-
-		// Healthcare-specific cleanup
-		console.log("🏥 Healthcare test cleanup...");
-
-		// Clean up any test data or resources
-		console.log("✅ Test environment cleaned");
-	} catch (error) {
-		console.warn("⚠️ Teardown warning:", error.message);
-	}
-
-	const teardownTime = Date.now() - startTime;
-	console.log(`✅ Global teardown completed in ${teardownTime}ms`);
+	const _teardownTime = Date.now() - startTime;
 }
 
 export default globalTeardown;

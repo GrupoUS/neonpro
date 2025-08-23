@@ -19,15 +19,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-// Import our comprehensive types
-import type {
-	AvailabilityStatus,
-	HealthcareProfessional,
-	MedicalEquipment,
-	Schedule,
-	TeamMessage,
-	TeamPerformanceMetrics,
-} from "@/types/team-coordination";
 import { CommunicationHub } from "./components/communication-hub";
 import { PerformanceAnalytics } from "./components/performance-analytics";
 import { ResourceAllocation } from "./components/resource-allocation";

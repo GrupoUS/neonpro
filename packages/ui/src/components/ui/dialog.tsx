@@ -143,10 +143,16 @@ const ConfirmationDialog = React.forwardRef<React.ElementRef<typeof DialogPrimit
 		ref
 	) => {
 		const getDefaultIcon = () => {
-			if (icon) return icon;
-			if (!showIcon) return null;
+			if (icon) {
+				return icon;
+			}
+			if (!showIcon) {
+				return null;
+			}
 
-			if (isDestructive) return <AlertTriangle className="h-6 w-6 animate-pulse-healthcare text-destructive" />;
+			if (isDestructive) {
+				return <AlertTriangle className="h-6 w-6 animate-pulse-healthcare text-destructive" />;
+			}
 
 			switch (medicalContext) {
 				case "appointment":
@@ -165,9 +171,15 @@ const ConfirmationDialog = React.forwardRef<React.ElementRef<typeof DialogPrimit
 		};
 
 		const getVariant = () => {
-			if (variant) return variant;
-			if (isDestructive) return "alert";
-			if (lgpdRequired) return "lgpd";
+			if (variant) {
+				return variant;
+			}
+			if (isDestructive) {
+				return "alert";
+			}
+			if (lgpdRequired) {
+				return "lgpd";
+			}
 
 			switch (medicalContext) {
 				case "emergency":
@@ -230,7 +242,7 @@ const ConfirmationDialog = React.forwardRef<React.ElementRef<typeof DialogPrimit
 	}
 );
 ConfirmationDialog.displayName = "ConfirmationDialog"; // NEONPROV1 Healthcare-specific specialized dialogs
-interface LGPDConsentDialogProps {
+type LGPDConsentDialogProps = {
 	isOpen: boolean;
 	onClose: () => void;
 	onAccept: () => void;
@@ -238,7 +250,7 @@ interface LGPDConsentDialogProps {
 	dataTypes?: string[];
 	purpose?: string;
 	retentionPeriod?: string;
-}
+};
 
 const LGPDConsentDialog = ({
 	isOpen,
@@ -312,7 +324,7 @@ const LGPDConsentDialog = ({
 		</Dialog>
 	);
 };
-interface MedicalAlertDialogProps {
+type MedicalAlertDialogProps = {
 	isOpen: boolean;
 	onClose: () => void;
 	alertType: "critical" | "urgent" | "info";
@@ -321,7 +333,7 @@ interface MedicalAlertDialogProps {
 	patientName?: string;
 	timestamp?: Date;
 	onAcknowledge?: () => void;
-}
+};
 
 const MedicalAlertDialog = ({
 	isOpen,

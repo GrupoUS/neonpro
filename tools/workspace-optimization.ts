@@ -6,6 +6,7 @@
 
 import { promises as fs } from "node:fs";
 import { join } from "node:path";
+import { logger } from "../apps/api/src/lib/logger";
 
 type WorkspaceOptimization = {
 	packageJson: any;
@@ -265,7 +266,9 @@ export class HealthcareWorkspaceOptimizer {
 // Execute optimization if run directly
 if (require.main === module) {
 	const optimizer = new HealthcareWorkspaceOptimizer();
-	optimizer.optimize().catch(console.error);
+	optimizer.optimize().catch((error) => {
+		logger.error("Healthcare workspace optimization failed", { error: error.message, stack: error.stack });
+	});
 }
 
 export { HealthcareWorkspaceOptimizer };

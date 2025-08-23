@@ -4,26 +4,26 @@
  * Gerencia conexão global e estado para toda aplicação
  */
 
-import React, { createContext, type ReactNode, useCallback, useContext, useEffect, useState } from "react";
+import { createContext, type ReactNode, useCallback, useContext, useEffect, useState } from "react";
 import { getRealtimeConfig } from "../config";
 import { type ConnectionStatus, getRealtimeManager, type SupabaseRealtimeManager } from "../connection-manager";
 
-interface RealtimeContextValue {
+type RealtimeContextValue = {
 	manager: SupabaseRealtimeManager | null;
 	connectionStatus: ConnectionStatus;
 	isReady: boolean;
 	reconnect: () => void;
 	disconnect: () => void;
-}
+};
 
 const RealtimeContext = createContext<RealtimeContextValue | null>(null);
 
-interface RealtimeProviderProps {
+type RealtimeProviderProps = {
 	children: ReactNode;
 	tenantId: string;
 	enableHealthcareMode?: boolean;
 	customConfig?: Partial<any>;
-} /**
+}; /**
  * MANDATORY Realtime Provider para NeonPro Healthcare
  * Deve envolver toda a aplicação para funcionalidade real-time
  */
@@ -69,24 +69,17 @@ export function RealtimeProvider({
 
 				// Log connection events for healthcare audit
 				if (enableHealthcareMode) {
-					console.log("[HealthcareRealtime] Connection status:", {
-						isConnected: status.isConnected,
-						healthScore: status.healthScore,
-						tenantId,
-						timestamp: new Date().toISOString(),
-					});
 				}
 			});
 
 			return () => {
 				unsubscribe();
 			};
-		} catch (error) {
-			console.error("[RealtimeProvider] Initialization error:", error);
+		} catch (_error) {
 			// Return empty cleanup function
 			return () => {};
 		}
-	}, [tenantId, enableHealthcareMode, customConfig]); /**
+	}, [enableHealthcareMode, customConfig]); /**
 	 * Manual reconnection
 	 */
 	const reconnect = useCallback(() => {
@@ -110,13 +103,13 @@ export function RealtimeProvider({
 	 * Handle critical connection issues in healthcare mode
 	 */
 	useEffect(() => {
-		if (!(enableHealthcareMode && manager)) return;
+		if (!(enableHealthcareMode && manager)) {
+			return;
+		}
 
 		const handleCriticalIssues = (status: ConnectionStatus) => {
 			// Alert if health drops below critical threshold for healthcare
 			if (status.healthScore < 50 && status.isConnected) {
-				console.warn("[HealthcareRealtime] CRITICAL: Connection health degraded:", status);
-
 				// Dispatch custom event for UI to handle
 				window.dispatchEvent(
 					new CustomEvent("neonpro-connection-critical", {
@@ -131,8 +124,6 @@ export function RealtimeProvider({
 
 			// Alert for excessive retries
 			if (status.totalRetries > 5) {
-				console.error("[HealthcareRealtime] ALERT: Excessive connection retries:", status);
-
 				window.dispatchEvent(
 					new CustomEvent("neonpro-connection-unstable", {
 						detail: {
@@ -200,11 +191,21 @@ export function useRealtimeStatus() {
  * Get human-readable status text
  */
 function getStatusText(status: ConnectionStatus): string {
-	if (!status.isConnected) return "Desconectado";
-	if (status.healthScore >= 90) return "Excelente";
-	if (status.healthScore >= 80) return "Bom";
-	if (status.healthScore >= 60) return "Regular";
-	if (status.healthScore >= 40) return "Ruim";
+	if (!status.isConnected) {
+		return "Desconectado";
+	}
+	if (status.healthScore >= 90) {
+		return "Excelente";
+	}
+	if (status.healthScore >= 80) {
+		return "Bom";
+	}
+	if (status.healthScore >= 60) {
+		return "Regular";
+	}
+	if (status.healthScore >= 40) {
+		return "Ruim";
+	}
 	return "Crítico";
 }
 
@@ -212,8 +213,14 @@ function getStatusText(status: ConnectionStatus): string {
  * Get status color for UI
  */
 function getStatusColor(healthScore: number): string {
-	if (healthScore >= 80) return "#10b981"; // Green
-	if (healthScore >= 60) return "#f59e0b"; // Yellow
-	if (healthScore >= 40) return "#ef4444"; // Red
+	if (healthScore >= 80) {
+		return "#10b981"; // Green
+	}
+	if (healthScore >= 60) {
+		return "#f59e0b"; // Yellow
+	}
+	if (healthScore >= 40) {
+		return "#ef4444"; // Red
+	}
 	return "#991b1b"; // Dark red
 }

@@ -6,20 +6,20 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { type AuthTokens, authTokenManager } from "./auth-token-manager";
 
-export interface AuthUser {
+export type AuthUser = {
 	id: string;
 	email: string;
 	name?: string;
 	role?: string;
 	tenantId?: string;
-}
+};
 
-export interface LoginCredentials {
+export type LoginCredentials = {
 	email: string;
 	password: string;
-}
+};
 
-export interface LoginResponse {
+export type LoginResponse = {
 	success: boolean;
 	data?: {
 		user: AuthUser;
@@ -27,14 +27,14 @@ export interface LoginResponse {
 	};
 	error?: string;
 	message?: string;
-}
+};
 
-export interface AuthState {
+export type AuthState = {
 	user: AuthUser | null;
 	isAuthenticated: boolean;
 	isLoading: boolean;
 	error: string | null;
-}
+};
 
 /**
  * Hook principal de autenticação
@@ -93,8 +93,7 @@ export function useAuthToken() {
 			}
 
 			return null;
-		} catch (error) {
-			console.error("Error loading current user:", error);
+		} catch (_error) {
 			return null;
 		}
 	}, []);
@@ -123,7 +122,6 @@ export function useAuthToken() {
 						const refreshed = await authTokenManager.refreshAccessToken();
 
 						if (refreshed) {
-							console.log("Token refreshed automatically");
 							scheduleTokenRefresh(); // Agenda próximo refresh
 						} else {
 							// Refresh falhou, fazer logout
@@ -170,8 +168,7 @@ export function useAuthToken() {
 				isAuthenticated: false,
 				isLoading: false,
 			});
-		} catch (error) {
-			console.error("Error initializing auth:", error);
+		} catch (_error) {
 			updateAuthState({
 				user: null,
 				isAuthenticated: false,
@@ -267,10 +264,7 @@ export function useAuthToken() {
 							refreshToken: authTokenManager.getRefreshToken(),
 						}),
 					});
-				} catch (error) {
-					// Ignore server logout errors - still clear local tokens
-					console.warn("Server logout failed:", error);
-				}
+				} catch (_error) {}
 			}
 
 			// Limpar tokens locais
@@ -283,8 +277,7 @@ export function useAuthToken() {
 				isLoading: false,
 				error: null,
 			});
-		} catch (error) {
-			console.error("Logout error:", error);
+		} catch (_error) {
 			// Sempre limpar estado local mesmo se houver erro
 			authTokenManager.clearTokens();
 			updateAuthState({

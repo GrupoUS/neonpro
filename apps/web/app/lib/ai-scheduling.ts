@@ -682,11 +682,6 @@ export class AISchedulingEngine {
 		return strategies;
 	}
 
-	// Utility methods for getting metrics and data
-	private getStaffEfficiency(staffId: string): number {
-		return this.realTimeMetrics.get(`staff_efficiency_${staffId}`) || 0.8;
-	}
-
 	private getRoomUtilization(roomId: string, time: Date): number {
 		const hour = time.getHours();
 		return this.realTimeMetrics.get(`room_utilization_${roomId}_${hour}`) || 0.6;
@@ -702,7 +697,7 @@ export class AISchedulingEngine {
 		return this.realTimeMetrics.get(`specialization_${staffId}_${treatment.category}`) || 0.7;
 	}
 
-	private getWeatherImpact(date: Date): number {
+	private getWeatherImpact(_date: Date): number {
 		// Simplified weather impact - would integrate with weather API
 		return 1.0; // Neutral impact for now
 	}
@@ -749,8 +744,8 @@ export class AISchedulingEngine {
 
 	// Dynamic event handlers
 	private async handleCancellation(
-		event: DynamicSchedulingEvent,
-		schedule: AppointmentSlot[]
+		_event: DynamicSchedulingEvent,
+		_schedule: AppointmentSlot[]
 	): Promise<SchedulingAction[]> {
 		return [
 			{
@@ -767,7 +762,10 @@ export class AISchedulingEngine {
 		];
 	}
 
-	private async handleNoShow(event: DynamicSchedulingEvent, schedule: AppointmentSlot[]): Promise<SchedulingAction[]> {
+	private async handleNoShow(
+		_event: DynamicSchedulingEvent,
+		_schedule: AppointmentSlot[]
+	): Promise<SchedulingAction[]> {
 		return [
 			{
 				type: "add_buffer",
@@ -784,9 +782,9 @@ export class AISchedulingEngine {
 	}
 
 	private async handleWalkIn(
-		event: DynamicSchedulingEvent,
-		schedule: AppointmentSlot[],
-		staff: Staff[]
+		_event: DynamicSchedulingEvent,
+		_schedule: AppointmentSlot[],
+		_staff: Staff[]
 	): Promise<SchedulingAction[]> {
 		return [
 			{
@@ -804,9 +802,9 @@ export class AISchedulingEngine {
 	}
 
 	private async handleEmergency(
-		event: DynamicSchedulingEvent,
-		schedule: AppointmentSlot[],
-		staff: Staff[]
+		_event: DynamicSchedulingEvent,
+		_schedule: AppointmentSlot[],
+		_staff: Staff[]
 	): Promise<SchedulingAction[]> {
 		return [
 			{
@@ -824,9 +822,9 @@ export class AISchedulingEngine {
 	}
 
 	private async handleStaffUnavailable(
-		event: DynamicSchedulingEvent,
-		schedule: AppointmentSlot[],
-		staff: Staff[]
+		_event: DynamicSchedulingEvent,
+		_schedule: AppointmentSlot[],
+		_staff: Staff[]
 	): Promise<SchedulingAction[]> {
 		return [
 			{

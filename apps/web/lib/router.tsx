@@ -9,28 +9,20 @@
 import { apiClient } from "@neonpro/shared/api-client";
 import type { UserRole } from "@neonpro/shared/schemas";
 import type { QueryClient } from "@tanstack/react-query";
-import {
-	createRootRoute,
-	createRoute,
-	createRouter,
-	Link,
-	type Outlet,
-	redirect,
-	useNavigate,
-} from "@tanstack/react-router";
+import { createRootRoute, createRoute, createRouter, Link, redirect } from "@tanstack/react-router";
 import React from "react";
 import { z } from "zod";
 import { useAuth } from "@/contexts/auth-context";
 
 // Router context type with authentication and query client
-interface RouterContext {
+type RouterContext = {
 	queryClient: QueryClient;
 	auth: {
 		user: any | null;
 		isAuthenticated: boolean;
 		hasRole: (role: UserRole | UserRole[]) => boolean;
 	};
-}
+};
 
 // Search params validation schemas
 export const DashboardSearchSchema = z.object({
@@ -94,7 +86,9 @@ export const rootRoute = createRootRoute({
 				user,
 				isAuthenticated,
 				hasRole: (roles: UserRole | UserRole[]) => {
-					if (!user) return false;
+					if (!user) {
+						return false;
+					}
 					const roleArray = Array.isArray(roles) ? roles : [roles];
 					return roleArray.includes(user.role);
 				},
@@ -384,7 +378,6 @@ export const router = createRouter({
 
 	// Global error handling
 	defaultErrorComponent: ({ error }) => {
-		console.error("Router error:", error);
 		return (
 			<div className="flex min-h-screen items-center justify-center bg-background">
 				<div className="text-center">
@@ -413,9 +406,9 @@ export const router = createRouter({
 
 // Declare router types for TypeScript
 declare module "@tanstack/react-router" {
-	interface Register {
+	type Register = {
 		router: typeof router;
-	}
+	};
 }
 
 export type Router = typeof router;

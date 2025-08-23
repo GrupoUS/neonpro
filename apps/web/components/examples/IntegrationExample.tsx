@@ -43,9 +43,7 @@ export function IntegrationExample() {
 		try {
 			await loginMutation.mutateAsync(loginData);
 			refetchProfile();
-		} catch (error) {
-			console.error("Login failed:", error);
-		}
+		} catch (_error) {}
 	};
 
 	const handleCreateTestPatient = async () => {
@@ -75,9 +73,7 @@ export function IntegrationExample() {
 
 		try {
 			await createPatientMutation.mutateAsync(testPatient);
-		} catch (error) {
-			console.error("Create patient failed:", error);
-		}
+		} catch (_error) {}
 	};
 
 	const handleCreateTestAppointment = async () => {
@@ -106,9 +102,7 @@ export function IntegrationExample() {
 
 		try {
 			await createAppointmentMutation.mutateAsync(testAppointment);
-		} catch (error) {
-			console.error("Create appointment failed:", error);
-		}
+		} catch (_error) {}
 	};
 
 	if (authLoading) {

@@ -10,34 +10,34 @@ import type { AppointmentPriority, AppointmentStatus, AppointmentType } from "..
 import type { MFAMethod, UserRole } from "../schemas/auth.schema";
 
 // Base entity interface (all entities extend this)
-export interface BaseEntity {
+export type BaseEntity = {
 	id: string; // UUID
 	createdAt: string; // ISO datetime
 	updatedAt: string; // ISO datetime
 	isActive?: boolean;
-}
+};
 
 // Soft delete support
-export interface SoftDeletable {
+export type SoftDeletable = {
 	deletedAt?: string | null;
 	deletedBy?: string | null;
-}
+};
 
 // Audit trail support
-export interface Auditable {
+export type Auditable = {
 	createdBy?: string;
 	updatedBy?: string;
 	version?: number;
-}
+};
 
 // Geographic coordinates
-export interface GeoCoordinates {
+export type GeoCoordinates = {
 	latitude: number;
 	longitude: number;
-}
+};
 
 // Address interface
-export interface Address {
+export type Address = {
 	street: string;
 	number: string;
 	complement?: string;
@@ -48,10 +48,10 @@ export interface Address {
 	country?: string;
 	coordinates?: GeoCoordinates;
 	landmark?: string;
-}
+};
 
 // Contact information
-export interface ContactInfo {
+export type ContactInfo = {
 	phone: string;
 	whatsapp?: string;
 	email: string;
@@ -61,7 +61,7 @@ export interface ContactInfo {
 		facebook?: string;
 		tiktok?: string;
 	};
-}
+};
 
 // User Entity
 export interface User extends BaseEntity, SoftDeletable, Auditable {
@@ -178,14 +178,14 @@ export interface Professional extends Omit<User, "role"> {
 }
 
 // Business hours type
-export interface BusinessHours {
+export type BusinessHours = {
 	day: "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday";
 	isOpen: boolean;
 	openTime: string; // HH:MM
 	closeTime: string; // HH:MM
 	breakStart?: string; // HH:MM
 	breakEnd?: string; // HH:MM
-}
+};
 
 // Clinic Service
 export interface ClinicService extends BaseEntity {

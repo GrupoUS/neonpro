@@ -17,16 +17,16 @@ import { vi } from "vitest";
 // Types
 // ============================================================================
 
-export interface UserProfile {
+export type UserProfile = {
 	id: string;
 	email: string;
 	name: string;
 	role: string;
 	createdAt: Date;
 	updatedAt: Date;
-}
+};
 
-export interface SubscriptionStatus {
+export type SubscriptionStatus = {
 	id: string;
 	userId: string;
 	tier: string;
@@ -49,7 +49,7 @@ export interface SubscriptionStatus {
 		source: string;
 		environment: string;
 	};
-}
+};
 
 // ============================================================================
 // Mock Data Factories

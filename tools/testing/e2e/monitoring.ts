@@ -4,10 +4,10 @@
  * Real-time metrics collection and analysis for NeonPro E2E tests
  */
 
-import { existsSync, mkdirSync, writeFileSync } from "fs";
-import { join } from "path";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 
-export interface E2EMetrics {
+export type E2EMetrics = {
 	timestamp: string;
 	testSuite: string;
 	browser: string;
@@ -23,9 +23,9 @@ export interface E2EMetrics {
 	networkRequests: number;
 	errorRate: number;
 	environment: string;
-}
+};
 
-export interface HealthcareComplianceMetrics {
+export type HealthcareComplianceMetrics = {
 	lgpdValidation: boolean;
 	anvisaCompliance: boolean;
 	cfmCompliance: boolean;
@@ -36,11 +36,11 @@ export interface HealthcareComplianceMetrics {
 		availability: number;
 		throughput: number;
 	};
-}
+};
 
 export class E2EMonitor {
-	private metricsPath: string;
-	private dashboardPath: string;
+	private readonly metricsPath: string;
+	private readonly dashboardPath: string;
 
 	constructor() {
 		this.metricsPath = join(process.cwd(), "tools", "testing", "e2e", "reports");
@@ -69,7 +69,7 @@ export class E2EMonitor {
 			testsFailed: testInfo.status === "failed" ? 1 : 0,
 			testsSkipped: testInfo.status === "skipped" ? 1 : 0,
 			retries: testInfo.retry || 0,
-			workers: Number.parseInt(process.env.PLAYWRIGHT_WORKERS || "1"),
+			workers: Number.parseInt(process.env.PLAYWRIGHT_WORKERS || "1", 10),
 			memoryUsage: process.memoryUsage(),
 			cpuUsage: process.cpuUsage().user / 1_000_000, // Convert to seconds
 			networkRequests: 0, // To be collected from network interceptor
@@ -213,7 +213,9 @@ export class E2EMonitor {
 	 * 📈 Calculate trend direction
 	 */
 	private calculateTrend(values: number[]): string {
-		if (values.length < 2) return "stable";
+		if (values.length < 2) {
+			return "stable";
+		}
 
 		const first = values.slice(0, Math.floor(values.length / 2));
 		const second = values.slice(Math.floor(values.length / 2));
@@ -223,8 +225,12 @@ export class E2EMonitor {
 
 		const change = ((secondAvg - firstAvg) / firstAvg) * 100;
 
-		if (change > 5) return "increasing";
-		if (change < -5) return "decreasing";
+		if (change > 5) {
+			return "increasing";
+		}
+		if (change < -5) {
+			return "decreasing";
+		}
 		return "stable";
 	}
 

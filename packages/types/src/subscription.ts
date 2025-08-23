@@ -3,16 +3,16 @@
  * Defines types for subscription management and user profiles
  */
 
-export interface UserProfile {
+export type UserProfile = {
 	id: string;
 	email: string;
 	name: string;
 	role: "user" | "admin" | "professional";
 	createdAt: Date;
 	updatedAt: Date;
-}
+};
 
-export interface SubscriptionStatus {
+export type SubscriptionStatus = {
 	id: string;
 	userId: string;
 	tier: "basic" | "premium" | "enterprise";
@@ -35,4 +35,4 @@ export interface SubscriptionStatus {
 		source: string;
 		environment: string;
 	};
-}
+};

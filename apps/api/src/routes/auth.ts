@@ -23,8 +23,8 @@ import { Hono } from "hono";
 export const authRoutes = new Hono()
 
 	// 🚪 Login endpoint
-	.post("/login", zValidator("json", LoginRequestSchema), async (c) => {
-		const { email, password, deviceInfo, mfaCode } = c.req.valid("json");
+	.post("/login", zValidator("json", LoginRequestSchema), (c) => {
+		const { email, password, _deviceInfo, _mfaCode } = c.req.valid("json");
 
 		try {
 			// TODO: Implement actual authentication logic
@@ -66,7 +66,7 @@ export const authRoutes = new Hono()
 				},
 				401
 			);
-		} catch (error) {
+		} catch (_error) {
 			return c.json(
 				{
 					success: false,
@@ -79,7 +79,7 @@ export const authRoutes = new Hono()
 	})
 
 	// 📝 Register endpoint
-	.post("/register", zValidator("json", RegisterRequestSchema), async (c) => {
+	.post("/register", zValidator("json", RegisterRequestSchema), (c) => {
 		const userData = c.req.valid("json");
 
 		try {
@@ -113,7 +113,7 @@ export const authRoutes = new Hono()
 			};
 
 			return c.json(response, 201);
-		} catch (error) {
+		} catch (_error) {
 			return c.json(
 				{
 					success: false,
@@ -126,7 +126,7 @@ export const authRoutes = new Hono()
 	})
 
 	// 🔄 Refresh token endpoint
-	.post("/refresh", zValidator("json", RefreshTokenRequestSchema), async (c) => {
+	.post("/refresh", zValidator("json", RefreshTokenRequestSchema), (c) => {
 		const { refreshToken } = c.req.valid("json");
 
 		try {
@@ -147,7 +147,7 @@ export const authRoutes = new Hono()
 			};
 
 			return c.json(response, 200);
-		} catch (error) {
+		} catch (_error) {
 			return c.json(
 				{
 					success: false,
@@ -160,7 +160,7 @@ export const authRoutes = new Hono()
 	})
 
 	// 👤 Get profile endpoint (requires auth)
-	.get("/profile", async (c) => {
+	.get("/profile", (c) => {
 		try {
 			// TODO: Get user from auth middleware
 			const userId = c.get("userId"); // From auth middleware
@@ -196,7 +196,7 @@ export const authRoutes = new Hono()
 			};
 
 			return c.json(response, 200);
-		} catch (error) {
+		} catch (_error) {
 			return c.json(
 				{
 					success: false,
@@ -209,7 +209,7 @@ export const authRoutes = new Hono()
 	})
 
 	// 🚪 Logout endpoint
-	.post("/logout", async (c) => {
+	.post("/logout", (c) => {
 		try {
 			// TODO: Invalidate tokens
 			// Clear session
@@ -221,7 +221,7 @@ export const authRoutes = new Hono()
 			};
 
 			return c.json(response, 200);
-		} catch (error) {
+		} catch (_error) {
 			return c.json(
 				{
 					success: false,
@@ -248,7 +248,7 @@ export const authRoutes = new Hono()
 			};
 
 			return c.json(response, 200);
-		} catch (error) {
+		} catch (_error) {
 			return c.json(
 				{
 					success: false,
@@ -276,7 +276,7 @@ export const authRoutes = new Hono()
 			};
 
 			return c.json(response, 200);
-		} catch (error) {
+		} catch (_error) {
 			return c.json(
 				{
 					success: false,
@@ -317,7 +317,7 @@ export const authRoutes = new Hono()
 			};
 
 			return c.json(response, 200);
-		} catch (error) {
+		} catch (_error) {
 			return c.json(
 				{
 					success: false,

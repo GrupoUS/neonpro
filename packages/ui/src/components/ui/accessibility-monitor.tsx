@@ -1,7 +1,7 @@
 import { AlertTriangle, CheckCircle, Eye, Keyboard, Volume2, X } from "lucide-react";
 import * as React from "react";
 import { cn } from "../../lib/utils";
-import { ContrastValidator, calculateContrastRatio } from "./contrast-validator";
+import { calculateContrastRatio } from "./contrast-validator";
 
 /**
  * NEONPRO HEALTHCARE - ACCESSIBILITY MONITOR
@@ -19,7 +19,7 @@ import { ContrastValidator, calculateContrastRatio } from "./contrast-validator"
  * - Performance impact monitoring
  */
 
-interface AccessibilityIssue {
+type AccessibilityIssue = {
 	id: string;
 	type: "contrast" | "keyboard" | "aria" | "heading" | "form" | "landmark";
 	severity: "critical" | "serious" | "moderate" | "minor";
@@ -28,9 +28,9 @@ interface AccessibilityIssue {
 	wcagCriterion: string;
 	suggestion: string;
 	healthcare?: boolean;
-}
+};
 
-interface AccessibilityStats {
+type AccessibilityStats = {
 	totalElements: number;
 	violationsCount: number;
 	contrastIssues: number;
@@ -39,9 +39,9 @@ interface AccessibilityStats {
 	healthcareCompliance: number; // percentage
 	wcagLevel: "AA" | "AAA" | "Failed";
 	lastScan: Date;
-}
+};
 
-interface AccessibilityMonitorProps {
+type AccessibilityMonitorProps = {
 	/**
 	 * Whether the monitor is active
 	 */
@@ -81,7 +81,7 @@ interface AccessibilityMonitorProps {
 	 * Development mode (shows more detailed information)
 	 */
 	devMode?: boolean;
-}
+};
 
 const AccessibilityMonitor: React.FC<AccessibilityMonitorProps> = ({
 	enabled = process.env.NODE_ENV === "development",
@@ -261,7 +261,7 @@ const AccessibilityMonitor: React.FC<AccessibilityMonitorProps> = ({
 		let previousLevel = 0;
 
 		headings.forEach((heading, index) => {
-			const level = Number.parseInt(heading.tagName.slice(1));
+			const level = Number.parseInt(heading.tagName.slice(1), 10);
 
 			if (level > previousLevel + 1 && previousLevel !== 0) {
 				violations.push({
@@ -286,7 +286,9 @@ const AccessibilityMonitor: React.FC<AccessibilityMonitorProps> = ({
 	 * Run comprehensive accessibility scan
 	 */
 	const runAccessibilityScan = React.useCallback(async () => {
-		if (!enabled) return;
+		if (!enabled) {
+			return;
+		}
 
 		setIsScanning(true);
 
@@ -335,16 +337,17 @@ const AccessibilityMonitor: React.FC<AccessibilityMonitorProps> = ({
 			setIssues(allViolations);
 			setStats(newStats);
 			onIssuesFound?.(allViolations, newStats);
-		} catch (error) {
-			console.error("Accessibility scan failed:", error);
+		} catch (_error) {
 		} finally {
 			setIsScanning(false);
 		}
-	}, [enabled, minimumSeverity, onIssuesFound, healthcareContext]);
+	}, [enabled, minimumSeverity, onIssuesFound, scanAriaViolations, scanContrastViolations, scanKeyboardViolations]);
 
 	// Auto-scan setup
 	React.useEffect(() => {
-		if (!enabled || scanInterval === 0) return;
+		if (!enabled || scanInterval === 0) {
+			return;
+		}
 
 		// Initial scan
 		runAccessibilityScan();

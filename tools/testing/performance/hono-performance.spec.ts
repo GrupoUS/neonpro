@@ -56,13 +56,7 @@ test.describe("⚡ Performance Testing Suite", () => {
 				// Calculate statistics
 				const avgResponseTime = measurements.reduce((a, b) => a + b, 0) / measurements.length;
 				const maxResponseTime = Math.max(...measurements);
-				const minResponseTime = Math.min(...measurements);
-
-				console.log(`${endpoint.name} Performance:`);
-				console.log(`  Average: ${avgResponseTime.toFixed(2)}ms`);
-				console.log(`  Min: ${minResponseTime}ms`);
-				console.log(`  Max: ${maxResponseTime}ms`);
-				console.log(`  Threshold: ${endpoint.threshold}ms`);
+				const _minResponseTime = Math.min(...measurements);
 
 				// Assert performance requirements
 				expect(
@@ -83,8 +77,6 @@ test.describe("⚡ Performance Testing Suite", () => {
 			const concurrentRequests = 20;
 			const endpoint = "/api/v1/health";
 
-			console.log(`Testing ${concurrentRequests} concurrent requests to ${endpoint}`);
-
 			const startTime = Date.now();
 
 			// Create concurrent requests
@@ -97,18 +89,10 @@ test.describe("⚡ Performance Testing Suite", () => {
 
 			// Analyze results
 			const successfulResponses = responses.filter((r) => r.status() < 400);
-			const failedResponses = responses.filter((r) => r.status() >= 400);
+			const _failedResponses = responses.filter((r) => r.status() >= 400);
 
 			const successRate = successfulResponses.length / responses.length;
 			const throughput = responses.length / (totalTime / 1000); // requests per second
-
-			console.log("Concurrent Request Results:");
-			console.log(`  Total requests: ${responses.length}`);
-			console.log(`  Successful: ${successfulResponses.length}`);
-			console.log(`  Failed: ${failedResponses.length}`);
-			console.log(`  Success rate: ${(successRate * 100).toFixed(2)}%`);
-			console.log(`  Total time: ${totalTime}ms`);
-			console.log(`  Throughput: ${throughput.toFixed(2)} req/s`);
 
 			// Assert performance requirements
 			expect(successRate, "Success rate should be above 95%").toBeGreaterThan(0.95);
@@ -118,8 +102,6 @@ test.describe("⚡ Performance Testing Suite", () => {
 		await test.step("Test database query performance under load", async () => {
 			const concurrentQueries = 15;
 			const endpoint = "/api/v1/patients"; // Endpoint that queries database
-
-			console.log(`Testing ${concurrentQueries} concurrent database queries`);
 
 			const startTime = Date.now();
 
@@ -132,11 +114,6 @@ test.describe("⚡ Performance Testing Suite", () => {
 
 			const successfulResponses = responses.filter((r) => r.status() < 400);
 			const avgResponseTime = totalTime / responses.length;
-
-			console.log("Database Query Performance:");
-			console.log(`  Concurrent queries: ${concurrentQueries}`);
-			console.log(`  Successful: ${successfulResponses.length}`);
-			console.log(`  Average response time: ${avgResponseTime.toFixed(2)}ms`);
 
 			// Database queries should remain fast under load
 			expect(avgResponseTime, "Database queries should remain fast under load").toBeLessThan(
@@ -164,8 +141,6 @@ test.describe("⚡ Performance Testing Suite", () => {
 
 			const totalRequests = 100;
 			const requestPromises: Promise<any>[] = [];
-
-			console.log(`Simulating realistic user load with ${totalRequests} requests`);
 
 			const startTime = Date.now();
 
@@ -215,16 +190,7 @@ test.describe("⚡ Performance Testing Suite", () => {
 			const overallSuccessRate = results.filter((r) => r.status < 400).length / results.length;
 			const throughput = results.length / (totalTime / 1000);
 
-			console.log("Load Testing Results:");
-			console.log(`  Total time: ${totalTime}ms`);
-			console.log(`  Overall success rate: ${(overallSuccessRate * 100).toFixed(2)}%`);
-			console.log(`  Throughput: ${throughput.toFixed(2)} req/s`);
-
-			scenarioStats.forEach((stat) => {
-				console.log(
-					`  ${stat.action}: ${stat.totalRequests} requests, ${(stat.successRate * 100).toFixed(1)}% success`
-				);
-			});
+			scenarioStats.forEach((_stat) => {});
 
 			// Assert load testing requirements
 			expect(overallSuccessRate, "Overall success rate should be high under load").toBeGreaterThan(0.95);
@@ -245,8 +211,6 @@ test.describe("⚡ Performance Testing Suite", () => {
 			const sampleSize = 50;
 			const measurements: number[] = [];
 
-			console.log(`Collecting ${sampleSize} response time measurements`);
-
 			for (let i = 0; i < sampleSize; i++) {
 				const startTime = performance.now();
 				const response = await page.request.get(endpoint);
@@ -264,9 +228,9 @@ test.describe("⚡ Performance Testing Suite", () => {
 			// Calculate statistical metrics
 			measurements.sort((a, b) => a - b);
 
-			const min = measurements[0];
-			const max = measurements[measurements.length - 1];
-			const median = measurements[Math.floor(measurements.length / 2)];
+			const _min = measurements[0];
+			const _max = measurements.at(-1);
+			const _median = measurements[Math.floor(measurements.length / 2)];
 			const p95 = measurements[Math.floor(measurements.length * 0.95)];
 			const p99 = measurements[Math.floor(measurements.length * 0.99)];
 			const average = measurements.reduce((a, b) => a + b, 0) / measurements.length;
@@ -274,16 +238,6 @@ test.describe("⚡ Performance Testing Suite", () => {
 			// Calculate standard deviation
 			const variance = measurements.reduce((acc, val) => acc + (val - average) ** 2, 0) / measurements.length;
 			const stdDev = Math.sqrt(variance);
-
-			console.log("Response Time Distribution Analysis:");
-			console.log(`  Sample size: ${sampleSize}`);
-			console.log(`  Min: ${min.toFixed(2)}ms`);
-			console.log(`  Max: ${max.toFixed(2)}ms`);
-			console.log(`  Average: ${average.toFixed(2)}ms`);
-			console.log(`  Median: ${median.toFixed(2)}ms`);
-			console.log(`  95th percentile: ${p95.toFixed(2)}ms`);
-			console.log(`  99th percentile: ${p99.toFixed(2)}ms`);
-			console.log(`  Standard deviation: ${stdDev.toFixed(2)}ms`);
 
 			// Performance assertions
 			expect(average, "Average response time should be acceptable").toBeLessThan(
@@ -303,8 +257,6 @@ test.describe("⚡ Performance Testing Suite", () => {
 		await test.step("Monitor resource usage during API calls", async () => {
 			const endpoint = "/api/v1/patients";
 			const iterations = 30;
-
-			console.log(`Monitoring resource usage during ${iterations} API calls`);
 
 			// Baseline measurement
 			await page.goto("/"); // Load the application
@@ -352,22 +304,13 @@ test.describe("⚡ Performance Testing Suite", () => {
 			const memoryMetrics = performanceMetrics.filter((m) => m.usedJSMemory > 0);
 			if (memoryMetrics.length > 0) {
 				const avgMemoryUsage = memoryMetrics.reduce((sum, m) => sum + m.usedJSMemory, 0) / memoryMetrics.length;
-				const maxMemoryUsage = Math.max(...memoryMetrics.map((m) => m.usedJSMemory));
-
-				console.log("Memory Usage Analysis:");
-				console.log(`  Average JS memory: ${(avgMemoryUsage / 1024 / 1024).toFixed(2)} MB`);
-				console.log(`  Peak JS memory: ${(maxMemoryUsage / 1024 / 1024).toFixed(2)} MB`);
+				const _maxMemoryUsage = Math.max(...memoryMetrics.map((m) => m.usedJSMemory));
 
 				// Memory usage assertions
 				expect(avgMemoryUsage / 1024 / 1024, "Average memory usage should be reasonable").toBeLessThan(
 					PERFORMANCE_THRESHOLDS.MEMORY_LIMIT
 				);
 			}
-
-			console.log("Resource Usage Results:");
-			console.log(`  Iterations: ${iterations}`);
-			console.log(`  Average response time: ${avgResponseTime.toFixed(2)}ms`);
-			console.log(`  Success rate: ${(successRate * 100).toFixed(2)}%`);
 
 			// Performance assertions
 			expect(avgResponseTime, "Average response time should be acceptable").toBeLessThan(
@@ -406,8 +349,6 @@ test.describe("⚡ Performance Testing Suite", () => {
 			];
 
 			for (const endpoint of healthcareEndpoints) {
-				console.log(`Testing ${endpoint.name} performance`);
-
 				const measurements: number[] = [];
 
 				for (let i = 0; i < 5; i++) {
@@ -426,7 +367,6 @@ test.describe("⚡ Performance Testing Suite", () => {
 				}
 
 				const avgTime = measurements.reduce((a, b) => a + b, 0) / measurements.length;
-				console.log(`  ${endpoint.name}: ${avgTime.toFixed(2)}ms average`);
 
 				// Healthcare data queries should be fast for good user experience
 				expect(avgTime, `${endpoint.name} should respond quickly for healthcare workflows`).toBeLessThan(300);
@@ -434,9 +374,6 @@ test.describe("⚡ Performance Testing Suite", () => {
 		});
 
 		await test.step("Test appointment booking performance simulation", async () => {
-			// Simulate the critical appointment booking workflow
-			console.log("Simulating appointment booking workflow performance");
-
 			const workflowSteps = [
 				{
 					step: "Get available slots",
@@ -463,19 +400,18 @@ test.describe("⚡ Performance Testing Suite", () => {
 				for (const step of workflowSteps) {
 					const stepStart = performance.now();
 
-					let response;
+					let _response;
 					if (step.method === "POST") {
-						response = await page.request.post(step.endpoint, {
+						_response = await page.request.post(step.endpoint, {
 							data: { patient_id: 1, date: "2025-08-21", time: "14:00" },
 						});
 					} else if (step.method === "PATCH") {
-						response = await page.request.patch(step.endpoint);
+						_response = await page.request.patch(step.endpoint);
 					} else {
-						response = await page.request.get(step.endpoint);
+						_response = await page.request.get(step.endpoint);
 					}
 
 					const stepTime = performance.now() - stepStart;
-					console.log(`    ${step.step}: ${stepTime.toFixed(2)}ms`);
 
 					// Each step should be reasonably fast
 					expect(stepTime, `${step.step} should be fast`).toBeLessThan(500);
@@ -483,11 +419,9 @@ test.describe("⚡ Performance Testing Suite", () => {
 
 				const workflowTime = performance.now() - workflowStart;
 				workflowTimes.push(workflowTime);
-				console.log(`  Workflow ${workflow + 1}: ${workflowTime.toFixed(2)}ms total`);
 			}
 
 			const avgWorkflowTime = workflowTimes.reduce((a, b) => a + b, 0) / workflowTimes.length;
-			console.log(`Average appointment booking workflow: ${avgWorkflowTime.toFixed(2)}ms`);
 
 			// Complete appointment booking should complete quickly for good UX
 			expect(avgWorkflowTime, "Appointment booking workflow should be fast").toBeLessThan(2000);

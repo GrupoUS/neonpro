@@ -7,7 +7,7 @@
  */
 
 import type { MiddlewareHandler } from "hono";
-import { createError, ErrorType } from "./error-handler";
+import { createError } from "./error-handler";
 
 // LGPD consent types
 export enum ConsentType {
@@ -43,7 +43,7 @@ export enum LawfulBasis {
 }
 
 // Route-specific LGPD configuration
-interface LGPDRouteConfig {
+type LGPDRouteConfig = {
 	requiresConsent: ConsentType[];
 	dataCategories: DataCategory[];
 	lawfulBasis: LawfulBasis[];
@@ -51,7 +51,7 @@ interface LGPDRouteConfig {
 	allowAnonymous?: boolean;
 	requireExplicitConsent?: boolean;
 	description: string;
-}
+};
 
 // LGPD configuration per endpoint
 const LGPD_ROUTE_CONFIG: Record<string, LGPDRouteConfig> = {
@@ -125,7 +125,7 @@ const LGPD_ROUTE_CONFIG: Record<string, LGPDRouteConfig> = {
 
 // Mock consent store (production should use database)
 class ConsentStore {
-	private consents = new Map<
+	private readonly consents = new Map<
 		string,
 		Map<
 			ConsentType,
@@ -145,7 +145,9 @@ class ConsentStore {
 
 	hasValidConsent(patientId: string, consentTypes: ConsentType[]): boolean {
 		const patientConsents = this.consents.get(patientId);
-		if (!patientConsents) return false;
+		if (!patientConsents) {
+			return false;
+		}
 
 		return consentTypes.every((type) => {
 			const consent = patientConsents.get(type);
@@ -158,7 +160,7 @@ class ConsentStore {
 			this.consents.set(patientId, new Map());
 		}
 
-		this.consents.get(patientId)!.set(consentType, {
+		this.consents.get(patientId)?.set(consentType, {
 			granted: true,
 			timestamp: new Date().toISOString(),
 			version,
@@ -197,24 +199,34 @@ consentStore.grantConsent("pat_456", ConsentType.DATA_PROCESSING, "1.0");
 const extractPatientId = (c: any): string | null => {
 	// Try to get from URL parameters
 	const pathPatientId = c.req.param("id");
-	if (pathPatientId) return pathPatientId;
+	if (pathPatientId) {
+		return pathPatientId;
+	}
 
 	// Try to get from request body
 	try {
 		const body = c.req.json();
-		if (body?.patientId) return body.patientId;
-		if (body?.id) return body.id;
+		if (body?.patientId) {
+			return body.patientId;
+		}
+		if (body?.id) {
+			return body.id;
+		}
 	} catch {
 		// Ignore JSON parsing errors
 	}
 
 	// Try to get from query parameters
 	const queryPatientId = c.req.query("patientId");
-	if (queryPatientId) return queryPatientId;
+	if (queryPatientId) {
+		return queryPatientId;
+	}
 
 	// Try to get from authenticated user context
 	const userId = c.get("userId");
-	if (userId && userId.startsWith("pat_")) return userId;
+	if (userId?.startsWith("pat_")) {
+		return userId;
+	}
 
 	return null;
 };
@@ -232,7 +244,7 @@ const getRouteConfig = (method: string, path: string): LGPDRouteConfig | null =>
 
 	// Check pattern matches (for parameterized routes)
 	for (const [pattern, config] of Object.entries(LGPD_ROUTE_CONFIG)) {
-		const regex = new RegExp("^" + pattern.replace(/:\w+/g, "[^/]+") + "$");
+		const regex = new RegExp(`^${pattern.replace(/:\w+/g, "[^/]+")}$`);
 		if (regex.test(operationKey)) {
 			return config;
 		}
@@ -244,8 +256,10 @@ const getRouteConfig = (method: string, path: string): LGPDRouteConfig | null =>
 /**
  * Validate data retention compliance
  */
-const validateDataRetention = (config: LGPDRouteConfig, patientId: string): boolean => {
-	if (!config.retentionPeriod) return true;
+const validateDataRetention = (config: LGPDRouteConfig, _patientId: string): boolean => {
+	if (!config.retentionPeriod) {
+		return true;
+	}
 
 	// TODO: Implement actual retention period check
 	// This would check when the data was first collected

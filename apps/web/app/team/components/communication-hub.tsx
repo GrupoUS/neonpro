@@ -20,8 +20,6 @@ import {
 	Stethoscope,
 	User,
 	Users,
-	Video,
-	X,
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -35,7 +33,6 @@ import {
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-	DialogTrigger,
 } from "@/components/ui/dialog";
 import {
 	DropdownMenu,
@@ -46,18 +43,11 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 
-import type {
-	CommunicationPriority,
-	HealthcareProfessional,
-	PatientHandoff,
-	TeamMessage,
-} from "@/types/team-coordination"; // Mock team messages with Brazilian healthcare context
+import type { CommunicationPriority, PatientHandoff, TeamMessage } from "@/types/team-coordination"; // Mock team messages with Brazilian healthcare context
 
 const mockTeamMessages: TeamMessage[] = [
 	{
@@ -377,9 +367,9 @@ const getHandoffStatusInfo = (status: string) => {
 	}
 };
 
-interface CommunicationHubProps {
+type CommunicationHubProps = {
 	emergencyMode?: boolean;
-}
+};
 
 export function CommunicationHub({ emergencyMode = false }: CommunicationHubProps) {
 	const [activeTab, setActiveTab] = useState("messages");
@@ -387,7 +377,7 @@ export function CommunicationHub({ emergencyMode = false }: CommunicationHubProp
 	const [priorityFilter, setPriorityFilter] = useState<CommunicationPriority | "all">("all");
 	const [typeFilter, setTypeFilter] = useState<string>("all");
 	const [showUnreadOnly, setShowUnreadOnly] = useState(false);
-	const [selectedMessage, setSelectedMessage] = useState<TeamMessage | null>(null);
+	const [_selectedMessage, setSelectedMessage] = useState<TeamMessage | null>(null);
 	const [isComposeDialogOpen, setIsComposeDialogOpen] = useState(false);
 	const [newMessage, setNewMessage] = useState({
 		subject: "",
@@ -408,17 +398,25 @@ export function CommunicationHub({ emergencyMode = false }: CommunicationHubProp
 					message.content.toLowerCase().includes(searchLower) ||
 					staff?.name.toLowerCase().includes(searchLower);
 
-				if (!matchesSearch) return false;
+				if (!matchesSearch) {
+					return false;
+				}
 			}
 
 			// Priority filter
-			if (priorityFilter !== "all" && message.priority !== priorityFilter) return false;
+			if (priorityFilter !== "all" && message.priority !== priorityFilter) {
+				return false;
+			}
 
 			// Type filter
-			if (typeFilter !== "all" && message.messageType !== typeFilter) return false;
+			if (typeFilter !== "all" && message.messageType !== typeFilter) {
+				return false;
+			}
 
 			// Unread filter
-			if (showUnreadOnly && message.status === "read") return false;
+			if (showUnreadOnly && message.status === "read") {
+				return false;
+			}
 
 			return true;
 		});

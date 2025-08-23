@@ -4,13 +4,14 @@
 import { createServer } from "http";
 import type { AddressInfo } from "net";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { logger } from "../../../utils/logger";
 
 describe("🎯 HONO RPC CLIENT INTEGRATION VALIDATION", () => {
 	let server: any;
 	let baseUrl: string;
 
 	beforeAll(async () => {
-		console.log("🚀 Starting RPC validation tests...");
+		logger.info("🚀 Starting RPC validation tests...");
 
 		// Try to import backend Hono app
 		try {
@@ -22,12 +23,12 @@ describe("🎯 HONO RPC CLIENT INTEGRATION VALIDATION", () => {
 				server.listen(0, () => {
 					const port = (server.address() as AddressInfo).port;
 					baseUrl = `http://localhost:${port}`;
-					console.log(`✅ Test server running on ${baseUrl}`);
+					logger.info(`✅ Test server running on ${baseUrl}`);
 					resolve();
 				});
 			});
 		} catch (error) {
-			console.error("❌ Failed to start backend server:", error);
+			logger.error("❌ Failed to start backend server:", error);
 			throw error;
 		}
 	});
@@ -35,7 +36,7 @@ describe("🎯 HONO RPC CLIENT INTEGRATION VALIDATION", () => {
 	afterAll(async () => {
 		if (server) {
 			server.close();
-			console.log("🛑 Test server stopped");
+			logger.info("🛑 Test server stopped");
 		}
 	});
 
@@ -44,7 +45,7 @@ describe("🎯 HONO RPC CLIENT INTEGRATION VALIDATION", () => {
 			const { default: app } = await import("../../../apps/api/src/index");
 			expect(app).toBeDefined();
 			expect(typeof app.fetch).toBe("function");
-			console.log("✅ Hono backend imported successfully");
+			logger.info("✅ Hono backend imported successfully");
 		});
 
 		it("should respond to health check endpoint", async () => {
@@ -54,9 +55,9 @@ describe("🎯 HONO RPC CLIENT INTEGRATION VALIDATION", () => {
 
 				const data = await response.json();
 				expect(data).toHaveProperty("status");
-				console.log("✅ Health endpoint responding:", data);
+				logger.info("✅ Health endpoint responding:", data);
 			} catch (error) {
-				console.log("⚠️  Health endpoint test:", error.message);
+				logger.warn("⚠️  Health endpoint test:", error.message);
 				// This might be expected if /health doesn't exist yet
 			}
 		});
@@ -67,17 +68,17 @@ describe("🎯 HONO RPC CLIENT INTEGRATION VALIDATION", () => {
 			try {
 				const clientModule = await import("../../../packages/shared/src/api-client");
 				expect(clientModule).toBeDefined();
-				console.log("✅ RPC Client module imported");
+				logger.info("✅ RPC Client module imported");
 
 				// Check if apiClient is exported
 				if ("apiClient" in clientModule) {
 					expect(clientModule.apiClient).toBeDefined();
-					console.log("✅ apiClient exported successfully");
+					logger.info("✅ apiClient exported successfully");
 				} else {
-					console.log("⚠️  apiClient not found in exports");
+					logger.warn("⚠️  apiClient not found in exports");
 				}
 			} catch (error) {
-				console.error("❌ RPC Client import failed:", error);
+				logger.error("❌ RPC Client import failed:", error);
 				throw error;
 			}
 		});
@@ -91,9 +92,9 @@ describe("🎯 HONO RPC CLIENT INTEGRATION VALIDATION", () => {
 					(key) => key.includes("Type") || key.includes("Client") || key.includes("Api")
 				);
 
-				console.log("✅ Client module exports:", Object.keys(clientModule));
+				logger.info("✅ Client module exports:", Object.keys(clientModule));
 			} catch (error) {
-				console.error("❌ Type validation failed:", error);
+				logger.error("❌ Type validation failed:", error);
 			}
 		});
 	});
@@ -106,15 +107,15 @@ describe("🎯 HONO RPC CLIENT INTEGRATION VALIDATION", () => {
 
 				// Check for common hook exports
 				const hookExports = Object.keys(hooksModule);
-				console.log("✅ Patient hooks exports:", hookExports);
+				logger.info("✅ Patient hooks exports:", hookExports);
 
 				// Look for typical hook patterns
 				const hasHooks = hookExports.some((key) => key.startsWith("use"));
 				if (hasHooks) {
-					console.log("✅ Hook patterns found");
+					logger.info("✅ Hook patterns found");
 				}
 			} catch (error) {
-				console.error("❌ Patient hooks import failed:", error);
+				logger.error("❌ Patient hooks import failed:", error);
 				throw error;
 			}
 		});
@@ -122,7 +123,7 @@ describe("🎯 HONO RPC CLIENT INTEGRATION VALIDATION", () => {
 
 	describe("🔍 End-to-End Validation", () => {
 		it("should validate complete RPC flow", async () => {
-			console.log("🧪 Testing complete RPC flow...");
+			logger.info("🧪 Testing complete RPC flow...");
 
 			try {
 				// 1. Import all components
@@ -135,15 +136,15 @@ describe("🎯 HONO RPC CLIENT INTEGRATION VALIDATION", () => {
 				expect(clientModule).toBeDefined();
 				expect(hooksModule).toBeDefined();
 
-				console.log("✅ All modules imported successfully");
+				logger.info("✅ All modules imported successfully");
 
 				// 3. Test basic connectivity if client is available
 				if ("apiClient" in clientModule && clientModule.apiClient) {
-					console.log("🔗 Testing RPC client connectivity...");
+					logger.info("🔗 Testing RPC client connectivity...");
 					// Basic connectivity test would go here
 				}
 			} catch (error) {
-				console.error("❌ End-to-end validation failed:", error);
+				logger.error("❌ End-to-end validation failed:", error);
 				throw error;
 			}
 		});

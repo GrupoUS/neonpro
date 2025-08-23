@@ -9,7 +9,7 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { createMockResponse, createMockSubscription } from "../../utils/test-utils";
+import { createMockSubscription } from "../../utils/test-utils";
 
 // Mock Next.js modules
 vi.mock("next/headers", () => ({

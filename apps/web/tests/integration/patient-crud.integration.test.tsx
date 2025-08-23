@@ -2,11 +2,10 @@
 // Complete patient management lifecycle testing for NeonPro Healthcare
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Types for patient data
-interface Patient {
+type Patient = {
 	id: string;
 	name: string;
 	cpf: string;
@@ -25,15 +24,15 @@ interface Patient {
 	updated_at: string;
 	lgpd_consent: boolean;
 	lgpd_consent_date: string;
-}
+};
 
 // Use the global Supabase client mock from vitest.setup.ts
 const mockSupabaseClient = (globalThis as any).mockSupabaseClient;
 
 // Use global service mocks from vitest.setup.ts
 const mockCpfValidator = (globalThis as any).mockCpfValidator;
-const mockNotificationService = (globalThis as any).mockNotificationService;
-const mockLgpdService = (globalThis as any).mockLgpdService;
+const _mockNotificationService = (globalThis as any).mockNotificationService;
+const _mockLgpdService = (globalThis as any).mockLgpdService;
 
 // Mock patient service hook
 const mockPatientsHook = {
@@ -66,7 +65,7 @@ vi.mock("../../lib/utils/cpf-validator", () => ({
 }));
 
 // Test wrapper component
-const TestWrapper = ({ children }: { children: React.ReactNode }) => {
+const _TestWrapper = ({ children }: { children: React.ReactNode }) => {
 	const queryClient = new QueryClient({
 		defaultOptions: {
 			queries: { retry: false },
@@ -188,7 +187,7 @@ describe("Patient CRUD Integration Tests", () => {
 
 			mockPatientsHook.createPatient.mockImplementation(async (patientData) => {
 				// Simulate actual hook behavior by calling global mocks
-				const isValidCpf = mockCpfValidator.isValid(patientData.cpf);
+				const _isValidCpf = mockCpfValidator.isValid(patientData.cpf);
 
 				// Simulate database call
 				mockSupabaseClient.from("patients");
@@ -290,7 +289,7 @@ describe("Patient CRUD Integration Tests", () => {
 				})),
 			});
 
-			mockPatientsHook.getPatient.mockImplementation(async (patientId) => {
+			mockPatientsHook.getPatient.mockImplementation(async (_patientId) => {
 				// Simulate actual hook behavior by calling global mocks
 				mockSupabaseClient.from("patients");
 
@@ -368,7 +367,7 @@ describe("Patient CRUD Integration Tests", () => {
 				})),
 			});
 
-			mockPatientsHook.updatePatient.mockImplementation(async (patientId, updateData) => {
+			mockPatientsHook.updatePatient.mockImplementation(async (_patientId, _updateData) => {
 				// Simulate actual hook behavior by calling global mocks
 				mockSupabaseClient.from("patients");
 
@@ -425,7 +424,7 @@ describe("Patient CRUD Integration Tests", () => {
 				})),
 			});
 
-			mockPatientsHook.deletePatient.mockImplementation(async (patientId) => {
+			mockPatientsHook.deletePatient.mockImplementation(async (_patientId) => {
 				// Simulate actual hook behavior by calling global mocks
 				mockSupabaseClient.from("patients");
 
@@ -447,7 +446,7 @@ describe("Patient CRUD Integration Tests", () => {
 
 	describe("LGPD Compliance Integration", () => {
 		it("should validate data processing purposes", async () => {
-			const dataProcessingValidation = {
+			const _dataProcessingValidation = {
 				patient_id: "patient-123",
 				purposes: ["treatment", "emergency_contact"],
 				legal_basis: "consent",
@@ -469,7 +468,7 @@ describe("Patient CRUD Integration Tests", () => {
 		});
 
 		it("should handle data subject access requests", async () => {
-			const accessRequest = {
+			const _accessRequest = {
 				subject_id: "patient-123",
 				request_type: "data_access",
 				requester_cpf: "123.456.789-00",
@@ -546,7 +545,7 @@ describe("Patient CRUD Integration Tests", () => {
 			const updateData = { phone: "(11) 77777-7777" };
 			const updatedPatient = { ...createdPatient, ...updateData };
 
-			mockPatientsHook.updatePatient.mockImplementation(async (id, data) => {
+			mockPatientsHook.updatePatient.mockImplementation(async (id, _data) => {
 				// Simulate cache invalidation after update
 				cacheInvalidation({ queryKey: ["patients", id] });
 				cacheInvalidation({ queryKey: ["patients"] });
@@ -598,22 +597,15 @@ describe("Patient CRUD Integration Tests", () => {
 						.eq("id", id)
 						.single();
 					return result;
-				} catch (error) {
-					console.log("First attempt failed, retrying...", error.message);
+				} catch (_error) {
 					// Simulate retry delay
 					await new Promise((resolve) => setTimeout(resolve, 100));
-
-					// Retry - will succeed
-					try {
-						const retryResult = await (globalThis as any).mockSupabaseClient
-							.from("patients")
-							.select("*")
-							.eq("id", id)
-							.single();
-						return retryResult;
-					} catch (retryError) {
-						throw retryError;
-					}
+					const retryResult = await (globalThis as any).mockSupabaseClient
+						.from("patients")
+						.select("*")
+						.eq("id", id)
+						.single();
+					return retryResult;
 				}
 			});
 

@@ -45,7 +45,7 @@ type HealthcareFormType =
 	| "emergency-contact"
 	| "general";
 
-interface FormContextValue {
+type FormContextValue = {
 	formId: string;
 	formType: HealthcareFormType;
 	lgpdCompliant: boolean;
@@ -57,7 +57,7 @@ interface FormContextValue {
 	announceToScreenReader: (message: string, priority?: "polite" | "assertive") => void;
 	currentStep?: number;
 	totalSteps?: number;
-}
+};
 
 const FormContext = createContext<FormContextValue | null>(null);
 
@@ -124,7 +124,7 @@ const Form = forwardRef<HTMLFormElement, FormProps>(
 		const [announcements, setAnnouncements] = useState<string>("");
 
 		// Screen reader announcement function
-		const announceToScreenReader = useCallback((message: string, priority: "polite" | "assertive" = "polite") => {
+		const announceToScreenReader = useCallback((message: string, _priority: "polite" | "assertive" = "polite") => {
 			setAnnouncements(message);
 
 			// Clear announcement after screen reader processes it
@@ -162,7 +162,9 @@ const Form = forwardRef<HTMLFormElement, FormProps>(
 		};
 
 		const getFormIcon = () => {
-			if (icon) return icon;
+			if (icon) {
+				return icon;
+			}
 
 			switch (formType) {
 				case "patient-registration":
@@ -181,7 +183,9 @@ const Form = forwardRef<HTMLFormElement, FormProps>(
 		};
 
 		const getFormTitle = () => {
-			if (title) return title;
+			if (title) {
+				return title;
+			}
 
 			switch (formType) {
 				case "patient-registration":
@@ -221,7 +225,6 @@ const Form = forwardRef<HTMLFormElement, FormProps>(
 					id={formId}
 					noValidate
 					ref={ref}
-					role="form"
 					{...props}
 				>
 					{/* Screen reader announcements for form state changes */}

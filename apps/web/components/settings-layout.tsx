@@ -16,12 +16,12 @@ import { MainNavigation } from "@/components/main-navigation";
 import { useAuth } from "@/contexts/auth-context";
 import { cn } from "@/lib/utils";
 
-interface SettingsTab {
+type SettingsTab = {
 	label: string;
 	href: string;
 	icon: React.ComponentType<{ className?: string }>;
 	permission?: () => boolean;
-}
+};
 
 export function SettingsLayout() {
 	const location = useLocation();

@@ -1,23 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import {
-	AlertTriangle,
-	CheckCircle,
-	Download,
-	Eye,
-	FileText,
-	Info,
-	Lock,
-	Shield,
-	Signature,
-	User,
-	Users,
-	X,
-} from "lucide-react";
+import { AlertTriangle, CheckCircle, FileText, Info, Lock, Shield, Signature, X } from "lucide-react";
 import { useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -55,7 +41,7 @@ const NeonGradientCard = ({ children, className = "" }: NeonGradientCardProps) =
 );
 
 // Props interface
-interface CosmeticConsentBrazilianProps {
+type CosmeticConsentBrazilianProps = {
 	treatmentPlan: TreatmentPlan;
 	existingConsent?: PatientConsent;
 	onConsentGranted?: (consent: Omit<PatientConsent, "id" | "created_at" | "updated_at">) => void;
@@ -64,10 +50,10 @@ interface CosmeticConsentBrazilianProps {
 	mode?: "new" | "view" | "edit";
 	showProgress?: boolean;
 	className?: string;
-}
+};
 
 // Consent form data structure
-interface ConsentFormData {
+type ConsentFormData = {
 	// Treatment consent
 	treatmentConsentGranted: boolean;
 	risksUnderstood: boolean;
@@ -99,7 +85,7 @@ interface ConsentFormData {
 
 	// Additional notes
 	additionalNotes: string;
-}
+};
 
 export function CosmeticConsentBrazilian({
 	treatmentPlan,
@@ -167,7 +153,9 @@ export function CosmeticConsentBrazilian({
 	};
 
 	const handleSubmitConsent = async () => {
-		if (!onConsentGranted) return;
+		if (!onConsentGranted) {
+			return;
+		}
 
 		setIsSubmitting(true);
 
@@ -214,15 +202,16 @@ export function CosmeticConsentBrazilian({
 			};
 
 			await onConsentGranted(consentData);
-		} catch (error) {
-			console.error("Error submitting consent:", error);
+		} catch (_error) {
 		} finally {
 			setIsSubmitting(false);
 		}
 	};
 
 	const handleWithdrawConsent = async () => {
-		if (!(existingConsent && onConsentWithdrawn && withdrawalReason.trim())) return;
+		if (!(existingConsent && onConsentWithdrawn && withdrawalReason.trim())) {
+			return;
+		}
 
 		await onConsentWithdrawn(existingConsent.id, withdrawalReason);
 		setShowWithdrawDialog(false);
@@ -671,7 +660,7 @@ export function CosmeticConsentBrazilian({
 										min="365"
 										onChange={(e) =>
 											updateFormData({
-												customRetentionPeriod: Number.parseInt(e.target.value) || 2555,
+												customRetentionPeriod: Number.parseInt(e.target.value, 10) || 2555,
 											})
 										}
 										type="number"

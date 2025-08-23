@@ -6,9 +6,10 @@
  * Analisa e otimiza estrutura App Router para performance máxima
  */
 
-const { execSync } = require("child_process");
-const { readFileSync, writeFileSync, existsSync, readdirSync, statSync } = require("fs");
-const { join, extname } = require("path");
+const { execSync } = require("node:child_process");
+const { readFileSync, writeFileSync, existsSync, readdirSync, statSync } = require("node:fs");
+const { join, extname } = require("node:path");
+const { logger } = require("../apps/api/src/lib/logger");
 
 const rootDir = process.cwd();
 const webAppDir = join(rootDir, "apps", "web");
@@ -31,10 +32,14 @@ class NextJSOptimizer {
 			optimization: "🚀",
 		}[type];
 
-		console.log(`${prefix} [${timestamp}] ${message}`);
+		logger.info(`${prefix} [${timestamp}] ${message}`);
 
-		if (type === "optimization") this.optimizations.push(message);
-		if (type === "warning") this.warnings.push(message);
+		if (type === "optimization") {
+			this.optimizations.push(message);
+		}
+		if (type === "warning") {
+			this.warnings.push(message);
+		}
 	}
 
 	// Analisar estrutura atual App Router
@@ -247,7 +252,7 @@ class NextJSOptimizer {
 
 	// Executar análise completa
 	runAnalysis() {
-		console.log("🚀 INICIANDO ANÁLISE NEXT.JS 15 APP ROUTER\n");
+		logger.info("🚀 INICIANDO ANÁLISE NEXT.JS 15 APP ROUTER\n");
 
 		this.analyzeAppRouterStructure();
 		this.checkForPagesRouter();
@@ -255,17 +260,17 @@ class NextJSOptimizer {
 		this.analyzeServerClientComponents();
 		this.generateOptimizationReport();
 
-		console.log("\n📊 ANÁLISE COMPLETA:");
-		console.log(`🚀 Otimizações identificadas: ${this.optimizations.length}`);
-		console.log(`⚠️  Avisos: ${this.warnings.length}`);
-		console.log(`📄 App Router pages: ${this.appRouterPages.length}`);
-		console.log(`📄 Pages Router files: ${this.pagesRouterFiles.length}`);
+		logger.info("\n📊 ANÁLISE COMPLETA:");
+		logger.info(`🚀 Otimizações identificadas: ${this.optimizations.length}`);
+		logger.info(`⚠️  Avisos: ${this.warnings.length}`);
+		logger.info(`📄 App Router pages: ${this.appRouterPages.length}`);
+		logger.info(`📄 Pages Router files: ${this.pagesRouterFiles.length}`);
 
-		console.log("\n🎯 PRÓXIMOS PASSOS:");
-		console.log("  1. Implementar route groups otimizados");
-		console.log("  2. Adicionar special pages (loading, error, not-found)");
-		console.log("  3. Otimizar Server/Client Component balance");
-		console.log("  4. Implementar feature-based architecture");
+		logger.info("\n🎯 PRÓXIMOS PASSOS:");
+		logger.info("  1. Implementar route groups otimizados");
+		logger.info("  2. Adicionar special pages (loading, error, not-found)");
+		logger.info("  3. Otimizar Server/Client Component balance");
+		logger.info("  4. Implementar feature-based architecture");
 
 		return true;
 	}

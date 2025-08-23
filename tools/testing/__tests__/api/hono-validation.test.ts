@@ -66,7 +66,7 @@ const createMockApp = () => {
 		);
 	});
 
-	app.get("/error/500", (c) => {
+	app.get("/error/500", (_c) => {
 		throw new Error("Erro interno do servidor");
 	});
 
@@ -83,11 +83,11 @@ vi.mock("process", () => ({
 
 describe("🏥 NEONPRO Healthcare - Core API Validation", () => {
 	let app: ReturnType<typeof createMockApp>;
-	let client: ReturnType<typeof testClient>;
+	let _client: ReturnType<typeof testClient>;
 
 	beforeEach(() => {
 		app = createMockApp();
-		client = testClient(app);
+		_client = testClient(app);
 		vi.clearAllMocks();
 	});
 

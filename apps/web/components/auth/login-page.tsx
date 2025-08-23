@@ -10,7 +10,6 @@
 
 import { useSearch } from "@tanstack/react-router";
 import { Heart } from "lucide-react";
-import React from "react";
 import { LoginForm } from "@/app/login/login-form";
 
 export function LoginPage() {

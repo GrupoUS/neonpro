@@ -5,9 +5,9 @@
  * Validates infrastructure, monitoring, rollback procedures, and operational requirements
  */
 
-import { performance } from "perf_hooks";
+import { performance } from "node:perf_hooks";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { mockAppointment, mockPatient, mockUser } from "../setup/final-test-setup";
+import { logger } from "../../../../utils/logger";
 
 // Mock deployment utilities
 class DeploymentValidator {
@@ -160,7 +160,7 @@ describe("Production Deployment Validation Tests - Final Readiness", () => {
 			expect(result.errors.length).toBe(0);
 
 			if (result.warnings.length > 0) {
-				console.warn("TypeScript warnings detected:", result.warnings);
+				logger.warn("TypeScript warnings detected:", result.warnings);
 			}
 		});
 
@@ -172,11 +172,11 @@ describe("Production Deployment Validation Tests - Final Readiness", () => {
 			expect(result.sizes["web-bundle.js"]).toBeDefined();
 
 			// Bundle sizes should be reasonable for healthcare app
-			const webBundleSize = Number.parseInt(result.sizes["web-bundle.js"].replace(/[^\d]/g, ""));
+			const webBundleSize = Number.parseInt(result.sizes["web-bundle.js"].replace(/[^\d]/g, ""), 10);
 			expect(webBundleSize).toBeLessThan(1500); // Under 1.5MB for main bundle
 
 			if (!result.optimized) {
-				console.log("Bundle optimization recommendations:", result.recommendations);
+				logger.info("Bundle optimization recommendations:", result.recommendations);
 			}
 		});
 
@@ -219,7 +219,7 @@ describe("Production Deployment Validation Tests - Final Readiness", () => {
 			expect(result.missing.length).toBe(0);
 
 			if (result.missing.length > 0) {
-				console.error("Missing environment variables:", result.missing);
+				logger.error("Missing environment variables:", result.missing);
 			}
 		});
 
@@ -431,7 +431,7 @@ describe("Production Deployment Validation Tests - Final Readiness", () => {
 			expect(rollbackTest.database_schema_compatible).toBe(true);
 			expect(rollbackTest.data_migration_reversible).toBe(true);
 
-			const rollbackTimeMinutes = Number.parseInt(rollbackTest.rollback_time);
+			const rollbackTimeMinutes = Number.parseInt(rollbackTest.rollback_time, 10);
 			expect(rollbackTimeMinutes).toBeLessThan(10); // Under 10 minutes
 		});
 
@@ -513,9 +513,9 @@ describe("Production Deployment Validation Tests - Final Readiness", () => {
 				error_rate_alert: "1%",
 			};
 
-			expect(Number.parseInt(resourceMonitoring.cpu_usage_alert)).toBeLessThan(90);
-			expect(Number.parseInt(resourceMonitoring.memory_usage_alert)).toBeLessThan(90);
-			expect(Number.parseInt(resourceMonitoring.disk_usage_alert)).toBeLessThan(95);
+			expect(Number.parseInt(resourceMonitoring.cpu_usage_alert, 10)).toBeLessThan(90);
+			expect(Number.parseInt(resourceMonitoring.memory_usage_alert, 10)).toBeLessThan(90);
+			expect(Number.parseInt(resourceMonitoring.disk_usage_alert, 10)).toBeLessThan(95);
 		});
 	});
 
@@ -584,13 +584,13 @@ describe("Production Deployment Validation Tests - Final Readiness", () => {
 				},
 			};
 
-			expect(Number.parseInt(loadTestResults.average_response_time)).toBeLessThan(100);
-			expect(Number.parseInt(loadTestResults.p95_response_time)).toBeLessThan(200);
+			expect(Number.parseInt(loadTestResults.average_response_time, 10)).toBeLessThan(100);
+			expect(Number.parseInt(loadTestResults.p95_response_time, 10)).toBeLessThan(200);
 			expect(Number.parseFloat(loadTestResults.error_rate)).toBeLessThan(0.1);
-			expect(Number.parseInt(loadTestResults.throughput.split(" ")[0])).toBeGreaterThan(1000);
+			expect(Number.parseInt(loadTestResults.throughput.split(" ")[0], 10)).toBeGreaterThan(1000);
 
-			expect(Number.parseInt(loadTestResults.resource_utilization.cpu)).toBeLessThan(80);
-			expect(Number.parseInt(loadTestResults.resource_utilization.memory)).toBeLessThan(85);
+			expect(Number.parseInt(loadTestResults.resource_utilization.cpu, 10)).toBeLessThan(80);
+			expect(Number.parseInt(loadTestResults.resource_utilization.memory, 10)).toBeLessThan(85);
 		});
 
 		it("should validate failover and recovery under load", async () => {
@@ -603,8 +603,8 @@ describe("Production Deployment Validation Tests - Final Readiness", () => {
 				user_experience_impact: "minimal",
 			};
 
-			expect(Number.parseInt(failoverTest.detection_time)).toBeLessThan(30);
-			expect(Number.parseInt(failoverTest.failover_time)).toBeLessThan(60);
+			expect(Number.parseInt(failoverTest.detection_time, 10)).toBeLessThan(30);
+			expect(Number.parseInt(failoverTest.failover_time, 10)).toBeLessThan(60);
 			expect(failoverTest.data_consistency_maintained).toBe(true);
 		});
 	});

@@ -117,7 +117,7 @@ test.describe("🏥 Complete Healthcare Workflow E2E", () => {
 
 			// Patient should appear in the list
 			await expect(page.locator('[data-testid="patients-table"]')).toBeVisible();
-			await expect(page.locator("text=" + patientData.name)).toBeVisible({
+			await expect(page.locator(`text=${patientData.name}`)).toBeVisible({
 				timeout: 5000,
 			});
 		});

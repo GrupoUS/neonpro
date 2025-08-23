@@ -3,7 +3,7 @@
 import { useCallback, useMemo, useState } from "react";
 
 // Emergency appointment interfaces
-export interface EmergencyDoctor {
+export type EmergencyDoctor = {
 	id: string;
 	name: string;
 	specialty: string;
@@ -18,9 +18,9 @@ export interface EmergencyDoctor {
 	};
 	currentLoad: number; // 0-100 percentage
 	estimatedResponseTime: string; // in minutes
-}
+};
 
-export interface EmergencyAppointment {
+export type EmergencyAppointment = {
 	id: string;
 	patientId: string;
 	doctorId: string;
@@ -34,20 +34,20 @@ export interface EmergencyAppointment {
 	roomNumber?: string;
 	createdAt: string;
 	createdBy: string;
-}
+};
 
 // Booking request interface
-interface EmergencyBookingRequest {
+type EmergencyBookingRequest = {
 	patientId: string;
 	doctorId: string;
 	priority: EmergencyAppointment["priority"];
 	symptoms?: string;
 	notes?: string;
 	preferredTime?: string;
-}
+};
 
 // Hook return interface
-interface UseEmergencyAppointmentsReturn {
+type UseEmergencyAppointmentsReturn = {
 	availableDoctors: EmergencyDoctor[];
 	appointments: EmergencyAppointment[];
 	bookEmergencyAppointment: (request: EmergencyBookingRequest) => Promise<EmergencyAppointment>;
@@ -58,7 +58,7 @@ interface UseEmergencyAppointmentsReturn {
 	isLoading: boolean;
 	error: string | null;
 	clearError: () => void;
-}
+};
 
 // Mock emergency doctors data
 const mockEmergencyDoctors: EmergencyDoctor[] = [
@@ -288,18 +288,6 @@ export function useEmergencyAppointments(): UseEmergencyAppointmentsReturn {
 					);
 				}
 
-				// Log emergency booking for audit
-				console.log(
-					`Emergency appointment booked: ${JSON.stringify({
-						appointmentId: newAppointment.id,
-						patientId: request.patientId,
-						doctorId: request.doctorId,
-						priority: request.priority,
-						scheduledAt: appointmentTime.toISOString(),
-						timestamp: new Date().toISOString(),
-					})}`
-				);
-
 				return newAppointment;
 			} catch (err) {
 				const errorMessage = err instanceof Error ? err.message : "Erro ao agendar consulta de emergência";
@@ -371,15 +359,6 @@ export function useEmergencyAppointments(): UseEmergencyAppointmentsReturn {
 					);
 				}
 
-				// Log cancellation for audit
-				console.log(
-					`Emergency appointment cancelled: ${JSON.stringify({
-						appointmentId: id,
-						reason,
-						timestamp: new Date().toISOString(),
-					})}`
-				);
-
 				return true;
 			} catch (err) {
 				const errorMessage = err instanceof Error ? err.message : "Erro ao cancelar consulta";
@@ -417,15 +396,6 @@ export function useEmergencyAppointments(): UseEmergencyAppointmentsReturn {
 					);
 				}
 
-				// Log status update for audit
-				console.log(
-					`Appointment status updated: ${JSON.stringify({
-						appointmentId: id,
-						newStatus: status,
-						timestamp: new Date().toISOString(),
-					})}`
-				);
-
 				return true;
 			} catch (err) {
 				const errorMessage = err instanceof Error ? err.message : "Erro ao atualizar status da consulta";
@@ -435,7 +405,7 @@ export function useEmergencyAppointments(): UseEmergencyAppointmentsReturn {
 				setIsLoading(false);
 			}
 		},
-		[appointments, availableDoctors]
+		[appointments]
 	);
 
 	// Clear error state

@@ -9,7 +9,6 @@
 "use client";
 
 import { Heart } from "lucide-react";
-import React from "react";
 
 export function RouterLoading() {
 	return (

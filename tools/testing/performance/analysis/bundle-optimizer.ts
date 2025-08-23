@@ -4,95 +4,87 @@
  * Analyzes JavaScript bundles and provides optimization recommendations
  */
 
-import fs from "fs/promises";
-import gzip from "gzip-size";
-import path from "path";
-import { webpack } from "webpack";
-import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
-
-export interface BundleAnalysis {
+export type BundleAnalysis = {
 	totalSize: number;
 	gzippedSize: number;
 	chunks: ChunkAnalysis[];
 	recommendations: OptimizationRecommendation[];
 	treeShakingOpportunities: TreeShakingOpportunity[];
-}
+};
 
-export interface ChunkAnalysis {
+export type ChunkAnalysis = {
 	name: string;
 	size: number;
 	gzippedSize: number;
 	modules: ModuleAnalysis[];
-}
+};
 
-export interface ModuleAnalysis {
+export type ModuleAnalysis = {
 	name: string;
 	size: number;
 	imported: boolean;
 	used: boolean;
-}
+};
 
-export interface OptimizationRecommendation {
+export type OptimizationRecommendation = {
 	type: "code-splitting" | "tree-shaking" | "compression" | "lazy-loading";
 	severity: "high" | "medium" | "low";
 	description: string;
 	estimatedSavings: number;
-}
+};
 
-export interface TreeShakingOpportunity {
+export type TreeShakingOpportunity = {
 	module: string;
 	unusedExports: string[];
 	estimatedSavings: number;
-} /**
+}; /**
  * Bundle Analyzer and Optimizer for NeonPro Healthcare
  *
  * Analyzes JavaScript bundles and provides optimization recommendations
  */
 
-import fs from "fs/promises";
+import fs from "node:fs/promises";
+import path from "node:path";
 import gzip from "gzip-size";
-import path from "path";
-import { webpack } from "webpack";
-import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
 
-export interface BundleAnalysis {
+export type BundleAnalysis = {
 	totalSize: number;
 	gzippedSize: number;
 	chunks: ChunkAnalysis[];
 	recommendations: OptimizationRecommendation[];
 	treeShakingOpportunities: TreeShakingOpportunity[];
-}
+};
 
-export interface ChunkAnalysis {
+export type ChunkAnalysis = {
 	name: string;
 	size: number;
 	gzippedSize: number;
 	modules: ModuleAnalysis[];
-}
+};
 
-export interface ModuleAnalysis {
+export type ModuleAnalysis = {
 	name: string;
 	size: number;
 	imported: boolean;
 	used: boolean;
-}
+};
 
-export interface OptimizationRecommendation {
+export type OptimizationRecommendation = {
 	type: "code-splitting" | "tree-shaking" | "compression" | "lazy-loading";
 	severity: "high" | "medium" | "low";
 	description: string;
 	estimatedSavings: number;
-}
+};
 
-export interface TreeShakingOpportunity {
+export type TreeShakingOpportunity = {
 	module: string;
 	unusedExports: string[];
 	estimatedSavings: number;
-}
+};
 
 export class BundleOptimizer {
-	private buildDir: string;
-	private outputDir: string;
+	private readonly buildDir: string;
+	private readonly outputDir: string;
 
 	constructor(buildDir: string, outputDir = "performance-reports") {
 		this.buildDir = buildDir;
@@ -243,10 +235,6 @@ export class BundleOptimizer {
 		const readableReport = this.generateReadableReport(analysis);
 		const readableReportPath = path.join(this.outputDir, "bundle-analysis-report.md");
 		await fs.writeFile(readableReportPath, readableReport);
-
-		console.log("Bundle analysis reports generated:");
-		console.log(`- JSON: ${reportPath}`);
-		console.log(`- Markdown: ${readableReportPath}`);
 	}
 
 	private generateReadableReport(analysis: BundleAnalysis): string {

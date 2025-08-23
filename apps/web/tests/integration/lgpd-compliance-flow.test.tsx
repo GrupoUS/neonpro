@@ -2,11 +2,10 @@
 // Brazilian healthcare data protection compliance testing
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Types for LGPD compliance
-interface LGPDConsentRecord {
+type LGPDConsentRecord = {
 	id: string;
 	patient_id: string;
 	purpose: string[];
@@ -17,9 +16,9 @@ interface LGPDConsentRecord {
 	data_controller: string;
 	retention_period: string;
 	clinic_id: string;
-}
+};
 
-interface DataSubjectRequest {
+type DataSubjectRequest = {
 	id: string;
 	request_type: "access" | "rectification" | "erasure" | "portability" | "objection";
 	patient_id: string;
@@ -30,9 +29,9 @@ interface DataSubjectRequest {
 	status: "pending" | "processing" | "completed" | "rejected";
 	data_export_url?: string;
 	clinic_id: string;
-}
+};
 
-interface AuditTrailEntry {
+type AuditTrailEntry = {
 	id: string;
 	action: "CREATE" | "READ" | "UPDATE" | "DELETE" | "EXPORT" | "ANONYMIZE";
 	resource: "patient" | "appointment" | "medical_record" | "consent";
@@ -45,7 +44,7 @@ interface AuditTrailEntry {
 	clinic_id: string;
 	legal_basis?: string;
 	data_categories?: string[];
-}
+};
 
 // Use global mocks from vitest.setup.ts
 const mockLGPDService = (globalThis as any).mockLgpdService;
@@ -93,7 +92,7 @@ const mockDataRequest: DataSubjectRequest = {
 };
 
 // Test wrapper component
-const TestWrapper = ({ children }: { children: React.ReactNode }) => {
+const _TestWrapper = ({ children }: { children: React.ReactNode }) => {
 	const queryClient = new QueryClient({
 		defaultOptions: {
 			queries: { retry: false },
@@ -584,7 +583,7 @@ describe("LGPD Compliance Flow Integration Tests", () => {
 		});
 
 		it("should enforce professional council registration validation", async () => {
-			const professionalAccess = {
+			const _professionalAccess = {
 				user_id: "doctor-123",
 				professional_council: "CRM", // Conselho Regional de Medicina
 				registration_number: "CRM-SP-123456",
@@ -612,7 +611,7 @@ describe("LGPD Compliance Flow Integration Tests", () => {
 		});
 
 		it("should handle ANVISA reporting compliance for medication data", async () => {
-			const medicationData = {
+			const _medicationData = {
 				patient_id: "patient-123",
 				prescriptions: [
 					{

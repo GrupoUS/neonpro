@@ -1,6 +1,5 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { jwt } from "hono/jwt";
 import { testClient } from "hono/testing";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -82,8 +81,8 @@ const createMockRPCApp = () => {
 		return c.json({
 			data: [mockPatient],
 			pagination: {
-				page: Number.parseInt(page),
-				limit: Number.parseInt(limit),
+				page: Number.parseInt(page, 10),
+				limit: Number.parseInt(limit, 10),
 				total: 1,
 				totalPages: 1,
 			},

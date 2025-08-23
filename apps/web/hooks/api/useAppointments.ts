@@ -9,7 +9,6 @@
 import { apiClient } from "@neonpro/shared/api-client";
 import type {
 	Appointment,
-	AppointmentResponse,
 	AppointmentSearch,
 	AvailabilitySearch,
 	CancelAppointment,
@@ -19,7 +18,7 @@ import type {
 	TimeSlot,
 	UpdateAppointment,
 } from "@neonpro/shared/types";
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 // Query keys for appointments
 export const APPOINTMENT_QUERY_KEYS = {
@@ -47,15 +46,33 @@ export function useAppointments(params: AppointmentSearch = {}) {
 			};
 
 			// Add optional filters
-			if (params.startDate) queryParams.startDate = params.startDate;
-			if (params.endDate) queryParams.endDate = params.endDate;
-			if (params.patientId) queryParams.patientId = params.patientId;
-			if (params.professionalId) queryParams.professionalId = params.professionalId;
-			if (params.clinicId) queryParams.clinicId = params.clinicId;
-			if (params.status) queryParams.status = params.status;
-			if (params.type) queryParams.type = params.type;
-			if (params.priority) queryParams.priority = params.priority;
-			if (params.query) queryParams.query = params.query;
+			if (params.startDate) {
+				queryParams.startDate = params.startDate;
+			}
+			if (params.endDate) {
+				queryParams.endDate = params.endDate;
+			}
+			if (params.patientId) {
+				queryParams.patientId = params.patientId;
+			}
+			if (params.professionalId) {
+				queryParams.professionalId = params.professionalId;
+			}
+			if (params.clinicId) {
+				queryParams.clinicId = params.clinicId;
+			}
+			if (params.status) {
+				queryParams.status = params.status;
+			}
+			if (params.type) {
+				queryParams.type = params.type;
+			}
+			if (params.priority) {
+				queryParams.priority = params.priority;
+			}
+			if (params.query) {
+				queryParams.query = params.query;
+			}
 
 			const response = await apiClient.api.v1.appointments.$get({
 				query: queryParams,
@@ -173,7 +190,9 @@ export function useUpdateAppointment() {
 			queryClient.setQueriesData(
 				{ queryKey: APPOINTMENT_QUERY_KEYS.lists() },
 				(old: PaginatedResponse<Appointment> | undefined) => {
-					if (!old?.data) return old;
+					if (!old?.data) {
+						return old;
+					}
 
 					return {
 						...old,
@@ -270,7 +289,9 @@ export function useCancelAppointment() {
 			queryClient.setQueriesData(
 				{ queryKey: APPOINTMENT_QUERY_KEYS.lists() },
 				(old: PaginatedResponse<Appointment> | undefined) => {
-					if (!old?.data) return old;
+					if (!old?.data) {
+						return old;
+					}
 
 					return {
 						...old,
@@ -305,10 +326,10 @@ export function useAvailability(params: AvailabilitySearch | undefined) {
 		queryFn: async (): Promise<TimeSlot[]> => {
 			const response = await apiClient.api.v1.appointments.availability.$get({
 				query: {
-					professionalId: params!.professionalId,
-					startDate: params!.startDate,
-					endDate: params!.endDate,
-					duration: params!.duration.toString(),
+					professionalId: params?.professionalId,
+					startDate: params?.startDate,
+					endDate: params?.endDate,
+					duration: params?.duration.toString(),
 				},
 			});
 
@@ -332,9 +353,15 @@ export function useAppointmentStats(filters?: { startDate?: string; endDate?: st
 		queryKey: [...APPOINTMENT_QUERY_KEYS.stats(), filters],
 		queryFn: async () => {
 			const queryParams: Record<string, string> = {};
-			if (filters?.startDate) queryParams.startDate = filters.startDate;
-			if (filters?.endDate) queryParams.endDate = filters.endDate;
-			if (filters?.clinicId) queryParams.clinicId = filters.clinicId;
+			if (filters?.startDate) {
+				queryParams.startDate = filters.startDate;
+			}
+			if (filters?.endDate) {
+				queryParams.endDate = filters.endDate;
+			}
+			if (filters?.clinicId) {
+				queryParams.clinicId = filters.clinicId;
+			}
 
 			const response = await apiClient.api.v1.appointments.stats.$get({
 				query: queryParams,
@@ -371,8 +398,12 @@ export function useCalendarAppointments(filters: {
 				limit: "1000", // Get all appointments in date range
 			};
 
-			if (filters.professionalId) queryParams.professionalId = filters.professionalId;
-			if (filters.clinicId) queryParams.clinicId = filters.clinicId;
+			if (filters.professionalId) {
+				queryParams.professionalId = filters.professionalId;
+			}
+			if (filters.clinicId) {
+				queryParams.clinicId = filters.clinicId;
+			}
 
 			const response = await apiClient.api.v1.appointments.$get({
 				query: queryParams,
@@ -437,7 +468,9 @@ export function useAppointmentUtils() {
 
 			for (const [, data] of calendarData) {
 				const appointments = data as Appointment[] | undefined;
-				if (!appointments) continue;
+				if (!appointments) {
+					continue;
+				}
 
 				const count = appointments.filter((apt) => {
 					const aptDate = apt.scheduledAt.split("T")[0];
@@ -448,7 +481,9 @@ export function useAppointmentUtils() {
 					return matchesDate && matchesProfessional && isActive;
 				}).length;
 
-				if (count > 0) return count;
+				if (count > 0) {
+					return count;
+				}
 			}
 
 			return 0;

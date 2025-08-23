@@ -3,9 +3,7 @@
  * Displays comprehensive analytics and metrics for healthcare operations
  */
 
-import React from "react";
-
-interface AnalyticsDashboardProps {
+type AnalyticsDashboardProps = {
 	data?: {
 		patients: number;
 		appointments: number;
@@ -14,7 +12,7 @@ interface AnalyticsDashboardProps {
 	};
 	loading?: boolean;
 	error?: string;
-}
+};
 
 export function AnalyticsDashboard({
 	data = { patients: 0, appointments: 0, revenue: 0, growth: 0 },

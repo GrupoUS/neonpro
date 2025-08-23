@@ -5,15 +5,12 @@ import {
 	Activity,
 	AlertTriangle,
 	BarChart3,
-	BookOpen,
 	Building2,
 	Calendar,
 	CheckCircle,
-	Clock,
 	CreditCard,
 	DollarSign,
 	Download,
-	Edit,
 	Eye,
 	FileSpreadsheet,
 	FileText,
@@ -33,14 +30,10 @@ import {
 	Zap,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
 	HEALTHCARE_ANNOUNCEMENTS,
 	initializeAccessibility,
@@ -361,7 +354,6 @@ import {
 	downloadReport,
 	emailReport,
 	generateCSVReport,
-	generateSecureShareLink,
 	HealthcareExcelExporter,
 	HealthcarePDFGenerator,
 } from "./export-utils";
@@ -388,7 +380,6 @@ const handleExportReport = (reportId: string, format: "pdf" | "excel" | "csv") =
 						downloadReport(pdfData, "relatorio-clinico.pdf", "pdf");
 						break;
 					default:
-						console.log(`Relatório PDF ${reportId} não implementado ainda`);
 				}
 				break;
 			}
@@ -405,8 +396,7 @@ const handleExportReport = (reportId: string, format: "pdf" | "excel" | "csv") =
 				break;
 			}
 		}
-	} catch (error) {
-		console.error("Erro ao exportar relatório:", error);
+	} catch (_error) {
 		// In production, show user-friendly error message
 	}
 };
@@ -418,12 +408,9 @@ const handleEmailReport = async (reportId: string) => {
 		const result = await emailReport(reportId, recipients, "pdf");
 
 		if (result.success) {
-			console.log("Relatório enviado por email com sucesso");
 			// Show success notification
 		}
-	} catch (error) {
-		console.error("Erro ao enviar relatório por email:", error);
-	}
+	} catch (_error) {}
 };
 
 const handleScheduleReport = (reportId: string) => {
@@ -437,8 +424,7 @@ const handleScheduleReport = (reportId: string) => {
 	}
 };
 
-const handleScheduleCreated = (schedule: any) => {
-	console.log("Agendamento criado:", schedule);
+const handleScheduleCreated = (_schedule: any) => {
 	// In production, save to backend
 	// Show success notification
 }; // Main Reports Center Components
@@ -723,7 +709,9 @@ function ExportOptionsModal({
 	reportId: string;
 	reportName: string;
 }) {
-	if (!isOpen) return null;
+	if (!isOpen) {
+		return null;
+	}
 
 	return (
 		<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
@@ -824,7 +812,7 @@ export default function ReportsPage() {
 	// Accessibility hooks
 	const { announce } = useAnnouncements();
 	const { saveFocus, restoreFocus } = useFocusManagement();
-	const motionSettings = useReducedMotion();
+	const _motionSettings = useReducedMotion();
 
 	// Initialize accessibility features
 	useEffect(() => {
@@ -863,7 +851,6 @@ export default function ReportsPage() {
 	});
 
 	const handleGenerateReport = (reportId: string) => {
-		console.log(`Gerando relatório: ${reportId}`);
 		const report = reportTemplates.find((r) => r.id === reportId);
 		if (report) {
 			report.status = "generating";
@@ -891,8 +878,7 @@ export default function ReportsPage() {
 		}
 	};
 
-	const handleScheduleClick = (reportId: string) => {
-		console.log(`Agendando relatório: ${reportId}`);
+	const handleScheduleClick = (_reportId: string) => {
 		// Will implement scheduling modal
 	};
 

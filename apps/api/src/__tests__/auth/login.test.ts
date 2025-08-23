@@ -11,11 +11,10 @@
  */
 
 import type { Context } from "hono";
-import { testClient } from "hono/testing";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock the Hono app and auth routes
-const mockApp = {
+const _mockApp = {
 	post: vi.fn(),
 	get: vi.fn(),
 	delete: vi.fn(),
@@ -145,7 +144,7 @@ describe("Authentication API Endpoints - NeonPro Healthcare", () => {
 				});
 			};
 
-			const response = await loginHandler(mockContext);
+			const _response = await loginHandler(mockContext);
 
 			expect(mockPrisma.user.findUnique).toHaveBeenCalledWith({
 				where: {
@@ -302,7 +301,7 @@ describe("Authentication API Endpoints - NeonPro Healthcare", () => {
 				const { refreshToken } = await c.req.json();
 
 				// Verify refresh token
-				const decoded = mockJWT.verify(refreshToken);
+				const _decoded = mockJWT.verify(refreshToken);
 
 				// Find active session
 				const session = await mockPrisma.session.findUnique({

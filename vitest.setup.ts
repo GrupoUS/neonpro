@@ -25,12 +25,9 @@ const createMockMutation = (mutationFn?: Function) => {
 
 		const updateState = (newState: Partial<typeof currentState>) => {
 			currentState = { ...currentState, ...newState };
-			console.log("📝 Mutation state updated:", currentState);
 		};
 
 		const mutate = vi.fn(async (mutationVariables: any) => {
-			console.log("🚀 Mock mutation called with:", mutationVariables);
-
 			try {
 				// PHASE 1: Set pending state
 				updateState({
@@ -50,14 +47,10 @@ const createMockMutation = (mutationFn?: Function) => {
 				// Execute mutation function
 				let result;
 				if (mutationFn) {
-					console.log("🔧 Calling provided mutation function...");
 					result = await mutationFn(mutationVariables);
 				} else {
-					console.log("🔧 Using default mock response...");
 					result = { success: true, data: mutationVariables };
 				}
-
-				console.log("✅ Mutation function completed with result:", result);
 
 				// PHASE 2: Set success state
 				updateState({
@@ -72,8 +65,6 @@ const createMockMutation = (mutationFn?: Function) => {
 
 				return result;
 			} catch (err) {
-				console.log("❌ Mutation failed with error:", err);
-
 				// PHASE 3: Set error state
 				updateState({
 					isPending: false,
@@ -90,7 +81,6 @@ const createMockMutation = (mutationFn?: Function) => {
 		});
 
 		const reset = vi.fn(() => {
-			console.log("🔄 Resetting mutation state");
 			updateState({
 				isSuccess: false,
 				isError: false,
@@ -152,32 +142,20 @@ const createMockMutation = (mutationFn?: Function) => {
 	};
 
 	const mutation = createStatefulMutation();
-
-	console.log("🏗️ Created new mutation mock");
 	return mutation;
 };
 
 // CRITICAL: Mock TanStack React Query FIRST with global stubbing
 const mockUseMutation = vi.fn((options?: any) => {
-	console.log("🔥 GLOBAL useMutation called with options:", options);
-	console.log("🔥 Options mutationFn:", options?.mutationFn);
-
 	const mutation = createMockMutation(options?.mutationFn);
-	console.log("🔥 Created mutation:", mutation);
-	console.log("🔥 Initial isSuccess:", mutation.isSuccess);
 
 	return mutation;
 });
 
 vi.stubGlobal("useMutation", mockUseMutation);
 
-// Let's add a test to see if our mock is being used
-console.log("🔧 Setting up React Query mocks...");
-
 vi.mock("@tanstack/react-query", async () => {
 	const actualQuery = await vi.importActual("@tanstack/react-query");
-
-	console.log("🔧 @tanstack/react-query mock being created");
 
 	return {
 		...actualQuery,
@@ -200,20 +178,16 @@ vi.mock("@tanstack/react-query", async () => {
 // Also mock the query-utils module specifically
 vi.mock("../../apps/web/lib/query/query-utils", async () => {
 	const actual = await vi.importActual("../../apps/web/lib/query/query-utils");
-	console.log("🔧 query-utils mock being created");
 
 	return {
 		...actual,
 		QueryUtilities: class MockQueryUtilities {
 			createMutation(options: any) {
-				console.log("🔥 MOCK query-utils createMutation called with:", options);
 				return mockUseMutation(options);
 			}
 		},
 	};
 });
-
-console.log("✅ VITEST SETUP: React Query mocked with proper mutation state");
 
 // CRITICAL: Resolve React version conflicts FIRST
 // This prevents "React Element from an older version" errors in monorepos
@@ -255,8 +229,6 @@ const ensureSingleReactInstance = () => {
 			configurable: true,
 		});
 	}
-
-	console.log("✅ VITEST SETUP: Single React instance enforced across test environment");
 };
 
 // Apply React consistency fix
@@ -270,41 +242,36 @@ vi.mock("react", async (importOriginal) => {
 	const mockReact = {
 		...actual,
 		// Override hooks with test-safe implementations
-		useMemo: vi.fn((factory, deps) => {
+		useMemo: vi.fn((factory, _deps) => {
 			try {
 				return factory();
-			} catch (error) {
-				console.warn("useMemo factory failed in test:", error);
+			} catch (_error) {
 				return;
 			}
 		}),
-		useCallback: vi.fn((callback, deps) => callback),
-		useEffect: vi.fn((effect, deps) => {
+		useCallback: vi.fn((callback, _deps) => callback),
+		useEffect: vi.fn((effect, _deps) => {
 			try {
 				const cleanup = effect();
 				if (typeof cleanup === "function") {
 					// Store cleanup for later if needed
 					return cleanup;
 				}
-			} catch (error) {
-				console.warn("useEffect failed in test:", error);
-			}
+			} catch (_error) {}
 		}),
-		useLayoutEffect: vi.fn((effect, deps) => {
+		useLayoutEffect: vi.fn((effect, _deps) => {
 			try {
 				const cleanup = effect();
 				if (typeof cleanup === "function") {
 					return cleanup;
 				}
-			} catch (error) {
-				console.warn("useLayoutEffect failed in test:", error);
-			}
+			} catch (_error) {}
 		}),
 		useState: vi.fn((initial) => {
 			const value = typeof initial === "function" ? initial() : initial;
 			return [value, vi.fn()];
 		}),
-		useReducer: vi.fn((reducer, initialArg, init) => {
+		useReducer: vi.fn((_reducer, initialArg, init) => {
 			const initialState = init ? init(initialArg) : initialArg;
 			return [initialState, vi.fn()];
 		}),
@@ -314,38 +281,36 @@ vi.mock("react", async (importOriginal) => {
 		}),
 		useImperativeHandle: vi.fn(),
 		useDebugValue: vi.fn(),
-		useId: vi.fn(() => "test-id-" + Math.random().toString(36).substr(2, 9)),
+		useId: vi.fn(() => `test-id-${Math.random().toString(36).substr(2, 9)}`),
 		useDeferredValue: vi.fn((value) => value),
 		useTransition: vi.fn(() => [false, vi.fn()]),
-		useSyncExternalStore: vi.fn((subscribe, getSnapshot, getServerSnapshot) => {
+		useSyncExternalStore: vi.fn((_subscribe, getSnapshot, getServerSnapshot) => {
 			return getSnapshot ? getSnapshot() : getServerSnapshot ? getServerSnapshot() : undefined;
 		}),
-		useInsertionEffect: vi.fn((effect, deps) => {
+		useInsertionEffect: vi.fn((effect, _deps) => {
 			try {
 				const cleanup = effect();
 				if (typeof cleanup === "function") {
 					return cleanup;
 				}
-			} catch (error) {
-				console.warn("useInsertionEffect failed in test:", error);
-			}
+			} catch (_error) {}
 		}),
 	};
-
-	console.log("✅ VITEST SETUP: React module mocked with enhanced hook implementations");
 	return mockReact;
 });
 
 // CRITICAL: Mock API client FIRST to ensure proper hoisting
 vi.mock("@neonpro/shared/api-client", () => {
-	console.log("🔧 VITEST.SETUP.TS MOCK: @neonpro/shared/api-client APPLIED");
 	return {
 		ApiHelpers: {
 			formatError: vi.fn((error: any) => {
-				console.log("🔧 VITEST.SETUP.TS formatError called with:", error);
 				// Return string like the real implementation
-				if (typeof error === "string") return error;
-				if (error instanceof Error) return error.message;
+				if (typeof error === "string") {
+					return error;
+				}
+				if (error instanceof Error) {
+					return error.message;
+				}
 				if (typeof error === "object" && error && "message" in error) {
 					return String(error.message);
 				}
@@ -416,7 +381,7 @@ import ReactDOM from "react-dom/client";
 
 try {
 	vi.stubGlobal("ReactDOM", ReactDOM);
-} catch (error) {
+} catch (_error) {
 	// If ReactDOM is already defined, that's okay
 }
 
@@ -427,16 +392,16 @@ const mockReactHooks = () => {
 	const mockReact = {
 		...React,
 		// Core hooks that frequently cause test failures
-		useMemo: vi.fn((factory, deps) => {
+		useMemo: vi.fn((factory, _deps) => {
 			// Simple implementation that calls factory immediately
 			return factory();
 		}),
-		useCallback: vi.fn((callback, deps) => callback),
-		useEffect: vi.fn((effect, deps) => {
+		useCallback: vi.fn((callback, _deps) => callback),
+		useEffect: vi.fn((effect, _deps) => {
 			// Execute effect immediately in tests
 			effect();
 		}),
-		useLayoutEffect: vi.fn((effect, deps) => {
+		useLayoutEffect: vi.fn((effect, _deps) => {
 			// Execute effect immediately in tests
 			effect();
 		}),
@@ -444,7 +409,7 @@ const mockReactHooks = () => {
 			const value = typeof initial === "function" ? initial() : initial;
 			return [value, vi.fn()];
 		}),
-		useReducer: vi.fn((reducer, initialArg, init) => {
+		useReducer: vi.fn((_reducer, initialArg, init) => {
 			const initialState = init ? init(initialArg) : initialArg;
 			return [initialState, vi.fn()];
 		}),
@@ -452,13 +417,13 @@ const mockReactHooks = () => {
 		useContext: vi.fn((context) => context._currentValue || context.defaultValue || {}),
 		useImperativeHandle: vi.fn(),
 		useDebugValue: vi.fn(),
-		useId: vi.fn(() => "test-id-" + Math.random().toString(36).substr(2, 9)),
+		useId: vi.fn(() => `test-id-${Math.random().toString(36).substr(2, 9)}`),
 		useDeferredValue: vi.fn((value) => value),
 		useTransition: vi.fn(() => [false, vi.fn()]),
-		useSyncExternalStore: vi.fn((subscribe, getSnapshot, getServerSnapshot) => {
+		useSyncExternalStore: vi.fn((_subscribe, getSnapshot, getServerSnapshot) => {
 			return getSnapshot ? getSnapshot() : getServerSnapshot ? getServerSnapshot() : undefined;
 		}),
-		useInsertionEffect: vi.fn((effect, deps) => {
+		useInsertionEffect: vi.fn((effect, _deps) => {
 			// Execute effect immediately in tests
 			effect();
 		}),
@@ -504,13 +469,11 @@ const mockReactHooks = () => {
 		writable: true,
 		configurable: true,
 	});
-
-	console.log("✅ VITEST SETUP: React hooks mocked globally for test compatibility");
 	return mockReact;
 };
 
 // Apply React hook mocking
-const mockedReact = mockReactHooks();
+const _mockedReact = mockReactHooks();
 
 // Add a beforeEach hook to reset React modules for each test
 beforeEach(() => {
@@ -688,8 +651,6 @@ if (!globalThis.SubmitEvent) {
 			enumerable: false,
 		});
 	}
-
-	console.log("✅ VITEST SETUP: SubmitEvent polyfill applied globally");
 }
 
 // SOLUTION 2: HTMLFormElement.requestSubmit polyfill - ULTIMATE JSDOM OVERRIDE
@@ -698,16 +659,9 @@ const polyfillFormSubmission = () => {
 	if (typeof HTMLFormElement !== "undefined") {
 		// Check if requestSubmit is already natively supported (it should be in JSDOM 26.1.0)
 		if (HTMLFormElement.prototype.requestSubmit) {
-			console.log("✅ VITEST SETUP: requestSubmit is natively supported by JSDOM, no polyfill needed");
 		} else {
-			console.log("🔧 VITEST SETUP: Adding requestSubmit polyfill (requestSubmit not found)");
-
 			// Only add polyfill if requestSubmit doesn't exist
 			HTMLFormElement.prototype.requestSubmit = function (submitter?: HTMLElement | null) {
-				console.log("🔧 VITEST SETUP: requestSubmit polyfill called", {
-					submitter,
-				});
-
 				// Create and dispatch submit event
 				let submitEvent: Event;
 
@@ -718,7 +672,7 @@ const polyfillFormSubmission = () => {
 						cancelable: true,
 						submitter: submitter || null,
 					});
-				} catch (error) {
+				} catch (_error) {
 					// Fallback to basic Event with manual submitter property
 					submitEvent = new Event("submit", {
 						bubbles: true,
@@ -735,11 +689,8 @@ const polyfillFormSubmission = () => {
 
 				// Dispatch the event
 				const result = this.dispatchEvent(submitEvent);
-				console.log("🔧 VITEST SETUP: requestSubmit polyfill dispatched submit event", { result });
 				return result;
 			};
-
-			console.log("✅ VITEST SETUP: requestSubmit polyfill applied successfully");
 		}
 	}
 };
@@ -788,14 +739,16 @@ Object.defineProperty(HTMLFormElement.prototype, "checkValidity", {
 						}
 						break;
 					case "number":
-						if (element.value && isNaN(Number(element.value))) {
+						if (element.value && Number.isNaN(Number(element.value))) {
 							isValid = false;
 						}
 						break;
 				}
 			}
 
-			if (!isValid) break;
+			if (!isValid) {
+				break;
+			}
 		}
 
 		return isValid;
@@ -811,7 +764,6 @@ Object.defineProperty(HTMLFormElement.prototype, "reportValidity", {
 		// In a real browser, this would show validation messages
 		// In tests, we just return the validity status
 		if (!isValid) {
-			console.log("🔧 VITEST SETUP: Form validation failed in reportValidity()");
 		}
 
 		return isValid;
@@ -831,7 +783,9 @@ Object.defineProperty(HTMLInputElement.prototype, "checkValidity", {
 			case "email":
 				return !this.value || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.value);
 			case "url":
-				if (!this.value) return true;
+				if (!this.value) {
+					return true;
+				}
 				try {
 					new URL(this.value);
 					return true;
@@ -839,7 +793,7 @@ Object.defineProperty(HTMLInputElement.prototype, "checkValidity", {
 					return false;
 				}
 			case "number":
-				return !(this.value && isNaN(Number(this.value)));
+				return !(this.value && Number.isNaN(Number(this.value)));
 			default:
 				return true;
 		}
@@ -942,37 +896,28 @@ Object.defineProperty(globalThis, "afterEach", {
 // ENHANCED CHANNEL MOCK - Research-driven approach
 // Based on Supabase RealtimeClient documentation from Context7
 const createMockChannel = (channelName?: string) => {
-	console.log(`🔧 VITEST SETUP: Creating enhanced channel mock for: ${channelName || "default"}`);
-
 	const mockChannel = {
 		// Core channel methods with enhanced implementation
 		on: vi.fn().mockImplementation((event, callback) => {
-			console.log(`🔧 VITEST SETUP: channel.on('${event}') called`);
 			// Store callback for potential triggering in tests
 			if (callback && typeof callback === "function") {
 				// Simulate successful event setup
 				setTimeout(() => {
 					try {
 						callback({ type: event, payload: {} });
-					} catch (error) {
-						console.warn("Channel callback error in test:", error);
-					}
+					} catch (_error) {}
 				}, 0);
 			}
 			return mockChannel; // Chainable
 		}),
 
 		subscribe: vi.fn().mockImplementation((callback?: Function) => {
-			console.log(`🔧 VITEST SETUP: channel.subscribe() called for: ${channelName || "default"}`);
-
 			// Call callback with successful subscription status immediately - this is what useRealtime expects to set isConnected = true
 			if (callback && typeof callback === "function") {
 				// Call immediately instead of setTimeout for more predictable test behavior
 				try {
 					callback("SUBSCRIBED");
-				} catch (error) {
-					console.warn("Channel subscription callback error in test:", error);
-				}
+				} catch (_error) {}
 			}
 
 			// Return the channel for chaining, not a Promise
@@ -980,7 +925,6 @@ const createMockChannel = (channelName?: string) => {
 		}),
 
 		unsubscribe: vi.fn().mockImplementation(() => {
-			console.log(`🔧 VITEST SETUP: channel.unsubscribe() called for: ${channelName || "default"}`);
 			return Promise.resolve({ status: "ok", error: null });
 		}),
 
@@ -991,31 +935,26 @@ const createMockChannel = (channelName?: string) => {
 		isErrored: vi.fn().mockReturnValue(false),
 
 		// Channel communication methods
-		send: vi.fn().mockImplementation((type, payload) => {
-			console.log(`🔧 VITEST SETUP: channel.send('${type}') called`);
+		send: vi.fn().mockImplementation((_type, _payload) => {
 			return mockChannel; // Chainable
 		}),
 
 		// Presence methods for real-time user tracking
 		presenceState: vi.fn().mockReturnValue({}),
-		track: vi.fn().mockImplementation((state) => {
-			console.log("🔧 VITEST SETUP: channel.track() called with state:", state);
+		track: vi.fn().mockImplementation((_state) => {
 			return mockChannel; // Chainable
 		}),
 		untrack: vi.fn().mockImplementation(() => {
-			console.log("🔧 VITEST SETUP: channel.untrack() called");
 			return mockChannel; // Chainable
 		}),
 
 		// Enhanced presence object with all documented methods
 		presence: {
 			state: vi.fn().mockReturnValue({}),
-			track: vi.fn().mockImplementation((state) => {
-				console.log("🔧 VITEST SETUP: channel.presence.track() called");
+			track: vi.fn().mockImplementation((_state) => {
 				return Promise.resolve({ status: "ok", error: null });
 			}),
 			untrack: vi.fn().mockImplementation(() => {
-				console.log("🔧 VITEST SETUP: channel.presence.untrack() called");
 				return Promise.resolve({ status: "ok", error: null });
 			}),
 		},
@@ -1025,17 +964,13 @@ const createMockChannel = (channelName?: string) => {
 		state: "joined",
 
 		// Event emitter-like methods for comprehensive compatibility
-		addEventListener: vi.fn().mockImplementation((event, callback) => {
-			console.log(`🔧 VITEST SETUP: channel.addEventListener('${event}') called`);
+		addEventListener: vi.fn().mockImplementation((_event, _callback) => {
 			return mockChannel;
 		}),
-		removeEventListener: vi.fn().mockImplementation((event, callback) => {
-			console.log(`🔧 VITEST SETUP: channel.removeEventListener('${event}') called`);
+		removeEventListener: vi.fn().mockImplementation((_event, _callback) => {
 			return mockChannel;
 		}),
 	};
-
-	console.log(`✅ VITEST SETUP: Enhanced channel mock created for: ${channelName || "default"}`);
 	return mockChannel;
 };
 
@@ -1045,10 +980,8 @@ const createMockChannel = (channelName?: string) => {
 // Mocks must match the real client's structure exactly to prevent test failures
 
 const createSupabaseClientMock = () => {
-	console.log("🔧 VITEST SETUP: Creating enhanced Supabase client mock");
-
 	// Enhanced query builder that returns proper data/error structure
-	const createQueryBuilder = (tableName?: string) => ({
+	const createQueryBuilder = (_tableName?: string) => ({
 		select: vi.fn().mockReturnThis(),
 		insert: vi.fn().mockReturnThis(),
 		update: vi.fn().mockReturnThis(),
@@ -1080,7 +1013,6 @@ const createSupabaseClientMock = () => {
 		limit: vi.fn().mockReturnThis(),
 		range: vi.fn().mockReturnThis(),
 		single: vi.fn().mockImplementation(() => {
-			console.log(`🔧 VITEST SETUP: Query .single() called on table: ${tableName || "unknown"}`);
 			return Promise.resolve({
 				data: null,
 				error: null,
@@ -1089,7 +1021,6 @@ const createSupabaseClientMock = () => {
 			});
 		}),
 		maybeSingle: vi.fn().mockImplementation(() => {
-			console.log(`🔧 VITEST SETUP: Query .maybeSingle() called on table: ${tableName || "unknown"}`);
 			return Promise.resolve({
 				data: null,
 				error: null,
@@ -1099,7 +1030,6 @@ const createSupabaseClientMock = () => {
 		}),
 		// CRITICAL: Promise-like behavior for direct awaiting
 		then: vi.fn().mockImplementation((onfulfilled, onrejected) => {
-			console.log(`🔧 VITEST SETUP: Query .then() called on table: ${tableName || "unknown"}`);
 			const result = {
 				data: [],
 				error: null,
@@ -1123,47 +1053,39 @@ const createSupabaseClientMock = () => {
 		// Enhanced auth mock with proper data/error structure
 		auth: {
 			getUser: vi.fn().mockImplementation(() => {
-				console.log("🔧 VITEST SETUP: auth.getUser() called");
 				return Promise.resolve({
 					data: { user: null },
 					error: null,
 				});
 			}),
 			getSession: vi.fn().mockImplementation(() => {
-				console.log("🔧 VITEST SETUP: auth.getSession() called");
 				return Promise.resolve({
 					data: { session: null },
 					error: null,
 				});
 			}),
 			signInWithPassword: vi.fn().mockImplementation(() => {
-				console.log("🔧 VITEST SETUP: auth.signInWithPassword() called");
 				return Promise.resolve({
 					data: { session: null, user: null },
 					error: null,
 				});
 			}),
 			signUp: vi.fn().mockImplementation(() => {
-				console.log("🔧 VITEST SETUP: auth.signUp() called");
 				return Promise.resolve({
 					data: { user: null, session: null },
 					error: null,
 				});
 			}),
 			signOut: vi.fn().mockImplementation(() => {
-				console.log("🔧 VITEST SETUP: auth.signOut() called");
 				return Promise.resolve({
 					error: null,
 				});
 			}),
-			onAuthStateChange: vi.fn().mockImplementation((callback) => {
-				console.log("🔧 VITEST SETUP: auth.onAuthStateChange() called");
+			onAuthStateChange: vi.fn().mockImplementation((_callback) => {
 				return {
 					data: {
 						subscription: {
-							unsubscribe: vi.fn().mockImplementation(() => {
-								console.log("🔧 VITEST SETUP: auth subscription.unsubscribe() called");
-							}),
+							unsubscribe: vi.fn().mockImplementation(() => {}),
 						},
 					},
 				};
@@ -1187,38 +1109,31 @@ const createSupabaseClientMock = () => {
 
 		// Enhanced table query mock with proper data/error structure
 		from: vi.fn().mockImplementation((tableName: string) => {
-			console.log(`🔧 VITEST SETUP: from('${tableName}') called`);
 			return createQueryBuilder(tableName);
 		}),
 
 		// Enhanced channel mock with proper subscription structure and chainable methods
 		channel: vi.fn().mockImplementation((channelName?: string) => {
-			console.log(`🔧 VITEST SETUP: channel('${channelName || "default"}') created`);
 			return createMockChannel(channelName);
 		}),
 
 		// Remove channel method for cleanup
-		removeChannel: vi.fn().mockImplementation((channel: any) => {
-			console.log("🔧 VITEST SETUP: removeChannel() called with channel:", channel?.topic || "unknown");
+		removeChannel: vi.fn().mockImplementation((_channel: any) => {
 			return Promise.resolve({ status: "ok", error: null });
 		}),
 
 		// Mock realtime client for channel creation with consistent structure
 		realtime: {
 			channel: vi.fn().mockImplementation((channelName?: string) => {
-				console.log(`🔧 VITEST SETUP: realtime.channel('${channelName || "default"}') created`);
 				return createMockChannel(channelName);
 			}),
-			setAuth: vi.fn().mockImplementation((token) => {
-				console.log("🔧 VITEST SETUP: realtime.setAuth() called");
-			}),
+			setAuth: vi.fn().mockImplementation((_token) => {}),
 			connect: vi.fn(),
 			disconnect: vi.fn(),
 		},
 
 		// Additional Supabase client methods based on documentation
-		rpc: vi.fn().mockImplementation((functionName: string, params?: any) => {
-			console.log(`🔧 VITEST SETUP: rpc('${functionName}') called with params:`, params);
+		rpc: vi.fn().mockImplementation((_functionName: string, _params?: any) => {
 			return Promise.resolve({
 				data: null,
 				error: null,
@@ -1248,8 +1163,7 @@ const createSupabaseClientMock = () => {
 
 		// Functions mock for Edge Functions
 		functions: {
-			invoke: vi.fn().mockImplementation((functionName: string, options?: any) => {
-				console.log(`🔧 VITEST SETUP: functions.invoke('${functionName}') called`);
+			invoke: vi.fn().mockImplementation((_functionName: string, _options?: any) => {
 				return Promise.resolve({
 					data: null,
 					error: null,
@@ -1279,12 +1193,15 @@ const globalMocks = vi.hoisted(() => {
 	// Mock CPF validator service
 	const mockCpfValidator = {
 		validate: vi.fn().mockImplementation((cpf: string) => {
-			console.log("🔧 VITEST SETUP: mockCpfValidator.validate() called with:", cpf);
 			// Simple CPF validation for tests
-			if (!cpf) return { isValid: false, error: "CPF is required" };
+			if (!cpf) {
+				return { isValid: false, error: "CPF is required" };
+			}
 			// Remove non-numeric characters
 			const cleanCpf = cpf.replace(/\D/g, "");
-			if (cleanCpf.length !== 11) return { isValid: false, error: "CPF must have 11 digits" };
+			if (cleanCpf.length !== 11) {
+				return { isValid: false, error: "CPF must have 11 digits" };
+			}
 			return { isValid: true, error: null };
 		}),
 		format: vi.fn().mockImplementation((cpf: string) => {
@@ -1297,8 +1214,9 @@ const globalMocks = vi.hoisted(() => {
 		clean: vi.fn().mockImplementation((cpf: string) => cpf.replace(/\D/g, "")),
 		// Add the method integration tests are looking for
 		isValid: vi.fn().mockImplementation((cpf: string) => {
-			console.log("🔧 VITEST SETUP: mockCpfValidator.isValid() called with:", cpf);
-			if (!cpf) return false;
+			if (!cpf) {
+				return false;
+			}
 			const cleanCpf = cpf.replace(/\D/g, "");
 			return cleanCpf.length === 11;
 		}),
@@ -1306,56 +1224,49 @@ const globalMocks = vi.hoisted(() => {
 
 	// Mock notification service
 	const mockNotificationService = {
-		send: vi.fn().mockImplementation(async (notification: any) => {
-			console.log("🔧 VITEST SETUP: mockNotificationService.send() called with:", notification);
+		send: vi.fn().mockImplementation(async (_notification: any) => {
 			return {
 				success: true,
-				id: "notification-" + Math.random().toString(36).substr(2, 9),
+				id: `notification-${Math.random().toString(36).substr(2, 9)}`,
 			};
 		}),
-		sendEmail: vi.fn().mockImplementation(async (email: any) => {
-			console.log("🔧 VITEST SETUP: mockNotificationService.sendEmail() called");
+		sendEmail: vi.fn().mockImplementation(async (_email: any) => {
 			return {
 				success: true,
-				messageId: "email-" + Math.random().toString(36).substr(2, 9),
+				messageId: `email-${Math.random().toString(36).substr(2, 9)}`,
 			};
 		}),
-		sendSms: vi.fn().mockImplementation(async (sms: any) => {
-			console.log("🔧 VITEST SETUP: mockNotificationService.sendSms() called");
+		sendSms: vi.fn().mockImplementation(async (_sms: any) => {
 			return {
 				success: true,
-				messageId: "sms-" + Math.random().toString(36).substr(2, 9),
+				messageId: `sms-${Math.random().toString(36).substr(2, 9)}`,
 			};
 		}),
-		sendPush: vi.fn().mockImplementation(async (push: any) => {
-			console.log("🔧 VITEST SETUP: mockNotificationService.sendPush() called");
+		sendPush: vi.fn().mockImplementation(async (_push: any) => {
 			return {
 				success: true,
-				messageId: "push-" + Math.random().toString(36).substr(2, 9),
+				messageId: `push-${Math.random().toString(36).substr(2, 9)}`,
 			};
 		}),
-		getDeliveryStatus: vi.fn().mockImplementation(async (messageId: string) => {
+		getDeliveryStatus: vi.fn().mockImplementation(async (_messageId: string) => {
 			return { status: "delivered", timestamp: new Date().toISOString() };
 		}),
 		// Add the method emergency tests are looking for
-		sendEmergencyAlert: vi.fn().mockImplementation(async (alert: any) => {
-			console.log("🔧 VITEST SETUP: mockNotificationService.sendEmergencyAlert() called");
+		sendEmergencyAlert: vi.fn().mockImplementation(async (_alert: any) => {
 			return {
 				success: true,
-				messageId: "emergency-" + Math.random().toString(36).substr(2, 9),
+				messageId: `emergency-${Math.random().toString(36).substr(2, 9)}`,
 			};
 		}),
 		// Add methods required by emergency access protocol tests
-		notifyMedicalStaff: vi.fn().mockImplementation(async (notification: any) => {
-			console.log("🔧 VITEST SETUP: mockNotificationService.notifyMedicalStaff() called");
+		notifyMedicalStaff: vi.fn().mockImplementation(async (_notification: any) => {
 			return {
 				medical_team_alerted: true,
 				specialists_contacted: ["cardiologist", "anesthesiologist"],
 				notification_time: new Date().toISOString(),
 			};
 		}),
-		logEmergencyNotification: vi.fn().mockImplementation(async (log: any) => {
-			console.log("🔧 VITEST SETUP: mockNotificationService.logEmergencyNotification() called");
+		logEmergencyNotification: vi.fn().mockImplementation(async (_log: any) => {
 			return {
 				notification_logged: true,
 				audit_id: "notification-audit-123",
@@ -1367,7 +1278,6 @@ const globalMocks = vi.hoisted(() => {
 	// Mock LGPD compliance service (for the healthcare_exceptions test)
 	const mockLgpdService = {
 		getRetentionPolicies: vi.fn().mockImplementation(async () => {
-			console.log("🔧 VITEST SETUP: mockLgpdService.getRetentionPolicies() called");
 			return {
 				success: true,
 				data: [
@@ -1392,14 +1302,14 @@ const globalMocks = vi.hoisted(() => {
 		checkCompliance: vi.fn().mockImplementation(async (dataType: string) => {
 			return { compliant: true, details: `${dataType} is compliant with LGPD` };
 		}),
-		exportData: vi.fn().mockImplementation(async (userId: string) => {
+		exportData: vi.fn().mockImplementation(async (_userId: string) => {
 			return { success: true, exportUrl: "https://example.com/export.zip" };
 		}),
-		deleteData: vi.fn().mockImplementation(async (userId: string) => {
+		deleteData: vi.fn().mockImplementation(async (_userId: string) => {
 			return { success: true, deletedAt: new Date().toISOString() };
 		}),
 		// Add the additional methods that integration tests expect
-		validateDataProcessing: vi.fn().mockImplementation(async (processingData: any) => {
+		validateDataProcessing: vi.fn().mockImplementation(async (_processingData: any) => {
 			return {
 				valid: true,
 				purpose_compliant: true,
@@ -1407,29 +1317,29 @@ const globalMocks = vi.hoisted(() => {
 				details: "Processing valid under LGPD consent provisions",
 			};
 		}),
-		recordConsent: vi.fn().mockImplementation(async (consentData: any) => {
+		recordConsent: vi.fn().mockImplementation(async (_consentData: any) => {
 			return {
 				success: true,
-				consent_id: "consent-" + Math.random().toString(36).substr(2, 9),
+				consent_id: `consent-${Math.random().toString(36).substr(2, 9)}`,
 				recorded_at: new Date().toISOString(),
 			};
 		}),
-		revokeConsent: vi.fn().mockImplementation(async (consentId: string) => {
+		revokeConsent: vi.fn().mockImplementation(async (_consentId: string) => {
 			return {
 				success: true,
 				revoked_at: new Date().toISOString(),
 				data_deletion_scheduled: true,
 			};
 		}),
-		processDataSubjectRequest: vi.fn().mockImplementation(async (requestData: any) => {
+		processDataSubjectRequest: vi.fn().mockImplementation(async (_requestData: any) => {
 			return {
 				success: true,
-				request_id: "request-" + Math.random().toString(36).substr(2, 9),
+				request_id: `request-${Math.random().toString(36).substr(2, 9)}`,
 				status: "processing",
 				estimated_completion: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
 			};
 		}),
-		exportPatientData: vi.fn().mockImplementation(async (patientId: string) => {
+		exportPatientData: vi.fn().mockImplementation(async (_patientId: string) => {
 			return {
 				success: true,
 				export_url: "https://example.com/patient-data-export.zip",
@@ -1444,14 +1354,14 @@ const globalMocks = vi.hoisted(() => {
 				anonymized_at: new Date().toISOString(),
 			};
 		}),
-		createAuditEntry: vi.fn().mockImplementation(async (auditData: any) => {
+		createAuditEntry: vi.fn().mockImplementation(async (_auditData: any) => {
 			return {
 				success: true,
-				audit_id: "audit-" + Math.random().toString(36).substr(2, 9),
+				audit_id: `audit-${Math.random().toString(36).substr(2, 9)}`,
 				created_at: new Date().toISOString(),
 			};
 		}),
-		getAuditTrail: vi.fn().mockImplementation(async (filters: any) => {
+		getAuditTrail: vi.fn().mockImplementation(async (_filters: any) => {
 			return {
 				success: true,
 				entries: [
@@ -1467,7 +1377,7 @@ const globalMocks = vi.hoisted(() => {
 				total_count: 1,
 			};
 		}),
-		checkRetentionPolicy: vi.fn().mockImplementation(async (clinicId: string) => {
+		checkRetentionPolicy: vi.fn().mockImplementation(async (_clinicId: string) => {
 			return {
 				policy_compliant: true,
 				retention_periods: {
@@ -1488,7 +1398,7 @@ const globalMocks = vi.hoisted(() => {
 				],
 			};
 		}),
-		validatePurposeLimitation: vi.fn().mockImplementation(async (purpose: string, dataTypes: string[]) => {
+		validatePurposeLimitation: vi.fn().mockImplementation(async (_purpose: string, dataTypes: string[]) => {
 			return {
 				valid: true,
 				purpose_compliant: true,
@@ -1576,8 +1486,6 @@ beforeEach(() => {
 			}
 		});
 	}
-
-	console.log("✅ VITEST SETUP: Complete DOM cleanup and test isolation applied");
 });
 
 // Enhanced cleanup after each test
@@ -1599,15 +1507,10 @@ afterEach(() => {
 						document.body.removeEventListener(type, listener.listener, listener.useCapture);
 					});
 				});
-			} catch (error) {
-				// getEventListeners might not be available in test environment
-				console.debug("Could not clean event listeners:", error);
-			}
+			} catch (_error) {}
 		}
 	}
 
 	// Restore all mocks and globals
 	vi.restoreAllMocks();
-
-	console.log("✅ VITEST SETUP: Post-test cleanup completed");
 });

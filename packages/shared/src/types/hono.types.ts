@@ -10,10 +10,10 @@ import type { Context } from "hono";
 import type { ApiResponse, RequestContext } from "./api.types";
 
 // Auth context interface for middleware
-export interface AuthContext {
+export type AuthContext = {
 	user: RequestContext["user"];
 	token: string;
-}
+};
 
 // Hono Context extension with NeonPro specific data - just a type alias
 export type NeonProContext = Context;
@@ -27,7 +27,7 @@ export type ValidatedHandler<TInput = unknown, TOutput = unknown> = (
 ) => Promise<ApiResponse<TOutput>> | ApiResponse<TOutput>;
 
 // Route configuration for type inference
-export interface RouteConfig<TInput = unknown, TOutput = unknown> {
+export type RouteConfig<TInput = unknown, TOutput = unknown> = {
 	method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 	path: string;
 	handler: ValidatedHandler<TInput, TOutput>;
@@ -51,14 +51,14 @@ export interface RouteConfig<TInput = unknown, TOutput = unknown> {
 		requiresConsent?: string[];
 		dataCategories?: string[];
 	};
-}
+};
 
 // Hono App Type inference helpers
 export type ExtractRouteInput<T> = T extends RouteConfig<infer I, any> ? I : never;
 export type ExtractRouteOutput<T> = T extends RouteConfig<any, infer O> ? O : never;
 
 // RPC Client types for frontend
-export interface RpcClient {
+export type RpcClient = {
 	// Auth endpoints
 	auth: {
 		login: {
@@ -199,30 +199,30 @@ export interface RpcClient {
 			};
 		};
 	};
-}
+};
 
 // Request/Response type mappings for RPC client
-export interface LoginRequest {
+export type LoginRequest = {
 	email: string;
 	password: string;
 	deviceInfo?: string;
 	mfaCode?: string;
-}
+};
 
-export interface RegisterRequest {
+export type RegisterRequest = {
 	email: string;
 	password: string;
 	fullName: string;
 	phone?: string;
 	acceptsTerms: boolean;
 	acceptsPrivacyPolicy: boolean;
-}
+};
 
-export interface RefreshTokenRequest {
+export type RefreshTokenRequest = {
 	refreshToken: string;
-}
+};
 
-export interface UpdateProfileRequest {
+export type UpdateProfileRequest = {
 	fullName?: string;
 	phone?: string;
 	avatar?: string;
@@ -233,17 +233,17 @@ export interface UpdateProfileRequest {
 		emailNotifications?: boolean;
 		smsNotifications?: boolean;
 	};
-}
+};
 
-export interface PatientsQuery {
+export type PatientsQuery = {
 	page?: number;
 	limit?: number;
 	search?: string;
 	status?: string;
 	professionalId?: string;
-}
+};
 
-export interface CreatePatientRequest {
+export type CreatePatientRequest = {
 	fullName: string;
 	email: string;
 	phone: string;
@@ -262,9 +262,9 @@ export interface CreatePatientRequest {
 	consentGiven: boolean;
 	dataProcessingConsent: boolean;
 	marketingConsent: boolean;
-}
+};
 
-export interface UpdatePatientRequest {
+export type UpdatePatientRequest = {
 	fullName?: string;
 	email?: string;
 	phone?: string;
@@ -274,9 +274,9 @@ export interface UpdatePatientRequest {
 		relationship: string;
 		phone: string;
 	};
-}
+};
 
-export interface AppointmentsQuery {
+export type AppointmentsQuery = {
 	page?: number;
 	limit?: number;
 	startDate?: string;
@@ -285,9 +285,9 @@ export interface AppointmentsQuery {
 	professionalId?: string;
 	patientId?: string;
 	serviceId?: string;
-}
+};
 
-export interface CreateAppointmentRequest {
+export type CreateAppointmentRequest = {
 	patientId: string;
 	professionalId: string;
 	serviceId: string;
@@ -296,32 +296,32 @@ export interface CreateAppointmentRequest {
 	duration: number;
 	notes?: string;
 	priority?: string;
-}
+};
 
-export interface UpdateAppointmentRequest {
+export type UpdateAppointmentRequest = {
 	scheduledDate?: string;
 	scheduledTime?: string;
 	status?: string;
 	notes?: string;
 	priority?: string;
-}
+};
 
-export interface AvailabilityQuery {
+export type AvailabilityQuery = {
 	professionalId?: string;
 	serviceId?: string;
 	startDate: string;
 	endDate: string;
-}
+};
 
-export interface ProfessionalsQuery {
+export type ProfessionalsQuery = {
 	page?: number;
 	limit?: number;
 	search?: string;
 	profession?: string;
 	isActive?: boolean;
-}
+};
 
-export interface CreateProfessionalRequest {
+export type CreateProfessionalRequest = {
 	fullName: string;
 	email: string;
 	phone: string;
@@ -331,18 +331,18 @@ export interface CreateProfessionalRequest {
 	isActive?: boolean;
 	workingHours?: Record<string, string[]>;
 	permissions?: string[];
-}
+};
 
-export interface UpdateProfessionalRequest {
+export type UpdateProfessionalRequest = {
 	fullName?: string;
 	email?: string;
 	phone?: string;
 	specialization?: string;
 	isActive?: boolean;
 	workingHours?: Record<string, string[]>;
-}
+};
 
-export interface ServicesQuery {
+export type ServicesQuery = {
 	page?: number;
 	limit?: number;
 	search?: string;
@@ -351,9 +351,9 @@ export interface ServicesQuery {
 	profession?: string;
 	priceMin?: number;
 	priceMax?: number;
-}
+};
 
-export interface CreateServiceRequest {
+export type CreateServiceRequest = {
 	name: string;
 	description: string;
 	category: string;
@@ -364,30 +364,30 @@ export interface CreateServiceRequest {
 	anvisaRegistration?: string;
 	requiresLicense?: boolean;
 	requiredProfessions: string[];
-}
+};
 
-export interface UpdateServiceRequest {
+export type UpdateServiceRequest = {
 	name?: string;
 	description?: string;
 	category?: string;
 	duration?: number;
 	price?: number;
 	isActive?: boolean;
-}
+};
 
-export interface AnalyticsQuery {
+export type AnalyticsQuery = {
 	period?: string;
 	startDate?: string;
 	endDate?: string;
 	groupBy?: string;
-}
+};
 
 export interface RevenueQuery extends AnalyticsQuery {
 	serviceCategory?: string;
 	professionalId?: string;
 }
 
-export interface CustomReportRequest {
+export type CustomReportRequest = {
 	reportType: string;
 	filters?: {
 		dateRange?: {
@@ -400,36 +400,36 @@ export interface CustomReportRequest {
 	};
 	groupBy?: string;
 	includeComparison?: boolean;
-}
+};
 
-export interface LGPDRequestData {
+export type LGPDRequestData = {
 	type: string;
 	patientId: string;
 	requesterName: string;
 	requesterEmail: string;
 	justification: string;
 	urgency?: string;
-}
+};
 
-export interface ConsentUpdateData {
+export type ConsentUpdateData = {
 	patientId: string;
 	consentType: string;
 	granted: boolean;
 	version: string;
 	ipAddress?: string;
 	userAgent?: string;
-}
+};
 
-export interface AnvisaReportData {
+export type AnvisaReportData = {
 	reportType: string;
 	period: {
 		startDate: string;
 		endDate: string;
 	};
 	includeDetails?: boolean;
-}
+};
 
-export interface AuditLogsQuery {
+export type AuditLogsQuery = {
 	page?: number;
 	limit?: number;
 	startDate?: string;
@@ -437,7 +437,7 @@ export interface AuditLogsQuery {
 	userId?: string;
 	action?: string;
 	resourceType?: string;
-}
+};
 
 // Type utilities for Hono RPC
 export type InferRequestType<T> = T extends {
@@ -455,14 +455,14 @@ export type InferResponseType<T> = T extends { $get: () => Promise<infer R> }
 		: never;
 
 // RPC Error types
-export interface RpcError {
+export type RpcError = {
 	success: false;
 	error: string;
 	message: string;
 	details?: unknown;
 	timestamp: string;
 	requestId?: string;
-}
+};
 
 // Type guard for RPC responses
 export const isRpcError = (response: unknown): response is RpcError => {
@@ -472,7 +472,7 @@ export const isRpcError = (response: unknown): response is RpcError => {
 };
 
 // RPC Client configuration
-export interface RpcClientConfig {
+export type RpcClientConfig = {
 	baseUrl: string;
 	timeout?: number;
 	retries?: number;
@@ -480,4 +480,4 @@ export interface RpcClientConfig {
 	onRequest?: (init: RequestInit) => Promise<RequestInit> | RequestInit;
 	onResponse?: (response: Response) => Promise<Response> | Response;
 	onError?: (error: Error) => void;
-}
+};

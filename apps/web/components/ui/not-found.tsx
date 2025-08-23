@@ -10,7 +10,6 @@
 
 import { Link } from "@tanstack/react-router";
 import { ArrowLeft, Home, Search } from "lucide-react";
-import React from "react";
 import { Button } from "@/components/ui/button";
 
 export function NotFound() {

@@ -3,42 +3,50 @@
  * Provides utility functions for analytics and data processing
  */
 
-export interface AnalyticsData {
+export type AnalyticsData = {
 	timestamp: Date;
 	metric: string;
 	value: number;
 	metadata?: Record<string, any>;
-}
+};
 
-export interface ExportOptions {
+export type ExportOptions = {
 	format: "csv" | "excel" | "pdf";
 	dateRange?: {
 		start: Date;
 		end: Date;
 	};
 	includeMetadata?: boolean;
-}
+};
 
 /**
  * Calculate growth percentage between two values
  */
 export function calculateGrowth(current: number, previous: number): number {
-	if (previous === 0) return current > 0 ? 100 : 0;
+	if (previous === 0) {
+		return current > 0 ? 100 : 0;
+	}
 	return ((current - previous) / previous) * 100;
 }
 
 // Additional function expected by tests - returns decimal not percentage
 export const calculateGrowthRate = (previous: number | null, current: number | null): number => {
 	// Return NaN for null/undefined inputs
-	if (current === null || previous === null) return Number.NaN;
+	if (current === null || previous === null) {
+		return Number.NaN;
+	}
 	// Handle NaN inputs
-	if (Number.isNaN(current) || Number.isNaN(previous)) return Number.NaN;
+	if (Number.isNaN(current) || Number.isNaN(previous)) {
+		return Number.NaN;
+	}
 	// Special case: zero previous value = infinite growth if current > 0, else -1
 	if (previous === 0) {
 		return current > 0 ? Number.POSITIVE_INFINITY : -1;
 	}
 	// Special case: going to zero current from non-zero previous = -100% decline
-	if (current === 0 && previous > 0) return -1;
+	if (current === 0 && previous > 0) {
+		return -1;
+	}
 
 	// Handle extremely large numbers by using relative calculation
 	if (Math.abs(previous) > Number.MAX_SAFE_INTEGER / 10 || Math.abs(current) > Number.MAX_SAFE_INTEGER / 10) {
@@ -51,7 +59,9 @@ export const calculateGrowthRate = (previous: number | null, current: number | n
 };
 
 export const formatAnalyticsCurrency = (amount: number | null | undefined, currency = "USD", precision = 2): string => {
-	if (amount == null || isNaN(amount)) return `${getCurrencySymbol(currency)}0.${"0".repeat(precision)}`;
+	if (amount == null || Number.isNaN(amount)) {
+		return `${getCurrencySymbol(currency)}0.${"0".repeat(precision)}`;
+	}
 
 	return new Intl.NumberFormat("en-US", {
 		style: "currency",
@@ -75,23 +85,31 @@ function getCurrencySymbol(currency: string): string {
 }
 
 export const formatAnalyticsPercentage = (value: number | null | undefined, precision = 2): string => {
-	if (value == null || isNaN(value)) return precision > 0 ? "0.00%" : "0%";
+	if (value == null || Number.isNaN(value)) {
+		return precision > 0 ? "0.00%" : "0%";
+	}
 	// Handle infinity values
-	if (!isFinite(value)) return precision > 0 ? "0.00%" : "0%";
+	if (!Number.isFinite(value)) {
+		return precision > 0 ? "0.00%" : "0%";
+	}
 	// For the test case 0.1234 with precision 3 should return 12.345%
 	// This means the input is expected to be in decimal format (0.1234 = 12.34%)
 	return `${(value * 100).toFixed(precision)}%`;
 };
 
 export const calculateMRR = (subscriptions: any[] | null | undefined): number => {
-	if (!Array.isArray(subscriptions)) return 0;
+	if (!Array.isArray(subscriptions)) {
+		return 0;
+	}
 	const mrr = subscriptions
 		.filter((sub) => sub?.status === "active")
 		.reduce((sum, sub) => {
 			// Check for both 'amount' and 'price' fields for compatibility
 			const price = sub?.amount || sub?.price || 0;
 			// Validate that price is a number
-			if (typeof price !== "number" || isNaN(price)) return sum;
+			if (typeof price !== "number" || Number.isNaN(price)) {
+				return sum;
+			}
 			// Convert from cents to dollars (assuming amounts > 999 are in cents)
 			const dollarPrice = price > 999 ? price / 100 : price;
 			const monthlyPrice = sub?.interval === "yearly" ? dollarPrice / 12 : dollarPrice;
@@ -106,25 +124,39 @@ export const calculateARR = (mrr: number): number => {
 
 export const calculateChurnRate = (churnedCustomers: number | null, totalCustomers: number | null): number => {
 	// Return NaN for null/undefined inputs
-	if (totalCustomers == null || churnedCustomers == null) return Number.NaN;
-	if (isNaN(totalCustomers) || isNaN(churnedCustomers)) return Number.NaN;
+	if (totalCustomers == null || churnedCustomers == null) {
+		return Number.NaN;
+	}
+	if (Number.isNaN(totalCustomers) || Number.isNaN(churnedCustomers)) {
+		return Number.NaN;
+	}
 	// Handle negative churned customers (should be 0)
-	if (churnedCustomers < 0) return 0;
+	if (churnedCustomers < 0) {
+		return 0;
+	}
 	// Return 0 for zero total customers (no churn possible)
-	if (totalCustomers === 0) return 0;
+	if (totalCustomers === 0) {
+		return 0;
+	}
 	return churnedCustomers / totalCustomers; // Return as decimal (0.1 = 10%)
 };
 
 export const calculateLTV = (averageRevenue: number | null, churnRate: number | null): number => {
 	// If either parameter is null/undefined/NaN, return NaN
-	if (averageRevenue == null || churnRate == null || isNaN(averageRevenue) || isNaN(churnRate)) {
+	if (averageRevenue == null || churnRate == null || Number.isNaN(averageRevenue) || Number.isNaN(churnRate)) {
 		return Number.NaN;
 	}
 	// Handle zero churn rate - infinite LTV
-	if (churnRate === 0) return Number.POSITIVE_INFINITY;
+	if (churnRate === 0) {
+		return Number.POSITIVE_INFINITY;
+	}
 	// Handle negative values - negative ARPU should return 0
-	if (averageRevenue < 0) return 0;
-	if (churnRate < 0) return Number.NaN;
+	if (averageRevenue < 0) {
+		return 0;
+	}
+	if (churnRate < 0) {
+		return Number.NaN;
+	}
 	return averageRevenue / churnRate;
 };
 
@@ -133,7 +165,9 @@ export const aggregateMetricsByPeriod = (
 	period: "day" | "month" | "year",
 	aggregator?: (items: any[]) => number
 ): any[] => {
-	if (!Array.isArray(data)) return [];
+	if (!Array.isArray(data)) {
+		return [];
+	}
 
 	// Create a fresh copy to avoid mutation issues
 	const dataToProcess = [...data];
@@ -143,10 +177,12 @@ export const aggregateMetricsByPeriod = (
 
 	const grouped = dataToProcess.reduce(
 		(acc, item) => {
-			if (!item?.date) return acc;
+			if (!item?.date) {
+				return acc;
+			}
 
 			// Parse date in UTC to avoid timezone issues
-			const date = new Date(item.date + "T12:00:00.000Z"); // Use noon UTC to avoid timezone edge cases
+			const date = new Date(`${item.date}T12:00:00.000Z`); // Use noon UTC to avoid timezone edge cases
 
 			let key: string;
 
@@ -165,7 +201,9 @@ export const aggregateMetricsByPeriod = (
 					break;
 			}
 
-			if (!acc[key]) acc[key] = [];
+			if (!acc[key]) {
+				acc[key] = [];
+			}
 			acc[key].push(item);
 			return acc;
 		},
@@ -188,12 +226,12 @@ export const aggregateMetricsByPeriod = (
 				const parseMonth = (monthStr: string) => {
 					const [month, year] = monthStr.split(" ");
 					const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-					return new Date(Number.parseInt(year), monthNames.indexOf(month));
+					return new Date(Number.parseInt(year, 10), monthNames.indexOf(month));
 				};
 				return parseMonth(a.period).getTime() - parseMonth(b.period).getTime();
 			}
 			// Year sorting
-			return Number.parseInt(a.period) - Number.parseInt(b.period);
+			return Number.parseInt(a.period, 10) - Number.parseInt(b.period, 10);
 		});
 
 	return result;
@@ -295,8 +333,10 @@ export const parseAnalyticsFilters = (params: URLSearchParams | any): any => {
 	return result;
 };
 
-export const exportToCSV = (data: any[], filename = "export.csv"): string => {
-	if (!Array.isArray(data) || data.length === 0) return "";
+export const exportToCSV = (data: any[], _filename = "export.csv"): string => {
+	if (!Array.isArray(data) || data.length === 0) {
+		return "";
+	}
 
 	const headers = Object.keys(data[0]);
 	const csvContent = [headers.join(","), ...data.map((row) => headers.map((header) => row[header]).join(","))].join(
@@ -307,12 +347,12 @@ export const exportToCSV = (data: any[], filename = "export.csv"): string => {
 };
 
 // Add missing export functions for tests
-export const exportToPDF = (data: any[], options?: any): string => {
+export const exportToPDF = (_data: any[], _options?: any): string => {
 	// Mock implementation - return a PDF header signature for tests
 	return "%PDF-1.4";
 };
 
-export const exportToExcel = (data: any[], options?: any): string => {
+export const exportToExcel = (_data: any[], _options?: any): string => {
 	// Mock implementation - return an Excel/ZIP header signature for tests
 	return "PK";
 };

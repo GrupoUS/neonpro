@@ -10,7 +10,6 @@
 
 import { Outlet } from "@tanstack/react-router";
 import { Filter, Plus, Search } from "lucide-react";
-import React from "react";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { MainNavigation } from "@/components/main-navigation";
 import { Button } from "@/components/ui/button";

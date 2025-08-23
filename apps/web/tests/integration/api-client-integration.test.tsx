@@ -2,25 +2,24 @@
 // Hono RPC client integration with backend services
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { act } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Types for API responses
-interface ApiResponse<T> {
+type ApiResponse<T> = {
 	success: boolean;
 	data?: T;
 	error?: string;
 	code?: string;
 	timestamp: string;
-}
+};
 
-interface HealthCheckResponse {
+type HealthCheckResponse = {
 	status: "healthy" | "unhealthy";
 	version: string;
 	database: "connected" | "disconnected";
 	redis: "connected" | "disconnected";
 	uptime: number;
-}
+};
 
 // Mock Hono RPC client
 const mockHonoClient = {
@@ -67,7 +66,7 @@ global.fetch = mockFetch;
 vi.mock("../../lib/api/hono-client", () => ({
 	honoClient: mockHonoClient,
 })); // Test wrapper component
-const TestWrapper = ({ children }: { children: React.ReactNode }) => {
+const _TestWrapper = ({ children }: { children: React.ReactNode }) => {
 	const queryClient = new QueryClient({
 		defaultOptions: {
 			queries: {
@@ -402,7 +401,9 @@ describe("API Client Integration Tests", () => {
 					try {
 						return await fn();
 					} catch (error) {
-						if (attempt === maxRetries - 1) throw error;
+						if (attempt === maxRetries - 1) {
+							throw error;
+						}
 						await new Promise((resolve) => setTimeout(resolve, 1000 * (attempt + 1)));
 					}
 				}
@@ -451,7 +452,9 @@ describe("API Client Integration Tests", () => {
 				status: 429,
 				headers: {
 					get: (header: string) => {
-						if (header === "Retry-After") return "2";
+						if (header === "Retry-After") {
+							return "2";
+						}
 						return null;
 					},
 				},

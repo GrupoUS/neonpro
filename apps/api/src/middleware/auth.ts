@@ -104,7 +104,7 @@ const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
 };
 
 // JWT payload interface
-export interface JWTPayload {
+export type JWTPayload = {
 	sub: string; // User ID
 	email: string; // User email
 	role: UserRole; // User role
@@ -114,10 +114,10 @@ export interface JWTPayload {
 	iat: number; // Issued at
 	exp: number; // Expires at
 	jti: string; // JWT ID
-}
+};
 
 // User context interface
-export interface UserContext {
+export type UserContext = {
 	id: string;
 	email: string;
 	role: UserRole;
@@ -126,11 +126,11 @@ export interface UserContext {
 	professionalId?: string;
 	isActive: boolean;
 	lastLogin?: string;
-}
+};
 
 // Mock user store (production should use database)
 class UserStore {
-	private users = new Map<string, UserContext>([
+	private readonly users = new Map<string, UserContext>([
 		[
 			"user_123",
 			{
@@ -172,7 +172,9 @@ class UserStore {
 
 	getUserByEmail(email: string): UserContext | undefined {
 		for (const user of this.users.values()) {
-			if (user.email === email) return user;
+			if (user.email === email) {
+				return user;
+			}
 		}
 		return;
 	}
@@ -226,7 +228,7 @@ const verifyToken = async (token: string): Promise<JWTPayload> => {
 /**
  * Check if token is blacklisted (for logout/revocation)
  */
-const isTokenBlacklisted = async (jti: string): Promise<boolean> => {
+const isTokenBlacklisted = async (_jti: string): Promise<boolean> => {
 	// TODO: Implement token blacklist check (Redis/Database)
 	return false;
 };
@@ -353,7 +355,7 @@ export const optionalAuth = (): MiddlewareHandler => {
 
 				if (payload.exp >= Date.now() / 1000) {
 					const user = userStore.getUser(payload.sub);
-					if (user && user.isActive) {
+					if (user?.isActive) {
 						c.set("user", user);
 						c.set("userId", user.id);
 						c.set("userRole", user.role);
@@ -462,7 +464,9 @@ export const authUtils = {
 		const userClinicId = c.get("clinicId") as string;
 
 		// Admins can access any clinic
-		if (userRole === UserRole.ADMIN) return true;
+		if (userRole === UserRole.ADMIN) {
+			return true;
+		}
 
 		// Users can only access their own clinic
 		return userClinicId === clinicId;

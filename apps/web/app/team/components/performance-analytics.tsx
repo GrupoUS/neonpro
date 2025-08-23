@@ -7,13 +7,10 @@ import {
 	Calendar,
 	CheckCircle2,
 	Clock,
-	DollarSign,
 	Download,
 	FileText,
-	Filter,
 	Heart,
 	LineChart,
-	PieChart,
 	Shield,
 	Star,
 	TrendingDown,
@@ -29,8 +26,6 @@ import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-import type { ComplianceStatus, HealthcareProfessional, TeamPerformanceMetrics } from "@/types/team-coordination";
 
 // Mock analytics data for Brazilian healthcare context
 const mockTeamKPIs = {
@@ -158,7 +153,7 @@ const mockIndividualPerformance = [
 	},
 ];
 
-const mockMonthlyTrends = [
+const _mockMonthlyTrends = [
 	{
 		month: "Jan",
 		patientSatisfaction: 8.2,
@@ -210,20 +205,28 @@ const getTrendIcon = (trend: "up" | "down" | "stable") => {
 };
 
 const getComplianceColor = (rate: number) => {
-	if (rate >= 95) return "text-green-600";
-	if (rate >= 90) return "text-accent";
+	if (rate >= 95) {
+		return "text-green-600";
+	}
+	if (rate >= 90) {
+		return "text-accent";
+	}
 	return "text-red-600";
 };
 
 const getComplianceBgColor = (rate: number) => {
-	if (rate >= 95) return "bg-green-100 border-green-200";
-	if (rate >= 90) return "bg-accent/10 border-accent/20";
+	if (rate >= 95) {
+		return "bg-green-100 border-green-200";
+	}
+	if (rate >= 90) {
+		return "bg-accent/10 border-accent/20";
+	}
 	return "bg-red-100 border-red-200";
 };
 
-interface PerformanceAnalyticsProps {
+type PerformanceAnalyticsProps = {
 	emergencyMode?: boolean;
-}
+};
 
 export function PerformanceAnalytics({ emergencyMode = false }: PerformanceAnalyticsProps) {
 	const [activeTab, setActiveTab] = useState("kpis");
@@ -816,7 +819,7 @@ export function PerformanceAnalytics({ emergencyMode = false }: PerformanceAnaly
 									</TableRow>
 								</TableHeader>
 								<TableBody>
-									{sortedPerformance.map((professional, index) => (
+									{sortedPerformance.map((professional, _index) => (
 										<TableRow key={professional.id}>
 											<TableCell>
 												<div>

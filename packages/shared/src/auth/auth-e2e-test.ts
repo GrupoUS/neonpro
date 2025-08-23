@@ -5,12 +5,12 @@
 
 import { authTokenManager } from "./auth-token-manager";
 
-export interface TestCredentials {
+export type TestCredentials = {
 	email: string;
 	password: string;
-}
+};
 
-export interface E2ETestResult {
+export type E2ETestResult = {
 	success: boolean;
 	steps: {
 		login: boolean;
@@ -25,7 +25,7 @@ export interface E2ETestResult {
 		refreshTime: number;
 		logoutTime: number;
 	};
-}
+};
 
 /**
  * Executa teste completo de autenticação end-to-end
@@ -48,14 +48,9 @@ export async function runAuthE2ETest(credentials: TestCredentials, baseUrl = "")
 		},
 	};
 
-	console.log("🚀 Iniciando teste E2E de autenticação...");
-
 	try {
 		// Limpar estado inicial
 		authTokenManager.clearTokens();
-
-		// Passo 1: Login
-		console.log("📝 Testando login...");
 		const loginStart = performance.now();
 
 		const loginResponse = await fetch(`${baseUrl}/api/v1/auth/login`, {
@@ -83,10 +78,6 @@ export async function runAuthE2ETest(credentials: TestCredentials, baseUrl = "")
 		// Armazenar tokens
 		authTokenManager.setTokens(loginData.data.tokens);
 		result.steps.login = true;
-		console.log("✅ Login bem-sucedido");
-
-		// Passo 2: Verificar armazenamento de tokens
-		console.log("💾 Testando armazenamento de tokens...");
 
 		const hasTokens = authTokenManager.hasValidTokens();
 		const accessToken = authTokenManager.getAccessToken();
@@ -98,10 +89,6 @@ export async function runAuthE2ETest(credentials: TestCredentials, baseUrl = "")
 		}
 
 		result.steps.tokenStorage = true;
-		console.log("✅ Tokens armazenados corretamente");
-
-		// Passo 3: Acessar rota protegida
-		console.log("🔒 Testando acesso a rota protegida...");
 
 		const protectedResponse = await fetch(`${baseUrl}/api/v1/auth/me`, {
 			headers: {
@@ -123,10 +110,6 @@ export async function runAuthE2ETest(credentials: TestCredentials, baseUrl = "")
 		}
 
 		result.steps.protectedAccess = true;
-		console.log("✅ Acesso a rota protegida bem-sucedido");
-
-		// Passo 4: Testar refresh de token
-		console.log("🔄 Testando refresh de token...");
 		const refreshStart = performance.now();
 
 		const refreshSuccess = await authTokenManager.refreshAccessToken();
@@ -145,10 +128,6 @@ export async function runAuthE2ETest(credentials: TestCredentials, baseUrl = "")
 		}
 
 		result.steps.tokenRefresh = true;
-		console.log("✅ Refresh de token bem-sucedido");
-
-		// Passo 5: Testar logout
-		console.log("👋 Testando logout...");
 		const logoutStart = performance.now();
 
 		await fetch(`${baseUrl}/api/v1/auth/logout`, {
@@ -187,17 +166,14 @@ export async function runAuthE2ETest(credentials: TestCredentials, baseUrl = "")
 		}
 
 		result.steps.logout = true;
-		console.log("✅ Logout bem-sucedido");
 
 		// Todos os passos bem-sucedidos
 		result.success = true;
-		console.log("🎉 Teste E2E de autenticação concluído com sucesso!");
 
 		return result;
 	} catch (error) {
 		const errorMessage = error instanceof Error ? error.message : "Unknown error";
 		result.errors.push(`Test execution error: ${errorMessage}`);
-		console.error("❌ Erro durante teste E2E:", error);
 
 		// Limpar estado em caso de erro
 		authTokenManager.clearTokens();
@@ -210,8 +186,6 @@ export async function runAuthE2ETest(credentials: TestCredentials, baseUrl = "")
  * Testa persistência de sessão (localStorage)
  */
 export async function testSessionPersistence(): Promise<boolean> {
-	console.log("💾 Testando persistência de sessão...");
-
 	try {
 		// Simular tokens válidos
 		const mockTokens = {
@@ -225,7 +199,6 @@ export async function testSessionPersistence(): Promise<boolean> {
 
 		// Verificar se foram armazenados
 		if (!authTokenManager.hasValidTokens()) {
-			console.error("❌ Tokens não foram armazenados");
 			return false;
 		}
 
@@ -235,17 +208,13 @@ export async function testSessionPersistence(): Promise<boolean> {
 		// Verificar se tokens foram carregados
 		const persistedToken = newManager.getAccessToken();
 		if (!persistedToken) {
-			console.error("❌ Tokens não foram persistidos");
 			return false;
 		}
 
 		// Limpar
 		authTokenManager.clearTokens();
-
-		console.log("✅ Persistência de sessão funcionando");
 		return true;
-	} catch (error) {
-		console.error("❌ Erro no teste de persistência:", error);
+	} catch (_error) {
 		return false;
 	}
 }
@@ -261,21 +230,13 @@ export async function runAllAuthTests(
 	persistenceTest: boolean;
 	overallSuccess: boolean;
 }> {
-	console.log("🧪 Executando todos os testes de autenticação...\n");
-
 	const e2eTest = await runAuthE2ETest(credentials, baseUrl);
 	const persistenceTest = await testSessionPersistence();
 
 	const overallSuccess = e2eTest.success && persistenceTest;
 
-	console.log("\n📊 Resultados dos Testes:");
-	console.log(`E2E Test: ${e2eTest.success ? "✅" : "❌"}`);
-	console.log(`Persistence Test: ${persistenceTest ? "✅" : "❌"}`);
-	console.log(`Overall: ${overallSuccess ? "✅ PASSOU" : "❌ FALHOU"}`);
-
 	if (!overallSuccess) {
-		console.log("\n❌ Erros encontrados:");
-		e2eTest.errors.forEach((error) => console.log(`  - ${error}`));
+		e2eTest.errors.forEach((_error) => {});
 	}
 
 	return {

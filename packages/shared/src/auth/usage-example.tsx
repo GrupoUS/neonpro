@@ -31,8 +31,6 @@ function LoginPage() {
 		const result = await login({ email, password });
 
 		if (result.success) {
-			// Redirecionamento será feito automaticamente pelo AuthProvider
-			console.log("Login realizado com sucesso!");
 		}
 	};
 
@@ -138,8 +136,7 @@ function DashboardPage() {
 				const result = await response.json();
 				setData(result.data);
 			}
-		} catch (error) {
-			console.error("Erro ao carregar dados:", error);
+		} catch (_error) {
 		} finally {
 			setLoading(false);
 		}
@@ -147,7 +144,7 @@ function DashboardPage() {
 
 	React.useEffect(() => {
 		fetchProtectedData();
-	}, []);
+	}, [fetchProtectedData]);
 
 	return (
 		<div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
@@ -273,8 +270,6 @@ export async function validateAuthSystem() {
 	};
 
 	const results = await runAllAuthTests(testCredentials);
-
-	console.log("Resultados dos testes de autenticação:", results);
 
 	return results.overallSuccess;
 }

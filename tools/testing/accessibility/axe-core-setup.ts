@@ -16,7 +16,7 @@ export const axeConfig = configureAxe(WCAG_AA_CONFIG);
  * Healthcare-specific accessibility test utilities
  */
 export class HealthcareAccessibilityTester {
-	private axe: any;
+	private readonly axe: any;
 
 	constructor() {
 		this.axe = axeConfig;
@@ -62,7 +62,9 @@ export class HealthcareAccessibilityTester {
 		results: Result,
 		scenario?: keyof typeof HEALTHCARE_A11Y_SCENARIOS
 	): HealthcareComplianceResult {
-		if (!scenario) return { compliant: true, issues: [] };
+		if (!scenario) {
+			return { compliant: true, issues: [] };
+		}
 
 		const scenarioConfig = HEALTHCARE_A11Y_SCENARIOS[scenario];
 		const issues: string[] = [];
@@ -143,9 +145,11 @@ export class HealthcareAccessibilityTester {
 	 */
 	private calculateAccessibilityScore(results: Result): number {
 		const totalRules = results.passes.length + results.violations.length + results.incomplete.length;
-		if (totalRules === 0) return 100;
+		if (totalRules === 0) {
+			return 100;
+		}
 
-		const passedRules = results.passes.length;
+		const _passedRules = results.passes.length;
 		const violationWeight = results.violations.reduce((weight, violation) => {
 			switch (violation.impact) {
 				case "critical":
@@ -186,13 +190,13 @@ export class HealthcareAccessibilityTester {
 		}
 	}
 
-	private countLGPDElements(results: Result): number {
+	private countLGPDElements(_results: Result): number {
 		// Count elements with LGPD attributes
 		const allElements = document.querySelectorAll("[data-lgpd], [data-sensitive]");
 		return allElements.length;
 	}
 
-	private checkMultiModalSupport(results: Result): boolean {
+	private checkMultiModalSupport(_results: Result): boolean {
 		// Check for visual, audio, and haptic feedback support
 		const hasAriaLive = document.querySelector("[aria-live]") !== null;
 		const hasRoleAlert = document.querySelector('[role="alert"]') !== null;
@@ -290,7 +294,7 @@ export const toBeAccessibleForHealthcare = (
 };
 
 // Type definitions
-export interface HealthcareAccessibilityResult {
+export type HealthcareAccessibilityResult = {
 	violations: any[];
 	passes: any[];
 	incomplete: any[];
@@ -303,29 +307,29 @@ export interface HealthcareAccessibilityResult {
 	seriousIssues: any[];
 	moderateIssues: any[];
 	minorIssues: any[];
-}
+};
 
-export interface HealthcareComplianceResult {
+export type HealthcareComplianceResult = {
 	compliant: boolean;
 	issues: string[];
 	scenario?: keyof typeof HEALTHCARE_A11Y_SCENARIOS;
 	requirements?: Record<string, boolean>;
-}
+};
 
-export interface LGPDComplianceResult {
+export type LGPDComplianceResult = {
 	compliant: boolean;
 	issues: string[];
 	protectedElementsCount: number;
 	requiresPrivacyAnnouncement: boolean;
-}
+};
 
-export interface EmergencyAccessibilityResult {
+export type EmergencyAccessibilityResult = {
 	compliant: boolean;
 	issues: string[];
 	emergencyElementsCount: number;
 	hasMultiModalSupport: boolean;
 	meetsCriticalContrastRatio: boolean;
-}
+};
 
 // Export configured axe instance
 export { axeConfig as axe };

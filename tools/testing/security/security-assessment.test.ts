@@ -12,7 +12,7 @@
 
 import { Hono } from "hono";
 import { testClient } from "hono/testing";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import {
 	authMiddleware,
 	Permission,
@@ -217,7 +217,7 @@ describe("🚨 Input Validation & Injection Prevention", () => {
 		});
 
 		it("should sanitize database queries", async () => {
-			const response = await fetch("/api/v1/patients?search=" + encodeURIComponent("'; DROP TABLE patients; --"), {
+			const response = await fetch(`/api/v1/patients?search=${encodeURIComponent("'; DROP TABLE patients; --")}`, {
 				headers: { Authorization: "Bearer mock-access-token" },
 			});
 
@@ -278,7 +278,7 @@ describe("🚨 Input Validation & Injection Prevention", () => {
 
 	describe("CSRF Protection", () => {
 		it("should require CSRF tokens for state-changing operations", async () => {
-			const response = await fetch("/api/v1/patients", {
+			const _response = await fetch("/api/v1/patients", {
 				method: "POST",
 				headers: {
 					Authorization: "Bearer mock-access-token",
@@ -401,7 +401,7 @@ describe("🚦 Rate Limiting & DDoS Protection", () => {
 		expect(rateLimitedResponses.length).toBeGreaterThan(0);
 
 		// Verify rate limit headers
-		const lastResponse = responses[responses.length - 1];
+		const lastResponse = responses.at(-1);
 		if (lastResponse.status === 429) {
 			expect(lastResponse.headers.get("X-RateLimit-Limit")).toBeTruthy();
 			expect(lastResponse.headers.get("X-RateLimit-Remaining")).toBe("0");

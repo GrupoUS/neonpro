@@ -1,18 +1,18 @@
 import type React from "react";
 import { Component, type ErrorInfo, type ReactNode } from "react";
 
-interface Props {
+type Props = {
 	children: ReactNode;
 	fallback?: ReactNode;
 	onError?: (error: Error, errorInfo: ErrorInfo) => void;
 	showDetails?: boolean;
-}
+};
 
-interface State {
+type State = {
 	hasError: boolean;
 	error?: Error;
 	errorInfo?: ErrorInfo;
-}
+};
 
 export class ErrorBoundary extends Component<Props, State> {
 	constructor(props: Props) {
@@ -30,9 +30,6 @@ export class ErrorBoundary extends Component<Props, State> {
 		if (this.props.onError) {
 			this.props.onError(error, errorInfo);
 		}
-
-		// Log error to monitoring service
-		console.error("ErrorBoundary caught an error:", error, errorInfo);
 	}
 
 	handleRetry = () => {
@@ -98,9 +95,6 @@ export class CriticalErrorBoundary extends Component<CriticalErrorBoundaryProps,
 		if (this.props.onError) {
 			this.props.onError(error, errorInfo);
 		}
-
-		// Critical error logging
-		console.error("CriticalErrorBoundary caught an error:", error, errorInfo);
 	}
 
 	handleReload = () => {

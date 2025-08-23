@@ -22,7 +22,6 @@ import {
 	XCircle,
 } from "lucide-react";
 import { useMemo, useState } from "react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -40,13 +39,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import type {
-	EquipmentReservation,
-	EquipmentStatus,
-	FacilityRoom,
-	MedicalEquipment,
-	RoomReservation,
-} from "@/types/team-coordination"; // Mock medical equipment data with ANVISA compliance
+import type { EquipmentStatus, FacilityRoom, MedicalEquipment } from "@/types/team-coordination"; // Mock medical equipment data with ANVISA compliance
 
 const mockEquipmentData: MedicalEquipment[] = [
 	{
@@ -316,9 +309,9 @@ const roomTypeLabels = {
 	emergency: "Emergência",
 };
 
-interface ResourceAllocationProps {
+type ResourceAllocationProps = {
 	emergencyMode?: boolean;
-}
+};
 
 export function ResourceAllocation({ emergencyMode = false }: ResourceAllocationProps) {
 	const [activeTab, setActiveTab] = useState("equipment");
@@ -338,14 +331,20 @@ export function ResourceAllocation({ emergencyMode = false }: ResourceAllocation
 					equipment.currentLocation.toLowerCase().includes(searchLower) ||
 					equipment.anvisaRegistration?.toLowerCase().includes(searchLower);
 
-				if (!matchesSearch) return false;
+				if (!matchesSearch) {
+					return false;
+				}
 			}
 
 			// Status filter
-			if (statusFilter !== "all" && equipment.status !== statusFilter) return false;
+			if (statusFilter !== "all" && equipment.status !== statusFilter) {
+				return false;
+			}
 
 			// Location filter
-			if (locationFilter !== "all" && !equipment.currentLocation.includes(locationFilter)) return false;
+			if (locationFilter !== "all" && !equipment.currentLocation.includes(locationFilter)) {
+				return false;
+			}
 
 			// Maintenance filter
 			if (showMaintenanceOnly) {
@@ -355,7 +354,9 @@ export function ResourceAllocation({ emergencyMode = false }: ResourceAllocation
 					(equipment.nextInspectionDate && equipment.nextInspectionDate < new Date()) ||
 					(equipment.nextMaintenanceDate && equipment.nextMaintenanceDate < new Date());
 
-				if (!hasMaintenanceIssues) return false;
+				if (!hasMaintenanceIssues) {
+					return false;
+				}
 			}
 
 			return true;
@@ -374,11 +375,15 @@ export function ResourceAllocation({ emergencyMode = false }: ResourceAllocation
 					room.floor.toLowerCase().includes(searchLower) ||
 					room.features.some((feature) => feature.toLowerCase().includes(searchLower));
 
-				if (!matchesSearch) return false;
+				if (!matchesSearch) {
+					return false;
+				}
 			}
 
 			// Status filter
-			if (statusFilter !== "all" && room.status !== statusFilter) return false;
+			if (statusFilter !== "all" && room.status !== statusFilter) {
+				return false;
+			}
 
 			return true;
 		});

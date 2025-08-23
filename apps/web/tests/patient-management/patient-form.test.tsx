@@ -8,14 +8,14 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 // Mock Patient Form Component (placeholder for actual implementation)
-interface PatientFormProps {
+type PatientFormProps = {
 	onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
 	initialData?: {
 		name?: string;
 		email?: string;
 		phone?: string;
 	};
-}
+};
 
 const PatientForm = ({ onSubmit, initialData }: PatientFormProps) => (
 	<form data-testid="patient-form" onSubmit={onSubmit}>

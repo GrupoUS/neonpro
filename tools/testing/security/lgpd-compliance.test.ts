@@ -13,20 +13,13 @@
 
 import { Hono } from "hono";
 import { testClient } from "hono/testing";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { auditStore, lgpdAudit } from "../../../apps/api/src/middleware/audit";
-import {
-	ConsentType,
-	consentStore,
-	DataCategory,
-	LawfulBasis,
-	lgpdMiddleware,
-	lgpdUtils,
-} from "../../../apps/api/src/middleware/lgpd";
+import { ConsentType, lgpdMiddleware, lgpdUtils } from "../../../apps/api/src/middleware/lgpd";
 
 describe("🛡️ LGPD Compliance Assessment", () => {
 	let app: Hono;
-	let client: any;
+	let _client: any;
 	const testPatientId = "pat_test_123";
 	const testUserId = "user_test_456";
 
@@ -48,7 +41,7 @@ describe("🛡️ LGPD Compliance Assessment", () => {
 
 		app.post("/api/v1/marketing/campaigns", (c) => c.json({ success: true, campaignId: "camp_123" }));
 
-		client = testClient(app);
+		_client = testClient(app);
 	});
 
 	describe("📋 Consent Management (LGPD Art. 8º)", () => {
@@ -293,7 +286,7 @@ describe("🛡️ LGPD Compliance Assessment", () => {
 			if (response.status === 200) {
 				const retentionDays = response.headers.get("X-LGPD-Retention-Days");
 				expect(retentionDays).toBeTruthy();
-				expect(Number.parseInt(retentionDays || "0")).toBeGreaterThan(0);
+				expect(Number.parseInt(retentionDays || "0", 10)).toBeGreaterThan(0);
 			}
 		});
 

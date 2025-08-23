@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Icons } from "@/components/ui/icons";
 import { Input } from "@/components/ui/input";
@@ -14,7 +13,7 @@ import { useAuth } from "@/contexts/auth-context";
 import { toastHelpers } from "@/lib/toast-helpers";
 
 // Tipos simplificados
-interface SignupFormData {
+type SignupFormData = {
 	fullName: string;
 	email: string;
 	password: string;
@@ -25,30 +24,40 @@ interface SignupFormData {
 	userType: "admin" | "professional" | "receptionist";
 	lgpdConsent: boolean;
 	terms: boolean;
-}
+};
 
 // Validação simplificada de CPF
 const validateCPF = (cpf: string): boolean => {
 	const cleanCpf = cpf.replace(/[^\d]/g, "");
-	if (cleanCpf.length !== 11) return false;
-	if (/^(\d)\1{10}$/.test(cleanCpf)) return false;
+	if (cleanCpf.length !== 11) {
+		return false;
+	}
+	if (/^(\d)\1{10}$/.test(cleanCpf)) {
+		return false;
+	}
 
 	let sum = 0;
 	for (let i = 0; i < 9; i++) {
-		sum += Number.parseInt(cleanCpf.charAt(i)) * (10 - i);
+		sum += Number.parseInt(cleanCpf.charAt(i), 10) * (10 - i);
 	}
 	let checkDigit = 11 - (sum % 11);
-	if (checkDigit === 10 || checkDigit === 11) checkDigit = 0;
-	if (checkDigit !== Number.parseInt(cleanCpf.charAt(9))) return false;
+	if (checkDigit === 10 || checkDigit === 11) {
+		checkDigit = 0;
+	}
+	if (checkDigit !== Number.parseInt(cleanCpf.charAt(9), 10)) {
+		return false;
+	}
 
 	sum = 0;
 	for (let i = 0; i < 10; i++) {
-		sum += Number.parseInt(cleanCpf.charAt(i)) * (11 - i);
+		sum += Number.parseInt(cleanCpf.charAt(i), 10) * (11 - i);
 	}
 	checkDigit = 11 - (sum % 11);
-	if (checkDigit === 10 || checkDigit === 11) checkDigit = 0;
+	if (checkDigit === 10 || checkDigit === 11) {
+		checkDigit = 0;
+	}
 
-	return checkDigit === Number.parseInt(cleanCpf.charAt(10));
+	return checkDigit === Number.parseInt(cleanCpf.charAt(10), 10);
 };
 
 // Formatação de CPF
@@ -121,24 +130,41 @@ export function SignupForm() {
 		const newErrors: Partial<Record<keyof SignupFormData, string>> = {};
 
 		if (stepNumber === 1) {
-			if (!formData.fullName.trim()) newErrors.fullName = "Nome é obrigatório";
-			if (!formData.email.trim()) newErrors.email = "Email é obrigatório";
-			if (!formData.password) newErrors.password = "Senha é obrigatória";
+			if (!formData.fullName.trim()) {
+				newErrors.fullName = "Nome é obrigatório";
+			}
+			if (!formData.email.trim()) {
+				newErrors.email = "Email é obrigatório";
+			}
+			if (!formData.password) {
+				newErrors.password = "Senha é obrigatória";
+			}
 			if (formData.password !== formData.confirmPassword) {
 				newErrors.confirmPassword = "As senhas não coincidem";
 			}
 		}
 
 		if (stepNumber === 2) {
-			if (!formData.cpf.trim()) newErrors.cpf = "CPF é obrigatório";
-			else if (!validateCPF(formData.cpf)) newErrors.cpf = "CPF inválido";
-			if (!formData.phone.trim()) newErrors.phone = "Telefone é obrigatório";
-			if (!formData.clinicName.trim()) newErrors.clinicName = "Nome da clínica é obrigatório";
+			if (!formData.cpf.trim()) {
+				newErrors.cpf = "CPF é obrigatório";
+			} else if (!validateCPF(formData.cpf)) {
+				newErrors.cpf = "CPF inválido";
+			}
+			if (!formData.phone.trim()) {
+				newErrors.phone = "Telefone é obrigatório";
+			}
+			if (!formData.clinicName.trim()) {
+				newErrors.clinicName = "Nome da clínica é obrigatório";
+			}
 		}
 
 		if (stepNumber === 3) {
-			if (!formData.lgpdConsent) newErrors.lgpdConsent = "É obrigatório aceitar os termos LGPD";
-			if (!formData.terms) newErrors.terms = "É obrigatório aceitar os termos de uso";
+			if (!formData.lgpdConsent) {
+				newErrors.lgpdConsent = "É obrigatório aceitar os termos LGPD";
+			}
+			if (!formData.terms) {
+				newErrors.terms = "É obrigatório aceitar os termos de uso";
+			}
 		}
 
 		setErrors(newErrors);
@@ -154,7 +180,9 @@ export function SignupForm() {
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
-		if (!validateStep(3)) return;
+		if (!validateStep(3)) {
+			return;
+		}
 
 		setIsSubmitting(true);
 		setError(null);
@@ -171,7 +199,6 @@ export function SignupForm() {
 				router.push("/login?message=confirm-email");
 			}
 		} catch (err: any) {
-			console.error("Signup error:", err);
 			setError(err.message || "Erro ao criar conta. Tente novamente.");
 			toastHelpers.error.generic();
 		} finally {

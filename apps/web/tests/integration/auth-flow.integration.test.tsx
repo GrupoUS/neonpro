@@ -2,7 +2,6 @@
 // Complete authentication lifecycle testing for NeonPro Healthcare
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { createMemoryRouter, RouterProvider } from "@tanstack/react-router";
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { getGlobalSupabaseMock, resetAllGlobalMocks } from "../../../../tests/test-utils";
@@ -51,7 +50,7 @@ const MockLoginComponent = () => {
 		</form>
 	);
 };
-const MockDashboard = () => {
+const _MockDashboard = () => {
 	return (
 		<div data-testid="dashboard">
 			<h1>Dashboard</h1>
@@ -157,7 +156,7 @@ describe("Authentication Flow Integration", () => {
 
 			mockAuthHook.signIn.mockImplementation(async (email: string, password: string) => {
 				// Simulate actual hook behavior by calling global mock
-				const authResult = await mockSupabaseClient.auth.signInWithPassword({
+				const _authResult = await mockSupabaseClient.auth.signInWithPassword({
 					email,
 					password,
 				});
@@ -247,7 +246,7 @@ describe("Authentication Flow Integration", () => {
 
 	describe("Session Management", () => {
 		it("should refresh session when token expires", async () => {
-			const expiredSession = {
+			const _expiredSession = {
 				access_token: "expired-token",
 				refresh_token: "valid-refresh-token",
 				expires_at: Date.now() - 1000, // Expired 1 second ago

@@ -4,7 +4,6 @@ import {
 	Activity,
 	AlertTriangle,
 	Calendar,
-	Clock,
 	Heart,
 	Mic,
 	MicIcon,
@@ -14,7 +13,6 @@ import {
 	Scan,
 	Search,
 	Shield,
-	User,
 	Wifi,
 	WifiOff,
 } from "lucide-react";
@@ -28,7 +26,7 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 
 // Emergency patient interface for critical medical information
-interface EmergencyPatient {
+type EmergencyPatient = {
 	id: string;
 	name: string;
 	cpf: string;
@@ -63,10 +61,10 @@ interface EmergencyPatient {
 		lastUpdate: string;
 	}>;
 	lastAccessed: string;
-}
+};
 
 // Emergency interface state
-interface EmergencyState {
+type EmergencyState = {
 	isOnline: boolean;
 	cacheStatus: "fresh" | "stale" | "offline";
 	lastSync: string;
@@ -76,7 +74,7 @@ interface EmergencyState {
 	isSearching: boolean;
 	voiceActive: boolean;
 	scannerActive: boolean;
-}
+};
 
 // Emergency search bar component
 const EmergencySearchBar: React.FC<{
@@ -325,9 +323,6 @@ const EmergencyContacts: React.FC<{
 	const handleCall = useCallback((phoneNumber: string, contactName: string) => {
 		// In a real implementation, this would trigger the phone call
 		if (confirm(`Ligar para ${contactName} (${phoneNumber})?`)) {
-			// Emergency audit log
-			console.log(`Emergency call initiated to ${contactName} at ${phoneNumber} at ${new Date().toISOString()}`);
-
 			// Attempt to use tel: protocol
 			window.open(`tel:${phoneNumber}`, "_self");
 		}
@@ -406,9 +401,8 @@ const CrisisScheduler: React.FC = () => {
 		},
 	]);
 
-	const handleEmergencyBooking = useCallback((doctorId: string, doctorName: string) => {
+	const handleEmergencyBooking = useCallback((_doctorId: string, doctorName: string) => {
 		if (confirm(`Confirmar agendamento de emergência com ${doctorName}?`)) {
-			console.log(`Emergency appointment booked with ${doctorName} at ${new Date().toISOString()}`);
 			alert(`Agendamento de emergência confirmado com ${doctorName}`);
 		}
 	}, []);
@@ -465,14 +459,22 @@ const OfflineIndicator: React.FC<{
 	lastSync: string;
 }> = ({ isOnline, cacheStatus, lastSync }) => {
 	const getStatusColor = () => {
-		if (!isOnline) return "text-red-600 bg-red-50 border-red-200";
-		if (cacheStatus === "stale") return "text-accent bg-accent/10 border-accent/20";
+		if (!isOnline) {
+			return "text-red-600 bg-red-50 border-red-200";
+		}
+		if (cacheStatus === "stale") {
+			return "text-accent bg-accent/10 border-accent/20";
+		}
 		return "text-green-600 bg-green-50 border-green-200";
 	};
 
 	const getStatusText = () => {
-		if (!isOnline) return "Modo Offline - Dados em Cache";
-		if (cacheStatus === "stale") return "Dados Podem Estar Desatualizados";
+		if (!isOnline) {
+			return "Modo Offline - Dados em Cache";
+		}
+		if (cacheStatus === "stale") {
+			return "Dados Podem Estar Desatualizados";
+		}
 		return "Sistema Online - Dados Atualizados";
 	};
 
@@ -596,34 +598,37 @@ export default function EmergencyAccessPage() {
 	}, []);
 
 	// Handle search
-	const handleSearch = useCallback(async (query: string) => {
-		setState((prev) => ({ ...prev, searchQuery: query, isSearching: true }));
+	const handleSearch = useCallback(
+		async (query: string) => {
+			setState((prev) => ({ ...prev, searchQuery: query, isSearching: true }));
 
-		// Simulate search delay
-		await new Promise((resolve) => setTimeout(resolve, 1000));
+			// Simulate search delay
+			await new Promise((resolve) => setTimeout(resolve, 1000));
 
-		// Mock search - in real implementation, this would search the database
-		if (query.toLowerCase().includes("joão") || query.includes("123.456.789-00")) {
-			setState((prev) => ({
-				...prev,
-				selectedPatient: mockPatient,
-				isSearching: false,
-			}));
-		} else if (query.length > 0) {
-			setState((prev) => ({
-				...prev,
-				selectedPatient: null,
-				isSearching: false,
-			}));
-			alert("Paciente não encontrado. Verifique o nome, CPF ou RG informado.");
-		} else {
-			setState((prev) => ({
-				...prev,
-				selectedPatient: null,
-				isSearching: false,
-			}));
-		}
-	}, []);
+			// Mock search - in real implementation, this would search the database
+			if (query.toLowerCase().includes("joão") || query.includes("123.456.789-00")) {
+				setState((prev) => ({
+					...prev,
+					selectedPatient: mockPatient,
+					isSearching: false,
+				}));
+			} else if (query.length > 0) {
+				setState((prev) => ({
+					...prev,
+					selectedPatient: null,
+					isSearching: false,
+				}));
+				alert("Paciente não encontrado. Verifique o nome, CPF ou RG informado.");
+			} else {
+				setState((prev) => ({
+					...prev,
+					selectedPatient: null,
+					isSearching: false,
+				}));
+			}
+		},
+		[mockPatient]
+	);
 
 	// Handle voice toggle
 	const handleVoiceToggle = useCallback(() => {
@@ -635,7 +640,6 @@ export default function EmergencyAccessPage() {
 
 		// In real implementation, this would start/stop voice recognition
 		if (!state.voiceActive) {
-			console.log("Voice recognition started");
 			// Simulate voice recognition after 3 seconds
 			setTimeout(() => {
 				handleSearch("João Silva");
@@ -654,7 +658,6 @@ export default function EmergencyAccessPage() {
 
 		// In real implementation, this would start/stop barcode scanner
 		if (!state.scannerActive) {
-			console.log("Barcode scanner started");
 			// Simulate barcode scan after 2 seconds
 			setTimeout(() => {
 				handleSearch("123.456.789-00");

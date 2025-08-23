@@ -13,12 +13,12 @@ import { ChevronRight, Home } from "lucide-react";
 import type React from "react";
 import { cn } from "@/lib/utils";
 
-interface BreadcrumbItem {
+type BreadcrumbItem = {
 	label: string;
 	href?: string;
 	isActive?: boolean;
 	icon?: React.ComponentType<{ className?: string }>;
-}
+};
 
 export function Breadcrumbs({ className }: { className?: string }) {
 	const location = useLocation();

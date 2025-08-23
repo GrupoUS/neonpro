@@ -12,22 +12,14 @@ import { ApiHelpers, type ApiResponse, apiClient } from "@neonpro/shared/api-cli
 import {
 	// Types
 	type AppointmentBase,
-	// Appointment schemas
-	AppointmentBaseSchema,
-	type AppointmentNote,
-	AppointmentNoteSchema,
 	type AppointmentPriority,
 	type AppointmentQuery,
 	AppointmentQuerySchema,
 	type AppointmentResponse,
 	AppointmentResponseSchema,
-	type AppointmentStats,
 	AppointmentStatsSchema,
 	type AppointmentStatus,
-	type AppointmentsListResponse,
 	AppointmentsListResponseSchema,
-	type AppointmentType,
-	type AvailabilitySlot,
 	AvailabilitySlotSchema,
 	type BulkUpdateAppointments,
 	BulkUpdateAppointmentsSchema,
@@ -37,38 +29,24 @@ import {
 	CompleteAppointmentSchema,
 	type CreateAppointment,
 	CreateAppointmentSchema,
-	type DailySchedule,
 	// Schedule schemas
 	DailyScheduleSchema,
-	type FileAttachment,
-	FileAttachmentSchema,
-	type PaymentMethod,
 	type PaymentStatus,
-	type Prescription,
-	PrescriptionSchema,
-	type ServicePerformed,
-	ServicePerformedSchema,
 	type UpdateAppointment,
 	UpdateAppointmentSchema,
-	type VitalSigns,
-	// Clinical data schemas
-	VitalSignsSchema,
-	type WeeklyScheduleResponse,
 	WeeklyScheduleResponseSchema,
 } from "@neonpro/shared/schemas";
 import { useCallback, useMemo } from "react";
-import { toast } from "sonner";
 // Import our enhanced query utilities
 import {
 	HealthcareQueryConfig,
 	InvalidationHelpers,
-	type PaginatedResponse,
 	QueryKeys,
 	useHealthcareQueryUtils,
 } from "@/lib/query/query-utils";
 
 // Appointment management context interface
-export interface AppointmentManagementContext {
+export type AppointmentManagementContext = {
 	// Basic operations
 	createAppointment: ReturnType<typeof useCreateAppointment>;
 	updateAppointment: ReturnType<typeof useUpdateAppointment>;
@@ -95,7 +73,7 @@ export interface AppointmentManagementContext {
 
 	// Utility functions
 	utils: ReturnType<typeof useAppointmentUtils>;
-}
+};
 
 // 📅 Get single appointment with clinical data
 export function useAppointment(id: string) {
@@ -114,7 +92,7 @@ export function useAppointment(id: string) {
 			if (!response.success) {
 				throw new Error(response.error?.code || "Failed to fetch appointment");
 			}
-			return response.data!.appointment;
+			return response.data?.appointment;
 		},
 		enableAuditLogging: true,
 		sensitiveData: true,
@@ -153,9 +131,9 @@ export function useAppointments(filters?: AppointmentQuery) {
 				throw new Error(response.error?.code || "Failed to fetch appointments");
 			}
 			return {
-				appointments: response.data!.appointments,
-				pagination: response.data!.pagination,
-				summary: response.data!.summary,
+				appointments: response.data?.appointments,
+				pagination: response.data?.pagination,
+				summary: response.data?.summary,
 			};
 		},
 		enableAuditLogging: true,
@@ -209,7 +187,7 @@ export function useCreateAppointment() {
 			QueryKeys.professionals.all(), // For schedules
 		],
 
-		onSuccess: (response, variables) => {
+		onSuccess: (response, _variables) => {
 			// Log appointment creation
 			const user = apiClient.auth.getUser();
 			if (user && response.appointment) {
@@ -272,7 +250,7 @@ export function useUpdateAppointment(id: string) {
 			oldData ? { ...oldData, ...appointmentData } : (oldData as AppointmentBase)
 		),
 
-		onSuccess: (response, variables) => {
+		onSuccess: (_response, _variables) => {
 			// Log appointment update
 			const user = apiClient.auth.getUser();
 			if (user) {
@@ -331,7 +309,7 @@ export function useCancelAppointment() {
 
 		invalidateQueries: [QueryKeys.appointments.all(), QueryKeys.appointments.stats(), QueryKeys.professionals.all()],
 
-		onSuccess: (response, variables) => {
+		onSuccess: (_response, variables) => {
 			// Log appointment cancellation
 			const user = apiClient.auth.getUser();
 			if (user) {
@@ -386,7 +364,7 @@ export function useDeleteAppointment() {
 			return { id };
 		},
 
-		onSuccess: (response, id) => {
+		onSuccess: (_response, id) => {
 			// Clear appointment from cache
 			queryUtils.queryClient.removeQueries({
 				queryKey: QueryKeys.appointments.detail(id),
@@ -450,7 +428,7 @@ export function useCheckInAppointment() {
 
 		invalidateQueries: [QueryKeys.appointments.all()],
 
-		onSuccess: (response, variables) => {
+		onSuccess: (_response, variables) => {
 			// Log check-in
 			const user = apiClient.auth.getUser();
 			if (user) {
@@ -513,7 +491,7 @@ export function useCompleteAppointment() {
 			QueryKeys.appointments.stats(),
 		],
 
-		onSuccess: (response, variables) => {
+		onSuccess: (_response, variables) => {
 			// Log appointment completion
 			const user = apiClient.auth.getUser();
 			if (user) {
@@ -682,7 +660,9 @@ export function useAvailableSlots() {
 					return await response.json();
 				},
 				validator: (data: unknown) => {
-					if (!Array.isArray(data)) throw new Error("Invalid available slots response");
+					if (!Array.isArray(data)) {
+						throw new Error("Invalid available slots response");
+					}
 					return data.map((slot) => AvailabilitySlotSchema.parse(slot));
 				},
 				enableAuditLogging: false,
@@ -780,14 +760,20 @@ export function useAppointmentUtils() {
 				const now = new Date();
 				const diffMs = appointmentTime.getTime() - now.getTime();
 
-				if (diffMs < 0) return "Vencido";
+				if (diffMs < 0) {
+					return "Vencido";
+				}
 
 				const diffDays = Math.floor(diffMs / (24 * 60 * 60 * 1000));
 				const diffHours = Math.floor((diffMs % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
 				const diffMinutes = Math.floor((diffMs % (60 * 60 * 1000)) / (60 * 1000));
 
-				if (diffDays > 0) return `${diffDays} dias`;
-				if (diffHours > 0) return `${diffHours}h${diffMinutes > 0 ? ` ${diffMinutes}min` : ""}`;
+				if (diffDays > 0) {
+					return `${diffDays} dias`;
+				}
+				if (diffHours > 0) {
+					return `${diffHours}h${diffMinutes > 0 ? ` ${diffMinutes}min` : ""}`;
+				}
 				return `${diffMinutes} minutos`;
 			},
 

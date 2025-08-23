@@ -496,7 +496,7 @@ describe("Patient Management API - NeonPro Healthcare", () => {
 				const { userId, tenantId } = c.get("user");
 
 				// Soft delete (LGPD compliance - retain audit trail)
-				const patient = await mockPrisma.patient.update({
+				const _patient = await mockPrisma.patient.update({
 					where: { id: patientId, tenantId },
 					data: {
 						isActive: false,

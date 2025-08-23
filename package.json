@@ -31,8 +31,12 @@
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:install": "playwright install --with-deps",
     "test:all": "pnpm test:unit && pnpm test:integration && pnpm test:e2e",
+    "test:all:safe": "pnpm ci:check && pnpm test:unit:safe && echo \"✅ Safe test suite completed successfully\"",
+    "test:unit:safe": "vitest run apps/web/tests/core apps/web/tests/components/ui apps/web/tests/hooks/simple-auth.test.tsx --no-coverage",
     "test:healthcare": "pnpm test:integration -- --testNamePattern=\"(Patient|LGPD|Emergency)\"",
-    "ci": "pnpm format && pnpm lint:biome && pnpm type-check"
+    "ci": "pnpm format && pnpm lint:biome && pnpm type-check",
+    "ci:check": "pnpm format:check && pnpm lint:biome && pnpm type-check",
+    "ci:safe": "pnpm ci:check && pnpm test:unit:safe"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.2.0",

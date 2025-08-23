@@ -14,11 +14,11 @@
 
 import { Hono } from "hono";
 import { testClient } from "hono/testing";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 
 describe("🏥 Brazilian Healthcare Compliance Assessment", () => {
 	let app: Hono;
-	let client: any;
+	let _client: any;
 
 	const mockProfessional = {
 		id: "prof_123",
@@ -53,7 +53,7 @@ describe("🏥 Brazilian Healthcare Compliance Assessment", () => {
 		// Emergency access endpoint
 		app.post("/api/v1/emergency/access", (c) => c.json({ success: true, accessGranted: true }));
 
-		client = testClient(app);
+		_client = testClient(app);
 	});
 
 	describe("🩺 ANVISA Compliance", () => {
@@ -442,10 +442,10 @@ describe("🏥 Brazilian Healthcare Compliance Assessment", () => {
 
 // Mock implementation functions for testing
 function validateAnvisaDevice(device: any): boolean {
-	return device.anvisaRegistration && device.anvisaRegistration.startsWith("REG");
+	return device.anvisaRegistration?.startsWith("REG");
 }
 
-function logMedicalDeviceUsage(usage: any): boolean {
+function logMedicalDeviceUsage(_usage: any): boolean {
 	return true; // Mock implementation
 }
 
@@ -508,33 +508,33 @@ function validateSpecializationScope(prescription: any): boolean {
 }
 
 // Additional mock functions would be implemented here...
-const validateInformedConsent = (procedure: any) => ({
+const validateInformedConsent = (_procedure: any) => ({
 	required: true,
 	riskDisclosureComplete: true,
 	alternativesDiscussed: true,
 });
 
-const attemptMedicalRecordAccess = async (request: any) => ({
+const attemptMedicalRecordAccess = async (_request: any) => ({
 	allowed: false,
 	violation: "CONFIDENTIALITY_BREACH",
 	auditLogged: true,
 });
 
-const generateRecordIntegrityHash = (record: any) =>
+const generateRecordIntegrityHash = (_record: any) =>
 	"a1b2c3d4e5f6789012345678901234567890123456789012345678901234567890";
 
-const modifyMedicalRecord = async (modification: any) => ({
+const modifyMedicalRecord = async (_modification: any) => ({
 	auditTrail: true,
 	originalRecordPreserved: true,
 });
 
-const getEmergencyAccessAuditLog = async (accessId: string) => ({
+const getEmergencyAccessAuditLog = async (_accessId: string) => ({
 	emergencyType: "CARDIAC_ARREST",
 	justification: "Critical patient condition",
 	professionalCRM: "CRM/SP 123456",
 });
 
-const checkEmergencyAccessReview = async (accessId: string) => ({
+const checkEmergencyAccessReview = async (_accessId: string) => ({
 	requiresReview: true,
 	reviewDeadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
 	complianceNotified: true,

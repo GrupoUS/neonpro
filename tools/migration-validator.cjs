@@ -1,7 +1,8 @@
 "use strict";
-const { execSync } = require("child_process");
-const { readFileSync, existsSync } = require("fs");
-const { join } = require("path");
+const { execSync } = require("node:child_process");
+const { readFileSync, existsSync } = require("node:fs");
+const { join } = require("node:path");
+const { logger } = require("../apps/api/src/lib/logger");
 
 const rootDir = process.cwd();
 
@@ -21,11 +22,17 @@ class MigrationValidator {
 			info: "ℹ️ ",
 		}[type];
 
-		console.log(`${prefix} [${timestamp}] ${message}`);
+		logger.info(`${prefix} [${timestamp}] ${message}`);
 
-		if (type === "error") this.errors.push(message);
-		if (type === "warning") this.warnings.push(message);
-		if (type === "success") this.success.push(message);
+		if (type === "error") {
+			this.errors.push(message);
+		}
+		if (type === "warning") {
+			this.warnings.push(message);
+		}
+		if (type === "success") {
+			this.success.push(message);
+		}
 	}
 
 	// Validar estrutura básica do Turborepo
@@ -69,7 +76,7 @@ class MigrationValidator {
 			const requiredTasks = ["build", "dev", "lint", "test", "type-check"];
 
 			for (const task of requiredTasks) {
-				if (turboConfig.tasks && turboConfig.tasks[task]) {
+				if (turboConfig.tasks?.[task]) {
 					this.log(`Task configurada: ${task}`, "success");
 				} else {
 					this.log(`Task ausente: ${task}`, "warning");
@@ -120,22 +127,22 @@ class MigrationValidator {
 
 	// Executar todas as validações
 	runAll() {
-		console.log("🚀 INICIANDO VALIDAÇÃO COMPLETA DA MIGRAÇÃO TURBOREPO\n");
+		logger.info("🚀 INICIANDO VALIDAÇÃO COMPLETA DA MIGRAÇÃO TURBOREPO\n");
 
 		this.validateTurborepoStructure();
 		this.validateTurboConfig();
 		this.validatePnpmWorkspace();
 
-		console.log("\n📊 RELATÓRIO FINAL:");
-		console.log(`✅ Sucessos: ${this.success.length}`);
-		console.log(`⚠️  Avisos: ${this.warnings.length}`);
-		console.log(`❌ Erros: ${this.errors.length}`);
+		logger.info("\n📊 RELATÓRIO FINAL:");
+		logger.info(`✅ Sucessos: ${this.success.length}`);
+		logger.info(`⚠️  Avisos: ${this.warnings.length}`);
+		logger.info(`❌ Erros: ${this.errors.length}`);
 
 		if (this.errors.length === 0) {
-			console.log("\n🎉 MIGRAÇÃO VALIDADA COM SUCESSO!");
+			logger.info("\n🎉 MIGRAÇÃO VALIDADA COM SUCESSO!");
 			return true;
 		}
-		console.log("\n🔧 ERROS ENCONTRADOS - REQUER ATENÇÃO");
+		logger.info("\n🔧 ERROS ENCONTRADOS - REQUER ATENÇÃO");
 		return false;
 	}
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { AlertTriangle, Calendar, CheckCircle, Clock, Mail, Plus, Settings, Trash2, Users, X } from "lucide-react";
+import { AlertTriangle, Calendar, CheckCircle, Plus, Settings, Trash2, X } from "lucide-react";
 import { useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -17,7 +17,7 @@ type ScheduleFrequency = "daily" | "weekly" | "monthly" | "quarterly" | "yearly"
 type ScheduleStatus = "active" | "paused" | "error";
 type DeliveryMethod = "email" | "download" | "both";
 
-interface ScheduleConfig {
+type ScheduleConfig = {
 	id: string;
 	reportId: string;
 	reportName: string;
@@ -33,15 +33,15 @@ interface ScheduleConfig {
 	lastRun?: string;
 	lgpdCompliant: boolean;
 	retentionDays: number;
-}
+};
 
-interface SchedulingModalProps {
+type SchedulingModalProps = {
 	isOpen: boolean;
 	onClose: () => void;
 	reportId: string;
 	reportName: string;
 	onScheduleCreated: (schedule: ScheduleConfig) => void;
-}
+};
 
 // Mock existing schedules
 const existingSchedules: ScheduleConfig[] = [
@@ -97,7 +97,9 @@ export default function SchedulingModal({
 	const [retentionDays, setRetentionDays] = useState(30);
 	const [activeTab, setActiveTab] = useState("create");
 
-	if (!isOpen) return null;
+	if (!isOpen) {
+		return null;
+	}
 
 	const handleAddRecipient = () => {
 		setRecipients([...recipients, ""]);

@@ -1,5 +1,4 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import React from "react";
 import { vi } from "vitest";
 import "@testing-library/jest-dom";
 import { CriticalErrorBoundary, ErrorBoundary, withErrorBoundary } from "../../../../../components/ui/error-boundary";

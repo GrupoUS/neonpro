@@ -3,14 +3,7 @@
  * Realistic data for testing and demonstration of the treatments management system
  */
 
-import type {
-	PatientConsent,
-	TreatmentPhoto,
-	TreatmentPlan,
-	TreatmentProgress,
-	TreatmentProtocol,
-	TreatmentSession,
-} from "@/types/treatments";
+import type { TreatmentPlan } from "@/types/treatments";
 
 // Mock Treatment Plans - Brazilian Aesthetic Medicine
 export const mockTreatmentPlans: TreatmentPlan[] = [

@@ -2,7 +2,7 @@
 // Supabase Realtime integration with cache synchronization
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock Supabase realtime channel
@@ -78,7 +78,7 @@ const mockAppointment = {
 	scheduled_at: new Date().toISOString(),
 	status: "scheduled",
 }; // Test wrapper component
-const TestWrapper = ({ children }: { children: React.ReactNode }) => {
+const _TestWrapper = ({ children }: { children: React.ReactNode }) => {
 	const queryClient = new QueryClient({
 		defaultOptions: {
 			queries: { retry: false },
@@ -193,7 +193,7 @@ describe("Real-time Updates Integration Tests", () => {
 
 			let realtimeCallback: ((payload: any) => void) | null = null;
 
-			mockRealtimeHook.subscribe.mockImplementation((channelName, callback) => {
+			mockRealtimeHook.subscribe.mockImplementation((_channelName, callback) => {
 				realtimeCallback = callback;
 				mockRealtimeHook.isConnected = true;
 				return mockChannel;
@@ -244,7 +244,7 @@ describe("Real-time Updates Integration Tests", () => {
 
 			let realtimeCallback: ((payload: any) => void) | null = null;
 
-			mockRealtimeHook.subscribe.mockImplementation((channelName, callback) => {
+			mockRealtimeHook.subscribe.mockImplementation((_channelName, callback) => {
 				realtimeCallback = callback;
 				return mockChannel;
 			});
@@ -254,12 +254,8 @@ describe("Real-time Updates Integration Tests", () => {
 
 			// Setup the subscription callback with a reference to the same queryClient
 			const subscriptionCallback = (payload: any) => {
-				console.log("Subscription callback called with:", payload);
 				if (payload.eventType === "UPDATE") {
 					const currentData = queryClient.getQueryData(["patients", payload.new.id]) as any;
-
-					console.log("Current data before update:", currentData);
-					console.log("Payload new data:", payload.new);
 
 					// Conflict resolution: use latest timestamp
 					if (!currentData || new Date(payload.new.updated_at) > new Date(currentData.updated_at)) {
@@ -267,8 +263,7 @@ describe("Real-time Updates Integration Tests", () => {
 						queryClient.setQueryData(["patients", payload.new.id], payload.new);
 
 						// Verify data was set correctly
-						const verifyData = queryClient.getQueryData(["patients", payload.new.id]);
-						console.log("Data after setQueryData:", verifyData);
+						const _verifyData = queryClient.getQueryData(["patients", payload.new.id]);
 					}
 				}
 			};
@@ -311,9 +306,6 @@ describe("Real-time Updates Integration Tests", () => {
 			await waitFor(
 				async () => {
 					const finalPatient = queryClient.getQueryData(["patients", "patient-123"]) as any;
-
-					// Debug: log what we actually get
-					console.log("Final patient data:", finalPatient);
 
 					expect(finalPatient).toBeDefined();
 					expect(finalPatient?.email).toBe("joao.updated@email.com");
@@ -387,7 +379,7 @@ describe("Real-time Updates Integration Tests", () => {
 			let conflictDetected = false;
 			let realtimeCallback: ((payload: any) => void) | null = null;
 
-			mockRealtimeHook.subscribe.mockImplementation((channelName, callback) => {
+			mockRealtimeHook.subscribe.mockImplementation((_channelName, callback) => {
 				realtimeCallback = callback;
 				return mockChannel;
 			});
@@ -486,7 +478,7 @@ describe("Real-time Updates Integration Tests", () => {
 
 			let realtimeCallback: ((payload: any) => void) | null = null;
 
-			mockRealtimeHook.subscribe.mockImplementation((channelName, callback) => {
+			mockRealtimeHook.subscribe.mockImplementation((_channelName, callback) => {
 				realtimeCallback = callback;
 				return mockChannel;
 			});
@@ -529,7 +521,7 @@ describe("Real-time Updates Integration Tests", () => {
 		it("should handle connection drops gracefully with reconnection", async () => {
 			let connectionAttempts = 0;
 
-			mockRealtimeHook.subscribe.mockImplementation((channelName, callback) => {
+			mockRealtimeHook.subscribe.mockImplementation((_channelName, _callback) => {
 				connectionAttempts++;
 
 				if (connectionAttempts === 1) {

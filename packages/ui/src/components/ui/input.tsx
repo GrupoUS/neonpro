@@ -147,7 +147,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 		// Determine validation state
 		const getValidationState = useCallback(
 			(val: string) => {
-				if (!(showValidation && val)) return "none";
+				if (!(showValidation && val)) {
+					return "none";
+				}
 
 				// Basic validation patterns for healthcare data
 				const validationPatterns = {

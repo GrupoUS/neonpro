@@ -7,20 +7,21 @@
  */
 
 import type { MiddlewareHandler } from "hono";
+import { logger } from "../lib/logger";
 
 // Rate limiting configuration per endpoint
-interface RateLimitConfig {
+type RateLimitConfig = {
 	windowMs: number; // Time window in milliseconds
 	maxRequests: number; // Max requests per window
 	message?: string;
 	skipSuccessfulRequests?: boolean;
 	skipFailedRequests?: boolean;
 	keyGenerator?: (c: any) => string;
-}
+};
 
 // In-memory store for development (production should use Redis)
 class MemoryStore {
-	private store = new Map<string, { count: number; resetTime: number }>();
+	private readonly store = new Map<string, { count: number; resetTime: number }>();
 
 	get(key: string): { count: number; resetTime: number } | undefined {
 		const record = this.store.get(key);
@@ -195,7 +196,13 @@ export const rateLimitMiddleware = (config?: Partial<RateLimitConfig>): Middlewa
 				}
 			}
 		} catch (error) {
-			console.error("Rate limiting error:", error);
+			logger.error("Rate limiting error", error, {
+				endpoint: c.req.path,
+				method: c.req.method,
+				ip:
+					c.req.header("CF-Connecting-IP") || c.req.header("X-Forwarded-For") || c.req.header("X-Real-IP") || "unknown",
+				userAgent: c.req.header("User-Agent"),
+			});
 			// On error, allow the request to continue
 			await next();
 		}

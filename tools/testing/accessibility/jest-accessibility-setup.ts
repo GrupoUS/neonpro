@@ -12,14 +12,14 @@ import { toBeAccessibleForHealthcare } from "./axe-core-setup";
 // Extend Jest matchers with healthcare-specific accessibility testing
 declare global {
 	namespace jest {
-		interface Matchers<R> {
+		type Matchers<R> = {
 			toBeAccessibleForHealthcare(scenario?: string): Promise<R>;
 			toHaveHealthcareCompliantContrast(): R;
 			toSupportKeyboardNavigation(): Promise<R>;
 			toBeScreenReaderAccessible(): Promise<R>;
 			toBeLGPDAccessible(): Promise<R>;
 			toHaveEmergencyAccessibility(): Promise<R>;
-		}
+		};
 	}
 }
 
@@ -270,13 +270,13 @@ export class HealthcareTestUtils {
 	}
 
 	// Helper methods
-	private static getColorLuminance(color: string): number {
+	private static getColorLuminance(_color: string): number {
 		// Simplified luminance calculation
 		// In production, use a proper color manipulation library
 		return 0.5; // Placeholder
 	}
 
-	private static calculateContrastRatio(bg: number, text: number): number {
+	private static calculateContrastRatio(_bg: number, _text: number): number {
 		// Simplified contrast ratio calculation
 		// In production, implement proper WCAG contrast calculation
 		return 4.5; // Placeholder
@@ -308,7 +308,7 @@ export class HealthcareTestUtils {
 		return element.hasAttribute("onkeydown") || element.hasAttribute("onkeyup") || element.hasAttribute("onkeypress");
 	}
 
-	private static checkTabOrder(element: HTMLElement): string[] {
+	private static checkTabOrder(_element: HTMLElement): string[] {
 		// Simplified tab order check
 		return [];
 	}
@@ -342,7 +342,7 @@ export class HealthcareTestUtils {
 		return issues;
 	}
 
-	private static checkSemanticStructure(element: HTMLElement): string[] {
+	private static checkSemanticStructure(_element: HTMLElement): string[] {
 		// Check for proper heading hierarchy, landmarks, etc.
 		return [];
 	}

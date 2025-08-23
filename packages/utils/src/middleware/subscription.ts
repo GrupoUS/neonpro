@@ -3,18 +3,24 @@
  * Handles subscription validation, route protection, and caching
  */
 
-export interface SubscriptionStatus {
+export type SubscriptionStatus = {
 	id: string;
 	status: "active" | "expired" | "cancelled" | "pending";
 	features: string[];
 	expiresAt?: Date;
 	planType: "basic" | "premium" | "enterprise";
-}
+};
 
 export const validateSubscriptionStatus = (subscription: SubscriptionStatus | null): boolean => {
-	if (!subscription) return false;
-	if (subscription.status === "active") return true;
-	if (subscription.status === "expired" || subscription.status === "cancelled") return false;
+	if (!subscription) {
+		return false;
+	}
+	if (subscription.status === "active") {
+		return true;
+	}
+	if (subscription.status === "expired" || subscription.status === "cancelled") {
+		return false;
+	}
 	return false;
 };
 
@@ -30,7 +36,9 @@ export const routeProtection = {
 	},
 
 	shouldRedirectToUpgrade: (subscription: SubscriptionStatus | null, route: string): boolean => {
-		if (routeProtection.isPublicRoute(route)) return false;
+		if (routeProtection.isPublicRoute(route)) {
+			return false;
+		}
 		if (routeProtection.isPremiumRoute(route) && (!subscription || subscription.status !== "active")) {
 			return true;
 		}
@@ -66,13 +74,11 @@ export const subscriptionCaching = {
 };
 
 export const errorHandling = {
-	handleNetworkError: (error: Error): SubscriptionStatus | null => {
-		console.error("Network error in subscription check:", error);
+	handleNetworkError: (_error: Error): SubscriptionStatus | null => {
 		return null;
 	},
 
-	handleInvalidResponse: (response: any): SubscriptionStatus | null => {
-		console.error("Invalid subscription response:", response);
+	handleInvalidResponse: (_response: any): SubscriptionStatus | null => {
 		return null;
 	},
 };

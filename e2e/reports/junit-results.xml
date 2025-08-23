@@ -1,5 +1,5 @@
-<testsuites id="" name="" tests="429" failures="0" skipped="429" errors="0" time="0.36683699999999997">
-<testsuite name="tests\accessibility-healthcare.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="chromium-desktop" tests="5" failures="0" skipped="5" time="0" errors="0">
+<testsuites id="" name="" tests="429" failures="0" skipped="429" errors="0" time="0.1981740000000001">
+<testsuite name="tests\accessibility-healthcare.spec.ts" timestamp="2025-08-22T22:45:04.630Z" hostname="chromium-desktop" tests="5" failures="0" skipped="5" time="0" errors="0">
 <testcase name="[chromium-desktop] Healthcare Accessibility Compliance › should meet WCAG 2.1 AA standards for patient dashboard" classname="tests\accessibility-healthcare.spec.ts" time="0">
 <skipped>
 </skipped>
@@ -21,7 +21,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="tests\auth\authentication.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="chromium-desktop" tests="21" failures="0" skipped="21" time="0" errors="0">
+<testsuite name="tests\auth\authentication.spec.ts" timestamp="2025-08-22T22:45:04.630Z" hostname="chromium-desktop" tests="21" failures="0" skipped="21" time="0" errors="0">
 <testcase name="[chromium-desktop] 🔐 Authentication Flow - Critical E2E › 🚪 Login/Logout Complete Flow › should complete full login flow with valid credentials" classname="tests\auth\authentication.spec.ts" time="0">
 <skipped>
 </skipped>
@@ -107,7 +107,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="tests\auth\role-based-access.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="chromium-desktop" tests="19" failures="0" skipped="19" time="0" errors="0">
+<testsuite name="tests\auth\role-based-access.spec.ts" timestamp="2025-08-22T22:45:04.630Z" hostname="chromium-desktop" tests="19" failures="0" skipped="19" time="0" errors="0">
 <testcase name="[chromium-desktop] Doctor Role Access Control › should have full access to patient medical records" classname="tests\auth\role-based-access.spec.ts" time="0">
 <skipped>
 </skipped>
@@ -185,7 +185,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="tests\core\basic-functionality.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="chromium-desktop" tests="6" failures="0" skipped="6" time="0" errors="0">
+<testsuite name="tests\core\basic-functionality.spec.ts" timestamp="2025-08-22T22:45:04.630Z" hostname="chromium-desktop" tests="6" failures="0" skipped="6" time="0" errors="0">
 <testcase name="[chromium-desktop] NeonPro Healthcare Platform - Core E2E › should load the homepage successfully" classname="tests\core\basic-functionality.spec.ts" time="0">
 <skipped>
 </skipped>
@@ -211,7 +211,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="tests\healthcare\appointment-booking.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="chromium-desktop" tests="15" failures="0" skipped="15" time="0" errors="0">
+<testsuite name="tests\healthcare\appointment-booking.spec.ts" timestamp="2025-08-22T22:45:04.630Z" hostname="chromium-desktop" tests="15" failures="0" skipped="15" time="0" errors="0">
 <testcase name="[chromium-desktop] 📅 Appointment Booking - Critical E2E › 🔍 Search Availability &amp; Booking Flow › should display available appointment slots with healthcare context" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
 <skipped>
 </skipped>
@@ -273,7 +273,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="tests\healthcare\complete-workflows.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="chromium-desktop" tests="6" failures="0" skipped="6" time="0" errors="0">
+<testsuite name="tests\healthcare\complete-workflows.spec.ts" timestamp="2025-08-22T22:45:04.630Z" hostname="chromium-desktop" tests="6" failures="0" skipped="6" time="0" errors="0">
 <testcase name="[chromium-desktop] 🏥 Complete Healthcare Workflow E2E › 👤 Complete Patient Registration Journey" classname="tests\healthcare\complete-workflows.spec.ts" time="0">
 <skipped>
 </skipped>
@@ -299,7 +299,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="tests\healthcare\compliance-workflows.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="chromium-desktop" tests="6" failures="0" skipped="6" time="0" errors="0">
+<testsuite name="tests\healthcare\compliance-workflows.spec.ts" timestamp="2025-08-22T22:45:04.630Z" hostname="chromium-desktop" tests="6" failures="0" skipped="6" time="0" errors="0">
 <testcase name="[chromium-desktop] 🏥 Healthcare Compliance Workflows › LGPD Compliance: Data consent management" classname="tests\healthcare\compliance-workflows.spec.ts" time="0">
 <skipped>
 </skipped>
@@ -325,7 +325,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="tests\healthcare\emergency-access.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="chromium-desktop" tests="20" failures="0" skipped="20" time="0" errors="0">
+<testsuite name="tests\healthcare\emergency-access.spec.ts" timestamp="2025-08-22T22:45:04.630Z" hostname="chromium-desktop" tests="20" failures="0" skipped="20" time="0" errors="0">
 <testcase name="[chromium-desktop] 🚨 Emergency Access - Critical E2E › ⚡ Emergency Login (&lt;10s) › should complete emergency login within 10 seconds" classname="tests\healthcare\emergency-access.spec.ts" time="0">
 <skipped>
 </skipped>
@@ -407,7 +407,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="tests\healthcare\patient-registration.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="chromium-desktop" tests="19" failures="0" skipped="19" time="0" errors="0">
+<testsuite name="tests\healthcare\patient-registration.spec.ts" timestamp="2025-08-22T22:45:04.630Z" hostname="chromium-desktop" tests="19" failures="0" skipped="19" time="0" errors="0">
 <testcase name="[chromium-desktop] 👥 Patient Registration - Critical E2E › 📝 Complete Registration with CPF Validation › should complete full patient registration with valid data" classname="tests\healthcare\patient-registration.spec.ts" time="0">
 <skipped>
 </skipped>
@@ -485,7 +485,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="tests\homepage.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="chromium-desktop" tests="3" failures="0" skipped="3" time="0" errors="0">
+<testsuite name="tests\homepage.spec.ts" timestamp="2025-08-22T22:45:04.630Z" hostname="chromium-desktop" tests="3" failures="0" skipped="3" time="0" errors="0">
 <testcase name="[chromium-desktop] NeonPro Application › should load the homepage" classname="tests\homepage.spec.ts" time="0">
 <skipped>
 </skipped>
@@ -499,7 +499,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="tests\performance\performance-security.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="chromium-desktop" tests="11" failures="0" skipped="11" time="0" errors="0">
+<testsuite name="tests\performance\performance-security.spec.ts" timestamp="2025-08-22T22:45:04.630Z" hostname="chromium-desktop" tests="11" failures="0" skipped="11" time="0" errors="0">
 <testcase name="[chromium-desktop] ⚡ Performance &amp; Security E2E Tests › Performance: Page load times under 3 seconds" classname="tests\performance\performance-security.spec.ts" time="0">
 <skipped>
 </skipped>
@@ -545,7 +545,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="tests\security\security-compliance.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="chromium-desktop" tests="7" failures="0" skipped="7" time="0" errors="0">
+<testsuite name="tests\security\security-compliance.spec.ts" timestamp="2025-08-22T22:45:04.630Z" hostname="chromium-desktop" tests="7" failures="0" skipped="7" time="0" errors="0">
 <testcase name="[chromium-desktop] 🔒 Security &amp; Compliance Testing › 🛡️ Authentication Security Tests" classname="tests\security\security-compliance.spec.ts" time="0">
 <skipped>
 </skipped>
@@ -575,7 +575,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="tests\security\security-healthcare-specific.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="chromium-desktop" tests="5" failures="0" skipped="5" time="0" errors="0">
+<testsuite name="tests\security\security-healthcare-specific.spec.ts" timestamp="2025-08-22T22:45:04.630Z" hostname="chromium-desktop" tests="5" failures="0" skipped="5" time="0" errors="0">
 <testcase name="[chromium-desktop] 🏥 Healthcare Security Compliance › should enforce LGPD data protection in patient views" classname="tests\security\security-healthcare-specific.spec.ts" time="0">
 <skipped>
 </skipped>
@@ -597,7 +597,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="tests\accessibility-healthcare.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="webkit-desktop" tests="5" failures="0" skipped="5" time="0" errors="0">
+<testsuite name="tests\accessibility-healthcare.spec.ts" timestamp="2025-08-22T22:45:04.630Z" hostname="webkit-desktop" tests="5" failures="0" skipped="5" time="0" errors="0">
 <testcase name="[webkit-desktop] Healthcare Accessibility Compliance › should meet WCAG 2.1 AA standards for patient dashboard" classname="tests\accessibility-healthcare.spec.ts" time="0">
 <skipped>
 </skipped>
@@ -619,7 +619,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="tests\auth\authentication.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="webkit-desktop" tests="21" failures="0" skipped="21" time="0" errors="0">
+<testsuite name="tests\auth\authentication.spec.ts" timestamp="2025-08-22T22:45:04.630Z" hostname="webkit-desktop" tests="21" failures="0" skipped="21" time="0" errors="0">
 <testcase name="[webkit-desktop] 🔐 Authentication Flow - Critical E2E › 🚪 Login/Logout Complete Flow › should complete full login flow with valid credentials" classname="tests\auth\authentication.spec.ts" time="0">
 <skipped>
 </skipped>
@@ -705,7 +705,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="tests\auth\role-based-access.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="webkit-desktop" tests="19" failures="0" skipped="19" time="0" errors="0">
+<testsuite name="tests\auth\role-based-access.spec.ts" timestamp="2025-08-22T22:45:04.630Z" hostname="webkit-desktop" tests="19" failures="0" skipped="19" time="0" errors="0">
 <testcase name="[webkit-desktop] Doctor Role Access Control › should have full access to patient medical records" classname="tests\auth\role-based-access.spec.ts" time="0">
 <skipped>
 </skipped>
@@ -783,7 +783,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="tests\core\basic-functionality.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="webkit-desktop" tests="6" failures="0" skipped="6" time="0" errors="0">
+<testsuite name="tests\core\basic-functionality.spec.ts" timestamp="2025-08-22T22:45:04.630Z" hostname="webkit-desktop" tests="6" failures="0" skipped="6" time="0" errors="0">
 <testcase name="[webkit-desktop] NeonPro Healthcare Platform - Core E2E › should load the homepage successfully" classname="tests\core\basic-functionality.spec.ts" time="0">
 <skipped>
 </skipped>
@@ -809,7 +809,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="tests\healthcare\appointment-booking.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="webkit-desktop" tests="15" failures="0" skipped="15" time="0" errors="0">
+<testsuite name="tests\healthcare\appointment-booking.spec.ts" timestamp="2025-08-22T22:45:04.630Z" hostname="webkit-desktop" tests="15" failures="0" skipped="15" time="0" errors="0">
 <testcase name="[webkit-desktop] 📅 Appointment Booking - Critical E2E › 🔍 Search Availability &amp; Booking Flow › should display available appointment slots with healthcare context" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
 <skipped>
 </skipped>
@@ -871,7 +871,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="tests\healthcare\complete-workflows.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="webkit-desktop" tests="6" failures="0" skipped="6" time="0" errors="0">
+<testsuite name="tests\healthcare\complete-workflows.spec.ts" timestamp="2025-08-22T22:45:04.630Z" hostname="webkit-desktop" tests="6" failures="0" skipped="6" time="0" errors="0">
 <testcase name="[webkit-desktop] 🏥 Complete Healthcare Workflow E2E › 👤 Complete Patient Registration Journey" classname="tests\healthcare\complete-workflows.spec.ts" time="0">
 <skipped>
 </skipped>
@@ -897,7 +897,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="tests\healthcare\compliance-workflows.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="webkit-desktop" tests="6" failures="0" skipped="6" time="0" errors="0">
+<testsuite name="tests\healthcare\compliance-workflows.spec.ts" timestamp="2025-08-22T22:45:04.630Z" hostname="webkit-desktop" tests="6" failures="0" skipped="6" time="0" errors="0">
 <testcase name="[webkit-desktop] 🏥 Healthcare Compliance Workflows › LGPD Compliance: Data consent management" classname="tests\healthcare\compliance-workflows.spec.ts" time="0">
 <skipped>
 </skipped>
@@ -923,7 +923,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="tests\healthcare\emergency-access.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="webkit-desktop" tests="20" failures="0" skipped="20" time="0" errors="0">
+<testsuite name="tests\healthcare\emergency-access.spec.ts" timestamp="2025-08-22T22:45:04.630Z" hostname="webkit-desktop" tests="20" failures="0" skipped="20" time="0" errors="0">
 <testcase name="[webkit-desktop] 🚨 Emergency Access - Critical E2E › ⚡ Emergency Login (&lt;10s) › should complete emergency login within 10 seconds" classname="tests\healthcare\emergency-access.spec.ts" time="0">
 <skipped>
 </skipped>
@@ -1005,7 +1005,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="tests\healthcare\patient-registration.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="webkit-desktop" tests="19" failures="0" skipped="19" time="0" errors="0">
+<testsuite name="tests\healthcare\patient-registration.spec.ts" timestamp="2025-08-22T22:45:04.630Z" hostname="webkit-desktop" tests="19" failures="0" skipped="19" time="0" errors="0">
 <testcase name="[webkit-desktop] 👥 Patient Registration - Critical E2E › 📝 Complete Registration with CPF Validation › should complete full patient registration with valid data" classname="tests\healthcare\patient-registration.spec.ts" time="0">
 <skipped>
 </skipped>
@@ -1083,7 +1083,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="tests\homepage.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="webkit-desktop" tests="3" failures="0" skipped="3" time="0" errors="0">
+<testsuite name="tests\homepage.spec.ts" timestamp="2025-08-22T22:45:04.630Z" hostname="webkit-desktop" tests="3" failures="0" skipped="3" time="0" errors="0">
 <testcase name="[webkit-desktop] NeonPro Application › should load the homepage" classname="tests\homepage.spec.ts" time="0">
 <skipped>
 </skipped>
@@ -1097,7 +1097,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="tests\performance\performance-security.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="webkit-desktop" tests="11" failures="0" skipped="11" time="0" errors="0">
+<testsuite name="tests\performance\performance-security.spec.ts" timestamp="2025-08-22T22:45:04.630Z" hostname="webkit-desktop" tests="11" failures="0" skipped="11" time="0" errors="0">
 <testcase name="[webkit-desktop] ⚡ Performance &amp; Security E2E Tests › Performance: Page load times under 3 seconds" classname="tests\performance\performance-security.spec.ts" time="0">
 <skipped>
 </skipped>
@@ -1143,7 +1143,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="tests\security\security-compliance.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="webkit-desktop" tests="7" failures="0" skipped="7" time="0" errors="0">
+<testsuite name="tests\security\security-compliance.spec.ts" timestamp="2025-08-22T22:45:04.630Z" hostname="webkit-desktop" tests="7" failures="0" skipped="7" time="0" errors="0">
 <testcase name="[webkit-desktop] 🔒 Security &amp; Compliance Testing › 🛡️ Authentication Security Tests" classname="tests\security\security-compliance.spec.ts" time="0">
 <skipped>
 </skipped>
@@ -1173,7 +1173,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="tests\security\security-healthcare-specific.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="webkit-desktop" tests="5" failures="0" skipped="5" time="0" errors="0">
+<testsuite name="tests\security\security-healthcare-specific.spec.ts" timestamp="2025-08-22T22:45:04.630Z" hostname="webkit-desktop" tests="5" failures="0" skipped="5" time="0" errors="0">
 <testcase name="[webkit-desktop] 🏥 Healthcare Security Compliance › should enforce LGPD data protection in patient views" classname="tests\security\security-healthcare-specific.spec.ts" time="0">
 <skipped>
 </skipped>
@@ -1195,7 +1195,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="tests\accessibility-healthcare.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="firefox-desktop" tests="5" failures="0" skipped="5" time="0" errors="0">
+<testsuite name="tests\accessibility-healthcare.spec.ts" timestamp="2025-08-22T22:45:04.630Z" hostname="firefox-desktop" tests="5" failures="0" skipped="5" time="0" errors="0">
 <testcase name="[firefox-desktop] Healthcare Accessibility Compliance › should meet WCAG 2.1 AA standards for patient dashboard" classname="tests\accessibility-healthcare.spec.ts" time="0">
 <skipped>
 </skipped>
@@ -1217,7 +1217,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="tests\auth\authentication.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="firefox-desktop" tests="21" failures="0" skipped="21" time="0" errors="0">
+<testsuite name="tests\auth\authentication.spec.ts" timestamp="2025-08-22T22:45:04.630Z" hostname="firefox-desktop" tests="21" failures="0" skipped="21" time="0" errors="0">
 <testcase name="[firefox-desktop] 🔐 Authentication Flow - Critical E2E › 🚪 Login/Logout Complete Flow › should complete full login flow with valid credentials" classname="tests\auth\authentication.spec.ts" time="0">
 <skipped>
 </skipped>
@@ -1303,7 +1303,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="tests\auth\role-based-access.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="firefox-desktop" tests="19" failures="0" skipped="19" time="0" errors="0">
+<testsuite name="tests\auth\role-based-access.spec.ts" timestamp="2025-08-22T22:45:04.630Z" hostname="firefox-desktop" tests="19" failures="0" skipped="19" time="0" errors="0">
 <testcase name="[firefox-desktop] Doctor Role Access Control › should have full access to patient medical records" classname="tests\auth\role-based-access.spec.ts" time="0">
 <skipped>
 </skipped>
@@ -1381,7 +1381,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="tests\core\basic-functionality.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="firefox-desktop" tests="6" failures="0" skipped="6" time="0" errors="0">
+<testsuite name="tests\core\basic-functionality.spec.ts" timestamp="2025-08-22T22:45:04.630Z" hostname="firefox-desktop" tests="6" failures="0" skipped="6" time="0" errors="0">
 <testcase name="[firefox-desktop] NeonPro Healthcare Platform - Core E2E › should load the homepage successfully" classname="tests\core\basic-functionality.spec.ts" time="0">
 <skipped>
 </skipped>
@@ -1407,7 +1407,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="tests\healthcare\appointment-booking.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="firefox-desktop" tests="15" failures="0" skipped="15" time="0" errors="0">
+<testsuite name="tests\healthcare\appointment-booking.spec.ts" timestamp="2025-08-22T22:45:04.630Z" hostname="firefox-desktop" tests="15" failures="0" skipped="15" time="0" errors="0">
 <testcase name="[firefox-desktop] 📅 Appointment Booking - Critical E2E › 🔍 Search Availability &amp; Booking Flow › should display available appointment slots with healthcare context" classname="tests\healthcare\appointment-booking.spec.ts" time="0">
 <skipped>
 </skipped>
@@ -1469,7 +1469,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="tests\healthcare\complete-workflows.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="firefox-desktop" tests="6" failures="0" skipped="6" time="0" errors="0">
+<testsuite name="tests\healthcare\complete-workflows.spec.ts" timestamp="2025-08-22T22:45:04.630Z" hostname="firefox-desktop" tests="6" failures="0" skipped="6" time="0" errors="0">
 <testcase name="[firefox-desktop] 🏥 Complete Healthcare Workflow E2E › 👤 Complete Patient Registration Journey" classname="tests\healthcare\complete-workflows.spec.ts" time="0">
 <skipped>
 </skipped>
@@ -1495,7 +1495,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="tests\healthcare\compliance-workflows.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="firefox-desktop" tests="6" failures="0" skipped="6" time="0" errors="0">
+<testsuite name="tests\healthcare\compliance-workflows.spec.ts" timestamp="2025-08-22T22:45:04.630Z" hostname="firefox-desktop" tests="6" failures="0" skipped="6" time="0" errors="0">
 <testcase name="[firefox-desktop] 🏥 Healthcare Compliance Workflows › LGPD Compliance: Data consent management" classname="tests\healthcare\compliance-workflows.spec.ts" time="0">
 <skipped>
 </skipped>
@@ -1521,7 +1521,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="tests\healthcare\emergency-access.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="firefox-desktop" tests="20" failures="0" skipped="20" time="0" errors="0">
+<testsuite name="tests\healthcare\emergency-access.spec.ts" timestamp="2025-08-22T22:45:04.630Z" hostname="firefox-desktop" tests="20" failures="0" skipped="20" time="0" errors="0">
 <testcase name="[firefox-desktop] 🚨 Emergency Access - Critical E2E › ⚡ Emergency Login (&lt;10s) › should complete emergency login within 10 seconds" classname="tests\healthcare\emergency-access.spec.ts" time="0">
 <skipped>
 </skipped>
@@ -1603,7 +1603,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="tests\healthcare\patient-registration.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="firefox-desktop" tests="19" failures="0" skipped="19" time="0" errors="0">
+<testsuite name="tests\healthcare\patient-registration.spec.ts" timestamp="2025-08-22T22:45:04.630Z" hostname="firefox-desktop" tests="19" failures="0" skipped="19" time="0" errors="0">
 <testcase name="[firefox-desktop] 👥 Patient Registration - Critical E2E › 📝 Complete Registration with CPF Validation › should complete full patient registration with valid data" classname="tests\healthcare\patient-registration.spec.ts" time="0">
 <skipped>
 </skipped>
@@ -1681,7 +1681,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="tests\homepage.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="firefox-desktop" tests="3" failures="0" skipped="3" time="0" errors="0">
+<testsuite name="tests\homepage.spec.ts" timestamp="2025-08-22T22:45:04.630Z" hostname="firefox-desktop" tests="3" failures="0" skipped="3" time="0" errors="0">
 <testcase name="[firefox-desktop] NeonPro Application › should load the homepage" classname="tests\homepage.spec.ts" time="0">
 <skipped>
 </skipped>
@@ -1695,7 +1695,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="tests\performance\performance-security.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="firefox-desktop" tests="11" failures="0" skipped="11" time="0" errors="0">
+<testsuite name="tests\performance\performance-security.spec.ts" timestamp="2025-08-22T22:45:04.630Z" hostname="firefox-desktop" tests="11" failures="0" skipped="11" time="0" errors="0">
 <testcase name="[firefox-desktop] ⚡ Performance &amp; Security E2E Tests › Performance: Page load times under 3 seconds" classname="tests\performance\performance-security.spec.ts" time="0">
 <skipped>
 </skipped>
@@ -1741,7 +1741,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="tests\security\security-compliance.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="firefox-desktop" tests="7" failures="0" skipped="7" time="0" errors="0">
+<testsuite name="tests\security\security-compliance.spec.ts" timestamp="2025-08-22T22:45:04.630Z" hostname="firefox-desktop" tests="7" failures="0" skipped="7" time="0" errors="0">
 <testcase name="[firefox-desktop] 🔒 Security &amp; Compliance Testing › 🛡️ Authentication Security Tests" classname="tests\security\security-compliance.spec.ts" time="0">
 <skipped>
 </skipped>
@@ -1771,7 +1771,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="tests\security\security-healthcare-specific.spec.ts" timestamp="2025-08-22T22:03:51.693Z" hostname="firefox-desktop" tests="5" failures="0" skipped="5" time="0" errors="0">
+<testsuite name="tests\security\security-healthcare-specific.spec.ts" timestamp="2025-08-22T22:45:04.630Z" hostname="firefox-desktop" tests="5" failures="0" skipped="5" time="0" errors="0">
 <testcase name="[firefox-desktop] 🏥 Healthcare Security Compliance › should enforce LGPD data protection in patient views" classname="tests\security\security-healthcare-specific.spec.ts" time="0">
 <skipped>
 </skipped>

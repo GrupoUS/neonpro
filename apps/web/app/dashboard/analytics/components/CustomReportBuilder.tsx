@@ -1,63 +1,39 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import {
 	Activity,
 	BarChart3,
 	Calendar,
-	Clock,
-	Copy,
-	DollarSign,
 	Download,
 	Eye,
-	FileText,
-	Filter,
 	Grid,
 	Image,
 	Layers,
-	LineChart,
-	Mail,
-	MoreVertical,
-	PieChart,
 	Plus,
 	Save,
-	Settings,
-	Share,
 	Trash2,
 	Type,
-	Users,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 
 // Types for the Report Builder
-interface ReportElement {
+type ReportElement = {
 	id: string;
 	type: "chart" | "table" | "metric" | "text" | "image";
 	title: string;
 	config: any;
 	position: { x: number; y: number };
 	size: { width: number; height: number };
-}
+};
 
-interface ReportTemplate {
+type ReportTemplate = {
 	id: string;
 	name: string;
 	description: string;
@@ -67,9 +43,9 @@ interface ReportTemplate {
 	isPublic: boolean;
 	usageCount: number;
 	rating: number;
-}
+};
 
-interface ReportSchedule {
+type ReportSchedule = {
 	id: string;
 	reportId: string;
 	name: string;
@@ -78,7 +54,7 @@ interface ReportSchedule {
 	recipients: string[];
 	format: "pdf" | "excel" | "csv";
 	isActive: boolean;
-}
+};
 
 // Visual components maintaining NeonPro design
 const NeonGradientCard = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
@@ -259,24 +235,11 @@ export default function CustomReportBuilder() {
 		}
 	};
 
-	const exportReport = (format: "pdf" | "excel" | "csv") => {
-		// Implementation for exporting reports
-		console.log(`Exporting report as ${format}...`);
-	};
+	const exportReport = (_format: "pdf" | "excel" | "csv") => {};
 
-	const saveReport = () => {
-		// Implementation for saving reports
-		console.log("Saving report...", {
-			reportName,
-			reportDescription,
-			elements,
-		});
-	};
+	const saveReport = () => {};
 
-	const previewReport = () => {
-		// Implementation for previewing reports
-		console.log("Previewing report...");
-	};
+	const previewReport = () => {};
 
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
@@ -417,7 +380,7 @@ export default function CustomReportBuilder() {
 												</div>
 											) : (
 												<div className="space-y-2 p-4">
-													{elements.map((element, index) => (
+													{elements.map((element, _index) => (
 														<div
 															className="flex items-center justify-between rounded-lg border border-slate-700 bg-white/5 p-3"
 															key={element.id}

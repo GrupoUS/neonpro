@@ -49,7 +49,7 @@ export type LGPDPhotoConsentStatus =
 	| "refused"; // Consentimento recusado
 
 // Treatment Database Schema
-export interface TreatmentPlan {
+export type TreatmentPlan = {
 	id: string;
 	patient_id: string;
 	professional_id: string;
@@ -94,10 +94,10 @@ export interface TreatmentPlan {
 	updated_at: string;
 	created_by: string;
 	last_modified_by: string;
-}
+};
 
 // Treatment Session Record
-export interface TreatmentSession {
+export type TreatmentSession = {
 	id: string;
 	treatment_plan_id: string;
 	session_number: number;
@@ -144,10 +144,10 @@ export interface TreatmentSession {
 	created_at: string;
 	updated_at: string;
 	completed_by: string | null;
-}
+};
 
 // Treatment Protocol Library
-export interface TreatmentProtocol {
+export type TreatmentProtocol = {
 	id: string;
 	protocol_name: string;
 	category: AestheticTreatmentCategory;
@@ -197,10 +197,10 @@ export interface TreatmentProtocol {
 	created_by: string;
 	approved_by: string | null;
 	approval_date: string | null;
-}
+};
 
 // Before/After Photo Management (LGPD Compliant)
-export interface TreatmentPhoto {
+export type TreatmentPhoto = {
 	id: string;
 	treatment_session_id: string;
 	photo_type: "before" | "after" | "during" | "follow_up";
@@ -248,10 +248,10 @@ export interface TreatmentPhoto {
 	uploaded_by: string;
 	modified_at: string | null;
 	modified_by: string | null;
-}
+};
 
 // Patient Consent Management (Brazilian LGPD + CFM Compliance)
-export interface PatientConsent {
+export type PatientConsent = {
 	id: string;
 	patient_id: string;
 	treatment_plan_id: string | null;
@@ -304,10 +304,10 @@ export interface PatientConsent {
 	created_by: string;
 	verified_by: string | null;
 	verification_date: string | null;
-}
+};
 
 // Progress Tracking and Outcome Measurement
-export interface TreatmentProgress {
+export type TreatmentProgress = {
 	id: string;
 	treatment_plan_id: string;
 	session_id: string | null;
@@ -347,7 +347,7 @@ export interface TreatmentProgress {
 	recorded_by: string;
 	reviewed_by: string | null;
 	review_date: string | null;
-}
+};
 
 // Exported type unions for easy use
 export type AllTreatmentTypes = {

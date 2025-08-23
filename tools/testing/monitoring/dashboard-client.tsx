@@ -7,50 +7,36 @@
 
 import type React from "react";
 import { useCallback, useEffect, useState } from "react";
-import {
-	Area,
-	AreaChart,
-	Bar,
-	BarChart,
-	CartesianGrid,
-	Cell,
-	Line,
-	LineChart,
-	Pie,
-	PieChart,
-	ResponsiveContainer,
-	Tooltip,
-	XAxis,
-	YAxis,
-} from "recharts";
+import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { io, type Socket } from "socket.io-client";
+import { logger } from "../../../apps/api/src/lib/logger.js";
 
-interface MetricValue {
+type MetricValue = {
 	timestamp: number;
 	value: number;
 	metadata?: Record<string, any>;
-}
+};
 
-interface Alert {
+type Alert = {
 	id: string;
 	level: "info" | "warning" | "error" | "critical";
 	message: string;
 	timestamp: number;
 	resolved: boolean;
-}
+};
 
-interface HealthStatus {
+type HealthStatus = {
 	status: "healthy" | "degraded" | "down";
 	score: number;
 	lastCheck: number;
 	issues: string[];
-}
+};
 
-interface DashboardData {
+type DashboardData = {
 	health: HealthStatus;
 	alerts: Alert[];
 	metrics: Record<string, MetricValue[]>;
-}
+};
 
 const COLORS = {
 	healthy: "#10B981",
@@ -63,7 +49,7 @@ const COLORS = {
 };
 
 export const RealTimeDashboard: React.FC = () => {
-	const [socket, setSocket] = useState<Socket | null>(null);
+	const [_socket, setSocket] = useState<Socket | null>(null);
 	const [data, setData] = useState<DashboardData>({
 		health: {
 			status: "healthy",
@@ -83,12 +69,12 @@ export const RealTimeDashboard: React.FC = () => {
 
 		newSocket.on("connect", () => {
 			setConnected(true);
-			console.log("📱 Conectado ao monitor");
+			logger.info("📱 Conectado ao monitor");
 		});
 
 		newSocket.on("disconnect", () => {
 			setConnected(false);
-			console.log("📱 Desconectado do monitor");
+			logger.info("📱 Desconectado do monitor");
 		});
 
 		newSocket.on("initial-data", (initialData: DashboardData) => {
@@ -104,7 +90,9 @@ export const RealTimeDashboard: React.FC = () => {
 				const newMetrics = { ...prev.metrics };
 
 				Object.entries(update.metrics).forEach(([key, value]) => {
-					if (!newMetrics[key]) newMetrics[key] = [];
+					if (!newMetrics[key]) {
+						newMetrics[key] = [];
+					}
 					newMetrics[key].push({
 						timestamp: update.timestamp,
 						value: value as number,
@@ -148,7 +136,7 @@ export const RealTimeDashboard: React.FC = () => {
 	);
 
 	// 🎨 Obter cor baseada no status
-	const getStatusColor = (status: string) => {
+	const _getStatusColor = (status: string) => {
 		return COLORS[status as keyof typeof COLORS] || "#6B7280";
 	};
 
@@ -156,8 +144,8 @@ export const RealTimeDashboard: React.FC = () => {
 	const MetricsOverview: React.FC = () => (
 		<div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
 			{Object.entries(data.metrics).map(([key, values]) => {
-				const latestValue = values[values.length - 1]?.value || 0;
-				const previousValue = values[values.length - 2]?.value || latestValue;
+				const latestValue = values.at(-1)?.value || 0;
+				const previousValue = values.at(-2)?.value || latestValue;
 				const trend = latestValue - previousValue;
 
 				return (

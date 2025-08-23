@@ -10,13 +10,12 @@
 
 import { useSearch } from "@tanstack/react-router";
 import { Calendar, Clock, MapPin, User } from "lucide-react";
-import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function AppointmentsCalendar() {
-	const search = useSearch({ from: "/appointments" });
+	const _search = useSearch({ from: "/appointments" });
 
 	// Mock appointments data
 	const appointments = [

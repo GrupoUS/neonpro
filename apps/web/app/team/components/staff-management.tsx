@@ -241,9 +241,9 @@ const roleTranslations: Record<ProfessionalRole, string> = {
 };
 
 // Component interface
-interface StaffManagementProps {
+type StaffManagementProps = {
 	emergencyMode?: boolean;
-}
+};
 
 export function StaffManagement({ emergencyMode = false }: StaffManagementProps) {
 	const [searchQuery, setSearchQuery] = useState("");
@@ -263,17 +263,25 @@ export function StaffManagement({ emergencyMode = false }: StaffManagementProps)
 					staff.department.toLowerCase().includes(searchLower) ||
 					staff.cfmLicense?.cfmNumber.toLowerCase().includes(searchLower);
 
-				if (!matchesSearch) return false;
+				if (!matchesSearch) {
+					return false;
+				}
 			}
 
 			// Role filter
-			if (roleFilter !== "all" && staff.role !== roleFilter) return false;
+			if (roleFilter !== "all" && staff.role !== roleFilter) {
+				return false;
+			}
 
 			// Status filter
-			if (statusFilter !== "all" && staff.availabilityStatus !== statusFilter) return false;
+			if (statusFilter !== "all" && staff.availabilityStatus !== statusFilter) {
+				return false;
+			}
 
 			// Department filter
-			if (departmentFilter !== "all" && staff.department !== departmentFilter) return false;
+			if (departmentFilter !== "all" && staff.department !== departmentFilter) {
+				return false;
+			}
 
 			// Compliance filter
 			if (showComplianceOnly) {
@@ -282,7 +290,9 @@ export function StaffManagement({ emergencyMode = false }: StaffManagementProps)
 					staff.currentWeekHours > staff.weeklyHoursLimit ||
 					staff.cmeCompletedHours < staff.cmeRequiredHours;
 
-				if (!hasComplianceIssues) return false;
+				if (!hasComplianceIssues) {
+					return false;
+				}
 			}
 
 			return true;

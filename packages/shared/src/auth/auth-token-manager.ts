@@ -8,19 +8,19 @@
  * - Limpeza segura de dados sensíveis
  */
 
-export interface AuthTokens {
+export type AuthTokens = {
 	accessToken: string;
 	refreshToken: string;
 	expiresIn: number; // seconds
 	tokenType?: string;
-}
+};
 
-export interface AuthTokenData {
+export type AuthTokenData = {
 	accessToken: string;
 	refreshToken: string;
 	expiresAt: number; // timestamp
 	tokenType: string;
-}
+};
 
 export class AuthTokenManager {
 	private static instance: AuthTokenManager;
@@ -30,7 +30,7 @@ export class AuthTokenManager {
 	private tokenType = "Bearer";
 	private isRefreshing = false;
 	private refreshPromise: Promise<boolean> | null = null;
-	private refreshCallbacks: ((success: boolean) => void)[] = [];
+	private readonly refreshCallbacks: ((success: boolean) => void)[] = [];
 
 	// Storage keys
 	private static readonly STORAGE_KEYS = {
@@ -72,13 +72,11 @@ export class AuthTokenManager {
 				this.tokenType = tokenType || "Bearer";
 
 				// Validate loaded tokens
-				if (isNaN(this.expiresAt) || this.expiresAt < Date.now()) {
-					console.warn("Loaded expired tokens, clearing storage");
+				if (Number.isNaN(this.expiresAt) || this.expiresAt < Date.now()) {
 					this.clearTokens();
 				}
 			}
-		} catch (error) {
-			console.error("Error loading tokens from storage:", error);
+		} catch (_error) {
 			this.clearTokens();
 		}
 	} /**
@@ -96,8 +94,7 @@ export class AuthTokenManager {
 				localStorage.setItem(AuthTokenManager.STORAGE_KEYS.EXPIRES_AT, this.expiresAt.toString());
 				localStorage.setItem(AuthTokenManager.STORAGE_KEYS.TOKEN_TYPE, this.tokenType);
 			}
-		} catch (error) {
-			console.error("Error saving tokens to storage:", error);
+		} catch (_error) {
 			// Clear tokens if storage fails to prevent inconsistent state
 			this.clearTokens();
 		}
@@ -115,9 +112,7 @@ export class AuthTokenManager {
 			Object.values(AuthTokenManager.STORAGE_KEYS).forEach((key) => {
 				localStorage.removeItem(key);
 			});
-		} catch (error) {
-			console.error("Error clearing storage:", error);
-		}
+		} catch (_error) {}
 	} /**
 	 * Set authentication tokens
 	 */
@@ -181,7 +176,9 @@ export class AuthTokenManager {
 	 * Check if access token is expired
 	 */
 	isTokenExpired(): boolean {
-		if (!this.expiresAt) return true;
+		if (!this.expiresAt) {
+			return true;
+		}
 		return Date.now() >= this.expiresAt;
 	}
 
@@ -196,7 +193,9 @@ export class AuthTokenManager {
 	 * Get time until token expiration (in seconds)
 	 */
 	getTimeUntilExpiration(): number {
-		if (!this.expiresAt) return 0;
+		if (!this.expiresAt) {
+			return 0;
+		}
 		return Math.max(0, Math.floor((this.expiresAt - Date.now()) / 1000));
 	}
 
@@ -205,7 +204,6 @@ export class AuthTokenManager {
 	 */
 	async refreshAccessToken(): Promise<boolean> {
 		if (!this.refreshToken) {
-			console.warn("No refresh token available");
 			return false;
 		} // If already refreshing, wait for that operation
 		if (this.isRefreshing && this.refreshPromise) {
@@ -252,8 +250,7 @@ export class AuthTokenManager {
 			});
 
 			if (!response.ok) {
-				const errorData = await response.json().catch(() => null);
-				console.error("Token refresh failed:", response.status, errorData?.message);
+				const _errorData = await response.json().catch(() => null);
 
 				// If refresh token is invalid/expired, clear all tokens
 				if (response.status === 401 || response.status === 403) {
@@ -272,16 +269,11 @@ export class AuthTokenManager {
 					expiresIn: data.data.expiresIn,
 					tokenType: data.data.tokenType,
 				});
-
-				console.log("Token refresh successful");
 				return true;
 			}
-			console.error("Invalid refresh response format:", data);
 			this.clearTokens();
 			return false;
 		} catch (error) {
-			console.error("Token refresh network error:", error);
-
 			// Only clear tokens on network errors if the error suggests auth failure
 			if (error instanceof TypeError && error.message.includes("fetch")) {
 				// Network error - don't clear tokens, might be temporary
@@ -356,7 +348,9 @@ export class AuthTokenManager {
 	 * Check if tokens will expire soon (within specified minutes)
 	 */
 	willExpireSoon(minutes = 5): boolean {
-		if (!this.expiresAt) return true;
+		if (!this.expiresAt) {
+			return true;
+		}
 		const timeUntilExpiration = this.expiresAt - Date.now();
 		return timeUntilExpiration <= minutes * 60 * 1000;
 	}

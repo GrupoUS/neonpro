@@ -10,6 +10,10 @@ import { defineConfig } from "vitest/config";
  * REMOVED: Over-engineered compliance/security/AI testing
  */
 export default defineConfig({
+	esbuild: {
+		jsx: "automatic",
+		jsxImportSource: "react",
+	},
 	test: {
 		// Global configuration - enhanced isolation
 		globals: true,

@@ -5,7 +5,7 @@
  * Tests load handling, response times, memory usage, and scalability
  */
 
-import { performance } from "perf_hooks";
+import { performance } from "node:perf_hooks";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockAppointment, mockPatient, mockUser } from "../setup/final-test-setup";
 
@@ -67,7 +67,7 @@ class LoadTestSimulator {
 				}
 
 				return performance.now() - requestStart;
-			} catch (error) {
+			} catch (_error) {
 				failed++;
 				return performance.now() - requestStart;
 			}
@@ -87,7 +87,7 @@ class LoadTestSimulator {
 			results.push(completedTime);
 
 			// Remove completed requests
-			const completedIndex = requests.findIndex((r) => r === Promise.resolve(completedTime));
+			const completedIndex = requests.indexOf(Promise.resolve(completedTime));
 			if (completedIndex >= 0) {
 				requests.splice(completedIndex, 1);
 			}
@@ -351,13 +351,11 @@ describe("Performance Validation Tests - Final Production Readiness", () => {
 					...mockPatient,
 					id: `patient-${i}`,
 					name: `Patient ${i}`,
-					medical_history: Array(10)
-						.fill(null)
-						.map((_, j) => ({
-							id: `record-${i}-${j}`,
-							date: new Date().toISOString(),
-							notes: `Medical record ${j} for patient ${i}`,
-						})),
+					medical_history: new Array(10).fill(null).map((_, j) => ({
+						id: `record-${i}-${j}`,
+						date: new Date().toISOString(),
+						notes: `Medical record ${j} for patient ${i}`,
+					})),
 				};
 
 				patients.push(patient);
@@ -382,13 +380,11 @@ describe("Performance Validation Tests - Final Production Readiness", () => {
 
 			// Mock large appointment dataset
 			const appointmentCount = 10_000;
-			const appointments = Array(appointmentCount)
-				.fill(null)
-				.map((_, i) => ({
-					...mockAppointment,
-					id: `appointment-${i}`,
-					scheduled_at: new Date(Date.now() + i * 3_600_000).toISOString(),
-				}));
+			const appointments = new Array(appointmentCount).fill(null).map((_, i) => ({
+				...mockAppointment,
+				id: `appointment-${i}`,
+				scheduled_at: new Date(Date.now() + i * 3_600_000).toISOString(),
+			}));
 
 			global.fetch = vi.fn().mockResolvedValue({
 				status: 200,
@@ -430,12 +426,10 @@ describe("Performance Validation Tests - Final Production Readiness", () => {
 
 			// Create and process large temporary datasets
 			for (let cycle = 0; cycle < 5; cycle++) {
-				const tempData = Array(1000)
-					.fill(null)
-					.map((_, i) => ({
-						id: `temp-${cycle}-${i}`,
-						data: new Array(100).fill("x").join(""), // 100 char string
-					}));
+				const tempData = new Array(1000).fill(null).map((_, i) => ({
+					id: `temp-${cycle}-${i}`,
+					data: new Array(100).fill("x").join(""), // 100 char string
+				}));
 
 				// Process data
 				const processed = tempData.map((item) => ({
@@ -470,7 +464,7 @@ describe("Performance Validation Tests - Final Production Readiness", () => {
 			const mockUpdates = 100;
 
 			// Mock real-time subscription
-			const mockChannel = {
+			const _mockChannel = {
 				on: vi.fn(),
 				subscribe: vi.fn(),
 				unsubscribe: vi.fn(),
@@ -630,13 +624,11 @@ describe("Performance Validation Tests - Final Production Readiness", () => {
 			monitor.start();
 
 			const bulkSize = 100;
-			const patients = Array(bulkSize)
-				.fill(null)
-				.map((_, i) => ({
-					...mockPatient,
-					id: `bulk-patient-${i}`,
-					name: `Bulk Patient ${i}`,
-				}));
+			const patients = new Array(bulkSize).fill(null).map((_, i) => ({
+				...mockPatient,
+				id: `bulk-patient-${i}`,
+				name: `Bulk Patient ${i}`,
+			}));
 
 			// Mock bulk insert
 			global.fetch = vi.fn().mockImplementation(() => {
@@ -693,45 +685,43 @@ describe("Performance Validation Tests - Final Production Readiness", () => {
 			const actionsPerProfessional = 5;
 
 			const results = await Promise.all(
-				Array(professionalCount)
-					.fill(null)
-					.map(async (_, i) => {
-						const professional = {
-							id: `prof-${i}`,
-							crm: `${12_345 + i}-SP`,
-							actions: [],
-						};
+				new Array(professionalCount).fill(null).map(async (_, i) => {
+					const professional = {
+						id: `prof-${i}`,
+						crm: `${12_345 + i}-SP`,
+						actions: [],
+					};
 
-						// Simulate professional actions
-						for (let action = 0; action < actionsPerProfessional; action++) {
-							const actionStart = performance.now();
+					// Simulate professional actions
+					for (let action = 0; action < actionsPerProfessional; action++) {
+						const actionStart = performance.now();
 
-							try {
-								const response = await fetch("/api/patients", {
-									method: "GET",
-									headers: { Authorization: `Bearer token-${i}` },
-								});
+						try {
+							const response = await fetch("/api/patients", {
+								method: "GET",
+								headers: { Authorization: `Bearer token-${i}` },
+							});
 
-								const actionTime = performance.now() - actionStart;
-								professional.actions.push({
-									type: "patient_query",
-									duration: actionTime,
-									success: response.ok,
-								});
-							} catch (error) {
-								professional.actions.push({
-									type: "patient_query",
-									duration: -1,
-									success: false,
-								});
-							}
-
-							// Small delay between actions
-							await new Promise((resolve) => setTimeout(resolve, Math.random() * 10));
+							const actionTime = performance.now() - actionStart;
+							professional.actions.push({
+								type: "patient_query",
+								duration: actionTime,
+								success: response.ok,
+							});
+						} catch (_error) {
+							professional.actions.push({
+								type: "patient_query",
+								duration: -1,
+								success: false,
+							});
 						}
 
-						return professional;
-					})
+						// Small delay between actions
+						await new Promise((resolve) => setTimeout(resolve, Math.random() * 10));
+					}
+
+					return professional;
+				})
 			);
 
 			// Analyze results

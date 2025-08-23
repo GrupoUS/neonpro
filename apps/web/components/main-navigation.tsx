@@ -9,26 +9,14 @@
 "use client";
 
 import { Link, useLocation } from "@tanstack/react-router";
-import {
-	Activity,
-	BarChart3,
-	Calendar,
-	FileText,
-	Heart,
-	Home,
-	Menu,
-	Settings,
-	Shield,
-	Stethoscope,
-	Users,
-} from "lucide-react";
+import { BarChart3, Calendar, Heart, Home, Menu, Settings, Shield, Stethoscope, Users } from "lucide-react";
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/auth-context";
 import { cn } from "@/lib/utils";
 
-interface NavigationItem {
+type NavigationItem = {
 	label: string;
 	href: string;
 	icon: React.ComponentType<{ className?: string }>;
@@ -36,7 +24,7 @@ interface NavigationItem {
 	badge?: string;
 	permission?: () => boolean;
 	children?: NavigationItem[];
-}
+};
 
 export function MainNavigation() {
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
@@ -126,10 +114,10 @@ export function MainNavigation() {
 		});
 
 		return items;
-	}, [user]);
+	}, [canAccessCompliance, canAccessPatients, canAccessProfessionals]);
 
 	const isActiveRoute = (href: string) => {
-		return location.pathname === href || location.pathname.startsWith(href + "/");
+		return location.pathname === href || location.pathname.startsWith(`${href}/`);
 	};
 
 	const NavigationItems = ({ items, mobile = false }: { items: NavigationItem[]; mobile?: boolean }) => (

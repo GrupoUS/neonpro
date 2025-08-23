@@ -77,7 +77,6 @@ const SkipLink = React.forwardRef<HTMLAnchorElement, SkipLinkProps>(
 			// Find target element
 			const targetElement = document.getElementById(targetId);
 			if (!targetElement) {
-				console.warn(`Skip link target "${targetId}" not found`);
 				return;
 			}
 

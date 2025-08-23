@@ -52,23 +52,23 @@ export type HealthcareRealtimePayload =
 	| AuditRealtimePayload;
 
 // Real-time subscription configuration
-export interface RealtimeSubscriptionConfig {
+export type RealtimeSubscriptionConfig = {
 	table: string;
 	schema?: string;
 	filter?: string;
 	event?: "INSERT" | "UPDATE" | "DELETE" | "*";
 	enableAuditLogging?: boolean;
 	lgpdCompliance?: boolean;
-}
+};
 
 // LGPD compliance for real-time data
-export interface LGPDRealtimeConfig {
+export type LGPDRealtimeConfig = {
 	enableDataMinimization: boolean;
 	enableConsentValidation: boolean;
 	enableAuditLogging: boolean;
 	sensitiveFields: string[];
 	retentionPeriodDays?: number;
-}
+};
 
 // Healthcare-specific subscription types
 export interface PatientSubscriptionConfig extends RealtimeSubscriptionConfig {
@@ -98,40 +98,40 @@ export interface ProfessionalSubscriptionConfig extends RealtimeSubscriptionConf
 }
 
 // Real-time channel management
-export interface RealtimeChannelManager {
+export type RealtimeChannelManager = {
 	channels: Map<string, RealtimeChannel>;
 	subscribe: (config: RealtimeSubscriptionConfig) => Promise<RealtimeChannel>;
 	unsubscribe: (channelName: string) => Promise<void>;
 	unsubscribeAll: () => Promise<void>;
 	getActiveChannels: () => string[];
-}
+};
 
 // Real-time event handlers - Using Record constraint for generic type
 export type RealtimeEventHandler<T extends Record<string, any> = Record<string, any>> = (
 	payload: RealtimePayload<T>
 ) => void;
 
-export interface RealtimeEventHandlers {
+export type RealtimeEventHandlers = {
 	onInsert?: RealtimeEventHandler;
 	onUpdate?: RealtimeEventHandler;
 	onDelete?: RealtimeEventHandler;
 	onError?: (error: Error) => void;
 	onSubscribe?: (status: string) => void;
 	onUnsubscribe?: () => void;
-}
+};
 
 // Health monitoring for real-time connections
-export interface RealtimeHealthCheck {
+export type RealtimeHealthCheck = {
 	isConnected: boolean;
 	activeSubscriptions: number;
 	lastPing?: Date;
 	connectionDuration?: number;
 	errorCount: number;
 	lastError?: Error;
-}
+};
 
 // Real-time hooks configuration
-export interface UseRealtimeConfig<T extends Record<string, any> = Record<string, any>> {
+export type UseRealtimeConfig<T extends Record<string, any> = Record<string, any>> = {
 	table: string;
 	filter?: string;
 	event?: "INSERT" | "UPDATE" | "DELETE" | "*";
@@ -142,16 +142,16 @@ export interface UseRealtimeConfig<T extends Record<string, any> = Record<string
 	enabled: boolean;
 	lgpdCompliance?: boolean;
 	auditLogging?: boolean;
-}
+};
 
 // TanStack Query integration types
-export interface RealtimeQueryOptions {
+export type RealtimeQueryOptions = {
 	invalidateOnInsert?: boolean;
 	invalidateOnUpdate?: boolean;
 	invalidateOnDelete?: boolean;
 	optimisticUpdates?: boolean;
 	backgroundRefetch?: boolean;
-}
+};
 
 // TanStack Query integration types - Using Record constraint
 export interface UseRealtimeQueryConfig<T extends Record<string, any> = Record<string, any>>

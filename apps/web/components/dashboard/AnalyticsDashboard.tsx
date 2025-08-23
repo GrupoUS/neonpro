@@ -3,13 +3,11 @@
  * Healthcare platform analytics visualization
  */
 
-import React from "react";
-
-export interface AnalyticsDashboardProps {
+export type AnalyticsDashboardProps = {
 	data?: any;
 	loading?: boolean;
 	error?: string;
-}
+};
 
 export default function AnalyticsDashboard({ data, loading = false, error }: AnalyticsDashboardProps) {
 	if (loading) {

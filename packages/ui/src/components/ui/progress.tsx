@@ -230,8 +230,12 @@ const LGPDComplianceProgress = React.forwardRef<
 	LGPDComplianceProgressProps
 >(({ overallScore, categories, lastAudit, nextAudit, ...props }, ref) => {
 	const getComplianceVariant = () => {
-		if (overallScore >= 90) return "success";
-		if (overallScore >= 70) return "warning";
+		if (overallScore >= 90) {
+			return "success";
+		}
+		if (overallScore >= 70) {
+			return "warning";
+		}
 		return "critical";
 	};
 

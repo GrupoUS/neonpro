@@ -8,9 +8,9 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock Login Form Component (placeholder for actual implementation)
-interface LoginFormProps {
+type LoginFormProps = {
 	onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
-}
+};
 
 const LoginForm = ({ onSubmit }: LoginFormProps) => (
 	<form data-testid="auth-login-form" onSubmit={onSubmit}>

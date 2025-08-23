@@ -15,9 +15,9 @@ import React from "react";
 import { useAuth } from "@/contexts/auth-context";
 import { router } from "@/lib/router";
 
-interface RouterProviderProps {
+type RouterProviderProps = {
 	children?: React.ReactNode;
-}
+};
 
 export function RouterProvider({ children }: RouterProviderProps) {
 	const queryClient = useQueryClient();
@@ -32,7 +32,9 @@ export function RouterProvider({ children }: RouterProviderProps) {
 					user: auth.user,
 					isAuthenticated: !!auth.user && !auth.loading,
 					hasRole: (roles) => {
-						if (!auth.user) return false;
+						if (!auth.user) {
+							return false;
+						}
 						const roleArray = Array.isArray(roles) ? roles : [roles];
 						return roleArray.includes(auth.user.role);
 					},
@@ -164,8 +166,10 @@ export function useRoutePermissions() {
 			return user && ["clinic_owner", "clinic_manager", "professional"].includes(user.role);
 		},
 
-		canEditPatient: (patientId?: string) => {
-			if (!user) return false;
+		canEditPatient: (_patientId?: string) => {
+			if (!user) {
+				return false;
+			}
 
 			// Clinic owners and managers can edit any patient
 			if (["clinic_owner", "clinic_manager"].includes(user.role)) {

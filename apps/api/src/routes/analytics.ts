@@ -40,7 +40,7 @@ export const analyticsRoutes = new Hono()
 	// Authentication middleware
 	.use("*", async (c, next) => {
 		const auth = c.req.header("Authorization");
-		if (!(auth && auth.startsWith("Bearer "))) {
+		if (!auth?.startsWith("Bearer ")) {
 			return c.json({ error: "UNAUTHORIZED", message: "Token de acesso obrigatório" }, 401);
 		}
 		await next();
@@ -123,7 +123,7 @@ export const analyticsRoutes = new Hono()
 			};
 
 			return c.json(response, 200);
-		} catch (error) {
+		} catch (_error) {
 			return c.json(
 				{
 					success: false,
@@ -204,7 +204,7 @@ export const analyticsRoutes = new Hono()
 			};
 
 			return c.json(response, 200);
-		} catch (error) {
+		} catch (_error) {
 			return c.json(
 				{
 					success: false,
@@ -280,7 +280,7 @@ export const analyticsRoutes = new Hono()
 			};
 
 			return c.json(response, 200);
-		} catch (error) {
+		} catch (_error) {
 			return c.json(
 				{
 					success: false,
@@ -354,7 +354,7 @@ export const analyticsRoutes = new Hono()
 			};
 
 			return c.json(response, 200);
-		} catch (error) {
+		} catch (_error) {
 			return c.json(
 				{
 					success: false,
@@ -423,7 +423,7 @@ export const analyticsRoutes = new Hono()
 			};
 
 			return c.json(response, 200);
-		} catch (error) {
+		} catch (_error) {
 			return c.json(
 				{
 					success: false,
@@ -489,7 +489,7 @@ export const analyticsRoutes = new Hono()
 				};
 
 				return c.json(response, 201);
-			} catch (error) {
+			} catch (_error) {
 				return c.json(
 					{
 						success: false,

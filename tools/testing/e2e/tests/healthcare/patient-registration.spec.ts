@@ -570,8 +570,6 @@ test.describe("👥 Patient Registration - Critical E2E", () => {
 
 			// Performance validation - complete registration should be under 30 seconds
 			expect(totalTime).toBeLessThan(30_000);
-
-			console.log(`Complete patient registration took ${totalTime}ms`);
 		});
 
 		test("should generate patient ID and medical record number", async ({ page }) => {
@@ -727,10 +725,6 @@ test.describe("👥 Patient Registration - Critical E2E", () => {
 
 			const navigationTime = Date.now() - navigationStart;
 			expect(navigationTime).toBeLessThan(5000);
-
-			console.log(
-				`Performance metrics - Page load: ${pageLoadTime}ms, CPF validation: ${cpfValidationTime}ms, Navigation: ${navigationTime}ms`
-			);
 		});
 
 		test("should provide accessibility compliance in registration form", async ({ page }) => {

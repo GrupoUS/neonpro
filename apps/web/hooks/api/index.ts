@@ -126,7 +126,7 @@ export type QueryKeyType =
 	| (typeof APPOINTMENT_QUERY_KEYS)[keyof typeof APPOINTMENT_QUERY_KEYS];
 
 // Hook status helpers
-export interface UseQueryState<T> {
+export type UseQueryState<T> = {
 	data: T | undefined;
 	isLoading: boolean;
 	isFetching: boolean;
@@ -134,9 +134,9 @@ export interface UseQueryState<T> {
 	error: Error | null;
 	isSuccess: boolean;
 	refetch: () => void;
-}
+};
 
-export interface UseMutationState<T, V> {
+export type UseMutationState<T, V> = {
 	mutate: (variables: V) => void;
 	mutateAsync: (variables: V) => Promise<T>;
 	data: T | undefined;
@@ -145,7 +145,7 @@ export interface UseMutationState<T, V> {
 	error: Error | null;
 	isSuccess: boolean;
 	reset: () => void;
-}
+};
 
 // Common error messages for hooks
 export const HOOK_ERROR_MESSAGES = {

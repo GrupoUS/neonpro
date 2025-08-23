@@ -15,7 +15,7 @@ type AuditLogRow = Database["public"]["Tables"]["healthcare_audit_logs"]["Row"];
 // Compliance log is based on healthcare audit log structure
 type ComplianceLog = AuditLogRow;
 
-export interface ComplianceEventType {
+export type ComplianceEventType = {
 	LGPD_CONSENT_GRANTED: "lgpd_consent_granted";
 	LGPD_CONSENT_REVOKED: "lgpd_consent_revoked";
 	LGPD_DATA_ACCESS: "lgpd_data_access";
@@ -25,18 +25,18 @@ export interface ComplianceEventType {
 	ANVISA_VIOLATION: "anvisa_violation";
 	DATA_BREACH_DETECTED: "data_breach_detected";
 	UNAUTHORIZED_ACCESS: "unauthorized_access";
-}
+};
 
-export interface RealtimeCompliancePayload {
+export type RealtimeCompliancePayload = {
 	eventType: "INSERT" | "UPDATE" | "DELETE";
 	complianceType: keyof ComplianceEventType;
 	new?: ComplianceLog;
 	old?: ComplianceLog;
 	severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
 	requiresAction: boolean;
-}
+};
 
-export interface UseRealtimeComplianceOptions {
+export type UseRealtimeComplianceOptions = {
 	tenantId: string;
 	complianceType?: keyof ComplianceEventType;
 	enabled?: boolean;
@@ -44,9 +44,9 @@ export interface UseRealtimeComplianceOptions {
 	onComplianceEvent?: (payload: RealtimeCompliancePayload) => void;
 	onCriticalViolation?: (payload: RealtimeCompliancePayload) => void;
 	onError?: (error: Error) => void;
-}
+};
 
-export interface UseRealtimeComplianceReturn {
+export type UseRealtimeComplianceReturn = {
 	isConnected: boolean;
 	connectionHealth: number;
 	totalEvents: number;
@@ -57,7 +57,7 @@ export interface UseRealtimeComplianceReturn {
 	unsubscribe: () => void;
 	generateComplianceReport: () => Promise<any>;
 	triggerManualAudit: () => void;
-} /**
+}; /**
  * MANDATORY Real-time Compliance Hook
  * Sistema crítico para monitoramento LGPD e ANVISA em healthcare brasileiro
  */
@@ -130,31 +130,32 @@ export function useRealtimeCompliance(options: UseRealtimeComplianceOptions): Us
 				if (onComplianceEvent) {
 					onComplianceEvent(realtimePayload);
 				}
-
-				// Critical logging for compliance audit
-				console.log(`[RealtimeCompliance] ${complianceType} ${severity} event:`, {
-					eventId: realtimePayload.new?.id || "unknown",
-					complianceType,
-					severity,
-					requiresAction,
-					tenantId,
-					timestamp: new Date().toISOString(),
-				});
 			} catch (error) {
-				console.error("[RealtimeCompliance] Payload processing error:", error);
 				if (onError) {
 					onError(error as Error);
 				}
 			}
 		},
-		[onComplianceEvent, onCriticalViolation, onError, tenantId, enableAuditLog]
+		[
+			onComplianceEvent,
+			onCriticalViolation,
+			onError,
+			enableAuditLog,
+			determineComplianceType,
+			determineSeverity,
+			generateAuditEntry, // Update TanStack Query cache
+			updateComplianceCache, // Update compliance score
+			updateComplianceScore,
+		]
 	); /**
 	 * Determine compliance type based on payload
 	 */
 	const determineComplianceType = useCallback((payload: any): keyof ComplianceEventType => {
 		const eventData = payload.new || payload.old;
 
-		if (!eventData) return "LGPD_DATA_ACCESS";
+		if (!eventData) {
+			return "LGPD_DATA_ACCESS";
+		}
 
 		// Map based on action categories
 		if (eventData.action?.includes("consent")) {
@@ -167,7 +168,9 @@ export function useRealtimeCompliance(options: UseRealtimeComplianceOptions): Us
 
 		if (eventData.action?.includes("anvisa")) {
 			const metadata = (eventData.metadata as Record<string, any>) || {};
-			if (metadata.severity === "CRITICAL") return "ANVISA_VIOLATION";
+			if (metadata.severity === "CRITICAL") {
+				return "ANVISA_VIOLATION";
+			}
 			return "ANVISA_COMPLIANCE_CHECK";
 		}
 
@@ -270,7 +273,9 @@ export function useRealtimeCompliance(options: UseRealtimeComplianceOptions): Us
 
 			// Update compliance logs cache
 			queryClient.setQueryData(["compliance-logs", tenantId], (oldCache: ComplianceLog[] | undefined) => {
-				if (!oldCache) return oldCache;
+				if (!oldCache) {
+					return oldCache;
+				}
 
 				switch (eventType) {
 					case "INSERT":
@@ -326,13 +331,14 @@ export function useRealtimeCompliance(options: UseRealtimeComplianceOptions): Us
 
 			// Add to audit cache
 			queryClient.setQueryData(["audit-trail", tenantId], (oldCache: any[] | undefined) => {
-				if (!oldCache) return [auditEntry];
+				if (!oldCache) {
+					return [auditEntry];
+				}
 				return [auditEntry, ...oldCache].slice(0, 5000); // Keep audit trail manageable
 			});
 
 			// Log critical events to console for immediate visibility
 			if (payload.severity === "CRITICAL") {
-				console.warn("[CRITICAL COMPLIANCE EVENT]", auditEntry);
 			}
 		},
 		[queryClient, tenantId]
@@ -342,7 +348,9 @@ export function useRealtimeCompliance(options: UseRealtimeComplianceOptions): Us
 	 * Subscribe to realtime compliance updates
 	 */
 	const subscribe = useCallback(() => {
-		if (!enabled || unsubscribeFn) return;
+		if (!enabled || unsubscribeFn) {
+			return;
+		}
 
 		const realtimeManager = getRealtimeManager();
 
@@ -376,46 +384,41 @@ export function useRealtimeCompliance(options: UseRealtimeComplianceOptions): Us
 	 * Generate compliance report
 	 */
 	const generateComplianceReport = useCallback(async (): Promise<any> => {
-		try {
-			const logs = (queryClient.getQueryData(["compliance-logs", tenantId]) as ComplianceLog[]) || [];
-			const auditTrail = (queryClient.getQueryData(["audit-trail", tenantId]) as any[]) || [];
+		const logs = (queryClient.getQueryData(["compliance-logs", tenantId]) as ComplianceLog[]) || [];
+		const auditTrail = (queryClient.getQueryData(["audit-trail", tenantId]) as any[]) || [];
 
-			// Analyze compliance data
-			const report = {
-				generatedAt: new Date().toISOString(),
-				tenantId,
-				period: {
-					start: logs[logs.length - 1]?.timestamp || new Date().toISOString(),
-					end: new Date().toISOString(),
-				},
-				summary: {
-					totalEvents,
-					criticalEvents,
-					complianceScore,
-					lastEventDate: lastEvent?.timestamp,
-				},
-				eventBreakdown: {
-					lgpdEvents: logs.filter((log) => log.action?.includes("lgpd")).length,
-					anvisaEvents: logs.filter((log) => log.action?.includes("anvisa")).length,
-					breachEvents: logs.filter((log) => log.action?.includes("breach")).length,
-					unauthorizedAccess: logs.filter((log) => log.action?.includes("unauthorized")).length,
-				},
-				severityBreakdown: {
-					critical: logs.filter((log) => (log.metadata as any)?.severity === "CRITICAL").length,
-					high: logs.filter((log) => (log.metadata as any)?.severity === "HIGH").length,
-					medium: logs.filter((log) => (log.metadata as any)?.severity === "MEDIUM").length,
-					low: logs.filter((log) => (log.metadata as any)?.severity === "LOW").length,
-				},
-				actionableItems: auditTrail.filter((item) => item.requires_action && !item.processed),
-				recommendations: generateRecommendations(logs, complianceScore),
-			};
+		// Analyze compliance data
+		const report = {
+			generatedAt: new Date().toISOString(),
+			tenantId,
+			period: {
+				start: logs.at(-1)?.timestamp || new Date().toISOString(),
+				end: new Date().toISOString(),
+			},
+			summary: {
+				totalEvents,
+				criticalEvents,
+				complianceScore,
+				lastEventDate: lastEvent?.timestamp,
+			},
+			eventBreakdown: {
+				lgpdEvents: logs.filter((log) => log.action?.includes("lgpd")).length,
+				anvisaEvents: logs.filter((log) => log.action?.includes("anvisa")).length,
+				breachEvents: logs.filter((log) => log.action?.includes("breach")).length,
+				unauthorizedAccess: logs.filter((log) => log.action?.includes("unauthorized")).length,
+			},
+			severityBreakdown: {
+				critical: logs.filter((log) => (log.metadata as any)?.severity === "CRITICAL").length,
+				high: logs.filter((log) => (log.metadata as any)?.severity === "HIGH").length,
+				medium: logs.filter((log) => (log.metadata as any)?.severity === "MEDIUM").length,
+				low: logs.filter((log) => (log.metadata as any)?.severity === "LOW").length,
+			},
+			actionableItems: auditTrail.filter((item) => item.requires_action && !item.processed),
+			recommendations: generateRecommendations(logs, complianceScore),
+		};
 
-			return report;
-		} catch (error) {
-			console.error("[RealtimeCompliance] Report generation error:", error);
-			throw error;
-		}
-	}, [queryClient, tenantId, totalEvents, criticalEvents, complianceScore, lastEvent]);
+		return report;
+	}, [queryClient, tenantId, totalEvents, criticalEvents, complianceScore, lastEvent, generateRecommendations]);
 
 	/**
 	 * Generate compliance recommendations
@@ -484,16 +487,18 @@ export function useRealtimeCompliance(options: UseRealtimeComplianceOptions): Us
 
 		// Add manual audit to cache
 		queryClient.setQueryData(["compliance-logs", tenantId], (oldCache: ComplianceLog[] | undefined) => {
-			if (!oldCache) return [auditEvent];
+			if (!oldCache) {
+				return [auditEvent];
+			}
 			return [auditEvent, ...oldCache];
 		});
-
-		console.log("[RealtimeCompliance] Manual audit triggered:", auditEvent);
 	}, [queryClient, tenantId, complianceScore, totalEvents, criticalEvents]); /**
 	 * Monitor connection status and auto-subscribe
 	 */
 	useEffect(() => {
-		if (!enabled) return;
+		if (!enabled) {
+			return;
+		}
 
 		const realtimeManager = getRealtimeManager();
 
@@ -580,10 +585,19 @@ export function useComplianceAnalytics(tenantId: string) {
 				overallScore: calculateOverallScore(logs),
 			},
 		};
-	}, [queryClient, tenantId]);
+	}, [
+		queryClient,
+		tenantId,
+		calculateANVISACompliance,
+		calculateLGPDCompliance,
+		calculateOverallScore,
+		calculateTrend,
+	]);
 
 	const calculateTrend = useCallback((logs: ComplianceLog[]): "improving" | "stable" | "declining" => {
-		if (logs.length < 10) return "stable";
+		if (logs.length < 10) {
+			return "stable";
+		}
 
 		const half = Math.floor(logs.length / 2);
 		const firstHalf = logs.slice(0, half);
@@ -598,8 +612,12 @@ export function useComplianceAnalytics(tenantId: string) {
 			return metadata.severity === "CRITICAL";
 		}).length;
 
-		if (secondCritical < firstCritical * 0.8) return "improving";
-		if (secondCritical > firstCritical * 1.2) return "declining";
+		if (secondCritical < firstCritical * 0.8) {
+			return "improving";
+		}
+		if (secondCritical > firstCritical * 1.2) {
+			return "declining";
+		}
 		return "stable";
 	}, []);
 
@@ -608,7 +626,9 @@ export function useComplianceAnalytics(tenantId: string) {
 			const metadata = (log.metadata as Record<string, any>) || {};
 			return metadata.event_type?.includes("lgpd") || log.action?.includes("lgpd");
 		});
-		if (lgpdLogs.length === 0) return 100;
+		if (lgpdLogs.length === 0) {
+			return 100;
+		}
 
 		const violations = lgpdLogs.filter((log) => {
 			const metadata = (log.metadata as Record<string, any>) || {};
@@ -622,7 +642,9 @@ export function useComplianceAnalytics(tenantId: string) {
 			const metadata = (log.metadata as Record<string, any>) || {};
 			return metadata.event_type?.includes("anvisa") || log.action?.includes("anvisa");
 		});
-		if (anvisaLogs.length === 0) return 100;
+		if (anvisaLogs.length === 0) {
+			return 100;
+		}
 
 		const violations = anvisaLogs.filter((log) => {
 			const metadata = (log.metadata as Record<string, any>) || {};
@@ -632,7 +654,9 @@ export function useComplianceAnalytics(tenantId: string) {
 	}, []);
 
 	const calculateOverallScore = useCallback((logs: ComplianceLog[]): number => {
-		if (logs.length === 0) return 100;
+		if (logs.length === 0) {
+			return 100;
+		}
 
 		const criticalPenalty =
 			logs.filter((log) => {

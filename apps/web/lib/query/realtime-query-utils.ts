@@ -6,7 +6,7 @@
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { type QueryClient, useQueryClient } from "@tanstack/react-query";
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 
 // Enhanced query invalidation strategies
 export type InvalidationStrategy = {
@@ -18,20 +18,20 @@ export type InvalidationStrategy = {
 };
 
 // Real-time query configuration
-export interface RealtimeQueryConfig {
+export type RealtimeQueryConfig = {
 	enabled: boolean;
 	invalidationStrategy: InvalidationStrategy;
 	lgpdCompliance: boolean;
 	auditLogging: boolean;
-}
+};
 
 /**
  * Enhanced query client utilities for real-time integration
  */
 export class RealtimeQueryManager {
-	private queryClient: QueryClient;
-	private supabaseClient: SupabaseClient;
-	private activeChannels: Map<string, any> = new Map();
+	private readonly queryClient: QueryClient;
+	private readonly supabaseClient: SupabaseClient;
+	private readonly activeChannels: Map<string, any> = new Map();
 
 	constructor(queryClient: QueryClient, supabaseClient: SupabaseClient) {
 		this.queryClient = queryClient;
@@ -57,8 +57,7 @@ export class RealtimeQueryManager {
 	/**
 	 * Audit data access for LGPD compliance
 	 */
-	auditDataAccess(entityType: string, entityId: string, operation: string) {
-		console.log(`LGPD Audit: ${operation} on ${entityType}:${entityId}`);
+	auditDataAccess(_entityType: string, _entityId: string, _operation: string) {
 		// TODO: Implement proper audit logging
 	}
 
@@ -95,7 +94,7 @@ export function useRealtimeQueryManager(supabaseClient: SupabaseClient) {
  */
 export function useRealtimePatients(
 	supabaseClient: SupabaseClient,
-	options: {
+	_options: {
 		patientId?: string;
 		clinicId?: string;
 		config?: RealtimeQueryConfig;
@@ -119,7 +118,7 @@ export function useRealtimePatients(
  */
 export function useRealtimeAppointments(
 	supabaseClient: SupabaseClient,
-	options: {
+	_options: {
 		appointmentId?: string;
 		patientId?: string;
 		professionalId?: string;
@@ -146,7 +145,7 @@ export function useRealtimeAppointments(
  */
 export function useRealtimeProfessionals(
 	supabaseClient: SupabaseClient,
-	options: {
+	_options: {
 		professionalId?: string;
 		clinicId?: string;
 		config?: RealtimeQueryConfig;
@@ -170,7 +169,7 @@ export function useRealtimeProfessionals(
  */
 export function useRealtimeDashboard(
 	supabaseClient: SupabaseClient,
-	options: {
+	_options: {
 		clinicId?: string;
 		config?: RealtimeQueryConfig;
 	}

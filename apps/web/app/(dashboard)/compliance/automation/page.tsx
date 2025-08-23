@@ -23,24 +23,19 @@ import {
 	Zap,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Healthcare compliance types
-interface ComplianceMetric {
+type ComplianceMetric = {
 	id: string;
 	title: string;
 	score: number;
 	status: "excellent" | "good" | "warning" | "critical";
 	trend: "up" | "down" | "stable";
 	lastUpdated: string;
-}
+};
 
-interface ComplianceAlert {
+type ComplianceAlert = {
 	id: string;
 	type: "critical" | "important" | "routine";
 	title: string;
@@ -48,9 +43,9 @@ interface ComplianceAlert {
 	dueDate: string;
 	category: "LGPD" | "ANVISA" | "CFM";
 	actionRequired: boolean;
-}
+};
 
-interface ActionItem {
+type ActionItem = {
 	id: string;
 	title: string;
 	description: string;
@@ -60,7 +55,7 @@ interface ActionItem {
 	assignedTo: string;
 	status: "pending" | "in_progress" | "completed";
 	dueDate: string;
-}
+};
 
 // NeonPro design components matching existing dashboard patterns
 type NeonGradientCardProps = {
@@ -232,15 +227,25 @@ function ComplianceOverview() {
 	);
 
 	const getScoreColor = (score: number) => {
-		if (score >= 90) return "text-green-400";
-		if (score >= 80) return "text-yellow-400";
+		if (score >= 90) {
+			return "text-green-400";
+		}
+		if (score >= 80) {
+			return "text-yellow-400";
+		}
 		return "text-red-400";
 	};
 
 	const getScoreStatus = (score: number) => {
-		if (score >= 90) return "Excelente";
-		if (score >= 80) return "Bom";
-		if (score >= 60) return "Atenção";
+		if (score >= 90) {
+			return "Excelente";
+		}
+		if (score >= 80) {
+			return "Bom";
+		}
+		if (score >= 60) {
+			return "Atenção";
+		}
 		return "Crítico";
 	};
 
@@ -272,8 +277,8 @@ function ComplianceOverview() {
 	);
 } // Critical Alerts Section
 function CriticalAlerts() {
-	const criticalAlerts = complianceAlerts.filter((alert) => alert.type === "critical");
-	const importantAlerts = complianceAlerts.filter((alert) => alert.type === "important");
+	const _criticalAlerts = complianceAlerts.filter((alert) => alert.type === "critical");
+	const _importantAlerts = complianceAlerts.filter((alert) => alert.type === "important");
 
 	const getAlertIcon = (type: string) => {
 		switch (type) {
@@ -893,7 +898,7 @@ export default function ComplianceAutomationPage() {
 		<div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
 			<div className="container mx-auto space-y-8 p-6">
 				{/* Header with accessibility attributes */}
-				<header className="flex items-center justify-between" role="banner">
+				<header className="flex items-center justify-between">
 					<div>
 						<h1 className="mb-2 font-bold text-3xl text-white">Central de Compliance Regulatório</h1>
 						<p className="text-slate-300">Monitoramento em tempo real - LGPD, ANVISA e CFM</p>
@@ -930,7 +935,7 @@ export default function ComplianceAutomationPage() {
 				</header>
 
 				{/* Main Content with semantic structure */}
-				<main role="main">
+				<main>
 					{/* Compliance Overview */}
 					<section aria-labelledby="overview-heading" className="mb-8">
 						<h2 className="sr-only" id="overview-heading">

@@ -1,5 +1,5 @@
 import { cva, type VariantProps } from "class-variance-authority";
-import { ChevronDown, ChevronUp, Download, Edit, Eye, Filter, MoreHorizontal, Search } from "lucide-react";
+import { ChevronDown, ChevronUp, Edit, Eye } from "lucide-react";
 import * as React from "react";
 import { cn } from "../../lib/utils";
 
@@ -174,7 +174,7 @@ TableCaption.displayName = "TableCaption";
 
 // Healthcare-specific table components
 
-interface Patient {
+type Patient = {
 	id: string;
 	name: string;
 	cpf: string;
@@ -185,9 +185,9 @@ interface Patient {
 	nextAppointment?: Date;
 	priority: "low" | "normal" | "high" | "critical";
 	status: "active" | "inactive" | "pending";
-}
+};
 
-interface PatientTableProps {
+type PatientTableProps = {
 	patients: Patient[];
 	onPatientSelect?: (patient: Patient) => void;
 	onPatientEdit?: (patient: Patient) => void;
@@ -197,7 +197,7 @@ interface PatientTableProps {
 	sortBy?: keyof Patient;
 	sortDirection?: "asc" | "desc";
 	onSort?: (field: keyof Patient) => void;
-}
+};
 
 const PatientTable = React.forwardRef<HTMLTableElement, PatientTableProps>(
 	(
@@ -215,7 +215,9 @@ const PatientTable = React.forwardRef<HTMLTableElement, PatientTableProps>(
 		ref
 	) => {
 		const filteredPatients = React.useMemo(() => {
-			if (!searchTerm) return patients;
+			if (!searchTerm) {
+				return patients;
+			}
 
 			return patients.filter(
 				(patient) =>
@@ -355,7 +357,7 @@ const PatientTable = React.forwardRef<HTMLTableElement, PatientTableProps>(
 	}
 );
 PatientTable.displayName = "PatientTable";
-interface Appointment {
+type Appointment = {
 	id: string;
 	patientName: string;
 	professionalName: string;
@@ -365,9 +367,9 @@ interface Appointment {
 	priority: "low" | "normal" | "high" | "critical";
 	type: string;
 	notes?: string;
-}
+};
 
-interface AppointmentTableProps {
+type AppointmentTableProps = {
 	appointments: Appointment[];
 	onAppointmentSelect?: (appointment: Appointment) => void;
 	onAppointmentEdit?: (appointment: Appointment) => void;
@@ -377,7 +379,7 @@ interface AppointmentTableProps {
 	sortBy?: keyof Appointment;
 	sortDirection?: "asc" | "desc";
 	onSort?: (field: keyof Appointment) => void;
-}
+};
 
 const AppointmentTable = React.forwardRef<HTMLTableElement, AppointmentTableProps>(
 	(

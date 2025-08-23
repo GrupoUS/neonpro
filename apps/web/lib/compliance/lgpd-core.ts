@@ -7,7 +7,6 @@
  */
 
 import { createClient } from "@supabase/supabase-js";
-import { Database } from "@/lib/database.types";
 
 // LGPD Data Categories (Art. 5, LGPD)
 export enum LGPDDataCategory {
@@ -45,7 +44,7 @@ export enum LGPDDataSubjectRights {
 }
 
 // LGPD Processing Purposes
-export interface LGPDProcessingPurpose {
+export type LGPDProcessingPurpose = {
 	id: string;
 	category: LGPDDataCategory;
 	legalBasis: LGPDLegalBasis;
@@ -56,7 +55,7 @@ export interface LGPDProcessingPurpose {
 	requiresExplicitConsent: boolean;
 	canBeAnonymized: boolean;
 	description: string;
-}
+};
 
 // Healthcare-specific LGPD purposes
 export const HEALTHCARE_PROCESSING_PURPOSES: LGPDProcessingPurpose[] = [
@@ -123,7 +122,7 @@ export const HEALTHCARE_PROCESSING_PURPOSES: LGPDProcessingPurpose[] = [
 ];
 
 // LGPD Consent Management
-export interface LGPDConsent {
+export type LGPDConsent = {
 	id: string;
 	userId: string;
 	purposeId: string;
@@ -135,10 +134,10 @@ export interface LGPDConsent {
 	userAgent: string;
 	ipAddress: string;
 	evidenceDocument?: string; // Path to consent evidence
-}
+};
 
 // Data Subject Request
-export interface LGPDDataSubjectRequest {
+export type LGPDDataSubjectRequest = {
 	id: string;
 	userId: string;
 	requestType: LGPDDataSubjectRights;
@@ -149,10 +148,10 @@ export interface LGPDDataSubjectRequest {
 	response?: string;
 	evidenceDocuments: string[];
 	processingNotes: string;
-}
+};
 
 // LGPD Audit Log
-export interface LGPDAuditLog {
+export type LGPDAuditLog = {
 	id: string;
 	userId?: string;
 	action: string;
@@ -165,10 +164,10 @@ export interface LGPDAuditLog {
 	dataAccessed?: string[];
 	dataModified?: string[];
 	additionalContext: Record<string, any>;
-}
+};
 
 class LGPDComplianceManager {
-	private supabase: ReturnType<typeof createClient>;
+	private readonly supabase: ReturnType<typeof createClient>;
 
 	constructor(supabaseUrl: string, supabaseAnonKey: string) {
 		this.supabase = createClient(supabaseUrl, supabaseAnonKey);
@@ -185,7 +184,9 @@ class LGPDComplianceManager {
 
 		const { data, error } = await this.supabase.from("lgpd_consents").insert(newConsent).select().single();
 
-		if (error) throw new Error(`Failed to record consent: ${error.message}`);
+		if (error) {
+			throw new Error(`Failed to record consent: ${error.message}`);
+		}
 
 		await this.auditLog({
 			userId: consent.userId,
@@ -214,7 +215,9 @@ class LGPDComplianceManager {
 			.eq("id", consentId)
 			.eq("userId", userId);
 
-		if (error) throw new Error(`Failed to withdraw consent: ${error.message}`);
+		if (error) {
+			throw new Error(`Failed to withdraw consent: ${error.message}`);
+		}
 
 		await this.auditLog({
 			userId,
@@ -242,7 +245,9 @@ class LGPDComplianceManager {
 
 		const { data, error } = await this.supabase.from("lgpd_data_subject_requests").insert(newRequest).select().single();
 
-		if (error) throw new Error(`Failed to create data subject request: ${error.message}`);
+		if (error) {
+			throw new Error(`Failed to create data subject request: ${error.message}`);
+		}
 
 		await this.auditLog({
 			userId: request.userId,
@@ -285,7 +290,9 @@ class LGPDComplianceManager {
 			expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days
 		});
 
-		if (error) throw new Error(`Failed to create data export: ${error.message}`);
+		if (error) {
+			throw new Error(`Failed to create data export: ${error.message}`);
+		}
 
 		return { exportId, downloadUrl: `/api/lgpd/export/${exportId}` };
 	}
@@ -390,7 +397,6 @@ class LGPDComplianceManager {
 		const { error } = await this.supabase.from("lgpd_audit_logs").insert(auditEntry);
 
 		if (error) {
-			console.error("Failed to create audit log:", error);
 			// Don't throw error to avoid breaking main functionality
 		}
 	}
@@ -412,7 +418,7 @@ class LGPDComplianceManager {
 		};
 	}
 
-	private getDataRetentionInfo(userId: string): any {
+	private getDataRetentionInfo(_userId: string): any {
 		return HEALTHCARE_PROCESSING_PURPOSES.map((purpose) => ({
 			purpose: purpose.purpose,
 			category: purpose.category,
@@ -498,7 +504,7 @@ export const LGPDUtils = {
 	},
 
 	// Get user's active consents
-	getUserConsents: async (userId: string): Promise<LGPDConsent[]> => {
+	getUserConsents: async (_userId: string): Promise<LGPDConsent[]> => {
 		// Implementation would fetch from database
 		return [];
 	},

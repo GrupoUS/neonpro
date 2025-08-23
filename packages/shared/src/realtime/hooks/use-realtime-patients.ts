@@ -15,29 +15,29 @@ type PatientRow = Database["public"]["Tables"]["patients"]["Row"];
 // type PatientInsert = Database['public']['Tables']['patients']['Insert'];
 // type PatientUpdate = Database['public']['Tables']['patients']['Update'];
 
-export interface RealtimePatientPayload {
+export type RealtimePatientPayload = {
 	eventType: "INSERT" | "UPDATE" | "DELETE";
 	new?: PatientRow;
 	old?: PatientRow;
 	errors?: string[];
-}
+};
 
-export interface UseRealtimePatientsOptions {
+export type UseRealtimePatientsOptions = {
 	tenantId: string;
 	enabled?: boolean;
 	onPatientChange?: (payload: RealtimePatientPayload) => void;
 	onError?: (error: Error) => void;
 	queryKey?: string[];
-}
+};
 
-export interface UseRealtimePatientsReturn {
+export type UseRealtimePatientsReturn = {
 	isConnected: boolean;
 	connectionHealth: number;
 	lastUpdate: Date | null;
 	totalUpdates: number;
 	subscribe: () => void;
 	unsubscribe: () => void;
-} /**
+}; /**
  * MANDATORY Real-time Patient Hook
  * Combina Supabase Realtime com TanStack Query cache management
  */
@@ -74,21 +74,17 @@ export function useRealtimePatients(options: UseRealtimePatientsOptions): UseRea
 				if (onPatientChange) {
 					onPatientChange(realtimePayload);
 				}
-
-				// Log for healthcare audit trail
-				console.log(`[RealtimePatients] ${payload.eventType} event:`, {
-					patientId: realtimePayload.new?.id || realtimePayload.old?.id,
-					tenantId,
-					timestamp: new Date().toISOString(),
-				});
 			} catch (error) {
-				console.error("[RealtimePatients] Payload processing error:", error);
 				if (onError) {
 					onError(error as Error);
 				}
 			}
 		},
-		[onPatientChange, onError, tenantId]
+		[
+			onPatientChange,
+			onError, // Update TanStack Query cache
+			updateQueryCache,
+		]
 	); /**
 	 * Update TanStack Query cache based on realtime changes
 	 */
@@ -98,7 +94,9 @@ export function useRealtimePatients(options: UseRealtimePatientsOptions): UseRea
 
 			// Update patients list cache
 			queryClient.setQueryData(queryKey, (oldCache: PatientRow[] | undefined) => {
-				if (!oldCache) return oldCache;
+				if (!oldCache) {
+					return oldCache;
+				}
 
 				switch (eventType) {
 					case "INSERT":
@@ -144,7 +142,9 @@ export function useRealtimePatients(options: UseRealtimePatientsOptions): UseRea
 	 * Subscribe to realtime patient updates
 	 */
 	const subscribe = useCallback(() => {
-		if (!enabled || unsubscribeFn) return;
+		if (!enabled || unsubscribeFn) {
+			return;
+		}
 
 		const realtimeManager = getRealtimeManager();
 
@@ -172,7 +172,9 @@ export function useRealtimePatients(options: UseRealtimePatientsOptions): UseRea
 	 * Monitor connection status
 	 */
 	useEffect(() => {
-		if (!enabled) return;
+		if (!enabled) {
+			return;
+		}
 
 		const realtimeManager = getRealtimeManager();
 
@@ -214,13 +216,17 @@ export function useOptimisticPatients(tenantId: string) {
 		(patientId: string, updates: Partial<PatientRow>) => {
 			// Update patients list optimistically
 			queryClient.setQueryData(["patients", tenantId], (oldCache: PatientRow[] | undefined) => {
-				if (!oldCache) return oldCache;
+				if (!oldCache) {
+					return oldCache;
+				}
 				return oldCache.map((patient) => (patient.id === patientId ? { ...patient, ...updates } : patient));
 			});
 
 			// Update individual patient cache
 			queryClient.setQueryData(["patient", patientId], (oldData: PatientRow | undefined) => {
-				if (!oldData) return oldData;
+				if (!oldData) {
+					return oldData;
+				}
 				return { ...oldData, ...updates };
 			});
 		},

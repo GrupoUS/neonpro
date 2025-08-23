@@ -63,7 +63,7 @@ export const servicesRoutes = new Hono()
 	// Authentication middleware
 	.use("*", async (c, next) => {
 		const auth = c.req.header("Authorization");
-		if (!(auth && auth.startsWith("Bearer "))) {
+		if (!auth?.startsWith("Bearer ")) {
 			return c.json({ error: "UNAUTHORIZED", message: "Token de acesso obrigatório" }, 401);
 		}
 		await next();
@@ -115,12 +115,24 @@ export const servicesRoutes = new Hono()
 					createdAt: new Date().toISOString(),
 				},
 			].filter((service) => {
-				if (search && !service.name.toLowerCase().includes(search.toLowerCase())) return false;
-				if (category && service.category !== category) return false;
-				if (isActive !== undefined && service.isActive !== isActive) return false;
-				if (profession && !service.requiredProfessions.includes(profession)) return false;
-				if (priceMin !== undefined && service.price < priceMin) return false;
-				if (priceMax !== undefined && service.price > priceMax) return false;
+				if (search && !service.name.toLowerCase().includes(search.toLowerCase())) {
+					return false;
+				}
+				if (category && service.category !== category) {
+					return false;
+				}
+				if (isActive !== undefined && service.isActive !== isActive) {
+					return false;
+				}
+				if (profession && !service.requiredProfessions.includes(profession)) {
+					return false;
+				}
+				if (priceMin !== undefined && service.price < priceMin) {
+					return false;
+				}
+				if (priceMax !== undefined && service.price > priceMax) {
+					return false;
+				}
 				return true;
 			});
 
@@ -152,7 +164,7 @@ export const servicesRoutes = new Hono()
 			};
 
 			return c.json(response, 200);
-		} catch (error) {
+		} catch (_error) {
 			return c.json(
 				{
 					success: false,
@@ -195,7 +207,7 @@ export const servicesRoutes = new Hono()
 			};
 
 			return c.json(response, 200);
-		} catch (error) {
+		} catch (_error) {
 			return c.json(
 				{
 					success: false,
@@ -227,7 +239,7 @@ export const servicesRoutes = new Hono()
 			};
 
 			return c.json(response, 201);
-		} catch (error) {
+		} catch (_error) {
 			return c.json(
 				{
 					success: false,
@@ -265,7 +277,7 @@ export const servicesRoutes = new Hono()
 			};
 
 			return c.json(response, 200);
-		} catch (error) {
+		} catch (_error) {
 			return c.json(
 				{
 					success: false,
@@ -290,7 +302,7 @@ export const servicesRoutes = new Hono()
 			};
 
 			return c.json(response, 200);
-		} catch (error) {
+		} catch (_error) {
 			return c.json(
 				{
 					success: false,
@@ -338,7 +350,7 @@ export const servicesRoutes = new Hono()
 			};
 
 			return c.json(response, 200);
-		} catch (error) {
+		} catch (_error) {
 			return c.json(
 				{
 					success: false,
@@ -374,7 +386,7 @@ export const servicesRoutes = new Hono()
 			};
 
 			return c.json(response, 200);
-		} catch (error) {
+		} catch (_error) {
 			return c.json(
 				{
 					success: false,

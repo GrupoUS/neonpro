@@ -7,7 +7,7 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { renderHook, waitFor } from "@testing-library/react";
-import React, { type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Import the hooks after mocking
@@ -34,13 +34,7 @@ describe("Real-time Core Functionality", () => {
 	beforeEach(() => {
 		// Use the global mock setup from vitest.setup.ts
 		vi.clearAllMocks();
-		console.log("🔧 TEST DEBUG: globalThis.mockSupabaseClient exists:", !!(globalThis as any).mockSupabaseClient);
-		console.log("🔧 TEST DEBUG: mockSupabaseClient.channel exists:", !!(globalThis as any).mockSupabaseClient?.channel);
 		if ((globalThis as any).mockSupabaseClient?.channel) {
-			console.log(
-				"🔧 TEST DEBUG: channel is function:",
-				typeof (globalThis as any).mockSupabaseClient.channel === "function"
-			);
 		}
 	});
 

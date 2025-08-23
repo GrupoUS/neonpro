@@ -1,7 +1,8 @@
 "use strict";
-const { execSync } = require("child_process");
-const { readFileSync, writeFileSync, existsSync, mkdirSync } = require("fs");
-const { join } = require("path");
+const { execSync } = require("node:child_process");
+const { readFileSync, writeFileSync, existsSync, mkdirSync } = require("node:fs");
+const { join } = require("node:path");
+const { logger } = require("../apps/api/src/lib/logger");
 
 const rootDir = process.cwd();
 
@@ -20,9 +21,11 @@ class BuildOptimizer {
 			optimization: "🚀",
 		}[type];
 
-		console.log(`${prefix} [${timestamp}] ${message}`);
+		logger.info(`${prefix} [${timestamp}] ${message}`);
 
-		if (type === "optimization") this.optimizations.push(message);
+		if (type === "optimization") {
+			this.optimizations.push(message);
+		}
 	}
 
 	// Otimizar package.json scripts
@@ -99,16 +102,16 @@ class BuildOptimizer {
 
 	// Executar todas as otimizações
 	runAll() {
-		console.log("🚀 INICIANDO OTIMIZAÇÃO DE BUILD TURBOREPO\n");
+		logger.info("🚀 INICIANDO OTIMIZAÇÃO DE BUILD TURBOREPO\n");
 
 		this.optimizeRootPackageScripts();
 		this.testBuild();
 
-		console.log("\n📊 OTIMIZAÇÕES APLICADAS:");
-		this.optimizations.forEach((opt) => console.log(`  🚀 ${opt}`));
+		logger.info("\n📊 OTIMIZAÇÕES APLICADAS:");
+		this.optimizations.forEach((opt) => logger.info(`  🚀 ${opt}`));
 
-		console.log("\n🎉 OTIMIZAÇÃO COMPLETA!");
-		console.log('💡 Execute "pnpm health" para validar todas as mudanças');
+		logger.info("\n🎉 OTIMIZAÇÃO COMPLETA!");
+		logger.info('💡 Execute "pnpm health" para validar todas as mudanças');
 
 		return true;
 	}

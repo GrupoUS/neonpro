@@ -3,7 +3,7 @@
  * Defines types and validation for stock alert management
  */
 
-export interface StockAlert {
+export type StockAlert = {
 	id: string;
 	productId: string;
 	productName: string;
@@ -15,9 +15,9 @@ export interface StockAlert {
 	resolvedAt?: Date;
 	resolvedBy?: string;
 	notes?: string;
-}
+};
 
-export interface StockAlertConfig {
+export type StockAlertConfig = {
 	id: string;
 	productId: string;
 	minimumThreshold: number;
@@ -26,14 +26,14 @@ export interface StockAlertConfig {
 	notificationEmails: string[];
 	autoReorder: boolean;
 	reorderQuantity?: number;
-}
+};
 
-export interface ResolveAlert {
+export type ResolveAlert = {
 	alertId: string;
 	resolvedBy: string;
 	notes?: string;
 	action: "restocked" | "threshold_adjusted" | "product_discontinued";
-}
+};
 
 /**
  * Validate stock alert configuration

@@ -8,7 +8,6 @@ import {
 	Camera,
 	CheckCircle,
 	Clock,
-	Filter,
 	Heart,
 	Plus,
 	Search,
@@ -34,7 +33,6 @@ import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 // Import hooks
 import { useTreatments } from "@/hooks/useTreatments";
@@ -84,7 +82,7 @@ export default function TreatmentsPage() {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [categoryFilter, setCategoryFilter] = useState<AestheticTreatmentCategory | "all">("all");
 	const [statusFilter, setStatusFilter] = useState<TreatmentStatus | "all">("all");
-	const [selectedTreatment, setSelectedTreatment] = useState<TreatmentPlan | null>(null);
+	const [_selectedTreatment, _setSelectedTreatment] = useState<TreatmentPlan | null>(null);
 	const [showNewTreatmentDialog, setShowNewTreatmentDialog] = useState(false);
 
 	// Handle search
@@ -358,8 +356,8 @@ export default function TreatmentsPage() {
 						</CardHeader>
 						<CardContent>
 							<AestheticTreatmentPlan
-								onScheduleSession={(id) => console.log("Schedule session:", id)}
-								onViewProgress={(id) => console.log("View progress:", id)}
+								onScheduleSession={(_id) => {}}
+								onViewProgress={(_id) => {}}
 								treatmentPlan={mockTreatmentPlan}
 								variant="card"
 							/>
@@ -421,7 +419,7 @@ export default function TreatmentsPage() {
 					<div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
 						{loading ? (
 							// Loading skeleton
-							[...Array(4)].map((_, i) => (
+							[...new Array(4)].map((_, i) => (
 								<Card key={i}>
 									<CardHeader>
 										<div className="space-y-2">
@@ -441,8 +439,8 @@ export default function TreatmentsPage() {
 							treatmentPlans.map((treatment) => (
 								<AestheticTreatmentPlan
 									key={treatment.id}
-									onScheduleSession={(id) => console.log("Schedule session:", id)}
-									onViewProgress={(id) => console.log("View progress:", id)}
+									onScheduleSession={(_id) => {}}
+									onViewProgress={(_id) => {}}
 									treatmentPlan={treatment}
 									variant="summary"
 								/>
@@ -451,8 +449,8 @@ export default function TreatmentsPage() {
 							// Show mock data for demonstration
 							<div className="col-span-full">
 								<AestheticTreatmentPlan
-									onScheduleSession={(id) => console.log("Schedule session:", id)}
-									onViewProgress={(id) => console.log("View progress:", id)}
+									onScheduleSession={(_id) => {}}
+									onViewProgress={(_id) => {}}
 									treatmentPlan={mockTreatmentPlan}
 									variant="summary"
 								/>
@@ -593,7 +591,7 @@ export default function TreatmentsPage() {
 						<CardContent>
 							<CosmeticConsentBrazilian
 								mode="new"
-								onConsentGranted={(consent) => console.log("Consent granted:", consent)}
+								onConsentGranted={(_consent) => {}}
 								showProgress={true}
 								treatmentPlan={mockTreatmentPlan}
 							/>
@@ -615,8 +613,8 @@ export default function TreatmentsPage() {
 								canShare={true}
 								consentStatus="granted"
 								enableComparison={true}
-								onPhotoShare={(id, hours) => console.log("Photo share:", id, hours)}
-								onPhotoUpload={(file, type) => console.log("Photo upload:", file, type)}
+								onPhotoShare={(_id, _hours) => {}}
+								onPhotoUpload={(_file, _type) => {}}
 								photos={[]}
 								treatmentSessionId="session-1"
 							/>

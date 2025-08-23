@@ -12,18 +12,15 @@ import {
 	type ChangePasswordRequest,
 	ChangePasswordRequestSchema,
 	type ChangePasswordResponse,
-	ChangePasswordResponseSchema,
 	type ForgotPasswordRequest,
 	ForgotPasswordRequestSchema,
 	type ForgotPasswordResponse,
-	ForgotPasswordResponseSchema,
 	// Types
 	type LoginRequest,
 	// Schemas for validation
 	LoginRequestSchema,
 	type LoginResponse,
 	LoginResponseSchema,
-	type RefreshTokenRequest,
 	RefreshTokenRequestSchema,
 	type RefreshTokenResponse,
 	RefreshTokenResponseSchema,
@@ -34,7 +31,6 @@ import {
 	type ResetPasswordRequest,
 	ResetPasswordRequestSchema,
 	type ResetPasswordResponse,
-	ResetPasswordResponseSchema,
 	type UpdateProfileRequest,
 	UpdateProfileRequestSchema,
 	type UpdateProfileResponse,
@@ -42,18 +38,15 @@ import {
 	type UserBase,
 	UserBaseSchema,
 	type UserPermission,
-	UserPermissionSchema,
 	type UserRole,
-	UserRoleSchema,
 } from "@neonpro/shared/schemas";
 import { useRouter } from "next/navigation";
 import { useCallback, useMemo } from "react";
-import { toast } from "sonner";
 // Import our enhanced query utilities
 import { QueryKeys, useHealthcareQueryUtils } from "@/lib/query/query-utils";
 
 // Enhanced auth context with healthcare-specific features
-export interface AuthContext {
+export type AuthContext = {
 	user: UserBase | null;
 	isAuthenticated: boolean;
 	isLoading: boolean;
@@ -81,7 +74,7 @@ export interface AuthContext {
 	sessionId: string | null;
 	lastActivity: Date | null;
 	tokenExpiry: Date | null;
-}
+};
 
 // 👤 Enhanced profile query with validation and audit logging
 export function useProfile() {
@@ -104,7 +97,9 @@ export function useProfile() {
 
 		retry: (failureCount, error) => {
 			// Don't retry auth errors
-			if (ApiHelpers.isAuthError(error)) return false;
+			if (ApiHelpers.isAuthError(error)) {
+				return false;
+			}
 			return failureCount < 2;
 		},
 
@@ -147,7 +142,7 @@ export function useLogin() {
 		// Invalidate and refetch related data
 		invalidateQueries: [QueryKeys.auth.user(), QueryKeys.auth.session()],
 
-		onSuccess: (response, variables) => {
+		onSuccess: (response, _variables) => {
 			// Store tokens securely
 			if (response.data) {
 				apiClient.auth.setTokens(
@@ -175,7 +170,7 @@ export function useLogin() {
 			}
 		},
 
-		onError: (error, variables) => {
+		onError: (error, _variables) => {
 			// Clear any partial auth state
 			apiClient.auth.clearTokens();
 
@@ -229,7 +224,7 @@ export function useRegister() {
 		showErrorToast: true,
 		successMessage: "Conta criada com sucesso! Verifique seu email.",
 
-		onSuccess: (response, variables) => {
+		onSuccess: (response, _variables) => {
 			// Log successful registration
 			apiClient.audit.log({
 				timestamp: new Date().toISOString(),
@@ -499,24 +494,32 @@ export function useAuthStatus(): AuthContext {
 
 		// Role checking functions
 		const hasRole = (roles: UserRole | UserRole[]): boolean => {
-			if (!user) return false;
+			if (!user) {
+				return false;
+			}
 			const roleArray = Array.isArray(roles) ? roles : [roles];
 			return roleArray.includes(user.role);
 		};
 
 		const hasPermission = (permissions: UserPermission | UserPermission[]): boolean => {
-			if (!user?.permissions) return false;
+			if (!user?.permissions) {
+				return false;
+			}
 			const permArray = Array.isArray(permissions) ? permissions : [permissions];
 			return permArray.every((perm) => user.permissions.includes(perm));
 		};
 
 		const hasAnyPermission = (permissions: UserPermission[]): boolean => {
-			if (!user?.permissions) return false;
+			if (!user?.permissions) {
+				return false;
+			}
 			return permissions.some((perm) => user.permissions.includes(perm));
 		};
 
 		const hasAllPermissions = (permissions: UserPermission[]): boolean => {
-			if (!user?.permissions) return false;
+			if (!user?.permissions) {
+				return false;
+			}
 			return permissions.every((perm) => user.permissions.includes(perm));
 		};
 
@@ -583,7 +586,9 @@ export function useAuthUtils() {
 
 		// Check LGPD consent status
 		checkConsentStatus: useCallback((user: UserBase | null) => {
-			if (!user?.lgpd_consent_date) return { hasConsent: false, isExpired: false };
+			if (!user?.lgpd_consent_date) {
+				return { hasConsent: false, isExpired: false };
+			}
 
 			const consentDate = new Date(user.lgpd_consent_date);
 			const expiryDate = new Date(consentDate.getTime() + 365 * 24 * 60 * 60 * 1000);
@@ -594,7 +599,9 @@ export function useAuthUtils() {
 
 		// Get user permissions for a specific resource
 		getResourcePermissions: useCallback((user: UserBase | null, resourceType: string) => {
-			if (!user?.permissions) return [];
+			if (!user?.permissions) {
+				return [];
+			}
 
 			return user.permissions.filter((perm) => perm.includes(resourceType));
 		}, []),

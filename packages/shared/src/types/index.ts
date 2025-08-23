@@ -142,24 +142,24 @@ export type EndpointMethod<T> = T extends `${string}:${infer M}` ? M : "GET";
 export type EndpointPath<T> = T extends `${infer P}:${string}` ? P : T;
 
 // Generic CRUD operations types
-export interface CrudOperations<T, TCreate = Omit<T, "id" | "createdAt" | "updatedAt">, TUpdate = Partial<TCreate>> {
+export type CrudOperations<T, TCreate = Omit<T, "id" | "createdAt" | "updatedAt">, TUpdate = Partial<TCreate>> = {
 	create: (data: TCreate) => Promise<ApiResponse<T>>;
 	read: (id: EntityId) => Promise<ApiResponse<T>>;
 	update: (id: EntityId, data: TUpdate) => Promise<ApiResponse<T>>;
 	delete: (id: EntityId) => Promise<ApiResponse<{ id: EntityId }>>;
 	list: (params?: PaginationParams) => Promise<PaginatedResponse<T>>;
-}
+};
 
 // Filter utilities
 export type FilterOperator = "eq" | "ne" | "gt" | "gte" | "lt" | "lte" | "in" | "nin" | "like" | "ilike";
 
-export interface FilterCondition<T = unknown> {
+export type FilterCondition<T = unknown> = {
 	field: string;
 	operator: FilterOperator;
 	value: T;
-}
+};
 
-export interface SearchFilter {
+export type SearchFilter = {
 	conditions: FilterCondition[];
 	logic?: "AND" | "OR";
 	pagination?: PaginationParams;
@@ -167,10 +167,10 @@ export interface SearchFilter {
 		field: string;
 		order: "asc" | "desc";
 	};
-}
+};
 
 // Event types for real-time updates
-export interface DomainEvent<T = unknown> {
+export type DomainEvent<T = unknown> = {
 	id: string;
 	type: string;
 	aggregateId: string;
@@ -182,10 +182,10 @@ export interface DomainEvent<T = unknown> {
 		userId?: string;
 		correlationId?: string;
 	};
-}
+};
 
 // Configuration types
-export interface HealthConfig {
+export type HealthConfig = {
 	timeout: number;
 	retries: number;
 	circuitBreaker: {
@@ -193,17 +193,17 @@ export interface HealthConfig {
 		threshold: number;
 		resetTimeout: number;
 	};
-}
+};
 
-export interface CacheConfig {
+export type CacheConfig = {
 	enabled: boolean;
 	ttl: number; // seconds
 	maxSize: number;
 	provider: "memory" | "redis";
-}
+};
 
 // Environment configuration
-export interface EnvironmentConfig {
+export type EnvironmentConfig = {
 	NODE_ENV: "development" | "production" | "test";
 	API_URL: string;
 	DATABASE_URL: string;
@@ -212,7 +212,7 @@ export interface EnvironmentConfig {
 	SUPABASE_URL: string;
 	SUPABASE_ANON_KEY: string;
 	ENCRYPTION_KEY: string;
-}
+};
 
 // Type guards
 export const isUUID = (value: string): value is UUID => {
@@ -222,11 +222,11 @@ export const isUUID = (value: string): value is UUID => {
 
 export const isISODate = (value: string): value is ISODate => {
 	const isoDateRegex = /^\d{4}-\d{2}-\d{2}$/;
-	return isoDateRegex.test(value) && !isNaN(Date.parse(value));
+	return isoDateRegex.test(value) && !Number.isNaN(Date.parse(value));
 };
 
 export const isISODateTime = (value: string): value is ISODateTime => {
-	return !isNaN(Date.parse(value));
+	return !Number.isNaN(Date.parse(value));
 };
 
 export const isTimeString = (value: string): value is TimeString => {

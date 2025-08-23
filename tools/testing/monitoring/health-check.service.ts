@@ -5,29 +5,32 @@
  * com checks automatizados de todos os componentes críticos.
  */
 
+import fs from "node:fs/promises";
+import { performance } from "node:perf_hooks";
 import { createClient } from "@supabase/supabase-js";
 import axios from "axios";
-import fs from "fs/promises";
-import { performance } from "perf_hooks";
 
-interface HealthCheckResult {
+type HealthCheckResult = {
 	component: string;
 	status: "healthy" | "degraded" | "down";
 	responseTime: number;
 	message: string;
 	metadata?: Record<string, any>;
-}
+};
 
-interface SystemHealth {
+type SystemHealth = {
 	overall: "healthy" | "degraded" | "down";
 	score: number;
 	timestamp: number;
 	checks: HealthCheckResult[];
 	uptime: number;
-}
+};
 
 export class HealthCheckService {
-	private supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
+	private readonly supabase = createClient(
+		process.env.NEXT_PUBLIC_SUPABASE_URL!,
+		process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+	);
 
 	/**
 	 * 🏥 Executar health check completo
@@ -98,8 +101,12 @@ export class HealthCheckService {
 
 			// Check response time thresholds
 			let status: "healthy" | "degraded" | "down" = "healthy";
-			if (responseTime > 1000) status = "degraded";
-			if (responseTime > 5000) status = "down";
+			if (responseTime > 1000) {
+				status = "degraded";
+			}
+			if (responseTime > 5000) {
+				status = "down";
+			}
 
 			return {
 				component: "database",
@@ -137,8 +144,12 @@ export class HealthCheckService {
 			const successRate = (successCount / endpoints.length) * 100;
 
 			let status: "healthy" | "degraded" | "down" = "healthy";
-			if (successRate < 100) status = "degraded";
-			if (successRate < 50) status = "down";
+			if (successRate < 100) {
+				status = "degraded";
+			}
+			if (successRate < 50) {
+				status = "down";
+			}
 
 			return {
 				component: "api",
@@ -183,8 +194,12 @@ export class HealthCheckService {
 			const successRate = (accessiblePaths / criticalPaths.length) * 100;
 
 			let status: "healthy" | "degraded" | "down" = "healthy";
-			if (successRate < 100) status = "degraded";
-			if (successRate < 75) status = "down";
+			if (successRate < 100) {
+				status = "degraded";
+			}
+			if (successRate < 75) {
+				status = "down";
+			}
 
 			return {
 				component: "filesystem",
@@ -222,8 +237,12 @@ export class HealthCheckService {
 			const usagePercent = (memory.heapUsed / memory.heapTotal) * 100;
 
 			let status: "healthy" | "degraded" | "down" = "healthy";
-			if (usagePercent > 80) status = "degraded";
-			if (usagePercent > 95) status = "down";
+			if (usagePercent > 80) {
+				status = "degraded";
+			}
+			if (usagePercent > 95) {
+				status = "down";
+			}
 
 			return {
 				component: "memory",
@@ -312,8 +331,12 @@ export class HealthCheckService {
 			const successRate = (availableModules / criticalModules.length) * 100;
 
 			let status: "healthy" | "degraded" | "down" = "healthy";
-			if (successRate < 100) status = "degraded";
-			if (successRate < 75) status = "down";
+			if (successRate < 100) {
+				status = "degraded";
+			}
+			if (successRate < 75) {
+				status = "down";
+			}
 
 			return {
 				component: "dependencies",
@@ -358,8 +381,12 @@ export class HealthCheckService {
 			const complianceRate = (passedChecks / totalChecks) * 100;
 
 			let status: "healthy" | "degraded" | "down" = "healthy";
-			if (complianceRate < 100) status = "degraded";
-			if (complianceRate < 80) status = "down";
+			if (complianceRate < 100) {
+				status = "degraded";
+			}
+			if (complianceRate < 80) {
+				status = "down";
+			}
 
 			return {
 				component: "compliance",
@@ -427,8 +454,12 @@ export class HealthCheckService {
 	 * 🎯 Determinar status geral
 	 */
 	private determineOverallStatus(score: number): "healthy" | "degraded" | "down" {
-		if (score >= 90) return "healthy";
-		if (score >= 60) return "degraded";
+		if (score >= 90) {
+			return "healthy";
+		}
+		if (score >= 60) {
+			return "degraded";
+		}
 		return "down";
 	}
 }

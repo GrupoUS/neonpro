@@ -3,7 +3,7 @@
 // WCAG 2.1 AA Accessibility Utilities for Healthcare Reports Center
 // Ensures compliance with medical accessibility standards
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
 // Keyboard navigation constants
 export const KEYBOARD_KEYS = {
@@ -50,13 +50,17 @@ export class FocusManager {
 
 	static trapFocus(container: HTMLElement) {
 		const focusableElements = FocusManager.getFocusableElements(container);
-		if (focusableElements.length === 0) return;
+		if (focusableElements.length === 0) {
+			return;
+		}
 
 		const firstElement = focusableElements[0];
-		const lastElement = focusableElements[focusableElements.length - 1];
+		const lastElement = focusableElements.at(-1);
 
 		const handleTabKey = (e: KeyboardEvent) => {
-			if (e.key !== KEYBOARD_KEYS.TAB) return;
+			if (e.key !== KEYBOARD_KEYS.TAB) {
+				return;
+			}
 
 			if (e.shiftKey) {
 				if (document.activeElement === firstElement) {
@@ -112,7 +116,9 @@ export class ScreenReaderAnnouncer {
 	private static announcer: HTMLElement | null = null;
 
 	static initialize() {
-		if (ScreenReaderAnnouncer.announcer) return;
+		if (ScreenReaderAnnouncer.announcer) {
+			return;
+		}
 
 		ScreenReaderAnnouncer.announcer = document.createElement("div");
 		ScreenReaderAnnouncer.announcer.setAttribute("aria-live", "polite");
@@ -210,7 +216,9 @@ export class ContrastChecker {
 
 	private static getLuminance(color: string): number {
 		const rgb = ContrastChecker.hexToRgb(color);
-		if (!rgb) return 0;
+		if (!rgb) {
+			return 0;
+		}
 
 		const rsRGB = rgb.r / 255;
 		const gsRGB = rgb.g / 255;
@@ -312,7 +320,9 @@ export class FormAccessibility {
 export class TableAccessibility {
 	static addTableHeaders(tableId: string) {
 		const table = document.getElementById(tableId);
-		if (!table) return;
+		if (!table) {
+			return;
+		}
 
 		// Add scope attributes to headers
 		const headers = table.querySelectorAll("th");
@@ -336,7 +346,9 @@ export class TableAccessibility {
 
 	static addSortableTableAria(tableId: string, columnIndex: number, sortDirection: "asc" | "desc") {
 		const table = document.getElementById(tableId);
-		if (!table) return;
+		if (!table) {
+			return;
+		}
 
 		const headers = table.querySelectorAll("th");
 		headers.forEach((header, index) => {

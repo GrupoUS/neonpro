@@ -8,6 +8,7 @@
 
 import type { MiddlewareHandler } from "hono";
 import { cors } from "hono/cors";
+import { logger } from "../lib/logger";
 
 // Regex patterns for dynamic origins
 const VERCEL_PRODUCTION_PATTERN = /^https:\/\/.*\.vercel\.app$/;
@@ -150,18 +151,20 @@ const addHealthcareHeaders = (): MiddlewareHandler => {
 /**
  * Dynamic origin validation for multi-tenant clinics
  */
+// Top-level regex patterns for performance
+const CLINIC_SUBDOMAIN_PATTERN = /^https:\/\/[a-zA-Z0-9-]+\.neonpro\.com$/;
+const VERCEL_PREVIEW_PATTERN = /^https:\/\/neonpro-[a-zA-Z0-9-]+\.vercel\.app$/;
+
 const validateClinicOrigin = (origin: string): boolean => {
 	// Allow clinic subdomains in production
-	const clinicSubdomainPattern = /^https:\/\/[a-zA-Z0-9-]+\.neonpro\.com$/;
 
-	if (clinicSubdomainPattern.test(origin)) {
+	if (CLINIC_SUBDOMAIN_PATTERN.test(origin)) {
 		return true;
 	}
 
 	// Allow Vercel preview deployments for clinics
-	const vercelPreviewPattern = /^https:\/\/neonpro-[a-zA-Z0-9-]+\.vercel\.app$/;
 
-	if (vercelPreviewPattern.test(origin)) {
+	if (VERCEL_PREVIEW_PATTERN.test(origin)) {
 		return true;
 	}
 
@@ -177,7 +180,9 @@ export const corsMiddleware = (): MiddlewareHandler[] => {
 	// Enhanced origin validation
 	const originValidator = (origin: string): boolean => {
 		// If no origin (same-origin requests), allow
-		if (!origin) return true;
+		if (!origin) {
+			return true;
+		}
 
 		// Check static origins
 		if (Array.isArray(corsPolicy.origin)) {
@@ -197,7 +202,7 @@ export const corsMiddleware = (): MiddlewareHandler[] => {
 		}
 
 		// Log rejected origins for monitoring
-		console.warn(`CORS: Rejected origin: ${origin}`);
+		logger.warn("CORS: Rejected origin", { origin, timestamp: new Date().toISOString() });
 		return false;
 	};
 
@@ -245,12 +250,18 @@ export const corsUtils = {
 	isOriginAllowed: (origin: string): boolean => {
 		const corsPolicy = getCorsPolicyByEnvironment();
 
-		if (!(corsPolicy.origin && origin)) return false;
+		if (!(corsPolicy.origin && origin)) {
+			return false;
+		}
 
 		if (Array.isArray(corsPolicy.origin)) {
 			return corsPolicy.origin.some((allowed) => {
-				if (typeof allowed === "string") return allowed === origin;
-				if (allowed instanceof RegExp) return allowed.test(origin);
+				if (typeof allowed === "string") {
+					return allowed === origin;
+				}
+				if (allowed instanceof RegExp) {
+					return allowed.test(origin);
+				}
 				return false;
 			});
 		}

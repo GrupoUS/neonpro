@@ -17,12 +17,16 @@ export const BusinessHoursSchema = z
 		closeTime: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, "Horário deve estar no formato HH:MM"),
 	})
 	.refine((data) => {
-		if (!(data.isOpen && data.openTime && data.closeTime)) return true;
+		if (!(data.isOpen && data.openTime && data.closeTime)) {
+			return true;
+		}
 
 		const openTimeParts = data.openTime.split(":").map(Number);
 		const closeTimeParts = data.closeTime.split(":").map(Number);
 
-		if (openTimeParts.length !== 2 || closeTimeParts.length !== 2) return false;
+		if (openTimeParts.length !== 2 || closeTimeParts.length !== 2) {
+			return false;
+		}
 
 		const openHour = openTimeParts[0];
 		const openMin = openTimeParts[1];
@@ -34,12 +38,13 @@ export const BusinessHoursSchema = z
 			typeof openMin !== "number" ||
 			typeof closeHour !== "number" ||
 			typeof closeMin !== "number" ||
-			isNaN(openHour) ||
-			isNaN(openMin) ||
-			isNaN(closeHour) ||
-			isNaN(closeMin)
-		)
+			Number.isNaN(openHour) ||
+			Number.isNaN(openMin) ||
+			Number.isNaN(closeHour) ||
+			Number.isNaN(closeMin)
+		) {
 			return false;
+		}
 
 		const openMinutes = openHour * 60 + openMin;
 		const closeMinutes = closeHour * 60 + closeMin;

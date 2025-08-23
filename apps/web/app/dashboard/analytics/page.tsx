@@ -8,23 +8,14 @@ import {
 	BarChart3,
 	Calendar,
 	CheckCircle2,
-	Clock,
 	DollarSign,
 	Download,
 	Eye,
 	FileText,
-	Filter,
 	Gauge,
-	Globe,
 	Heart,
 	LineChart,
-	Mail,
-	MapPin,
-	Phone,
-	PieChart,
-	Pill,
 	RefreshCw,
-	Settings,
 	Shield,
 	Stethoscope,
 	Target,
@@ -32,13 +23,10 @@ import {
 	TrendingUp,
 	UserCheck,
 	Users,
-	Zap,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -51,7 +39,7 @@ import { usePatients } from "@/hooks/usePatients";
 type AnalyticsTimeRange = "7d" | "30d" | "90d" | "1y";
 type ChartType = "line" | "bar" | "pie" | "area";
 
-interface AnalyticsKPI {
+type AnalyticsKPI = {
 	id: string;
 	title: string;
 	value: string | number;
@@ -60,22 +48,22 @@ interface AnalyticsKPI {
 	icon: React.ComponentType<{ className?: string }>;
 	description: string;
 	trend: number[];
-}
+};
 
-interface ChartData {
+type ChartData = {
 	name: string;
 	value: number;
 	percentage?: number;
 	color?: string;
-}
+};
 
-interface TrendData {
+type TrendData = {
 	period: string;
 	revenue: number;
 	patients: number;
 	appointments: number;
 	satisfaction: number;
-}
+};
 
 // Visual components maintaining NeonPro design
 const NeonGradientCard = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (

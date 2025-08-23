@@ -7,14 +7,7 @@
  */
 
 import { apiClient } from "@neonpro/shared/api-client";
-import type {
-	CreatePatient,
-	PaginatedResponse,
-	Patient,
-	PatientResponse,
-	PatientSearch,
-	UpdatePatient,
-} from "@neonpro/shared/types";
+import type { CreatePatient, PaginatedResponse, Patient, PatientSearch, UpdatePatient } from "@neonpro/shared/types";
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 // Query keys for patients
@@ -186,7 +179,9 @@ export function useUpdatePatient() {
 			queryClient.setQueriesData(
 				{ queryKey: PATIENT_QUERY_KEYS.lists() },
 				(old: PaginatedResponse<Patient> | undefined) => {
-					if (!old?.data) return old;
+					if (!old?.data) {
+						return old;
+					}
 
 					return {
 						...old,
@@ -197,7 +192,9 @@ export function useUpdatePatient() {
 
 			// Update infinite queries
 			queryClient.setQueriesData({ queryKey: [...PATIENT_QUERY_KEYS.lists(), "infinite"] }, (old: any) => {
-				if (!old?.pages) return old;
+				if (!old?.pages) {
+					return old;
+				}
 
 				return {
 					...old,
@@ -238,7 +235,9 @@ export function useDeletePatient() {
 			queryClient.setQueriesData(
 				{ queryKey: PATIENT_QUERY_KEYS.lists() },
 				(old: PaginatedResponse<Patient> | undefined) => {
-					if (!old?.data) return old;
+					if (!old?.data) {
+						return old;
+					}
 
 					return {
 						...old,
@@ -253,7 +252,9 @@ export function useDeletePatient() {
 
 			// Update infinite queries
 			queryClient.setQueriesData({ queryKey: [...PATIENT_QUERY_KEYS.lists(), "infinite"] }, (old: any) => {
-				if (!old?.pages) return old;
+				if (!old?.pages) {
+					return old;
+				}
 
 				return {
 					...old,

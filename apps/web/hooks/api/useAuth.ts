@@ -87,8 +87,7 @@ export function useLogin() {
 			});
 		},
 
-		onError: (error) => {
-			console.error("Login failed:", error);
+		onError: (_error) => {
 			// Clear any cached auth data
 			queryClient.removeQueries({
 				queryKey: ["auth"],
@@ -285,7 +284,9 @@ export function useAuthUtils() {
 		// Update cached user data
 		updateUser: (userData: Partial<AuthUser>) => {
 			queryClient.setQueryData(AUTH_QUERY_KEYS.profile, (old: AuthUser | undefined) => {
-				if (!old) return old;
+				if (!old) {
+					return old;
+				}
 				return { ...old, ...userData };
 			});
 		},

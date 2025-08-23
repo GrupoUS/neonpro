@@ -5,8 +5,7 @@
  * Tests authentication, data integrity, LGPD compliance, and error handling
  */
 
-import { NextRequest } from "next/server";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { mockAppointment, mockPatient, mockUser } from "../setup/final-test-setup";
 
 describe("API Integration Tests - Final Validation", () => {

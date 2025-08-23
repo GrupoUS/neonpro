@@ -5,10 +5,10 @@
 
 "use client";
 
-import React, { createContext, type ReactNode, useContext } from "react";
+import { createContext, type ReactNode, useContext } from "react";
 import { type AuthUser, type LoginCredentials, useAuthToken } from "./use-auth-token";
 
-interface AuthContextType {
+type AuthContextType = {
 	// Estado
 	user: AuthUser | null;
 	isAuthenticated: boolean;
@@ -28,13 +28,13 @@ interface AuthContextType {
 	hasValidTokens: boolean;
 	willExpireSoon: boolean;
 	timeUntilExpiration: number;
-}
+};
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export interface AuthProviderProps {
+export type AuthProviderProps = {
 	children: ReactNode;
-}
+};
 
 /**
  * Provider de autenticação global

@@ -8,6 +8,7 @@
 
 import type { Context, ErrorHandler } from "hono";
 import type { StatusCode } from "hono/utils/http-status";
+import { logger } from "../lib/logger";
 
 // Error types for better categorization
 export enum ErrorType {
@@ -83,7 +84,7 @@ export class NeonProError extends Error {
 }
 
 // Error response structure
-interface ErrorResponse {
+type ErrorResponse = {
 	success: false;
 	error: string;
 	message: string;
@@ -91,7 +92,7 @@ interface ErrorResponse {
 	timestamp: string;
 	requestId?: string;
 	auditId?: string;
-}
+};
 
 /**
  * Sanitize error data to prevent sensitive information leakage
@@ -190,14 +191,14 @@ const logError = (error: any, context: Context): void => {
 	// Sanitize sensitive data before logging
 	const sanitizedLog = sanitizeError(logData);
 
-	// Log to console (in production, this should go to proper logging service)
-	console.error("API ERROR:", JSON.stringify(sanitizedLog, null, 2));
-
-	// In production, send to monitoring service (e.g., Sentry, DataDog)
-	if (process.env.NODE_ENV === "production") {
-		// TODO: Send to monitoring service
-		// Example: sentry.captureException(error, { extra: sanitizedLog });
-	}
+	// Log using centralized logger
+	logger.error("API Error occurred", error, {
+		endpoint: sanitizedLog.endpoint,
+		method: sanitizedLog.method,
+		statusCode: sanitizedLog.statusCode,
+		errorType: sanitizedLog.type,
+		requestId: sanitizedLog.requestId,
+	});
 };
 
 /**

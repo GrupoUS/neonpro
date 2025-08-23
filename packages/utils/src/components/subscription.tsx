@@ -4,14 +4,14 @@
  */
 import type React from "react";
 
-export interface SubscriptionStatusCardProps {
+export type SubscriptionStatusCardProps = {
 	subscription: {
 		status: "active" | "expired" | "cancelled" | "pending";
 		planType: "basic" | "premium" | "enterprise";
 		expiresAt?: Date;
 	};
 	variant?: "default" | "premium" | "enterprise";
-}
+};
 
 export const SubscriptionStatusCard: React.FC<SubscriptionStatusCardProps> = ({
 	subscription,
@@ -26,12 +26,12 @@ export const SubscriptionStatusCard: React.FC<SubscriptionStatusCardProps> = ({
 	);
 };
 
-export interface FeatureGateProps {
+export type FeatureGateProps = {
 	feature: string;
 	isAvailable: boolean;
 	children: React.ReactNode;
 	fallback?: React.ReactNode;
-}
+};
 
 export const FeatureGate: React.FC<FeatureGateProps> = ({ feature, isAvailable, children, fallback }) => {
 	if (isAvailable) {
@@ -49,12 +49,12 @@ export const FeatureGate: React.FC<FeatureGateProps> = ({ feature, isAvailable, 
 	);
 };
 
-export interface SubscriptionNotificationsProps {
+export type SubscriptionNotificationsProps = {
 	subscription: {
 		status: "active" | "expired" | "cancelled" | "pending";
 		expiresAt?: Date;
 	};
-}
+};
 
 export const SubscriptionNotifications: React.FC<SubscriptionNotificationsProps> = ({ subscription }) => {
 	const isExpiringSoon =

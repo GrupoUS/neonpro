@@ -3,7 +3,7 @@
 import { useCallback, useMemo, useState } from "react";
 
 // Emergency patient data interface
-export interface EmergencyPatient {
+export type EmergencyPatient = {
 	id: string;
 	name: string;
 	cpf: string;
@@ -52,17 +52,17 @@ export interface EmergencyPatient {
 		planNumber: string;
 		validUntil: string;
 	};
-}
+};
 
 // Search options interface
-interface SearchOptions {
+type SearchOptions = {
 	includeInactive?: boolean;
 	emergencyOnly?: boolean;
 	maxResults?: number;
-}
+};
 
 // Hook return interface
-interface UseEmergencyPatientSearchReturn {
+type UseEmergencyPatientSearchReturn = {
 	patients: EmergencyPatient[];
 	searchPatient: (query: string, options?: SearchOptions) => Promise<EmergencyPatient[]>;
 	getPatientById: (id: string) => Promise<EmergencyPatient | null>;
@@ -72,7 +72,7 @@ interface UseEmergencyPatientSearchReturn {
 	clearError: () => void;
 	cacheStatus: "fresh" | "stale" | "offline";
 	lastSync: Date | null;
-}
+};
 
 // Mock emergency patient data for demonstration
 const mockEmergencyPatients: EmergencyPatient[] = [

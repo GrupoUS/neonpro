@@ -19,7 +19,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
 
-interface DataProcessingRecord {
+type DataProcessingRecord = {
 	id: string;
 	category: "health" | "identifying" | "behavioral" | "financial";
 	purpose: string;
@@ -28,23 +28,23 @@ interface DataProcessingRecord {
 	retentionPeriod: number;
 	lastUpdated: Date;
 	status: "active" | "deleted" | "anonymized";
-}
+};
 
-interface ConsentRecord {
+type ConsentRecord = {
 	id: string;
 	type: "data_processing" | "marketing" | "analytics" | "research";
 	status: "granted" | "withdrawn" | "pending";
 	grantedAt?: Date;
 	withdrawnAt?: Date;
 	description: string;
-}
+};
 
-interface DataSubjectRights {
+type DataSubjectRights = {
 	access: { available: boolean; lastRequested?: Date; status?: string };
 	rectification: { available: boolean; lastRequested?: Date; status?: string };
 	erasure: { available: boolean; lastRequested?: Date; status?: string };
 	portability: { available: boolean; lastRequested?: Date; status?: string };
-}
+};
 
 export default function LGPDComplianceDashboard() {
 	const [activeTab, setActiveTab] = useState<"overview" | "data" | "consent" | "rights">("overview");
@@ -67,7 +67,7 @@ export default function LGPDComplianceDashboard() {
 
 	useEffect(() => {
 		loadUserData();
-	}, []);
+	}, [loadUserData]);
 
 	const loadUserData = async () => {
 		// Mock data - integrate with real API

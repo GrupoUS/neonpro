@@ -10,7 +10,6 @@
 
 import { Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
-import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 
 export function RootLayout() {

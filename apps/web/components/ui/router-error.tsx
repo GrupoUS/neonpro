@@ -10,14 +10,13 @@
 
 import { Link } from "@tanstack/react-router";
 import { AlertTriangle, Home, RefreshCw } from "lucide-react";
-import React from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 
-interface RouterErrorProps {
+type RouterErrorProps = {
 	error: Error;
 	reset?: () => void;
-}
+};
 
 export function RouterError({ error, reset }: RouterErrorProps) {
 	const handleRefresh = () => {
@@ -29,14 +28,6 @@ export function RouterError({ error, reset }: RouterErrorProps) {
 	};
 
 	const handleReportError = () => {
-		// Log error for monitoring (implement based on your error tracking service)
-		console.error("Router Error:", {
-			message: error.message,
-			stack: error.stack,
-			timestamp: new Date().toISOString(),
-			url: window.location.href,
-		});
-
 		// TODO: Send to error tracking service (Sentry, LogRocket, etc.)
 	};
 

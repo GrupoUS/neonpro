@@ -15,52 +15,52 @@ import { z } from "zod";
 /**
  * LGPD lawful basis for data processing
  */
-export var LgpdLawfulBasis;
+export let LgpdLawfulBasis;
 ((LgpdLawfulBasis) => {
-	LgpdLawfulBasis["CONSENT"] = "consent";
-	LgpdLawfulBasis["CONTRACT"] = "contract";
-	LgpdLawfulBasis["LEGAL_OBLIGATION"] = "legal_obligation";
-	LgpdLawfulBasis["VITAL_INTERESTS"] = "vital_interests";
-	LgpdLawfulBasis["PUBLIC_TASK"] = "public_task";
-	LgpdLawfulBasis["LEGITIMATE_INTERESTS"] = "legitimate_interests";
+	LgpdLawfulBasis.CONSENT = "consent";
+	LgpdLawfulBasis.CONTRACT = "contract";
+	LgpdLawfulBasis.LEGAL_OBLIGATION = "legal_obligation";
+	LgpdLawfulBasis.VITAL_INTERESTS = "vital_interests";
+	LgpdLawfulBasis.PUBLIC_TASK = "public_task";
+	LgpdLawfulBasis.LEGITIMATE_INTERESTS = "legitimate_interests";
 })(LgpdLawfulBasis || (LgpdLawfulBasis = {}));
 /**
  * Data processing purposes
  */
-export var DataProcessingPurpose;
+export let DataProcessingPurpose;
 ((DataProcessingPurpose) => {
-	DataProcessingPurpose["MEDICAL_TREATMENT"] = "medical_treatment";
-	DataProcessingPurpose["APPOINTMENT_SCHEDULING"] = "appointment_scheduling";
-	DataProcessingPurpose["BILLING"] = "billing";
-	DataProcessingPurpose["MARKETING"] = "marketing";
-	DataProcessingPurpose["RESEARCH"] = "research";
-	DataProcessingPurpose["LEGAL_COMPLIANCE"] = "legal_compliance";
-	DataProcessingPurpose["SECURITY"] = "security";
+	DataProcessingPurpose.MEDICAL_TREATMENT = "medical_treatment";
+	DataProcessingPurpose.APPOINTMENT_SCHEDULING = "appointment_scheduling";
+	DataProcessingPurpose.BILLING = "billing";
+	DataProcessingPurpose.MARKETING = "marketing";
+	DataProcessingPurpose.RESEARCH = "research";
+	DataProcessingPurpose.LEGAL_COMPLIANCE = "legal_compliance";
+	DataProcessingPurpose.SECURITY = "security";
 })(DataProcessingPurpose || (DataProcessingPurpose = {}));
 /**
  * Data categories for processing
  */
-export var DataCategory;
+export let DataCategory;
 ((DataCategory) => {
-	DataCategory["PERSONAL"] = "personal";
-	DataCategory["HEALTH"] = "health";
-	DataCategory["FINANCIAL"] = "financial";
-	DataCategory["BEHAVIORAL"] = "behavioral";
-	DataCategory["SENSITIVE"] = "sensitive";
-	DataCategory["BIOMETRIC"] = "biometric";
+	DataCategory.PERSONAL = "personal";
+	DataCategory.HEALTH = "health";
+	DataCategory.FINANCIAL = "financial";
+	DataCategory.BEHAVIORAL = "behavioral";
+	DataCategory.SENSITIVE = "sensitive";
+	DataCategory.BIOMETRIC = "biometric";
 })(DataCategory || (DataCategory = {}));
 /**
  * Data subject rights under LGPD
  */
-export var DataSubjectRight;
+export let DataSubjectRight;
 ((DataSubjectRight) => {
-	DataSubjectRight["ACCESS"] = "access";
-	DataSubjectRight["RECTIFICATION"] = "rectification";
-	DataSubjectRight["ERASURE"] = "erasure";
-	DataSubjectRight["PORTABILITY"] = "portability";
-	DataSubjectRight["OBJECTION"] = "objection";
-	DataSubjectRight["RESTRICTION"] = "restriction";
-	DataSubjectRight["INFORMATION"] = "information";
+	DataSubjectRight.ACCESS = "access";
+	DataSubjectRight.RECTIFICATION = "rectification";
+	DataSubjectRight.ERASURE = "erasure";
+	DataSubjectRight.PORTABILITY = "portability";
+	DataSubjectRight.OBJECTION = "objection";
+	DataSubjectRight.RESTRICTION = "restriction";
+	DataSubjectRight.INFORMATION = "information";
 })(DataSubjectRight || (DataSubjectRight = {}));
 /**
  * Consent record schema

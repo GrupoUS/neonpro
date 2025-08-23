@@ -8,6 +8,7 @@
 import { cleanup } from "@testing-library/react";
 import { afterAll, afterEach, beforeAll, vi } from "vitest";
 import "@testing-library/jest-dom";
+import { logger } from "../../../../utils/logger";
 
 // Mock environment variables
 process.env.NODE_ENV = "test";
@@ -127,7 +128,7 @@ export const mockAppointment = {
 // Global test setup
 beforeAll(() => {
 	// Setup test database if needed
-	console.log("🧪 Final Testing Phase - Setup Complete");
+	logger.info("🧪 Final Testing Phase - Setup Complete");
 });
 
 afterEach(() => {

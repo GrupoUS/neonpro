@@ -76,7 +76,7 @@ export function useTreatments(): TreatmentsHook {
 	const [treatmentPlans, setTreatmentPlans] = useState<TreatmentPlan[]>([]);
 	const [treatmentSessions, setTreatmentSessions] = useState<TreatmentSession[]>([]);
 	const [treatmentProtocols, setTreatmentProtocols] = useState<TreatmentProtocol[]>([]);
-	const [treatmentProgress, setTreatmentProgress] = useState<TreatmentProgress[]>([]);
+	const [_treatmentProgress, _setTreatmentProgress] = useState<TreatmentProgress[]>([]);
 
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<Error | null>(null);
@@ -224,7 +224,9 @@ export function useTreatments(): TreatmentsHook {
 	const completionRate = totalTreatments > 0 ? (completedTreatments.length / totalTreatments) * 100 : 0;
 	const averageSatisfactionScore = useMemo(() => {
 		const sessionsWithScores = treatmentSessions.filter((s) => s.patient_satisfaction_score);
-		if (sessionsWithScores.length === 0) return 0;
+		if (sessionsWithScores.length === 0) {
+			return 0;
+		}
 		const total = sessionsWithScores.reduce((sum, s) => sum + (s.patient_satisfaction_score || 0), 0);
 		return total / sessionsWithScores.length;
 	}, [treatmentSessions]);
@@ -315,61 +317,45 @@ export function useTreatments(): TreatmentsHook {
 
 	// Session Management Functions (placeholder implementations)
 	const scheduleSession = useCallback(
-		async (session: Omit<TreatmentSession, "id" | "created_at" | "updated_at">): Promise<TreatmentSession | null> => {
-			// Implementation would go here
-			console.log("Scheduling session:", session);
+		async (_session: Omit<TreatmentSession, "id" | "created_at" | "updated_at">): Promise<TreatmentSession | null> => {
 			return null;
 		},
 		[]
 	);
 
 	const completeSession = useCallback(
-		async (sessionId: string, sessionData: Partial<TreatmentSession>): Promise<TreatmentSession | null> => {
-			// Implementation would go here
-			console.log("Completing session:", sessionId, sessionData);
+		async (_sessionId: string, _sessionData: Partial<TreatmentSession>): Promise<TreatmentSession | null> => {
 			return null;
 		},
 		[]
 	);
 
-	const cancelSession = useCallback(async (sessionId: string, reason: string): Promise<boolean> => {
-		// Implementation would go here
-		console.log("Cancelling session:", sessionId, reason);
+	const cancelSession = useCallback(async (_sessionId: string, _reason: string): Promise<boolean> => {
 		return true;
 	}, []);
 
 	// Progress Tracking Functions (placeholder implementations)
 	const updateProgress = useCallback(
-		async (progressData: Omit<TreatmentProgress, "id" | "recorded_at">): Promise<TreatmentProgress | null> => {
-			// Implementation would go here
-			console.log("Updating progress:", progressData);
+		async (_progressData: Omit<TreatmentProgress, "id" | "recorded_at">): Promise<TreatmentProgress | null> => {
 			return null;
 		},
 		[]
 	);
 
-	const getProgressHistory = useCallback(async (treatmentPlanId: string): Promise<TreatmentProgress[]> => {
-		// Implementation would go here
-		console.log("Getting progress history for:", treatmentPlanId);
+	const getProgressHistory = useCallback(async (_treatmentPlanId: string): Promise<TreatmentProgress[]> => {
 		return [];
 	}, []);
 
 	// Brazilian Compliance Functions (placeholder implementations)
-	const validateCFMCompliance = useCallback(async (treatmentPlanId: string): Promise<boolean> => {
-		// Implementation would validate CFM compliance
-		console.log("Validating CFM compliance for:", treatmentPlanId);
+	const validateCFMCompliance = useCallback(async (_treatmentPlanId: string): Promise<boolean> => {
 		return true;
 	}, []);
 
-	const updateLGPDConsent = useCallback(async (treatmentPlanId: string, consentStatus: boolean): Promise<boolean> => {
-		// Implementation would update LGPD consent
-		console.log("Updating LGPD consent for:", treatmentPlanId, consentStatus);
+	const updateLGPDConsent = useCallback(async (_treatmentPlanId: string, _consentStatus: boolean): Promise<boolean> => {
 		return true;
 	}, []);
 
-	const generateComplianceReport = useCallback(async (treatmentPlanId: string): Promise<any> => {
-		// Implementation would generate compliance report
-		console.log("Generating compliance report for:", treatmentPlanId);
+	const generateComplianceReport = useCallback(async (_treatmentPlanId: string): Promise<any> => {
 		return {};
 	}, []);
 
@@ -378,9 +364,7 @@ export function useTreatments(): TreatmentsHook {
 		await Promise.all([fetchTreatmentPlans(), fetchTreatmentSessions(), fetchTreatmentProtocols()]);
 	}, [fetchTreatmentPlans, fetchTreatmentSessions, fetchTreatmentProtocols]);
 
-	const exportTreatmentData = useCallback(async (treatmentPlanId: string): Promise<any> => {
-		// Implementation would export treatment data
-		console.log("Exporting treatment data for:", treatmentPlanId);
+	const exportTreatmentData = useCallback(async (_treatmentPlanId: string): Promise<any> => {
 		return {};
 	}, []);
 

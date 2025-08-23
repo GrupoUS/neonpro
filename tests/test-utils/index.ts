@@ -1,7 +1,5 @@
 // Test utilities for consistent mock management across the test suite
 
-import { vi } from "vitest";
-
 /**
  * Get the global Supabase mock that's configured in vitest.setup.ts
  */

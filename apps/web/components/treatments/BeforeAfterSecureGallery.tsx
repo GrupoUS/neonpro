@@ -7,7 +7,6 @@ import {
 	Download,
 	Eye,
 	EyeOff,
-	Filter,
 	Grid,
 	Image as ImageIcon,
 	Lock,
@@ -17,7 +16,6 @@ import {
 	Shield,
 	Trash2,
 	Upload,
-	User,
 	Zap,
 	ZoomIn,
 } from "lucide-react";
@@ -62,7 +60,7 @@ const NeonGradientCard = ({ children, className = "" }: NeonGradientCardProps) =
 );
 
 // Props interface
-interface BeforeAfterSecureGalleryProps {
+type BeforeAfterSecureGalleryProps = {
 	treatmentSessionId: string;
 	photos: TreatmentPhoto[];
 	sessions?: TreatmentSession[];
@@ -76,20 +74,20 @@ interface BeforeAfterSecureGalleryProps {
 	showMetadata?: boolean;
 	enableComparison?: boolean;
 	className?: string;
-}
+};
 
 // Filter and view options
 type PhotoFilter = "all" | "before" | "after" | "during" | "follow_up";
 type ViewMode = "grid" | "comparison" | "timeline";
 
 // Photo upload data
-interface PhotoUploadData {
+type PhotoUploadData = {
 	file: File | null;
 	type: "before" | "after" | "during" | "follow_up";
 	anatomicalRegion: string;
 	photoAngle: string;
 	lightingConditions: string;
-}
+};
 
 export function BeforeAfterSecureGallery({
 	treatmentSessionId,
@@ -189,7 +187,9 @@ export function BeforeAfterSecureGallery({
 
 	// Photo upload handler
 	const handlePhotoUpload = async () => {
-		if (!(uploadData.file && onPhotoUpload)) return;
+		if (!(uploadData.file && onPhotoUpload)) {
+			return;
+		}
 
 		await onPhotoUpload(uploadData.file, uploadData.type);
 		setShowUploadDialog(false);
@@ -204,7 +204,9 @@ export function BeforeAfterSecureGallery({
 
 	// Photo share handler
 	const handlePhotoShare = async (photo: TreatmentPhoto) => {
-		if (!onPhotoShare) return;
+		if (!onPhotoShare) {
+			return;
+		}
 
 		await onPhotoShare(photo.id, shareExpiryHours);
 		setShowShareDialog(false);
@@ -609,7 +611,7 @@ export function BeforeAfterSecureGallery({
 							</CardHeader>
 							<CardContent>
 								<div className="space-y-4">
-									{sessions.map((session, index) => {
+									{sessions.map((session, _index) => {
 										const sessionPhotos = photos.filter((p) => p.treatment_session_id === session.id);
 										return (
 											<div className="flex gap-4 rounded-lg border p-4" key={session.id}>
@@ -788,7 +790,7 @@ export function BeforeAfterSecureGallery({
 						<div className="space-y-2">
 							<Label htmlFor="expiry-hours">Tempo de Expiração</Label>
 							<Select
-								onValueChange={(value) => setShareExpiryHours(Number.parseInt(value))}
+								onValueChange={(value) => setShareExpiryHours(Number.parseInt(value, 10))}
 								value={shareExpiryHours.toString()}
 							>
 								<SelectTrigger>

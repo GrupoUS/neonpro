@@ -165,11 +165,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
 					});
 
 					if (profileError) {
-						console.error("Error saving profile:", profileError);
 						// Don't fail the signup for profile errors
 					}
-				} catch (profileError) {
-					console.error("Error saving profile:", profileError);
+				} catch (_profileError) {
 					// Don't fail the signup for profile errors
 				}
 			}

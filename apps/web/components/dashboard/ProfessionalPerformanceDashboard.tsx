@@ -3,14 +3,12 @@
  * Healthcare professional performance metrics and analytics
  */
 
-import React from "react";
-
-export interface ProfessionalPerformanceDashboardProps {
+export type ProfessionalPerformanceDashboardProps = {
 	professionalId?: string;
 	metrics?: any;
 	loading?: boolean;
 	error?: string;
-}
+};
 
 export default function ProfessionalPerformanceDashboard({
 	professionalId,

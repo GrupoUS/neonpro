@@ -13,46 +13,47 @@
  * - Dashboard integration com live updates
  */
 
+import fs from "node:fs/promises";
+import { createServer } from "node:http";
+import path from "node:path";
 import axios from "axios";
 import express from "express";
-import fs from "fs/promises";
-import { createServer } from "http";
 import cron from "node-cron";
-import path from "path";
 import { Server } from "socket.io";
+import { logger } from "../../../apps/api/src/lib/logger.js";
 
-interface MetricValue {
+type MetricValue = {
 	timestamp: number;
 	value: number;
 	metadata?: Record<string, any>;
-}
+};
 
-interface Alert {
+type Alert = {
 	id: string;
 	level: "info" | "warning" | "error" | "critical";
 	message: string;
 	timestamp: number;
 	resolved: boolean;
 	metadata?: Record<string, any>;
-}
+};
 
-interface HealthStatus {
+type HealthStatus = {
 	status: "healthy" | "degraded" | "down";
 	score: number;
 	lastCheck: number;
 	issues: string[];
-}
+};
 
 class ProductionMonitor {
-	private app = express();
-	private server = createServer(this.app);
-	private io = new Server(this.server, {
+	private readonly app = express();
+	private readonly server = createServer(this.app);
+	private readonly io = new Server(this.server, {
 		cors: { origin: "*", methods: ["GET", "POST"] },
 	});
 
-	private metrics: Map<string, MetricValue[]> = new Map();
+	private readonly metrics: Map<string, MetricValue[]> = new Map();
 	private alerts: Alert[] = [];
-	private healthStatus: HealthStatus = {
+	private readonly healthStatus: HealthStatus = {
 		status: "healthy",
 		score: 100,
 		lastCheck: Date.now(),
@@ -70,7 +71,7 @@ class ProductionMonitor {
 	 */
 	private setupRoutes(): void {
 		// Health check endpoint
-		this.app.get("/health", (req, res) => {
+		this.app.get("/health", (_req, res) => {
 			res.json({
 				status: this.healthStatus.status,
 				score: this.healthStatus.score,
@@ -84,7 +85,7 @@ class ProductionMonitor {
 		// Metrics endpoint
 		this.app.get("/metrics", (req, res) => {
 			const { metric, since } = req.query;
-			const sinceTime = since ? Number.parseInt(since as string) : Date.now() - 3_600_000; // 1 hour default
+			const sinceTime = since ? Number.parseInt(since as string, 10) : Date.now() - 3_600_000; // 1 hour default
 
 			if (metric) {
 				const metricData = this.metrics.get(metric as string) || [];
@@ -117,7 +118,7 @@ class ProductionMonitor {
 		});
 
 		// Dashboard endpoint
-		this.app.get("/dashboard", (req, res) => {
+		this.app.get("/dashboard", (_req, res) => {
 			res.json({
 				health: this.healthStatus,
 				activeAlerts: this.alerts.filter((a) => !a.resolved).length,
@@ -141,7 +142,7 @@ class ProductionMonitor {
 	 */
 	private setupWebSockets(): void {
 		this.io.on("connection", (socket) => {
-			console.log("📱 Dashboard conectado:", socket.id);
+			logger.info("📱 Dashboard conectado", { socketId: socket.id });
 
 			// Enviar dados iniciais
 			socket.emit("initial-data", {
@@ -151,7 +152,7 @@ class ProductionMonitor {
 			});
 
 			socket.on("disconnect", () => {
-				console.log("📱 Dashboard desconectado:", socket.id);
+				logger.info("📱 Dashboard desconectado", { socketId: socket.id });
 			});
 		});
 	}
@@ -180,7 +181,7 @@ class ProductionMonitor {
 			this.generateDailyReport();
 		});
 
-		console.log("⏰ Agendamentos configurados");
+		logger.info("⏰ Agendamentos configurados");
 	}
 
 	/**
@@ -229,9 +230,13 @@ class ProductionMonitor {
 
 			// Determinar status
 			let status: "healthy" | "degraded" | "down";
-			if (score >= 90) status = "healthy";
-			else if (score >= 60) status = "degraded";
-			else status = "down";
+			if (score >= 90) {
+				status = "healthy";
+			} else if (score >= 60) {
+				status = "degraded";
+			} else {
+				status = "down";
+			}
 
 			this.healthStatus = {
 				status,
@@ -251,7 +256,7 @@ class ProductionMonitor {
 			// Broadcast para dashboards
 			this.io.emit("health-update", this.healthStatus);
 		} catch (error) {
-			console.error("❌ Erro no health check:", error);
+			logger.error("❌ Erro no health check", error);
 			this.createAlert("error", `Health check failed: ${error.message}`);
 		}
 	}
@@ -312,7 +317,7 @@ class ProductionMonitor {
 				metrics,
 			});
 		} catch (error) {
-			console.error("❌ Erro na coleta de métricas:", error);
+			logger.error("❌ Erro na coleta de métricas", error);
 			this.createAlert("error", `Metrics collection failed: ${error.message}`);
 		}
 	}
@@ -342,9 +347,15 @@ class ProductionMonitor {
 
 		// Score baseado em Core Web Vitals
 		let score = 100;
-		if (lcp > 2.5) score -= 20;
-		if (fid > 100) score -= 20;
-		if (cls > 0.1) score -= 20;
+		if (lcp > 2.5) {
+			score -= 20;
+		}
+		if (fid > 100) {
+			score -= 20;
+		}
+		if (cls > 0.1) {
+			score -= 20;
+		}
 
 		return Math.max(0, score);
 	}
@@ -426,7 +437,7 @@ class ProductionMonitor {
 		this.io.emit("new-alert", alert);
 
 		// Log do alerta
-		console.log(`🚨 [${level.toUpperCase()}] ${message}`);
+		logger.info(`🚨 [${level.toUpperCase()}] ${message}`, { level, metadata });
 
 		// Em produção, enviar para Slack/Email/PagerDuty
 		if (level === "critical" || level === "error") {
@@ -439,7 +450,7 @@ class ProductionMonitor {
 	 */
 	private async sendCriticalAlert(alert: Alert): Promise<void> {
 		// Em produção, implementar integrações reais
-		console.log("📧 Enviando alerta crítico:", alert.message);
+		logger.warn("📧 Enviando alerta crítico", { message: alert.message, alertId: alert.id });
 
 		// Simulação de envio para Slack
 		// await axios.post(process.env.SLACK_WEBHOOK_URL, {
@@ -454,9 +465,11 @@ class ProductionMonitor {
 	 */
 	private getLatestMetric(key: string): number | null {
 		const metricArray = this.metrics.get(key);
-		if (!metricArray || metricArray.length === 0) return null;
+		if (!metricArray || metricArray.length === 0) {
+			return null;
+		}
 
-		return metricArray[metricArray.length - 1].value;
+		return metricArray.at(-1).value;
 	}
 
 	/**
@@ -488,7 +501,7 @@ class ProductionMonitor {
 		// Limpar alertas antigos resolvidos
 		this.alerts = this.alerts.filter((a) => !a.resolved || a.timestamp >= oneDayAgo);
 
-		console.log("🧹 Cleanup de dados antigos executado");
+		logger.info("🧹 Cleanup de dados antigos executado");
 	}
 
 	/**
@@ -510,7 +523,7 @@ class ProductionMonitor {
 		const reportPath = `./reports/daily/daily-report-${report.date}.json`;
 		await fs.writeFile(reportPath, JSON.stringify(report, null, 2));
 
-		console.log(`📄 Relatório diário gerado: ${reportPath}`);
+		logger.info("📄 Relatório diário gerado", { reportPath });
 	}
 
 	/**
@@ -526,9 +539,11 @@ class ProductionMonitor {
 	 */
 	public start(): void {
 		this.server.listen(this.port, () => {
-			console.log(`📈 Production Monitor running on port ${this.port}`);
-			console.log(`🌐 Dashboard: http://localhost:${this.port}/static`);
-			console.log(`📊 API: http://localhost:${this.port}/dashboard`);
+			logger.info("📈 Production Monitor iniciado", {
+				port: this.port,
+				dashboard: `http://localhost:${this.port}/static`,
+				api: `http://localhost:${this.port}/dashboard`,
+			});
 		});
 	}
 
@@ -537,7 +552,7 @@ class ProductionMonitor {
 	 */
 	public stop(): void {
 		this.server.close();
-		console.log("📈 Production Monitor stopped");
+		logger.info("📈 Production Monitor stopped");
 	}
 }
 
@@ -548,7 +563,7 @@ if (require.main === module) {
 
 	// Graceful shutdown
 	process.on("SIGINT", () => {
-		console.log("\n🛑 Shutting down monitor...");
+		logger.info("🛑 Shutting down monitor...");
 		monitor.stop();
 		process.exit(0);
 	});

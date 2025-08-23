@@ -37,8 +37,6 @@ test.describe("🤖 Compliance Automation Suite", () => {
 		test.setTimeout(90_000);
 
 		await test.step("Validate LGPD consent management system", async () => {
-			console.log("🇧🇷 Testing LGPD consent management compliance...");
-
 			// Test consent collection endpoint
 			const consentData = {
 				patient_id: "test-patient-123",
@@ -60,16 +58,10 @@ test.describe("🤖 Compliance Automation Suite", () => {
 			expect(consentResult).toHaveProperty("consent_id");
 			expect(consentResult).toHaveProperty("timestamp");
 			expect(consentResult.patient_id).toBe(consentData.patient_id);
-
-			console.log(`✅ Consent recorded with ID: ${consentResult.consent_id}`);
 		});
 
 		await test.step("Test LGPD subject rights implementation", async () => {
-			console.log("Testing LGPD data subject rights...");
-
 			for (const right of COMPLIANCE_CONFIG.LGPD.SUBJECT_RIGHTS) {
-				console.log(`  Testing ${right} right...`);
-
 				const rightRequest = await page.request.post(`/api/v1/compliance/lgpd/subject-rights/${right}`, {
 					data: {
 						patient_id: "test-patient-123",
@@ -85,17 +77,12 @@ test.describe("🤖 Compliance Automation Suite", () => {
 					const rightResult = await rightRequest.json();
 					expect(rightResult).toHaveProperty("request_id");
 					expect(rightResult.status).toBeDefined();
-
-					console.log(`    ✅ ${right}: Request ID ${rightResult.request_id}`);
 				} else {
-					console.log(`    ⚠️ ${right}: Not implemented or access denied (${rightRequest.status()})`);
 				}
 			}
 		});
 
 		await test.step("Validate LGPD audit trail functionality", async () => {
-			console.log("Testing LGPD audit trail...");
-
 			const auditRequest = await page.request.get("/api/v1/compliance/lgpd/audit-trail", {
 				params: {
 					patient_id: "test-patient-123",
@@ -115,17 +102,12 @@ test.describe("🤖 Compliance Automation Suite", () => {
 					expect(event).toHaveProperty("timestamp");
 					expect(event).toHaveProperty("event_type");
 					expect(event).toHaveProperty("user_id");
-
-					console.log(`✅ Audit trail contains ${auditData.events.length} events`);
 				}
 			} else {
-				console.log(`⚠️ Audit trail endpoint not accessible (${auditRequest.status()})`);
 			}
 		});
 
 		await test.step("Test LGPD data breach notification system", async () => {
-			console.log("Testing LGPD breach notification simulation...");
-
 			const breachData = {
 				incident_type: "test_simulation",
 				severity: "low",
@@ -143,10 +125,7 @@ test.describe("🤖 Compliance Automation Suite", () => {
 				const breachResult = await breachResponse.json();
 				expect(breachResult).toHaveProperty("incident_id");
 				expect(breachResult).toHaveProperty("notification_status");
-
-				console.log(`✅ Breach notification test: ${breachResult.incident_id}`);
 			} else {
-				console.log(`⚠️ Breach notification system not accessible (${breachResponse.status()})`);
 			}
 		});
 	});
@@ -155,8 +134,6 @@ test.describe("🤖 Compliance Automation Suite", () => {
 		test.setTimeout(60_000);
 
 		await test.step("Validate ANVISA product registration system", async () => {
-			console.log("🏥 Testing ANVISA product registration compliance...");
-
 			const productData = {
 				registration_number: "ANVISA-TEST-12345",
 				product_name: "Test Aesthetic Product",
@@ -179,16 +156,11 @@ test.describe("🤖 Compliance Automation Suite", () => {
 				for (const field of COMPLIANCE_CONFIG.ANVISA.REQUIRED_FIELDS) {
 					expect(productResult[field], `Product should have required ANVISA field: ${field}`).toBeDefined();
 				}
-
-				console.log(`✅ ANVISA product registered: ${productResult.product_id}`);
 			} else {
-				console.log(`⚠️ ANVISA product registration not accessible (${productResponse.status()})`);
 			}
 		});
 
 		await test.step("Test ANVISA product expiry monitoring", async () => {
-			console.log("Testing ANVISA product expiry monitoring...");
-
 			const expiryCheckResponse = await page.request.get("/api/v1/compliance/anvisa/expiry-check", {
 				params: {
 					clinic_id: "test-clinic-123",
@@ -200,8 +172,6 @@ test.describe("🤖 Compliance Automation Suite", () => {
 				const expiryData = await expiryCheckResponse.json();
 				expect(Array.isArray(expiryData.expiring_products), "Should return expiring products array").toBeTruthy();
 
-				console.log(`✅ ANVISA expiry check: ${expiryData.expiring_products.length} products expiring soon`);
-
 				// Validate expiry alert structure
 				if (expiryData.expiring_products.length > 0) {
 					const product = expiryData.expiring_products[0];
@@ -210,13 +180,10 @@ test.describe("🤖 Compliance Automation Suite", () => {
 					expect(product).toHaveProperty("days_until_expiry");
 				}
 			} else {
-				console.log(`⚠️ ANVISA expiry monitoring not accessible (${expiryCheckResponse.status()})`);
 			}
 		});
 
 		await test.step("Validate ANVISA compliance reporting", async () => {
-			console.log("Testing ANVISA compliance reporting...");
-
 			const reportResponse = await page.request.get("/api/v1/compliance/anvisa/compliance-report", {
 				params: {
 					clinic_id: "test-clinic-123",
@@ -230,11 +197,7 @@ test.describe("🤖 Compliance Automation Suite", () => {
 				expect(reportData).toHaveProperty("clinic_id");
 				expect(reportData).toHaveProperty("compliance_status");
 				expect(reportData).toHaveProperty("product_summary");
-
-				console.log(`✅ ANVISA compliance report generated: ${reportData.report_id}`);
-				console.log(`    Compliance status: ${reportData.compliance_status}`);
 			} else {
-				console.log(`⚠️ ANVISA compliance reporting not accessible (${reportResponse.status()})`);
 			}
 		});
 	});
@@ -243,8 +206,6 @@ test.describe("🤖 Compliance Automation Suite", () => {
 		test.setTimeout(60_000);
 
 		await test.step("Validate professional registration system", async () => {
-			console.log("⚕️ Testing professional registration compliance...");
-
 			const professionalData = {
 				license_number: "PROF-TEST-67890",
 				name: "Test Professional",
@@ -263,16 +224,11 @@ test.describe("🤖 Compliance Automation Suite", () => {
 				const professionalResult = await professionalResponse.json();
 				expect(professionalResult).toHaveProperty("professional_id");
 				expect(professionalResult.license_number).toBe(professionalData.license_number);
-
-				console.log(`✅ Professional registered: ${professionalResult.professional_id}`);
 			} else {
-				console.log(`⚠️ Professional registration not accessible (${professionalResponse.status()})`);
 			}
 		});
 
 		await test.step("Test procedure documentation compliance", async () => {
-			console.log("Testing procedure documentation compliance...");
-
 			const procedureData = {
 				patient_id: "test-patient-123",
 				professional_id: "test-professional-456",
@@ -298,10 +254,7 @@ test.describe("🤖 Compliance Automation Suite", () => {
 				for (const doc of COMPLIANCE_CONFIG.CFM.PROCEDURE_DOCUMENTATION) {
 					expect(procedureResult.documentation, `Should track ${doc} documentation`).toHaveProperty(doc);
 				}
-
-				console.log(`✅ Procedure documented: ${procedureResult.procedure_id}`);
 			} else {
-				console.log(`⚠️ Procedure documentation not accessible (${procedureResponse.status()})`);
 			}
 		});
 	});
@@ -310,8 +263,6 @@ test.describe("🤖 Compliance Automation Suite", () => {
 		test.setTimeout(120_000);
 
 		await test.step("Test compliance dashboard and alerts", async () => {
-			console.log("📊 Testing automated compliance monitoring...");
-
 			const dashboardResponse = await page.request.get("/api/v1/compliance/dashboard", {
 				params: {
 					clinic_id: "test-clinic-123",
@@ -328,23 +279,16 @@ test.describe("🤖 Compliance Automation Suite", () => {
 				expect(dashboardData).toHaveProperty("overall_compliance_score");
 				expect(dashboardData).toHaveProperty("alerts");
 
-				console.log("✅ Compliance dashboard loaded");
-				console.log(`    Overall compliance score: ${dashboardData.overall_compliance_score}%`);
-				console.log(`    Active alerts: ${dashboardData.alerts.length}`);
-
 				// Compliance score should be reasonable
 				expect(dashboardData.overall_compliance_score, "Compliance score should be numeric").toBeGreaterThanOrEqual(0);
 				expect(dashboardData.overall_compliance_score, "Compliance score should not exceed 100%").toBeLessThanOrEqual(
 					100
 				);
 			} else {
-				console.log(`⚠️ Compliance dashboard not accessible (${dashboardResponse.status()})`);
 			}
 		});
 
 		await test.step("Test automated compliance alerts", async () => {
-			console.log("Testing automated compliance alert system...");
-
 			const alertsResponse = await page.request.get("/api/v1/compliance/alerts", {
 				params: {
 					clinic_id: "test-clinic-123",
@@ -356,8 +300,6 @@ test.describe("🤖 Compliance Automation Suite", () => {
 				const alertsData = await alertsResponse.json();
 				expect(Array.isArray(alertsData.alerts), "Should return alerts array").toBeTruthy();
 
-				console.log(`✅ Compliance alerts retrieved: ${alertsData.alerts.length} alerts`);
-
 				// Validate alert structure
 				if (alertsData.alerts.length > 0) {
 					const alert = alertsData.alerts[0];
@@ -366,17 +308,12 @@ test.describe("🤖 Compliance Automation Suite", () => {
 					expect(alert).toHaveProperty("severity");
 					expect(alert).toHaveProperty("message");
 					expect(alert).toHaveProperty("created_at");
-
-					console.log(`    Sample alert: ${alert.type} - ${alert.severity}`);
 				}
 			} else {
-				console.log(`⚠️ Compliance alerts not accessible (${alertsResponse.status()})`);
 			}
 		});
 
 		await test.step("Test compliance report generation", async () => {
-			console.log("Testing automated compliance report generation...");
-
 			const reportRequest = await page.request.post("/api/v1/compliance/generate-report", {
 				data: {
 					clinic_id: "test-clinic-123",
@@ -391,8 +328,6 @@ test.describe("🤖 Compliance Automation Suite", () => {
 				expect(reportResult).toHaveProperty("report_id");
 				expect(reportResult).toHaveProperty("generation_status");
 
-				console.log(`✅ Compliance report generation started: ${reportResult.report_id}`);
-
 				// If report is generated immediately, validate structure
 				if (reportResult.generation_status === "completed" && reportResult.report_data) {
 					expect(reportResult.report_data).toHaveProperty("lgpd_compliance");
@@ -401,13 +336,10 @@ test.describe("🤖 Compliance Automation Suite", () => {
 					expect(reportResult.report_data).toHaveProperty("recommendations");
 				}
 			} else {
-				console.log(`⚠️ Compliance report generation not accessible (${reportRequest.status()})`);
 			}
 		});
 
 		await test.step("Test compliance data export functionality", async () => {
-			console.log("Testing compliance data export for audits...");
-
 			const exportRequest = await page.request.post("/api/v1/compliance/export", {
 				data: {
 					clinic_id: "test-clinic-123",
@@ -424,10 +356,7 @@ test.describe("🤖 Compliance Automation Suite", () => {
 				const exportResult = await exportRequest.json();
 				expect(exportResult).toHaveProperty("export_id");
 				expect(exportResult).toHaveProperty("download_url");
-
-				console.log(`✅ Compliance data export initiated: ${exportResult.export_id}`);
 			} else {
-				console.log(`⚠️ Compliance data export not accessible (${exportRequest.status()})`);
 			}
 		});
 	});
@@ -436,8 +365,6 @@ test.describe("🤖 Compliance Automation Suite", () => {
 		test.setTimeout(60_000);
 
 		await test.step("Test data encryption compliance", async () => {
-			console.log("🔐 Testing data protection and encryption compliance...");
-
 			// Test sensitive data handling
 			const sensitiveData = {
 				patient_cpf: "123.456.789-00",
@@ -453,17 +380,11 @@ test.describe("🤖 Compliance Automation Suite", () => {
 				const protectionResult = await dataProtectionResponse.json();
 				expect(protectionResult).toHaveProperty("encryption_status");
 				expect(protectionResult).toHaveProperty("compliance_level");
-
-				console.log(`✅ Data protection validation: ${protectionResult.compliance_level}`);
-				console.log(`    Encryption status: ${protectionResult.encryption_status}`);
 			} else {
-				console.log(`⚠️ Data protection validation not accessible (${dataProtectionResponse.status()})`);
 			}
 		});
 
 		await test.step("Test access control compliance", async () => {
-			console.log("Testing access control and authorization compliance...");
-
 			const accessControlResponse = await page.request.get("/api/v1/compliance/access-control/audit", {
 				params: {
 					clinic_id: "test-clinic-123",
@@ -476,13 +397,7 @@ test.describe("🤖 Compliance Automation Suite", () => {
 				expect(accessData).toHaveProperty("access_events");
 				expect(accessData).toHaveProperty("unauthorized_attempts");
 				expect(accessData).toHaveProperty("compliance_score");
-
-				console.log("✅ Access control audit completed");
-				console.log(`    Access events: ${accessData.access_events.length}`);
-				console.log(`    Unauthorized attempts: ${accessData.unauthorized_attempts}`);
-				console.log(`    Compliance score: ${accessData.compliance_score}%`);
 			} else {
-				console.log(`⚠️ Access control audit not accessible (${accessControlResponse.status()})`);
 			}
 		});
 	});

@@ -2,7 +2,7 @@
 
 import jsPDF from "jspdf";
 import * as XLSX from "xlsx";
-import { formatCNPJ, formatCPF, formatCurrency, formatDate, formatPercentage, reportData } from "./healthcare-data";
+import { formatCurrency, formatDate, reportData } from "./healthcare-data";
 
 // PDF Export Configuration
 const PDF_CONFIG = {
@@ -27,7 +27,7 @@ const PDF_CONFIG = {
 
 // Professional PDF Template Generator
 export class HealthcarePDFGenerator {
-	private doc: jsPDF;
+	private readonly doc: jsPDF;
 	private yPosition: number;
 
 	constructor() {
@@ -624,10 +624,7 @@ const generateClinicalCSV = (): string => {
 };
 
 // Email and Sharing Functions
-export const emailReport = async (reportId: string, recipients: string[], format: "pdf" | "excel") => {
-	// Mock email functionality - in production, integrate with email service
-	console.log(`Enviando relatório ${reportId} em formato ${format} para:`, recipients);
-
+export const emailReport = async (_reportId: string, _recipients: string[], _format: "pdf" | "excel") => {
 	// LGPD compliance check
 	const lgpdNotice = `
     AVISO LGPD: Este relatório contém dados pessoais protegidos pela Lei Geral de Proteção de Dados.
