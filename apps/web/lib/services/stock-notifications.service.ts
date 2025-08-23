@@ -12,7 +12,7 @@ export class StockNotificationsService {
 	 */
 	async sendAlertNotification(
 		alert: StockAlert,
-		channels: NotificationChannel[],
+		channels: NotificationChannel[]
 	): Promise<{
 		success: boolean;
 		results: Array<{
@@ -49,7 +49,7 @@ export class StockNotificationsService {
 	 */
 	private async sendNotificationByChannel(
 		alert: StockAlert,
-		channel: NotificationChannel,
+		channel: NotificationChannel
 	): Promise<{ success: boolean; error?: string }> {
 		switch (channel) {
 			case "in_app":
@@ -72,9 +72,7 @@ export class StockNotificationsService {
 	/**
 	 * Send in-app notification
 	 */
-	private async sendInAppNotification(
-		alert: StockAlert,
-	): Promise<{ success: boolean; error?: string }> {
+	private async sendInAppNotification(alert: StockAlert): Promise<{ success: boolean; error?: string }> {
 		try {
 			// Get users who should receive notifications for this clinic
 			const { data: recipients, error: recipientsError } = await this.supabase
@@ -106,9 +104,7 @@ export class StockNotificationsService {
 				read: false,
 			}));
 
-			const { error: insertError } = await this.supabase
-				.from("notifications")
-				.insert(notifications);
+			const { error: insertError } = await this.supabase.from("notifications").insert(notifications);
 
 			if (insertError) {
 				return { success: false, error: insertError.message };
@@ -126,9 +122,7 @@ export class StockNotificationsService {
 	/**
 	 * Send email notification
 	 */
-	private async sendEmailNotification(
-		alert: StockAlert,
-	): Promise<{ success: boolean; error?: string }> {
+	private async sendEmailNotification(alert: StockAlert): Promise<{ success: boolean; error?: string }> {
 		try {
 			// Get clinic email settings and recipients
 			const { data: clinicSettings, error: settingsError } = await this.supabase
@@ -154,17 +148,14 @@ export class StockNotificationsService {
 			const htmlContent = this.formatEmailContent(alert);
 
 			// Send via Supabase Edge Function (or external email service)
-			const { error: emailError } = await this.supabase.functions.invoke(
-				"send-email",
-				{
-					body: {
-						to: emails,
-						subject,
-						html: htmlContent,
-						type: "stock_alert",
-					},
+			const { error: emailError } = await this.supabase.functions.invoke("send-email", {
+				body: {
+					to: emails,
+					subject,
+					html: htmlContent,
+					type: "stock_alert",
 				},
-			);
+			});
 
 			if (emailError) {
 				return { success: false, error: emailError.message };
@@ -185,9 +176,7 @@ export class StockNotificationsService {
 	/**
 	 * Send SMS notification
 	 */
-	private async sendSMSNotification(
-		alert: StockAlert,
-	): Promise<{ success: boolean; error?: string }> {
+	private async sendSMSNotification(alert: StockAlert): Promise<{ success: boolean; error?: string }> {
 		try {
 			// Get clinic SMS settings
 			const { data: clinicSettings, error: settingsError } = await this.supabase
@@ -212,16 +201,13 @@ export class StockNotificationsService {
 			const message = this.formatSMSContent(alert);
 
 			// Send via Supabase Edge Function (or external SMS service)
-			const { error: smsError } = await this.supabase.functions.invoke(
-				"send-sms",
-				{
-					body: {
-						phones,
-						message,
-						type: "stock_alert",
-					},
+			const { error: smsError } = await this.supabase.functions.invoke("send-sms", {
+				body: {
+					phones,
+					message,
+					type: "stock_alert",
 				},
-			);
+			});
 
 			if (smsError) {
 				return { success: false, error: smsError.message };
@@ -242,9 +228,7 @@ export class StockNotificationsService {
 	/**
 	 * Send WhatsApp notification
 	 */
-	private async sendWhatsAppNotification(
-		alert: StockAlert,
-	): Promise<{ success: boolean; error?: string }> {
+	private async sendWhatsAppNotification(alert: StockAlert): Promise<{ success: boolean; error?: string }> {
 		// Implementation would depend on WhatsApp Business API integration
 		// For now, return success for demonstration
 		try {
@@ -253,10 +237,7 @@ export class StockNotificationsService {
 		} catch (error) {
 			return {
 				success: false,
-				error:
-					error instanceof Error
-						? error.message
-						: "WhatsApp service unavailable",
+				error: error instanceof Error ? error.message : "WhatsApp service unavailable",
 			};
 		}
 	}
@@ -264,9 +245,7 @@ export class StockNotificationsService {
 	/**
 	 * Send push notification
 	 */
-	private async sendPushNotification(
-		alert: StockAlert,
-	): Promise<{ success: boolean; error?: string }> {
+	private async sendPushNotification(alert: StockAlert): Promise<{ success: boolean; error?: string }> {
 		try {
 			// Get push tokens for clinic users
 			const { data: tokens, error: tokensError } = await this.supabase
@@ -280,21 +259,18 @@ export class StockNotificationsService {
 			}
 
 			// Send via push notification service
-			const { error: pushError } = await this.supabase.functions.invoke(
-				"send-push",
-				{
-					body: {
-						tokens: tokens.map((t) => t.token),
-						title: this.getNotificationTitle(alert),
-						body: alert.message,
-						data: {
-							alert_id: alert.id,
-							alert_type: alert.alertType,
-							severity: alert.severityLevel,
-						},
+			const { error: pushError } = await this.supabase.functions.invoke("send-push", {
+				body: {
+					tokens: tokens.map((t) => t.token),
+					title: this.getNotificationTitle(alert),
+					body: alert.message,
+					data: {
+						alert_id: alert.id,
+						alert_type: alert.alertType,
+						severity: alert.severityLevel,
 					},
 				},
-			);
+			});
 
 			if (pushError) {
 				return { success: false, error: pushError.message };
@@ -313,9 +289,7 @@ export class StockNotificationsService {
 	/**
 	 * Send Slack notification
 	 */
-	private async sendSlackNotification(
-		alert: StockAlert,
-	): Promise<{ success: boolean; error?: string }> {
+	private async sendSlackNotification(alert: StockAlert): Promise<{ success: boolean; error?: string }> {
 		try {
 			// Get Slack webhook URL for clinic
 			const { data: clinicSettings, error: settingsError } = await this.supabase
@@ -324,11 +298,7 @@ export class StockNotificationsService {
 				.eq("clinic_id", alert.clinicId)
 				.single();
 
-			if (
-				settingsError ||
-				!clinicSettings?.slack_enabled ||
-				!clinicSettings.slack_webhook_url
-			) {
+			if (settingsError || !clinicSettings?.slack_enabled || !clinicSettings.slack_webhook_url) {
 				return {
 					success: false,
 					error: "Slack notifications not configured for clinic",
@@ -365,11 +335,7 @@ export class StockNotificationsService {
 	/**
 	 * Log notification delivery
 	 */
-	private async logNotification(
-		alertId: string,
-		channel: NotificationChannel,
-		recipientCount: number,
-	): Promise<void> {
+	private async logNotification(alertId: string, channel: NotificationChannel, recipientCount: number): Promise<void> {
 		await this.supabase.from("notification_logs").insert({
 			alert_id: alertId,
 			channel,
@@ -422,9 +388,7 @@ export class StockNotificationsService {
 	 */
 	private formatSMSContent(alert: StockAlert): string {
 		const shortMessage = `🚨 ${alert.alertType.replace("_", " ").toUpperCase()}: ${alert.message.substring(0, 100)}...`;
-		return shortMessage.length > 160
-			? `${shortMessage.substring(0, 157)}...`
-			: shortMessage;
+		return shortMessage.length > 160 ? `${shortMessage.substring(0, 157)}...` : shortMessage;
 	}
 
 	/**
@@ -487,21 +451,16 @@ export class StockNotificationsService {
 		dateRange?: {
 			start: Date;
 			end: Date;
-		},
+		}
 	): Promise<{
 		total: number;
 		byChannel: Record<NotificationChannel, number>;
 		success_rate: number;
 	}> {
-		let query = this.supabase
-			.from("notification_logs")
-			.select("channel, success")
-			.eq("clinic_id", clinicId);
+		let query = this.supabase.from("notification_logs").select("channel, success").eq("clinic_id", clinicId);
 
 		if (dateRange) {
-			query = query
-				.gte("sent_at", dateRange.start.toISOString())
-				.lte("sent_at", dateRange.end.toISOString());
+			query = query.gte("sent_at", dateRange.start.toISOString()).lte("sent_at", dateRange.end.toISOString());
 		}
 
 		const { data, error } = await query;
@@ -527,14 +486,13 @@ export class StockNotificationsService {
 				total: 0,
 				successful: 0,
 				byChannel: {} as Record<NotificationChannel, number>,
-			},
+			}
 		);
 
 		return {
 			total: stats.total,
 			byChannel: stats.byChannel,
-			success_rate:
-				stats.total > 0 ? (stats.successful / stats.total) * 100 : 0,
+			success_rate: stats.total > 0 ? (stats.successful / stats.total) * 100 : 0,
 		};
 	}
 }

@@ -107,24 +107,15 @@ async function setupDatabase() {
 	const supabaseKey = await question("Enter your Supabase Service Role Key: ");
 
 	if (!(supabaseUrl && supabaseKey)) {
-		log(
-			"⚠️  Supabase credentials not provided, skipping database setup",
-			"yellow",
-		);
+		log("⚠️  Supabase credentials not provided, skipping database setup", "yellow");
 		return true;
 	}
 
 	// Update .env file with Supabase credentials
 	try {
 		let envContent = fs.readFileSync(".env", "utf8");
-		envContent = envContent.replace(
-			/SUPABASE_URL=.*/,
-			`SUPABASE_URL=${supabaseUrl}`,
-		);
-		envContent = envContent.replace(
-			/SUPABASE_SERVICE_ROLE_KEY=.*/,
-			`SUPABASE_SERVICE_ROLE_KEY=${supabaseKey}`,
-		);
+		envContent = envContent.replace(/SUPABASE_URL=.*/, `SUPABASE_URL=${supabaseUrl}`);
+		envContent = envContent.replace(/SUPABASE_SERVICE_ROLE_KEY=.*/, `SUPABASE_SERVICE_ROLE_KEY=${supabaseKey}`);
 		fs.writeFileSync(".env", envContent);
 		log("✅ Updated .env with Supabase credentials", "green");
 	} catch (error) {
@@ -132,10 +123,7 @@ async function setupDatabase() {
 		return false;
 	}
 
-	log(
-		"📋 Please run the SQL schema from database/backup-schema.sql in your Supabase dashboard",
-		"cyan",
-	);
+	log("📋 Please run the SQL schema from database/backup-schema.sql in your Supabase dashboard", "cyan");
 	return true;
 }
 
@@ -200,10 +188,7 @@ async function showNextSteps() {
 	log("\n📋 Next steps:", "bright");
 	log("1. Edit .env file with your specific configuration", "cyan");
 	log("2. Run the SQL schema in your Supabase dashboard", "cyan");
-	log(
-		"3. Configure your storage providers (AWS S3, Google Cloud, etc.)",
-		"cyan",
-	);
+	log("3. Configure your storage providers (AWS S3, Google Cloud, etc.)", "cyan");
 	log("4. Test the backup system with a simple configuration", "cyan");
 	log("5. Set up monitoring and alerts", "cyan");
 

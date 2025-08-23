@@ -1,35 +1,12 @@
 "use client";
 
-import {
-	Calendar,
-	Edit,
-	Eye,
-	Loader2,
-	Mail,
-	MoreHorizontal,
-	Phone,
-	Plus,
-	Search,
-} from "lucide-react";
+import { Calendar, Edit, Eye, Loader2, Mail, MoreHorizontal, Phone, Plus, Search } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { usePatients } from "@/hooks/use-patients";
 
 type PatientFilters = {
@@ -87,12 +64,8 @@ export default function PatientsPage() {
 						<div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
 							<Search className="h-6 w-6 text-red-400" />
 						</div>
-						<h3 className="mb-2 font-medium text-gray-900 text-lg">
-							Erro ao carregar pacientes
-						</h3>
-						<p className="mb-6 text-gray-500">
-							Ocorreu um erro ao buscar os dados dos pacientes.
-						</p>
+						<h3 className="mb-2 font-medium text-gray-900 text-lg">Erro ao carregar pacientes</h3>
+						<p className="mb-6 text-gray-500">Ocorreu um erro ao buscar os dados dos pacientes.</p>
 						<Button onClick={() => refreshPatients()}>Tentar novamente</Button>
 					</div>
 				</div>
@@ -155,9 +128,7 @@ export default function PatientsPage() {
 							</div>
 							<div className="ml-4">
 								<p className="font-medium text-gray-600 text-sm">Total</p>
-								<p className="font-bold text-2xl text-gray-900">
-									{patients.length}
-								</p>
+								<p className="font-bold text-2xl text-gray-900">{patients.length}</p>
 							</div>
 						</div>
 					</CardContent>
@@ -171,9 +142,7 @@ export default function PatientsPage() {
 							</div>
 							<div className="ml-4">
 								<p className="font-medium text-gray-600 text-sm">Total</p>
-								<p className="font-bold text-2xl text-gray-900">
-									{patients.length}
-								</p>
+								<p className="font-bold text-2xl text-gray-900">{patients.length}</p>
 							</div>
 						</div>
 					</CardContent>
@@ -200,9 +169,7 @@ export default function PatientsPage() {
 								<div className="h-6 w-6 rounded bg-purple-600" />
 							</div>
 							<div className="ml-4">
-								<p className="font-medium text-gray-600 text-sm">
-									Receita Total
-								</p>
+								<p className="font-medium text-gray-600 text-sm">Receita Total</p>
 								<p className="font-bold text-2xl text-gray-900">
 									{/* TODO: Calculate from appointment data when available */}
 									R$ 0,00
@@ -217,9 +184,7 @@ export default function PatientsPage() {
 			<Card>
 				<CardHeader>
 					<CardTitle>Lista de Pacientes</CardTitle>
-					<CardDescription>
-						{filteredPatients.length} paciente(s) encontrado(s)
-					</CardDescription>
+					<CardDescription>{filteredPatients.length} paciente(s) encontrado(s)</CardDescription>
 				</CardHeader>
 				<CardContent>
 					<div className="overflow-x-auto">
@@ -238,12 +203,8 @@ export default function PatientsPage() {
 									<TableRow key={patient.id}>
 										<TableCell>
 											<div>
-												<div className="font-medium text-gray-900">
-													{patient.name}
-												</div>
-												<div className="text-gray-500 text-sm">
-													{patient.email}
-												</div>
+												<div className="font-medium text-gray-900">{patient.name}</div>
+												<div className="text-gray-500 text-sm">{patient.email}</div>
 											</div>
 										</TableCell>
 										<TableCell>
@@ -260,18 +221,12 @@ export default function PatientsPage() {
 										</TableCell>
 										<TableCell>
 											<div className="text-gray-900 text-sm">
-												{patient.date_of_birth
-													? formatDate(patient.date_of_birth)
-													: "N/A"}
+												{patient.date_of_birth ? formatDate(patient.date_of_birth) : "N/A"}
 											</div>
 										</TableCell>
 										<TableCell>
 											<div className="text-gray-900 text-sm">
-												{patient.gender === "M"
-													? "Masculino"
-													: patient.gender === "F"
-														? "Feminino"
-														: "Outro"}
+												{patient.gender === "M" ? "Masculino" : patient.gender === "F" ? "Feminino" : "Outro"}
 											</div>
 										</TableCell>
 										<TableCell className="text-right">
@@ -289,9 +244,7 @@ export default function PatientsPage() {
 												</Button>
 
 												<Button asChild size="sm" variant="ghost">
-													<Link
-														href={`/appointments/new?patient=${patient.id}`}
-													>
+													<Link href={`/appointments/new?patient=${patient.id}`}>
 														<Calendar className="h-4 w-4" />
 													</Link>
 												</Button>
@@ -312,13 +265,9 @@ export default function PatientsPage() {
 							<div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
 								<Search className="h-6 w-6 text-gray-400" />
 							</div>
-							<h3 className="mb-2 font-medium text-gray-900 text-lg">
-								Nenhum paciente encontrado
-							</h3>
+							<h3 className="mb-2 font-medium text-gray-900 text-lg">Nenhum paciente encontrado</h3>
 							<p className="mb-6 text-gray-500">
-								{patients.length === 0
-									? "Ainda não há pacientes cadastrados."
-									: "Tente ajustar os filtros."}
+								{patients.length === 0 ? "Ainda não há pacientes cadastrados." : "Tente ajustar os filtros."}
 							</p>
 							<Button asChild>
 								<Link href="/patients/new">

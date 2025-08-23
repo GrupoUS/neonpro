@@ -2,18 +2,9 @@
 // Complete authentication lifecycle testing for NeonPro Healthcare
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import {
-	act,
-	fireEvent,
-	render,
-	screen,
-	waitFor,
-} from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import {
-	getGlobalSupabaseMock,
-	resetAllGlobalMocks,
-} from "../../../../tests/test-utils";
+import { getGlobalSupabaseMock, resetAllGlobalMocks } from "../../../../tests/test-utils";
 
 // Get the global mock that's configured in vitest.setup.ts
 let mockSupabaseClient: any;
@@ -51,20 +42,8 @@ const MockLoginComponent = () => {
 
 	return (
 		<form data-testid="integration-login-form" onSubmit={handleSubmit}>
-			<input
-				data-testid="integration-email-input"
-				name="email"
-				placeholder="Email"
-				required
-				type="email"
-			/>
-			<input
-				data-testid="integration-password-input"
-				name="password"
-				placeholder="Password"
-				required
-				type="password"
-			/>
+			<input data-testid="integration-email-input" name="email" placeholder="Email" required type="email" />
+			<input data-testid="integration-password-input" name="password" placeholder="Password" required type="password" />
 			<button data-testid="integration-login-button" type="submit">
 				Login
 			</button>
@@ -89,9 +68,7 @@ const TestWrapper = ({ children }: { children: React.ReactNode }) => {
 		},
 	});
 
-	return (
-		<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-	);
+	return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 };
 
 describe("Authentication Flow Integration", () => {
@@ -177,26 +154,24 @@ describe("Authentication Flow Integration", () => {
 				error: null,
 			});
 
-			mockAuthHook.signIn.mockImplementation(
-				async (email: string, password: string) => {
-					// Simulate actual hook behavior by calling global mock
-					const _authResult = await mockSupabaseClient.auth.signInWithPassword({
-						email,
-						password,
-					});
+			mockAuthHook.signIn.mockImplementation(async (email: string, password: string) => {
+				// Simulate actual hook behavior by calling global mock
+				const _authResult = await mockSupabaseClient.auth.signInWithPassword({
+					email,
+					password,
+				});
 
-					mockAuthHook.user = mockUser;
-					mockAuthHook.session = mockSession;
-					return {
-						data: { user: mockUser, session: mockSession },
-						error: null,
-					};
-				},
-			);
+				mockAuthHook.user = mockUser;
+				mockAuthHook.session = mockSession;
+				return {
+					data: { user: mockUser, session: mockSession },
+					error: null,
+				};
+			});
 			render(
 				<TestWrapper>
 					<MockLoginComponent />
-				</TestWrapper>,
+				</TestWrapper>
 			);
 
 			// Fill in login credentials
@@ -219,10 +194,7 @@ describe("Authentication Flow Integration", () => {
 			});
 
 			await waitFor(() => {
-				expect(mockAuthHook.signIn).toHaveBeenCalledWith(
-					"doctor@clinic.com",
-					"securePassword123",
-				);
+				expect(mockAuthHook.signIn).toHaveBeenCalledWith("doctor@clinic.com", "securePassword123");
 			});
 
 			// Verify Supabase auth was called
@@ -249,7 +221,7 @@ describe("Authentication Flow Integration", () => {
 			render(
 				<TestWrapper>
 					<MockLoginComponent />
-				</TestWrapper>,
+				</TestWrapper>
 			);
 
 			const emailInput = screen.getByTestId("integration-email-input");
@@ -351,11 +323,7 @@ describe("Authentication Flow Integration", () => {
 				})),
 			});
 
-			const result = await mockSupabaseClient
-				.from("patients")
-				.select("*")
-				.eq("id", "patient-1")
-				.single();
+			const result = await mockSupabaseClient.from("patients").select("*").eq("id", "patient-1").single();
 
 			expect(result.data).toBeDefined();
 			expect(result.error).toBeNull();
@@ -417,10 +385,7 @@ describe("Authentication Flow Integration", () => {
 				})),
 			});
 
-			const result = await mockSupabaseClient
-				.from("patients")
-				.select("*")
-				.eq("clinic_id", "clinic-1");
+			const result = await mockSupabaseClient.from("patients").select("*").eq("clinic_id", "clinic-1");
 
 			expect(result.data).toHaveLength(1);
 			expect(result.data[0].clinic_id).toBe("clinic-1");

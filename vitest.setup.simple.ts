@@ -5,6 +5,29 @@
  * Essential mocks only - no complex async operations or extensive logging
  */
 
+// CRITICAL: Polyfill HTMLFormElement.requestSubmit BEFORE any DOM setup
+// This must happen before jsdom loads to prevent the "Not implemented" error
+(globalThis as any).HTMLFormElement = (globalThis as any).HTMLFormElement || class {};
+if (!(globalThis as any).HTMLFormElement.prototype.requestSubmit) {
+	(globalThis as any).HTMLFormElement.prototype.requestSubmit = function (
+		submitter?: HTMLElement,
+	) {
+		// Create and dispatch submit event
+		const event = new Event("submit", { bubbles: true, cancelable: true });
+		
+		if (submitter) {
+			Object.defineProperty(event, "submitter", {
+				value: submitter,
+				enumerable: true,
+				writable: false,
+				configurable: true,
+			});
+		}
+
+		return this.dispatchEvent(event);
+	};
+}
+
 import "@testing-library/jest-dom/vitest";
 import React from "react";
 import { beforeEach, vi } from "vitest";
@@ -133,16 +156,125 @@ vi.mock("@neonpro/shared/api-client", () => ({
 			if (error instanceof Error) {
 				return error.message;
 			}
-			return "An error occurred";
+			if (typeof error === "object" && error && "message" in error) {
+				return String(error.message);
+			}
+			if (typeof error === "object" && error && "error" in error) {
+				const apiError = error as any;
+				if (apiError.error?.validation_errors?.length > 0) {
+					return apiError.error.validation_errors
+						.map((ve: any) => `${ve.field}: ${ve.message}`)
+						.join(", ");
+				}
+				return apiError.message || "API error occurred";
+			}
+			return "An unexpected error occurred";
 		}),
-		handleResponse: vi.fn(() => ({ success: true, data: {} })),
-		validateResponse: vi.fn((response: any) => response),
-		handleApiError: vi.fn(() => {
-			throw new Error("API Error");
+		handleResponse: vi.fn(async (response: any, validator?: any) => {
+			const data = await response.json();
+			
+			if (!response.ok) {
+				return {
+					success: false,
+					error: {
+						code: data.error?.code || "API_ERROR",
+						details: data.error?.details,
+						validation_errors: data.error?.validation_errors,
+					},
+					message: data.message || "Unknown error occurred",
+					meta: {
+						request_id: response.headers.get("X-Request-ID") || "unknown",
+						timestamp: new Date().toISOString(),
+						duration: 0,
+					},
+				};
+			}
+
+			let validatedData = data;
+			if (validator) {
+				try {
+					validatedData = validator(data);
+				} catch (validationError) {
+					return {
+						success: false,
+						error: {
+							code: "VALIDATION_ERROR",
+							details: { validation_error: String(validationError) },
+						},
+						message: "Response validation failed",
+						meta: {
+							request_id: response.headers.get("X-Request-ID") || "unknown",
+							timestamp: new Date().toISOString(),
+							duration: 0,
+						},
+					};
+				}
+			}
+
+			return {
+				success: true,
+				data: validatedData,
+				message: data.message || "Success",
+				meta: {
+					request_id: response.headers.get("X-Request-ID") || "unknown",
+					timestamp: new Date().toISOString(),
+					duration: 0,
+					cached: response.headers.get("X-Cache") === "HIT",
+				},
+			};
 		}),
-		isNetworkError: vi.fn(() => false),
-		isAuthError: vi.fn(() => false),
-		getApiKey: vi.fn(() => "test-key"),
+		createQueryKey: vi.fn((endpoint: string, params?: any, userId?: string) => {
+			const key = ["api", endpoint];
+			if (userId) {
+				key.push("user", userId);
+			}
+			if (params && Object.keys(params).length > 0) {
+				key.push(JSON.stringify(params));
+			}
+			return key;
+		}),
+		isNetworkError: vi.fn((error: any) => {
+			if (error instanceof Error) {
+				return (
+					error.message.includes("fetch") ||
+					error.message.includes("network") ||
+					error.message.includes("timeout") ||
+					error.name === "AbortError" ||
+					error.name === "NetworkError"
+				);
+			}
+			return false;
+		}),
+		isAuthError: vi.fn((error: any) => {
+			if (typeof error === "object" && error && "error" in error) {
+				const errorCode = error.error?.code;
+				return [
+					"UNAUTHORIZED",
+					"FORBIDDEN", 
+					"TOKEN_EXPIRED",
+					"INVALID_CREDENTIALS",
+					"SESSION_EXPIRED",
+				].includes(errorCode);
+			}
+			return false;
+		}),
+		isValidationError: vi.fn((error: any) => {
+			if (typeof error === "object" && error && "error" in error) {
+				const apiError = error as any;
+				return (
+					apiError.error?.code === "VALIDATION_ERROR" ||
+					apiError.error?.validation_errors?.length > 0
+				);
+			}
+			return false;
+		}),
+		isRateLimitError: vi.fn((error: any) => {
+			if (typeof error === "object" && error && "error" in error) {
+				const errorCode = error.error?.code;
+				return errorCode === "RATE_LIMIT_EXCEEDED";
+			}
+			return false;
+		}),
 	},
 	apiClient: {
 		auth: {
@@ -246,46 +378,88 @@ Object.defineProperty(window, "alert", {
 	configurable: true,
 });
 
-// Form submission polyfill - Enhanced for JSDOM compatibility
+// Enhanced form submission polyfill for JSDOM compatibility
 if (typeof HTMLFormElement !== "undefined") {
-	// Check if requestSubmit is already available
+	// Polyfill requestSubmit method
 	if (!HTMLFormElement.prototype.requestSubmit) {
 		HTMLFormElement.prototype.requestSubmit = function (
 			submitter?: HTMLElement,
 		) {
-			// Create and dispatch submit event
-			const event = new Event("submit", { bubbles: true, cancelable: true });
+			// Validate submitter if provided
+			if (submitter) {
+				if (submitter.form !== this) {
+					throw new DOMException(
+						"The specified element is not a form-associated element.",
+						"NotFoundError",
+					);
+				}
+				if (submitter.type === "submit" || submitter.type === "image") {
+					// Valid submitter types
+				} else {
+					throw new DOMException(
+						"The specified element is not a submit button.",
+						"InvalidStateError",
+					);
+				}
+			}
 
-			// Add submitter property if provided
+			// Create synthetic submit event
+			const event = new Event("submit", {
+				bubbles: true,
+				cancelable: true,
+			});
+
+			// Set submitter property
 			if (submitter) {
 				Object.defineProperty(event, "submitter", {
 					value: submitter,
+					enumerable: true,
 					writable: false,
 					configurable: true,
 				});
 			}
 
-			// Dispatch the event on the form
-			const eventResult = this.dispatchEvent(event);
+			// Dispatch the event
+			const shouldContinue = this.dispatchEvent(event);
 
-			// If event wasn't cancelled, perform default form submission behavior
-			if (eventResult) {
-			}
-
-			return eventResult;
+			// If not cancelled and no action, do nothing (as per spec)
+			return shouldContinue;
 		};
 	}
 
-	// Also polyfill form validation methods
+	// Enhanced form validation polyfills
 	if (!HTMLFormElement.prototype.checkValidity) {
-		HTMLFormElement.prototype.checkValidity = () => {
-			return true; // Simplified for tests
+		HTMLFormElement.prototype.checkValidity = function () {
+			const formControls = this.querySelectorAll("input, select, textarea");
+			let allValid = true;
+
+			for (const control of formControls) {
+				const element = control as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+				if (element.checkValidity && !element.checkValidity()) {
+					allValid = false;
+				}
+			}
+
+			return allValid;
 		};
 	}
 
 	if (!HTMLFormElement.prototype.reportValidity) {
 		HTMLFormElement.prototype.reportValidity = function () {
 			return this.checkValidity();
+		};
+	}
+}
+
+// Also polyfill form elements if needed
+if (typeof HTMLInputElement !== "undefined") {
+	if (!HTMLInputElement.prototype.checkValidity) {
+		HTMLInputElement.prototype.checkValidity = function () {
+			// Basic validation for required fields
+			if (this.required && !this.value.trim()) {
+				return false;
+			}
+			return true;
 		};
 	}
 }

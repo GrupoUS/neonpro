@@ -178,10 +178,7 @@ export class NeonProDashboardService {
 	/**
 	 * Get comprehensive dashboard analytics
 	 */
-	async getDashboardAnalytics(
-		userId: string,
-		filter?: DashboardFilter,
-	): Promise<DashboardAnalytics> {
+	async getDashboardAnalytics(userId: string, filter?: DashboardFilter): Promise<DashboardAnalytics> {
 		const context = await this.getUserContext(userId);
 
 		// Get date range (default to last 30 days)
@@ -191,13 +188,7 @@ export class NeonProDashboardService {
 		};
 
 		// Run parallel queries for different analytics
-		const [
-			projectStats,
-			taskStats,
-			userStats,
-			budgetStats,
-			performanceMetrics,
-		] = await Promise.all([
+		const [projectStats, taskStats, userStats, budgetStats, performanceMetrics] = await Promise.all([
 			this.getProjectStatistics(context.clinicId, dateRange),
 			this.getTaskStatistics(context.clinicId, dateRange),
 			this.getUserStatistics(context.clinicId),
@@ -235,10 +226,7 @@ export class NeonProDashboardService {
 	/**
 	 * Get dashboard metrics with comparison to previous period
 	 */
-	async getDashboardMetrics(
-		userId: string,
-		category?: string,
-	): Promise<DashboardMetric[]> {
+	async getDashboardMetrics(userId: string, category?: string): Promise<DashboardMetric[]> {
 		const context = await this.getUserContext(userId);
 
 		// Core business metrics for healthcare/clinic management
@@ -261,15 +249,9 @@ export class NeonProDashboardService {
 		// Calculate trends and changes
 		return await Promise.all(
 			(metrics || []).map(async (metric) => {
-				const previousValue = await this.getPreviousPeriodValue(
-					metric.id,
-					context.clinicId,
-				);
+				const previousValue = await this.getPreviousPeriodValue(metric.id, context.clinicId);
 
-				const change =
-					previousValue > 0
-						? ((metric.current_value - previousValue) / previousValue) * 100
-						: 0;
+				const change = previousValue > 0 ? ((metric.current_value - previousValue) / previousValue) * 100 : 0;
 
 				return {
 					id: metric.id,
@@ -284,17 +266,14 @@ export class NeonProDashboardService {
 					target: metric.target_value,
 					unit: metric.unit,
 				};
-			}),
+			})
 		);
 	}
 
 	/**
 	 * Get dashboard projects with team and progress
 	 */
-	async getDashboardProjects(
-		userId: string,
-		filter?: DashboardFilter,
-	): Promise<DashboardProject[]> {
+	async getDashboardProjects(userId: string, filter?: DashboardFilter): Promise<DashboardProject[]> {
 		const context = await this.getUserContext(userId);
 
 		let query = this.supabase
@@ -363,10 +342,7 @@ export class NeonProDashboardService {
 	/**
 	 * Get dashboard tasks with assignees and progress
 	 */
-	async getDashboardTasks(
-		userId: string,
-		filter?: DashboardFilter,
-	): Promise<DashboardTask[]> {
+	async getDashboardTasks(userId: string, filter?: DashboardFilter): Promise<DashboardTask[]> {
 		const context = await this.getUserContext(userId);
 
 		let query = this.supabase
@@ -435,10 +411,7 @@ export class NeonProDashboardService {
 	/**
 	 * Get recent dashboard activities
 	 */
-	async getDashboardActivities(
-		userId: string,
-		limit = 50,
-	): Promise<DashboardActivity[]> {
+	async getDashboardActivities(userId: string, limit = 50): Promise<DashboardActivity[]> {
 		const context = await this.getUserContext(userId);
 
 		const { data: activities, error } = await this.supabase
@@ -486,10 +459,7 @@ export class NeonProDashboardService {
 	/**
 	 * Get user notifications
 	 */
-	async getDashboardNotifications(
-		userId: string,
-		unreadOnly = false,
-	): Promise<DashboardNotification[]> {
+	async getDashboardNotifications(userId: string, unreadOnly = false): Promise<DashboardNotification[]> {
 		let query = this.supabase
 			.from("dashboard_notifications")
 			.select("*")
@@ -525,7 +495,7 @@ export class NeonProDashboardService {
 	 */
 	async createProject(
 		userId: string,
-		project: Omit<DashboardProject, "id" | "team" | "health">,
+		project: Omit<DashboardProject, "id" | "team" | "health">
 	): Promise<DashboardProject> {
 		const context = await this.getUserContext(userId);
 
@@ -565,7 +535,7 @@ export class NeonProDashboardService {
 		userId: string,
 		task: Omit<DashboardTask, "id" | "createdAt" | "updatedAt" | "assignee"> & {
 			assigneeId: string;
-		},
+		}
 	): Promise<DashboardTask> {
 		const context = await this.getUserContext(userId);
 
@@ -645,10 +615,7 @@ export class NeonProDashboardService {
 
 	// Private helper methods
 
-	private async getProjectStatistics(
-		clinicId: string,
-		dateRange: { start: Date; end: Date },
-	) {
+	private async getProjectStatistics(clinicId: string, dateRange: { start: Date; end: Date }) {
 		const { data } = await this.supabase
 			.from("dashboard_projects")
 			.select("status, created_at")
@@ -657,9 +624,7 @@ export class NeonProDashboardService {
 		const projects = data || [];
 		const total = projects.length;
 		const active = projects.filter((p) => p.status === "active").length;
-		const newProjects = projects.filter(
-			(p) => new Date(p.created_at) >= dateRange.start,
-		).length;
+		const newProjects = projects.filter((p) => new Date(p.created_at) >= dateRange.start).length;
 
 		return {
 			total,
@@ -669,10 +634,7 @@ export class NeonProDashboardService {
 		};
 	}
 
-	private async getTaskStatistics(
-		clinicId: string,
-		_dateRange: { start: Date; end: Date },
-	) {
+	private async getTaskStatistics(clinicId: string, _dateRange: { start: Date; end: Date }) {
 		const { data } = await this.supabase
 			.from("dashboard_tasks")
 			.select("status, created_at, updated_at")
@@ -705,21 +667,13 @@ export class NeonProDashboardService {
 		return { total, online };
 	}
 
-	private async getBudgetStatistics(
-		clinicId: string,
-		_dateRange: { start: Date; end: Date },
-	) {
-		const { data } = await this.supabase
-			.from("dashboard_projects")
-			.select("budget, spent")
-			.eq("clinic_id", clinicId);
+	private async getBudgetStatistics(clinicId: string, _dateRange: { start: Date; end: Date }) {
+		const { data } = await this.supabase.from("dashboard_projects").select("budget, spent").eq("clinic_id", clinicId);
 
 		const projects = data || [];
 		const total = projects.reduce((sum, p) => sum + (p.budget || 0), 0);
 		const spent = projects.reduce((sum, p) => sum + (p.spent || 0), 0);
-		const overbudget = projects.filter(
-			(p) => (p.spent || 0) > (p.budget || 0),
-		).length;
+		const overbudget = projects.filter((p) => (p.spent || 0) > (p.budget || 0)).length;
 
 		return {
 			total,
@@ -729,10 +683,7 @@ export class NeonProDashboardService {
 		};
 	}
 
-	private async getPerformanceMetrics(
-		_clinicId: string,
-		_dateRange: { start: Date; end: Date },
-	) {
+	private async getPerformanceMetrics(_clinicId: string, _dateRange: { start: Date; end: Date }) {
 		// Complex performance calculations would go here
 		return {
 			productivity: 85, // Placeholder
@@ -746,10 +697,7 @@ export class NeonProDashboardService {
 		};
 	}
 
-	private async getPreviousPeriodValue(
-		metricId: string,
-		clinicId: string,
-	): Promise<number> {
+	private async getPreviousPeriodValue(metricId: string, clinicId: string): Promise<number> {
 		const { data } = await this.supabase
 			.from("dashboard_metrics_history")
 			.select("value")
@@ -761,14 +709,11 @@ export class NeonProDashboardService {
 		return data?.[0]?.value || 0;
 	}
 
-	private calculateProjectHealth(
-		project: any,
-	): "healthy" | "at-risk" | "critical" {
+	private calculateProjectHealth(project: any): "healthy" | "at-risk" | "critical" {
 		const budgetHealth = (project.spent || 0) / (project.budget || 1);
 		const timeHealth =
 			(Date.now() - new Date(project.start_date).getTime()) /
-			(new Date(project.end_date).getTime() -
-				new Date(project.start_date).getTime());
+			(new Date(project.end_date).getTime() - new Date(project.start_date).getTime());
 
 		if (budgetHealth > 1.2 || timeHealth > 1.2) {
 			return "critical";

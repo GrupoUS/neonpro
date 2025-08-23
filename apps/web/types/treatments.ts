@@ -3,13 +3,7 @@
  * Optimized for CFM compliance and LGPD data protection
  */
 
-export type Json =
-	| string
-	| number
-	| boolean
-	| null
-	| { [key: string]: Json | undefined }
-	| Json[];
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 // Treatment Plan Types for Brazilian Aesthetic Medicine
 export type TreatmentPlanType =
@@ -263,12 +257,7 @@ export type PatientConsent = {
 	treatment_plan_id: string | null;
 
 	// Consent Type
-	consent_type:
-		| "treatment"
-		| "photo_documentation"
-		| "data_processing"
-		| "marketing"
-		| "research";
+	consent_type: "treatment" | "photo_documentation" | "data_processing" | "marketing" | "research";
 
 	// LGPD Compliance
 	purpose_description: string; // Clear purpose in Portuguese
@@ -373,21 +362,12 @@ export type AllTreatmentTypes = {
 // Helper types for component props
 export type TreatmentPlanSummary = Pick<
 	TreatmentPlan,
-	| "id"
-	| "treatment_name"
-	| "category"
-	| "status"
-	| "expected_sessions"
-	| "completed_sessions"
+	"id" | "treatment_name" | "category" | "status" | "expected_sessions" | "completed_sessions"
 >;
 
 export type SessionSummary = Pick<
 	TreatmentSession,
-	| "id"
-	| "session_number"
-	| "scheduled_date"
-	| "status"
-	| "completion_percentage"
+	"id" | "session_number" | "scheduled_date" | "status" | "completion_percentage"
 >;
 
 export type ProtocolSummary = Pick<

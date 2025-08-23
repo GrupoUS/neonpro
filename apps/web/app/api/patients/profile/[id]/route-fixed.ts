@@ -30,9 +30,7 @@ const UpdateProfileSchema = z.object({
 		.object({
 			language: z.string().optional(),
 			timezone: z.string().optional(),
-			communication_method: z
-				.enum(["email", "sms", "phone", "in_app"])
-				.optional(),
+			communication_method: z.enum(["email", "sms", "phone", "in_app"]).optional(),
 			appointment_reminders: z.boolean().optional(),
 		})
 		.optional(),
@@ -48,10 +46,7 @@ const UpdateProfileSchema = z.object({
 /**
  * GET /api/patients/profile/[id] - Get specific patient profile
  */
-export async function GET(
-	_request: NextRequest,
-	{ params }: { params: Promise<{ id: string }> },
-) {
+export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
 	try {
 		const supabase = createClient();
 		const { id: patientId } = await params;
@@ -73,20 +68,14 @@ export async function GET(
 
 		return NextResponse.json({ profile });
 	} catch (_error) {
-		return NextResponse.json(
-			{ error: "Internal server error" },
-			{ status: 500 },
-		);
+		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 	}
 }
 
 /**
  * PUT /api/patients/profile/[id] - Update patient profile
  */
-export async function PUT(
-	request: NextRequest,
-	{ params }: { params: Promise<{ id: string }> },
-) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
 	try {
 		const supabase = createClient();
 		const { id: patientId } = await params;
@@ -105,10 +94,7 @@ export async function PUT(
 		const validatedData = UpdateProfileSchema.parse(body);
 
 		// Update patient profile
-		const updatedProfile = await profileManager.updatePatientProfile(
-			patientId,
-			validatedData,
-		);
+		const updatedProfile = await profileManager.updatePatientProfile(patientId, validatedData);
 		if (!updatedProfile) {
 			return NextResponse.json({ error: "Patient not found" }, { status: 404 });
 		}
@@ -119,25 +105,16 @@ export async function PUT(
 		});
 	} catch (error) {
 		if (error instanceof z.ZodError) {
-			return NextResponse.json(
-				{ error: "Invalid data format", details: error.errors },
-				{ status: 400 },
-			);
+			return NextResponse.json({ error: "Invalid data format", details: error.errors }, { status: 400 });
 		}
-		return NextResponse.json(
-			{ error: "Internal server error" },
-			{ status: 500 },
-		);
+		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 	}
 }
 
 /**
  * DELETE /api/patients/profile/[id] - Archive patient profile
  */
-export async function DELETE(
-	_request: NextRequest,
-	{ params }: { params: Promise<{ id: string }> },
-) {
+export async function DELETE(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
 	try {
 		const supabase = createClient();
 		const { id: patientId } = await params;
@@ -161,9 +138,6 @@ export async function DELETE(
 			message: "Patient profile archived successfully",
 		});
 	} catch (_error) {
-		return NextResponse.json(
-			{ error: "Internal server error" },
-			{ status: 500 },
-		);
+		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 	}
 }

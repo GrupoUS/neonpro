@@ -37,22 +37,9 @@ export const mockTreatmentPlans: TreatmentPlan[] = [
 		},
 		risk_assessment: {
 			risk_level: "medium",
-			common_side_effects: [
-				"Vermelhidão temporária",
-				"Descamação leve",
-				"Sensibilidade solar",
-			],
-			rare_complications: [
-				"Hiperpigmentação",
-				"Hipopigmentação",
-				"Cicatrização irregular",
-			],
-			contraindications: [
-				"Gravidez",
-				"Lactação",
-				"Uso de isotretinoína",
-				"Bronzeamento recente",
-			],
+			common_side_effects: ["Vermelhidão temporária", "Descamação leve", "Sensibilidade solar"],
+			rare_complications: ["Hiperpigmentação", "Hipopigmentação", "Cicatrização irregular"],
+			contraindications: ["Gravidez", "Lactação", "Uso de isotretinoína", "Bronzeamento recente"],
 		},
 		total_cost: 4800.0,
 		payment_plan: {
@@ -98,15 +85,8 @@ export const mockTreatmentPlans: TreatmentPlan[] = [
 		},
 		risk_assessment: {
 			risk_level: "low",
-			common_side_effects: [
-				"Vermelhidão",
-				"Inchaço temporário",
-				"Dormência leve",
-			],
-			rare_complications: [
-				"Hiperplasia adiposa paradoxal",
-				"Neuropatia sensitiva",
-			],
+			common_side_effects: ["Vermelhidão", "Inchaço temporário", "Dormência leve"],
+			rare_complications: ["Hiperplasia adiposa paradoxal", "Neuropatia sensitiva"],
 			contraindications: ["Gravidez", "Crioglobulinemia", "Urticária ao frio"],
 		},
 		total_cost: 2700.0,

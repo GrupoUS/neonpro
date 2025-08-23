@@ -30,16 +30,11 @@ export function usePatients(): PatientsHook {
 			setLoading(true);
 			setError(null);
 
-			let query = supabase
-				.from("patients")
-				.select("*")
-				.order("created_at", { ascending: false });
+			let query = supabase.from("patients").select("*").order("created_at", { ascending: false });
 
 			// Aplicar filtro de busca se existir
 			if (searchQuery.trim()) {
-				query = query.or(
-					`name.ilike.%${searchQuery}%,email.ilike.%${searchQuery}%,phone.ilike.%${searchQuery}%`,
-				);
+				query = query.or(`name.ilike.%${searchQuery}%,email.ilike.%${searchQuery}%,phone.ilike.%${searchQuery}%`);
 			}
 
 			const { data, error: fetchError } = await query;
@@ -58,12 +53,7 @@ export function usePatients(): PatientsHook {
 
 	// Pacientes recentes (últimos 10 criados)
 	const recentPatients = useMemo(() => {
-		return patients
-			.sort(
-				(a, b) =>
-					new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
-			)
-			.slice(0, 10);
+		return patients.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 10);
 	}, [patients]);
 
 	// Total count
@@ -74,7 +64,7 @@ export function usePatients(): PatientsHook {
 		(id: string): Patient | null => {
 			return patients.find((patient) => patient.id === id) || null;
 		},
-		[patients],
+		[patients]
 	);
 
 	// Função para pesquisar pacientes
@@ -108,18 +98,12 @@ export function usePatients(): PatientsHook {
 						setPatients((prev) => [payload.new as Patient, ...prev]);
 					} else if (payload.eventType === "UPDATE") {
 						setPatients((prev) =>
-							prev.map((patient) =>
-								patient.id === payload.new.id
-									? (payload.new as Patient)
-									: patient,
-							),
+							prev.map((patient) => (patient.id === payload.new.id ? (payload.new as Patient) : patient))
 						);
 					} else if (payload.eventType === "DELETE") {
-						setPatients((prev) =>
-							prev.filter((patient) => patient.id !== payload.old.id),
-						);
+						setPatients((prev) => prev.filter((patient) => patient.id !== payload.old.id));
 					}
-				},
+				}
 			)
 			.subscribe();
 

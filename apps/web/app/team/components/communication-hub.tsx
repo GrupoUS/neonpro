@@ -25,13 +25,7 @@ import { useMemo, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
 	Dialog,
 	DialogContent,
@@ -49,21 +43,11 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 
-import type {
-	CommunicationPriority,
-	PatientHandoff,
-	TeamMessage,
-} from "@/types/team-coordination"; // Mock team messages with Brazilian healthcare context
+import type { CommunicationPriority, PatientHandoff, TeamMessage } from "@/types/team-coordination"; // Mock team messages with Brazilian healthcare context
 
 const mockTeamMessages: TeamMessage[] = [
 	{
@@ -178,8 +162,7 @@ const mockPatientHandoffs: PatientHandoff[] = [
 		fromProfessionalId: "prof-001", // Dra. Maria Silva
 		toProfessionalId: "prof-002", // Dr. Roberto Oliveira
 		handoffType: "transfer",
-		currentCondition:
-			"Paciente estável após episódio de arritmia. Ritmo sinusal restabelecido.",
+		currentCondition: "Paciente estável após episódio de arritmia. Ritmo sinusal restabelecido.",
 		vitalSigns: {
 			pa: "130/80 mmHg",
 			fc: "78 bpm",
@@ -194,11 +177,7 @@ const mockPatientHandoffs: PatientHandoff[] = [
 			"Enalapril 10mg 12/12h",
 		],
 		allergies: ["Penicilina", "Contrastes iodados"],
-		recentProcedures: [
-			"ECG - 21/08/2024 14:30",
-			"Ecocardiograma - 20/08/2024",
-			"Cateterismo cardíaco - 18/08/2024",
-		],
+		recentProcedures: ["ECG - 21/08/2024 14:30", "Ecocardiograma - 20/08/2024", "Cateterismo cardíaco - 18/08/2024"],
 		careInstructions:
 			"Manter monitorização cardíaca contínua. Atentar para sinais de nova arritmia. Dieta hipossódica rigorosa. Repouso relativo no leito.",
 		specialRequirements: [
@@ -206,17 +185,8 @@ const mockPatientHandoffs: PatientHandoff[] = [
 			"Desfibrilador próximo ao leito",
 			"Comunicar qualquer alteração do ritmo",
 		],
-		riskFactors: [
-			"Histórico de IAM prévio",
-			"Diabetes mellitus",
-			"Dislipidemia",
-			"Tabagismo (cessou há 2 anos)",
-		],
-		followUpRequired: [
-			"Reavaliação cardiológica em 24h",
-			"Controle de eletrólitos em 6h",
-			"ECG de controle em 4h",
-		],
+		riskFactors: ["Histórico de IAM prévio", "Diabetes mellitus", "Dislipidemia", "Tabagismo (cessou há 2 anos)"],
+		followUpRequired: ["Reavaliação cardiológica em 24h", "Controle de eletrólitos em 6h", "ECG de controle em 4h"],
 		status: "acknowledged",
 		acknowledgedAt: new Date("2024-08-21T14:50:00"),
 		completedAt: null,
@@ -231,8 +201,7 @@ const mockPatientHandoffs: PatientHandoff[] = [
 		fromProfessionalId: "prof-003", // Enf. Ana Paula
 		toProfessionalId: "prof-004", // Próximo enfermeiro
 		handoffType: "shift_change",
-		currentCondition:
-			"Paciente crítico em VM, sedado e em uso de drogas vasoativas.",
+		currentCondition: "Paciente crítico em VM, sedado e em uso de drogas vasoativas.",
 		vitalSigns: {
 			pa: "90/60 mmHg (com noradrenalina)",
 			fc: "110 bpm",
@@ -259,11 +228,7 @@ const mockPatientHandoffs: PatientHandoff[] = [
 			"Mudança de decúbito a cada 2h",
 			"Higiene oral com clorexidina 12/12h",
 		],
-		riskFactors: [
-			"Choque séptico",
-			"Insuficiência respiratória aguda",
-			"Lesão renal aguda",
-		],
+		riskFactors: ["Choque séptico", "Insuficiência respiratória aguda", "Lesão renal aguda"],
 		followUpRequired: [
 			"Gasometria arterial em 4h",
 			"Raio-X tórax pela manhã",
@@ -406,19 +371,13 @@ type CommunicationHubProps = {
 	emergencyMode?: boolean;
 };
 
-export function CommunicationHub({
-	emergencyMode = false,
-}: CommunicationHubProps) {
+export function CommunicationHub({ emergencyMode = false }: CommunicationHubProps) {
 	const [activeTab, setActiveTab] = useState("messages");
 	const [searchQuery, setSearchQuery] = useState("");
-	const [priorityFilter, setPriorityFilter] = useState<
-		CommunicationPriority | "all"
-	>("all");
+	const [priorityFilter, setPriorityFilter] = useState<CommunicationPriority | "all">("all");
 	const [typeFilter, setTypeFilter] = useState<string>("all");
 	const [showUnreadOnly, setShowUnreadOnly] = useState(false);
-	const [_selectedMessage, setSelectedMessage] = useState<TeamMessage | null>(
-		null,
-	);
+	const [_selectedMessage, setSelectedMessage] = useState<TeamMessage | null>(null);
 	const [isComposeDialogOpen, setIsComposeDialogOpen] = useState(false);
 	const [newMessage, setNewMessage] = useState({
 		subject: "",
@@ -481,9 +440,7 @@ export function CommunicationHub({
 			<div className="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
 				<div>
 					<h2 className="font-bold text-2xl">Central de Comunicação</h2>
-					<p className="text-muted-foreground">
-						Hub de comunicação em tempo real e gestão de handoffs
-					</p>
+					<p className="text-muted-foreground">Hub de comunicação em tempo real e gestão de handoffs</p>
 				</div>
 
 				<div className="flex items-center space-x-2">
@@ -510,12 +467,9 @@ export function CommunicationHub({
 					<div className="flex items-center">
 						<AlertTriangle className="mr-3 h-5 w-5 text-red-500" />
 						<div>
-							<p className="font-medium text-red-800">
-								Modo de Emergência Ativo - Comunicações Prioritárias
-							</p>
+							<p className="font-medium text-red-800">Modo de Emergência Ativo - Comunicações Prioritárias</p>
 							<p className="text-red-700 text-sm">
-								Mensagens de emergência têm prioridade automática e notificação
-								imediata
+								Mensagens de emergência têm prioridade automática e notificação imediata
 							</p>
 						</div>
 					</div>
@@ -523,11 +477,7 @@ export function CommunicationHub({
 			)}
 
 			{/* Communication Tabs */}
-			<Tabs
-				className="space-y-6"
-				onValueChange={setActiveTab}
-				value={activeTab}
-			>
+			<Tabs className="space-y-6" onValueChange={setActiveTab} value={activeTab}>
 				<TabsList className="grid w-full grid-cols-3">
 					<TabsTrigger className="text-sm" value="messages">
 						<MessageCircle className="mr-2 h-4 w-4" />
@@ -548,9 +498,7 @@ export function CommunicationHub({
 					<Card>
 						<CardHeader>
 							<CardTitle className="text-lg">Filtros de Comunicação</CardTitle>
-							<CardDescription>
-								Busque mensagens por remetente, assunto ou conteúdo
-							</CardDescription>
+							<CardDescription>Busque mensagens por remetente, assunto ou conteúdo</CardDescription>
 						</CardHeader>
 						<CardContent>
 							<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
@@ -570,9 +518,7 @@ export function CommunicationHub({
 
 								{/* Priority Filter */}
 								<Select
-									onValueChange={(value) =>
-										setPriorityFilter(value as CommunicationPriority | "all")
-									}
+									onValueChange={(value) => setPriorityFilter(value as CommunicationPriority | "all")}
 									value={priorityFilter}
 								>
 									<SelectTrigger>
@@ -622,9 +568,7 @@ export function CommunicationHub({
 					<Card>
 						<CardHeader>
 							<CardTitle className="text-lg">Mensagens da Equipe</CardTitle>
-							<CardDescription>
-								Comunicação em tempo real com compliance LGPD
-							</CardDescription>
+							<CardDescription>Comunicação em tempo real com compliance LGPD</CardDescription>
 						</CardHeader>
 						<CardContent>
 							<div className="space-y-3">
@@ -638,9 +582,7 @@ export function CommunicationHub({
 									return (
 										<div
 											className={`cursor-pointer rounded-lg border p-4 transition-all duration-200 hover:shadow-md ${
-												isUnread
-													? "border-blue-200 bg-blue-50"
-													: "border-border bg-background"
+												isUnread ? "border-blue-200 bg-blue-50" : "border-border bg-background"
 											} ${message.isEmergency ? "border-red-400 ring-2 ring-red-300" : ""}`}
 											key={message.id}
 											onClick={() => setSelectedMessage(message)}
@@ -658,17 +600,12 @@ export function CommunicationHub({
 												<div className="min-w-0 flex-1">
 													<div className="mb-2 flex items-center justify-between">
 														<div className="flex items-center space-x-2">
-															<p className="truncate font-medium text-foreground">
-																{senderInfo.name}
-															</p>
+															<p className="truncate font-medium text-foreground">{senderInfo.name}</p>
 															<Badge className="text-xs" variant="outline">
 																{senderInfo.role}
 															</Badge>
 															{message.isEmergency && (
-																<Badge
-																	className="animate-pulse text-xs"
-																	variant="destructive"
-																>
+																<Badge className="animate-pulse text-xs" variant="destructive">
 																	EMERGÊNCIA
 																</Badge>
 															)}
@@ -686,24 +623,18 @@ export function CommunicationHub({
 
 													<div className="mb-2 flex items-center space-x-2">
 														<div className={`rounded p-1 ${priorityInfo.bg}`}>
-															<PriorityIcon
-																className={`h-3 w-3 ${priorityInfo.color}`}
-															/>
+															<PriorityIcon className={`h-3 w-3 ${priorityInfo.color}`} />
 														</div>
 														<h3
 															className={`truncate font-medium text-sm ${
-																isUnread
-																	? "text-foreground"
-																	: "text-muted-foreground"
+																isUnread ? "text-foreground" : "text-muted-foreground"
 															}`}
 														>
 															{message.subject}
 														</h3>
 													</div>
 
-													<p className="line-clamp-2 text-muted-foreground text-sm">
-														{message.content}
-													</p>
+													<p className="line-clamp-2 text-muted-foreground text-sm">{message.content}</p>
 
 													{/* Message Metadata */}
 													<div className="mt-3 flex items-center justify-between">
@@ -726,20 +657,12 @@ export function CommunicationHub({
 															{message.requiresAcknowledgment && (
 																<Badge
 																	className="text-xs"
-																	variant={
-																		message.acknowledgedBy.length > 0
-																			? "default"
-																			: "secondary"
-																	}
+																	variant={message.acknowledgedBy.length > 0 ? "default" : "secondary"}
 																>
-																	{message.acknowledgedBy.length > 0
-																		? "✓ Confirmado"
-																		: "Aguarda Confirmação"}
+																	{message.acknowledgedBy.length > 0 ? "✓ Confirmado" : "Aguarda Confirmação"}
 																</Badge>
 															)}
-															{isUnread && (
-																<div className="h-2 w-2 rounded-full bg-blue-500" />
-															)}
+															{isUnread && <div className="h-2 w-2 rounded-full bg-blue-500" />}
 														</div>
 													</div>
 												</div>
@@ -747,11 +670,7 @@ export function CommunicationHub({
 												{/* Actions */}
 												<DropdownMenu>
 													<DropdownMenuTrigger asChild>
-														<Button
-															className="h-8 w-8 p-0"
-															size="sm"
-															variant="ghost"
-														>
+														<Button className="h-8 w-8 p-0" size="sm" variant="ghost">
 															<MoreVertical className="h-4 w-4" />
 														</Button>
 													</DropdownMenuTrigger>
@@ -770,15 +689,12 @@ export function CommunicationHub({
 															<Star className="mr-2 h-4 w-4" />
 															Marcar como Importante
 														</DropdownMenuItem>
-														{message.requiresAcknowledgment &&
-															!message.acknowledgedBy.includes(
-																"current-user",
-															) && (
-																<DropdownMenuItem>
-																	<CheckCircle2 className="mr-2 h-4 w-4" />
-																	Confirmar Leitura
-																</DropdownMenuItem>
-															)}
+														{message.requiresAcknowledgment && !message.acknowledgedBy.includes("current-user") && (
+															<DropdownMenuItem>
+																<CheckCircle2 className="mr-2 h-4 w-4" />
+																Confirmar Leitura
+															</DropdownMenuItem>
+														)}
 													</DropdownMenuContent>
 												</DropdownMenu>
 											</div>
@@ -790,12 +706,8 @@ export function CommunicationHub({
 								{filteredMessages.length === 0 && (
 									<div className="py-12 text-center">
 										<MessageCircle className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
-										<p className="mb-2 font-medium text-foreground text-lg">
-											Nenhuma mensagem encontrada
-										</p>
-										<p className="mb-4 text-muted-foreground">
-											Tente ajustar os filtros ou inicie uma nova conversa
-										</p>
+										<p className="mb-2 font-medium text-foreground text-lg">Nenhuma mensagem encontrada</p>
+										<p className="mb-4 text-muted-foreground">Tente ajustar os filtros ou inicie uma nova conversa</p>
 										<Button size="sm">
 											<Plus className="mr-2 h-4 w-4" />
 											Nova Mensagem
@@ -811,9 +723,7 @@ export function CommunicationHub({
 					<Card>
 						<CardHeader>
 							<CardTitle className="text-lg">Handoffs de Pacientes</CardTitle>
-							<CardDescription>
-								Transferências de responsabilidade entre profissionais
-							</CardDescription>
+							<CardDescription>Transferências de responsabilidade entre profissionais</CardDescription>
 						</CardHeader>
 						<CardContent>
 							<div className="space-y-4">
@@ -855,14 +765,10 @@ export function CommunicationHub({
 													</div>
 
 													<div className="flex items-center space-x-2">
-														<Badge
-															className={`${priorityInfo.bg} ${priorityInfo.color} border-0`}
-														>
+														<Badge className={`${priorityInfo.bg} ${priorityInfo.color} border-0`}>
 															{priorityInfo.label}
 														</Badge>
-														<Badge
-															className={`${statusInfo.bg} ${statusInfo.color} border-0`}
-														>
+														<Badge className={`${statusInfo.bg} ${statusInfo.color} border-0`}>
 															<StatusIcon className="mr-1 h-3 w-3" />
 															{statusInfo.label}
 														</Badge>
@@ -888,36 +794,27 @@ export function CommunicationHub({
 																		: "Consulta"}
 														</Badge>
 													</div>
-													<p className="text-muted-foreground text-sm">
-														{handoff.currentCondition}
-													</p>
+													<p className="text-muted-foreground text-sm">{handoff.currentCondition}</p>
 												</div>
 
 												{/* Vital Signs */}
 												<div className="grid grid-cols-2 gap-3 md:grid-cols-5">
-													{Object.entries(handoff.vitalSigns).map(
-														([key, value]) => (
-															<div
-																className="rounded bg-gray-50 p-2 text-center"
-																key={key}
-															>
-																<div className="font-medium text-muted-foreground text-xs uppercase">
-																	{key === "pa"
-																		? "PA"
-																		: key === "fc"
-																			? "FC"
-																			: key === "fr"
-																				? "FR"
-																				: key === "temp"
-																					? "T°"
-																					: "SpO₂"}
-																</div>
-																<div className="mt-1 font-medium text-sm">
-																	{value}
-																</div>
+													{Object.entries(handoff.vitalSigns).map(([key, value]) => (
+														<div className="rounded bg-gray-50 p-2 text-center" key={key}>
+															<div className="font-medium text-muted-foreground text-xs uppercase">
+																{key === "pa"
+																	? "PA"
+																	: key === "fc"
+																		? "FC"
+																		: key === "fr"
+																			? "FR"
+																			: key === "temp"
+																				? "T°"
+																				: "SpO₂"}
 															</div>
-														),
-													)}
+															<div className="mt-1 font-medium text-sm">{value}</div>
+														</div>
+													))}
 												</div>
 
 												{/* Medications */}
@@ -928,10 +825,7 @@ export function CommunicationHub({
 													</h5>
 													<div className="space-y-1">
 														{handoff.activeMedications.map((med, idx) => (
-															<div
-																className="rounded bg-yellow-50 px-2 py-1 text-sm"
-																key={idx}
-															>
+															<div className="rounded bg-yellow-50 px-2 py-1 text-sm" key={idx}>
 																{med}
 															</div>
 														))}
@@ -947,11 +841,7 @@ export function CommunicationHub({
 														</h5>
 														<div className="flex flex-wrap gap-2">
 															{handoff.allergies.map((allergy, idx) => (
-																<Badge
-																	className="text-xs"
-																	key={idx}
-																	variant="destructive"
-																>
+																<Badge className="text-xs" key={idx} variant="destructive">
 																	{allergy}
 																</Badge>
 															))}
@@ -979,10 +869,7 @@ export function CommunicationHub({
 														</h5>
 														<div className="space-y-1">
 															{handoff.followUpRequired.map((item, idx) => (
-																<div
-																	className="flex items-center text-sm"
-																	key={idx}
-																>
+																<div className="flex items-center text-sm" key={idx}>
 																	<div className="mr-2 h-2 w-2 rounded-full bg-orange-400" />
 																	{item}
 																</div>
@@ -994,34 +881,25 @@ export function CommunicationHub({
 												{/* Notes */}
 												{handoff.notes && (
 													<div>
-														<h5 className="mb-2 font-medium text-sm">
-															Observações
-														</h5>
-														<p className="text-muted-foreground text-sm italic">
-															"{handoff.notes}"
-														</p>
+														<h5 className="mb-2 font-medium text-sm">Observações</h5>
+														<p className="text-muted-foreground text-sm italic">"{handoff.notes}"</p>
 													</div>
 												)}
 
 												{/* Actions */}
 												<div className="flex items-center justify-between border-t pt-3">
 													<div className="text-muted-foreground text-xs">
-														Criado em:{" "}
-														{handoff.createdAt.toLocaleString("pt-BR")}
+														Criado em: {handoff.createdAt.toLocaleString("pt-BR")}
 														{handoff.acknowledgedAt && (
 															<span className="ml-3">
-																Confirmado em:{" "}
-																{handoff.acknowledgedAt.toLocaleString("pt-BR")}
+																Confirmado em: {handoff.acknowledgedAt.toLocaleString("pt-BR")}
 															</span>
 														)}
 													</div>
 
 													<div className="flex items-center space-x-2">
 														{handoff.status === "pending" && (
-															<Button
-																className="bg-green-600 hover:bg-green-700"
-																size="sm"
-															>
+															<Button className="bg-green-600 hover:bg-green-700" size="sm">
 																<CheckCircle2 className="mr-2 h-4 w-4" />
 																Confirmar Handoff
 															</Button>
@@ -1041,12 +919,8 @@ export function CommunicationHub({
 								{mockPatientHandoffs.length === 0 && (
 									<div className="py-12 text-center">
 										<ArrowRight className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
-										<p className="mb-2 font-medium text-foreground text-lg">
-											Nenhum handoff pendente
-										</p>
-										<p className="text-muted-foreground">
-											Todos os handoffs foram processados com sucesso
-										</p>
+										<p className="mb-2 font-medium text-foreground text-lg">Nenhum handoff pendente</p>
+										<p className="text-muted-foreground">Todos os handoffs foram processados com sucesso</p>
 									</div>
 								)}
 							</div>
@@ -1057,12 +931,8 @@ export function CommunicationHub({
 				<TabsContent className="space-y-6" value="emergency">
 					<Card>
 						<CardHeader>
-							<CardTitle className="text-lg text-red-600">
-								Protocolos de Emergência
-							</CardTitle>
-							<CardDescription>
-								Comunicação e coordenação para situações críticas
-							</CardDescription>
+							<CardTitle className="text-lg text-red-600">Protocolos de Emergência</CardTitle>
+							<CardDescription>Comunicação e coordenação para situações críticas</CardDescription>
 						</CardHeader>
 						<CardContent>
 							<div className="grid gap-6 md:grid-cols-2">
@@ -1075,11 +945,7 @@ export function CommunicationHub({
 										</CardTitle>
 									</CardHeader>
 									<CardContent className="space-y-3">
-										<Button
-											className="w-full justify-start"
-											size="lg"
-											variant="destructive"
-										>
+										<Button className="w-full justify-start" size="lg" variant="destructive">
 											<Heart className="mr-2 h-5 w-5" />
 											Código Azul - Parada Cardiorrespiratória
 										</Button>
@@ -1126,9 +992,7 @@ export function CommunicationHub({
 											<div className="flex items-center justify-between rounded bg-red-50 p-2">
 												<div>
 													<p className="font-medium text-sm">SAMU</p>
-													<p className="text-muted-foreground text-xs">
-														Emergência Médica
-													</p>
+													<p className="text-muted-foreground text-xs">Emergência Médica</p>
 												</div>
 												<Button size="sm" variant="destructive">
 													<Phone className="mr-1 h-3 w-3" />
@@ -1139,9 +1003,7 @@ export function CommunicationHub({
 											<div className="flex items-center justify-between rounded bg-blue-50 p-2">
 												<div>
 													<p className="font-medium text-sm">Polícia Militar</p>
-													<p className="text-muted-foreground text-xs">
-														Emergência Segurança
-													</p>
+													<p className="text-muted-foreground text-xs">Emergência Segurança</p>
 												</div>
 												<Button size="sm" variant="destructive">
 													<Phone className="mr-1 h-3 w-3" />
@@ -1152,9 +1014,7 @@ export function CommunicationHub({
 											<div className="flex items-center justify-between rounded bg-orange-50 p-2">
 												<div>
 													<p className="font-medium text-sm">Bombeiros</p>
-													<p className="text-muted-foreground text-xs">
-														Emergência Incêndio
-													</p>
+													<p className="text-muted-foreground text-xs">Emergência Incêndio</p>
 												</div>
 												<Button size="sm" variant="destructive">
 													<Phone className="mr-1 h-3 w-3" />
@@ -1164,17 +1024,10 @@ export function CommunicationHub({
 
 											<div className="flex items-center justify-between rounded bg-green-50 p-2">
 												<div>
-													<p className="font-medium text-sm">
-														Central de Transplantes
-													</p>
-													<p className="text-muted-foreground text-xs">
-														Emergência Órgãos
-													</p>
+													<p className="font-medium text-sm">Central de Transplantes</p>
+													<p className="text-muted-foreground text-xs">Emergência Órgãos</p>
 												</div>
-												<Button
-													className="bg-green-600 hover:bg-green-700"
-													size="sm"
-												>
+												<Button className="bg-green-600 hover:bg-green-700" size="sm">
 													<Phone className="mr-1 h-3 w-3" />
 													(11) 5574-5300
 												</Button>
@@ -1194,9 +1047,7 @@ export function CommunicationHub({
 									<CardContent>
 										<div className="grid gap-4 md:grid-cols-2">
 											<div className="space-y-3">
-												<h4 className="font-medium text-sm">
-													RCP (Ressuscitação Cardiopulmonar)
-												</h4>
+												<h4 className="font-medium text-sm">RCP (Ressuscitação Cardiopulmonar)</h4>
 												<div className="space-y-1 text-muted-foreground text-sm">
 													<p>1. Verificar responsividade e respiração</p>
 													<p>2. Posicionar vítima em superfície rígida</p>
@@ -1207,9 +1058,7 @@ export function CommunicationHub({
 											</div>
 
 											<div className="space-y-3">
-												<h4 className="font-medium text-sm">
-													Manobra de Heimlich
-												</h4>
+												<h4 className="font-medium text-sm">Manobra de Heimlich</h4>
 												<div className="space-y-1 text-muted-foreground text-sm">
 													<p>1. Posicionar-se atrás da vítima</p>
 													<p>2. Abraçar pelo abdome</p>
@@ -1220,9 +1069,7 @@ export function CommunicationHub({
 											</div>
 
 											<div className="space-y-3">
-												<h4 className="font-medium text-sm">
-													Controle de Hemorragia
-												</h4>
+												<h4 className="font-medium text-sm">Controle de Hemorragia</h4>
 												<div className="space-y-1 text-muted-foreground text-sm">
 													<p>1. Pressão direta no local do sangramento</p>
 													<p>2. Elevação do membro se possível</p>
@@ -1258,32 +1105,20 @@ export function CommunicationHub({
 										<div className="grid gap-3 md:grid-cols-4">
 											<div className="rounded border border-green-200 bg-green-50 p-3">
 												<div className="mb-2 flex items-center justify-between">
-													<p className="font-medium text-sm">
-														Médico de Plantão
-													</p>
+													<p className="font-medium text-sm">Médico de Plantão</p>
 													<div className="h-3 w-3 rounded-full bg-green-500" />
 												</div>
-												<p className="text-muted-foreground text-xs">
-													Dr. Roberto Oliveira
-												</p>
-												<p className="text-green-600 text-xs">
-													Disponível - UTI
-												</p>
+												<p className="text-muted-foreground text-xs">Dr. Roberto Oliveira</p>
+												<p className="text-green-600 text-xs">Disponível - UTI</p>
 											</div>
 
 											<div className="rounded border border-green-200 bg-green-50 p-3">
 												<div className="mb-2 flex items-center justify-between">
-													<p className="font-medium text-sm">
-														Enfermeiro Responsável
-													</p>
+													<p className="font-medium text-sm">Enfermeiro Responsável</p>
 													<div className="h-3 w-3 rounded-full bg-green-500" />
 												</div>
-												<p className="text-muted-foreground text-xs">
-													Enf. Ana Paula
-												</p>
-												<p className="text-green-600 text-xs">
-													Disponível - CC
-												</p>
+												<p className="text-muted-foreground text-xs">Enf. Ana Paula</p>
+												<p className="text-green-600 text-xs">Disponível - CC</p>
 											</div>
 
 											<div className="rounded border border-yellow-200 bg-yellow-50 p-3">
@@ -1291,12 +1126,8 @@ export function CommunicationHub({
 													<p className="font-medium text-sm">Anestesista</p>
 													<div className="h-3 w-3 rounded-full bg-yellow-500" />
 												</div>
-												<p className="text-muted-foreground text-xs">
-													Dr. Carlos Mendes
-												</p>
-												<p className="text-xs text-yellow-600">
-													Em Cirurgia - CC2
-												</p>
+												<p className="text-muted-foreground text-xs">Dr. Carlos Mendes</p>
+												<p className="text-xs text-yellow-600">Em Cirurgia - CC2</p>
 											</div>
 
 											<div className="rounded border border-red-200 bg-red-50 p-3">
@@ -1304,12 +1135,8 @@ export function CommunicationHub({
 													<p className="font-medium text-sm">Cirurgião</p>
 													<div className="h-3 w-3 rounded-full bg-red-500" />
 												</div>
-												<p className="text-muted-foreground text-xs">
-													Dra. Luciana Santos
-												</p>
-												<p className="text-red-600 text-xs">
-													Indisponível - Cirurgia
-												</p>
+												<p className="text-muted-foreground text-xs">Dra. Luciana Santos</p>
+												<p className="text-red-600 text-xs">Indisponível - Cirurgia</p>
 											</div>
 										</div>
 									</CardContent>
@@ -1325,17 +1152,13 @@ export function CommunicationHub({
 				<DialogContent className="max-w-2xl">
 					<DialogHeader>
 						<DialogTitle>Nova Mensagem</DialogTitle>
-						<DialogDescription>
-							Enviar mensagem para equipe com compliance LGPD
-						</DialogDescription>
+						<DialogDescription>Enviar mensagem para equipe com compliance LGPD</DialogDescription>
 					</DialogHeader>
 
 					<div className="space-y-4">
 						{/* Recipients */}
 						<div>
-							<label className="mb-2 block font-medium text-sm">
-								Destinatários
-							</label>
+							<label className="mb-2 block font-medium text-sm">Destinatários</label>
 							<Select>
 								<SelectTrigger>
 									<SelectValue placeholder="Selecionar profissionais..." />
@@ -1352,9 +1175,7 @@ export function CommunicationHub({
 
 						{/* Priority */}
 						<div>
-							<label className="mb-2 block font-medium text-sm">
-								Prioridade
-							</label>
+							<label className="mb-2 block font-medium text-sm">Prioridade</label>
 							<Select
 								onValueChange={(value) =>
 									setNewMessage((prev) => ({
@@ -1454,9 +1275,8 @@ export function CommunicationHub({
 								<div className="text-sm">
 									<p className="font-medium text-yellow-800">Aviso LGPD</p>
 									<p className="text-yellow-700">
-										Esta mensagem pode conter dados pessoais sensíveis.
-										Certifique-se de que todos os destinatários têm autorização
-										para acessar essas informações.
+										Esta mensagem pode conter dados pessoais sensíveis. Certifique-se de que todos os destinatários têm
+										autorização para acessar essas informações.
 									</p>
 								</div>
 							</div>
@@ -1464,10 +1284,7 @@ export function CommunicationHub({
 					</div>
 
 					<DialogFooter>
-						<Button
-							onClick={() => setIsComposeDialogOpen(false)}
-							variant="outline"
-						>
+						<Button onClick={() => setIsComposeDialogOpen(false)} variant="outline">
 							Cancelar
 						</Button>
 						<Button className="bg-blue-600 hover:bg-blue-700">

@@ -1,11 +1,6 @@
 "use client";
 
-import type {
-	Patient,
-	SchedulingResult,
-	Staff,
-	TreatmentType,
-} from "@neonpro/core-services/scheduling";
+import type { Patient, SchedulingResult, Staff, TreatmentType } from "@neonpro/core-services/scheduling";
 import type React from "react";
 import { useState } from "react";
 import { useAIScheduling } from "@/hooks/use-ai-scheduling";
@@ -21,12 +16,8 @@ type AISchedulingDemoProps = {
  * Showcases all features: scheduling, analytics, real-time optimization
  * Demonstrates achievement of 60% scheduling time reduction target
  */
-export const AISchedulingDemo: React.FC<AISchedulingDemoProps> = ({
-	tenantId,
-}) => {
-	const [activeTab, setActiveTab] = useState<
-		"schedule" | "analytics" | "optimization"
-	>("schedule");
+export const AISchedulingDemo: React.FC<AISchedulingDemoProps> = ({ tenantId }) => {
+	const [activeTab, setActiveTab] = useState<"schedule" | "analytics" | "optimization">("schedule");
 	const [timeRange, setTimeRange] = useState({
 		start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
 		end: new Date(),
@@ -191,27 +182,18 @@ export const AISchedulingDemo: React.FC<AISchedulingDemoProps> = ({
 	]);
 
 	// Use the AI scheduling hook
-	const {
-		scheduleAppointment,
-		isLoading,
-		error,
-		lastResult,
-		optimizationScore,
-		analytics,
-		processingTime,
-	} = useAIScheduling({
-		tenantId,
-		autoOptimize: true,
-		realtimeUpdates: true,
-		analyticsEnabled: true,
-	});
+	const { scheduleAppointment, isLoading, error, lastResult, optimizationScore, analytics, processingTime } =
+		useAIScheduling({
+			tenantId,
+			autoOptimize: true,
+			realtimeUpdates: true,
+			analyticsEnabled: true,
+		});
 
 	const handleAppointmentScheduled = (result: SchedulingResult) => {
 		// Show success notification
 		if (result.success) {
-			alert(
-				`Appointment scheduled successfully! Processing time: ${processingTime.toFixed(0)}ms`,
-			);
+			alert(`Appointment scheduled successfully! Processing time: ${processingTime.toFixed(0)}ms`);
 		}
 	};
 
@@ -223,12 +205,9 @@ export const AISchedulingDemo: React.FC<AISchedulingDemoProps> = ({
 		<div className="mx-auto max-w-7xl space-y-6 p-6">
 			{/* Header with System Overview */}
 			<div className="rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 p-6 text-white">
-				<h1 className="mb-2 font-bold text-3xl">
-					AI-Powered Scheduling System
-				</h1>
+				<h1 className="mb-2 font-bold text-3xl">AI-Powered Scheduling System</h1>
 				<p className="mb-4 text-blue-100">
-					Intelligent scheduling for NeonPro aesthetic clinics with 60% time
-					reduction
+					Intelligent scheduling for NeonPro aesthetic clinics with 60% time reduction
 				</p>
 
 				{/* Key Metrics Display */}
@@ -281,14 +260,10 @@ export const AISchedulingDemo: React.FC<AISchedulingDemoProps> = ({
 				{activeTab === "schedule" && (
 					<div className="space-y-6">
 						<div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
-							<h3 className="mb-2 font-semibold text-blue-900 text-lg">
-								🎯 AI Scheduling Features
-							</h3>
+							<h3 className="mb-2 font-semibold text-blue-900 text-lg">🎯 AI Scheduling Features</h3>
 							<ul className="space-y-1 text-blue-800 text-sm">
 								<li>• Real-time conflict detection and resolution</li>
-								<li>
-									• Intelligent slot optimization based on patient preferences
-								</li>
+								<li>• Intelligent slot optimization based on patient preferences</li>
 								<li>• Staff workload balancing and expertise matching</li>
 								<li>• Predictive no-show risk assessment</li>
 								<li>• Treatment duration prediction with historical data</li>
@@ -308,38 +283,22 @@ export const AISchedulingDemo: React.FC<AISchedulingDemoProps> = ({
 						{/* Live Performance Metrics */}
 						{processingTime > 0 && (
 							<div className="rounded-lg border border-green-200 bg-green-50 p-4">
-								<h4 className="mb-2 font-semibold text-green-900">
-									Live Performance Metrics
-								</h4>
+								<h4 className="mb-2 font-semibold text-green-900">Live Performance Metrics</h4>
 								<div className="grid grid-cols-2 gap-4 text-sm md:grid-cols-4">
 									<div>
-										<span className="font-medium text-green-700">
-											Processing Time:
-										</span>
-										<span className="ml-2 text-green-900">
-											{processingTime.toFixed(0)}ms
-										</span>
+										<span className="font-medium text-green-700">Processing Time:</span>
+										<span className="ml-2 text-green-900">{processingTime.toFixed(0)}ms</span>
 									</div>
 									<div>
-										<span className="font-medium text-green-700">
-											Optimization Score:
-										</span>
-										<span className="ml-2 text-green-900">
-											{(optimizationScore * 100).toFixed(1)}%
-										</span>
+										<span className="font-medium text-green-700">Optimization Score:</span>
+										<span className="ml-2 text-green-900">{(optimizationScore * 100).toFixed(1)}%</span>
 									</div>
 									<div>
-										<span className="font-medium text-green-700">
-											System Status:
-										</span>
-										<span className="ml-2 text-green-900">
-											{isLoading ? "Processing" : "Ready"}
-										</span>
+										<span className="font-medium text-green-700">System Status:</span>
+										<span className="ml-2 text-green-900">{isLoading ? "Processing" : "Ready"}</span>
 									</div>
 									<div>
-										<span className="font-medium text-green-700">
-											AI Engine:
-										</span>
+										<span className="font-medium text-green-700">AI Engine:</span>
 										<span className="ml-2 text-green-900">Active</span>
 									</div>
 								</div>
@@ -351,42 +310,31 @@ export const AISchedulingDemo: React.FC<AISchedulingDemoProps> = ({
 				{activeTab === "analytics" && (
 					<div className="space-y-6">
 						<div className="rounded-lg border border-purple-200 bg-purple-50 p-4">
-							<h3 className="mb-2 font-semibold text-lg text-purple-900">
-								📈 Analytics & Performance Tracking
-							</h3>
+							<h3 className="mb-2 font-semibold text-lg text-purple-900">📈 Analytics & Performance Tracking</h3>
 							<p className="text-purple-800 text-sm">
-								Comprehensive analytics showing achievement of target metrics:
-								60% scheduling time reduction, 25% no-show reduction, and 95%+
-								scheduling efficiency.
+								Comprehensive analytics showing achievement of target metrics: 60% scheduling time reduction, 25%
+								no-show reduction, and 95%+ scheduling efficiency.
 							</p>
 						</div>
 
-						<SchedulingAnalyticsDashboard
-							onTimeRangeChange={setTimeRange}
-							tenantId={tenantId}
-							timeRange={timeRange}
-						/>
+						<SchedulingAnalyticsDashboard onTimeRangeChange={setTimeRange} tenantId={tenantId} timeRange={timeRange} />
 					</div>
 				)}
 
 				{activeTab === "optimization" && (
 					<div className="space-y-6">
 						<div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4">
-							<h3 className="mb-2 font-semibold text-lg text-yellow-900">
-								⚡ Real-time Optimization Engine
-							</h3>
+							<h3 className="mb-2 font-semibold text-lg text-yellow-900">⚡ Real-time Optimization Engine</h3>
 							<p className="text-sm text-yellow-800">
-								Live monitoring and optimization of scheduling decisions with
-								automatic adjustments for maximum efficiency.
+								Live monitoring and optimization of scheduling decisions with automatic adjustments for maximum
+								efficiency.
 							</p>
 						</div>
 
 						<div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
 							{/* Real-time Optimization Status */}
 							<div className="rounded-lg bg-white p-6 shadow">
-								<h4 className="mb-4 font-semibold text-lg">
-									Optimization Engine Status
-								</h4>
+								<h4 className="mb-4 font-semibold text-lg">Optimization Engine Status</h4>
 								<div className="space-y-4">
 									<div className="flex items-center justify-between">
 										<span className="font-medium text-sm">AI Processing</span>
@@ -397,9 +345,7 @@ export const AISchedulingDemo: React.FC<AISchedulingDemoProps> = ({
 									</div>
 
 									<div className="flex items-center justify-between">
-										<span className="font-medium text-sm">
-											Real-time Updates
-										</span>
+										<span className="font-medium text-sm">Real-time Updates</span>
 										<div className="flex items-center">
 											<div className="mr-2 h-2 w-2 rounded-full bg-green-400" />
 											<span className="text-green-600 text-sm">Connected</span>
@@ -407,22 +353,14 @@ export const AISchedulingDemo: React.FC<AISchedulingDemoProps> = ({
 									</div>
 
 									<div className="flex items-center justify-between">
-										<span className="font-medium text-sm">
-											Optimization Score
-										</span>
-										<span className="font-semibold text-blue-600 text-sm">
-											{(optimizationScore * 100).toFixed(1)}%
-										</span>
+										<span className="font-medium text-sm">Optimization Score</span>
+										<span className="font-semibold text-blue-600 text-sm">{(optimizationScore * 100).toFixed(1)}%</span>
 									</div>
 
 									<div className="flex items-center justify-between">
-										<span className="font-medium text-sm">
-											Processing Speed
-										</span>
+										<span className="font-medium text-sm">Processing Speed</span>
 										<span className="font-semibold text-green-600 text-sm">
-											{processingTime > 0
-												? `${processingTime.toFixed(0)}ms`
-												: "Ready"}
+											{processingTime > 0 ? `${processingTime.toFixed(0)}ms` : "Ready"}
 										</span>
 									</div>
 								</div>
@@ -430,35 +368,21 @@ export const AISchedulingDemo: React.FC<AISchedulingDemoProps> = ({
 
 							{/* Optimization Recommendations */}
 							<div className="rounded-lg bg-white p-6 shadow">
-								<h4 className="mb-4 font-semibold text-lg">
-									Current Recommendations
-								</h4>
+								<h4 className="mb-4 font-semibold text-lg">Current Recommendations</h4>
 								<div className="space-y-3">
 									<div className="rounded-lg bg-blue-50 p-3">
-										<div className="font-medium text-blue-900 text-sm">
-											Increase Tuesday afternoon capacity
-										</div>
-										<div className="text-blue-700 text-xs">
-											Expected improvement: +20% utilization
-										</div>
+										<div className="font-medium text-blue-900 text-sm">Increase Tuesday afternoon capacity</div>
+										<div className="text-blue-700 text-xs">Expected improvement: +20% utilization</div>
 									</div>
 
 									<div className="rounded-lg bg-green-50 p-3">
-										<div className="font-medium text-green-900 text-sm">
-											Optimize Dr. Silva's schedule
-										</div>
-										<div className="text-green-700 text-xs">
-											Expected improvement: +15% efficiency
-										</div>
+										<div className="font-medium text-green-900 text-sm">Optimize Dr. Silva's schedule</div>
+										<div className="text-green-700 text-xs">Expected improvement: +15% efficiency</div>
 									</div>
 
 									<div className="rounded-lg bg-yellow-50 p-3">
-										<div className="font-medium text-sm text-yellow-900">
-											Review Friday evening slots
-										</div>
-										<div className="text-xs text-yellow-700">
-											Expected improvement: -12% no-shows
-										</div>
+										<div className="font-medium text-sm text-yellow-900">Review Friday evening slots</div>
+										<div className="text-xs text-yellow-700">Expected improvement: -12% no-shows</div>
 									</div>
 								</div>
 							</div>
@@ -466,9 +390,7 @@ export const AISchedulingDemo: React.FC<AISchedulingDemoProps> = ({
 
 						{/* Success Metrics Summary */}
 						<div className="rounded-lg border border-green-200 bg-gradient-to-r from-green-50 to-blue-50 p-6">
-							<h4 className="mb-4 font-semibold text-gray-900 text-lg">
-								Target Achievement Summary
-							</h4>
+							<h4 className="mb-4 font-semibold text-gray-900 text-lg">Target Achievement Summary</h4>
 							<div className="grid grid-cols-2 gap-4 md:grid-cols-4">
 								<div className="text-center">
 									<div className="font-bold text-2xl text-green-600">✓</div>
@@ -477,23 +399,17 @@ export const AISchedulingDemo: React.FC<AISchedulingDemoProps> = ({
 								</div>
 								<div className="text-center">
 									<div className="font-bold text-2xl text-green-600">✓</div>
-									<div className="font-medium text-sm">
-										25% No-Show Reduction
-									</div>
+									<div className="font-medium text-sm">25% No-Show Reduction</div>
 									<div className="text-gray-600 text-xs">Target Exceeded</div>
 								</div>
 								<div className="text-center">
 									<div className="font-bold text-2xl text-green-600">✓</div>
 									<div className="font-medium text-sm">95%+ Efficiency</div>
-									<div className="text-gray-600 text-xs">
-										Consistently Achieved
-									</div>
+									<div className="text-gray-600 text-xs">Consistently Achieved</div>
 								</div>
 								<div className="text-center">
 									<div className="font-bold text-2xl text-green-600">✓</div>
-									<div className="font-medium text-sm">
-										Sub-second Decisions
-									</div>
+									<div className="font-medium text-sm">Sub-second Decisions</div>
 									<div className="text-gray-600 text-xs">Average: 500ms</div>
 								</div>
 							</div>
@@ -504,10 +420,8 @@ export const AISchedulingDemo: React.FC<AISchedulingDemoProps> = ({
 
 			{/* System Status Footer */}
 			<div className="rounded-lg bg-gray-50 p-4 text-center text-gray-600 text-sm">
-				AI Scheduling System v2.0 - Production Ready | Processing Time:{" "}
-				{processingTime.toFixed(0)}
-				ms | Optimization Score: {(optimizationScore * 100).toFixed(1)}% |
-				Status: {isLoading ? "Processing" : "Ready"}
+				AI Scheduling System v2.0 - Production Ready | Processing Time: {processingTime.toFixed(0)}
+				ms | Optimization Score: {(optimizationScore * 100).toFixed(1)}% | Status: {isLoading ? "Processing" : "Ready"}
 			</div>
 		</div>
 	);

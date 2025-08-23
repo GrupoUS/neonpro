@@ -50,16 +50,11 @@ type EmergencyBookingRequest = {
 type UseEmergencyAppointmentsReturn = {
 	availableDoctors: EmergencyDoctor[];
 	appointments: EmergencyAppointment[];
-	bookEmergencyAppointment: (
-		request: EmergencyBookingRequest,
-	) => Promise<EmergencyAppointment>;
+	bookEmergencyAppointment: (request: EmergencyBookingRequest) => Promise<EmergencyAppointment>;
 	getAvailableDoctors: (specialty?: string) => Promise<EmergencyDoctor[]>;
 	getAppointmentById: (id: string) => Promise<EmergencyAppointment | null>;
 	cancelAppointment: (id: string, reason: string) => Promise<boolean>;
-	updateAppointmentStatus: (
-		id: string,
-		status: EmergencyAppointment["status"],
-	) => Promise<boolean>;
+	updateAppointmentStatus: (id: string, status: EmergencyAppointment["status"]) => Promise<boolean>;
 	isLoading: boolean;
 	error: string | null;
 	clearError: () => void;
@@ -175,57 +170,47 @@ const mockAppointments: EmergencyAppointment[] = [
  * Optimized for high-priority medical scenarios with real-time availability checking.
  */
 export function useEmergencyAppointments(): UseEmergencyAppointmentsReturn {
-	const [availableDoctors, setAvailableDoctors] =
-		useState<EmergencyDoctor[]>(mockEmergencyDoctors);
-	const [appointments, setAppointments] =
-		useState<EmergencyAppointment[]>(mockAppointments);
+	const [availableDoctors, setAvailableDoctors] = useState<EmergencyDoctor[]>(mockEmergencyDoctors);
+	const [appointments, setAppointments] = useState<EmergencyAppointment[]>(mockAppointments);
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
 	// Get available doctors, optionally filtered by specialty
-	const getAvailableDoctors = useCallback(
-		async (specialty?: string): Promise<EmergencyDoctor[]> => {
-			setIsLoading(true);
-			setError(null);
+	const getAvailableDoctors = useCallback(async (specialty?: string): Promise<EmergencyDoctor[]> => {
+		setIsLoading(true);
+		setError(null);
 
-			try {
-				// Simulate API call
-				await new Promise((resolve) => setTimeout(resolve, 300));
+		try {
+			// Simulate API call
+			await new Promise((resolve) => setTimeout(resolve, 300));
 
-				let doctors = [...mockEmergencyDoctors];
+			let doctors = [...mockEmergencyDoctors];
 
-				if (specialty) {
-					doctors = doctors.filter((doctor) =>
-						doctor.specialty.toLowerCase().includes(specialty.toLowerCase()),
-					);
-				}
-
-				// Sort by availability, then by emergency rating, then by current load
-				doctors.sort((a, b) => {
-					if (a.available !== b.available) {
-						return a.available ? -1 : 1; // Available doctors first
-					}
-					if (a.emergencyRating !== b.emergencyRating) {
-						return b.emergencyRating - a.emergencyRating; // Higher rating first
-					}
-					return a.currentLoad - b.currentLoad; // Lower load first
-				});
-
-				setAvailableDoctors(doctors);
-				return doctors;
-			} catch (err) {
-				const errorMessage =
-					err instanceof Error
-						? err.message
-						: "Erro ao carregar médicos disponíveis";
-				setError(errorMessage);
-				return [];
-			} finally {
-				setIsLoading(false);
+			if (specialty) {
+				doctors = doctors.filter((doctor) => doctor.specialty.toLowerCase().includes(specialty.toLowerCase()));
 			}
-		},
-		[],
-	);
+
+			// Sort by availability, then by emergency rating, then by current load
+			doctors.sort((a, b) => {
+				if (a.available !== b.available) {
+					return a.available ? -1 : 1; // Available doctors first
+				}
+				if (a.emergencyRating !== b.emergencyRating) {
+					return b.emergencyRating - a.emergencyRating; // Higher rating first
+				}
+				return a.currentLoad - b.currentLoad; // Lower load first
+			});
+
+			setAvailableDoctors(doctors);
+			return doctors;
+		} catch (err) {
+			const errorMessage = err instanceof Error ? err.message : "Erro ao carregar médicos disponíveis";
+			setError(errorMessage);
+			return [];
+		} finally {
+			setIsLoading(false);
+		}
+	}, []);
 
 	// Book emergency appointment
 	const bookEmergencyAppointment = useCallback(
@@ -241,9 +226,7 @@ export function useEmergencyAppointments(): UseEmergencyAppointmentsReturn {
 				}
 
 				if (!doctor.available) {
-					throw new Error(
-						`Dr(a). ${doctor.name} não está disponível no momento`,
-					);
+					throw new Error(`Dr(a). ${doctor.name} não está disponível no momento`);
 				}
 
 				// Calculate appointment time based on priority
@@ -300,26 +283,21 @@ export function useEmergencyAppointments(): UseEmergencyAppointmentsReturn {
 				if (request.priority === "critical") {
 					setAvailableDoctors((prev) =>
 						prev.map((doc) =>
-							doc.id === request.doctorId
-								? { ...doc, currentLoad: Math.min(100, doc.currentLoad + 20) }
-								: doc,
-						),
+							doc.id === request.doctorId ? { ...doc, currentLoad: Math.min(100, doc.currentLoad + 20) } : doc
+						)
 					);
 				}
 
 				return newAppointment;
 			} catch (err) {
-				const errorMessage =
-					err instanceof Error
-						? err.message
-						: "Erro ao agendar consulta de emergência";
+				const errorMessage = err instanceof Error ? err.message : "Erro ao agendar consulta de emergência";
 				setError(errorMessage);
 				throw new Error(errorMessage);
 			} finally {
 				setIsLoading(false);
 			}
 		},
-		[availableDoctors],
+		[availableDoctors]
 	);
 
 	// Get appointment by ID
@@ -334,15 +312,14 @@ export function useEmergencyAppointments(): UseEmergencyAppointmentsReturn {
 				const appointment = appointments.find((apt) => apt.id === id);
 				return appointment || null;
 			} catch (err) {
-				const errorMessage =
-					err instanceof Error ? err.message : "Erro ao carregar consulta";
+				const errorMessage = err instanceof Error ? err.message : "Erro ao carregar consulta";
 				setError(errorMessage);
 				return null;
 			} finally {
 				setIsLoading(false);
 			}
 		},
-		[appointments],
+		[appointments]
 	);
 
 	// Cancel appointment
@@ -368,43 +345,35 @@ export function useEmergencyAppointments(): UseEmergencyAppointmentsReturn {
 									status: "cancelled" as const,
 									notes: `${apt.notes || ""}\nCancelado: ${reason}`,
 								}
-							: apt,
-					),
+							: apt
+					)
 				);
 
 				// Update doctor availability
-				const doctor = availableDoctors.find(
-					(d) => d.id === appointment.doctorId,
-				);
+				const doctor = availableDoctors.find((d) => d.id === appointment.doctorId);
 				if (doctor) {
 					setAvailableDoctors((prev) =>
 						prev.map((doc) =>
-							doc.id === appointment.doctorId
-								? { ...doc, currentLoad: Math.max(0, doc.currentLoad - 15) }
-								: doc,
-						),
+							doc.id === appointment.doctorId ? { ...doc, currentLoad: Math.max(0, doc.currentLoad - 15) } : doc
+						)
 					);
 				}
 
 				return true;
 			} catch (err) {
-				const errorMessage =
-					err instanceof Error ? err.message : "Erro ao cancelar consulta";
+				const errorMessage = err instanceof Error ? err.message : "Erro ao cancelar consulta";
 				setError(errorMessage);
 				return false;
 			} finally {
 				setIsLoading(false);
 			}
 		},
-		[appointments, availableDoctors],
+		[appointments, availableDoctors]
 	);
 
 	// Update appointment status
 	const updateAppointmentStatus = useCallback(
-		async (
-			id: string,
-			status: EmergencyAppointment["status"],
-		): Promise<boolean> => {
+		async (id: string, status: EmergencyAppointment["status"]): Promise<boolean> => {
 			setIsLoading(true);
 			setError(null);
 
@@ -416,34 +385,27 @@ export function useEmergencyAppointments(): UseEmergencyAppointmentsReturn {
 					throw new Error("Consulta não encontrada");
 				}
 
-				setAppointments((prev) =>
-					prev.map((apt) => (apt.id === id ? { ...apt, status } : apt)),
-				);
+				setAppointments((prev) => prev.map((apt) => (apt.id === id ? { ...apt, status } : apt)));
 
 				// Update doctor load based on status
 				if (status === "completed" || status === "cancelled") {
 					setAvailableDoctors((prev) =>
 						prev.map((doc) =>
-							doc.id === appointment.doctorId
-								? { ...doc, currentLoad: Math.max(0, doc.currentLoad - 20) }
-								: doc,
-						),
+							doc.id === appointment.doctorId ? { ...doc, currentLoad: Math.max(0, doc.currentLoad - 20) } : doc
+						)
 					);
 				}
 
 				return true;
 			} catch (err) {
-				const errorMessage =
-					err instanceof Error
-						? err.message
-						: "Erro ao atualizar status da consulta";
+				const errorMessage = err instanceof Error ? err.message : "Erro ao atualizar status da consulta";
 				setError(errorMessage);
 				return false;
 			} finally {
 				setIsLoading(false);
 			}
 		},
-		[appointments],
+		[appointments]
 	);
 
 	// Clear error state

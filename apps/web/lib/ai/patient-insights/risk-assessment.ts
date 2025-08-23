@@ -1,9 +1,5 @@
 import { riskAssessmentService } from "@/app/lib/services/risk-assessment-automation";
-import type {
-	RiskAssessmentInput,
-	RiskAssessmentResult,
-	RiskLevel,
-} from "@/app/types/risk-assessment-automation";
+import type { RiskAssessmentInput, RiskAssessmentResult, RiskLevel } from "@/app/types/risk-assessment-automation";
 
 // ============================================================================
 // PATIENT INSIGHTS INTEGRATION - TREATMENT PREDICTION CONNECTIVITY
@@ -27,7 +23,7 @@ export class RiskAssessmentIntegration {
 			complexity: "LOW" | "MEDIUM" | "HIGH" | "COMPLEX";
 			estimatedOutcome: number;
 		}>,
-		performedBy: string,
+		performedBy: string
 	): Promise<
 		Array<{
 			treatmentId: string;
@@ -41,12 +37,7 @@ export class RiskAssessmentIntegration {
 	> {
 		try {
 			// Get latest risk assessment for patient
-			const riskHistory = await riskAssessmentService.getPatientRiskHistory(
-				patientId,
-				tenantId,
-				1,
-				performedBy,
-			);
+			const riskHistory = await riskAssessmentService.getPatientRiskHistory(patientId, tenantId, 1, performedBy);
 
 			if (riskHistory.length === 0) {
 				// No risk assessment available - return treatments with default risk
@@ -65,10 +56,7 @@ export class RiskAssessmentIntegration {
 
 			// Analyze each treatment option against risk factors
 			const enhancedTreatments = treatmentOptions.map((treatment) => {
-				const riskAnalysis = RiskAssessmentIntegration.analyzeTreatmentRisk(
-					treatment,
-					latestRiskAssessment,
-				);
+				const riskAnalysis = RiskAssessmentIntegration.analyzeTreatmentRisk(treatment, latestRiskAssessment);
 
 				return {
 					treatmentId: treatment.treatmentId,
@@ -82,13 +70,9 @@ export class RiskAssessmentIntegration {
 			});
 
 			// Sort by risk-adjusted outcome (highest first)
-			return enhancedTreatments.sort(
-				(a, b) => b.riskAdjustedOutcome - a.riskAdjustedOutcome,
-			);
+			return enhancedTreatments.sort((a, b) => b.riskAdjustedOutcome - a.riskAdjustedOutcome);
 		} catch (error) {
-			throw new Error(
-				`Treatment enhancement failed: ${error instanceof Error ? error.message : "Unknown error"}`,
-			);
+			throw new Error(`Treatment enhancement failed: ${error instanceof Error ? error.message : "Unknown error"}`);
 		}
 	}
 
@@ -98,7 +82,7 @@ export class RiskAssessmentIntegration {
 	 */
 	private static analyzeTreatmentRisk(
 		treatment: { name: string; complexity: string; estimatedOutcome: number },
-		riskAssessment: RiskAssessmentResult,
+		riskAssessment: RiskAssessmentResult
 	): {
 		adjustedOutcome: number;
 		treatmentRiskLevel: RiskLevel;
@@ -119,9 +103,7 @@ export class RiskAssessmentIntegration {
 				riskFactors.push("Paciente em estado crítico");
 				recommendations.push("Considerar estabilização antes do tratamento");
 				if (treatment.complexity !== "LOW") {
-					contraindications.push(
-						"Tratamento complexo contraindicado em estado crítico",
-					);
+					contraindications.push("Tratamento complexo contraindicado em estado crítico");
 				}
 				break;
 
@@ -134,9 +116,7 @@ export class RiskAssessmentIntegration {
 			case RiskLevel.MEDIUM:
 				riskMultiplier *= 0.8;
 				riskFactors.push("Risco moderado presente");
-				recommendations.push(
-					"Seguimento padrão com atenção aos fatores de risco",
-				);
+				recommendations.push("Seguimento padrão com atenção aos fatores de risco");
 				break;
 
 			case RiskLevel.LOW:
@@ -149,26 +129,17 @@ export class RiskAssessmentIntegration {
 
 		for (const factor of criticalFactors) {
 			// Cardiovascular risks
-			if (
-				factor.factor.toLowerCase().includes("cardíac") ||
-				factor.factor.toLowerCase().includes("pressão")
-			) {
+			if (factor.factor.toLowerCase().includes("cardíac") || factor.factor.toLowerCase().includes("pressão")) {
 				riskFactors.push(`Risco cardiovascular: ${factor.factor}`);
 
-				if (
-					treatment.name.toLowerCase().includes("anestesia") ||
-					treatment.complexity === "HIGH"
-				) {
+				if (treatment.name.toLowerCase().includes("anestesia") || treatment.complexity === "HIGH") {
 					riskMultiplier *= 0.7;
 					recommendations.push("Avaliação cardiológica pré-procedimento");
 				}
 			}
 
 			// Respiratory risks
-			if (
-				factor.factor.toLowerCase().includes("respirat") ||
-				factor.factor.toLowerCase().includes("oxigen")
-			) {
+			if (factor.factor.toLowerCase().includes("respirat") || factor.factor.toLowerCase().includes("oxigen")) {
 				riskFactors.push(`Risco respiratório: ${factor.factor}`);
 
 				if (treatment.name.toLowerCase().includes("sedação")) {
@@ -178,10 +149,7 @@ export class RiskAssessmentIntegration {
 			}
 
 			// Metabolic risks
-			if (
-				factor.factor.toLowerCase().includes("diabet") ||
-				factor.factor.toLowerCase().includes("metab")
-			) {
+			if (factor.factor.toLowerCase().includes("diabet") || factor.factor.toLowerCase().includes("metab")) {
 				riskFactors.push(`Risco metabólico: ${factor.factor}`);
 				recommendations.push("Controle glicêmico otimizado");
 				riskMultiplier *= 0.85;
@@ -216,15 +184,11 @@ export class RiskAssessmentIntegration {
 			COMPLEX: 0.5,
 		};
 
-		riskMultiplier *=
-			complexityMultipliers[
-				treatment.complexity as keyof typeof complexityMultipliers
-			] || 0.8;
+		riskMultiplier *= complexityMultipliers[treatment.complexity as keyof typeof complexityMultipliers] || 0.8;
 
 		// Determine treatment-specific risk level
 		let treatmentRiskLevel: RiskLevel;
-		const adjustedScore =
-			riskAssessment.scoreBreakdown.overallScore * (2 - riskMultiplier);
+		const adjustedScore = riskAssessment.scoreBreakdown.overallScore * (2 - riskMultiplier);
 
 		if (adjustedScore >= 86) {
 			treatmentRiskLevel = RiskLevel.CRITICAL;
@@ -237,21 +201,13 @@ export class RiskAssessmentIntegration {
 		}
 
 		// Final contraindication check
-		if (
-			treatmentRiskLevel === RiskLevel.CRITICAL &&
-			treatment.complexity !== "LOW"
-		) {
-			contraindications.push(
-				"Risco crítico impede realização de tratamento complexo",
-			);
+		if (treatmentRiskLevel === RiskLevel.CRITICAL && treatment.complexity !== "LOW") {
+			contraindications.push("Risco crítico impede realização de tratamento complexo");
 			riskMultiplier *= 0.1; // Severely penalize
 		}
 
 		return {
-			adjustedOutcome: Math.max(
-				0,
-				Math.min(100, treatment.estimatedOutcome * riskMultiplier),
-			),
+			adjustedOutcome: Math.max(0, Math.min(100, treatment.estimatedOutcome * riskMultiplier)),
 			treatmentRiskLevel,
 			applicableRiskFactors: riskFactors,
 			recommendations,
@@ -273,7 +229,7 @@ export class RiskAssessmentIntegration {
 			respiratoryRate: number;
 			oxygenSaturation: number;
 		},
-		performedBy: string,
+		performedBy: string
 	): Promise<{
 		riskUpdate: boolean;
 		newRiskLevel?: RiskLevel;
@@ -282,12 +238,7 @@ export class RiskAssessmentIntegration {
 	}> {
 		try {
 			// Get current risk assessment
-			const currentRisk = await riskAssessmentService.getPatientRiskHistory(
-				patientId,
-				tenantId,
-				1,
-				performedBy,
-			);
+			const currentRisk = await riskAssessmentService.getPatientRiskHistory(patientId, tenantId, 1, performedBy);
 
 			if (currentRisk.length === 0) {
 				return {
@@ -305,10 +256,7 @@ export class RiskAssessmentIntegration {
 			let criticalChange = false;
 
 			// Blood pressure assessment
-			if (
-				vitalSigns.bloodPressure.systolic > 180 ||
-				vitalSigns.bloodPressure.diastolic > 110
-			) {
+			if (vitalSigns.bloodPressure.systolic > 180 || vitalSigns.bloodPressure.diastolic > 110) {
 				alerts.push("Crise hipertensiva detectada");
 				recommendations.push("Intervenção médica imediata necessária");
 				criticalChange = true;
@@ -373,17 +321,14 @@ export class RiskAssessmentIntegration {
 				// Execute new risk assessment
 				const newAssessment = await riskAssessmentService.executeRiskAssessment(
 					updatedInput as RiskAssessmentInput,
-					performedBy,
+					performedBy
 				);
 
 				return {
 					riskUpdate: true,
 					newRiskLevel: newAssessment.scoreBreakdown.riskLevel,
 					alerts,
-					recommendations: [
-						...recommendations,
-						...newAssessment.recommendations.map((r) => r.action),
-					],
+					recommendations: [...recommendations, ...newAssessment.recommendations.map((r) => r.action)],
 				};
 			}
 
@@ -403,7 +348,6 @@ export class RiskAssessmentIntegration {
 }
 
 // Export main integration functions
-export const { enhanceTreatmentPrediction, integrateVitalSignsMonitoring } =
-	RiskAssessmentIntegration;
+export const { enhanceTreatmentPrediction, integrateVitalSignsMonitoring } = RiskAssessmentIntegration;
 
 export default RiskAssessmentIntegration;

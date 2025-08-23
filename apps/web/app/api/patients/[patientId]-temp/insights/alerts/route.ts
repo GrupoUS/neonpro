@@ -6,10 +6,7 @@ import { PatientInsightsIntegration } from "@/lib/ai/patient-insights";
 
 const patientInsights = new PatientInsightsIntegration();
 
-export async function GET(
-	_request: NextRequest,
-	{ params }: { params: Promise<{ patientId: string }> },
-) {
+export async function GET(_request: NextRequest, { params }: { params: Promise<{ patientId: string }> }) {
 	try {
 		const supabase = await createClient();
 
@@ -24,11 +21,7 @@ export async function GET(
 		const { patientId } = await params;
 
 		// Validate patient access
-		const { data: patient } = await supabase
-			.from("patients")
-			.select("id")
-			.eq("id", patientId)
-			.single();
+		const { data: patient } = await supabase.from("patients").select("id").eq("id", patientId).single();
 
 		if (!patient) {
 			return NextResponse.json({ error: "Patient not found" }, { status: 404 });
@@ -42,17 +35,11 @@ export async function GET(
 			data: alertSummary,
 		});
 	} catch (_error) {
-		return NextResponse.json(
-			{ error: "Failed to retrieve patient alerts" },
-			{ status: 500 },
-		);
+		return NextResponse.json({ error: "Failed to retrieve patient alerts" }, { status: 500 });
 	}
 }
 
-export async function POST(
-	request: NextRequest,
-	{ params }: { params: Promise<{ patientId: string }> },
-) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ patientId: string }> }) {
 	try {
 		const supabase = await createClient();
 
@@ -75,15 +62,11 @@ export async function POST(
 		let filteredAlerts = alertSummary.alerts;
 
 		if (alertTypes.length > 0) {
-			filteredAlerts = filteredAlerts.filter((alert) =>
-				alertTypes.includes(alert.type),
-			);
+			filteredAlerts = filteredAlerts.filter((alert) => alertTypes.includes(alert.type));
 		}
 
 		if (severityFilter) {
-			filteredAlerts = filteredAlerts.filter(
-				(alert) => alert.severity === severityFilter,
-			);
+			filteredAlerts = filteredAlerts.filter((alert) => alert.severity === severityFilter);
 		}
 
 		return NextResponse.json({
@@ -95,9 +78,6 @@ export async function POST(
 			},
 		});
 	} catch (_error) {
-		return NextResponse.json(
-			{ error: "Failed to retrieve filtered alerts" },
-			{ status: 500 },
-		);
+		return NextResponse.json({ error: "Failed to retrieve filtered alerts" }, { status: 500 });
 	}
 }

@@ -63,10 +63,7 @@ type NeonGradientCardProps = {
 	className?: string;
 };
 
-const NeonGradientCard = ({
-	children,
-	className = "",
-}: NeonGradientCardProps) => (
+const NeonGradientCard = ({ children, className = "" }: NeonGradientCardProps) => (
 	<motion.div
 		animate={{ opacity: 1, y: 0 }}
 		className={`relative overflow-hidden rounded-xl border border-healthcare-border bg-gradient-to-br from-slate-900/90 to-blue-900/30 backdrop-blur-sm ${className}`}
@@ -95,16 +92,11 @@ const CosmicGlowButton = ({
 	disabled = false,
 }: CosmicGlowButtonProps) => {
 	const variants = {
-		primary:
-			"bg-gradient-to-r from-healthcare-primary to-blue-600 hover:from-healthcare-primary/80 hover:to-blue-700",
-		secondary:
-			"bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800",
-		success:
-			"bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700",
-		warning:
-			"bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700",
-		danger:
-			"bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary",
+		primary: "bg-gradient-to-r from-healthcare-primary to-blue-600 hover:from-healthcare-primary/80 hover:to-blue-700",
+		secondary: "bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800",
+		success: "bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700",
+		warning: "bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700",
+		danger: "bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary",
 	};
 
 	const sizes = {
@@ -167,8 +159,7 @@ const complianceAlerts: ComplianceAlert[] = [
 		id: "lgpd-consent-review",
 		type: "important",
 		title: "Revisão de Consentimentos LGPD",
-		description:
-			"Revisar e atualizar formulários de consentimento para pacientes",
+		description: "Revisar e atualizar formulários de consentimento para pacientes",
 		dueDate: "2024-01-25",
 		category: "LGPD",
 		actionRequired: true,
@@ -232,8 +223,7 @@ const actionItems: ActionItem[] = [
 // Compliance Overview Section
 function ComplianceOverview() {
 	const overallScore = Math.round(
-		complianceMetrics.reduce((acc, metric) => acc + metric.score, 0) /
-			complianceMetrics.length,
+		complianceMetrics.reduce((acc, metric) => acc + metric.score, 0) / complianceMetrics.length
 	);
 
 	const getScoreColor = (score: number) => {
@@ -262,45 +252,21 @@ function ComplianceOverview() {
 	return (
 		<NeonGradientCard>
 			<div className="text-center">
-				<h2 className="mb-4 font-bold text-2xl text-white">
-					Score de Compliance Geral
-				</h2>
-				<div
-					className={`mb-2 font-bold text-6xl ${getScoreColor(overallScore)}`}
-				>
-					{overallScore}%
-				</div>
-				<p className="mb-6 text-slate-300">
-					Status: {getScoreStatus(overallScore)}
-				</p>
+				<h2 className="mb-4 font-bold text-2xl text-white">Score de Compliance Geral</h2>
+				<div className={`mb-2 font-bold text-6xl ${getScoreColor(overallScore)}`}>{overallScore}%</div>
+				<p className="mb-6 text-slate-300">Status: {getScoreStatus(overallScore)}</p>
 
 				<div className="grid grid-cols-1 gap-4 md:grid-cols-3">
 					{complianceMetrics.map((metric) => (
 						<div className="rounded-lg bg-white/5 p-4" key={metric.id}>
-							<h3 className="mb-2 font-medium text-slate-300 text-sm">
-								{metric.title}
-							</h3>
-							<div
-								className={`font-bold text-2xl ${getScoreColor(metric.score)}`}
-							>
-								{metric.score}%
-							</div>
+							<h3 className="mb-2 font-medium text-slate-300 text-sm">{metric.title}</h3>
+							<div className={`font-bold text-2xl ${getScoreColor(metric.score)}`}>{metric.score}%</div>
 							<div className="mt-2 flex items-center justify-center">
-								{metric.trend === "up" && (
-									<TrendingUp className="h-4 w-4 text-green-400" />
-								)}
-								{metric.trend === "down" && (
-									<TrendingUp className="h-4 w-4 rotate-180 text-red-400" />
-								)}
-								{metric.trend === "stable" && (
-									<Activity className="h-4 w-4 text-yellow-400" />
-								)}
+								{metric.trend === "up" && <TrendingUp className="h-4 w-4 text-green-400" />}
+								{metric.trend === "down" && <TrendingUp className="h-4 w-4 rotate-180 text-red-400" />}
+								{metric.trend === "stable" && <Activity className="h-4 w-4 text-yellow-400" />}
 								<span className="ml-1 text-slate-400 text-xs">
-									{metric.trend === "up"
-										? "Melhorando"
-										: metric.trend === "down"
-											? "Declinando"
-											: "Estável"}
+									{metric.trend === "up" ? "Melhorando" : metric.trend === "down" ? "Declinando" : "Estável"}
 								</span>
 							</div>
 						</div>
@@ -311,12 +277,8 @@ function ComplianceOverview() {
 	);
 } // Critical Alerts Section
 function CriticalAlerts() {
-	const _criticalAlerts = complianceAlerts.filter(
-		(alert) => alert.type === "critical",
-	);
-	const _importantAlerts = complianceAlerts.filter(
-		(alert) => alert.type === "important",
-	);
+	const _criticalAlerts = complianceAlerts.filter((alert) => alert.type === "critical");
+	const _importantAlerts = complianceAlerts.filter((alert) => alert.type === "important");
 
 	const getAlertIcon = (type: string) => {
 		switch (type) {
@@ -380,33 +342,19 @@ function CriticalAlerts() {
 								<div className="flex-1">
 									<div className="mb-1 flex items-center space-x-2">
 										<h3 className="font-semibold text-white">{alert.title}</h3>
-										<Badge
-											className={`${getCategoryColor(alert.category)} text-white text-xs`}
-										>
-											{alert.category}
-										</Badge>
+										<Badge className={`${getCategoryColor(alert.category)} text-white text-xs`}>{alert.category}</Badge>
 									</div>
-									<p className="mb-2 text-slate-300 text-sm">
-										{alert.description}
-									</p>
+									<p className="mb-2 text-slate-300 text-sm">{alert.description}</p>
 									<div className="flex items-center space-x-4 text-slate-400 text-xs">
 										<span className="flex items-center">
 											<Clock className="mr-1 h-3 w-3" />
-											Prazo:{" "}
-											{new Date(alert.dueDate).toLocaleDateString("pt-BR")}
+											Prazo: {new Date(alert.dueDate).toLocaleDateString("pt-BR")}
 										</span>
-										{alert.actionRequired && (
-											<span className="font-medium text-red-400">
-												Ação Requerida
-											</span>
-										)}
+										{alert.actionRequired && <span className="font-medium text-red-400">Ação Requerida</span>}
 									</div>
 								</div>
 							</div>
-							<CosmicGlowButton
-								size="sm"
-								variant={alert.type === "critical" ? "danger" : "warning"}
-							>
+							<CosmicGlowButton size="sm" variant={alert.type === "critical" ? "danger" : "warning"}>
 								<ChevronRight className="h-4 w-4" />
 							</CosmicGlowButton>
 						</div>
@@ -480,18 +428,11 @@ function LGPDComplianceModule() {
 			</div>
 
 			<div className="space-y-3">
-				<h3 className="font-semibold text-sm text-white">
-					Atividades Recentes
-				</h3>
+				<h3 className="font-semibold text-sm text-white">Atividades Recentes</h3>
 				{recentActivities.map((activity, index) => (
-					<div
-						className="flex items-center justify-between rounded-lg bg-white/5 p-3"
-						key={index}
-					>
+					<div className="flex items-center justify-between rounded-lg bg-white/5 p-3" key={index}>
 						<div>
-							<p className="font-medium text-sm text-white">
-								{activity.action}
-							</p>
+							<p className="font-medium text-sm text-white">{activity.action}</p>
 							<p className="text-slate-400 text-xs">{activity.patient}</p>
 						</div>
 						<span className="text-slate-400 text-xs">{activity.time}</span>
@@ -571,24 +512,16 @@ function ANVISAComplianceModule() {
 			</div>
 
 			<div className="space-y-3">
-				<h3 className="font-semibold text-sm text-white">
-					Status das Licenças
-				</h3>
+				<h3 className="font-semibold text-sm text-white">Status das Licenças</h3>
 				{licenses.map((license, index) => (
-					<div
-						className="flex items-center justify-between rounded-lg bg-white/5 p-3"
-						key={index}
-					>
+					<div className="flex items-center justify-between rounded-lg bg-white/5 p-3" key={index}>
 						<div>
 							<p className="font-medium text-sm text-white">{license.name}</p>
 							<p className="text-slate-400 text-xs">
-								Expira em:{" "}
-								{new Date(license.expiry).toLocaleDateString("pt-BR")}
+								Expira em: {new Date(license.expiry).toLocaleDateString("pt-BR")}
 							</p>
 						</div>
-						<span
-							className={`font-medium text-sm ${getStatusColor(license.status)}`}
-						>
+						<span className={`font-medium text-sm ${getStatusColor(license.status)}`}>
 							{getStatusText(license.status)}
 						</span>
 					</div>
@@ -656,10 +589,7 @@ function CFMComplianceModule() {
 			<div className="space-y-3">
 				<h3 className="font-semibold text-sm text-white">Equipe Médica</h3>
 				{professionals.map((prof, index) => (
-					<div
-						className="flex items-center justify-between rounded-lg bg-white/5 p-3"
-						key={index}
-					>
+					<div className="flex items-center justify-between rounded-lg bg-white/5 p-3" key={index}>
 						<div>
 							<p className="font-medium text-sm text-white">{prof.name}</p>
 							<p className="text-slate-400 text-xs">
@@ -667,9 +597,7 @@ function CFMComplianceModule() {
 							</p>
 						</div>
 						<div className="text-right">
-							<span className="font-medium text-sm text-white">
-								{prof.cmeCredits}
-							</span>
+							<span className="font-medium text-sm text-white">{prof.cmeCredits}</span>
 							<p className="text-slate-400 text-xs">CME Completo</p>
 						</div>
 					</div>
@@ -789,31 +717,20 @@ function ActionItemsSection() {
 									</Badge>
 								</div>
 								<div className="flex-1">
-									<h3 className="mb-1 font-semibold text-sm text-white">
-										{item.title}
-									</h3>
-									<p className="mb-2 text-slate-300 text-xs">
-										{item.description}
-									</p>
+									<h3 className="mb-1 font-semibold text-sm text-white">{item.title}</h3>
+									<p className="mb-2 text-slate-300 text-xs">{item.description}</p>
 									<div className="flex items-center space-x-4 text-slate-400 text-xs">
 										<span>Responsável: {item.assignedTo}</span>
 										<span>Tempo estimado: {item.estimatedTime}</span>
-										<span>
-											Prazo:{" "}
-											{new Date(item.dueDate).toLocaleDateString("pt-BR")}
-										</span>
+										<span>Prazo: {new Date(item.dueDate).toLocaleDateString("pt-BR")}</span>
 									</div>
 								</div>
 							</div>
 							<div className="flex flex-col items-end space-y-2">
-								<span
-									className={`font-medium text-xs ${getPriorityColor(item.priority).split(" ")[0]}`}
-								>
+								<span className={`font-medium text-xs ${getPriorityColor(item.priority).split(" ")[0]}`}>
 									{getPriorityText(item.priority)}
 								</span>
-								<span
-									className={`font-medium text-xs ${getStatusColor(item.status)}`}
-								>
+								<span className={`font-medium text-xs ${getStatusColor(item.status)}`}>
 									{getStatusText(item.status)}
 								</span>
 								<CosmicGlowButton
@@ -923,23 +840,14 @@ function RegulatoryCalendar() {
 				{upcomingDeadlines.map((deadline, index) => {
 					const daysUntil = getDaysUntil(deadline.date);
 					return (
-						<div
-							className={`rounded-r-lg border-l-4 p-4 ${getTypeColor(deadline.type)}`}
-							key={index}
-						>
+						<div className={`rounded-r-lg border-l-4 p-4 ${getTypeColor(deadline.type)}`} key={index}>
 							<div className="flex items-center justify-between">
 								<div className="flex items-center space-x-3">
 									<div>
-										<h3 className="font-semibold text-sm text-white">
-											{deadline.title}
-										</h3>
-										<p className="text-slate-300 text-xs">
-											{new Date(deadline.date).toLocaleDateString("pt-BR")}
-										</p>
+										<h3 className="font-semibold text-sm text-white">{deadline.title}</h3>
+										<p className="text-slate-300 text-xs">{new Date(deadline.date).toLocaleDateString("pt-BR")}</p>
 									</div>
-									<Badge
-										className={`${getCategoryColor(deadline.category)} text-white text-xs`}
-									>
+									<Badge className={`${getCategoryColor(deadline.category)} text-white text-xs`}>
 										{deadline.category}
 									</Badge>
 								</div>
@@ -947,18 +855,10 @@ function RegulatoryCalendar() {
 									<div
 										className={`font-medium text-sm ${daysUntil <= 7 ? "text-red-400" : daysUntil <= 30 ? "text-yellow-400" : "text-green-400"}`}
 									>
-										{daysUntil < 0
-											? "Vencido"
-											: daysUntil === 0
-												? "Hoje"
-												: `${daysUntil} dias`}
+										{daysUntil < 0 ? "Vencido" : daysUntil === 0 ? "Hoje" : `${daysUntil} dias`}
 									</div>
 									<p className="text-slate-400 text-xs">
-										{daysUntil < 0
-											? "Ação urgente"
-											: daysUntil <= 7
-												? "Urgente"
-												: "No prazo"}
+										{daysUntil < 0 ? "Ação urgente" : daysUntil <= 7 ? "Urgente" : "No prazo"}
 									</p>
 								</div>
 							</div>
@@ -991,8 +891,7 @@ export default function ComplianceAutomationPage() {
 	};
 
 	const overallComplianceScore = Math.round(
-		complianceMetrics.reduce((acc, metric) => acc + metric.score, 0) /
-			complianceMetrics.length,
+		complianceMetrics.reduce((acc, metric) => acc + metric.score, 0) / complianceMetrics.length
 	);
 
 	return (
@@ -1001,15 +900,9 @@ export default function ComplianceAutomationPage() {
 				{/* Header with accessibility attributes */}
 				<header className="flex items-center justify-between">
 					<div>
-						<h1 className="mb-2 font-bold text-3xl text-white">
-							Central de Compliance Regulatório
-						</h1>
-						<p className="text-slate-300">
-							Monitoramento em tempo real - LGPD, ANVISA e CFM
-						</p>
-						<p className="mt-1 text-slate-400 text-sm">
-							Última atualização: {lastUpdated.toLocaleString("pt-BR")}
-						</p>
+						<h1 className="mb-2 font-bold text-3xl text-white">Central de Compliance Regulatório</h1>
+						<p className="text-slate-300">Monitoramento em tempo real - LGPD, ANVISA e CFM</p>
+						<p className="mt-1 text-slate-400 text-sm">Última atualização: {lastUpdated.toLocaleString("pt-BR")}</p>
 					</div>
 					<div className="flex items-center space-x-4">
 						<div
@@ -1022,9 +915,7 @@ export default function ComplianceAutomationPage() {
 							}`}
 						>
 							<span className="font-medium text-sm">Compliance:</span>
-							<span className="font-bold text-lg">
-								{overallComplianceScore}%
-							</span>
+							<span className="font-bold text-lg">{overallComplianceScore}%</span>
 						</div>
 						<CosmicGlowButton
 							className="flex items-center"
@@ -1033,9 +924,7 @@ export default function ComplianceAutomationPage() {
 							size="sm"
 							variant="secondary"
 						>
-							<RefreshCw
-								className={`mr-2 h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`}
-							/>
+							<RefreshCw className={`mr-2 h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`} />
 							{isRefreshing ? "Atualizando..." : "Atualizar"}
 						</CosmicGlowButton>
 						<CosmicGlowButton size="sm" variant="primary">
@@ -1170,9 +1059,7 @@ export default function ComplianceAutomationPage() {
 								<div className="flex items-center space-x-4">
 									<div className="flex items-center space-x-2">
 										<CheckCircle className="h-5 w-5 text-green-400" />
-										<span className="font-medium text-white">
-											Sistema Online
-										</span>
+										<span className="font-medium text-white">Sistema Online</span>
 									</div>
 									<div className="flex items-center space-x-2">
 										<Shield className="h-5 w-5 text-blue-400" />
@@ -1180,18 +1067,12 @@ export default function ComplianceAutomationPage() {
 									</div>
 									<div className="flex items-center space-x-2">
 										<Activity className="h-5 w-5 text-green-400" />
-										<span className="text-slate-300">
-											Backups Sincronizados
-										</span>
+										<span className="text-slate-300">Backups Sincronizados</span>
 									</div>
 								</div>
 								<div className="text-right">
-									<p className="text-slate-300 text-sm">
-										NeonPro Healthcare Compliance System v2.1
-									</p>
-									<p className="text-slate-400 text-xs">
-										Certificado para regulamentações brasileiras de saúde
-									</p>
+									<p className="text-slate-300 text-sm">NeonPro Healthcare Compliance System v2.1</p>
+									<p className="text-slate-400 text-xs">Certificado para regulamentações brasileiras de saúde</p>
 								</div>
 							</div>
 						</NeonGradientCard>
@@ -1199,12 +1080,7 @@ export default function ComplianceAutomationPage() {
 				</main>
 
 				{/* Accessibility Live Region for Updates */}
-				<div
-					aria-label="Atualizações de compliance"
-					aria-live="polite"
-					className="sr-only"
-					role="status"
-				>
+				<div aria-label="Atualizações de compliance" aria-live="polite" className="sr-only" role="status">
 					{isRefreshing && "Atualizando dados de compliance..."}
 				</div>
 			</div>

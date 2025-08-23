@@ -44,8 +44,7 @@ function validateHooks() {
 			const content = fs.readFileSync(path.join(hooksDir, hook), "utf8");
 
 			// Verificar loading state
-			const hasLoading =
-				content.includes("loading") && content.includes("boolean");
+			const hasLoading = content.includes("loading") && content.includes("boolean");
 			if (hasLoading) {
 				log.success(`${hook} - Loading state implementado`);
 			} else {
@@ -53,8 +52,7 @@ function validateHooks() {
 			}
 
 			// Verificar error state
-			const hasError =
-				content.includes("error") && content.includes("Error | null");
+			const hasError = content.includes("error") && content.includes("Error | null");
 			if (hasError) {
 				log.success(`${hook} - Error state implementado`);
 			} else {
@@ -62,8 +60,7 @@ function validateHooks() {
 			}
 
 			// Verificar try-catch
-			const hasTryCatch =
-				content.includes("try {") && content.includes("catch");
+			const hasTryCatch = content.includes("try {") && content.includes("catch");
 			if (hasTryCatch) {
 				log.success(`${hook} - Try-catch implementado`);
 			} else {
@@ -96,11 +93,7 @@ function validateUIComponents() {
 
 // 3. VALIDAÇÃO DE ERROR BOUNDARIES
 function validateErrorBoundaries() {
-	const errorBoundaries = [
-		"components/error-boundary.tsx",
-		"app/error.tsx",
-		"app/global-error.tsx",
-	];
+	const errorBoundaries = ["components/error-boundary.tsx", "app/error.tsx", "app/global-error.tsx"];
 
 	errorBoundaries.forEach((boundary) => {
 		const filePath = path.join(__dirname, "..", boundary);
@@ -117,9 +110,7 @@ function runValidation() {
 		validateUIComponents();
 		validateErrorBoundaries();
 
-		log.success(
-			"VALIDAÇÃO CONCLUÍDA! Verificar logs acima para identificar problemas.",
-		);
+		log.success("VALIDAÇÃO CONCLUÍDA! Verificar logs acima para identificar problemas.");
 	} catch (error) {
 		log.error(`Erro durante validação: ${error.message}`);
 		process.exit(1);

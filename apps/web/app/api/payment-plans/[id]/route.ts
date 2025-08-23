@@ -30,10 +30,7 @@ const paramsSchema = z.object({
  * GET /api/payment-plans/[id]
  * Get a specific payment plan with its installments
  */
-export async function GET(
-	_request: NextRequest,
-	{ params }: { params: Promise<{ id: string }> },
-) {
+export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
 	try {
 		const supabase = await createClient();
 
@@ -58,10 +55,7 @@ export async function GET(
 		const paymentPlan = await installmentManager.getPaymentPlan(id);
 
 		if (!paymentPlan) {
-			return NextResponse.json(
-				{ error: "Payment plan not found" },
-				{ status: 404 },
-			);
+			return NextResponse.json({ error: "Payment plan not found" }, { status: 404 });
 		}
 
 		// Get installments for this payment plan
@@ -85,14 +79,11 @@ export async function GET(
 					error: "Invalid payment plan ID",
 					details: error.errors,
 				},
-				{ status: 400 },
+				{ status: 400 }
 			);
 		}
 
-		return NextResponse.json(
-			{ error: "Internal server error" },
-			{ status: 500 },
-		);
+		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 	}
 }
 
@@ -100,10 +91,7 @@ export async function GET(
  * PUT /api/payment-plans/[id]
  * Update a specific payment plan
  */
-export async function PUT(
-	request: NextRequest,
-	{ params }: { params: Promise<{ id: string }> },
-) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
 	try {
 		const supabase = await createClient();
 
@@ -131,9 +119,7 @@ export async function PUT(
 		// Update payment plan
 		const updatedPaymentPlan = await installmentManager.modifyPaymentPlan(id, {
 			...validatedData,
-			startDate: validatedData.startDate
-				? new Date(validatedData.startDate)
-				: undefined,
+			startDate: validatedData.startDate ? new Date(validatedData.startDate) : undefined,
 		});
 
 		return NextResponse.json({
@@ -148,38 +134,26 @@ export async function PUT(
 					error: "Invalid request data",
 					details: error.errors,
 				},
-				{ status: 400 },
+				{ status: 400 }
 			);
 		}
 
 		if (error instanceof Error) {
 			// Check for specific business logic errors
 			if (error.message.includes("Payment plan not found")) {
-				return NextResponse.json(
-					{ error: "Payment plan not found" },
-					{ status: 404 },
-				);
+				return NextResponse.json({ error: "Payment plan not found" }, { status: 404 });
 			}
 
 			if (error.message.includes("Cannot modify completed payment plan")) {
-				return NextResponse.json(
-					{ error: "Cannot modify completed payment plan" },
-					{ status: 400 },
-				);
+				return NextResponse.json({ error: "Cannot modify completed payment plan" }, { status: 400 });
 			}
 
 			if (error.message.includes("Cannot modify cancelled payment plan")) {
-				return NextResponse.json(
-					{ error: "Cannot modify cancelled payment plan" },
-					{ status: 400 },
-				);
+				return NextResponse.json({ error: "Cannot modify cancelled payment plan" }, { status: 400 });
 			}
 		}
 
-		return NextResponse.json(
-			{ error: "Internal server error" },
-			{ status: 500 },
-		);
+		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 	}
 }
 
@@ -187,10 +161,7 @@ export async function PUT(
  * DELETE /api/payment-plans/[id]
  * Cancel a specific payment plan
  */
-export async function DELETE(
-	request: NextRequest,
-	{ params }: { params: Promise<{ id: string }> },
-) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
 	try {
 		const supabase = await createClient();
 
@@ -236,38 +207,26 @@ export async function DELETE(
 					error: "Invalid payment plan ID",
 					details: error.errors,
 				},
-				{ status: 400 },
+				{ status: 400 }
 			);
 		}
 
 		if (error instanceof Error) {
 			// Check for specific business logic errors
 			if (error.message.includes("Payment plan not found")) {
-				return NextResponse.json(
-					{ error: "Payment plan not found" },
-					{ status: 404 },
-				);
+				return NextResponse.json({ error: "Payment plan not found" }, { status: 404 });
 			}
 
 			if (error.message.includes("Payment plan already cancelled")) {
-				return NextResponse.json(
-					{ error: "Payment plan already cancelled" },
-					{ status: 400 },
-				);
+				return NextResponse.json({ error: "Payment plan already cancelled" }, { status: 400 });
 			}
 
 			if (error.message.includes("Cannot cancel completed payment plan")) {
-				return NextResponse.json(
-					{ error: "Cannot cancel completed payment plan" },
-					{ status: 400 },
-				);
+				return NextResponse.json({ error: "Cannot cancel completed payment plan" }, { status: 400 });
 			}
 		}
 
-		return NextResponse.json(
-			{ error: "Internal server error" },
-			{ status: 500 },
-		);
+		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 	}
 }
 
@@ -275,10 +234,7 @@ export async function DELETE(
  * PATCH /api/payment-plans/[id]
  * Perform specific actions on a payment plan
  */
-export async function PATCH(
-	request: NextRequest,
-	{ params }: { params: Promise<{ id: string }> },
-) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
 	try {
 		const supabase = await createClient();
 
@@ -301,10 +257,7 @@ export async function PATCH(
 		const { action, data } = body;
 
 		if (!action) {
-			return NextResponse.json(
-				{ error: "Action is required" },
-				{ status: 400 },
-			);
+			return NextResponse.json({ error: "Action is required" }, { status: 400 });
 		}
 
 		const installmentManager = getInstallmentManager();
@@ -337,14 +290,9 @@ export async function PATCH(
 				return NextResponse.json(
 					{
 						error: "Invalid action",
-						supportedActions: [
-							"regenerate_installments",
-							"recalculate_amounts",
-							"mark_as_defaulted",
-							"reactivate",
-						],
+						supportedActions: ["regenerate_installments", "recalculate_amounts", "mark_as_defaulted", "reactivate"],
 					},
-					{ status: 400 },
+					{ status: 400 }
 				);
 		}
 
@@ -360,17 +308,14 @@ export async function PATCH(
 					error: "Invalid payment plan ID",
 					details: error.errors,
 				},
-				{ status: 400 },
+				{ status: 400 }
 			);
 		}
 
 		if (error instanceof Error) {
 			// Check for specific business logic errors
 			if (error.message.includes("Payment plan not found")) {
-				return NextResponse.json(
-					{ error: "Payment plan not found" },
-					{ status: 404 },
-				);
+				return NextResponse.json({ error: "Payment plan not found" }, { status: 404 });
 			}
 
 			if (error.message.includes("Invalid action for current status")) {
@@ -378,9 +323,6 @@ export async function PATCH(
 			}
 		}
 
-		return NextResponse.json(
-			{ error: "Internal server error" },
-			{ status: 500 },
-		);
+		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 	}
 }

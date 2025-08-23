@@ -39,7 +39,7 @@ export async function updateSession(request: NextRequest) {
 					"X-Compliance": "LGPD-ANVISA-CFM",
 				},
 			},
-		},
+		}
 	);
 
 	// CRITICAL: Must call getUser() to refresh tokens
@@ -51,14 +51,9 @@ export async function updateSession(request: NextRequest) {
 
 	// Healthcare route protection
 	const isAuthRoute = request.nextUrl.pathname.startsWith("/auth");
-	const isPublicRoute = [
-		"/",
-		"/about",
-		"/services",
-		"/contact",
-		"/privacy",
-		"/terms",
-	].includes(request.nextUrl.pathname);
+	const isPublicRoute = ["/", "/about", "/services", "/contact", "/privacy", "/terms"].includes(
+		request.nextUrl.pathname
+	);
 
 	// Redirect unauthenticated users from protected routes
 	if (!(user || isAuthRoute || isPublicRoute)) {
@@ -88,11 +83,7 @@ export async function updateSession(request: NextRequest) {
  * Log route access for healthcare audit compliance
  * LGPD requires comprehensive access logging
  */
-async function logRouteAccess(
-	_userId: string,
-	pathname: string,
-	_ipAddress?: string,
-): Promise<void> {
+async function logRouteAccess(_userId: string, pathname: string, _ipAddress?: string): Promise<void> {
 	try {
 		// Only log access to sensitive healthcare routes
 		const healthcareRoutes = [
@@ -104,9 +95,7 @@ async function logRouteAccess(
 			"/reports",
 		];
 
-		const isHealthcareRoute = healthcareRoutes.some((route) =>
-			pathname.startsWith(route),
-		);
+		const isHealthcareRoute = healthcareRoutes.some((route) => pathname.startsWith(route));
 
 		if (!isHealthcareRoute) {
 			return;

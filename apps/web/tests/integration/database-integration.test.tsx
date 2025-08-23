@@ -113,9 +113,7 @@ const _TestWrapper = ({ children }: { children: React.ReactNode }) => {
 		},
 	});
 
-	return (
-		<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-	);
+	return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 };
 
 describe("Database Integration Tests", () => {
@@ -180,9 +178,7 @@ describe("Database Integration Tests", () => {
 				},
 			};
 
-			mockPrismaClient.patient.findUnique.mockResolvedValue(
-				patientWithRelations,
-			);
+			mockPrismaClient.patient.findUnique.mockResolvedValue(patientWithRelations);
 
 			const result = await mockPrismaClient.patient.findUnique({
 				where: { id: "patient-123" },
@@ -247,9 +243,7 @@ describe("Database Integration Tests", () => {
 
 			const result = await mockPrismaClient.$transaction(transactionOperations);
 
-			expect(mockPrismaClient.$transaction).toHaveBeenCalledWith(
-				transactionOperations,
-			);
+			expect(mockPrismaClient.$transaction).toHaveBeenCalledWith(transactionOperations);
 			expect(result).toHaveLength(4);
 			expect(result[0].id).toBe("patient-123");
 			expect(result[1].id).toBe("appointment-123");
@@ -263,9 +257,7 @@ describe("Database Integration Tests", () => {
 			mockPrismaClient.$transaction.mockImplementation(async (operations) => {
 				if (Array.isArray(operations)) {
 					// Simulate failure in the middle of transaction
-					throw new Error(
-						"Transaction rolled back due to constraint violation",
-					);
+					throw new Error("Transaction rolled back due to constraint violation");
 				}
 				return failingTransaction();
 			});
@@ -277,9 +269,7 @@ describe("Database Integration Tests", () => {
 				}),
 			];
 
-			await expect(
-				mockPrismaClient.$transaction(transactionOperations),
-			).rejects.toThrow("constraint violation");
+			await expect(mockPrismaClient.$transaction(transactionOperations)).rejects.toThrow("constraint violation");
 
 			expect(mockPrismaClient.$transaction).toHaveBeenCalled();
 		});
@@ -287,15 +277,13 @@ describe("Database Integration Tests", () => {
 		it("should handle appointment scheduling with conflict detection", async () => {
 			const conflictDetectionTransaction = async () => {
 				// Check for existing appointments at the same time
-				const existingAppointment = await mockPrismaClient.appointment.findMany(
-					{
-						where: {
-							doctor_id: "doctor-456",
-							scheduled_at: new Date("2024-02-15T14:30:00Z"),
-							status: { not: "cancelled" },
-						},
+				const existingAppointment = await mockPrismaClient.appointment.findMany({
+					where: {
+						doctor_id: "doctor-456",
+						scheduled_at: new Date("2024-02-15T14:30:00Z"),
+						status: { not: "cancelled" },
 					},
-				);
+				});
 
 				if (existingAppointment.length > 0) {
 					throw new Error("Appointment conflict detected");
@@ -315,13 +303,11 @@ describe("Database Integration Tests", () => {
 				},
 			]);
 
-			mockPrismaClient.$transaction.mockImplementation(
-				conflictDetectionTransaction,
-			);
+			mockPrismaClient.$transaction.mockImplementation(conflictDetectionTransaction);
 
-			await expect(
-				mockPrismaClient.$transaction(conflictDetectionTransaction),
-			).rejects.toThrow("Appointment conflict detected");
+			await expect(mockPrismaClient.$transaction(conflictDetectionTransaction)).rejects.toThrow(
+				"Appointment conflict detected"
+			);
 		});
 	});
 
@@ -338,9 +324,7 @@ describe("Database Integration Tests", () => {
 				created_at: new Date(),
 			}));
 
-			mockPrismaClient.patient.findMany.mockResolvedValue(
-				largePatientsDataset.slice(0, 50),
-			);
+			mockPrismaClient.patient.findMany.mockResolvedValue(largePatientsDataset.slice(0, 50));
 
 			const result = await mockPrismaClient.patient.findMany({
 				where: {
@@ -362,16 +346,14 @@ describe("Database Integration Tests", () => {
 			const concurrentQueries = Array.from({ length: 20 }, (_, i) =>
 				mockPrismaClient.patient.findUnique({
 					where: { id: `patient-${i}` },
-				}),
+				})
 			);
 
-			mockPrismaClient.patient.findUnique.mockImplementation(
-				async ({ where }) => ({
-					id: where.id,
-					name: `Patient ${where.id}`,
-					clinic_id: "clinic-1",
-				}),
-			);
+			mockPrismaClient.patient.findUnique.mockImplementation(async ({ where }) => ({
+				id: where.id,
+				name: `Patient ${where.id}`,
+				clinic_id: "clinic-1",
+			}));
 
 			const startTime = performance.now();
 			const results = await Promise.all(concurrentQueries);
@@ -422,15 +404,13 @@ describe("Database Integration Tests", () => {
 			};
 
 			mockPrismaClient.patient.create.mockRejectedValue(
-				new Error(
-					"Unique constraint failed on the fields: (`cpf`,`clinic_id`)",
-				),
+				new Error("Unique constraint failed on the fields: (`cpf`,`clinic_id`)")
 			);
 
 			await expect(
 				mockPrismaClient.patient.create({
 					data: duplicatePatientData,
-				}),
+				})
 			).rejects.toThrow("Unique constraint failed");
 		});
 
@@ -441,13 +421,13 @@ describe("Database Integration Tests", () => {
 			};
 
 			mockPrismaClient.appointment.create.mockRejectedValue(
-				new Error("Foreign key constraint failed on the field: `patient_id`"),
+				new Error("Foreign key constraint failed on the field: `patient_id`")
 			);
 
 			await expect(
 				mockPrismaClient.appointment.create({
 					data: appointmentWithInvalidPatient,
-				}),
+				})
 			).rejects.toThrow("Foreign key constraint failed");
 		});
 	});
@@ -469,21 +449,15 @@ describe("Database Integration Tests", () => {
 				error: null,
 			});
 
-			const result = await mockSupabaseClient.rpc(
-				"calculate_patient_health_summary",
-				{
-					patient_id: "patient-123",
-					clinic_id: "clinic-1",
-				},
-			);
+			const result = await mockSupabaseClient.rpc("calculate_patient_health_summary", {
+				patient_id: "patient-123",
+				clinic_id: "clinic-1",
+			});
 
-			expect(mockSupabaseClient.rpc).toHaveBeenCalledWith(
-				"calculate_patient_health_summary",
-				{
-					patient_id: "patient-123",
-					clinic_id: "clinic-1",
-				},
-			);
+			expect(mockSupabaseClient.rpc).toHaveBeenCalledWith("calculate_patient_health_summary", {
+				patient_id: "patient-123",
+				clinic_id: "clinic-1",
+			});
 
 			expect(result.data.patient_summary.total_appointments).toBe(15);
 			expect(result.data.patient_summary.risk_score).toBe("moderate");
@@ -514,9 +488,7 @@ describe("Database Integration Tests", () => {
 				}),
 			});
 
-			const result = await mockSupabaseClient
-				.from("audit_logs")
-				.insert(auditTriggerData);
+			const result = await mockSupabaseClient.from("audit_logs").insert(auditTriggerData);
 
 			expect(result.data.changed_fields).toContain("phone");
 			expect(result.data.operation).toBe("UPDATE");
@@ -530,22 +502,18 @@ describe("Database Integration Tests", () => {
 				{ id: "patient-2", name: "Patient 2", clinic_id: "clinic-1" },
 			];
 
-			const clinic2Patients = [
-				{ id: "patient-3", name: "Patient 3", clinic_id: "clinic-2" },
-			];
+			const clinic2Patients = [{ id: "patient-3", name: "Patient 3", clinic_id: "clinic-2" }];
 
 			// Mock RLS filtering - user from clinic-1 should only see clinic-1 patients
-			mockPrismaClient.patient.findMany.mockImplementation(
-				async ({ where }) => {
-					if (where?.clinic_id === "clinic-1") {
-						return clinic1Patients;
-					}
-					if (where?.clinic_id === "clinic-2") {
-						return clinic2Patients;
-					}
-					return [];
-				},
-			);
+			mockPrismaClient.patient.findMany.mockImplementation(async ({ where }) => {
+				if (where?.clinic_id === "clinic-1") {
+					return clinic1Patients;
+				}
+				if (where?.clinic_id === "clinic-2") {
+					return clinic2Patients;
+				}
+				return [];
+			});
 
 			// Query as clinic-1 user
 			const clinic1Results = await mockPrismaClient.patient.findMany({
@@ -559,12 +527,8 @@ describe("Database Integration Tests", () => {
 
 			expect(clinic1Results).toHaveLength(2);
 			expect(clinic2Results).toHaveLength(1);
-			expect(clinic1Results.every((p) => p.clinic_id === "clinic-1")).toBe(
-				true,
-			);
-			expect(clinic2Results.every((p) => p.clinic_id === "clinic-2")).toBe(
-				true,
-			);
+			expect(clinic1Results.every((p) => p.clinic_id === "clinic-1")).toBe(true);
+			expect(clinic2Results.every((p) => p.clinic_id === "clinic-2")).toBe(true);
 		});
 
 		it("should prevent cross-tenant data access", async () => {

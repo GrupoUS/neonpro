@@ -7,12 +7,7 @@
  */
 
 // Import our enhanced API client and schemas
-import {
-	type ApiClient,
-	ApiHelpers,
-	type ApiResponse,
-	apiClient,
-} from "@neonpro/shared/api-client";
+import { type ApiClient, ApiHelpers, type ApiResponse, apiClient } from "@neonpro/shared/api-client";
 import {
 	type InfiniteData,
 	type QueryClient,
@@ -45,10 +40,7 @@ export type PaginatedResponse<T> = {
 
 // Generic query options with healthcare-specific defaults
 export interface HealthcareQueryOptions<TData, TError = unknown>
-	extends Omit<
-		UseQueryOptions<ApiResponse<TData>, TError, TData>,
-		"queryKey" | "queryFn"
-	> {
+	extends Omit<UseQueryOptions<ApiResponse<TData>, TError, TData>, "queryKey" | "queryFn"> {
 	// Healthcare-specific options
 	enableAuditLogging?: boolean;
 	sensitiveData?: boolean;
@@ -56,15 +48,8 @@ export interface HealthcareQueryOptions<TData, TError = unknown>
 }
 
 // Generic mutation options with healthcare-specific features
-export interface HealthcareMutationOptions<
-	TData,
-	TError,
-	TVariables,
-	TContext = unknown,
-> extends Omit<
-		UseMutationOptions<ApiResponse<TData>, TError, TVariables, TContext>,
-		"mutationFn"
-	> {
+export interface HealthcareMutationOptions<TData, TError, TVariables, TContext = unknown>
+	extends Omit<UseMutationOptions<ApiResponse<TData>, TError, TVariables, TContext>, "mutationFn"> {
 	// Healthcare-specific options
 	enableAuditLogging?: boolean;
 	requiresConsent?: boolean;
@@ -106,10 +91,7 @@ export class HealthcareQueryUtils {
 		enableAuditLogging?: boolean;
 		sensitiveData?: boolean;
 		lgpdCompliant?: boolean;
-	} & Omit<
-		UseQueryOptions<ApiResponse<TData>, unknown, TData>,
-		"queryKey" | "queryFn"
-	>) {
+	} & Omit<UseQueryOptions<ApiResponse<TData>, unknown, TData>, "queryKey" | "queryFn">) {
 		return useQuery({
 			queryKey,
 			queryFn: async () => {
@@ -155,8 +137,7 @@ export class HealthcareQueryUtils {
 							ip_address: this.apiClient.utils.getClientIP(),
 							user_agent: this.apiClient.utils.getUserAgent(),
 							success: false,
-							error_message:
-								error instanceof Error ? error.message : "Unknown error",
+							error_message: error instanceof Error ? error.message : "Unknown error",
 							request_duration: Date.now() - startTime,
 						});
 					}
@@ -246,8 +227,7 @@ export class HealthcareQueryUtils {
 							ip_address: this.apiClient.utils.getClientIP(),
 							user_agent: this.apiClient.utils.getUserAgent(),
 							success: false,
-							error_message:
-								error instanceof Error ? error.message : "Unknown error",
+							error_message: error instanceof Error ? error.message : "Unknown error",
 							request_duration: Date.now() - startTime,
 						});
 					}
@@ -259,9 +239,7 @@ export class HealthcareQueryUtils {
 			onSuccess: (data, variables, context) => {
 				// Show success toast
 				if (showSuccessToast) {
-					toast.success(
-						successMessage || data.message || "Operação realizada com sucesso",
-					);
+					toast.success(successMessage || data.message || "Operação realizada com sucesso");
 				}
 
 				// Invalidate specified queries
@@ -304,18 +282,10 @@ export class HealthcareQueryUtils {
 		...options
 	}: {
 		queryKey: QueryKey;
-		queryFn: ({
-			pageParam,
-		}: {
-			pageParam: number;
-		}) => Promise<ApiResponse<PaginatedResponse<TData>>>;
+		queryFn: ({ pageParam }: { pageParam: number }) => Promise<ApiResponse<PaginatedResponse<TData>>>;
 		validator?: (data: unknown) => TData[];
 	} & Omit<
-		UseInfiniteQueryOptions<
-			ApiResponse<PaginatedResponse<TData>>,
-			unknown,
-			InfiniteData<TData[]>
-		>,
+		UseInfiniteQueryOptions<ApiResponse<PaginatedResponse<TData>>, unknown, InfiniteData<TData[]>>,
 		"queryKey" | "queryFn" | "getNextPageParam"
 	>) {
 		return useInfiniteQuery({
@@ -328,9 +298,7 @@ export class HealthcareQueryUtils {
 
 					// Validate response if validator provided
 					if (validator && response.data?.items) {
-						response.data.items = response.data.items.map((item) =>
-							validator(item),
-						);
+						response.data.items = response.data.items.map((item) => validator(item));
 					}
 
 					// Audit logging
@@ -364,8 +332,7 @@ export class HealthcareQueryUtils {
 							ip_address: this.apiClient.utils.getClientIP(),
 							user_agent: this.apiClient.utils.getUserAgent(),
 							success: false,
-							error_message:
-								error instanceof Error ? error.message : "Unknown error",
+							error_message: error instanceof Error ? error.message : "Unknown error",
 							request_duration: Date.now() - startTime,
 						});
 					}
@@ -394,7 +361,7 @@ export class HealthcareQueryUtils {
 	createOptimisticUpdate<T>(
 		queryKey: QueryKey,
 		updateFn: (oldData: T | undefined) => T,
-		rollbackFn?: (error: unknown, variables: unknown, context: unknown) => void,
+		rollbackFn?: (error: unknown, variables: unknown, context: unknown) => void
 	) {
 		return {
 			onMutate: async (_variables: unknown) => {
@@ -411,11 +378,7 @@ export class HealthcareQueryUtils {
 				return { previousData };
 			},
 
-			onError: (
-				error: unknown,
-				variables: unknown,
-				context: { previousData?: T },
-			) => {
+			onError: (error: unknown, variables: unknown, context: { previousData?: T }) => {
 				// Rollback on error
 				if (context?.previousData) {
 					this.queryClient.setQueryData<T>(queryKey, context.previousData);
@@ -475,7 +438,7 @@ export class HealthcareQueryUtils {
 		const userData: Record<string, unknown> = {
 			userId,
 			exportedAt: new Date().toISOString(),
-			data: {}
+			data: {},
 		};
 
 		// Extract cached data for the user
@@ -524,10 +487,7 @@ export const InvalidationHelpers = {
 	},
 
 	// Appointment-related invalidations
-	invalidateAppointmentData: (
-		queryClient: QueryClient,
-		appointmentId?: string,
-	) => {
+	invalidateAppointmentData: (queryClient: QueryClient, appointmentId?: string) => {
 		if (appointmentId) {
 			queryClient.invalidateQueries({
 				queryKey: QueryKeys.appointments.detail(appointmentId),
@@ -538,10 +498,7 @@ export const InvalidationHelpers = {
 	},
 
 	// Professional-related invalidations
-	invalidateProfessionalData: (
-		queryClient: QueryClient,
-		professionalId?: string,
-	) => {
+	invalidateProfessionalData: (queryClient: QueryClient, professionalId?: string) => {
 		if (professionalId) {
 			queryClient.invalidateQueries({
 				queryKey: QueryKeys.professionals.detail(professionalId),
@@ -590,10 +547,7 @@ export const CacheWarming = {
 	},
 
 	// Prefetch services for a clinic
-	prefetchClinicServices: async (
-		queryClient: QueryClient,
-		clinicId: string,
-	) => {
+	prefetchClinicServices: async (queryClient: QueryClient, clinicId: string) => {
 		await queryClient.prefetchQuery({
 			queryKey: QueryKeys.services.list({ clinic_id: clinicId }),
 			staleTime: HealthcareQueryConfig.service.staleTime,

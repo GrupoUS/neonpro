@@ -18,22 +18,11 @@ import { useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-	Tooltip,
-	TooltipContent,
-	TooltipProvider,
-	TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type {
 	AestheticTreatmentCategory,
 	CFMComplianceStatus,
@@ -49,10 +38,7 @@ type NeonGradientCardProps = {
 	className?: string;
 };
 
-const NeonGradientCard = ({
-	children,
-	className = "",
-}: NeonGradientCardProps) => (
+const NeonGradientCard = ({ children, className = "" }: NeonGradientCardProps) => (
 	<motion.div
 		animate={{ opacity: 1, y: 0 }}
 		className={`relative overflow-hidden rounded-xl border border-slate-800 bg-gradient-to-br from-slate-900/90 to-blue-900/30 backdrop-blur-sm ${className}`}
@@ -76,9 +62,7 @@ type AestheticTreatmentPlanProps = {
 };
 
 // Helper functions for Brazilian localization
-const getTreatmentCategoryLabel = (
-	category: AestheticTreatmentCategory,
-): string => {
+const getTreatmentCategoryLabel = (category: AestheticTreatmentCategory): string => {
 	const labels: Record<AestheticTreatmentCategory, string> = {
 		facial: "Tratamentos Faciais",
 		body_contouring: "Contorno Corporal",
@@ -104,13 +88,8 @@ const getTreatmentStatusLabel = (status: TreatmentStatus): string => {
 	return labels[status];
 };
 
-const getTreatmentStatusVariant = (
-	status: TreatmentStatus,
-): "default" | "secondary" | "destructive" | "outline" => {
-	const variants: Record<
-		TreatmentStatus,
-		"default" | "secondary" | "destructive" | "outline"
-	> = {
+const getTreatmentStatusVariant = (status: TreatmentStatus): "default" | "secondary" | "destructive" | "outline" => {
+	const variants: Record<TreatmentStatus, "default" | "secondary" | "destructive" | "outline"> = {
 		planned: "outline",
 		consent_pending: "secondary",
 		active: "default",
@@ -176,10 +155,7 @@ const getLGPDConsentIcon = (status: LGPDPhotoConsentStatus) => {
 };
 
 // Progress calculation helper
-const calculateProgress = (
-	completedSessions: number,
-	expectedSessions: number,
-): number => {
+const calculateProgress = (completedSessions: number, expectedSessions: number): number => {
 	if (expectedSessions === 0) {
 		return 0;
 	}
@@ -199,18 +175,11 @@ export function AestheticTreatmentPlan({
 }: AestheticTreatmentPlanProps) {
 	const [activeTab, setActiveTab] = useState("overview");
 
-	const progress = calculateProgress(
-		treatmentPlan.completed_sessions,
-		treatmentPlan.expected_sessions,
-	);
+	const progress = calculateProgress(treatmentPlan.completed_sessions, treatmentPlan.expected_sessions);
 	const upcomingSessions = sessions.filter(
-		(session) =>
-			session.status === "scheduled" &&
-			new Date(session.scheduled_date) > new Date(),
+		(session) => session.status === "scheduled" && new Date(session.scheduled_date) > new Date()
 	);
-	const completedSessions = sessions.filter(
-		(session) => session.status === "completed",
-	);
+	const completedSessions = sessions.filter((session) => session.status === "completed");
 
 	// Summary Card View
 	if (variant === "summary") {
@@ -219,12 +188,8 @@ export function AestheticTreatmentPlan({
 				<CardHeader className="pb-3">
 					<div className="flex items-center justify-between">
 						<div className="space-y-1">
-							<CardTitle className="text-lg">
-								{treatmentPlan.treatment_name}
-							</CardTitle>
-							<CardDescription>
-								{getTreatmentCategoryLabel(treatmentPlan.category)}
-							</CardDescription>
+							<CardTitle className="text-lg">{treatmentPlan.treatment_name}</CardTitle>
+							<CardDescription>{getTreatmentCategoryLabel(treatmentPlan.category)}</CardDescription>
 						</div>
 						<Badge variant={getTreatmentStatusVariant(treatmentPlan.status)}>
 							{getTreatmentStatusLabel(treatmentPlan.status)}
@@ -234,19 +199,12 @@ export function AestheticTreatmentPlan({
 				<CardContent>
 					<div className="space-y-3">
 						<div className="flex items-center justify-between text-sm">
-							<span className="text-muted-foreground">
-								Progresso do Tratamento
-							</span>
+							<span className="text-muted-foreground">Progresso do Tratamento</span>
 							<span className="font-medium">
-								{treatmentPlan.completed_sessions}/
-								{treatmentPlan.expected_sessions} sessões
+								{treatmentPlan.completed_sessions}/{treatmentPlan.expected_sessions} sessões
 							</span>
 						</div>
-						<Progress
-							aria-label={`Progresso: ${progress.toFixed(1)}%`}
-							className="h-2"
-							value={progress}
-						/>
+						<Progress aria-label={`Progresso: ${progress.toFixed(1)}%`} className="h-2" value={progress} />
 
 						<div className="flex items-center gap-4 text-sm">
 							<div className="flex items-center gap-1">
@@ -261,10 +219,7 @@ export function AestheticTreatmentPlan({
 								<div className="flex items-center gap-1">
 									<Calendar className="h-4 w-4 text-blue-500" />
 									<span className="text-muted-foreground">
-										Próxima:{" "}
-										{new Date(
-											treatmentPlan.next_session_date,
-										).toLocaleDateString("pt-BR")}
+										Próxima: {new Date(treatmentPlan.next_session_date).toLocaleDateString("pt-BR")}
 									</span>
 								</div>
 							)}
@@ -282,9 +237,7 @@ export function AestheticTreatmentPlan({
 				<CardHeader>
 					<div className="flex items-center justify-between">
 						<div className="space-y-1">
-							<CardTitle className="text-white text-xl">
-								{treatmentPlan.treatment_name}
-							</CardTitle>
+							<CardTitle className="text-white text-xl">{treatmentPlan.treatment_name}</CardTitle>
 							<CardDescription className="text-slate-300">
 								{getTreatmentCategoryLabel(treatmentPlan.category)}
 							</CardDescription>
@@ -296,33 +249,17 @@ export function AestheticTreatmentPlan({
 							<div className="flex items-center gap-2">
 								<TooltipProvider>
 									<Tooltip>
-										<TooltipTrigger>
-											{getCFMComplianceIcon(
-												treatmentPlan.cfm_compliance_status,
-											)}
-										</TooltipTrigger>
+										<TooltipTrigger>{getCFMComplianceIcon(treatmentPlan.cfm_compliance_status)}</TooltipTrigger>
 										<TooltipContent>
-											<p>
-												{getCFMComplianceLabel(
-													treatmentPlan.cfm_compliance_status,
-												)}
-											</p>
+											<p>{getCFMComplianceLabel(treatmentPlan.cfm_compliance_status)}</p>
 										</TooltipContent>
 									</Tooltip>
 								</TooltipProvider>
 								<TooltipProvider>
 									<Tooltip>
-										<TooltipTrigger>
-											{getLGPDConsentIcon(
-												treatmentPlan.lgpd_photo_consent_status,
-											)}
-										</TooltipTrigger>
+										<TooltipTrigger>{getLGPDConsentIcon(treatmentPlan.lgpd_photo_consent_status)}</TooltipTrigger>
 										<TooltipContent>
-											<p>
-												{getLGPDConsentLabel(
-													treatmentPlan.lgpd_photo_consent_status,
-												)}
-											</p>
+											<p>{getLGPDConsentLabel(treatmentPlan.lgpd_photo_consent_status)}</p>
 										</TooltipContent>
 									</Tooltip>
 								</TooltipProvider>
@@ -336,18 +273,11 @@ export function AestheticTreatmentPlan({
 						<div className="flex items-center justify-between text-sm">
 							<span className="text-slate-300">Progresso do Tratamento</span>
 							<span className="font-medium text-white">
-								{treatmentPlan.completed_sessions}/
-								{treatmentPlan.expected_sessions} sessões
+								{treatmentPlan.completed_sessions}/{treatmentPlan.expected_sessions} sessões
 							</span>
 						</div>
-						<Progress
-							aria-label={`Progresso: ${progress.toFixed(1)}%`}
-							className="h-3"
-							value={progress}
-						/>
-						<div className="text-slate-400 text-xs">
-							{progress.toFixed(1)}% concluído
-						</div>
+						<Progress aria-label={`Progresso: ${progress.toFixed(1)}%`} className="h-3" value={progress} />
+						<div className="text-slate-400 text-xs">{progress.toFixed(1)}% concluído</div>
 					</div>
 
 					{/* Quick Info */}
@@ -357,9 +287,7 @@ export function AestheticTreatmentPlan({
 								<Calendar className="h-4 w-4" />
 								<span>Início:</span>
 							</div>
-							<p className="font-medium text-white">
-								{new Date(treatmentPlan.start_date).toLocaleDateString("pt-BR")}
-							</p>
+							<p className="font-medium text-white">{new Date(treatmentPlan.start_date).toLocaleDateString("pt-BR")}</p>
 						</div>
 						<div className="space-y-2">
 							<div className="flex items-center gap-2 text-slate-300">
@@ -367,9 +295,7 @@ export function AestheticTreatmentPlan({
 								<span>Previsão:</span>
 							</div>
 							<p className="font-medium text-white">
-								{new Date(
-									treatmentPlan.estimated_completion_date,
-								).toLocaleDateString("pt-BR")}
+								{new Date(treatmentPlan.estimated_completion_date).toLocaleDateString("pt-BR")}
 							</p>
 						</div>
 					</div>
@@ -380,15 +306,12 @@ export function AestheticTreatmentPlan({
 							<Calendar className="h-4 w-4" />
 							<AlertDescription className="text-blue-100">
 								Próxima sessão:{" "}
-								{new Date(treatmentPlan.next_session_date).toLocaleDateString(
-									"pt-BR",
-									{
-										weekday: "long",
-										year: "numeric",
-										month: "long",
-										day: "numeric",
-									},
-								)}
+								{new Date(treatmentPlan.next_session_date).toLocaleDateString("pt-BR", {
+									weekday: "long",
+									year: "numeric",
+									month: "long",
+									day: "numeric",
+								})}
 							</AlertDescription>
 						</Alert>
 					)}
@@ -396,22 +319,13 @@ export function AestheticTreatmentPlan({
 					{/* Action Buttons */}
 					<div className="flex gap-2 pt-2">
 						{onViewProgress && (
-							<Button
-								className="flex-1"
-								onClick={() => onViewProgress(treatmentPlan.id)}
-								size="sm"
-								variant="outline"
-							>
+							<Button className="flex-1" onClick={() => onViewProgress(treatmentPlan.id)} size="sm" variant="outline">
 								<Activity className="mr-1 h-4 w-4" />
 								Ver Progresso
 							</Button>
 						)}
 						{onScheduleSession && treatmentPlan.status === "active" && (
-							<Button
-								className="flex-1"
-								onClick={() => onScheduleSession(treatmentPlan.id)}
-								size="sm"
-							>
+							<Button className="flex-1" onClick={() => onScheduleSession(treatmentPlan.id)} size="sm">
 								<Calendar className="mr-1 h-4 w-4" />
 								Agendar Sessão
 							</Button>
@@ -428,19 +342,12 @@ export function AestheticTreatmentPlan({
 				<CardHeader>
 					<div className="flex items-center justify-between">
 						<div className="space-y-2">
-							<CardTitle className="text-2xl text-white">
-								{treatmentPlan.treatment_name}
-							</CardTitle>
+							<CardTitle className="text-2xl text-white">{treatmentPlan.treatment_name}</CardTitle>
 							<div className="flex items-center gap-4">
-								<Badge
-									className="text-sm"
-									variant={getTreatmentStatusVariant(treatmentPlan.status)}
-								>
+								<Badge className="text-sm" variant={getTreatmentStatusVariant(treatmentPlan.status)}>
 									{getTreatmentStatusLabel(treatmentPlan.status)}
 								</Badge>
-								<span className="text-slate-300">
-									{getTreatmentCategoryLabel(treatmentPlan.category)}
-								</span>
+								<span className="text-slate-300">{getTreatmentCategoryLabel(treatmentPlan.category)}</span>
 							</div>
 						</div>
 						<div className="flex gap-2">
@@ -492,22 +399,13 @@ export function AestheticTreatmentPlan({
 							<CardContent className="space-y-4">
 								<div className="space-y-2">
 									<div className="flex items-center justify-between">
-										<span className="text-muted-foreground text-sm">
-											Sessões Completadas
-										</span>
+										<span className="text-muted-foreground text-sm">Sessões Completadas</span>
 										<span className="font-medium">
-											{treatmentPlan.completed_sessions}/
-											{treatmentPlan.expected_sessions}
+											{treatmentPlan.completed_sessions}/{treatmentPlan.expected_sessions}
 										</span>
 									</div>
-									<Progress
-										aria-label={`Progresso: ${progress.toFixed(1)}%`}
-										className="h-3"
-										value={progress}
-									/>
-									<p className="text-muted-foreground text-xs">
-										{progress.toFixed(1)}% do tratamento concluído
-									</p>
+									<Progress aria-label={`Progresso: ${progress.toFixed(1)}%`} className="h-3" value={progress} />
+									<p className="text-muted-foreground text-xs">{progress.toFixed(1)}% do tratamento concluído</p>
 								</div>
 
 								<Separator />
@@ -516,23 +414,15 @@ export function AestheticTreatmentPlan({
 									<div>
 										<p className="text-muted-foreground">Tipo de Tratamento</p>
 										<p className="font-medium">
-											{treatmentPlan.treatment_type === "single_session" &&
-												"Sessão Única"}
-											{treatmentPlan.treatment_type === "multi_session" &&
-												"Multi-sessão"}
-											{treatmentPlan.treatment_type === "combination_therapy" &&
-												"Terapia Combinada"}
-											{treatmentPlan.treatment_type ===
-												"maintenance_protocol" && "Protocolo de Manutenção"}
+											{treatmentPlan.treatment_type === "single_session" && "Sessão Única"}
+											{treatmentPlan.treatment_type === "multi_session" && "Multi-sessão"}
+											{treatmentPlan.treatment_type === "combination_therapy" && "Terapia Combinada"}
+											{treatmentPlan.treatment_type === "maintenance_protocol" && "Protocolo de Manutenção"}
 										</p>
 									</div>
 									<div>
-										<p className="text-muted-foreground">
-											Intervalo entre Sessões
-										</p>
-										<p className="font-medium">
-											{treatmentPlan.session_interval_days} dias
-										</p>
+										<p className="text-muted-foreground">Intervalo entre Sessões</p>
+										<p className="font-medium">{treatmentPlan.session_interval_days} dias</p>
 									</div>
 								</div>
 							</CardContent>
@@ -548,9 +438,7 @@ export function AestheticTreatmentPlan({
 							</CardHeader>
 							<CardContent className="space-y-4">
 								<div>
-									<p className="mb-2 text-muted-foreground text-sm">
-										Descrição
-									</p>
+									<p className="mb-2 text-muted-foreground text-sm">Descrição</p>
 									<p className="text-sm">{treatmentPlan.description}</p>
 								</div>
 
@@ -559,20 +447,12 @@ export function AestheticTreatmentPlan({
 								<div className="grid grid-cols-2 gap-4 text-sm">
 									<div>
 										<p className="text-muted-foreground">Data de Início</p>
-										<p className="font-medium">
-											{new Date(treatmentPlan.start_date).toLocaleDateString(
-												"pt-BR",
-											)}
-										</p>
+										<p className="font-medium">{new Date(treatmentPlan.start_date).toLocaleDateString("pt-BR")}</p>
 									</div>
 									<div>
-										<p className="text-muted-foreground">
-											Previsão de Conclusão
-										</p>
+										<p className="text-muted-foreground">Previsão de Conclusão</p>
 										<p className="font-medium">
-											{new Date(
-												treatmentPlan.estimated_completion_date,
-											).toLocaleDateString("pt-BR")}
+											{new Date(treatmentPlan.estimated_completion_date).toLocaleDateString("pt-BR")}
 										</p>
 									</div>
 								</div>
@@ -583,9 +463,7 @@ export function AestheticTreatmentPlan({
 										<AlertDescription>
 											Próxima sessão agendada para{" "}
 											<strong>
-												{new Date(
-													treatmentPlan.next_session_date,
-												).toLocaleDateString("pt-BR", {
+												{new Date(treatmentPlan.next_session_date).toLocaleDateString("pt-BR", {
 													weekday: "long",
 													year: "numeric",
 													month: "long",
@@ -615,23 +493,14 @@ export function AestheticTreatmentPlan({
 								{upcomingSessions.length > 0 ? (
 									<div className="space-y-3">
 										{upcomingSessions.slice(0, 3).map((session) => (
-											<div
-												className="flex items-center justify-between rounded-lg border p-3"
-												key={session.id}
-											>
+											<div className="flex items-center justify-between rounded-lg border p-3" key={session.id}>
 												<div>
-													<p className="font-medium">
-														Sessão {session.session_number}
-													</p>
+													<p className="font-medium">Sessão {session.session_number}</p>
 													<p className="text-muted-foreground text-sm">
-														{new Date(
-															session.scheduled_date,
-														).toLocaleDateString("pt-BR")}
+														{new Date(session.scheduled_date).toLocaleDateString("pt-BR")}
 													</p>
 												</div>
-												<Badge variant="outline">
-													{session.duration_minutes} min
-												</Badge>
+												<Badge variant="outline">{session.duration_minutes} min</Badge>
 											</div>
 										))}
 										{upcomingSessions.length > 3 && (
@@ -643,9 +512,7 @@ export function AestheticTreatmentPlan({
 								) : (
 									<div className="py-6 text-center">
 										<Calendar className="mx-auto mb-2 h-12 w-12 text-muted-foreground" />
-										<p className="text-muted-foreground">
-											Nenhuma sessão agendada
-										</p>
+										<p className="text-muted-foreground">Nenhuma sessão agendada</p>
 										{onScheduleSession && (
 											<Button
 												className="mt-2"
@@ -673,27 +540,18 @@ export function AestheticTreatmentPlan({
 								{completedSessions.length > 0 ? (
 									<div className="space-y-3">
 										{completedSessions.slice(-3).map((session) => (
-											<div
-												className="flex items-center justify-between rounded-lg border p-3"
-												key={session.id}
-											>
+											<div className="flex items-center justify-between rounded-lg border p-3" key={session.id}>
 												<div>
-													<p className="font-medium">
-														Sessão {session.session_number}
-													</p>
+													<p className="font-medium">Sessão {session.session_number}</p>
 													<p className="text-muted-foreground text-sm">
-														{new Date(
-															session.actual_date || session.scheduled_date,
-														).toLocaleDateString("pt-BR")}
+														{new Date(session.actual_date || session.scheduled_date).toLocaleDateString("pt-BR")}
 													</p>
 												</div>
 												<div className="flex items-center gap-2">
 													{session.patient_satisfaction_score && (
 														<div className="flex items-center gap-1">
 															<Star className="h-4 w-4 text-yellow-500" />
-															<span className="text-sm">
-																{session.patient_satisfaction_score}/10
-															</span>
+															<span className="text-sm">{session.patient_satisfaction_score}/10</span>
 														</div>
 													)}
 													<Badge variant="default">Concluída</Badge>
@@ -709,9 +567,7 @@ export function AestheticTreatmentPlan({
 								) : (
 									<div className="py-6 text-center">
 										<CheckCircle className="mx-auto mb-2 h-12 w-12 text-muted-foreground" />
-										<p className="text-muted-foreground">
-											Nenhuma sessão realizada
-										</p>
+										<p className="text-muted-foreground">Nenhuma sessão realizada</p>
 									</div>
 								)}
 							</CardContent>
@@ -733,26 +589,14 @@ export function AestheticTreatmentPlan({
 							<CardContent className="space-y-4">
 								<div className="space-y-2">
 									<div className="flex items-center justify-between">
-										<span className="text-muted-foreground text-sm">
-											Status
-										</span>
-										<Badge
-											variant={
-												treatmentPlan.cfm_compliance_status === "compliant"
-													? "default"
-													: "secondary"
-											}
-										>
-											{getCFMComplianceLabel(
-												treatmentPlan.cfm_compliance_status,
-											)}
+										<span className="text-muted-foreground text-sm">Status</span>
+										<Badge variant={treatmentPlan.cfm_compliance_status === "compliant" ? "default" : "secondary"}>
+											{getCFMComplianceLabel(treatmentPlan.cfm_compliance_status)}
 										</Badge>
 									</div>
 
 									<div className="flex items-center justify-between">
-										<span className="text-muted-foreground text-sm">
-											Licença Profissional Verificada
-										</span>
+										<span className="text-muted-foreground text-sm">Licença Profissional Verificada</span>
 										{treatmentPlan.professional_license_verified ? (
 											<CheckCircle className="h-4 w-4 text-green-500" />
 										) : (
@@ -761,9 +605,7 @@ export function AestheticTreatmentPlan({
 									</div>
 
 									<div className="flex items-center justify-between">
-										<span className="text-muted-foreground text-sm">
-											Revisão Ética Necessária
-										</span>
+										<span className="text-muted-foreground text-sm">Revisão Ética Necessária</span>
 										{treatmentPlan.ethics_review_required ? (
 											<AlertTriangle className="h-4 w-4 text-yellow-500" />
 										) : (
@@ -776,8 +618,7 @@ export function AestheticTreatmentPlan({
 									<Alert className="border-yellow-500/50 bg-yellow-500/10">
 										<AlertTriangle className="h-4 w-4" />
 										<AlertDescription>
-											Este tratamento requer atenção para conformidade com as
-											diretrizes do CFM.
+											Este tratamento requer atenção para conformidade com as diretrizes do CFM.
 										</AlertDescription>
 									</Alert>
 								)}
@@ -795,9 +636,7 @@ export function AestheticTreatmentPlan({
 							<CardContent className="space-y-4">
 								<div className="space-y-2">
 									<div className="flex items-center justify-between">
-										<span className="text-muted-foreground text-sm">
-											Consentimento LGPD
-										</span>
+										<span className="text-muted-foreground text-sm">Consentimento LGPD</span>
 										{treatmentPlan.lgpd_consent_granted ? (
 											<CheckCircle className="h-4 w-4 text-green-500" />
 										) : (
@@ -806,40 +645,22 @@ export function AestheticTreatmentPlan({
 									</div>
 
 									<div className="flex items-center justify-between">
-										<span className="text-muted-foreground text-sm">
-											Consentimento para Fotos
-										</span>
-										<Badge
-											variant={
-												treatmentPlan.lgpd_photo_consent_status === "granted"
-													? "default"
-													: "secondary"
-											}
-										>
-											{getLGPDConsentLabel(
-												treatmentPlan.lgpd_photo_consent_status,
-											)}
+										<span className="text-muted-foreground text-sm">Consentimento para Fotos</span>
+										<Badge variant={treatmentPlan.lgpd_photo_consent_status === "granted" ? "default" : "secondary"}>
+											{getLGPDConsentLabel(treatmentPlan.lgpd_photo_consent_status)}
 										</Badge>
 									</div>
 
 									<div className="flex items-center justify-between">
-										<span className="text-muted-foreground text-sm">
-											Retenção de Dados
-										</span>
-										<span className="font-medium text-sm">
-											{treatmentPlan.data_retention_days} dias
-										</span>
+										<span className="text-muted-foreground text-sm">Retenção de Dados</span>
+										<span className="font-medium text-sm">{treatmentPlan.data_retention_days} dias</span>
 									</div>
 
 									{treatmentPlan.lgpd_consent_date && (
 										<div className="flex items-center justify-between">
-											<span className="text-muted-foreground text-sm">
-												Data do Consentimento
-											</span>
+											<span className="text-muted-foreground text-sm">Data do Consentimento</span>
 											<span className="font-medium text-sm">
-												{new Date(
-													treatmentPlan.lgpd_consent_date,
-												).toLocaleDateString("pt-BR")}
+												{new Date(treatmentPlan.lgpd_consent_date).toLocaleDateString("pt-BR")}
 											</span>
 										</div>
 									)}
@@ -849,8 +670,7 @@ export function AestheticTreatmentPlan({
 									<Alert className="border-red-500/50 bg-red-500/10">
 										<Shield className="h-4 w-4" />
 										<AlertDescription>
-											É necessário obter o consentimento LGPD antes de
-											prosseguir com o tratamento.
+											É necessário obter o consentimento LGPD antes de prosseguir com o tratamento.
 										</AlertDescription>
 									</Alert>
 								)}
@@ -874,20 +694,15 @@ export function AestheticTreatmentPlan({
 								{treatmentPlan.expected_outcomes ? (
 									<div className="space-y-4">
 										<div className="prose prose-sm max-w-none">
-											<p>
-												Os resultados esperados para este tratamento incluem:
-											</p>
+											<p>Os resultados esperados para este tratamento incluem:</p>
 											{/* This would be populated from the JSON structure */}
 											<p className="text-muted-foreground">
-												Dados específicos dos resultados esperados serão
-												exibidos aqui.
+												Dados específicos dos resultados esperados serão exibidos aqui.
 											</p>
 										</div>
 									</div>
 								) : (
-									<p className="text-muted-foreground">
-										Nenhum resultado esperado definido para este tratamento.
-									</p>
+									<p className="text-muted-foreground">Nenhum resultado esperado definido para este tratamento.</p>
 								)}
 							</CardContent>
 						</Card>
@@ -906,22 +721,18 @@ export function AestheticTreatmentPlan({
 										<Alert>
 											<AlertTriangle className="h-4 w-4" />
 											<AlertDescription>
-												Importante: Todos os riscos foram explicados e
-												compreendidos pelo paciente.
+												Importante: Todos os riscos foram explicados e compreendidos pelo paciente.
 											</AlertDescription>
 										</Alert>
 										<div className="prose prose-sm max-w-none">
 											{/* This would be populated from the JSON structure */}
 											<p className="text-muted-foreground">
-												Avaliação detalhada de riscos e contraindicações será
-												exibida aqui.
+												Avaliação detalhada de riscos e contraindicações será exibida aqui.
 											</p>
 										</div>
 									</div>
 								) : (
-									<p className="text-muted-foreground">
-										Nenhuma avaliação de risco disponível para este tratamento.
-									</p>
+									<p className="text-muted-foreground">Nenhuma avaliação de risco disponível para este tratamento.</p>
 								)}
 							</CardContent>
 						</Card>
@@ -946,26 +757,19 @@ export function AestheticTreatmentPlan({
 										</p>
 									</div>
 									<div>
-										<p className="text-muted-foreground text-sm">
-											Custo por Sessão
-										</p>
+										<p className="text-muted-foreground text-sm">Custo por Sessão</p>
 										<p className="font-semibold text-lg">
 											{new Intl.NumberFormat("pt-BR", {
 												style: "currency",
 												currency: "BRL",
-											}).format(
-												treatmentPlan.total_cost /
-													treatmentPlan.expected_sessions,
-											)}
+											}).format(treatmentPlan.total_cost / treatmentPlan.expected_sessions)}
 										</p>
 									</div>
 								</div>
 
 								{treatmentPlan.payment_plan && (
 									<div className="mt-4">
-										<p className="mb-2 text-muted-foreground text-sm">
-											Plano de Pagamento
-										</p>
+										<p className="mb-2 text-muted-foreground text-sm">Plano de Pagamento</p>
 										<Badge variant="outline">Parcelamento Disponível</Badge>
 									</div>
 								)}

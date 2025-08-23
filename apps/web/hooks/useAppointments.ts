@@ -57,18 +57,12 @@ export function useAppointments(): AppointmentsHook {
 	// Consultas futuras (próximos 30 dias)
 	const upcomingAppointments = useMemo(() => {
 		const now = new Date();
-		const thirtyDaysFromNow = new Date(
-			now.getTime() + 30 * 24 * 60 * 60 * 1000,
-		);
+		const thirtyDaysFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
 
 		return appointments
 			.filter((appointment) => {
 				const appointmentDate = new Date(appointment.appointment_date);
-				return (
-					appointmentDate >= now &&
-					appointmentDate <= thirtyDaysFromNow &&
-					appointment.status === "scheduled"
-				);
+				return appointmentDate >= now && appointmentDate <= thirtyDaysFromNow && appointment.status === "scheduled";
 			})
 			.slice(0, 10); // Limitar a 10 próximas consultas
 	}, [appointments]);
@@ -89,11 +83,7 @@ export function useAppointments(): AppointmentsHook {
 					["scheduled", "confirmed"].includes(appointment.status)
 				);
 			})
-			.sort(
-				(a, b) =>
-					new Date(a.appointment_date).getTime() -
-					new Date(b.appointment_date).getTime(),
-			);
+			.sort((a, b) => new Date(a.appointment_date).getTime() - new Date(b.appointment_date).getTime());
 	}, [appointments]);
 
 	// Função para buscar consultas por data específica
@@ -109,13 +99,9 @@ export function useAppointments(): AppointmentsHook {
 					const appointmentDate = new Date(appointment.appointment_date);
 					return appointmentDate >= startOfDay && appointmentDate <= endOfDay;
 				})
-				.sort(
-					(a, b) =>
-						new Date(a.appointment_date).getTime() -
-						new Date(b.appointment_date).getTime(),
-				);
+				.sort((a, b) => new Date(a.appointment_date).getTime() - new Date(b.appointment_date).getTime());
 		},
-		[appointments],
+		[appointments]
 	);
 
 	// Função para atualizar a lista de consultas
@@ -142,7 +128,7 @@ export function useAppointments(): AppointmentsHook {
 				async (_payload) => {
 					// Refetch appointments para incluir dados relacionados
 					await fetchAppointments();
-				},
+				}
 			)
 			.subscribe();
 

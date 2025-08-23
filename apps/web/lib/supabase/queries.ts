@@ -70,7 +70,7 @@ export const getPatientsWithFilters = async (
 		status?: string;
 		page?: number;
 		limit?: number;
-	},
+	}
 ) => {
 	const { page = 1, limit = 10, search, status } = filters;
 	const from = (page - 1) * limit;
@@ -89,15 +89,13 @@ export const getPatientsWithFilters = async (
       created_at,
       updated_at
     `,
-			{ count: "exact" },
+			{ count: "exact" }
 		)
 		.range(from, to)
 		.order("created_at", { ascending: false });
 
 	if (search?.trim()) {
-		query = query.or(
-			`name.ilike.%${search}%,email.ilike.%${search}%,phone.ilike.%${search}%`,
-		);
+		query = query.or(`name.ilike.%${search}%,email.ilike.%${search}%,phone.ilike.%${search}%`);
 	}
 
 	if (status) {
@@ -122,7 +120,7 @@ export const getAppointmentsWithDetails = async (
 		staffMemberId?: string;
 		patientId?: string;
 		limit?: number;
-	},
+	}
 ) => {
 	const { limit = 50, dateRange, status, staffMemberId, patientId } = filters;
 
@@ -157,9 +155,7 @@ export const getAppointmentsWithDetails = async (
 		.limit(limit);
 
 	if (dateRange) {
-		query = query
-			.gte("appointment_date", dateRange.start)
-			.lte("appointment_date", dateRange.end);
+		query = query.gte("appointment_date", dateRange.start).lte("appointment_date", dateRange.end);
 	}
 
 	if (status) {
@@ -184,10 +180,7 @@ export const getAppointmentsWithDetails = async (
 /**
  * Busca receita mensal dos últimos N meses
  */
-export const getMonthlyRevenue = async (
-	supabase: SupabaseClient,
-	monthsBack = 12,
-) => {
+export const getMonthlyRevenue = async (supabase: SupabaseClient, monthsBack = 12) => {
 	const { data, error } = await supabase.rpc("get_monthly_revenue_stats", {
 		months_back: monthsBack,
 	});
@@ -244,10 +237,7 @@ export const getRevenueByService = async (supabase: SupabaseClient) => {
 /**
  * Busca funcionários com estatísticas de agendamentos
  */
-export const getStaffWithAppointmentStats = async (
-	supabase: SupabaseClient,
-	staffId: string,
-) => {
+export const getStaffWithAppointmentStats = async (supabase: SupabaseClient, staffId: string) => {
 	const startOfMonth = new Date();
 	startOfMonth.setDate(1);
 	startOfMonth.setHours(0, 0, 0, 0);
@@ -289,8 +279,7 @@ export const getStaffWithAppointmentStats = async (
 		throw revenueError;
 	}
 
-	const totalRevenue =
-		revenueData?.reduce((sum, t) => sum + (t.amount || 0), 0) || 0;
+	const totalRevenue = revenueData?.reduce((sum, t) => sum + (t.amount || 0), 0) || 0;
 
 	return {
 		totalAppointments: totalAppointments || 0,
@@ -302,11 +291,7 @@ export const getStaffWithAppointmentStats = async (
 /**
  * Busca disponibilidade de funcionário
  */
-export const getStaffAvailability = async (
-	supabase: SupabaseClient,
-	staffId: string,
-	date: string,
-) => {
+export const getStaffAvailability = async (supabase: SupabaseClient, staffId: string, date: string) => {
 	const startDate = new Date(date);
 	const endDate = new Date(date);
 	endDate.setDate(endDate.getDate() + 1);
@@ -332,10 +317,7 @@ export const getStaffAvailability = async (
 /**
  * Busca serviços com estatísticas de uso
  */
-export const getServiceUsageStats = async (
-	supabase: SupabaseClient,
-	serviceId: string,
-) => {
+export const getServiceUsageStats = async (supabase: SupabaseClient, serviceId: string) => {
 	const startOfMonth = new Date();
 	startOfMonth.setDate(1);
 	startOfMonth.setHours(0, 0, 0, 0);
@@ -377,8 +359,7 @@ export const getServiceUsageStats = async (
 		throw revenueError;
 	}
 
-	const totalRevenue =
-		revenueData?.reduce((sum, t) => sum + (t.amount || 0), 0) || 0;
+	const totalRevenue = revenueData?.reduce((sum, t) => sum + (t.amount || 0), 0) || 0;
 
 	return {
 		totalAppointments: totalAppointments || 0,
@@ -396,7 +377,7 @@ export const getServiceUsageStats = async (
  */
 export const executeWithRetry = async <T>(
 	queryFunction: () => Promise<{ data: T; error: any }>,
-	maxRetries = 3,
+	maxRetries = 3
 ): Promise<T> => {
 	let lastError: any;
 
@@ -408,9 +389,7 @@ export const executeWithRetry = async <T>(
 				lastError = error;
 				if (attempt < maxRetries) {
 					// Wait before retry (exponential backoff)
-					await new Promise((resolve) =>
-						setTimeout(resolve, 2 ** attempt * 1000),
-					);
+					await new Promise((resolve) => setTimeout(resolve, 2 ** attempt * 1000));
 					continue;
 				}
 				throw error;
@@ -420,9 +399,7 @@ export const executeWithRetry = async <T>(
 		} catch (error) {
 			lastError = error;
 			if (attempt < maxRetries) {
-				await new Promise((resolve) =>
-					setTimeout(resolve, 2 ** attempt * 1000),
-				);
+				await new Promise((resolve) => setTimeout(resolve, 2 ** attempt * 1000));
 				continue;
 			}
 			throw error;
@@ -435,15 +412,12 @@ export const executeWithRetry = async <T>(
 /**
  * Cache simples para queries
  */
-const queryCache = new Map<
-	string,
-	{ data: any; timestamp: number; ttl: number }
->();
+const queryCache = new Map<string, { data: any; timestamp: number; ttl: number }>();
 
 export const getCachedQuery = async <T>(
 	cacheKey: string,
 	queryFunction: () => Promise<T>,
-	ttlMinutes = 5,
+	ttlMinutes = 5
 ): Promise<T> => {
 	const now = Date.now();
 	const cached = queryCache.get(cacheKey);

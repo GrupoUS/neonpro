@@ -7,11 +7,7 @@
  */
 
 // Import our enhanced API client
-import {
-	ApiHelpers,
-	type ApiResponse,
-	apiClient,
-} from "@neonpro/shared/api-client";
+import { ApiHelpers, type ApiResponse, apiClient } from "@neonpro/shared/api-client";
 // Import validation schemas and types
 import {
 	// Types
@@ -64,20 +60,12 @@ export type AppointmentManagementContext = {
 
 	// Data retrieval
 	getAppointment: (id: string) => ReturnType<typeof useAppointment>;
-	getAppointments: (
-		filters?: AppointmentQuery,
-	) => ReturnType<typeof useAppointments>;
+	getAppointments: (filters?: AppointmentQuery) => ReturnType<typeof useAppointments>;
 	getAppointmentStats: ReturnType<typeof useAppointmentStats>;
 
 	// Schedule management
-	getDailySchedule: (
-		date: string,
-		professionalId?: string,
-	) => ReturnType<typeof useDailySchedule>;
-	getWeeklySchedule: (
-		weekStart: string,
-		professionalId?: string,
-	) => ReturnType<typeof useWeeklySchedule>;
+	getDailySchedule: (date: string, professionalId?: string) => ReturnType<typeof useDailySchedule>;
+	getWeeklySchedule: (weekStart: string, professionalId?: string) => ReturnType<typeof useWeeklySchedule>;
 	getAvailableSlots: ReturnType<typeof useAvailableSlots>;
 
 	// Bulk operations
@@ -115,10 +103,7 @@ export function useAppointment(id: string) {
 		gcTime: HealthcareQueryConfig.appointment.gcTime,
 
 		retry: (failureCount, error) => {
-			if (
-				ApiHelpers.isAuthError(error) ||
-				(error as any)?.message?.includes("not found")
-			) {
+			if (ApiHelpers.isAuthError(error) || (error as any)?.message?.includes("not found")) {
 				return false;
 			}
 			return failureCount < 2;
@@ -133,9 +118,7 @@ export function useAppointments(filters?: AppointmentQuery) {
 	return queryUtils.createQuery({
 		queryKey: QueryKeys.appointments.list(filters),
 		queryFn: async () => {
-			const validatedFilters = filters
-				? AppointmentQuerySchema.parse(filters)
-				: {};
+			const validatedFilters = filters ? AppointmentQuerySchema.parse(filters) : {};
 
 			const response = await apiClient.api.v1.appointments.$get({
 				query: validatedFilters as any,
@@ -168,9 +151,7 @@ export function useCreateAppointment() {
 	const queryUtils = useHealthcareQueryUtils();
 
 	return queryUtils.createMutation({
-		mutationFn: async (
-			appointmentData: CreateAppointment,
-		): Promise<ApiResponse<AppointmentResponse["data"]>> => {
+		mutationFn: async (appointmentData: CreateAppointment): Promise<ApiResponse<AppointmentResponse["data"]>> => {
 			// Validate appointment data
 			const validatedData = CreateAppointmentSchema.parse(appointmentData);
 
@@ -231,9 +212,7 @@ export function useUpdateAppointment(id: string) {
 	const queryUtils = useHealthcareQueryUtils();
 
 	return queryUtils.createMutation({
-		mutationFn: async (
-			appointmentData: UpdateAppointment,
-		): Promise<ApiResponse<AppointmentResponse["data"]>> => {
+		mutationFn: async (appointmentData: UpdateAppointment): Promise<ApiResponse<AppointmentResponse["data"]>> => {
 			const validatedData = UpdateAppointmentSchema.parse(appointmentData);
 
 			const response = await apiClient.api.v1.appointments[":id"].$put({
@@ -267,12 +246,8 @@ export function useUpdateAppointment(id: string) {
 		],
 
 		// Optimistic update
-		...queryUtils.createOptimisticUpdate<AppointmentBase>(
-			QueryKeys.appointments.detail(id),
-			(oldData) =>
-				oldData
-					? { ...oldData, ...appointmentData }
-					: (oldData as AppointmentBase),
+		...queryUtils.createOptimisticUpdate<AppointmentBase>(QueryKeys.appointments.detail(id), (oldData) =>
+			oldData ? { ...oldData, ...appointmentData } : (oldData as AppointmentBase)
 		),
 
 		onSuccess: (_response, _variables) => {
@@ -332,11 +307,7 @@ export function useCancelAppointment() {
 		showErrorToast: true,
 		successMessage: "Consulta cancelada com sucesso",
 
-		invalidateQueries: [
-			QueryKeys.appointments.all(),
-			QueryKeys.appointments.stats(),
-			QueryKeys.professionals.all(),
-		],
+		invalidateQueries: [QueryKeys.appointments.all(), QueryKeys.appointments.stats(), QueryKeys.professionals.all()],
 
 		onSuccess: (_response, variables) => {
 			// Log appointment cancellation
@@ -378,15 +349,12 @@ export function useDeleteAppointment() {
 		showErrorToast: true,
 		successMessage: "Consulta removida com sucesso",
 
-		invalidateQueries: [
-			QueryKeys.appointments.all(),
-			QueryKeys.appointments.stats(),
-		],
+		invalidateQueries: [QueryKeys.appointments.all(), QueryKeys.appointments.stats()],
 
 		onMutate: async (id: string) => {
 			// Show confirmation dialog
 			const confirmed = window.confirm(
-				"Tem certeza que deseja remover esta consulta? Esta ação não pode ser desfeita.",
+				"Tem certeza que deseja remover esta consulta? Esta ação não pode ser desfeita."
 			);
 
 			if (!confirmed) {
@@ -435,9 +403,7 @@ export function useCheckInAppointment() {
 		}): Promise<ApiResponse<AppointmentResponse["data"]>> => {
 			const validatedData = CheckInAppointmentSchema.parse(checkInData);
 
-			const response = await apiClient.api.v1.appointments[":id"][
-				"check-in"
-			].$post({
+			const response = await apiClient.api.v1.appointments[":id"]["check-in"].$post({
 				param: { id },
 				json: validatedData,
 			});
@@ -448,9 +414,7 @@ export function useCheckInAppointment() {
 		validator: (data: unknown) => {
 			const response = AppointmentResponseSchema.parse(data);
 			if (!response.success) {
-				throw new Error(
-					response.error?.code || "Failed to check in appointment",
-				);
+				throw new Error(response.error?.code || "Failed to check in appointment");
 			}
 			return response.data!;
 		},
@@ -498,9 +462,7 @@ export function useCompleteAppointment() {
 		}): Promise<ApiResponse<AppointmentResponse["data"]>> => {
 			const validatedData = CompleteAppointmentSchema.parse(completionData);
 
-			const response = await apiClient.api.v1.appointments[
-				":id"
-			].complete.$post({
+			const response = await apiClient.api.v1.appointments[":id"].complete.$post({
 				param: { id },
 				json: validatedData,
 			});
@@ -511,9 +473,7 @@ export function useCompleteAppointment() {
 		validator: (data: unknown) => {
 			const response = AppointmentResponseSchema.parse(data);
 			if (!response.success) {
-				throw new Error(
-					response.error?.code || "Failed to complete appointment",
-				);
+				throw new Error(response.error?.code || "Failed to complete appointment");
 			}
 			return response.data!;
 		},
@@ -567,9 +527,7 @@ export function useRescheduleAppointment() {
 			newTime: string;
 			reason?: string;
 		}): Promise<ApiResponse<AppointmentResponse["data"]>> => {
-			const response = await apiClient.api.v1.appointments[
-				":id"
-			].reschedule.$post({
+			const response = await apiClient.api.v1.appointments[":id"].reschedule.$post({
 				param: { id },
 				json: {
 					scheduled_date: newDate,
@@ -584,9 +542,7 @@ export function useRescheduleAppointment() {
 		validator: (data: unknown) => {
 			const response = AppointmentResponseSchema.parse(data);
 			if (!response.success) {
-				throw new Error(
-					response.error?.code || "Failed to reschedule appointment",
-				);
+				throw new Error(response.error?.code || "Failed to reschedule appointment");
 			}
 			return response.data!;
 		},
@@ -598,11 +554,7 @@ export function useRescheduleAppointment() {
 		showErrorToast: true,
 		successMessage: "Consulta reagendada com sucesso",
 
-		invalidateQueries: [
-			QueryKeys.appointments.detail(id),
-			QueryKeys.appointments.all(),
-			QueryKeys.professionals.all(),
-		],
+		invalidateQueries: [QueryKeys.appointments.detail(id), QueryKeys.appointments.all(), QueryKeys.professionals.all()],
 	});
 }
 
@@ -660,10 +612,7 @@ export function useWeeklySchedule(weekStart: string, professionalId?: string) {
 
 	return queryUtils.createQuery({
 		queryKey: professionalId
-			? [
-					...QueryKeys.professionals.schedule(professionalId, weekStart),
-					"weekly",
-				]
+			? [...QueryKeys.professionals.schedule(professionalId, weekStart), "weekly"]
 			: [...QueryKeys.appointments.calendar(weekStart), "weekly"],
 		queryFn: async () => {
 			const response = professionalId
@@ -699,17 +648,9 @@ export function useAvailableSlots() {
 	return useCallback(
 		(professionalId: string, date: string, serviceId?: string) => {
 			return queryUtils.createQuery({
-				queryKey: [
-					"appointments",
-					"available-slots",
-					professionalId,
-					date,
-					serviceId,
-				],
+				queryKey: ["appointments", "available-slots", professionalId, date, serviceId],
 				queryFn: async () => {
-					const response = await apiClient.api.v1.appointments[
-						"available-slots"
-					].$get({
+					const response = await apiClient.api.v1.appointments["available-slots"].$get({
 						query: {
 							professional_id: professionalId,
 							date,
@@ -732,7 +673,7 @@ export function useAvailableSlots() {
 				gcTime: 1000 * 60 * 2, // 2 minutes
 			});
 		},
-		[queryUtils],
+		[queryUtils]
 	);
 }
 
@@ -741,9 +682,7 @@ export function useBulkUpdateAppointments() {
 	const queryUtils = useHealthcareQueryUtils();
 
 	return queryUtils.createMutation({
-		mutationFn: async (
-			bulkData: BulkUpdateAppointments,
-		): Promise<ApiResponse<{ updated_count: number }>> => {
+		mutationFn: async (bulkData: BulkUpdateAppointments): Promise<ApiResponse<{ updated_count: number }>> => {
 			const validatedData = BulkUpdateAppointmentsSchema.parse(bulkData);
 
 			const response = await apiClient.api.v1.appointments.bulk.$put({
@@ -760,10 +699,7 @@ export function useBulkUpdateAppointments() {
 		showErrorToast: true,
 		successMessage: "Consultas atualizadas com sucesso",
 
-		invalidateQueries: [
-			QueryKeys.appointments.all(),
-			QueryKeys.appointments.stats(),
-		],
+		invalidateQueries: [QueryKeys.appointments.all(), QueryKeys.appointments.stats()],
 	});
 }
 
@@ -820,9 +756,7 @@ export function useAppointmentUtils() {
 
 			// Calculate time until appointment
 			getTimeUntilAppointment: (appointment: AppointmentBase): string => {
-				const appointmentTime = new Date(
-					`${appointment.scheduled_date}T${appointment.scheduled_time}`,
-				);
+				const appointmentTime = new Date(`${appointment.scheduled_date}T${appointment.scheduled_time}`);
 				const now = new Date();
 				const diffMs = appointmentTime.getTime() - now.getTime();
 
@@ -831,12 +765,8 @@ export function useAppointmentUtils() {
 				}
 
 				const diffDays = Math.floor(diffMs / (24 * 60 * 60 * 1000));
-				const diffHours = Math.floor(
-					(diffMs % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000),
-				);
-				const diffMinutes = Math.floor(
-					(diffMs % (60 * 60 * 1000)) / (60 * 1000),
-				);
+				const diffHours = Math.floor((diffMs % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
+				const diffMinutes = Math.floor((diffMs % (60 * 60 * 1000)) / (60 * 1000));
 
 				if (diffDays > 0) {
 					return `${diffDays} dias`;
@@ -856,19 +786,12 @@ export function useAppointmentUtils() {
 
 			// Check if appointment is overdue
 			isOverdue: (appointment: AppointmentBase): boolean => {
-				const appointmentTime = new Date(
-					`${appointment.scheduled_date}T${appointment.scheduled_time}`,
-				);
-				return (
-					appointmentTime < new Date() &&
-					!["completed", "cancelled", "no_show"].includes(appointment.status)
-				);
+				const appointmentTime = new Date(`${appointment.scheduled_date}T${appointment.scheduled_time}`);
+				return appointmentTime < new Date() && !["completed", "cancelled", "no_show"].includes(appointment.status);
 			},
 
 			// Get next appointment status in workflow
-			getNextStatus: (
-				currentStatus: AppointmentStatus,
-			): AppointmentStatus[] => {
+			getNextStatus: (currentStatus: AppointmentStatus): AppointmentStatus[] => {
 				const statusFlow = {
 					scheduled: ["confirmed", "cancelled"],
 					confirmed: ["in_progress", "cancelled", "no_show"],
@@ -896,17 +819,12 @@ export function useAppointmentUtils() {
 
 			// Get appointment revenue
 			getAppointmentRevenue: (appointment: AppointmentBase): number => {
-				return appointment.services_performed.reduce(
-					(total, service) => total + service.final_price,
-					0,
-				);
+				return appointment.services_performed.reduce((total, service) => total + service.final_price, 0);
 			},
 
 			// Check if appointment can be modified
 			canModifyAppointment: (appointment: AppointmentBase): boolean => {
-				return !["completed", "cancelled", "no_show"].includes(
-					appointment.status,
-				);
+				return !["completed", "cancelled", "no_show"].includes(appointment.status);
 			},
 
 			// Check if appointment can be cancelled
@@ -916,10 +834,7 @@ export function useAppointmentUtils() {
 
 			// Invalidate appointment data
 			invalidateAppointment: (appointmentId: string) => {
-				InvalidationHelpers.invalidateAppointmentData(
-					queryUtils.queryClient,
-					appointmentId,
-				);
+				InvalidationHelpers.invalidateAppointmentData(queryUtils.queryClient, appointmentId);
 			},
 
 			// Invalidate all appointment data
@@ -939,7 +854,7 @@ export function useAppointmentUtils() {
 				return parts.join(" - ");
 			},
 		}),
-		[queryUtils],
+		[queryUtils]
 	);
 }
 
@@ -998,7 +913,7 @@ export function useAppointmentManagement(): AppointmentManagementContext {
 			bulkUpdateAppointments,
 			getAvailableSlots,
 			utils,
-		],
+		]
 	);
 }
 

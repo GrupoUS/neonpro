@@ -1,12 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 	output: "standalone",
-	transpilePackages: [
-		"@neonpro/ui",
-		"@neonpro/utils",
-		"@neonpro/domain",
-		"@neonpro/db",
-	],
+	transpilePackages: ["@neonpro/ui", "@neonpro/utils", "@neonpro/domain", "@neonpro/db"],
 	eslint: {
 		// HEALTHCARE CRITICAL: Using Biome for code quality validation
 		ignoreDuringBuilds: true, // Biome handles linting in CI/CD pipeline

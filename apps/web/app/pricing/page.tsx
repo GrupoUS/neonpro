@@ -1,24 +1,7 @@
 "use client";
 
-import {
-	Badge,
-	Button,
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-	Separator,
-} from "@neonpro/ui";
-import {
-	Briefcase,
-	Building2,
-	Check,
-	Shield,
-	Star,
-	Users,
-	Zap,
-} from "lucide-react";
+import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Separator } from "@neonpro/ui";
+import { Briefcase, Building2, Check, Shield, Star, Users, Zap } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type React from "react";
 
@@ -115,31 +98,24 @@ export default function PricingPage() {
 		router.push(`/signup?plan=${planId}`);
 	};
 
-	const PlanIcon = ({ icon: Icon }: { icon: React.ComponentType<any> }) => (
-		<Icon className="h-8 w-8" />
-	);
+	const PlanIcon = ({ icon: Icon }: { icon: React.ComponentType<any> }) => <Icon className="h-8 w-8" />;
 
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50">
 			{/* Header */}
 			<div className="container mx-auto px-4 py-16">
 				<div className="mb-16 text-center">
-					<h1 className="mb-4 font-bold text-4xl tracking-tight">
-						Planos e Preços
-					</h1>
+					<h1 className="mb-4 font-bold text-4xl tracking-tight">Planos e Preços</h1>
 					<p className="mx-auto max-w-2xl text-muted-foreground text-xl">
-						Escolha o plano ideal para sua clínica ou organização de saúde.
-						Todos os planos incluem compliance LGPD e segurança de dados.
+						Escolha o plano ideal para sua clínica ou organização de saúde. Todos os planos incluem compliance LGPD e
+						segurança de dados.
 					</p>
 				</div>
 
 				{/* Pricing Cards */}
 				<div className="mb-16 grid gap-8 md:grid-cols-3">
 					{PRICING_PLANS.map((plan) => (
-						<Card
-							className={`relative ${plan.popular ? "scale-105 border-blue-500 shadow-lg" : ""}`}
-							key={plan.id}
-						>
+						<Card className={`relative ${plan.popular ? "scale-105 border-blue-500 shadow-lg" : ""}`} key={plan.id}>
 							{plan.popular && (
 								<div className="-top-3 -translate-x-1/2 absolute left-1/2 transform">
 									<Badge className="bg-blue-500 px-3 py-1 text-white">
@@ -158,9 +134,7 @@ export default function PricingPage() {
 
 								<div className="mt-4">
 									<span className="font-bold text-4xl">R$ {plan.price}</span>
-									<span className="text-muted-foreground">
-										/{plan.billingPeriod === "month" ? "mês" : "ano"}
-									</span>
+									<span className="text-muted-foreground">/{plan.billingPeriod === "month" ? "mês" : "ano"}</span>
 								</div>
 							</CardHeader>
 
@@ -184,11 +158,7 @@ export default function PricingPage() {
 									<div className="grid grid-cols-2 gap-4 text-sm">
 										<div>
 											<span className="text-muted-foreground">Usuários:</span>
-											<p className="font-medium">
-												{plan.maxUsers === 999
-													? "Ilimitados"
-													: `Até ${plan.maxUsers}`}
-											</p>
+											<p className="font-medium">{plan.maxUsers === 999 ? "Ilimitados" : `Até ${plan.maxUsers}`}</p>
 										</div>
 										<div>
 											<span className="text-muted-foreground">Storage:</span>
@@ -223,9 +193,7 @@ export default function PricingPage() {
 				<Card className="mb-16">
 					<CardHeader>
 						<CardTitle className="text-center">Comparação Detalhada</CardTitle>
-						<CardDescription className="text-center">
-							Veja todos os recursos disponíveis em cada plano
-						</CardDescription>
+						<CardDescription className="text-center">Veja todos os recursos disponíveis em cada plano</CardDescription>
 					</CardHeader>
 					<CardContent>
 						<div className="overflow-x-auto">
@@ -290,9 +258,7 @@ export default function PricingPage() {
 							<Shield className="mr-2 h-5 w-5" />
 							Segurança e Compliance
 						</CardTitle>
-						<CardDescription>
-							Todos os planos incluem as mais altas medidas de segurança
-						</CardDescription>
+						<CardDescription>Todos os planos incluem as mais altas medidas de segurança</CardDescription>
 					</CardHeader>
 					<CardContent>
 						<div className="grid gap-6 md:grid-cols-2">
@@ -345,9 +311,7 @@ export default function PricingPage() {
 				{/* FAQ */}
 				<div className="mt-16 text-center">
 					<h2 className="mb-4 font-bold text-2xl">Perguntas Frequentes</h2>
-					<p className="mb-8 text-muted-foreground">
-						Não encontrou o que procura? Entre em contato conosco.
-					</p>
+					<p className="mb-8 text-muted-foreground">Não encontrou o que procura? Entre em contato conosco.</p>
 					<Button variant="outline">Falar com Vendas</Button>
 				</div>
 			</div>

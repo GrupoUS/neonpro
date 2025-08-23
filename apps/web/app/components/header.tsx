@@ -16,9 +16,7 @@ export function Header() {
 		<header className="flex h-16 items-center justify-between border-healthcare-border border-b bg-background px-6">
 			<div className="flex items-center space-x-4">
 				<SidebarTrigger />
-				<h1 className="font-semibold font-serif text-foreground text-xl">
-					Dashboard NeonPro
-				</h1>
+				<h1 className="font-semibold font-serif text-foreground text-xl">Dashboard NeonPro</h1>
 			</div>
 
 			<div className="flex items-center space-x-4">
@@ -52,31 +50,18 @@ export function Header() {
 				{/* User Menu */}
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
-						<Button
-							className="relative h-8 w-8 rounded-full hover:bg-healthcare-primary/10"
-							variant="ghost"
-						>
+						<Button className="relative h-8 w-8 rounded-full hover:bg-healthcare-primary/10" variant="ghost">
 							<Avatar className="h-8 w-8">
 								<AvatarImage alt="@usuario" src="/avatars/01.png" />
-								<AvatarFallback className="bg-healthcare-primary font-medium text-white">
-									AD
-								</AvatarFallback>
+								<AvatarFallback className="bg-healthcare-primary font-medium text-white">AD</AvatarFallback>
 							</Avatar>
 						</Button>
 					</DropdownMenuTrigger>
-					<DropdownMenuContent
-						align="end"
-						className="w-56 border-healthcare-border"
-						forceMount
-					>
+					<DropdownMenuContent align="end" className="w-56 border-healthcare-border" forceMount>
 						<DropdownMenuLabel className="font-normal">
 							<div className="flex flex-col space-y-1">
-								<p className="font-medium text-foreground text-sm leading-none">
-									Dr. Administrador
-								</p>
-								<p className="text-healthcare-text-muted text-xs leading-none">
-									admin@neonpro.com
-								</p>
+								<p className="font-medium text-foreground text-sm leading-none">Dr. Administrador</p>
+								<p className="text-healthcare-text-muted text-xs leading-none">admin@neonpro.com</p>
 							</div>
 						</DropdownMenuLabel>
 						<DropdownMenuSeparator className="bg-healthcare-border" />

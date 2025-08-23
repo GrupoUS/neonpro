@@ -123,6 +123,9 @@ export default defineConfig({
 
 	// Enhanced use block for test isolation
 	use: {
+		// Base URL for all tests - CRITICAL FOR E2E FUNCTIONALITY
+		baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:3000",
+
 		// Optimized for maximum performance
 		actionTimeout: 15_000, // 15 seconds max for actions
 		navigationTimeout: 30_000, // 30 seconds for navigation
@@ -143,6 +146,7 @@ export default defineConfig({
 		permissions: [],
 
 		// Optimized for SPA applications
+		waitUntil: "networkidle",
 	},
 	projects: [
 		{
@@ -178,24 +182,14 @@ export default defineConfig({
 		},
 	],
 
-	// Development server configuration
-	// DISABLED: webServer disabled to prevent startup issues
-	// To enable: Set environment variable PLAYWRIGHT_START_SERVER=true
-	// Example: PLAYWRIGHT_START_SERVER=true npx playwright test
-	...(process.env.PLAYWRIGHT_START_SERVER === "true"
-		? {
-				webServer: {
-					command: "pnpm dev:web", // Updated to target specific web app
-					port: 3000,
-					reuseExistingServer: !process.env.CI,
-					timeout: 120_000, // 2 minutes for dev server startup
-					env: {
-						NODE_ENV: "test",
-						NEXT_TELEMETRY_DISABLED: "1",
-					},
-				},
-			}
-		: {}),
+	// Development server configuration - DISABLED temporarily
+	// TODO: Re-enable after fixing turbo/pnpm configuration
+	// webServer: {
+	//   command: "npm run dev:web",
+	//   port: 3000,
+	//   reuseExistingServer: !process.env.CI,
+	//   timeout: 120_000,
+	// },
 });
 
 /**

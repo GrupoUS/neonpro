@@ -14,18 +14,8 @@ type LoginFormProps = {
 
 const LoginForm = ({ onSubmit }: LoginFormProps) => (
 	<form data-testid="auth-login-form" onSubmit={onSubmit}>
-		<input
-			data-testid="auth-login-email"
-			name="email"
-			placeholder="Email"
-			type="email"
-		/>
-		<input
-			data-testid="auth-login-password"
-			name="password"
-			placeholder="Senha"
-			type="password"
-		/>
+		<input data-testid="auth-login-email" name="email" placeholder="Email" type="email" />
+		<input data-testid="auth-login-password" name="password" placeholder="Senha" type="password" />
 		<button data-testid="auth-login-button" type="submit">
 			Entrar
 		</button>

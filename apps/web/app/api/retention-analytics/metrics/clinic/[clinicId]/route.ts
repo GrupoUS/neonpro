@@ -29,10 +29,7 @@ const ClinicMetricsQuerySchema = z.object({
 // GET CLINIC RETENTION METRICS
 // =====================================================================================
 
-export async function GET(
-	request: NextRequest,
-	{ params }: { params: Promise<{ clinicId: string }> },
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ clinicId: string }> }) {
 	try {
 		const resolvedParams = await params;
 		// Validate clinic ID parameter
@@ -46,7 +43,7 @@ export async function GET(
 					error: "Invalid clinic ID",
 					details: clinicValidation.error.issues,
 				},
-				{ status: 400 },
+				{ status: 400 }
 			);
 		}
 
@@ -68,12 +65,11 @@ export async function GET(
 					error: "Invalid query parameters",
 					details: queryValidation.error.issues,
 				},
-				{ status: 400 },
+				{ status: 400 }
 			);
 		}
 
-		const { limit, offset, startDate, endDate, riskLevel } =
-			queryValidation.data;
+		const { limit, offset, startDate, endDate, riskLevel } = queryValidation.data;
 
 		// Verify authentication
 		const supabase = await createClient();
@@ -94,17 +90,11 @@ export async function GET(
 			.single();
 
 		if (profileError || !userProfile) {
-			return NextResponse.json(
-				{ error: "User profile not found" },
-				{ status: 403 },
-			);
+			return NextResponse.json({ error: "User profile not found" }, { status: 403 });
 		}
 
 		if (userProfile.clinic_id !== clinicId) {
-			return NextResponse.json(
-				{ error: "Access denied to clinic data" },
-				{ status: 403 },
-			);
+			return NextResponse.json({ error: "Access denied to clinic data" }, { status: 403 });
 		}
 
 		// Verify clinic exists
@@ -120,11 +110,7 @@ export async function GET(
 
 		// Get clinic retention metrics
 		const retentionService = new RetentionAnalyticsService();
-		const metrics = await retentionService.getClinicRetentionMetrics(
-			clinicId,
-			limit,
-			offset,
-		);
+		const metrics = await retentionService.getClinicRetentionMetrics(clinicId, limit, offset);
 
 		// Apply additional filters if provided
 		let filteredMetrics = metrics;
@@ -132,16 +118,10 @@ export async function GET(
 		if (startDate || endDate || riskLevel) {
 			filteredMetrics = metrics.filter((metric) => {
 				// Filter by date range
-				if (
-					startDate &&
-					new Date(metric.last_appointment_date) < new Date(startDate)
-				) {
+				if (startDate && new Date(metric.last_appointment_date) < new Date(startDate)) {
 					return false;
 				}
-				if (
-					endDate &&
-					new Date(metric.last_appointment_date) > new Date(endDate)
-				) {
+				if (endDate && new Date(metric.last_appointment_date) > new Date(endDate)) {
 					return false;
 				}
 
@@ -158,28 +138,16 @@ export async function GET(
 		const summary = {
 			total_patients: filteredMetrics.length,
 			average_retention_rate:
-				filteredMetrics.reduce((sum, m) => sum + m.retention_rate, 0) /
-					filteredMetrics.length || 0,
-			average_churn_risk:
-				filteredMetrics.reduce((sum, m) => sum + m.churn_risk_score, 0) /
-					filteredMetrics.length || 0,
+				filteredMetrics.reduce((sum, m) => sum + m.retention_rate, 0) / filteredMetrics.length || 0,
+			average_churn_risk: filteredMetrics.reduce((sum, m) => sum + m.churn_risk_score, 0) / filteredMetrics.length || 0,
 			risk_distribution: {
 				low: filteredMetrics.filter((m) => m.churn_risk_level === "low").length,
-				medium: filteredMetrics.filter((m) => m.churn_risk_level === "medium")
-					.length,
-				high: filteredMetrics.filter((m) => m.churn_risk_level === "high")
-					.length,
-				critical: filteredMetrics.filter(
-					(m) => m.churn_risk_level === "critical",
-				).length,
+				medium: filteredMetrics.filter((m) => m.churn_risk_level === "medium").length,
+				high: filteredMetrics.filter((m) => m.churn_risk_level === "high").length,
+				critical: filteredMetrics.filter((m) => m.churn_risk_level === "critical").length,
 			},
-			total_lifetime_value: filteredMetrics.reduce(
-				(sum, m) => sum + m.lifetime_value,
-				0,
-			),
-			patients_at_risk: filteredMetrics.filter((m) =>
-				["high", "critical"].includes(m.churn_risk_level),
-			).length,
+			total_lifetime_value: filteredMetrics.reduce((sum, m) => sum + m.lifetime_value, 0),
+			patients_at_risk: filteredMetrics.filter((m) => ["high", "critical"].includes(m.churn_risk_level)).length,
 		};
 
 		return NextResponse.json({
@@ -207,7 +175,7 @@ export async function GET(
 				error: "Internal server error",
 				message: error instanceof Error ? error.message : "Unknown error",
 			},
-			{ status: 500 },
+			{ status: 500 }
 		);
 	}
 }
@@ -216,10 +184,7 @@ export async function GET(
 // BULK CALCULATE CLINIC RETENTION METRICS
 // =====================================================================================
 
-export async function POST(
-	request: NextRequest,
-	{ params }: { params: Promise<{ clinicId: string }> },
-) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ clinicId: string }> }) {
 	try {
 		const resolvedParams = await params;
 		// Validate clinic ID parameter
@@ -233,7 +198,7 @@ export async function POST(
 					error: "Invalid clinic ID",
 					details: clinicValidation.error.issues,
 				},
-				{ status: 400 },
+				{ status: 400 }
 			);
 		}
 
@@ -262,26 +227,17 @@ export async function POST(
 			.single();
 
 		if (profileError || !userProfile) {
-			return NextResponse.json(
-				{ error: "User profile not found" },
-				{ status: 403 },
-			);
+			return NextResponse.json({ error: "User profile not found" }, { status: 403 });
 		}
 
 		if (userProfile.clinic_id !== clinicId) {
-			return NextResponse.json(
-				{ error: "Access denied to clinic data" },
-				{ status: 403 },
-			);
+			return NextResponse.json({ error: "Access denied to clinic data" }, { status: 403 });
 		}
 
 		// Check permissions for bulk calculations
 		const allowedRoles = ["admin", "manager", "analyst"];
 		if (!allowedRoles.includes(userProfile.role)) {
-			return NextResponse.json(
-				{ error: "Insufficient permissions for bulk calculations" },
-				{ status: 403 },
-			);
+			return NextResponse.json({ error: "Insufficient permissions for bulk calculations" }, { status: 403 });
 		}
 
 		// Get patients to calculate metrics for
@@ -310,10 +266,7 @@ export async function POST(
 			.in("id", targetPatientIds);
 
 		if (validationError || validPatients.length !== targetPatientIds.length) {
-			return NextResponse.json(
-				{ error: "Some patients do not belong to the specified clinic" },
-				{ status: 400 },
-			);
+			return NextResponse.json({ error: "Some patients do not belong to the specified clinic" }, { status: 400 });
 		}
 
 		// Calculate metrics in batches to avoid overwhelming the system
@@ -328,11 +281,7 @@ export async function POST(
 
 			const batchPromises = batch.map(async (patientId) => {
 				try {
-					const metrics =
-						await retentionService.calculatePatientRetentionMetrics(
-							patientId,
-							clinicId,
-						);
+					const metrics = await retentionService.calculatePatientRetentionMetrics(patientId, clinicId);
 					return { patientId, metrics, success: true };
 				} catch (error) {
 					return {
@@ -386,7 +335,7 @@ export async function POST(
 				error: "Internal server error",
 				message: error instanceof Error ? error.message : "Unknown error",
 			},
-			{ status: 500 },
+			{ status: 500 }
 		);
 	}
 }

@@ -11,15 +11,7 @@
  */
 
 // Mock Form components
-import {
-	Form,
-	FormControl,
-	FormDescription,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from "@neonpro/ui";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@neonpro/ui";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -33,9 +25,7 @@ vi.mock("@neonpro/utils/validation", () => ({
 }));
 
 // Mock theme provider
-const ThemeWrapper = ({ children }: { children: React.ReactNode }) => (
-	<div className="neonprov1-theme">{children}</div>
-);
+const ThemeWrapper = ({ children }: { children: React.ReactNode }) => <div className="neonprov1-theme">{children}</div>;
 
 describe("Form Component - NeonPro Healthcare", () => {
 	afterEach(() => {
@@ -51,15 +41,9 @@ describe("Form Component - NeonPro Healthcare", () => {
 							<FormItem>
 								<FormLabel>Nome Completo *</FormLabel>
 								<FormControl>
-									<input
-										data-testid="name-input"
-										placeholder="Digite o nome completo"
-										type="text"
-									/>
+									<input data-testid="name-input" placeholder="Digite o nome completo" type="text" />
 								</FormControl>
-								<FormDescription>
-									Nome completo conforme documento de identidade
-								</FormDescription>
+								<FormDescription>Nome completo conforme documento de identidade</FormDescription>
 							</FormItem>
 						</FormField>
 
@@ -67,17 +51,12 @@ describe("Form Component - NeonPro Healthcare", () => {
 							<FormItem>
 								<FormLabel>CPF *</FormLabel>
 								<FormControl>
-									<input
-										data-testid="cpf-input"
-										maxLength={14}
-										placeholder="000.000.000-00"
-										type="text"
-									/>
+									<input data-testid="cpf-input" maxLength={14} placeholder="000.000.000-00" type="text" />
 								</FormControl>
 							</FormItem>
 						</FormField>
 					</Form>
-				</ThemeWrapper>,
+				</ThemeWrapper>
 			);
 			expect(screen.getByTestId("patient-form")).toBeInTheDocument();
 			expect(screen.getByTestId("name-input")).toBeInTheDocument();
@@ -116,7 +95,7 @@ describe("Form Component - NeonPro Healthcare", () => {
 							</FormItem>
 						</FormField>
 					</Form>
-				</ThemeWrapper>,
+				</ThemeWrapper>
 			);
 
 			const cpfInput = screen.getByTestId("cpf-input");
@@ -140,16 +119,12 @@ describe("Form Component - NeonPro Healthcare", () => {
 							<FormItem>
 								<FormLabel>Telefone *</FormLabel>
 								<FormControl>
-									<input
-										data-testid="phone-input"
-										placeholder="(11) 99999-9999"
-										type="tel"
-									/>
+									<input data-testid="phone-input" placeholder="(11) 99999-9999" type="tel" />
 								</FormControl>
 							</FormItem>
 						</FormField>
 					</Form>
-				</ThemeWrapper>,
+				</ThemeWrapper>
 			);
 
 			const phoneInput = screen.getByTestId("phone-input");
@@ -169,23 +144,16 @@ describe("Form Component - NeonPro Healthcare", () => {
 					<Form data-testid="lgpd-form">
 						<FormField name="lgpdConsent">
 							<FormItem className="lgpd-consent-section">
-								<FormLabel className="font-semibold text-lg">
-									Consentimento para Tratamento de Dados (LGPD)
-								</FormLabel>
+								<FormLabel className="font-semibold text-lg">Consentimento para Tratamento de Dados (LGPD)</FormLabel>
 
 								<div className="consent-options">
 									<FormField name="dataProcessing">
 										<FormItem className="flex items-center space-x-2">
 											<FormControl>
-												<input
-													data-testid="consent-processing"
-													required
-													type="checkbox"
-												/>
+												<input data-testid="consent-processing" required type="checkbox" />
 											</FormControl>
 											<FormLabel className="text-sm">
-												Autorizo o processamento dos meus dados pessoais para
-												fins de atendimento médico *
+												Autorizo o processamento dos meus dados pessoais para fins de atendimento médico *
 											</FormLabel>
 										</FormItem>
 									</FormField>
@@ -193,28 +161,21 @@ describe("Form Component - NeonPro Healthcare", () => {
 									<FormField name="marketingCommunications">
 										<FormItem className="flex items-center space-x-2">
 											<FormControl>
-												<input
-													data-testid="consent-marketing"
-													type="checkbox"
-												/>
+												<input data-testid="consent-marketing" type="checkbox" />
 											</FormControl>
-											<FormLabel className="text-sm">
-												Aceito receber comunicações de marketing e promoções
-											</FormLabel>
+											<FormLabel className="text-sm">Aceito receber comunicações de marketing e promoções</FormLabel>
 										</FormItem>
 									</FormField>
 								</div>
 							</FormItem>
 						</FormField>
 					</Form>
-				</ThemeWrapper>,
+				</ThemeWrapper>
 			);
 
 			expect(screen.getByTestId("consent-processing")).toBeInTheDocument();
 			expect(screen.getByTestId("consent-marketing")).toBeInTheDocument();
-			expect(
-				screen.getByText(/Autorizo o processamento dos meus dados/),
-			).toBeInTheDocument();
+			expect(screen.getByText(/Autorizo o processamento dos meus dados/)).toBeInTheDocument();
 		});
 
 		it("should enforce mandatory data processing consent", async () => {
@@ -229,15 +190,9 @@ describe("Form Component - NeonPro Healthcare", () => {
 						<FormField name="dataProcessing">
 							<FormItem>
 								<FormControl>
-									<input
-										data-testid="mandatory-consent"
-										required
-										type="checkbox"
-									/>
+									<input data-testid="mandatory-consent" required type="checkbox" />
 								</FormControl>
-								<FormLabel>
-									Consentimento obrigatório para processamento de dados *
-								</FormLabel>
+								<FormLabel>Consentimento obrigatório para processamento de dados *</FormLabel>
 								<FormMessage data-testid="consent-error" />
 							</FormItem>
 						</FormField>
@@ -246,13 +201,11 @@ describe("Form Component - NeonPro Healthcare", () => {
 							Cadastrar Paciente
 						</button>
 					</form>
-				</ThemeWrapper>,
+				</ThemeWrapper>
 			);
 
 			// Check that checkbox is unchecked initially
-			const checkbox = screen.getByTestId(
-				"mandatory-consent",
-			) as HTMLInputElement;
+			const checkbox = screen.getByTestId("mandatory-consent") as HTMLInputElement;
 			expect(checkbox.checked).toBe(false);
 
 			// Try to submit without consent
@@ -270,9 +223,7 @@ describe("Form Component - NeonPro Healthcare", () => {
 					<Form data-testid="accessible-form">
 						<FormField name="emergencyContact">
 							<FormItem>
-								<FormLabel id="emergency-label">
-									Contato de Emergência *
-								</FormLabel>
+								<FormLabel id="emergency-label">Contato de Emergência *</FormLabel>
 								<FormControl>
 									<input
 										aria-describedby="emergency-help emergency-error"
@@ -282,22 +233,17 @@ describe("Form Component - NeonPro Healthcare", () => {
 										type="text"
 									/>
 								</FormControl>
-								<FormDescription id="emergency-help">
-									Nome e telefone de contato para emergências
-								</FormDescription>
+								<FormDescription id="emergency-help">Nome e telefone de contato para emergências</FormDescription>
 								<FormMessage id="emergency-error" role="alert" />
 							</FormItem>
 						</FormField>
 					</Form>
-				</ThemeWrapper>,
+				</ThemeWrapper>
 			);
 
 			const input = screen.getByTestId("emergency-input");
 			expect(input).toHaveAttribute("aria-labelledby", "emergency-label");
-			expect(input).toHaveAttribute(
-				"aria-describedby",
-				"emergency-help emergency-error",
-			);
+			expect(input).toHaveAttribute("aria-describedby", "emergency-help emergency-error");
 			expect(input).toHaveAttribute("aria-required", "true");
 		});
 
@@ -311,21 +257,13 @@ describe("Form Component - NeonPro Healthcare", () => {
 							<FormItem>
 								<FormLabel>Email *</FormLabel>
 								<FormControl>
-									<input
-										aria-describedby="email-error"
-										data-testid="form-test-email-input"
-										type="email"
-									/>
+									<input aria-describedby="email-error" data-testid="form-test-email-input" type="email" />
 								</FormControl>
-								<FormMessage
-									data-testid="email-error-message"
-									id="email-error"
-									role="alert"
-								/>
+								<FormMessage data-testid="email-error-message" id="email-error" role="alert" />
 							</FormItem>
 						</FormField>
 					</Form>
-				</ThemeWrapper>,
+				</ThemeWrapper>
 			);
 
 			const emailInput = screen.getByTestId("form-test-email-input");
@@ -342,9 +280,7 @@ describe("Form Component - NeonPro Healthcare", () => {
 
 	describe("Error Handling and Edge Cases", () => {
 		it("should handle form submission errors gracefully", async () => {
-			const mockSubmit = vi
-				.fn()
-				.mockRejectedValue(new Error("Servidor indisponível"));
+			const mockSubmit = vi.fn().mockRejectedValue(new Error("Servidor indisponível"));
 			const user = userEvent.setup();
 
 			render(
@@ -353,11 +289,7 @@ describe("Form Component - NeonPro Healthcare", () => {
 						<FormField name="name">
 							<FormItem>
 								<FormControl>
-									<input
-										data-testid="name-input"
-										defaultValue="Test Name"
-										type="text"
-									/>
+									<input data-testid="name-input" defaultValue="Test Name" type="text" />
 								</FormControl>
 							</FormItem>
 						</FormField>
@@ -368,7 +300,7 @@ describe("Form Component - NeonPro Healthcare", () => {
 
 						<FormMessage className="form-error" data-testid="form-error" />
 					</Form>
-				</ThemeWrapper>,
+				</ThemeWrapper>
 			);
 
 			const submitButton = screen.getByTestId("error-form-submit-button");

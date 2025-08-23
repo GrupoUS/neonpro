@@ -57,7 +57,7 @@ export function useStaffMembers(): StaffHook {
 		(id: string): StaffMember | null => {
 			return staffMembers.find((staff) => staff.id === id) || null;
 		},
-		[staffMembers],
+		[staffMembers]
 	);
 
 	// Staff agrupado por especialidade
@@ -107,18 +107,12 @@ export function useStaffMembers(): StaffHook {
 						setStaffMembers((prev) => [...prev, payload.new as StaffMember]);
 					} else if (payload.eventType === "UPDATE") {
 						setStaffMembers((prev) =>
-							prev.map((staff) =>
-								staff.id === payload.new.id
-									? (payload.new as StaffMember)
-									: staff,
-							),
+							prev.map((staff) => (staff.id === payload.new.id ? (payload.new as StaffMember) : staff))
 						);
 					} else if (payload.eventType === "DELETE") {
-						setStaffMembers((prev) =>
-							prev.filter((staff) => staff.id !== payload.old.id),
-						);
+						setStaffMembers((prev) => prev.filter((staff) => staff.id !== payload.old.id));
 					}
-				},
+				}
 			)
 			.subscribe();
 

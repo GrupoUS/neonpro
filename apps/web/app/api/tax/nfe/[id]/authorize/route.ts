@@ -5,10 +5,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/app/utils/supabase/server";
 import { nfeService } from "@/lib/services/tax/nfe-service";
 
-export async function POST(
-	_request: Request,
-	{ params }: { params: Promise<{ id: string }> },
-) {
+export async function POST(_request: Request, { params }: { params: Promise<{ id: string }> }) {
 	try {
 		const resolvedParams = await params;
 		const supabase = createClient();
@@ -32,10 +29,7 @@ export async function POST(
 			.single();
 
 		if (fetchError || !nfeDocument) {
-			return NextResponse.json(
-				{ error: "NFe document not found" },
-				{ status: 404 },
-			);
+			return NextResponse.json({ error: "NFe document not found" }, { status: 404 });
 		}
 
 		// Verify clinic access
@@ -51,10 +45,7 @@ export async function POST(
 
 		// Check if NFe can be authorized
 		if (nfeDocument.status !== "draft") {
-			return NextResponse.json(
-				{ error: "Only draft NFe documents can be authorized" },
-				{ status: 400 },
-			);
+			return NextResponse.json({ error: "Only draft NFe documents can be authorized" }, { status: 400 });
 		}
 
 		// Authorize NFe with SEFAZ
@@ -66,9 +57,7 @@ export async function POST(
 			.update({
 				status: authResult.success ? "authorized" : "rejected",
 				authorization_code: authResult.authorizationCode,
-				authorization_date: authResult.success
-					? new Date().toISOString()
-					: null,
+				authorization_date: authResult.success ? new Date().toISOString() : null,
 				rejection_reason: authResult.success ? null : authResult.error,
 				sefaz_response: authResult.sefazResponse,
 				updated_at: new Date().toISOString(),
@@ -78,10 +67,7 @@ export async function POST(
 			.single();
 
 		if (updateError) {
-			return NextResponse.json(
-				{ error: "Failed to update NFe document" },
-				{ status: 500 },
-			);
+			return NextResponse.json({ error: "Failed to update NFe document" }, { status: 500 });
 		}
 
 		// Log authorization attempt
@@ -102,9 +88,6 @@ export async function POST(
 			},
 		});
 	} catch (_error) {
-		return NextResponse.json(
-			{ error: "Internal server error" },
-			{ status: 500 },
-		);
+		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 	}
 }

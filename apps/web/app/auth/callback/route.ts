@@ -7,28 +7,21 @@ export async function GET(request: NextRequest) {
 	const error = requestUrl.searchParams.get("error");
 
 	if (error) {
-		return NextResponse.redirect(
-			`${requestUrl.origin}/login?error=auth_failed`,
-		);
+		return NextResponse.redirect(`${requestUrl.origin}/login?error=auth_failed`);
 	}
 
 	if (code) {
 		try {
-			const { error: authError } =
-				await supabase.auth.exchangeCodeForSession(code);
+			const { error: authError } = await supabase.auth.exchangeCodeForSession(code);
 
 			if (authError) {
-				return NextResponse.redirect(
-					`${requestUrl.origin}/login?error=exchange_failed`,
-				);
+				return NextResponse.redirect(`${requestUrl.origin}/login?error=exchange_failed`);
 			}
 
 			// Successful authentication - redirect to dashboard
 			return NextResponse.redirect(`${requestUrl.origin}/dashboard`);
 		} catch (_err) {
-			return NextResponse.redirect(
-				`${requestUrl.origin}/login?error=unexpected`,
-			);
+			return NextResponse.redirect(`${requestUrl.origin}/login?error=unexpected`);
 		}
 	}
 

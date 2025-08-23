@@ -17,29 +17,22 @@ export const toastHelpers = {
 		saved: (item?: string) =>
 			toast({
 				title: "Salvo com sucesso",
-				description: item
-					? `${item} foi salvo com sucesso.`
-					: "As alterações foram salvas.",
+				description: item ? `${item} foi salvo com sucesso.` : "As alterações foram salvas.",
 			}),
 		deleted: (item?: string) =>
 			toast({
 				title: "Excluído com sucesso",
-				description: item
-					? `${item} foi excluído com sucesso.`
-					: "Item excluído com sucesso.",
+				description: item ? `${item} foi excluído com sucesso.` : "Item excluído com sucesso.",
 			}),
 		created: (item?: string) =>
 			toast({
 				title: "Criado com sucesso",
-				description: item
-					? `${item} foi criado com sucesso.`
-					: "Item criado com sucesso.",
+				description: item ? `${item} foi criado com sucesso.` : "Item criado com sucesso.",
 			}),
 		signup: () =>
 			toast({
 				title: "Conta criada com sucesso!",
-				description:
-					"Verifique seu email para confirmar sua conta e começar a usar o NeonPro Healthcare.",
+				description: "Verifique seu email para confirmar sua conta e começar a usar o NeonPro Healthcare.",
 			}),
 	},
 
@@ -66,16 +59,13 @@ export const toastHelpers = {
 		validation: (message?: string) =>
 			toast({
 				title: "Dados inválidos",
-				description:
-					message || "Verifique os dados informados e tente novamente.",
+				description: message || "Verifique os dados informados e tente novamente.",
 				variant: "destructive",
 			}),
 		notFound: (item?: string) =>
 			toast({
 				title: "Não encontrado",
-				description: item
-					? `${item} não foi encontrado.`
-					: "Item não encontrado.",
+				description: item ? `${item} não foi encontrado.` : "Item não encontrado.",
 				variant: "destructive",
 			}),
 	},
@@ -115,8 +105,7 @@ export const toastHelpers = {
 		offline: () =>
 			toast({
 				title: "Modo offline",
-				description:
-					"Você está offline. Algumas funcionalidades podem não funcionar.",
+				description: "Você está offline. Algumas funcionalidades podem não funcionar.",
 				variant: "destructive",
 			}),
 	},

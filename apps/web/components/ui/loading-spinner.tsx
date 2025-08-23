@@ -15,27 +15,11 @@ const sizeClasses = {
 	xl: "w-12 h-12",
 };
 
-export function LoadingSpinner({
-	size = "md",
-	className,
-	text,
-}: LoadingSpinnerProps) {
+export function LoadingSpinner({ size = "md", className, text }: LoadingSpinnerProps) {
 	return (
-		<div
-			className={cn(
-				"flex flex-col items-center justify-center gap-2",
-				className,
-			)}
-		>
-			<div
-				className={cn(
-					"animate-spin rounded-full border-2 border-muted border-t-primary",
-					sizeClasses[size],
-				)}
-			/>
-			{text && (
-				<p className="animate-pulse text-muted-foreground text-sm">{text}</p>
-			)}
+		<div className={cn("flex flex-col items-center justify-center gap-2", className)}>
+			<div className={cn("animate-spin rounded-full border-2 border-muted border-t-primary", sizeClasses[size])} />
+			{text && <p className="animate-pulse text-muted-foreground text-sm">{text}</p>}
 		</div>
 	);
 }

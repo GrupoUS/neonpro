@@ -20,12 +20,7 @@ type LGPDConsentRecord = {
 
 type DataSubjectRequest = {
 	id: string;
-	request_type:
-		| "access"
-		| "rectification"
-		| "erasure"
-		| "portability"
-		| "objection";
+	request_type: "access" | "rectification" | "erasure" | "portability" | "objection";
 	patient_id: string;
 	patient_cpf: string;
 	requester_identity_verified: boolean;
@@ -105,9 +100,7 @@ const _TestWrapper = ({ children }: { children: React.ReactNode }) => {
 		},
 	});
 
-	return (
-		<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-	);
+	return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 };
 describe("LGPD Compliance Flow Integration Tests", () => {
 	let queryClient: QueryClient;
@@ -176,8 +169,7 @@ describe("LGPD Compliance Flow Integration Tests", () => {
 				requested_purpose: "marketing",
 			});
 
-			const result =
-				await mockLGPDService.validatePurposeLimitation(processingRequest);
+			const result = await mockLGPDService.validatePurposeLimitation(processingRequest);
 
 			expect(result.valid).toBe(false);
 			expect(result.violation).toBe("PURPOSE_NOT_CONSENTED");
@@ -281,8 +273,7 @@ describe("LGPD Compliance Flow Integration Tests", () => {
 				})),
 			});
 
-			const result =
-				await mockLGPDService.processDataSubjectRequest(accessRequest);
+			const result = await mockLGPDService.processDataSubjectRequest(accessRequest);
 
 			expect(result.success).toBe(true);
 			expect(result.exported_data.patient_data).toEqual(mockPatientData);
@@ -310,8 +301,7 @@ describe("LGPD Compliance Flow Integration Tests", () => {
 				audit_trail_id: "audit-rectification-123",
 			});
 
-			const result =
-				await mockLGPDService.processDataSubjectRequest(rectificationRequest);
+			const result = await mockLGPDService.processDataSubjectRequest(rectificationRequest);
 
 			expect(result.success).toBe(true);
 			expect(result.changes_applied).toBe(true);
@@ -334,20 +324,16 @@ describe("LGPD Compliance Flow Integration Tests", () => {
 				anonymization_applied: true,
 				data_anonymized: true,
 				medical_records_retained: true, // Due to legal medical record retention
-				retention_justification:
-					"Brazilian medical record retention law (10 years)",
+				retention_justification: "Brazilian medical record retention law (10 years)",
 				audit_trail_id: "audit-erasure-123",
 			});
 
-			const result =
-				await mockLGPDService.processDataSubjectRequest(erasureRequest);
+			const result = await mockLGPDService.processDataSubjectRequest(erasureRequest);
 
 			expect(result.success).toBe(true);
 			expect(result.anonymization_applied).toBe(true);
 			expect(result.medical_records_retained).toBe(true);
-			expect(result.retention_justification).toContain(
-				"medical record retention",
-			);
+			expect(result.retention_justification).toContain("medical record retention");
 		});
 		it("should process data portability requests (Right to Data Portability)", async () => {
 			const portabilityRequest = {
@@ -368,9 +354,7 @@ describe("LGPD Compliance Flow Integration Tests", () => {
 							resource: {
 								resourceType: "Patient",
 								id: "patient-123",
-								identifier: [
-									{ value: "123.456.789-00", system: "urn:oid:2.16.76.1.3.1" },
-								],
+								identifier: [{ value: "123.456.789-00", system: "urn:oid:2.16.76.1.3.1" }],
 								name: [{ family: "Santos", given: ["João", "Silva"] }],
 							},
 						},
@@ -390,8 +374,7 @@ describe("LGPD Compliance Flow Integration Tests", () => {
 				machine_readable: true,
 			});
 
-			const result =
-				await mockLGPDService.processDataSubjectRequest(portabilityRequest);
+			const result = await mockLGPDService.processDataSubjectRequest(portabilityRequest);
 
 			expect(result.success).toBe(true);
 			expect(result.portable_data.export_format).toBe("HL7_FHIR");
@@ -535,7 +518,7 @@ describe("LGPD Compliance Flow Integration Tests", () => {
 			expect(result.policy_compliant).toBe(true);
 			expect(result.retention_periods.medical_records).toBe("10_years");
 			expect(result.healthcare_exceptions).toContain(
-				"Medical records retained for 10 years as per Brazilian medical law",
+				"Medical records retained for 10 years as per Brazilian medical law"
 			);
 			expect(result.upcoming_expirations).toHaveLength(1);
 		});
@@ -561,9 +544,7 @@ describe("LGPD Compliance Flow Integration Tests", () => {
 				audit_trail_id: "audit-anonymization-456",
 			});
 
-			const result = await mockLGPDService.anonymizePatientData(
-				expiredPatientData.patient_id,
-			);
+			const result = await mockLGPDService.anonymizePatientData(expiredPatientData.patient_id);
 
 			expect(result.success).toBe(true);
 			expect(result.anonymized_fields).toContain("cpf");
@@ -589,20 +570,13 @@ describe("LGPD Compliance Flow Integration Tests", () => {
 			const verificationResult = {
 				verified: true,
 				confidence_score: 0.95,
-				verification_factors: [
-					"cpf_exact_match",
-					"name_exact_match",
-					"birth_date_match",
-					"mothers_name_match",
-				],
+				verification_factors: ["cpf_exact_match", "name_exact_match", "birth_date_match", "mothers_name_match"],
 				risk_assessment: "low_risk",
 				approved_for_data_access: true,
 			};
 
 			// Mock identity verification
-			expect(identityVerification.provided_cpf).toBe(
-				identityVerification.patient_cpf,
-			);
+			expect(identityVerification.provided_cpf).toBe(identityVerification.patient_cpf);
 			expect(verificationResult.verified).toBe(true);
 			expect(verificationResult.confidence_score).toBeGreaterThan(0.9);
 			expect(verificationResult.approved_for_data_access).toBe(true);

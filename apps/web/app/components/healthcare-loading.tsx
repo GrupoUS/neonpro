@@ -104,9 +104,7 @@ export default function HealthcareLoading({
 
 					{/* Loading Message */}
 					<div className="text-center">
-						<h3 className="mb-2 font-semibold text-gray-800 text-xl">
-							Sistema NeonPro Health
-						</h3>
+						<h3 className="mb-2 font-semibold text-gray-800 text-xl">Sistema NeonPro Health</h3>
 						<p className="text-gray-600">{message}</p>
 					</div>
 
@@ -114,9 +112,7 @@ export default function HealthcareLoading({
 					{showProgress && typeof progress === "number" && (
 						<div className="w-full space-y-2">
 							<Progress className="h-2" value={progress} />
-							<p className="text-center text-gray-500 text-sm">
-								{progress.toFixed(0)}% concluído
-							</p>
+							<p className="text-center text-gray-500 text-sm">{progress.toFixed(0)}% concluído</p>
 						</div>
 					)}
 
@@ -143,9 +139,7 @@ export default function HealthcareLoading({
 					<div className="w-full rounded-lg border border-green-200 bg-green-50 p-3">
 						<div className="flex items-center space-x-2">
 							<Shield className="h-4 w-4 text-green-600" />
-							<span className="text-green-800 text-sm">
-								Conexão segura e compatível com LGPD
-							</span>
+							<span className="text-green-800 text-sm">Conexão segura e compatível com LGPD</span>
 						</div>
 					</div>
 				</CardContent>

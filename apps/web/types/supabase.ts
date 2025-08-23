@@ -1,10 +1,4 @@
-export type Json =
-	| string
-	| number
-	| boolean
-	| null
-	| { [key: string]: Json | undefined }
-	| Json[];
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export type Database = {
 	public: {
@@ -56,12 +50,7 @@ export type Database = {
 					service_id: string | null;
 					appointment_date: string;
 					duration: number;
-					status:
-						| "scheduled"
-						| "confirmed"
-						| "completed"
-						| "cancelled"
-						| "no_show";
+					status: "scheduled" | "confirmed" | "completed" | "cancelled" | "no_show";
 					notes: string | null;
 					created_at: string;
 					updated_at: string;
@@ -73,12 +62,7 @@ export type Database = {
 					service_id?: string | null;
 					appointment_date: string;
 					duration: number;
-					status?:
-						| "scheduled"
-						| "confirmed"
-						| "completed"
-						| "cancelled"
-						| "no_show";
+					status?: "scheduled" | "confirmed" | "completed" | "cancelled" | "no_show";
 					notes?: string | null;
 					created_at?: string;
 					updated_at?: string;
@@ -90,12 +74,7 @@ export type Database = {
 					service_id?: string | null;
 					appointment_date?: string;
 					duration?: number;
-					status?:
-						| "scheduled"
-						| "confirmed"
-						| "completed"
-						| "cancelled"
-						| "no_show";
+					status?: "scheduled" | "confirmed" | "completed" | "cancelled" | "no_show";
 					notes?: string | null;
 					created_at?: string;
 					updated_at?: string;

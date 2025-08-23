@@ -1,7 +1,4 @@
-import type {
-	SchedulingAnalytics,
-	TimeSlotEfficiency,
-} from "@neonpro/core-services/scheduling";
+import type { SchedulingAnalytics, TimeSlotEfficiency } from "@neonpro/core-services/scheduling";
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -9,9 +6,7 @@ const analyticsQuerySchema = z.object({
 	startDate: z.string().datetime().optional(),
 	endDate: z.string().datetime().optional(),
 	granularity: z.enum(["hour", "day", "week", "month"]).default("day"),
-	metrics: z
-		.array(z.enum(["utilization", "noshow", "satisfaction", "revenue"]))
-		.optional(),
+	metrics: z.array(z.enum(["utilization", "noshow", "satisfaction", "revenue"])).optional(),
 });
 
 /**
@@ -20,10 +15,7 @@ const analyticsQuerySchema = z.object({
  *
  * Returns comprehensive scheduling performance metrics and AI insights
  */
-export async function GET(
-	request: NextRequest,
-	{ params }: { params: { tenantId: string } },
-) {
+export async function GET(request: NextRequest, { params }: { params: { tenantId: string } }) {
 	const startTime = performance.now();
 
 	try {
@@ -44,11 +36,7 @@ export async function GET(
 			: new Date(endDate.getTime() - 30 * 24 * 60 * 60 * 1000); // 30 days ago
 
 		// Fetch analytics data (mock implementation)
-		const analytics = await getSchedulingAnalytics(
-			tenantId,
-			startDate,
-			endDate,
-		);
+		const analytics = await getSchedulingAnalytics(tenantId, startDate, endDate);
 
 		// Calculate trends and improvements
 		const trends = await calculateTrends(analytics, tenantId);
@@ -74,25 +62,16 @@ export async function GET(
 		});
 	} catch (error) {
 		if (error instanceof z.ZodError) {
-			return NextResponse.json(
-				{ success: false, error: "Invalid query parameters" },
-				{ status: 400 },
-			);
+			return NextResponse.json({ success: false, error: "Invalid query parameters" }, { status: 400 });
 		}
 
-		return NextResponse.json(
-			{ success: false, error: "Failed to fetch analytics" },
-			{ status: 500 },
-		);
+		return NextResponse.json({ success: false, error: "Failed to fetch analytics" }, { status: 500 });
 	}
 } /**
  * Record scheduling analytics data
  * POST /api/scheduling/analytics/[tenantId]/record
  */
-export async function POST(
-	request: NextRequest,
-	{ params }: { params: { tenantId: string } },
-) {
+export async function POST(request: NextRequest, { params }: { params: { tenantId: string } }) {
 	try {
 		const { tenantId } = params;
 		const body = await request.json();
@@ -105,10 +84,7 @@ export async function POST(
 			message: "Analytics recorded successfully",
 		});
 	} catch (_error) {
-		return NextResponse.json(
-			{ success: false, error: "Failed to record analytics" },
-			{ status: 500 },
-		);
+		return NextResponse.json({ success: false, error: "Failed to record analytics" }, { status: 500 });
 	}
 }
 
@@ -116,7 +92,7 @@ export async function POST(
 async function getSchedulingAnalytics(
 	_tenantId: string,
 	_startDate: Date,
-	_endDate: Date,
+	_endDate: Date
 ): Promise<SchedulingAnalytics> {
 	// Mock implementation - would fetch from database
 	const analytics: SchedulingAnalytics = {
@@ -167,10 +143,7 @@ function generateTimeSlotEfficiency(): TimeSlotEfficiency[] {
 	];
 }
 
-async function calculateTrends(
-	_analytics: SchedulingAnalytics,
-	_tenantId: string,
-): Promise<any> {
+async function calculateTrends(_analytics: SchedulingAnalytics, _tenantId: string): Promise<any> {
 	// Calculate improvement trends
 	return {
 		schedulingTimeReduction: 62.3, // 62.3% improvement
@@ -195,10 +168,7 @@ async function calculateTrends(
 	};
 }
 
-async function generateAIInsights(
-	_analytics: SchedulingAnalytics,
-	_trends: any,
-): Promise<any> {
+async function generateAIInsights(_analytics: SchedulingAnalytics, _trends: any): Promise<any> {
 	return {
 		keyAchievements: [
 			"Successfully achieved 60% scheduling time reduction target",
@@ -248,7 +218,4 @@ async function generateAIInsights(
 	};
 }
 
-async function recordSchedulingEvent(
-	_tenantId: string,
-	_eventData: any,
-): Promise<void> {}
+async function recordSchedulingEvent(_tenantId: string, _eventData: any): Promise<void> {}

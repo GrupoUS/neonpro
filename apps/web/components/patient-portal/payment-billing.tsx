@@ -227,7 +227,7 @@ function PaymentMethodCard({ method, onSelect, isSelected }: any) {
 			className={cn(
 				"cursor-pointer transition-all hover:shadow-md",
 				isSelected ? "border-pink-500 bg-pink-50 dark:bg-pink-950/20" : "",
-				method.available ? "" : "cursor-not-allowed opacity-50",
+				method.available ? "" : "cursor-not-allowed opacity-50"
 			)}
 			onClick={() => method.available && onSelect(method)}
 		>
@@ -239,17 +239,12 @@ function PaymentMethodCard({ method, onSelect, isSelected }: any) {
 							<div className="flex items-center space-x-2">
 								<h3 className="font-medium">{method.name}</h3>
 								{method.popular && (
-									<Badge
-										className="bg-green-100 text-green-800 text-xs"
-										variant="secondary"
-									>
+									<Badge className="bg-green-100 text-green-800 text-xs" variant="secondary">
 										Popular
 									</Badge>
 								)}
 							</div>
-							<p className="text-muted-foreground text-sm">
-								{method.description}
-							</p>
+							<p className="text-muted-foreground text-sm">{method.description}</p>
 							<div className="mt-1 flex items-center space-x-4 text-muted-foreground text-xs">
 								<span>Taxa: {method.fee}%</span>
 								<span>{method.processingTime}</span>
@@ -275,9 +270,7 @@ function PaymentForm({ payment, selectedMethod }: any) {
 					<div className="space-y-4">
 						<div className="rounded-lg bg-green-50 p-4 text-center dark:bg-green-950/20">
 							<QrCode className="mx-auto mb-4 h-24 w-24 text-green-600" />
-							<p className="mb-2 text-green-700 text-sm">
-								Escaneie o QR Code ou copie a chave PIX
-							</p>
+							<p className="mb-2 text-green-700 text-sm">Escaneie o QR Code ou copie a chave PIX</p>
 							<div className="flex items-center space-x-2 rounded border bg-white p-3 dark:bg-green-900/20">
 								<code className="flex-1 text-sm">{pixKey}</code>
 								<Button size="sm" variant="outline">
@@ -287,14 +280,9 @@ function PaymentForm({ payment, selectedMethod }: any) {
 						</div>
 						<div className="text-center">
 							<p className="text-muted-foreground text-sm">
-								Valor:{" "}
-								<span className="font-bold text-lg">
-									R$ {payment.amount.toFixed(2)}
-								</span>
+								Valor: <span className="font-bold text-lg">R$ {payment.amount.toFixed(2)}</span>
 							</p>
-							<p className="text-muted-foreground text-xs">
-								Pagamento instantâneo • Sem taxas
-							</p>
+							<p className="text-muted-foreground text-xs">Pagamento instantâneo • Sem taxas</p>
 						</div>
 					</div>
 				);
@@ -363,9 +351,7 @@ function PaymentForm({ payment, selectedMethod }: any) {
 								</div>
 							</div>
 						</div>
-						<p className="text-muted-foreground text-xs">
-							Envie o comprovante para financeiro@neonpro.com.br
-						</p>
+						<p className="text-muted-foreground text-xs">Envie o comprovante para financeiro@neonpro.com.br</p>
 					</div>
 				);
 
@@ -442,13 +428,9 @@ function PaymentHistoryTable({ payments }: any) {
 
 								<div>
 									<h3 className="font-medium text-sm">{payment.description}</h3>
-									<p className="text-muted-foreground text-xs">
-										{payment.treatment}
-									</p>
+									<p className="text-muted-foreground text-xs">{payment.treatment}</p>
 									<div className="mt-1 flex items-center space-x-4 text-muted-foreground text-xs">
-										<span>
-											{new Date(payment.paidDate).toLocaleDateString("pt-BR")}
-										</span>
+										<span>{new Date(payment.paidDate).toLocaleDateString("pt-BR")}</span>
 										<span>{payment.method}</span>
 										<span>{payment.invoice}</span>
 									</div>
@@ -458,16 +440,9 @@ function PaymentHistoryTable({ payments }: any) {
 							<div className="space-y-2 text-right">
 								<p className="font-bold">R$ {payment.amount.toFixed(2)}</p>
 								<div className="flex items-center space-x-2">
-									<Badge
-										className={cn(
-											"flex items-center space-x-1",
-											getStatusColor(payment.status),
-										)}
-									>
+									<Badge className={cn("flex items-center space-x-1", getStatusColor(payment.status))}>
 										{getStatusIcon(payment.status)}
-										<span>
-											{payment.status === "paid" ? "Pago" : "Pendente"}
-										</span>
+										<span>{payment.status === "paid" ? "Pago" : "Pendente"}</span>
 									</Badge>
 								</div>
 								<div className="flex space-x-1">
@@ -497,12 +472,8 @@ function FinancialSummary({ summary }: any) {
 						<div className="flex items-center justify-between">
 							<div>
 								<p className="text-muted-foreground text-sm">Gasto no Ano</p>
-								<p className="font-bold text-2xl">
-									R$ {summary.thisYear.spent.toFixed(2)}
-								</p>
-								<p className="text-muted-foreground text-xs">
-									{summary.thisYear.treatments} tratamentos
-								</p>
+								<p className="font-bold text-2xl">R$ {summary.thisYear.spent.toFixed(2)}</p>
+								<p className="text-muted-foreground text-xs">{summary.thisYear.treatments} tratamentos</p>
 							</div>
 							<TrendingUp className="h-8 w-8 text-green-500" />
 						</div>
@@ -514,12 +485,8 @@ function FinancialSummary({ summary }: any) {
 						<div className="flex items-center justify-between">
 							<div>
 								<p className="text-muted-foreground text-sm">Gasto no Mês</p>
-								<p className="font-bold text-2xl">
-									R$ {summary.thisMonth.spent.toFixed(2)}
-								</p>
-								<p className="text-muted-foreground text-xs">
-									{summary.thisMonth.treatments} tratamentos
-								</p>
+								<p className="font-bold text-2xl">R$ {summary.thisMonth.spent.toFixed(2)}</p>
+								<p className="text-muted-foreground text-xs">{summary.thisMonth.treatments} tratamentos</p>
 							</div>
 							<Calendar className="h-8 w-8 text-blue-500" />
 						</div>
@@ -530,15 +497,9 @@ function FinancialSummary({ summary }: any) {
 					<CardContent className="p-4">
 						<div className="flex items-center justify-between">
 							<div>
-								<p className="text-muted-foreground text-sm">
-									Média por Tratamento
-								</p>
-								<p className="font-bold text-2xl">
-									R$ {summary.thisYear.averagePerTreatment.toFixed(2)}
-								</p>
-								<p className="text-muted-foreground text-xs">
-									Nos últimos 12 meses
-								</p>
+								<p className="text-muted-foreground text-sm">Média por Tratamento</p>
+								<p className="font-bold text-2xl">R$ {summary.thisYear.averagePerTreatment.toFixed(2)}</p>
+								<p className="text-muted-foreground text-xs">Nos últimos 12 meses</p>
 							</div>
 							<Calculator className="h-8 w-8 text-purple-500" />
 						</div>
@@ -550,9 +511,7 @@ function FinancialSummary({ summary }: any) {
 						<div className="flex items-center justify-between">
 							<div>
 								<p className="text-muted-foreground text-sm">Economia no Mês</p>
-								<p className="font-bold text-2xl">
-									R$ {summary.thisMonth.savings.toFixed(2)}
-								</p>
+								<p className="font-bold text-2xl">R$ {summary.thisMonth.savings.toFixed(2)}</p>
 								<p className="text-muted-foreground text-xs">Em promoções</p>
 							</div>
 							<Star className="h-8 w-8 text-yellow-500" />
@@ -613,16 +572,13 @@ export function PaymentBilling() {
 					<CardHeader>
 						<CardTitle>Escolha o Método de Pagamento</CardTitle>
 						<CardDescription>
-							Pagamento: {selectedPayment.description} - R${" "}
-							{selectedPayment.amount.toFixed(2)}
+							Pagamento: {selectedPayment.description} - R$ {selectedPayment.amount.toFixed(2)}
 						</CardDescription>
 					</CardHeader>
 					<CardContent>
 						<div className="grid gap-4 md:grid-cols-2">
 							{mockPaymentData.paymentMethods
-								.filter((method) =>
-									selectedPayment.paymentMethods.includes(method.type),
-								)
+								.filter((method) => selectedPayment.paymentMethods.includes(method.type))
 								.map((method) => (
 									<PaymentMethodCard
 										isSelected={selectedPaymentMethod?.id === method.id}
@@ -636,12 +592,7 @@ export function PaymentBilling() {
 				</Card>
 
 				{/* Payment Form */}
-				{selectedPaymentMethod && (
-					<PaymentForm
-						payment={selectedPayment}
-						selectedMethod={selectedPaymentMethod}
-					/>
-				)}
+				{selectedPaymentMethod && <PaymentForm payment={selectedPayment} selectedMethod={selectedPaymentMethod} />}
 			</div>
 		);
 	}
@@ -651,12 +602,8 @@ export function PaymentBilling() {
 			{/* Header */}
 			<div className="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
 				<div>
-					<h1 className="font-bold text-2xl tracking-tight lg:text-3xl">
-						Pagamentos e Faturamento
-					</h1>
-					<p className="text-muted-foreground">
-						Gerencie seus pagamentos e acompanhe seu histórico financeiro
-					</p>
+					<h1 className="font-bold text-2xl tracking-tight lg:text-3xl">Pagamentos e Faturamento</h1>
+					<p className="text-muted-foreground">Gerencie seus pagamentos e acompanhe seu histórico financeiro</p>
 				</div>
 
 				<div className="flex space-x-2">
@@ -678,14 +625,9 @@ export function PaymentBilling() {
 						<div className="flex items-center justify-between">
 							<div>
 								<p className="text-muted-foreground text-sm">Valor Pendente</p>
-								<p className="font-bold text-2xl text-red-600">
-									R$ {mockPaymentData.summary.pendingAmount.toFixed(2)}
-								</p>
+								<p className="font-bold text-2xl text-red-600">R$ {mockPaymentData.summary.pendingAmount.toFixed(2)}</p>
 								<p className="text-muted-foreground text-xs">
-									Vence em{" "}
-									{new Date(
-										mockPaymentData.summary.nextPaymentDate,
-									).toLocaleDateString("pt-BR")}
+									Vence em {new Date(mockPaymentData.summary.nextPaymentDate).toLocaleDateString("pt-BR")}
 								</p>
 							</div>
 							<AlertTriangle className="h-8 w-8 text-red-500" />
@@ -698,12 +640,8 @@ export function PaymentBilling() {
 						<div className="flex items-center justify-between">
 							<div>
 								<p className="text-muted-foreground text-sm">Total Gasto</p>
-								<p className="font-bold text-2xl">
-									R$ {mockPaymentData.summary.totalSpent.toFixed(2)}
-								</p>
-								<p className="text-muted-foreground text-xs">
-									{mockPaymentData.summary.completedPayments} pagamentos
-								</p>
+								<p className="font-bold text-2xl">R$ {mockPaymentData.summary.totalSpent.toFixed(2)}</p>
+								<p className="text-muted-foreground text-xs">{mockPaymentData.summary.completedPayments} pagamentos</p>
 							</div>
 							<TrendingUp className="h-8 w-8 text-green-500" />
 						</div>
@@ -715,12 +653,8 @@ export function PaymentBilling() {
 						<div className="flex items-center justify-between">
 							<div>
 								<p className="text-muted-foreground text-sm">Métodos Ativos</p>
-								<p className="font-bold text-2xl">
-									{mockPaymentData.summary.paymentMethods}
-								</p>
-								<p className="text-muted-foreground text-xs">
-									Cartões e contas
-								</p>
+								<p className="font-bold text-2xl">{mockPaymentData.summary.paymentMethods}</p>
+								<p className="text-muted-foreground text-xs">Cartões e contas</p>
 							</div>
 							<CreditCard className="h-8 w-8 text-blue-500" />
 						</div>
@@ -731,9 +665,7 @@ export function PaymentBilling() {
 					<CardContent className="p-4">
 						<div className="flex items-center justify-between">
 							<div>
-								<p className="text-muted-foreground text-sm">
-									Próximo Vencimento
-								</p>
+								<p className="text-muted-foreground text-sm">Próximo Vencimento</p>
 								<p className="font-bold text-lg">01/09</p>
 								<p className="text-muted-foreground text-xs">Em 2 semanas</p>
 							</div>
@@ -746,12 +678,8 @@ export function PaymentBilling() {
 			{/* Main Content */}
 			<Tabs onValueChange={setActiveTab} value={activeTab}>
 				<TabsList className="grid w-full grid-cols-4">
-					<TabsTrigger value="pending">
-						Pendentes ({mockPaymentData.upcomingPayments.length})
-					</TabsTrigger>
-					<TabsTrigger value="history">
-						Histórico ({mockPaymentData.paymentHistory.length})
-					</TabsTrigger>
+					<TabsTrigger value="pending">Pendentes ({mockPaymentData.upcomingPayments.length})</TabsTrigger>
+					<TabsTrigger value="history">Histórico ({mockPaymentData.paymentHistory.length})</TabsTrigger>
 					<TabsTrigger value="packages">Pacotes</TabsTrigger>
 					<TabsTrigger value="analytics">Relatórios</TabsTrigger>
 				</TabsList>
@@ -761,59 +689,38 @@ export function PaymentBilling() {
 						<Card>
 							<CardContent className="flex flex-col items-center justify-center py-12">
 								<CheckCircle className="mb-4 h-12 w-12 text-green-500" />
-								<h3 className="mb-2 font-medium text-lg">
-									Nenhum pagamento pendente
-								</h3>
-								<p className="text-center text-muted-foreground">
-									Todos os seus pagamentos estão em dia!
-								</p>
+								<h3 className="mb-2 font-medium text-lg">Nenhum pagamento pendente</h3>
+								<p className="text-center text-muted-foreground">Todos os seus pagamentos estão em dia!</p>
 							</CardContent>
 						</Card>
 					) : (
 						<div className="space-y-4">
 							{mockPaymentData.upcomingPayments.map((payment) => (
-								<Card
-									className="border-l-4 border-l-yellow-500"
-									key={payment.id}
-								>
+								<Card className="border-l-4 border-l-yellow-500" key={payment.id}>
 									<CardContent className="p-6">
 										<div className="flex items-center justify-between">
 											<div className="space-y-2">
 												<h3 className="font-semibold">{payment.description}</h3>
-												<p className="text-muted-foreground text-sm">
-													{payment.treatment}
-												</p>
+												<p className="text-muted-foreground text-sm">{payment.treatment}</p>
 												<div className="flex items-center space-x-4 text-muted-foreground text-sm">
 													<div className="flex items-center space-x-1">
 														<Calendar className="h-4 w-4" />
-														<span>
-															Vence em{" "}
-															{new Date(payment.dueDate).toLocaleDateString(
-																"pt-BR",
-															)}
-														</span>
+														<span>Vence em {new Date(payment.dueDate).toLocaleDateString("pt-BR")}</span>
 													</div>
 													<Badge variant="outline">{payment.installment}</Badge>
 												</div>
 											</div>
 
 											<div className="space-y-3 text-right">
-												<p className="font-bold text-2xl">
-													R$ {payment.amount.toFixed(2)}
-												</p>
+												<p className="font-bold text-2xl">R$ {payment.amount.toFixed(2)}</p>
 												<div className="flex space-x-2">
 													{payment.canPay ? (
-														<Button
-															className="bg-pink-600 hover:bg-pink-700"
-															onClick={() => handlePayNow(payment)}
-														>
+														<Button className="bg-pink-600 hover:bg-pink-700" onClick={() => handlePayNow(payment)}>
 															<CreditCard className="h-4 w-4" />
 															Pagar Agora
 														</Button>
 													) : (
-														<Badge variant="secondary">
-															Aguardando consulta
-														</Badge>
+														<Badge variant="secondary">Aguardando consulta</Badge>
 													)}
 													<Button size="sm" variant="outline">
 														<Eye className="h-4 w-4" />
@@ -861,21 +768,15 @@ export function PaymentBilling() {
 								<div className="grid gap-4 md:grid-cols-3">
 									<div className="text-center">
 										<p className="text-muted-foreground text-sm">Valor Total</p>
-										<p className="font-bold text-xl">
-											R$ {pkg.totalValue.toFixed(2)}
-										</p>
+										<p className="font-bold text-xl">R$ {pkg.totalValue.toFixed(2)}</p>
 									</div>
 									<div className="text-center">
 										<p className="text-muted-foreground text-sm">Valor Pago</p>
-										<p className="font-bold text-green-600 text-xl">
-											R$ {pkg.paidValue.toFixed(2)}
-										</p>
+										<p className="font-bold text-green-600 text-xl">R$ {pkg.paidValue.toFixed(2)}</p>
 									</div>
 									<div className="text-center">
 										<p className="text-muted-foreground text-sm">Restante</p>
-										<p className="font-bold text-red-600 text-xl">
-											R$ {pkg.remainingValue.toFixed(2)}
-										</p>
+										<p className="font-bold text-red-600 text-xl">R$ {pkg.remainingValue.toFixed(2)}</p>
 									</div>
 								</div>
 
@@ -886,8 +787,7 @@ export function PaymentBilling() {
 									</div>
 									<Progress className="h-3" value={pkg.progress} />
 									<p className="text-muted-foreground text-xs">
-										{pkg.installments.paid} de {pkg.installments.total} parcelas
-										pagas
+										{pkg.installments.paid} de {pkg.installments.total} parcelas pagas
 									</p>
 								</div>
 

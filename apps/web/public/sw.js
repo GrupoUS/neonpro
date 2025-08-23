@@ -54,7 +54,7 @@ self.addEventListener("install", (event) => {
 				return cache.addAll(STATIC_CACHE_URLS);
 			}),
 			self.skipWaiting(),
-		]),
+		])
 	);
 });
 
@@ -69,11 +69,11 @@ self.addEventListener("activate", (event) => {
 							return caches.delete(cacheName);
 						}
 						return Promise.resolve();
-					}),
+					})
 				);
 			}),
 			self.clients.claim(),
-		]),
+		])
 	);
 });
 
@@ -84,10 +84,7 @@ self.addEventListener("fetch", (event) => {
 
 	// Handle POST/PUT/DELETE requests for background sync
 	if (request.method !== "GET") {
-		if (
-			url.pathname.startsWith("/api/patient/appointments") ||
-			url.pathname.startsWith("/api/patient/profile")
-		) {
+		if (url.pathname.startsWith("/api/patient/appointments") || url.pathname.startsWith("/api/patient/profile")) {
 			event.respondWith(handleOfflineCapableRequest(request));
 		}
 		return;
@@ -149,7 +146,7 @@ async function handleOfflineCapableRequest(request) {
 				headers: {
 					"Content-Type": "application/json",
 				},
-			},
+			}
 		);
 	}
 }
@@ -396,10 +393,7 @@ async function handleOfflineRequest(request) {
 
 // Utility functions
 function isStaticAsset(pathname) {
-	return (
-		/\.(js|css|png|jpg|jpeg|svg|ico|woff|woff2)$/.test(pathname) ||
-		STATIC_CACHE_URLS.includes(pathname)
-	);
+	return /\.(js|css|png|jpg|jpeg|svg|ico|woff|woff2)$/.test(pathname) || STATIC_CACHE_URLS.includes(pathname);
 }
 
 function isCacheableApi(pathname) {
@@ -440,21 +434,18 @@ self.addEventListener("push", (event) => {
 		} catch (_error) {}
 	}
 
-	const notificationPromise = self.registration.showNotification(
-		notificationData.title,
-		{
-			body: notificationData.body,
-			icon: notificationData.icon,
-			badge: notificationData.badge,
-			tag: notificationData.tag,
-			data: notificationData.data,
-			actions: notificationData.actions,
-			requireInteraction: notificationData.requireInteraction,
-			silent: notificationData.silent,
-			vibrate: notificationData.vibrate || [200, 100, 200],
-			timestamp: Date.now(),
-		},
-	);
+	const notificationPromise = self.registration.showNotification(notificationData.title, {
+		body: notificationData.body,
+		icon: notificationData.icon,
+		badge: notificationData.badge,
+		tag: notificationData.tag,
+		data: notificationData.data,
+		actions: notificationData.actions,
+		requireInteraction: notificationData.requireInteraction,
+		silent: notificationData.silent,
+		vibrate: notificationData.vibrate || [200, 100, 200],
+		timestamp: Date.now(),
+	});
 
 	event.waitUntil(notificationPromise);
 });

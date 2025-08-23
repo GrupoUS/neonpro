@@ -3,13 +3,7 @@
 "use client";
 
 import type { AuthError, Session, User } from "@supabase/supabase-js";
-import {
-	createContext,
-	type ReactNode,
-	useContext,
-	useEffect,
-	useState,
-} from "react";
+import { createContext, type ReactNode, useContext, useEffect, useState } from "react";
 import { createClient } from "@/app/utils/supabase/client";
 
 // Types
@@ -19,7 +13,7 @@ type AuthContextType = {
 	loading: boolean;
 	signIn: (
 		email: string,
-		password: string,
+		password: string
 	) => Promise<{
 		data: any;
 		error: AuthError | null;
@@ -33,7 +27,7 @@ type AuthContextType = {
 			phone: string;
 			clinicName: string;
 			userType: string;
-		},
+		}
 	) => Promise<{
 		data: any;
 		error: AuthError | null;
@@ -134,7 +128,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 			phone: string;
 			clinicName: string;
 			userType: string;
-		},
+		}
 	) => {
 		setLoading(true);
 		try {
@@ -158,19 +152,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
 			// If signup successful and we have additional data, save to profiles table
 			if (data?.user && !error && additionalData) {
 				try {
-					const { error: profileError } = await supabase
-						.from("profiles")
-						.insert({
-							id: data.user.id,
-							full_name: additionalData.fullName,
-							cpf: additionalData.cpf,
-							phone: additionalData.phone,
-							clinic_name: additionalData.clinicName,
-							user_type: additionalData.userType,
-							email,
-							created_at: new Date().toISOString(),
-							updated_at: new Date().toISOString(),
-						});
+					const { error: profileError } = await supabase.from("profiles").insert({
+						id: data.user.id,
+						full_name: additionalData.fullName,
+						cpf: additionalData.cpf,
+						phone: additionalData.phone,
+						clinic_name: additionalData.clinicName,
+						user_type: additionalData.userType,
+						email,
+						created_at: new Date().toISOString(),
+						updated_at: new Date().toISOString(),
+					});
 
 					if (profileError) {
 						// Don't fail the signup for profile errors
@@ -215,7 +207,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 					"width=500,height=600,scrollbars=yes,resizable=yes,left=" +
 						(window.screen.width / 2 - 250) +
 						",top=" +
-						(window.screen.height / 2 - 300),
+						(window.screen.height / 2 - 300)
 				);
 
 				if (!popup) {
@@ -236,25 +228,23 @@ export function AuthProvider({ children }: AuthProviderProps) {
 							clearInterval(checkClosed);
 
 							// Get the fresh session and update our state
-							supabase.auth
-								.getSession()
-								.then(({ data: sessionData, error: sessionError }) => {
-									if (sessionError) {
-										reject(sessionError);
-										return;
-									}
+							supabase.auth.getSession().then(({ data: sessionData, error: sessionError }) => {
+								if (sessionError) {
+									reject(sessionError);
+									return;
+								}
 
-									if (sessionData?.session) {
-										// Update the local state immediately
-										setSession(sessionData.session);
-										setUser(sessionData.session.user);
+								if (sessionData?.session) {
+									// Update the local state immediately
+									setSession(sessionData.session);
+									setUser(sessionData.session.user);
 
-										// Redirect to dashboard immediately
-										window.location.href = "/dashboard";
-									}
+									// Redirect to dashboard immediately
+									window.location.href = "/dashboard";
+								}
 
-									resolve({ data: sessionData, error: null });
-								});
+								resolve({ data: sessionData, error: null });
+							});
 						} else if (event.data.type === "OAUTH_ERROR") {
 							popup.close();
 							window.removeEventListener("message", messageListener);

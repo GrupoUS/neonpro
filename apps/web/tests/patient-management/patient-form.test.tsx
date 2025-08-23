@@ -32,12 +32,7 @@ const PatientForm = ({ onSubmit, initialData }: PatientFormProps) => (
 			placeholder="Email"
 			type="email"
 		/>
-		<input
-			data-testid="patient-phone"
-			defaultValue={initialData?.phone || ""}
-			name="phone"
-			placeholder="Telefone"
-		/>
+		<input data-testid="patient-phone" defaultValue={initialData?.phone || ""} name="phone" placeholder="Telefone" />
 		<button data-testid="patient-submit-button" type="submit">
 			Salvar Paciente
 		</button>

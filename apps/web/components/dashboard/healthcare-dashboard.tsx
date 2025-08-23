@@ -38,14 +38,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { motion } from "framer-motion";
 // ✅ Icons - only what we need
-import {
-	Activity,
-	AlertCircle,
-	Calendar,
-	Download,
-	TrendingUp,
-	Users,
-} from "lucide-react";
+import { Activity, AlertCircle, Calendar, Download, TrendingUp, Users } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 
 type HealthcareDashboardProps = {
@@ -58,18 +51,13 @@ type HealthcareDashboardProps = {
  * Main Healthcare Dashboard Component
  * Implements Brazilian healthcare compliance and accessibility standards
  */
-export function HealthcareDashboard({
-	initialData,
-	clinicId,
-	professionalId,
-}: HealthcareDashboardProps) {
+export function HealthcareDashboard({ initialData, clinicId, professionalId }: HealthcareDashboardProps) {
 	const [selectedPeriod, setSelectedPeriod] = useState<string>("30d");
 	const [dashboardData, setDashboardData] = useState(initialData);
 	const [isLoading, setIsLoading] = useState(false);
 
 	// ✅ Healthcare permissions validation
-	const { canViewDashboard, canExportData, canViewFinancials } =
-		useHealthcarePermissions();
+	const { canViewDashboard, canExportData, canViewFinancials } = useHealthcarePermissions();
 
 	// ✅ Memoized calculations for performance
 	const dashboardMetrics = useMemo(() => {
@@ -81,9 +69,7 @@ export function HealthcareDashboard({
 			totalPatients: dashboardData.patients?.length ?? 0,
 			todayAppointments:
 				dashboardData.appointments?.filter(
-					(apt) =>
-						format(new Date(apt.date), "yyyy-MM-dd") ===
-						format(new Date(), "yyyy-MM-dd"),
+					(apt) => format(new Date(apt.date), "yyyy-MM-dd") === format(new Date(), "yyyy-MM-dd")
 				).length ?? 0,
 			monthlyRevenue: dashboardData.financials?.monthlyRevenue ?? 0,
 			complianceScore: dashboardData.compliance?.overallScore ?? 0,
@@ -100,15 +86,12 @@ export function HealthcareDashboard({
 				await validateHealthcareAccess();
 
 				// Fetch new data for selected period
-				const response = await fetch(
-					`/api/dashboard/healthcare?period=${period}`,
-					{
-						method: "GET",
-						headers: {
-							"Content-Type": "application/json",
-						},
+				const response = await fetch(`/api/dashboard/healthcare?period=${period}`, {
+					method: "GET",
+					headers: {
+						"Content-Type": "application/json",
 					},
-				);
+				});
 
 				if (!response.ok) {
 					throw new Error("Falha ao carregar dados do dashboard");
@@ -130,7 +113,7 @@ export function HealthcareDashboard({
 				setIsLoading(false);
 			}
 		},
-		[clinicId, professionalId],
+		[clinicId, professionalId]
 	);
 
 	// ✅ Access control - return null if no permissions
@@ -138,9 +121,7 @@ export function HealthcareDashboard({
 		return (
 			<Alert className="healthcare-alert">
 				<AlertCircle className="h-4 w-4" />
-				<AlertDescription>
-					Você não possui permissão para visualizar o dashboard.
-				</AlertDescription>
+				<AlertDescription>Você não possui permissão para visualizar o dashboard.</AlertDescription>
 			</Alert>
 		);
 	}
@@ -149,9 +130,7 @@ export function HealthcareDashboard({
 			{/* ✅ Dashboard Header with Brazilian date formatting */}
 			<div className="flex items-center justify-between">
 				<div>
-					<h1 className="font-bold text-3xl tracking-tight">
-						Dashboard Clínica
-					</h1>
+					<h1 className="font-bold text-3xl tracking-tight">Dashboard Clínica</h1>
 					<p className="text-muted-foreground">
 						{format(new Date(), "EEEE, dd 'de' MMMM 'de' yyyy", {
 							locale: ptBR,
@@ -160,11 +139,7 @@ export function HealthcareDashboard({
 				</div>
 
 				<div className="flex items-center space-x-2">
-					<Select
-						disabled={isLoading}
-						onValueChange={handlePeriodChange}
-						value={selectedPeriod}
-					>
+					<Select disabled={isLoading} onValueChange={handlePeriodChange} value={selectedPeriod}>
 						<SelectTrigger className="w-[180px]">
 							<SelectValue placeholder="Selecionar período" />
 						</SelectTrigger>
@@ -190,9 +165,7 @@ export function HealthcareDashboard({
 				<div className="flex items-center justify-center py-8">
 					<div className="text-center">
 						<div className="mx-auto h-8 w-8 animate-spin rounded-full border-primary border-b-2" />
-						<p className="mt-2 text-muted-foreground text-sm">
-							Carregando dados...
-						</p>
+						<p className="mt-2 text-muted-foreground text-sm">Carregando dados...</p>
 					</div>
 				</div>
 			)}
@@ -234,10 +207,7 @@ export function HealthcareDashboard({
 						/>
 					)}
 
-					<ComplianceCard
-						className="healthcare-metric-compliance"
-						score={dashboardMetrics.complianceScore}
-					/>
+					<ComplianceCard className="healthcare-metric-compliance" score={dashboardMetrics.complianceScore} />
 				</motion.div>
 			)}
 
@@ -247,9 +217,7 @@ export function HealthcareDashboard({
 					<TabsTrigger value="overview">Visão Geral</TabsTrigger>
 					<TabsTrigger value="appointments">Agendamentos</TabsTrigger>
 					<TabsTrigger value="patients">Pacientes</TabsTrigger>
-					{canViewFinancials && (
-						<TabsTrigger value="financials">Financeiro</TabsTrigger>
-					)}
+					{canViewFinancials && <TabsTrigger value="financials">Financeiro</TabsTrigger>}
 				</TabsList>
 
 				<TabsContent className="space-y-4" value="overview">
@@ -347,9 +315,7 @@ function OverviewSection({ data }: { data?: HealthcareDashboardData }) {
 		return (
 			<Card>
 				<CardContent className="py-8">
-					<p className="text-center text-muted-foreground">
-						Nenhum dado disponível para o período selecionado
-					</p>
+					<p className="text-center text-muted-foreground">Nenhum dado disponível para o período selecionado</p>
 				</CardContent>
 			</Card>
 		);
@@ -365,9 +331,7 @@ function OverviewSection({ data }: { data?: HealthcareDashboardData }) {
 					<div className="space-y-2">
 						<div className="flex justify-between">
 							<span>Total de Consultas:</span>
-							<span className="font-medium">
-								{data.appointments?.length ?? 0}
-							</span>
+							<span className="font-medium">{data.appointments?.length ?? 0}</span>
 						</div>
 						<div className="flex justify-between">
 							<span>Novos Pacientes:</span>
@@ -388,10 +352,7 @@ function OverviewSection({ data }: { data?: HealthcareDashboardData }) {
 				<CardContent>
 					<div className="space-y-2">
 						{data.topTreatments?.slice(0, 5).map((treatment, _index) => (
-							<div
-								className="flex items-center justify-between"
-								key={treatment.id}
-							>
+							<div className="flex items-center justify-between" key={treatment.id}>
 								<span className="text-sm">{treatment.name}</span>
 								<Badge variant="outline">{treatment.count}</Badge>
 							</div>
@@ -411,9 +372,7 @@ function AppointmentsSection({ data }: { data?: any[] }) {
 				<CardTitle>Próximos Agendamentos</CardTitle>
 			</CardHeader>
 			<CardContent>
-				<p className="text-muted-foreground">
-					Seção de agendamentos em desenvolvimento...
-				</p>
+				<p className="text-muted-foreground">Seção de agendamentos em desenvolvimento...</p>
 			</CardContent>
 		</Card>
 	);
@@ -427,9 +386,7 @@ function PatientsSection({ data }: { data?: any[] }) {
 				<CardTitle>Pacientes Ativos</CardTitle>
 			</CardHeader>
 			<CardContent>
-				<p className="text-muted-foreground">
-					Seção de pacientes em desenvolvimento...
-				</p>
+				<p className="text-muted-foreground">Seção de pacientes em desenvolvimento...</p>
 			</CardContent>
 		</Card>
 	);
@@ -443,9 +400,7 @@ function FinancialsSection({ data }: { data?: any }) {
 				<CardTitle>Relatório Financeiro</CardTitle>
 			</CardHeader>
 			<CardContent>
-				<p className="text-muted-foreground">
-					Seção financeira em desenvolvimento...
-				</p>
+				<p className="text-muted-foreground">Seção financeira em desenvolvimento...</p>
 			</CardContent>
 		</Card>
 	);

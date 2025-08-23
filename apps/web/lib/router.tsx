@@ -9,13 +9,7 @@
 import { apiClient } from "@neonpro/shared/api-client";
 import type { UserRole } from "@neonpro/shared/schemas";
 import type { QueryClient } from "@tanstack/react-query";
-import {
-	createRootRoute,
-	createRoute,
-	createRouter,
-	Link,
-	redirect,
-} from "@tanstack/react-router";
+import { createRootRoute, createRoute, createRouter, Link, redirect } from "@tanstack/react-router";
 import React from "react";
 import { z } from "zod";
 import { useAuth } from "@/contexts/auth-context";
@@ -45,9 +39,7 @@ export const PatientsSearchSchema = z.object({
 
 export const AppointmentsSearchSchema = z.object({
 	date: z.string().optional(),
-	status: z
-		.enum(["scheduled", "confirmed", "completed", "cancelled"])
-		.optional(),
+	status: z.enum(["scheduled", "confirmed", "completed", "cancelled"]).optional(),
 	professional: z.string().optional(),
 	search: z.string().optional(),
 });
@@ -181,9 +173,7 @@ export const dashboardIndexRoute = createRoute({
 			<div className="space-y-6">
 				<div>
 					<h1 className="font-bold text-3xl">Dashboard</h1>
-					<p className="text-muted-foreground">
-						Visão geral da sua clínica de estética
-					</p>
+					<p className="text-muted-foreground">Visão geral da sua clínica de estética</p>
 				</div>
 				<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
 					<div className="rounded-lg border bg-card p-6">
@@ -261,9 +251,7 @@ export const patientsIndexRoute = createRoute({
 					</Link>
 				</div>
 				<div className="rounded-lg border bg-card p-6">
-					<p className="text-center text-muted-foreground">
-						Lista de pacientes será exibida aqui
-					</p>
+					<p className="text-center text-muted-foreground">Lista de pacientes será exibida aqui</p>
 				</div>
 			</div>
 		);
@@ -281,9 +269,7 @@ export const patientNewRoute = createRoute({
 					<p className="text-muted-foreground">Cadastre um novo paciente</p>
 				</div>
 				<div className="rounded-lg border bg-card p-6">
-					<p className="text-center text-muted-foreground">
-						Formulário de cadastro de paciente será exibido aqui
-					</p>
+					<p className="text-center text-muted-foreground">Formulário de cadastro de paciente será exibido aqui</p>
 				</div>
 			</div>
 		);
@@ -332,14 +318,10 @@ export const appointmentsIndexRoute = createRoute({
 			<div className="space-y-6">
 				<div>
 					<h1 className="font-bold text-3xl">Consultas</h1>
-					<p className="text-muted-foreground">
-						Gerencie sua agenda de consultas
-					</p>
+					<p className="text-muted-foreground">Gerencie sua agenda de consultas</p>
 				</div>
 				<div className="rounded-lg border bg-card p-6">
-					<p className="text-center text-muted-foreground">
-						Calendário de consultas será exibido aqui
-					</p>
+					<p className="text-center text-muted-foreground">Calendário de consultas será exibido aqui</p>
 				</div>
 			</div>
 		);
@@ -359,13 +341,8 @@ export const unauthorizedRoute = createRoute({
 				<div className="text-center">
 					<h1 className="mb-4 font-bold text-4xl text-destructive">403</h1>
 					<h2 className="mb-2 font-semibold text-2xl">Acesso Negado</h2>
-					<p className="mb-6 text-muted-foreground">
-						Você não tem permissão para acessar esta página.
-					</p>
-					<Link
-						className="rounded-lg bg-primary px-6 py-2 text-primary-foreground hover:bg-primary/90"
-						to="/dashboard"
-					>
+					<p className="mb-6 text-muted-foreground">Você não tem permissão para acessar esta página.</p>
+					<Link className="rounded-lg bg-primary px-6 py-2 text-primary-foreground hover:bg-primary/90" to="/dashboard">
 						Voltar ao Dashboard
 					</Link>
 				</div>
@@ -405,13 +382,8 @@ export const router = createRouter({
 			<div className="flex min-h-screen items-center justify-center bg-background">
 				<div className="text-center">
 					<h1 className="mb-4 font-bold text-4xl text-destructive">Erro</h1>
-					<p className="mb-6 text-muted-foreground">
-						Ocorreu um erro na aplicação: {error.message}
-					</p>
-					<Link
-						className="rounded-lg bg-primary px-6 py-2 text-primary-foreground hover:bg-primary/90"
-						to="/"
-					>
+					<p className="mb-6 text-muted-foreground">Ocorreu um erro na aplicação: {error.message}</p>
+					<Link className="rounded-lg bg-primary px-6 py-2 text-primary-foreground hover:bg-primary/90" to="/">
 						Voltar ao Início
 					</Link>
 				</div>

@@ -7,16 +7,10 @@ import { createClient } from "@/app/utils/supabase/server";
 import { nfeService } from "@/lib/services/tax/nfe-service";
 
 const cancelRequestSchema = z.object({
-	reason: z
-		.string()
-		.min(15, "Reason must be at least 15 characters")
-		.max(255, "Reason must be at most 255 characters"),
+	reason: z.string().min(15, "Reason must be at least 15 characters").max(255, "Reason must be at most 255 characters"),
 });
 
-export async function POST(
-	request: Request,
-	{ params }: { params: Promise<{ id: string }> },
-) {
+export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
 	try {
 		const resolvedParams = await params;
 		const supabase = createClient();
@@ -44,10 +38,7 @@ export async function POST(
 			.single();
 
 		if (fetchError || !nfeDocument) {
-			return NextResponse.json(
-				{ error: "NFe document not found" },
-				{ status: 404 },
-			);
+			return NextResponse.json({ error: "NFe document not found" }, { status: 404 });
 		}
 
 		// Verify clinic access
@@ -63,10 +54,7 @@ export async function POST(
 
 		// Check if NFe can be cancelled
 		if (nfeDocument.status !== "authorized") {
-			return NextResponse.json(
-				{ error: "Only authorized NFe documents can be cancelled" },
-				{ status: 400 },
-			);
+			return NextResponse.json({ error: "Only authorized NFe documents can be cancelled" }, { status: 400 });
 		}
 
 		// Check cancellation window (usually 24 hours)
@@ -77,7 +65,7 @@ export async function POST(
 		if (hoursDiff > 24) {
 			return NextResponse.json(
 				{ error: "NFe can only be cancelled within 24 hours of authorization" },
-				{ status: 400 },
+				{ status: 400 }
 			);
 		}
 
@@ -90,9 +78,7 @@ export async function POST(
 			.update({
 				status: cancelResult.success ? "cancelled" : "authorized",
 				cancellation_code: cancelResult.cancellationCode,
-				cancellation_date: cancelResult.success
-					? new Date().toISOString()
-					: null,
+				cancellation_date: cancelResult.success ? new Date().toISOString() : null,
 				cancellation_reason: reason,
 				cancellation_response: cancelResult.sefazResponse,
 				updated_at: new Date().toISOString(),
@@ -102,10 +88,7 @@ export async function POST(
 			.single();
 
 		if (updateError) {
-			return NextResponse.json(
-				{ error: "Failed to update NFe document" },
-				{ status: 500 },
-			);
+			return NextResponse.json({ error: "Failed to update NFe document" }, { status: 500 });
 		}
 
 		// Log cancellation attempt
@@ -127,15 +110,9 @@ export async function POST(
 		});
 	} catch (error) {
 		if (error instanceof Error && error.name === "ZodError") {
-			return NextResponse.json(
-				{ error: "Invalid request data", details: error.message },
-				{ status: 400 },
-			);
+			return NextResponse.json({ error: "Invalid request data", details: error.message }, { status: 400 });
 		}
 
-		return NextResponse.json(
-			{ error: "Internal server error" },
-			{ status: 500 },
-		);
+		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 	}
 }

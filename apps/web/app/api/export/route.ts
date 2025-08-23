@@ -10,10 +10,7 @@ export async function GET(request: NextRequest) {
 		// Check authentication (mock for now)
 		const authHeader = request.headers.get("authorization");
 		if (!authHeader) {
-			return NextResponse.json(
-				{ error: "Authentication required" },
-				{ status: 401 },
-			);
+			return NextResponse.json({ error: "Authentication required" }, { status: 401 });
 		}
 
 		// Get export parameters
@@ -35,10 +32,7 @@ export async function GET(request: NextRequest) {
 
 		return NextResponse.json(exportData);
 	} catch (_error) {
-		return NextResponse.json(
-			{ error: "Internal server error" },
-			{ status: 500 },
-		);
+		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 	}
 }
 
@@ -46,10 +40,7 @@ export async function POST(request: NextRequest) {
 	try {
 		const authHeader = request.headers.get("authorization");
 		if (!authHeader) {
-			return NextResponse.json(
-				{ error: "Authentication required" },
-				{ status: 401 },
-			);
+			return NextResponse.json({ error: "Authentication required" }, { status: 401 });
 		}
 
 		const body = await request.json();
@@ -63,9 +54,6 @@ export async function POST(request: NextRequest) {
 
 		return NextResponse.json(result);
 	} catch (_error) {
-		return NextResponse.json(
-			{ error: "Internal server error" },
-			{ status: 500 },
-		);
+		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 	}
 }

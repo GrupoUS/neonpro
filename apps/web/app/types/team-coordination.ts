@@ -49,19 +49,9 @@ export type PerformanceMetricType =
 	| "team_collaboration"
 	| "emergency_response";
 
-export type EquipmentStatus =
-	| "available"
-	| "in_use"
-	| "maintenance"
-	| "reserved"
-	| "out_of_service";
+export type EquipmentStatus = "available" | "in_use" | "maintenance" | "reserved" | "out_of_service";
 
-export type CommunicationPriority =
-	| "low"
-	| "normal"
-	| "high"
-	| "urgent"
-	| "emergency";
+export type CommunicationPriority = "low" | "normal" | "high" | "urgent" | "emergency";
 
 // ========== CFM & LICENSING INTERFACES ==========
 
@@ -224,11 +214,7 @@ export type Schedule = {
 
 export type ScheduleConflict = {
 	id: string;
-	type:
-		| "double_booking"
-		| "clt_violation"
-		| "equipment_conflict"
-		| "room_conflict";
+	type: "double_booking" | "clt_violation" | "equipment_conflict" | "room_conflict";
 	severity: "low" | "medium" | "high" | "critical";
 	description: string;
 	affectedSchedules: string[]; // Schedule IDs affected
@@ -485,11 +471,7 @@ export type PerformanceTrend = {
 
 export type PerformanceAlert = {
 	id: string;
-	type:
-		| "performance_decline"
-		| "compliance_issue"
-		| "safety_concern"
-		| "workload_excess";
+	type: "performance_decline" | "compliance_issue" | "safety_concern" | "workload_excess";
 	severity: "low" | "medium" | "high" | "critical";
 	description: string;
 	affectedProfessionals: string[];
@@ -522,13 +504,7 @@ export type DashboardLayout = {
 
 export type DashboardWidget = {
 	id: string;
-	type:
-		| "staff_overview"
-		| "schedule_grid"
-		| "performance_chart"
-		| "alerts"
-		| "communication"
-		| "resources";
+	type: "staff_overview" | "schedule_grid" | "performance_chart" | "alerts" | "communication" | "resources";
 	title: string;
 	position: { x: number; y: number };
 	size: { width: number; height: number };

@@ -80,15 +80,13 @@ export class AuthService {
 
 			if (data.user) {
 				// Create user profile
-				const { error: profileError } = await supabase
-					.from("user_profiles")
-					.insert({
-						user_id: data.user.id,
-						tenant_id: userData.tenantId,
-						role: "user",
-						first_name: userData.firstName,
-						last_name: userData.lastName,
-					});
+				const { error: profileError } = await supabase.from("user_profiles").insert({
+					user_id: data.user.id,
+					tenant_id: userData.tenantId,
+					role: "user",
+					first_name: userData.firstName,
+					last_name: userData.lastName,
+				});
 
 				if (profileError) {
 				}

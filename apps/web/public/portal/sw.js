@@ -18,11 +18,7 @@ const STATIC_RESOURCES = [
 ];
 
 // API routes that should be cached
-const API_CACHE_PATTERNS = [
-	"/api/portal/auth/validate",
-	"/api/portal/dashboard/stats",
-	"/api/portal/notifications",
-];
+const API_CACHE_PATTERNS = ["/api/portal/auth/validate", "/api/portal/dashboard/stats", "/api/portal/notifications"];
 
 // Install event - cache static resources
 self.addEventListener("install", (event) => {
@@ -35,7 +31,7 @@ self.addEventListener("install", (event) => {
 			.then(() => {
 				// Force the new service worker to activate immediately
 				return self.skipWaiting();
-			}),
+			})
 	);
 });
 
@@ -51,13 +47,13 @@ self.addEventListener("activate", (event) => {
 							return caches.delete(cacheName);
 						}
 						return Promise.resolve();
-					}),
+					})
 				);
 			})
 			.then(() => {
 				// Take control of all pages immediately
 				return self.clients.claim();
-			}),
+			})
 	);
 });
 
@@ -198,7 +194,7 @@ async function handleAPIRequest(request) {
 				headers: {
 					"Content-Type": "application/json",
 				},
-			},
+			}
 		);
 	}
 }
@@ -261,12 +257,7 @@ self.addEventListener("push", (event) => {
 			requireInteraction: data.requireInteraction,
 		};
 
-		event.waitUntil(
-			self.registration.showNotification(
-				data.title || "Portal NeonPro",
-				options,
-			),
-		);
+		event.waitUntil(self.registration.showNotification(data.title || "Portal NeonPro", options));
 	} catch (_error) {}
 });
 
@@ -287,27 +278,25 @@ self.addEventListener("notificationclick", (event) => {
 	}
 
 	event.waitUntil(
-		clients
-			.matchAll({ type: "window", includeUncontrolled: true })
-			.then((clientList) => {
-				// Check if portal is already open
-				for (const client of clientList) {
-					const clientUrl = new URL(client.url);
-					if (clientUrl.pathname.startsWith("/portal/") && "focus" in client) {
-						client.focus();
-						client.postMessage({
-							type: "NOTIFICATION_CLICK",
-							data: { url: targetUrl },
-						});
-						return;
-					}
+		clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {
+			// Check if portal is already open
+			for (const client of clientList) {
+				const clientUrl = new URL(client.url);
+				if (clientUrl.pathname.startsWith("/portal/") && "focus" in client) {
+					client.focus();
+					client.postMessage({
+						type: "NOTIFICATION_CLICK",
+						data: { url: targetUrl },
+					});
+					return;
 				}
+			}
 
-				// Open new window if portal not open
-				if (clients.openWindow) {
-					return clients.openWindow(targetUrl);
-				}
-			}),
+			// Open new window if portal not open
+			if (clients.openWindow) {
+				return clients.openWindow(targetUrl);
+			}
+		})
 	);
 });
 

@@ -5,13 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Icons } from "@/components/ui/icons";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -74,9 +68,7 @@ export function LoginForm() {
 	return (
 		<Card className="neonpro-card w-full">
 			<CardHeader className="space-y-3 text-center">
-				<CardTitle className="font-bold text-foreground text-xl">
-					Acessar Plataforma
-				</CardTitle>
+				<CardTitle className="font-bold text-foreground text-xl">Acessar Plataforma</CardTitle>
 				<CardDescription className="text-muted-foreground">
 					Digite suas credenciais para continuar no sistema de gestão
 				</CardDescription>
@@ -126,14 +118,8 @@ export function LoginForm() {
 								type="button"
 								variant="ghost"
 							>
-								{showPassword ? (
-									<EyeOff className="h-4 w-4" />
-								) : (
-									<Eye className="h-4 w-4" />
-								)}
-								<span className="sr-only">
-									{showPassword ? "Hide password" : "Show password"}
-								</span>
+								{showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+								<span className="sr-only">{showPassword ? "Hide password" : "Show password"}</span>
 							</Button>
 						</div>
 					</div>
@@ -158,9 +144,7 @@ export function LoginForm() {
 						<span className="w-full border-t" />
 					</div>
 					<div className="relative flex justify-center text-xs uppercase">
-						<span className="bg-background px-2 text-muted-foreground">
-							Ou continue com
-						</span>
+						<span className="bg-background px-2 text-muted-foreground">Ou continue com</span>
 					</div>
 				</div>
 

@@ -28,9 +28,7 @@ const StrategiesQuerySchema = z.object({
 	status: z.nativeEnum(RetentionStrategyStatus).optional(),
 	limit: z.coerce.number().min(1).max(200).default(50),
 	offset: z.coerce.number().min(0).default(0),
-	sortBy: z
-		.enum(["created_at", "updated_at", "name", "success_rate"])
-		.default("created_at"),
+	sortBy: z.enum(["created_at", "updated_at", "name", "success_rate"]).default("created_at"),
 	sortOrder: z.enum(["asc", "desc"]).default("desc"),
 });
 
@@ -57,10 +55,7 @@ const _ExecuteStrategySchema = z.object({
 // GET RETENTION STRATEGIES
 // =====================================================================================
 
-export async function GET(
-	request: NextRequest,
-	{ params }: { params: Promise<{ clinicId: string }> },
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ clinicId: string }> }) {
 	try {
 		const resolvedParams = await params;
 		// Validate clinic ID parameter
@@ -74,7 +69,7 @@ export async function GET(
 					error: "Invalid clinic ID",
 					details: clinicValidation.error.issues,
 				},
-				{ status: 400 },
+				{ status: 400 }
 			);
 		}
 
@@ -98,19 +93,11 @@ export async function GET(
 					error: "Invalid query parameters",
 					details: queryValidation.error.issues,
 				},
-				{ status: 400 },
+				{ status: 400 }
 			);
 		}
 
-		const {
-			activeOnly,
-			strategyType,
-			status,
-			limit,
-			offset,
-			sortBy,
-			sortOrder,
-		} = queryValidation.data;
+		const { activeOnly, strategyType, status, limit, offset, sortBy, sortOrder } = queryValidation.data;
 
 		// Verify authentication
 		const supabase = await createClient();
@@ -131,39 +118,26 @@ export async function GET(
 			.single();
 
 		if (profileError || !userProfile) {
-			return NextResponse.json(
-				{ error: "User profile not found" },
-				{ status: 403 },
-			);
+			return NextResponse.json({ error: "User profile not found" }, { status: 403 });
 		}
 
 		if (userProfile.clinic_id !== clinicId) {
-			return NextResponse.json(
-				{ error: "Access denied to clinic data" },
-				{ status: 403 },
-			);
+			return NextResponse.json({ error: "Access denied to clinic data" }, { status: 403 });
 		}
 
 		// Get retention strategies
 		const retentionService = new RetentionAnalyticsService();
-		const strategies = await retentionService.getRetentionStrategies(
-			clinicId,
-			activeOnly,
-		);
+		const strategies = await retentionService.getRetentionStrategies(clinicId, activeOnly);
 
 		// Apply additional filters
 		let filteredStrategies = strategies;
 
 		if (strategyType) {
-			filteredStrategies = filteredStrategies.filter(
-				(s) => s.strategy_type === strategyType,
-			);
+			filteredStrategies = filteredStrategies.filter((s) => s.strategy_type === strategyType);
 		}
 
 		if (status) {
-			filteredStrategies = filteredStrategies.filter(
-				(s) => s.status === status,
-			);
+			filteredStrategies = filteredStrategies.filter((s) => s.status === status);
 		}
 
 		// Apply sorting
@@ -199,10 +173,7 @@ export async function GET(
 		});
 
 		// Apply pagination
-		const paginatedStrategies = filteredStrategies.slice(
-			offset,
-			offset + limit,
-		);
+		const paginatedStrategies = filteredStrategies.slice(offset, offset + limit);
 
 		// Calculate summary statistics
 		const summary = {
@@ -210,20 +181,12 @@ export async function GET(
 			active_strategies: filteredStrategies.filter((s) => s.is_active).length,
 			strategy_types: Object.values(RetentionStrategyType).map((type) => ({
 				type,
-				count: filteredStrategies.filter((s) => s.strategy_type === type)
-					.length,
+				count: filteredStrategies.filter((s) => s.strategy_type === type).length,
 			})),
 			average_success_rate:
-				filteredStrategies.reduce((sum, s) => sum + (s.success_rate || 0), 0) /
-					filteredStrategies.length || 0,
-			total_executions: filteredStrategies.reduce(
-				(sum, s) => sum + s.execution_count,
-				0,
-			),
-			successful_executions: filteredStrategies.reduce(
-				(sum, s) => sum + s.successful_executions,
-				0,
-			),
+				filteredStrategies.reduce((sum, s) => sum + (s.success_rate || 0), 0) / filteredStrategies.length || 0,
+			total_executions: filteredStrategies.reduce((sum, s) => sum + s.execution_count, 0),
+			successful_executions: filteredStrategies.reduce((sum, s) => sum + s.successful_executions, 0),
 		};
 
 		return NextResponse.json({
@@ -253,7 +216,7 @@ export async function GET(
 				error: "Internal server error",
 				message: error instanceof Error ? error.message : "Unknown error",
 			},
-			{ status: 500 },
+			{ status: 500 }
 		);
 	}
 }
@@ -262,10 +225,7 @@ export async function GET(
 // CREATE RETENTION STRATEGY
 // =====================================================================================
 
-export async function POST(
-	request: NextRequest,
-	{ params }: { params: Promise<{ clinicId: string }> },
-) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ clinicId: string }> }) {
 	try {
 		const resolvedParams = await params;
 		// Validate clinic ID parameter
@@ -279,7 +239,7 @@ export async function POST(
 					error: "Invalid clinic ID",
 					details: clinicValidation.error.issues,
 				},
-				{ status: 400 },
+				{ status: 400 }
 			);
 		}
 
@@ -295,7 +255,7 @@ export async function POST(
 					error: "Invalid strategy data",
 					details: validation.error.issues,
 				},
-				{ status: 400 },
+				{ status: 400 }
 			);
 		}
 
@@ -320,26 +280,17 @@ export async function POST(
 			.single();
 
 		if (profileError || !userProfile) {
-			return NextResponse.json(
-				{ error: "User profile not found" },
-				{ status: 403 },
-			);
+			return NextResponse.json({ error: "User profile not found" }, { status: 403 });
 		}
 
 		if (userProfile.clinic_id !== clinicId) {
-			return NextResponse.json(
-				{ error: "Access denied to clinic data" },
-				{ status: 403 },
-			);
+			return NextResponse.json({ error: "Access denied to clinic data" }, { status: 403 });
 		}
 
 		// Check permissions for creating strategies
 		const allowedRoles = ["admin", "manager", "analyst"];
 		if (!allowedRoles.includes(userProfile.role)) {
-			return NextResponse.json(
-				{ error: "Insufficient permissions to create strategies" },
-				{ status: 403 },
-			);
+			return NextResponse.json({ error: "Insufficient permissions to create strategies" }, { status: 403 });
 		}
 
 		// Create retention strategy
@@ -364,7 +315,7 @@ export async function POST(
 				error: "Internal server error",
 				message: error instanceof Error ? error.message : "Unknown error",
 			},
-			{ status: 500 },
+			{ status: 500 }
 		);
 	}
 }

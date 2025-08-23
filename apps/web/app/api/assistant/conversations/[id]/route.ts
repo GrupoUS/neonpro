@@ -30,10 +30,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
 			.single();
 
 		if (convError || !conversation) {
-			return NextResponse.json(
-				{ error: "Conversation not found" },
-				{ status: 404 },
-			);
+			return NextResponse.json({ error: "Conversation not found" }, { status: 404 });
 		}
 
 		// Buscar mensagens da conversa
@@ -45,18 +42,12 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
 			.order("created_at", { ascending: true });
 
 		if (messagesError) {
-			return NextResponse.json(
-				{ error: "Failed to fetch messages" },
-				{ status: 500 },
-			);
+			return NextResponse.json({ error: "Failed to fetch messages" }, { status: 500 });
 		}
 
 		return NextResponse.json({ conversation, messages: messages || [] });
 	} catch (_error) {
-		return NextResponse.json(
-			{ error: "Internal server error" },
-			{ status: 500 },
-		);
+		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 	}
 }
 
@@ -84,10 +75,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 			.single();
 
 		if (convError || !existingConversation) {
-			return NextResponse.json(
-				{ error: "Conversation not found" },
-				{ status: 404 },
-			);
+			return NextResponse.json({ error: "Conversation not found" }, { status: 404 });
 		}
 
 		// Preparar dados para atualização
@@ -100,10 +88,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 		}
 
 		if (Object.keys(updateData).length === 0) {
-			return NextResponse.json(
-				{ error: "No valid fields to update" },
-				{ status: 400 },
-			);
+			return NextResponse.json({ error: "No valid fields to update" }, { status: 400 });
 		}
 
 		// Atualizar conversa
@@ -116,18 +101,12 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 			.single();
 
 		if (error) {
-			return NextResponse.json(
-				{ error: "Failed to update conversation" },
-				{ status: 500 },
-			);
+			return NextResponse.json({ error: "Failed to update conversation" }, { status: 500 });
 		}
 
 		return NextResponse.json({ conversation });
 	} catch (_error) {
-		return NextResponse.json(
-			{ error: "Internal server error" },
-			{ status: 500 },
-		);
+		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 	}
 }
 
@@ -154,10 +133,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
 			.single();
 
 		if (convError || !existingConversation) {
-			return NextResponse.json(
-				{ error: "Conversation not found" },
-				{ status: 404 },
-			);
+			return NextResponse.json({ error: "Conversation not found" }, { status: 404 });
 		}
 
 		// Deletar conversa (cascata automática deletará mensagens)
@@ -168,18 +144,12 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
 			.eq("user_id", user.id);
 
 		if (error) {
-			return NextResponse.json(
-				{ error: "Failed to delete conversation" },
-				{ status: 500 },
-			);
+			return NextResponse.json({ error: "Failed to delete conversation" }, { status: 500 });
 		}
 
 		return NextResponse.json({ success: true });
 	} catch (_error) {
-		return NextResponse.json(
-			{ error: "Internal server error" },
-			{ status: 500 },
-		);
+		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 	}
 }
 

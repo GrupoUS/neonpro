@@ -7,11 +7,7 @@
  */
 
 // Import our enhanced API client and schemas
-import {
-	ApiHelpers,
-	type ApiResponse,
-	apiClient,
-} from "@neonpro/shared/api-client";
+import { ApiHelpers, type ApiResponse, apiClient } from "@neonpro/shared/api-client";
 import {
 	type ChangePasswordRequest,
 	ChangePasswordRequestSchema,
@@ -118,9 +114,7 @@ export function useLogin() {
 	const router = useRouter();
 
 	return queryUtils.createMutation({
-		mutationFn: async (
-			loginData: LoginRequest,
-		): Promise<ApiResponse<LoginResponse["data"]>> => {
+		mutationFn: async (loginData: LoginRequest): Promise<ApiResponse<LoginResponse["data"]>> => {
 			// Validate request data
 			const validatedData = LoginRequestSchema.parse(loginData);
 
@@ -155,7 +149,7 @@ export function useLogin() {
 					response.data.access_token,
 					response.data.refresh_token,
 					response.data.expires_in,
-					response.data.user,
+					response.data.user
 				);
 
 				// Log successful login for audit
@@ -200,17 +194,13 @@ export function useRegister() {
 	const router = useRouter();
 
 	return queryUtils.createMutation({
-		mutationFn: async (
-			registerData: RegisterRequest,
-		): Promise<ApiResponse<RegisterResponse["data"]>> => {
+		mutationFn: async (registerData: RegisterRequest): Promise<ApiResponse<RegisterResponse["data"]>> => {
 			// Validate request data including LGPD consent
 			const validatedData = RegisterRequestSchema.parse(registerData);
 
 			// Ensure LGPD consent is provided
 			if (!validatedData.lgpd_consent) {
-				throw new Error(
-					"Consentimento LGPD é obrigatório para criar uma conta",
-				);
+				throw new Error("Consentimento LGPD é obrigatório para criar uma conta");
 			}
 
 			const response = await apiClient.api.v1.auth.register.$post({
@@ -315,9 +305,7 @@ export function useChangePassword() {
 	const queryUtils = useHealthcareQueryUtils();
 
 	return queryUtils.createMutation({
-		mutationFn: async (
-			passwordData: ChangePasswordRequest,
-		): Promise<ApiResponse<ChangePasswordResponse["data"]>> => {
+		mutationFn: async (passwordData: ChangePasswordRequest): Promise<ApiResponse<ChangePasswordResponse["data"]>> => {
 			const validatedData = ChangePasswordRequestSchema.parse(passwordData);
 
 			const response = await apiClient.api.v1.auth["change-password"].$post({
@@ -358,9 +346,7 @@ export function useForgotPassword() {
 	const queryUtils = useHealthcareQueryUtils();
 
 	return queryUtils.createMutation({
-		mutationFn: async (
-			forgotData: ForgotPasswordRequest,
-		): Promise<ApiResponse<ForgotPasswordResponse["data"]>> => {
+		mutationFn: async (forgotData: ForgotPasswordRequest): Promise<ApiResponse<ForgotPasswordResponse["data"]>> => {
 			const validatedData = ForgotPasswordRequestSchema.parse(forgotData);
 
 			const response = await apiClient.api.v1.auth["forgot-password"].$post({
@@ -383,9 +369,7 @@ export function useResetPassword() {
 	const router = useRouter();
 
 	return queryUtils.createMutation({
-		mutationFn: async (
-			resetData: ResetPasswordRequest,
-		): Promise<ApiResponse<ResetPasswordResponse["data"]>> => {
+		mutationFn: async (resetData: ResetPasswordRequest): Promise<ApiResponse<ResetPasswordResponse["data"]>> => {
 			const validatedData = ResetPasswordRequestSchema.parse(resetData);
 
 			const response = await apiClient.api.v1.auth["reset-password"].$post({
@@ -412,9 +396,7 @@ export function useUpdateProfile() {
 	const queryUtils = useHealthcareQueryUtils();
 
 	return queryUtils.createMutation({
-		mutationFn: async (
-			profileData: UpdateProfileRequest,
-		): Promise<ApiResponse<UpdateProfileResponse["data"]>> => {
+		mutationFn: async (profileData: UpdateProfileRequest): Promise<ApiResponse<UpdateProfileResponse["data"]>> => {
 			const validatedData = UpdateProfileRequestSchema.parse(profileData);
 
 			const response = await apiClient.api.v1.auth.profile.$put({
@@ -448,7 +430,7 @@ export function useUpdateProfile() {
 					apiClient.auth.getAccessToken()!,
 					apiClient.auth.getRefreshToken()!,
 					undefined,
-					response.data.user,
+					response.data.user
 				);
 			}
 		},
@@ -460,9 +442,7 @@ export function useRefreshToken() {
 	const queryUtils = useHealthcareQueryUtils();
 
 	return queryUtils.createMutation({
-		mutationFn: async (): Promise<
-			ApiResponse<RefreshTokenResponse["data"]>
-		> => {
+		mutationFn: async (): Promise<ApiResponse<RefreshTokenResponse["data"]>> => {
 			const refreshToken = apiClient.auth.getRefreshToken();
 
 			if (!refreshToken) {
@@ -493,11 +473,7 @@ export function useRefreshToken() {
 
 		onSuccess: (response) => {
 			if (response.data) {
-				apiClient.auth.setTokens(
-					response.data.access_token,
-					response.data.refresh_token,
-					response.data.expires_in,
-				);
+				apiClient.auth.setTokens(response.data.access_token, response.data.refresh_token, response.data.expires_in);
 			}
 		},
 
@@ -525,15 +501,11 @@ export function useAuthStatus(): AuthContext {
 			return roleArray.includes(user.role);
 		};
 
-		const hasPermission = (
-			permissions: UserPermission | UserPermission[],
-		): boolean => {
+		const hasPermission = (permissions: UserPermission | UserPermission[]): boolean => {
 			if (!user?.permissions) {
 				return false;
 			}
-			const permArray = Array.isArray(permissions)
-				? permissions
-				: [permissions];
+			const permArray = Array.isArray(permissions) ? permissions : [permissions];
 			return permArray.every((perm) => user.permissions.includes(perm));
 		};
 
@@ -552,15 +524,9 @@ export function useAuthStatus(): AuthContext {
 		};
 
 		// LGPD compliance status
-		const consentDate = user?.lgpd_consent_date
-			? new Date(user.lgpd_consent_date)
-			: null;
-		const consentExpiryDate = consentDate
-			? new Date(consentDate.getTime() + 365 * 24 * 60 * 60 * 1000)
-			: null; // 1 year
-		const isConsentExpired = consentExpiryDate
-			? consentExpiryDate < new Date()
-			: false;
+		const consentDate = user?.lgpd_consent_date ? new Date(user.lgpd_consent_date) : null;
+		const consentExpiryDate = consentDate ? new Date(consentDate.getTime() + 365 * 24 * 60 * 60 * 1000) : null; // 1 year
+		const isConsentExpired = consentExpiryDate ? consentExpiryDate < new Date() : false;
 
 		return {
 			user: user || null,
@@ -608,9 +574,7 @@ export function useAuthUtils() {
 
 		// Check if token exists and is valid
 		hasValidToken: useCallback((): boolean => {
-			return (
-				apiClient.auth.isAuthenticated() && !apiClient.auth.shouldRefresh()
-			);
+			return apiClient.auth.isAuthenticated() && !apiClient.auth.shouldRefresh();
 		}, []),
 
 		// Force refresh profile
@@ -627,32 +591,27 @@ export function useAuthUtils() {
 			}
 
 			const consentDate = new Date(user.lgpd_consent_date);
-			const expiryDate = new Date(
-				consentDate.getTime() + 365 * 24 * 60 * 60 * 1000,
-			);
+			const expiryDate = new Date(consentDate.getTime() + 365 * 24 * 60 * 60 * 1000);
 			const isExpired = expiryDate < new Date();
 
 			return { hasConsent: true, isExpired, expiryDate };
 		}, []),
 
 		// Get user permissions for a specific resource
-		getResourcePermissions: useCallback(
-			(user: UserBase | null, resourceType: string) => {
-				if (!user?.permissions) {
-					return [];
-				}
+		getResourcePermissions: useCallback((user: UserBase | null, resourceType: string) => {
+			if (!user?.permissions) {
+				return [];
+			}
 
-				return user.permissions.filter((perm) => perm.includes(resourceType));
-			},
-			[],
-		),
+			return user.permissions.filter((perm) => perm.includes(resourceType));
+		}, []),
 
 		// Export user data for LGPD compliance
 		exportUserData: useCallback(
 			async (userId: string) => {
 				return await queryUtils.exportUserData(userId);
 			},
-			[queryUtils],
+			[queryUtils]
 		),
 	};
 }

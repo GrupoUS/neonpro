@@ -19,18 +19,7 @@ import {
 	TabsList,
 	TabsTrigger,
 } from "@neonpro/ui";
-import {
-	Activity,
-	AlertCircle,
-	Calendar,
-	Heart,
-	Mail,
-	MapPin,
-	Phone,
-	Pill,
-	TrendingUp,
-	User,
-} from "lucide-react";
+import { Activity, AlertCircle, Calendar, Heart, Mail, MapPin, Phone, Pill, TrendingUp, User } from "lucide-react";
 import { useState } from "react";
 
 type PatientInfo = {
@@ -177,10 +166,7 @@ export default function PatientDashboard() {
 		let age = today.getFullYear() - birth.getFullYear();
 		const monthDiff = today.getMonth() - birth.getMonth();
 
-		if (
-			monthDiff < 0 ||
-			(monthDiff === 0 && today.getDate() < birth.getDate())
-		) {
+		if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
 			age--;
 		}
 
@@ -211,12 +197,7 @@ export default function PatientDashboard() {
 		};
 
 		return (
-			<Badge
-				className={
-					variants[status as keyof typeof variants] ||
-					"bg-gray-100 text-gray-800"
-				}
-			>
+			<Badge className={variants[status as keyof typeof variants] || "bg-gray-100 text-gray-800"}>
 				{labels[status as keyof typeof labels] || status}
 			</Badge>
 		);
@@ -252,9 +233,7 @@ export default function PatientDashboard() {
 		}
 	};
 
-	const upcomingAppointment = appointments.find(
-		(apt) => apt.status === "scheduled",
-	);
+	const upcomingAppointment = appointments.find((apt) => apt.status === "scheduled");
 
 	return (
 		<div className="space-y-6">
@@ -262,9 +241,7 @@ export default function PatientDashboard() {
 			<div className="flex items-center justify-between">
 				<div>
 					<h1 className="font-bold text-3xl tracking-tight">Meu Dashboard</h1>
-					<p className="text-muted-foreground">
-						Bem-vindo de volta, {patient.name.split(" ")[0]}!
-					</p>
+					<p className="text-muted-foreground">Bem-vindo de volta, {patient.name.split(" ")[0]}!</p>
 				</div>
 				<Avatar className="h-16 w-16">
 					<AvatarImage src={patient.avatar} />
@@ -287,9 +264,7 @@ export default function PatientDashboard() {
 							</div>
 							<div>
 								<p className="font-medium text-sm">Idade</p>
-								<p className="font-bold text-xl">
-									{calculateAge(patient.dateOfBirth)} anos
-								</p>
+								<p className="font-bold text-xl">{calculateAge(patient.dateOfBirth)} anos</p>
 							</div>
 						</div>
 					</CardContent>
@@ -304,8 +279,7 @@ export default function PatientDashboard() {
 							<div>
 								<p className="font-medium text-sm">Pressão Arterial</p>
 								<p className="font-bold text-xl">
-									{healthMetrics.bloodPressure.systolic}/
-									{healthMetrics.bloodPressure.diastolic}
+									{healthMetrics.bloodPressure.systolic}/{healthMetrics.bloodPressure.diastolic}
 								</p>
 							</div>
 						</div>
@@ -320,9 +294,7 @@ export default function PatientDashboard() {
 							</div>
 							<div>
 								<p className="font-medium text-sm">Frequência Cardíaca</p>
-								<p className="font-bold text-xl">
-									{healthMetrics.heartRate.value} bpm
-								</p>
+								<p className="font-bold text-xl">{healthMetrics.heartRate.value} bpm</p>
 							</div>
 						</div>
 					</CardContent>
@@ -336,9 +308,7 @@ export default function PatientDashboard() {
 							</div>
 							<div>
 								<p className="font-medium text-sm">IMC</p>
-								<p
-									className={`font-bold text-xl ${getBMIColor(healthMetrics.bmi.category)}`}
-								>
+								<p className={`font-bold text-xl ${getBMIColor(healthMetrics.bmi.category)}`}>
 									{healthMetrics.bmi.value}
 								</p>
 							</div>
@@ -352,10 +322,8 @@ export default function PatientDashboard() {
 				<Alert>
 					<Calendar className="h-4 w-4" />
 					<AlertDescription>
-						<strong>Próxima consulta:</strong> {upcomingAppointment.doctor} (
-						{upcomingAppointment.specialty}) -{" "}
-						{upcomingAppointment.date.toLocaleDateString("pt-BR")} às{" "}
-						{upcomingAppointment.time}
+						<strong>Próxima consulta:</strong> {upcomingAppointment.doctor} ({upcomingAppointment.specialty}) -{" "}
+						{upcomingAppointment.date.toLocaleDateString("pt-BR")} às {upcomingAppointment.time}
 					</AlertDescription>
 				</Alert>
 			)}
@@ -374,22 +342,17 @@ export default function PatientDashboard() {
 						<Card>
 							<CardHeader>
 								<CardTitle>Métricas de Saúde</CardTitle>
-								<CardDescription>
-									Seus indicadores vitais atuais
-								</CardDescription>
+								<CardDescription>Seus indicadores vitais atuais</CardDescription>
 							</CardHeader>
 							<CardContent className="space-y-4">
 								<div className="flex items-center justify-between">
 									<div className="flex items-center space-x-2">
 										<Heart className="h-4 w-4 text-red-500" />
-										<span className="font-medium text-sm">
-											Pressão Arterial
-										</span>
+										<span className="font-medium text-sm">Pressão Arterial</span>
 									</div>
 									<div className="flex items-center space-x-2">
 										<span className="font-medium">
-											{healthMetrics.bloodPressure.systolic}/
-											{healthMetrics.bloodPressure.diastolic} mmHg
+											{healthMetrics.bloodPressure.systolic}/{healthMetrics.bloodPressure.diastolic} mmHg
 										</span>
 										{getStatusBadge(healthMetrics.bloodPressure.status)}
 									</div>
@@ -398,14 +361,10 @@ export default function PatientDashboard() {
 								<div className="flex items-center justify-between">
 									<div className="flex items-center space-x-2">
 										<Activity className="h-4 w-4 text-blue-500" />
-										<span className="font-medium text-sm">
-											Frequência Cardíaca
-										</span>
+										<span className="font-medium text-sm">Frequência Cardíaca</span>
 									</div>
 									<div className="flex items-center space-x-2">
-										<span className="font-medium">
-											{healthMetrics.heartRate.value} bpm
-										</span>
+										<span className="font-medium">{healthMetrics.heartRate.value} bpm</span>
 										{getStatusBadge(healthMetrics.heartRate.status)}
 									</div>
 								</div>
@@ -416,9 +375,7 @@ export default function PatientDashboard() {
 										<span className="font-medium text-sm">Peso</span>
 									</div>
 									<div className="flex items-center space-x-2">
-										<span className="font-medium">
-											{healthMetrics.weight.value} kg
-										</span>
+										<span className="font-medium">{healthMetrics.weight.value} kg</span>
 										<Badge variant="outline">
 											{healthMetrics.weight.trend === "stable"
 												? "Estável"
@@ -433,22 +390,14 @@ export default function PatientDashboard() {
 
 								<div className="space-y-2">
 									<div className="flex items-center justify-between">
-										<span className="font-medium text-sm">
-											Índice de Massa Corporal (IMC)
-										</span>
-										<span
-											className={`font-bold ${getBMIColor(healthMetrics.bmi.category)}`}
-										>
+										<span className="font-medium text-sm">Índice de Massa Corporal (IMC)</span>
+										<span className={`font-bold ${getBMIColor(healthMetrics.bmi.category)}`}>
 											{healthMetrics.bmi.value}
 										</span>
 									</div>
 									<div className="flex items-center justify-between">
-										<span className="text-muted-foreground text-xs">
-											Classificação
-										</span>
-										<span
-											className={`text-sm ${getBMIColor(healthMetrics.bmi.category)}`}
-										>
+										<span className="text-muted-foreground text-xs">Classificação</span>
+										<span className={`text-sm ${getBMIColor(healthMetrics.bmi.category)}`}>
 											{getBMILabel(healthMetrics.bmi.category)}
 										</span>
 									</div>
@@ -476,36 +425,25 @@ export default function PatientDashboard() {
 					<Card>
 						<CardHeader>
 							<CardTitle>Minhas Consultas</CardTitle>
-							<CardDescription>
-								Histórico e próximos agendamentos
-							</CardDescription>
+							<CardDescription>Histórico e próximos agendamentos</CardDescription>
 						</CardHeader>
 						<CardContent>
 							<div className="space-y-4">
 								{appointments.map((appointment) => (
-									<div
-										className="flex items-center justify-between rounded-lg border p-4"
-										key={appointment.id}
-									>
+									<div className="flex items-center justify-between rounded-lg border p-4" key={appointment.id}>
 										<div className="flex items-center space-x-4">
 											<div className="rounded-full bg-blue-100 p-2">
 												<Calendar className="h-5 w-5 text-blue-600" />
 											</div>
 											<div>
 												<h4 className="font-medium">{appointment.doctor}</h4>
-												<p className="text-muted-foreground text-sm">
-													{appointment.specialty}
-												</p>
-												<p className="text-muted-foreground text-sm">
-													{appointment.type}
-												</p>
+												<p className="text-muted-foreground text-sm">{appointment.specialty}</p>
+												<p className="text-muted-foreground text-sm">{appointment.type}</p>
 												<div className="mt-1 flex items-center space-x-4">
 													<span className="text-muted-foreground text-xs">
 														{appointment.date.toLocaleDateString("pt-BR")}
 													</span>
-													<span className="text-muted-foreground text-xs">
-														{appointment.time}
-													</span>
+													<span className="text-muted-foreground text-xs">{appointment.time}</span>
 												</div>
 											</div>
 										</div>
@@ -527,17 +465,12 @@ export default function PatientDashboard() {
 					<Card>
 						<CardHeader>
 							<CardTitle>Medicações Atuais</CardTitle>
-							<CardDescription>
-								Medicamentos prescritos e em uso
-							</CardDescription>
+							<CardDescription>Medicamentos prescritos e em uso</CardDescription>
 						</CardHeader>
 						<CardContent>
 							<div className="space-y-4">
 								{medications.map((medication) => (
-									<div
-										className="flex items-center justify-between rounded-lg border p-4"
-										key={medication.id}
-									>
+									<div className="flex items-center justify-between rounded-lg border p-4" key={medication.id}>
 										<div className="flex items-center space-x-4">
 											<div className="rounded-full bg-green-100 p-2">
 												<Pill className="h-5 w-5 text-green-600" />
@@ -546,15 +479,10 @@ export default function PatientDashboard() {
 												<h4 className="font-medium">
 													{medication.name} {medication.dosage}
 												</h4>
-												<p className="text-muted-foreground text-sm">
-													{medication.frequency}
-												</p>
+												<p className="text-muted-foreground text-sm">{medication.frequency}</p>
+												<p className="text-muted-foreground text-xs">Prescrito por {medication.prescribedBy}</p>
 												<p className="text-muted-foreground text-xs">
-													Prescrito por {medication.prescribedBy}
-												</p>
-												<p className="text-muted-foreground text-xs">
-													Desde{" "}
-													{medication.startDate.toLocaleDateString("pt-BR")}
+													Desde {medication.startDate.toLocaleDateString("pt-BR")}
 												</p>
 											</div>
 										</div>
@@ -571,8 +499,7 @@ export default function PatientDashboard() {
 							<Alert>
 								<AlertCircle className="h-4 w-4" />
 								<AlertDescription>
-									<strong>Lembre-se:</strong> Sempre consulte seu médico antes
-									de alterar ou interromper medicações.
+									<strong>Lembre-se:</strong> Sempre consulte seu médico antes de alterar ou interromper medicações.
 								</AlertDescription>
 							</Alert>
 						</CardContent>
@@ -592,27 +519,21 @@ export default function PatientDashboard() {
 									<User className="h-4 w-4 text-muted-foreground" />
 									<div>
 										<p className="font-medium text-sm">Nome</p>
-										<p className="text-muted-foreground text-sm">
-											{patient.name}
-										</p>
+										<p className="text-muted-foreground text-sm">{patient.name}</p>
 									</div>
 								</div>
 								<div className="flex items-center space-x-2">
 									<Mail className="h-4 w-4 text-muted-foreground" />
 									<div>
 										<p className="font-medium text-sm">Email</p>
-										<p className="text-muted-foreground text-sm">
-											{patient.email}
-										</p>
+										<p className="text-muted-foreground text-sm">{patient.email}</p>
 									</div>
 								</div>
 								<div className="flex items-center space-x-2">
 									<Phone className="h-4 w-4 text-muted-foreground" />
 									<div>
 										<p className="font-medium text-sm">Telefone</p>
-										<p className="text-muted-foreground text-sm">
-											{patient.phone}
-										</p>
+										<p className="text-muted-foreground text-sm">{patient.phone}</p>
 									</div>
 								</div>
 								<div className="flex items-center space-x-2">
@@ -620,9 +541,7 @@ export default function PatientDashboard() {
 									<div>
 										<p className="font-medium text-sm">Data de Nascimento</p>
 										<p className="text-muted-foreground text-sm">
-											{new Date(patient.dateOfBirth).toLocaleDateString(
-												"pt-BR",
-											)}
+											{new Date(patient.dateOfBirth).toLocaleDateString("pt-BR")}
 										</p>
 									</div>
 								</div>
@@ -635,9 +554,7 @@ export default function PatientDashboard() {
 									<MapPin className="mt-0.5 h-4 w-4 text-muted-foreground" />
 									<div>
 										<p className="font-medium text-sm">Endereço</p>
-										<p className="text-muted-foreground text-sm">
-											{patient.address}
-										</p>
+										<p className="text-muted-foreground text-sm">{patient.address}</p>
 									</div>
 								</div>
 							</div>
@@ -651,18 +568,14 @@ export default function PatientDashboard() {
 										<User className="h-4 w-4 text-muted-foreground" />
 										<div>
 											<p className="font-medium text-sm">Nome</p>
-											<p className="text-muted-foreground text-sm">
-												{patient.emergencyContact}
-											</p>
+											<p className="text-muted-foreground text-sm">{patient.emergencyContact}</p>
 										</div>
 									</div>
 									<div className="flex items-center space-x-2">
 										<Phone className="h-4 w-4 text-muted-foreground" />
 										<div>
 											<p className="font-medium text-sm">Telefone</p>
-											<p className="text-muted-foreground text-sm">
-												{patient.emergencyPhone}
-											</p>
+											<p className="text-muted-foreground text-sm">{patient.emergencyPhone}</p>
 										</div>
 									</div>
 								</div>

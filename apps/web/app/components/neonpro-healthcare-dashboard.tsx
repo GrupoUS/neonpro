@@ -171,9 +171,7 @@ const MOCK_USERS: User[] = [
 		role: "Designer",
 		department: "Design",
 		status: "away",
-		lastSeen: new Date(
-			Date.now() - MILLISECONDS_PER_SECOND * SECONDS_PER_MINUTE * 30,
-		),
+		lastSeen: new Date(Date.now() - MILLISECONDS_PER_SECOND * SECONDS_PER_MINUTE * 30),
 	},
 	{
 		id: "3",
@@ -182,10 +180,7 @@ const MOCK_USERS: User[] = [
 		role: "Gerente",
 		department: "Gestão",
 		status: "offline",
-		lastSeen: new Date(
-			Date.now() -
-				MILLISECONDS_PER_SECOND * SECONDS_PER_MINUTE * MINUTES_PER_HOUR * 2,
-		),
+		lastSeen: new Date(Date.now() - MILLISECONDS_PER_SECOND * SECONDS_PER_MINUTE * MINUTES_PER_HOUR * 2),
 	},
 ];
 
@@ -232,10 +227,7 @@ const MOCK_METRICS: Metric[] = [
 	},
 ];
 
-export default function NeonProHealthcareDashboard({
-	userId,
-	tenantId,
-}: NeonProDashboardProps) {
+export default function NeonProHealthcareDashboard({ userId, tenantId }: NeonProDashboardProps) {
 	const [_selectedDate, _setSelectedDate] = useState<Date>(new Date());
 	const [activeTab, setActiveTab] = useState("overview");
 	const [_notifications, _setNotifications] = useState<Notification[]>([]);
@@ -300,16 +292,7 @@ export default function NeonProHealthcareDashboard({
 			urgent: "bg-red-100 text-red-800",
 		};
 
-		return (
-			<Badge
-				className={
-					variants[status as keyof typeof variants] ||
-					"bg-gray-100 text-gray-800"
-				}
-			>
-				{status}
-			</Badge>
-		);
+		return <Badge className={variants[status as keyof typeof variants] || "bg-gray-100 text-gray-800"}>{status}</Badge>;
 	};
 
 	if (loading) {
@@ -329,12 +312,7 @@ export default function NeonProHealthcareDashboard({
 			<header className="border-b bg-white shadow-sm">
 				<div className="flex items-center justify-between px-6 py-4">
 					<div className="flex items-center space-x-4">
-						<Button
-							className="lg:hidden"
-							onClick={() => setSidebarOpen(!sidebarOpen)}
-							size="sm"
-							variant="ghost"
-						>
+						<Button className="lg:hidden" onClick={() => setSidebarOpen(!sidebarOpen)} size="sm" variant="ghost">
 							<Menu className="h-5 w-5" />
 						</Button>
 						<h1 className="font-bold text-2xl text-gray-900">Dashboard</h1>
@@ -440,19 +418,14 @@ export default function NeonProHealthcareDashboard({
 								{MOCK_METRICS.map((metric) => (
 									<Card key={metric.id}>
 										<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-											<CardTitle className="font-medium text-sm">
-												{metric.label}
-											</CardTitle>
+											<CardTitle className="font-medium text-sm">{metric.label}</CardTitle>
 											{getMetricIcon(metric)}
 										</CardHeader>
 										<CardContent>
 											<div className="font-bold text-2xl">
-												{metric.format === "currency" &&
-													formatCurrency(metric.value)}
-												{metric.format === "percentage" &&
-													formatPercentage(metric.value)}
-												{metric.format === "number" &&
-													metric.value.toLocaleString()}
+												{metric.format === "currency" && formatCurrency(metric.value)}
+												{metric.format === "percentage" && formatPercentage(metric.value)}
+												{metric.format === "number" && metric.value.toLocaleString()}
 											</div>
 											<p className={`text-xs ${getChangeColor(metric.change)}`}>
 												{metric.change > 0 ? "+" : ""}
@@ -468,9 +441,7 @@ export default function NeonProHealthcareDashboard({
 								<Card>
 									<CardHeader>
 										<CardTitle>Receita por Período</CardTitle>
-										<CardDescription>
-											Comparação dos últimos 6 meses
-										</CardDescription>
+										<CardDescription>Comparação dos últimos 6 meses</CardDescription>
 									</CardHeader>
 									<CardContent>
 										<div className="flex h-80 items-center justify-center text-gray-400">
@@ -508,9 +479,7 @@ export default function NeonProHealthcareDashboard({
 													<AvatarFallback>U{i}</AvatarFallback>
 												</Avatar>
 												<div className="flex-1">
-													<p className="text-sm">
-														Usuário {i} executou uma ação importante
-													</p>
+													<p className="text-sm">Usuário {i} executou uma ação importante</p>
 													<p className="text-gray-500 text-xs">
 														há {i} minuto{i > 1 ? "s" : ""}
 													</p>
@@ -596,9 +565,7 @@ export default function NeonProHealthcareDashboard({
 									<DialogContent>
 										<DialogHeader>
 											<DialogTitle>Criar Novo Projeto</DialogTitle>
-											<DialogDescription>
-												Preencha as informações do projeto
-											</DialogDescription>
+											<DialogDescription>Preencha as informações do projeto</DialogDescription>
 										</DialogHeader>
 										<div className="space-y-4">
 											<div>
@@ -607,10 +574,7 @@ export default function NeonProHealthcareDashboard({
 											</div>
 											<div>
 												<Label htmlFor="project-desc">Descrição</Label>
-												<Textarea
-													id="project-desc"
-													placeholder="Descreva o projeto"
-												/>
+												<Textarea id="project-desc" placeholder="Descreva o projeto" />
 											</div>
 											<div className="flex space-x-4">
 												<div className="flex-1">
@@ -641,9 +605,7 @@ export default function NeonProHealthcareDashboard({
 													<MoreHorizontal className="h-4 w-4" />
 												</Button>
 											</div>
-											<CardDescription>
-												Descrição do projeto {i}
-											</CardDescription>
+											<CardDescription>Descrição do projeto {i}</CardDescription>
 										</CardHeader>
 										<CardContent>
 											<div className="space-y-4">
@@ -658,35 +620,21 @@ export default function NeonProHealthcareDashboard({
 												<div className="flex items-center justify-between">
 													<div className="-space-x-2 flex">
 														{[1, 2, 3].map((j) => (
-															<Avatar
-																className="h-6 w-6 border-2 border-white"
-																key={j}
-															>
-																<AvatarFallback className="text-xs">
-																	U{j}
-																</AvatarFallback>
+															<Avatar className="h-6 w-6 border-2 border-white" key={j}>
+																<AvatarFallback className="text-xs">U{j}</AvatarFallback>
 															</Avatar>
 														))}
 													</div>
 													{getStatusBadge(
-														["planning", "active", "on-hold", "completed"][
-															Math.floor(Math.random() * 4)
-														],
+														["planning", "active", "on-hold", "completed"][Math.floor(Math.random() * 4)]
 													)}
 												</div>
 
 												<div className="text-gray-500 text-sm">
 													Entrega:{" "}
-													{format(
-														new Date(
-															Date.now() +
-																Math.random() * 30 * 24 * 60 * 60 * 1000,
-														),
-														"dd/MM/yyyy",
-														{
-															locale: ptBR,
-														},
-													)}
+													{format(new Date(Date.now() + Math.random() * 30 * 24 * 60 * 60 * 1000), "dd/MM/yyyy", {
+														locale: ptBR,
+													})}
 												</div>
 											</div>
 										</CardContent>
@@ -740,46 +688,27 @@ export default function NeonProHealthcareDashboard({
 													<TableCell>
 														<div>
 															<p className="font-medium">Tarefa {i}</p>
-															<p className="text-gray-500 text-sm">
-																Descrição da tarefa {i}
-															</p>
+															<p className="text-gray-500 text-sm">Descrição da tarefa {i}</p>
 														</div>
 													</TableCell>
 													<TableCell>
 														<div className="flex items-center space-x-2">
 															<Avatar className="h-6 w-6">
-																<AvatarFallback className="text-xs">
-																	U{i}
-																</AvatarFallback>
+																<AvatarFallback className="text-xs">U{i}</AvatarFallback>
 															</Avatar>
 															<span className="text-sm">Usuário {i}</span>
 														</div>
 													</TableCell>
 													<TableCell>
-														{getStatusBadge(
-															["pending", "in-progress", "completed"][
-																Math.floor(Math.random() * 3)
-															],
-														)}
+														{getStatusBadge(["pending", "in-progress", "completed"][Math.floor(Math.random() * 3)])}
 													</TableCell>
 													<TableCell>
-														{getStatusBadge(
-															["low", "medium", "high", "urgent"][
-																Math.floor(Math.random() * 4)
-															],
-														)}
+														{getStatusBadge(["low", "medium", "high", "urgent"][Math.floor(Math.random() * 4)])}
 													</TableCell>
 													<TableCell className="text-sm">
-														{format(
-															new Date(
-																Date.now() +
-																	Math.random() * 14 * 24 * 60 * 60 * 1000,
-															),
-															"dd/MM",
-															{
-																locale: ptBR,
-															},
-														)}
+														{format(new Date(Date.now() + Math.random() * 14 * 24 * 60 * 60 * 1000), "dd/MM", {
+															locale: ptBR,
+														})}
 													</TableCell>
 													<TableCell>
 														<div className="flex items-center space-x-1">
@@ -836,15 +765,11 @@ export default function NeonProHealthcareDashboard({
 													{getStatusBadge(user.status)}
 												</div>
 												<div className="flex items-center justify-between">
-													<span className="text-gray-500 text-sm">
-														Departamento
-													</span>
+													<span className="text-gray-500 text-sm">Departamento</span>
 													<span className="text-sm">{user.department}</span>
 												</div>
 												<div className="flex items-center justify-between">
-													<span className="text-gray-500 text-sm">
-														Último acesso
-													</span>
+													<span className="text-gray-500 text-sm">Último acesso</span>
 													<span className="text-sm">
 														{format(user.lastSeen, "dd/MM HH:mm", {
 															locale: ptBR,
@@ -852,19 +777,11 @@ export default function NeonProHealthcareDashboard({
 													</span>
 												</div>
 												<div className="flex items-center space-x-2 pt-2">
-													<Button
-														className="flex-1"
-														size="sm"
-														variant="outline"
-													>
+													<Button className="flex-1" size="sm" variant="outline">
 														<Mail className="mr-1 h-4 w-4" />
 														Email
 													</Button>
-													<Button
-														className="flex-1"
-														size="sm"
-														variant="outline"
-													>
+													<Button className="flex-1" size="sm" variant="outline">
 														<MessageSquare className="mr-1 h-4 w-4" />
 														Chat
 													</Button>
@@ -884,17 +801,13 @@ export default function NeonProHealthcareDashboard({
 								<Card>
 									<CardHeader>
 										<CardTitle>Preferências Gerais</CardTitle>
-										<CardDescription>
-											Configure suas preferências do sistema
-										</CardDescription>
+										<CardDescription>Configure suas preferências do sistema</CardDescription>
 									</CardHeader>
 									<CardContent className="space-y-4">
 										<div className="flex items-center justify-between">
 											<div>
 												<Label htmlFor="notifications">Notificações</Label>
-												<p className="text-gray-500 text-sm">
-													Receber notificações em tempo real
-												</p>
+												<p className="text-gray-500 text-sm">Receber notificações em tempo real</p>
 											</div>
 											<Switch id="notifications" />
 										</div>
@@ -902,9 +815,7 @@ export default function NeonProHealthcareDashboard({
 										<div className="flex items-center justify-between">
 											<div>
 												<Label htmlFor="dark-mode">Modo Escuro</Label>
-												<p className="text-gray-500 text-sm">
-													Usar tema escuro
-												</p>
+												<p className="text-gray-500 text-sm">Usar tema escuro</p>
 											</div>
 											<Switch id="dark-mode" />
 										</div>
@@ -912,9 +823,7 @@ export default function NeonProHealthcareDashboard({
 										<div className="flex items-center justify-between">
 											<div>
 												<Label htmlFor="auto-save">Salvamento Automático</Label>
-												<p className="text-gray-500 text-sm">
-													Salvar alterações automaticamente
-												</p>
+												<p className="text-gray-500 text-sm">Salvar alterações automaticamente</p>
 											</div>
 											<Switch defaultChecked id="auto-save" />
 										</div>
@@ -924,29 +833,21 @@ export default function NeonProHealthcareDashboard({
 								<Card>
 									<CardHeader>
 										<CardTitle>Configurações de Segurança</CardTitle>
-										<CardDescription>
-											Gerencie suas configurações de segurança
-										</CardDescription>
+										<CardDescription>Gerencie suas configurações de segurança</CardDescription>
 									</CardHeader>
 									<CardContent className="space-y-4">
 										<div className="flex items-center justify-between">
 											<div>
 												<Label htmlFor="2fa">Autenticação em Duas Etapas</Label>
-												<p className="text-gray-500 text-sm">
-													Adicionar camada extra de segurança
-												</p>
+												<p className="text-gray-500 text-sm">Adicionar camada extra de segurança</p>
 											</div>
 											<Switch id="2fa" />
 										</div>
 
 										<div className="flex items-center justify-between">
 											<div>
-												<Label htmlFor="session-timeout">
-													Timeout de Sessão
-												</Label>
-												<p className="text-gray-500 text-sm">
-													Deslogar automaticamente após inatividade
-												</p>
+												<Label htmlFor="session-timeout">Timeout de Sessão</Label>
+												<p className="text-gray-500 text-sm">Deslogar automaticamente após inatividade</p>
 											</div>
 											<Switch defaultChecked id="session-timeout" />
 										</div>

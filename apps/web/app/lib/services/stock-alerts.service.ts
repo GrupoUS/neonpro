@@ -37,10 +37,7 @@ export class StockAlertsService {
 	/**
 	 * Create stock alert configuration
 	 */
-	async createAlertConfig(
-		configData: CreateStockAlertConfig,
-		userId: string,
-	): Promise<StockAlertConfig> {
+	async createAlertConfig(configData: CreateStockAlertConfig, userId: string): Promise<StockAlertConfig> {
 		const validatedData = validateCreateStockAlertConfig(configData);
 		const clinicId = await this.getUserClinicId(userId);
 
@@ -55,10 +52,7 @@ export class StockAlertsService {
 			duplicateQuery = duplicateQuery.eq("product_id", validatedData.productId);
 		}
 		if (validatedData.categoryId) {
-			duplicateQuery = duplicateQuery.eq(
-				"category_id",
-				validatedData.categoryId,
-			);
+			duplicateQuery = duplicateQuery.eq("category_id", validatedData.categoryId);
 		}
 
 		const { data: existing } = await duplicateQuery;
@@ -118,17 +112,14 @@ export class StockAlertsService {
 	 */
 	async getAlerts(
 		query: AlertsQuery,
-		userId: string,
+		userId: string
 	): Promise<{
 		alerts: StockAlert[];
 		total: number;
 	}> {
 		const clinicId = await this.getUserClinicId(userId);
 
-		let dbQuery = this.supabase
-			.from("stock_alerts")
-			.select("*", { count: "exact" })
-			.eq("clinic_id", clinicId);
+		let dbQuery = this.supabase.from("stock_alerts").select("*", { count: "exact" }).eq("clinic_id", clinicId);
 
 		// Apply filters
 		if (query.productId) {
@@ -172,9 +163,7 @@ export class StockAlertsService {
 	/**
 	 * Acknowledge an alert
 	 */
-	async acknowledgeAlert(
-		acknowledgeData: AcknowledgeAlert,
-	): Promise<StockAlert> {
+	async acknowledgeAlert(acknowledgeData: AcknowledgeAlert): Promise<StockAlert> {
 		const validatedData = validateAcknowledgeAlert(acknowledgeData);
 
 		// First, check if alert exists and is active
@@ -277,17 +266,11 @@ export class StockAlertsService {
 	/**
 	 * Evaluate a single stock configuration and create alerts if needed
 	 */
-	private async evaluateStockConfig(
-		config: StockAlertConfig,
-		clinicId: string,
-	): Promise<StockAlert[]> {
+	private async evaluateStockConfig(config: StockAlertConfig, clinicId: string): Promise<StockAlert[]> {
 		const alerts: StockAlert[] = [];
 
 		// Build query based on configuration
-		let stockQuery = this.supabase
-			.from("inventory_items")
-			.select("*")
-			.eq("clinic_id", clinicId);
+		let stockQuery = this.supabase.from("inventory_items").select("*").eq("clinic_id", clinicId);
 
 		if (config.productId) {
 			stockQuery = stockQuery.eq("product_id", config.productId);
@@ -314,11 +297,7 @@ export class StockAlertsService {
 					.eq("status", "active");
 
 				if (!existingAlerts || existingAlerts.length === 0) {
-					const newAlert = await this.createAlert(
-						item,
-						config,
-						alertNeeded.message,
-					);
+					const newAlert = await this.createAlert(item, config, alertNeeded.message);
 					if (newAlert) {
 						alerts.push(newAlert);
 					}
@@ -332,10 +311,7 @@ export class StockAlertsService {
 	/**
 	 * Determine if an alert should be triggered
 	 */
-	private shouldTriggerAlert(
-		item: any,
-		config: StockAlertConfig,
-	): { trigger: boolean; message: string } {
+	private shouldTriggerAlert(item: any, config: StockAlertConfig): { trigger: boolean; message: string } {
 		const currentStock = item.current_quantity || 0;
 		const threshold = config.thresholdValue;
 
@@ -360,9 +336,7 @@ export class StockAlertsService {
 
 			case "expiring": {
 				const expiryDate = new Date(item.expiry_date);
-				const daysUntilExpiry = Math.ceil(
-					(expiryDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24),
-				);
+				const daysUntilExpiry = Math.ceil((expiryDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
 
 				if (daysUntilExpiry <= threshold && daysUntilExpiry > 0) {
 					return {
@@ -391,11 +365,7 @@ export class StockAlertsService {
 	/**
 	 * Create a new stock alert
 	 */
-	private async createAlert(
-		item: any,
-		config: StockAlertConfig,
-		message: string,
-	): Promise<StockAlert | null> {
+	private async createAlert(item: any, config: StockAlertConfig, message: string): Promise<StockAlert | null> {
 		const { data, error } = await this.supabase
 			.from("stock_alerts")
 			.insert({

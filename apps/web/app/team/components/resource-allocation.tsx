@@ -24,13 +24,7 @@ import {
 import { useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -41,28 +35,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
-import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from "@/components/ui/table";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import type {
-	EquipmentStatus,
-	FacilityRoom,
-	MedicalEquipment,
-} from "@/types/team-coordination"; // Mock medical equipment data with ANVISA compliance
+import type { EquipmentStatus, FacilityRoom, MedicalEquipment } from "@/types/team-coordination"; // Mock medical equipment data with ANVISA compliance
 
 const mockEquipmentData: MedicalEquipment[] = [
 	{
@@ -191,13 +168,7 @@ const mockRoomData: FacilityRoom[] = [
 		status: "occupied",
 		currentOccupancy: 6,
 		reservations: [],
-		features: [
-			"pressão-positiva",
-			"oxigênio",
-			"gases-medicinais",
-			"aspiração",
-			"sistema-som",
-		],
+		features: ["pressão-positiva", "oxigênio", "gases-medicinais", "aspiração", "sistema-som"],
 		accessibilityFeatures: ["acesso-amplo"],
 		sanitationStatus: "clean",
 		lastCleaningTime: new Date("2024-08-21T05:30:00"),
@@ -215,12 +186,7 @@ const mockRoomData: FacilityRoom[] = [
 		status: "occupied",
 		currentOccupancy: 2,
 		reservations: [],
-		features: [
-			"monitorização-contínua",
-			"oxigênio",
-			"aspiração",
-			"gases-medicinais",
-		],
+		features: ["monitorização-contínua", "oxigênio", "aspiração", "gases-medicinais"],
 		accessibilityFeatures: ["acesso-equipamentos"],
 		sanitationStatus: "clean",
 		lastCleaningTime: new Date("2024-08-21T04:00:00"),
@@ -238,13 +204,7 @@ const mockRoomData: FacilityRoom[] = [
 		status: "available",
 		currentOccupancy: 0,
 		reservations: [],
-		features: [
-			"acesso-rápido",
-			"oxigênio",
-			"aspiração",
-			"desfibrilador",
-			"carrinho-emergência",
-		],
+		features: ["acesso-rápido", "oxigênio", "aspiração", "desfibrilador", "carrinho-emergência"],
 		accessibilityFeatures: ["entrada-ampla", "acesso-maca"],
 		sanitationStatus: "clean",
 		lastCleaningTime: new Date("2024-08-21T07:00:00"),
@@ -353,9 +313,7 @@ type ResourceAllocationProps = {
 	emergencyMode?: boolean;
 };
 
-export function ResourceAllocation({
-	emergencyMode = false,
-}: ResourceAllocationProps) {
+export function ResourceAllocation({ emergencyMode = false }: ResourceAllocationProps) {
 	const [activeTab, setActiveTab] = useState("equipment");
 	const [searchQuery, setSearchQuery] = useState("");
 	const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -384,10 +342,7 @@ export function ResourceAllocation({
 			}
 
 			// Location filter
-			if (
-				locationFilter !== "all" &&
-				!equipment.currentLocation.includes(locationFilter)
-			) {
+			if (locationFilter !== "all" && !equipment.currentLocation.includes(locationFilter)) {
 				return false;
 			}
 
@@ -396,10 +351,8 @@ export function ResourceAllocation({
 				const hasMaintenanceIssues =
 					equipment.status === "maintenance" ||
 					equipment.safetyAlerts.length > 0 ||
-					(equipment.nextInspectionDate &&
-						equipment.nextInspectionDate < new Date()) ||
-					(equipment.nextMaintenanceDate &&
-						equipment.nextMaintenanceDate < new Date());
+					(equipment.nextInspectionDate && equipment.nextInspectionDate < new Date()) ||
+					(equipment.nextMaintenanceDate && equipment.nextMaintenanceDate < new Date());
 
 				if (!hasMaintenanceIssues) {
 					return false;
@@ -420,9 +373,7 @@ export function ResourceAllocation({
 					room.name.toLowerCase().includes(searchLower) ||
 					room.type.toLowerCase().includes(searchLower) ||
 					room.floor.toLowerCase().includes(searchLower) ||
-					room.features.some((feature) =>
-						feature.toLowerCase().includes(searchLower),
-					);
+					room.features.some((feature) => feature.toLowerCase().includes(searchLower));
 
 				if (!matchesSearch) {
 					return false;
@@ -440,11 +391,7 @@ export function ResourceAllocation({
 
 	// Get unique locations for filter
 	const locations = useMemo(() => {
-		return Array.from(
-			new Set(
-				mockEquipmentData.map((equip) => equip.currentLocation.split(" - ")[0]),
-			),
-		);
+		return Array.from(new Set(mockEquipmentData.map((equip) => equip.currentLocation.split(" - ")[0])));
 	}, []);
 	return (
 		<div className="space-y-6">
@@ -452,9 +399,7 @@ export function ResourceAllocation({
 			<div className="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
 				<div>
 					<h2 className="font-bold text-2xl">Coordenação de Recursos</h2>
-					<p className="text-muted-foreground">
-						Gestão de equipamentos, salas e suprimentos com compliance ANVISA
-					</p>
+					<p className="text-muted-foreground">Gestão de equipamentos, salas e suprimentos com compliance ANVISA</p>
 				</div>
 
 				<div className="flex items-center space-x-2">
@@ -479,9 +424,7 @@ export function ResourceAllocation({
 			<Card>
 				<CardHeader>
 					<CardTitle className="text-lg">Busca e Filtros</CardTitle>
-					<CardDescription>
-						Encontre recursos por nome, modelo, localização ou registro ANVISA
-					</CardDescription>
+					<CardDescription>Encontre recursos por nome, modelo, localização ou registro ANVISA</CardDescription>
 				</CardHeader>
 				<CardContent>
 					<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
@@ -543,11 +486,7 @@ export function ResourceAllocation({
 			</Card>
 
 			{/* Resource Tabs */}
-			<Tabs
-				className="space-y-6"
-				onValueChange={setActiveTab}
-				value={activeTab}
-			>
+			<Tabs className="space-y-6" onValueChange={setActiveTab} value={activeTab}>
 				<TabsList className="grid w-full grid-cols-3">
 					<TabsTrigger className="text-sm" value="equipment">
 						<Heart className="mr-2 h-4 w-4" />
@@ -568,8 +507,7 @@ export function ResourceAllocation({
 						<CardHeader>
 							<CardTitle className="text-lg">Equipamentos Médicos</CardTitle>
 							<CardDescription>
-								{filteredEquipment.length} equipamentos de{" "}
-								{mockEquipmentData.length} total
+								{filteredEquipment.length} equipamentos de {mockEquipmentData.length} total
 							</CardDescription>
 						</CardHeader>
 						<CardContent>
@@ -588,75 +526,52 @@ export function ResourceAllocation({
 									</TableHeader>
 									<TableBody>
 										{filteredEquipment.map((equipment) => {
-											const statusInfo = getEquipmentStatusInfo(
-												equipment.status,
-											);
+											const statusInfo = getEquipmentStatusInfo(equipment.status);
 											const StatusIcon = statusInfo.icon;
 
 											// Check for alerts
 											const hasInspectionAlert =
-												equipment.nextInspectionDate &&
-												equipment.nextInspectionDate < new Date();
+												equipment.nextInspectionDate && equipment.nextInspectionDate < new Date();
 											const hasMaintenanceAlert =
-												equipment.nextMaintenanceDate &&
-												equipment.nextMaintenanceDate < new Date();
+												equipment.nextMaintenanceDate && equipment.nextMaintenanceDate < new Date();
 											const hasSafetyAlerts = equipment.safetyAlerts.length > 0;
 
 											return (
-												<TableRow
-													className="hover:bg-muted/50"
-													key={equipment.id}
-												>
+												<TableRow className="hover:bg-muted/50" key={equipment.id}>
 													{/* Equipment Info */}
 													<TableCell>
 														<div className="space-y-1">
-															<p className="font-medium text-foreground">
-																{equipment.name}
-															</p>
+															<p className="font-medium text-foreground">{equipment.name}</p>
 															<p className="text-muted-foreground text-sm">
 																{equipment.model} | {equipment.serialNumber}
 															</p>
-															<p className="text-muted-foreground text-xs">
-																{equipment.manufacturer}
-															</p>
+															<p className="text-muted-foreground text-xs">{equipment.manufacturer}</p>
 														</div>
 													</TableCell>
 													{/* Status */}
 													<TableCell>
 														<div className="flex items-center space-x-2">
-															<div
-																className={`rounded-full p-1 ${statusInfo.bg}`}
-															>
-																<StatusIcon
-																	className={`h-3 w-3 ${statusInfo.color}`}
-																/>
+															<div className={`rounded-full p-1 ${statusInfo.bg}`}>
+																<StatusIcon className={`h-3 w-3 ${statusInfo.color}`} />
 															</div>
-															<span className="font-medium text-sm">
-																{statusInfo.label}
-															</span>
+															<span className="font-medium text-sm">{statusInfo.label}</span>
 														</div>
 														{equipment.assignedTo && (
-															<p className="mt-1 text-blue-600 text-xs">
-																Atribuído: Prof. ID {equipment.assignedTo}
-															</p>
+															<p className="mt-1 text-blue-600 text-xs">Atribuído: Prof. ID {equipment.assignedTo}</p>
 														)}
 													</TableCell>
 													{/* Location */}
 													<TableCell>
 														<div className="flex items-center space-x-1">
 															<MapPin className="h-3 w-3 text-muted-foreground" />
-															<span className="text-sm">
-																{equipment.currentLocation}
-															</span>
+															<span className="text-sm">{equipment.currentLocation}</span>
 														</div>
 													</TableCell>{" "}
 													{/* ANVISA Registration */}
 													<TableCell>
 														<div className="space-y-1">
 															<div className="flex items-center space-x-1">
-																<span className="font-mono text-xs">
-																	{equipment.anvisaRegistration}
-																</span>
+																<span className="font-mono text-xs">{equipment.anvisaRegistration}</span>
 																{hasInspectionAlert ? (
 																	<AlertTriangle className="h-3 w-3 text-red-500" />
 																) : (
@@ -667,10 +582,7 @@ export function ResourceAllocation({
 																{equipment.regulatoryClass}
 															</Badge>
 															{hasInspectionAlert && (
-																<Badge
-																	className="text-xs"
-																	variant="destructive"
-																>
+																<Badge className="text-xs" variant="destructive">
 																	Inspeção Pendente
 																</Badge>
 															)}
@@ -681,17 +593,10 @@ export function ResourceAllocation({
 														<div className="space-y-1">
 															<div className="flex items-center space-x-1">
 																<Activity className="h-3 w-3 text-blue-500" />
-																<span className="text-xs">
-																	{equipment.utilizationRate}%
-																</span>
+																<span className="text-xs">{equipment.utilizationRate}%</span>
 															</div>
-															<Progress
-																className="h-1"
-																value={equipment.utilizationRate}
-															/>
-															<p className="text-muted-foreground text-xs">
-																{equipment.totalUsageHours}h total
-															</p>
+															<Progress className="h-1" value={equipment.utilizationRate} />
+															<p className="text-muted-foreground text-xs">{equipment.totalUsageHours}h total</p>
 														</div>
 													</TableCell>
 													{/* Maintenance */}
@@ -700,13 +605,10 @@ export function ResourceAllocation({
 															<div className="flex items-center space-x-1">
 																<Tool className="h-3 w-3 text-yellow-500" />
 																<span className="text-xs">
-																	{equipment.nextMaintenanceDate?.toLocaleDateString(
-																		"pt-BR",
-																		{
-																			day: "2-digit",
-																			month: "2-digit",
-																		},
-																	)}
+																	{equipment.nextMaintenanceDate?.toLocaleDateString("pt-BR", {
+																		day: "2-digit",
+																		month: "2-digit",
+																	})}
 																</span>
 																{hasMaintenanceAlert ? (
 																	<AlertTriangle className="h-3 w-3 text-red-500" />
@@ -715,18 +617,12 @@ export function ResourceAllocation({
 																)}
 															</div>
 															{equipment.failureCount > 0 && (
-																<Badge
-																	className="border-red-500 text-red-700 text-xs"
-																	variant="outline"
-																>
+																<Badge className="border-red-500 text-red-700 text-xs" variant="outline">
 																	{equipment.failureCount} falha(s)
 																</Badge>
 															)}
 															{hasSafetyAlerts && (
-																<Badge
-																	className="text-xs"
-																	variant="destructive"
-																>
+																<Badge className="text-xs" variant="destructive">
 																	{equipment.safetyAlerts.length} alerta(s)
 																</Badge>
 															)}
@@ -792,34 +688,22 @@ export function ResourceAllocation({
 								{filteredRooms.map((room) => {
 									const statusInfo = getRoomStatusInfo(room.status);
 									const StatusIcon = statusInfo.icon;
-									const occupancyPercentage =
-										(room.currentOccupancy / room.capacity) * 100;
+									const occupancyPercentage = (room.currentOccupancy / room.capacity) * 100;
 
 									return (
-										<Card
-											className="transition-shadow hover:shadow-md"
-											key={room.id}
-										>
+										<Card className="transition-shadow hover:shadow-md" key={room.id}>
 											<CardHeader className="pb-3">
 												<div className="flex items-center justify-between">
 													<CardTitle className="text-lg">{room.name}</CardTitle>
 													<div className="flex items-center space-x-1">
-														<div
-															className={`rounded-full p-1 ${statusInfo.bg}`}
-														>
-															<StatusIcon
-																className={`h-3 w-3 ${statusInfo.color}`}
-															/>
+														<div className={`rounded-full p-1 ${statusInfo.bg}`}>
+															<StatusIcon className={`h-3 w-3 ${statusInfo.color}`} />
 														</div>
-														<span className="font-medium text-xs">
-															{statusInfo.label}
-														</span>
+														<span className="font-medium text-xs">{statusInfo.label}</span>
 													</div>
 												</div>
 												<div className="flex items-center space-x-2 text-muted-foreground text-sm">
-													<Badge variant="outline">
-														{roomTypeLabels[room.type]}
-													</Badge>
+													<Badge variant="outline">{roomTypeLabels[room.type]}</Badge>
 													<span>•</span>
 													<span>{room.floor}</span>
 												</div>
@@ -833,10 +717,7 @@ export function ResourceAllocation({
 															{room.currentOccupancy}/{room.capacity}
 														</span>
 													</div>
-													<Progress
-														className="h-2"
-														value={occupancyPercentage}
-													/>
+													<Progress className="h-2" value={occupancyPercentage} />
 												</div>
 
 												{/* Features */}
@@ -844,11 +725,7 @@ export function ResourceAllocation({
 													<p className="mb-2 font-medium text-sm">Recursos</p>
 													<div className="flex flex-wrap gap-1">
 														{room.features.slice(0, 3).map((feature) => (
-															<Badge
-																className="text-xs"
-																key={feature}
-																variant="secondary"
-															>
+															<Badge className="text-xs" key={feature} variant="secondary">
 																{feature}
 															</Badge>
 														))}
@@ -873,19 +750,13 @@ export function ResourceAllocation({
 																		: "bg-red-500"
 															}`}
 														/>
-														<span className="text-xs capitalize">
-															{room.sanitationStatus}
-														</span>
+														<span className="text-xs capitalize">{room.sanitationStatus}</span>
 													</div>
 												</div>
 
 												{/* Actions */}
 												<div className="flex items-center space-x-2 pt-2">
-													<Button
-														className="flex-1"
-														size="sm"
-														variant="outline"
-													>
+													<Button className="flex-1" size="sm" variant="outline">
 														<Calendar className="mr-1 h-3 w-3" />
 														Reservar
 													</Button>
@@ -906,17 +777,14 @@ export function ResourceAllocation({
 					<Card>
 						<CardHeader>
 							<CardTitle className="text-lg">Gestão de Suprimentos</CardTitle>
-							<CardDescription>
-								Controle de estoque e suprimentos médicos
-							</CardDescription>
+							<CardDescription>Controle de estoque e suprimentos médicos</CardDescription>
 						</CardHeader>
 						<CardContent>
 							<div className="py-12 text-center text-muted-foreground">
 								📦 Sistema de gestão de suprimentos será implementado aqui
 								<br />
 								<span className="text-sm">
-									Integração com controle de estoque, alertas de reposição e
-									rastreabilidade
+									Integração com controle de estoque, alertas de reposição e rastreabilidade
 								</span>
 							</div>
 						</CardContent>

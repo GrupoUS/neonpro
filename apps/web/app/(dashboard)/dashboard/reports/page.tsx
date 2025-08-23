@@ -33,13 +33,7 @@ import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
 	HEALTHCARE_ANNOUNCEMENTS,
 	initializeAccessibility,
@@ -56,10 +50,7 @@ type NeonGradientCardProps = {
 	className?: string;
 };
 
-const NeonGradientCard = ({
-	children,
-	className = "",
-}: NeonGradientCardProps) => (
+const NeonGradientCard = ({ children, className = "" }: NeonGradientCardProps) => (
 	<motion.div
 		animate={{ opacity: 1, y: 0 }}
 		className={`relative overflow-hidden rounded-xl border border-slate-800 bg-gradient-to-br from-slate-900/90 to-blue-900/30 backdrop-blur-sm ${className}`}
@@ -90,16 +81,11 @@ const CosmicGlowButton = ({
 	disabled = false,
 }: CosmicGlowButtonProps) => {
 	const variants = {
-		primary:
-			"bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700",
-		secondary:
-			"bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800",
-		success:
-			"bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700",
-		warning:
-			"bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700",
-		danger:
-			"bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary",
+		primary: "bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700",
+		secondary: "bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800",
+		success: "bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700",
+		warning: "bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700",
+		danger: "bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary",
 	};
 
 	const sizes = {
@@ -138,13 +124,7 @@ type ReportTemplate = {
 	category: ReportCategory;
 	compliance: string[];
 	lastGenerated?: string;
-	frequency:
-		| "daily"
-		| "weekly"
-		| "monthly"
-		| "quarterly"
-		| "yearly"
-		| "on-demand";
+	frequency: "daily" | "weekly" | "monthly" | "quarterly" | "yearly" | "on-demand";
 	status: "available" | "generating" | "scheduled" | "error";
 	icon: React.ElementType;
 	estimatedTime: string;
@@ -156,8 +136,7 @@ const reportTemplates: ReportTemplate[] = [
 	{
 		id: "lgpd-compliance",
 		name: "Relatório de Conformidade LGPD",
-		description:
-			"Análise completa de conformidade com a Lei Geral de Proteção de Dados",
+		description: "Análise completa de conformidade com a Lei Geral de Proteção de Dados",
 		category: "regulatory",
 		compliance: ["LGPD", "ANPD"],
 		lastGenerated: "2024-01-20",
@@ -169,8 +148,7 @@ const reportTemplates: ReportTemplate[] = [
 	{
 		id: "anvisa-inspection",
 		name: "Relatório de Inspeção ANVISA",
-		description:
-			"Preparação para inspeções da Agência Nacional de Vigilância Sanitária",
+		description: "Preparação para inspeções da Agência Nacional de Vigilância Sanitária",
 		category: "regulatory",
 		compliance: ["ANVISA", "RDC"],
 		lastGenerated: "2024-01-18",
@@ -182,8 +160,7 @@ const reportTemplates: ReportTemplate[] = [
 	{
 		id: "cfm-professional",
 		name: "Relatório de Atividade Profissional CFM",
-		description:
-			"Registro de atividades profissionais para o Conselho Federal de Medicina",
+		description: "Registro de atividades profissionais para o Conselho Federal de Medicina",
 		category: "regulatory",
 		compliance: ["CFM", "CRM"],
 		lastGenerated: "2024-01-15",
@@ -195,8 +172,7 @@ const reportTemplates: ReportTemplate[] = [
 	{
 		id: "ans-performance",
 		name: "Métricas de Performance ANS",
-		description:
-			"Indicadores de qualidade para a Agência Nacional de Saúde Suplementar",
+		description: "Indicadores de qualidade para a Agência Nacional de Saúde Suplementar",
 		category: "regulatory",
 		compliance: ["ANS", "QUALISS"],
 		frequency: "quarterly",
@@ -209,8 +185,7 @@ const reportTemplates: ReportTemplate[] = [
 	{
 		id: "revenue-analysis",
 		name: "Análise de Receita",
-		description:
-			"Análise detalhada de receitas por período, serviço e profissional",
+		description: "Análise detalhada de receitas por período, serviço e profissional",
 		category: "financial",
 		compliance: ["Receita Federal", "CNPJ"],
 		lastGenerated: "2024-01-21",
@@ -384,10 +359,7 @@ import {
 } from "./export-utils";
 
 // Export functionality implementation
-const handleExportReport = (
-	reportId: string,
-	format: "pdf" | "excel" | "csv",
-) => {
+const handleExportReport = (reportId: string, format: "pdf" | "excel" | "csv") => {
 	try {
 		switch (format) {
 			case "pdf": {
@@ -516,19 +488,13 @@ function ReportTemplateCard({
 		switch (status) {
 			case "available":
 				return (
-					<Badge
-						className="border-green-400 text-green-400"
-						variant="secondary"
-					>
+					<Badge className="border-green-400 text-green-400" variant="secondary">
 						Disponível
 					</Badge>
 				);
 			case "generating":
 				return (
-					<Badge
-						className="border-yellow-400 text-yellow-400"
-						variant="secondary"
-					>
+					<Badge className="border-yellow-400 text-yellow-400" variant="secondary">
 						Gerando...
 					</Badge>
 				);
@@ -570,20 +536,14 @@ function ReportTemplateCard({
 				{report.lastGenerated && (
 					<div className="flex items-center justify-between text-xs">
 						<span className="text-slate-400">Última geração:</span>
-						<span className="text-white">
-							{new Date(report.lastGenerated).toLocaleDateString("pt-BR")}
-						</span>
+						<span className="text-white">{new Date(report.lastGenerated).toLocaleDateString("pt-BR")}</span>
 					</div>
 				)}
 			</div>
 
 			<div className="mb-3 flex items-center gap-2">
 				{report.compliance.map((comp) => (
-					<Badge
-						className="border-slate-600 text-slate-300 text-xs"
-						key={comp}
-						variant="outline"
-					>
+					<Badge className="border-slate-600 text-slate-300 text-xs" key={comp} variant="outline">
 						{comp}
 					</Badge>
 				))}
@@ -659,31 +619,19 @@ function RecentReportsSection() {
 							<div>
 								<p className="font-medium text-sm text-white">{report.name}</p>
 								<p className="text-slate-400 text-xs">
-									{new Date(report.generatedAt).toLocaleString("pt-BR")} •{" "}
-									{report.size}
+									{new Date(report.generatedAt).toLocaleString("pt-BR")} • {report.size}
 								</p>
 							</div>
 						</div>
 
 						<div className="flex items-center gap-2">
-							<Badge
-								className="border-slate-600 text-slate-300 text-xs"
-								variant="outline"
-							>
+							<Badge className="border-slate-600 text-slate-300 text-xs" variant="outline">
 								{report.type}
 							</Badge>
-							<Button
-								className="text-slate-400 hover:text-white"
-								size="sm"
-								variant="ghost"
-							>
+							<Button className="text-slate-400 hover:text-white" size="sm" variant="ghost">
 								<Download className="h-3 w-3" />
 							</Button>
-							<Button
-								className="text-slate-400 hover:text-white"
-								size="sm"
-								variant="ghost"
-							>
+							<Button className="text-slate-400 hover:text-white" size="sm" variant="ghost">
 								<Share2 className="h-3 w-3" />
 							</Button>
 						</div>
@@ -695,11 +643,7 @@ function RecentReportsSection() {
 }
 
 // Quick Actions Section
-function QuickActionsSection({
-	onSelectCategory,
-}: {
-	onSelectCategory: (categoryId: ReportCategory) => void;
-}) {
+function QuickActionsSection({ onSelectCategory }: { onSelectCategory: (categoryId: ReportCategory) => void }) {
 	const quickActions = [
 		{
 			name: "Relatório LGPD",
@@ -778,19 +722,13 @@ function ExportOptionsModal({
 			>
 				<div className="mb-6 flex items-center justify-between">
 					<h3 className="font-bold text-lg text-white">Opções de Export</h3>
-					<Button
-						className="text-slate-400 hover:text-white"
-						onClick={onClose}
-						size="sm"
-						variant="ghost"
-					>
+					<Button className="text-slate-400 hover:text-white" onClick={onClose} size="sm" variant="ghost">
 						✕
 					</Button>
 				</div>
 
 				<p className="mb-6 text-slate-400 text-sm">
-					Selecione o formato para exportar:{" "}
-					<strong className="text-white">{reportName}</strong>
+					Selecione o formato para exportar: <strong className="text-white">{reportName}</strong>
 				</p>
 
 				<div className="space-y-3">
@@ -867,8 +805,7 @@ function ExportOptionsModal({
 
 // Main Reports Center Page Component
 export default function ReportsPage() {
-	const [selectedCategory, setSelectedCategory] =
-		useState<ReportCategory | null>(null);
+	const [selectedCategory, setSelectedCategory] = useState<ReportCategory | null>(null);
 	const [searchTerm, setSearchTerm] = useState("");
 	const [filterStatus, setFilterStatus] = useState<string>("all");
 
@@ -903,14 +840,12 @@ export default function ReportsPage() {
 
 	// Filter reports based on selected category and search
 	const filteredReports = reportTemplates.filter((report) => {
-		const matchesCategory =
-			!selectedCategory || report.category === selectedCategory;
+		const matchesCategory = !selectedCategory || report.category === selectedCategory;
 		const matchesSearch =
 			!searchTerm ||
 			report.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
 			report.description.toLowerCase().includes(searchTerm.toLowerCase());
-		const matchesStatus =
-			filterStatus === "all" || report.status === filterStatus;
+		const matchesStatus = filterStatus === "all" || report.status === filterStatus;
 
 		return matchesCategory && matchesSearch && matchesStatus;
 	});
@@ -949,17 +884,13 @@ export default function ReportsPage() {
 
 	// Add effect for search results announcement
 	useEffect(() => {
-		announce(
-			HEALTHCARE_ANNOUNCEMENTS.SEARCH_RESULTS_UPDATED(filteredReports.length),
-		);
+		announce(HEALTHCARE_ANNOUNCEMENTS.SEARCH_RESULTS_UPDATED(filteredReports.length));
 	}, [filteredReports.length, announce]);
 
 	// Add effect for category selection announcement
 	useEffect(() => {
 		if (selectedCategory) {
-			const categoryName = reportCategories.find(
-				(c) => c.id === selectedCategory,
-			)?.name;
+			const categoryName = reportCategories.find((c) => c.id === selectedCategory)?.name;
 			if (categoryName) {
 				announce(HEALTHCARE_ANNOUNCEMENTS.CATEGORY_SELECTED(categoryName));
 			}
@@ -969,38 +900,23 @@ export default function ReportsPage() {
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
 			<SkipLinks />
-			<div
-				className="container mx-auto space-y-8 p-6"
-				id="main-content"
-				role="main"
-			>
+			<div className="container mx-auto space-y-8 p-6" id="main-content" role="main">
 				{/* Header */}
 				<div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
 					<div>
-						<h1 className="mb-2 font-bold text-3xl text-white">
-							Central de Relatórios
-						</h1>
+						<h1 className="mb-2 font-bold text-3xl text-white">Central de Relatórios</h1>
 						<p className="text-slate-400">
-							Sistema completo de relatórios para conformidade regulatória e
-							gestão clínica
+							Sistema completo de relatórios para conformidade regulatória e gestão clínica
 						</p>
 					</div>
 
 					<div className="flex items-center gap-3">
-						<CosmicGlowButton
-							onClick={() => window.print()}
-							size="sm"
-							variant="secondary"
-						>
+						<CosmicGlowButton onClick={() => window.print()} size="sm" variant="secondary">
 							<Printer className="mr-2 h-4 w-4" />
 							Imprimir
 						</CosmicGlowButton>
 
-						<CosmicGlowButton
-							onClick={() => setSelectedCategory("custom")}
-							size="sm"
-							variant="primary"
-						>
+						<CosmicGlowButton onClick={() => setSelectedCategory("custom")} size="sm" variant="primary">
 							<Plus className="mr-2 h-4 w-4" />
 							Novo Relatório
 						</CosmicGlowButton>
@@ -1009,11 +925,7 @@ export default function ReportsPage() {
 
 				{/* Search and Filters */}
 				<NeonGradientCard>
-					<div
-						className="flex flex-col gap-4 lg:flex-row"
-						id="search-filters"
-						role="search"
-					>
+					<div className="flex flex-col gap-4 lg:flex-row" id="search-filters" role="search">
 						<div className="flex-1">
 							<Label className="sr-only" htmlFor="report-search">
 								Buscar relatórios
@@ -1033,11 +945,7 @@ export default function ReportsPage() {
 									value={searchTerm}
 								/>
 							</div>
-							<div
-								aria-live="polite"
-								className="sr-only"
-								id="search-results-count"
-							>
+							<div aria-live="polite" className="sr-only" id="search-results-count">
 								{filteredReports.length} relatórios encontrados
 							</div>
 						</div>
@@ -1075,15 +983,8 @@ export default function ReportsPage() {
 				{/* Report Categories Navigation */}
 				{!selectedCategory && (
 					<>
-						<div
-							aria-labelledby="categories-heading"
-							id="report-categories"
-							role="region"
-						>
-							<h2
-								className="mb-6 font-bold text-2xl text-white"
-								id="categories-heading"
-							>
+						<div aria-labelledby="categories-heading" id="report-categories" role="region">
+							<h2 className="mb-6 font-bold text-2xl text-white" id="categories-heading">
 								Categorias de Relatórios
 							</h2>
 							<div
@@ -1092,11 +993,7 @@ export default function ReportsPage() {
 								role="grid"
 							>
 								{reportCategories.map((category) => (
-									<ReportCategoryCard
-										category={category}
-										key={category.id}
-										onSelectCategory={setSelectedCategory}
-									/>
+									<ReportCategoryCard category={category} key={category.id} onSelectCategory={setSelectedCategory} />
 								))}
 							</div>
 						</div>
@@ -1123,16 +1020,10 @@ export default function ReportsPage() {
 								</Button>
 								<div>
 									<h2 className="font-bold text-2xl text-white">
-										{
-											reportCategories.find((c) => c.id === selectedCategory)
-												?.name
-										}
+										{reportCategories.find((c) => c.id === selectedCategory)?.name}
 									</h2>
 									<p className="text-slate-400">
-										{
-											reportCategories.find((c) => c.id === selectedCategory)
-												?.description
-										}
+										{reportCategories.find((c) => c.id === selectedCategory)?.description}
 									</p>
 								</div>
 							</div>
@@ -1157,12 +1048,8 @@ export default function ReportsPage() {
 						{filteredReports.length === 0 && (
 							<div className="py-12 text-center">
 								<FileText className="mx-auto mb-4 h-12 w-12 text-slate-600" />
-								<h3 className="mb-2 font-medium text-lg text-slate-400">
-									Nenhum relatório encontrado
-								</h3>
-								<p className="text-slate-500">
-									Tente ajustar os filtros ou termos de busca
-								</p>
+								<h3 className="mb-2 font-medium text-lg text-slate-400">Nenhum relatório encontrado</h3>
+								<p className="text-slate-500">Tente ajustar os filtros ou termos de busca</p>
 							</div>
 						)}
 					</div>
@@ -1179,9 +1066,7 @@ export default function ReportsPage() {
 				{/* Scheduling Modal */}
 				<SchedulingModal
 					isOpen={schedulingModal.isOpen}
-					onClose={() =>
-						setSchedulingModal({ ...schedulingModal, isOpen: false })
-					}
+					onClose={() => setSchedulingModal({ ...schedulingModal, isOpen: false })}
 					onScheduleCreated={handleScheduleCreated}
 					reportId={schedulingModal.reportId}
 					reportName={schedulingModal.reportName}
@@ -1190,10 +1075,7 @@ export default function ReportsPage() {
 				{/* Footer */}
 				<div className="border-slate-800 border-t pt-8 text-center text-slate-500 text-sm">
 					<p>NeonPro Healthcare Reports Center</p>
-					<p>
-						Conformidade LGPD, ANVISA, CFM e ANS • Exportação segura • Auditoria
-						completa
-					</p>
+					<p>Conformidade LGPD, ANVISA, CFM e ANS • Exportação segura • Auditoria completa</p>
 				</div>
 			</div>
 		</div>

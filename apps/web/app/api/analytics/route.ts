@@ -3,22 +3,14 @@ import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 // Initialize Supabase client with service role key for server-side operations
-const supabase = createClient(
-	process.env.NEXT_PUBLIC_SUPABASE_URL!,
-	process.env.SUPABASE_SERVICE_ROLE_KEY!,
-);
+const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
 
 // Validation schemas
 const _analyticsQuerySchema = z.object({
 	startDate: z.string().optional(),
 	endDate: z.string().optional(),
-	metric: z
-		.enum(["revenue", "subscriptions", "trials", "conversions", "churn"])
-		.optional(),
-	granularity: z
-		.enum(["day", "week", "month", "quarter"])
-		.optional()
-		.default("day"),
+	metric: z.enum(["revenue", "subscriptions", "trials", "conversions", "churn"]).optional(),
+	granularity: z.enum(["day", "week", "month", "quarter"]).optional().default("day"),
 	userId: z.string().optional(),
 	subscriptionTier: z.enum(["free", "pro", "enterprise"]).optional(),
 });
@@ -41,10 +33,7 @@ export async function GET(request: NextRequest) {
 		const _subscriptionStatus = request.headers.get("x-user-subscription");
 
 		if (!userId) {
-			return NextResponse.json(
-				{ error: "Authentication required" },
-				{ status: 401 },
-			);
+			return NextResponse.json({ error: "Authentication required" }, { status: 401 });
 		}
 
 		// Parse query parameters
@@ -62,25 +51,14 @@ export async function GET(request: NextRequest) {
 		const validatedParams = _analyticsQuerySchema.parse(queryParams);
 
 		// Check permissions - only admins can view other users' data
-		if (
-			validatedParams.userId &&
-			validatedParams.userId !== userId &&
-			userRole !== "admin"
-		) {
-			return NextResponse.json(
-				{ error: "Insufficient permissions" },
-				{ status: 403 },
-			);
+		if (validatedParams.userId && validatedParams.userId !== userId && userRole !== "admin") {
+			return NextResponse.json({ error: "Insufficient permissions" }, { status: 403 });
 		}
 
 		// Set default date range if not provided (last 30 days)
-		const endDate =
-			validatedParams.endDate || new Date().toISOString().split("T")[0];
+		const endDate = validatedParams.endDate || new Date().toISOString().split("T")[0];
 		const startDate =
-			validatedParams.startDate ||
-			new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
-				.toISOString()
-				.split("T")[0];
+			validatedParams.startDate || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
 
 		let analyticsData: any = {};
 
@@ -91,7 +69,7 @@ export async function GET(request: NextRequest) {
 					startDate,
 					endDate,
 					validatedParams.granularity,
-					validatedParams.userId || userId,
+					validatedParams.userId || userId
 				);
 				break;
 			case "subscriptions":
@@ -99,7 +77,7 @@ export async function GET(request: NextRequest) {
 					startDate,
 					endDate,
 					validatedParams.granularity,
-					validatedParams.userId || userId,
+					validatedParams.userId || userId
 				);
 				break;
 			case "trials":
@@ -107,7 +85,7 @@ export async function GET(request: NextRequest) {
 					startDate,
 					endDate,
 					validatedParams.granularity,
-					validatedParams.userId || userId,
+					validatedParams.userId || userId
 				);
 				break;
 			case "conversions":
@@ -115,7 +93,7 @@ export async function GET(request: NextRequest) {
 					startDate,
 					endDate,
 					validatedParams.granularity,
-					validatedParams.userId || userId,
+					validatedParams.userId || userId
 				);
 				break;
 			case "churn":
@@ -123,17 +101,12 @@ export async function GET(request: NextRequest) {
 					startDate,
 					endDate,
 					validatedParams.granularity,
-					validatedParams.userId || userId,
+					validatedParams.userId || userId
 				);
 				break;
 			default:
 				// Return comprehensive dashboard data
-				analyticsData = await getDashboardAnalytics(
-					startDate,
-					endDate,
-					validatedParams.userId || userId,
-					userRole,
-				);
+				analyticsData = await getDashboardAnalytics(startDate, endDate, validatedParams.userId || userId, userRole);
 		}
 
 		return NextResponse.json({
@@ -153,14 +126,11 @@ export async function GET(request: NextRequest) {
 					error: "Invalid query parameters",
 					details: error.errors,
 				},
-				{ status: 400 },
+				{ status: 400 }
 			);
 		}
 
-		return NextResponse.json(
-			{ error: "Internal server error" },
-			{ status: 500 },
-		);
+		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 	}
 }
 
@@ -172,10 +142,7 @@ export async function POST(request: NextRequest) {
 		const userId = request.headers.get("x-user-id");
 
 		if (!userId) {
-			return NextResponse.json(
-				{ error: "Authentication required" },
-				{ status: 401 },
-			);
+			return NextResponse.json({ error: "Authentication required" }, { status: 401 });
 		}
 
 		const body = await request.json();
@@ -184,10 +151,7 @@ export async function POST(request: NextRequest) {
 		// Ensure user can only track events for themselves (unless admin)
 		const userRole = request.headers.get("x-user-role");
 		if (validatedEvent.user_id !== userId && userRole !== "admin") {
-			return NextResponse.json(
-				{ error: "Cannot track events for other users" },
-				{ status: 403 },
-			);
+			return NextResponse.json({ error: "Cannot track events for other users" }, { status: 403 });
 		}
 
 		// Insert event into analytics_events table
@@ -203,10 +167,7 @@ export async function POST(request: NextRequest) {
 			.single();
 
 		if (error) {
-			return NextResponse.json(
-				{ error: "Failed to track event" },
-				{ status: 500 },
-			);
+			return NextResponse.json({ error: "Failed to track event" }, { status: 500 });
 		}
 
 		return NextResponse.json({
@@ -221,24 +182,16 @@ export async function POST(request: NextRequest) {
 					error: "Invalid event data",
 					details: error.errors,
 				},
-				{ status: 400 },
+				{ status: 400 }
 			);
 		}
 
-		return NextResponse.json(
-			{ error: "Internal server error" },
-			{ status: 500 },
-		);
+		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 	}
 }
 
 // Helper functions for different analytics queries
-async function getRevenueAnalytics(
-	startDate: string,
-	endDate: string,
-	granularity: string,
-	userId: string,
-) {
+async function getRevenueAnalytics(startDate: string, endDate: string, granularity: string, userId: string) {
 	const { data, error } = await (await supabase).rpc("get_revenue_analytics", {
 		start_date: startDate,
 		end_date: endDate,
@@ -252,21 +205,13 @@ async function getRevenueAnalytics(
 	return data;
 }
 
-async function getSubscriptionAnalytics(
-	startDate: string,
-	endDate: string,
-	granularity: string,
-	userId: string,
-) {
-	const { data, error } = await (await supabase).rpc(
-		"get_subscription_analytics",
-		{
-			start_date: startDate,
-			end_date: endDate,
-			granularity,
-			user_id: userId,
-		},
-	);
+async function getSubscriptionAnalytics(startDate: string, endDate: string, granularity: string, userId: string) {
+	const { data, error } = await (await supabase).rpc("get_subscription_analytics", {
+		start_date: startDate,
+		end_date: endDate,
+		granularity,
+		user_id: userId,
+	});
 
 	if (error) {
 		throw error;
@@ -274,12 +219,7 @@ async function getSubscriptionAnalytics(
 	return data;
 }
 
-async function getTrialAnalytics(
-	startDate: string,
-	endDate: string,
-	granularity: string,
-	userId: string,
-) {
+async function getTrialAnalytics(startDate: string, endDate: string, granularity: string, userId: string) {
 	const { data, error } = await (await supabase).rpc("get_trial_analytics", {
 		start_date: startDate,
 		end_date: endDate,
@@ -293,21 +233,13 @@ async function getTrialAnalytics(
 	return data;
 }
 
-async function getConversionAnalytics(
-	startDate: string,
-	endDate: string,
-	granularity: string,
-	userId: string,
-) {
-	const { data, error } = await (await supabase).rpc(
-		"get_conversion_analytics",
-		{
-			start_date: startDate,
-			end_date: endDate,
-			granularity,
-			user_id: userId,
-		},
-	);
+async function getConversionAnalytics(startDate: string, endDate: string, granularity: string, userId: string) {
+	const { data, error } = await (await supabase).rpc("get_conversion_analytics", {
+		start_date: startDate,
+		end_date: endDate,
+		granularity,
+		user_id: userId,
+	});
 
 	if (error) {
 		throw error;
@@ -315,12 +247,7 @@ async function getConversionAnalytics(
 	return data;
 }
 
-async function getChurnAnalytics(
-	startDate: string,
-	endDate: string,
-	granularity: string,
-	userId: string,
-) {
+async function getChurnAnalytics(startDate: string, endDate: string, granularity: string, userId: string) {
 	const { data, error } = await (await supabase).rpc("get_churn_analytics", {
 		start_date: startDate,
 		end_date: endDate,
@@ -334,12 +261,7 @@ async function getChurnAnalytics(
 	return data;
 }
 
-async function getDashboardAnalytics(
-	startDate: string,
-	endDate: string,
-	userId: string,
-	_userRole: string | null,
-) {
+async function getDashboardAnalytics(startDate: string, endDate: string, userId: string, _userRole: string | null) {
 	// Get comprehensive dashboard data
 	const [revenue, subscriptions, trials, conversions] = await Promise.all([
 		getRevenueAnalytics(startDate, endDate, "day", userId),
@@ -354,11 +276,7 @@ async function getDashboardAnalytics(
 		trials,
 		conversions,
 		summary: {
-			totalRevenue:
-				revenue?.reduce(
-					(sum: number, item: any) => sum + (item.revenue || 0),
-					0,
-				) || 0,
+			totalRevenue: revenue?.reduce((sum: number, item: any) => sum + (item.revenue || 0), 0) || 0,
 			totalSubscriptions: subscriptions?.length || 0,
 			totalTrials: trials?.length || 0,
 			conversionRate: conversions?.conversion_rate || 0,

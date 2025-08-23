@@ -129,12 +129,8 @@ export function HealthcareSidebar() {
 						<Stethoscope className="h-5 w-5 text-primary-foreground" />
 					</div>
 					<div className="flex flex-col">
-						<span className="font-bold font-serif text-foreground text-lg">
-							NeonPro
-						</span>
-						<span className="text-muted-foreground text-xs">
-							Healthcare Management
-						</span>
+						<span className="font-bold font-serif text-foreground text-lg">NeonPro</span>
+						<span className="text-muted-foreground text-xs">Healthcare Management</span>
 					</div>
 				</div>
 			</SidebarHeader>
@@ -142,9 +138,7 @@ export function HealthcareSidebar() {
 			<SidebarContent className="px-2">
 				{/* Principal Navigation */}
 				<SidebarGroup>
-					<SidebarGroupLabel className="font-medium text-sidebar-text/70">
-						Principal
-					</SidebarGroupLabel>
+					<SidebarGroupLabel className="font-medium text-sidebar-text/70">Principal</SidebarGroupLabel>
 					<SidebarGroupContent>
 						<SidebarMenu>
 							{navigationItems.map((item) => {
@@ -168,10 +162,7 @@ export function HealthcareSidebar() {
 											isActive={isActive}
 											tooltip={item.description}
 										>
-											<Link
-												className="flex items-center gap-3"
-												href={item.href}
-											>
+											<Link className="flex items-center gap-3" href={item.href}>
 												<Icon
 													className={`h-4 w-4 ${
 														isEmergency
@@ -184,9 +175,7 @@ export function HealthcareSidebar() {
 													}`}
 												/>
 												<span className="font-medium">{item.title}</span>
-												{isEmergency && (
-													<span className="ml-auto font-bold text-xs">🚨</span>
-												)}
+												{isEmergency && <span className="ml-auto font-bold text-xs">🚨</span>}
 											</Link>
 										</SidebarMenuButton>
 									</SidebarMenuItem>
@@ -200,9 +189,7 @@ export function HealthcareSidebar() {
 
 				{/* Analytics & Reports */}
 				<SidebarGroup>
-					<SidebarGroupLabel className="font-medium text-muted-foreground">
-						Análises & Relatórios
-					</SidebarGroupLabel>
+					<SidebarGroupLabel className="font-medium text-muted-foreground">Análises & Relatórios</SidebarGroupLabel>
 					<SidebarGroupContent>
 						<SidebarMenu>
 							{analyticsItems.map((item) => {
@@ -221,13 +208,8 @@ export function HealthcareSidebar() {
 											isActive={isActive}
 											tooltip={item.description}
 										>
-											<Link
-												className="flex items-center gap-3"
-												href={item.href}
-											>
-												<Icon
-													className={`h-4 w-4 ${isActive ? "text-primary-foreground" : "text-muted-foreground"}`}
-												/>
+											<Link className="flex items-center gap-3" href={item.href}>
+												<Icon className={`h-4 w-4 ${isActive ? "text-primary-foreground" : "text-muted-foreground"}`} />
 												<span className="font-medium">{item.title}</span>
 											</Link>
 										</SidebarMenuButton>
@@ -242,9 +224,7 @@ export function HealthcareSidebar() {
 
 				{/* System & Settings */}
 				<SidebarGroup>
-					<SidebarGroupLabel className="font-medium text-muted-foreground">
-						Sistema
-					</SidebarGroupLabel>
+					<SidebarGroupLabel className="font-medium text-muted-foreground">Sistema</SidebarGroupLabel>
 					<SidebarGroupContent>
 						<SidebarMenu>
 							{systemItems.map((item) => {
@@ -263,13 +243,8 @@ export function HealthcareSidebar() {
 											isActive={isActive}
 											tooltip={item.description}
 										>
-											<Link
-												className="flex items-center gap-3"
-												href={item.href}
-											>
-												<Icon
-													className={`h-4 w-4 ${isActive ? "text-primary-foreground" : "text-muted-foreground"}`}
-												/>
+											<Link className="flex items-center gap-3" href={item.href}>
+												<Icon className={`h-4 w-4 ${isActive ? "text-primary-foreground" : "text-muted-foreground"}`} />
 												<span className="font-medium">{item.title}</span>
 											</Link>
 										</SidebarMenuButton>
@@ -307,17 +282,11 @@ export function HealthcareSidebar() {
 							<div className="flex w-full items-center gap-3">
 								<Avatar className="h-8 w-8">
 									<AvatarImage alt="User" src="" />
-									<AvatarFallback className="bg-primary font-medium text-primary-foreground text-sm">
-										AD
-									</AvatarFallback>
+									<AvatarFallback className="bg-primary font-medium text-primary-foreground text-sm">AD</AvatarFallback>
 								</Avatar>
 								<div className="flex min-w-0 flex-col text-left">
-									<span className="truncate font-medium text-foreground text-sm">
-										Dr. Admin
-									</span>
-									<span className="truncate text-muted-foreground text-xs">
-										admin@neonpro.com
-									</span>
+									<span className="truncate font-medium text-foreground text-sm">Dr. Admin</span>
+									<span className="truncate text-muted-foreground text-xs">admin@neonpro.com</span>
 								</div>
 							</div>
 						</SidebarMenuButton>

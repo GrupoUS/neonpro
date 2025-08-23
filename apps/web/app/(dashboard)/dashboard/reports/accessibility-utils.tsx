@@ -40,8 +40,7 @@ export const HEALTHCARE_ANNOUNCEMENTS = {
 	SCHEDULE_CREATED: "Agendamento criado com sucesso.",
 	LGPD_COMPLIANCE_ACTIVE: "Modo de conformidade LGPD ativo.",
 	ERROR_OCCURRED: "Erro ocorrido. Verifique os detalhes.",
-	SEARCH_RESULTS_UPDATED: (count: number) =>
-		`${count} relatórios encontrados para sua busca.`,
+	SEARCH_RESULTS_UPDATED: (count: number) => `${count} relatórios encontrados para sua busca.`,
 	CATEGORY_SELECTED: (category: string) => `Categoria ${category} selecionada.`,
 } as const;
 
@@ -134,10 +133,7 @@ export class ScreenReaderAnnouncer {
 		document.body.appendChild(ScreenReaderAnnouncer.announcer);
 	}
 
-	static announce(
-		message: string,
-		priority: "polite" | "assertive" = "polite",
-	) {
+	static announce(message: string, priority: "polite" | "assertive" = "polite") {
 		ScreenReaderAnnouncer.initialize();
 
 		if (ScreenReaderAnnouncer.announcer) {
@@ -158,8 +154,7 @@ export class ScreenReaderAnnouncer {
 export class HighContrastManager {
 	static isHighContrastMode(): boolean {
 		return (
-			window.matchMedia("(prefers-contrast: high)").matches ||
-			window.matchMedia("(forced-colors: active)").matches
+			window.matchMedia("(prefers-contrast: high)").matches || window.matchMedia("(forced-colors: active)").matches
 		);
 	}
 
@@ -191,12 +186,8 @@ export class MotionManager {
 	static getMotionSettings() {
 		return {
 			enableAnimations: !MotionManager.respectsReducedMotion(),
-			transitionDuration: MotionManager.respectsReducedMotion()
-				? "0ms"
-				: "300ms",
-			animationDuration: MotionManager.respectsReducedMotion()
-				? "0ms"
-				: "500ms",
+			transitionDuration: MotionManager.respectsReducedMotion() ? "0ms" : "300ms",
+			animationDuration: MotionManager.respectsReducedMotion() ? "0ms" : "500ms",
 		};
 	}
 }
@@ -233,19 +224,14 @@ export class ContrastChecker {
 		const gsRGB = rgb.g / 255;
 		const bsRGB = rgb.b / 255;
 
-		const r =
-			rsRGB <= 0.039_28 ? rsRGB / 12.92 : ((rsRGB + 0.055) / 1.055) ** 2.4;
-		const g =
-			gsRGB <= 0.039_28 ? gsRGB / 12.92 : ((gsRGB + 0.055) / 1.055) ** 2.4;
-		const b =
-			bsRGB <= 0.039_28 ? bsRGB / 12.92 : ((bsRGB + 0.055) / 1.055) ** 2.4;
+		const r = rsRGB <= 0.039_28 ? rsRGB / 12.92 : ((rsRGB + 0.055) / 1.055) ** 2.4;
+		const g = gsRGB <= 0.039_28 ? gsRGB / 12.92 : ((gsRGB + 0.055) / 1.055) ** 2.4;
+		const b = bsRGB <= 0.039_28 ? bsRGB / 12.92 : ((bsRGB + 0.055) / 1.055) ** 2.4;
 
 		return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 	}
 
-	private static hexToRgb(
-		hex: string,
-	): { r: number; g: number; b: number } | null {
+	private static hexToRgb(hex: string): { r: number; g: number; b: number } | null {
 		const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 		return result
 			? {
@@ -275,9 +261,7 @@ export class FormAccessibility {
 
 		if (field && description) {
 			const existingDescribedBy = field.getAttribute("aria-describedby") || "";
-			const newDescribedBy = existingDescribedBy
-				? `${existingDescribedBy} ${descriptionId}`
-				: descriptionId;
+			const newDescribedBy = existingDescribedBy ? `${existingDescribedBy} ${descriptionId}` : descriptionId;
 
 			field.setAttribute("aria-describedby", newDescribedBy);
 		}
@@ -360,11 +344,7 @@ export class TableAccessibility {
 		}
 	}
 
-	static addSortableTableAria(
-		tableId: string,
-		columnIndex: number,
-		sortDirection: "asc" | "desc",
-	) {
+	static addSortableTableAria(tableId: string, columnIndex: number, sortDirection: "asc" | "desc") {
 		const table = document.getElementById(tableId);
 		if (!table) {
 			return;
@@ -373,10 +353,7 @@ export class TableAccessibility {
 		const headers = table.querySelectorAll("th");
 		headers.forEach((header, index) => {
 			if (index === columnIndex) {
-				header.setAttribute(
-					"aria-sort",
-					sortDirection === "asc" ? "ascending" : "descending",
-				);
+				header.setAttribute("aria-sort", sortDirection === "asc" ? "ascending" : "descending");
 			} else {
 				header.setAttribute("aria-sort", "none");
 			}
@@ -483,9 +460,7 @@ export class HealthcareAccessibilityValidator {
 		const buttons = cardElement.querySelectorAll('button, [role="button"]');
 		buttons.forEach((button, index) => {
 			const accessibleName =
-				button.getAttribute("aria-label") ||
-				button.getAttribute("aria-labelledby") ||
-				button.textContent?.trim();
+				button.getAttribute("aria-label") || button.getAttribute("aria-labelledby") || button.textContent?.trim();
 
 			if (!accessibleName) {
 				issues.push(`Botão ${index + 1} precisa de nome acessível`);
@@ -495,9 +470,7 @@ export class HealthcareAccessibilityValidator {
 		// Check for compliance indicators
 		const complianceInfo = cardElement.querySelector("[data-compliance]");
 		if (complianceInfo && !complianceInfo.getAttribute("aria-label")) {
-			issues.push(
-				"Informações de conformidade precisam de descrição acessível",
-			);
+			issues.push("Informações de conformidade precisam de descrição acessível");
 		}
 
 		return issues;
@@ -516,16 +489,14 @@ export class HealthcareAccessibilityValidator {
 		}
 
 		// Check for close button
-		const closeButton = modalElement.querySelector(
-			'[aria-label*="fechar"], [aria-label*="close"]',
-		);
+		const closeButton = modalElement.querySelector('[aria-label*="fechar"], [aria-label*="close"]');
 		if (!closeButton) {
 			issues.push("Modal precisa de botão de fechar com rótulo acessível");
 		}
 
 		// Check for initial focus
 		const focusableElements = modalElement.querySelectorAll(
-			"button:not([disabled]), input:not([disabled]), select:not([disabled])",
+			"button:not([disabled]), input:not([disabled]), select:not([disabled])"
 		);
 
 		if (focusableElements.length > 0) {
@@ -550,14 +521,8 @@ export function initializeAccessibility() {
 	// Set up reduced motion preferences
 	const motionSettings = MotionManager.getMotionSettings();
 	const root = document.documentElement;
-	root.style.setProperty(
-		"--animation-duration",
-		motionSettings.animationDuration,
-	);
-	root.style.setProperty(
-		"--transition-duration",
-		motionSettings.transitionDuration,
-	);
+	root.style.setProperty("--animation-duration", motionSettings.animationDuration);
+	root.style.setProperty("--transition-duration", motionSettings.transitionDuration);
 
 	// Add global keyboard event listeners for accessibility shortcuts
 	document.addEventListener("keydown", (e) => {
@@ -574,9 +539,7 @@ export function initializeAccessibility() {
 		// Alt + S: Focus on search
 		if (e.altKey && e.key === "s") {
 			e.preventDefault();
-			const searchInput = document.querySelector(
-				'input[placeholder*="Buscar"]',
-			) as HTMLElement;
+			const searchInput = document.querySelector('input[placeholder*="Buscar"]') as HTMLElement;
 			if (searchInput) {
 				searchInput.focus();
 				ScreenReaderAnnouncer.announce("Campo de busca focado");

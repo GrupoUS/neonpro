@@ -138,8 +138,7 @@ const MOCK_DOCTORS: DoctorStats[] = [
 
 export default function ClinicDashboard() {
 	const [metrics, _setMetrics] = useState<ClinicMetrics>(MOCK_METRICS);
-	const [activities, _setActivities] =
-		useState<RecentActivity[]>(MOCK_ACTIVITIES);
+	const [activities, _setActivities] = useState<RecentActivity[]>(MOCK_ACTIVITIES);
 	const [doctors, _setDoctors] = useState<DoctorStats[]>(MOCK_DOCTORS);
 	const [_timeRange, _setTimeRange] = useState("today");
 
@@ -186,9 +185,7 @@ export default function ClinicDashboard() {
 			offline: "Offline",
 		};
 
-		return (
-			<Badge className={variants[availability]}>{labels[availability]}</Badge>
-		);
+		return <Badge className={variants[availability]}>{labels[availability]}</Badge>;
 	};
 
 	const formatCurrency = (value: number) => {
@@ -224,12 +221,8 @@ export default function ClinicDashboard() {
 			{/* Header */}
 			<div className="flex items-center justify-between">
 				<div>
-					<h1 className="font-bold text-3xl tracking-tight">
-						Dashboard da Clínica
-					</h1>
-					<p className="text-muted-foreground">
-						Visão geral das operações e métricas em tempo real
-					</p>
+					<h1 className="font-bold text-3xl tracking-tight">Dashboard da Clínica</h1>
+					<p className="text-muted-foreground">Visão geral das operações e métricas em tempo real</p>
 				</div>
 				<div className="flex items-center space-x-2">
 					<Button variant="outline">Relatório</Button>
@@ -241,15 +234,11 @@ export default function ClinicDashboard() {
 			<div className="grid grid-cols-1 gap-6 md:grid-cols-4">
 				<Card>
 					<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-						<CardTitle className="font-medium text-sm">
-							Pacientes Total
-						</CardTitle>
+						<CardTitle className="font-medium text-sm">Pacientes Total</CardTitle>
 						<Users className="h-4 w-4 text-muted-foreground" />
 					</CardHeader>
 					<CardContent>
-						<div className="font-bold text-2xl">
-							{metrics.totalPatients.toLocaleString()}
-						</div>
+						<div className="font-bold text-2xl">{metrics.totalPatients.toLocaleString()}</div>
 						<p className="text-muted-foreground text-xs">
 							<TrendingUp className="mr-1 inline h-3 w-3" />
 							+12% desde o mês passado
@@ -259,32 +248,22 @@ export default function ClinicDashboard() {
 
 				<Card>
 					<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-						<CardTitle className="font-medium text-sm">
-							Consultas Hoje
-						</CardTitle>
+						<CardTitle className="font-medium text-sm">Consultas Hoje</CardTitle>
 						<Calendar className="h-4 w-4 text-muted-foreground" />
 					</CardHeader>
 					<CardContent>
-						<div className="font-bold text-2xl">
-							{metrics.appointmentsToday}
-						</div>
-						<p className="text-muted-foreground text-xs">
-							{metrics.completedAppointments} concluídas este mês
-						</p>
+						<div className="font-bold text-2xl">{metrics.appointmentsToday}</div>
+						<p className="text-muted-foreground text-xs">{metrics.completedAppointments} concluídas este mês</p>
 					</CardContent>
 				</Card>
 
 				<Card>
 					<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-						<CardTitle className="font-medium text-sm">
-							Receita Mensal
-						</CardTitle>
+						<CardTitle className="font-medium text-sm">Receita Mensal</CardTitle>
 						<DollarSign className="h-4 w-4 text-muted-foreground" />
 					</CardHeader>
 					<CardContent>
-						<div className="font-bold text-2xl">
-							{formatCurrency(metrics.revenue)}
-						</div>
+						<div className="font-bold text-2xl">{formatCurrency(metrics.revenue)}</div>
 						<p className="text-muted-foreground text-xs">
 							<TrendingUp className="mr-1 inline h-3 w-3" />
 							+8% desde o mês passado
@@ -298,12 +277,8 @@ export default function ClinicDashboard() {
 						<Star className="h-4 w-4 text-muted-foreground" />
 					</CardHeader>
 					<CardContent>
-						<div className="font-bold text-2xl">
-							{metrics.patientSatisfaction}/5.0
-						</div>
-						<p className="text-muted-foreground text-xs">
-							Baseado em 127 avaliações
-						</p>
+						<div className="font-bold text-2xl">{metrics.patientSatisfaction}/5.0</div>
+						<p className="text-muted-foreground text-xs">Baseado em 127 avaliações</p>
 					</CardContent>
 				</Card>
 			</div>
@@ -313,17 +288,13 @@ export default function ClinicDashboard() {
 				<Card>
 					<CardHeader>
 						<CardTitle>Ocupação da Clínica</CardTitle>
-						<CardDescription>
-							Taxa de ocupação e tempo médio de espera
-						</CardDescription>
+						<CardDescription>Taxa de ocupação e tempo médio de espera</CardDescription>
 					</CardHeader>
 					<CardContent className="space-y-4">
 						<div>
 							<div className="mb-2 flex items-center justify-between">
 								<span className="font-medium text-sm">Taxa de Ocupação</span>
-								<span className="text-muted-foreground text-sm">
-									{metrics.occupancyRate}%
-								</span>
+								<span className="text-muted-foreground text-sm">{metrics.occupancyRate}%</span>
 							</div>
 							<Progress className="h-2" value={metrics.occupancyRate} />
 						</div>
@@ -333,9 +304,7 @@ export default function ClinicDashboard() {
 								<Clock className="h-4 w-4 text-muted-foreground" />
 								<span className="text-sm">Tempo médio de espera</span>
 							</div>
-							<span className="font-medium text-sm">
-								{metrics.averageWaitTime} min
-							</span>
+							<span className="font-medium text-sm">{metrics.averageWaitTime} min</span>
 						</div>
 
 						<Alert>
@@ -356,12 +325,8 @@ export default function ClinicDashboard() {
 					</CardHeader>
 					<CardContent>
 						<div className="text-center">
-							<div className="mb-2 font-bold text-3xl text-orange-600">
-								{metrics.pendingResults}
-							</div>
-							<p className="mb-4 text-muted-foreground text-sm">
-								exames pendentes de análise
-							</p>
+							<div className="mb-2 font-bold text-3xl text-orange-600">{metrics.pendingResults}</div>
+							<p className="mb-4 text-muted-foreground text-sm">exames pendentes de análise</p>
 							<Button className="w-full" variant="outline">
 								<FileText className="mr-2 h-4 w-4" />
 								Ver Todos os Resultados
@@ -383,17 +348,12 @@ export default function ClinicDashboard() {
 					<Card>
 						<CardHeader>
 							<CardTitle>Status da Equipe Médica</CardTitle>
-							<CardDescription>
-								Disponibilidade e performance dos médicos
-							</CardDescription>
+							<CardDescription>Disponibilidade e performance dos médicos</CardDescription>
 						</CardHeader>
 						<CardContent>
 							<div className="space-y-4">
 								{doctors.map((doctor) => (
-									<div
-										className="flex items-center justify-between rounded-lg border p-4"
-										key={doctor.id}
-									>
+									<div className="flex items-center justify-between rounded-lg border p-4" key={doctor.id}>
 										<div className="flex items-center space-x-4">
 											<Avatar>
 												<AvatarImage src={doctor.avatar} />
@@ -406,9 +366,7 @@ export default function ClinicDashboard() {
 											</Avatar>
 											<div>
 												<h4 className="font-medium">{doctor.name}</h4>
-												<p className="text-muted-foreground text-sm">
-													{doctor.specialty}
-												</p>
+												<p className="text-muted-foreground text-sm">{doctor.specialty}</p>
 												<div className="mt-1 flex items-center space-x-4">
 													<span className="text-muted-foreground text-xs">
 														{doctor.appointmentsToday} consultas hoje
@@ -441,24 +399,18 @@ export default function ClinicDashboard() {
 					<Card>
 						<CardHeader>
 							<CardTitle>Atividades Recentes</CardTitle>
-							<CardDescription>
-								Últimas ações e eventos na clínica
-							</CardDescription>
+							<CardDescription>Últimas ações e eventos na clínica</CardDescription>
 						</CardHeader>
 						<CardContent>
 							<div className="space-y-4">
 								{activities.map((activity) => (
 									<div className="flex items-start space-x-4" key={activity.id}>
-										<div
-											className={`rounded-full p-2 ${getActivityStatusColor(activity.status)} bg-opacity-10`}
-										>
+										<div className={`rounded-full p-2 ${getActivityStatusColor(activity.status)} bg-opacity-10`}>
 											{getActivityIcon(activity.type)}
 										</div>
 										<div className="flex-1">
 											<p className="text-sm">{activity.description}</p>
-											<p className="text-muted-foreground text-xs">
-												{formatRelativeTime(activity.timestamp)}
-											</p>
+											<p className="text-muted-foreground text-xs">{formatRelativeTime(activity.timestamp)}</p>
 										</div>
 									</div>
 								))}

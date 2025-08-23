@@ -216,11 +216,7 @@ const mockCommunications = {
 	],
 };
 
-function ConversationList({
-	conversations,
-	onSelectConversation,
-	selectedId,
-}: any) {
+function ConversationList({ conversations, onSelectConversation, selectedId }: any) {
 	const formatTime = (timestamp: string) => {
 		const date = new Date(timestamp);
 		const now = new Date();
@@ -257,9 +253,7 @@ function ConversationList({
 				<Card
 					className={cn(
 						"cursor-pointer border-l-4 transition-all hover:shadow-md",
-						selectedId === conversation.id
-							? "border-primary bg-primary/10"
-							: getPriorityColor(conversation.priority),
+						selectedId === conversation.id ? "border-primary bg-primary/10" : getPriorityColor(conversation.priority)
 					)}
 					key={conversation.id}
 					onClick={() => onSelectConversation(conversation)}
@@ -280,12 +274,8 @@ function ConversationList({
 							<div className="min-w-0 flex-1">
 								<div className="flex items-center justify-between">
 									<div className="flex items-center space-x-2">
-										<h3 className="truncate font-medium text-sm">
-											{conversation.participant.name}
-										</h3>
-										{conversation.isPinned && (
-											<Pin className="h-3 w-3 text-muted-foreground" />
-										)}
+										<h3 className="truncate font-medium text-sm">{conversation.participant.name}</h3>
+										{conversation.isPinned && <Pin className="h-3 w-3 text-muted-foreground" />}
 									</div>
 									<div className="flex items-center space-x-1">
 										<span className="text-muted-foreground text-xs">
@@ -299,12 +289,8 @@ function ConversationList({
 									</div>
 								</div>
 
-								<p className="text-muted-foreground text-xs">
-									{conversation.participant.role}
-								</p>
-								<p className="mt-1 truncate text-muted-foreground text-sm">
-									{conversation.lastMessage.text}
-								</p>
+								<p className="text-muted-foreground text-xs">{conversation.participant.role}</p>
+								<p className="mt-1 truncate text-muted-foreground text-sm">{conversation.lastMessage.text}</p>
 							</div>
 						</div>
 					</CardContent>
@@ -363,12 +349,9 @@ function ChatWindow({ conversation }: any) {
 						<div>
 							<h3 className="font-medium">{conversation.participant.name}</h3>
 							<p className="text-muted-foreground text-sm">
-								{conversation.participant.role} •{" "}
-								{conversation.participant.clinic}
+								{conversation.participant.role} • {conversation.participant.clinic}
 							</p>
-							<p className="text-green-600 text-xs">
-								{conversation.participant.isOnline ? "Online" : "Offline"}
-							</p>
+							<p className="text-green-600 text-xs">{conversation.participant.isOnline ? "Online" : "Offline"}</p>
 						</div>
 					</div>
 
@@ -389,28 +372,18 @@ function ChatWindow({ conversation }: any) {
 			{/* Messages */}
 			<div className="flex-1 space-y-4 overflow-y-auto p-4">
 				{conversation.messages.map((msg: any) => (
-					<div
-						className={cn(
-							"flex",
-							msg.from === "patient" ? "justify-end" : "justify-start",
-						)}
-						key={msg.id}
-					>
+					<div className={cn("flex", msg.from === "patient" ? "justify-end" : "justify-start")} key={msg.id}>
 						<div
 							className={cn(
 								"max-w-xs space-y-1 rounded-lg px-4 py-2 lg:max-w-md",
-								msg.from === "patient"
-									? "bg-primary text-white"
-									: "bg-gray-100 dark:bg-gray-800",
+								msg.from === "patient" ? "bg-primary text-white" : "bg-gray-100 dark:bg-gray-800"
 							)}
 						>
 							<p className="text-sm">{msg.text}</p>
 							<div
 								className={cn(
 									"flex items-center justify-end space-x-1 text-xs",
-									msg.from === "patient"
-										? "text-primary-light"
-										: "text-muted-foreground",
+									msg.from === "patient" ? "text-primary-light" : "text-muted-foreground"
 								)}
 							>
 								<span>{formatMessageTime(msg.timestamp)}</span>
@@ -444,11 +417,7 @@ function ChatWindow({ conversation }: any) {
 							placeholder="Digite sua mensagem..."
 							value={message}
 						/>
-						<Button
-							className="bg-primary hover:bg-primary-dark"
-							disabled={!message.trim()}
-							onClick={handleSendMessage}
-						>
+						<Button className="bg-primary hover:bg-primary-dark" disabled={!message.trim()} onClick={handleSendMessage}>
 							<Send className="h-4 w-4" />
 						</Button>
 					</div>
@@ -494,50 +463,34 @@ function NotificationsList({ notifications }: any) {
 				<Card
 					className={cn(
 						"cursor-pointer transition-all hover:shadow-md",
-						notification.read
-							? ""
-							: "border-l-4 border-l-primary bg-primary/10",
+						notification.read ? "" : "border-l-4 border-l-primary bg-primary/10"
 					)}
 					key={notification.id}
 				>
 					<CardContent className="p-4">
 						<div className="flex items-start space-x-3">
-							<div className="flex-shrink-0">
-								{getNotificationIcon(notification.type)}
-							</div>
+							<div className="flex-shrink-0">{getNotificationIcon(notification.type)}</div>
 
 							<div className="min-w-0 flex-1">
 								<div className="flex items-center justify-between">
-									<h3
-										className={cn(
-											"font-medium text-sm",
-											notification.read ? "" : "font-semibold",
-										)}
-									>
+									<h3 className={cn("font-medium text-sm", notification.read ? "" : "font-semibold")}>
 										{notification.title}
 									</h3>
 									<span className="text-muted-foreground text-xs">
 										{formatNotificationTime(notification.timestamp)}
 									</span>
 								</div>
-								<p className="mt-1 text-muted-foreground text-sm">
-									{notification.message}
-								</p>
+								<p className="mt-1 text-muted-foreground text-sm">{notification.message}</p>
 
 								{notification.priority === "high" && (
-									<Badge
-										className="mt-2 bg-red-100 text-red-800"
-										variant="secondary"
-									>
+									<Badge className="mt-2 bg-red-100 text-red-800" variant="secondary">
 										Urgente
 									</Badge>
 								)}
 							</div>
 
 							<div className="flex items-center space-x-1">
-								{!notification.read && (
-									<div className="h-2 w-2 rounded-full bg-primary" />
-								)}
+								{!notification.read && <div className="h-2 w-2 rounded-full bg-primary" />}
 								<Button size="sm" variant="ghost">
 									<MoreVertical className="h-4 w-4" />
 								</Button>
@@ -562,12 +515,8 @@ function EmergencyContacts({ contacts }: any) {
 									<AlertTriangle className="h-4 w-4 text-red-600" />
 									<span>{contact.name}</span>
 								</h3>
-								<p className="text-muted-foreground text-xs">
-									{contact.description}
-								</p>
-								<p className="font-medium text-red-600 text-xs">
-									{contact.available}
-								</p>
+								<p className="text-muted-foreground text-xs">{contact.description}</p>
+								<p className="font-medium text-red-600 text-xs">{contact.available}</p>
 							</div>
 
 							<div className="flex space-x-2">
@@ -590,9 +539,7 @@ function EmergencyContacts({ contacts }: any) {
 
 export function CommunicationHub() {
 	const [activeTab, setActiveTab] = useState("messages");
-	const [selectedConversation, setSelectedConversation] = useState(
-		mockCommunications.currentConversation,
-	);
+	const [selectedConversation, setSelectedConversation] = useState(mockCommunications.currentConversation);
 	const [searchTerm, setSearchTerm] = useState("");
 
 	return (
@@ -600,12 +547,8 @@ export function CommunicationHub() {
 			{/* Header */}
 			<div className="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
 				<div>
-					<h1 className="font-bold text-2xl tracking-tight lg:text-3xl">
-						Central de Comunicação
-					</h1>
-					<p className="text-muted-foreground">
-						Mantenha-se conectado com sua equipe médica
-					</p>
+					<h1 className="font-bold text-2xl tracking-tight lg:text-3xl">Central de Comunicação</h1>
+					<p className="text-muted-foreground">Mantenha-se conectado com sua equipe médica</p>
 				</div>
 
 				<div className="flex space-x-2">
@@ -626,9 +569,7 @@ export function CommunicationHub() {
 					<CardContent className="p-4">
 						<div className="flex items-center justify-between">
 							<div>
-								<p className="text-muted-foreground text-sm">
-									Mensagens Não Lidas
-								</p>
+								<p className="text-muted-foreground text-sm">Mensagens Não Lidas</p>
 								<p className="font-bold text-2xl">3</p>
 							</div>
 							<MessageCircle className="h-8 w-8 text-blue-500" />
@@ -676,12 +617,9 @@ export function CommunicationHub() {
 			{/* Main Communication Interface */}
 			<Tabs onValueChange={setActiveTab} value={activeTab}>
 				<TabsList className="grid w-full grid-cols-3">
-					<TabsTrigger value="messages">
-						Mensagens ({mockCommunications.conversations.length})
-					</TabsTrigger>
+					<TabsTrigger value="messages">Mensagens ({mockCommunications.conversations.length})</TabsTrigger>
 					<TabsTrigger value="notifications">
-						Notificações (
-						{mockCommunications.notifications.filter((n) => !n.read).length})
+						Notificações ({mockCommunications.notifications.filter((n) => !n.read).length})
 					</TabsTrigger>
 					<TabsTrigger value="emergency">Emergência</TabsTrigger>
 				</TabsList>
@@ -735,14 +673,10 @@ export function CommunicationHub() {
 					<Card>
 						<CardHeader>
 							<CardTitle>Notificações</CardTitle>
-							<CardDescription>
-								Mantenha-se atualizado sobre seus tratamentos e consultas
-							</CardDescription>
+							<CardDescription>Mantenha-se atualizado sobre seus tratamentos e consultas</CardDescription>
 						</CardHeader>
 						<CardContent>
-							<NotificationsList
-								notifications={mockCommunications.notifications}
-							/>
+							<NotificationsList notifications={mockCommunications.notifications} />
 						</CardContent>
 					</Card>
 				</TabsContent>
@@ -760,9 +694,7 @@ export function CommunicationHub() {
 								</CardDescription>
 							</CardHeader>
 							<CardContent>
-								<EmergencyContacts
-									contacts={mockCommunications.emergencyContacts}
-								/>
+								<EmergencyContacts contacts={mockCommunications.emergencyContacts} />
 							</CardContent>
 						</Card>
 
@@ -774,23 +706,17 @@ export function CommunicationHub() {
 							<CardContent>
 								<div className="space-y-4">
 									<div className="rounded-lg bg-red-50 p-4 dark:bg-red-950/20">
-										<h4 className="mb-2 font-medium text-red-700">
-											Emergências Médicas (Ligue Imediatamente)
-										</h4>
+										<h4 className="mb-2 font-medium text-red-700">Emergências Médicas (Ligue Imediatamente)</h4>
 										<ul className="space-y-1 text-red-600 text-sm">
 											<li>• Dificuldade para respirar ou engolir</li>
-											<li>
-												• Reação alérgica grave (urticária, inchaço facial)
-											</li>
+											<li>• Reação alérgica grave (urticária, inchaço facial)</li>
 											<li>• Dor intensa e persistente</li>
 											<li>• Sangramento excessivo</li>
 										</ul>
 									</div>
 
 									<div className="rounded-lg bg-accent/10 p-4 dark:bg-accent/20">
-										<h4 className="mb-2 font-medium text-accent">
-											Situações Urgentes (Contate em 24h)
-										</h4>
+										<h4 className="mb-2 font-medium text-accent">Situações Urgentes (Contate em 24h)</h4>
 										<ul className="space-y-1 text-accent text-sm">
 											<li>• Inchaço anormal após 48h</li>
 											<li>• Vermelhidão persistente</li>

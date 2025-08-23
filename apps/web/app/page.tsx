@@ -20,13 +20,7 @@ import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAppointments } from "@/hooks/useAppointments";
 import { useDashboardMetrics } from "@/hooks/useDashboardMetrics";
@@ -43,8 +37,7 @@ export default function HomePage() {
 	} = useDashboardMetrics();
 
 	const { recentPatients, loading: patientsLoading } = usePatients();
-	const { todaysAppointments, loading: appointmentsLoading } =
-		useAppointments();
+	const { todaysAppointments, loading: appointmentsLoading } = useAppointments();
 
 	return (
 		<div className="min-h-screen bg-background">
@@ -56,14 +49,9 @@ export default function HomePage() {
 						<div className="neonpro-gradient neonpro-glow flex h-10 w-10 items-center justify-center rounded-lg">
 							<Heart className="h-6 w-6 text-primary-foreground" />
 						</div>
-						<h1 className="font-bold text-2xl text-primary">
-							NeonPro Healthcare
-						</h1>
+						<h1 className="font-bold text-2xl text-primary">NeonPro Healthcare</h1>
 					</div>
-					<Button
-						className="neonpro-button-primary"
-						onClick={() => router.push("/login")}
-					>
+					<Button className="neonpro-button-primary" onClick={() => router.push("/login")}>
 						Acessar Sistema
 						<ArrowRight className="ml-2 h-4 w-4" />
 					</Button>
@@ -74,14 +62,11 @@ export default function HomePage() {
 					<div className="mx-auto max-w-4xl">
 						<h1 className="mb-6 font-bold text-5xl text-foreground leading-tight lg:text-6xl">
 							Revolução Digital para
-							<span className="neonpro-glow mt-2 block text-primary">
-								Clínicas Estéticas Brasileiras
-							</span>
+							<span className="neonpro-glow mt-2 block text-primary">Clínicas Estéticas Brasileiras</span>
 						</h1>
 						<p className="mx-auto mb-12 max-w-3xl text-muted-foreground text-xl leading-relaxed">
-							Gestão inteligente com compliance total LGPD, ANVISA e CFM.
-							Transforme sua clínica com tecnologia de ponta, resultados reais e
-							a confiança do mercado brasileiro de medicina estética.
+							Gestão inteligente com compliance total LGPD, ANVISA e CFM. Transforme sua clínica com tecnologia de
+							ponta, resultados reais e a confiança do mercado brasileiro de medicina estética.
 						</p>
 
 						{/* Trust Indicators */}
@@ -126,8 +111,7 @@ export default function HomePage() {
 
 						{/* Trust Line */}
 						<p className="mt-8 text-muted-foreground text-sm">
-							✓ Teste grátis por 30 dias • ✓ Sem cartão de crédito • ✓ Suporte
-							especializado em saúde
+							✓ Teste grátis por 30 dias • ✓ Sem cartão de crédito • ✓ Suporte especializado em saúde
 						</p>
 					</div>
 				</div>
@@ -135,12 +119,9 @@ export default function HomePage() {
 			{/* Real-time Metrics Section */}
 			<section className="container mx-auto px-6 pb-20">
 				<div className="mb-12 text-center">
-					<h2 className="mb-4 font-bold text-3xl text-foreground">
-						Performance em Tempo Real
-					</h2>
+					<h2 className="mb-4 font-bold text-3xl text-foreground">Performance em Tempo Real</h2>
 					<p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-						Acompanhe o crescimento da sua clínica com métricas atualizadas
-						automaticamente
+						Acompanhe o crescimento da sua clínica com métricas atualizadas automaticamente
 					</p>
 				</div>
 
@@ -167,12 +148,8 @@ export default function HomePage() {
 								<Skeleton className="h-8 w-32 bg-muted" />
 							) : (
 								<div className="flex items-center">
-									<p className="font-bold text-3xl text-foreground">
-										R$ {monthlyRevenue.toLocaleString("pt-BR")}
-									</p>
-									{revenueGrowth >= 0 && (
-										<TrendingUp className="ml-2 h-5 w-5 text-primary" />
-									)}
+									<p className="font-bold text-3xl text-foreground">R$ {monthlyRevenue.toLocaleString("pt-BR")}</p>
+									{revenueGrowth >= 0 && <TrendingUp className="ml-2 h-5 w-5 text-primary" />}
 								</div>
 							)}
 						</CardContent>
@@ -187,17 +164,13 @@ export default function HomePage() {
 								</div>
 								Total Pacientes
 							</CardTitle>
-							<CardDescription className="text-muted-foreground">
-								Cadastros ativos
-							</CardDescription>
+							<CardDescription className="text-muted-foreground">Cadastros ativos</CardDescription>
 						</CardHeader>
 						<CardContent>
 							{metricsLoading ? (
 								<Skeleton className="h-8 w-16 bg-muted" />
 							) : (
-								<p className="font-bold text-3xl text-foreground">
-									{totalPatients.toLocaleString("pt-BR")}
-								</p>
+								<p className="font-bold text-3xl text-foreground">{totalPatients.toLocaleString("pt-BR")}</p>
 							)}
 						</CardContent>
 					</Card>
@@ -211,17 +184,13 @@ export default function HomePage() {
 								</div>
 								Consultas Agendadas
 							</CardTitle>
-							<CardDescription className="text-muted-foreground">
-								Próximos 30 dias
-							</CardDescription>
+							<CardDescription className="text-muted-foreground">Próximos 30 dias</CardDescription>
 						</CardHeader>
 						<CardContent>
 							{metricsLoading ? (
 								<Skeleton className="h-8 w-12 bg-muted" />
 							) : (
-								<p className="font-bold text-3xl text-foreground">
-									{upcomingAppointments}
-								</p>
+								<p className="font-bold text-3xl text-foreground">{upcomingAppointments}</p>
 							)}
 						</CardContent>
 					</Card>
@@ -235,17 +204,13 @@ export default function HomePage() {
 								</div>
 								Consultas Hoje
 							</CardTitle>
-							<CardDescription className="text-muted-foreground">
-								Agenda do dia
-							</CardDescription>
+							<CardDescription className="text-muted-foreground">Agenda do dia</CardDescription>
 						</CardHeader>
 						<CardContent>
 							{appointmentsLoading ? (
 								<Skeleton className="h-8 w-12 bg-muted" />
 							) : (
-								<p className="font-bold text-3xl text-foreground">
-									{todaysAppointments.length}
-								</p>
+								<p className="font-bold text-3xl text-foreground">{todaysAppointments.length}</p>
 							)}
 						</CardContent>
 					</Card>
@@ -254,12 +219,9 @@ export default function HomePage() {
 			{/* Features Section */}
 			<section className="container mx-auto px-6 pb-20">
 				<div className="mb-12 text-center">
-					<h2 className="mb-4 font-bold text-3xl text-foreground">
-						Recursos Especializados para Medicina Estética
-					</h2>
+					<h2 className="mb-4 font-bold text-3xl text-foreground">Recursos Especializados para Medicina Estética</h2>
 					<p className="mx-auto max-w-3xl text-lg text-muted-foreground">
-						Ferramentas desenvolvidas especificamente para as necessidades do
-						mercado brasileiro de estética e bem-estar
+						Ferramentas desenvolvidas especificamente para as necessidades do mercado brasileiro de estética e bem-estar
 					</p>
 				</div>
 
@@ -272,9 +234,7 @@ export default function HomePage() {
 									<Calendar className="h-6 w-6 text-primary" />
 								</div>
 								<div>
-									<CardTitle className="text-foreground text-xl">
-										Agendamento Inteligente
-									</CardTitle>
+									<CardTitle className="text-foreground text-xl">Agendamento Inteligente</CardTitle>
 									<CardDescription className="text-muted-foreground">
 										IA especializada para clínicas estéticas
 									</CardDescription>
@@ -283,10 +243,8 @@ export default function HomePage() {
 						</CardHeader>
 						<CardContent>
 							<p className="text-muted-foreground leading-relaxed">
-								Sistema avançado com lembretes automáticos via WhatsApp, gestão
-								de filas de espera para procedimentos específicos e otimização
-								inteligente baseada em preferências de horário e histórico de
-								tratamentos.
+								Sistema avançado com lembretes automáticos via WhatsApp, gestão de filas de espera para procedimentos
+								específicos e otimização inteligente baseada em preferências de horário e histórico de tratamentos.
 							</p>
 						</CardContent>
 					</Card>
@@ -299,9 +257,7 @@ export default function HomePage() {
 									<Users className="h-6 w-6 text-chart-2" />
 								</div>
 								<div>
-									<CardTitle className="text-foreground text-xl">
-										Gestão de Pacientes
-									</CardTitle>
+									<CardTitle className="text-foreground text-xl">Gestão de Pacientes</CardTitle>
 									<CardDescription className="text-muted-foreground">
 										Prontuários estéticos completos e seguros
 									</CardDescription>
@@ -310,10 +266,8 @@ export default function HomePage() {
 						</CardHeader>
 						<CardContent>
 							<p className="text-muted-foreground leading-relaxed">
-								Prontuários digitais especializados com histórico de
-								procedimentos estéticos, anexos de imagens antes/depois,
-								evolução de tratamentos e compliance total com LGPD, ANVISA e
-								CFM.
+								Prontuários digitais especializados com histórico de procedimentos estéticos, anexos de imagens
+								antes/depois, evolução de tratamentos e compliance total com LGPD, ANVISA e CFM.
 							</p>
 						</CardContent>
 					</Card>
@@ -326,9 +280,7 @@ export default function HomePage() {
 									<BarChart3 className="h-6 w-6 text-chart-3" />
 								</div>
 								<div>
-									<CardTitle className="text-foreground text-xl">
-										Analytics Estético
-									</CardTitle>
+									<CardTitle className="text-foreground text-xl">Analytics Estético</CardTitle>
 									<CardDescription className="text-muted-foreground">
 										Insights especializados para crescimento
 									</CardDescription>
@@ -337,9 +289,8 @@ export default function HomePage() {
 						</CardHeader>
 						<CardContent>
 							<p className="text-muted-foreground leading-relaxed">
-								Relatórios financeiros detalhados por procedimento, análise de
-								sazonalidade estética, ROI por tratamento, taxa de retorno de
-								pacientes e previsões baseadas em IA para o mercado brasileiro.
+								Relatórios financeiros detalhados por procedimento, análise de sazonalidade estética, ROI por
+								tratamento, taxa de retorno de pacientes e previsões baseadas em IA para o mercado brasileiro.
 							</p>
 						</CardContent>
 					</Card>
@@ -352,9 +303,7 @@ export default function HomePage() {
 									<Shield className="h-6 w-6 text-chart-4" />
 								</div>
 								<div>
-									<CardTitle className="text-foreground text-xl">
-										Compliance Brasileiro
-									</CardTitle>
+									<CardTitle className="text-foreground text-xl">Compliance Brasileiro</CardTitle>
 									<CardDescription className="text-muted-foreground">
 										Conformidade especializada em saúde
 									</CardDescription>
@@ -363,10 +312,8 @@ export default function HomePage() {
 						</CardHeader>
 						<CardContent>
 							<p className="text-muted-foreground leading-relaxed">
-								Conformidade automática com LGPD, ANVISA e CFM. Auditoria em
-								tempo real, relatórios específicos para fiscalizações sanitárias
-								e documentação automática para processos regulatórios do setor
-								estético.
+								Conformidade automática com LGPD, ANVISA e CFM. Auditoria em tempo real, relatórios específicos para
+								fiscalizações sanitárias e documentação automática para processos regulatórios do setor estético.
 							</p>
 						</CardContent>
 					</Card>
@@ -384,9 +331,7 @@ export default function HomePage() {
 								</div>
 								Pacientes Recentes
 							</CardTitle>
-							<CardDescription className="text-muted-foreground">
-								Últimos cadastros na plataforma
-							</CardDescription>
+							<CardDescription className="text-muted-foreground">Últimos cadastros na plataforma</CardDescription>
 						</CardHeader>
 						<CardContent>
 							{patientsLoading ? (
@@ -414,22 +359,16 @@ export default function HomePage() {
 												</AvatarFallback>
 											</Avatar>
 											<div>
-												<p className="font-medium text-foreground">
-													{patient.name || "Nome não informado"}
-												</p>
+												<p className="font-medium text-foreground">{patient.name || "Nome não informado"}</p>
 												<p className="text-muted-foreground text-sm">
-													{new Date(patient.created_at).toLocaleDateString(
-														"pt-BR",
-													)}
+													{new Date(patient.created_at).toLocaleDateString("pt-BR")}
 												</p>
 											</div>
 										</div>
 									))}
 								</div>
 							) : (
-								<p className="text-slate-300">
-									Nenhum paciente cadastrado ainda
-								</p>
+								<p className="text-slate-300">Nenhum paciente cadastrado ainda</p>
 							)}
 
 							{!patientsLoading && recentPatients.length > 5 && (
@@ -454,18 +393,13 @@ export default function HomePage() {
 								</div>
 								Agenda de Hoje
 							</CardTitle>
-							<CardDescription className="text-muted-foreground">
-								Consultas programadas para hoje
-							</CardDescription>
+							<CardDescription className="text-muted-foreground">Consultas programadas para hoje</CardDescription>
 						</CardHeader>
 						<CardContent>
 							{appointmentsLoading ? (
 								<div className="space-y-3">
 									{[1, 2, 3].map((i) => (
-										<div
-											className="space-y-2 rounded-lg border border-border p-3"
-											key={i}
-										>
+										<div className="space-y-2 rounded-lg border border-border p-3" key={i}>
 											<Skeleton className="h-4 w-20 bg-muted" />
 											<Skeleton className="h-4 w-32 bg-muted" />
 											<Skeleton className="h-3 w-24 bg-muted" />
@@ -481,24 +415,18 @@ export default function HomePage() {
 										>
 											<div className="mb-2 flex items-center justify-between">
 												<p className="font-semibold text-foreground">
-													{new Date(
-														appointment.appointment_date,
-													).toLocaleTimeString("pt-BR", {
+													{new Date(appointment.appointment_date).toLocaleTimeString("pt-BR", {
 														hour: "2-digit",
 														minute: "2-digit",
 													})}
 												</p>
-												<Badge className="neonpro-badge-success">
-													{appointment.status}
-												</Badge>
+												<Badge className="neonpro-badge-success">{appointment.status}</Badge>
 											</div>
 											<p className="mb-1 font-medium text-foreground text-sm">
-												{appointment.patients?.name ||
-													"Paciente não identificado"}
+												{appointment.patients?.name || "Paciente não identificado"}
 											</p>
 											<p className="text-muted-foreground text-xs">
-												{appointment.services?.name ||
-													"Serviço não especificado"}
+												{appointment.services?.name || "Serviço não especificado"}
 											</p>
 										</div>
 									))}
@@ -506,9 +434,7 @@ export default function HomePage() {
 							) : (
 								<div className="py-8 text-center">
 									<Calendar className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
-									<p className="text-muted-foreground">
-										Nenhuma consulta agendada para hoje
-									</p>
+									<p className="text-muted-foreground">Nenhuma consulta agendada para hoje</p>
 								</div>
 							)}
 
@@ -529,12 +455,10 @@ export default function HomePage() {
 			{/* Trust/Social Proof Section */}
 			<section className="container mx-auto px-6 pb-20">
 				<div className="text-center">
-					<h3 className="mb-6 font-bold text-3xl text-foreground">
-						Confiança e Segurança para o Mercado Brasileiro
-					</h3>
+					<h3 className="mb-6 font-bold text-3xl text-foreground">Confiança e Segurança para o Mercado Brasileiro</h3>
 					<p className="mx-auto mb-12 max-w-3xl text-lg text-muted-foreground">
-						Desenvolvido com foco nas regulamentações brasileiras e necessidades
-						específicas do setor de medicina estética nacional
+						Desenvolvido com foco nas regulamentações brasileiras e necessidades específicas do setor de medicina
+						estética nacional
 					</p>
 
 					{/* Enhanced Compliance Badges */}
@@ -568,13 +492,10 @@ export default function HomePage() {
 								<div className="neonpro-gradient group-hover:neonpro-glow mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full transition-all">
 									<Shield className="h-10 w-10 text-primary-foreground" />
 								</div>
-								<h4 className="mb-4 font-semibold text-foreground text-xl">
-									Proteção de Dados Médicos
-								</h4>
+								<h4 className="mb-4 font-semibold text-foreground text-xl">Proteção de Dados Médicos</h4>
 								<p className="text-muted-foreground leading-relaxed">
-									Criptografia de nível bancário, backup automático em nuvem
-									brasileira e compliance total com LGPD para dados sensíveis de
-									saúde
+									Criptografia de nível bancário, backup automático em nuvem brasileira e compliance total com LGPD para
+									dados sensíveis de saúde
 								</p>
 							</CardContent>
 						</Card>
@@ -584,13 +505,10 @@ export default function HomePage() {
 								<div className="neonpro-gradient group-hover:neonpro-glow mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full transition-all">
 									<Heart className="h-10 w-10 text-primary-foreground" />
 								</div>
-								<h4 className="mb-4 font-semibold text-foreground text-xl">
-									Especialista em Medicina Estética
-								</h4>
+								<h4 className="mb-4 font-semibold text-foreground text-xl">Especialista em Medicina Estética</h4>
 								<p className="text-muted-foreground leading-relaxed">
-									Desenvolvido por especialistas para o mercado brasileiro de
-									estética, com funcionalidades específicas para procedimentos e
-									regulamentações locais
+									Desenvolvido por especialistas para o mercado brasileiro de estética, com funcionalidades específicas
+									para procedimentos e regulamentações locais
 								</p>
 							</CardContent>
 						</Card>
@@ -600,13 +518,10 @@ export default function HomePage() {
 								<div className="neonpro-gradient group-hover:neonpro-glow mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full transition-all">
 									<Star className="h-10 w-10 text-primary-foreground" />
 								</div>
-								<h4 className="mb-4 font-semibold text-foreground text-xl">
-									Suporte Especializado 24/7
-								</h4>
+								<h4 className="mb-4 font-semibold text-foreground text-xl">Suporte Especializado 24/7</h4>
 								<p className="text-muted-foreground leading-relaxed">
-									Equipe técnica especializada em saúde, treinamento
-									personalizado e suporte prioritário para clínicas em todo o
-									Brasil
+									Equipe técnica especializada em saúde, treinamento personalizado e suporte prioritário para clínicas
+									em todo o Brasil
 								</p>
 							</CardContent>
 						</Card>
@@ -621,10 +536,8 @@ export default function HomePage() {
 							Transforme sua Clínica Estética Hoje
 						</h3>
 						<p className="mx-auto mb-12 max-w-3xl text-muted-foreground text-xl leading-relaxed">
-							Junte-se a centenas de clínicas brasileiras que já confiam no
-							NeonPro Healthcare para gerenciar seus negócios com eficiência,
-							segurança total e resultados comprovados no mercado de medicina
-							estética.
+							Junte-se a centenas de clínicas brasileiras que já confiam no NeonPro Healthcare para gerenciar seus
+							negócios com eficiência, segurança total e resultados comprovados no mercado de medicina estética.
 						</p>
 
 						<div className="mb-8 flex flex-col justify-center gap-6 sm:flex-row">
@@ -650,9 +563,7 @@ export default function HomePage() {
 						<div className="flex flex-wrap justify-center gap-6 text-muted-foreground text-sm">
 							<div className="trust-indicator">Teste grátis por 30 dias</div>
 							<div className="trust-indicator">Sem cartão de crédito</div>
-							<div className="trust-indicator">
-								Suporte especializado em saúde
-							</div>
+							<div className="trust-indicator">Suporte especializado em saúde</div>
 							<div className="trust-indicator">Treinamento incluído</div>
 						</div>
 
@@ -660,29 +571,19 @@ export default function HomePage() {
 						<div className="mt-12 grid grid-cols-2 gap-8 md:grid-cols-4">
 							<div className="text-center">
 								<div className="mb-2 font-bold text-3xl text-primary">500+</div>
-								<div className="text-muted-foreground text-sm">
-									Clínicas Atendidas
-								</div>
+								<div className="text-muted-foreground text-sm">Clínicas Atendidas</div>
 							</div>
 							<div className="text-center">
 								<div className="mb-2 font-bold text-3xl text-primary">50k+</div>
-								<div className="text-muted-foreground text-sm">
-									Pacientes Gerenciados
-								</div>
+								<div className="text-muted-foreground text-sm">Pacientes Gerenciados</div>
 							</div>
 							<div className="text-center">
-								<div className="mb-2 font-bold text-3xl text-primary">
-									99.9%
-								</div>
-								<div className="text-muted-foreground text-sm">
-									Uptime Garantido
-								</div>
+								<div className="mb-2 font-bold text-3xl text-primary">99.9%</div>
+								<div className="text-muted-foreground text-sm">Uptime Garantido</div>
 							</div>
 							<div className="text-center">
 								<div className="mb-2 font-bold text-3xl text-primary">24/7</div>
-								<div className="text-muted-foreground text-sm">
-									Suporte Disponível
-								</div>
+								<div className="text-muted-foreground text-sm">Suporte Disponível</div>
 							</div>
 						</div>
 					</div>

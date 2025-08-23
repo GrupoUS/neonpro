@@ -27,18 +27,12 @@ export async function GET(_request: NextRequest) {
 			.order("created_at", { ascending: false });
 
 		if (error) {
-			return NextResponse.json(
-				{ error: "Internal server error" },
-				{ status: 500 },
-			);
+			return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 		}
 
 		return NextResponse.json({ credentials });
 	} catch (_error) {
-		return NextResponse.json(
-			{ error: "Internal server error" },
-			{ status: 500 },
-		);
+		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 	}
 }
 
@@ -56,8 +50,7 @@ export async function POST(request: NextRequest) {
 		}
 
 		const body = await request.json();
-		const { credential_id, public_key, name, transports, attestation_type } =
-			body;
+		const { credential_id, public_key, name, transports, attestation_type } = body;
 
 		// Validate required fields
 		if (!(credential_id && public_key)) {
@@ -65,7 +58,7 @@ export async function POST(request: NextRequest) {
 				{
 					error: "Missing required fields: credential_id, public_key",
 				},
-				{ status: 400 },
+				{ status: 400 }
 			);
 		}
 
@@ -91,13 +84,10 @@ export async function POST(request: NextRequest) {
 					{
 						error: "Credential already exists",
 					},
-					{ status: 409 },
+					{ status: 409 }
 				);
 			}
-			return NextResponse.json(
-				{ error: "Internal server error" },
-				{ status: 500 },
-			);
+			return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 		}
 
 		return NextResponse.json(
@@ -110,12 +100,9 @@ export async function POST(request: NextRequest) {
 					created_at: data.created_at,
 				},
 			},
-			{ status: 201 },
+			{ status: 201 }
 		);
 	} catch (_error) {
-		return NextResponse.json(
-			{ error: "Internal server error" },
-			{ status: 500 },
-		);
+		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 	}
 }

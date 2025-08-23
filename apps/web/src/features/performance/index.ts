@@ -9,10 +9,7 @@ export function WebVitalsReporter() {
 			const { name, value, id, label } = metric;
 
 			// Only log in development or with explicit consent
-			if (
-				process.env.NODE_ENV === "development" ||
-				window.localStorage.getItem("performance-consent") === "true"
-			) {
+			if (process.env.NODE_ENV === "development" || window.localStorage.getItem("performance-consent") === "true") {
 				// Send to monitoring service (if available)
 				if (typeof window !== "undefined" && "gtag" in window) {
 					(window as any).gtag("event", name, {
@@ -59,13 +56,10 @@ export function requestPerformanceConsent() {
 
 	if (!hasConsent) {
 		const consent = window.confirm(
-			"Para melhorar a performance do sistema de saúde, podemos coletar métricas de performance não identificadas. Aceita?",
+			"Para melhorar a performance do sistema de saúde, podemos coletar métricas de performance não identificadas. Aceita?"
 		);
 
-		window.localStorage.setItem(
-			"performance-consent",
-			consent ? "true" : "false",
-		);
+		window.localStorage.setItem("performance-consent", consent ? "true" : "false");
 		return consent;
 	}
 

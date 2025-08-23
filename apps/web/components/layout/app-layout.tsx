@@ -1,16 +1,6 @@
 "use client";
 
-import {
-	BarChart3,
-	Bell,
-	Calendar,
-	FileText,
-	Home,
-	LogOut,
-	Settings,
-	User,
-	Users,
-} from "lucide-react";
+import { BarChart3, Bell, Calendar, FileText, Home, LogOut, Settings, User, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type * as React from "react";
@@ -98,9 +88,7 @@ function AppSidebar() {
 					</div>
 					<div className="flex flex-col">
 						<span className="font-semibold text-sm">NeonPro</span>
-						<span className="text-muted-foreground text-xs">
-							Clínica Estética
-						</span>
+						<span className="text-muted-foreground text-xs">Clínica Estética</span>
 					</div>
 				</div>
 			</SidebarHeader>
@@ -108,8 +96,7 @@ function AppSidebar() {
 			<SidebarContent>
 				<SidebarMenu>
 					{mainNavItems.map((item) => {
-						const isActive =
-							pathname === item.href || pathname.startsWith(`${item.href}/`);
+						const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
 						return (
 							<SidebarMenuItem key={item.href}>
 								<SidebarMenuButton asChild isActive={isActive}>
@@ -125,14 +112,11 @@ function AppSidebar() {
 
 				<div className="mt-8">
 					<div className="px-3 py-2">
-						<p className="font-medium text-muted-foreground text-xs uppercase tracking-wider">
-							Configurações
-						</p>
+						<p className="font-medium text-muted-foreground text-xs uppercase tracking-wider">Configurações</p>
 					</div>
 					<SidebarMenu>
 						{settingsNavItems.map((item) => {
-							const isActive =
-								pathname === item.href || pathname.startsWith(`${item.href}/`);
+							const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
 							return (
 								<SidebarMenuItem key={item.href}>
 									<SidebarMenuButton asChild isActive={isActive}>
@@ -173,9 +157,7 @@ function Header() {
 				</div>
 
 				<div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
-					<div className="w-full flex-1 md:w-auto md:flex-none">
-						{/* Search component can be added here */}
-					</div>
+					<div className="w-full flex-1 md:w-auto md:flex-none">{/* Search component can be added here */}</div>
 
 					<nav className="flex items-center gap-2">
 						<Button size="sm" variant="ghost">

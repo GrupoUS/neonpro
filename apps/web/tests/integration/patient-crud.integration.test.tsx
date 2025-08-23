@@ -73,9 +73,7 @@ const _TestWrapper = ({ children }: { children: React.ReactNode }) => {
 		},
 	});
 
-	return (
-		<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-	);
+	return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 };
 
 // Mock patient data for Brazilian healthcare system
@@ -201,9 +199,7 @@ describe("Patient CRUD Integration Tests", () => {
 			const result = await mockPatientsHook.createPatient(mockPatientData);
 
 			// Verify CPF validation was called
-			expect(mockCpfValidator.isValid).toHaveBeenCalledWith(
-				mockPatientData.cpf,
-			);
+			expect(mockCpfValidator.isValid).toHaveBeenCalledWith(mockPatientData.cpf);
 
 			// Verify database insertion
 			expect(mockSupabaseClient.from).toHaveBeenCalledWith("patients");
@@ -238,9 +234,7 @@ describe("Patient CRUD Integration Tests", () => {
 				return { data: createdPatient, error: null };
 			});
 
-			await expect(
-				mockPatientsHook.createPatient(invalidCpfData),
-			).rejects.toMatchObject({
+			await expect(mockPatientsHook.createPatient(invalidCpfData)).rejects.toMatchObject({
 				message: "CPF inválido",
 				code: "INVALID_CPF",
 			});
@@ -259,9 +253,7 @@ describe("Patient CRUD Integration Tests", () => {
 				code: "LGPD_CONSENT_REQUIRED",
 			});
 
-			await expect(
-				mockPatientsHook.createPatient(patientWithoutConsent),
-			).rejects.toMatchObject({
+			await expect(mockPatientsHook.createPatient(patientWithoutConsent)).rejects.toMatchObject({
 				message: "LGPD consent is required for patient registration",
 				code: "LGPD_CONSENT_REQUIRED",
 			});
@@ -278,9 +270,7 @@ describe("Patient CRUD Integration Tests", () => {
 				code: "TENANT_ISOLATION_VIOLATION",
 			});
 
-			await expect(
-				mockPatientsHook.createPatient(patientFromOtherClinic),
-			).rejects.toMatchObject({
+			await expect(mockPatientsHook.createPatient(patientFromOtherClinic)).rejects.toMatchObject({
 				code: "TENANT_ISOLATION_VIOLATION",
 			});
 		});
@@ -317,10 +307,7 @@ describe("Patient CRUD Integration Tests", () => {
 		});
 
 		it("should search patients with filters and pagination", async () => {
-			const searchResults = [
-				createdPatient,
-				{ ...createdPatient, id: "patient-124", name: "Maria Silva Santos" },
-			];
+			const searchResults = [createdPatient, { ...createdPatient, id: "patient-124", name: "Maria Silva Santos" }];
 
 			mockSupabaseClient.from.mockReturnValue({
 				select: vi.fn(() => ({
@@ -380,22 +367,17 @@ describe("Patient CRUD Integration Tests", () => {
 				})),
 			});
 
-			mockPatientsHook.updatePatient.mockImplementation(
-				async (_patientId, _updateData) => {
-					// Simulate actual hook behavior by calling global mocks
-					mockSupabaseClient.from("patients");
+			mockPatientsHook.updatePatient.mockImplementation(async (_patientId, _updateData) => {
+				// Simulate actual hook behavior by calling global mocks
+				mockSupabaseClient.from("patients");
 
-					return {
-						data: updatedPatient,
-						error: null,
-					};
-				},
-			);
+				return {
+					data: updatedPatient,
+					error: null,
+				};
+			});
 
-			const result = await mockPatientsHook.updatePatient(
-				"patient-123",
-				updateData,
-			);
+			const result = await mockPatientsHook.updatePatient("patient-123", updateData);
 
 			expect(result.data.phone).toBe(updateData.phone);
 			expect(result.data.email).toBe(updateData.email);
@@ -415,9 +397,7 @@ describe("Patient CRUD Integration Tests", () => {
 				code: "SENSITIVE_FIELD_UPDATE_DENIED",
 			});
 
-			await expect(
-				mockPatientsHook.updatePatient("patient-123", sensitiveUpdate),
-			).rejects.toMatchObject({
+			await expect(mockPatientsHook.updatePatient("patient-123", sensitiveUpdate)).rejects.toMatchObject({
 				code: "SENSITIVE_FIELD_UPDATE_DENIED",
 			});
 		});
@@ -639,8 +619,7 @@ describe("Patient CRUD Integration Tests", () => {
 
 		it("should handle database constraint violations", async () => {
 			const duplicateCpfError = {
-				message:
-					'duplicate key value violates unique constraint "patients_cpf_clinic_id_key"',
+				message: 'duplicate key value violates unique constraint "patients_cpf_clinic_id_key"',
 				code: "23505",
 			};
 
@@ -660,9 +639,7 @@ describe("Patient CRUD Integration Tests", () => {
 				code: "DUPLICATE_CPF",
 			});
 
-			await expect(
-				mockPatientsHook.createPatient(mockPatientData),
-			).rejects.toMatchObject({
+			await expect(mockPatientsHook.createPatient(mockPatientData)).rejects.toMatchObject({
 				code: "DUPLICATE_CPF",
 			});
 		});

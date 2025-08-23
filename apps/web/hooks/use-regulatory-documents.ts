@@ -16,13 +16,8 @@ type UseRegulatoryDocumentsReturn = {
 	loading: boolean;
 	error: string | null;
 	refetch: () => void;
-	createDocument: (
-		document: Omit<RegulatoryDocument, "id" | "created_at" | "updated_at">,
-	) => Promise<void>;
-	updateDocument: (
-		id: string,
-		updates: Partial<RegulatoryDocument>,
-	) => Promise<void>;
+	createDocument: (document: Omit<RegulatoryDocument, "id" | "created_at" | "updated_at">) => Promise<void>;
+	updateDocument: (id: string, updates: Partial<RegulatoryDocument>) => Promise<void>;
 	deleteDocument: (id: string) => Promise<void>;
 };
 
@@ -45,14 +40,9 @@ export function useRegulatoryDocuments(): UseRegulatoryDocumentsReturn {
 		}
 	};
 
-	const createDocument = async (
-		_document: Omit<RegulatoryDocument, "id" | "created_at" | "updated_at">,
-	) => {};
+	const createDocument = async (_document: Omit<RegulatoryDocument, "id" | "created_at" | "updated_at">) => {};
 
-	const updateDocument = async (
-		_id: string,
-		_updates: Partial<RegulatoryDocument>,
-	) => {};
+	const updateDocument = async (_id: string, _updates: Partial<RegulatoryDocument>) => {};
 
 	const deleteDocument = async (_id: string) => {};
 

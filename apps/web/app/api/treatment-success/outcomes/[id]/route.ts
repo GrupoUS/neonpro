@@ -4,10 +4,7 @@ import { updateTreatmentOutcomeSchema } from "@/app/lib/validations/treatment-su
 
 const treatmentSuccessService = new TreatmentSuccessService();
 
-export async function GET(
-	_request: NextRequest,
-	{ params }: { params: Promise<{ id: string }> },
-) {
+export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
 	try {
 		const { id } = await params;
 		const outcome = await treatmentSuccessService.getTreatmentOutcomeById(id);
@@ -23,15 +20,12 @@ export async function GET(
 				error: "Erro interno do servidor",
 				details: error instanceof Error ? error.message : "Erro desconhecido",
 			},
-			{ status: 500 },
+			{ status: 500 }
 		);
 	}
 }
 
-export async function PUT(
-	request: NextRequest,
-	{ params }: { params: Promise<{ id: string }> },
-) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
 	try {
 		const { id } = await params;
 		const body = await request.json();
@@ -39,10 +33,7 @@ export async function PUT(
 		// Validate request body
 		const validatedData = updateTreatmentOutcomeSchema.parse(body);
 
-		const outcome = await treatmentSuccessService.updateTreatmentOutcome(
-			id,
-			validatedData,
-		);
+		const outcome = await treatmentSuccessService.updateTreatmentOutcome(id, validatedData);
 
 		return NextResponse.json({
 			success: true,
@@ -56,7 +47,7 @@ export async function PUT(
 					error: "Dados inválidos",
 					details: error.message,
 				},
-				{ status: 400 },
+				{ status: 400 }
 			);
 		}
 
@@ -66,15 +57,12 @@ export async function PUT(
 				error: "Erro interno do servidor",
 				details: error instanceof Error ? error.message : "Erro desconhecido",
 			},
-			{ status: 500 },
+			{ status: 500 }
 		);
 	}
 }
 
-export async function DELETE(
-	_request: NextRequest,
-	{ params }: { params: { id: string } },
-) {
+export async function DELETE(_request: NextRequest, { params }: { params: { id: string } }) {
 	try {
 		await treatmentSuccessService.deleteTreatmentOutcome(params.id);
 
@@ -89,7 +77,7 @@ export async function DELETE(
 				error: "Erro interno do servidor",
 				details: error instanceof Error ? error.message : "Erro desconhecido",
 			},
-			{ status: 500 },
+			{ status: 500 }
 		);
 	}
 }

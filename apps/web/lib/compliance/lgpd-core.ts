@@ -69,8 +69,7 @@ export const HEALTHCARE_PROCESSING_PURPOSES: LGPDProcessingPurpose[] = [
 		isHealthcareRelated: true,
 		requiresExplicitConsent: false, // Legal basis is health protection
 		canBeAnonymized: false, // Medical data must maintain traceability
-		description:
-			"Processamento de dados de saúde para prestação de cuidados médicos",
+		description: "Processamento de dados de saúde para prestação de cuidados médicos",
 	},
 	{
 		id: "patient_identification",
@@ -82,8 +81,7 @@ export const HEALTHCARE_PROCESSING_PURPOSES: LGPDProcessingPurpose[] = [
 		isHealthcareRelated: true,
 		requiresExplicitConsent: false,
 		canBeAnonymized: true,
-		description:
-			"Dados pessoais para identificação e comunicação com pacientes",
+		description: "Dados pessoais para identificação e comunicação com pacientes",
 	},
 	{
 		id: "emergency_contact",
@@ -107,8 +105,7 @@ export const HEALTHCARE_PROCESSING_PURPOSES: LGPDProcessingPurpose[] = [
 		isHealthcareRelated: true,
 		requiresExplicitConsent: true,
 		canBeAnonymized: true,
-		description:
-			"Análise de dados agregados para melhoria dos cuidados de saúde",
+		description: "Análise de dados agregados para melhoria dos cuidados de saúde",
 	},
 	{
 		id: "medical_research",
@@ -120,8 +117,7 @@ export const HEALTHCARE_PROCESSING_PURPOSES: LGPDProcessingPurpose[] = [
 		isHealthcareRelated: true,
 		requiresExplicitConsent: true,
 		canBeAnonymized: true,
-		description:
-			"Participação em pesquisas médicas e científicas (anonimizadas)",
+		description: "Participação em pesquisas médicas e científicas (anonimizadas)",
 	},
 ];
 
@@ -178,9 +174,7 @@ class LGPDComplianceManager {
 	}
 
 	// Consent Management
-	async grantConsent(
-		consent: Omit<LGPDConsent, "id" | "grantedAt">,
-	): Promise<LGPDConsent> {
+	async grantConsent(consent: Omit<LGPDConsent, "id" | "grantedAt">): Promise<LGPDConsent> {
 		const newConsent: LGPDConsent = {
 			...consent,
 			id: crypto.randomUUID(),
@@ -188,11 +182,7 @@ class LGPDComplianceManager {
 			expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year
 		};
 
-		const { data, error } = await this.supabase
-			.from("lgpd_consents")
-			.insert(newConsent)
-			.select()
-			.single();
+		const { data, error } = await this.supabase.from("lgpd_consents").insert(newConsent).select().single();
 
 		if (error) {
 			throw new Error(`Failed to record consent: ${error.message}`);
@@ -242,7 +232,7 @@ class LGPDComplianceManager {
 		});
 	} // Data Subject Rights Implementation
 	async processDataSubjectRequest(
-		request: Omit<LGPDDataSubjectRequest, "id" | "requestedAt" | "status">,
+		request: Omit<LGPDDataSubjectRequest, "id" | "requestedAt" | "status">
 	): Promise<LGPDDataSubjectRequest> {
 		const newRequest: LGPDDataSubjectRequest = {
 			...request,
@@ -253,16 +243,10 @@ class LGPDComplianceManager {
 			processingNotes: request.processingNotes || "",
 		};
 
-		const { data, error } = await this.supabase
-			.from("lgpd_data_subject_requests")
-			.insert(newRequest)
-			.select()
-			.single();
+		const { data, error } = await this.supabase.from("lgpd_data_subject_requests").insert(newRequest).select().single();
 
 		if (error) {
-			throw new Error(
-				`Failed to create data subject request: ${error.message}`,
-			);
+			throw new Error(`Failed to create data subject request: ${error.message}`);
 		}
 
 		await this.auditLog({
@@ -313,32 +297,23 @@ class LGPDComplianceManager {
 		return { exportId, downloadUrl: `/api/lgpd/export/${exportId}` };
 	}
 
-	async handleErasureRequest(
-		userId: string,
-	): Promise<{ canDelete: boolean; retainedData: string[] }> {
+	async handleErasureRequest(userId: string): Promise<{ canDelete: boolean; retainedData: string[] }> {
 		// Check for legal obligations to retain data
 		const retainedData: string[] = [];
 		let canDelete = true;
 
 		// Check medical data retention requirements
-		const medicalData = await this.supabase
-			.from("medical_records")
-			.select("*")
-			.eq("patient_id", userId);
+		const medicalData = await this.supabase.from("medical_records").select("*").eq("patient_id", userId);
 
 		if (medicalData.data && medicalData.data.length > 0) {
 			// CFM requires 20 years retention for medical records
 			const twentyYearsAgo = new Date();
 			twentyYearsAgo.setFullYear(twentyYearsAgo.getFullYear() - 20);
 
-			const recentMedicalRecords = medicalData.data.filter(
-				(record) => new Date(record.created_at) > twentyYearsAgo,
-			);
+			const recentMedicalRecords = medicalData.data.filter((record) => new Date(record.created_at) > twentyYearsAgo);
 
 			if (recentMedicalRecords.length > 0) {
-				retainedData.push(
-					"Prontuários médicos (retenção obrigatória CFM - 20 anos)",
-				);
+				retainedData.push("Prontuários médicos (retenção obrigatória CFM - 20 anos)");
 				canDelete = false;
 			}
 		}
@@ -367,15 +342,13 @@ class LGPDComplianceManager {
 	async validateDataProcessing(
 		userId: string,
 		purposeId: string,
-		dataTypes: string[],
+		dataTypes: string[]
 	): Promise<{ isValid: boolean; reasons: string[] }> {
 		const reasons: string[] = [];
 		let isValid = true;
 
 		// Check if purpose exists
-		const purpose = HEALTHCARE_PROCESSING_PURPOSES.find(
-			(p) => p.id === purposeId,
-		);
+		const purpose = HEALTHCARE_PROCESSING_PURPOSES.find((p) => p.id === purposeId);
 		if (!purpose) {
 			reasons.push(`Invalid processing purpose: ${purposeId}`);
 			isValid = false;
@@ -393,21 +366,15 @@ class LGPDComplianceManager {
 					.single();
 
 				if (!consent.data) {
-					reasons.push(
-						`Explicit consent required for purpose: ${purpose.purpose}`,
-					);
+					reasons.push(`Explicit consent required for purpose: ${purpose.purpose}`);
 					isValid = false;
 				}
 			}
 
 			// Check data types alignment
-			const invalidDataTypes = dataTypes.filter(
-				(dt) => !purpose.dataTypes.includes(dt),
-			);
+			const invalidDataTypes = dataTypes.filter((dt) => !purpose.dataTypes.includes(dt));
 			if (invalidDataTypes.length > 0) {
-				reasons.push(
-					`Invalid data types for purpose: ${invalidDataTypes.join(", ")}`,
-				);
+				reasons.push(`Invalid data types for purpose: ${invalidDataTypes.join(", ")}`);
 				isValid = false;
 			}
 
@@ -427,9 +394,7 @@ class LGPDComplianceManager {
 			id: crypto.randomUUID(),
 		};
 
-		const { error } = await this.supabase
-			.from("lgpd_audit_logs")
-			.insert(auditEntry);
+		const { error } = await this.supabase.from("lgpd_audit_logs").insert(auditEntry);
 
 		if (error) {
 			// Don't throw error to avoid breaking main functionality
@@ -440,10 +405,7 @@ class LGPDComplianceManager {
 	private async getUserDataForExport(userId: string): Promise<any> {
 		const [profile, medical, consents, auditLogs] = await Promise.all([
 			this.supabase.from("profiles").select("*").eq("id", userId).single(),
-			this.supabase
-				.from("medical_records")
-				.select("*")
-				.eq("patient_id", userId),
+			this.supabase.from("medical_records").select("*").eq("patient_id", userId),
 			this.supabase.from("lgpd_consents").select("*").eq("userId", userId),
 			this.supabase.from("lgpd_audit_logs").select("*").eq("userId", userId),
 		]);
@@ -496,23 +458,15 @@ class LGPDComplianceManager {
 		let overallScore = 100;
 
 		// Check consent status
-		const requiredConsents = HEALTHCARE_PROCESSING_PURPOSES.filter(
-			(p) => p.requiresExplicitConsent,
-		);
+		const requiredConsents = HEALTHCARE_PROCESSING_PURPOSES.filter((p) => p.requiresExplicitConsent);
 		const userConsents = await this.supabase
 			.from("lgpd_consents")
 			.select("*")
 			.eq("userId", userId)
 			.eq("status", "granted");
 
-		const consentCoverage =
-			(userConsents.data?.length || 0) / requiredConsents.length;
-		const consentStatus =
-			consentCoverage === 1
-				? "compliant"
-				: consentCoverage > 0.5
-					? "partial"
-					: "non_compliant";
+		const consentCoverage = (userConsents.data?.length || 0) / requiredConsents.length;
+		const consentStatus = consentCoverage === 1 ? "compliant" : consentCoverage > 0.5 ? "partial" : "non_compliant";
 
 		if (consentStatus !== "compliant") {
 			overallScore -= 20;
@@ -538,20 +492,14 @@ class LGPDComplianceManager {
 // Export singleton instance
 export const lgpdManager = new LGPDComplianceManager(
 	process.env.NEXT_PUBLIC_SUPABASE_URL!,
-	process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+	process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
 // Helper functions for common LGPD operations
 export const LGPDUtils = {
 	// Check if data processing is allowed
-	canProcessData: async (
-		userId: string,
-		purpose: string,
-		dataType: string,
-	): Promise<boolean> => {
-		const result = await lgpdManager.validateDataProcessing(userId, purpose, [
-			dataType,
-		]);
+	canProcessData: async (userId: string, purpose: string, dataType: string): Promise<boolean> => {
+		const result = await lgpdManager.validateDataProcessing(userId, purpose, [dataType]);
 		return result.isValid;
 	},
 
@@ -569,9 +517,7 @@ export const LGPDUtils = {
 				generatedAt: new Date().toISOString(),
 				format: "JSON",
 				standard: "LGPD Article 18 - Data Portability",
-				validUntil: new Date(
-					Date.now() + 7 * 24 * 60 * 60 * 1000,
-				).toISOString(),
+				validUntil: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
 			},
 		};
 	},

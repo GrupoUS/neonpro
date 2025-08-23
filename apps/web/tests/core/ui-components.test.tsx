@@ -58,9 +58,7 @@ describe("Core UI Components", () => {
 			render(<Card>Card content</Card>);
 
 			expect(screen.getByTestId("card")).toBeInTheDocument();
-			expect(screen.getByTestId("card-content")).toHaveTextContent(
-				"Card content",
-			);
+			expect(screen.getByTestId("card-content")).toHaveTextContent("Card content");
 		});
 
 		it("should render card with title", () => {

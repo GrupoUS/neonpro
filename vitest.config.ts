@@ -17,7 +17,7 @@ export default defineConfig({
 	test: {
 		// Global configuration - enhanced isolation
 		globals: true,
-		environment: "jsdom",
+		environment: "happy-dom",
 		setupFiles: ["./vitest.setup.simple.ts"],
 
 		// Enhanced test isolation to prevent DOM duplication
@@ -28,13 +28,17 @@ export default defineConfig({
 			hooks: "list",
 		},
 
-		// JSDOM environment options - enhanced for test stability
+		// Happy-DOM environment options - better form support
 		environmentOptions: {
-			jsdom: {
-				resources: "usable",
-				// Enable better DOM cleanup
-				runScripts: "dangerously",
-				pretendToBeVisual: true,
+			happyDOM: {
+				url: "http://localhost:3000",
+				width: 1920,
+				height: 1080,
+				settings: {
+					disableJavaScriptFileLoading: true,
+					disableCSSFileLoading: true,
+					enableFileSystemHttpRequests: false,
+				},
 			},
 		},
 

@@ -6,10 +6,7 @@ import { createClient } from "@/app/utils/supabase/server";
  * Handles operations on specific WebAuthn credentials
  */
 
-export async function GET(
-	_request: NextRequest,
-	{ params }: { params: { credentialId: string } },
-) {
+export async function GET(_request: NextRequest, { params }: { params: { credentialId: string } }) {
 	try {
 		const supabase = await createClient();
 		const { credentialId } = params;
@@ -26,9 +23,7 @@ export async function GET(
 		// Get specific WebAuthn credential
 		const { data: credential, error } = await supabase
 			.from("webauthn_credentials")
-			.select(
-				"id, credential_id, name, created_at, last_used_at, transports, counter",
-			)
+			.select("id, credential_id, name, created_at, last_used_at, transports, counter")
 			.eq("user_id", user.id)
 			.eq("credential_id", credentialId)
 			.single();
@@ -36,30 +31,18 @@ export async function GET(
 		if (error) {
 			if (error.code === "PGRST116") {
 				// No rows returned
-				return NextResponse.json(
-					{ error: "Credential not found" },
-					{ status: 404 },
-				);
+				return NextResponse.json({ error: "Credential not found" }, { status: 404 });
 			}
-			return NextResponse.json(
-				{ error: "Internal server error" },
-				{ status: 500 },
-			);
+			return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 		}
 
 		return NextResponse.json({ credential });
 	} catch (_error) {
-		return NextResponse.json(
-			{ error: "Internal server error" },
-			{ status: 500 },
-		);
+		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 	}
 }
 
-export async function PUT(
-	request: NextRequest,
-	{ params }: { params: { credentialId: string } },
-) {
+export async function PUT(request: NextRequest, { params }: { params: { credentialId: string } }) {
 	try {
 		const supabase = await createClient();
 		const { credentialId } = params;
@@ -91,7 +74,7 @@ export async function PUT(
 				{
 					error: "No valid fields to update",
 				},
-				{ status: 400 },
+				{ status: 400 }
 			);
 		}
 
@@ -107,15 +90,9 @@ export async function PUT(
 		if (error) {
 			if (error.code === "PGRST116") {
 				// No rows returned
-				return NextResponse.json(
-					{ error: "Credential not found" },
-					{ status: 404 },
-				);
+				return NextResponse.json({ error: "Credential not found" }, { status: 404 });
 			}
-			return NextResponse.json(
-				{ error: "Internal server error" },
-				{ status: 500 },
-			);
+			return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 		}
 
 		return NextResponse.json({
@@ -129,17 +106,11 @@ export async function PUT(
 			},
 		});
 	} catch (_error) {
-		return NextResponse.json(
-			{ error: "Internal server error" },
-			{ status: 500 },
-		);
+		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 	}
 }
 
-export async function DELETE(
-	_request: NextRequest,
-	{ params }: { params: { credentialId: string } },
-) {
+export async function DELETE(_request: NextRequest, { params }: { params: { credentialId: string } }) {
 	try {
 		const supabase = await createClient();
 		const { credentialId } = params;
@@ -161,19 +132,13 @@ export async function DELETE(
 			.eq("credential_id", credentialId);
 
 		if (error) {
-			return NextResponse.json(
-				{ error: "Internal server error" },
-				{ status: 500 },
-			);
+			return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 		}
 
 		return NextResponse.json({
 			message: "Credential deleted successfully",
 		});
 	} catch (_error) {
-		return NextResponse.json(
-			{ error: "Internal server error" },
-			{ status: 500 },
-		);
+		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 	}
 }

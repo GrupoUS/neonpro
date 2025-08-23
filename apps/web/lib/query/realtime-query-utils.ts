@@ -98,7 +98,7 @@ export function useRealtimePatients(
 		patientId?: string;
 		clinicId?: string;
 		config?: RealtimeQueryConfig;
-	},
+	}
 ) {
 	const manager = useRealtimeQueryManager(supabaseClient);
 
@@ -125,7 +125,7 @@ export function useRealtimeAppointments(
 		clinicId?: string;
 		dateRange?: { start: string; end: string };
 		config?: RealtimeQueryConfig;
-	},
+	}
 ) {
 	const manager = useRealtimeQueryManager(supabaseClient);
 
@@ -149,7 +149,7 @@ export function useRealtimeProfessionals(
 		professionalId?: string;
 		clinicId?: string;
 		config?: RealtimeQueryConfig;
-	},
+	}
 ) {
 	const manager = useRealtimeQueryManager(supabaseClient);
 
@@ -172,7 +172,7 @@ export function useRealtimeDashboard(
 	_options: {
 		clinicId?: string;
 		config?: RealtimeQueryConfig;
-	},
+	}
 ) {
 	const manager = useRealtimeQueryManager(supabaseClient);
 

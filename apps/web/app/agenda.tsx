@@ -170,23 +170,17 @@ const AppointmentCard = ({ appointment, index }: AppointmentCardProps) => {
 							<User className="h-6 w-6 text-primary" />
 						</div>
 						<div>
-							<h3 className="font-semibold text-lg text-white">
-								{appointment.patient}
-							</h3>
+							<h3 className="font-semibold text-lg text-white">{appointment.patient}</h3>
 							<p className="flex items-center text-gray-400 text-sm">
 								<Phone className="mr-1 h-4 w-4" />
 								{appointment.phone}
 							</p>
 						</div>
 					</div>
-					<div
-						className={`rounded-full border px-3 py-1 ${statusInfo.bgColor} ${statusInfo.borderColor}`}
-					>
+					<div className={`rounded-full border px-3 py-1 ${statusInfo.bgColor} ${statusInfo.borderColor}`}>
 						<div className="flex items-center space-x-1">
 							<StatusIcon className={`h-4 w-4 ${statusInfo.textColor}`} />
-							<span className={`font-medium text-sm ${statusInfo.textColor}`}>
-								{statusInfo.label}
-							</span>
+							<span className={`font-medium text-sm ${statusInfo.textColor}`}>{statusInfo.label}</span>
 						</div>
 					</div>
 				</div>
@@ -194,9 +188,7 @@ const AppointmentCard = ({ appointment, index }: AppointmentCardProps) => {
 				<div className="mb-4 grid grid-cols-2 gap-4">
 					<div className="flex items-center space-x-2 text-gray-300">
 						<Clock className="h-4 w-4 text-accent" />
-						<span className="text-sm">
-							{formatTime(new Date(appointment.date))}
-						</span>
+						<span className="text-sm">{formatTime(new Date(appointment.date))}</span>
 					</div>
 					<div className="flex items-center space-x-2 text-gray-300">
 						<MapPin className="h-4 w-4 text-accent" />
@@ -241,22 +233,15 @@ export default function Agenda() {
 		const matchesSearch =
 			appointment.patient.toLowerCase().includes(searchTerm.toLowerCase()) ||
 			appointment.doctor.toLowerCase().includes(searchTerm.toLowerCase());
-		const matchesStatus =
-			filterStatus === "todos" || appointment.status === filterStatus;
+		const matchesStatus = filterStatus === "todos" || appointment.status === filterStatus;
 		return matchesSearch && matchesStatus;
 	});
 
 	return (
 		<div className="min-h-screen animate-background-position-spin bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
 			<div className="container mx-auto px-6 py-8">
-				<motion.div
-					animate={{ opacity: 1, y: 0 }}
-					className="mb-8"
-					initial={{ opacity: 0, y: -20 }}
-				>
-					<h1 className="mb-2 font-bold text-4xl text-white">
-						Agenda NEONPROV1
-					</h1>
+				<motion.div animate={{ opacity: 1, y: 0 }} className="mb-8" initial={{ opacity: 0, y: -20 }}>
+					<h1 className="mb-2 font-bold text-4xl text-white">Agenda NEONPROV1</h1>
 					<p className="text-gray-400">Gerencie consultas e horários médicos</p>
 				</motion.div>
 
@@ -267,9 +252,7 @@ export default function Agenda() {
 							<Calendar className="h-6 w-6 text-primary" />
 							<div>
 								<p className="text-gray-400 text-sm">Data Selecionada</p>
-								<p className="font-semibold text-white">
-									{formatDate(selectedDate)}
-								</p>
+								<p className="font-semibold text-white">{formatDate(selectedDate)}</p>
 							</div>
 						</div>
 					</Card>
@@ -303,10 +286,7 @@ export default function Agenda() {
 						</div>
 					</Card>
 
-					<Button
-						className="flex h-full items-center justify-center"
-						variant="default"
-					>
+					<Button className="flex h-full items-center justify-center" variant="default">
 						<Plus className="mr-2 h-5 w-5" />
 						Nova Consulta
 					</Button>
@@ -316,29 +296,17 @@ export default function Agenda() {
 				<div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
 					<AnimatePresence>
 						{filteredAppointments.map((appointment, index) => (
-							<AppointmentCard
-								appointment={appointment}
-								index={index}
-								key={appointment.id}
-							/>
+							<AppointmentCard appointment={appointment} index={index} key={appointment.id} />
 						))}
 					</AnimatePresence>
 				</div>
 
 				{filteredAppointments.length === 0 && (
-					<motion.div
-						animate={{ opacity: 1 }}
-						className="py-12 text-center"
-						initial={{ opacity: 0 }}
-					>
+					<motion.div animate={{ opacity: 1 }} className="py-12 text-center" initial={{ opacity: 0 }}>
 						<Card className="mx-auto max-w-md bg-gradient-to-r from-primary/20 to-primary/10 p-6">
 							<Calendar className="mx-auto mb-4 h-16 w-16 text-accent" />
-							<h3 className="mb-2 font-semibold text-white text-xl">
-								Nenhuma consulta encontrada
-							</h3>
-							<p className="mb-4 text-gray-400">
-								Não há consultas que correspondam aos filtros selecionados.
-							</p>
+							<h3 className="mb-2 font-semibold text-white text-xl">Nenhuma consulta encontrada</h3>
+							<p className="mb-4 text-gray-400">Não há consultas que correspondam aos filtros selecionados.</p>
 							<Button variant="default">Agendar Nova Consulta</Button>
 						</Card>
 					</motion.div>

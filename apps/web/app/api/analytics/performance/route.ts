@@ -77,8 +77,7 @@ export async function POST(request: NextRequest) {
 		const supabase = await createClient();
 
 		// Parse request body
-		const metrics: PerformanceMetric | PerformanceMetric[] =
-			await request.json();
+		const metrics: PerformanceMetric | PerformanceMetric[] = await request.json();
 		const metricsArray = Array.isArray(metrics) ? metrics : [metrics];
 
 		// Validate metrics
@@ -86,14 +85,11 @@ export async function POST(request: NextRequest) {
 			(metric) =>
 				(metric as any).name &&
 				typeof metric.value === "number" &&
-				(SUPPORTED_METRICS as readonly string[]).includes((metric as any).name),
+				(SUPPORTED_METRICS as readonly string[]).includes((metric as any).name)
 		);
 
 		if (validMetrics.length === 0) {
-			return NextResponse.json(
-				{ error: "No valid metrics provided" },
-				{ status: 400 },
-			);
+			return NextResponse.json({ error: "No valid metrics provided" }, { status: 400 });
 		}
 
 		const supabaseClient = createClient();
@@ -108,28 +104,19 @@ export async function POST(request: NextRequest) {
 			userId: userId || null,
 			sessionId: generateSessionId(request),
 			url: metric.url || request.headers.get("referer") || "unknown",
-			userAgent:
-				metric.userAgent || request.headers.get("user-agent") || "unknown",
+			userAgent: metric.userAgent || request.headers.get("user-agent") || "unknown",
 			timestamp: metric.timestamp || Date.now,
-			grade:
-				metric.grade ||
-				calculateGrade((metric as any).name as MetricType, metric.value),
+			grade: metric.grade || calculateGrade((metric as any).name as MetricType, metric.value),
 			ip_address: getClientIP(request),
 			country: (request as any).geo?.country || "unknown",
 			city: (request as any).geo?.city || "unknown",
 		}));
 
 		// Store metrics in database
-		const { data, error } = await supabase
-			.from("performance_metrics")
-			.insert(enrichedMetrics)
-			.select();
+		const { data, error } = await supabase.from("performance_metrics").insert(enrichedMetrics).select();
 
 		if (error) {
-			return NextResponse.json(
-				{ error: "Failed to store metrics" },
-				{ status: 500 },
-			);
+			return NextResponse.json({ error: "Failed to store metrics" }, { status: 500 });
 		}
 
 		// Check for performance alerts
@@ -152,15 +139,12 @@ export async function POST(request: NextRequest) {
 					Pragma: "no-cache",
 					Expires: "0",
 				},
-			},
+			}
 		);
 
 		return response;
 	} catch (_error) {
-		return NextResponse.json(
-			{ error: "Internal server error" },
-			{ status: 500 },
-		);
+		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 	}
 }
 
@@ -173,10 +157,7 @@ export async function GET(request: NextRequest) {
 			data: { session },
 		} = await supabaseClient.auth.getSession();
 		if (!session) {
-			return NextResponse.json(
-				{ error: "Authentication required" },
-				{ status: 401 },
-			);
+			return NextResponse.json({ error: "Authentication required" }, { status: 401 });
 		}
 
 		// Parse query parameters
@@ -208,10 +189,7 @@ export async function GET(request: NextRequest) {
 		const { data, error } = await query;
 
 		if (error) {
-			return NextResponse.json(
-				{ error: "Failed to fetch metrics" },
-				{ status: 500 },
-			);
+			return NextResponse.json({ error: "Failed to fetch metrics" }, { status: 500 });
 		}
 
 		// Calculate aggregated statistics
@@ -229,10 +207,7 @@ export async function GET(request: NextRequest) {
 
 		return response;
 	} catch (_error) {
-		return NextResponse.json(
-			{ error: "Internal server error" },
-			{ status: 500 },
-		);
+		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 	}
 }
 
@@ -241,9 +216,7 @@ function generateSessionId(request: NextRequest): string {
 	const ip = getClientIP(request);
 	const userAgent = request.headers.get("user-agent") || "";
 	const timestamp = Math.floor(Date.now() / (1000 * 60 * 30)); // 30-minute buckets
-	return Buffer.from(`${ip}-${userAgent}-${timestamp}`)
-		.toString("base64")
-		.slice(0, 16);
+	return Buffer.from(`${ip}-${userAgent}-${timestamp}`).toString("base64").slice(0, 16);
 }
 
 function getClientIP(request: NextRequest): string {
@@ -255,12 +228,8 @@ function getClientIP(request: NextRequest): string {
 	);
 }
 
-function calculateGrade(
-	metric: MetricType,
-	value: number,
-): "good" | "needs-improvement" | "poor" {
-	const thresholds =
-		PERFORMANCE_ALERTS[metric as keyof typeof PERFORMANCE_ALERTS];
+function calculateGrade(metric: MetricType, value: number): "good" | "needs-improvement" | "poor" {
+	const thresholds = PERFORMANCE_ALERTS[metric as keyof typeof PERFORMANCE_ALERTS];
 
 	if (!thresholds) {
 		return "poor";
@@ -316,8 +285,7 @@ function _calculateAggregatedStats(metrics: any[]) {
 			...stats,
 			min: values[0],
 			max: values[count - 1],
-			average:
-				values.reduce((sum: number, val: number) => sum + val, 0) / count,
+			average: values.reduce((sum: number, val: number) => sum + val, 0) / count,
 			median: values[Math.floor(count / 2)],
 			p75: values[Math.floor(count * 0.75)],
 			p95: values[Math.floor(count * 0.95)],
@@ -333,10 +301,7 @@ function _calculateAggregatedStats(metrics: any[]) {
 
 async function checkPerformanceAlerts(metrics: any[], supabase: any) {
 	for (const metric of metrics) {
-		const threshold =
-			PERFORMANCE_ALERTS[
-				(metric as any).name as keyof typeof PERFORMANCE_ALERTS
-			];
+		const threshold = PERFORMANCE_ALERTS[(metric as any).name as keyof typeof PERFORMANCE_ALERTS];
 
 		if (threshold && metric.grade === "poor") {
 			// Store alert (you could extend this to send notifications)

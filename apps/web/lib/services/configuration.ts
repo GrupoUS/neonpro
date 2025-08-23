@@ -25,10 +25,7 @@ export class ConfigurationService {
 	private readonly cacheExpiry = new Map<string, number>();
 	private readonly CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
-	async getConfiguration(
-		tenantId: string,
-		key: string,
-	): Promise<{ value?: unknown; error?: string }> {
+	async getConfiguration(tenantId: string, key: string): Promise<{ value?: unknown; error?: string }> {
 		try {
 			const cacheKey = `${tenantId}:${key}`;
 
@@ -60,17 +57,14 @@ export class ConfigurationService {
 			return { value: this.parseConfigValue(data) };
 		} catch (error) {
 			return {
-				error:
-					error instanceof Error
-						? error.message
-						: "Failed to get configuration",
+				error: error instanceof Error ? error.message : "Failed to get configuration",
 			};
 		}
 	}
 
 	async setConfiguration(
 		tenantId: string,
-		config: ConfigurationUpdate,
+		config: ConfigurationUpdate
 	): Promise<{ success?: boolean; error?: string }> {
 		try {
 			const configData: Partial<TenantConfiguration> = {
@@ -84,11 +78,9 @@ export class ConfigurationService {
 				updated_at: new Date().toISOString(),
 			};
 
-			const { error } = await supabase
-				.from("tenant_configurations")
-				.upsert(configData, {
-					onConflict: "tenant_id,key",
-				});
+			const { error } = await supabase.from("tenant_configurations").upsert(configData, {
+				onConflict: "tenant_id,key",
+			});
 
 			if (error) {
 				return { error: error.message };
@@ -102,17 +94,14 @@ export class ConfigurationService {
 			return { success: true };
 		} catch (error) {
 			return {
-				error:
-					error instanceof Error
-						? error.message
-						: "Failed to set configuration",
+				error: error instanceof Error ? error.message : "Failed to set configuration",
 			};
 		}
 	}
 
 	async getAllConfigurations(
 		tenantId: string,
-		category?: string,
+		category?: string
 	): Promise<{ configurations?: TenantConfiguration[]; error?: string }> {
 		try {
 			let query = supabase
@@ -135,24 +124,14 @@ export class ConfigurationService {
 			return { configurations: data };
 		} catch (error) {
 			return {
-				error:
-					error instanceof Error
-						? error.message
-						: "Failed to get configurations",
+				error: error instanceof Error ? error.message : "Failed to get configurations",
 			};
 		}
 	}
 
-	async deleteConfiguration(
-		tenantId: string,
-		key: string,
-	): Promise<{ success?: boolean; error?: string }> {
+	async deleteConfiguration(tenantId: string, key: string): Promise<{ success?: boolean; error?: string }> {
 		try {
-			const { error } = await supabase
-				.from("tenant_configurations")
-				.delete()
-				.eq("tenant_id", tenantId)
-				.eq("key", key);
+			const { error } = await supabase.from("tenant_configurations").delete().eq("tenant_id", tenantId).eq("key", key);
 
 			if (error) {
 				return { error: error.message };
@@ -166,10 +145,7 @@ export class ConfigurationService {
 			return { success: true };
 		} catch (error) {
 			return {
-				error:
-					error instanceof Error
-						? error.message
-						: "Failed to delete configuration",
+				error: error instanceof Error ? error.message : "Failed to delete configuration",
 			};
 		}
 	}
@@ -179,10 +155,7 @@ export class ConfigurationService {
 		settings?: Record<string, unknown>;
 		error?: string;
 	}> {
-		const { configurations, error } = await this.getAllConfigurations(
-			tenantId,
-			"healthcare",
-		);
+		const { configurations, error } = await this.getAllConfigurations(tenantId, "healthcare");
 
 		if (error) {
 			return { error };
@@ -200,7 +173,7 @@ export class ConfigurationService {
 		tenantId: string,
 		key: string,
 		value: unknown,
-		description?: string,
+		description?: string
 	): Promise<{ success?: boolean; error?: string }> {
 		return this.setConfiguration(tenantId, {
 			key,
@@ -215,10 +188,7 @@ export class ConfigurationService {
 		settings?: Record<string, unknown>;
 		error?: string;
 	}> {
-		const { configurations, error } = await this.getAllConfigurations(
-			tenantId,
-			"compliance",
-		);
+		const { configurations, error } = await this.getAllConfigurations(tenantId, "compliance");
 
 		if (error) {
 			return { error };
@@ -237,10 +207,7 @@ export class ConfigurationService {
 		settings?: Record<string, unknown>;
 		error?: string;
 	}> {
-		const { configurations, error } = await this.getAllConfigurations(
-			tenantId,
-			"ui",
-		);
+		const { configurations, error } = await this.getAllConfigurations(tenantId, "ui");
 
 		if (error) {
 			return { error };
@@ -274,9 +241,7 @@ export class ConfigurationService {
 					return Boolean(config.value);
 				case "object":
 				case "array":
-					return typeof config.value === "string"
-						? JSON.parse(config.value)
-						: config.value;
+					return typeof config.value === "string" ? JSON.parse(config.value) : config.value;
 				default:
 					return config.value;
 			}
@@ -305,18 +270,9 @@ export class ConfigurationService {
 	}
 
 	private shouldEncrypt(key: string): boolean {
-		const sensitiveKeys = [
-			"api_key",
-			"secret",
-			"password",
-			"token",
-			"credential",
-			"private_key",
-		];
+		const sensitiveKeys = ["api_key", "secret", "password", "token", "credential", "private_key"];
 
-		return sensitiveKeys.some((sensitive) =>
-			key.toLowerCase().includes(sensitive),
-		);
+		return sensitiveKeys.some((sensitive) => key.toLowerCase().includes(sensitive));
 	}
 
 	// Clear cache manually if needed

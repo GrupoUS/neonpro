@@ -9,15 +9,7 @@
 "use client";
 
 import { Link, Outlet, useLocation } from "@tanstack/react-router";
-import {
-	Bell,
-	Building,
-	CreditCard,
-	Plug,
-	Settings,
-	Shield,
-	User,
-} from "lucide-react";
+import { Bell, Building, CreditCard, Plug, Settings, Shield, User } from "lucide-react";
 import type React from "react";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { MainNavigation } from "@/components/main-navigation";
@@ -80,9 +72,7 @@ export function SettingsLayout() {
 		},
 	];
 
-	const visibleTabs = settingsTabs.filter(
-		(tab) => !tab.permission || tab.permission(),
-	);
+	const visibleTabs = settingsTabs.filter((tab) => !tab.permission || tab.permission());
 
 	const isActiveTab = (href: string) => {
 		if (href === "/settings") {
@@ -111,9 +101,7 @@ export function SettingsLayout() {
 						<div className="mx-auto max-w-6xl">
 							<div className="mb-8">
 								<h1 className="font-bold text-3xl">Configurações</h1>
-								<p className="text-muted-foreground">
-									Gerencie suas preferências e configurações da conta
-								</p>
+								<p className="text-muted-foreground">Gerencie suas preferências e configurações da conta</p>
 							</div>
 
 							<div className="flex flex-col gap-8 lg:flex-row">
@@ -125,9 +113,7 @@ export function SettingsLayout() {
 												className={cn(
 													"flex items-center space-x-3 rounded-lg px-3 py-2 font-medium text-sm transition-colors",
 													"hover:bg-accent hover:text-accent-foreground",
-													isActiveTab(tab.href)
-														? "bg-accent text-accent-foreground"
-														: "text-muted-foreground",
+													isActiveTab(tab.href) ? "bg-accent text-accent-foreground" : "text-muted-foreground"
 												)}
 												key={tab.href}
 												to={tab.href}

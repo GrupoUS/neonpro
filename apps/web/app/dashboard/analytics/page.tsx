@@ -28,13 +28,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAppointments } from "@/hooks/useAppointments";
@@ -72,13 +66,7 @@ type TrendData = {
 };
 
 // Visual components maintaining NeonPro design
-const NeonGradientCard = ({
-	children,
-	className = "",
-}: {
-	children: React.ReactNode;
-	className?: string;
-}) => (
+const NeonGradientCard = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
 	<motion.div
 		animate={{ opacity: 1, y: 0 }}
 		className={`relative overflow-hidden rounded-xl border border-slate-800 bg-gradient-to-br from-slate-900/90 to-blue-900/30 backdrop-blur-sm ${className}`}
@@ -103,16 +91,11 @@ const CosmicGlowButton = ({
 	className?: string;
 }) => {
 	const variants = {
-		primary:
-			"bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700",
-		secondary:
-			"bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800",
-		success:
-			"bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700",
-		warning:
-			"bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700",
-		danger:
-			"bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary",
+		primary: "bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700",
+		secondary: "bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800",
+		success: "bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700",
+		warning: "bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700",
+		danger: "bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary",
 	};
 
 	const sizes = {
@@ -137,11 +120,7 @@ const CosmicGlowButton = ({
 const generateMockAnalyticsData = () => {
 	const currentDate = new Date();
 	const last12Months = Array.from({ length: 12 }, (_, i) => {
-		const date = new Date(
-			currentDate.getFullYear(),
-			currentDate.getMonth() - i,
-			1,
-		);
+		const date = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
 		return {
 			period: date.toLocaleDateString("pt-BR", {
 				month: "short",
@@ -228,9 +207,7 @@ const KPICard = ({ kpi }: { kpi: AnalyticsKPI }) => {
 							) : (
 								<TrendingDown className="h-4 w-4 text-red-400" />
 							)}
-							<span
-								className={`font-medium text-sm ${isPositive ? "text-green-400" : "text-red-400"}`}
-							>
+							<span className={`font-medium text-sm ${isPositive ? "text-green-400" : "text-red-400"}`}>
 								{kpi.change > 0 ? "+" : ""}
 								{kpi.change}%
 							</span>
@@ -248,13 +225,7 @@ const KPICard = ({ kpi }: { kpi: AnalyticsKPI }) => {
 };
 
 // Simple Chart Components (can be replaced with Recharts later)
-const SimpleBarChart = ({
-	data,
-	height = 200,
-}: {
-	data: ChartData[];
-	height?: number;
-}) => {
+const SimpleBarChart = ({ data, height = 200 }: { data: ChartData[]; height?: number }) => {
 	const maxValue = Math.max(...data.map((d) => d.value));
 
 	return (
@@ -289,21 +260,12 @@ const SimplePieChart = ({ data }: { data: ChartData[] }) => {
 		<div className="flex items-center space-x-6">
 			<div className="relative h-32 w-32">
 				<svg className="-rotate-90 h-32 w-32 transform">
-					<circle
-						cx="64"
-						cy="64"
-						fill="none"
-						r="56"
-						stroke="rgb(51 65 85)"
-						strokeWidth="8"
-					/>
+					<circle cx="64" cy="64" fill="none" r="56" stroke="rgb(51 65 85)" strokeWidth="8" />
 					{data.map((item, index) => {
 						const percentage = (item.value / total) * 100;
 						const circumference = 2 * Math.PI * 56;
 						const offset = circumference - (percentage / 100) * circumference;
-						const prevPercentages = data
-							.slice(0, index)
-							.reduce((sum, prev) => sum + prev.value, 0);
+						const prevPercentages = data.slice(0, index).reduce((sum, prev) => sum + prev.value, 0);
 						const rotation = (prevPercentages / total) * 360;
 
 						return (
@@ -332,14 +294,9 @@ const SimplePieChart = ({ data }: { data: ChartData[] }) => {
 			<div className="space-y-2">
 				{data.map((item, index) => (
 					<div className="flex items-center space-x-2" key={index}>
-						<div
-							className="h-3 w-3 rounded-full"
-							style={{ backgroundColor: item.color || "#3b82f6" }}
-						/>
+						<div className="h-3 w-3 rounded-full" style={{ backgroundColor: item.color || "#3b82f6" }} />
 						<span className="text-slate-300 text-sm">{item.name}</span>
-						<span className="font-medium text-sm text-white">
-							{item.value}%
-						</span>
+						<span className="font-medium text-sm text-white">{item.value}%</span>
 					</div>
 				))}
 			</div>
@@ -347,13 +304,7 @@ const SimplePieChart = ({ data }: { data: ChartData[] }) => {
 	);
 };
 
-const SimpleLineChart = ({
-	data,
-	height = 200,
-}: {
-	data: TrendData[];
-	height?: number;
-}) => {
+const SimpleLineChart = ({ data, height = 200 }: { data: TrendData[]; height?: number }) => {
 	const maxRevenue = Math.max(...data.map((d) => d.revenue));
 	const minRevenue = Math.min(...data.map((d) => d.revenue));
 	const range = maxRevenue - minRevenue;
@@ -363,13 +314,7 @@ const SimpleLineChart = ({
 			<div className="relative" style={{ height }}>
 				<svg className="h-full w-full">
 					<defs>
-						<linearGradient
-							id="revenueGradient"
-							x1="0%"
-							x2="0%"
-							y1="0%"
-							y2="100%"
-						>
+						<linearGradient id="revenueGradient" x1="0%" x2="0%" y1="0%" y2="100%">
 							<stop offset="0%" stopColor="#3b82f6" stopOpacity="0.3" />
 							<stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
 						</linearGradient>
@@ -434,15 +379,9 @@ export default function AnalyticsPage() {
 	const [isLoading, setIsLoading] = useState(true);
 	const [activeTab, setActiveTab] = useState("overview");
 
-	const {
-		totalPatients,
-		monthlyRevenue,
-		upcomingAppointments,
-		loading: metricsLoading,
-	} = useDashboardMetrics();
+	const { totalPatients, monthlyRevenue, upcomingAppointments, loading: metricsLoading } = useDashboardMetrics();
 	const { patients, loading: patientsLoading } = usePatients();
-	const { todaysAppointments, loading: appointmentsLoading } =
-		useAppointments();
+	const { todaysAppointments, loading: appointmentsLoading } = useAppointments();
 
 	const mockData = useMemo(() => generateMockAnalyticsData(), []);
 
@@ -516,7 +455,7 @@ export default function AnalyticsPage() {
 				trend: [92, 93, 94, 95, 95, 96, 96],
 			},
 		],
-		[totalPatients, monthlyRevenue, upcomingAppointments],
+		[totalPatients, monthlyRevenue, upcomingAppointments]
 	);
 
 	if (isLoading || metricsLoading || patientsLoading || appointmentsLoading) {
@@ -553,19 +492,12 @@ export default function AnalyticsPage() {
 				{/* Header */}
 				<div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
 					<div>
-						<h1 className="font-bold text-3xl text-white">
-							Analytics - NeonPro Healthcare
-						</h1>
-						<p className="text-slate-400">
-							Análise completa da performance clínica e financeira
-						</p>
+						<h1 className="font-bold text-3xl text-white">Analytics - NeonPro Healthcare</h1>
+						<p className="text-slate-400">Análise completa da performance clínica e financeira</p>
 					</div>
 
 					<div className="flex items-center space-x-4">
-						<Select
-							onValueChange={(value: AnalyticsTimeRange) => setTimeRange(value)}
-							value={timeRange}
-						>
+						<Select onValueChange={(value: AnalyticsTimeRange) => setTimeRange(value)} value={timeRange}>
 							<SelectTrigger className="w-40 border-slate-700 bg-slate-800/50 text-white">
 								<SelectValue />
 							</SelectTrigger>
@@ -577,11 +509,7 @@ export default function AnalyticsPage() {
 							</SelectContent>
 						</Select>
 
-						<CosmicGlowButton
-							onClick={() => window.location.reload()}
-							size="sm"
-							variant="secondary"
-						>
+						<CosmicGlowButton onClick={() => window.location.reload()} size="sm" variant="secondary">
 							<RefreshCw className="mr-2 h-4 w-4" />
 							Atualizar
 						</CosmicGlowButton>
@@ -603,34 +531,19 @@ export default function AnalyticsPage() {
 				{/* Main Analytics Tabs */}
 				<Tabs className="w-full" onValueChange={setActiveTab} value={activeTab}>
 					<TabsList className="grid w-full grid-cols-5 border-slate-700 bg-slate-800/50">
-						<TabsTrigger
-							className="data-[state=active]:bg-blue-600"
-							value="overview"
-						>
+						<TabsTrigger className="data-[state=active]:bg-blue-600" value="overview">
 							Visão Geral
 						</TabsTrigger>
-						<TabsTrigger
-							className="data-[state=active]:bg-blue-600"
-							value="practice"
-						>
+						<TabsTrigger className="data-[state=active]:bg-blue-600" value="practice">
 							Análise Clínica
 						</TabsTrigger>
-						<TabsTrigger
-							className="data-[state=active]:bg-blue-600"
-							value="financial"
-						>
+						<TabsTrigger className="data-[state=active]:bg-blue-600" value="financial">
 							Financeiro
 						</TabsTrigger>
-						<TabsTrigger
-							className="data-[state=active]:bg-blue-600"
-							value="predictive"
-						>
+						<TabsTrigger className="data-[state=active]:bg-blue-600" value="predictive">
 							Preditiva
 						</TabsTrigger>
-						<TabsTrigger
-							className="data-[state=active]:bg-blue-600"
-							value="compliance"
-						>
+						<TabsTrigger className="data-[state=active]:bg-blue-600" value="compliance">
 							Conformidade
 						</TabsTrigger>
 					</TabsList>
@@ -643,12 +556,8 @@ export default function AnalyticsPage() {
 								<div className="space-y-4">
 									<div className="flex items-center justify-between">
 										<div>
-											<h3 className="font-semibold text-lg text-white">
-												Tendência de Receita
-											</h3>
-											<p className="text-slate-400 text-sm">
-												Evolução mensal da receita
-											</p>
+											<h3 className="font-semibold text-lg text-white">Tendência de Receita</h3>
+											<p className="text-slate-400 text-sm">Evolução mensal da receita</p>
 										</div>
 										<LineChart className="h-6 w-6 text-blue-400" />
 									</div>
@@ -661,12 +570,8 @@ export default function AnalyticsPage() {
 								<div className="space-y-4">
 									<div className="flex items-center justify-between">
 										<div>
-											<h3 className="font-semibold text-lg text-white">
-												Demografia de Pacientes
-											</h3>
-											<p className="text-slate-400 text-sm">
-												Distribuição por faixa etária
-											</p>
+											<h3 className="font-semibold text-lg text-white">Demografia de Pacientes</h3>
+											<p className="text-slate-400 text-sm">Distribuição por faixa etária</p>
 										</div>
 										<Users className="h-6 w-6 text-purple-400" />
 									</div>
@@ -679,19 +584,12 @@ export default function AnalyticsPage() {
 								<div className="space-y-4">
 									<div className="flex items-center justify-between">
 										<div>
-											<h3 className="font-semibold text-lg text-white">
-												Taxa de Sucesso por Tratamento
-											</h3>
-											<p className="text-slate-400 text-sm">
-												Percentual de sucesso por especialidade
-											</p>
+											<h3 className="font-semibold text-lg text-white">Taxa de Sucesso por Tratamento</h3>
+											<p className="text-slate-400 text-sm">Percentual de sucesso por especialidade</p>
 										</div>
 										<Stethoscope className="h-6 w-6 text-green-400" />
 									</div>
-									<SimpleBarChart
-										data={mockData.treatmentSuccessRates}
-										height={250}
-									/>
+									<SimpleBarChart data={mockData.treatmentSuccessRates} height={250} />
 								</div>
 							</NeonGradientCard>
 
@@ -700,12 +598,8 @@ export default function AnalyticsPage() {
 								<div className="space-y-4">
 									<div className="flex items-center justify-between">
 										<div>
-											<h3 className="font-semibold text-lg text-white">
-												Receita por Serviço
-											</h3>
-											<p className="text-slate-400 text-sm">
-												Distribuição da receita por tipo de serviço
-											</p>
+											<h3 className="font-semibold text-lg text-white">Receita por Serviço</h3>
+											<p className="text-slate-400 text-sm">Distribuição da receita por tipo de serviço</p>
 										</div>
 										<DollarSign className="h-6 w-6 text-accent" />
 									</div>
@@ -723,12 +617,8 @@ export default function AnalyticsPage() {
 								<div className="space-y-4">
 									<div className="flex items-center justify-between">
 										<div>
-											<h3 className="font-semibold text-lg text-white">
-												Fluxo de Pacientes
-											</h3>
-											<p className="text-slate-400 text-sm">
-												Análise do fluxo de entrada e saída
-											</p>
+											<h3 className="font-semibold text-lg text-white">Fluxo de Pacientes</h3>
+											<p className="text-slate-400 text-sm">Análise do fluxo de entrada e saída</p>
 										</div>
 										<Activity className="h-6 w-6 text-blue-400" />
 									</div>
@@ -775,12 +665,8 @@ export default function AnalyticsPage() {
 								<div className="space-y-4">
 									<div className="flex items-center justify-between">
 										<div>
-											<h3 className="font-semibold text-lg text-white">
-												Performance dos Profissionais
-											</h3>
-											<p className="text-slate-400 text-sm">
-												Métricas de performance individual
-											</p>
+											<h3 className="font-semibold text-lg text-white">Performance dos Profissionais</h3>
+											<p className="text-slate-400 text-sm">Métricas de performance individual</p>
 										</div>
 										<UserCheck className="h-6 w-6 text-purple-400" />
 									</div>
@@ -814,13 +700,8 @@ export default function AnalyticsPage() {
 										].map((provider, index) => (
 											<div className="rounded-lg bg-white/5 p-3" key={index}>
 												<div className="mb-2 flex items-center justify-between">
-													<span className="font-medium text-white">
-														{provider.name}
-													</span>
-													<Badge
-														className="border-green-400 text-green-400"
-														variant="outline"
-													>
+													<span className="font-medium text-white">{provider.name}</span>
+													<Badge className="border-green-400 text-green-400" variant="outline">
 														{provider.score}%
 													</Badge>
 												</div>
@@ -840,12 +721,8 @@ export default function AnalyticsPage() {
 								<div className="space-y-4">
 									<div className="flex items-center justify-between">
 										<div>
-											<h3 className="font-semibold text-lg text-white">
-												Utilização da Capacidade
-											</h3>
-											<p className="text-slate-400 text-sm">
-												Análise da ocupação por período e sala
-											</p>
+											<h3 className="font-semibold text-lg text-white">Utilização da Capacidade</h3>
+											<p className="text-slate-400 text-sm">Análise da ocupação por período e sala</p>
 										</div>
 										<Gauge className="h-6 w-6 text-orange-400" />
 									</div>
@@ -857,23 +734,11 @@ export default function AnalyticsPage() {
 											{ period: "Noite", utilization: 45, rooms: 2 },
 											{ period: "Fim de Semana", utilization: 23, rooms: 1 },
 										].map((slot, index) => (
-											<div
-												className="rounded-lg bg-white/5 p-4 text-center"
-												key={index}
-											>
-												<div className="font-bold text-lg text-white">
-													{slot.utilization}%
-												</div>
-												<div className="text-slate-300 text-sm">
-													{slot.period}
-												</div>
-												<div className="text-slate-400 text-xs">
-													{slot.rooms} salas
-												</div>
-												<Progress
-													className="mt-2 h-1"
-													value={slot.utilization}
-												/>
+											<div className="rounded-lg bg-white/5 p-4 text-center" key={index}>
+												<div className="font-bold text-lg text-white">{slot.utilization}%</div>
+												<div className="text-slate-300 text-sm">{slot.period}</div>
+												<div className="text-slate-400 text-xs">{slot.rooms} salas</div>
+												<Progress className="mt-2 h-1" value={slot.utilization} />
 											</div>
 										))}
 									</div>
@@ -890,12 +755,8 @@ export default function AnalyticsPage() {
 								<div className="space-y-4">
 									<div className="flex items-center justify-between">
 										<div>
-											<h3 className="font-semibold text-lg text-white">
-												Análise de Receita
-											</h3>
-											<p className="text-slate-400 text-sm">
-												Breakdown detalhado da receita
-											</p>
+											<h3 className="font-semibold text-lg text-white">Análise de Receita</h3>
+											<p className="text-slate-400 text-sm">Breakdown detalhado da receita</p>
 										</div>
 										<DollarSign className="h-6 w-6 text-green-400" />
 									</div>
@@ -903,20 +764,12 @@ export default function AnalyticsPage() {
 									<div className="space-y-4">
 										<div className="grid grid-cols-2 gap-4">
 											<div className="rounded-lg bg-white/5 p-3 text-center">
-												<div className="font-bold text-green-400 text-xl">
-													R$ 125.430
-												</div>
-												<div className="text-slate-300 text-sm">
-													Receita Bruta
-												</div>
+												<div className="font-bold text-green-400 text-xl">R$ 125.430</div>
+												<div className="text-slate-300 text-sm">Receita Bruta</div>
 											</div>
 											<div className="rounded-lg bg-white/5 p-3 text-center">
-												<div className="font-bold text-blue-400 text-xl">
-													R$ 98.670
-												</div>
-												<div className="text-slate-300 text-sm">
-													Receita Líquida
-												</div>
+												<div className="font-bold text-blue-400 text-xl">R$ 98.670</div>
+												<div className="text-slate-300 text-sm">Receita Líquida</div>
 											</div>
 										</div>
 
@@ -926,18 +779,12 @@ export default function AnalyticsPage() {
 												<span className="font-medium text-white">78.6%</span>
 											</div>
 											<div className="flex justify-between">
-												<span className="text-slate-300">
-													Custos Operacionais
-												</span>
-												<span className="font-medium text-white">
-													R$ 26.760
-												</span>
+												<span className="text-slate-300">Custos Operacionais</span>
+												<span className="font-medium text-white">R$ 26.760</span>
 											</div>
 											<div className="flex justify-between">
 												<span className="text-slate-300">EBITDA</span>
-												<span className="font-medium text-green-400">
-													R$ 71.910
-												</span>
+												<span className="font-medium text-green-400">R$ 71.910</span>
 											</div>
 										</div>
 									</div>
@@ -949,12 +796,8 @@ export default function AnalyticsPage() {
 								<div className="space-y-4">
 									<div className="flex items-center justify-between">
 										<div>
-											<h3 className="font-semibold text-lg text-white">
-												Métodos de Pagamento
-											</h3>
-											<p className="text-slate-400 text-sm">
-												Distribuição por forma de pagamento
-											</p>
+											<h3 className="font-semibold text-lg text-white">Métodos de Pagamento</h3>
+											<p className="text-slate-400 text-sm">Distribuição por forma de pagamento</p>
 										</div>
 										<Target className="h-6 w-6 text-accent" />
 									</div>
@@ -980,45 +823,29 @@ export default function AnalyticsPage() {
 								<div className="space-y-4">
 									<div className="flex items-center justify-between">
 										<div>
-											<h3 className="font-semibold text-lg text-white">
-												Fluxo de Caixa
-											</h3>
-											<p className="text-slate-400 text-sm">
-												Entradas e saídas mensais
-											</p>
+											<h3 className="font-semibold text-lg text-white">Fluxo de Caixa</h3>
+											<p className="text-slate-400 text-sm">Entradas e saídas mensais</p>
 										</div>
 										<BarChart3 className="h-6 w-6 text-blue-400" />
 									</div>
 
 									<div className="grid grid-cols-1 gap-6 md:grid-cols-3">
 										<div className="rounded-lg border border-green-500/20 bg-green-500/10 p-4 text-center">
-											<div className="font-bold text-2xl text-green-400">
-												R$ 142.580
-											</div>
+											<div className="font-bold text-2xl text-green-400">R$ 142.580</div>
 											<div className="text-green-300 text-sm">Entradas</div>
-											<div className="mt-1 text-green-400 text-xs">
-												+12.5% vs mês anterior
-											</div>
+											<div className="mt-1 text-green-400 text-xs">+12.5% vs mês anterior</div>
 										</div>
 
 										<div className="rounded-lg border border-red-500/20 bg-red-500/10 p-4 text-center">
-											<div className="font-bold text-2xl text-red-400">
-												R$ 43.910
-											</div>
+											<div className="font-bold text-2xl text-red-400">R$ 43.910</div>
 											<div className="text-red-300 text-sm">Saídas</div>
-											<div className="mt-1 text-red-400 text-xs">
-												+8.2% vs mês anterior
-											</div>
+											<div className="mt-1 text-red-400 text-xs">+8.2% vs mês anterior</div>
 										</div>
 
 										<div className="rounded-lg border border-blue-500/20 bg-blue-500/10 p-4 text-center">
-											<div className="font-bold text-2xl text-blue-400">
-												R$ 98.670
-											</div>
+											<div className="font-bold text-2xl text-blue-400">R$ 98.670</div>
 											<div className="text-blue-300 text-sm">Saldo Líquido</div>
-											<div className="mt-1 text-blue-400 text-xs">
-												+15.8% vs mês anterior
-											</div>
+											<div className="mt-1 text-blue-400 text-xs">+15.8% vs mês anterior</div>
 										</div>
 									</div>
 								</div>
@@ -1034,12 +861,8 @@ export default function AnalyticsPage() {
 								<div className="space-y-4">
 									<div className="flex items-center justify-between">
 										<div>
-											<h3 className="font-semibold text-lg text-white">
-												Predição de Faltas
-											</h3>
-											<p className="text-slate-400 text-sm">
-												Probabilidade de no-show por paciente
-											</p>
+											<h3 className="font-semibold text-lg text-white">Predição de Faltas</h3>
+											<p className="text-slate-400 text-sm">Probabilidade de no-show por paciente</p>
 										</div>
 										<AlertTriangle className="h-6 w-6 text-accent" />
 									</div>
@@ -1073,9 +896,7 @@ export default function AnalyticsPage() {
 										].map((prediction, index) => (
 											<div className="rounded-lg bg-white/5 p-3" key={index}>
 												<div className="mb-2 flex items-center justify-between">
-													<span className="font-medium text-white">
-														{prediction.patient}
-													</span>
+													<span className="font-medium text-white">{prediction.patient}</span>
 													<Badge
 														className={`
                               ${
@@ -1091,13 +912,8 @@ export default function AnalyticsPage() {
 														{prediction.risk}: {prediction.probability}%
 													</Badge>
 												</div>
-												<div className="text-slate-400 text-xs">
-													{prediction.appointment}
-												</div>
-												<Progress
-													className="mt-2 h-1"
-													value={prediction.probability}
-												/>
+												<div className="text-slate-400 text-xs">{prediction.appointment}</div>
+												<Progress className="mt-2 h-1" value={prediction.probability} />
 											</div>
 										))}
 									</div>
@@ -1109,12 +925,8 @@ export default function AnalyticsPage() {
 								<div className="space-y-4">
 									<div className="flex items-center justify-between">
 										<div>
-											<h3 className="font-semibold text-lg text-white">
-												Projeções de Receita
-											</h3>
-											<p className="text-slate-400 text-sm">
-												Previsões para os próximos meses
-											</p>
+											<h3 className="font-semibold text-lg text-white">Projeções de Receita</h3>
+											<p className="text-slate-400 text-sm">Previsões para os próximos meses</p>
 										</div>
 										<TrendingUp className="h-6 w-6 text-green-400" />
 									</div>
@@ -1122,25 +934,17 @@ export default function AnalyticsPage() {
 									<div className="space-y-4">
 										<div className="grid grid-cols-3 gap-3 text-center">
 											<div className="rounded-lg bg-white/5 p-3">
-												<div className="font-bold text-blue-400 text-lg">
-													R$ 132K
-												</div>
-												<div className="text-slate-300 text-xs">
-													Próximo Mês
-												</div>
+												<div className="font-bold text-blue-400 text-lg">R$ 132K</div>
+												<div className="text-slate-300 text-xs">Próximo Mês</div>
 												<div className="text-green-400 text-xs">+5.2%</div>
 											</div>
 											<div className="rounded-lg bg-white/5 p-3">
-												<div className="font-bold text-lg text-purple-400">
-													R$ 389K
-												</div>
+												<div className="font-bold text-lg text-purple-400">R$ 389K</div>
 												<div className="text-slate-300 text-xs">Trimestre</div>
 												<div className="text-green-400 text-xs">+8.7%</div>
 											</div>
 											<div className="rounded-lg bg-white/5 p-3">
-												<div className="font-bold text-green-400 text-lg">
-													R$ 1.6M
-												</div>
+												<div className="font-bold text-green-400 text-lg">R$ 1.6M</div>
 												<div className="text-slate-300 text-xs">Anual</div>
 												<div className="text-green-400 text-xs">+12.3%</div>
 											</div>
@@ -1148,9 +952,7 @@ export default function AnalyticsPage() {
 
 										<div className="space-y-2">
 											<div className="flex justify-between">
-												<span className="text-slate-300">
-													Confiança da Previsão
-												</span>
+												<span className="text-slate-300">Confiança da Previsão</span>
 												<span className="font-medium text-green-400">87%</span>
 											</div>
 											<Progress className="h-2" value={87} />
@@ -1171,12 +973,8 @@ export default function AnalyticsPage() {
 								<div className="space-y-4">
 									<div className="flex items-center justify-between">
 										<div>
-											<h3 className="font-semibold text-lg text-white">
-												Padrões de Demanda Sazonal
-											</h3>
-											<p className="text-slate-400 text-sm">
-												Análise de sazonalidade por tipo de procedimento
-											</p>
+											<h3 className="font-semibold text-lg text-white">Padrões de Demanda Sazonal</h3>
+											<p className="text-slate-400 text-sm">Análise de sazonalidade por tipo de procedimento</p>
 										</div>
 										<Calendar className="h-6 w-6 text-orange-400" />
 									</div>
@@ -1193,37 +991,25 @@ export default function AnalyticsPage() {
 												season: "Outono",
 												procedures: "Tratamentos Faciais",
 												trend: "+28%",
-												color:
-													"bg-orange-500/10 border-orange-500/20 text-orange-400",
+												color: "bg-orange-500/10 border-orange-500/20 text-orange-400",
 											},
 											{
 												season: "Inverno",
 												procedures: "Cirurgias Plásticas",
 												trend: "+35%",
-												color:
-													"bg-blue-500/10 border-blue-500/20 text-blue-400",
+												color: "bg-blue-500/10 border-blue-500/20 text-blue-400",
 											},
 											{
 												season: "Primavera",
 												procedures: "Harmonização Facial",
 												trend: "+22%",
-												color:
-													"bg-green-500/10 border-green-500/20 text-green-400",
+												color: "bg-green-500/10 border-green-500/20 text-green-400",
 											},
 										].map((pattern, index) => (
-											<div
-												className={`rounded-lg border p-4 ${pattern.color}`}
-												key={index}
-											>
-												<div className="font-bold text-lg">
-													{pattern.season}
-												</div>
-												<div className="mt-1 text-sm opacity-90">
-													{pattern.procedures}
-												</div>
-												<div className="mt-2 font-bold text-lg">
-													{pattern.trend}
-												</div>
+											<div className={`rounded-lg border p-4 ${pattern.color}`} key={index}>
+												<div className="font-bold text-lg">{pattern.season}</div>
+												<div className="mt-1 text-sm opacity-90">{pattern.procedures}</div>
+												<div className="mt-2 font-bold text-lg">{pattern.trend}</div>
 												<div className="text-xs opacity-75">vs média anual</div>
 											</div>
 										))}
@@ -1241,24 +1027,16 @@ export default function AnalyticsPage() {
 								<div className="space-y-4">
 									<div className="flex items-center justify-between">
 										<div>
-											<h3 className="font-semibold text-lg text-white">
-												Conformidade LGPD
-											</h3>
-											<p className="text-slate-400 text-sm">
-												Status de adequação à LGPD
-											</p>
+											<h3 className="font-semibold text-lg text-white">Conformidade LGPD</h3>
+											<p className="text-slate-400 text-sm">Status de adequação à LGPD</p>
 										</div>
 										<Shield className="h-6 w-6 text-green-400" />
 									</div>
 
 									<div className="space-y-4">
 										<div className="rounded-lg border border-green-500/20 bg-green-500/10 p-4 text-center">
-											<div className="font-bold text-3xl text-green-400">
-												96%
-											</div>
-											<div className="text-green-300 text-sm">
-												Score de Conformidade
-											</div>
+											<div className="font-bold text-3xl text-green-400">96%</div>
+											<div className="text-green-300 text-sm">Score de Conformidade</div>
 										</div>
 
 										<div className="space-y-2">
@@ -1284,23 +1062,16 @@ export default function AnalyticsPage() {
 													score: 100,
 												},
 											].map((item, index) => (
-												<div
-													className="flex items-center justify-between rounded bg-white/5 p-2"
-													key={index}
-												>
+												<div className="flex items-center justify-between rounded bg-white/5 p-2" key={index}>
 													<div className="flex items-center space-x-2">
 														{item.status === "completed" ? (
 															<CheckCircle2 className="h-4 w-4 text-green-400" />
 														) : (
 															<AlertTriangle className="h-4 w-4 text-accent" />
 														)}
-														<span className="text-slate-300 text-sm">
-															{item.item}
-														</span>
+														<span className="text-slate-300 text-sm">{item.item}</span>
 													</div>
-													<span className="font-medium text-sm text-white">
-														{item.score}%
-													</span>
+													<span className="font-medium text-sm text-white">{item.score}%</span>
 												</div>
 											))}
 										</div>
@@ -1313,12 +1084,8 @@ export default function AnalyticsPage() {
 								<div className="space-y-4">
 									<div className="flex items-center justify-between">
 										<div>
-											<h3 className="font-semibold text-lg text-white">
-												Métricas Regulatórias
-											</h3>
-											<p className="text-slate-400 text-sm">
-												Indicadores de qualidade e conformidade
-											</p>
+											<h3 className="font-semibold text-lg text-white">Métricas Regulatórias</h3>
+											<p className="text-slate-400 text-sm">Indicadores de qualidade e conformidade</p>
 										</div>
 										<FileText className="h-6 w-6 text-blue-400" />
 									</div>
@@ -1327,9 +1094,7 @@ export default function AnalyticsPage() {
 										{mockData.complianceMetrics.map((metric, index) => (
 											<div className="rounded-lg bg-white/5 p-3" key={index}>
 												<div className="mb-2 flex items-center justify-between">
-													<span className="font-medium text-white">
-														{metric.metric}
-													</span>
+													<span className="font-medium text-white">{metric.metric}</span>
 													<Badge
 														className={`
                               ${
@@ -1363,11 +1128,7 @@ export default function AnalyticsPage() {
 																	: "text-slate-400"
 														}`}
 													>
-														{metric.trend === "up"
-															? "Melhorando"
-															: metric.trend === "down"
-																? "Degradando"
-																: "Estável"}
+														{metric.trend === "up" ? "Melhorando" : metric.trend === "down" ? "Degradando" : "Estável"}
 													</span>
 												</div>
 											</div>
@@ -1381,12 +1142,8 @@ export default function AnalyticsPage() {
 								<div className="space-y-4">
 									<div className="flex items-center justify-between">
 										<div>
-											<h3 className="font-semibold text-lg text-white">
-												Trilha de Auditoria
-											</h3>
-											<p className="text-slate-400 text-sm">
-												Atividades recentes de conformidade
-											</p>
+											<h3 className="font-semibold text-lg text-white">Trilha de Auditoria</h3>
+											<p className="text-slate-400 text-sm">Atividades recentes de conformidade</p>
 										</div>
 										<Eye className="h-6 w-6 text-purple-400" />
 									</div>
@@ -1424,10 +1181,7 @@ export default function AnalyticsPage() {
 												status: "warning",
 											},
 										].map((audit, index) => (
-											<div
-												className="flex items-center space-x-4 rounded-lg bg-white/5 p-3"
-												key={index}
-											>
+											<div className="flex items-center space-x-4 rounded-lg bg-white/5 p-3" key={index}>
 												<div
 													className={`h-2 w-2 rounded-full ${
 														audit.status === "success"
@@ -1438,16 +1192,10 @@ export default function AnalyticsPage() {
 													}`}
 												/>
 												<div className="flex-1">
-													<div className="font-medium text-white">
-														{audit.action}
-													</div>
-													<div className="text-slate-400 text-sm">
-														por {audit.user}
-													</div>
+													<div className="font-medium text-white">{audit.action}</div>
+													<div className="text-slate-400 text-sm">por {audit.user}</div>
 												</div>
-												<div className="text-slate-400 text-sm">
-													{audit.time}
-												</div>
+												<div className="text-slate-400 text-sm">{audit.time}</div>
 											</div>
 										))}
 									</div>
@@ -1461,17 +1209,11 @@ export default function AnalyticsPage() {
 				<NeonGradientCard>
 					<div className="flex items-center justify-between">
 						<div>
-							<h3 className="font-semibold text-lg text-white">
-								Custom Report Builder
-							</h3>
-							<p className="text-slate-400 text-sm">
-								Crie relatórios personalizados com interface drag-and-drop
-							</p>
+							<h3 className="font-semibold text-lg text-white">Custom Report Builder</h3>
+							<p className="text-slate-400 text-sm">Crie relatórios personalizados com interface drag-and-drop</p>
 						</div>
 						<CosmicGlowButton
-							onClick={() =>
-								window.open("/dashboard/analytics/report-builder", "_blank")
-							}
+							onClick={() => window.open("/dashboard/analytics/report-builder", "_blank")}
 							variant="success"
 						>
 							<FileText className="mr-2 h-4 w-4" />

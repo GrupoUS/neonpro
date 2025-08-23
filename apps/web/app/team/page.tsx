@@ -16,13 +16,7 @@ import { useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { CommunicationHub } from "./components/communication-hub";
@@ -74,22 +68,14 @@ export default function TeamCoordinationPage() {
 			{/* Header Section with Emergency Controls */}
 			<div className="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
 				<div>
-					<h1 className="font-bold text-3xl text-foreground tracking-tight">
-						Coordenação da Equipe
-					</h1>
-					<p className="text-muted-foreground">
-						Gestão completa da equipe de saúde com compliance CFM, CLT e LGPD
-					</p>
+					<h1 className="font-bold text-3xl text-foreground tracking-tight">Coordenação da Equipe</h1>
+					<p className="text-muted-foreground">Gestão completa da equipe de saúde com compliance CFM, CLT e LGPD</p>
 				</div>
 
 				{/* Emergency Controls */}
 				<div className="flex items-center space-x-3">
 					<Button
-						aria-label={
-							emergencyMode
-								? "Desativar modo de emergência"
-								: "Ativar modo de emergência"
-						}
+						aria-label={emergencyMode ? "Desativar modo de emergência" : "Ativar modo de emergência"}
 						className="transition-all duration-200"
 						onClick={() => setEmergencyMode(!emergencyMode)}
 						size="sm"
@@ -110,9 +96,8 @@ export default function TeamCoordinationPage() {
 				<Alert className="border-red-500 bg-red-50 dark:bg-red-900/20">
 					<AlertTriangle className="h-4 w-4 text-red-600" />
 					<AlertDescription className="text-red-700 dark:text-red-300">
-						<strong>Modo de Emergência Ativo:</strong> Protocolos de emergência
-						em vigor. Acesso prioritário a recursos e comunicação de alta
-						prioridade habilitada.
+						<strong>Modo de Emergência Ativo:</strong> Protocolos de emergência em vigor. Acesso prioritário a recursos
+						e comunicação de alta prioridade habilitada.
 					</AlertDescription>
 				</Alert>
 			)}
@@ -124,12 +109,8 @@ export default function TeamCoordinationPage() {
 						<Users className="h-4 w-4 text-blue-600" />
 					</CardHeader>
 					<CardContent>
-						<div className="font-bold text-2xl text-blue-700 dark:text-blue-300">
-							{mockTeamStats.totalStaff}
-						</div>
-						<p className="text-blue-600 text-xs dark:text-blue-400">
-							profissionais cadastrados
-						</p>
+						<div className="font-bold text-2xl text-blue-700 dark:text-blue-300">{mockTeamStats.totalStaff}</div>
+						<p className="text-blue-600 text-xs dark:text-blue-400">profissionais cadastrados</p>
 					</CardContent>
 				</Card>
 				<Card className="bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20">
@@ -138,12 +119,8 @@ export default function TeamCoordinationPage() {
 						<UserCheck className="h-4 w-4 text-green-600" />
 					</CardHeader>
 					<CardContent>
-						<div className="font-bold text-2xl text-green-700 dark:text-green-300">
-							{mockTeamStats.activeStaff}
-						</div>
-						<p className="text-green-600 text-xs dark:text-green-400">
-							em serviço ativo
-						</p>
+						<div className="font-bold text-2xl text-green-700 dark:text-green-300">{mockTeamStats.activeStaff}</div>
+						<p className="text-green-600 text-xs dark:text-green-400">em serviço ativo</p>
 					</CardContent>
 				</Card>{" "}
 				<Card className="bg-gradient-to-r from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20">
@@ -152,9 +129,7 @@ export default function TeamCoordinationPage() {
 						<Clock className="h-4 w-4 text-accent" />
 					</CardHeader>
 					<CardContent>
-						<div className="font-bold text-2xl text-accent dark:text-accent-light">
-							{mockTeamStats.onBreak}
-						</div>
+						<div className="font-bold text-2xl text-accent dark:text-accent-light">{mockTeamStats.onBreak}</div>
 						<p className="text-accent text-xs dark:text-accent">pausa CLT</p>
 					</CardContent>
 				</Card>
@@ -164,12 +139,8 @@ export default function TeamCoordinationPage() {
 						<AlertTriangle className="h-4 w-4 text-red-600" />
 					</CardHeader>
 					<CardContent>
-						<div className="font-bold text-2xl text-red-700 dark:text-red-300">
-							{mockTeamStats.emergencyAvailable}
-						</div>
-						<p className="text-red-600 text-xs dark:text-red-400">
-							disponíveis emergência
-						</p>
+						<div className="font-bold text-2xl text-red-700 dark:text-red-300">{mockTeamStats.emergencyAvailable}</div>
+						<p className="text-red-600 text-xs dark:text-red-400">disponíveis emergência</p>
 					</CardContent>
 				</Card>
 				<Card className="bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20">
@@ -178,12 +149,8 @@ export default function TeamCoordinationPage() {
 						<Calendar className="h-4 w-4 text-purple-600" />
 					</CardHeader>
 					<CardContent>
-						<div className="font-bold text-2xl text-purple-700 dark:text-purple-300">
-							{mockTeamStats.currentShifts}
-						</div>
-						<p className="text-purple-600 text-xs dark:text-purple-400">
-							turnos em andamento
-						</p>
+						<div className="font-bold text-2xl text-purple-700 dark:text-purple-300">{mockTeamStats.currentShifts}</div>
+						<p className="text-purple-600 text-xs dark:text-purple-400">turnos em andamento</p>
 					</CardContent>
 				</Card>{" "}
 				<Card className="bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20">
@@ -195,9 +162,7 @@ export default function TeamCoordinationPage() {
 						<div className="font-bold text-2xl text-orange-700 dark:text-orange-300">
 							{mockTeamStats.overdueCompliance}
 						</div>
-						<p className="text-orange-600 text-xs dark:text-orange-400">
-							pendências CFM/CLT
-						</p>
+						<p className="text-orange-600 text-xs dark:text-orange-400">pendências CFM/CLT</p>
 					</CardContent>
 				</Card>
 			</div>
@@ -220,22 +185,12 @@ export default function TeamCoordinationPage() {
 								/>
 								<AlertDescription
 									className={
-										alert.severity === "critical"
-											? "text-red-700 dark:text-red-300"
-											: "text-accent dark:text-accent"
+										alert.severity === "critical" ? "text-red-700 dark:text-red-300" : "text-accent dark:text-accent"
 									}
 								>
 									<div className="flex items-center justify-between">
 										<span className="text-sm">{alert.message}</span>
-										<Badge
-											variant={
-												alert.severity === "critical"
-													? "destructive"
-													: "secondary"
-											}
-										>
-											{alert.type}
-										</Badge>
+										<Badge variant={alert.severity === "critical" ? "destructive" : "secondary"}>{alert.type}</Badge>
 									</div>
 								</AlertDescription>
 							</Alert>
@@ -244,11 +199,7 @@ export default function TeamCoordinationPage() {
 				</div>
 			)}{" "}
 			{/* Main Dashboard Tabs */}
-			<Tabs
-				className="space-y-6"
-				onValueChange={setActiveTab}
-				value={activeTab}
-			>
+			<Tabs className="space-y-6" onValueChange={setActiveTab} value={activeTab}>
 				<TabsList className="grid w-full grid-cols-2 lg:grid-cols-6">
 					<TabsTrigger className="text-sm" value="overview">
 						<Activity className="mr-2 h-4 w-4" />
@@ -282,20 +233,14 @@ export default function TeamCoordinationPage() {
 						<Card>
 							<CardHeader>
 								<CardTitle>Status da Equipe em Tempo Real</CardTitle>
-								<CardDescription>
-									Monitoramento contínuo da disponibilidade e localização da
-									equipe
-								</CardDescription>
+								<CardDescription>Monitoramento contínuo da disponibilidade e localização da equipe</CardDescription>
 							</CardHeader>
 							<CardContent>
 								<div className="space-y-4">
 									<div className="py-8 text-center text-muted-foreground">
 										📊 Mapa de calor da equipe será implementado aqui
 										<br />
-										<span className="text-sm">
-											Visualização em tempo real da disponibilidade por
-											departamento
-										</span>
+										<span className="text-sm">Visualização em tempo real da disponibilidade por departamento</span>
 									</div>
 								</div>
 							</CardContent>
@@ -304,18 +249,14 @@ export default function TeamCoordinationPage() {
 						<Card>
 							<CardHeader>
 								<CardTitle>Atividade Recente</CardTitle>
-								<CardDescription>
-									Últimas ações e atualizações da equipe
-								</CardDescription>
+								<CardDescription>Últimas ações e atualizações da equipe</CardDescription>
 							</CardHeader>
 							<CardContent>
 								<div className="space-y-4">
 									<div className="py-8 text-center text-muted-foreground">
 										📝 Feed de atividades será implementado aqui
 										<br />
-										<span className="text-sm">
-											Cronologia de mudanças de turno, comunicações e alertas
-										</span>
+										<span className="text-sm">Cronologia de mudanças de turno, comunicações e alertas</span>
 									</div>
 								</div>
 							</CardContent>

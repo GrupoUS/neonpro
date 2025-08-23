@@ -25,9 +25,7 @@ export function NotFound() {
 				<div className="space-y-2">
 					<h1 className="font-bold text-6xl text-primary">404</h1>
 					<h2 className="font-semibold text-2xl">Página não encontrada</h2>
-					<p className="text-muted-foreground">
-						A página que você está procurando não existe ou foi removida.
-					</p>
+					<p className="text-muted-foreground">A página que você está procurando não existe ou foi removida.</p>
 				</div>
 
 				<div className="flex flex-col justify-center gap-3 sm:flex-row">
@@ -38,11 +36,7 @@ export function NotFound() {
 						</Link>
 					</Button>
 
-					<Button
-						asChild
-						onClick={() => window.history.back()}
-						variant="outline"
-					>
+					<Button asChild onClick={() => window.history.back()} variant="outline">
 						<button>
 							<ArrowLeft className="mr-2 h-4 w-4" />
 							Voltar

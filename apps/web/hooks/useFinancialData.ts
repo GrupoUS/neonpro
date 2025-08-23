@@ -4,8 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { createClient } from "@/app/utils/supabase/client";
 import type { Database } from "@/types/supabase";
 
-type FinancialTransaction =
-	Database["public"]["Tables"]["financial_transactions"]["Row"];
+type FinancialTransaction = Database["public"]["Tables"]["financial_transactions"]["Row"];
 
 type DailyRevenue = {
 	date: string;
@@ -68,18 +67,10 @@ export function useFinancialData(): FinancialHook {
 	// Receita mensal atual
 	const monthlyRevenue = useMemo(() => {
 		const currentMonth = new Date();
-		const startOfMonth = new Date(
-			currentMonth.getFullYear(),
-			currentMonth.getMonth(),
-			1,
-		);
+		const startOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
 
 		return transactions
-			.filter(
-				(transaction) =>
-					transaction.type === "income" &&
-					new Date(transaction.date) >= startOfMonth,
-			)
+			.filter((transaction) => transaction.type === "income" && new Date(transaction.date) >= startOfMonth)
 			.reduce((sum, transaction) => sum + (transaction.amount || 0), 0);
 	}, [transactions]);
 
@@ -91,11 +82,7 @@ export function useFinancialData(): FinancialHook {
 		const dailyMap = new Map<string, number>();
 
 		transactions
-			.filter(
-				(transaction) =>
-					transaction.type === "income" &&
-					new Date(transaction.date) >= thirtyDaysAgo,
-			)
+			.filter((transaction) => transaction.type === "income" && new Date(transaction.date) >= thirtyDaysAgo)
 			.forEach((transaction) => {
 				const dateKey = new Date(transaction.date).toISOString().split("T")[0];
 				const currentAmount = dailyMap.get(dateKey) || 0;
@@ -114,16 +101,10 @@ export function useFinancialData(): FinancialHook {
 
 	// Receita por serviço
 	const revenueByService = useMemo(() => {
-		const serviceMap = new Map<
-			string,
-			{ totalRevenue: number; transactionCount: number }
-		>();
+		const serviceMap = new Map<string, { totalRevenue: number; transactionCount: number }>();
 
 		transactions
-			.filter(
-				(transaction) =>
-					transaction.type === "income" && transaction.service_id,
-			)
+			.filter((transaction) => transaction.type === "income" && transaction.service_id)
 			.forEach((transaction) => {
 				const serviceId = transaction.service_id!;
 				const current = serviceMap.get(serviceId) || {
@@ -186,24 +167,17 @@ export function useFinancialData(): FinancialHook {
 				},
 				(payload) => {
 					if (payload.eventType === "INSERT") {
-						setTransactions((prev) => [
-							payload.new as FinancialTransaction,
-							...prev,
-						]);
+						setTransactions((prev) => [payload.new as FinancialTransaction, ...prev]);
 					} else if (payload.eventType === "UPDATE") {
 						setTransactions((prev) =>
 							prev.map((transaction) =>
-								transaction.id === payload.new.id
-									? (payload.new as FinancialTransaction)
-									: transaction,
-							),
+								transaction.id === payload.new.id ? (payload.new as FinancialTransaction) : transaction
+							)
 						);
 					} else if (payload.eventType === "DELETE") {
-						setTransactions((prev) =>
-							prev.filter((transaction) => transaction.id !== payload.old.id),
-						);
+						setTransactions((prev) => prev.filter((transaction) => transaction.id !== payload.old.id));
 					}
-				},
+				}
 			)
 			.subscribe();
 

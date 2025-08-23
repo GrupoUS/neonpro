@@ -73,14 +73,12 @@ export function useServices(): ServicesHook {
 		(id: string): Service | null => {
 			return services.find((service) => service.id === id) || null;
 		},
-		[services],
+		[services]
 	);
 
 	// Serviços mais populares (baseado no preço mais alto, poderia ser baseado em uso)
 	const popularServices = useMemo(() => {
-		return activeServices
-			.sort((a, b) => (b.price || 0) - (a.price || 0))
-			.slice(0, 5);
+		return activeServices.sort((a, b) => (b.price || 0) - (a.price || 0)).slice(0, 5);
 	}, [activeServices]);
 
 	// Total de serviços
@@ -115,18 +113,12 @@ export function useServices(): ServicesHook {
 						setServices((prev) => [...prev, payload.new as Service]);
 					} else if (payload.eventType === "UPDATE") {
 						setServices((prev) =>
-							prev.map((service) =>
-								service.id === payload.new.id
-									? (payload.new as Service)
-									: service,
-							),
+							prev.map((service) => (service.id === payload.new.id ? (payload.new as Service) : service))
 						);
 					} else if (payload.eventType === "DELETE") {
-						setServices((prev) =>
-							prev.filter((service) => service.id !== payload.old.id),
-						);
+						setServices((prev) => prev.filter((service) => service.id !== payload.old.id));
 					}
-				},
+				}
 			)
 			.subscribe();
 
