@@ -1,11 +1,25 @@
 "use client";
 
-import { Bluetooth, Nfc, Plus, Shield, Smartphone, Trash2, Usb } from "lucide-react";
+import {
+	Bluetooth,
+	Nfc,
+	Plus,
+	Shield,
+	Smartphone,
+	Trash2,
+	Usb,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
 
 type WebAuthnCredential = {
 	id: string;
@@ -47,7 +61,11 @@ export function WebAuthnManager({ className }: WebAuthnManagerProps) {
 	};
 
 	const isWebAuthnSupported = () => {
-		return typeof window !== "undefined" && "credentials" in navigator && "create" in navigator.credentials;
+		return (
+			typeof window !== "undefined" &&
+			"credentials" in navigator &&
+			"create" in navigator.credentials
+		);
 	};
 
 	const registerCredential = async () => {
@@ -88,21 +106,28 @@ export function WebAuthnManager({ className }: WebAuthnManagerProps) {
 			}
 
 			// Complete registration
-			const completeResponse = await fetch("/api/auth/webauthn/register/complete", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					id: credential.id,
-					rawId: Array.from(new Uint8Array(credential.rawId)),
-					response: {
-						clientDataJSON: Array.from(new Uint8Array(credential.response.clientDataJSON)),
-						attestationObject: Array.from(new Uint8Array(credential.response.attestationObject)),
+			const completeResponse = await fetch(
+				"/api/auth/webauthn/register/complete",
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
 					},
-					type: credential.type,
-				}),
-			});
+					body: JSON.stringify({
+						id: credential.id,
+						rawId: Array.from(new Uint8Array(credential.rawId)),
+						response: {
+							clientDataJSON: Array.from(
+								new Uint8Array(credential.response.clientDataJSON),
+							),
+							attestationObject: Array.from(
+								new Uint8Array(credential.response.attestationObject),
+							),
+						},
+						type: credential.type,
+					}),
+				},
+			);
 
 			if (!completeResponse.ok) {
 				throw new Error("Failed to complete registration");
@@ -119,9 +144,12 @@ export function WebAuthnManager({ className }: WebAuthnManagerProps) {
 
 	const deleteCredential = async (credentialId: string) => {
 		try {
-			const response = await fetch(`/api/auth/webauthn/credentials/${credentialId}`, {
-				method: "DELETE",
-			});
+			const response = await fetch(
+				`/api/auth/webauthn/credentials/${credentialId}`,
+				{
+					method: "DELETE",
+				},
+			);
 
 			if (!response.ok) {
 				throw new Error("Failed to delete credential");
@@ -167,13 +195,15 @@ export function WebAuthnManager({ className }: WebAuthnManagerProps) {
 						<Shield className="h-5 w-5" />
 						WebAuthn Security Keys
 					</CardTitle>
-					<CardDescription>Enhance your account security with biometric authentication</CardDescription>
+					<CardDescription>
+						Enhance your account security with biometric authentication
+					</CardDescription>
 				</CardHeader>
 				<CardContent>
 					<Alert>
 						<AlertDescription>
-							WebAuthn is not supported in this browser. Please use a modern browser that supports Web Authentication
-							API.
+							WebAuthn is not supported in this browser. Please use a modern
+							browser that supports Web Authentication API.
 						</AlertDescription>
 					</Alert>
 				</CardContent>
@@ -190,9 +220,15 @@ export function WebAuthnManager({ className }: WebAuthnManagerProps) {
 							<Shield className="h-5 w-5" />
 							WebAuthn Security Keys
 						</CardTitle>
-						<CardDescription>Manage your registered security keys and biometric authenticators</CardDescription>
+						<CardDescription>
+							Manage your registered security keys and biometric authenticators
+						</CardDescription>
 					</div>
-					<Button className="flex items-center gap-2" disabled={isRegistering} onClick={registerCredential}>
+					<Button
+						className="flex items-center gap-2"
+						disabled={isRegistering}
+						onClick={registerCredential}
+					>
 						<Plus className="h-4 w-4" />
 						{isRegistering ? "Registering..." : "Add Security Key"}
 					</Button>
@@ -208,14 +244,19 @@ export function WebAuthnManager({ className }: WebAuthnManagerProps) {
 				{loading ? (
 					<div className="py-8 text-center">
 						<div className="mx-auto h-8 w-8 animate-spin rounded-full border-gray-900 border-b-2" />
-						<p className="mt-2 text-muted-foreground text-sm">Loading credentials...</p>
+						<p className="mt-2 text-muted-foreground text-sm">
+							Loading credentials...
+						</p>
 					</div>
 				) : credentials.length === 0 ? (
 					<div className="py-8 text-center">
 						<Shield className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
-						<h3 className="font-semibold text-lg">No Security Keys Registered</h3>
+						<h3 className="font-semibold text-lg">
+							No Security Keys Registered
+						</h3>
 						<p className="mb-4 text-muted-foreground text-sm">
-							Add a security key or biometric authenticator to enhance your account security
+							Add a security key or biometric authenticator to enhance your
+							account security
 						</p>
 						<Button disabled={isRegistering} onClick={registerCredential}>
 							<Plus className="mr-2 h-4 w-4" />
@@ -225,13 +266,20 @@ export function WebAuthnManager({ className }: WebAuthnManagerProps) {
 				) : (
 					<div className="space-y-3">
 						{credentials.map((credential) => (
-							<div className="flex items-center justify-between rounded-lg border p-4" key={credential.id}>
+							<div
+								className="flex items-center justify-between rounded-lg border p-4"
+								key={credential.id}
+							>
 								<div className="flex-1">
 									<div className="mb-2 flex items-center gap-2">
 										<h4 className="font-medium">{credential.name}</h4>
 										<div className="flex gap-1">
 											{credential.transports.map((transport) => (
-												<Badge className="flex items-center gap-1" key={transport} variant="secondary">
+												<Badge
+													className="flex items-center gap-1"
+													key={transport}
+													variant="secondary"
+												>
 													{getTransportIcon(transport)}
 													{transport}
 												</Badge>
@@ -240,7 +288,9 @@ export function WebAuthnManager({ className }: WebAuthnManagerProps) {
 									</div>
 									<div className="text-muted-foreground text-sm">
 										<p>Created: {formatDate(credential.created_at)}</p>
-										{credential.last_used_at && <p>Last used: {formatDate(credential.last_used_at)}</p>}
+										{credential.last_used_at && (
+											<p>Last used: {formatDate(credential.last_used_at)}</p>
+										)}
 									</div>
 								</div>
 								<Button

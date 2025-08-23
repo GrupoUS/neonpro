@@ -43,7 +43,13 @@ export type ConsentRecord = {
 export type DataSubjectRequest = {
 	id: string;
 	user_id: string;
-	request_type: "access" | "rectification" | "erasure" | "portability" | "restriction" | "objection";
+	request_type:
+		| "access"
+		| "rectification"
+		| "erasure"
+		| "portability"
+		| "restriction"
+		| "objection";
 	status: "pending" | "in_progress" | "completed" | "rejected";
 	description: string | null;
 	requested_at: string;
@@ -173,9 +179,13 @@ type UseLGPDDashboardReturn = {
 export function useLGPDDashboard(): UseLGPDDashboardReturn {
 	const [metrics, setMetrics] = useState<LGPDMetrics | null>(null);
 	const [recentConsents, setRecentConsents] = useState<ConsentRecord[]>([]);
-	const [pendingRequests, setPendingRequests] = useState<DataSubjectRequest[]>([]);
+	const [pendingRequests, setPendingRequests] = useState<DataSubjectRequest[]>(
+		[],
+	);
 	const [activeIncidents, setActiveIncidents] = useState<BreachIncident[]>([]);
-	const [recentAssessments, setRecentAssessments] = useState<ComplianceAssessment[]>([]);
+	const [recentAssessments, setRecentAssessments] = useState<
+		ComplianceAssessment[]
+	>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [isRefreshing, setIsRefreshing] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -224,7 +234,10 @@ export function useLGPDDashboard(): UseLGPDDashboardReturn {
 			});
 			setRecentAssessments(assessmentsData.data);
 		} catch (err) {
-			const errorMessage = err instanceof Error ? err.message : "Erro ao carregar dados do dashboard";
+			const errorMessage =
+				err instanceof Error
+					? err.message
+					: "Erro ao carregar dados do dashboard";
 			setError(errorMessage);
 			toast({
 				title: "Erro",
@@ -270,7 +283,10 @@ export function useLGPDDashboard(): UseLGPDDashboardReturn {
 			const link = document.createElement("a");
 			const url = URL.createObjectURL(blob);
 			link.setAttribute("href", url);
-			link.setAttribute("download", `lgpd-metrics-${new Date().toISOString().split("T")[0]}.csv`);
+			link.setAttribute(
+				"download",
+				`lgpd-metrics-${new Date().toISOString().split("T")[0]}.csv`,
+			);
 			link.style.visibility = "hidden";
 			document.body.appendChild(link);
 			link.click();
@@ -281,7 +297,8 @@ export function useLGPDDashboard(): UseLGPDDashboardReturn {
 				description: "Métricas LGPD exportadas com sucesso.",
 			});
 		} catch (err) {
-			const errorMessage = err instanceof Error ? err.message : "Erro ao exportar métricas";
+			const errorMessage =
+				err instanceof Error ? err.message : "Erro ao exportar métricas";
 			toast({
 				title: "Erro na exportação",
 				description: errorMessage,
@@ -308,7 +325,7 @@ export function useLGPDDashboard(): UseLGPDDashboardReturn {
 					loadDashboardData();
 				}
 			},
-			5 * 60 * 1000
+			5 * 60 * 1000,
 		); // 5 minutes
 
 		return () => clearInterval(interval);

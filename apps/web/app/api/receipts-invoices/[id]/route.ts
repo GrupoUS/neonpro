@@ -12,7 +12,9 @@ const SendEmailSchema = z.object({
 const RegenerateSchema = z.object({
 	templateOptions: z
 		.object({
-			template: z.enum(["modern", "classic", "minimal", "corporate"]).default("modern"),
+			template: z
+				.enum(["modern", "classic", "minimal", "corporate"])
+				.default("modern"),
 			colors: z
 				.object({
 					primary: z.string(),
@@ -95,18 +97,33 @@ function getReceiptInvoiceManager() {
 		},
 	};
 
-	return new ReceiptInvoiceManager(supabaseUrl, supabaseKey, companyInfo, nfseConfig, emailConfig);
+	return new ReceiptInvoiceManager(
+		supabaseUrl,
+		supabaseKey,
+		companyInfo,
+		nfseConfig,
+		emailConfig,
+	);
 }
 
 // GET - Get document details
-export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(
+	request: NextRequest,
+	{ params }: { params: Promise<{ id: string }> },
+) {
 	try {
-		const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+		const supabase = createClient(
+			process.env.NEXT_PUBLIC_SUPABASE_URL!,
+			process.env.SUPABASE_SERVICE_ROLE_KEY!,
+		);
 
 		// Check authentication
 		const authHeader = request.headers.get("authorization");
 		if (!authHeader) {
-			return NextResponse.json({ error: "Authorization header required" }, { status: 401 });
+			return NextResponse.json(
+				{ error: "Authorization header required" },
+				{ status: 401 },
+			);
 		}
 
 		const {
@@ -115,7 +132,10 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 		} = await supabase.auth.getUser(authHeader.replace("Bearer ", ""));
 
 		if (authError || !user) {
-			return NextResponse.json({ error: "Invalid authentication" }, { status: 401 });
+			return NextResponse.json(
+				{ error: "Invalid authentication" },
+				{ status: 401 },
+			);
 		}
 
 		const { id } = await params;
@@ -134,20 +154,29 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 				success: false,
 				error: error instanceof Error ? error.message : "Internal server error",
 			},
-			{ status: 500 }
+			{ status: 500 },
 		);
 	}
 }
 
 // POST - Perform actions on document
-export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function POST(
+	request: NextRequest,
+	{ params }: { params: Promise<{ id: string }> },
+) {
 	try {
-		const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+		const supabase = createClient(
+			process.env.NEXT_PUBLIC_SUPABASE_URL!,
+			process.env.SUPABASE_SERVICE_ROLE_KEY!,
+		);
 
 		// Check authentication
 		const authHeader = request.headers.get("authorization");
 		if (!authHeader) {
-			return NextResponse.json({ error: "Authorization header required" }, { status: 401 });
+			return NextResponse.json(
+				{ error: "Authorization header required" },
+				{ status: 401 },
+			);
 		}
 
 		const {
@@ -156,7 +185,10 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 		} = await supabase.auth.getUser(authHeader.replace("Bearer ", ""));
 
 		if (authError || !user) {
-			return NextResponse.json({ error: "Invalid authentication" }, { status: 401 });
+			return NextResponse.json(
+				{ error: "Invalid authentication" },
+				{ status: 401 },
+			);
 		}
 
 		const { id } = await params;
@@ -165,7 +197,10 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 		const action = url.searchParams.get("action");
 
 		if (!action) {
-			return NextResponse.json({ error: "Action parameter is required" }, { status: 400 });
+			return NextResponse.json(
+				{ error: "Action parameter is required" },
+				{ status: 400 },
+			);
 		}
 
 		const manager = getReceiptInvoiceManager();
@@ -175,7 +210,11 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 				const body = await request.json();
 				const validatedData = SendEmailSchema.parse(body);
 
-				const result = await manager.sendEmail(documentId, validatedData.recipientEmail, validatedData.customMessage);
+				const result = await manager.sendEmail(
+					documentId,
+					validatedData.recipientEmail,
+					validatedData.customMessage,
+				);
 
 				return NextResponse.json({
 					success: result.success,
@@ -207,7 +246,10 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 					},
 				};
 
-				const result = await manager.generatePDF(document.data, templateOptions);
+				const result = await manager.generatePDF(
+					document.data,
+					templateOptions,
+				);
 
 				return NextResponse.json({
 					success: result.success,
@@ -223,7 +265,10 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 				const document = await manager.getDocument(documentId);
 
 				if (document.type !== "invoice") {
-					return NextResponse.json({ error: "NFSe can only be generated for invoices" }, { status: 400 });
+					return NextResponse.json(
+						{ error: "NFSe can only be generated for invoices" },
+						{ status: 400 },
+					);
 				}
 
 				const result = await manager.generateNFSe(document.data);
@@ -247,11 +292,17 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 					.single();
 
 				if (error || !document) {
-					return NextResponse.json({ error: "Document not found" }, { status: 404 });
+					return NextResponse.json(
+						{ error: "Document not found" },
+						{ status: 404 },
+					);
 				}
 
 				if (!document.pdf_path) {
-					return NextResponse.json({ error: "PDF not available" }, { status: 404 });
+					return NextResponse.json(
+						{ error: "PDF not available" },
+						{ status: 404 },
+					);
 				}
 
 				// Download PDF from storage
@@ -260,7 +311,10 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 					.download(document.pdf_path);
 
 				if (downloadError) {
-					return NextResponse.json({ error: "Failed to download PDF" }, { status: 500 });
+					return NextResponse.json(
+						{ error: "Failed to download PDF" },
+						{ status: 500 },
+					);
 				}
 
 				const pdfBuffer = Buffer.from(await pdfData.arrayBuffer());
@@ -311,7 +365,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 					error: "Validation error",
 					details: error.errors,
 				},
-				{ status: 400 }
+				{ status: 400 },
 			);
 		}
 
@@ -320,20 +374,29 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 				success: false,
 				error: error instanceof Error ? error.message : "Internal server error",
 			},
-			{ status: 500 }
+			{ status: 500 },
 		);
 	}
 }
 
 // PUT - Update document details
-export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function PUT(
+	request: NextRequest,
+	{ params }: { params: Promise<{ id: string }> },
+) {
 	try {
-		const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+		const supabase = createClient(
+			process.env.NEXT_PUBLIC_SUPABASE_URL!,
+			process.env.SUPABASE_SERVICE_ROLE_KEY!,
+		);
 
 		// Check authentication
 		const authHeader = request.headers.get("authorization");
 		if (!authHeader) {
-			return NextResponse.json({ error: "Authorization header required" }, { status: 401 });
+			return NextResponse.json(
+				{ error: "Authorization header required" },
+				{ status: 401 },
+			);
 		}
 
 		const {
@@ -342,7 +405,10 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 		} = await supabase.auth.getUser(authHeader.replace("Bearer ", ""));
 
 		if (authError || !user) {
-			return NextResponse.json({ error: "Invalid authentication" }, { status: 401 });
+			return NextResponse.json(
+				{ error: "Invalid authentication" },
+				{ status: 401 },
+			);
 		}
 
 		const { id } = await params;
@@ -374,20 +440,29 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 				success: false,
 				error: error instanceof Error ? error.message : "Internal server error",
 			},
-			{ status: 500 }
+			{ status: 500 },
 		);
 	}
 }
 
 // DELETE - Delete document
-export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(
+	request: NextRequest,
+	{ params }: { params: Promise<{ id: string }> },
+) {
 	try {
-		const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+		const supabase = createClient(
+			process.env.NEXT_PUBLIC_SUPABASE_URL!,
+			process.env.SUPABASE_SERVICE_ROLE_KEY!,
+		);
 
 		// Check authentication
 		const authHeader = request.headers.get("authorization");
 		if (!authHeader) {
-			return NextResponse.json({ error: "Authorization header required" }, { status: 401 });
+			return NextResponse.json(
+				{ error: "Authorization header required" },
+				{ status: 401 },
+			);
 		}
 
 		const {
@@ -396,7 +471,10 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
 		} = await supabase.auth.getUser(authHeader.replace("Bearer ", ""));
 
 		if (authError || !user) {
-			return NextResponse.json({ error: "Invalid authentication" }, { status: 401 });
+			return NextResponse.json(
+				{ error: "Invalid authentication" },
+				{ status: 401 },
+			);
 		}
 
 		const { id } = await params;
@@ -410,12 +488,18 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
 			.single();
 
 		if (fetchError || !document) {
-			return NextResponse.json({ error: "Document not found" }, { status: 404 });
+			return NextResponse.json(
+				{ error: "Document not found" },
+				{ status: 404 },
+			);
 		}
 
 		// Only allow deletion of draft documents
 		if (document.status !== "draft") {
-			return NextResponse.json({ error: "Only draft documents can be deleted" }, { status: 400 });
+			return NextResponse.json(
+				{ error: "Only draft documents can be deleted" },
+				{ status: 400 },
+			);
 		}
 
 		// Delete PDF from storage
@@ -424,7 +508,10 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
 		}
 
 		// Delete document
-		const { error: deleteError } = await supabase.from("receipts_invoices").delete().eq("id", documentId);
+		const { error: deleteError } = await supabase
+			.from("receipts_invoices")
+			.delete()
+			.eq("id", documentId);
 
 		if (deleteError) {
 			throw deleteError;
@@ -440,7 +527,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
 				success: false,
 				error: error instanceof Error ? error.message : "Internal server error",
 			},
-			{ status: 500 }
+			{ status: 500 },
 		);
 	}
 }

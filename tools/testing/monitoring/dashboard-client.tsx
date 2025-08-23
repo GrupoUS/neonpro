@@ -7,7 +7,15 @@
 
 import type React from "react";
 import { useCallback, useEffect, useState } from "react";
-import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import {
+	CartesianGrid,
+	Line,
+	LineChart,
+	ResponsiveContainer,
+	Tooltip,
+	XAxis,
+	YAxis,
+} from "recharts";
 import { io, type Socket } from "socket.io-client";
 import { logger } from "../../../apps/api/src/lib/logger.js";
 
@@ -61,7 +69,9 @@ export const RealTimeDashboard: React.FC = () => {
 		metrics: {},
 	});
 	const [connected, setConnected] = useState(false);
-	const [activeTab, setActiveTab] = useState<"overview" | "metrics" | "alerts" | "health">("overview");
+	const [activeTab, setActiveTab] = useState<
+		"overview" | "metrics" | "alerts" | "health"
+	>("overview");
 
 	// 🔌 Configurar WebSocket connection
 	useEffect(() => {
@@ -85,28 +95,31 @@ export const RealTimeDashboard: React.FC = () => {
 			setData((prev) => ({ ...prev, health }));
 		});
 
-		newSocket.on("metrics-update", (update: { timestamp: number; metrics: any }) => {
-			setData((prev) => {
-				const newMetrics = { ...prev.metrics };
+		newSocket.on(
+			"metrics-update",
+			(update: { timestamp: number; metrics: any }) => {
+				setData((prev) => {
+					const newMetrics = { ...prev.metrics };
 
-				Object.entries(update.metrics).forEach(([key, value]) => {
-					if (!newMetrics[key]) {
-						newMetrics[key] = [];
-					}
-					newMetrics[key].push({
-						timestamp: update.timestamp,
-						value: value as number,
+					Object.entries(update.metrics).forEach(([key, value]) => {
+						if (!newMetrics[key]) {
+							newMetrics[key] = [];
+						}
+						newMetrics[key].push({
+							timestamp: update.timestamp,
+							value: value as number,
+						});
+
+						// Manter apenas últimas 50 entradas
+						if (newMetrics[key].length > 50) {
+							newMetrics[key] = newMetrics[key].slice(-50);
+						}
 					});
 
-					// Manter apenas últimas 50 entradas
-					if (newMetrics[key].length > 50) {
-						newMetrics[key] = newMetrics[key].slice(-50);
-					}
+					return { ...prev, metrics: newMetrics };
 				});
-
-				return { ...prev, metrics: newMetrics };
-			});
-		});
+			},
+		);
 
 		newSocket.on("new-alert", (alert: Alert) => {
 			setData((prev) => ({
@@ -132,7 +145,7 @@ export const RealTimeDashboard: React.FC = () => {
 				timestamp: m.timestamp,
 			}));
 		},
-		[data.metrics]
+		[data.metrics],
 	);
 
 	// 🎨 Obter cor baseada no status
@@ -152,10 +165,16 @@ export const RealTimeDashboard: React.FC = () => {
 					<div className="rounded-lg border bg-white p-4 shadow" key={key}>
 						<div className="flex items-center justify-between">
 							<div>
-								<p className="font-medium text-gray-600 text-sm capitalize">{key.replace(/([A-Z])/g, " $1").trim()}</p>
-								<p className="font-bold text-2xl text-gray-900">{latestValue.toFixed(1)}%</p>
+								<p className="font-medium text-gray-600 text-sm capitalize">
+									{key.replace(/([A-Z])/g, " $1").trim()}
+								</p>
+								<p className="font-bold text-2xl text-gray-900">
+									{latestValue.toFixed(1)}%
+								</p>
 							</div>
-							<div className={`text-sm ${trend >= 0 ? "text-green-600" : "text-red-600"}`}>
+							<div
+								className={`text-sm ${trend >= 0 ? "text-green-600" : "text-red-600"}`}
+							>
 								{trend >= 0 ? "↗" : "↘"} {Math.abs(trend).toFixed(1)}
 							</div>
 						</div>
@@ -163,7 +182,11 @@ export const RealTimeDashboard: React.FC = () => {
 							<div className="h-2 w-full rounded-full bg-gray-200">
 								<div
 									className={`h-2 rounded-full ${
-										latestValue >= 90 ? "bg-green-500" : latestValue >= 70 ? "bg-yellow-500" : "bg-red-500"
+										latestValue >= 90
+											? "bg-green-500"
+											: latestValue >= 70
+												? "bg-yellow-500"
+												: "bg-red-500"
 									}`}
 									style={{ width: `${Math.min(latestValue, 100)}%` }}
 								/>
@@ -196,12 +219,18 @@ export const RealTimeDashboard: React.FC = () => {
 			<div className="mb-4">
 				<div className="mb-2 flex items-center justify-between">
 					<span className="text-gray-600 text-sm">Health Score</span>
-					<span className="font-bold text-2xl text-gray-900">{data.health.score}/100</span>
+					<span className="font-bold text-2xl text-gray-900">
+						{data.health.score}/100
+					</span>
 				</div>
 				<div className="h-3 w-full rounded-full bg-gray-200">
 					<div
 						className={`h-3 rounded-full transition-all duration-300 ${
-							data.health.score >= 90 ? "bg-green-500" : data.health.score >= 70 ? "bg-yellow-500" : "bg-red-500"
+							data.health.score >= 90
+								? "bg-green-500"
+								: data.health.score >= 70
+									? "bg-yellow-500"
+									: "bg-red-500"
 						}`}
 						style={{ width: `${data.health.score}%` }}
 					/>
@@ -210,10 +239,15 @@ export const RealTimeDashboard: React.FC = () => {
 
 			{data.health.issues.length > 0 && (
 				<div>
-					<h4 className="mb-2 font-medium text-gray-900 text-sm">Current Issues</h4>
+					<h4 className="mb-2 font-medium text-gray-900 text-sm">
+						Current Issues
+					</h4>
 					<ul className="space-y-1">
 						{data.health.issues.map((issue, index) => (
-							<li className="flex items-center text-red-600 text-sm" key={index}>
+							<li
+								className="flex items-center text-red-600 text-sm"
+								key={index}
+							>
 								<span className="mr-2 h-2 w-2 rounded-full bg-red-500" />
 								{issue}
 							</li>
@@ -227,7 +261,9 @@ export const RealTimeDashboard: React.FC = () => {
 	// 🚨 Componente de alertas
 	const AlertsList: React.FC = () => (
 		<div className="rounded-lg border bg-white p-6 shadow">
-			<h3 className="mb-4 font-semibold text-gray-900 text-lg">Recent Alerts</h3>
+			<h3 className="mb-4 font-semibold text-gray-900 text-lg">
+				Recent Alerts
+			</h3>
 			<div className="max-h-96 space-y-2 overflow-y-auto">
 				{data.alerts.length === 0 ? (
 					<p className="py-8 text-center text-gray-500">No alerts</p>
@@ -259,7 +295,9 @@ export const RealTimeDashboard: React.FC = () => {
 								>
 									{alert.level}
 								</span>
-								<span className="text-gray-500 text-xs">{new Date(alert.timestamp).toLocaleTimeString()}</span>
+								<span className="text-gray-500 text-xs">
+									{new Date(alert.timestamp).toLocaleTimeString()}
+								</span>
 							</div>
 							<p className="mt-1 text-gray-800 text-sm">{alert.message}</p>
 						</div>
@@ -276,17 +314,27 @@ export const RealTimeDashboard: React.FC = () => {
 				const chartData = formatMetricData(metricName);
 
 				return (
-					<div className="rounded-lg border bg-white p-6 shadow" key={metricName}>
+					<div
+						className="rounded-lg border bg-white p-6 shadow"
+						key={metricName}
+					>
 						<h3 className="mb-4 font-semibold text-gray-900 text-lg capitalize">
 							{metricName.replace(/([A-Z])/g, " $1").trim()}
 						</h3>
 						<ResponsiveContainer height={250} width="100%">
 							<LineChart data={chartData}>
 								<CartesianGrid strokeDasharray="3 3" />
-								<XAxis dataKey="time" interval="preserveStartEnd" tick={{ fontSize: 12 }} />
+								<XAxis
+									dataKey="time"
+									interval="preserveStartEnd"
+									tick={{ fontSize: 12 }}
+								/>
 								<YAxis tick={{ fontSize: 12 }} />
 								<Tooltip
-									formatter={(value: number) => [`${value.toFixed(1)}%`, metricName]}
+									formatter={(value: number) => [
+										`${value.toFixed(1)}%`,
+										metricName,
+									]}
 									labelFormatter={(label) => `Time: ${label}`}
 								/>
 								<Line
@@ -312,10 +360,18 @@ export const RealTimeDashboard: React.FC = () => {
 				<div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 					<div className="flex h-16 items-center justify-between">
 						<div className="flex items-center">
-							<h1 className="font-semibold text-gray-900 text-xl">📈 NeonPro Quality Monitor</h1>
-							<div className={`ml-4 flex items-center ${connected ? "text-green-600" : "text-red-600"}`}>
-								<span className={`mr-2 h-2 w-2 rounded-full ${connected ? "bg-green-500" : "bg-red-500"}`} />
-								<span className="font-medium text-sm">{connected ? "Connected" : "Disconnected"}</span>
+							<h1 className="font-semibold text-gray-900 text-xl">
+								📈 NeonPro Quality Monitor
+							</h1>
+							<div
+								className={`ml-4 flex items-center ${connected ? "text-green-600" : "text-red-600"}`}
+							>
+								<span
+									className={`mr-2 h-2 w-2 rounded-full ${connected ? "bg-green-500" : "bg-red-500"}`}
+								/>
+								<span className="font-medium text-sm">
+									{connected ? "Connected" : "Disconnected"}
+								</span>
 							</div>
 						</div>
 
@@ -323,7 +379,9 @@ export const RealTimeDashboard: React.FC = () => {
 							{["overview", "metrics", "alerts", "health"].map((tab) => (
 								<button
 									className={`rounded-md px-3 py-2 font-medium text-sm capitalize ${
-										activeTab === tab ? "bg-blue-100 text-blue-700" : "text-gray-500 hover:text-gray-700"
+										activeTab === tab
+											? "bg-blue-100 text-blue-700"
+											: "text-gray-500 hover:text-gray-700"
 									}`}
 									key={tab}
 									onClick={() => setActiveTab(tab as any)}

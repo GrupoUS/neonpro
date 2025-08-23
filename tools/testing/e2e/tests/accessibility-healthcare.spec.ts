@@ -5,7 +5,9 @@ test.describe("Healthcare Accessibility Compliance", () => {
 		await page.goto("/dashboard");
 	});
 
-	test("should meet WCAG 2.1 AA standards for patient dashboard", async ({ page }) => {
+	test("should meet WCAG 2.1 AA standards for patient dashboard", async ({
+		page,
+	}) => {
 		// Test keyboard navigation
 		await page.keyboard.press("Tab");
 		const focusedElement = await page.locator(":focus");
@@ -13,7 +15,10 @@ test.describe("Healthcare Accessibility Compliance", () => {
 
 		// Test color contrast for healthcare data
 		const patientCards = page.locator('[data-testid="patient-card"]');
-		await expect(patientCards.first()).toHaveCSS("color", /rgb\(\d+,\s*\d+,\s*\d+\)/);
+		await expect(patientCards.first()).toHaveCSS(
+			"color",
+			/rgb\(\d+,\s*\d+,\s*\d+\)/,
+		);
 
 		// Test ARIA labels for healthcare components
 		await expect(page.locator('[aria-label*="Patient"]')).toBeVisible();
@@ -37,7 +42,9 @@ test.describe("Healthcare Accessibility Compliance", () => {
 		await expect(page.locator('[role="alert"]')).toBeVisible();
 	});
 
-	test("should support screen readers for ANVISA compliance data", async ({ page }) => {
+	test("should support screen readers for ANVISA compliance data", async ({
+		page,
+	}) => {
 		await page.goto("/compliance/anvisa");
 
 		// Test ARIA landmarks
@@ -49,7 +56,9 @@ test.describe("Healthcare Accessibility Compliance", () => {
 		await expect(page.locator('th[scope="col"]')).toHaveCount({ min: 1 });
 	});
 
-	test("should provide accessible CFM professional validation interface", async ({ page }) => {
+	test("should provide accessible CFM professional validation interface", async ({
+		page,
+	}) => {
 		await page.goto("/professionals");
 
 		// Test heading hierarchy
@@ -57,11 +66,17 @@ test.describe("Healthcare Accessibility Compliance", () => {
 		await expect(page.locator("h2")).toHaveCount({ min: 1 });
 
 		// Test professional data accessibility
-		await expect(page.locator('[aria-label*="Professional License"]')).toBeVisible();
-		await expect(page.locator('[aria-label*="CFM Registration"]')).toBeVisible();
+		await expect(
+			page.locator('[aria-label*="Professional License"]'),
+		).toBeVisible();
+		await expect(
+			page.locator('[aria-label*="CFM Registration"]'),
+		).toBeVisible();
 	});
 
-	test("should maintain accessibility during data loading states", async ({ page }) => {
+	test("should maintain accessibility during data loading states", async ({
+		page,
+	}) => {
 		await page.goto("/analytics");
 
 		// Test loading state accessibility

@@ -73,18 +73,29 @@ export class HealthcarePDFGenerator {
 		doc.setTextColor(100, 116, 139);
 
 		// LGPD compliance notice
-		doc.text("Este relatório está em conformidade com a LGPD e regulamentações ANVISA/CFM", PDF_CONFIG.margin, footerY);
+		doc.text(
+			"Este relatório está em conformidade com a LGPD e regulamentações ANVISA/CFM",
+			PDF_CONFIG.margin,
+			footerY,
+		);
 
 		// Generation timestamp
 		const timestamp = new Date().toLocaleString("pt-BR");
 		doc.text(`Gerado em: ${timestamp}`, PDF_CONFIG.margin, footerY + 5);
 
 		// Digital signature placeholder
-		doc.text("Assinatura Digital: NeonPro Healthcare System", PDF_CONFIG.margin, footerY + 10);
+		doc.text(
+			"Assinatura Digital: NeonPro Healthcare System",
+			PDF_CONFIG.margin,
+			footerY + 10,
+		);
 	}
 
 	// Add section with data table
-	private addDataTable(title: string, data: Array<{ label: string; value: string }>) {
+	private addDataTable(
+		title: string,
+		data: Array<{ label: string; value: string }>,
+	) {
 		const { doc } = this;
 
 		// Section title
@@ -134,7 +145,10 @@ export class HealthcarePDFGenerator {
 	generateLGPDReport(): Uint8Array {
 		const data = reportData.lgpd;
 
-		this.addHeader("Relatório de Conformidade LGPD", "Análise Completa de Proteção de Dados");
+		this.addHeader(
+			"Relatório de Conformidade LGPD",
+			"Análise Completa de Proteção de Dados",
+		);
 
 		// Overview section
 		this.addDataTable("Visão Geral da Conformidade", [
@@ -192,7 +206,11 @@ export class HealthcarePDFGenerator {
 		// Data requests section
 		this.doc.setFontSize(PDF_CONFIG.fontSize.heading);
 		this.doc.setTextColor(30, 64, 175);
-		this.doc.text("Solicitações de Dados Recentes", PDF_CONFIG.margin, this.yPosition);
+		this.doc.text(
+			"Solicitações de Dados Recentes",
+			PDF_CONFIG.margin,
+			this.yPosition,
+		);
 		this.yPosition += 15;
 
 		data.dataRequests.forEach((request) => {
@@ -227,7 +245,10 @@ export class HealthcarePDFGenerator {
 	generateFinancialReport(): Uint8Array {
 		const data = reportData.financial;
 
-		this.addHeader("Relatório Financeiro", "Análise de Receitas e Conformidade Fiscal");
+		this.addHeader(
+			"Relatório Financeiro",
+			"Análise de Receitas e Conformidade Fiscal",
+		);
 
 		// Revenue overview
 		this.addDataTable("Receitas", [
@@ -288,7 +309,10 @@ export class HealthcarePDFGenerator {
 	generateClinicalReport(): Uint8Array {
 		const data = reportData.clinical;
 
-		this.addHeader("Relatório Clínico", "Resultados de Tratamento e Satisfação do Paciente");
+		this.addHeader(
+			"Relatório Clínico",
+			"Resultados de Tratamento e Satisfação do Paciente",
+		);
 
 		// Treatment outcomes
 		this.addDataTable("Resultados de Tratamento", [
@@ -399,7 +423,11 @@ export class HealthcareExcelExporter {
 		// Patient Demographics Sheet
 		const demographicsData = HealthcareExcelExporter.prepareDemographicsData();
 		const demographicsSheet = XLSX.utils.aoa_to_sheet(demographicsData);
-		XLSX.utils.book_append_sheet(workbook, demographicsSheet, "Demografia Pacientes");
+		XLSX.utils.book_append_sheet(
+			workbook,
+			demographicsSheet,
+			"Demografia Pacientes",
+		);
 
 		return XLSX.write(workbook, { bookType: "xlsx", type: "array" });
 	}
@@ -474,7 +502,12 @@ export class HealthcareExcelExporter {
 			[],
 			["MÉTODOS DE PAGAMENTO"],
 			["Método", "Valor (R$)", "Percentual (%)", "Transações"],
-			["PIX", data.paymentMethods.pix.amount, data.paymentMethods.pix.percentage, data.paymentMethods.pix.transactions],
+			[
+				"PIX",
+				data.paymentMethods.pix.amount,
+				data.paymentMethods.pix.percentage,
+				data.paymentMethods.pix.transactions,
+			],
 			[
 				"Cartão de Crédito",
 				data.paymentMethods.creditCard.amount,
@@ -496,7 +529,12 @@ export class HealthcareExcelExporter {
 			[],
 			["ANÁLISE DE SERVIÇOS"],
 			["Serviço", "Receita (R$)", "Margem (%)", "Sessões"],
-			...data.serviceAnalysis.map((service) => [service.service, service.revenue, service.margin, service.sessions]),
+			...data.serviceAnalysis.map((service) => [
+				service.service,
+				service.revenue,
+				service.margin,
+				service.sessions,
+			]),
 			[],
 			["TRIBUTOS"],
 			["Tributo", "Valor (R$)"],
@@ -555,16 +593,32 @@ export class HealthcareExcelExporter {
 			[],
 			["DISTRIBUIÇÃO POR IDADE"],
 			["Faixa Etária", "Quantidade", "Percentual (%)"],
-			...Object.entries(data.ageDistribution).map(([age, info]) => [age, info.count, info.percentage]),
+			...Object.entries(data.ageDistribution).map(([age, info]) => [
+				age,
+				info.count,
+				info.percentage,
+			]),
 			[],
 			["DISTRIBUIÇÃO POR GÊNERO"],
 			["Gênero", "Quantidade", "Percentual (%)"],
-			["Feminino", data.genderDistribution.female.count, data.genderDistribution.female.percentage],
-			["Masculino", data.genderDistribution.male.count, data.genderDistribution.male.percentage],
+			[
+				"Feminino",
+				data.genderDistribution.female.count,
+				data.genderDistribution.female.percentage,
+			],
+			[
+				"Masculino",
+				data.genderDistribution.male.count,
+				data.genderDistribution.male.percentage,
+			],
 			[],
 			["DISTRIBUIÇÃO POR REGIÃO"],
 			["Estado", "Quantidade", "Percentual (%)"],
-			...Object.entries(data.regionDistribution).map(([region, info]) => [region, info.count, info.percentage]),
+			...Object.entries(data.regionDistribution).map(([region, info]) => [
+				region,
+				info.count,
+				info.percentage,
+			]),
 		];
 	}
 }
@@ -624,7 +678,11 @@ const generateClinicalCSV = (): string => {
 };
 
 // Email and Sharing Functions
-export const emailReport = async (_reportId: string, _recipients: string[], _format: "pdf" | "excel") => {
+export const emailReport = async (
+	_reportId: string,
+	_recipients: string[],
+	_format: "pdf" | "excel",
+) => {
 	// LGPD compliance check
 	const lgpdNotice = `
     AVISO LGPD: Este relatório contém dados pessoais protegidos pela Lei Geral de Proteção de Dados.
@@ -639,7 +697,10 @@ export const emailReport = async (_reportId: string, _recipients: string[], _for
 	};
 };
 
-export const generateSecureShareLink = (reportId: string, expirationHours = 24): string => {
+export const generateSecureShareLink = (
+	reportId: string,
+	expirationHours = 24,
+): string => {
 	// Mock secure sharing - in production, implement proper token generation
 	const token = btoa(`${reportId}-${Date.now()}-${Math.random()}`);
 	const baseUrl = window.location.origin;
@@ -648,7 +709,11 @@ export const generateSecureShareLink = (reportId: string, expirationHours = 24):
 };
 
 // Download handlers
-export const downloadReport = (data: Uint8Array | string, filename: string, type: "pdf" | "excel" | "csv") => {
+export const downloadReport = (
+	data: Uint8Array | string,
+	filename: string,
+	type: "pdf" | "excel" | "csv",
+) => {
 	const mimeTypes = {
 		pdf: "application/pdf",
 		excel: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",

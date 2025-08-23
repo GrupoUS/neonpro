@@ -36,7 +36,11 @@ const getRedirectURLs = (_siteUrl) => [
 const googleOAuthConfig = {
 	clientId: process.env.GOOGLE_CLIENT_ID || "",
 	clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
-	authorizedOrigins: [PRODUCTION_URL, "http://localhost:3000", `https://${SUPABASE_PROJECT_ID}.supabase.co`],
+	authorizedOrigins: [
+		PRODUCTION_URL,
+		"http://localhost:3000",
+		`https://${SUPABASE_PROJECT_ID}.supabase.co`,
+	],
 	redirectUris: [
 		`https://${SUPABASE_PROJECT_ID}.supabase.co/auth/v1/callback`,
 		`${PRODUCTION_URL}/auth/callback`,

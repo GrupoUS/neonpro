@@ -1,5 +1,12 @@
 import { z } from "zod";
-import { type BaseEntity, DateSchema, EmailSchema, PatientStatus, PhoneSchema, UUIDSchema } from "../types";
+import {
+	type BaseEntity,
+	DateSchema,
+	EmailSchema,
+	PatientStatus,
+	PhoneSchema,
+	UUIDSchema,
+} from "../types";
 
 // Patient interfaces for aesthetic clinic
 export interface Patient extends BaseEntity {
@@ -250,7 +257,9 @@ export const CreatePatientSchema = z.object({
 	notes: z.string().default(""),
 	photoConsent: z.boolean(),
 	marketingConsent: z.boolean(),
-	lgpdConsent: z.boolean().refine((val) => val === true, "LGPD consent is required"),
+	lgpdConsent: z
+		.boolean()
+		.refine((val) => val === true, "LGPD consent is required"),
 	tags: z.array(z.string()).default([]),
 });
 

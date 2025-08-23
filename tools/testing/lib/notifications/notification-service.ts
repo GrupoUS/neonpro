@@ -16,7 +16,11 @@ export type NotificationChannel = {
 export type NotificationTemplate = {
 	id: string;
 	name: string;
-	type: "medical_alert" | "appointment_reminder" | "system_notification" | "compliance_alert";
+	type:
+		| "medical_alert"
+		| "appointment_reminder"
+		| "system_notification"
+		| "compliance_alert";
 	subject: string;
 	body: string;
 	variables: string[]; // Available template variables
@@ -99,7 +103,8 @@ class MockNotificationService {
 	private readonly channels: Map<string, NotificationChannel> = new Map();
 	private readonly templates: Map<string, NotificationTemplate> = new Map();
 	private readonly messages: NotificationMessage[] = [];
-	private readonly preferences: Map<string, NotificationPreferences> = new Map();
+	private readonly preferences: Map<string, NotificationPreferences> =
+		new Map();
 
 	constructor() {
 		this.initializeDefaultChannels();
@@ -123,15 +128,26 @@ class MockNotificationService {
 		}
 
 		// Get user preferences
-		const userPrefs = request.recipient.userId ? this.preferences.get(request.recipient.userId) : null;
+		const userPrefs = request.recipient.userId
+			? this.preferences.get(request.recipient.userId)
+			: null;
 
 		// Determine best channel based on preferences and template
 		const availableChannels = template.channels;
-		const preferredChannel = this.selectOptimalChannel(availableChannels, userPrefs);
+		const preferredChannel = this.selectOptimalChannel(
+			availableChannels,
+			userPrefs,
+		);
 
 		// Process template variables
-		const processedSubject = this.processTemplate(template.subject, request.variables || {});
-		const processedBody = this.processTemplate(template.body, request.variables || {});
+		const processedSubject = this.processTemplate(
+			template.subject,
+			request.variables || {},
+		);
+		const processedBody = this.processTemplate(
+			template.body,
+			request.variables || {},
+		);
 
 		const message: NotificationMessage = {
 			id: `msg_${Date.now()}_${Math.random().toString(36).substring(2)}`,
@@ -193,7 +209,9 @@ class MockNotificationService {
 	/**
 	 * Get notification status
 	 */
-	async getNotificationStatus(messageId: string): Promise<NotificationMessage | null> {
+	async getNotificationStatus(
+		messageId: string,
+	): Promise<NotificationMessage | null> {
 		return this.messages.find((msg) => msg.id === messageId) || null;
 	}
 
@@ -217,7 +235,7 @@ class MockNotificationService {
 	 */
 	async updateUserPreferences(
 		userId: string,
-		updates: Partial<NotificationPreferences>
+		updates: Partial<NotificationPreferences>,
 	): Promise<NotificationPreferences> {
 		const currentPrefs = await this.getUserPreferences(userId);
 		const updatedPrefs = {
@@ -240,19 +258,27 @@ class MockNotificationService {
 			status?: NotificationMessage["status"];
 			channel?: NotificationChannel["type"];
 			priority?: NotificationChannel["priority"];
-		}
+		},
 	): Promise<NotificationMessage[]> {
-		let userMessages = this.messages.filter((msg) => msg.recipient.userId === userId);
+		let userMessages = this.messages.filter(
+			(msg) => msg.recipient.userId === userId,
+		);
 
 		// Apply filters
 		if (options?.status) {
-			userMessages = userMessages.filter((msg) => msg.status === options.status);
+			userMessages = userMessages.filter(
+				(msg) => msg.status === options.status,
+			);
 		}
 		if (options?.channel) {
-			userMessages = userMessages.filter((msg) => msg.channel === options.channel);
+			userMessages = userMessages.filter(
+				(msg) => msg.channel === options.channel,
+			);
 		}
 		if (options?.priority) {
-			userMessages = userMessages.filter((msg) => msg.priority === options.priority);
+			userMessages = userMessages.filter(
+				(msg) => msg.priority === options.priority,
+			);
 		}
 
 		// Sort by most recent first
@@ -286,33 +312,61 @@ class MockNotificationService {
 	/**
 	 * Get notification statistics
 	 */
-	async getNotificationStats(timeRange?: { start: Date; end: Date }): Promise<NotificationStats> {
+	async getNotificationStats(timeRange?: {
+		start: Date;
+		end: Date;
+	}): Promise<NotificationStats> {
 		let filteredMessages = this.messages;
 
 		if (timeRange) {
 			filteredMessages = this.messages.filter((msg) => {
 				const msgTime = msg.sentAt || msg.scheduledAt;
-				return msgTime && msgTime >= timeRange.start && msgTime <= timeRange.end;
+				return (
+					msgTime && msgTime >= timeRange.start && msgTime <= timeRange.end
+				);
 			});
 		}
 
-		const totalSent = filteredMessages.filter((msg) => msg.status !== "pending").length;
-		const totalDelivered = filteredMessages.filter((msg) => msg.status === "delivered" || msg.status === "read").length;
-		const totalRead = filteredMessages.filter((msg) => msg.status === "read").length;
-		const totalFailed = filteredMessages.filter((msg) => msg.status === "failed").length;
+		const totalSent = filteredMessages.filter(
+			(msg) => msg.status !== "pending",
+		).length;
+		const totalDelivered = filteredMessages.filter(
+			(msg) => msg.status === "delivered" || msg.status === "read",
+		).length;
+		const totalRead = filteredMessages.filter(
+			(msg) => msg.status === "read",
+		).length;
+		const totalFailed = filteredMessages.filter(
+			(msg) => msg.status === "failed",
+		).length;
 
 		const deliveryRate = totalSent > 0 ? (totalDelivered / totalSent) * 100 : 0;
-		const readRate = totalDelivered > 0 ? (totalRead / totalDelivered) * 100 : 0;
+		const readRate =
+			totalDelivered > 0 ? (totalRead / totalDelivered) * 100 : 0;
 		const errorRate = totalSent > 0 ? (totalFailed / totalSent) * 100 : 0;
 
 		// Calculate stats by channel
-		const channels: NotificationChannel["type"][] = ["email", "sms", "push", "webhook", "in_app"];
+		const channels: NotificationChannel["type"][] = [
+			"email",
+			"sms",
+			"push",
+			"webhook",
+			"in_app",
+		];
 		const byChannel = channels.reduce(
 			(acc, channel) => {
-				const channelMessages = filteredMessages.filter((msg) => msg.channel === channel);
-				const sent = channelMessages.filter((msg) => msg.status !== "pending").length;
-				const delivered = channelMessages.filter((msg) => msg.status === "delivered" || msg.status === "read").length;
-				const failed = channelMessages.filter((msg) => msg.status === "failed").length;
+				const channelMessages = filteredMessages.filter(
+					(msg) => msg.channel === channel,
+				);
+				const sent = channelMessages.filter(
+					(msg) => msg.status !== "pending",
+				).length;
+				const delivered = channelMessages.filter(
+					(msg) => msg.status === "delivered" || msg.status === "read",
+				).length;
+				const failed = channelMessages.filter(
+					(msg) => msg.status === "failed",
+				).length;
 
 				acc[channel] = {
 					sent,
@@ -322,17 +376,30 @@ class MockNotificationService {
 				};
 				return acc;
 			},
-			{} as NotificationStats["byChannel"]
+			{} as NotificationStats["byChannel"],
 		);
 
 		// Calculate stats by priority
-		const priorities: NotificationChannel["priority"][] = ["low", "medium", "high", "critical"];
+		const priorities: NotificationChannel["priority"][] = [
+			"low",
+			"medium",
+			"high",
+			"critical",
+		];
 		const byPriority = priorities.reduce(
 			(acc, priority) => {
-				const priorityMessages = filteredMessages.filter((msg) => msg.priority === priority);
-				const sent = priorityMessages.filter((msg) => msg.status !== "pending").length;
-				const delivered = priorityMessages.filter((msg) => msg.status === "delivered" || msg.status === "read").length;
-				const failed = priorityMessages.filter((msg) => msg.status === "failed").length;
+				const priorityMessages = filteredMessages.filter(
+					(msg) => msg.priority === priority,
+				);
+				const sent = priorityMessages.filter(
+					(msg) => msg.status !== "pending",
+				).length;
+				const delivered = priorityMessages.filter(
+					(msg) => msg.status === "delivered" || msg.status === "read",
+				).length;
+				const failed = priorityMessages.filter(
+					(msg) => msg.status === "failed",
+				).length;
 
 				acc[priority] = {
 					sent,
@@ -341,7 +408,7 @@ class MockNotificationService {
 				};
 				return acc;
 			},
-			{} as NotificationStats["byPriority"]
+			{} as NotificationStats["byPriority"],
 		);
 
 		return {
@@ -358,7 +425,9 @@ class MockNotificationService {
 	} /**
 	 * Create or update a notification template
 	 */
-	async createTemplate(template: Omit<NotificationTemplate, "id">): Promise<NotificationTemplate> {
+	async createTemplate(
+		template: Omit<NotificationTemplate, "id">,
+	): Promise<NotificationTemplate> {
 		const newTemplate: NotificationTemplate = {
 			...template,
 			id: `tpl_${Date.now()}_${Math.random().toString(36).substring(2)}`,
@@ -387,7 +456,9 @@ class MockNotificationService {
 	 */
 	async processPendingNotifications(): Promise<void> {
 		const pendingMessages = this.messages.filter(
-			(msg) => msg.status === "pending" && (!msg.scheduledAt || msg.scheduledAt <= new Date())
+			(msg) =>
+				msg.status === "pending" &&
+				(!msg.scheduledAt || msg.scheduledAt <= new Date()),
 		);
 
 		for (const message of pendingMessages) {
@@ -458,7 +529,13 @@ class MockNotificationService {
 				type: "medical_alert",
 				subject: "URGENT: Critical Medical Alert - {{patientName}}",
 				body: "Critical medical alert for patient {{patientName}} (ID: {{patientId}}).\n\nAlert: {{alertMessage}}\n\nImmediate attention required.\n\nTime: {{timestamp}}\nProvider: {{providerName}}",
-				variables: ["patientName", "patientId", "alertMessage", "timestamp", "providerName"],
+				variables: [
+					"patientName",
+					"patientId",
+					"alertMessage",
+					"timestamp",
+					"providerName",
+				],
 				channels: ["sms", "email", "push"],
 				priority: "critical",
 			},
@@ -467,7 +544,13 @@ class MockNotificationService {
 				type: "appointment_reminder",
 				subject: "Appointment Reminder - {{appointmentDate}}",
 				body: "Hello {{patientName}},\n\nThis is a reminder for your upcoming appointment:\n\nDate: {{appointmentDate}}\nTime: {{appointmentTime}}\nProvider: {{providerName}}\nLocation: {{location}}\n\nPlease confirm your attendance or reschedule if needed.",
-				variables: ["patientName", "appointmentDate", "appointmentTime", "providerName", "location"],
+				variables: [
+					"patientName",
+					"appointmentDate",
+					"appointmentTime",
+					"providerName",
+					"location",
+				],
 				channels: ["email", "sms", "in_app"],
 				priority: "medium",
 			},
@@ -517,7 +600,7 @@ class MockNotificationService {
 
 	private selectOptimalChannel(
 		availableChannels: NotificationChannel["type"][],
-		userPrefs?: NotificationPreferences | null
+		userPrefs?: NotificationPreferences | null,
 	): NotificationChannel["type"] {
 		if (userPrefs) {
 			// Use user preferences
@@ -528,7 +611,13 @@ class MockNotificationService {
 			}
 		} else {
 			// Default priority: push > email > sms > in_app > webhook
-			const priorityOrder: NotificationChannel["type"][] = ["push", "email", "sms", "in_app", "webhook"];
+			const priorityOrder: NotificationChannel["type"][] = [
+				"push",
+				"email",
+				"sms",
+				"in_app",
+				"webhook",
+			];
 			for (const channel of priorityOrder) {
 				if (availableChannels.includes(channel)) {
 					return channel;
@@ -540,7 +629,10 @@ class MockNotificationService {
 		return availableChannels[0] || "email";
 	}
 
-	private processTemplate(template: string, variables: Record<string, string>): string {
+	private processTemplate(
+		template: string,
+		variables: Record<string, string>,
+	): string {
 		let processed = template;
 
 		for (const [key, value] of Object.entries(variables)) {
@@ -551,10 +643,14 @@ class MockNotificationService {
 		return processed;
 	}
 
-	private async processPendingMessage(message: NotificationMessage): Promise<void> {
+	private async processPendingMessage(
+		message: NotificationMessage,
+	): Promise<void> {
 		try {
 			// Simulate network delay
-			await new Promise((resolve) => setTimeout(resolve, Math.random() * 100 + 50));
+			await new Promise((resolve) =>
+				setTimeout(resolve, Math.random() * 100 + 50),
+			);
 
 			// Simulate delivery success/failure (95% success rate)
 			const success = Math.random() > 0.05;
@@ -570,7 +666,7 @@ class MockNotificationService {
 							message.status = "delivered";
 							message.deliveredAt = new Date();
 						},
-						Math.random() * 5000 + 1000
+						Math.random() * 5000 + 1000,
 					); // 1-6 seconds
 				}
 			} else {
@@ -579,7 +675,9 @@ class MockNotificationService {
 			}
 		} catch (error) {
 			message.status = "failed";
-			message.errors.push(error instanceof Error ? error.message : "Unknown error");
+			message.errors.push(
+				error instanceof Error ? error.message : "Unknown error",
+			);
 		}
 	}
 }

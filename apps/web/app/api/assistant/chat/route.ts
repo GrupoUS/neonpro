@@ -42,7 +42,10 @@ export async function POST(request: NextRequest) {
 				.single();
 
 			if (convError || !existingConversation) {
-				return NextResponse.json({ error: "Conversation not found" }, { status: 404 });
+				return NextResponse.json(
+					{ error: "Conversation not found" },
+					{ status: 404 },
+				);
 			}
 			conversation = existingConversation;
 		} else {
@@ -59,7 +62,10 @@ export async function POST(request: NextRequest) {
 				.single();
 
 			if (createError || !newConversation) {
-				return NextResponse.json({ error: "Failed to create conversation" }, { status: 500 });
+				return NextResponse.json(
+					{ error: "Failed to create conversation" },
+					{ status: 500 },
+				);
 			}
 			conversation = newConversation;
 		}
@@ -89,7 +95,7 @@ export async function POST(request: NextRequest) {
         service,
         notes,
         patients!inner(name, phone)
-      `
+      `,
 			)
 			.eq("user_id", user.id)
 			.order("date_time", { ascending: false })
@@ -115,7 +121,7 @@ CONTEXTO RECENTE: ${
 ${recentAppointments
 	.map(
 		(apt) =>
-			`- ${apt.date_time}: ${(apt.patients as any)?.name || "Nome não informado"} - ${apt.service || "Serviço não informado"} (${apt.status})`
+			`- ${apt.date_time}: ${(apt.patients as any)?.name || "Nome não informado"} - ${apt.service || "Serviço não informado"} (${apt.status})`,
 	)
 	.join("\n")}`
 				: "Nenhum agendamento recente encontrado."
@@ -171,7 +177,10 @@ Seja sempre útil, preciso e contextualmente relevante para a gestão de clínic
 
 		return result.toTextStreamResponse();
 	} catch (_error) {
-		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+		return NextResponse.json(
+			{ error: "Internal server error" },
+			{ status: 500 },
+		);
 	}
 }
 

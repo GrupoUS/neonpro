@@ -5,8 +5,20 @@ import { useMemo, useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 
 import type { Schedule, ScheduleConflict } from "@/types/team-coordination"; // Mock schedule data for the current week
 
@@ -64,7 +76,11 @@ const mockScheduleData: Schedule[] = [
 		noShowReason: null,
 		notes: "Plantão noturno - cobertura emergência",
 		handoffNotes: "Atenção para casos de trauma",
-		emergencyProtocols: ["trauma-protocol", "cardiac-arrest", "stroke-protocol"],
+		emergencyProtocols: [
+			"trauma-protocol",
+			"cardiac-arrest",
+			"stroke-protocol",
+		],
 		createdAt: new Date("2024-08-20"),
 		updatedAt: new Date("2024-08-21"),
 		createdBy: "admin-001",
@@ -92,7 +108,8 @@ const mockScheduleData: Schedule[] = [
 		actualEndTime: null,
 		noShowReason: null,
 		notes: "Cuidados intensivos - pacientes críticos",
-		handoffNotes: "Paciente leito 05: ventilação mecânica, monitorar gasometria",
+		handoffNotes:
+			"Paciente leito 05: ventilação mecânica, monitorar gasometria",
 		emergencyProtocols: ["icu-emergency", "ventilator-emergency"],
 		createdAt: new Date("2024-08-20"),
 		updatedAt: new Date("2024-08-21"),
@@ -138,9 +155,11 @@ const mockConflicts: ScheduleConflict[] = [
 		id: "conflict-001",
 		type: "clt_violation",
 		severity: "high",
-		description: "Dr. Roberto Oliveira excedendo limite semanal de 44h (46h programadas)",
+		description:
+			"Dr. Roberto Oliveira excedendo limite semanal de 44h (46h programadas)",
 		affectedSchedules: ["sched-002"],
-		suggestedResolution: "Redistribuir 2h para outro profissional ou aprovar horas extras",
+		suggestedResolution:
+			"Redistribuir 2h para outro profissional ou aprovar horas extras",
 		resolutionRequired: true,
 		resolvedAt: null,
 		resolvedBy: null,
@@ -150,7 +169,8 @@ const mockConflicts: ScheduleConflict[] = [
 		id: "conflict-002",
 		type: "equipment_conflict",
 		severity: "medium",
-		description: "Monitor ECG-001 atribuído para 2 profissionais no mesmo horário",
+		description:
+			"Monitor ECG-001 atribuído para 2 profissionais no mesmo horário",
 		affectedSchedules: ["sched-001", "sched-004"],
 		suggestedResolution: "Realocar equipamento ou usar monitor alternativo",
 		resolutionRequired: true,
@@ -201,24 +221,32 @@ type SchedulingSystemProps = {
 	emergencyMode?: boolean;
 };
 
-export function SchedulingSystem({ emergencyMode = false }: SchedulingSystemProps) {
+export function SchedulingSystem({
+	emergencyMode = false,
+}: SchedulingSystemProps) {
 	const [currentWeek, setCurrentWeek] = useState(new Date());
 	const [selectedDepartment, setSelectedDepartment] = useState<string>("all");
 	const [viewMode, setViewMode] = useState<"week" | "day">("week");
 	const [draggedSchedule, setDraggedSchedule] = useState<Schedule | null>(null);
 	const [showConflicts, setShowConflicts] = useState(true);
 	const [_isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-	const [_selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(null); // Filter schedules by department
+	const [_selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(
+		null,
+	); // Filter schedules by department
 	const filteredSchedules = useMemo(() => {
 		if (selectedDepartment === "all") {
 			return mockScheduleData;
 		}
-		return mockScheduleData.filter((schedule) => schedule.department === selectedDepartment);
+		return mockScheduleData.filter(
+			(schedule) => schedule.department === selectedDepartment,
+		);
 	}, [selectedDepartment]);
 
 	// Get unique departments
 	const departments = useMemo(() => {
-		return Array.from(new Set(mockScheduleData.map((schedule) => schedule.department)));
+		return Array.from(
+			new Set(mockScheduleData.map((schedule) => schedule.department)),
+		);
 	}, []);
 
 	// Generate week dates
@@ -251,7 +279,8 @@ export function SchedulingSystem({ emergencyMode = false }: SchedulingSystemProp
 		const newStartTime = new Date(targetDate);
 		newStartTime.setHours(targetHour, 0, 0, 0);
 
-		const duration = draggedSchedule.endTime.getTime() - draggedSchedule.startTime.getTime();
+		const duration =
+			draggedSchedule.endTime.getTime() - draggedSchedule.startTime.getTime();
 		const _newEndTime = new Date(newStartTime.getTime() + duration);
 
 		// TODO: Implement actual schedule update logic
@@ -263,7 +292,9 @@ export function SchedulingSystem({ emergencyMode = false }: SchedulingSystemProp
 			<div className="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
 				<div>
 					<h2 className="font-bold text-2xl">Gestão de Escalas</h2>
-					<p className="text-muted-foreground">Sistema de escalas com compliance CLT e protocolos de emergência</p>
+					<p className="text-muted-foreground">
+						Sistema de escalas com compliance CLT e protocolos de emergência
+					</p>
 				</div>
 
 				<div className="flex items-center space-x-2">
@@ -287,7 +318,9 @@ export function SchedulingSystem({ emergencyMode = false }: SchedulingSystemProp
 			<Card>
 				<CardHeader>
 					<CardTitle className="text-lg">Controles de Visualização</CardTitle>
-					<CardDescription>Navegue pela semana e filtre por departamento</CardDescription>
+					<CardDescription>
+						Navegue pela semana e filtre por departamento
+					</CardDescription>
 				</CardHeader>
 				<CardContent>
 					<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -328,7 +361,10 @@ export function SchedulingSystem({ emergencyMode = false }: SchedulingSystemProp
 							</Button>
 						</div>{" "}
 						{/* Department Filter */}
-						<Select onValueChange={setSelectedDepartment} value={selectedDepartment}>
+						<Select
+							onValueChange={setSelectedDepartment}
+							value={selectedDepartment}
+						>
 							<SelectTrigger>
 								<SelectValue placeholder="Filtrar Departamento" />
 							</SelectTrigger>
@@ -342,7 +378,10 @@ export function SchedulingSystem({ emergencyMode = false }: SchedulingSystemProp
 							</SelectContent>
 						</Select>
 						{/* View Mode */}
-						<Select onValueChange={(value) => setViewMode(value as "week" | "day")} value={viewMode}>
+						<Select
+							onValueChange={(value) => setViewMode(value as "week" | "day")}
+							value={viewMode}
+						>
 							<SelectTrigger>
 								<SelectValue placeholder="Modo de Visualização" />
 							</SelectTrigger>
@@ -396,14 +435,28 @@ export function SchedulingSystem({ emergencyMode = false }: SchedulingSystemProp
 								>
 									<div className="space-y-2">
 										<div className="flex items-center justify-between">
-											<span className="font-medium text-sm">{conflict.description}</span>
-											<Badge variant={conflict.severity === "high" ? "destructive" : "secondary"}>
+											<span className="font-medium text-sm">
+												{conflict.description}
+											</span>
+											<Badge
+												variant={
+													conflict.severity === "high"
+														? "destructive"
+														: "secondary"
+												}
+											>
 												{conflict.type}
 											</Badge>
 										</div>
-										<p className="text-xs opacity-80">Sugestão: {conflict.suggestedResolution}</p>
+										<p className="text-xs opacity-80">
+											Sugestão: {conflict.suggestedResolution}
+										</p>
 										<div className="flex items-center space-x-2">
-											<Button className="h-6 text-xs" size="sm" variant="outline">
+											<Button
+												className="h-6 text-xs"
+												size="sm"
+												variant="outline"
+											>
 												Resolver
 											</Button>
 											<Button className="h-6 text-xs" size="sm" variant="ghost">
@@ -422,16 +475,22 @@ export function SchedulingSystem({ emergencyMode = false }: SchedulingSystemProp
 				<CardHeader>
 					<CardTitle className="text-lg">Escala Semanal</CardTitle>
 					<CardDescription>
-						Arraste e solte para reorganizar turnos. Sistema valida automaticamente compliance CLT.
+						Arraste e solte para reorganizar turnos. Sistema valida
+						automaticamente compliance CLT.
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
 					<div className="overflow-x-auto">
 						<div className="grid min-w-[800px] grid-cols-8 gap-1">
 							{/* Header Row */}
-							<div className="bg-muted p-2 text-center font-medium text-sm">Horário</div>
+							<div className="bg-muted p-2 text-center font-medium text-sm">
+								Horário
+							</div>
 							{weekDates.map((date, index) => (
-								<div className="bg-muted p-2 text-center font-medium text-sm" key={index}>
+								<div
+									className="bg-muted p-2 text-center font-medium text-sm"
+									key={index}
+								>
 									<div>{weekDays[index]}</div>
 									<div className="text-muted-foreground text-xs">
 										{date.toLocaleDateString("pt-BR", {
@@ -446,19 +505,30 @@ export function SchedulingSystem({ emergencyMode = false }: SchedulingSystemProp
 							{timeSlots.map((timeSlot, hourIndex) => (
 								<div className="contents" key={timeSlot}>
 									{/* Time Column */}
-									<div className="border bg-background p-2 text-center text-xs">{timeSlot}</div>
+									<div className="border bg-background p-2 text-center text-xs">
+										{timeSlot}
+									</div>
 
 									{/* Day Columns */}
 									{weekDates.map((date, dayIndex) => {
 										// Find schedules that overlap with this time slot
-										const daySchedules = filteredSchedules.filter((schedule) => {
-											const scheduleDate = new Date(schedule.startTime);
-											const isSameDay = scheduleDate.toDateString() === date.toDateString();
-											const scheduleHour = scheduleDate.getHours();
-											const scheduleEndHour = new Date(schedule.endTime).getHours();
+										const daySchedules = filteredSchedules.filter(
+											(schedule) => {
+												const scheduleDate = new Date(schedule.startTime);
+												const isSameDay =
+													scheduleDate.toDateString() === date.toDateString();
+												const scheduleHour = scheduleDate.getHours();
+												const scheduleEndHour = new Date(
+													schedule.endTime,
+												).getHours();
 
-											return isSameDay && hourIndex >= scheduleHour && hourIndex < scheduleEndHour;
-										});
+												return (
+													isSameDay &&
+													hourIndex >= scheduleHour &&
+													hourIndex < scheduleEndHour
+												);
+											},
+										);
 
 										return (
 											<div
@@ -469,16 +539,21 @@ export function SchedulingSystem({ emergencyMode = false }: SchedulingSystemProp
 											>
 												{/* Render schedule blocks */}
 												{daySchedules.map((schedule) => {
-													const staff = mockStaffForScheduling.find((s) => s.id === schedule.professionalId);
+													const staff = mockStaffForScheduling.find(
+														(s) => s.id === schedule.professionalId,
+													);
 													const shiftInfo = shiftTypeInfo[schedule.shiftType];
-													const isFirstHourOfShift = new Date(schedule.startTime).getHours() === hourIndex;
+													const isFirstHourOfShift =
+														new Date(schedule.startTime).getHours() ===
+														hourIndex;
 
 													if (!isFirstHourOfShift) {
 														return null; // Only render on first hour
 													}
 
 													const durationHours =
-														(new Date(schedule.endTime).getTime() - new Date(schedule.startTime).getTime()) /
+														(new Date(schedule.endTime).getTime() -
+															new Date(schedule.startTime).getTime()) /
 														(1000 * 60 * 60);
 
 													return (
@@ -497,14 +572,25 @@ export function SchedulingSystem({ emergencyMode = false }: SchedulingSystemProp
 																zIndex: 10,
 															}}
 														>
-															<div className="truncate font-medium text-xs">{staff?.name || "Profissional"}</div>
-															<div className="truncate text-muted-foreground text-xs">{schedule.location}</div>
+															<div className="truncate font-medium text-xs">
+																{staff?.name || "Profissional"}
+															</div>
+															<div className="truncate text-muted-foreground text-xs">
+																{schedule.location}
+															</div>
 															<div className="mt-1 flex items-center space-x-1">
-																<Badge className="px-1 py-0 text-xs" variant="outline">
+																<Badge
+																	className="px-1 py-0 text-xs"
+																	variant="outline"
+																>
 																	{shiftInfo.label}
 																</Badge>
-																{schedule.isOvertimeShift && <AlertTriangle className="h-3 w-3 text-yellow-600" />}
-																{schedule.isEmergencyShift && <Shield className="h-3 w-3 text-red-600" />}
+																{schedule.isOvertimeShift && (
+																	<AlertTriangle className="h-3 w-3 text-yellow-600" />
+																)}
+																{schedule.isEmergencyShift && (
+																	<Shield className="h-3 w-3 text-red-600" />
+																)}
 															</div>
 														</div>
 													);

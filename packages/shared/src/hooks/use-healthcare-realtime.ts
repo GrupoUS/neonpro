@@ -21,7 +21,7 @@ export function usePatientRealtime(
 		clinicId?: string;
 		enabled?: boolean;
 		onPatientUpdate?: (patient: any) => void;
-	}
+	},
 ) {
 	const filter = options.patientId
 		? `id=eq.${options.patientId}`
@@ -32,7 +32,9 @@ export function usePatientRealtime(
 	const config: UseRealtimeQueryConfig = {
 		table: "patients",
 		...(filter && { filter }),
-		queryKey: ["patients", options.patientId, options.clinicId].filter(Boolean) as string[],
+		queryKey: ["patients", options.patientId, options.clinicId].filter(
+			Boolean,
+		) as string[],
 		enabled: options.enabled ?? true,
 		lgpdCompliance: true,
 		auditLogging: true,
@@ -61,7 +63,7 @@ export function useAppointmentRealtime(
 		dateRange?: { start: string; end: string };
 		enabled?: boolean;
 		onAppointmentUpdate?: (appointment: any) => void;
-	}
+	},
 ) {
 	const buildFilter = useCallback(() => {
 		const filters = [];
@@ -89,9 +91,12 @@ export function useAppointmentRealtime(
 	const config: UseRealtimeQueryConfig = {
 		table: "appointments",
 		filter: buildFilter(),
-		queryKey: ["appointments", options.appointmentId, options.patientId, options.professionalId].filter(
-			Boolean
-		) as string[],
+		queryKey: [
+			"appointments",
+			options.appointmentId,
+			options.patientId,
+			options.professionalId,
+		].filter(Boolean) as string[],
 		enabled: options.enabled ?? true,
 		lgpdCompliance: true,
 		auditLogging: true,
@@ -120,7 +125,7 @@ export function useProfessionalRealtime(
 		specialty?: string;
 		enabled?: boolean;
 		onProfessionalUpdate?: (professional: any) => void;
-	}
+	},
 ) {
 	const buildFilter = useCallback(() => {
 		const filters = [];
@@ -141,7 +146,11 @@ export function useProfessionalRealtime(
 	const config: UseRealtimeQueryConfig = {
 		table: "professionals",
 		filter: buildFilter(),
-		queryKey: ["professionals", options.professionalId, options.clinicId].filter(Boolean) as string[],
+		queryKey: [
+			"professionals",
+			options.professionalId,
+			options.clinicId,
+		].filter(Boolean) as string[],
 		enabled: options.enabled ?? true,
 		lgpdCompliance: true,
 		auditLogging: true,
@@ -169,7 +178,7 @@ export function useDashboardRealtime(
 		clinicId?: string;
 		enabled?: boolean;
 		onMetricsUpdate?: (metrics: any) => void;
-	}
+	},
 ) {
 	// Listen to multiple tables for dashboard metrics
 	const appointmentsRealtime = useAppointmentRealtime(supabaseClient, {
@@ -200,8 +209,15 @@ export function useDashboardRealtime(
 		appointments: appointmentsRealtime,
 		patients: patientsRealtime,
 		professionals: professionalsRealtime,
-		isConnected: appointmentsRealtime.isConnected || patientsRealtime.isConnected || professionalsRealtime.isConnected,
-		errors: [appointmentsRealtime.error, patientsRealtime.error, professionalsRealtime.error].filter(Boolean),
+		isConnected:
+			appointmentsRealtime.isConnected ||
+			patientsRealtime.isConnected ||
+			professionalsRealtime.isConnected,
+		errors: [
+			appointmentsRealtime.error,
+			patientsRealtime.error,
+			professionalsRealtime.error,
+		].filter(Boolean),
 	};
 }
 
@@ -216,7 +232,7 @@ export function useAuditRealtime(
 		action?: string;
 		enabled?: boolean;
 		onAuditUpdate?: (audit: any) => void;
-	}
+	},
 ) {
 	const buildFilter = useCallback(() => {
 		const filters = [];
@@ -238,7 +254,12 @@ export function useAuditRealtime(
 		table: "audit_logs",
 		event: "INSERT", // Only listen to new audit entries
 		filter: buildFilter(),
-		queryKey: ["audit_logs", options.table, options.userId, options.action].filter(Boolean) as string[],
+		queryKey: [
+			"audit_logs",
+			options.table,
+			options.userId,
+			options.action,
+		].filter(Boolean) as string[],
 		enabled: options.enabled ?? true,
 		lgpdCompliance: true,
 		auditLogging: false, // Don't audit the audit logs

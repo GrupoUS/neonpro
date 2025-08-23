@@ -111,7 +111,7 @@ export class LGPDDataProcessor {
 	 */
 	static anonymizePayload(
 		payload: RealtimePostgresChangesPayload<any>,
-		config: LGPDRealtimeConfig
+		config: LGPDRealtimeConfig,
 	): RealtimePostgresChangesPayload<any> {
 		if (!config.anonymization) {
 			return payload;
@@ -120,11 +120,17 @@ export class LGPDDataProcessor {
 		const anonymized = { ...payload };
 
 		if (anonymized.new) {
-			anonymized.new = LGPDDataProcessor.anonymizeFields(anonymized.new, config.sensitiveFields);
+			anonymized.new = LGPDDataProcessor.anonymizeFields(
+				anonymized.new,
+				config.sensitiveFields,
+			);
 		}
 
 		if (anonymized.old) {
-			anonymized.old = LGPDDataProcessor.anonymizeFields(anonymized.old, config.sensitiveFields);
+			anonymized.old = LGPDDataProcessor.anonymizeFields(
+				anonymized.old,
+				config.sensitiveFields,
+			);
 		}
 
 		return anonymized;
@@ -135,7 +141,7 @@ export class LGPDDataProcessor {
 	 */
 	static pseudonymizePayload(
 		payload: RealtimePostgresChangesPayload<any>,
-		config: LGPDRealtimeConfig
+		config: LGPDRealtimeConfig,
 	): RealtimePostgresChangesPayload<any> {
 		if (!config.pseudonymization) {
 			return payload;
@@ -144,11 +150,17 @@ export class LGPDDataProcessor {
 		const pseudonymized = { ...payload };
 
 		if (pseudonymized.new) {
-			pseudonymized.new = LGPDDataProcessor.pseudonymizeFields(pseudonymized.new, config.sensitiveFields);
+			pseudonymized.new = LGPDDataProcessor.pseudonymizeFields(
+				pseudonymized.new,
+				config.sensitiveFields,
+			);
 		}
 
 		if (pseudonymized.old) {
-			pseudonymized.old = LGPDDataProcessor.pseudonymizeFields(pseudonymized.old, config.sensitiveFields);
+			pseudonymized.old = LGPDDataProcessor.pseudonymizeFields(
+				pseudonymized.old,
+				config.sensitiveFields,
+			);
 		}
 
 		return pseudonymized;
@@ -159,16 +171,22 @@ export class LGPDDataProcessor {
 	 */
 	static minimizeData(
 		payload: RealtimePostgresChangesPayload<any>,
-		allowedFields: string[]
+		allowedFields: string[],
 	): RealtimePostgresChangesPayload<any> {
 		const minimized = { ...payload };
 
 		if (minimized.new) {
-			minimized.new = LGPDDataProcessor.extractFields(minimized.new, allowedFields);
+			minimized.new = LGPDDataProcessor.extractFields(
+				minimized.new,
+				allowedFields,
+			);
 		}
 
 		if (minimized.old) {
-			minimized.old = LGPDDataProcessor.extractFields(minimized.old, allowedFields);
+			minimized.old = LGPDDataProcessor.extractFields(
+				minimized.old,
+				allowedFields,
+			);
 		}
 
 		return minimized;
@@ -183,14 +201,19 @@ export class LGPDDataProcessor {
 
 		// Auto-detect sensitive fields
 		const detectedSensitiveFields = Object.keys(data).filter((field) =>
-			LGPDDataProcessor.SENSITIVE_FIELD_PATTERNS.some((pattern) => field.toLowerCase().includes(pattern.toLowerCase()))
+			LGPDDataProcessor.SENSITIVE_FIELD_PATTERNS.some((pattern) =>
+				field.toLowerCase().includes(pattern.toLowerCase()),
+			),
 		);
 
 		const fieldsToAnonymize = [...sensitiveFields, ...detectedSensitiveFields];
 
 		fieldsToAnonymize.forEach((field) => {
 			if (field in anonymized) {
-				anonymized[field] = LGPDDataProcessor.generateAnonymousValue(field, anonymized[field]);
+				anonymized[field] = LGPDDataProcessor.generateAnonymousValue(
+					field,
+					anonymized[field],
+				);
 			}
 		});
 
@@ -206,7 +229,10 @@ export class LGPDDataProcessor {
 
 		sensitiveFields.forEach((field) => {
 			if (field in pseudonymized) {
-				pseudonymized[field] = LGPDDataProcessor.generatePseudonym(field, pseudonymized[field]);
+				pseudonymized[field] = LGPDDataProcessor.generatePseudonym(
+					field,
+					pseudonymized[field],
+				);
 			}
 		});
 
@@ -229,13 +255,20 @@ export class LGPDDataProcessor {
 		return extracted;
 	}
 
-	private static generateAnonymousValue(fieldName: string, originalValue: any): string {
+	private static generateAnonymousValue(
+		fieldName: string,
+		originalValue: any,
+	): string {
 		const fieldLower = fieldName.toLowerCase();
 
 		if (fieldLower.includes("email")) {
 			return "***@***.***";
 		}
-		if (fieldLower.includes("phone") || fieldLower.includes("telefone") || fieldLower.includes("celular")) {
+		if (
+			fieldLower.includes("phone") ||
+			fieldLower.includes("telefone") ||
+			fieldLower.includes("celular")
+		) {
 			return "***-***-****";
 		}
 		if (fieldLower.includes("cpf")) {
@@ -252,10 +285,15 @@ export class LGPDDataProcessor {
 		}
 
 		// Generic anonymization
-		return typeof originalValue === "string" ? "*".repeat(Math.min(originalValue.length, 10)) : "***PROTECTED***";
+		return typeof originalValue === "string"
+			? "*".repeat(Math.min(originalValue.length, 10))
+			: "***PROTECTED***";
 	}
 
-	private static generatePseudonym(fieldName: string, originalValue: any): string {
+	private static generatePseudonym(
+		fieldName: string,
+		originalValue: any,
+	): string {
 		// Simple hash-based pseudonymization (in production, use proper cryptographic methods)
 		const hash = LGPDDataProcessor.simpleHash(String(originalValue));
 		const fieldLower = fieldName.toLowerCase();
@@ -289,7 +327,10 @@ export class LGPDDataProcessor {
 
 // LGPD consent validator
 export class LGPDConsentValidator {
-	private static consentCache = new Map<string, { status: LGPDConsentStatus; expiresAt?: Date }>();
+	private static consentCache = new Map<
+		string,
+		{ status: LGPDConsentStatus; expiresAt?: Date }
+	>();
 
 	/**
 	 * Validate consent for real-time data processing
@@ -297,7 +338,7 @@ export class LGPDConsentValidator {
 	static async validateConsent(
 		userId: string,
 		processingPurpose: LGPDProcessingPurpose,
-		dataCategory: LGPDDataCategory
+		dataCategory: LGPDDataCategory,
 	): Promise<{
 		valid: boolean;
 		status: LGPDConsentStatus;
@@ -320,7 +361,11 @@ export class LGPDConsentValidator {
 
 		// In a real implementation, this would check the database
 		// For now, we'll simulate consent validation
-		const result = await LGPDConsentValidator.checkConsentInDatabase(userId, processingPurpose, dataCategory);
+		const result = await LGPDConsentValidator.checkConsentInDatabase(
+			userId,
+			processingPurpose,
+			dataCategory,
+		);
 
 		// Cache the result
 		LGPDConsentValidator.consentCache.set(cacheKey, {
@@ -338,7 +383,7 @@ export class LGPDConsentValidator {
 	private static async checkConsentInDatabase(
 		_userId: string,
 		processingPurpose: LGPDProcessingPurpose,
-		_dataCategory: LGPDDataCategory
+		_dataCategory: LGPDDataCategory,
 	): Promise<{
 		status: LGPDConsentStatus;
 		expiresAt?: Date;
@@ -366,10 +411,12 @@ export class LGPDConsentValidator {
 	 * Clear consent cache for a user (when consent is revoked)
 	 */
 	static clearConsentCache(userId: string) {
-		const keysToDelete = Array.from(LGPDConsentValidator.consentCache.keys()).filter((key) =>
-			key.startsWith(`${userId}:`)
-		);
+		const keysToDelete = Array.from(
+			LGPDConsentValidator.consentCache.keys(),
+		).filter((key) => key.startsWith(`${userId}:`));
 
-		keysToDelete.forEach((key) => LGPDConsentValidator.consentCache.delete(key));
+		keysToDelete.forEach((key) =>
+			LGPDConsentValidator.consentCache.delete(key),
+		);
 	}
 }

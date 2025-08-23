@@ -11,10 +11,10 @@ import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
 	// Constitutional test directory structure
-	testDir: "./tools/testing/e2e",
+	testDir: "./tools/testing/e2e/tests",
 
 	// Optimized test patterns - E2E ONLY
-	testMatch: ["**/tests/**/*.spec.ts", "**/e2e/**/*.spec.ts", "**/*.spec.ts"],
+	testMatch: ["**/*.spec.ts"],
 
 	// EXCLUDE PATTERNS - SYNCHRONIZED WITH BIOME.JSON
 	testIgnore: [
@@ -107,12 +107,10 @@ export default defineConfig({
 		timeout: 10_000, // 10 seconds for assertions
 		toHaveScreenshot: {
 			threshold: 0.2,
-			mode: "pixelDiff",
 			animations: "disabled", // Faster screenshot comparison
 		},
 		toMatchSnapshot: {
 			threshold: 0.2,
-			animations: "disabled",
 		},
 	},
 
@@ -136,7 +134,6 @@ export default defineConfig({
 		trace: process.env.CI ? "retain-on-failure" : "on-first-retry", // Selective tracing
 
 		// Modern browser features
-		channel: "chrome",
 		locale: "pt-BR",
 		timezoneId: "America/Sao_Paulo",
 
@@ -146,10 +143,7 @@ export default defineConfig({
 		permissions: [],
 
 		// Optimized for SPA applications
-		waitForLoadState: "domcontentloaded", // Faster than 'load'
 	},
-
-	// 🚀 CONSTITUTIONAL PROJECT STRUCTURE
 	projects: [
 		{
 			name: "chromium-desktop",
@@ -157,7 +151,6 @@ export default defineConfig({
 				...devices["Desktop Chrome"],
 				viewport: { width: 1920, height: 1080 },
 			},
-			testDir: "./tools/testing/e2e/tests",
 		},
 
 		{
@@ -173,7 +166,6 @@ export default defineConfig({
 			use: {
 				...devices["Desktop Safari"],
 			},
-			testDir: "./tools/testing/e2e/tests",
 			testIgnore: ["**/heavy-performance/**"], // Skip heavy tests on WebKit
 		},
 
@@ -182,22 +174,28 @@ export default defineConfig({
 			use: {
 				...devices["Desktop Firefox"],
 			},
-			testDir: "./tools/testing/e2e/tests",
 			testIgnore: ["**/heavy-performance/**"], // Skip heavy tests on Firefox
 		},
 	],
 
 	// Development server configuration
-	webServer: {
-		command: "pnpm dev",
-		port: 3000,
-		reuseExistingServer: !process.env.CI,
-		timeout: 120_000, // 2 minutes for dev server startup
-		env: {
-			NODE_ENV: "test",
-			NEXT_TELEMETRY_DISABLED: "1",
-		},
-	},
+	// DISABLED: webServer disabled to prevent startup issues
+	// To enable: Set environment variable PLAYWRIGHT_START_SERVER=true
+	// Example: PLAYWRIGHT_START_SERVER=true npx playwright test
+	...(process.env.PLAYWRIGHT_START_SERVER === "true"
+		? {
+				webServer: {
+					command: "pnpm dev:web", // Updated to target specific web app
+					port: 3000,
+					reuseExistingServer: !process.env.CI,
+					timeout: 120_000, // 2 minutes for dev server startup
+					env: {
+						NODE_ENV: "test",
+						NEXT_TELEMETRY_DISABLED: "1",
+					},
+				},
+			}
+		: {}),
 });
 
 /**

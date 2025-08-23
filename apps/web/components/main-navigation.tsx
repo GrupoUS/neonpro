@@ -9,7 +9,17 @@
 "use client";
 
 import { Link, useLocation } from "@tanstack/react-router";
-import { BarChart3, Calendar, Heart, Home, Menu, Settings, Shield, Stethoscope, Users } from "lucide-react";
+import {
+	BarChart3,
+	Calendar,
+	Heart,
+	Home,
+	Menu,
+	Settings,
+	Shield,
+	Stethoscope,
+	Users,
+} from "lucide-react";
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -33,7 +43,10 @@ export function MainNavigation() {
 
 	// Simple permission checks based on user role
 	const canAccessPatients = () => {
-		return user && ["clinic_owner", "clinic_manager", "professional"].includes(user.role);
+		return (
+			user &&
+			["clinic_owner", "clinic_manager", "professional"].includes(user.role)
+		);
 	};
 
 	const canAccessProfessionals = () => {
@@ -117,18 +130,28 @@ export function MainNavigation() {
 	}, [canAccessCompliance, canAccessPatients, canAccessProfessionals]);
 
 	const isActiveRoute = (href: string) => {
-		return location.pathname === href || location.pathname.startsWith(`${href}/`);
+		return (
+			location.pathname === href || location.pathname.startsWith(`${href}/`)
+		);
 	};
 
-	const NavigationItems = ({ items, mobile = false }: { items: NavigationItem[]; mobile?: boolean }) => (
+	const NavigationItems = ({
+		items,
+		mobile = false,
+	}: {
+		items: NavigationItem[];
+		mobile?: boolean;
+	}) => (
 		<div className={cn("space-y-2", mobile && "w-full")}>
 			{items.map((item) => (
 				<Link
 					className={cn(
 						"flex items-center space-x-3 rounded-lg px-3 py-2 font-medium text-sm transition-colors",
 						"hover:bg-accent hover:text-accent-foreground",
-						isActiveRoute(item.href) ? "bg-accent text-accent-foreground" : "text-muted-foreground",
-						mobile && "w-full"
+						isActiveRoute(item.href)
+							? "bg-accent text-accent-foreground"
+							: "text-muted-foreground",
+						mobile && "w-full",
 					)}
 					key={item.href}
 					onClick={() => mobile && setIsMobileMenuOpen(false)}
@@ -139,12 +162,21 @@ export function MainNavigation() {
 						<div className="flex items-center justify-between">
 							<span className="truncate">{item.label}</span>
 							{item.badge && (
-								<Badge className="ml-2" variant={item.badge === "Crítico" ? "destructive" : "secondary"}>
+								<Badge
+									className="ml-2"
+									variant={
+										item.badge === "Crítico" ? "destructive" : "secondary"
+									}
+								>
 									{item.badge}
 								</Badge>
 							)}
 						</div>
-						{item.description && mobile && <p className="mt-1 text-muted-foreground text-xs">{item.description}</p>}
+						{item.description && mobile && (
+							<p className="mt-1 text-muted-foreground text-xs">
+								{item.description}
+							</p>
+						)}
 					</div>
 				</Link>
 			))}
@@ -246,11 +278,17 @@ export function MainNavigation() {
 							<div className="flex h-full flex-col">
 								{/* Mobile Logo */}
 								<div className="flex h-16 items-center border-b px-6">
-									<Link className="flex items-center space-x-3" onClick={() => setIsMobileMenuOpen(false)} to="/">
+									<Link
+										className="flex items-center space-x-3"
+										onClick={() => setIsMobileMenuOpen(false)}
+										to="/"
+									>
 										<div className="neonpro-gradient flex h-8 w-8 items-center justify-center rounded-lg">
 											<Heart className="h-5 w-5 text-white" />
 										</div>
-										<span className="font-bold text-lg text-primary">NeonPro</span>
+										<span className="font-bold text-lg text-primary">
+											NeonPro
+										</span>
 									</Link>
 								</div>
 

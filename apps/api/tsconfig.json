@@ -1,64 +1,64 @@
 {
-  "compilerOptions": {
-    // Target modern ESNext to match tsup build configuration
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "node",
+	"compilerOptions": {
+		// Target modern ESNext to match tsup build configuration
+		"target": "ESNext",
+		"module": "ESNext",
+		"moduleResolution": "node",
 
-    // ESM and module configurations
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
+		// ESM and module configurations
+		"allowSyntheticDefaultImports": true,
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
 
-    // Strict type checking (healthcare compliance)
-    "strict": true,
-    "noUncheckedIndexedAccess": true,
-    // "exactOptionalPropertyTypes": true, // Temporary disabled - too strict for current codebase
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    // "noUncheckedSideEffectImports": true, // Temporary disabled
+		// Strict type checking (healthcare compliance)
+		"strict": true,
+		"noUncheckedIndexedAccess": true,
+		// "exactOptionalPropertyTypes": true, // Temporary disabled - too strict for current codebase
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true,
+		// "noUncheckedSideEffectImports": true, // Temporary disabled
 
-    // Build configurations
-    "skipLibCheck": true,
-    "declaration": true,
-    "declarationMap": true,
-    "outDir": "./dist",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
+		// Build configurations
+		"skipLibCheck": true,
+		"declaration": true,
+		"declarationMap": true,
+		"outDir": "./dist",
+		"resolveJsonModule": true,
+		"isolatedModules": true,
 
-    // Type checking only (tsup handles building)
-    "noEmit": true,
+		// Type checking only (tsup handles building)
+		"noEmit": true,
 
-    // Libraries for Node.js environment
-    "lib": ["ESNext"],
-    "types": ["node", "vitest/globals"],
+		// Libraries for Node.js environment
+		"lib": ["ESNext"],
+		"types": ["node", "vitest/globals"],
 
-    // Path mapping
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"],
-      "@/types/*": ["./src/types/*"],
-      "@/lib/*": ["./src/lib/*"],
-      "@/middleware/*": ["./src/middleware/*"],
-      "@/routes/*": ["./src/routes/*"],
-      "@neonpro/shared": ["../../packages/shared/src"],
-      "@neonpro/shared/*": ["../../packages/shared/src/*"],
-      "@neonpro/database": ["../../packages/database/src"],
-      "@neonpro/types": ["../../packages/types/src"]
-    }
-  },
-  "include": [
-    "src/**/*",
-    "src/**/*.json",
-    "vitest.config.ts",
-    "vitest.setup.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.test.ts",
-    "**/*.spec.ts",
-    "main.py",
-    "routers/"
-  ]
+		// Path mapping
+		"baseUrl": ".",
+		"paths": {
+			"@/*": ["./src/*"],
+			"@/types/*": ["./src/types/*"],
+			"@/lib/*": ["./src/lib/*"],
+			"@/middleware/*": ["./src/middleware/*"],
+			"@/routes/*": ["./src/routes/*"],
+			"@neonpro/shared": ["../../packages/shared/src"],
+			"@neonpro/shared/*": ["../../packages/shared/src/*"],
+			"@neonpro/database": ["../../packages/database/src"],
+			"@neonpro/types": ["../../packages/types/src"]
+		}
+	},
+	"include": [
+		"src/**/*",
+		"src/**/*.json",
+		"vitest.config.ts",
+		"vitest.setup.ts"
+	],
+	"exclude": [
+		"node_modules",
+		"dist",
+		"**/*.test.ts",
+		"**/*.spec.ts",
+		"main.py",
+		"routers/"
+	]
 }

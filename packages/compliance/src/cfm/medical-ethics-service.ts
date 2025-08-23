@@ -104,7 +104,12 @@ export type EthicsAudit = {
 	/** Assessment ID being audited */
 	assessment_id: string;
 	/** Action performed on assessment */
-	action: "created" | "updated" | "reviewed" | "approved" | "corrective_action_implemented";
+	action:
+		| "created"
+		| "updated"
+		| "reviewed"
+		| "approved"
+		| "corrective_action_implemented";
 	/** Previous assessment state */
 	previous_state: Partial<MedicalEthicsAssessment>;
 	/** New assessment state */
@@ -206,7 +211,7 @@ export class MedicalEthicsService {
 	async conductEthicsAssessment(
 		params: MedicalEthicsValidationParams,
 		tenantId: string,
-		assessorId: string
+		assessorId: string,
 	): Promise<{
 		success: boolean;
 		data?: MedicalEthicsComplianceResponse;
@@ -214,14 +219,18 @@ export class MedicalEthicsService {
 	}> {
 		try {
 			// Constitutional validation of CFM number
-			const cfmValidation = await this.validateDoctorForEthicsAssessment(params.doctor_cfm_number);
+			const cfmValidation = await this.validateDoctorForEthicsAssessment(
+				params.doctor_cfm_number,
+			);
 			if (!cfmValidation.valid) {
 				return { success: false, error: cfmValidation.error };
 			}
 
 			// Conduct assessment by category
-			const patientAutonomyAssessment = await this.assessPatientAutonomy(params);
-			const professionalConductAssessment = await this.assessProfessionalConduct(params);
+			const patientAutonomyAssessment =
+				await this.assessPatientAutonomy(params);
+			const professionalConductAssessment =
+				await this.assessProfessionalConduct(params);
 			const advertisingAssessment = await this.assessMedicalAdvertising(params);
 			const conflictAssessment = await this.assessConflictOfInterest(params);
 			const educationAssessment = await this.assessContinuingEducation(params);
@@ -268,7 +277,12 @@ export class MedicalEthicsService {
 			};
 
 			// Store assessment record
-			await this.storeEthicsAssessment(params, complianceResponse, tenantId, assessorId);
+			await this.storeEthicsAssessment(
+				params,
+				complianceResponse,
+				tenantId,
+				assessorId,
+			);
 
 			return { success: true, data: complianceResponse };
 		} catch (_error) {
@@ -281,7 +295,9 @@ export class MedicalEthicsService {
 	 * Validate doctor eligibility for ethics assessment
 	 * Constitutional CFM professional validation
 	 */
-	private async validateDoctorForEthicsAssessment(cfmNumber: string): Promise<{ valid: boolean; error?: string }> {
+	private async validateDoctorForEthicsAssessment(
+		cfmNumber: string,
+	): Promise<{ valid: boolean; error?: string }> {
 		try {
 			// Check if doctor has valid CFM license
 			const { data: license, error } = await this.supabase
@@ -322,7 +338,9 @@ export class MedicalEthicsService {
 	 * Assess patient autonomy and informed consent compliance
 	 * Constitutional validation of patient rights and autonomy
 	 */
-	private async assessPatientAutonomy(params: MedicalEthicsValidationParams): Promise<{
+	private async assessPatientAutonomy(
+		params: MedicalEthicsValidationParams,
+	): Promise<{
 		compliant: boolean;
 		score: number;
 		issues: string[];
@@ -354,13 +372,21 @@ export class MedicalEthicsService {
 					corrective_actions: ["Implement proper informed consent procedures"],
 					constitutional_impact: true,
 				});
-				correctiveActions.push("Establish comprehensive informed consent procedures");
+				correctiveActions.push(
+					"Establish comprehensive informed consent procedures",
+				);
 			}
 
 			// Check for shared decision making
-			const sharedDecisionRecords = consentRecords?.filter((record) => record.shared_decision_making === true) || [];
+			const sharedDecisionRecords =
+				consentRecords?.filter(
+					(record) => record.shared_decision_making === true,
+				) || [];
 
-			if (consentRecords && sharedDecisionRecords.length < consentRecords.length * 0.8) {
+			if (
+				consentRecords &&
+				sharedDecisionRecords.length < consentRecords.length * 0.8
+			) {
 				issues.push("Insufficient shared decision making documentation");
 				score -= 1.0;
 				correctiveActions.push("Improve shared decision making practices");
@@ -368,9 +394,14 @@ export class MedicalEthicsService {
 
 			// Check patient decision respect
 			const patientDecisionRespectIssues =
-				consentRecords?.filter((record) => record.patient_decision_overridden === true) || [];
+				consentRecords?.filter(
+					(record) => record.patient_decision_overridden === true,
+				) || [];
 
-			if (patientDecisionRespectIssues.length > (consentRecords?.length || 0) * 0.1) {
+			if (
+				patientDecisionRespectIssues.length >
+				(consentRecords?.length || 0) * 0.1
+			) {
 				issues.push("High rate of patient decision overrides");
 				score -= 1.5;
 				violations.push({
@@ -378,7 +409,9 @@ export class MedicalEthicsService {
 					code_article: "Article 31 - Code of Medical Ethics",
 					violation_description: "Insufficient respect for patient autonomy",
 					severity: "moderate",
-					evidence: [`${patientDecisionRespectIssues.length} cases of decision overrides`],
+					evidence: [
+						`${patientDecisionRespectIssues.length} cases of decision overrides`,
+					],
 					corrective_actions: ["Review patient autonomy procedures"],
 					constitutional_impact: true,
 				});
@@ -408,7 +441,9 @@ export class MedicalEthicsService {
 	 * Assess professional conduct and boundaries compliance
 	 * Constitutional validation of professional behavior standards
 	 */
-	private async assessProfessionalConduct(params: MedicalEthicsValidationParams): Promise<{
+	private async assessProfessionalConduct(
+		params: MedicalEthicsValidationParams,
+	): Promise<{
 		compliant: boolean;
 		score: number;
 		issues: string[];
@@ -429,10 +464,15 @@ export class MedicalEthicsService {
 				.limit(50);
 
 			// Check for boundary violations
-			const boundaryViolations = conductRecords?.filter((record) => record.boundary_violation === true) || [];
+			const boundaryViolations =
+				conductRecords?.filter(
+					(record) => record.boundary_violation === true,
+				) || [];
 
 			if (boundaryViolations.length > 0) {
-				issues.push(`${boundaryViolations.length} professional boundary violations found`);
+				issues.push(
+					`${boundaryViolations.length} professional boundary violations found`,
+				);
 				score -= 3.0;
 				violations.push({
 					violation_id: crypto.randomUUID(),
@@ -443,11 +483,16 @@ export class MedicalEthicsService {
 					corrective_actions: ["Professional conduct training required"],
 					constitutional_impact: true,
 				});
-				correctiveActions.push("Implement professional boundary training program");
+				correctiveActions.push(
+					"Implement professional boundary training program",
+				);
 			}
 
 			// Check professional appearance and behavior
-			const unprofessionalConduct = conductRecords?.filter((record) => record.unprofessional_behavior === true) || [];
+			const unprofessionalConduct =
+				conductRecords?.filter(
+					(record) => record.unprofessional_behavior === true,
+				) || [];
 
 			if (unprofessionalConduct.length > 0) {
 				issues.push("Unprofessional behavior incidents reported");
@@ -465,7 +510,10 @@ export class MedicalEthicsService {
 			}
 
 			// Check patient confidentiality maintenance
-			const confidentialityBreaches = conductRecords?.filter((record) => record.confidentiality_breach === true) || [];
+			const confidentialityBreaches =
+				conductRecords?.filter(
+					(record) => record.confidentiality_breach === true,
+				) || [];
 
 			if (confidentialityBreaches.length > 0) {
 				issues.push("Patient confidentiality breaches detected");
@@ -475,16 +523,26 @@ export class MedicalEthicsService {
 					code_article: "Article 73 - Code of Medical Ethics",
 					violation_description: "Patient confidentiality breach",
 					severity: "critical",
-					evidence: [`${confidentialityBreaches.length} confidentiality breaches`],
-					corrective_actions: ["Mandatory confidentiality training", "Review access controls"],
+					evidence: [
+						`${confidentialityBreaches.length} confidentiality breaches`,
+					],
+					corrective_actions: [
+						"Mandatory confidentiality training",
+						"Review access controls",
+					],
 					constitutional_impact: true,
 				});
-				correctiveActions.push("Immediate confidentiality training and system review");
+				correctiveActions.push(
+					"Immediate confidentiality training and system review",
+				);
 			}
 
 			const finalScore = Math.max(score, 0);
 			const compliant =
-				finalScore >= 9.0 && violations.filter((v) => v.severity === "critical" || v.severity === "major").length === 0;
+				finalScore >= 9.0 &&
+				violations.filter(
+					(v) => v.severity === "critical" || v.severity === "major",
+				).length === 0;
 
 			return {
 				compliant,
@@ -506,7 +564,9 @@ export class MedicalEthicsService {
 	 * Assess medical advertising and marketing compliance
 	 * Constitutional validation of advertising ethics per CFM standards
 	 */
-	private async assessMedicalAdvertising(params: MedicalEthicsValidationParams): Promise<{
+	private async assessMedicalAdvertising(
+		params: MedicalEthicsValidationParams,
+	): Promise<{
 		compliant: boolean;
 		score: number;
 		issues: string[];
@@ -538,7 +598,9 @@ export class MedicalEthicsService {
 			}
 
 			// Check for prohibited content
-			const prohibitedContent = advertisingRecords.filter((record) => record.contains_prohibited_content === true);
+			const prohibitedContent = advertisingRecords.filter(
+				(record) => record.contains_prohibited_content === true,
+			);
 
 			if (prohibitedContent.length > 0) {
 				issues.push("Advertising contains prohibited content");
@@ -548,15 +610,22 @@ export class MedicalEthicsService {
 					code_article: "Article 112 - Code of Medical Ethics",
 					violation_description: "Prohibited content in medical advertising",
 					severity: "major",
-					evidence: [`${prohibitedContent.length} materials with prohibited content`],
-					corrective_actions: ["Remove prohibited content", "Review advertising guidelines"],
+					evidence: [
+						`${prohibitedContent.length} materials with prohibited content`,
+					],
+					corrective_actions: [
+						"Remove prohibited content",
+						"Review advertising guidelines",
+					],
 					constitutional_impact: true,
 				});
 				correctiveActions.push("Review and update all advertising materials");
 			}
 
 			// Check for false or misleading claims
-			const misleadingClaims = advertisingRecords.filter((record) => record.contains_misleading_claims === true);
+			const misleadingClaims = advertisingRecords.filter(
+				(record) => record.contains_misleading_claims === true,
+			);
 
 			if (misleadingClaims.length > 0) {
 				issues.push("Misleading claims in advertising");
@@ -566,24 +635,37 @@ export class MedicalEthicsService {
 					code_article: "Article 113 - Code of Medical Ethics",
 					violation_description: "Misleading claims in medical advertising",
 					severity: "moderate",
-					evidence: [`${misleadingClaims.length} materials with misleading claims`],
-					corrective_actions: ["Correct misleading information", "Implement review process"],
+					evidence: [
+						`${misleadingClaims.length} materials with misleading claims`,
+					],
+					corrective_actions: [
+						"Correct misleading information",
+						"Implement review process",
+					],
 					constitutional_impact: true,
 				});
-				correctiveActions.push("Implement mandatory advertising review process");
+				correctiveActions.push(
+					"Implement mandatory advertising review process",
+				);
 			}
 
 			// Check for proper disclaimers
-			const missingDisclaimers = advertisingRecords.filter((record) => record.has_proper_disclaimers === false);
+			const missingDisclaimers = advertisingRecords.filter(
+				(record) => record.has_proper_disclaimers === false,
+			);
 
 			if (missingDisclaimers.length > 0) {
 				issues.push("Missing proper disclaimers in advertising");
 				score -= 1.0;
-				correctiveActions.push("Add required disclaimers to all advertising materials");
+				correctiveActions.push(
+					"Add required disclaimers to all advertising materials",
+				);
 			}
 
 			// Check for CFM number inclusion
-			const missingCfmNumber = advertisingRecords.filter((record) => record.includes_cfm_number === false);
+			const missingCfmNumber = advertisingRecords.filter(
+				(record) => record.includes_cfm_number === false,
+			);
 
 			if (missingCfmNumber.length > 0) {
 				issues.push("CFM number missing from advertising materials");
@@ -597,12 +679,17 @@ export class MedicalEthicsService {
 					corrective_actions: ["Include CFM number in all advertising"],
 					constitutional_impact: false,
 				});
-				correctiveActions.push("Ensure CFM number appears in all advertising materials");
+				correctiveActions.push(
+					"Ensure CFM number appears in all advertising materials",
+				);
 			}
 
 			const finalScore = Math.max(score, 0);
 			const compliant =
-				finalScore >= 9.0 && violations.filter((v) => v.severity === "critical" || v.severity === "major").length === 0;
+				finalScore >= 9.0 &&
+				violations.filter(
+					(v) => v.severity === "critical" || v.severity === "major",
+				).length === 0;
 
 			return {
 				compliant,
@@ -624,7 +711,9 @@ export class MedicalEthicsService {
 	 * Assess conflict of interest management compliance
 	 * Constitutional validation of conflict disclosure and management
 	 */
-	private async assessConflictOfInterest(params: MedicalEthicsValidationParams): Promise<{
+	private async assessConflictOfInterest(
+		params: MedicalEthicsValidationParams,
+	): Promise<{
 		compliant: boolean;
 		score: number;
 		issues: string[];
@@ -646,8 +735,11 @@ export class MedicalEthicsService {
 
 			// Check for undisclosed conflicts
 			const undisclosedConflicts =
-				conflictRecords?.filter((record) => record.conflict_disclosed === false && record.conflict_exists === true) ||
-				[];
+				conflictRecords?.filter(
+					(record) =>
+						record.conflict_disclosed === false &&
+						record.conflict_exists === true,
+				) || [];
 
 			if (undisclosedConflicts.length > 0) {
 				issues.push("Undisclosed conflicts of interest detected");
@@ -658,31 +750,47 @@ export class MedicalEthicsService {
 					violation_description: "Failure to disclose conflicts of interest",
 					severity: "critical",
 					evidence: [`${undisclosedConflicts.length} undisclosed conflicts`],
-					corrective_actions: ["Immediate disclosure of all conflicts", "Implement conflict management procedures"],
+					corrective_actions: [
+						"Immediate disclosure of all conflicts",
+						"Implement conflict management procedures",
+					],
 					constitutional_impact: true,
 				});
-				correctiveActions.push("Establish comprehensive conflict disclosure procedures");
+				correctiveActions.push(
+					"Establish comprehensive conflict disclosure procedures",
+				);
 			}
 
 			// Check for financial relationships with pharmaceutical companies
 			const pharmaRelationships =
-				conflictRecords?.filter((record) => record.financial_relationship_pharma === true) || [];
+				conflictRecords?.filter(
+					(record) => record.financial_relationship_pharma === true,
+				) || [];
 
 			if (pharmaRelationships.length > 0) {
-				const disclosedPharmaRelationships = pharmaRelationships.filter((record) => record.conflict_disclosed === true);
+				const disclosedPharmaRelationships = pharmaRelationships.filter(
+					(record) => record.conflict_disclosed === true,
+				);
 
 				if (disclosedPharmaRelationships.length < pharmaRelationships.length) {
 					issues.push("Undisclosed pharmaceutical relationships");
 					score -= 2.0;
-					correctiveActions.push("Disclose all pharmaceutical industry relationships");
+					correctiveActions.push(
+						"Disclose all pharmaceutical industry relationships",
+					);
 				}
 			}
 
 			// Check for research conflicts
-			const researchConflicts = conflictRecords?.filter((record) => record.research_conflict === true) || [];
+			const researchConflicts =
+				conflictRecords?.filter(
+					(record) => record.research_conflict === true,
+				) || [];
 
 			if (researchConflicts.length > 0) {
-				const properlyManagedResearch = researchConflicts.filter((record) => record.conflict_properly_managed === true);
+				const properlyManagedResearch = researchConflicts.filter(
+					(record) => record.conflict_properly_managed === true,
+				);
 
 				if (properlyManagedResearch.length < researchConflicts.length) {
 					issues.push("Research conflicts not properly managed");
@@ -692,27 +800,42 @@ export class MedicalEthicsService {
 						code_article: "Article 69 - Code of Medical Ethics",
 						violation_description: "Inadequate research conflict management",
 						severity: "moderate",
-						evidence: [`${researchConflicts.length - properlyManagedResearch.length} unmanaged research conflicts`],
-						corrective_actions: ["Implement research conflict management protocols"],
+						evidence: [
+							`${researchConflicts.length - properlyManagedResearch.length} unmanaged research conflicts`,
+						],
+						corrective_actions: [
+							"Implement research conflict management protocols",
+						],
 						constitutional_impact: true,
 					});
-					correctiveActions.push("Develop research conflict management protocols");
+					correctiveActions.push(
+						"Develop research conflict management protocols",
+					);
 				}
 			}
 
 			// Check for annual disclosure updates
 			const currentYear = new Date().getFullYear();
 			const currentYearDisclosures =
-				conflictRecords?.filter((record) => new Date(record.disclosure_date).getFullYear() === currentYear) || [];
+				conflictRecords?.filter(
+					(record) =>
+						new Date(record.disclosure_date).getFullYear() === currentYear,
+				) || [];
 
-			if (currentYearDisclosures.length === 0 && conflictRecords && conflictRecords.length > 0) {
+			if (
+				currentYearDisclosures.length === 0 &&
+				conflictRecords &&
+				conflictRecords.length > 0
+			) {
 				issues.push("Annual conflict disclosure not updated");
 				score -= 1.0;
 				correctiveActions.push("Update annual conflict of interest disclosure");
 			}
 
 			const finalScore = Math.max(score, 0);
-			const compliant = finalScore >= 9.0 && violations.filter((v) => v.severity === "critical").length === 0;
+			const compliant =
+				finalScore >= 9.0 &&
+				violations.filter((v) => v.severity === "critical").length === 0;
 
 			return {
 				compliant,
@@ -734,7 +857,9 @@ export class MedicalEthicsService {
 	 * Assess continuing education and competence compliance
 	 * Constitutional validation of ongoing professional development
 	 */
-	private async assessContinuingEducation(params: MedicalEthicsValidationParams): Promise<{
+	private async assessContinuingEducation(
+		params: MedicalEthicsValidationParams,
+	): Promise<{
 		compliant: boolean;
 		score: number;
 		issues: string[];
@@ -760,13 +885,20 @@ export class MedicalEthicsService {
 			// Check CME credits for last three years
 			for (const year of lastThreeYears) {
 				const yearlyCredits =
-					educationRecords?.filter((record) => new Date(record.completion_date).getFullYear() === year) || [];
+					educationRecords?.filter(
+						(record) => new Date(record.completion_date).getFullYear() === year,
+					) || [];
 
-				const totalCredits = yearlyCredits.reduce((sum, record) => sum + (record.credit_hours || 0), 0);
+				const totalCredits = yearlyCredits.reduce(
+					(sum, record) => sum + (record.credit_hours || 0),
+					0,
+				);
 				const requiredCredits = 30; // CFM requirement
 
 				if (totalCredits < requiredCredits) {
-					issues.push(`Insufficient CME credits for ${year}: ${totalCredits}/${requiredCredits} hours`);
+					issues.push(
+						`Insufficient CME credits for ${year}: ${totalCredits}/${requiredCredits} hours`,
+					);
 					score -= 1.5;
 
 					if (year === currentYear) {
@@ -775,13 +907,19 @@ export class MedicalEthicsService {
 							code_article: "Article 32 - Code of Medical Ethics",
 							violation_description: `Insufficient continuing education for ${year}`,
 							severity: "moderate",
-							evidence: [`Only ${totalCredits} of ${requiredCredits} required hours completed`],
-							corrective_actions: [`Complete ${requiredCredits - totalCredits} additional CME hours`],
+							evidence: [
+								`Only ${totalCredits} of ${requiredCredits} required hours completed`,
+							],
+							corrective_actions: [
+								`Complete ${requiredCredits - totalCredits} additional CME hours`,
+							],
 							constitutional_impact: true,
 						});
 					}
 
-					correctiveActions.push(`Complete ${requiredCredits - totalCredits} CME hours for ${year}`);
+					correctiveActions.push(
+						`Complete ${requiredCredits - totalCredits} CME hours for ${year}`,
+					);
 				}
 			}
 
@@ -790,11 +928,12 @@ export class MedicalEthicsService {
 				educationRecords?.filter(
 					(record) =>
 						record.course_category?.toLowerCase().includes("ética") ||
-						record.course_category?.toLowerCase().includes("ethics")
+						record.course_category?.toLowerCase().includes("ethics"),
 				) || [];
 
 			const recentEthicsEducation = ethicsEducation.filter(
-				(record) => new Date(record.completion_date).getFullYear() >= currentYear - 2
+				(record) =>
+					new Date(record.completion_date).getFullYear() >= currentYear - 2,
 			);
 
 			if (recentEthicsEducation.length === 0) {
@@ -809,7 +948,9 @@ export class MedicalEthicsService {
 					corrective_actions: ["Complete ethics education course"],
 					constitutional_impact: true,
 				});
-				correctiveActions.push("Complete medical ethics continuing education course");
+				correctiveActions.push(
+					"Complete medical ethics continuing education course",
+				);
 			}
 
 			// Check for specialty-specific education
@@ -819,31 +960,42 @@ export class MedicalEthicsService {
 				.eq("cfm_number", params.doctor_cfm_number)
 				.single();
 
-			if (licenseData?.specializations && licenseData.specializations.length > 0) {
+			if (
+				licenseData?.specializations &&
+				licenseData.specializations.length > 0
+			) {
 				const specialtyEducation =
 					educationRecords?.filter((record) =>
 						licenseData.specializations.some((spec: string) =>
-							record.course_category?.toLowerCase().includes(spec.toLowerCase())
-						)
+							record.course_category
+								?.toLowerCase()
+								.includes(spec.toLowerCase()),
+						),
 					) || [];
 
 				const recentSpecialtyEducation = specialtyEducation.filter(
-					(record) => new Date(record.completion_date).getFullYear() >= currentYear - 1
+					(record) =>
+						new Date(record.completion_date).getFullYear() >= currentYear - 1,
 				);
 
 				if (recentSpecialtyEducation.length === 0) {
 					issues.push("No recent specialty-specific education");
 					score -= 0.5;
-					correctiveActions.push("Complete specialty-specific continuing education");
+					correctiveActions.push(
+						"Complete specialty-specific continuing education",
+					);
 				}
 			}
 
 			// Check certification renewals
 			const certificationRenewals =
-				educationRecords?.filter((record) => record.course_type === "certification_renewal") || [];
+				educationRecords?.filter(
+					(record) => record.course_type === "certification_renewal",
+				) || [];
 
 			const recentRenewals = certificationRenewals.filter(
-				(record) => new Date(record.completion_date).getFullYear() >= currentYear - 5
+				(record) =>
+					new Date(record.completion_date).getFullYear() >= currentYear - 5,
 			);
 
 			if (certificationRenewals.length > 0 && recentRenewals.length === 0) {
@@ -897,7 +1049,8 @@ export class MedicalEthicsService {
 
 			// Calculate weighted average of assessment scores
 			for (const [category, weight] of Object.entries(weights)) {
-				const categoryResult = assessmentResults[category as keyof typeof assessmentResults];
+				const categoryResult =
+					assessmentResults[category as keyof typeof assessmentResults];
 				if (categoryResult && typeof categoryResult.score === "number") {
 					weightedScore += categoryResult.score * weight;
 					totalWeight += weight;
@@ -912,8 +1065,12 @@ export class MedicalEthicsService {
 
 			Object.values(assessmentResults).forEach((result) => {
 				if (result.violations) {
-					const criticalViolations = result.violations.filter((v: any) => v.severity === "critical");
-					const majorViolations = result.violations.filter((v: any) => v.severity === "major");
+					const criticalViolations = result.violations.filter(
+						(v: any) => v.severity === "critical",
+					);
+					const majorViolations = result.violations.filter(
+						(v: any) => v.severity === "major",
+					);
 
 					// Critical violations significantly impact constitutional compliance
 					penaltyScore -= criticalViolations.length * 1.0;
@@ -938,7 +1095,7 @@ export class MedicalEthicsService {
 		params: MedicalEthicsValidationParams,
 		complianceResponse: MedicalEthicsComplianceResponse,
 		tenantId: string,
-		assessorId: string
+		assessorId: string,
 	): Promise<void> {
 		try {
 			const assessmentId = crypto.randomUUID();
@@ -968,18 +1125,30 @@ export class MedicalEthicsService {
 					compliance_score: complianceResponse.constitutional_score,
 					violations: complianceResponse.violations,
 					recommendations: complianceResponse.corrective_actions,
-					constitutional_compliance: complianceResponse.constitutional_score >= 9.9,
+					constitutional_compliance:
+						complianceResponse.constitutional_score >= 9.9,
 				},
 				patient_autonomy_compliance: {
-					informed_consent_adequate: complianceResponse.compliance_details.patient_autonomy.compliant,
-					patient_decision_respect: complianceResponse.compliance_details.patient_autonomy.score >= 9.0,
-					shared_decision_making: complianceResponse.compliance_details.patient_autonomy.issues.length === 0,
+					informed_consent_adequate:
+						complianceResponse.compliance_details.patient_autonomy.compliant,
+					patient_decision_respect:
+						complianceResponse.compliance_details.patient_autonomy.score >= 9.0,
+					shared_decision_making:
+						complianceResponse.compliance_details.patient_autonomy.issues
+							.length === 0,
 				},
 				professional_conduct: {
-					advertising_compliant: complianceResponse.compliance_details.medical_advertising.compliant,
-					conflict_of_interest_declared: complianceResponse.compliance_details.conflict_of_interest.compliant,
-					professional_boundaries: complianceResponse.compliance_details.professional_conduct.compliant,
-					continuing_education_current: complianceResponse.compliance_details.continuing_education.compliant,
+					advertising_compliant:
+						complianceResponse.compliance_details.medical_advertising.compliant,
+					conflict_of_interest_declared:
+						complianceResponse.compliance_details.conflict_of_interest
+							.compliant,
+					professional_boundaries:
+						complianceResponse.compliance_details.professional_conduct
+							.compliant,
+					continuing_education_current:
+						complianceResponse.compliance_details.continuing_education
+							.compliant,
 				},
 				tenant_id: tenantId,
 				assessed_by: assessorId,
@@ -997,7 +1166,8 @@ export class MedicalEthicsService {
 								compliance_score: complianceResponse.constitutional_score,
 								violations: complianceResponse.violations,
 								recommendations: complianceResponse.corrective_actions,
-								constitutional_compliance: complianceResponse.constitutional_score >= 9.9,
+								constitutional_compliance:
+									complianceResponse.constitutional_score >= 9.9,
 							},
 						},
 						user_id: assessorId,
@@ -1007,7 +1177,9 @@ export class MedicalEthicsService {
 				],
 			};
 
-			await this.supabase.from("cfm_medical_ethics_assessments").insert(ethicsAssessment);
+			await this.supabase
+				.from("cfm_medical_ethics_assessments")
+				.insert(ethicsAssessment);
 		} catch (_error) {}
 	} /**
 	 * Get medical ethics assessments with constitutional filtering
@@ -1025,14 +1197,17 @@ export class MedicalEthicsService {
 			};
 			constitutional_compliance?: boolean;
 			minimum_score?: number;
-		}
+		},
 	): Promise<{
 		success: boolean;
 		data?: MedicalEthicsAssessment[];
 		error?: string;
 	}> {
 		try {
-			let query = this.supabase.from("cfm_medical_ethics_assessments").select("*").eq("tenant_id", tenantId); // Constitutional tenant isolation
+			let query = this.supabase
+				.from("cfm_medical_ethics_assessments")
+				.select("*")
+				.eq("tenant_id", tenantId); // Constitutional tenant isolation
 
 			// Apply constitutional filters
 			if (filters?.doctor_cfm_number) {
@@ -1042,18 +1217,33 @@ export class MedicalEthicsService {
 				query = query.eq("assessment_type", filters.assessment_type);
 			}
 			if (filters?.compliant_only !== undefined) {
-				query = query.eq("assessment_results.compliant", filters.compliant_only);
+				query = query.eq(
+					"assessment_results.compliant",
+					filters.compliant_only,
+				);
 			}
 			if (filters?.constitutional_compliance !== undefined) {
-				query = query.eq("assessment_results.constitutional_compliance", filters.constitutional_compliance);
+				query = query.eq(
+					"assessment_results.constitutional_compliance",
+					filters.constitutional_compliance,
+				);
 			}
 			if (filters?.minimum_score) {
-				query = query.gte("assessment_results.compliance_score", filters.minimum_score);
+				query = query.gte(
+					"assessment_results.compliance_score",
+					filters.minimum_score,
+				);
 			}
 			if (filters?.assessment_date_range) {
 				query = query
-					.gte("assessment_date", filters.assessment_date_range.start.toISOString())
-					.lte("assessment_date", filters.assessment_date_range.end.toISOString());
+					.gte(
+						"assessment_date",
+						filters.assessment_date_range.start.toISOString(),
+					)
+					.lte(
+						"assessment_date",
+						filters.assessment_date_range.end.toISOString(),
+					);
 			}
 
 			const { data, error } = await query.order("assessment_date", {
@@ -1080,7 +1270,9 @@ export class MedicalEthicsService {
 	 * Generate constitutional compliance report for medical ethics
 	 * CFM audit requirements ≥9.9/10
 	 */
-	async generateEthicsComplianceReport(tenantId: string): Promise<{ success: boolean; data?: any; error?: string }> {
+	async generateEthicsComplianceReport(
+		tenantId: string,
+	): Promise<{ success: boolean; data?: any; error?: string }> {
 		try {
 			const { data: assessments, error } = await this.supabase
 				.from("cfm_medical_ethics_assessments")
@@ -1098,20 +1290,36 @@ export class MedicalEthicsService {
 
 			// Calculate compliance statistics
 			const totalAssessments = assessmentStats.length;
-			const compliantAssessments = assessmentStats.filter((a) => a.assessment_results?.compliant).length;
-			const highScoreAssessments = assessmentStats.filter((a) => a.assessment_results?.compliance_score >= 9.5).length;
+			const compliantAssessments = assessmentStats.filter(
+				(a) => a.assessment_results?.compliant,
+			).length;
+			const highScoreAssessments = assessmentStats.filter(
+				(a) => a.assessment_results?.compliance_score >= 9.5,
+			).length;
 
 			// Analyze by assessment type
 			const byAssessmentType = {
-				routine_compliance: assessmentStats.filter((a) => a.assessment_type === "routine_compliance").length,
-				complaint_investigation: assessmentStats.filter((a) => a.assessment_type === "complaint_investigation").length,
-				advertising_review: assessmentStats.filter((a) => a.assessment_type === "advertising_review").length,
-				conflict_of_interest: assessmentStats.filter((a) => a.assessment_type === "conflict_of_interest").length,
-				informed_consent_audit: assessmentStats.filter((a) => a.assessment_type === "informed_consent_audit").length,
+				routine_compliance: assessmentStats.filter(
+					(a) => a.assessment_type === "routine_compliance",
+				).length,
+				complaint_investigation: assessmentStats.filter(
+					(a) => a.assessment_type === "complaint_investigation",
+				).length,
+				advertising_review: assessmentStats.filter(
+					(a) => a.assessment_type === "advertising_review",
+				).length,
+				conflict_of_interest: assessmentStats.filter(
+					(a) => a.assessment_type === "conflict_of_interest",
+				).length,
+				informed_consent_audit: assessmentStats.filter(
+					(a) => a.assessment_type === "informed_consent_audit",
+				).length,
 			};
 
 			// Analyze violations
-			const allViolations = assessmentStats.flatMap((a) => a.assessment_results?.violations || []);
+			const allViolations = assessmentStats.flatMap(
+				(a) => a.assessment_results?.violations || [],
+			);
 			const violationsBySeverity = {
 				critical: allViolations.filter((v) => v.severity === "critical").length,
 				major: allViolations.filter((v) => v.severity === "major").length,
@@ -1120,14 +1328,21 @@ export class MedicalEthicsService {
 			};
 
 			// Calculate average compliance score
-			const scoresSum = assessmentStats.reduce((sum, a) => sum + (a.assessment_results?.compliance_score || 0), 0);
-			const averageScore = totalAssessments > 0 ? scoresSum / totalAssessments : 0;
+			const scoresSum = assessmentStats.reduce(
+				(sum, a) => sum + (a.assessment_results?.compliance_score || 0),
+				0,
+			);
+			const averageScore =
+				totalAssessments > 0 ? scoresSum / totalAssessments : 0;
 
 			const report = {
 				summary: {
 					total_assessments: totalAssessments,
 					compliant_assessments: compliantAssessments,
-					compliance_rate: totalAssessments > 0 ? (compliantAssessments / totalAssessments) * 100 : 0,
+					compliance_rate:
+						totalAssessments > 0
+							? (compliantAssessments / totalAssessments) * 100
+							: 0,
 					high_score_assessments: highScoreAssessments,
 					average_compliance_score: Math.round(averageScore * 10) / 10,
 				},
@@ -1138,11 +1353,14 @@ export class MedicalEthicsService {
 					most_common_violations: this.getMostCommonViolations(allViolations),
 				},
 				constitutional_compliance: {
-					constitutional_compliant: assessmentStats.filter((a) => a.assessment_results?.constitutional_compliance)
-						.length,
+					constitutional_compliant: assessmentStats.filter(
+						(a) => a.assessment_results?.constitutional_compliance,
+					).length,
 					constitutional_compliance_rate:
 						totalAssessments > 0
-							? (assessmentStats.filter((a) => a.assessment_results?.constitutional_compliance).length /
+							? (assessmentStats.filter(
+									(a) => a.assessment_results?.constitutional_compliance,
+								).length /
 									totalAssessments) *
 								100
 							: 0,
@@ -1164,13 +1382,16 @@ export class MedicalEthicsService {
 	 * Helper method to identify most common violations
 	 * Constitutional violation pattern analysis
 	 */
-	private getMostCommonViolations(violations: EthicsViolation[]): Array<{ code_article: string; count: number }> {
+	private getMostCommonViolations(
+		violations: EthicsViolation[],
+	): Array<{ code_article: string; count: number }> {
 		const violationCounts = violations.reduce(
 			(counts, violation) => {
-				counts[violation.code_article] = (counts[violation.code_article] || 0) + 1;
+				counts[violation.code_article] =
+					(counts[violation.code_article] || 0) + 1;
 				return counts;
 			},
-			{} as Record<string, number>
+			{} as Record<string, number>,
 		);
 
 		return Object.entries(violationCounts)

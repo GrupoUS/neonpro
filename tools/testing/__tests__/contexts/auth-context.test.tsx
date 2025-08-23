@@ -1,4 +1,11 @@
-import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+	act,
+	cleanup,
+	fireEvent,
+	render,
+	screen,
+	waitFor,
+} from "@testing-library/react";
 import { vi } from "vitest";
 import "@testing-library/jest-dom";
 
@@ -22,11 +29,15 @@ vi.mock("@/app/utils/supabase/client", () => ({
 }));
 
 // Now import the component AFTER the mock
-import { AuthProvider, useAuth } from "../../../../apps/web/contexts/auth-context";
+import {
+	AuthProvider,
+	useAuth,
+} from "../../../../apps/web/contexts/auth-context";
 
 // Test component to access auth context
 const TestComponent = () => {
-	const { user, session, loading, signIn, signUp, signOut, signInWithGoogle } = useAuth();
+	const { user, session, loading, signIn, signUp, signOut, signInWithGoogle } =
+		useAuth();
 
 	return (
 		<div>
@@ -34,11 +45,17 @@ const TestComponent = () => {
 			<div data-testid="session">{session ? "has-session" : "no-session"}</div>
 			<div data-testid="loading">{loading ? "loading" : "not-loading"}</div>
 
-			<button data-testid="signin-btn" onClick={() => signIn("test@example.com", "password")}>
+			<button
+				data-testid="signin-btn"
+				onClick={() => signIn("test@example.com", "password")}
+			>
 				Sign In
 			</button>
 
-			<button data-testid="signup-btn" onClick={() => signUp("test@example.com", "password", "Test User")}>
+			<button
+				data-testid="signup-btn"
+				onClick={() => signUp("test@example.com", "password", "Test User")}
+			>
 				Sign Up
 			</button>
 
@@ -46,7 +63,10 @@ const TestComponent = () => {
 				Sign Out
 			</button>
 
-			<button data-testid="google-signin-btn" onClick={() => signInWithGoogle()}>
+			<button
+				data-testid="google-signin-btn"
+				onClick={() => signInWithGoogle()}
+			>
 				Sign In with Google
 			</button>
 		</div>
@@ -78,7 +98,7 @@ describe("AuthProvider", () => {
 		render(
 			<AuthProvider>
 				<TestComponent />
-			</AuthProvider>
+			</AuthProvider>,
 		);
 
 		expect(screen.getByTestId("user")).toBeInTheDocument();
@@ -105,7 +125,7 @@ describe("AuthProvider", () => {
 		render(
 			<AuthProvider>
 				<TestComponent />
-			</AuthProvider>
+			</AuthProvider>,
 		);
 
 		await waitFor(() => {
@@ -130,7 +150,7 @@ describe("AuthProvider", () => {
 		render(
 			<AuthProvider>
 				<TestComponent />
-			</AuthProvider>
+			</AuthProvider>,
 		);
 
 		await waitFor(() => {
@@ -157,7 +177,7 @@ describe("AuthProvider", () => {
 		render(
 			<AuthProvider>
 				<TestComponent />
-			</AuthProvider>
+			</AuthProvider>,
 		);
 
 		await waitFor(() => {
@@ -185,7 +205,7 @@ describe("AuthProvider", () => {
 		render(
 			<AuthProvider>
 				<TestComponent />
-			</AuthProvider>
+			</AuthProvider>,
 		);
 
 		await waitFor(() => {
@@ -209,7 +229,10 @@ describe("AuthProvider", () => {
 		const TestComponentNoName = () => {
 			const { signUp } = useAuth();
 			return (
-				<button data-testid="signup-no-name-btn" onClick={() => signUp("test@example.com", "password")}>
+				<button
+					data-testid="signup-no-name-btn"
+					onClick={() => signUp("test@example.com", "password")}
+				>
 					Sign Up No Name
 				</button>
 			);
@@ -228,7 +251,7 @@ describe("AuthProvider", () => {
 		render(
 			<AuthProvider>
 				<TestComponentNoName />
-			</AuthProvider>
+			</AuthProvider>,
 		);
 
 		fireEvent.click(screen.getByTestId("signup-no-name-btn"));
@@ -252,7 +275,7 @@ describe("AuthProvider", () => {
 		render(
 			<AuthProvider>
 				<TestComponent />
-			</AuthProvider>
+			</AuthProvider>,
 		);
 
 		await waitFor(() => {
@@ -280,7 +303,7 @@ describe("AuthProvider", () => {
 		render(
 			<AuthProvider>
 				<TestComponent />
-			</AuthProvider>
+			</AuthProvider>,
 		);
 
 		await waitFor(() => {
@@ -313,7 +336,7 @@ describe("AuthProvider", () => {
 		render(
 			<AuthProvider>
 				<TestComponent />
-			</AuthProvider>
+			</AuthProvider>,
 		);
 
 		await waitFor(() => {
@@ -346,7 +369,7 @@ describe("AuthProvider", () => {
 		render(
 			<AuthProvider>
 				<TestComponent />
-			</AuthProvider>
+			</AuthProvider>,
 		);
 
 		await waitFor(() => {
@@ -372,7 +395,7 @@ describe("AuthProvider", () => {
 		const { unmount } = render(
 			<AuthProvider>
 				<TestComponent />
-			</AuthProvider>
+			</AuthProvider>,
 		);
 
 		unmount();

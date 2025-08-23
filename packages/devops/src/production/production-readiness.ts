@@ -17,14 +17,16 @@ export class ProductionReadiness {
 			{
 				name: "LGPD Data Protection",
 				status: await ProductionReadiness.validateLGPDCompliance(),
-				details: "All patient data encrypted, consent mechanisms active, audit trails enabled",
+				details:
+					"All patient data encrypted, consent mechanisms active, audit trails enabled",
 			},
 
 			// CFM Compliance Checks
 			{
 				name: "CFM Medical Standards",
 				status: await ProductionReadiness.validateCFMCompliance(),
-				details: "AI recommendations require doctor approval, medical disclaimers active",
+				details:
+					"AI recommendations require doctor approval, medical disclaimers active",
 			},
 
 			// ANVISA Compliance Checks
@@ -38,7 +40,8 @@ export class ProductionReadiness {
 			{
 				name: "Healthcare Performance SLA",
 				status: await ProductionReadiness.validatePerformanceSLA(),
-				details: "API responses <100ms, Core Web Vitals >95, medical accuracy ≥95%",
+				details:
+					"API responses <100ms, Core Web Vitals >95, medical accuracy ≥95%",
 			},
 
 			// Security & Infrastructure

@@ -6,7 +6,11 @@
  * para uso consistente em todo o sistema.
  */
 
-import type { AppointmentPriority, AppointmentStatus, AppointmentType } from "../schemas/appointment.schema";
+import type {
+	AppointmentPriority,
+	AppointmentStatus,
+	AppointmentType,
+} from "../schemas/appointment.schema";
 import type { MFAMethod, UserRole } from "../schemas/auth.schema";
 
 // Base entity interface (all entities extend this)
@@ -179,7 +183,14 @@ export interface Professional extends Omit<User, "role"> {
 
 // Business hours type
 export type BusinessHours = {
-	day: "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday";
+	day:
+		| "monday"
+		| "tuesday"
+		| "wednesday"
+		| "thursday"
+		| "friday"
+		| "saturday"
+		| "sunday";
 	isOpen: boolean;
 	openTime: string; // HH:MM
 	closeTime: string; // HH:MM
@@ -245,7 +256,14 @@ export interface Clinic extends BaseEntity, SoftDeletable, Auditable {
 	// Settings
 	capacity: number; // max simultaneous appointments
 	acceptsInsurance: boolean;
-	acceptedPaymentMethods: ("cash" | "credit_card" | "debit_card" | "pix" | "bank_transfer" | "installments")[];
+	acceptedPaymentMethods: (
+		| "cash"
+		| "credit_card"
+		| "debit_card"
+		| "pix"
+		| "bank_transfer"
+		| "installments"
+	)[];
 
 	// Booking settings
 	bookingSettings: {
@@ -437,7 +455,15 @@ export interface FileDocument extends BaseEntity {
 }
 
 // Export all entity types as a union
-export type Entity = User | Patient | Professional | Clinic | Appointment | TreatmentRecord | Payment | FileDocument;
+export type Entity =
+	| User
+	| Patient
+	| Professional
+	| Clinic
+	| Appointment
+	| TreatmentRecord
+	| Payment
+	| FileDocument;
 
 export type EntityType =
 	| "user"

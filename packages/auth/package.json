@@ -1,43 +1,43 @@
 {
-  "name": "@neonpro/auth",
-  "version": "0.1.0",
-  "description": "Authentication and authorization utilities for NeonPro",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    },
-    "./hooks": {
-      "types": "./dist/hooks/index.d.ts",
-      "default": "./dist/hooks/index.js"
-    },
-    "./components": {
-      "types": "./dist/components/index.d.ts",
-      "default": "./dist/components/index.js"
-    }
-  },
-  "scripts": {
-    "build": "npx tsc",
-    "dev": "npx tsc --watch",
-    "lint": "biome lint .",
-    "type-check": "npx tsc --noEmit"
-  },
-  "dependencies": {
-    "@neonpro/types": "workspace:*",
-    "@neonpro/utils": "workspace:*",
-    "@supabase/supabase-js": "^2.45.4",
-    "react": "^18.3.1",
-    "react-hook-form": "^7.52.1",
-    "zod": "^3.23.8"
-  },
-  "devDependencies": {
-    "@neonpro/config": "workspace:*",
-    "@types/react": "^18.3.3",
-    "typescript": "^5.5.4"
-  },
-  "peerDependencies": {
-    "react": "^18.3.1"
-  }
+	"name": "@neonpro/auth",
+	"version": "0.1.0",
+	"description": "Authentication and authorization utilities for NeonPro",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		},
+		"./hooks": {
+			"types": "./dist/hooks/index.d.ts",
+			"default": "./dist/hooks/index.js"
+		},
+		"./components": {
+			"types": "./dist/components/index.d.ts",
+			"default": "./dist/components/index.js"
+		}
+	},
+	"scripts": {
+		"build": "npx tsc",
+		"dev": "npx tsc --watch",
+		"lint": "biome lint .",
+		"type-check": "npx tsc --noEmit"
+	},
+	"dependencies": {
+		"@neonpro/types": "workspace:*",
+		"@neonpro/utils": "workspace:*",
+		"@supabase/supabase-js": "^2.45.4",
+		"react": "^18.3.1",
+		"react-hook-form": "^7.52.1",
+		"zod": "^3.23.8"
+	},
+	"devDependencies": {
+		"@neonpro/config": "workspace:*",
+		"@types/react": "^18.3.3",
+		"typescript": "^5.5.4"
+	},
+	"peerDependencies": {
+		"react": "^18.3.1"
+	}
 }

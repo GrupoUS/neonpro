@@ -7,7 +7,11 @@
  */
 
 import { z } from "zod";
-import type { ComplianceScore, Consent, ConstitutionalResponse } from "../types";
+import type {
+	ComplianceScore,
+	Consent,
+	ConstitutionalResponse,
+} from "../types";
 import { LGPDLegalBasis, PatientDataClassification } from "../types";
 
 /**
@@ -72,13 +76,16 @@ export class ConsentService {
 	 * Request Constitutional Healthcare Consent
 	 * Implements LGPD Art. 8º and 9º with constitutional healthcare validation
 	 */
-	async requestConsent(request: ConsentRequest): Promise<ConstitutionalResponse<Consent>> {
+	async requestConsent(
+		request: ConsentRequest,
+	): Promise<ConstitutionalResponse<Consent>> {
 		try {
 			// Step 1: Validate consent request
 			const validatedRequest = ConsentRequestSchema.parse(request);
 
 			// Step 2: Constitutional healthcare validation
-			const constitutionalValidation = await this.validateConstitutionalRequirements(validatedRequest);
+			const constitutionalValidation =
+				await this.validateConstitutionalRequirements(validatedRequest);
 
 			if (!constitutionalValidation.valid) {
 				return {
@@ -86,7 +93,10 @@ export class ConsentService {
 					error: `Constitutional validation failed: ${constitutionalValidation.violations.join(", ")}`,
 					complianceScore: constitutionalValidation.score,
 					regulatoryValidation: { lgpd: false, anvisa: true, cfm: true },
-					auditTrail: await this.createAuditEvent("CONSENT_CONSTITUTIONAL_VIOLATION", validatedRequest),
+					auditTrail: await this.createAuditEvent(
+						"CONSENT_CONSTITUTIONAL_VIOLATION",
+						validatedRequest,
+					),
 					timestamp: new Date(),
 				};
 			}
@@ -109,7 +119,9 @@ export class ConsentService {
 				withdrawable: true, // LGPD Art. 8º § 5º
 				grantedAt: new Date(),
 				withdrawnAt: null,
-				expiresAt: new Date(Date.now() + this.consentExpiryMonths * 30 * 24 * 60 * 60 * 1000),
+				expiresAt: new Date(
+					Date.now() + this.consentExpiryMonths * 30 * 24 * 60 * 60 * 1000,
+				),
 				isActive: false, // Becomes active only after patient confirmation
 				auditTrail: [
 					{
@@ -132,10 +144,17 @@ export class ConsentService {
 			await this.storeConsentRequest(consent, consentTerms);
 
 			// Step 6: Generate audit trail
-			const auditTrail = await this.createAuditEvent("CONSENT_REQUESTED", validatedRequest);
+			const auditTrail = await this.createAuditEvent(
+				"CONSENT_REQUESTED",
+				validatedRequest,
+			);
 
 			// Step 7: Send consent notification to patient (accessibility-compliant)
-			await this.sendConsentNotification(consent, consentTerms, validatedRequest.accessibilityRequirements);
+			await this.sendConsentNotification(
+				consent,
+				consentTerms,
+				validatedRequest.accessibilityRequirements,
+			);
 
 			return {
 				success: true,
@@ -146,11 +165,17 @@ export class ConsentService {
 				timestamp: new Date(),
 			};
 		} catch (error) {
-			const auditTrail = await this.createAuditEvent("CONSENT_REQUEST_ERROR", request);
+			const auditTrail = await this.createAuditEvent(
+				"CONSENT_REQUEST_ERROR",
+				request,
+			);
 
 			return {
 				success: false,
-				error: error instanceof Error ? error.message : "Unknown consent request error",
+				error:
+					error instanceof Error
+						? error.message
+						: "Unknown consent request error",
 				complianceScore: 0,
 				regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
 				auditTrail,
@@ -167,8 +192,13 @@ export class ConsentService {
 		consentId: string,
 		patientId: string,
 		tenantId: string,
-		confirmationMethod: "WEB" | "MOBILE" | "PHONE" | "IN_PERSON" | "ACCESSIBLE_INTERFACE",
-		biometricConfirmation?: string
+		confirmationMethod:
+			| "WEB"
+			| "MOBILE"
+			| "PHONE"
+			| "IN_PERSON"
+			| "ACCESSIBLE_INTERFACE",
+		biometricConfirmation?: string,
 	): Promise<ConstitutionalResponse<Consent>> {
 		try {
 			// Step 1: Retrieve and validate consent record
@@ -188,7 +218,10 @@ export class ConsentService {
 			}
 
 			// Step 3: Constitutional validation of grant process
-			const grantValidation = await this.validateConsentGrant(consentRecord, confirmationMethod);
+			const grantValidation = await this.validateConsentGrant(
+				consentRecord,
+				confirmationMethod,
+			);
 
 			if (!grantValidation.valid) {
 				return {
@@ -248,7 +281,8 @@ export class ConsentService {
 
 			return {
 				success: false,
-				error: error instanceof Error ? error.message : "Failed to grant consent",
+				error:
+					error instanceof Error ? error.message : "Failed to grant consent",
 				complianceScore: 0,
 				regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
 				auditTrail,
@@ -259,15 +293,23 @@ export class ConsentService {
 	 * Withdraw Consent (LGPD Art. 8º § 5º)
 	 * Constitutional right to withdraw consent with immediate effect
 	 */
-	async withdrawConsent(withdrawal: ConsentWithdrawal): Promise<ConstitutionalResponse<Consent>> {
+	async withdrawConsent(
+		withdrawal: ConsentWithdrawal,
+	): Promise<ConstitutionalResponse<Consent>> {
 		try {
 			// Step 1: Validate withdrawal request
 			const validatedWithdrawal = ConsentWithdrawalSchema.parse(withdrawal);
 
 			// Step 2: Retrieve consent record
-			const consentRecord = await this.getConsentRecord(validatedWithdrawal.consentId, validatedWithdrawal.tenantId);
+			const consentRecord = await this.getConsentRecord(
+				validatedWithdrawal.consentId,
+				validatedWithdrawal.tenantId,
+			);
 
-			if (!consentRecord || consentRecord.patientId !== validatedWithdrawal.patientId) {
+			if (
+				!consentRecord ||
+				consentRecord.patientId !== validatedWithdrawal.patientId
+			) {
 				throw new Error("Invalid consent record or unauthorized withdrawal");
 			}
 
@@ -276,7 +318,8 @@ export class ConsentService {
 			}
 
 			// Step 3: Constitutional validation of withdrawal
-			const withdrawalValidation = await this.validateConsentWithdrawal(validatedWithdrawal);
+			const withdrawalValidation =
+				await this.validateConsentWithdrawal(validatedWithdrawal);
 
 			// Step 4: Withdraw consent with constitutional compliance
 			const withdrawnConsent: Consent = {
@@ -307,10 +350,16 @@ export class ConsentService {
 			}
 
 			// Step 8: Generate audit trail
-			const auditTrail = await this.createAuditEvent("CONSENT_WITHDRAWN", validatedWithdrawal);
+			const auditTrail = await this.createAuditEvent(
+				"CONSENT_WITHDRAWN",
+				validatedWithdrawal,
+			);
 
 			// Step 9: Send withdrawal confirmation
-			await this.sendWithdrawalConfirmation(withdrawnConsent, validatedWithdrawal);
+			await this.sendWithdrawalConfirmation(
+				withdrawnConsent,
+				validatedWithdrawal,
+			);
 
 			return {
 				success: true,
@@ -321,11 +370,15 @@ export class ConsentService {
 				timestamp: new Date(),
 			};
 		} catch (error) {
-			const auditTrail = await this.createAuditEvent("CONSENT_WITHDRAWAL_ERROR", withdrawal);
+			const auditTrail = await this.createAuditEvent(
+				"CONSENT_WITHDRAWAL_ERROR",
+				withdrawal,
+			);
 
 			return {
 				success: false,
-				error: error instanceof Error ? error.message : "Failed to withdraw consent",
+				error:
+					error instanceof Error ? error.message : "Failed to withdraw consent",
 				complianceScore: 0,
 				regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
 				auditTrail,
@@ -338,10 +391,16 @@ export class ConsentService {
 	 * Get Patient Consent Status
 	 * Constitutional transparency mandate - patients can access their consent status
 	 */
-	async getPatientConsentStatus(patientId: string, tenantId: string): Promise<ConstitutionalResponse<Consent[]>> {
+	async getPatientConsentStatus(
+		patientId: string,
+		tenantId: string,
+	): Promise<ConstitutionalResponse<Consent[]>> {
 		try {
 			const consents = await this.getPatientConsents(patientId, tenantId);
-			const auditTrail = await this.createAuditEvent("CONSENT_STATUS_ACCESSED", { patientId });
+			const auditTrail = await this.createAuditEvent(
+				"CONSENT_STATUS_ACCESSED",
+				{ patientId },
+			);
 
 			return {
 				success: true,
@@ -358,7 +417,10 @@ export class ConsentService {
 
 			return {
 				success: false,
-				error: error instanceof Error ? error.message : "Failed to retrieve consent status",
+				error:
+					error instanceof Error
+						? error.message
+						: "Failed to retrieve consent status",
 				complianceScore: 0,
 				regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
 				auditTrail,
@@ -374,7 +436,9 @@ export class ConsentService {
 	/**
 	 * Validate constitutional healthcare requirements for consent
 	 */
-	private async validateConstitutionalRequirements(request: ConsentRequest): Promise<{
+	private async validateConstitutionalRequirements(
+		request: ConsentRequest,
+	): Promise<{
 		valid: boolean;
 		score: ComplianceScore;
 		violations: string[];
@@ -384,10 +448,16 @@ export class ConsentService {
 
 		// Healthcare-specific validations
 		if (
-			(request.consentType === "HEALTH" || request.consentType === "SENSITIVE") &&
-			!(request.legalBasis.includes("HEALTH_PROTECTION") || request.legalBasis.includes("HEALTH_PROCEDURES"))
+			(request.consentType === "HEALTH" ||
+				request.consentType === "SENSITIVE") &&
+			!(
+				request.legalBasis.includes("HEALTH_PROTECTION") ||
+				request.legalBasis.includes("HEALTH_PROCEDURES")
+			)
 		) {
-			violations.push("Health data requires appropriate legal basis (Art. 11 LGPD)");
+			violations.push(
+				"Health data requires appropriate legal basis (Art. 11 LGPD)",
+			);
 			score -= 2;
 		}
 
@@ -399,12 +469,17 @@ export class ConsentService {
 
 		// Purpose limitation validation
 		if (request.purpose.length < 20) {
-			violations.push("Consent purpose must be specific and detailed (constitutional transparency)");
+			violations.push(
+				"Consent purpose must be specific and detailed (constitutional transparency)",
+			);
 			score -= 1;
 		}
 
 		// Automated decision-making disclosure
-		if (request.automatedDecisionMaking && !request.purpose.includes("automated")) {
+		if (
+			request.automatedDecisionMaking &&
+			!request.purpose.includes("automated")
+		) {
 			violations.push("Automated decision-making must be explicitly disclosed");
 			score -= 1;
 		}
@@ -458,11 +533,15 @@ Categorias de Dados: ${request.dataCategories.join(", ")}
 		return {
 			plainLanguage,
 			legalTerms,
-			audioScript: request.accessibilityRequirements?.audioConsent ? plainLanguage : undefined,
+			audioScript: request.accessibilityRequirements?.audioConsent
+				? plainLanguage
+				: undefined,
 			accessibilityMetadata: {
 				screenReaderFriendly: true,
 				contrastRatio: "AAA",
-				fontSize: request.accessibilityRequirements?.largeText ? "large" : "normal",
+				fontSize: request.accessibilityRequirements?.largeText
+					? "large"
+					: "normal",
 				languageLevel: "B1", // Simple Portuguese for accessibility
 			},
 		};
@@ -473,7 +552,7 @@ Categorias de Dados: ${request.dataCategories.join(", ")}
 	 */
 	private async validateConsentGrant(
 		consent: Consent,
-		confirmationMethod: string
+		confirmationMethod: string,
 	): Promise<{ valid: boolean; score: ComplianceScore; violations: string[] }> {
 		const violations: string[] = [];
 		let score = 10;
@@ -507,29 +586,56 @@ Categorias de Dados: ${request.dataCategories.join(", ")}
 	/**
 	 * Database and external service methods (stubs for now)
 	 */
-	private async storeConsentRequest(_consent: Consent, _terms: any): Promise<void> {}
+	private async storeConsentRequest(
+		_consent: Consent,
+		_terms: any,
+	): Promise<void> {}
 
-	private async getConsentRecord(_consentId: string, _tenantId: string): Promise<Consent | null> {
+	private async getConsentRecord(
+		_consentId: string,
+		_tenantId: string,
+	): Promise<Consent | null> {
 		return null; // Would query Supabase database
 	}
 
 	private async updateConsentRecord(_consent: Consent): Promise<void> {}
 
-	private async getPatientConsents(_patientId: string, _tenantId: string): Promise<Consent[]> {
+	private async getPatientConsents(
+		_patientId: string,
+		_tenantId: string,
+	): Promise<Consent[]> {
 		return []; // Would query Supabase database
 	}
 
-	private async ceaseDataProcessing(_consent: Consent, _withdrawal: ConsentWithdrawal): Promise<void> {}
+	private async ceaseDataProcessing(
+		_consent: Consent,
+		_withdrawal: ConsentWithdrawal,
+	): Promise<void> {}
 
-	private async triggerDataErasure(_consent: Consent, _withdrawal: ConsentWithdrawal): Promise<void> {}
+	private async triggerDataErasure(
+		_consent: Consent,
+		_withdrawal: ConsentWithdrawal,
+	): Promise<void> {}
 
-	private async sendConsentNotification(_consent: Consent, _terms: any, _accessibility?: any): Promise<void> {}
+	private async sendConsentNotification(
+		_consent: Consent,
+		_terms: any,
+		_accessibility?: any,
+	): Promise<void> {}
 
-	private async sendConsentConfirmation(_consent: Consent, _method: string): Promise<void> {}
+	private async sendConsentConfirmation(
+		_consent: Consent,
+		_method: string,
+	): Promise<void> {}
 
-	private async sendWithdrawalConfirmation(_consent: Consent, _withdrawal: ConsentWithdrawal): Promise<void> {}
+	private async sendWithdrawalConfirmation(
+		_consent: Consent,
+		_withdrawal: ConsentWithdrawal,
+	): Promise<void> {}
 
-	private async validateConsentWithdrawal(_withdrawal: ConsentWithdrawal): Promise<{ score: ComplianceScore }> {
+	private async validateConsentWithdrawal(
+		_withdrawal: ConsentWithdrawal,
+	): Promise<{ score: ComplianceScore }> {
 		return { score: 9.9 };
 	}
 

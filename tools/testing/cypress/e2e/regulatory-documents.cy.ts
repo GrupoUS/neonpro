@@ -14,7 +14,10 @@ describe("Regulatory Documents Dashboard Integration", () => {
 		cy.url().should("include", "/dashboard/regulatory-documents");
 
 		// Verify breadcrumb navigation
-		cy.get('[data-testid="breadcrumb"]').should("contain", "Regulatory Documents");
+		cy.get('[data-testid="breadcrumb"]').should(
+			"contain",
+			"Regulatory Documents",
+		);
 
 		// Verify page loads with proper components
 		cy.get('[data-testid="regulatory-documents-list"]').should("be.visible");
@@ -26,12 +29,16 @@ describe("Regulatory Documents Dashboard Integration", () => {
 
 		// Add new document
 		cy.get('[data-testid="add-document-button"]').click();
-		cy.get('[data-testid="document-title-input"]').type("ANVISA Compliance Document");
+		cy.get('[data-testid="document-title-input"]').type(
+			"ANVISA Compliance Document",
+		);
 		cy.get('[data-testid="document-category-select"]').select("ANVISA");
 		cy.get('[data-testid="document-type-select"]').select("regulamento");
 
 		// Test file upload
-		cy.get('[data-testid="file-upload-input"]').selectFile("cypress/fixtures/test-document.pdf");
+		cy.get('[data-testid="file-upload-input"]').selectFile(
+			"cypress/fixtures/test-document.pdf",
+		);
 		cy.get('[data-testid="upload-progress"]').should("be.visible");
 
 		// Set expiration date
@@ -41,8 +48,14 @@ describe("Regulatory Documents Dashboard Integration", () => {
 		cy.get('[data-testid="submit-document-button"]').click();
 
 		// Verify success
-		cy.get('[data-testid="success-message"]').should("contain", "Document created successfully");
-		cy.get('[data-testid="regulatory-documents-list"]').should("contain", "ANVISA Compliance Document");
+		cy.get('[data-testid="success-message"]').should(
+			"contain",
+			"Document created successfully",
+		);
+		cy.get('[data-testid="regulatory-documents-list"]').should(
+			"contain",
+			"ANVISA Compliance Document",
+		);
 	});
 
 	it("should display expiration alerts", () => {
@@ -63,7 +76,13 @@ describe("Regulatory Documents Dashboard Integration", () => {
 		cy.get('[data-testid="submit-document-button"]').click();
 
 		// Verify validation errors
-		cy.get('[data-testid="title-error"]').should("contain", "Title is required");
-		cy.get('[data-testid="category-error"]').should("contain", "Category is required");
+		cy.get('[data-testid="title-error"]').should(
+			"contain",
+			"Title is required",
+		);
+		cy.get('[data-testid="category-error"]').should(
+			"contain",
+			"Category is required",
+		);
 	});
 });

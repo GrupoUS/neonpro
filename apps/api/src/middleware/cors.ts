@@ -202,7 +202,10 @@ export const corsMiddleware = (): MiddlewareHandler[] => {
 		}
 
 		// Log rejected origins for monitoring
-		logger.warn("CORS: Rejected origin", { origin, timestamp: new Date().toISOString() });
+		logger.warn("CORS: Rejected origin", {
+			origin,
+			timestamp: new Date().toISOString(),
+		});
 		return false;
 	};
 
@@ -275,7 +278,9 @@ export const corsUtils = {
 	// Validate request headers
 	validateHeaders: (headers: string[]): boolean => {
 		const corsPolicy = getCorsPolicyByEnvironment();
-		return headers.every((header) => corsPolicy.allowedHeaders.includes(header));
+		return headers.every((header) =>
+			corsPolicy.allowedHeaders.includes(header),
+		);
 	},
 
 	// Set custom CORS headers for specific routes

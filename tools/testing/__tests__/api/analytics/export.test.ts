@@ -94,7 +94,9 @@ describe("/api/analytics/export", () => {
 		await handler(req, res);
 
 		expect(res._getStatusCode()).toBe(200);
-		expect(res._getHeaders()["content-type"]).toBe("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+		expect(res._getHeaders()["content-type"]).toBe(
+			"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+		);
 		expect(res._getHeaders()["content-disposition"]).toContain("attachment");
 	});
 
@@ -207,13 +209,17 @@ describe("/api/analytics/export", () => {
 					format: "pdf",
 					data: mockExportData,
 				},
-			})
+			}),
 		);
 
-		const responses = await Promise.all(requests.map(({ req, res }) => handler(req, res)));
+		const responses = await Promise.all(
+			requests.map(({ req, res }) => handler(req, res)),
+		);
 
 		// Should have some rate limited responses
-		const rateLimitedResponses = responses.filter((_, index) => requests[index].res._getStatusCode() === 429);
+		const rateLimitedResponses = responses.filter(
+			(_, index) => requests[index].res._getStatusCode() === 429,
+		);
 
 		expect(rateLimitedResponses.length).toBeGreaterThan(0);
 	});

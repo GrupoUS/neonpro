@@ -56,14 +56,20 @@ export function resetAllGlobalMocks() {
 /**
  * Create a test wrapper with common providers
  */
-export function createTestWrapper(options: { queryClient?: any; router?: any } = {}) {
+export function createTestWrapper(
+	options: { queryClient?: any; router?: any } = {},
+) {
 	const { queryClient, router } = options;
 
 	return ({ children }: { children: React.ReactNode }) => {
 		let wrapper = children;
 
 		if (queryClient) {
-			wrapper = React.createElement(queryClient.Provider || queryClient, { client: queryClient }, wrapper);
+			wrapper = React.createElement(
+				queryClient.Provider || queryClient,
+				{ client: queryClient },
+				wrapper,
+			);
 		}
 
 		if (router) {

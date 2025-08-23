@@ -27,7 +27,10 @@ const CalculateMetricsSchema = z.object({
 // GET PATIENT RETENTION METRICS
 // =====================================================================================
 
-export async function GET(request: NextRequest, { params }: { params: Promise<{ patientId: string }> }) {
+export async function GET(
+	request: NextRequest,
+	{ params }: { params: Promise<{ patientId: string }> },
+) {
 	try {
 		const resolvedParams = await params;
 		// Extract clinic ID from query parameters
@@ -46,7 +49,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 					error: "Invalid parameters",
 					details: validation.error.issues,
 				},
-				{ status: 400 }
+				{ status: 400 },
 			);
 		}
 
@@ -71,11 +74,17 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 			.single();
 
 		if (profileError || !userProfile) {
-			return NextResponse.json({ error: "User profile not found" }, { status: 403 });
+			return NextResponse.json(
+				{ error: "User profile not found" },
+				{ status: 403 },
+			);
 		}
 
 		if (userProfile.clinic_id !== validatedClinicId) {
-			return NextResponse.json({ error: "Access denied to clinic data" }, { status: 403 });
+			return NextResponse.json(
+				{ error: "Access denied to clinic data" },
+				{ status: 403 },
+			);
 		}
 
 		// Verify patient belongs to clinic
@@ -87,12 +96,18 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 			.single();
 
 		if (patientError || !patient) {
-			return NextResponse.json({ error: "Patient not found or does not belong to clinic" }, { status: 404 });
+			return NextResponse.json(
+				{ error: "Patient not found or does not belong to clinic" },
+				{ status: 404 },
+			);
 		}
 
 		// Get retention metrics
 		const retentionService = new RetentionAnalyticsService();
-		const metrics = await retentionService.getPatientRetentionMetrics(patientId, validatedClinicId);
+		const metrics = await retentionService.getPatientRetentionMetrics(
+			patientId,
+			validatedClinicId,
+		);
 
 		return NextResponse.json({
 			success: true,
@@ -105,7 +120,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 				error: "Internal server error",
 				message: error instanceof Error ? error.message : "Unknown error",
 			},
-			{ status: 500 }
+			{ status: 500 },
 		);
 	}
 }
@@ -114,7 +129,10 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 // CALCULATE PATIENT RETENTION METRICS
 // =====================================================================================
 
-export async function POST(request: NextRequest, { params }: { params: Promise<{ patientId: string }> }) {
+export async function POST(
+	request: NextRequest,
+	{ params }: { params: Promise<{ patientId: string }> },
+) {
 	try {
 		const resolvedParams = await params;
 		// Parse request body
@@ -132,7 +150,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 					error: "Invalid request data",
 					details: validation.error.issues,
 				},
-				{ status: 400 }
+				{ status: 400 },
 			);
 		}
 
@@ -157,11 +175,17 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 			.single();
 
 		if (profileError || !userProfile) {
-			return NextResponse.json({ error: "User profile not found" }, { status: 403 });
+			return NextResponse.json(
+				{ error: "User profile not found" },
+				{ status: 403 },
+			);
 		}
 
 		if (userProfile.clinic_id !== clinicId) {
-			return NextResponse.json({ error: "Access denied to clinic data" }, { status: 403 });
+			return NextResponse.json(
+				{ error: "Access denied to clinic data" },
+				{ status: 403 },
+			);
 		}
 
 		// Verify patient belongs to clinic
@@ -173,18 +197,27 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 			.single();
 
 		if (patientError || !patient) {
-			return NextResponse.json({ error: "Patient not found or does not belong to clinic" }, { status: 404 });
+			return NextResponse.json(
+				{ error: "Patient not found or does not belong to clinic" },
+				{ status: 404 },
+			);
 		}
 
 		// Check if user has permission to calculate metrics
 		const allowedRoles = ["admin", "manager", "analyst"];
 		if (!allowedRoles.includes(userProfile.role)) {
-			return NextResponse.json({ error: "Insufficient permissions to calculate metrics" }, { status: 403 });
+			return NextResponse.json(
+				{ error: "Insufficient permissions to calculate metrics" },
+				{ status: 403 },
+			);
 		}
 
 		// Calculate retention metrics
 		const retentionService = new RetentionAnalyticsService();
-		const metrics = await retentionService.calculatePatientRetentionMetrics(patientId, clinicId);
+		const metrics = await retentionService.calculatePatientRetentionMetrics(
+			patientId,
+			clinicId,
+		);
 
 		return NextResponse.json({
 			success: true,
@@ -198,7 +231,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 				error: "Internal server error",
 				message: error instanceof Error ? error.message : "Unknown error",
 			},
-			{ status: 500 }
+			{ status: 500 },
 		);
 	}
 }

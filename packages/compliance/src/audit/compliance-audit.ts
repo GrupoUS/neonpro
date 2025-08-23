@@ -30,7 +30,7 @@ export class ComplianceAuditService {
 	async generateComplianceReport(
 		tenantId: string,
 		auditorId: string,
-		regulation?: HealthcareRegulation
+		regulation?: HealthcareRegulation,
 	): Promise<{
 		success: boolean;
 		report?: ComplianceAuditReport;
@@ -49,17 +49,22 @@ export class ComplianceAuditService {
 				.limit(1)
 				.single();
 
-			const lastAuditDate = previousAudit?.audit_date ? new Date(previousAudit.audit_date) : undefined;
+			const lastAuditDate = previousAudit?.audit_date
+				? new Date(previousAudit.audit_date)
+				: undefined;
 
 			// Perform compliance checks for each regulation
-			const regulations = regulation ? [regulation] : Object.values(HealthcareRegulation);
+			const regulations = regulation
+				? [regulation]
+				: Object.values(HealthcareRegulation);
 			const allFindings: ComplianceAuditFinding[] = [];
 			const allActionItems: ComplianceActionItem[] = [];
 			const recommendations: string[] = [];
 			let totalScore = 0;
 
 			for (const reg of regulations) {
-				const { findings, actionItems, score, regRecommendations } = await this.auditRegulation(tenantId, reg);
+				const { findings, actionItems, score, regRecommendations } =
+					await this.auditRegulation(tenantId, reg);
 				allFindings.push(...findings);
 				allActionItems.push(...actionItems);
 				recommendations.push(...regRecommendations);
@@ -88,30 +93,34 @@ export class ComplianceAuditService {
 				metadata: {
 					regulationsAudited: regulations,
 					totalFindings: allFindings.length,
-					criticalFindings: allFindings.filter((f) => f.severity === AuditSeverity.CRITICAL).length,
+					criticalFindings: allFindings.filter(
+						(f) => f.severity === AuditSeverity.CRITICAL,
+					).length,
 					auditDuration: "Generated automatically",
 					complianceThreshold: 9.9,
 				},
 			};
 
 			// Save report to database
-			const { error: saveError } = await this.supabaseClient.from("compliance_audit_reports").insert([
-				{
-					id: report.id,
-					tenant_id: report.tenantId,
-					audit_date: report.auditDate,
-					last_audit_date: report.lastAuditDate,
-					auditor_id: report.auditorId,
-					regulation: report.regulation,
-					overall_score: report.overallScore,
-					findings: report.findings,
-					recommendations: report.recommendations,
-					action_items: report.actionItems,
-					next_audit_due: report.nextAuditDue,
-					status: report.status,
-					metadata: report.metadata,
-				},
-			]);
+			const { error: saveError } = await this.supabaseClient
+				.from("compliance_audit_reports")
+				.insert([
+					{
+						id: report.id,
+						tenant_id: report.tenantId,
+						audit_date: report.auditDate,
+						last_audit_date: report.lastAuditDate,
+						auditor_id: report.auditorId,
+						regulation: report.regulation,
+						overall_score: report.overallScore,
+						findings: report.findings,
+						recommendations: report.recommendations,
+						action_items: report.actionItems,
+						next_audit_due: report.nextAuditDue,
+						status: report.status,
+						metadata: report.metadata,
+					},
+				]);
 
 			if (saveError) {
 				return { success: false, error: saveError.message };
@@ -131,7 +140,7 @@ export class ComplianceAuditService {
 	 */
 	private async auditRegulation(
 		tenantId: string,
-		regulation: HealthcareRegulation
+		regulation: HealthcareRegulation,
 	): Promise<{
 		findings: ComplianceAuditFinding[];
 		actionItems: ComplianceActionItem[];
@@ -182,7 +191,10 @@ export class ComplianceAuditService {
 
 		try {
 			// Check consent management
-			const { data: consents } = await this.supabaseClient.from("lgpd_consents").select("*").eq("tenant_id", tenantId);
+			const { data: consents } = await this.supabaseClient
+				.from("lgpd_consents")
+				.select("*")
+				.eq("tenant_id", tenantId);
 
 			if (!consents || consents.length === 0) {
 				findings.push({
@@ -235,7 +247,7 @@ export class ComplianceAuditService {
 				"Ensure all patient data processing has explicit consent",
 				"Implement data minimization principles",
 				"Regular LGPD compliance training for staff",
-				"Maintain comprehensive data processing records"
+				"Maintain comprehensive data processing records",
 			);
 
 			return {
@@ -252,7 +264,9 @@ export class ComplianceAuditService {
 						category: "System Error",
 						severity: AuditSeverity.CRITICAL,
 						description: "Failed to audit LGPD compliance",
-						evidence: [error instanceof Error ? error.message : "Unknown error"],
+						evidence: [
+							error instanceof Error ? error.message : "Unknown error",
+						],
 						regulation: HealthcareRegulation.LGPD,
 						complianceScore: 0 as ComplianceScore,
 						status: "OPEN",
@@ -384,7 +398,9 @@ export class ComplianceAuditService {
 				id: data.id,
 				tenantId: data.tenant_id,
 				auditDate: new Date(data.audit_date),
-				lastAuditDate: data.last_audit_date ? new Date(data.last_audit_date) : undefined,
+				lastAuditDate: data.last_audit_date
+					? new Date(data.last_audit_date)
+					: undefined,
 				auditorId: data.auditor_id,
 				regulation: data.regulation,
 				overallScore: data.overall_score,
@@ -410,7 +426,7 @@ export class ComplianceAuditService {
 	 */
 	async updateReportStatus(
 		reportId: string,
-		status: "DRAFT" | "FINAL" | "APPROVED"
+		status: "DRAFT" | "FINAL" | "APPROVED",
 	): Promise<{ success: boolean; error?: string }> {
 		try {
 			const { error } = await this.supabaseClient

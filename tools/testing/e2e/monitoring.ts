@@ -43,7 +43,13 @@ export class E2EMonitor {
 	private readonly dashboardPath: string;
 
 	constructor() {
-		this.metricsPath = join(process.cwd(), "tools", "testing", "e2e", "reports");
+		this.metricsPath = join(
+			process.cwd(),
+			"tools",
+			"testing",
+			"e2e",
+			"reports",
+		);
 		this.dashboardPath = join(this.metricsPath, "dashboard");
 
 		// Ensure directories exist
@@ -78,7 +84,10 @@ export class E2EMonitor {
 		};
 
 		// Save individual test metrics
-		const metricsFile = join(this.metricsPath, `test-metrics-${Date.now()}.json`);
+		const metricsFile = join(
+			this.metricsPath,
+			`test-metrics-${Date.now()}.json`,
+		);
 		writeFileSync(metricsFile, JSON.stringify(metrics, null, 2));
 
 		return metrics;
@@ -101,7 +110,10 @@ export class E2EMonitor {
 			},
 		};
 
-		const complianceFile = join(this.metricsPath, `compliance-metrics-${Date.now()}.json`);
+		const complianceFile = join(
+			this.metricsPath,
+			`compliance-metrics-${Date.now()}.json`,
+		);
 		writeFileSync(complianceFile, JSON.stringify(compliance, null, 2));
 
 		return compliance;
@@ -110,31 +122,38 @@ export class E2EMonitor {
 	/**
 	 * 📈 Generate performance dashboard
 	 */
-	async generateDashboard(metrics: E2EMetrics[], compliance: HealthcareComplianceMetrics): Promise<string> {
+	async generateDashboard(
+		metrics: E2EMetrics[],
+		compliance: HealthcareComplianceMetrics,
+	): Promise<string> {
 		const dashboard = {
 			generated: new Date().toISOString(),
 			summary: {
 				totalTests: metrics.reduce((acc, m) => acc + m.testsTotal, 0),
 				totalPassed: metrics.reduce((acc, m) => acc + m.testsPassed, 0),
 				totalFailed: metrics.reduce((acc, m) => acc + m.testsFailed, 0),
-				averageDuration: metrics.reduce((acc, m) => acc + m.duration, 0) / metrics.length,
+				averageDuration:
+					metrics.reduce((acc, m) => acc + m.duration, 0) / metrics.length,
 				successRate:
 					metrics.length > 0
-						? (metrics.reduce((acc, m) => acc + m.testsPassed, 0) / metrics.reduce((acc, m) => acc + m.testsTotal, 0)) *
+						? (metrics.reduce((acc, m) => acc + m.testsPassed, 0) /
+								metrics.reduce((acc, m) => acc + m.testsTotal, 0)) *
 							100
 						: 0,
-				avgMemoryUsage: metrics.reduce((acc, m) => acc + m.memoryUsage.heapUsed, 0) / metrics.length,
+				avgMemoryUsage:
+					metrics.reduce((acc, m) => acc + m.memoryUsage.heapUsed, 0) /
+					metrics.length,
 			},
 			performance: {
 				fastest: Math.min(...metrics.map((m) => m.duration)),
 				slowest: Math.max(...metrics.map((m) => m.duration)),
 				p95: this.calculatePercentile(
 					metrics.map((m) => m.duration),
-					95
+					95,
 				),
 				p99: this.calculatePercentile(
 					metrics.map((m) => m.duration),
-					99
+					99,
 				),
 			},
 			compliance,
@@ -143,7 +162,10 @@ export class E2EMonitor {
 			alerts: this.generateAlerts(metrics, compliance),
 		};
 
-		const dashboardFile = join(this.dashboardPath, "performance-dashboard.json");
+		const dashboardFile = join(
+			this.dashboardPath,
+			"performance-dashboard.json",
+		);
 		writeFileSync(dashboardFile, JSON.stringify(dashboard, null, 2));
 
 		// Generate HTML dashboard
@@ -187,8 +209,11 @@ export class E2EMonitor {
 		// Calculate averages
 		Object.keys(browsers).forEach((browser) => {
 			const tests = browsers[browser].tests;
-			browsers[browser].avgDuration = tests.reduce((acc: number, t: E2EMetrics) => acc + t.duration, 0) / tests.length;
-			browsers[browser].successRate = (browsers[browser].testsPassed / browsers[browser].testsTotal) * 100;
+			browsers[browser].avgDuration =
+				tests.reduce((acc: number, t: E2EMetrics) => acc + t.duration, 0) /
+				tests.length;
+			browsers[browser].successRate =
+				(browsers[browser].testsPassed / browsers[browser].testsTotal) * 100;
 		});
 
 		return browsers;
@@ -200,12 +225,19 @@ export class E2EMonitor {
 	private calculateTrends(metrics: E2EMetrics[]): any {
 		const sortedByTime = metrics
 			.slice()
-			.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+			.sort(
+				(a, b) =>
+					new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
+			);
 
 		return {
 			durationTrend: this.calculateTrend(sortedByTime.map((m) => m.duration)),
-			successRateTrend: this.calculateTrend(sortedByTime.map((m) => m.testsPassed / m.testsTotal)),
-			memoryTrend: this.calculateTrend(sortedByTime.map((m) => m.memoryUsage.heapUsed)),
+			successRateTrend: this.calculateTrend(
+				sortedByTime.map((m) => m.testsPassed / m.testsTotal),
+			),
+			memoryTrend: this.calculateTrend(
+				sortedByTime.map((m) => m.memoryUsage.heapUsed),
+			),
 		};
 	}
 
@@ -237,11 +269,15 @@ export class E2EMonitor {
 	/**
 	 * 🚨 Generate alerts based on metrics
 	 */
-	private generateAlerts(metrics: E2EMetrics[], compliance: HealthcareComplianceMetrics): string[] {
+	private generateAlerts(
+		metrics: E2EMetrics[],
+		compliance: HealthcareComplianceMetrics,
+	): string[] {
 		const alerts: string[] = [];
 
 		// Performance alerts
-		const avgDuration = metrics.reduce((acc, m) => acc + m.duration, 0) / metrics.length;
+		const avgDuration =
+			metrics.reduce((acc, m) => acc + m.duration, 0) / metrics.length;
 		if (avgDuration > 30_000) {
 			// 30 seconds
 			alerts.push("🚨 HIGH: Average test duration exceeds 30 seconds");
@@ -249,14 +285,17 @@ export class E2EMonitor {
 
 		// Success rate alerts
 		const successRate =
-			metrics.reduce((acc, m) => acc + m.testsPassed, 0) / metrics.reduce((acc, m) => acc + m.testsTotal, 0);
+			metrics.reduce((acc, m) => acc + m.testsPassed, 0) /
+			metrics.reduce((acc, m) => acc + m.testsTotal, 0);
 		if (successRate < 0.95) {
 			// Below 95%
 			alerts.push("🚨 CRITICAL: Test success rate below 95%");
 		}
 
 		// Memory alerts
-		const avgMemory = metrics.reduce((acc, m) => acc + m.memoryUsage.heapUsed, 0) / metrics.length;
+		const avgMemory =
+			metrics.reduce((acc, m) => acc + m.memoryUsage.heapUsed, 0) /
+			metrics.length;
 		if (avgMemory > 500 * 1024 * 1024) {
 			// 500MB
 			alerts.push("⚠️ WARNING: High memory usage detected");
@@ -373,7 +412,7 @@ export class E2EMonitor {
                     <strong>${browser}</strong>
                     <span>Tests: ${stats.testsTotal} | Success: ${stats.successRate.toFixed(1)}% | Avg: ${(stats.avgDuration / 1000).toFixed(1)}s</span>
                 </div>
-            `
+            `,
 							)
 							.join("")}
         </div>

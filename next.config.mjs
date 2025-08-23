@@ -5,14 +5,22 @@
 
 const nextConfig = {
 	// Legacy transpilePackages for compatibility during migration
-	transpilePackages: ["@neonpro/ui", "@neonpro/domain", "@neonpro/types", "@neonpro/utils"],
+	transpilePackages: [
+		"@neonpro/ui",
+		"@neonpro/domain",
+		"@neonpro/types",
+		"@neonpro/utils",
+	],
 
 	// Environment variables
 	env: {
 		NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
 		NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
 		NEXT_PUBLIC_API_URL:
-			process.env.NEXT_PUBLIC_API_URL || (process.env.NODE_ENV === "production" ? "/api/v1" : "http://localhost:3003"),
+			process.env.NEXT_PUBLIC_API_URL ||
+			(process.env.NODE_ENV === "production"
+				? "/api/v1"
+				: "http://localhost:3003"),
 	},
 
 	// API configuration - no rewrites needed in production (Vercel handles this)

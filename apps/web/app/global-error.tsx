@@ -3,9 +3,21 @@
 import { AlertTriangle, Home, RefreshCw } from "lucide-react";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
 
-export default function GlobalError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+export default function GlobalError({
+	error,
+	reset,
+}: {
+	error: Error & { digest?: string };
+	reset: () => void;
+}) {
 	useEffect(() => {}, []);
 
 	return (
@@ -18,12 +30,17 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
 								<AlertTriangle className="h-6 w-6 text-destructive" />
 							</div>
 							<CardTitle className="text-xl">Algo deu errado</CardTitle>
-							<CardDescription>Ocorreu um erro inesperado na aplicação. Nossa equipe foi notificada.</CardDescription>
+							<CardDescription>
+								Ocorreu um erro inesperado na aplicação. Nossa equipe foi
+								notificada.
+							</CardDescription>
 						</CardHeader>
 						<CardContent className="space-y-4">
 							{process.env.NODE_ENV === "development" && (
 								<div className="rounded-md bg-muted p-3">
-									<p className="font-mono text-muted-foreground text-sm">{error.message}</p>
+									<p className="font-mono text-muted-foreground text-sm">
+										{error.message}
+									</p>
 								</div>
 							)}
 							<div className="flex flex-col gap-2">
@@ -31,7 +48,11 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
 									<RefreshCw className="mr-2 h-4 w-4" />
 									Tentar novamente
 								</Button>
-								<Button className="w-full" onClick={() => (window.location.href = "/")} variant="outline">
+								<Button
+									className="w-full"
+									onClick={() => (window.location.href = "/")}
+									variant="outline"
+								>
 									<Home className="mr-2 h-4 w-4" />
 									Voltar ao início
 								</Button>

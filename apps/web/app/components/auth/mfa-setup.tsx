@@ -11,7 +11,8 @@ type MfaSetupProps = {
 };
 
 export function MfaSetup({ onComplete, onCancel }: MfaSetupProps) {
-	const { setupMfaMethod, verifyMfaCode, isLoading, error, clearError } = useMFA();
+	const { setupMfaMethod, verifyMfaCode, isLoading, error, clearError } =
+		useMFA();
 
 	const [step, setStep] = useState<"method" | "setup" | "verify">("method");
 	const [selectedMethod, setSelectedMethod] = useState<MfaMethod | null>(null);
@@ -66,7 +67,11 @@ export function MfaSetup({ onComplete, onCancel }: MfaSetupProps) {
 		}
 
 		try {
-			const result = await verifyMfaCode(selectedMethod, verificationCode, sessionId);
+			const result = await verifyMfaCode(
+				selectedMethod,
+				verificationCode,
+				sessionId,
+			);
 
 			if (result.success) {
 				onComplete?.();
@@ -84,7 +89,9 @@ export function MfaSetup({ onComplete, onCancel }: MfaSetupProps) {
 					onClick={() => handleMethodSelect(MfaMethod.TOTP)}
 				>
 					<div className="font-medium">Authenticator App</div>
-					<div className="text-gray-600 text-sm">Use Google Authenticator, Authy, or similar app</div>
+					<div className="text-gray-600 text-sm">
+						Use Google Authenticator, Authy, or similar app
+					</div>
 				</button>
 
 				<button
@@ -92,7 +99,9 @@ export function MfaSetup({ onComplete, onCancel }: MfaSetupProps) {
 					onClick={() => handleMethodSelect(MfaMethod.SMS)}
 				>
 					<div className="font-medium">SMS</div>
-					<div className="text-gray-600 text-sm">Receive codes via text message</div>
+					<div className="text-gray-600 text-sm">
+						Receive codes via text message
+					</div>
 				</button>
 
 				<button
@@ -108,7 +117,9 @@ export function MfaSetup({ onComplete, onCancel }: MfaSetupProps) {
 					onClick={() => handleMethodSelect(MfaMethod.BACKUP_CODES)}
 				>
 					<div className="font-medium">Backup Codes</div>
-					<div className="text-gray-600 text-sm">Generate one-time backup codes for recovery</div>
+					<div className="text-gray-600 text-sm">
+						Generate one-time backup codes for recovery
+					</div>
 				</button>
 			</div>
 		</div>
@@ -179,7 +190,10 @@ export function MfaSetup({ onComplete, onCancel }: MfaSetupProps) {
 					>
 						{isLoading ? "Setting up..." : "Continue"}
 					</button>
-					<button className="rounded border px-4 py-2 hover:bg-gray-50" onClick={() => setStep("method")}>
+					<button
+						className="rounded border px-4 py-2 hover:bg-gray-50"
+						onClick={() => setStep("method")}
+					>
 						Back
 					</button>
 				</div>
@@ -196,7 +210,9 @@ export function MfaSetup({ onComplete, onCancel }: MfaSetupProps) {
 			<input
 				className="block w-full rounded-md border px-3 py-2 text-center text-2xl tracking-widest"
 				maxLength={6}
-				onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+				onChange={(e) =>
+					setVerificationCode(e.target.value.replace(/\D/g, "").slice(0, 6))
+				}
 				placeholder="123456"
 				type="text"
 				value={verificationCode}
@@ -205,7 +221,9 @@ export function MfaSetup({ onComplete, onCancel }: MfaSetupProps) {
 			{setupResult?.backupCodes && (
 				<div className="rounded border border-yellow-200 bg-yellow-50 p-4">
 					<h4 className="font-medium">Backup Codes</h4>
-					<p className="mb-2 text-gray-600 text-sm">Save these codes in a safe place. Each can only be used once:</p>
+					<p className="mb-2 text-gray-600 text-sm">
+						Save these codes in a safe place. Each can only be used once:
+					</p>
 					<div className="grid grid-cols-2 gap-2 font-mono text-sm">
 						{setupResult.backupCodes.map((code: string, index: number) => (
 							<div className="rounded border bg-white p-2" key={index}>
@@ -224,7 +242,10 @@ export function MfaSetup({ onComplete, onCancel }: MfaSetupProps) {
 				>
 					{isLoading ? "Verifying..." : "Verify & Enable"}
 				</button>
-				<button className="rounded border px-4 py-2 hover:bg-gray-50" onClick={() => setStep("setup")}>
+				<button
+					className="rounded border px-4 py-2 hover:bg-gray-50"
+					onClick={() => setStep("setup")}
+				>
 					Back
 				</button>
 			</div>
@@ -233,14 +254,21 @@ export function MfaSetup({ onComplete, onCancel }: MfaSetupProps) {
 
 	return (
 		<div className="mx-auto max-w-md rounded-lg border p-6">
-			{error && <div className="mb-4 rounded border border-red-200 bg-red-50 p-3 text-red-700">{error}</div>}
+			{error && (
+				<div className="mb-4 rounded border border-red-200 bg-red-50 p-3 text-red-700">
+					{error}
+				</div>
+			)}
 
 			{step === "method" && renderMethodSelection()}
 			{step === "setup" && renderSetup()}
 			{step === "verify" && renderVerification()}
 
 			<div className="mt-6 border-t pt-4">
-				<button className="text-gray-600 text-sm hover:text-gray-800" onClick={onCancel}>
+				<button
+					className="text-gray-600 text-sm hover:text-gray-800"
+					onClick={onCancel}
+				>
 					Cancel Setup
 				</button>
 			</div>

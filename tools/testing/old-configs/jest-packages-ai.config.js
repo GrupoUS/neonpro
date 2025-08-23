@@ -124,7 +124,9 @@ const config = createJestConfig({
 	testEnvironment: "node",
 
 	// Transform ignore patterns for AI dependencies
-	transformIgnorePatterns: ["/node_modules/(?!(.*\\.mjs$|@tensorflow|@huggingface|ml-matrix))"],
+	transformIgnorePatterns: [
+		"/node_modules/(?!(.*\\.mjs$|@tensorflow|@huggingface|ml-matrix))",
+	],
 
 	// Verbose output for AI testing
 	verbose: true,

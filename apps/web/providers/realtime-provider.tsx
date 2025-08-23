@@ -45,9 +45,9 @@ export function RealtimeProvider({
 	const [supabaseClient] = useState(() => createClient());
 	const [manager, setManager] = useState<RealtimeQueryManager | null>(null);
 	const [isEnabled, setIsEnabled] = useState(config.enabled);
-	const [connectionStatus, setConnectionStatus] = useState<"connecting" | "connected" | "disconnected" | "error">(
-		"disconnected"
-	);
+	const [connectionStatus, setConnectionStatus] = useState<
+		"connecting" | "connected" | "disconnected" | "error"
+	>("disconnected");
 	const [currentConfig, setCurrentConfig] = useState(config);
 	const managerRef = useRef<RealtimeQueryManager | null>(null);
 
@@ -107,14 +107,20 @@ export function RealtimeProvider({
 		},
 	};
 
-	return <RealtimeContext.Provider value={contextValue}>{children}</RealtimeContext.Provider>;
+	return (
+		<RealtimeContext.Provider value={contextValue}>
+			{children}
+		</RealtimeContext.Provider>
+	);
 }
 
 // Hook to use realtime context
 export function useRealtimeContext(): RealtimeContextValue {
 	const context = useContext(RealtimeContext);
 	if (!context) {
-		throw new Error("useRealtimeContext must be used within a RealtimeProvider");
+		throw new Error(
+			"useRealtimeContext must be used within a RealtimeProvider",
+		);
 	}
 	return context;
 }

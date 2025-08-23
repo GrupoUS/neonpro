@@ -7,7 +7,15 @@
 
 "use client";
 
-import { type Metric, onCLS, onFCP, onFID, onINP, onLCP, onTTFB } from "web-vitals";
+import {
+	type Metric,
+	onCLS,
+	onFCP,
+	onFID,
+	onINP,
+	onLCP,
+	onTTFB,
+} from "web-vitals";
 import type {
 	CustomMetric,
 	HealthcareContext,
@@ -73,7 +81,10 @@ export class PerformanceMonitor {
 	private readonly sessionId: string;
 	private isInitialized = false;
 
-	constructor(config: Partial<MonitoringConfig> = {}, hooks: MonitoringHooks = {}) {
+	constructor(
+		config: Partial<MonitoringConfig> = {},
+		hooks: MonitoringHooks = {},
+	) {
 		this.config = { ...DEFAULT_CONFIG, ...config };
 		this.hooks = hooks;
 		this.sessionId = this.generateSessionId();
@@ -103,7 +114,11 @@ export class PerformanceMonitor {
 	/**
 	 * Track custom healthcare metric
 	 */
-	trackCustomMetric(name: HealthcareMetricName, value: number, context?: Record<string, any>): void {
+	trackCustomMetric(
+		name: HealthcareMetricName,
+		value: number,
+		context?: Record<string, any>,
+	): void {
 		if (!this.shouldSample("customMetrics")) {
 			return;
 		}
@@ -135,7 +150,11 @@ export class PerformanceMonitor {
 	/**
 	 * Track patient search performance
 	 */
-	trackPatientSearch(searchType: string, resultCount: number, startTime: number): void {
+	trackPatientSearch(
+		searchType: string,
+		resultCount: number,
+		startTime: number,
+	): void {
 		const duration = performance.now() - startTime;
 		this.trackCustomMetric("patient_search_time", duration, {
 			searchType,
@@ -181,7 +200,11 @@ export class PerformanceMonitor {
 	/**
 	 * Track report generation performance
 	 */
-	trackReportGeneration(reportType: string, recordCount: number, startTime: number): void {
+	trackReportGeneration(
+		reportType: string,
+		recordCount: number,
+		startTime: number,
+	): void {
 		const duration = performance.now() - startTime;
 		this.trackCustomMetric("report_generation_time", duration, {
 			reportType,
@@ -212,7 +235,12 @@ export class PerformanceMonitor {
 	/**
 	 * End timing and track metric
 	 */
-	endTiming(label: string, metricName: HealthcareMetricName, startTime: number, context?: Record<string, any>): void {
+	endTiming(
+		label: string,
+		metricName: HealthcareMetricName,
+		startTime: number,
+		context?: Record<string, any>,
+	): void {
 		performance.mark(`${label}-end`);
 		performance.measure(label, `${label}-start`, `${label}-end`);
 
@@ -415,7 +443,9 @@ export class PerformanceMonitor {
 	/**
 	 * Send navigation metrics
 	 */
-	private async sendNavigationMetrics(metrics: Record<string, number>): Promise<void> {
+	private async sendNavigationMetrics(
+		metrics: Record<string, number>,
+	): Promise<void> {
 		try {
 			await fetch(this.config.endpoints.metrics, {
 				method: "POST",
@@ -451,7 +481,10 @@ export class PerformanceMonitor {
 	/**
 	 * Get rating for custom metric
 	 */
-	private getRating(name: HealthcareMetricName, value: number): "good" | "needs-improvement" | "poor" {
+	private getRating(
+		name: HealthcareMetricName,
+		value: number,
+	): "good" | "needs-improvement" | "poor" {
 		const thresholds = this.config.thresholds.healthcare[name];
 		if (value <= thresholds.good) {
 			return "good";
@@ -582,7 +615,7 @@ let globalMonitor: PerformanceMonitor | null = null;
  */
 export function initPerformanceMonitoring(
 	config?: Partial<MonitoringConfig>,
-	hooks?: MonitoringHooks
+	hooks?: MonitoringHooks,
 ): PerformanceMonitor {
 	if (!globalMonitor) {
 		globalMonitor = new PerformanceMonitor(config, hooks);

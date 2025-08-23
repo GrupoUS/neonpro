@@ -53,7 +53,7 @@ export class CircuitBreaker {
 			} else {
 				throw new CircuitBreakerOpenError(
 					`Circuit breaker is OPEN for ${this.config.healthcareContext}. ` +
-						`Next attempt at: ${this.nextAttemptTime?.toISOString()}`
+						`Next attempt at: ${this.nextAttemptTime?.toISOString()}`,
 				);
 			}
 		}
@@ -80,8 +80,8 @@ export class CircuitBreaker {
 				setTimeout(() => {
 					reject(
 						new CircuitBreakerTimeoutError(
-							`Healthcare operation timed out after ${timeout}ms for ${this.config.healthcareContext}`
-						)
+							`Healthcare operation timed out after ${timeout}ms for ${this.config.healthcareContext}`,
+						),
 					);
 				}, timeout);
 			}),
@@ -141,7 +141,7 @@ export class CircuitBreaker {
 			this.logStateChange(
 				this.state === CircuitBreakerState.HALF_OPEN ? "HALF_OPEN" : "CLOSED",
 				"OPEN",
-				`Failure threshold reached (${this.failureCount}/${this.config.failureThreshold})`
+				`Failure threshold reached (${this.failureCount}/${this.config.failureThreshold})`,
 			);
 		}
 	}
@@ -157,7 +157,10 @@ export class CircuitBreaker {
 	 * Check if current context is emergency
 	 */
 	private isEmergencyContext(): boolean {
-		return this.config.healthcareContext === "emergency" || this.config.healthcareContext === "patient_data";
+		return (
+			this.config.healthcareContext === "emergency" ||
+			this.config.healthcareContext === "patient_data"
+		);
 	}
 
 	/**
@@ -303,7 +306,10 @@ export class HealthcareCircuitBreakerManager {
 	/**
 	 * Get or create circuit breaker for healthcare service
 	 */
-	getCircuitBreaker(serviceKey: string, config?: Partial<CircuitBreakerConfig>): CircuitBreaker {
+	getCircuitBreaker(
+		serviceKey: string,
+		config?: Partial<CircuitBreakerConfig>,
+	): CircuitBreaker {
 		if (!this.circuitBreakers.has(serviceKey)) {
 			this.circuitBreakers.set(serviceKey, new CircuitBreaker(config));
 		}
@@ -339,9 +345,15 @@ export class HealthcareCircuitBreakerManager {
 		const statuses = this.getAllStatuses();
 		const total = Object.keys(statuses).length;
 
-		const healthy = Object.values(statuses).filter((s) => s.state === CircuitBreakerState.CLOSED).length;
-		const degraded = Object.values(statuses).filter((s) => s.state === CircuitBreakerState.HALF_OPEN).length;
-		const unhealthy = Object.values(statuses).filter((s) => s.state === CircuitBreakerState.OPEN).length;
+		const healthy = Object.values(statuses).filter(
+			(s) => s.state === CircuitBreakerState.CLOSED,
+		).length;
+		const degraded = Object.values(statuses).filter(
+			(s) => s.state === CircuitBreakerState.HALF_OPEN,
+		).length;
+		const unhealthy = Object.values(statuses).filter(
+			(s) => s.state === CircuitBreakerState.OPEN,
+		).length;
 
 		return {
 			total,

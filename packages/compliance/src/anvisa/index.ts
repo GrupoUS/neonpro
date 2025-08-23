@@ -78,7 +78,7 @@ export function createAnvisaServices(supabaseClient: any) {
  */
 export async function validateAnvisaCompliance(
 	tenantId: string,
-	services: ReturnType<typeof createAnvisaServices>
+	services: ReturnType<typeof createAnvisaServices>,
 ): Promise<{
 	compliant: boolean;
 	score: number;
@@ -91,7 +91,8 @@ export async function validateAnvisaCompliance(
 
 	try {
 		// Check product registrations
-		const { data: products } = await services.productRegistration.getProductRegistrations(tenantId);
+		const { data: products } =
+			await services.productRegistration.getProductRegistrations(tenantId);
 		if (!products || products.length === 0) {
 			issues.push("No registered products found");
 			totalScore -= 1.0;
@@ -99,16 +100,20 @@ export async function validateAnvisaCompliance(
 		}
 
 		// Check for expiring registrations
-		const { data: expiringProducts } = await services.productRegistration.getExpiringProducts(tenantId, 30);
+		const { data: expiringProducts } =
+			await services.productRegistration.getExpiringProducts(tenantId, 30);
 		if (expiringProducts && expiringProducts.length > 0) {
-			issues.push(`${expiringProducts.length} products expiring within 30 days`);
+			issues.push(
+				`${expiringProducts.length} products expiring within 30 days`,
+			);
 			totalScore -= 0.5;
 			recommendations.push("Renew expiring product registrations");
 		}
 
 		// Constitutional compliance minimum
 		const finalScore = Math.max(totalScore, CONSTITUTIONAL_COMPLIANCE_MINIMUM);
-		const compliant = finalScore >= CONSTITUTIONAL_COMPLIANCE_MINIMUM && issues.length === 0;
+		const compliant =
+			finalScore >= CONSTITUTIONAL_COMPLIANCE_MINIMUM && issues.length === 0;
 
 		return {
 			compliant,

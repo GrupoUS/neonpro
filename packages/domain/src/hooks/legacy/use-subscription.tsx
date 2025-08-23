@@ -21,7 +21,9 @@ type SubscriptionData = {
 };
 
 export function useSubscription() {
-	const [subscription, setSubscription] = useState<SubscriptionData | null>(null);
+	const [subscription, setSubscription] = useState<SubscriptionData | null>(
+		null,
+	);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 
@@ -115,10 +117,20 @@ type SubscriptionContextType = {
 	refreshSubscription: () => Promise<void>;
 };
 
-const SubscriptionContext = createContext<SubscriptionContextType | undefined>(undefined);
+const SubscriptionContext = createContext<SubscriptionContextType | undefined>(
+	undefined,
+);
 
-export function SubscriptionProvider({ children, user }: { children: React.ReactNode; user: User | null }) {
-	const [subscription, setSubscription] = useState<SubscriptionData | null>(null);
+export function SubscriptionProvider({
+	children,
+	user,
+}: {
+	children: React.ReactNode;
+	user: User | null;
+}) {
+	const [subscription, setSubscription] = useState<SubscriptionData | null>(
+		null,
+	);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 
@@ -170,7 +182,9 @@ export function SubscriptionProvider({ children, user }: { children: React.React
 export function useSubscriptionContext() {
 	const context = useContext(SubscriptionContext);
 	if (context === undefined) {
-		throw new Error("useSubscriptionContext must be used within a SubscriptionProvider");
+		throw new Error(
+			"useSubscriptionContext must be used within a SubscriptionProvider",
+		);
 	}
 	return context;
 }

@@ -15,8 +15,20 @@ import {
 import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
 
 type DataProcessingRecord = {
@@ -47,8 +59,12 @@ type DataSubjectRights = {
 };
 
 export default function LGPDComplianceDashboard() {
-	const [activeTab, setActiveTab] = useState<"overview" | "data" | "consent" | "rights">("overview");
-	const [dataProcessing, setDataProcessing] = useState<DataProcessingRecord[]>([]);
+	const [activeTab, setActiveTab] = useState<
+		"overview" | "data" | "consent" | "rights"
+	>("overview");
+	const [dataProcessing, setDataProcessing] = useState<DataProcessingRecord[]>(
+		[],
+	);
 	const [consents, setConsents] = useState<ConsentRecord[]>([]);
 	const [rights, setRights] = useState<DataSubjectRights>({
 		access: { available: true },
@@ -100,7 +116,8 @@ export default function LGPDComplianceDashboard() {
 				type: "data_processing",
 				status: "granted",
 				grantedAt: new Date(),
-				description: "Processamento de dados para prestação de serviços médicos",
+				description:
+					"Processamento de dados para prestação de serviços médicos",
 			},
 			{
 				id: "2",
@@ -194,7 +211,8 @@ export default function LGPDComplianceDashboard() {
 				<div>
 					<h1 className="font-bold text-2xl">Painel de Conformidade LGPD</h1>
 					<p className="text-gray-600">
-						Gerencie seus direitos e dados pessoais conforme a Lei Geral de Proteção de Dados
+						Gerencie seus direitos e dados pessoais conforme a Lei Geral de
+						Proteção de Dados
 					</p>
 				</div>
 			</div>
@@ -244,7 +262,9 @@ export default function LGPDComplianceDashboard() {
 							</CardTitle>
 						</CardHeader>
 						<CardContent>
-							<div className="font-bold text-2xl">{dataProcessing.filter((d) => d.status === "active").length}</div>
+							<div className="font-bold text-2xl">
+								{dataProcessing.filter((d) => d.status === "active").length}
+							</div>
 							<p className="text-gray-600 text-xs">Categorias ativas</p>
 						</CardContent>
 					</Card>
@@ -260,7 +280,9 @@ export default function LGPDComplianceDashboard() {
 							<div className="font-bold text-2xl text-green-600">
 								{consents.filter((c) => c.status === "granted").length}
 							</div>
-							<p className="text-gray-600 text-xs">Ativos de {consents.length}</p>
+							<p className="text-gray-600 text-xs">
+								Ativos de {consents.length}
+							</p>
 						</CardContent>
 					</Card>
 
@@ -301,19 +323,27 @@ export default function LGPDComplianceDashboard() {
 									<div className="flex items-center space-x-3">
 										{getCategoryIcon(record.category)}
 										<div>
-											<CardTitle className="text-lg">{record.purpose}</CardTitle>
+											<CardTitle className="text-lg">
+												{record.purpose}
+											</CardTitle>
 											<CardDescription>{record.lawfulBasis}</CardDescription>
 										</div>
 									</div>
 									<Badge variant={getBadgeVariant(record.status)}>
-										{record.status === "active" ? "Ativo" : record.status === "deleted" ? "Excluído" : "Anonimizado"}
+										{record.status === "active"
+											? "Ativo"
+											: record.status === "deleted"
+												? "Excluído"
+												: "Anonimizado"}
 									</Badge>
 								</div>
 							</CardHeader>
 							<CardContent>
 								<div className="grid grid-cols-1 gap-4 md:grid-cols-3">
 									<div>
-										<h4 className="mb-2 font-semibold text-sm">Dados Coletados</h4>
+										<h4 className="mb-2 font-semibold text-sm">
+											Dados Coletados
+										</h4>
 										<ul className="space-y-1 text-gray-600 text-sm">
 											{record.dataCollected.map((data, idx) => (
 												<li key={idx}>• {data}</li>
@@ -322,11 +352,17 @@ export default function LGPDComplianceDashboard() {
 									</div>
 									<div>
 										<h4 className="mb-2 font-semibold text-sm">Retenção</h4>
-										<p className="text-gray-600 text-sm">{Math.floor(record.retentionPeriod / 365)} anos</p>
+										<p className="text-gray-600 text-sm">
+											{Math.floor(record.retentionPeriod / 365)} anos
+										</p>
 									</div>
 									<div>
-										<h4 className="mb-2 font-semibold text-sm">Última Atualização</h4>
-										<p className="text-gray-600 text-sm">{record.lastUpdated.toLocaleDateString("pt-BR")}</p>
+										<h4 className="mb-2 font-semibold text-sm">
+											Última Atualização
+										</h4>
+										<p className="text-gray-600 text-sm">
+											{record.lastUpdated.toLocaleDateString("pt-BR")}
+										</p>
 									</div>
 								</div>
 							</CardContent>
@@ -365,29 +401,46 @@ export default function LGPDComplianceDashboard() {
 							<CardContent>
 								<div className="flex items-center justify-between">
 									<div className="text-gray-600 text-sm">
-										{consent.grantedAt && <p>Concedido em: {consent.grantedAt.toLocaleDateString("pt-BR")}</p>}
-										{consent.withdrawnAt && <p>Retirado em: {consent.withdrawnAt.toLocaleDateString("pt-BR")}</p>}
+										{consent.grantedAt && (
+											<p>
+												Concedido em:{" "}
+												{consent.grantedAt.toLocaleDateString("pt-BR")}
+											</p>
+										)}
+										{consent.withdrawnAt && (
+											<p>
+												Retirado em:{" "}
+												{consent.withdrawnAt.toLocaleDateString("pt-BR")}
+											</p>
+										)}
 									</div>
 									<Button
 										onClick={() => {
 											// Handle consent withdrawal/grant
-											const newStatus = consent.status === "granted" ? "withdrawn" : "granted";
+											const newStatus =
+												consent.status === "granted" ? "withdrawn" : "granted";
 											setConsents((prev) =>
 												prev.map((c) =>
 													c.id === consent.id
 														? {
 																...c,
 																status: newStatus,
-																[newStatus === "withdrawn" ? "withdrawnAt" : "grantedAt"]: new Date(),
+																[newStatus === "withdrawn"
+																	? "withdrawnAt"
+																	: "grantedAt"]: new Date(),
 															}
-														: c
-												)
+														: c,
+												),
 											);
 										}}
 										size="sm"
-										variant={consent.status === "granted" ? "destructive" : "default"}
+										variant={
+											consent.status === "granted" ? "destructive" : "default"
+										}
 									>
-										{consent.status === "granted" ? "Retirar Consentimento" : "Conceder Consentimento"}
+										{consent.status === "granted"
+											? "Retirar Consentimento"
+											: "Conceder Consentimento"}
 									</Button>
 								</div>
 							</CardContent>
@@ -404,15 +457,22 @@ export default function LGPDComplianceDashboard() {
 								<Eye className="h-5 w-5" />
 								<span>Direito de Acesso (Art. 15)</span>
 							</CardTitle>
-							<CardDescription>Solicite uma cópia de todos os seus dados pessoais que processamos.</CardDescription>
+							<CardDescription>
+								Solicite uma cópia de todos os seus dados pessoais que
+								processamos.
+							</CardDescription>
 						</CardHeader>
 						<CardContent>
 							{rights.access.lastRequested && (
 								<p className="mb-3 text-gray-600 text-sm">
-									Última solicitação: {rights.access.lastRequested.toLocaleDateString("pt-BR")}
+									Última solicitação:{" "}
+									{rights.access.lastRequested.toLocaleDateString("pt-BR")}
 								</p>
 							)}
-							<Button className="w-full" onClick={() => handleDataSubjectRight("access")}>
+							<Button
+								className="w-full"
+								onClick={() => handleDataSubjectRight("access")}
+							>
 								<Download className="mr-2 h-4 w-4" />
 								Solicitar Acesso aos Dados
 							</Button>
@@ -425,15 +485,24 @@ export default function LGPDComplianceDashboard() {
 								<Edit className="h-5 w-5" />
 								<span>Direito de Retificação (Art. 16)</span>
 							</CardTitle>
-							<CardDescription>Solicite a correção de dados incorretos ou incompletos.</CardDescription>
+							<CardDescription>
+								Solicite a correção de dados incorretos ou incompletos.
+							</CardDescription>
 						</CardHeader>
 						<CardContent>
 							{rights.rectification.lastRequested && (
 								<p className="mb-3 text-gray-600 text-sm">
-									Última solicitação: {rights.rectification.lastRequested.toLocaleDateString("pt-BR")}
+									Última solicitação:{" "}
+									{rights.rectification.lastRequested.toLocaleDateString(
+										"pt-BR",
+									)}
 								</p>
 							)}
-							<Button className="w-full" onClick={() => handleDataSubjectRight("rectification")} variant="outline">
+							<Button
+								className="w-full"
+								onClick={() => handleDataSubjectRight("rectification")}
+								variant="outline"
+							>
 								<Edit className="mr-2 h-4 w-4" />
 								Solicitar Correção
 							</Button>
@@ -447,20 +516,28 @@ export default function LGPDComplianceDashboard() {
 								<span>Direito ao Apagamento (Art. 16)</span>
 							</CardTitle>
 							<CardDescription>
-								Solicite a exclusão dos seus dados pessoais (sujeito a obrigações legais).
+								Solicite a exclusão dos seus dados pessoais (sujeito a
+								obrigações legais).
 							</CardDescription>
 						</CardHeader>
 						<CardContent>
 							<div className="mb-3 flex items-center space-x-2 text-amber-600">
 								<AlertTriangle className="h-4 w-4" />
-								<span className="text-sm">Dados médicos podem ter retenção obrigatória</span>
+								<span className="text-sm">
+									Dados médicos podem ter retenção obrigatória
+								</span>
 							</div>
 							{rights.erasure.lastRequested && (
 								<p className="mb-3 text-gray-600 text-sm">
-									Última solicitação: {rights.erasure.lastRequested.toLocaleDateString("pt-BR")}
+									Última solicitação:{" "}
+									{rights.erasure.lastRequested.toLocaleDateString("pt-BR")}
 								</p>
 							)}
-							<Button className="w-full" onClick={() => handleDataSubjectRight("erasure")} variant="destructive">
+							<Button
+								className="w-full"
+								onClick={() => handleDataSubjectRight("erasure")}
+								variant="destructive"
+							>
 								<Trash2 className="mr-2 h-4 w-4" />
 								Solicitar Exclusão
 							</Button>
@@ -473,15 +550,22 @@ export default function LGPDComplianceDashboard() {
 								<Download className="h-5 w-5" />
 								<span>Direito à Portabilidade (Art. 18)</span>
 							</CardTitle>
-							<CardDescription>Exporte seus dados em formato estruturado e legível por máquina.</CardDescription>
+							<CardDescription>
+								Exporte seus dados em formato estruturado e legível por máquina.
+							</CardDescription>
 						</CardHeader>
 						<CardContent>
 							{rights.portability.lastRequested && (
 								<p className="mb-3 text-gray-600 text-sm">
-									Última solicitação: {rights.portability.lastRequested.toLocaleDateString("pt-BR")}
+									Última solicitação:{" "}
+									{rights.portability.lastRequested.toLocaleDateString("pt-BR")}
 								</p>
 							)}
-							<Button className="w-full" onClick={() => handleDataSubjectRight("portability")} variant="outline">
+							<Button
+								className="w-full"
+								onClick={() => handleDataSubjectRight("portability")}
+								variant="outline"
+							>
 								<Download className="mr-2 h-4 w-4" />
 								Exportar Dados
 							</Button>
@@ -500,7 +584,9 @@ export default function LGPDComplianceDashboard() {
 						<Button onClick={() => setShowDialog(false)} variant="outline">
 							Cancelar
 						</Button>
-						<Button onClick={() => setShowDialog(false)}>Confirmar Solicitação</Button>
+						<Button onClick={() => setShowDialog(false)}>
+							Confirmar Solicitação
+						</Button>
 					</div>
 				</DialogContent>
 			</Dialog>

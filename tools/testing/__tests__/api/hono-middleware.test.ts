@@ -41,16 +41,22 @@ const createMiddlewareApp = () => {
 		cors({
 			origin: ["https://app.neonpro.com", "https://admin.neonpro.com"],
 			allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-			allowHeaders: ["Content-Type", "Authorization", "X-Request-ID", "Accept-Language"],
+			allowHeaders: [
+				"Content-Type",
+				"Authorization",
+				"X-Request-ID",
+				"Accept-Language",
+			],
 			exposeHeaders: ["X-Request-ID", "X-Total-Count"],
 			credentials: true,
 			maxAge: 86_400,
-		})
+		}),
 	);
 
 	// Rate limiting middleware
 	app.use("/api/*", async (c, next) => {
-		const clientIP = c.req.header("x-forwarded-for") || c.req.header("x-real-ip") || "unknown";
+		const clientIP =
+			c.req.header("x-forwarded-for") || c.req.header("x-real-ip") || "unknown";
 		const key = `rate_limit:${clientIP}`;
 		const now = Date.now();
 		const windowMs = 60_000; // 1 minute
@@ -64,10 +70,11 @@ const createMiddlewareApp = () => {
 			return c.json(
 				{
 					error: "Muitas tentativas",
-					message: "Limite de requisições excedido. Tente novamente em 1 minuto.",
+					message:
+						"Limite de requisições excedido. Tente novamente em 1 minuto.",
 					retryAfter: Math.ceil((current.resetTime - now) / 1000),
 				},
-				429
+				429,
 			);
 		} else {
 			current.count++;
@@ -87,7 +94,7 @@ const createMiddlewareApp = () => {
 					message: "Forneça um token de autorização válido",
 					code: "MISSING_AUTH_TOKEN",
 				},
-				401
+				401,
 			);
 		}
 
@@ -101,7 +108,7 @@ const createMiddlewareApp = () => {
 					message: "O token fornecido é inválido ou expirou",
 					code: "INVALID_TOKEN",
 				},
-				401
+				401,
 			);
 		}
 
@@ -120,12 +127,15 @@ const createMiddlewareApp = () => {
 
 		// Log LGPD-sensitive data access
 		if (method === "GET" || method === "PUT" || method === "DELETE") {
-			neonLogger.info(`LGPD: Acesso a dados pessoais por usuário ${user?.id} - ${method} ${c.req.path}`, {
-				userId: user?.id,
-				method,
-				endpoint: c.req.path,
-				type: "lgpd_access",
-			});
+			neonLogger.info(
+				`LGPD: Acesso a dados pessoais por usuário ${user?.id} - ${method} ${c.req.path}`,
+				{
+					userId: user?.id,
+					method,
+					endpoint: c.req.path,
+					type: "lgpd_access",
+				},
+			);
 		}
 
 		// Add LGPD headers
@@ -183,7 +193,7 @@ const createMiddlewareApp = () => {
 					requestId,
 					timestamp: new Date().toISOString(),
 				},
-				500
+				500,
 			);
 		}
 
@@ -193,7 +203,7 @@ const createMiddlewareApp = () => {
 				message: err.message,
 				requestId,
 			},
-			500
+			500,
 		);
 	});
 
@@ -283,7 +293,9 @@ describe("🛡️ NEONPRO Healthcare - Middleware Validation", () => {
 			});
 
 			expect(res.status).toBe(200);
-			expect(res.headers.get("Access-Control-Allow-Origin")).toBe("https://app.neonpro.com");
+			expect(res.headers.get("Access-Control-Allow-Origin")).toBe(
+				"https://app.neonpro.com",
+			);
 			expect(res.headers.get("Access-Control-Allow-Credentials")).toBe("true");
 		});
 
@@ -299,8 +311,12 @@ describe("🛡️ NEONPRO Healthcare - Middleware Validation", () => {
 
 			expect(res.status).toBe(204);
 			expect(res.headers.get("Access-Control-Allow-Methods")).toContain("POST");
-			expect(res.headers.get("Access-Control-Allow-Headers")).toContain("Content-Type");
-			expect(res.headers.get("Access-Control-Allow-Headers")).toContain("Authorization");
+			expect(res.headers.get("Access-Control-Allow-Headers")).toContain(
+				"Content-Type",
+			);
+			expect(res.headers.get("Access-Control-Allow-Headers")).toContain(
+				"Authorization",
+			);
 		});
 	});
 
@@ -353,7 +369,9 @@ describe("🛡️ NEONPRO Healthcare - Middleware Validation", () => {
 
 			expect(res.status).toBe(200);
 			expect(res.headers.get("X-Data-Protection")).toBe("LGPD-Compliant");
-			expect(res.headers.get("X-Privacy-Policy")).toBe("https://neonpro.com/privacy");
+			expect(res.headers.get("X-Privacy-Policy")).toBe(
+				"https://neonpro.com/privacy",
+			);
 		});
 	});
 

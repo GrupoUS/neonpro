@@ -88,7 +88,10 @@ export function Sidebar() {
 						return (
 							<Button
 								asChild
-								className={cn("w-full justify-start", isActive && "bg-secondary")}
+								className={cn(
+									"w-full justify-start",
+									isActive && "bg-secondary",
+								)}
 								key={item.href}
 								variant={isActive ? "secondary" : "ghost"}
 							>

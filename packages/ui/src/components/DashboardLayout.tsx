@@ -52,10 +52,14 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
 			notifications = 0,
 			...props
 		},
-		ref
+		ref,
 	) => {
 		return (
-			<div className={cn("flex min-h-screen bg-background", className)} ref={ref} {...props}>
+			<div
+				className={cn("flex min-h-screen bg-background", className)}
+				ref={ref}
+				{...props}
+			>
 				{/* Sidebar */}
 				<DashboardSidebar
 					collapsed={sidebarCollapsed}
@@ -82,7 +86,9 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
 													{index > 0 && <BreadcrumbSeparator />}
 													<BreadcrumbItem>
 														{item.href ? (
-															<BreadcrumbLink href={item.href}>{item.title}</BreadcrumbLink>
+															<BreadcrumbLink href={item.href}>
+																{item.title}
+															</BreadcrumbLink>
 														) : (
 															<BreadcrumbPage>{item.title}</BreadcrumbPage>
 														)}
@@ -94,14 +100,22 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
 								)}
 
 								{/* Page Title */}
-								{title && <h1 className="font-semibold text-2xl tracking-tight">{title}</h1>}
+								{title && (
+									<h1 className="font-semibold text-2xl tracking-tight">
+										{title}
+									</h1>
+								)}
 
 								{/* Page Description */}
-								{description && <p className="text-muted-foreground">{description}</p>}
+								{description && (
+									<p className="text-muted-foreground">{description}</p>
+								)}
 							</div>
 
 							{/* Header Actions */}
-							{headerActions && <div className="flex items-center gap-3">{headerActions}</div>}
+							{headerActions && (
+								<div className="flex items-center gap-3">{headerActions}</div>
+							)}
 						</div>
 					</header>
 
@@ -110,7 +124,7 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
 				</div>
 			</div>
 		);
-	}
+	},
 );
 
 DashboardLayout.displayName = "DashboardLayout";

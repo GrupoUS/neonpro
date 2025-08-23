@@ -9,31 +9,43 @@ describe("TASK-001 Infrastructure Verification", () => {
 	describe("Component Exports Verification", () => {
 		it("should have FeatureFlagManager component available", async () => {
 			try {
-				const module = await import("../../components/monitoring/FeatureFlagManager");
+				const module = await import(
+					"../../components/monitoring/FeatureFlagManager"
+				);
 				expect(module.FeatureFlagManager).toBeDefined();
 				expect(typeof module.FeatureFlagManager).toBe("function");
 			} catch (error) {
-				throw new Error(`FeatureFlagManager component not found: ${error.message}`);
+				throw new Error(
+					`FeatureFlagManager component not found: ${error.message}`,
+				);
 			}
 		});
 
 		it("should have SystemHealthWidget component available", async () => {
 			try {
-				const module = await import("../../components/monitoring/SystemHealthWidget");
+				const module = await import(
+					"../../components/monitoring/SystemHealthWidget"
+				);
 				expect(module.SystemHealthWidget).toBeDefined();
 				expect(typeof module.SystemHealthWidget).toBe("function");
 			} catch (error) {
-				throw new Error(`SystemHealthWidget component not found: ${error.message}`);
+				throw new Error(
+					`SystemHealthWidget component not found: ${error.message}`,
+				);
 			}
 		});
 
 		it("should have PerformanceDashboard component available", async () => {
 			try {
-				const module = await import("../../components/monitoring/performance-dashboard");
+				const module = await import(
+					"../../components/monitoring/performance-dashboard"
+				);
 				expect(module.PerformanceDashboard).toBeDefined();
 				expect(typeof module.PerformanceDashboard).toBe("function");
 			} catch (error) {
-				throw new Error(`PerformanceDashboard component not found: ${error.message}`);
+				throw new Error(
+					`PerformanceDashboard component not found: ${error.message}`,
+				);
 			}
 		});
 	});
@@ -112,7 +124,10 @@ describe("TASK-001 Infrastructure Verification", () => {
 			const fs = require("node:fs");
 			const path = require("node:path");
 
-			const routePath = path.join(process.cwd(), "app/api/monitoring/health/route.ts");
+			const routePath = path.join(
+				process.cwd(),
+				"app/api/monitoring/health/route.ts",
+			);
 			expect(fs.existsSync(routePath)).toBe(true);
 		});
 
@@ -120,7 +135,10 @@ describe("TASK-001 Infrastructure Verification", () => {
 			const fs = require("node:fs");
 			const path = require("node:path");
 
-			const routePath = path.join(process.cwd(), "app/api/monitoring/metrics/route.ts");
+			const routePath = path.join(
+				process.cwd(),
+				"app/api/monitoring/metrics/route.ts",
+			);
 			expect(fs.existsSync(routePath)).toBe(true);
 		});
 
@@ -128,7 +146,10 @@ describe("TASK-001 Infrastructure Verification", () => {
 			const fs = require("node:fs");
 			const path = require("node:path");
 
-			const routePath = path.join(process.cwd(), "app/api/monitoring/feature-flags/route.ts");
+			const routePath = path.join(
+				process.cwd(),
+				"app/api/monitoring/feature-flags/route.ts",
+			);
 			expect(fs.existsSync(routePath)).toBe(true);
 		});
 	});

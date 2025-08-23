@@ -69,7 +69,10 @@ export function useLogin() {
 
 			// Store tokens
 			if (result.data?.tokens) {
-				apiClient.auth.setTokens(result.data.tokens.accessToken, result.data.tokens.refreshToken);
+				apiClient.auth.setTokens(
+					result.data.tokens.accessToken,
+					result.data.tokens.refreshToken,
+				);
 			}
 
 			return result as LoginResponse;
@@ -239,7 +242,10 @@ export function useRefreshToken() {
 
 			// Update tokens
 			if (result.data?.tokens) {
-				apiClient.auth.setTokens(result.data.tokens.accessToken, result.data.tokens.refreshToken);
+				apiClient.auth.setTokens(
+					result.data.tokens.accessToken,
+					result.data.tokens.refreshToken,
+				);
 			}
 
 			return result;
@@ -265,7 +271,8 @@ export function useAuthStatus() {
 		isLoading,
 		error,
 		hasRole: (role: string) => user?.role === role,
-		hasPermission: (permission: string) => user?.permissions?.includes(permission) ?? false,
+		hasPermission: (permission: string) =>
+			user?.permissions?.includes(permission) ?? false,
 	};
 }
 
@@ -283,12 +290,15 @@ export function useAuthUtils() {
 
 		// Update cached user data
 		updateUser: (userData: Partial<AuthUser>) => {
-			queryClient.setQueryData(AUTH_QUERY_KEYS.profile, (old: AuthUser | undefined) => {
-				if (!old) {
-					return old;
-				}
-				return { ...old, ...userData };
-			});
+			queryClient.setQueryData(
+				AUTH_QUERY_KEYS.profile,
+				(old: AuthUser | undefined) => {
+					if (!old) {
+						return old;
+					}
+					return { ...old, ...userData };
+				},
+			);
 		},
 
 		// Check if token exists (doesn't validate)

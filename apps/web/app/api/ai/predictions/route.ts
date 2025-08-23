@@ -5,9 +5,10 @@ export async function GET(_request: NextRequest) {
 	return NextResponse.json(
 		{
 			success: false,
-			error: "AI Predictions API temporarily unavailable - package under development",
+			error:
+				"AI Predictions API temporarily unavailable - package under development",
 		},
-		{ status: 503 }
+		{ status: 503 },
 	);
 }
 
@@ -15,8 +16,9 @@ export async function POST(_request: NextRequest) {
 	return NextResponse.json(
 		{
 			success: false,
-			error: "AI Predictions API temporarily unavailable - package under development",
+			error:
+				"AI Predictions API temporarily unavailable - package under development",
 		},
-		{ status: 503 }
+		{ status: 503 },
 	);
 }

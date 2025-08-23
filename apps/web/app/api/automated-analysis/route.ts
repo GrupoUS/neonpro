@@ -25,14 +25,20 @@ export async function GET(request: NextRequest) {
 			status: (searchParams.get("status") as any) || undefined,
 			date_from: searchParams.get("date_from") || undefined,
 			date_to: searchParams.get("date_to") || undefined,
-			accuracy_min: searchParams.get("accuracy_min") ? Number(searchParams.get("accuracy_min")) : undefined,
+			accuracy_min: searchParams.get("accuracy_min")
+				? Number(searchParams.get("accuracy_min"))
+				: undefined,
 			created_by: searchParams.get("created_by") || undefined,
 		};
 
 		// Validate filters
-		const validatedFilters = validationSchemas.analysisSessionFilters.parse(filters);
+		const validatedFilters =
+			validationSchemas.analysisSessionFilters.parse(filters);
 
-		const sessions = await automatedBeforeAfterAnalysisService.getAnalysisSessions(validatedFilters);
+		const sessions =
+			await automatedBeforeAfterAnalysisService.getAnalysisSessions(
+				validatedFilters,
+			);
 
 		return NextResponse.json({
 			success: true,
@@ -45,7 +51,7 @@ export async function GET(request: NextRequest) {
 				error: "Failed to fetch analysis sessions",
 				details: error instanceof Error ? error.message : "Unknown error",
 			},
-			{ status: 500 }
+			{ status: 500 },
 		);
 	}
 }
@@ -67,7 +73,10 @@ export async function POST(request: NextRequest) {
 		// Validate request body
 		const validatedData = validationSchemas.createAnalysisSession.parse(body);
 
-		const session = await automatedBeforeAfterAnalysisService.createAnalysisSession(validatedData);
+		const session =
+			await automatedBeforeAfterAnalysisService.createAnalysisSession(
+				validatedData,
+			);
 
 		return NextResponse.json(
 			{
@@ -75,7 +84,7 @@ export async function POST(request: NextRequest) {
 				data: session,
 				message: "Analysis session created successfully",
 			},
-			{ status: 201 }
+			{ status: 201 },
 		);
 	} catch (error) {
 		return NextResponse.json(
@@ -83,7 +92,7 @@ export async function POST(request: NextRequest) {
 				error: "Failed to create analysis session",
 				details: error instanceof Error ? error.message : "Unknown error",
 			},
-			{ status: 500 }
+			{ status: 500 },
 		);
 	}
 }
@@ -104,13 +113,21 @@ export async function PUT(request: NextRequest) {
 		const { id, ...updates } = body;
 
 		if (!id) {
-			return NextResponse.json({ error: "Session ID is required" }, { status: 400 });
+			return NextResponse.json(
+				{ error: "Session ID is required" },
+				{ status: 400 },
+			);
 		}
 
 		// Validate updates
-		const validatedUpdates = validationSchemas.updateAnalysisSession.parse(updates);
+		const validatedUpdates =
+			validationSchemas.updateAnalysisSession.parse(updates);
 
-		const updatedSession = await automatedBeforeAfterAnalysisService.updateAnalysisSession(id, validatedUpdates);
+		const updatedSession =
+			await automatedBeforeAfterAnalysisService.updateAnalysisSession(
+				id,
+				validatedUpdates,
+			);
 
 		return NextResponse.json({
 			success: true,
@@ -123,7 +140,7 @@ export async function PUT(request: NextRequest) {
 				error: "Failed to update analysis session",
 				details: error instanceof Error ? error.message : "Unknown error",
 			},
-			{ status: 500 }
+			{ status: 500 },
 		);
 	}
 }
@@ -144,7 +161,10 @@ export async function DELETE(request: NextRequest) {
 		const id = searchParams.get("id");
 
 		if (!id) {
-			return NextResponse.json({ error: "Session ID is required" }, { status: 400 });
+			return NextResponse.json(
+				{ error: "Session ID is required" },
+				{ status: 400 },
+			);
 		}
 
 		await automatedBeforeAfterAnalysisService.deleteAnalysisSession(id);
@@ -159,7 +179,7 @@ export async function DELETE(request: NextRequest) {
 				error: "Failed to delete analysis session",
 				details: error instanceof Error ? error.message : "Unknown error",
 			},
-			{ status: 500 }
+			{ status: 500 },
 		);
 	}
 }

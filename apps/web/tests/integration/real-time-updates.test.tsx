@@ -86,14 +86,17 @@ const _TestWrapper = ({ children }: { children: React.ReactNode }) => {
 		},
 	});
 
-	return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+	return (
+		<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+	);
 };
 
 describe("Real-time Updates Integration Tests", () => {
 	let queryClient: QueryClient;
 
 	beforeEach(() => {
-		vi.clearAllMocks();
+		// Don't clear all mocks here since global setup does it
+		// Create a fresh QueryClient instance
 		queryClient = new QueryClient({
 			defaultOptions: {
 				queries: { retry: false },
@@ -110,7 +113,7 @@ describe("Real-time Updates Integration Tests", () => {
 
 	afterEach(() => {
 		vi.restoreAllMocks();
-		queryClient.clear();
+		queryClient.removeQueries();
 	});
 
 	describe("Realtime Connection Management", () => {
@@ -145,7 +148,9 @@ describe("Real-time Updates Integration Tests", () => {
 				expect(mockRealtimeHook.isConnected).toBe(true);
 			});
 
-			expect(mockSupabaseClient.channel).toHaveBeenCalledWith("patients:clinic-1");
+			expect(mockSupabaseClient.channel).toHaveBeenCalledWith(
+				"patients:clinic-1",
+			);
 			expect(mockChannel.subscribe).toHaveBeenCalled();
 		});
 
@@ -193,20 +198,36 @@ describe("Real-time Updates Integration Tests", () => {
 
 			let realtimeCallback: ((payload: any) => void) | null = null;
 
-			mockRealtimeHook.subscribe.mockImplementation((_channelName, callback) => {
-				realtimeCallback = callback;
-				mockRealtimeHook.isConnected = true;
-				return mockChannel;
-			});
+			mockRealtimeHook.subscribe.mockImplementation(
+				(_channelName, callback) => {
+					realtimeCallback = callback;
+					mockRealtimeHook.isConnected = true;
+
+					// Create a local reference to ensure queryClient is available
+					const currentQueryClient = queryClient;
+					if (currentQueryClient) {
+						// Store reference for use in callback
+						callback.queryClient = currentQueryClient;
+					}
+
+					return mockChannel;
+				},
+			);
 
 			// Set up initial patient data in cache
-			queryClient.setQueryData(["patients", "patient-123"], mockPatient);
+			queryClient.setQueryData(
+				{ queryKey: ["patients", "patient-123"] },
+				mockPatient,
+			);
 
 			await act(async () => {
 				mockRealtimeHook.subscribe("patients:clinic-1", (payload) => {
 					// Simulate cache invalidation on realtime update
 					if (payload.eventType === "UPDATE") {
-						queryClient.setQueryData(["patients", payload.new.id], payload.new);
+						queryClient.setQueryData(
+							{ queryKey: ["patients", payload.new.id] },
+							payload.new,
+						);
 						queryClient.invalidateQueries({ queryKey: ["patients"] });
 					}
 				});
@@ -225,7 +246,10 @@ describe("Real-time Updates Integration Tests", () => {
 				}
 			});
 
-			const cachedPatient = queryClient.getQueryData(["patients", "patient-123"]);
+			const cachedPatient = queryClient.getQueryData([
+				"patients",
+				"patient-123",
+			]);
 			expect(cachedPatient).toEqual(updatedPatient);
 		});
 
@@ -244,26 +268,43 @@ describe("Real-time Updates Integration Tests", () => {
 
 			let realtimeCallback: ((payload: any) => void) | null = null;
 
-			mockRealtimeHook.subscribe.mockImplementation((_channelName, callback) => {
-				realtimeCallback = callback;
-				return mockChannel;
-			});
+			mockRealtimeHook.subscribe.mockImplementation(
+				(_channelName, callback) => {
+					realtimeCallback = callback;
+					return mockChannel;
+				},
+			);
 
 			// Set initial data in the queryClient created in beforeEach
-			queryClient.setQueryData(["patients", "patient-123"], mockPatient);
+			queryClient.setQueryData(
+				{ queryKey: ["patients", "patient-123"] },
+				mockPatient,
+			);
 
 			// Setup the subscription callback with a reference to the same queryClient
 			const subscriptionCallback = (payload: any) => {
 				if (payload.eventType === "UPDATE") {
-					const currentData = queryClient.getQueryData(["patients", payload.new.id]) as any;
+					const currentData = queryClient.getQueryData([
+						"patients",
+						payload.new.id,
+					]) as any;
 
 					// Conflict resolution: use latest timestamp
-					if (!currentData || new Date(payload.new.updated_at) > new Date(currentData.updated_at)) {
+					if (
+						!currentData ||
+						new Date(payload.new.updated_at) > new Date(currentData.updated_at)
+					) {
 						// Use consistent query key and ensure data is set
-						queryClient.setQueryData(["patients", payload.new.id], payload.new);
+						queryClient.setQueryData(
+							{ queryKey: ["patients", payload.new.id] },
+							payload.new,
+						);
 
 						// Verify data was set correctly
-						const _verifyData = queryClient.getQueryData(["patients", payload.new.id]);
+						const _verifyData = queryClient.getQueryData([
+							"patients",
+							payload.new.id,
+						]);
 					}
 				}
 			};
@@ -305,15 +346,21 @@ describe("Real-time Updates Integration Tests", () => {
 			// Wait for state updates to process
 			await waitFor(
 				async () => {
-					const finalPatient = queryClient.getQueryData(["patients", "patient-123"]) as any;
+					const finalPatient = queryClient.getQueryData([
+						"patients",
+						"patient-123",
+					]) as any;
 
 					expect(finalPatient).toBeDefined();
 					expect(finalPatient?.email).toBe("joao.updated@email.com");
 				},
-				{ timeout: 3000 }
+				{ timeout: 3000 },
 			);
 
-			const finalPatient = queryClient.getQueryData(["patients", "patient-123"]) as any;
+			const finalPatient = queryClient.getQueryData([
+				"patients",
+				"patient-123",
+			]) as any;
 
 			// Validate the final state matches the latest update (user2Update)
 			expect(finalPatient).toBeDefined();
@@ -349,13 +396,22 @@ describe("Real-time Updates Integration Tests", () => {
 			// Simulate multiple user types subscribing
 			await act(async () => {
 				// Doctor subscription
-				mockRealtimeHook.subscribe("appointments:doctor:doctor-123", notificationCallbacks.doctor);
+				mockRealtimeHook.subscribe(
+					"appointments:doctor:doctor-123",
+					notificationCallbacks.doctor,
+				);
 
 				// Patient subscription
-				mockRealtimeHook.subscribe("appointments:patient:patient-123", notificationCallbacks.patient);
+				mockRealtimeHook.subscribe(
+					"appointments:patient:patient-123",
+					notificationCallbacks.patient,
+				);
 
 				// Reception subscription
-				mockRealtimeHook.subscribe("appointments:clinic:clinic-1", notificationCallbacks.reception);
+				mockRealtimeHook.subscribe(
+					"appointments:clinic:clinic-1",
+					notificationCallbacks.reception,
+				);
 			});
 
 			expect(notificationCallbacks.doctor).toHaveBeenCalledWith({
@@ -379,30 +435,43 @@ describe("Real-time Updates Integration Tests", () => {
 			let conflictDetected = false;
 			let realtimeCallback: ((payload: any) => void) | null = null;
 
-			mockRealtimeHook.subscribe.mockImplementation((_channelName, callback) => {
-				realtimeCallback = callback;
-				return mockChannel;
-			});
+			mockRealtimeHook.subscribe.mockImplementation(
+				(_channelName, callback) => {
+					realtimeCallback = callback;
+					return mockChannel;
+				},
+			);
 
 			await act(async () => {
-				mockRealtimeHook.subscribe("appointments:doctor:doctor-123", (payload) => {
-					if (payload.eventType === "INSERT") {
-						// Check for scheduling conflicts
-						const existingAppointments = (queryClient.getQueryData(["appointments", "doctor-123"]) as any[]) || [];
-						const conflict = existingAppointments.find(
-							(apt) =>
-								apt.scheduled_at === payload.new.scheduled_at && apt.id !== payload.new.id && apt.status !== "cancelled"
-						);
+				mockRealtimeHook.subscribe(
+					"appointments:doctor:doctor-123",
+					(payload) => {
+						if (payload.eventType === "INSERT") {
+							// Check for scheduling conflicts
+							const existingAppointments =
+								(queryClient.getQueryData([
+									"appointments",
+									"doctor-123",
+								]) as any[]) || [];
+							const conflict = existingAppointments.find(
+								(apt) =>
+									apt.scheduled_at === payload.new.scheduled_at &&
+									apt.id !== payload.new.id &&
+									apt.status !== "cancelled",
+							);
 
-						if (conflict) {
-							conflictDetected = true;
+							if (conflict) {
+								conflictDetected = true;
+							}
 						}
-					}
-				});
+					},
+				);
 			});
 
 			// Set existing appointment in cache
-			queryClient.setQueryData(["appointments", "doctor-123"], [mockAppointment]);
+			queryClient.setQueryData({ queryKey: ["appointments", "doctor-123"] }, [
+				mockAppointment,
+			]);
 
 			// Simulate new conflicting appointment
 			await act(async () => {
@@ -452,10 +521,22 @@ describe("Real-time Updates Integration Tests", () => {
 
 			// Simulate all staff types subscribing to emergency channel
 			await act(async () => {
-				mockRealtimeHook.subscribe("emergency:clinic:clinic-1:doctors", emergencyCallbacks.doctors);
-				mockRealtimeHook.subscribe("emergency:clinic:clinic-1:nurses", emergencyCallbacks.nurses);
-				mockRealtimeHook.subscribe("emergency:clinic:clinic-1:reception", emergencyCallbacks.reception);
-				mockRealtimeHook.subscribe("emergency:clinic:clinic-1:security", emergencyCallbacks.security);
+				mockRealtimeHook.subscribe(
+					"emergency:clinic:clinic-1:doctors",
+					emergencyCallbacks.doctors,
+				);
+				mockRealtimeHook.subscribe(
+					"emergency:clinic:clinic-1:nurses",
+					emergencyCallbacks.nurses,
+				);
+				mockRealtimeHook.subscribe(
+					"emergency:clinic:clinic-1:reception",
+					emergencyCallbacks.reception,
+				);
+				mockRealtimeHook.subscribe(
+					"emergency:clinic:clinic-1:security",
+					emergencyCallbacks.security,
+				);
 			});
 
 			// All staff should receive the emergency alert
@@ -475,22 +556,40 @@ describe("Real-time Updates Integration Tests", () => {
 		it("should handle high-frequency updates without performance degradation", async () => {
 			const updateCount = 100;
 			const updates: any[] = [];
+			let testQueryClient: QueryClient;
 
 			let realtimeCallback: ((payload: any) => void) | null = null;
 
-			mockRealtimeHook.subscribe.mockImplementation((_channelName, callback) => {
-				realtimeCallback = callback;
-				return mockChannel;
-			});
+			mockRealtimeHook.subscribe.mockImplementation(
+				(_channelName, callback) => {
+					realtimeCallback = callback;
+					return mockChannel;
+				},
+			);
 
 			await act(async () => {
-				mockRealtimeHook.subscribe("patients:clinic-1", (payload) => {
+				// Create QueryClient inside act to avoid timing issues with global mock clearing
+				testQueryClient = new QueryClient({
+					defaultOptions: {
+						queries: { retry: false },
+						mutations: { retry: false },
+					},
+				});
+
+				// Define the callback function with proper QueryClient reference
+				const subscriptionCallback = (payload: any) => {
 					updates.push(payload);
 					// Simulate efficient cache update
 					if (payload.eventType === "UPDATE") {
-						queryClient.setQueryData(["patients", payload.new.id], payload.new);
+						// Use the fresh QueryClient instance with v5 API
+						testQueryClient.setQueryData(
+							{ queryKey: ["patients", payload.new.id] },
+							payload.new,
+						);
 					}
-				});
+				};
+
+				mockRealtimeHook.subscribe("patients:clinic-1", subscriptionCallback);
 			});
 
 			const startTime = performance.now();
@@ -521,29 +620,31 @@ describe("Real-time Updates Integration Tests", () => {
 		it("should handle connection drops gracefully with reconnection", async () => {
 			let connectionAttempts = 0;
 
-			mockRealtimeHook.subscribe.mockImplementation((_channelName, _callback) => {
-				connectionAttempts++;
+			mockRealtimeHook.subscribe.mockImplementation(
+				(_channelName, _callback) => {
+					connectionAttempts++;
 
-				if (connectionAttempts === 1) {
-					// First connection succeeds
-					mockRealtimeHook.isConnected = true;
-					mockRealtimeHook.connectionStatus = "connected";
-
-					// Simulate connection drop after 1 second
-					setTimeout(() => {
-						mockRealtimeHook.isConnected = false;
-						mockRealtimeHook.connectionStatus = "disconnected";
-					}, 1000);
-				} else if (connectionAttempts === 2) {
-					// Reconnection succeeds
-					setTimeout(() => {
+					if (connectionAttempts === 1) {
+						// First connection succeeds
 						mockRealtimeHook.isConnected = true;
 						mockRealtimeHook.connectionStatus = "connected";
-					}, 500);
-				}
 
-				return mockChannel;
-			});
+						// Simulate connection drop after 1 second
+						setTimeout(() => {
+							mockRealtimeHook.isConnected = false;
+							mockRealtimeHook.connectionStatus = "disconnected";
+						}, 1000);
+					} else if (connectionAttempts === 2) {
+						// Reconnection succeeds
+						setTimeout(() => {
+							mockRealtimeHook.isConnected = true;
+							mockRealtimeHook.connectionStatus = "connected";
+						}, 500);
+					}
+
+					return mockChannel;
+				},
+			);
 
 			// Initial connection
 			await act(async () => {

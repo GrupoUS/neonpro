@@ -119,7 +119,12 @@ export type AlertConfig = {
  * Healthcare-specific monitoring context
  */
 export type HealthcareContext = {
-	feature: "patient-management" | "procedures" | "compliance" | "reports" | "auth";
+	feature:
+		| "patient-management"
+		| "procedures"
+		| "compliance"
+		| "reports"
+		| "auth";
 	sensitivity: "low" | "medium" | "high" | "critical";
 	complianceLevel: "basic" | "healthcare" | "anvisa" | "cfm";
 	userRole: "patient" | "doctor" | "nurse" | "admin" | "receptionist";

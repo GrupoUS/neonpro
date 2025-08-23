@@ -152,7 +152,8 @@ export class LgpdService {
 			if (!consent.canWithdraw) {
 				return {
 					success: false,
-					message: "Este consentimento não pode ser retirado devido a obrigações legais",
+					message:
+						"Este consentimento não pode ser retirado devido a obrigações legais",
 				};
 			}
 			// Update consent record
@@ -221,7 +222,10 @@ export class LgpdService {
 		// Gather all user data
 		const userData = await LgpdService.gatherUserData(request.userId);
 		// Format data according to preferred format
-		const formattedData = await LgpdService.formatUserData(userData, request.preferredFormat);
+		const formattedData = await LgpdService.formatUserData(
+			userData,
+			request.preferredFormat,
+		);
 		// Create response
 		const response = {
 			requestId: request.id,
@@ -251,26 +255,39 @@ export class LgpdService {
 		};
 		// Check legal basis for each data category
 		const userConsents = await LgpdService.getUserConsents(request.userId);
-		const legalObligations = await LgpdService.getLegalRetentionRequirements(request.userId);
+		const legalObligations = await LgpdService.getLegalRetentionRequirements(
+			request.userId,
+		);
 		for (const consent of userConsents) {
 			for (const category of consent.dataCategories) {
 				if (legalObligations.includes(category)) {
 					// Cannot delete due to legal obligation
 					result.retained.push(category);
-					result.reasons[category] = "Legal obligation (healthcare records retention)";
-				} else if (consent.lawfulBasis === LgpdLawfulBasis.CONSENT && !consent.isActive) {
+					result.reasons[category] =
+						"Legal obligation (healthcare records retention)";
+				} else if (
+					consent.lawfulBasis === LgpdLawfulBasis.CONSENT &&
+					!consent.isActive
+				) {
 					// Can delete - consent withdrawn and no legal basis
 					await LgpdService.deleteUserDataByCategory(request.userId, category);
 					result.deleted.push(category);
 				} else {
 					// Evaluate other lawful bases
-					const canDelete = await LgpdService.evaluateErasureEligibility(request.userId, category);
+					const canDelete = await LgpdService.evaluateErasureEligibility(
+						request.userId,
+						category,
+					);
 					if (canDelete) {
-						await LgpdService.deleteUserDataByCategory(request.userId, category);
+						await LgpdService.deleteUserDataByCategory(
+							request.userId,
+							category,
+						);
 						result.deleted.push(category);
 					} else {
 						result.retained.push(category);
-						result.reasons[category] = "Legitimate interests or contract performance";
+						result.reasons[category] =
+							"Legitimate interests or contract performance";
 					}
 				}
 			}
@@ -333,13 +350,16 @@ export class LgpdService {
 				recommendation = "Standard data protection measures are sufficient.";
 				break;
 			case "medium":
-				recommendation = "Additional safeguards recommended. Regular monitoring required.";
+				recommendation =
+					"Additional safeguards recommended. Regular monitoring required.";
 				break;
 			case "high":
-				recommendation = "Enhanced security measures mandatory. DPO consultation required.";
+				recommendation =
+					"Enhanced security measures mandatory. DPO consultation required.";
 				break;
 			case "very_high":
-				recommendation = "Prior consultation with ANPD required. Comprehensive DPIA mandatory.";
+				recommendation =
+					"Prior consultation with ANPD required. Comprehensive DPIA mandatory.";
 				break;
 		}
 		return {
@@ -355,7 +375,11 @@ export class LgpdService {
 	static async handleDataBreach(incident) {
 		const { affectedUsers, dataCategories, severity } = incident;
 		// Assess breach severity and impact
-		const isHighRisk = LgpdService.assessBreachRisk(dataCategories, affectedUsers.length, severity);
+		const isHighRisk = LgpdService.assessBreachRisk(
+			dataCategories,
+			affectedUsers.length,
+			severity,
+		);
 		// ANPD notification requirements (LGPD Art. 48)
 		const anpdNotificationRequired = isHighRisk || severity === "critical";
 		// User notification requirements
@@ -365,15 +389,23 @@ export class LgpdService {
 				dataCategories.includes(DataCategory.SENSITIVE) ||
 				dataCategories.includes(DataCategory.BIOMETRIC));
 		// Calculate notification deadline (72 hours from discovery)
-		const notificationDeadline = anpdNotificationRequired ? addDays(incident.discoveredAt, 3) : undefined;
+		const notificationDeadline = anpdNotificationRequired
+			? addDays(incident.discoveredAt, 3)
+			: undefined;
 		// Risk assessment
 		const riskAssessment = LgpdService.generateBreachRiskAssessment(incident);
 		// Auto-schedule notifications if required
 		if (anpdNotificationRequired) {
-			await LgpdService.scheduleAnpdNotification(incident, notificationDeadline);
+			await LgpdService.scheduleAnpdNotification(
+				incident,
+				notificationDeadline,
+			);
 		}
 		if (userNotificationRequired) {
-			await LgpdService.scheduleUserNotifications(incident.affectedUsers, incident);
+			await LgpdService.scheduleUserNotifications(
+				incident.affectedUsers,
+				incident,
+			);
 		}
 		return {
 			anpdNotificationRequired,
@@ -424,7 +456,11 @@ export class LgpdService {
 	}
 	static async deleteUserDataByCategory(_userId, _category) {}
 	static assessBreachRisk(dataCategories, affectedCount, severity) {
-		return dataCategories.includes(DataCategory.HEALTH) || affectedCount > 100 || severity === "critical";
+		return (
+			dataCategories.includes(DataCategory.HEALTH) ||
+			affectedCount > 100 ||
+			severity === "critical"
+		);
 	}
 	static generateBreachRiskAssessment(incident) {
 		return `Risk assessment for breach affecting ${incident.affectedUsers.length} users`;

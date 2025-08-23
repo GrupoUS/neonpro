@@ -15,7 +15,10 @@ export async function GET(_request: NextRequest) {
 
 		return NextResponse.json(metrics);
 	} catch (_error) {
-		return NextResponse.json({ error: "Failed to fetch metrics" }, { status: 500 });
+		return NextResponse.json(
+			{ error: "Failed to fetch metrics" },
+			{ status: 500 },
+		);
 	}
 }
 
@@ -28,6 +31,9 @@ export async function POST(request: NextRequest) {
 			id: `metric-${Date.now()}`,
 		});
 	} catch (_error) {
-		return NextResponse.json({ error: "Failed to record metric" }, { status: 500 });
+		return NextResponse.json(
+			{ error: "Failed to record metric" },
+			{ status: 500 },
+		);
 	}
 }

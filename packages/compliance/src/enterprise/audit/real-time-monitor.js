@@ -66,7 +66,10 @@ export class RealTimeComplianceMonitor {
 				};
 			}
 			// Start monitoring interval
-			await this.setupMonitoringInterval(monitorId, params.config.monitoring_interval_minutes);
+			await this.setupMonitoringInterval(
+				monitorId,
+				params.config.monitoring_interval_minutes,
+			);
 			// Perform initial compliance assessment
 			await this.performComplianceAssessment(monitorId);
 			return { success: true, data };
@@ -99,15 +102,21 @@ export class RealTimeComplianceMonitor {
 			const constitutionalRecommendations = [];
 			// Assess each compliance area
 			for (const area of monitor.compliance_areas) {
-				const areaAssessment = await this.assessComplianceArea(area, monitor.tenant_id);
+				const areaAssessment = await this.assessComplianceArea(
+					area,
+					monitor.tenant_id,
+				);
 				complianceScores[area] = areaAssessment.score;
 				// Generate alerts for low scores
-				if (areaAssessment.score < monitor.monitoring_config.score_thresholds.warning) {
+				if (
+					areaAssessment.score <
+					monitor.monitoring_config.score_thresholds.warning
+				) {
 					const alert = await this.generateComplianceAlert(
 						area,
 						areaAssessment.score,
 						monitor.monitoring_config.score_thresholds.warning,
-						areaAssessment.issues
+						areaAssessment.issues,
 					);
 					activeAlerts.push(alert);
 				}
@@ -115,16 +124,27 @@ export class RealTimeComplianceMonitor {
 				recommendations.push(...areaAssessment.recommendations);
 				// Check constitutional compliance
 				if (areaAssessment.score < 9.9) {
-					constitutionalIssues.push(`${area} compliance below constitutional standard`);
-					constitutionalRecommendations.push(`Improve ${area} compliance to meet constitutional healthcare standards`);
+					constitutionalIssues.push(
+						`${area} compliance below constitutional standard`,
+					);
+					constitutionalRecommendations.push(
+						`Improve ${area} compliance to meet constitutional healthcare standards`,
+					);
 				}
 			}
 			// Calculate overall constitutional score
-			const overallScore = this.calculateOverallComplianceScore(complianceScores);
+			const overallScore =
+				this.calculateOverallComplianceScore(complianceScores);
 			// Determine overall status
-			const status = this.determineComplianceStatus(overallScore, monitor.monitoring_config.score_thresholds);
+			const status = this.determineComplianceStatus(
+				overallScore,
+				monitor.monitoring_config.score_thresholds,
+			);
 			// Analyze trends
-			const trends = await this.analyzeComplianceTrends(monitorId, overallScore);
+			const trends = await this.analyzeComplianceTrends(
+				monitorId,
+				overallScore,
+			);
 			const monitoringResponse = {
 				status,
 				compliance_scores: complianceScores,
@@ -133,7 +153,8 @@ export class RealTimeComplianceMonitor {
 				trends,
 				recommendations: Array.from(new Set(recommendations)), // Remove duplicates
 				constitutional_assessment: {
-					constitutional_compliant: overallScore >= 9.9 && constitutionalIssues.length === 0,
+					constitutional_compliant:
+						overallScore >= 9.9 && constitutionalIssues.length === 0,
 					constitutional_issues: constitutionalIssues,
 					constitutional_recommendations: constitutionalRecommendations,
 				},
@@ -184,7 +205,8 @@ export class RealTimeComplianceMonitor {
 					break;
 				}
 				case "constitutional_healthcare": {
-					const constitutionalAssessment = await this.assessConstitutionalCompliance(tenantId);
+					const constitutionalAssessment =
+						await this.assessConstitutionalCompliance(tenantId);
 					score = constitutionalAssessment.score;
 					issues.push(...constitutionalAssessment.issues);
 					recommendations.push(...constitutionalAssessment.recommendations);
@@ -206,7 +228,9 @@ export class RealTimeComplianceMonitor {
 			return {
 				score: 9.9, // Constitutional minimum fallback
 				issues: [`Error assessing ${area} compliance`],
-				recommendations: [`Contact technical support for ${area} compliance assessment`],
+				recommendations: [
+					`Contact technical support for ${area} compliance assessment`,
+				],
 			};
 		}
 	}
@@ -261,7 +285,11 @@ export class RealTimeComplianceMonitor {
 			alertType = "compliance_drop";
 		}
 		// Generate recommendations based on area and score
-		const recommendedActions = this.generateRecommendedActions(area, currentScore, issues);
+		const recommendedActions = this.generateRecommendedActions(
+			area,
+			currentScore,
+			issues,
+		);
 		const alert = {
 			alert_id: alertId,
 			alert_type: alertType,
@@ -295,7 +323,7 @@ export class RealTimeComplianceMonitor {
 						await this.performComplianceAssessment(monitorId);
 					} catch (_error) {}
 				},
-				intervalMinutes * 60 * 1000
+				intervalMinutes * 60 * 1000,
 			); // Convert minutes to milliseconds
 			// Store interval reference
 			this.monitoringIntervals.set(monitorId, interval);
@@ -316,13 +344,14 @@ export class RealTimeComplianceMonitor {
 				return { success: false, error: "Compliance monitor not found" };
 			}
 			// Get latest assessment
-			const { data: latestAssessment, error: assessmentError } = await this.supabase
-				.from("compliance_monitoring_assessments")
-				.select("*")
-				.eq("monitor_id", monitorId)
-				.order("monitoring_timestamp", { ascending: false })
-				.limit(1)
-				.single();
+			const { data: latestAssessment, error: assessmentError } =
+				await this.supabase
+					.from("compliance_monitoring_assessments")
+					.select("*")
+					.eq("monitor_id", monitorId)
+					.order("monitoring_timestamp", { ascending: false })
+					.limit(1)
+					.single();
 			if (assessmentError || !latestAssessment) {
 				// If no assessment exists, perform one now
 				return await this.performComplianceAssessment(monitorId);
@@ -396,7 +425,10 @@ export class RealTimeComplianceMonitor {
 				error: "At least one compliance area required for monitoring",
 			};
 		}
-		if (!params.config.score_thresholds || params.config.score_thresholds.target < 9.9) {
+		if (
+			!params.config.score_thresholds ||
+			params.config.score_thresholds.target < 9.9
+		) {
 			return {
 				valid: false,
 				error: "Constitutional minimum score threshold (9.9) required",
@@ -439,13 +471,17 @@ export class RealTimeComplianceMonitor {
 	generateRecommendedActions(area, score, issues) {
 		const actions = [];
 		if (score < 9.9) {
-			actions.push(`Immediate action required to meet constitutional ${area} standards`);
+			actions.push(
+				`Immediate action required to meet constitutional ${area} standards`,
+			);
 		}
 		if (score < 9.5) {
 			actions.push(`Review and improve ${area} compliance procedures`);
 		}
 		if (issues.length > 0) {
-			actions.push(`Address identified issues: ${issues.slice(0, 3).join(", ")}`);
+			actions.push(
+				`Address identified issues: ${issues.slice(0, 3).join(", ")}`,
+			);
 		}
 		actions.push(`Schedule ${area} compliance review with responsible team`);
 		actions.push(`Document corrective actions taken for ${area} compliance`);
@@ -480,8 +516,10 @@ export class RealTimeComplianceMonitor {
 				};
 			}
 			// Calculate trend
-			const previousScore = historicalAssessments[1].overall_constitutional_score;
-			const trendPercentage = ((currentScore - previousScore) / previousScore) * 100;
+			const previousScore =
+				historicalAssessments[1].overall_constitutional_score;
+			const trendPercentage =
+				((currentScore - previousScore) / previousScore) * 100;
 			let scoreTrend = "stable";
 			if (trendPercentage > 1) {
 				scoreTrend = "improving";

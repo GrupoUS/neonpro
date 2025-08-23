@@ -20,7 +20,8 @@ const REMOVE_LIST: CleanupItem[] = [
 	{
 		path: "apps/web/types/lgpd.ts.disabled",
 		action: "remove",
-		reason: "LGPD types already implemented in packages/compliance/src/lgpd/types.ts",
+		reason:
+			"LGPD types already implemented in packages/compliance/src/lgpd/types.ts",
 		category: "duplicate",
 	},
 	{
@@ -96,7 +97,8 @@ const REACTIVATE_CANDIDATES: CleanupItem[] = [
 	{
 		path: "apps/web/types/rbac.ts.disabled",
 		action: "keep",
-		reason: "RBAC types may be needed, analyze if current implementation is complete",
+		reason:
+			"RBAC types may be needed, analyze if current implementation is complete",
 		category: "evaluate",
 	},
 	{
@@ -239,4 +241,9 @@ if (require.main === module) {
 	executeCleanup();
 }
 
-export { executeCleanup, analyzeDisabledFile, REMOVE_LIST, REACTIVATE_CANDIDATES };
+export {
+	executeCleanup,
+	analyzeDisabledFile,
+	REMOVE_LIST,
+	REACTIVATE_CANDIDATES,
+};

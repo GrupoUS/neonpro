@@ -1,40 +1,61 @@
 import { cva, type VariantProps } from "class-variance-authority";
-import { AlertCircle, Calendar, CheckCircle, FileText, Heart, Shield, User } from "lucide-react";
+import {
+	AlertCircle,
+	Calendar,
+	CheckCircle,
+	FileText,
+	Heart,
+	Shield,
+	User,
+} from "lucide-react";
 import type * as React from "react";
-import { createContext, forwardRef, useCallback, useContext, useId, useState } from "react";
+import {
+	createContext,
+	forwardRef,
+	useCallback,
+	useContext,
+	useId,
+	useState,
+} from "react";
 import { cn } from "../../lib/utils";
 import { FormInstruction, LGPDNotice, VisuallyHidden } from "./visually-hidden";
 
-const formVariants = cva("space-y-6 rounded-lg border bg-card p-6 shadow-sm transition-all duration-200", {
-	variants: {
-		variant: {
-			default: "border-border",
-			medical: "border-l-4 border-l-primary bg-gradient-to-r from-blue-50/20 to-transparent dark:from-blue-950/10",
-			patient: "border-l-4 border-l-secondary bg-gradient-to-r from-green-50/20 to-transparent dark:from-green-950/10",
-			sensitive:
-				"border-l-4 border-l-orange-500 bg-gradient-to-r from-orange-50/20 to-transparent dark:from-orange-950/10",
-			critical: "border-l-4 border-l-destructive bg-gradient-to-r from-red-50/20 to-transparent dark:from-red-950/10",
-			simple: "border-0 bg-transparent p-0 shadow-none",
+const formVariants = cva(
+	"space-y-6 rounded-lg border bg-card p-6 shadow-sm transition-all duration-200",
+	{
+		variants: {
+			variant: {
+				default: "border-border",
+				medical:
+					"border-l-4 border-l-primary bg-gradient-to-r from-blue-50/20 to-transparent dark:from-blue-950/10",
+				patient:
+					"border-l-4 border-l-secondary bg-gradient-to-r from-green-50/20 to-transparent dark:from-green-950/10",
+				sensitive:
+					"border-l-4 border-l-orange-500 bg-gradient-to-r from-orange-50/20 to-transparent dark:from-orange-950/10",
+				critical:
+					"border-l-4 border-l-destructive bg-gradient-to-r from-red-50/20 to-transparent dark:from-red-950/10",
+				simple: "border-0 bg-transparent p-0 shadow-none",
+			},
+			spacing: {
+				default: "space-y-6",
+				compact: "space-y-4",
+				spacious: "space-y-8",
+				tight: "space-y-2",
+			},
+			lgpdLevel: {
+				none: "",
+				basic: "ring-1 ring-green-200 dark:ring-green-800",
+				enhanced: "ring-2 ring-green-300 dark:ring-green-700",
+				strict: "shadow-lg ring-2 ring-green-500 dark:ring-green-500",
+			},
 		},
-		spacing: {
-			default: "space-y-6",
-			compact: "space-y-4",
-			spacious: "space-y-8",
-			tight: "space-y-2",
-		},
-		lgpdLevel: {
-			none: "",
-			basic: "ring-1 ring-green-200 dark:ring-green-800",
-			enhanced: "ring-2 ring-green-300 dark:ring-green-700",
-			strict: "shadow-lg ring-2 ring-green-500 dark:ring-green-500",
+		defaultVariants: {
+			variant: "default",
+			spacing: "default",
+			lgpdLevel: "basic",
 		},
 	},
-	defaultVariants: {
-		variant: "default",
-		spacing: "default",
-		lgpdLevel: "basic",
-	},
-});
+);
 
 // Healthcare form types
 type HealthcareFormType =
@@ -54,7 +75,10 @@ type FormContextValue = {
 	// Enhanced accessibility features
 	errors: Record<string, string>;
 	setErrors: (errors: Record<string, string>) => void;
-	announceToScreenReader: (message: string, priority?: "polite" | "assertive") => void;
+	announceToScreenReader: (
+		message: string,
+		priority?: "polite" | "assertive",
+	) => void;
 	currentStep?: number;
 	totalSteps?: number;
 };
@@ -69,7 +93,9 @@ export const useFormContext = () => {
 	return context;
 };
 
-interface FormProps extends React.ComponentProps<"form">, VariantProps<typeof formVariants> {
+interface FormProps
+	extends React.ComponentProps<"form">,
+		VariantProps<typeof formVariants> {
 	formType?: HealthcareFormType;
 	lgpdCompliant?: boolean;
 	sensitiveData?: boolean;
@@ -115,7 +141,7 @@ const Form = forwardRef<HTMLFormElement, FormProps>(
 			children,
 			...props
 		},
-		ref
+		ref,
 	) => {
 		const formId = useId();
 
@@ -124,12 +150,15 @@ const Form = forwardRef<HTMLFormElement, FormProps>(
 		const [announcements, setAnnouncements] = useState<string>("");
 
 		// Screen reader announcement function
-		const announceToScreenReader = useCallback((message: string, _priority: "polite" | "assertive" = "polite") => {
-			setAnnouncements(message);
+		const announceToScreenReader = useCallback(
+			(message: string, _priority: "polite" | "assertive" = "polite") => {
+				setAnnouncements(message);
 
-			// Clear announcement after screen reader processes it
-			setTimeout(() => setAnnouncements(""), 3000);
-		}, []);
+				// Clear announcement after screen reader processes it
+				setTimeout(() => setAnnouncements(""), 3000);
+			},
+			[],
+		);
 
 		// Auto-determine variant based on form type
 		const autoVariant =
@@ -216,7 +245,7 @@ const Form = forwardRef<HTMLFormElement, FormProps>(
 							spacing,
 							lgpdLevel: autoLgpdLevel,
 						}),
-						className
+						className,
 					)}
 					data-form-type={formType}
 					data-lgpd-compliant={lgpdCompliant}
@@ -242,13 +271,16 @@ const Form = forwardRef<HTMLFormElement, FormProps>(
 							role="progressbar"
 						>
 							<VisuallyHidden>
-								Etapa {currentStep} de {totalSteps}: {stepTitle || getFormTitle()}
+								Etapa {currentStep} de {totalSteps}:{" "}
+								{stepTitle || getFormTitle()}
 							</VisuallyHidden>
 							<div className="mb-2 flex items-center justify-between text-muted-foreground text-sm">
 								<span>
 									Etapa {currentStep} de {totalSteps}
 								</span>
-								<span>{Math.round((currentStep / totalSteps) * 100)}% concluído</span>
+								<span>
+									{Math.round((currentStep / totalSteps) * 100)}% concluído
+								</span>
 							</div>
 							<div className="h-2 w-full rounded-full bg-muted">
 								<div
@@ -256,14 +288,21 @@ const Form = forwardRef<HTMLFormElement, FormProps>(
 									style={{ width: `${(currentStep / totalSteps) * 100}%` }}
 								/>
 							</div>
-							{stepTitle && <div className="mt-2 font-medium text-foreground">{stepTitle}</div>}
+							{stepTitle && (
+								<div className="mt-2 font-medium text-foreground">
+									{stepTitle}
+								</div>
+							)}
 						</div>
 					)}
 
 					{/* Form instructions */}
 					{instructions && (
 						<>
-							<div className="mb-4 rounded-md bg-muted/50 p-3" id={`${formId}-instructions`}>
+							<div
+								className="mb-4 rounded-md bg-muted/50 p-3"
+								id={`${formId}-instructions`}
+							>
 								<p className="text-muted-foreground text-sm">{instructions}</p>
 							</div>
 							<FormInstruction fieldId={formId} instruction={instructions} />
@@ -306,20 +345,32 @@ const Form = forwardRef<HTMLFormElement, FormProps>(
 					{showHeader && (
 						<div className="form-header border-border/50 border-b pb-4">
 							<div className="mb-2 flex items-center gap-3">
-								<div aria-hidden="true" className="rounded-lg bg-primary/10 p-2 text-primary">
+								<div
+									aria-hidden="true"
+									className="rounded-lg bg-primary/10 p-2 text-primary"
+								>
 									{getFormIcon()}
 								</div>
 								<div className="flex-1">
-									<h3 className="font-semibold text-foreground text-lg" id={`${formId}-title`}>
+									<h3
+										className="font-semibold text-foreground text-lg"
+										id={`${formId}-title`}
+									>
 										{getFormTitle()}
 										{required && (
-											<span aria-label="obrigatório" className="ml-1 text-destructive">
+											<span
+												aria-label="obrigatório"
+												className="ml-1 text-destructive"
+											>
 												*
 											</span>
 										)}
 									</h3>
 									{description && (
-										<p className="mt-1 text-muted-foreground text-sm" id={`${formId}-description`}>
+										<p
+											className="mt-1 text-muted-foreground text-sm"
+											id={`${formId}-description`}
+										>
 											{description}
 										</p>
 									)}
@@ -334,13 +385,19 @@ const Form = forwardRef<HTMLFormElement, FormProps>(
 										id={`${formId}-lgpd`}
 										role="region"
 									>
-										<Shield aria-hidden="true" className="h-3 w-3 text-green-600" />
+										<Shield
+											aria-hidden="true"
+											className="h-3 w-3 text-green-600"
+										/>
 										<span>
 											{sensitiveData
 												? "Dados sensíveis protegidos pela LGPD com nível de segurança máximo"
 												: "Formulário em conformidade com a LGPD"}
 										</span>
-										<CheckCircle aria-hidden="true" className="ml-auto h-3 w-3 text-green-600" />
+										<CheckCircle
+											aria-hidden="true"
+											className="ml-auto h-3 w-3 text-green-600"
+										/>
 									</div>
 
 									{/* Hidden LGPD notice for screen readers */}
@@ -361,7 +418,7 @@ const Form = forwardRef<HTMLFormElement, FormProps>(
 				</form>
 			</FormContext.Provider>
 		);
-	}
+	},
 );
 
 Form.displayName = "Form";
@@ -375,10 +432,16 @@ interface FormSectionProps extends React.ComponentProps<"div"> {
 }
 
 const FormSection = forwardRef<HTMLDivElement, FormSectionProps>(
-	({ className, title, description, icon, required, children, ...props }, ref) => {
+	(
+		{ className, title, description, icon, required, children, ...props },
+		ref,
+	) => {
 		return (
 			<div
-				className={cn("form-section space-y-4 border-border/30 border-b pb-6 last:border-b-0 last:pb-0", className)}
+				className={cn(
+					"form-section space-y-4 border-border/30 border-b pb-6 last:border-b-0 last:pb-0",
+					className,
+				)}
 				ref={ref}
 				{...props}
 			>
@@ -390,78 +453,103 @@ const FormSection = forwardRef<HTMLDivElement, FormSectionProps>(
 								<h4 className="flex items-center gap-1 font-medium text-base text-foreground">
 									{title}
 									{required && (
-										<span aria-label="obrigatório" className="text-destructive text-sm">
+										<span
+											aria-label="obrigatório"
+											className="text-destructive text-sm"
+										>
 											*
 										</span>
 									)}
 								</h4>
 							)}
 						</div>
-						{description && <p className="text-muted-foreground text-sm">{description}</p>}
+						{description && (
+							<p className="text-muted-foreground text-sm">{description}</p>
+						)}
 					</div>
 				)}
 				<div className="form-section-content space-y-4">{children}</div>
 			</div>
 		);
-	}
+	},
 );
 
 FormSection.displayName = "FormSection";
 
 // Additional Form Field Components for React Hook Form integration
-const FormField = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement> & { name: string }>(
-	({ className, name, children, ...props }, ref) => {
-		return (
-			<div className={cn("space-y-2", className)} ref={ref} {...props}>
-				{children}
-			</div>
-		);
-	}
-);
+const FormField = forwardRef<
+	HTMLDivElement,
+	React.HTMLAttributes<HTMLDivElement> & { name: string }
+>(({ className, name, children, ...props }, ref) => {
+	return (
+		<div className={cn("space-y-2", className)} ref={ref} {...props}>
+			{children}
+		</div>
+	);
+});
 FormField.displayName = "FormField";
 
-const FormItem = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => {
+const FormItem = forwardRef<
+	HTMLDivElement,
+	React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => {
 	return <div className={cn("space-y-2", className)} ref={ref} {...props} />;
 });
 FormItem.displayName = "FormItem";
 
-const FormLabel = forwardRef<HTMLLabelElement, React.LabelHTMLAttributes<HTMLLabelElement>>(
-	({ className, ...props }, ref) => {
-		return (
-			<label
-				className={cn(
-					"font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
-					className
-				)}
-				ref={ref}
-				{...props}
-			/>
-		);
-	}
-);
+const FormLabel = forwardRef<
+	HTMLLabelElement,
+	React.LabelHTMLAttributes<HTMLLabelElement>
+>(({ className, ...props }, ref) => {
+	return (
+		<label
+			className={cn(
+				"font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
+				className,
+			)}
+			ref={ref}
+			{...props}
+		/>
+	);
+});
 FormLabel.displayName = "FormLabel";
 
-const FormControl = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ ...props }, ref) => {
+const FormControl = forwardRef<
+	HTMLDivElement,
+	React.HTMLAttributes<HTMLDivElement>
+>(({ ...props }, ref) => {
 	return <div ref={ref} {...props} />;
 });
 FormControl.displayName = "FormControl";
 
-const FormDescription = forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
-	({ className, ...props }, ref) => {
-		return <p className={cn("text-muted-foreground text-sm", className)} ref={ref} {...props} />;
-	}
-);
+const FormDescription = forwardRef<
+	HTMLParagraphElement,
+	React.HTMLAttributes<HTMLParagraphElement>
+>(({ className, ...props }, ref) => {
+	return (
+		<p
+			className={cn("text-muted-foreground text-sm", className)}
+			ref={ref}
+			{...props}
+		/>
+	);
+});
 FormDescription.displayName = "FormDescription";
 
-const FormMessage = forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
-	({ className, children, ...props }, ref) => {
-		return (
-			<p className={cn("font-medium text-destructive text-sm", className)} ref={ref} {...props}>
-				{children}
-			</p>
-		);
-	}
-);
+const FormMessage = forwardRef<
+	HTMLParagraphElement,
+	React.HTMLAttributes<HTMLParagraphElement>
+>(({ className, children, ...props }, ref) => {
+	return (
+		<p
+			className={cn("font-medium text-destructive text-sm", className)}
+			ref={ref}
+			{...props}
+		>
+			{children}
+		</p>
+	);
+});
 FormMessage.displayName = "FormMessage";
 
 export {

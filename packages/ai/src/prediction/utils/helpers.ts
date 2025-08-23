@@ -27,7 +27,9 @@ export async function initializeAIPredictionEngine(): Promise<void> {
  * Create a patient profile with sensible defaults
  * Useful for testing and rapid prototyping
  */
-export function createPatientProfile(overrides: Partial<PatientProfile> = {}): PatientProfile {
+export function createPatientProfile(
+	overrides: Partial<PatientProfile> = {},
+): PatientProfile {
 	const defaultProfile: PatientProfile = {
 		id: overrides.id || `patient_${Date.now()}`,
 		age: 35,
@@ -85,7 +87,7 @@ export function createTreatmentRequest(
 	patientId: string,
 	treatmentType: string,
 	targetAreas: string[],
-	overrides: Partial<TreatmentRequest> = {}
+	overrides: Partial<TreatmentRequest> = {},
 ): TreatmentRequest {
 	const defaultRequest: TreatmentRequest = {
 		patientId,
@@ -143,13 +145,19 @@ export function validatePatientData(patient: PatientProfile): {
 
 	// Warnings for data quality
 	if (patient.previousTreatments.length === 0) {
-		warnings.push("No previous treatment history - predictions may be less accurate");
+		warnings.push(
+			"No previous treatment history - predictions may be less accurate",
+		);
 	}
 	if (!patient.medicalHistory.medications) {
-		warnings.push("No medication history provided - risk assessment may be incomplete");
+		warnings.push(
+			"No medication history provided - risk assessment may be incomplete",
+		);
 	}
 	if (patient.lifestyle.smoking) {
-		warnings.push("Smoking detected - may affect treatment outcomes and healing");
+		warnings.push(
+			"Smoking detected - may affect treatment outcomes and healing",
+		);
 	}
 
 	return {
@@ -181,7 +189,10 @@ export function formatSkinType(skinType: string | number): SkinType {
 
 	// Handle common variations
 	const normalizedType = skinType.toLowerCase();
-	if (normalizedType.includes("very fair") || normalizedType.includes("type 1")) {
+	if (
+		normalizedType.includes("very fair") ||
+		normalizedType.includes("type 1")
+	) {
 		return "fitzpatrick-1";
 	}
 	if (normalizedType.includes("fair") || normalizedType.includes("type 2")) {
@@ -230,17 +241,19 @@ export function formatRecommendations(recommendations: string[]): {
 		(rec) =>
 			rec.toLowerCase().includes("urgent") ||
 			rec.toLowerCase().includes("contraindication") ||
-			rec.toLowerCase().includes("immediate")
+			rec.toLowerCase().includes("immediate"),
 	);
 
 	const important = recommendations.filter(
 		(rec) =>
 			rec.toLowerCase().includes("consider") ||
 			rec.toLowerCase().includes("recommend") ||
-			rec.toLowerCase().includes("significant")
+			rec.toLowerCase().includes("significant"),
 	);
 
-	const general = recommendations.filter((rec) => !(critical.includes(rec) || important.includes(rec)));
+	const general = recommendations.filter(
+		(rec) => !(critical.includes(rec) || important.includes(rec)),
+	);
 
 	return { critical, important, general };
 }
@@ -264,16 +277,21 @@ export async function checkAccuracyTargets(): Promise<{
 			individualTargets[model] = accuracy >= targetAccuracy;
 
 			if (accuracy < targetAccuracy) {
-				recommendations.push(`Model ${model} accuracy (${(accuracy * 100).toFixed(1)}%) below target (85%)`);
+				recommendations.push(
+					`Model ${model} accuracy (${(accuracy * 100).toFixed(1)}%) below target (85%)`,
+				);
 			}
 		}
 
 		const overallAccuracy =
-			Object.values(health.accuracy).reduce((sum, acc) => sum + acc, 0) / Object.values(health.accuracy).length;
+			Object.values(health.accuracy).reduce((sum, acc) => sum + acc, 0) /
+			Object.values(health.accuracy).length;
 		const overallTarget = overallAccuracy >= targetAccuracy;
 
 		if (!overallTarget) {
-			recommendations.push("Overall system accuracy below target - consider model retraining");
+			recommendations.push(
+				"Overall system accuracy below target - consider model retraining",
+			);
 		}
 
 		return {
@@ -285,7 +303,9 @@ export async function checkAccuracyTargets(): Promise<{
 		return {
 			overallTarget: false,
 			individualTargets: {},
-			recommendations: ["Unable to check accuracy targets - system may be offline"],
+			recommendations: [
+				"Unable to check accuracy targets - system may be offline",
+			],
 		};
 	}
 }
@@ -320,7 +340,15 @@ export const AESTHETIC_CONSTANTS = {
 		"neck",
 	] as const,
 
-	BODY_REGIONS: ["abdomen", "thighs", "arms", "back", "chest", "flanks", "buttocks"] as const,
+	BODY_REGIONS: [
+		"abdomen",
+		"thighs",
+		"arms",
+		"back",
+		"chest",
+		"flanks",
+		"buttocks",
+	] as const,
 
 	SKIN_TYPES: [
 		"fitzpatrick-1",

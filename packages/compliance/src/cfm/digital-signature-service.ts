@@ -22,7 +22,11 @@ export type DigitalSignature = {
 	/** Associated prescription or document ID */
 	document_id: string;
 	/** Document type being signed */
-	document_type: "prescription" | "medical_certificate" | "medical_report" | "procedure_authorization";
+	document_type:
+		| "prescription"
+		| "medical_certificate"
+		| "medical_report"
+		| "procedure_authorization";
 	/** CFM number of signing doctor */
 	doctor_cfm_number: string;
 	/** Doctor's full name */
@@ -38,7 +42,12 @@ export type DigitalSignature = {
 	/** Constitutional compliance validation */
 	constitutional_compliance: boolean;
 	/** CFM validation status */
-	cfm_validation_status: "valid" | "invalid" | "expired" | "revoked" | "pending";
+	cfm_validation_status:
+		| "valid"
+		| "invalid"
+		| "expired"
+		| "revoked"
+		| "pending";
 	/** Associated clinic/tenant */
 	tenant_id: string;
 	/** Creation metadata */
@@ -140,7 +149,7 @@ export class DigitalSignatureService {
 		documentId: string,
 		documentType: DigitalSignature["document_type"],
 		tenantId: string,
-		userId: string
+		userId: string,
 	): Promise<{ success: boolean; data?: DigitalSignature; error?: string }> {
 		try {
 			// Constitutional validation of CFM number
@@ -150,7 +159,9 @@ export class DigitalSignatureService {
 			}
 
 			// Validate digital certificate
-			const certificateValidation = await this.validateDigitalCertificate(params.digital_certificate);
+			const certificateValidation = await this.validateDigitalCertificate(
+				params.digital_certificate,
+			);
 			if (!certificateValidation.valid) {
 				return { success: false, error: certificateValidation.error };
 			}
@@ -196,7 +207,11 @@ export class DigitalSignatureService {
 			};
 
 			// Store signature with constitutional compliance
-			const { data, error } = await this.supabase.from("cfm_digital_signatures").insert(newSignature).select().single();
+			const { data, error } = await this.supabase
+				.from("cfm_digital_signatures")
+				.insert(newSignature)
+				.select()
+				.single();
 
 			if (error) {
 				return { success: false, error: "Failed to create digital signature" };
@@ -231,23 +246,29 @@ export class DigitalSignatureService {
 			}
 
 			// Verify CFM registration
-			const cfmValidation = await this.validateCfmNumber(signature.doctor_cfm_number);
+			const cfmValidation = await this.validateCfmNumber(
+				signature.doctor_cfm_number,
+			);
 
 			// Verify certificate validity
-			const certificateValidation = await this.validateDigitalCertificate(signature.certificate_chain[0]);
+			const certificateValidation = await this.validateDigitalCertificate(
+				signature.certificate_chain[0],
+			);
 
 			const verificationResponse: SignatureVerificationResponse = {
 				verified: cfmValidation.valid && certificateValidation.valid,
 				cfm_validation: {
 					registration_valid: cfmValidation.valid,
 					license_active: cfmValidation.license_active ?? false,
-					specialization_verified: cfmValidation.specialization_verified ?? false,
+					specialization_verified:
+						cfmValidation.specialization_verified ?? false,
 					constitutional_compliance: cfmValidation.valid,
 				},
 				certificate_validation: {
 					certificate_valid: certificateValidation.valid,
 					expiry_date: certificateValidation.expiry_date || new Date(),
-					issuing_authority: certificateValidation.issuing_authority || "Unknown",
+					issuing_authority:
+						certificateValidation.issuing_authority || "Unknown",
 					chain_valid: certificateValidation.valid,
 				},
 				error_details: cfmValidation.valid
@@ -372,7 +393,7 @@ export class DigitalSignatureService {
 	 * Constitutional signature generation with CFM standards
 	 */
 	private async generateSignature(
-		params: SignatureValidationParams
+		params: SignatureValidationParams,
 	): Promise<{ success: boolean; signature?: string; error?: string }> {
 		try {
 			// Validate document hash
@@ -391,7 +412,10 @@ export class DigitalSignatureService {
 				case "ECDSA-SHA256":
 				case "CFM-ICP-Brasil":
 					// Mock signature generation (in production, use proper cryptographic library)
-					signature = this.generateMockSignature(params.document_hash, params.cfm_number);
+					signature = this.generateMockSignature(
+						params.document_hash,
+						params.cfm_number,
+					);
 					break;
 				default:
 					return {
@@ -413,7 +437,10 @@ export class DigitalSignatureService {
 	 * Generate cryptographic signature for production
 	 * Constitutional implementation for medical document validation
 	 */
-	private generateMockSignature(documentHash: string, cfmNumber: string): string {
+	private generateMockSignature(
+		documentHash: string,
+		cfmNumber: string,
+	): string {
 		const timestamp = Date.now().toString();
 		const combinedData = `${documentHash}-${cfmNumber}-${timestamp}`;
 
@@ -432,10 +459,13 @@ export class DigitalSignatureService {
 			cfm_number?: string;
 			validation_status?: DigitalSignature["cfm_validation_status"];
 			created_after?: Date;
-		}
+		},
 	): Promise<{ success: boolean; data?: DigitalSignature[]; error?: string }> {
 		try {
-			let query = this.supabase.from("cfm_digital_signatures").select("*").eq("tenant_id", tenantId); // Constitutional tenant isolation
+			let query = this.supabase
+				.from("cfm_digital_signatures")
+				.select("*")
+				.eq("tenant_id", tenantId); // Constitutional tenant isolation
 
 			// Apply constitutional filters
 			if (filters?.document_type) {
@@ -478,7 +508,7 @@ export class DigitalSignatureService {
 	async revokeDigitalSignature(
 		signatureId: string,
 		userId: string,
-		reason: string
+		reason: string,
 	): Promise<{ success: boolean; error?: string }> {
 		try {
 			// Get current signature for audit trail

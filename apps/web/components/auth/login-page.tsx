@@ -29,8 +29,8 @@ export function LoginPage() {
 				<div className="relative z-20 mt-auto">
 					<blockquote className="space-y-2">
 						<p className="text-lg">
-							&ldquo;Sistema completo de gestão para clínicas estéticas com compliance LGPD, ANVISA e CFM
-							integrado.&rdquo;
+							&ldquo;Sistema completo de gestão para clínicas estéticas com
+							compliance LGPD, ANVISA e CFM integrado.&rdquo;
 						</p>
 						<footer className="text-sm">Equipe NeonPro Healthcare</footer>
 					</blockquote>
@@ -39,20 +39,32 @@ export function LoginPage() {
 			<div className="lg:p-8">
 				<div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
 					<div className="flex flex-col space-y-2 text-center">
-						<h1 className="font-semibold text-2xl tracking-tight">Acesse sua conta</h1>
+						<h1 className="font-semibold text-2xl tracking-tight">
+							Acesse sua conta
+						</h1>
 						<p className="text-muted-foreground text-sm">
 							Digite suas credenciais para continuar
-							{redirectUrl && <span className="mt-1 block text-xs">Você será redirecionado após o login</span>}
+							{redirectUrl && (
+								<span className="mt-1 block text-xs">
+									Você será redirecionado após o login
+								</span>
+							)}
 						</p>
 					</div>
 					<LoginForm redirectUrl={redirectUrl} />
 					<p className="px-8 text-center text-muted-foreground text-sm">
 						Ao clicar em continuar, você concorda com nossos{" "}
-						<a className="underline underline-offset-4 hover:text-primary" href="/terms">
+						<a
+							className="underline underline-offset-4 hover:text-primary"
+							href="/terms"
+						>
 							Termos de Serviço
 						</a>{" "}
 						e{" "}
-						<a className="underline underline-offset-4 hover:text-primary" href="/privacy">
+						<a
+							className="underline underline-offset-4 hover:text-primary"
+							href="/privacy"
+						>
 							Política de Privacidade
 						</a>
 						.

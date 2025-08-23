@@ -314,7 +314,10 @@ export declare class LGPDAuditLogger {
 	/**
 	 * Generate audit report
 	 */
-	generateAuditReport(period: { start_date: string; end_date: string }): Promise<{
+	generateAuditReport(period: {
+		start_date: string;
+		end_date: string;
+	}): Promise<{
 		report_id: string;
 		period: typeof period;
 		total_events: number;
@@ -329,11 +332,16 @@ export declare class LGPDAuditLogger {
 /**
  * Create LGPD Audit Logger service
  */
-export declare function createLGPDAuditLogger(config: LGPDAuditConfig, db: Database): LGPDAuditLogger;
+export declare function createLGPDAuditLogger(
+	config: LGPDAuditConfig,
+	db: Database,
+): LGPDAuditLogger;
 /**
  * Validate LGPD audit configuration
  */
-export declare function validateLGPDAuditConfig(config: LGPDAuditConfig): Promise<{
+export declare function validateLGPDAuditConfig(
+	config: LGPDAuditConfig,
+): Promise<{
 	valid: boolean;
 	violations: string[];
 }>;

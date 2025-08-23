@@ -24,7 +24,11 @@ const testScenarios = [
 		id: 2,
 		name: "Dashboard sem conexão com internet",
 		description: "Testa comportamento offline",
-		steps: ["1. Desconectar internet (WiFi/Ethernet)", "2. Acessar /dashboard", "3. Aguardar tentativas de fetch"],
+		steps: [
+			"1. Desconectar internet (WiFi/Ethernet)",
+			"2. Acessar /dashboard",
+			"3. Aguardar tentativas de fetch",
+		],
 		expected: [
 			"✅ Loading skeletons aparecem primeiro",
 			"✅ Error state após timeout",
@@ -38,7 +42,11 @@ const testScenarios = [
 		id: 3,
 		name: "Lista de pacientes vazia (primeiro uso)",
 		description: "Testa empty state em dados vazios",
-		steps: ["1. Limpar tabela patients no Supabase", "2. Acessar /dashboard/patients", "3. Verificar empty state"],
+		steps: [
+			"1. Limpar tabela patients no Supabase",
+			"2. Acessar /dashboard/patients",
+			"3. Verificar empty state",
+		],
 		expected: [
 			"✅ Loading skeleton inicial",
 			"✅ EmptyState component com ícone",
@@ -70,7 +78,11 @@ const testScenarios = [
 		id: 5,
 		name: "Loading prolongado (conexão lenta)",
 		description: "Testa feedback de loading adequado",
-		steps: ["1. Simular conexão lenta (DevTools)", "2. Acessar dashboard", "3. Verificar estados de loading"],
+		steps: [
+			"1. Simular conexão lenta (DevTools)",
+			"2. Acessar dashboard",
+			"3. Verificar estados de loading",
+		],
 		expected: [
 			"✅ Skeleton components aparecem imediatamente",
 			"✅ LoadingSpinner para ações específicas",

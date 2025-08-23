@@ -71,7 +71,8 @@ const _TestWrapper = ({ children }: { children: React.ReactNode }) => {
 		defaultOptions: {
 			queries: {
 				retry: 3,
-				retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30_000),
+				retryDelay: (attemptIndex) =>
+					Math.min(1000 * 2 ** attemptIndex, 30_000),
 			},
 			mutations: {
 				retry: 2,
@@ -79,7 +80,9 @@ const _TestWrapper = ({ children }: { children: React.ReactNode }) => {
 		},
 	});
 
-	return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+	return (
+		<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+	);
 };
 
 describe("API Client Integration Tests", () => {
@@ -100,7 +103,7 @@ describe("API Client Integration Tests", () => {
 
 	afterEach(() => {
 		vi.restoreAllMocks();
-		queryClient.clear();
+		queryClient.removeQueries();
 	});
 
 	describe("Health Check and Connection", () => {
@@ -137,7 +140,9 @@ describe("API Client Integration Tests", () => {
 
 			mockHonoClient.api.health.$get.mockRejectedValue(connectionError);
 
-			await expect(mockHonoClient.api.health.$get()).rejects.toThrow("ECONNREFUSED");
+			await expect(mockHonoClient.api.health.$get()).rejects.toThrow(
+				"ECONNREFUSED",
+			);
 		});
 	});
 
@@ -404,7 +409,9 @@ describe("API Client Integration Tests", () => {
 						if (attempt === maxRetries - 1) {
 							throw error;
 						}
-						await new Promise((resolve) => setTimeout(resolve, 1000 * (attempt + 1)));
+						await new Promise((resolve) =>
+							setTimeout(resolve, 1000 * (attempt + 1)),
+						);
 					}
 				}
 			};
@@ -413,7 +420,7 @@ describe("API Client Integration Tests", () => {
 				mockHonoClient.api.patients.$get({
 					query: {},
 					headers: { Authorization: "Bearer jwt-access-token" },
-				})
+				}),
 			);
 
 			expect(mockHonoClient.api.patients.$get).toHaveBeenCalledTimes(3);
@@ -432,7 +439,7 @@ describe("API Client Integration Tests", () => {
 				mockHonoClient.api.patients.$get({
 					query: {},
 					headers: { Authorization: "Bearer jwt-access-token" },
-				})
+				}),
 			).rejects.toThrow("Request timeout");
 
 			const endTime = performance.now();

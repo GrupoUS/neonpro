@@ -20,7 +20,12 @@ const PrivacyPreservingAnalyticsConfigSchema = z.object({
 
 const PrivacyPreservingQuerySchema = z.object({
 	query_id: z.string().uuid(),
-	query_type: z.enum(["aggregation", "correlation", "distribution", "trend_analysis"]),
+	query_type: z.enum([
+		"aggregation",
+		"correlation",
+		"distribution",
+		"trend_analysis",
+	]),
 	target_columns: z.array(z.string()).min(1),
 	filters: z.record(z.any()).optional(),
 	time_range: z
@@ -57,9 +62,15 @@ const PrivacyPreservingAnalyticsResultsSchema = z.object({
 });
 
 // Type definitions
-export type PrivacyPreservingAnalyticsConfig = z.infer<typeof PrivacyPreservingAnalyticsConfigSchema>;
-export type PrivacyPreservingQuery = z.infer<typeof PrivacyPreservingQuerySchema>;
-export type PrivacyPreservingAnalyticsResults = z.infer<typeof PrivacyPreservingAnalyticsResultsSchema>;
+export type PrivacyPreservingAnalyticsConfig = z.infer<
+	typeof PrivacyPreservingAnalyticsConfigSchema
+>;
+export type PrivacyPreservingQuery = z.infer<
+	typeof PrivacyPreservingQuerySchema
+>;
+export type PrivacyPreservingAnalyticsResults = z.infer<
+	typeof PrivacyPreservingAnalyticsResultsSchema
+>;
 
 export type PrivacyPreservingAnalyticsAudit = {
 	audit_id: string;
@@ -91,19 +102,23 @@ export class PrivacyPreservingAnalyticsService {
 	 */
 	async executePrivacyPreservingQuery(
 		rawData: any[],
-		query: PrivacyPreservingQuery
+		query: PrivacyPreservingQuery,
 	): Promise<PrivacyPreservingAnalyticsResults> {
 		// Validate query
 		const validatedQuery = PrivacyPreservingQuerySchema.parse(query);
 
 		// Check privacy budget
 		if (this.privacyBudgetUsed >= this.config.max_privacy_budget) {
-			throw new Error("Privacy budget exhausted - constitutional privacy protection");
+			throw new Error(
+				"Privacy budget exhausted - constitutional privacy protection",
+			);
 		}
 
 		// Constitutional validation
 		if (!validatedQuery.constitutional_approval) {
-			throw new Error("Constitutional approval required for patient data analytics");
+			throw new Error(
+				"Constitutional approval required for patient data analytics",
+			);
 		}
 
 		// Apply privacy-preserving techniques based on privacy level
@@ -112,20 +127,41 @@ export class PrivacyPreservingAnalyticsService {
 
 		switch (validatedQuery.privacy_level) {
 			case "high":
-				processedData = await this.applyHighPrivacyProtection(rawData, validatedQuery);
-				privacyMetrics = await this.calculateHighPrivacyMetrics(processedData, validatedQuery);
+				processedData = await this.applyHighPrivacyProtection(
+					rawData,
+					validatedQuery,
+				);
+				privacyMetrics = await this.calculateHighPrivacyMetrics(
+					processedData,
+					validatedQuery,
+				);
 				break;
 			case "medium":
-				processedData = await this.applyMediumPrivacyProtection(rawData, validatedQuery);
-				privacyMetrics = await this.calculateMediumPrivacyMetrics(processedData, validatedQuery);
+				processedData = await this.applyMediumPrivacyProtection(
+					rawData,
+					validatedQuery,
+				);
+				privacyMetrics = await this.calculateMediumPrivacyMetrics(
+					processedData,
+					validatedQuery,
+				);
 				break;
 			default:
-				processedData = await this.applyStandardPrivacyProtection(rawData, validatedQuery);
-				privacyMetrics = await this.calculateStandardPrivacyMetrics(processedData, validatedQuery);
+				processedData = await this.applyStandardPrivacyProtection(
+					rawData,
+					validatedQuery,
+				);
+				privacyMetrics = await this.calculateStandardPrivacyMetrics(
+					processedData,
+					validatedQuery,
+				);
 		}
 
 		// Generate analytics results
-		const analyticsResults = await this.generateAnalyticsResults(processedData, validatedQuery);
+		const analyticsResults = await this.generateAnalyticsResults(
+			processedData,
+			validatedQuery,
+		);
 
 		// Create audit trail
 		const auditEntry: PrivacyPreservingAnalyticsAudit = {
@@ -159,7 +195,9 @@ export class PrivacyPreservingAnalyticsService {
 			},
 			audit_trail: {
 				query_executed_at: new Date().toISOString(),
-				privacy_techniques_applied: [this.getPrivacyTechnique(validatedQuery.privacy_level)],
+				privacy_techniques_applied: [
+					this.getPrivacyTechnique(validatedQuery.privacy_level),
+				],
 				data_subjects_count: rawData.length,
 				constitutional_validation_result: true,
 			},
@@ -177,15 +215,29 @@ export class PrivacyPreservingAnalyticsService {
 	/**
 	 * Apply high privacy protection (differential privacy + k-anonymity + l-diversity)
 	 */
-	private async applyHighPrivacyProtection(rawData: any[], query: PrivacyPreservingQuery): Promise<any[]> {
+	private async applyHighPrivacyProtection(
+		rawData: any[],
+		query: PrivacyPreservingQuery,
+	): Promise<any[]> {
 		// Step 1: Apply k-anonymity
-		let processedData = await this.applyKAnonymity(rawData, query.target_columns, this.config.k_anonymity_k);
+		let processedData = await this.applyKAnonymity(
+			rawData,
+			query.target_columns,
+			this.config.k_anonymity_k,
+		);
 
 		// Step 2: Apply l-diversity
-		processedData = await this.applyLDiversity(processedData, query.target_columns, this.config.l_diversity_l);
+		processedData = await this.applyLDiversity(
+			processedData,
+			query.target_columns,
+			this.config.l_diversity_l,
+		);
 
 		// Step 3: Apply differential privacy
-		processedData = await this.applyDifferentialPrivacy(processedData, this.config.differential_privacy_epsilon);
+		processedData = await this.applyDifferentialPrivacy(
+			processedData,
+			this.config.differential_privacy_epsilon,
+		);
 
 		return processedData;
 	}
@@ -193,13 +245,23 @@ export class PrivacyPreservingAnalyticsService {
 	/**
 	 * Apply medium privacy protection (k-anonymity + differential privacy)
 	 */
-	private async applyMediumPrivacyProtection(rawData: any[], query: PrivacyPreservingQuery): Promise<any[]> {
+	private async applyMediumPrivacyProtection(
+		rawData: any[],
+		query: PrivacyPreservingQuery,
+	): Promise<any[]> {
 		// Step 1: Apply k-anonymity
-		let processedData = await this.applyKAnonymity(rawData, query.target_columns, this.config.k_anonymity_k);
+		let processedData = await this.applyKAnonymity(
+			rawData,
+			query.target_columns,
+			this.config.k_anonymity_k,
+		);
 
 		// Step 2: Apply differential privacy with higher epsilon (less noise)
 		const relaxedEpsilon = this.config.differential_privacy_epsilon * 1.5;
-		processedData = await this.applyDifferentialPrivacy(processedData, relaxedEpsilon);
+		processedData = await this.applyDifferentialPrivacy(
+			processedData,
+			relaxedEpsilon,
+		);
 
 		return processedData;
 	}
@@ -207,19 +269,32 @@ export class PrivacyPreservingAnalyticsService {
 	/**
 	 * Apply standard privacy protection (k-anonymity only)
 	 */
-	private async applyStandardPrivacyProtection(rawData: any[], query: PrivacyPreservingQuery): Promise<any[]> {
-		return await this.applyKAnonymity(rawData, query.target_columns, this.config.k_anonymity_k);
+	private async applyStandardPrivacyProtection(
+		rawData: any[],
+		query: PrivacyPreservingQuery,
+	): Promise<any[]> {
+		return await this.applyKAnonymity(
+			rawData,
+			query.target_columns,
+			this.config.k_anonymity_k,
+		);
 	}
 
 	/**
 	 * Apply k-anonymity to protect individual privacy
 	 */
-	private async applyKAnonymity(data: any[], columns: string[], k: number): Promise<any[]> {
+	private async applyKAnonymity(
+		data: any[],
+		columns: string[],
+		k: number,
+	): Promise<any[]> {
 		// Group data by quasi-identifier combinations
 		const groups = new Map<string, any[]>();
 
 		for (const row of data) {
-			const key = columns.map((col) => this.generalize(row[col], col)).join("|");
+			const key = columns
+				.map((col) => this.generalize(row[col], col))
+				.join("|");
 			if (!groups.has(key)) {
 				groups.set(key, []);
 			}
@@ -248,7 +323,11 @@ export class PrivacyPreservingAnalyticsService {
 	/**
 	 * Apply l-diversity for additional privacy protection
 	 */
-	private async applyLDiversity(data: any[], sensitiveColumns: string[], l: number): Promise<any[]> {
+	private async applyLDiversity(
+		data: any[],
+		sensitiveColumns: string[],
+		l: number,
+	): Promise<any[]> {
 		// Group by quasi-identifiers and check l-diversity for sensitive attributes
 		const groups = new Map<string, any[]>();
 
@@ -264,7 +343,9 @@ export class PrivacyPreservingAnalyticsService {
 		const diverseData: any[] = [];
 		for (const [_key, group] of Array.from(groups)) {
 			// Check if group has at least l distinct values for sensitive attributes
-			const distinctValues = new Set(group.map((row) => sensitiveColumns.map((col) => row[col]).join("|")));
+			const distinctValues = new Set(
+				group.map((row) => sensitiveColumns.map((col) => row[col]).join("|")),
+			);
 
 			if (distinctValues.size >= l) {
 				diverseData.push(...group);
@@ -277,7 +358,10 @@ export class PrivacyPreservingAnalyticsService {
 	/**
 	 * Apply differential privacy with Laplace noise
 	 */
-	private async applyDifferentialPrivacy(data: any[], epsilon: number): Promise<any[]> {
+	private async applyDifferentialPrivacy(
+		data: any[],
+		epsilon: number,
+	): Promise<any[]> {
 		return data.map((row) => {
 			const noisyRow = { ...row };
 			// Add Laplace noise to numeric columns
@@ -329,7 +413,10 @@ export class PrivacyPreservingAnalyticsService {
 	/**
 	 * Calculate privacy metrics for high privacy level
 	 */
-	private async calculateHighPrivacyMetrics(_data: any[], _query: PrivacyPreservingQuery): Promise<any> {
+	private async calculateHighPrivacyMetrics(
+		_data: any[],
+		_query: PrivacyPreservingQuery,
+	): Promise<any> {
 		return {
 			epsilon_used: this.config.differential_privacy_epsilon,
 			k_anonymity_achieved: this.config.k_anonymity_k,
@@ -341,7 +428,10 @@ export class PrivacyPreservingAnalyticsService {
 	/**
 	 * Calculate privacy metrics for medium privacy level
 	 */
-	private async calculateMediumPrivacyMetrics(_data: any[], _query: PrivacyPreservingQuery): Promise<any> {
+	private async calculateMediumPrivacyMetrics(
+		_data: any[],
+		_query: PrivacyPreservingQuery,
+	): Promise<any> {
 		return {
 			epsilon_used: this.config.differential_privacy_epsilon * 1.5,
 			k_anonymity_achieved: this.config.k_anonymity_k,
@@ -353,7 +443,10 @@ export class PrivacyPreservingAnalyticsService {
 	/**
 	 * Calculate privacy metrics for standard privacy level
 	 */
-	private async calculateStandardPrivacyMetrics(_data: any[], _query: PrivacyPreservingQuery): Promise<any> {
+	private async calculateStandardPrivacyMetrics(
+		_data: any[],
+		_query: PrivacyPreservingQuery,
+	): Promise<any> {
 		return {
 			epsilon_used: 0, // No differential privacy
 			k_anonymity_achieved: this.config.k_anonymity_k,
@@ -365,7 +458,10 @@ export class PrivacyPreservingAnalyticsService {
 	/**
 	 * Generate analytics results based on query type
 	 */
-	private async generateAnalyticsResults(data: any[], query: PrivacyPreservingQuery): Promise<any> {
+	private async generateAnalyticsResults(
+		data: any[],
+		query: PrivacyPreservingQuery,
+	): Promise<any> {
 		switch (query.query_type) {
 			case "aggregation":
 				return this.calculateAggregations(data, query.target_columns);
@@ -387,7 +483,9 @@ export class PrivacyPreservingAnalyticsService {
 		const results: Record<string, any> = {};
 
 		for (const column of columns) {
-			const values = data.map((row) => row[column]).filter((val) => val !== null && val !== undefined);
+			const values = data
+				.map((row) => row[column])
+				.filter((val) => val !== null && val !== undefined);
 
 			if (values.length === 0) {
 				results[column] = { count: 0, mean: null, sum: null };
@@ -434,12 +532,20 @@ export class PrivacyPreservingAnalyticsService {
 			correlations[numericColumns[i]] = {};
 
 			for (let j = 0; j < numericColumns.length; j++) {
-				const col1Values = data.map((row) => Number(row[numericColumns[i]])).filter((val) => !Number.isNaN(val));
-				const col2Values = data.map((row) => Number(row[numericColumns[j]])).filter((val) => !Number.isNaN(val));
+				const col1Values = data
+					.map((row) => Number(row[numericColumns[i]]))
+					.filter((val) => !Number.isNaN(val));
+				const col2Values = data
+					.map((row) => Number(row[numericColumns[j]]))
+					.filter((val) => !Number.isNaN(val));
 
 				if (col1Values.length > 1 && col2Values.length > 1) {
-					const correlation = this.calculatePearsonCorrelation(col1Values, col2Values);
-					correlations[numericColumns[i]][numericColumns[j]] = Math.round(correlation * 1000) / 1000;
+					const correlation = this.calculatePearsonCorrelation(
+						col1Values,
+						col2Values,
+					);
+					correlations[numericColumns[i]][numericColumns[j]] =
+						Math.round(correlation * 1000) / 1000;
 				} else {
 					correlations[numericColumns[i]][numericColumns[j]] = 0;
 				}
@@ -465,7 +571,9 @@ export class PrivacyPreservingAnalyticsService {
 		const sumY2 = y.slice(0, n).reduce((sum, yi) => sum + yi * yi, 0);
 
 		const numerator = n * sumXY - sumX * sumY;
-		const denominator = Math.sqrt((n * sumX2 - sumX * sumX) * (n * sumY2 - sumY * sumY));
+		const denominator = Math.sqrt(
+			(n * sumX2 - sumX * sumX) * (n * sumY2 - sumY * sumY),
+		);
 
 		return denominator === 0 ? 0 : numerator / denominator;
 	}
@@ -477,12 +585,15 @@ export class PrivacyPreservingAnalyticsService {
 		const distributions: Record<string, any> = {};
 
 		for (const column of columns) {
-			const values = data.map((row) => row[column]).filter((val) => val !== null && val !== undefined);
+			const values = data
+				.map((row) => row[column])
+				.filter((val) => val !== null && val !== undefined);
 			const valueFrequency = new Map<any, number>();
 
 			// Count frequency of each value
 			for (const value of values) {
-				const key = typeof value === "number" ? Math.floor(value / 10) * 10 : value;
+				const key =
+					typeof value === "number" ? Math.floor(value / 10) * 10 : value;
 				valueFrequency.set(key, (valueFrequency.get(key) || 0) + 1);
 			}
 
@@ -532,7 +643,10 @@ export class PrivacyPreservingAnalyticsService {
 				.map(([period, values]) => {
 					const numericValues = values.filter((val) => typeof val === "number");
 					const average =
-						numericValues.length > 0 ? numericValues.reduce((sum, val) => sum + val, 0) / numericValues.length : 0;
+						numericValues.length > 0
+							? numericValues.reduce((sum, val) => sum + val, 0) /
+								numericValues.length
+							: 0;
 
 					return {
 						period,
@@ -629,7 +743,7 @@ export class PrivacyPreservingAnalyticsService {
  * Factory function to create privacy-preserving analytics service
  */
 export function createPrivacyPreservingAnalyticsService(
-	config: PrivacyPreservingAnalyticsConfig
+	config: PrivacyPreservingAnalyticsConfig,
 ): PrivacyPreservingAnalyticsService {
 	return new PrivacyPreservingAnalyticsService(config);
 }
@@ -639,12 +753,15 @@ export function createPrivacyPreservingAnalyticsService(
  */
 export async function validatePrivacyPreservingAnalytics(
 	query: PrivacyPreservingQuery,
-	config: PrivacyPreservingAnalyticsConfig
+	config: PrivacyPreservingAnalyticsConfig,
 ): Promise<{ valid: boolean; violations: string[] }> {
 	const violations: string[] = [];
 
 	// Validate privacy level requirements
-	if (query.privacy_level === "high" && config.differential_privacy_epsilon > 1) {
+	if (
+		query.privacy_level === "high" &&
+		config.differential_privacy_epsilon > 1
+	) {
 		violations.push("High privacy level requires epsilon ≤ 1.0");
 	}
 
@@ -655,7 +772,9 @@ export async function validatePrivacyPreservingAnalytics(
 
 	// Validate constitutional approval
 	if (!query.constitutional_approval) {
-		violations.push("Constitutional approval required for patient data analytics");
+		violations.push(
+			"Constitutional approval required for patient data analytics",
+		);
 	}
 
 	// Validate LGPD compliance

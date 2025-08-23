@@ -262,7 +262,10 @@ export async function getDictionary(locale: Locale): Promise<Dictionary> {
 }
 
 export function createTranslator(dictionary: Dictionary) {
-	return function t(key: string, params?: Record<string, string | number>): string {
+	return function t(
+		key: string,
+		params?: Record<string, string | number>,
+	): string {
 		const keys = key.split(".");
 		let value: any = dictionary;
 

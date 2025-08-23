@@ -16,7 +16,12 @@ const PERFORMANCE_TARGETS = {
 	AI_MODEL_BUILD_OPTIMIZATION: true,
 };
 
-const HEALTHCARE_COMPLIANCE_REQUIREMENTS = ["compliance:lgpd", "compliance:anvisa", "compliance:cfm", "security:audit"];
+const HEALTHCARE_COMPLIANCE_REQUIREMENTS = [
+	"compliance:lgpd",
+	"compliance:anvisa",
+	"compliance:cfm",
+	"security:audit",
+];
 
 async function validatePerformance() {
 	const results = {
@@ -36,7 +41,8 @@ async function validatePerformance() {
 		const baselineBuildTime = 120_000; // 2 minutes baseline
 		const improvement = (baselineBuildTime - buildTime) / baselineBuildTime;
 
-		results.buildTimeImprovement = improvement >= PERFORMANCE_TARGETS.BUILD_TIME_REDUCTION;
+		results.buildTimeImprovement =
+			improvement >= PERFORMANCE_TARGETS.BUILD_TIME_REDUCTION;
 
 		// Run build twice to test cache
 		execSync("pnpm run build", { stdio: "pipe" });
@@ -45,7 +51,8 @@ async function validatePerformance() {
 		const cacheTime = Date.now() - cacheStart;
 
 		const cacheImprovement = (buildTime - cacheTime) / buildTime;
-		results.cacheOptimization = cacheImprovement >= PERFORMANCE_TARGETS.CACHE_HIT_RATE;
+		results.cacheOptimization =
+			cacheImprovement >= PERFORMANCE_TARGETS.CACHE_HIT_RATE;
 
 		for (const task of HEALTHCARE_COMPLIANCE_REQUIREMENTS) {
 			try {
@@ -107,14 +114,19 @@ function generatePerformanceReport(results, metrics) {
 		recommendations: generateRecommendations(results),
 	};
 
-	fs.writeFileSync(path.join(process.cwd(), "performance-report.json"), JSON.stringify(report, null, 2));
+	fs.writeFileSync(
+		path.join(process.cwd(), "performance-report.json"),
+		JSON.stringify(report, null, 2),
+	);
 }
 
 function generateRecommendations(results) {
 	const recommendations = [];
 
 	if (!results.buildTimeImprovement) {
-		recommendations.push("Consider additional input optimization and dependency analysis");
+		recommendations.push(
+			"Consider additional input optimization and dependency analysis",
+		);
 	}
 
 	if (!results.cacheOptimization) {
@@ -122,11 +134,15 @@ function generateRecommendations(results) {
 	}
 
 	if (!results.complianceMaintained) {
-		recommendations.push("CRITICAL: Healthcare compliance validation failed - immediate review required");
+		recommendations.push(
+			"CRITICAL: Healthcare compliance validation failed - immediate review required",
+		);
 	}
 
 	if (!results.aiOptimization) {
-		recommendations.push("Optimize AI model build process and caching strategy");
+		recommendations.push(
+			"Optimize AI model build process and caching strategy",
+		);
 	}
 
 	return recommendations;

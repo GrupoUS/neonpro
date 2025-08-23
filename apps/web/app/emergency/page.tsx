@@ -85,7 +85,15 @@ const EmergencySearchBar: React.FC<{
 	isVoiceActive: boolean;
 	isScannerActive: boolean;
 	isSearching: boolean;
-}> = ({ value, onChange, onVoiceToggle, onScannerToggle, isVoiceActive, isScannerActive, isSearching }) => {
+}> = ({
+	value,
+	onChange,
+	onVoiceToggle,
+	onScannerToggle,
+	isVoiceActive,
+	isScannerActive,
+	isSearching,
+}) => {
 	const inputRef = useRef<HTMLInputElement>(null);
 
 	// Focus management for accessibility
@@ -127,7 +135,11 @@ const EmergencySearchBar: React.FC<{
 
 					{/* Voice Command Button */}
 					<Button
-						aria-label={isVoiceActive ? "Desativar comando de voz" : "Ativar comando de voz"}
+						aria-label={
+							isVoiceActive
+								? "Desativar comando de voz"
+								: "Ativar comando de voz"
+						}
 						aria-pressed={isVoiceActive}
 						className="h-14 border-2 px-6"
 						onClick={onVoiceToggle}
@@ -140,7 +152,9 @@ const EmergencySearchBar: React.FC<{
 
 					{/* Barcode Scanner Button */}
 					<Button
-						aria-label={isScannerActive ? "Fechar scanner" : "Abrir scanner de código"}
+						aria-label={
+							isScannerActive ? "Fechar scanner" : "Abrir scanner de código"
+						}
 						aria-pressed={isScannerActive}
 						className="h-14 border-2 px-6"
 						onClick={onScannerToggle}
@@ -153,7 +167,8 @@ const EmergencySearchBar: React.FC<{
 				</div>
 
 				<div className="text-muted-foreground text-sm" id="search-help">
-					Digite o nome, CPF ou RG do paciente. Use voz ou scanner para entrada alternativa.
+					Digite o nome, CPF ou RG do paciente. Use voz ou scanner para entrada
+					alternativa.
 				</div>
 			</CardContent>
 		</Card>
@@ -170,7 +185,9 @@ const PatientCriticalInfo: React.FC<{
 			<Card className="border-2 border-blue-200">
 				<CardHeader className="pb-3">
 					<div className="flex items-center justify-between">
-						<CardTitle className="font-bold text-foreground text-xl">{patient.name}</CardTitle>
+						<CardTitle className="font-bold text-foreground text-xl">
+							{patient.name}
+						</CardTitle>
 						<Badge className="text-sm" variant="outline">
 							ID: {patient.id}
 						</Badge>
@@ -228,12 +245,23 @@ const PatientCriticalInfo: React.FC<{
 					{patient.medications.length > 0 ? (
 						<div className="grid gap-3 md:grid-cols-2">
 							{patient.medications.map((medication, index) => (
-								<div className="rounded-lg border border-orange-300 bg-orange-100 p-3" key={index}>
-									<div className="font-bold text-orange-800">{medication.name}</div>
-									<div className="text-orange-700 text-sm">Dosagem: {medication.dosage}</div>
-									<div className="text-orange-700 text-sm">Frequência: {medication.frequency}</div>
+								<div
+									className="rounded-lg border border-orange-300 bg-orange-100 p-3"
+									key={index}
+								>
+									<div className="font-bold text-orange-800">
+										{medication.name}
+									</div>
+									<div className="text-orange-700 text-sm">
+										Dosagem: {medication.dosage}
+									</div>
+									<div className="text-orange-700 text-sm">
+										Frequência: {medication.frequency}
+									</div>
 									{medication.lastTaken && (
-										<div className="mt-1 text-orange-600 text-xs">Última dose: {medication.lastTaken}</div>
+										<div className="mt-1 text-orange-600 text-xs">
+											Última dose: {medication.lastTaken}
+										</div>
 									)}
 								</div>
 							))}
@@ -255,10 +283,24 @@ const PatientCriticalInfo: React.FC<{
 					{patient.contraindications.length > 0 ? (
 						<div className="space-y-2">
 							{patient.contraindications.map((contraindication, index) => (
-								<div className="rounded-lg border border-accent/30 bg-accent/20 p-3" key={index}>
-									<div className="font-bold text-accent">{contraindication.type}</div>
-									<div className="text-accent text-sm">{contraindication.description}</div>
-									<Badge className="mt-1" variant={contraindication.severity === "high" ? "destructive" : "secondary"}>
+								<div
+									className="rounded-lg border border-accent/30 bg-accent/20 p-3"
+									key={index}
+								>
+									<div className="font-bold text-accent">
+										{contraindication.type}
+									</div>
+									<div className="text-accent text-sm">
+										{contraindication.description}
+									</div>
+									<Badge
+										className="mt-1"
+										variant={
+											contraindication.severity === "high"
+												? "destructive"
+												: "secondary"
+										}
+									>
 										{contraindication.severity === "high"
 											? "Alta"
 											: contraindication.severity === "moderate"
@@ -285,8 +327,13 @@ const PatientCriticalInfo: React.FC<{
 					{patient.medicalConditions.length > 0 ? (
 						<div className="grid gap-2 md:grid-cols-2">
 							{patient.medicalConditions.map((condition, index) => (
-								<div className="rounded-lg border border-green-300 bg-green-100 p-3" key={index}>
-									<div className="font-bold text-green-800">{condition.condition}</div>
+								<div
+									className="rounded-lg border border-green-300 bg-green-100 p-3"
+									key={index}
+								>
+									<div className="font-bold text-green-800">
+										{condition.condition}
+									</div>
 									<Badge
 										className="mt-1"
 										variant={
@@ -303,7 +350,9 @@ const PatientCriticalInfo: React.FC<{
 												? "Controlada"
 												: "Resolvida"}
 									</Badge>
-									<div className="mt-1 text-green-600 text-xs">Atualização: {condition.lastUpdate}</div>
+									<div className="mt-1 text-green-600 text-xs">
+										Atualização: {condition.lastUpdate}
+									</div>
 								</div>
 							))}
 						</div>
@@ -352,8 +401,12 @@ const EmergencyContacts: React.FC<{
 											</Badge>
 										)}
 									</div>
-									<div className="text-blue-700 text-sm">{contact.relationship}</div>
-									<div className="font-mono text-blue-600 text-sm">{contact.phone}</div>
+									<div className="text-blue-700 text-sm">
+										{contact.relationship}
+									</div>
+									<div className="font-mono text-blue-600 text-sm">
+										{contact.phone}
+									</div>
 								</div>
 								<Button
 									aria-label={`Ligar para ${contact.name}`}
@@ -368,7 +421,9 @@ const EmergencyContacts: React.FC<{
 						))}
 					</div>
 				) : (
-					<p className="text-blue-600">Nenhum contato de emergência registrado</p>
+					<p className="text-blue-600">
+						Nenhum contato de emergência registrado
+					</p>
 				)}
 			</CardContent>
 		</Card>
@@ -401,11 +456,14 @@ const CrisisScheduler: React.FC = () => {
 		},
 	]);
 
-	const handleEmergencyBooking = useCallback((_doctorId: string, doctorName: string) => {
-		if (confirm(`Confirmar agendamento de emergência com ${doctorName}?`)) {
-			alert(`Agendamento de emergência confirmado com ${doctorName}`);
-		}
-	}, []);
+	const handleEmergencyBooking = useCallback(
+		(_doctorId: string, doctorName: string) => {
+			if (confirm(`Confirmar agendamento de emergência com ${doctorName}?`)) {
+				alert(`Agendamento de emergência confirmado com ${doctorName}`);
+			}
+		},
+		[],
+	);
 
 	return (
 		<Card className="border-2 border-purple-200">
@@ -424,8 +482,12 @@ const CrisisScheduler: React.FC = () => {
 						>
 							<div className="flex-1">
 								<div className="font-bold text-purple-800">{doctor.name}</div>
-								<div className="text-purple-700 text-sm">{doctor.specialty}</div>
-								<div className="text-purple-600 text-sm">Próximo horário: {doctor.nextSlot}</div>
+								<div className="text-purple-700 text-sm">
+									{doctor.specialty}
+								</div>
+								<div className="text-purple-600 text-sm">
+									Próximo horário: {doctor.nextSlot}
+								</div>
 							</div>
 							<div className="flex items-center gap-3">
 								<Badge
@@ -483,7 +545,11 @@ const OfflineIndicator: React.FC<{
 			<CardContent className="p-4">
 				<div className="flex items-center justify-between">
 					<div className="flex items-center gap-2">
-						{isOnline ? <Wifi className="h-5 w-5 text-green-600" /> : <WifiOff className="h-5 w-5 text-red-600" />}
+						{isOnline ? (
+							<Wifi className="h-5 w-5 text-green-600" />
+						) : (
+							<WifiOff className="h-5 w-5 text-red-600" />
+						)}
 						<span className="font-medium">{getStatusText()}</span>
 					</div>
 					<div className="text-sm">Última sincronização: {lastSync}</div>
@@ -584,7 +650,9 @@ export default function EmergencyAccessPage() {
 				...prev,
 				isOnline: navigator.onLine,
 				cacheStatus: navigator.onLine ? "fresh" : "offline",
-				lastSync: navigator.onLine ? new Date().toLocaleString("pt-BR") : prev.lastSync,
+				lastSync: navigator.onLine
+					? new Date().toLocaleString("pt-BR")
+					: prev.lastSync,
 			}));
 		};
 
@@ -606,7 +674,10 @@ export default function EmergencyAccessPage() {
 			await new Promise((resolve) => setTimeout(resolve, 1000));
 
 			// Mock search - in real implementation, this would search the database
-			if (query.toLowerCase().includes("joão") || query.includes("123.456.789-00")) {
+			if (
+				query.toLowerCase().includes("joão") ||
+				query.includes("123.456.789-00")
+			) {
 				setState((prev) => ({
 					...prev,
 					selectedPatient: mockPatient,
@@ -618,7 +689,9 @@ export default function EmergencyAccessPage() {
 					selectedPatient: null,
 					isSearching: false,
 				}));
-				alert("Paciente não encontrado. Verifique o nome, CPF ou RG informado.");
+				alert(
+					"Paciente não encontrado. Verifique o nome, CPF ou RG informado.",
+				);
 			} else {
 				setState((prev) => ({
 					...prev,
@@ -627,7 +700,7 @@ export default function EmergencyAccessPage() {
 				}));
 			}
 		},
-		[mockPatient]
+		[mockPatient],
 	);
 
 	// Handle voice toggle
@@ -672,7 +745,9 @@ export default function EmergencyAccessPage() {
 			// Ctrl+S for search focus
 			if (event.ctrlKey && event.key === "s") {
 				event.preventDefault();
-				const searchInput = document.querySelector('input[type="text"]') as HTMLInputElement;
+				const searchInput = document.querySelector(
+					'input[type="text"]',
+				) as HTMLInputElement;
 				if (searchInput) {
 					searchInput.focus();
 				}
@@ -704,18 +779,26 @@ export default function EmergencyAccessPage() {
 						<AlertTriangle className="h-8 w-8" />
 						Acesso de Emergência
 					</h1>
-					<p className="mt-2 text-xl opacity-90">Sistema de Acesso Rápido a Informações Críticas de Pacientes</p>
+					<p className="mt-2 text-xl opacity-90">
+						Sistema de Acesso Rápido a Informações Críticas de Pacientes
+					</p>
 				</div>
 
 				{/* System Status */}
-				<OfflineIndicator cacheStatus={state.cacheStatus} isOnline={state.isOnline} lastSync={state.lastSync} />
+				<OfflineIndicator
+					cacheStatus={state.cacheStatus}
+					isOnline={state.isOnline}
+					lastSync={state.lastSync}
+				/>
 
 				{/* Emergency Search */}
 				<EmergencySearchBar
 					isScannerActive={state.scannerActive}
 					isSearching={state.isSearching}
 					isVoiceActive={state.voiceActive}
-					onChange={(value) => setState((prev) => ({ ...prev, searchQuery: value }))}
+					onChange={(value) =>
+						setState((prev) => ({ ...prev, searchQuery: value }))
+					}
 					onScannerToggle={handleScannerToggle}
 					onVoiceToggle={handleVoiceToggle}
 					value={state.searchQuery}
@@ -726,7 +809,8 @@ export default function EmergencyAccessPage() {
 					<Alert className="border-blue-400 bg-blue-50">
 						<Mic className="h-4 w-4 text-blue-600" />
 						<AlertDescription className="text-blue-800">
-							<strong>Comando de voz ativo.</strong> Diga o nome do paciente, CPF ou RG.
+							<strong>Comando de voz ativo.</strong> Diga o nome do paciente,
+							CPF ou RG.
 						</AlertDescription>
 					</Alert>
 				)}
@@ -735,7 +819,8 @@ export default function EmergencyAccessPage() {
 					<Alert className="border-purple-400 bg-purple-50">
 						<Scan className="h-4 w-4 text-purple-600" />
 						<AlertDescription className="text-purple-800">
-							<strong>Scanner ativo.</strong> Posicione o código de barras ou QR code do paciente.
+							<strong>Scanner ativo.</strong> Posicione o código de barras ou QR
+							code do paciente.
 						</AlertDescription>
 					</Alert>
 				)}
@@ -777,7 +862,9 @@ export default function EmergencyAccessPage() {
 
 							{/* Emergency Actions - 1 column */}
 							<div className="space-y-4">
-								<EmergencyContacts contacts={state.selectedPatient.emergencyContacts} />
+								<EmergencyContacts
+									contacts={state.selectedPatient.emergencyContacts}
+								/>
 								<CrisisScheduler />
 							</div>
 						</div>
@@ -806,7 +893,9 @@ export default function EmergencyAccessPage() {
 								</div>
 
 								<div className="rounded-lg border border-green-200 bg-green-50 p-4">
-									<h3 className="mb-2 font-bold text-green-800">Informações Críticas</h3>
+									<h3 className="mb-2 font-bold text-green-800">
+										Informações Críticas
+									</h3>
 									<ul className="space-y-1 text-green-700 text-sm">
 										<li>• 🔴 Alergias life-threatening</li>
 										<li>• 🟠 Medicações atuais</li>
@@ -819,8 +908,9 @@ export default function EmergencyAccessPage() {
 							<Alert className="border-orange-400 bg-orange-50">
 								<Shield className="h-4 w-4 text-orange-600" />
 								<AlertDescription className="text-orange-800">
-									<strong>Protocolo de Emergência:</strong> Todos os acessos são registrados para auditoria. Em caso de
-									falha do sistema, consulte os protocolos em papel disponíveis na recepção.
+									<strong>Protocolo de Emergência:</strong> Todos os acessos são
+									registrados para auditoria. Em caso de falha do sistema,
+									consulte os protocolos em papel disponíveis na recepção.
 								</AlertDescription>
 							</Alert>
 						</CardContent>
@@ -831,9 +921,15 @@ export default function EmergencyAccessPage() {
 				<div className="border-t py-4 text-center text-muted-foreground text-sm">
 					<p>
 						NeonPro Healthcare Emergency Access • Versão 1.0 •
-						<span className="font-mono"> {new Date().toLocaleString("pt-BR")}</span>
+						<span className="font-mono">
+							{" "}
+							{new Date().toLocaleString("pt-BR")}
+						</span>
 					</p>
-					<p className="mt-1">🔒 Acesso monitorado e auditado conforme LGPD • ☎️ Suporte 24h: 0800-NEONPRO</p>
+					<p className="mt-1">
+						🔒 Acesso monitorado e auditado conforme LGPD • ☎️ Suporte 24h:
+						0800-NEONPRO
+					</p>
 				</div>
 			</div>
 		</div>

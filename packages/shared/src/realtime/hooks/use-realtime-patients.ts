@@ -41,8 +41,16 @@ export type UseRealtimePatientsReturn = {
  * MANDATORY Real-time Patient Hook
  * Combina Supabase Realtime com TanStack Query cache management
  */
-export function useRealtimePatients(options: UseRealtimePatientsOptions): UseRealtimePatientsReturn {
-	const { tenantId, enabled = true, onPatientChange, onError, queryKey = ["patients", tenantId] } = options;
+export function useRealtimePatients(
+	options: UseRealtimePatientsOptions,
+): UseRealtimePatientsReturn {
+	const {
+		tenantId,
+		enabled = true,
+		onPatientChange,
+		onError,
+		queryKey = ["patients", tenantId],
+	} = options;
 
 	const queryClient = useQueryClient();
 	const [isConnected, setIsConnected] = useState(false);
@@ -84,7 +92,7 @@ export function useRealtimePatients(options: UseRealtimePatientsOptions): UseRea
 			onPatientChange,
 			onError, // Update TanStack Query cache
 			updateQueryCache,
-		]
+		],
 	); /**
 	 * Update TanStack Query cache based on realtime changes
 	 */
@@ -93,34 +101,39 @@ export function useRealtimePatients(options: UseRealtimePatientsOptions): UseRea
 			const { eventType, new: newData, old: oldData } = payload;
 
 			// Update patients list cache
-			queryClient.setQueryData(queryKey, (oldCache: PatientRow[] | undefined) => {
-				if (!oldCache) {
-					return oldCache;
-				}
-
-				switch (eventType) {
-					case "INSERT":
-						if (newData && newData.clinic_id === tenantId) {
-							return [...oldCache, newData];
-						}
+			queryClient.setQueryData(
+				queryKey,
+				(oldCache: PatientRow[] | undefined) => {
+					if (!oldCache) {
 						return oldCache;
+					}
 
-					case "UPDATE":
-						if (newData) {
-							return oldCache.map((patient) => (patient.id === newData.id ? newData : patient));
-						}
-						return oldCache;
+					switch (eventType) {
+						case "INSERT":
+							if (newData && newData.clinic_id === tenantId) {
+								return [...oldCache, newData];
+							}
+							return oldCache;
 
-					case "DELETE":
-						if (oldData) {
-							return oldCache.filter((patient) => patient.id !== oldData.id);
-						}
-						return oldCache;
+						case "UPDATE":
+							if (newData) {
+								return oldCache.map((patient) =>
+									patient.id === newData.id ? newData : patient,
+								);
+							}
+							return oldCache;
 
-					default:
-						return oldCache;
-				}
-			});
+						case "DELETE":
+							if (oldData) {
+								return oldCache.filter((patient) => patient.id !== oldData.id);
+							}
+							return oldCache;
+
+						default:
+							return oldCache;
+					}
+				},
+			);
 
 			// Update individual patient cache if exists
 			if (newData) {
@@ -135,7 +148,7 @@ export function useRealtimePatients(options: UseRealtimePatientsOptions): UseRea
 			});
 			queryClient.invalidateQueries({ queryKey: ["patient-stats", tenantId] });
 		},
-		[queryClient, queryKey, tenantId]
+		[queryClient, queryKey, tenantId],
 	);
 
 	/**
@@ -154,7 +167,7 @@ export function useRealtimePatients(options: UseRealtimePatientsOptions): UseRea
 				table: "patients",
 				filter: `clinic_id=eq.${tenantId}`,
 			},
-			handlePatientChange
+			handlePatientChange,
 		);
 
 		setUnsubscribeFn(() => unsubscribe);
@@ -215,22 +228,30 @@ export function useOptimisticPatients(tenantId: string) {
 	const optimisticUpdate = useCallback(
 		(patientId: string, updates: Partial<PatientRow>) => {
 			// Update patients list optimistically
-			queryClient.setQueryData(["patients", tenantId], (oldCache: PatientRow[] | undefined) => {
-				if (!oldCache) {
-					return oldCache;
-				}
-				return oldCache.map((patient) => (patient.id === patientId ? { ...patient, ...updates } : patient));
-			});
+			queryClient.setQueryData(
+				["patients", tenantId],
+				(oldCache: PatientRow[] | undefined) => {
+					if (!oldCache) {
+						return oldCache;
+					}
+					return oldCache.map((patient) =>
+						patient.id === patientId ? { ...patient, ...updates } : patient,
+					);
+				},
+			);
 
 			// Update individual patient cache
-			queryClient.setQueryData(["patient", patientId], (oldData: PatientRow | undefined) => {
-				if (!oldData) {
-					return oldData;
-				}
-				return { ...oldData, ...updates };
-			});
+			queryClient.setQueryData(
+				["patient", patientId],
+				(oldData: PatientRow | undefined) => {
+					if (!oldData) {
+						return oldData;
+					}
+					return { ...oldData, ...updates };
+				},
+			);
 		},
-		[queryClient, tenantId]
+		[queryClient, tenantId],
 	);
 
 	const rollbackUpdate = useCallback(
@@ -239,7 +260,7 @@ export function useOptimisticPatients(tenantId: string) {
 			queryClient.invalidateQueries({ queryKey: ["patients", tenantId] });
 			queryClient.invalidateQueries({ queryKey: ["patient", patientId] });
 		},
-		[queryClient, tenantId]
+		[queryClient, tenantId],
 	);
 
 	return {

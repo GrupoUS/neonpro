@@ -11,7 +11,12 @@ import ora from "ora";
 
 export type ChecklistItem = {
 	id: string;
-	category: "security" | "performance" | "compliance" | "infrastructure" | "documentation";
+	category:
+		| "security"
+		| "performance"
+		| "compliance"
+		| "infrastructure"
+		| "documentation";
 	name: string;
 	description: string;
 	critical: boolean;
@@ -79,7 +84,13 @@ export class GoLiveChecker {
 
 		try {
 			// Initialize categories
-			const categories = ["security", "performance", "compliance", "infrastructure", "documentation"];
+			const categories = [
+				"security",
+				"performance",
+				"compliance",
+				"infrastructure",
+				"documentation",
+			];
 			categories.forEach((category) => {
 				report.categories[category] = {
 					score: 0,
@@ -148,11 +159,15 @@ export class GoLiveChecker {
 
 			Object.keys(report.categories).forEach((categoryName) => {
 				const category = report.categories[categoryName];
-				category.score = category.total > 0 ? Math.round((category.passed / category.total) * 100) : 100;
+				category.score =
+					category.total > 0
+						? Math.round((category.passed / category.total) * 100)
+						: 100;
 			});
 
 			// Determine production readiness
-			report.readyForProduction = report.criticalFailures === 0 && report.overallScore >= 95;
+			report.readyForProduction =
+				report.criticalFailures === 0 && report.overallScore >= 95;
 
 			this.spinner.succeed("Go-live validation completed!");
 			this.generateReport(report);
@@ -174,7 +189,8 @@ export class GoLiveChecker {
 				id: "sec-001",
 				category: "security",
 				name: "SSL/TLS Configuration",
-				description: "Verify HTTPS is properly configured with valid certificates",
+				description:
+					"Verify HTTPS is properly configured with valid certificates",
 				critical: true,
 				automated: true,
 				validator: this.validateSSLConfiguration,
@@ -192,7 +208,8 @@ export class GoLiveChecker {
 				id: "sec-003",
 				category: "security",
 				name: "Data Encryption",
-				description: "Verify all sensitive data is encrypted at rest and in transit",
+				description:
+					"Verify all sensitive data is encrypted at rest and in transit",
 				critical: true,
 				automated: true,
 				validator: this.validateEncryption,
@@ -371,35 +388,47 @@ export class GoLiveChecker {
 	}
 
 	// Security Validators
-	private readonly validateSSLConfiguration = async (): Promise<CheckResult> => {
-		try {
-			const response = await fetch("https://api.neonpro.com.br/health");
-			const cert = response.headers.get("strict-transport-security");
+	private readonly validateSSLConfiguration =
+		async (): Promise<CheckResult> => {
+			try {
+				const response = await fetch("https://api.neonpro.com.br/health");
+				const cert = response.headers.get("strict-transport-security");
 
-			return {
-				passed: response.ok && !!cert,
-				score: response.ok && !!cert ? 100 : 0,
-				message: response.ok && !!cert ? "SSL/TLS properly configured" : "SSL/TLS configuration issues",
-				details: [`HTTPS: ${response.ok ? "✅" : "❌"}`, `HSTS: ${cert ? "✅" : "❌"}`],
-			};
-		} catch (error) {
-			return {
-				passed: false,
-				score: 0,
-				message: "SSL/TLS validation failed",
-				details: [`Error: ${error}`],
-			};
-		}
-	};
+				return {
+					passed: response.ok && !!cert,
+					score: response.ok && !!cert ? 100 : 0,
+					message:
+						response.ok && !!cert
+							? "SSL/TLS properly configured"
+							: "SSL/TLS configuration issues",
+					details: [
+						`HTTPS: ${response.ok ? "✅" : "❌"}`,
+						`HSTS: ${cert ? "✅" : "❌"}`,
+					],
+				};
+			} catch (error) {
+				return {
+					passed: false,
+					score: 0,
+					message: "SSL/TLS validation failed",
+					details: [`Error: ${error}`],
+				};
+			}
+		};
 
 	private readonly validateAuthentication = async (): Promise<CheckResult> => {
 		// Test authentication endpoints
 		try {
-			const response = await fetch("https://api.neonpro.com.br/api/auth/validate");
+			const response = await fetch(
+				"https://api.neonpro.com.br/api/auth/validate",
+			);
 			return {
 				passed: response.status === 401, // Expecting unauthorized without token
 				score: response.status === 401 ? 100 : 0,
-				message: response.status === 401 ? "Authentication system working" : "Authentication issues detected",
+				message:
+					response.status === 401
+						? "Authentication system working"
+						: "Authentication issues detected",
 			};
 		} catch (error) {
 			return {
@@ -424,8 +453,12 @@ export class GoLiveChecker {
 		return {
 			passed,
 			score: passed ? 100 : 0,
-			message: passed ? "All encryption checks passed" : "Encryption issues detected",
-			details: checks.map((check) => `${check.name}: ${check.passed ? "✅" : "❌"}`),
+			message: passed
+				? "All encryption checks passed"
+				: "Encryption issues detected",
+			details: checks.map(
+				(check) => `${check.name}: ${check.passed ? "✅" : "❌"}`,
+			),
 		};
 	};
 
@@ -447,8 +480,12 @@ export class GoLiveChecker {
 			return {
 				passed,
 				score: passed ? 100 : Math.max(0, 100 - missing.length * 25),
-				message: passed ? "All security headers present" : `Missing headers: ${missing.join(", ")}`,
-				details: requiredHeaders.map((header) => `${header}: ${headers.has(header) ? "✅" : "❌"}`),
+				message: passed
+					? "All security headers present"
+					: `Missing headers: ${missing.join(", ")}`,
+				details: requiredHeaders.map(
+					(header) => `${header}: ${headers.has(header) ? "✅" : "❌"}`,
+				),
 			};
 		} catch (error) {
 			return {
@@ -520,17 +557,24 @@ export class GoLiveChecker {
 		return {
 			passed,
 			score: Math.round((passedCount / checks.length) * 100),
-			message: passed ? "All Core Web Vitals in good range" : `${checks.length - passedCount} vitals need improvement`,
+			message: passed
+				? "All Core Web Vitals in good range"
+				: `${checks.length - passedCount} vitals need improvement`,
 			details: checks.map(
 				(check) =>
-					`${check.name}: ${check.value}${check.name === "CLS" ? "" : "ms"} (threshold: ${check.threshold}) ${check.passed ? "✅" : "❌"}`
+					`${check.name}: ${check.value}${check.name === "CLS" ? "" : "ms"} (threshold: ${check.threshold}) ${check.passed ? "✅" : "❌"}`,
 			),
 		};
 	};
 
 	private readonly validateAPIPerformance = async (): Promise<CheckResult> => {
 		// Test API response times
-		const endpoints = ["/api/health", "/api/auth/validate", "/api/patients", "/api/appointments"];
+		const endpoints = [
+			"/api/health",
+			"/api/auth/validate",
+			"/api/patients",
+			"/api/appointments",
+		];
 
 		const results = [];
 
@@ -546,28 +590,42 @@ export class GoLiveChecker {
 		}
 
 		const passed = results.every((result) => result.passed);
-		const avgDuration = results.reduce((sum, result) => sum + result.duration, 0) / results.length;
+		const avgDuration =
+			results.reduce((sum, result) => sum + result.duration, 0) /
+			results.length;
 
 		return {
 			passed,
-			score: passed ? 100 : Math.max(0, 100 - results.filter((r) => !r.passed).length * 25),
-			message: passed ? "All API endpoints meet performance targets" : "Some endpoints exceed 500ms threshold",
+			score: passed
+				? 100
+				: Math.max(0, 100 - results.filter((r) => !r.passed).length * 25),
+			message: passed
+				? "All API endpoints meet performance targets"
+				: "Some endpoints exceed 500ms threshold",
 			details: [
 				`Average response time: ${Math.round(avgDuration)}ms`,
-				...results.map((result) => `${result.endpoint}: ${result.duration}ms ${result.passed ? "✅" : "❌"}`),
+				...results.map(
+					(result) =>
+						`${result.endpoint}: ${result.duration}ms ${result.passed ? "✅" : "❌"}`,
+				),
 			],
 		};
 	};
 
-	private readonly validateDatabasePerformance = async (): Promise<CheckResult> => {
-		// This would check actual database performance metrics
-		return {
-			passed: true,
-			score: 95,
-			message: "Database performance within acceptable range",
-			details: ["Query response time: <100ms average", "Connection pool: Healthy", "Index usage: Optimized"],
+	private readonly validateDatabasePerformance =
+		async (): Promise<CheckResult> => {
+			// This would check actual database performance metrics
+			return {
+				passed: true,
+				score: 95,
+				message: "Database performance within acceptable range",
+				details: [
+					"Query response time: <100ms average",
+					"Connection pool: Healthy",
+					"Index usage: Optimized",
+				],
+			};
 		};
-	};
 
 	private readonly validateLoadTesting = async (): Promise<CheckResult> => {
 		// This would run actual load tests
@@ -575,7 +633,11 @@ export class GoLiveChecker {
 			passed: true,
 			score: 100,
 			message: "Load testing passed - system handles expected traffic",
-			details: ["1000 concurrent users: ✅", "Response times stable: ✅", "No errors under load: ✅"],
+			details: [
+				"1000 concurrent users: ✅",
+				"Response times stable: ✅",
+				"No errors under load: ✅",
+			],
 		};
 	};
 
@@ -593,19 +655,24 @@ export class GoLiveChecker {
 		return {
 			passed,
 			score: passed ? 100 : 0,
-			message: passed ? "LGPD compliance verified" : "LGPD compliance issues detected",
-			details: checks.map((check) => `${check.name}: ${check.passed ? "✅" : "❌"}`),
+			message: passed
+				? "LGPD compliance verified"
+				: "LGPD compliance issues detected",
+			details: checks.map(
+				(check) => `${check.name}: ${check.passed ? "✅" : "❌"}`,
+			),
 		};
 	};
 
-	private readonly validateANVISACompliance = async (): Promise<CheckResult> => {
-		return {
-			passed: true,
-			score: 100,
-			message: "ANVISA compliance verified",
-			details: ["Medical device regulations met"],
+	private readonly validateANVISACompliance =
+		async (): Promise<CheckResult> => {
+			return {
+				passed: true,
+				score: 100,
+				message: "ANVISA compliance verified",
+				details: ["Medical device regulations met"],
+			};
 		};
-	};
 
 	private readonly validateCFMCompliance = async (): Promise<CheckResult> => {
 		return {
@@ -631,7 +698,11 @@ export class GoLiveChecker {
 			passed: true,
 			score: 100,
 			message: "Backup systems operational",
-			details: ["Daily automated backups: ✅", "Backup restoration tested: ✅", "Off-site storage configured: ✅"],
+			details: [
+				"Daily automated backups: ✅",
+				"Backup restoration tested: ✅",
+				"Off-site storage configured: ✅",
+			],
 		};
 	};
 
@@ -648,51 +719,74 @@ export class GoLiveChecker {
 		};
 	};
 
-	private readonly validateDisasterRecovery = async (): Promise<CheckResult> => {
-		return {
-			passed: true,
-			score: 100,
-			message: "Disaster recovery procedures ready",
-			details: ["DR procedures documented: ✅", "Recovery testing completed: ✅", "RTO/RPO targets met: ✅"],
+	private readonly validateDisasterRecovery =
+		async (): Promise<CheckResult> => {
+			return {
+				passed: true,
+				score: 100,
+				message: "Disaster recovery procedures ready",
+				details: [
+					"DR procedures documented: ✅",
+					"Recovery testing completed: ✅",
+					"RTO/RPO targets met: ✅",
+				],
+			};
 		};
-	};
 
 	private readonly validateScalability = async (): Promise<CheckResult> => {
 		return {
 			passed: true,
 			score: 95,
 			message: "Auto-scaling configured and tested",
-			details: ["Horizontal scaling: ✅", "Load balancing: ✅", "Resource monitoring: ✅"],
+			details: [
+				"Horizontal scaling: ✅",
+				"Load balancing: ✅",
+				"Resource monitoring: ✅",
+			],
 		};
 	};
 
 	// Documentation Validators
-	private readonly validateAPIDocumentation = async (): Promise<CheckResult> => {
-		return {
-			passed: true,
-			score: 100,
-			message: "API documentation complete and current",
-			details: ["OpenAPI specification: ✅", "Code examples: ✅", "Authentication docs: ✅"],
+	private readonly validateAPIDocumentation =
+		async (): Promise<CheckResult> => {
+			return {
+				passed: true,
+				score: 100,
+				message: "API documentation complete and current",
+				details: [
+					"OpenAPI specification: ✅",
+					"Code examples: ✅",
+					"Authentication docs: ✅",
+				],
+			};
 		};
-	};
 
 	private readonly validateRunbooks = async (): Promise<CheckResult> => {
 		return {
 			passed: true,
 			score: 100,
 			message: "Operational runbooks complete",
-			details: ["Deployment procedures: ✅", "Troubleshooting guides: ✅", "Emergency procedures: ✅"],
+			details: [
+				"Deployment procedures: ✅",
+				"Troubleshooting guides: ✅",
+				"Emergency procedures: ✅",
+			],
 		};
 	};
 
-	private readonly validateIncidentResponse = async (): Promise<CheckResult> => {
-		return {
-			passed: true,
-			score: 100,
-			message: "Incident response procedures documented",
-			details: ["Escalation procedures: ✅", "Communication plans: ✅", "Recovery procedures: ✅"],
+	private readonly validateIncidentResponse =
+		async (): Promise<CheckResult> => {
+			return {
+				passed: true,
+				score: 100,
+				message: "Incident response procedures documented",
+				details: [
+					"Escalation procedures: ✅",
+					"Communication plans: ✅",
+					"Recovery procedures: ✅",
+				],
+			};
 		};
-	};
 
 	private readonly validateUserTraining = async (): Promise<CheckResult> => {
 		return {
@@ -700,7 +794,10 @@ export class GoLiveChecker {
 			score: 0,
 			message: "User training materials need review",
 			details: ["Manual verification required"],
-			recommendations: ["Schedule user training sessions", "Prepare training materials"],
+			recommendations: [
+				"Schedule user training sessions",
+				"Prepare training materials",
+			],
 		};
 	};
 
@@ -721,7 +818,12 @@ export class GoLiveChecker {
 		if (report.criticalFailures > 0) {
 		}
 		Object.entries(report.categories).forEach(([_category, data]) => {
-			const _color = data.score >= 95 ? chalk.green : data.score >= 80 ? chalk.yellow : chalk.red;
+			const _color =
+				data.score >= 95
+					? chalk.green
+					: data.score >= 80
+						? chalk.yellow
+						: chalk.red;
 		});
 
 		if (report.blockers.length > 0) {

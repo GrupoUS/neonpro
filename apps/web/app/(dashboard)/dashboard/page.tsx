@@ -31,7 +31,10 @@ type NeonGradientCardProps = {
 	className?: string;
 };
 
-const NeonGradientCard = ({ children, className = "" }: NeonGradientCardProps) => (
+const NeonGradientCard = ({
+	children,
+	className = "",
+}: NeonGradientCardProps) => (
 	<motion.div
 		animate={{ opacity: 1, y: 0 }}
 		className={`neonpro-card relative overflow-hidden rounded-xl border border-border bg-card/90 backdrop-blur-sm ${className}`}
@@ -59,11 +62,16 @@ const CosmicGlowButton = ({
 	className = "",
 }: CosmicGlowButtonProps) => {
 	const variants = {
-		primary: "bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90",
-		secondary: "bg-gradient-to-r from-secondary to-secondary/80 hover:from-secondary/90 hover:to-secondary/70",
-		success: "bg-gradient-to-r from-success to-success/80 hover:from-success/90 hover:to-success/70",
-		warning: "bg-gradient-to-r from-warning to-warning/80 hover:from-warning/90 hover:to-warning/70",
-		danger: "bg-gradient-to-r from-destructive to-destructive/80 hover:from-destructive/90 hover:to-destructive/70",
+		primary:
+			"bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90",
+		secondary:
+			"bg-gradient-to-r from-secondary to-secondary/80 hover:from-secondary/90 hover:to-secondary/70",
+		success:
+			"bg-gradient-to-r from-success to-success/80 hover:from-success/90 hover:to-success/70",
+		warning:
+			"bg-gradient-to-r from-warning to-warning/80 hover:from-warning/90 hover:to-warning/70",
+		danger:
+			"bg-gradient-to-r from-destructive to-destructive/80 hover:from-destructive/90 hover:to-destructive/70",
 	};
 
 	const sizes = {
@@ -75,7 +83,11 @@ const CosmicGlowButton = ({
 	const ButtonComponent = href ? "a" : "button";
 
 	return (
-		<motion.div className="inline-block" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+		<motion.div
+			className="inline-block"
+			whileHover={{ scale: 1.02 }}
+			whileTap={{ scale: 0.98 }}
+		>
 			<ButtonComponent
 				className={`inline-flex items-center gap-2 rounded-lg font-semibold text-white shadow-lg transition-all duration-300 hover:shadow-xl ${variants[variant]} ${sizes[size]} ${className}`}
 				href={href}
@@ -125,7 +137,8 @@ function DashboardMetricsCards() {
 					<Alert>
 						<AlertTriangle className="h-4 w-4" />
 						<AlertDescription>
-							Erro ao carregar métricas do dashboard: {error?.message || String(error)}
+							Erro ao carregar métricas do dashboard:{" "}
+							{error?.message || String(error)}
 						</AlertDescription>
 					</Alert>
 				</div>
@@ -138,7 +151,10 @@ function DashboardMetricsCards() {
 		{
 			title: "Total de Pacientes",
 			value: totalPatients?.toString() || "0",
-			change: activePatients > 0 ? `+${Math.round((activePatients / totalPatients) * 100)}%` : "0%",
+			change:
+				activePatients > 0
+					? `+${Math.round((activePatients / totalPatients) * 100)}%`
+					: "0%",
 			changeType: "increase" as const,
 			icon: Users,
 			gradient: "from-primary to-accent",
@@ -146,16 +162,26 @@ function DashboardMetricsCards() {
 		{
 			title: "Receita Mensal",
 			value: `R$ ${monthlyRevenue?.toLocaleString("pt-BR") || "0"}`,
-			change: revenueGrowth ? `${revenueGrowth > 0 ? "+" : ""}${revenueGrowth.toFixed(1)}%` : "0%",
-			changeType: (revenueGrowth || 0) >= 0 ? ("increase" as const) : ("decrease" as const),
+			change: revenueGrowth
+				? `${revenueGrowth > 0 ? "+" : ""}${revenueGrowth.toFixed(1)}%`
+				: "0%",
+			changeType:
+				(revenueGrowth || 0) >= 0
+					? ("increase" as const)
+					: ("decrease" as const),
 			icon: DollarSign,
 			gradient: "from-success to-success/80",
 		},
 		{
 			title: "Consultas Agendadas",
 			value: upcomingAppointments?.toString() || "0",
-			change: appointmentsGrowth ? `${appointmentsGrowth > 0 ? "+" : ""}${appointmentsGrowth.toFixed(1)}%` : "0%",
-			changeType: (appointmentsGrowth || 0) >= 0 ? ("increase" as const) : ("decrease" as const),
+			change: appointmentsGrowth
+				? `${appointmentsGrowth > 0 ? "+" : ""}${appointmentsGrowth.toFixed(1)}%`
+				: "0%",
+			changeType:
+				(appointmentsGrowth || 0) >= 0
+					? ("increase" as const)
+					: ("decrease" as const),
 			icon: Calendar,
 			gradient: "from-primary to-accent",
 		},
@@ -176,11 +202,15 @@ function DashboardMetricsCards() {
 				return (
 					<NeonGradientCard key={stat.title}>
 						<div className="flex flex-row items-center justify-between space-y-0 pb-2">
-							<h3 className="font-medium text-muted-foreground text-sm tracking-tight">{stat.title}</h3>
+							<h3 className="font-medium text-muted-foreground text-sm tracking-tight">
+								{stat.title}
+							</h3>
 							<Icon className="h-4 w-4 text-muted" />
 						</div>
 						<div>
-							<div className="font-bold text-2xl text-foreground">{stat.value}</div>
+							<div className="font-bold text-2xl text-foreground">
+								{stat.value}
+							</div>
 							<p className="flex items-center gap-1 text-muted text-xs">
 								{stat.changeType === "increase" ? (
 									<TrendingUp className="h-3 w-3 text-success" />
@@ -202,10 +232,15 @@ function RecentPatientsSection() {
 	if (loading) {
 		return (
 			<NeonGradientCard>
-				<h2 className="mb-6 font-bold text-white text-xl">Pacientes Recentes</h2>
+				<h2 className="mb-6 font-bold text-white text-xl">
+					Pacientes Recentes
+				</h2>
 				<div className="space-y-4">
 					{[...new Array(5)].map((_, i) => (
-						<div className="flex items-center space-x-4 rounded-lg bg-white/5 p-3" key={i}>
+						<div
+							className="flex items-center space-x-4 rounded-lg bg-white/5 p-3"
+							key={i}
+						>
 							<Skeleton className="h-10 w-10 rounded-full bg-muted/20" />
 							<div className="flex-1 space-y-2">
 								<Skeleton className="h-4 w-[180px] bg-muted/20" />
@@ -222,11 +257,14 @@ function RecentPatientsSection() {
 	if (error) {
 		return (
 			<NeonGradientCard>
-				<h2 className="mb-6 font-bold text-white text-xl">Pacientes Recentes</h2>
+				<h2 className="mb-6 font-bold text-white text-xl">
+					Pacientes Recentes
+				</h2>
 				<Alert>
 					<AlertTriangle className="h-4 w-4" />
 					<AlertDescription>
-						Erro ao carregar pacientes recentes: {error?.message || "Erro desconhecido"}
+						Erro ao carregar pacientes recentes:{" "}
+						{error?.message || "Erro desconhecido"}
 					</AlertDescription>
 				</Alert>
 			</NeonGradientCard>
@@ -235,8 +273,14 @@ function RecentPatientsSection() {
 	return (
 		<NeonGradientCard>
 			<div className="mb-6 flex items-center justify-between">
-				<h2 className="font-bold text-foreground text-xl">Pacientes Recentes</h2>
-				<CosmicGlowButton href="/dashboard/patients" size="sm" variant="secondary">
+				<h2 className="font-bold text-foreground text-xl">
+					Pacientes Recentes
+				</h2>
+				<CosmicGlowButton
+					href="/dashboard/patients"
+					size="sm"
+					variant="secondary"
+				>
 					Ver Todos
 				</CosmicGlowButton>
 			</div>
@@ -249,13 +293,18 @@ function RecentPatientsSection() {
 						key={patient.id}
 					>
 						<div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-primary to-accent">
-							<span className="font-semibold text-primary-foreground text-sm">{patient.name?.charAt(0) || "P"}</span>
+							<span className="font-semibold text-primary-foreground text-sm">
+								{patient.name?.charAt(0) || "P"}
+							</span>
 						</div>
 						<div className="flex-1">
 							<p className="font-medium text-foreground">{patient.name}</p>
 							<p className="text-muted-foreground text-sm">{patient.email}</p>
 						</div>
-						<Badge className="border-border text-muted-foreground" variant="outline">
+						<Badge
+							className="border-border text-muted-foreground"
+							variant="outline"
+						>
 							{patient.phone || "Sem contato"}
 						</Badge>
 					</motion.div>
@@ -306,7 +355,10 @@ function TodaysAppointmentsSection() {
 				<h2 className="mb-6 font-bold text-white text-xl">Agenda de Hoje</h2>
 				<div className="space-y-3">
 					{[...new Array(4)].map((_, i) => (
-						<div className="flex items-center justify-between rounded-lg bg-white/5 p-3" key={i}>
+						<div
+							className="flex items-center justify-between rounded-lg bg-white/5 p-3"
+							key={i}
+						>
 							<div className="flex-1 space-y-2">
 								<Skeleton className="h-4 w-[160px] bg-muted/20" />
 								<Skeleton className="h-3 w-[120px] bg-muted/20" />
@@ -327,7 +379,9 @@ function TodaysAppointmentsSection() {
 				<h2 className="mb-6 font-bold text-white text-xl">Agenda de Hoje</h2>
 				<Alert>
 					<AlertTriangle className="h-4 w-4" />
-					<AlertDescription>Erro ao carregar agenda: {error?.message || "Erro desconhecido"}</AlertDescription>
+					<AlertDescription>
+						Erro ao carregar agenda: {error?.message || "Erro desconhecido"}
+					</AlertDescription>
 				</Alert>
 			</NeonGradientCard>
 		);
@@ -337,7 +391,11 @@ function TodaysAppointmentsSection() {
 		<NeonGradientCard>
 			<div className="mb-6 flex items-center justify-between">
 				<h2 className="font-bold text-foreground text-xl">Agenda de Hoje</h2>
-				<CosmicGlowButton href="/dashboard/appointments" size="sm" variant="secondary">
+				<CosmicGlowButton
+					href="/dashboard/appointments"
+					size="sm"
+					variant="secondary"
+				>
 					Ver Agenda Completa
 				</CosmicGlowButton>
 			</div>
@@ -350,12 +408,20 @@ function TodaysAppointmentsSection() {
 						key={appointment.id}
 					>
 						<div>
-							<p className="font-medium text-foreground">{appointment.patients?.name || "Paciente"}</p>
-							<p className="text-muted-foreground text-sm">{appointment.services?.name || "Consulta"}</p>
+							<p className="font-medium text-foreground">
+								{appointment.patients?.name || "Paciente"}
+							</p>
+							<p className="text-muted-foreground text-sm">
+								{appointment.services?.name || "Consulta"}
+							</p>
 						</div>
 						<div className="text-right">
-							<p className="text-muted-foreground text-sm">{formatTime(appointment.appointment_date)}</p>
-							<Badge variant={getStatusVariant(appointment.status)}>{appointment.status || "Agendado"}</Badge>
+							<p className="text-muted-foreground text-sm">
+								{formatTime(appointment.appointment_date)}
+							</p>
+							<Badge variant={getStatusVariant(appointment.status)}>
+								{appointment.status || "Agendado"}
+							</Badge>
 						</div>
 					</motion.div>
 				))}
@@ -430,7 +496,9 @@ function QuickActionsSection() {
 						>
 							<Icon className="mb-2 h-6 w-6" />
 							<span className="font-medium text-sm">{action.label}</span>
-							<span className="mt-1 text-xs opacity-75">{action.description}</span>
+							<span className="mt-1 text-xs opacity-75">
+								{action.description}
+							</span>
 						</CosmicGlowButton>
 					);
 				})}
@@ -440,7 +508,8 @@ function QuickActionsSection() {
 } // System Status Section with real data
 function SystemStatusSection() {
 	const { activeStaff, loading: staffLoading } = useStaffMembers();
-	const { todaysAppointments, loading: appointmentsLoading } = useAppointments();
+	const { todaysAppointments, loading: appointmentsLoading } =
+		useAppointments();
 	const { totalPatients, loading: patientsLoading } = useDashboardMetrics();
 
 	const systemMetrics = [
@@ -460,7 +529,9 @@ function SystemStatusSection() {
 		},
 		{
 			label: "Consultas Hoje",
-			value: appointmentsLoading ? "..." : todaysAppointments?.length?.toString() || "0",
+			value: appointmentsLoading
+				? "..."
+				: todaysAppointments?.length?.toString() || "0",
 			status: "success" as const,
 			icon: Calendar,
 			description: "Consultas agendadas para hoje",
@@ -502,7 +573,9 @@ function SystemStatusSection() {
 
 	return (
 		<NeonGradientCard>
-			<h2 className="mb-6 font-bold text-foreground text-xl">Status do Sistema</h2>
+			<h2 className="mb-6 font-bold text-foreground text-xl">
+				Status do Sistema
+			</h2>
 			<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
 				{systemMetrics.map((metric) => {
 					const Icon = metric.icon;
@@ -513,10 +586,18 @@ function SystemStatusSection() {
 						>
 							<Icon className={`h-5 w-5 ${getStatusColor(metric.status)}`} />
 							<div className="flex-1">
-								<p className="font-medium text-foreground text-sm">{metric.label}</p>
-								<p className="text-muted-foreground text-xs">{metric.description}</p>
+								<p className="font-medium text-foreground text-sm">
+									{metric.label}
+								</p>
+								<p className="text-muted-foreground text-xs">
+									{metric.description}
+								</p>
 							</div>
-							<span className={`font-semibold text-sm ${getStatusColor(metric.status)}`}>{metric.value}</span>
+							<span
+								className={`font-semibold text-sm ${getStatusColor(metric.status)}`}
+							>
+								{metric.value}
+							</span>
 						</div>
 					);
 				})}
@@ -525,14 +606,19 @@ function SystemStatusSection() {
 	);
 } // Healthcare Dashboard - maintaining existing functionality
 function HealthcareDashboard() {
-	const { totalPatients, monthlyRevenue, upcomingAppointments } = useDashboardMetrics();
+	const { totalPatients, monthlyRevenue, upcomingAppointments } =
+		useDashboardMetrics();
 
 	return (
 		<div className="min-h-screen bg-secondary font-mono text-primary">
 			<div className="container mx-auto p-6">
 				<div className="mb-6 border border-primary p-4">
-					<h1 className="mb-2 font-bold text-2xl">NEONPRO HEALTHCARE CONTROL SYSTEM v2.1</h1>
-					<p className="text-sm">SISTEMA DE CONTROLE HOSPITALAR - ACESSO RESTRITO</p>
+					<h1 className="mb-2 font-bold text-2xl">
+						NEONPRO HEALTHCARE CONTROL SYSTEM v2.1
+					</h1>
+					<p className="text-sm">
+						SISTEMA DE CONTROLE HOSPITALAR - ACESSO RESTRITO
+					</p>
 				</div>
 
 				<div className="grid grid-cols-1 gap-6 md:grid-cols-3">
@@ -544,13 +630,17 @@ function HealthcareDashboard() {
 
 					<div className="border border-primary p-4">
 						<h2 className="mb-2 font-bold text-lg">RECEITA</h2>
-						<div className="font-bold text-2xl">R$ {monthlyRevenue?.toLocaleString("pt-BR") || "0"}</div>
+						<div className="font-bold text-2xl">
+							R$ {monthlyRevenue?.toLocaleString("pt-BR") || "0"}
+						</div>
 						<p className="text-sm">MENSAL ATUAL</p>
 					</div>
 
 					<div className="border border-primary p-4">
 						<h2 className="mb-2 font-bold text-lg">AGENDAMENTOS</h2>
-						<div className="font-bold text-3xl">{upcomingAppointments || 0}</div>
+						<div className="font-bold text-3xl">
+							{upcomingAppointments || 0}
+						</div>
 						<p className="text-sm">PRÓXIMOS</p>
 					</div>
 				</div>
@@ -590,7 +680,9 @@ function HealthcareDashboard() {
 	);
 } // Main Dashboard Component with dynamic data integration
 export default function DashboardPage() {
-	const [viewMode, setViewMode] = useState<"standard" | "healthcare">("standard");
+	const [viewMode, setViewMode] = useState<"standard" | "healthcare">(
+		"standard",
+	);
 	const { user } = useAuth();
 
 	// Handle Healthcare mode
@@ -604,21 +696,32 @@ export default function DashboardPage() {
 				{/* Header */}
 				<div className="flex items-center justify-between">
 					<div>
-						<h1 className="mb-2 font-bold text-3xl text-foreground">Dashboard - NeonPro</h1>
+						<h1 className="mb-2 font-bold text-3xl text-foreground">
+							Dashboard - NeonPro
+						</h1>
 						<p className="text-muted-foreground">
-							Bem-vindo de volta, {user?.user_metadata?.full_name || user?.email || "Usuário"}
+							Bem-vindo de volta,{" "}
+							{user?.user_metadata?.full_name || user?.email || "Usuário"}
 						</p>
 					</div>
 					<div className="flex items-center space-x-4">
 						<CosmicGlowButton
-							onClick={() => setViewMode(viewMode === "standard" ? "bmad-master" : "standard")}
+							onClick={() =>
+								setViewMode(
+									viewMode === "standard" ? "bmad-master" : "standard",
+								)
+							}
 							size="sm"
 							variant="secondary"
 						>
 							<Cpu className="mr-2 h-4 w-4" />
 							{viewMode === "standard" ? "Modo BMad" : "Modo Padrão"}
 						</CosmicGlowButton>
-						<CosmicGlowButton href="/dashboard/patients/new" size="sm" variant="primary">
+						<CosmicGlowButton
+							href="/dashboard/patients/new"
+							size="sm"
+							variant="primary"
+						>
 							<Plus className="mr-2 h-4 w-4" />
 							Novo Paciente
 						</CosmicGlowButton>

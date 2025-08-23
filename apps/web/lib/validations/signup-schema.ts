@@ -54,7 +54,10 @@ const passwordValidation = z
 	.regex(/[A-Z]/, "A senha deve conter pelo menos uma letra maiúscula")
 	.regex(/[a-z]/, "A senha deve conter pelo menos uma letra minúscula")
 	.regex(/\d/, "A senha deve conter pelo menos um número")
-	.regex(/[^A-Za-z0-9]/, "A senha deve conter pelo menos um caractere especial");
+	.regex(
+		/[^A-Za-z0-9]/,
+		"A senha deve conter pelo menos um caractere especial",
+	);
 
 // Schema principal de signup
 export const signupSchema = z
@@ -66,16 +69,28 @@ export const signupSchema = z
 			.max(100, "Nome deve ter no máximo 100 caracteres")
 			.regex(/^[a-zA-ZÀ-ÿ\s]+$/, "Nome deve conter apenas letras e espaços"),
 
-		email: z.string().email("Email inválido").max(255, "Email deve ter no máximo 255 caracteres").toLowerCase(),
+		email: z
+			.string()
+			.email("Email inválido")
+			.max(255, "Email deve ter no máximo 255 caracteres")
+			.toLowerCase(),
 
 		password: passwordValidation,
 
 		confirmPassword: z.string(),
 
 		// Documentos brasileiros
-		cpf: z.string().regex(cpfRegex, "CPF deve estar no formato 000.000.000-00").refine(cpfValidation, "CPF inválido"),
+		cpf: z
+			.string()
+			.regex(cpfRegex, "CPF deve estar no formato 000.000.000-00")
+			.refine(cpfValidation, "CPF inválido"),
 
-		phone: z.string().regex(phoneRegex, "Telefone deve estar no formato (00) 0000-0000 ou (00) 90000-0000"),
+		phone: z
+			.string()
+			.regex(
+				phoneRegex,
+				"Telefone deve estar no formato (00) 0000-0000 ou (00) 90000-0000",
+			),
 
 		// Dados profissionais
 		clinicName: z
@@ -88,9 +103,16 @@ export const signupSchema = z
 		}),
 
 		// Consentimentos obrigatórios
-		lgpdConsent: z.boolean().refine((val) => val === true, "É obrigatório aceitar os termos de privacidade LGPD"),
+		lgpdConsent: z
+			.boolean()
+			.refine(
+				(val) => val === true,
+				"É obrigatório aceitar os termos de privacidade LGPD",
+			),
 
-		terms: z.boolean().refine((val) => val === true, "É obrigatório aceitar os termos de uso"),
+		terms: z
+			.boolean()
+			.refine((val) => val === true, "É obrigatório aceitar os termos de uso"),
 	})
 	.refine((data) => data.password === data.confirmPassword, {
 		message: "As senhas não coincidem",
@@ -166,7 +188,7 @@ export const validatePhone = (phone: string): boolean => {
 };
 
 export const validatePassword = (
-	password: string
+	password: string,
 ): {
 	isValid: boolean;
 	errors: string[];

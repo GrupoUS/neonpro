@@ -38,7 +38,10 @@ const _CACHE_CONFIG = {
 /**
  * Gera chave de cache baseada em parâmetros
  */
-export const generateCacheKey = (prefix: string, params: Record<string, any> = {}): string => {
+export const generateCacheKey = (
+	prefix: string,
+	params: Record<string, any> = {},
+): string => {
 	const sortedParams = Object.keys(params)
 		.sort()
 		.reduce(
@@ -46,7 +49,7 @@ export const generateCacheKey = (prefix: string, params: Record<string, any> = {
 				result[key] = params[key];
 				return result;
 			},
-			{} as Record<string, any>
+			{} as Record<string, any>,
 		);
 
 	return `${prefix}:${JSON.stringify(sortedParams)}`;
@@ -76,7 +79,11 @@ export const getCachedData = <T>(cacheKey: string): T | null => {
 /**
  * Armazena dados no cache
  */
-export const setCachedData = <T>(cacheKey: string, data: T, ttlSeconds = 60): void => {
+export const setCachedData = <T>(
+	cacheKey: string,
+	data: T,
+	ttlSeconds = 60,
+): void => {
 	queryCache.set(cacheKey, {
 		data,
 		timestamp: Date.now(),
@@ -87,7 +94,11 @@ export const setCachedData = <T>(cacheKey: string, data: T, ttlSeconds = 60): vo
 /**
  * Executa query com cache automático
  */
-export const executeWithCache = async <T>(cacheKey: string, queryFn: () => Promise<T>, ttlSeconds = 60): Promise<T> => {
+export const executeWithCache = async <T>(
+	cacheKey: string,
+	queryFn: () => Promise<T>,
+	ttlSeconds = 60,
+): Promise<T> => {
 	// Tenta buscar do cache primeiro
 	const cached = getCachedData<T>(cacheKey);
 	if (cached) {
@@ -131,7 +142,7 @@ export const clearCacheByPattern = (pattern: string): void => {
 export const executeWithRetry = async <T>(
 	queryFn: () => Promise<{ data: T; error: any }>,
 	maxRetries = 3,
-	retryDelayMs = 1000
+	retryDelayMs = 1000,
 ): Promise<T> => {
 	let lastError: any;
 
@@ -144,7 +155,9 @@ export const executeWithRetry = async <T>(
 
 				// Se não for o último retry, aguarda e tenta novamente
 				if (attempt < maxRetries) {
-					await new Promise((resolve) => setTimeout(resolve, retryDelayMs * 2 ** (attempt - 1)));
+					await new Promise((resolve) =>
+						setTimeout(resolve, retryDelayMs * 2 ** (attempt - 1)),
+					);
 					continue;
 				}
 
@@ -156,7 +169,9 @@ export const executeWithRetry = async <T>(
 			lastError = error;
 
 			if (attempt < maxRetries) {
-				await new Promise((resolve) => setTimeout(resolve, retryDelayMs * 2 ** (attempt - 1)));
+				await new Promise((resolve) =>
+					setTimeout(resolve, retryDelayMs * 2 ** (attempt - 1)),
+				);
 				continue;
 			}
 
@@ -170,7 +185,10 @@ export const executeWithRetry = async <T>(
 /**
  * Calcula crescimento percentual
  */
-export const calculateGrowthPercentage = (current: number, previous: number): number => {
+export const calculateGrowthPercentage = (
+	current: number,
+	previous: number,
+): number => {
 	if (previous === 0) {
 		return current > 0 ? 100 : 0;
 	}
@@ -193,7 +211,10 @@ export const formatCurrency = (value: number, currency = "BRL"): string => {
 /**
  * Formata datas para o padrão brasileiro
  */
-export const formatDate = (date: string | Date, options: Intl.DateTimeFormatOptions = {}): string => {
+export const formatDate = (
+	date: string | Date,
+	options: Intl.DateTimeFormatOptions = {},
+): string => {
 	const dateObj = typeof date === "string" ? new Date(date) : date;
 
 	return new Intl.DateTimeFormat("pt-BR", {
@@ -221,7 +242,7 @@ export const formatDateTime = (date: string | Date): string => {
 export const groupByPeriod = <T>(
 	data: T[],
 	getDate: (item: T) => string | Date,
-	period: "day" | "week" | "month" | "year" = "month"
+	period: "day" | "week" | "month" | "year" = "month",
 ): Record<string, T[]> => {
 	const groups: Record<string, T[]> = {};
 
@@ -262,7 +283,10 @@ export const groupByPeriod = <T>(
 /**
  * Debounce para otimizar queries em tempo real
  */
-export const debounce = <T extends (...args: any[]) => any>(func: T, waitMs: number): T => {
+export const debounce = <T extends (...args: any[]) => any>(
+	func: T,
+	waitMs: number,
+): T => {
 	let timeoutId: NodeJS.Timeout;
 
 	return ((...args: Parameters<T>) => {
@@ -274,7 +298,10 @@ export const debounce = <T extends (...args: any[]) => any>(func: T, waitMs: num
 /**
  * Throttle para limitar frequência de execução
  */
-export const throttle = <T extends (...args: any[]) => any>(func: T, limitMs: number): T => {
+export const throttle = <T extends (...args: any[]) => any>(
+	func: T,
+	limitMs: number,
+): T => {
 	let inThrottle: boolean;
 
 	return ((...args: Parameters<T>) => {
@@ -301,7 +328,7 @@ export const generateTimeSlots = (
 	endHour = 18,
 	intervalMinutes = 60,
 	breakStart?: number,
-	breakEnd?: number
+	breakEnd?: number,
 ): string[] => {
 	const slots: string[] = [];
 
@@ -335,7 +362,7 @@ export const isBusinessHour = (
 	date: Date,
 	startHour = 8,
 	endHour = 18,
-	workDays: number[] = [1, 2, 3, 4, 5] // Segunda a sexta
+	workDays: number[] = [1, 2, 3, 4, 5], // Segunda a sexta
 ): boolean => {
 	const dayOfWeek = date.getDay();
 	const hour = date.getHours();

@@ -58,7 +58,8 @@ const mockEducationalContent = {
 					category: "Cuidados Pós-Procedimento",
 					priority: "high",
 					completed: false,
-					description: "Instruções essenciais para as primeiras 24h após aplicação de Botox",
+					description:
+						"Instruções essenciais para as primeiras 24h após aplicação de Botox",
 					thumbnail: "/botox-care-thumb.jpg",
 					tags: ["botox", "pós-procedimento", "cuidados"],
 				},
@@ -70,7 +71,8 @@ const mockEducationalContent = {
 					category: "Evolução",
 					priority: "medium",
 					completed: true,
-					description: "Timeline detalhado da evolução do Botox na primeira semana",
+					description:
+						"Timeline detalhado da evolução do Botox na primeira semana",
 					tags: ["botox", "evolução", "resultados"],
 				},
 				{
@@ -81,7 +83,8 @@ const mockEducationalContent = {
 					category: "Exercícios",
 					priority: "medium",
 					completed: false,
-					description: "Exercícios específicos para otimizar os resultados do Botox",
+					description:
+						"Exercícios específicos para otimizar os resultados do Botox",
 					tags: ["botox", "exercícios", "resultados"],
 				},
 			],
@@ -115,7 +118,8 @@ const mockEducationalContent = {
 			priority: "high",
 			rating: 4.8,
 			views: 1234,
-			description: "Como e por que usar protetor solar durante tratamentos estéticos",
+			description:
+				"Como e por que usar protetor solar durante tratamentos estéticos",
 			tags: ["proteção solar", "cuidados", "prevenção"],
 			featured: true,
 		},
@@ -177,7 +181,8 @@ const mockCareInstructions = {
 		{
 			id: 1,
 			title: "Evitar exercícios intensos",
-			description: "Não faça atividades físicas que aumentem muito a frequência cardíaca",
+			description:
+				"Não faça atividades físicas que aumentem muito a frequência cardíaca",
 			status: "active",
 			timeframe: "Até 24h pós-procedimento",
 			completed: false,
@@ -213,7 +218,13 @@ const mockCareInstructions = {
 	],
 };
 
-function ContentCard({ content, onView }: { content: any; onView: () => void }) {
+function ContentCard({
+	content,
+	onView,
+}: {
+	content: any;
+	onView: () => void;
+}) {
 	const getTypeIcon = (type: string) => {
 		switch (type) {
 			case "video":
@@ -259,22 +270,36 @@ function ContentCard({ content, onView }: { content: any; onView: () => void }) 
 
 	return (
 		<Card
-			className={cn("cursor-pointer border-l-4 transition-all hover:shadow-md", getPriorityColor(content.priority))}
+			className={cn(
+				"cursor-pointer border-l-4 transition-all hover:shadow-md",
+				getPriorityColor(content.priority),
+			)}
 		>
 			<CardContent className="p-4" onClick={onView}>
 				<div className="mb-3 flex items-start justify-between">
 					<div className="flex-1">
 						<div className="mb-2 flex items-center space-x-2">
-							<Badge className={cn("flex items-center space-x-1", getTypeColor(content.type))}>
+							<Badge
+								className={cn(
+									"flex items-center space-x-1",
+									getTypeColor(content.type),
+								)}
+							>
 								{getTypeIcon(content.type)}
 								<span className="capitalize">{content.type}</span>
 							</Badge>
-							{content.completed && <CheckCircle className="h-4 w-4 text-green-600" />}
-							{content.featured && <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />}
+							{content.completed && (
+								<CheckCircle className="h-4 w-4 text-green-600" />
+							)}
+							{content.featured && (
+								<Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />
+							)}
 						</div>
 
 						<h3 className="mb-1 font-semibold text-sm">{content.title}</h3>
-						<p className="mb-2 text-muted-foreground text-xs">{content.description}</p>
+						<p className="mb-2 text-muted-foreground text-xs">
+							{content.description}
+						</p>
 
 						<div className="flex items-center space-x-4 text-muted-foreground text-xs">
 							<div className="flex items-center space-x-1">
@@ -322,9 +347,15 @@ function ContentCard({ content, onView }: { content: any; onView: () => void }) 
 }
 
 function CareInstructionsWidget() {
-	const activeInstructions = mockCareInstructions.instructions.filter((i) => i.status === "active");
-	const completedInstructions = mockCareInstructions.instructions.filter((i) => i.completed);
-	const progressPercentage = (completedInstructions.length / mockCareInstructions.instructions.length) * 100;
+	const activeInstructions = mockCareInstructions.instructions.filter(
+		(i) => i.status === "active",
+	);
+	const completedInstructions = mockCareInstructions.instructions.filter(
+		(i) => i.completed,
+	);
+	const progressPercentage =
+		(completedInstructions.length / mockCareInstructions.instructions.length) *
+		100;
 
 	return (
 		<Card className="border-l-4 border-l-pink-500">
@@ -334,7 +365,8 @@ function CareInstructionsWidget() {
 					<span>Cuidados Atuais</span>
 				</CardTitle>
 				<CardDescription>
-					{mockCareInstructions.currentPhase} • {mockCareInstructions.timeRemaining} restantes
+					{mockCareInstructions.currentPhase} •{" "}
+					{mockCareInstructions.timeRemaining} restantes
 				</CardDescription>
 			</CardHeader>
 			<CardContent className="space-y-4">
@@ -354,7 +386,9 @@ function CareInstructionsWidget() {
 							<div
 								className={cn(
 									"mt-0.5 h-2 w-2 rounded-full",
-									instruction.priority === "high" ? "bg-red-500" : "bg-yellow-500"
+									instruction.priority === "high"
+										? "bg-red-500"
+										: "bg-yellow-500",
 								)}
 							/>
 							<div className="flex-1">
@@ -364,8 +398,12 @@ function CareInstructionsWidget() {
 										<CheckCircle className="h-4 w-4" />
 									</Button>
 								</div>
-								<p className="text-muted-foreground text-xs">{instruction.description}</p>
-								<p className="font-medium text-muted-foreground text-xs">{instruction.timeframe}</p>
+								<p className="text-muted-foreground text-xs">
+									{instruction.description}
+								</p>
+								<p className="font-medium text-muted-foreground text-xs">
+									{instruction.timeframe}
+								</p>
 							</div>
 						</div>
 					))}
@@ -431,7 +469,11 @@ function VideoPlayer({ content }: { content: any }) {
 										size="sm"
 										variant="ghost"
 									>
-										{isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
+										{isPlaying ? (
+											<Pause className="h-5 w-5" />
+										) : (
+											<Play className="h-5 w-5" />
+										)}
 									</Button>
 
 									<Button
@@ -440,7 +482,11 @@ function VideoPlayer({ content }: { content: any }) {
 										size="sm"
 										variant="ghost"
 									>
-										{isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+										{isMuted ? (
+											<VolumeX className="h-5 w-5" />
+										) : (
+											<Volume2 className="h-5 w-5" />
+										)}
 									</Button>
 
 									<span className="text-sm">
@@ -449,10 +495,18 @@ function VideoPlayer({ content }: { content: any }) {
 								</div>
 
 								<div className="flex items-center space-x-2">
-									<Button className="text-white hover:bg-white/20" size="sm" variant="ghost">
+									<Button
+										className="text-white hover:bg-white/20"
+										size="sm"
+										variant="ghost"
+									>
 										<RotateCcw className="h-4 w-4" />
 									</Button>
-									<Button className="text-white hover:bg-white/20" size="sm" variant="ghost">
+									<Button
+										className="text-white hover:bg-white/20"
+										size="sm"
+										variant="ghost"
+									>
 										<Maximize className="h-4 w-4" />
 									</Button>
 								</div>
@@ -465,7 +519,9 @@ function VideoPlayer({ content }: { content: any }) {
 				<div className="space-y-4 p-4">
 					<div>
 						<h3 className="mb-2 font-semibold text-lg">{content.title}</h3>
-						<p className="text-muted-foreground text-sm">{content.description}</p>
+						<p className="text-muted-foreground text-sm">
+							{content.description}
+						</p>
 					</div>
 
 					<div className="flex items-center justify-between">
@@ -512,7 +568,9 @@ function EmergencyContacts() {
 					<AlertTriangle className="h-5 w-5 text-red-600" />
 					<span>Contatos de Emergência</span>
 				</CardTitle>
-				<CardDescription>Em caso de reações ou dúvidas urgentes</CardDescription>
+				<CardDescription>
+					Em caso de reações ou dúvidas urgentes
+				</CardDescription>
 			</CardHeader>
 			<CardContent className="space-y-4">
 				{mockEducationalContent.emergencyContacts.map((contact) => (
@@ -522,8 +580,12 @@ function EmergencyContacts() {
 					>
 						<div>
 							<h4 className="font-medium text-sm">{contact.title}</h4>
-							<p className="text-muted-foreground text-xs">{contact.description}</p>
-							<p className="font-medium text-red-600 text-xs">{contact.available}</p>
+							<p className="text-muted-foreground text-xs">
+								{contact.description}
+							</p>
+							<p className="font-medium text-red-600 text-xs">
+								{contact.available}
+							</p>
 						</div>
 						<Button className="bg-red-600 hover:bg-red-700" size="sm">
 							<MessageCircle className="h-4 w-4" />
@@ -580,8 +642,12 @@ export function EducationCenter() {
 			{/* Header */}
 			<div className="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
 				<div>
-					<h1 className="font-bold text-2xl tracking-tight lg:text-3xl">Centro Educacional</h1>
-					<p className="text-muted-foreground">Aprenda sobre seus tratamentos e cuidados essenciais</p>
+					<h1 className="font-bold text-2xl tracking-tight lg:text-3xl">
+						Centro Educacional
+					</h1>
+					<p className="text-muted-foreground">
+						Aprenda sobre seus tratamentos e cuidados essenciais
+					</p>
 				</div>
 
 				<div className="flex space-x-2">
@@ -627,12 +693,18 @@ export function EducationCenter() {
 							<div className="flex items-center space-x-2">
 								<Heart className="h-5 w-5 text-pink-600" />
 								<h2 className="font-semibold text-lg">{treatment.treatment}</h2>
-								<Badge variant="secondary">{treatment.content.length} itens</Badge>
+								<Badge variant="secondary">
+									{treatment.content.length} itens
+								</Badge>
 							</div>
 
 							<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
 								{treatment.content.map((content) => (
-									<ContentCard content={content} key={content.id} onView={() => handleViewContent(content)} />
+									<ContentCard
+										content={content}
+										key={content.id}
+										onView={() => handleViewContent(content)}
+									/>
 								))}
 							</div>
 						</div>
@@ -642,7 +714,11 @@ export function EducationCenter() {
 				<TabsContent className="space-y-6" value="general">
 					<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
 						{mockEducationalContent.generalContent.map((content) => (
-							<ContentCard content={content} key={content.id} onView={() => handleViewContent(content)} />
+							<ContentCard
+								content={content}
+								key={content.id}
+								onView={() => handleViewContent(content)}
+							/>
 						))}
 					</div>
 				</TabsContent>
@@ -660,7 +736,9 @@ export function EducationCenter() {
 										<category.icon className="h-6 w-6 text-pink-600" />
 									</div>
 									<h3 className="mb-2 font-semibold">{category.name}</h3>
-									<p className="text-muted-foreground text-sm">{category.count} conteúdos disponíveis</p>
+									<p className="text-muted-foreground text-sm">
+										{category.count} conteúdos disponíveis
+									</p>
 								</CardContent>
 							</Card>
 						))}

@@ -84,9 +84,14 @@ export default function ProfilePage() {
 			<div className="flex items-center justify-between">
 				<div>
 					<h1 className="font-bold text-3xl tracking-tight">Perfil</h1>
-					<p className="text-muted-foreground">Gerencie suas informações pessoais e preferências</p>
+					<p className="text-muted-foreground">
+						Gerencie suas informações pessoais e preferências
+					</p>
 				</div>
-				<Button onClick={() => setIsEditing(!isEditing)} variant={isEditing ? "outline" : "default"}>
+				<Button
+					onClick={() => setIsEditing(!isEditing)}
+					variant={isEditing ? "outline" : "default"}
+				>
 					{isEditing ? (
 						<>
 							<Save className="mr-2 h-4 w-4" />
@@ -114,7 +119,9 @@ export default function ProfilePage() {
 					<Card>
 						<CardHeader>
 							<CardTitle>Informações Pessoais</CardTitle>
-							<CardDescription>Suas informações básicas de perfil</CardDescription>
+							<CardDescription>
+								Suas informações básicas de perfil
+							</CardDescription>
 						</CardHeader>
 						<CardContent className="space-y-6">
 							{/* Avatar Section */}
@@ -130,7 +137,9 @@ export default function ProfilePage() {
 									<h3 className="font-medium text-lg">
 										{user?.firstName} {user?.lastName}
 									</h3>
-									<p className="text-muted-foreground text-sm">{user?.emailAddresses?.[0]?.emailAddress}</p>
+									<p className="text-muted-foreground text-sm">
+										{user?.emailAddresses?.[0]?.emailAddress}
+									</p>
 									<Button className="mt-2" size="sm" variant="outline">
 										<Camera className="mr-2 h-4 w-4" />
 										Alterar Foto
@@ -172,8 +181,16 @@ export default function ProfilePage() {
 								</div>
 								<div className="space-y-2">
 									<Label htmlFor="email">Email</Label>
-									<Input className="bg-muted" disabled id="email" type="email" value={profileData.email} />
-									<p className="text-muted-foreground text-xs">Para alterar o email, use as configurações de conta</p>
+									<Input
+										className="bg-muted"
+										disabled
+										id="email"
+										type="email"
+										value={profileData.email}
+									/>
+									<p className="text-muted-foreground text-xs">
+										Para alterar o email, use as configurações de conta
+									</p>
 								</div>
 								<div className="space-y-2">
 									<Label htmlFor="phone">Telefone</Label>
@@ -196,7 +213,9 @@ export default function ProfilePage() {
 								<Textarea
 									disabled={!isEditing}
 									id="bio"
-									onChange={(e) => setProfileData((prev) => ({ ...prev, bio: e.target.value }))}
+									onChange={(e) =>
+										setProfileData((prev) => ({ ...prev, bio: e.target.value }))
+									}
 									placeholder="Conte um pouco sobre você..."
 									rows={3}
 									value={profileData.bio}
@@ -256,7 +275,9 @@ export default function ProfilePage() {
 					<Card>
 						<CardHeader>
 							<CardTitle>Informações Profissionais</CardTitle>
-							<CardDescription>Dados relacionados à sua atividade profissional</CardDescription>
+							<CardDescription>
+								Dados relacionados à sua atividade profissional
+							</CardDescription>
 						</CardHeader>
 						<CardContent className="space-y-4">
 							<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -314,7 +335,8 @@ export default function ProfilePage() {
 							<Alert>
 								<Shield className="h-4 w-4" />
 								<AlertDescription>
-									Suas informações profissionais são verificadas e protegidas conforme LGPD.
+									Suas informações profissionais são verificadas e protegidas
+									conforme LGPD.
 								</AlertDescription>
 							</Alert>
 						</CardContent>
@@ -326,39 +348,53 @@ export default function ProfilePage() {
 					<Card>
 						<CardHeader>
 							<CardTitle>Notificações</CardTitle>
-							<CardDescription>Configure como você quer receber notificações</CardDescription>
+							<CardDescription>
+								Configure como você quer receber notificações
+							</CardDescription>
 						</CardHeader>
 						<CardContent className="space-y-4">
 							<div className="flex items-center justify-between">
 								<div className="space-y-0.5">
 									<Label>Notificações por Email</Label>
-									<p className="text-muted-foreground text-sm">Receber notificações importantes por email</p>
+									<p className="text-muted-foreground text-sm">
+										Receber notificações importantes por email
+									</p>
 								</div>
 								<Switch
 									checked={preferences.emailNotifications}
-									onCheckedChange={(checked) => handlePreferenceChange("emailNotifications", checked)}
+									onCheckedChange={(checked) =>
+										handlePreferenceChange("emailNotifications", checked)
+									}
 								/>
 							</div>
 
 							<div className="flex items-center justify-between">
 								<div className="space-y-0.5">
 									<Label>Notificações por SMS</Label>
-									<p className="text-muted-foreground text-sm">Receber notificações urgentes por SMS</p>
+									<p className="text-muted-foreground text-sm">
+										Receber notificações urgentes por SMS
+									</p>
 								</div>
 								<Switch
 									checked={preferences.smsNotifications}
-									onCheckedChange={(checked) => handlePreferenceChange("smsNotifications", checked)}
+									onCheckedChange={(checked) =>
+										handlePreferenceChange("smsNotifications", checked)
+									}
 								/>
 							</div>
 
 							<div className="flex items-center justify-between">
 								<div className="space-y-0.5">
 									<Label>Emails de Marketing</Label>
-									<p className="text-muted-foreground text-sm">Receber novidades e atualizações do produto</p>
+									<p className="text-muted-foreground text-sm">
+										Receber novidades e atualizações do produto
+									</p>
 								</div>
 								<Switch
 									checked={preferences.marketingEmails}
-									onCheckedChange={(checked) => handlePreferenceChange("marketingEmails", checked)}
+									onCheckedChange={(checked) =>
+										handlePreferenceChange("marketingEmails", checked)
+									}
 								/>
 							</div>
 						</CardContent>
@@ -367,17 +403,23 @@ export default function ProfilePage() {
 					<Card>
 						<CardHeader>
 							<CardTitle>Aparência</CardTitle>
-							<CardDescription>Personalize a aparência da plataforma</CardDescription>
+							<CardDescription>
+								Personalize a aparência da plataforma
+							</CardDescription>
 						</CardHeader>
 						<CardContent className="space-y-4">
 							<div className="flex items-center justify-between">
 								<div className="space-y-0.5">
 									<Label>Modo Escuro</Label>
-									<p className="text-muted-foreground text-sm">Usar tema escuro na interface</p>
+									<p className="text-muted-foreground text-sm">
+										Usar tema escuro na interface
+									</p>
 								</div>
 								<Switch
 									checked={preferences.darkMode}
-									onCheckedChange={(checked) => handlePreferenceChange("darkMode", checked)}
+									onCheckedChange={(checked) =>
+										handlePreferenceChange("darkMode", checked)
+									}
 								/>
 							</div>
 
@@ -402,13 +444,17 @@ export default function ProfilePage() {
 					<Card>
 						<CardHeader>
 							<CardTitle>Segurança da Conta</CardTitle>
-							<CardDescription>Gerencie a segurança da sua conta</CardDescription>
+							<CardDescription>
+								Gerencie a segurança da sua conta
+							</CardDescription>
 						</CardHeader>
 						<CardContent className="space-y-4">
 							<div className="flex items-center justify-between">
 								<div className="space-y-0.5">
 									<Label>Autenticação de Dois Fatores</Label>
-									<p className="text-muted-foreground text-sm">Adicione uma camada extra de segurança</p>
+									<p className="text-muted-foreground text-sm">
+										Adicione uma camada extra de segurança
+									</p>
 								</div>
 								<div className="flex items-center space-x-2">
 									{preferences.twoFactorAuth && (
@@ -418,7 +464,9 @@ export default function ProfilePage() {
 									)}
 									<Switch
 										checked={preferences.twoFactorAuth}
-										onCheckedChange={(checked) => handlePreferenceChange("twoFactorAuth", checked)}
+										onCheckedChange={(checked) =>
+											handlePreferenceChange("twoFactorAuth", checked)
+										}
 									/>
 								</div>
 							</div>
@@ -429,7 +477,9 @@ export default function ProfilePage() {
 								<div className="flex items-center justify-between">
 									<div>
 										<Label>Senha</Label>
-										<p className="text-muted-foreground text-sm">Última alteração: há 2 meses</p>
+										<p className="text-muted-foreground text-sm">
+											Última alteração: há 2 meses
+										</p>
 									</div>
 									<Button variant="outline">
 										<Lock className="mr-2 h-4 w-4" />
@@ -440,7 +490,9 @@ export default function ProfilePage() {
 								<div className="flex items-center justify-between">
 									<div>
 										<Label>Sessões Ativas</Label>
-										<p className="text-muted-foreground text-sm">Gerencie dispositivos conectados</p>
+										<p className="text-muted-foreground text-sm">
+											Gerencie dispositivos conectados
+										</p>
 									</div>
 									<Button variant="outline">
 										<Activity className="mr-2 h-4 w-4" />
@@ -452,7 +504,8 @@ export default function ProfilePage() {
 							<Alert>
 								<Shield className="h-4 w-4" />
 								<AlertDescription>
-									Sua conta está protegida com criptografia de ponta a ponta e conformidade LGPD.
+									Sua conta está protegida com criptografia de ponta a ponta e
+									conformidade LGPD.
 								</AlertDescription>
 							</Alert>
 						</CardContent>

@@ -76,7 +76,10 @@ export function validateCNPJ(cnpj: string): boolean {
 }
 
 // Professional registration validation (CRM, COREN, etc.)
-export function validateProfessionalRegistration(registration: string, type: "CRM" | "COREN" | "CRO" | "CRF"): boolean {
+export function validateProfessionalRegistration(
+	registration: string,
+	type: "CRM" | "COREN" | "CRO" | "CRF",
+): boolean {
 	const clean = registration.replace(/\D/g, "");
 
 	switch (type) {
@@ -94,7 +97,9 @@ export function validateProfessionalRegistration(registration: string, type: "CR
 }
 
 // LGPD data classification helper
-export function classifyDataSensitivity(fieldName: string): "public" | "internal" | "confidential" | "restricted" {
+export function classifyDataSensitivity(
+	fieldName: string,
+): "public" | "internal" | "confidential" | "restricted" {
 	const sensitiveFields = [
 		"cpf",
 		"rg",
@@ -161,7 +166,12 @@ export const ClinicSchema = z.object({
 
 export const PatientConsentSchema = z.object({
 	patient_id: z.string().uuid("ID do paciente inválido"),
-	consent_type: z.enum(["data_processing", "image_use", "treatment", "research"]),
+	consent_type: z.enum([
+		"data_processing",
+		"image_use",
+		"treatment",
+		"research",
+	]),
 	granted: z.boolean(),
 	granted_at: z.date(),
 	expires_at: z.date().optional(),

@@ -4,7 +4,11 @@
  * Helper functions and utilities for performance monitoring.
  */
 
-import type { CustomMetric, HealthcareMetricName, PerformanceThresholds } from "../types";
+import type {
+	CustomMetric,
+	HealthcareMetricName,
+	PerformanceThresholds,
+} from "../types";
 
 /**
  * Performance thresholds for healthcare applications
@@ -73,7 +77,7 @@ export function sanitizeData(data: any, excludeFields: string[]): any {
 export function calculateRating(
 	metricName: HealthcareMetricName,
 	value: number,
-	thresholds: PerformanceThresholds = HEALTHCARE_THRESHOLDS
+	thresholds: PerformanceThresholds = HEALTHCARE_THRESHOLDS,
 ): "good" | "needs-improvement" | "poor" {
 	const threshold = thresholds.healthcare[metricName];
 
@@ -146,67 +150,102 @@ export function getPerformanceInsights(metrics: CustomMetric[]): {
 			return;
 		}
 
-		const avgValue = values.reduce((sum, m) => sum + m.value, 0) / values.length;
+		const avgValue =
+			values.reduce((sum, m) => sum + m.value, 0) / values.length;
 		const poorCount = values.filter((m) => m.rating === "poor").length;
 		const poorPercentage = (poorCount / values.length) * 100;
 
 		if (poorPercentage > 20) {
 			severity = "high";
-			insights.push(`${name}: ${poorPercentage.toFixed(1)}% of operations are performing poorly`);
+			insights.push(
+				`${name}: ${poorPercentage.toFixed(1)}% of operations are performing poorly`,
+			);
 
 			switch (name) {
 				case "patient_search_time":
-					recommendations.push("Optimize patient search with database indexing and caching");
+					recommendations.push(
+						"Optimize patient search with database indexing and caching",
+					);
 					break;
 				case "form_submission_time":
-					recommendations.push("Implement client-side validation and optimize API endpoints");
+					recommendations.push(
+						"Implement client-side validation and optimize API endpoints",
+					);
 					break;
 				case "data_encryption_time":
-					recommendations.push("Consider hardware encryption or optimized encryption algorithms");
+					recommendations.push(
+						"Consider hardware encryption or optimized encryption algorithms",
+					);
 					break;
 				case "database_query_time":
-					recommendations.push("Review database queries and add appropriate indexes");
+					recommendations.push(
+						"Review database queries and add appropriate indexes",
+					);
 					break;
 				case "image_upload_time":
-					recommendations.push("Implement progressive upload and image compression");
+					recommendations.push(
+						"Implement progressive upload and image compression",
+					);
 					break;
 				case "report_generation_time":
-					recommendations.push("Implement background processing and caching for reports");
+					recommendations.push(
+						"Implement background processing and caching for reports",
+					);
 					break;
 				case "auth_verification_time":
-					recommendations.push("Optimize authentication flow and consider caching strategies");
+					recommendations.push(
+						"Optimize authentication flow and consider caching strategies",
+					);
 					break;
 				case "compliance_check_time":
-					recommendations.push("Cache compliance rules and implement batch processing");
+					recommendations.push(
+						"Cache compliance rules and implement batch processing",
+					);
 					break;
 			}
 		} else if (poorPercentage > 10) {
 			if (severity === "low") {
 				severity = "medium";
 			}
-			insights.push(`${name}: ${poorPercentage.toFixed(1)}% of operations need improvement`);
+			insights.push(
+				`${name}: ${poorPercentage.toFixed(1)}% of operations need improvement`,
+			);
 		}
 
-		if (avgValue > HEALTHCARE_THRESHOLDS.healthcare[name as HealthcareMetricName]?.needsImprovement) {
-			insights.push(`${name}: Average performance (${formatDuration(avgValue)}) exceeds acceptable thresholds`);
+		if (
+			avgValue >
+			HEALTHCARE_THRESHOLDS.healthcare[name as HealthcareMetricName]
+				?.needsImprovement
+		) {
+			insights.push(
+				`${name}: Average performance (${formatDuration(avgValue)}) exceeds acceptable thresholds`,
+			);
 		}
 	});
 
 	// General recommendations based on patterns
 	if (metricGroups.database_query_time && metricGroups.form_submission_time) {
-		const dbSlow = metricGroups.database_query_time.filter((m) => m.rating === "poor").length > 0;
-		const formSlow = metricGroups.form_submission_time.filter((m) => m.rating === "poor").length > 0;
+		const dbSlow =
+			metricGroups.database_query_time.filter((m) => m.rating === "poor")
+				.length > 0;
+		const formSlow =
+			metricGroups.form_submission_time.filter((m) => m.rating === "poor")
+				.length > 0;
 
 		if (dbSlow && formSlow) {
 			recommendations.push(
-				"Database performance issues are affecting form submissions - prioritize database optimization"
+				"Database performance issues are affecting form submissions - prioritize database optimization",
 			);
 		}
 	}
 
 	if (insights.length === 0) {
-		insights.push("All healthcare operations are performing within acceptable thresholds");
-		recommendations.push("Continue monitoring and consider implementing proactive performance testing");
+		insights.push(
+			"All healthcare operations are performing within acceptable thresholds",
+		);
+		recommendations.push(
+			"Continue monitoring and consider implementing proactive performance testing",
+		);
 	}
 
 	return { insights, recommendations, severity };
@@ -219,7 +258,7 @@ export function createAlertMessage(
 	metricName: HealthcareMetricName,
 	value: number,
 	threshold: number,
-	context?: Record<string, any>
+	context?: Record<string, any>,
 ): string {
 	const formattedValue = formatDuration(value);
 	const formattedThreshold = formatDuration(threshold);
@@ -240,7 +279,10 @@ export function createAlertMessage(
 /**
  * Calculate percentile from array of values
  */
-export function calculatePercentile(values: number[], percentile: number): number {
+export function calculatePercentile(
+	values: number[],
+	percentile: number,
+): number {
 	if (values.length === 0) {
 		return 0;
 	}
@@ -261,7 +303,8 @@ export function calculateStandardDeviation(values: number[]): number {
 
 	const mean = values.reduce((sum, val) => sum + val, 0) / values.length;
 	const squaredDiffs = values.map((val) => (val - mean) ** 2);
-	const avgSquaredDiff = squaredDiffs.reduce((sum, val) => sum + val, 0) / values.length;
+	const avgSquaredDiff =
+		squaredDiffs.reduce((sum, val) => sum + val, 0) / values.length;
 
 	return Math.sqrt(avgSquaredDiff);
 }
@@ -271,7 +314,7 @@ export function calculateStandardDeviation(values: number[]): number {
  */
 export function detectAnomalies(
 	metrics: CustomMetric[],
-	threshold = 2 // standard deviations
+	threshold = 2, // standard deviations
 ): CustomMetric[] {
 	const metricGroups: Record<string, number[]> = {};
 
@@ -329,7 +372,9 @@ export function calculatePerformanceScore(metrics: CustomMetric[]): number {
 		}
 	});
 
-	return Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length);
+	return Math.round(
+		scores.reduce((sum, score) => sum + score, 0) / scores.length,
+	);
 }
 
 /**
@@ -341,16 +386,25 @@ export function formatMetricForDisplay(metric: CustomMetric): {
 	rating: string;
 	context: string;
 } {
-	const displayName = metric.name.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+	const displayName = metric.name
+		.replace(/_/g, " ")
+		.replace(/\b\w/g, (l) => l.toUpperCase());
 	const formattedValue = formatDuration(metric.value);
-	const ratingColor = metric.rating === "good" ? "green" : metric.rating === "needs-improvement" ? "yellow" : "red";
+	const ratingColor =
+		metric.rating === "good"
+			? "green"
+			: metric.rating === "needs-improvement"
+				? "yellow"
+				: "red";
 
 	let context = "";
 	if (metric.context?.feature) {
 		context += `Feature: ${metric.context.feature}`;
 	}
 	if (metric.context?.userRole) {
-		context += context ? `, Role: ${metric.context.userRole}` : `Role: ${metric.context.userRole}`;
+		context += context
+			? `, Role: ${metric.context.userRole}`
+			: `Role: ${metric.context.userRole}`;
 	}
 
 	return {

@@ -41,7 +41,14 @@ class MigrationValidator {
 
 		const requiredFiles = ["turbo.json", "pnpm-workspace.yaml", "package.json"];
 
-		const requiredDirs = ["apps", "packages", "apps/web", "packages/ui", "packages/utils", "packages/types"];
+		const requiredDirs = [
+			"apps",
+			"packages",
+			"apps/web",
+			"packages/ui",
+			"packages/utils",
+			"packages/types",
+		];
 
 		// Verificar arquivos obrigatórios
 		for (const file of requiredFiles) {

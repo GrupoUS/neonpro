@@ -1,59 +1,7 @@
 {
-  "folders": [
-    {
-      "path": "."
-    },
-    {
-      "path": "C:/Users/Mauri/AppData/Roaming/Code/User"
-    }
-  ],
-  "settings": {
-    "biome.enabled": true,
-    "biome.lspBin": "npx",
-    "biome.lspBinArguments": ["biome"],
-    "biome.requireConfiguration": true,
-    "biome.rename": true,
-    "editor.defaultFormatter": "biomejs.biome",
-    "editor.formatOnSave": true,
-    "editor.formatOnPaste": true,
-    "editor.codeActionsOnSave": {
-      "source.fixAll.biome": "explicit",
-      "source.organizeImports.biome": "explicit"
-    },
-    "vitest.enable": true,
-    "vitest.disableWorkspaceConfig": false,
-    "vitest.rootConfig": "./vitest.config.ts",
-    "vitest.maximumConfigs": 3,
-    "[javascript]": {
-      "editor.defaultFormatter": "biomejs.biome"
-    },
-    "[typescript]": {
-      "editor.defaultFormatter": "biomejs.biome"
-    },
-    "[javascriptreact]": {
-      "editor.defaultFormatter": "biomejs.biome"
-    },
-    "[typescriptreact]": {
-      "editor.defaultFormatter": "biomejs.biome"
-    },
-    "[json]": {
-      "editor.defaultFormatter": "biomejs.biome"
-    },
-    "[jsonc]": {
-      "editor.defaultFormatter": "vscode.json-language-features"
-    },
-    "[css]": {
-      "editor.defaultFormatter": "biomejs.biome"
-    },
-    "[graphql]": {
-      "editor.defaultFormatter": "biomejs.biome"
-    }
-  },
-  "extensions": {
-    "recommendations": [
-      "biomejs.biome",
-      "vitest.explorer",
-      "ms-playwright.playwright"
-    ]
-  }
+	"folders": [
+		{
+			"path": "."
+		}
+	]
 }

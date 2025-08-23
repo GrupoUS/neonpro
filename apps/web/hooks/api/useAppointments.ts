@@ -24,13 +24,18 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 export const APPOINTMENT_QUERY_KEYS = {
 	all: ["appointments"] as const,
 	lists: () => [...APPOINTMENT_QUERY_KEYS.all, "list"] as const,
-	list: (filters: AppointmentSearch) => [...APPOINTMENT_QUERY_KEYS.lists(), filters] as const,
+	list: (filters: AppointmentSearch) =>
+		[...APPOINTMENT_QUERY_KEYS.lists(), filters] as const,
 	details: () => [...APPOINTMENT_QUERY_KEYS.all, "detail"] as const,
 	detail: (id: string) => [...APPOINTMENT_QUERY_KEYS.details(), id] as const,
-	availability: (params: AvailabilitySearch) => [...APPOINTMENT_QUERY_KEYS.all, "availability", params] as const,
+	availability: (params: AvailabilitySearch) =>
+		[...APPOINTMENT_QUERY_KEYS.all, "availability", params] as const,
 	stats: () => [...APPOINTMENT_QUERY_KEYS.all, "stats"] as const,
-	calendar: (filters: { startDate: string; endDate: string; [key: string]: any }) =>
-		[...APPOINTMENT_QUERY_KEYS.all, "calendar", filters] as const,
+	calendar: (filters: {
+		startDate: string;
+		endDate: string;
+		[key: string]: any;
+	}) => [...APPOINTMENT_QUERY_KEYS.all, "calendar", filters] as const,
 } as const;
 
 // 📋 Get appointments list with pagination
@@ -119,7 +124,9 @@ export function useCreateAppointment() {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: async (appointmentData: CreateAppointment): Promise<Appointment> => {
+		mutationFn: async (
+			appointmentData: CreateAppointment,
+		): Promise<Appointment> => {
 			const response = await apiClient.api.v1.appointments.$post({
 				json: appointmentData,
 			});
@@ -135,7 +142,10 @@ export function useCreateAppointment() {
 
 		onSuccess: (newAppointment) => {
 			// Add to appointment detail cache
-			queryClient.setQueryData(APPOINTMENT_QUERY_KEYS.detail(newAppointment.id), newAppointment);
+			queryClient.setQueryData(
+				APPOINTMENT_QUERY_KEYS.detail(newAppointment.id),
+				newAppointment,
+			);
 
 			// Invalidate lists to show new appointment
 			queryClient.invalidateQueries({
@@ -184,7 +194,10 @@ export function useUpdateAppointment() {
 
 		onSuccess: (updatedAppointment) => {
 			// Update appointment detail cache
-			queryClient.setQueryData(APPOINTMENT_QUERY_KEYS.detail(updatedAppointment.id), updatedAppointment);
+			queryClient.setQueryData(
+				APPOINTMENT_QUERY_KEYS.detail(updatedAppointment.id),
+				updatedAppointment,
+			);
 
 			// Update appointment in lists
 			queryClient.setQueriesData(
@@ -197,10 +210,12 @@ export function useUpdateAppointment() {
 					return {
 						...old,
 						data: old.data.map((appointment) =>
-							appointment.id === updatedAppointment.id ? updatedAppointment : appointment
+							appointment.id === updatedAppointment.id
+								? updatedAppointment
+								: appointment,
 						),
 					};
-				}
+				},
 			);
 
 			// Invalidate related queries
@@ -220,8 +235,12 @@ export function useRescheduleAppointment() {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: async (rescheduleData: RescheduleAppointment): Promise<Appointment> => {
-			const response = await apiClient.api.v1.appointments[":id"].reschedule.$post({
+		mutationFn: async (
+			rescheduleData: RescheduleAppointment,
+		): Promise<Appointment> => {
+			const response = await apiClient.api.v1.appointments[
+				":id"
+			].reschedule.$post({
 				param: { id: rescheduleData.id },
 				json: {
 					newScheduledAt: rescheduleData.newScheduledAt,
@@ -240,7 +259,10 @@ export function useRescheduleAppointment() {
 
 		onSuccess: (rescheduledAppointment) => {
 			// Update caches similar to update
-			queryClient.setQueryData(APPOINTMENT_QUERY_KEYS.detail(rescheduledAppointment.id), rescheduledAppointment);
+			queryClient.setQueryData(
+				APPOINTMENT_QUERY_KEYS.detail(rescheduledAppointment.id),
+				rescheduledAppointment,
+			);
 
 			// Invalidate availability and calendar
 			queryClient.invalidateQueries({
@@ -283,7 +305,10 @@ export function useCancelAppointment() {
 
 		onSuccess: (cancelledAppointment) => {
 			// Update appointment status to cancelled
-			queryClient.setQueryData(APPOINTMENT_QUERY_KEYS.detail(cancelledAppointment.id), cancelledAppointment);
+			queryClient.setQueryData(
+				APPOINTMENT_QUERY_KEYS.detail(cancelledAppointment.id),
+				cancelledAppointment,
+			);
 
 			// Update in lists
 			queryClient.setQueriesData(
@@ -296,10 +321,12 @@ export function useCancelAppointment() {
 					return {
 						...old,
 						data: old.data.map((appointment) =>
-							appointment.id === cancelledAppointment.id ? cancelledAppointment : appointment
+							appointment.id === cancelledAppointment.id
+								? cancelledAppointment
+								: appointment,
 						),
 					};
-				}
+				},
 			);
 
 			// Invalidate availability (slot is now free)
@@ -341,14 +368,23 @@ export function useAvailability(params: AvailabilitySearch | undefined) {
 
 			return result.data as TimeSlot[];
 		},
-		enabled: !!(params?.professionalId && params?.startDate && params?.endDate && params?.duration),
+		enabled: !!(
+			params?.professionalId &&
+			params?.startDate &&
+			params?.endDate &&
+			params?.duration
+		),
 		staleTime: 1000 * 30, // 30 seconds
 		gcTime: 1000 * 60, // 1 minute
 	});
 }
 
 // 📊 Appointment statistics
-export function useAppointmentStats(filters?: { startDate?: string; endDate?: string; clinicId?: string }) {
+export function useAppointmentStats(filters?: {
+	startDate?: string;
+	endDate?: string;
+	clinicId?: string;
+}) {
 	return useQuery({
 		queryKey: [...APPOINTMENT_QUERY_KEYS.stats(), filters],
 		queryFn: async () => {
@@ -412,7 +448,9 @@ export function useCalendarAppointments(filters: {
 			const result = await response.json();
 
 			if (!result.success) {
-				throw new Error(result.message || "Failed to fetch calendar appointments");
+				throw new Error(
+					result.message || "Failed to fetch calendar appointments",
+				);
 			}
 
 			return (result as PaginatedResponse<Appointment>).data || [];
@@ -475,7 +513,8 @@ export function useAppointmentUtils() {
 				const count = appointments.filter((apt) => {
 					const aptDate = apt.scheduledAt.split("T")[0];
 					const matchesDate = aptDate === date;
-					const matchesProfessional = !professionalId || apt.professionalId === professionalId;
+					const matchesProfessional =
+						!professionalId || apt.professionalId === professionalId;
 					const isActive = !["cancelled", "no_show"].includes(apt.status);
 
 					return matchesDate && matchesProfessional && isActive;

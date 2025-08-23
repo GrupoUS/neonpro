@@ -56,10 +56,14 @@ export const healthcareHelpers = {
 		await expect(page.locator('[data-testid="lgpd-consent"]')).toBeVisible();
 
 		// Check for privacy policy link
-		await expect(page.locator('[data-testid="privacy-policy-link"]')).toBeVisible();
+		await expect(
+			page.locator('[data-testid="privacy-policy-link"]'),
+		).toBeVisible();
 
 		// Check for data subject rights information
-		await expect(page.locator('[data-testid="data-rights-info"]')).toBeVisible();
+		await expect(
+			page.locator('[data-testid="data-rights-info"]'),
+		).toBeVisible();
 	},
 
 	/**
@@ -70,7 +74,9 @@ export const healthcareHelpers = {
 		await expect(page.locator('[data-testid="medical-license"]')).toBeVisible();
 
 		// Check for regulatory warnings
-		await expect(page.locator('[data-testid="regulatory-warning"]')).toBeVisible();
+		await expect(
+			page.locator('[data-testid="regulatory-warning"]'),
+		).toBeVisible();
 
 		// Check for audit trail indicators
 		await expect(page.locator('[data-testid="audit-trail"]')).toBeVisible();
@@ -81,8 +87,12 @@ export const healthcareHelpers = {
 	 */
 	async validatePerformanceThresholds(page: any) {
 		// Measure page load time
-		const navigationStart = await page.evaluate(() => performance.timing.navigationStart);
-		const loadComplete = await page.evaluate(() => performance.timing.loadEventEnd);
+		const navigationStart = await page.evaluate(
+			() => performance.timing.navigationStart,
+		);
+		const loadComplete = await page.evaluate(
+			() => performance.timing.loadEventEnd,
+		);
 		const loadTime = loadComplete - navigationStart;
 
 		// Healthcare systems should load within 3 seconds
@@ -123,7 +133,11 @@ export const performanceHelpers = {
 				});
 
 				observer.observe({
-					entryTypes: ["largest-contentful-paint", "first-input", "layout-shift"],
+					entryTypes: [
+						"largest-contentful-paint",
+						"first-input",
+						"layout-shift",
+					],
 				});
 
 				// Fallback timeout

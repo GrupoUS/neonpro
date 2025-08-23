@@ -54,9 +54,13 @@ export function AppointmentsCalendar() {
 	const getStatusBadge = (status: string) => {
 		switch (status) {
 			case "confirmed":
-				return <Badge className="bg-green-100 text-green-800">Confirmada</Badge>;
+				return (
+					<Badge className="bg-green-100 text-green-800">Confirmada</Badge>
+				);
 			case "pending":
-				return <Badge className="bg-yellow-100 text-yellow-800">Pendente</Badge>;
+				return (
+					<Badge className="bg-yellow-100 text-yellow-800">Pendente</Badge>
+				);
 			case "completed":
 				return <Badge className="bg-blue-100 text-blue-800">Concluída</Badge>;
 			case "cancelled":
@@ -71,7 +75,9 @@ export function AppointmentsCalendar() {
 			<div className="flex items-center justify-between">
 				<div>
 					<h1 className="font-bold text-3xl">Agenda</h1>
-					<p className="text-muted-foreground">Gerencie suas consultas e horários</p>
+					<p className="text-muted-foreground">
+						Gerencie suas consultas e horários
+					</p>
 				</div>
 				<div className="flex items-center space-x-2">
 					<Button variant="outline">
@@ -95,7 +101,9 @@ export function AppointmentsCalendar() {
 								day: "numeric",
 							})}
 						</div>
-						<Badge variant="outline">{appointments.length} consultas hoje</Badge>
+						<Badge variant="outline">
+							{appointments.length} consultas hoje
+						</Badge>
 					</CardTitle>
 				</CardHeader>
 			</Card>
@@ -103,7 +111,10 @@ export function AppointmentsCalendar() {
 			{/* Appointments Timeline */}
 			<div className="grid grid-cols-1 gap-4">
 				{appointments.map((appointment, index) => (
-					<Card className="transition-shadow hover:shadow-md" key={appointment.id}>
+					<Card
+						className="transition-shadow hover:shadow-md"
+						key={appointment.id}
+					>
 						<CardContent className="p-6">
 							<div className="flex items-start justify-between">
 								<div className="flex items-start space-x-4">
@@ -111,14 +122,20 @@ export function AppointmentsCalendar() {
 										<div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-purple-500 font-semibold text-white">
 											<Clock className="h-6 w-6" />
 										</div>
-										<span className="mt-2 font-medium text-sm">{appointment.time}</span>
-										{index < appointments.length - 1 && <div className="mt-2 h-8 w-0.5 bg-border" />}
+										<span className="mt-2 font-medium text-sm">
+											{appointment.time}
+										</span>
+										{index < appointments.length - 1 && (
+											<div className="mt-2 h-8 w-0.5 bg-border" />
+										)}
 									</div>
 
 									<div className="min-w-0 flex-1">
 										<div className="mb-2 flex items-start justify-between">
 											<div>
-												<h3 className="font-semibold text-lg">{appointment.service}</h3>
+												<h3 className="font-semibold text-lg">
+													{appointment.service}
+												</h3>
 												<div className="mt-1 flex items-center space-x-4 text-muted-foreground text-sm">
 													<div className="flex items-center">
 														<User className="mr-1 h-4 w-4" />
@@ -136,18 +153,25 @@ export function AppointmentsCalendar() {
 										<div className="grid grid-cols-1 gap-4 text-sm md:grid-cols-3">
 											<div>
 												<p className="font-medium">Profissional</p>
-												<p className="text-muted-foreground">{appointment.professional}</p>
+												<p className="text-muted-foreground">
+													{appointment.professional}
+												</p>
 											</div>
 											<div>
 												<p className="font-medium">Duração</p>
-												<p className="text-muted-foreground">{appointment.duration} minutos</p>
+												<p className="text-muted-foreground">
+													{appointment.duration} minutos
+												</p>
 											</div>
 											<div>
 												<p className="font-medium">Horário</p>
 												<p className="text-muted-foreground">
 													{appointment.time} -{" "}
 													{new Date(
-														new Date(`2024-01-01 ${appointment.time}`).getTime() + appointment.duration * 60_000
+														new Date(
+															`2024-01-01 ${appointment.time}`,
+														).getTime() +
+															appointment.duration * 60_000,
 													).toLocaleTimeString("pt-BR", {
 														hour: "2-digit",
 														minute: "2-digit",
@@ -163,7 +187,9 @@ export function AppointmentsCalendar() {
 											<Button size="sm" variant="outline">
 												Reagendar
 											</Button>
-											{appointment.status === "pending" && <Button size="sm">Confirmar</Button>}
+											{appointment.status === "pending" && (
+												<Button size="sm">Confirmar</Button>
+											)}
 										</div>
 									</div>
 								</div>
@@ -177,8 +203,12 @@ export function AppointmentsCalendar() {
 				<Card>
 					<CardContent className="flex flex-col items-center justify-center py-16">
 						<Calendar className="mb-4 h-16 w-16 text-muted-foreground" />
-						<h3 className="mb-2 font-semibold text-lg">Nenhuma consulta hoje</h3>
-						<p className="mb-6 text-center text-muted-foreground">Você não tem consultas agendadas para hoje.</p>
+						<h3 className="mb-2 font-semibold text-lg">
+							Nenhuma consulta hoje
+						</h3>
+						<p className="mb-6 text-center text-muted-foreground">
+							Você não tem consultas agendadas para hoje.
+						</p>
 						<Button>Agendar Nova Consulta</Button>
 					</CardContent>
 				</Card>

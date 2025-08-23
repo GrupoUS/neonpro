@@ -7,17 +7,30 @@
  */
 
 import { apiClient } from "@neonpro/shared/api-client";
-import type { CreatePatient, PaginatedResponse, Patient, PatientSearch, UpdatePatient } from "@neonpro/shared/types";
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type {
+	CreatePatient,
+	PaginatedResponse,
+	Patient,
+	PatientSearch,
+	UpdatePatient,
+} from "@neonpro/shared/types";
+import {
+	useInfiniteQuery,
+	useMutation,
+	useQuery,
+	useQueryClient,
+} from "@tanstack/react-query";
 
 // Query keys for patients
 export const PATIENT_QUERY_KEYS = {
 	all: ["patients"] as const,
 	lists: () => [...PATIENT_QUERY_KEYS.all, "list"] as const,
-	list: (filters: PatientSearch) => [...PATIENT_QUERY_KEYS.lists(), filters] as const,
+	list: (filters: PatientSearch) =>
+		[...PATIENT_QUERY_KEYS.lists(), filters] as const,
 	details: () => [...PATIENT_QUERY_KEYS.all, "detail"] as const,
 	detail: (id: string) => [...PATIENT_QUERY_KEYS.details(), id] as const,
-	search: (query: PatientSearch) => [...PATIENT_QUERY_KEYS.all, "search", query] as const,
+	search: (query: PatientSearch) =>
+		[...PATIENT_QUERY_KEYS.all, "search", query] as const,
 	stats: () => [...PATIENT_QUERY_KEYS.all, "stats"] as const,
 } as const;
 
@@ -134,7 +147,10 @@ export function useCreatePatient() {
 
 		onSuccess: (newPatient) => {
 			// Add to patient lists cache
-			queryClient.setQueryData(PATIENT_QUERY_KEYS.detail(newPatient.id), newPatient);
+			queryClient.setQueryData(
+				PATIENT_QUERY_KEYS.detail(newPatient.id),
+				newPatient,
+			);
 
 			// Invalidate lists to show new patient
 			queryClient.invalidateQueries({
@@ -173,7 +189,10 @@ export function useUpdatePatient() {
 
 		onSuccess: (updatedPatient) => {
 			// Update patient detail cache
-			queryClient.setQueryData(PATIENT_QUERY_KEYS.detail(updatedPatient.id), updatedPatient);
+			queryClient.setQueryData(
+				PATIENT_QUERY_KEYS.detail(updatedPatient.id),
+				updatedPatient,
+			);
 
 			// Update patient in lists
 			queryClient.setQueriesData(
@@ -185,25 +204,32 @@ export function useUpdatePatient() {
 
 					return {
 						...old,
-						data: old.data.map((patient) => (patient.id === updatedPatient.id ? updatedPatient : patient)),
+						data: old.data.map((patient) =>
+							patient.id === updatedPatient.id ? updatedPatient : patient,
+						),
 					};
-				}
+				},
 			);
 
 			// Update infinite queries
-			queryClient.setQueriesData({ queryKey: [...PATIENT_QUERY_KEYS.lists(), "infinite"] }, (old: any) => {
-				if (!old?.pages) {
-					return old;
-				}
+			queryClient.setQueriesData(
+				{ queryKey: [...PATIENT_QUERY_KEYS.lists(), "infinite"] },
+				(old: any) => {
+					if (!old?.pages) {
+						return old;
+					}
 
-				return {
-					...old,
-					pages: old.pages.map((page: PaginatedResponse<Patient>) => ({
-						...page,
-						data: page.data?.map((patient) => (patient.id === updatedPatient.id ? updatedPatient : patient)),
-					})),
-				};
-			});
+					return {
+						...old,
+						pages: old.pages.map((page: PaginatedResponse<Patient>) => ({
+							...page,
+							data: page.data?.map((patient) =>
+								patient.id === updatedPatient.id ? updatedPatient : patient,
+							),
+						})),
+					};
+				},
+			);
 		},
 	});
 }
@@ -247,27 +273,33 @@ export function useDeletePatient() {
 							total: (old.meta?.total ?? 0) - 1,
 						},
 					};
-				}
+				},
 			);
 
 			// Update infinite queries
-			queryClient.setQueriesData({ queryKey: [...PATIENT_QUERY_KEYS.lists(), "infinite"] }, (old: any) => {
-				if (!old?.pages) {
-					return old;
-				}
+			queryClient.setQueriesData(
+				{ queryKey: [...PATIENT_QUERY_KEYS.lists(), "infinite"] },
+				(old: any) => {
+					if (!old?.pages) {
+						return old;
+					}
 
-				return {
-					...old,
-					pages: old.pages.map((page: PaginatedResponse<Patient>) => ({
-						...page,
-						data: page.data?.filter((patient) => patient.id !== deletedPatientId) ?? [],
-						meta: {
-							...page.meta,
-							total: (page.meta?.total ?? 0) - 1,
-						},
-					})),
-				};
-			});
+					return {
+						...old,
+						pages: old.pages.map((page: PaginatedResponse<Patient>) => ({
+							...page,
+							data:
+								page.data?.filter(
+									(patient) => patient.id !== deletedPatientId,
+								) ?? [],
+							meta: {
+								...page.meta,
+								total: (page.meta?.total ?? 0) - 1,
+							},
+						})),
+					};
+				},
+			);
 
 			// Update stats
 			queryClient.invalidateQueries({
@@ -332,7 +364,10 @@ export function usePatientsStats() {
 // 📥 Export patients
 export function useExportPatients() {
 	return useMutation({
-		mutationFn: async (params: { format: "csv" | "xlsx" | "pdf"; filters?: PatientSearch }) => {
+		mutationFn: async (params: {
+			format: "csv" | "xlsx" | "pdf";
+			filters?: PatientSearch;
+		}) => {
 			const response = await apiClient.api.v1.patients.export.$post({
 				json: {
 					format: params.format,
@@ -379,7 +414,10 @@ export function usePatientUtils() {
 		},
 
 		// Update patient in cache
-		updatePatientCache: (patientId: string, updater: (old: Patient | undefined) => Patient | undefined) => {
+		updatePatientCache: (
+			patientId: string,
+			updater: (old: Patient | undefined) => Patient | undefined,
+		) => {
 			queryClient.setQueryData(PATIENT_QUERY_KEYS.detail(patientId), updater);
 		},
 	};

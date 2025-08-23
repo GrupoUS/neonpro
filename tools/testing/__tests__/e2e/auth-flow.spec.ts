@@ -44,7 +44,9 @@ test.describe("Authentication Flow", () => {
 		await expect(page.url()).toContain("/login");
 	});
 
-	test("should redirect to dashboard after successful login", async ({ page }) => {
+	test("should redirect to dashboard after successful login", async ({
+		page,
+	}) => {
 		// Mock successful login (in real test, you'd use test credentials)
 		// For demo purposes, we'll simulate the successful flow
 
@@ -76,7 +78,10 @@ test.describe("Google OAuth Flow", () => {
 		await page.goto("/login");
 
 		// Mock popup behavior (real test would handle actual OAuth)
-		const [popup] = await Promise.all([context.waitForEvent("page"), page.click("text=Entrar com Google")]);
+		const [popup] = await Promise.all([
+			context.waitForEvent("page"),
+			page.click("text=Entrar com Google"),
+		]);
 
 		// Verify popup opened with correct URL
 		expect(popup.url()).toContain("accounts.google.com");
@@ -105,7 +110,9 @@ test.describe("Sign Up Flow", () => {
 		await page.click('button[type="submit"]');
 
 		// Should show password validation error
-		await expect(page.locator("text=Password must be at least 8 characters")).toBeVisible();
+		await expect(
+			page.locator("text=Password must be at least 8 characters"),
+		).toBeVisible();
 	});
 
 	test("should handle successful signup", async ({ page }) => {
@@ -116,12 +123,16 @@ test.describe("Sign Up Flow", () => {
 		await page.click('button[type="submit"]');
 
 		// Should show success message or redirect
-		await expect(page.locator("text=Account created successfully")).toBeVisible();
+		await expect(
+			page.locator("text=Account created successfully"),
+		).toBeVisible();
 	});
 });
 
 test.describe("Authentication State Persistence", () => {
-	test("should maintain login state across page refreshes", async ({ page }) => {
+	test("should maintain login state across page refreshes", async ({
+		page,
+	}) => {
 		// Login first
 		await page.goto("/login");
 		await page.fill('input[type="email"]', "demo@neonpro.com");
@@ -138,7 +149,9 @@ test.describe("Authentication State Persistence", () => {
 		await expect(page.locator("text=Dashboard")).toBeVisible();
 	});
 
-	test("should redirect to login when accessing protected route", async ({ page }) => {
+	test("should redirect to login when accessing protected route", async ({
+		page,
+	}) => {
 		// Try to access dashboard without being logged in
 		await page.goto("/dashboard");
 
@@ -173,7 +186,9 @@ test.describe("Logout Flow", () => {
 });
 
 test.describe("Error Boundaries", () => {
-	test("should display error boundary when authentication fails critically", async ({ page }) => {
+	test("should display error boundary when authentication fails critically", async ({
+		page,
+	}) => {
 		// Simulate a critical auth error (you might need to mock this)
 		await page.goto("/login");
 
@@ -185,7 +200,9 @@ test.describe("Error Boundaries", () => {
 
 		// Should show error boundary
 		await expect(page.locator("text=Oops! Algo deu errado")).toBeVisible();
-		await expect(page.locator('button:has-text("Tentar novamente")')).toBeVisible();
+		await expect(
+			page.locator('button:has-text("Tentar novamente")'),
+		).toBeVisible();
 	});
 
 	test("should recover from error boundary", async ({ page }) => {
@@ -225,9 +242,18 @@ test.describe("Accessibility", () => {
 		await page.goto("/login");
 
 		// Check for proper ARIA labels
-		await expect(page.locator('input[type="email"]')).toHaveAttribute("aria-label", /email/i);
-		await expect(page.locator('input[type="password"]')).toHaveAttribute("aria-label", /password/i);
-		await expect(page.locator('button[type="submit"]')).toHaveAttribute("aria-label", /login|sign in/i);
+		await expect(page.locator('input[type="email"]')).toHaveAttribute(
+			"aria-label",
+			/email/i,
+		);
+		await expect(page.locator('input[type="password"]')).toHaveAttribute(
+			"aria-label",
+			/password/i,
+		);
+		await expect(page.locator('button[type="submit"]')).toHaveAttribute(
+			"aria-label",
+			/login|sign in/i,
+		);
 	});
 });
 

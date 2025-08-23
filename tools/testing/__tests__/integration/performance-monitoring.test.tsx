@@ -3,7 +3,14 @@
  * Comprehensive testing for performance monitoring system
  */
 
-import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+	act,
+	cleanup,
+	fireEvent,
+	render,
+	screen,
+	waitFor,
+} from "@testing-library/react";
 import { vi } from "vitest";
 import "@testing-library/jest-dom";
 
@@ -154,10 +161,10 @@ describe("Performance Monitoring Integration", () => {
 							headers: {
 								"Content-Type": "application/json",
 							},
-						})
+						}),
 					);
 				},
-				{ timeout: 3000 }
+				{ timeout: 3000 },
 			);
 		});
 
@@ -180,7 +187,9 @@ describe("Performance Monitoring Integration", () => {
 			// Wait for API call with performance data
 			await waitFor(
 				() => {
-					const fetchCall = mockFetch.mock.calls.find((call) => call[0] === "/api/analytics/performance");
+					const fetchCall = mockFetch.mock.calls.find(
+						(call) => call[0] === "/api/analytics/performance",
+					);
 					expect(fetchCall).toBeDefined();
 
 					if (fetchCall) {
@@ -193,7 +202,7 @@ describe("Performance Monitoring Integration", () => {
 						expect(typeof body.score).toBe("number");
 					}
 				},
-				{ timeout: 3000 }
+				{ timeout: 3000 },
 			);
 		});
 
@@ -210,7 +219,9 @@ describe("Performance Monitoring Integration", () => {
 
 			await waitFor(
 				() => {
-					const fetchCall = mockFetch.mock.calls.find((call) => call[0] === "/api/analytics/performance");
+					const fetchCall = mockFetch.mock.calls.find(
+						(call) => call[0] === "/api/analytics/performance",
+					);
 
 					if (fetchCall) {
 						const body = JSON.parse(fetchCall[1].body);
@@ -218,7 +229,7 @@ describe("Performance Monitoring Integration", () => {
 						expect(["mobile", "tablet", "desktop"]).toContain(body.deviceType);
 					}
 				},
-				{ timeout: 3000 }
+				{ timeout: 3000 },
 			);
 		});
 	});
@@ -254,7 +265,9 @@ describe("Performance Monitoring Integration", () => {
 
 			await waitFor(() => {
 				// Check for performance badges - look for specific metric labels
-				expect(screen.getByText("Largest Contentful Paint")).toBeInTheDocument();
+				expect(
+					screen.getByText("Largest Contentful Paint"),
+				).toBeInTheDocument();
 				expect(screen.getByText("First Input Delay")).toBeInTheDocument();
 				expect(screen.getByText("Cumulative Layout Shift")).toBeInTheDocument();
 			});
@@ -264,7 +277,9 @@ describe("Performance Monitoring Integration", () => {
 			render(<PerformanceDashboard />);
 
 			// Initially should show loading
-			expect(screen.getByText("Loading performance metrics...")).toBeInTheDocument();
+			expect(
+				screen.getByText("Loading performance metrics..."),
+			).toBeInTheDocument();
 		});
 
 		it("should refresh metrics when button is clicked", async () => {
@@ -274,7 +289,9 @@ describe("Performance Monitoring Integration", () => {
 
 			// Wait for initial load
 			await waitFor(() => {
-				expect(screen.queryByText("Loading performance data...")).not.toBeInTheDocument();
+				expect(
+					screen.queryByText("Loading performance data..."),
+				).not.toBeInTheDocument();
 			});
 
 			// Find and click refresh button
@@ -309,9 +326,12 @@ describe("Performance Monitoring Integration", () => {
 
 			await waitFor(
 				() => {
-					expect(consoleSpy).toHaveBeenCalledWith("❌ Failed to send performance metrics:", expect.any(Error));
+					expect(consoleSpy).toHaveBeenCalledWith(
+						"❌ Failed to send performance metrics:",
+						expect.any(Error),
+					);
 				},
-				{ timeout: 3000 }
+				{ timeout: 3000 },
 			);
 
 			consoleSpy.mockRestore();
@@ -378,7 +398,8 @@ describe("Performance Monitoring Integration", () => {
 					score -= 5;
 				}
 
-				const category = score >= 90 ? "good" : score >= 70 ? "needs-improvement" : "poor";
+				const category =
+					score >= 90 ? "good" : score >= 70 ? "needs-improvement" : "poor";
 				expect(category).toBe(expected);
 			});
 		});

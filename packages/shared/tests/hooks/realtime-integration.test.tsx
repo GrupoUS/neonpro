@@ -16,6 +16,41 @@ import { useRealtime, useRealtimeQuery } from "../../src/hooks/use-realtime";
 // Temporarily unmock React for this test to allow real state management
 vi.unmock("react");
 
+// Create local Supabase client mock for this test
+const createMockChannel = (channelName?: string) => {
+	return {
+		on: vi.fn().mockReturnThis(),
+		subscribe: vi.fn().mockImplementation((callback) => {
+			if (callback) {
+				// Call synchronously to match global mock behavior
+				callback("SUBSCRIBED");
+			}
+			return { status: "SUBSCRIBED", error: null };
+		}),
+		unsubscribe: vi.fn().mockResolvedValue({ status: "ok", error: null }),
+		isJoined: vi.fn().mockReturnValue(true),
+		send: vi.fn().mockResolvedValue({ status: "ok", error: null }),
+		presence: {
+			track: vi.fn().mockResolvedValue({ status: "ok", error: null }),
+			untrack: vi.fn().mockResolvedValue({ status: "ok", error: null }),
+			state: vi.fn().mockReturnValue({}),
+		},
+		channelName: channelName || "test-channel",
+	};
+};
+
+const mockSupabaseClient = {
+	channel: vi.fn().mockImplementation((channelName?: string) => {
+		return createMockChannel(channelName);
+	}),
+	removeChannel: vi.fn().mockResolvedValue({ status: "ok", error: null }),
+	realtime: {
+		connect: vi.fn(),
+		disconnect: vi.fn(),
+		isConnected: vi.fn().mockReturnValue(true),
+	},
+};
+
 // Test wrapper with QueryClient
 const createWrapper = () => {
 	const queryClient = new QueryClient({
@@ -32,10 +67,10 @@ const createWrapper = () => {
 
 describe("Real-time Core Functionality", () => {
 	beforeEach(() => {
-		// Use the global mock setup from vitest.setup.ts
+		// Clear all mocks before each test
 		vi.clearAllMocks();
-		if ((globalThis as any).mockSupabaseClient?.channel) {
-		}
+		// Reset the local mock
+		mockSupabaseClient.channel.mockClear();
 	});
 
 	afterEach(() => {
@@ -48,17 +83,19 @@ describe("Real-time Core Functionality", () => {
 
 			const { result } = renderHook(
 				() =>
-					useRealtime((globalThis as any).mockSupabaseClient, {
+					useRealtime(mockSupabaseClient, {
 						table: "patients",
 						enabled: true,
 						onUpdate: mockOnUpdate,
 					}),
-				{ wrapper: createWrapper() }
+				{ wrapper: createWrapper() },
 			);
 
 			// Wait for channel creation
 			await waitFor(() => {
-				expect((globalThis as any).mockSupabaseClient.channel).toHaveBeenCalledWith("realtime:patients");
+				expect(mockSupabaseClient.channel).toHaveBeenCalledWith(
+					"realtime:patients",
+				);
 			});
 
 			// Wait for connection - the global mock should trigger SUBSCRIBED status
@@ -66,7 +103,7 @@ describe("Real-time Core Functionality", () => {
 				() => {
 					expect(result.current.isConnected).toBe(true);
 				},
-				{ timeout: 2000 }
+				{ timeout: 2000 },
 			);
 
 			expect(result.current.error).toBeNull();
@@ -102,7 +139,7 @@ describe("Real-time Core Functionality", () => {
 						enabled: true,
 						onError: mockOnError,
 					}),
-				{ wrapper: createWrapper() }
+				{ wrapper: createWrapper() },
 			);
 
 			await waitFor(
@@ -110,7 +147,7 @@ describe("Real-time Core Functionality", () => {
 					expect(result.current.isConnected).toBe(false);
 					expect(result.current.error).toBeInstanceOf(Error);
 				},
-				{ timeout: 2000 }
+				{ timeout: 2000 },
 			);
 		});
 
@@ -141,7 +178,7 @@ describe("Real-time Core Functionality", () => {
 						table: "patients",
 						enabled: true,
 					}),
-				{ wrapper: createWrapper() }
+				{ wrapper: createWrapper() },
 			);
 
 			// Wait for channel to be created
@@ -159,16 +196,17 @@ describe("Real-time Core Functionality", () => {
 	it("should handle disabled real-time gracefully", () => {
 		const { result } = renderHook(
 			() =>
-				useRealtime((globalThis as any).mockSupabaseClient, {
+				useRealtime(mockSupabaseClient, {
 					table: "patients",
 					enabled: false,
 				}),
-			{ wrapper: createWrapper() }
+			{ wrapper: createWrapper() },
 		);
 
 		expect(result.current.isConnected).toBe(false);
 		expect(result.current.error).toBeNull();
-		expect((globalThis as any).mockSupabaseClient.channel).not.toHaveBeenCalled();
+		// Verify channel was not called when disabled
+		expect(mockSupabaseClient.channel).not.toHaveBeenCalled();
 	});
 });
 
@@ -179,7 +217,8 @@ describe("useRealtimeQuery Hook", () => {
 			on: vi.fn().mockReturnThis(),
 			subscribe: vi.fn().mockImplementation((callback) => {
 				if (callback) {
-					setTimeout(() => callback("SUBSCRIBED"), 0);
+					// Call synchronously to match global mock behavior
+					callback("SUBSCRIBED");
 				}
 				return mockChannelInstance;
 			}),
@@ -189,7 +228,7 @@ describe("useRealtimeQuery Hook", () => {
 		};
 
 		const mockSupabaseClientForQuery = {
-			...(globalThis as any).mockSupabaseClient,
+			...mockSupabaseClient,
 			channel: vi.fn().mockReturnValue(mockChannelInstance),
 			removeChannel: vi.fn(),
 		};
@@ -205,12 +244,14 @@ describe("useRealtimeQuery Hook", () => {
 						backgroundRefetch: true,
 					},
 				}),
-			{ wrapper: createWrapper() }
+			{ wrapper: createWrapper() },
 		);
 
 		// Wait for setup
 		await waitFor(() => {
-			expect(mockSupabaseClientForQuery.channel).toHaveBeenCalledWith("realtime:patients");
+			expect(mockSupabaseClientForQuery.channel).toHaveBeenCalledWith(
+				"realtime:patients",
+			);
 		});
 
 		// Wait for connection
@@ -257,7 +298,9 @@ describe("LGPD Compliance Utilities", () => {
 				pseudonymized.new.email = `user${Math.floor(Math.random() * 1000)}@example.com`;
 			}
 			if (config.sensitiveFields?.includes("cpf")) {
-				pseudonymized.new.cpf = Math.floor(Math.random() * 100_000_000).toString();
+				pseudonymized.new.cpf = Math.floor(
+					Math.random() * 100_000_000,
+				).toString();
 			}
 			return pseudonymized;
 		},
@@ -282,7 +325,10 @@ describe("LGPD Compliance Utilities", () => {
 				sensitiveFields: ["email", "cpf"],
 			};
 
-			const anonymized = LGPDDataProcessor.anonymizePayload(testPayload, config);
+			const anonymized = LGPDDataProcessor.anonymizePayload(
+				testPayload,
+				config,
+			);
 
 			expect(anonymized.new.id).toBe("123");
 			expect(anonymized.new.name).toBe("João Silva");
@@ -304,7 +350,10 @@ describe("LGPD Compliance Utilities", () => {
 			};
 
 			const allowedFields = ["id", "name"];
-			const minimized = LGPDDataProcessor.minimizeData(testPayload, allowedFields);
+			const minimized = LGPDDataProcessor.minimizeData(
+				testPayload,
+				allowedFields,
+			);
 
 			expect(minimized.new).toEqual({
 				id: "123",
@@ -332,7 +381,10 @@ describe("LGPD Compliance Utilities", () => {
 				sensitiveFields: ["email", "cpf"],
 			};
 
-			const pseudonymized = LGPDDataProcessor.pseudonymizePayload(testPayload, config);
+			const pseudonymized = LGPDDataProcessor.pseudonymizePayload(
+				testPayload,
+				config,
+			);
 
 			expect(pseudonymized.new.id).toBe("123");
 			expect(pseudonymized.new.email).toMatch(/^user\d+@example\.com$/);

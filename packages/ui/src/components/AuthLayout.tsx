@@ -28,7 +28,7 @@ const AuthLayout = React.forwardRef<HTMLDivElement, AuthLayoutProps>(
 			showBackground = true,
 			...props
 		},
-		ref
+		ref,
 	) => {
 		const formWidthClasses = {
 			sm: "max-w-sm",
@@ -41,10 +41,14 @@ const AuthLayout = React.forwardRef<HTMLDivElement, AuthLayoutProps>(
 				className={cn(
 					"flex min-h-screen items-center justify-center",
 					showBackground && "bg-gradient-to-br from-blue-50 to-indigo-100",
-					className
+					className,
 				)}
 				ref={ref}
-				style={backgroundImage ? { backgroundImage: `url(${backgroundImage})` } : undefined}
+				style={
+					backgroundImage
+						? { backgroundImage: `url(${backgroundImage})` }
+						: undefined
+				}
 				{...props}
 			>
 				{/* Background Overlay */}
@@ -54,23 +58,33 @@ const AuthLayout = React.forwardRef<HTMLDivElement, AuthLayoutProps>(
 				<div
 					className={cn(
 						"relative z-10 mx-4 w-full space-y-6 rounded-lg border bg-card p-8 shadow-lg",
-						formWidthClasses[formWidth]
+						formWidthClasses[formWidth],
 					)}
 				>
 					{/* Logo */}
 					{showLogo && (
 						<div className="text-center">
 							{logoUrl ? (
-								<img alt="Logo" className="mx-auto mb-4 h-12 w-auto" src={logoUrl} />
+								<img
+									alt="Logo"
+									className="mx-auto mb-4 h-12 w-auto"
+									src={logoUrl}
+								/>
 							) : (
 								<div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary">
 									<Heart className="h-6 w-6 text-primary-foreground" />
 								</div>
 							)}
 
-							{title && <h1 className="font-semibold text-2xl tracking-tight">{title}</h1>}
+							{title && (
+								<h1 className="font-semibold text-2xl tracking-tight">
+									{title}
+								</h1>
+							)}
 
-							{subtitle && <p className="mt-2 text-muted-foreground">{subtitle}</p>}
+							{subtitle && (
+								<p className="mt-2 text-muted-foreground">{subtitle}</p>
+							)}
 						</div>
 					)}
 
@@ -95,7 +109,7 @@ const AuthLayout = React.forwardRef<HTMLDivElement, AuthLayoutProps>(
 				</div>
 			</div>
 		);
-	}
+	},
 );
 
 AuthLayout.displayName = "AuthLayout";

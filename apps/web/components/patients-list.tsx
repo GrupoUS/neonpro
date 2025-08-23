@@ -56,7 +56,9 @@ export function PatientsList() {
 			case "inactive":
 				return <Badge variant="secondary">Inativo</Badge>;
 			case "pending":
-				return <Badge className="bg-yellow-100 text-yellow-800">Pendente</Badge>;
+				return (
+					<Badge className="bg-yellow-100 text-yellow-800">Pendente</Badge>
+				);
 			default:
 				return <Badge variant="outline">{status}</Badge>;
 		}
@@ -67,7 +69,9 @@ export function PatientsList() {
 			<div className="flex items-center justify-between">
 				<div>
 					<h1 className="font-bold text-3xl">Pacientes</h1>
-					<p className="text-muted-foreground">Gerencie seus pacientes e prontuários</p>
+					<p className="text-muted-foreground">
+						Gerencie seus pacientes e prontuários
+					</p>
 				</div>
 				<Button asChild>
 					<Link to="/patients/new">
@@ -81,7 +85,11 @@ export function PatientsList() {
 			<div className="flex flex-col gap-4 sm:flex-row">
 				<div className="relative flex-1">
 					<Search className="absolute top-3 left-3 h-4 w-4 text-muted-foreground" />
-					<Input className="pl-10" defaultValue={search?.search || ""} placeholder="Buscar pacientes..." />
+					<Input
+						className="pl-10"
+						defaultValue={search?.search || ""}
+						placeholder="Buscar pacientes..."
+					/>
 				</div>
 				<Button variant="outline">
 					<Filter className="mr-2 h-4 w-4" />
@@ -101,7 +109,9 @@ export function PatientsList() {
 									</div>
 									<div>
 										<h3 className="font-semibold">{patient.name}</h3>
-										<p className="text-muted-foreground text-sm">ID: {patient.id}</p>
+										<p className="text-muted-foreground text-sm">
+											ID: {patient.id}
+										</p>
 									</div>
 								</div>
 								{getStatusBadge(patient.status)}
@@ -118,7 +128,9 @@ export function PatientsList() {
 								</p>
 								<p className="flex justify-between">
 									<span className="text-muted-foreground">Última visita:</span>
-									<span>{new Date(patient.lastVisit).toLocaleDateString("pt-BR")}</span>
+									<span>
+										{new Date(patient.lastVisit).toLocaleDateString("pt-BR")}
+									</span>
 								</p>
 								<p className="flex justify-between">
 									<span className="text-muted-foreground">Tratamentos:</span>

@@ -9,19 +9,28 @@ const buttonVariants = cva(
 		variants: {
 			variant: {
 				default: "bg-primary text-primary-foreground hover:bg-primary/90",
-				destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-				outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-				secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+				destructive:
+					"bg-destructive text-destructive-foreground hover:bg-destructive/90",
+				outline:
+					"border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+				secondary:
+					"bg-secondary text-secondary-foreground hover:bg-secondary/80",
 				ghost: "hover:bg-accent hover:text-accent-foreground",
 				link: "text-primary underline-offset-4 hover:underline",
 				// Healthcare-specific variants
-				medical: "bg-emerald-600 text-white hover:bg-emerald-700 focus:ring-emerald-500",
+				medical:
+					"bg-emerald-600 text-white hover:bg-emerald-700 focus:ring-emerald-500",
 				emergency: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
-				procedure: "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500",
-				consultation: "bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500",
-				confirmed: "bg-green-600 text-white hover:bg-green-700 focus:ring-green-500",
-				pending: "bg-yellow-600 text-white hover:bg-yellow-700 focus:ring-yellow-500",
-				cancelled: "bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500",
+				procedure:
+					"bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500",
+				consultation:
+					"bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500",
+				confirmed:
+					"bg-green-600 text-white hover:bg-green-700 focus:ring-green-500",
+				pending:
+					"bg-yellow-600 text-white hover:bg-yellow-700 focus:ring-yellow-500",
+				cancelled:
+					"bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500",
 			},
 			size: {
 				default: "h-10 px-4 py-2",
@@ -36,7 +45,7 @@ const buttonVariants = cva(
 			variant: "default",
 			size: "default",
 		},
-	}
+	},
 );
 export interface ButtonProps
 	extends React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -59,7 +68,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 			children,
 			...props
 		},
-		ref
+		ref,
 	) => {
 		const Comp = asChild ? Slot : "button";
 
@@ -80,7 +89,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 				)}
 			</Comp>
 		);
-	}
+	},
 );
 
 Button.displayName = "Button";

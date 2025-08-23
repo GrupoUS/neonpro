@@ -119,7 +119,8 @@ vi.mock("@tanstack/react-query", () => ({
 		invalidateQueries: vi.fn(),
 		clear: vi.fn(),
 	})),
-	QueryClientProvider: ({ children }: { children: React.ReactNode }) => children,
+	QueryClientProvider: ({ children }: { children: React.ReactNode }) =>
+		children,
 }));
 
 // Mock API client with all required methods
@@ -149,7 +150,11 @@ vi.mock("@neonpro/shared/api-client", () => ({
 			getAccessToken: vi.fn(() => "mock-token"),
 			getRefreshToken: vi.fn(() => "mock-refresh"),
 			getSessionId: vi.fn(() => "mock-session-id"),
-			getUser: vi.fn(() => ({ id: "user-1", role: "doctor", email: "test@example.com" })),
+			getUser: vi.fn(() => ({
+				id: "user-1",
+				role: "doctor",
+				email: "test@example.com",
+			})),
 			isAuthenticated: vi.fn(() => true),
 			clearTokens: vi.fn(),
 			shouldRefresh: vi.fn(() => false),
@@ -167,7 +172,7 @@ vi.mock("@neonpro/shared/api-client", () => ({
 						Promise.resolve({
 							success: true,
 							data: { id: "patient-1", name: "Test Patient" },
-						})
+						}),
 					),
 					$get: vi.fn(() => Promise.resolve({ success: true, data: [] })),
 				},
@@ -203,7 +208,7 @@ Object.defineProperty(global, "fetch", {
 			status: 200,
 			json: () => Promise.resolve({}),
 			text: () => Promise.resolve(""),
-		})
+		}),
 	),
 });
 
@@ -245,7 +250,9 @@ Object.defineProperty(window, "alert", {
 if (typeof HTMLFormElement !== "undefined") {
 	// Check if requestSubmit is already available
 	if (!HTMLFormElement.prototype.requestSubmit) {
-		HTMLFormElement.prototype.requestSubmit = function (submitter?: HTMLElement) {
+		HTMLFormElement.prototype.requestSubmit = function (
+			submitter?: HTMLElement,
+		) {
 			// Create and dispatch submit event
 			const event = new Event("submit", { bubbles: true, cancelable: true });
 

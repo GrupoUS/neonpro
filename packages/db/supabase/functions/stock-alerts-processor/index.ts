@@ -7,7 +7,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
 	"Access-Control-Allow-Origin": "*",
-	"Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+	"Access-Control-Allow-Headers":
+		"authorization, x-client-info, apikey, content-type",
 };
 
 type StockAlert = {
@@ -32,7 +33,7 @@ serve(async (req) => {
 		// Initialize Supabase client
 		const supabaseClient = createClient(
 			Deno.env.get("SUPABASE_URL") ?? "",
-			Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+			Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
 		);
 
 		// Get authorization header
@@ -127,7 +128,7 @@ serve(async (req) => {
 				{
 					headers: { ...corsHeaders, "Content-Type": "application/json" },
 					status: 200,
-				}
+				},
 			);
 		}
 
@@ -136,7 +137,11 @@ serve(async (req) => {
 			const body = await req.json();
 			const { scan_all = false, item_ids = [] } = body;
 
-			let query = supabaseClient.from("inventory_items").select("*").eq("tenant_id", tenantId).eq("is_active", true);
+			let query = supabaseClient
+				.from("inventory_items")
+				.select("*")
+				.eq("tenant_id", tenantId)
+				.eq("is_active", true);
 
 			if (!scan_all && item_ids.length > 0) {
 				query = query.in("id", item_ids);
@@ -155,7 +160,10 @@ serve(async (req) => {
 				const alerts: Partial<StockAlert>[] = [];
 
 				// Check for low stock
-				if (item.current_stock <= item.minimum_threshold && item.current_stock > 0) {
+				if (
+					item.current_stock <= item.minimum_threshold &&
+					item.current_stock > 0
+				) {
 					alerts.push({
 						tenant_id: tenantId,
 						item_id: item.id,
@@ -179,7 +187,9 @@ serve(async (req) => {
 				// Check for expiring items (30 days)
 				if (item.expiry_date) {
 					const expiryDate = new Date(item.expiry_date);
-					const daysToExpiry = Math.ceil((expiryDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+					const daysToExpiry = Math.ceil(
+						(expiryDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
+					);
 
 					if (daysToExpiry <= 30 && daysToExpiry > 0) {
 						alerts.push({
@@ -197,7 +207,9 @@ serve(async (req) => {
 
 			// Insert new alerts
 			if (newAlerts.length > 0) {
-				const { error: insertError } = await supabaseClient.from("stock_alerts").insert(newAlerts);
+				const { error: insertError } = await supabaseClient
+					.from("stock_alerts")
+					.insert(newAlerts);
 
 				if (insertError) {
 					throw insertError;
@@ -232,7 +244,7 @@ serve(async (req) => {
 				{
 					headers: { ...corsHeaders, "Content-Type": "application/json" },
 					status: 200,
-				}
+				},
 			);
 		}
 
@@ -252,7 +264,7 @@ serve(async (req) => {
 			{
 				headers: { ...corsHeaders, "Content-Type": "application/json" },
 				status: 400,
-			}
+			},
 		);
 	}
 });

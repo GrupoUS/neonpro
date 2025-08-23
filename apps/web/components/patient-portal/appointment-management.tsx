@@ -145,7 +145,13 @@ const treatmentTypes = [
 	{ id: "consulta", name: "Consulta", duration: 30, price: 200 },
 ];
 
-function AppointmentCard({ appointment, isPast = false }: { appointment: any; isPast?: boolean }) {
+function AppointmentCard({
+	appointment,
+	isPast = false,
+}: {
+	appointment: any;
+	isPast?: boolean;
+}) {
 	const getStatusColor = (status: string) => {
 		switch (status) {
 			case "confirmed":
@@ -192,12 +198,19 @@ function AppointmentCard({ appointment, isPast = false }: { appointment: any; is
 						{/* Header */}
 						<div className="flex items-start justify-between">
 							<div>
-								<h3 className="font-semibold text-lg">{appointment.treatment}</h3>
+								<h3 className="font-semibold text-lg">
+									{appointment.treatment}
+								</h3>
 								<p className="text-muted-foreground text-sm">
 									{formatDate(appointment.date)} às {appointment.time}
 								</p>
 							</div>
-							<Badge className={cn("flex items-center space-x-1", getStatusColor(appointment.status))}>
+							<Badge
+								className={cn(
+									"flex items-center space-x-1",
+									getStatusColor(appointment.status),
+								)}
+							>
 								{getStatusIcon(appointment.status)}
 								<span className="capitalize">
 									{appointment.status === "confirmed"
@@ -241,7 +254,11 @@ function AppointmentCard({ appointment, isPast = false }: { appointment: any; is
 						</div>
 
 						{/* Notes */}
-						{appointment.notes && <p className="text-muted-foreground text-sm italic">{appointment.notes}</p>}
+						{appointment.notes && (
+							<p className="text-muted-foreground text-sm italic">
+								{appointment.notes}
+							</p>
+						)}
 
 						{/* Preparation (for upcoming appointments) */}
 						{!isPast && appointment.preparation && (
@@ -250,12 +267,17 @@ function AppointmentCard({ appointment, isPast = false }: { appointment: any; is
 									Preparação para o procedimento:
 								</h4>
 								<ul className="space-y-1">
-									{appointment.preparation.map((item: string, index: number) => (
-										<li className="flex items-start space-x-2 text-blue-800 text-xs dark:text-blue-200" key={index}>
-											<span className="mt-1 h-1 w-1 flex-shrink-0 rounded-full bg-blue-600" />
-											<span>{item}</span>
-										</li>
-									))}
+									{appointment.preparation.map(
+										(item: string, index: number) => (
+											<li
+												className="flex items-start space-x-2 text-blue-800 text-xs dark:text-blue-200"
+												key={index}
+											>
+												<span className="mt-1 h-1 w-1 flex-shrink-0 rounded-full bg-blue-600" />
+												<span>{item}</span>
+											</li>
+										),
+									)}
 								</ul>
 							</div>
 						)}
@@ -267,14 +289,24 @@ function AppointmentCard({ appointment, isPast = false }: { appointment: any; is
 									<span className="text-sm">Avaliação:</span>
 									<div className="flex">
 										{[...new Array(5)].map((_, i) => (
-											<span className={cn("text-sm", i < appointment.rating ? "text-accent" : "text-gray-300")} key={i}>
+											<span
+												className={cn(
+													"text-sm",
+													i < appointment.rating
+														? "text-accent"
+														: "text-gray-300",
+												)}
+												key={i}
+											>
 												★
 											</span>
 										))}
 									</div>
 								</div>
 								{appointment.feedback && (
-									<p className="text-muted-foreground text-sm italic">"{appointment.feedback}"</p>
+									<p className="text-muted-foreground text-sm italic">
+										"{appointment.feedback}"
+									</p>
 								)}
 							</div>
 						)}
@@ -303,7 +335,11 @@ function AppointmentCard({ appointment, isPast = false }: { appointment: any; is
 							)}
 
 							{appointment.canCancel && (
-								<Button className="border-red-200 text-red-600 hover:bg-red-50" size="sm" variant="outline">
+								<Button
+									className="border-red-200 text-red-600 hover:bg-red-50"
+									size="sm"
+									variant="outline"
+								>
 									<Trash2 className="h-4 w-4" />
 									Cancelar
 								</Button>
@@ -336,7 +372,9 @@ function NewAppointmentForm() {
 					<Plus className="h-5 w-5 text-primary" />
 					<span>Agendar Nova Consulta</span>
 				</CardTitle>
-				<CardDescription>Use nossa IA para encontrar o melhor horário para seu tratamento</CardDescription>
+				<CardDescription>
+					Use nossa IA para encontrar o melhor horário para seu tratamento
+				</CardDescription>
 			</CardHeader>
 			<CardContent className="space-y-6">
 				{/* Treatment Selection */}
@@ -349,7 +387,7 @@ function NewAppointmentForm() {
 									"cursor-pointer transition-all hover:shadow-md",
 									selectedTreatment === treatment.id
 										? "border-primary bg-primary/10 dark:bg-primary/20"
-										: "hover:border-gray-300"
+										: "hover:border-gray-300",
 								)}
 								key={treatment.id}
 								onClick={() => setSelectedTreatment(treatment.id)}
@@ -370,8 +408,12 @@ function NewAppointmentForm() {
 				{selectedTreatment && (
 					<div className="space-y-4">
 						<div className="space-y-2">
-							<label className="font-medium text-sm">Horários Disponíveis</label>
-							<p className="text-muted-foreground text-sm">Baseado na sua localização e preferências</p>
+							<label className="font-medium text-sm">
+								Horários Disponíveis
+							</label>
+							<p className="text-muted-foreground text-sm">
+								Baseado na sua localização e preferências
+							</p>
 						</div>
 
 						<div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -383,7 +425,7 @@ function NewAppointmentForm() {
 											"cursor-pointer transition-all hover:shadow-md",
 											selectedDate === slot.date && selectedTime === slot.time
 												? "border-primary bg-primary/10 dark:bg-primary/20"
-												: "hover:border-gray-300"
+												: "hover:border-gray-300",
 										)}
 										key={index}
 										onClick={() => {
@@ -399,7 +441,9 @@ function NewAppointmentForm() {
 													month: "short",
 												})}
 											</div>
-											<div className="font-bold text-lg text-primary">{slot.time}</div>
+											<div className="font-bold text-lg text-primary">
+												{slot.time}
+											</div>
 										</CardContent>
 									</Card>
 								))}
@@ -410,7 +454,9 @@ function NewAppointmentForm() {
 				{/* Additional Notes */}
 				{selectedDate && selectedTime && (
 					<div className="space-y-2">
-						<label className="font-medium text-sm">Observações (opcional)</label>
+						<label className="font-medium text-sm">
+							Observações (opcional)
+						</label>
 						<textarea
 							className="min-h-[80px] w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
 							onChange={(e) => setNotes(e.target.value)}
@@ -423,10 +469,13 @@ function NewAppointmentForm() {
 				{/* Confirmation */}
 				{selectedTreatment && selectedDate && selectedTime && (
 					<div className="rounded-lg bg-green-50 p-4 dark:bg-green-950/20">
-						<h4 className="mb-2 font-medium text-green-900 dark:text-green-100">Resumo do Agendamento</h4>
+						<h4 className="mb-2 font-medium text-green-900 dark:text-green-100">
+							Resumo do Agendamento
+						</h4>
 						<div className="space-y-1 text-green-800 text-sm dark:text-green-200">
 							<p>
-								<strong>Tratamento:</strong> {treatmentTypes.find((t) => t.id === selectedTreatment)?.name}
+								<strong>Tratamento:</strong>{" "}
+								{treatmentTypes.find((t) => t.id === selectedTreatment)?.name}
 							</p>
 							<p>
 								<strong>Data:</strong>{" "}
@@ -441,10 +490,16 @@ function NewAppointmentForm() {
 								<strong>Horário:</strong> {selectedTime}
 							</p>
 							<p>
-								<strong>Duração:</strong> {treatmentTypes.find((t) => t.id === selectedTreatment)?.duration} minutos
+								<strong>Duração:</strong>{" "}
+								{
+									treatmentTypes.find((t) => t.id === selectedTreatment)
+										?.duration
+								}{" "}
+								minutos
 							</p>
 							<p>
-								<strong>Valor:</strong> R$ {treatmentTypes.find((t) => t.id === selectedTreatment)?.price}
+								<strong>Valor:</strong> R${" "}
+								{treatmentTypes.find((t) => t.id === selectedTreatment)?.price}
 							</p>
 						</div>
 					</div>
@@ -477,12 +532,19 @@ export function AppointmentManagement() {
 			{/* Header */}
 			<div className="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
 				<div>
-					<h1 className="font-bold text-2xl tracking-tight lg:text-3xl">Gerenciamento de Agendamentos</h1>
-					<p className="text-muted-foreground">Visualize, agende e gerencie suas consultas e tratamentos</p>
+					<h1 className="font-bold text-2xl tracking-tight lg:text-3xl">
+						Gerenciamento de Agendamentos
+					</h1>
+					<p className="text-muted-foreground">
+						Visualize, agende e gerencie suas consultas e tratamentos
+					</p>
 				</div>
 
 				<div className="flex space-x-2">
-					<Button onClick={() => setShowNewAppointment(!showNewAppointment)} variant="outline">
+					<Button
+						onClick={() => setShowNewAppointment(!showNewAppointment)}
+						variant="outline"
+					>
 						<Filter className="h-4 w-4" />
 						Filtros
 					</Button>
@@ -515,8 +577,12 @@ export function AppointmentManagement() {
 			{/* Appointments Tabs */}
 			<Tabs onValueChange={setActiveTab} value={activeTab}>
 				<TabsList className="grid w-full grid-cols-2">
-					<TabsTrigger value="upcoming">Próximas Consultas ({mockAppointments.upcoming.length})</TabsTrigger>
-					<TabsTrigger value="past">Histórico ({mockAppointments.past.length})</TabsTrigger>
+					<TabsTrigger value="upcoming">
+						Próximas Consultas ({mockAppointments.upcoming.length})
+					</TabsTrigger>
+					<TabsTrigger value="past">
+						Histórico ({mockAppointments.past.length})
+					</TabsTrigger>
 				</TabsList>
 
 				<TabsContent className="space-y-4" value="upcoming">
@@ -524,11 +590,16 @@ export function AppointmentManagement() {
 						<Card>
 							<CardContent className="flex flex-col items-center justify-center py-12">
 								<Calendar className="mb-4 h-12 w-12 text-muted-foreground" />
-								<h3 className="mb-2 font-medium text-lg">Nenhuma consulta agendada</h3>
+								<h3 className="mb-2 font-medium text-lg">
+									Nenhuma consulta agendada
+								</h3>
 								<p className="mb-4 text-center text-muted-foreground">
 									Que tal agendar sua próxima sessão de tratamento?
 								</p>
-								<Button className="bg-primary hover:bg-primary-dark" onClick={() => setShowNewAppointment(true)}>
+								<Button
+									className="bg-primary hover:bg-primary-dark"
+									onClick={() => setShowNewAppointment(true)}
+								>
 									<Plus className="h-4 w-4" />
 									Agendar Consulta
 								</Button>
@@ -546,13 +617,21 @@ export function AppointmentManagement() {
 						<Card>
 							<CardContent className="flex flex-col items-center justify-center py-12">
 								<CheckCircle className="mb-4 h-12 w-12 text-muted-foreground" />
-								<h3 className="mb-2 font-medium text-lg">Nenhuma consulta anterior</h3>
-								<p className="text-center text-muted-foreground">Seu histórico de consultas aparecerá aqui</p>
+								<h3 className="mb-2 font-medium text-lg">
+									Nenhuma consulta anterior
+								</h3>
+								<p className="text-center text-muted-foreground">
+									Seu histórico de consultas aparecerá aqui
+								</p>
 							</CardContent>
 						</Card>
 					) : (
 						mockAppointments.past.map((appointment) => (
-							<AppointmentCard appointment={appointment} isPast key={appointment.id} />
+							<AppointmentCard
+								appointment={appointment}
+								isPast
+								key={appointment.id}
+							/>
 						))
 					)}
 				</TabsContent>
@@ -565,27 +644,42 @@ export function AppointmentManagement() {
 				</CardHeader>
 				<CardContent>
 					<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-						<Button className="flex h-auto flex-col items-center space-y-2 p-4" variant="outline">
+						<Button
+							className="flex h-auto flex-col items-center space-y-2 p-4"
+							variant="outline"
+						>
 							<Calendar className="h-6 w-6 text-primary" />
 							<div className="text-center">
 								<div className="font-medium">Reagendar Consulta</div>
-								<div className="text-muted-foreground text-xs">Alterar data/horário</div>
+								<div className="text-muted-foreground text-xs">
+									Alterar data/horário
+								</div>
 							</div>
 						</Button>
 
-						<Button className="flex h-auto flex-col items-center space-y-2 p-4" variant="outline">
+						<Button
+							className="flex h-auto flex-col items-center space-y-2 p-4"
+							variant="outline"
+						>
 							<Bell className="h-6 w-6 text-blue-600" />
 							<div className="text-center">
 								<div className="font-medium">Configurar Lembretes</div>
-								<div className="text-muted-foreground text-xs">SMS, email, push</div>
+								<div className="text-muted-foreground text-xs">
+									SMS, email, push
+								</div>
 							</div>
 						</Button>
 
-						<Button className="flex h-auto flex-col items-center space-y-2 p-4" variant="outline">
+						<Button
+							className="flex h-auto flex-col items-center space-y-2 p-4"
+							variant="outline"
+						>
 							<Phone className="h-6 w-6 text-green-600" />
 							<div className="text-center">
 								<div className="font-medium">Contatar Clínica</div>
-								<div className="text-muted-foreground text-xs">Suporte direto</div>
+								<div className="text-muted-foreground text-xs">
+									Suporte direto
+								</div>
 							</div>
 						</Button>
 					</div>

@@ -31,7 +31,12 @@ export {
 import HealthcareBundleAnalyzer from "./bundle-analysis/bundle-analyzer";
 import HealthcareDatabaseMonitor from "./database/query-profiler";
 import HealthcareInfrastructureOptimizer from "./infrastructure/cache-manager";
-import type { HealthcareVitalsMetric, PerformanceConfig, PerformanceEventHandler, PerformanceReport } from "./types";
+import type {
+	HealthcareVitalsMetric,
+	PerformanceConfig,
+	PerformanceEventHandler,
+	PerformanceReport,
+} from "./types";
 // Healthcare Performance Monitor - Main orchestrator
 import { HealthcareWebVitals } from "./web-vitals/core-web-vitals";
 
@@ -117,10 +122,16 @@ export class HealthcarePerformanceMonitor {
 		executionTime: number,
 		table: string,
 		queryType: "select" | "insert" | "update" | "delete",
-		rowsAffected?: number
+		rowsAffected?: number,
 	): void {
 		if (this.config.enableDatabaseMonitoring) {
-			this.databaseMonitor.recordQuery(query, executionTime, table, queryType, rowsAffected);
+			this.databaseMonitor.recordQuery(
+				query,
+				executionTime,
+				table,
+				queryType,
+				rowsAffected,
+			);
 		}
 	}
 
@@ -243,7 +254,9 @@ export class HealthcarePerformanceMonitor {
 export default HealthcarePerformanceMonitor;
 
 // Convenience function for quick setup
-export function initHealthcarePerformance(config?: Partial<PerformanceConfig>): HealthcarePerformanceMonitor {
+export function initHealthcarePerformance(
+	config?: Partial<PerformanceConfig>,
+): HealthcarePerformanceMonitor {
 	const monitor = new HealthcarePerformanceMonitor(config);
 	monitor.init();
 	return monitor;

@@ -48,6 +48,13 @@ temp-*
 .hg/
 .svn/
 
+# CSS Files (Tailwind CSS compatibility)
+**/*.css
+**/globals.css
+**/tailwind.css
+apps/**/*.css
+packages/**/*.css
+
 # OS Generated Files
 .DS_Store
 .DS_Store?

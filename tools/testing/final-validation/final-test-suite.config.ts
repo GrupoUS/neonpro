@@ -24,7 +24,13 @@ export default defineConfig({
 				"apps/web/lib/**/*.{ts,tsx}",
 				"packages/**/*.{ts,tsx}",
 			],
-			exclude: ["node_modules/**", "dist/**", "**/*.d.ts", "**/*.test.*", "**/__tests__/**"],
+			exclude: [
+				"node_modules/**",
+				"dist/**",
+				"**/*.d.ts",
+				"**/*.test.*",
+				"**/__tests__/**",
+			],
 			thresholds: {
 				global: {
 					branches: 95,

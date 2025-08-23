@@ -7,14 +7,18 @@ import { afterAll, afterEach, beforeAll, beforeEach } from "vitest";
 // Global test configuration
 export const TEST_CONFIG = {
 	database: {
-		test_database_url: process.env.TEST_DATABASE_URL || "postgresql://test:test@localhost:5432/neonpro_test",
+		test_database_url:
+			process.env.TEST_DATABASE_URL ||
+			"postgresql://test:test@localhost:5432/neonpro_test",
 		connection_timeout: 10_000,
 		query_timeout: 5000,
 	},
 	supabase: {
-		test_project_url: process.env.TEST_SUPABASE_URL || "https://test.supabase.co",
+		test_project_url:
+			process.env.TEST_SUPABASE_URL || "https://test.supabase.co",
 		test_anon_key: process.env.TEST_SUPABASE_ANON_KEY || "test-anon-key",
-		test_service_role_key: process.env.TEST_SUPABASE_SERVICE_ROLE_KEY || "test-service-key",
+		test_service_role_key:
+			process.env.TEST_SUPABASE_SERVICE_ROLE_KEY || "test-service-key",
 	},
 	api: {
 		test_api_base_url: process.env.TEST_API_BASE_URL || "http://localhost:3001",
@@ -152,7 +156,9 @@ export class TestPerformanceMonitor {
 
 	static getAverageTime(testName: string): number {
 		const times = TestPerformanceMonitor.measurements.get(testName) || [];
-		return times.length > 0 ? times.reduce((a, b) => a + b, 0) / times.length : 0;
+		return times.length > 0
+			? times.reduce((a, b) => a + b, 0) / times.length
+			: 0;
 	}
 
 	static validatePerformance(testName: string, thresholdMs: number): boolean {
@@ -185,13 +191,22 @@ export class TestLGPDCompliance {
 		return testData.lgpd_consent === true && testData.lgpd_consent_date != null;
 	}
 
-	static validateDataMinimization(requestedData: string[], actualData: any): boolean {
+	static validateDataMinimization(
+		requestedData: string[],
+		actualData: any,
+	): boolean {
 		const actualKeys = Object.keys(actualData);
 		return requestedData.every((field) => actualKeys.includes(field));
 	}
 
 	static validateAuditTrail(_operation: string, auditEntry: any): boolean {
-		const requiredFields = ["user_id", "timestamp", "action", "resource", "legal_basis"];
+		const requiredFields = [
+			"user_id",
+			"timestamp",
+			"action",
+			"resource",
+			"legal_basis",
+		];
 		return requiredFields.every((field) => auditEntry[field] != null);
 	}
 
@@ -200,7 +215,10 @@ export class TestLGPDCompliance {
 		const cleanCpf = cpf.replace(/[^\d]/g, "");
 		const isValid = cleanCpf.length === 11 && cleanCpf !== "00000000000";
 
-		const formatted = cleanCpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+		const formatted = cleanCpf.replace(
+			/(\d{3})(\d{3})(\d{3})(\d{2})/,
+			"$1.$2.$3-$4",
+		);
 
 		return { valid: isValid, formatted };
 	}
@@ -208,7 +226,10 @@ export class TestLGPDCompliance {
 
 // Emergency access testing utilities
 export class TestEmergencyAccess {
-	static validateEmergencyJustification(emergencyType: string, justification: string): boolean {
+	static validateEmergencyJustification(
+		emergencyType: string,
+		justification: string,
+	): boolean {
 		const criticalTypes = ["cardiac_arrest", "trauma", "overdose"];
 		const isCritical = criticalTypes.includes(emergencyType);
 		const hasValidJustification = justification.length > 20; // Minimum explanation
@@ -218,7 +239,7 @@ export class TestEmergencyAccess {
 
 	static calculateEmergencyResponseTime(
 		startTime: number,
-		endTime: number
+		endTime: number,
 	): {
 		responseTime: number;
 		meetsRequirement: boolean;
@@ -239,7 +260,9 @@ export class TestEmergencyAccess {
 			deliveryStatus[recipient] = Math.random() > 0.1; // 90% delivery success rate
 		});
 
-		const allDelivered = Object.values(deliveryStatus).every((delivered) => delivered);
+		const allDelivered = Object.values(deliveryStatus).every(
+			(delivered) => delivered,
+		);
 
 		return {
 			sent: allDelivered,

@@ -1,120 +1,120 @@
 {
-  "mcpServers": {
-    "desktop-commander": {
-      "command": "cmd",
-      "args": ["/C", "npx", "-y", "@wonderwhy-er/desktop-commander@latest"],
-      "env": {
-        "MCP_TIMEOUT": "30000",
-        "DC_FILE_READ_LIMIT": "2000",
-        "DC_FILE_WRITE_LIMIT": "50",
-        "DC_TELEMETRY_ENABLED": "false",
-        "DC_BLOCKED_COMMANDS": "rm,del,format,shutdown,reboot"
-      }
-    },
-    "sequential-thinking": {
-      "command": "cmd",
-      "args": [
-        "/C",
-        "npx",
-        "-y",
-        "@modelcontextprotocol/server-sequential-thinking@latest"
-      ],
-      "env": {
-        "DISABLE_THOUGHT_LOGGING": "false"
-      }
-    },
-    "context7": {
-      "command": "cmd",
-      "args": ["/C", "npx", "-y", "@upstash/context7-mcp@latest"],
-      "env": {
-        "UPSTASH_CONTEXT7_API_KEY": "ctx7_fzqcQNgU3AChDBMjNIVYg4zLQp4LgBjZnbA",
-        "CONTEXT7_MAX_TOKENS": "10000",
-        "CONTEXT7_TIMEOUT": "15000"
-      }
-    },
-    "tavily": {
-      "command": "cmd",
-      "args": ["/C", "npx", "-y", "tavily-mcp@latest"],
-      "env": {
-        "TAVILY_API_KEY": "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",
-        "TAVILY_MAX_RESULTS": "10",
-        "TAVILY_SEARCH_DEPTH": "advanced",
-        "TAVILY_TIMEOUT": "20000"
-      }
-    },
-    "exa": {
-      "command": "cmd",
-      "args": ["/C", "npx", "-y", "exa-mcp-server@latest"],
-      "env": {
-        "EXA_API_KEY": "fae6582d-4562-45be-8ce9-f6c0c3518c66",
-        "EXA_MAX_RESULTS": "10",
-        "EXA_TIMEOUT": "20000"
-      }
-    },
-    "supabase-mcp": {
-      "command": "cmd",
-      "args": ["/C", "npx", "-y", "@supabase/mcp-server-supabase@latest"],
-      "env": {
-        "SUPABASE_URL": "https://gfkskrkbnawkuppazkpt.supabase.co",
-        "SUPABASE_ACCESS_TOKEN": "sbp_40a721931e7ff98b4f6979a5bcb2a28c8ea5c0dc",
-        "SUPABASE_PROJECT_REF": "gfkskrkbnawkuppazkpt",
-        "SUPABASE_PROJECT_ID": "gfkskrkbnawkuppazkpt",
-        "SUPABASE_TIMEOUT": "30000"
-      }
-    },
-    "shadcn-ui": {
-      "command": "cmd",
-      "args": ["/C", "npx", "-y", "@jpisnice/shadcn-ui-mcp-server@latest"],
-      "env": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": "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",
-        "SHADCN_TIMEOUT": "15000"
-      }
-    },
-    "serena": {
-      "command": "cmd",
-      "args": [
-        "/C",
-        "uvx",
-        "--from",
-        "git+https://github.com/oraios/serena",
-        "serena",
-        "start-mcp-server",
-        "--context",
-        "ide-assistant",
-        "--project",
-        "E:\\neonpro"
-      ],
-      "env": {
-        "SERENA_TIMEOUT": "30000"
-      }
-    },
-    "@21st-dev/magic": {
-      "command": "cmd",
-      "args": [
-        "/C",
-        "npx",
-        "-y",
-        "@21st-dev/magic@latest",
-        "API_KEY=\"2c5c6b6e07d502a308d18336327de5985e4f130e5cc6a7e3c9832760fa519986\""
-      ],
-      "env": {
-        "MAGIC_TIMEOUT": "25000"
-      }
-    },
-    "browsermcp": {
-      "command": "npx",
-      "args": ["@browsermcp/mcp@latest"]
-    },
-    "vercel": {
-      "url": "https://mcp.vercel.com",
-      "type": "http",
-      "timeout": 30000
-    }
-  },
-  "inputs": [],
-  "settings": {
-    "globalTimeout": 30000,
-    "retryAttempts": 3,
-    "logLevel": "info"
-  }
+	"mcpServers": {
+		"desktop-commander": {
+			"command": "cmd",
+			"args": ["/C", "npx", "-y", "@wonderwhy-er/desktop-commander@latest"],
+			"env": {
+				"MCP_TIMEOUT": "30000",
+				"DC_FILE_READ_LIMIT": "2000",
+				"DC_FILE_WRITE_LIMIT": "50",
+				"DC_TELEMETRY_ENABLED": "false",
+				"DC_BLOCKED_COMMANDS": "rm,del,format,shutdown,reboot"
+			}
+		},
+		"sequential-thinking": {
+			"command": "cmd",
+			"args": [
+				"/C",
+				"npx",
+				"-y",
+				"@modelcontextprotocol/server-sequential-thinking@latest"
+			],
+			"env": {
+				"DISABLE_THOUGHT_LOGGING": "false"
+			}
+		},
+		"context7": {
+			"command": "cmd",
+			"args": ["/C", "npx", "-y", "@upstash/context7-mcp@latest"],
+			"env": {
+				"UPSTASH_CONTEXT7_API_KEY": "ctx7_fzqcQNgU3AChDBMjNIVYg4zLQp4LgBjZnbA",
+				"CONTEXT7_MAX_TOKENS": "10000",
+				"CONTEXT7_TIMEOUT": "15000"
+			}
+		},
+		"tavily": {
+			"command": "cmd",
+			"args": ["/C", "npx", "-y", "tavily-mcp@latest"],
+			"env": {
+				"TAVILY_API_KEY": "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",
+				"TAVILY_MAX_RESULTS": "10",
+				"TAVILY_SEARCH_DEPTH": "advanced",
+				"TAVILY_TIMEOUT": "20000"
+			}
+		},
+		"exa": {
+			"command": "cmd",
+			"args": ["/C", "npx", "-y", "exa-mcp-server@latest"],
+			"env": {
+				"EXA_API_KEY": "fae6582d-4562-45be-8ce9-f6c0c3518c66",
+				"EXA_MAX_RESULTS": "10",
+				"EXA_TIMEOUT": "20000"
+			}
+		},
+		"supabase-mcp": {
+			"command": "cmd",
+			"args": ["/C", "npx", "-y", "@supabase/mcp-server-supabase@latest"],
+			"env": {
+				"SUPABASE_URL": "https://gfkskrkbnawkuppazkpt.supabase.co",
+				"SUPABASE_ACCESS_TOKEN": "sbp_40a721931e7ff98b4f6979a5bcb2a28c8ea5c0dc",
+				"SUPABASE_PROJECT_REF": "gfkskrkbnawkuppazkpt",
+				"SUPABASE_PROJECT_ID": "gfkskrkbnawkuppazkpt",
+				"SUPABASE_TIMEOUT": "30000"
+			}
+		},
+		"shadcn-ui": {
+			"command": "cmd",
+			"args": ["/C", "npx", "-y", "@jpisnice/shadcn-ui-mcp-server@latest"],
+			"env": {
+				"GITHUB_PERSONAL_ACCESS_TOKEN": "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",
+				"SHADCN_TIMEOUT": "15000"
+			}
+		},
+		"serena": {
+			"command": "cmd",
+			"args": [
+				"/C",
+				"uvx",
+				"--from",
+				"git+https://github.com/oraios/serena",
+				"serena",
+				"start-mcp-server",
+				"--context",
+				"ide-assistant",
+				"--project",
+				"E:\\neonpro"
+			],
+			"env": {
+				"SERENA_TIMEOUT": "30000"
+			}
+		},
+		"@21st-dev/magic": {
+			"command": "cmd",
+			"args": [
+				"/C",
+				"npx",
+				"-y",
+				"@21st-dev/magic@latest",
+				"API_KEY=\"2c5c6b6e07d502a308d18336327de5985e4f130e5cc6a7e3c9832760fa519986\""
+			],
+			"env": {
+				"MAGIC_TIMEOUT": "25000"
+			}
+		},
+		"browsermcp": {
+			"command": "npx",
+			"args": ["@browsermcp/mcp@latest"]
+		},
+		"vercel": {
+			"url": "https://mcp.vercel.com",
+			"type": "http",
+			"timeout": 30000
+		}
+	},
+	"inputs": [],
+	"settings": {
+		"globalTimeout": 30000,
+		"retryAttempts": 3,
+		"logLevel": "info"
+	}
 }

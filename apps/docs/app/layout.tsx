@@ -7,7 +7,14 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
 	title: "NeonPro Documentation",
 	description: "Comprehensive documentation for NeonPro Healthcare Platform",
-	keywords: ["healthcare", "documentation", "API", "components", "HIPAA", "ANVISA"],
+	keywords: [
+		"healthcare",
+		"documentation",
+		"API",
+		"components",
+		"HIPAA",
+		"ANVISA",
+	],
 };
 
 export default function RootLayout({

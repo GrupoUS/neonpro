@@ -12,8 +12,14 @@ export async function GET(request: NextRequest) {
 		}
 
 		const { searchParams } = new URL(request.url);
-		const limit = Math.min(Number.parseInt(searchParams.get("limit") || "20", 10), 50);
-		const offset = Math.max(Number.parseInt(searchParams.get("offset") || "0", 10), 0);
+		const limit = Math.min(
+			Number.parseInt(searchParams.get("limit") || "20", 10),
+			50,
+		);
+		const offset = Math.max(
+			Number.parseInt(searchParams.get("offset") || "0", 10),
+			0,
+		);
 
 		// Buscar conversas do usuário com contagem de mensagens
 		const { data: conversations, error } = await supabase
@@ -27,14 +33,17 @@ export async function GET(request: NextRequest) {
         created_at,
         updated_at,
         assistant_messages(count)
-      `
+      `,
 			)
 			.eq("user_id", user.id)
 			.order("updated_at", { ascending: false })
 			.range(offset, offset + limit - 1);
 
 		if (error) {
-			return NextResponse.json({ error: "Failed to fetch conversations" }, { status: 500 });
+			return NextResponse.json(
+				{ error: "Failed to fetch conversations" },
+				{ status: 500 },
+			);
 		}
 
 		// Formatar resposta
@@ -58,7 +67,10 @@ export async function GET(request: NextRequest) {
 			},
 		});
 	} catch (_error) {
-		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+		return NextResponse.json(
+			{ error: "Internal server error" },
+			{ status: 500 },
+		);
 	}
 }
 
@@ -92,12 +104,18 @@ export async function POST(request: NextRequest) {
 			.single();
 
 		if (error) {
-			return NextResponse.json({ error: "Failed to create conversation" }, { status: 500 });
+			return NextResponse.json(
+				{ error: "Failed to create conversation" },
+				{ status: 500 },
+			);
 		}
 
 		return NextResponse.json({ conversation });
 	} catch (_error) {
-		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+		return NextResponse.json(
+			{ error: "Internal server error" },
+			{ status: 500 },
+		);
 	}
 }
 

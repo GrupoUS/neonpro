@@ -4,7 +4,8 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
 	title: "Automated Before/After Analysis | NeonPro",
-	description: "AI-powered photo analysis with ≥95% accuracy and <30s processing time",
+	description:
+		"AI-powered photo analysis with ≥95% accuracy and <30s processing time",
 };
 
 export default function AutomatedAnalysisPage() {

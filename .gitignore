@@ -84,3 +84,9 @@ tools/testing/security/apex-qa-security-validation.test.ts
 tools/turbo/advanced-config.ts
 
 archon
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

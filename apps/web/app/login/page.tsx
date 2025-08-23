@@ -33,8 +33,9 @@ export default function LoginPage() {
 				<div className="relative z-20 mt-auto space-y-8">
 					<blockquote className="space-y-4">
 						<p className="font-medium text-foreground text-lg leading-relaxed">
-							&ldquo;Tecnologia de ponta para clínicas estéticas brasileiras. Gestão completa, segura e em total
-							conformidade com LGPD, ANVISA e CFM.&rdquo;
+							&ldquo;Tecnologia de ponta para clínicas estéticas brasileiras.
+							Gestão completa, segura e em total conformidade com LGPD, ANVISA e
+							CFM.&rdquo;
 						</p>
 						<footer className="font-medium text-muted-foreground">
 							Dr. Ana Carolina Silva, Clínica Estética Premium - São Paulo
@@ -48,16 +49,24 @@ export default function LoginPage() {
 						</h4>
 						<div className="space-y-3">
 							<div className="trust-indicator">
-								<span className="text-foreground/80">Conformidade LGPD completa</span>
+								<span className="text-foreground/80">
+									Conformidade LGPD completa
+								</span>
 							</div>
 							<div className="trust-indicator">
-								<span className="text-foreground/80">Aprovação ANVISA para dados de saúde</span>
+								<span className="text-foreground/80">
+									Aprovação ANVISA para dados de saúde
+								</span>
 							</div>
 							<div className="trust-indicator">
-								<span className="text-foreground/80">Certificação ISO 27001 de segurança</span>
+								<span className="text-foreground/80">
+									Certificação ISO 27001 de segurança
+								</span>
 							</div>
 							<div className="trust-indicator">
-								<span className="text-foreground/80">Suporte especializado 24/7</span>
+								<span className="text-foreground/80">
+									Suporte especializado 24/7
+								</span>
 							</div>
 						</div>
 					</div>
@@ -81,9 +90,12 @@ export default function LoginPage() {
 								<path d="M22 12h-4l-3 9L9 3l-3 9H2" />
 							</svg>
 						</div>
-						<h1 className="font-bold text-3xl text-foreground tracking-tight">Bem-vindo de Volta</h1>
+						<h1 className="font-bold text-3xl text-foreground tracking-tight">
+							Bem-vindo de Volta
+						</h1>
 						<p className="text-muted-foreground leading-relaxed">
-							Acesse sua conta NeonPro Healthcare para gerenciar sua clínica com segurança e eficiência
+							Acesse sua conta NeonPro Healthcare para gerenciar sua clínica com
+							segurança e eficiência
 						</p>
 					</div>
 
@@ -94,15 +106,24 @@ export default function LoginPage() {
 					<div className="space-y-4">
 						<p className="px-4 text-center text-muted-foreground text-xs leading-relaxed">
 							Ao continuar, você concorda com nossos{" "}
-							<a className="font-medium underline underline-offset-4 hover:text-primary" href="/terms">
+							<a
+								className="font-medium underline underline-offset-4 hover:text-primary"
+								href="/terms"
+							>
 								Termos de Serviço
 							</a>
 							,{" "}
-							<a className="font-medium underline underline-offset-4 hover:text-primary" href="/privacy">
+							<a
+								className="font-medium underline underline-offset-4 hover:text-primary"
+								href="/privacy"
+							>
 								Política de Privacidade LGPD
 							</a>{" "}
 							e{" "}
-							<a className="font-medium underline underline-offset-4 hover:text-primary" href="/compliance">
+							<a
+								className="font-medium underline underline-offset-4 hover:text-primary"
+								href="/compliance"
+							>
 								Diretrizes de Conformidade
 							</a>
 							.
@@ -111,8 +132,8 @@ export default function LoginPage() {
 						{/* Security Notice */}
 						<div className="rounded-lg border border-primary/20 bg-primary/5 p-4 text-center">
 							<p className="text-foreground/80 text-xs">
-								🔒 Conexão segura com criptografia de nível bancário • Dados protegidos conforme LGPD • Auditoria
-								contínua de segurança
+								🔒 Conexão segura com criptografia de nível bancário • Dados
+								protegidos conforme LGPD • Auditoria contínua de segurança
 							</p>
 						</div>
 					</div>

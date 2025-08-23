@@ -37,7 +37,16 @@ import {
 	TabsTrigger,
 	Textarea,
 } from "@neonpro/ui";
-import { Calendar, Edit, Heart, Mail, Phone, Plus, Search, Trash2 } from "lucide-react";
+import {
+	Calendar,
+	Edit,
+	Heart,
+	Mail,
+	Phone,
+	Plus,
+	Search,
+	Trash2,
+} from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/contexts/auth-context";
 
@@ -119,7 +128,8 @@ export default function PacientesPage() {
 			patient.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
 			patient.phone.includes(searchQuery);
 
-		const matchesFilter = filterStatus === "all" || patient.status === filterStatus;
+		const matchesFilter =
+			filterStatus === "all" || patient.status === filterStatus;
 
 		return matchesSearch && matchesFilter;
 	});
@@ -154,7 +164,10 @@ export default function PacientesPage() {
 		let age = today.getFullYear() - birth.getFullYear();
 		const monthDiff = today.getMonth() - birth.getMonth();
 
-		if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+		if (
+			monthDiff < 0 ||
+			(monthDiff === 0 && today.getDate() < birth.getDate())
+		) {
 			age--;
 		}
 
@@ -167,7 +180,9 @@ export default function PacientesPage() {
 			<div className="flex items-center justify-between">
 				<div>
 					<h1 className="font-bold text-3xl tracking-tight">Pacientes</h1>
-					<p className="text-muted-foreground">Gerencie os pacientes da sua clínica</p>
+					<p className="text-muted-foreground">
+						Gerencie os pacientes da sua clínica
+					</p>
 				</div>
 				<Button onClick={handleAddPatient}>
 					<Plus className="mr-2 h-4 w-4" />
@@ -211,7 +226,9 @@ export default function PacientesPage() {
 			<Card>
 				<CardHeader>
 					<CardTitle>Lista de Pacientes</CardTitle>
-					<CardDescription>{filteredPatients.length} paciente(s) encontrado(s)</CardDescription>
+					<CardDescription>
+						{filteredPatients.length} paciente(s) encontrado(s)
+					</CardDescription>
 				</CardHeader>
 				<CardContent>
 					<Table>
@@ -242,7 +259,11 @@ export default function PacientesPage() {
 											<div>
 												<p className="font-medium">{patient.name}</p>
 												<p className="text-muted-foreground text-sm">
-													{patient.gender === "M" ? "Masculino" : patient.gender === "F" ? "Feminino" : "Outro"}
+													{patient.gender === "M"
+														? "Masculino"
+														: patient.gender === "F"
+															? "Feminino"
+															: "Outro"}
 												</p>
 											</div>
 										</div>
@@ -259,24 +280,38 @@ export default function PacientesPage() {
 											</div>
 										</div>
 									</TableCell>
-									<TableCell>{calculateAge(patient.dateOfBirth)} anos</TableCell>
+									<TableCell>
+										{calculateAge(patient.dateOfBirth)} anos
+									</TableCell>
 									<TableCell>
 										{patient.lastVisit ? (
 											<div className="flex items-center text-sm">
 												<Calendar className="mr-1 h-3 w-3" />
-												{new Date(patient.lastVisit).toLocaleDateString("pt-BR")}
+												{new Date(patient.lastVisit).toLocaleDateString(
+													"pt-BR",
+												)}
 											</div>
 										) : (
-											<span className="text-muted-foreground">Sem consultas</span>
+											<span className="text-muted-foreground">
+												Sem consultas
+											</span>
 										)}
 									</TableCell>
 									<TableCell>{getStatusBadge(patient.status)}</TableCell>
 									<TableCell>
 										<div className="flex items-center space-x-2">
-											<Button onClick={() => handleEditPatient(patient)} size="sm" variant="ghost">
+											<Button
+												onClick={() => handleEditPatient(patient)}
+												size="sm"
+												variant="ghost"
+											>
 												<Edit className="h-4 w-4" />
 											</Button>
-											<Button onClick={() => handleDeletePatient(patient.id)} size="sm" variant="ghost">
+											<Button
+												onClick={() => handleDeletePatient(patient.id)}
+												size="sm"
+												variant="ghost"
+											>
 												<Trash2 className="h-4 w-4" />
 											</Button>
 										</div>
@@ -292,9 +327,13 @@ export default function PacientesPage() {
 			<Dialog onOpenChange={setIsDialogOpen} open={isDialogOpen}>
 				<DialogContent className="max-w-2xl">
 					<DialogHeader>
-						<DialogTitle>{selectedPatient ? "Editar Paciente" : "Novo Paciente"}</DialogTitle>
+						<DialogTitle>
+							{selectedPatient ? "Editar Paciente" : "Novo Paciente"}
+						</DialogTitle>
 						<DialogDescription>
-							{selectedPatient ? "Atualize as informações do paciente" : "Preencha os dados do novo paciente"}
+							{selectedPatient
+								? "Atualize as informações do paciente"
+								: "Preencha os dados do novo paciente"}
 						</DialogDescription>
 					</DialogHeader>
 
@@ -313,7 +352,11 @@ export default function PacientesPage() {
 								</div>
 								<div>
 									<Label htmlFor="email">Email</Label>
-									<Input defaultValue={selectedPatient?.email} id="email" type="email" />
+									<Input
+										defaultValue={selectedPatient?.email}
+										id="email"
+										type="email"
+									/>
 								</div>
 								<div>
 									<Label htmlFor="phone">Telefone</Label>
@@ -321,7 +364,11 @@ export default function PacientesPage() {
 								</div>
 								<div>
 									<Label htmlFor="birthDate">Data de Nascimento</Label>
-									<Input defaultValue={selectedPatient?.dateOfBirth} id="birthDate" type="date" />
+									<Input
+										defaultValue={selectedPatient?.dateOfBirth}
+										id="birthDate"
+										type="date"
+									/>
 								</div>
 								<div>
 									<Label htmlFor="gender">Gênero</Label>
@@ -338,7 +385,10 @@ export default function PacientesPage() {
 								</div>
 								<div className="col-span-2">
 									<Label htmlFor="address">Endereço</Label>
-									<Textarea defaultValue={selectedPatient?.address} id="address" />
+									<Textarea
+										defaultValue={selectedPatient?.address}
+										id="address"
+									/>
 								</div>
 							</div>
 						</TabsContent>
@@ -373,24 +423,36 @@ export default function PacientesPage() {
 						<TabsContent className="space-y-4" value="emergency">
 							<div className="grid grid-cols-2 gap-4">
 								<div>
-									<Label htmlFor="emergencyContact">Contato de Emergência</Label>
-									<Input defaultValue={selectedPatient?.emergencyContact} id="emergencyContact" />
+									<Label htmlFor="emergencyContact">
+										Contato de Emergência
+									</Label>
+									<Input
+										defaultValue={selectedPatient?.emergencyContact}
+										id="emergencyContact"
+									/>
 								</div>
 								<div>
 									<Label htmlFor="emergencyPhone">Telefone de Emergência</Label>
-									<Input defaultValue={selectedPatient?.emergencyPhone} id="emergencyPhone" />
+									<Input
+										defaultValue={selectedPatient?.emergencyPhone}
+										id="emergencyPhone"
+									/>
 								</div>
 								<div className="col-span-2">
 									<Label htmlFor="insurance">Informações do Convênio</Label>
-									<Input defaultValue={selectedPatient?.insuranceInfo} id="insurance" />
+									<Input
+										defaultValue={selectedPatient?.insuranceInfo}
+										id="insurance"
+									/>
 								</div>
 							</div>
 
 							<Alert>
 								<Heart className="h-4 w-4" />
 								<AlertDescription>
-									<strong>LGPD:</strong> Os dados pessoais são tratados conforme a Lei Geral de Proteção de Dados. O
-									paciente deve consentir com o tratamento de seus dados.
+									<strong>LGPD:</strong> Os dados pessoais são tratados conforme
+									a Lei Geral de Proteção de Dados. O paciente deve consentir
+									com o tratamento de seus dados.
 								</AlertDescription>
 							</Alert>
 						</TabsContent>

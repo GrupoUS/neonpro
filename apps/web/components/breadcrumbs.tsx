@@ -79,7 +79,9 @@ export function Breadcrumbs({ className }: { className?: string }) {
 
 			// Don't create links for certain segments that are not navigable
 			const nonNavigableSegments = ["edit", "new"];
-			const href = nonNavigableSegments.includes(segment) ? undefined : currentPath;
+			const href = nonNavigableSegments.includes(segment)
+				? undefined
+				: currentPath;
 
 			breadcrumbs.push({
 				label,
@@ -101,7 +103,10 @@ export function Breadcrumbs({ className }: { className?: string }) {
 	return (
 		<nav
 			aria-label="Navegação estrutural"
-			className={cn("flex items-center space-x-1 text-muted-foreground text-sm", className)}
+			className={cn(
+				"flex items-center space-x-1 text-muted-foreground text-sm",
+				className,
+			)}
 		>
 			<ol className="flex items-center space-x-1">
 				{breadcrumbs.map((item, index) => {
@@ -109,26 +114,37 @@ export function Breadcrumbs({ className }: { className?: string }) {
 
 					return (
 						<li className="flex items-center" key={index}>
-							{index > 0 && <ChevronRight aria-hidden="true" className="mx-2 h-4 w-4" />}
+							{index > 0 && (
+								<ChevronRight aria-hidden="true" className="mx-2 h-4 w-4" />
+							)}
 
 							{item.href && !isLast ? (
 								<Link
 									aria-current={isLast ? "page" : undefined}
 									className={cn(
 										"flex items-center transition-colors hover:text-foreground",
-										index === 0 && "hover:text-primary"
+										index === 0 && "hover:text-primary",
 									)}
 									to={item.href}
 								>
-									{item.icon && index === 0 && <item.icon className="mr-1 h-4 w-4" />}
+									{item.icon && index === 0 && (
+										<item.icon className="mr-1 h-4 w-4" />
+									)}
 									<span className="max-w-32 truncate">{item.label}</span>
 								</Link>
 							) : (
 								<span
 									aria-current={isLast ? "page" : undefined}
-									className={cn("flex items-center", isLast ? "font-medium text-foreground" : "text-muted-foreground")}
+									className={cn(
+										"flex items-center",
+										isLast
+											? "font-medium text-foreground"
+											: "text-muted-foreground",
+									)}
 								>
-									{item.icon && index === 0 && <item.icon className="mr-1 h-4 w-4" />}
+									{item.icon && index === 0 && (
+										<item.icon className="mr-1 h-4 w-4" />
+									)}
 									<span className="max-w-32 truncate">{item.label}</span>
 								</span>
 							)}
@@ -151,17 +167,26 @@ export function PatientBreadcrumbs({
 	currentSection?: string;
 }) {
 	return (
-		<nav aria-label="Navegação do paciente" className="flex items-center space-x-1 text-muted-foreground text-sm">
+		<nav
+			aria-label="Navegação do paciente"
+			className="flex items-center space-x-1 text-muted-foreground text-sm"
+		>
 			<ol className="flex items-center space-x-1">
 				<li>
-					<Link className="flex items-center transition-colors hover:text-foreground" to="/">
+					<Link
+						className="flex items-center transition-colors hover:text-foreground"
+						to="/"
+					>
 						<Home className="mr-1 h-4 w-4" />
 						Início
 					</Link>
 				</li>
 				<li className="flex items-center">
 					<ChevronRight aria-hidden="true" className="mx-2 h-4 w-4" />
-					<Link className="transition-colors hover:text-foreground" to="/patients">
+					<Link
+						className="transition-colors hover:text-foreground"
+						to="/patients"
+					>
 						Pacientes
 					</Link>
 				</li>
@@ -171,7 +196,9 @@ export function PatientBreadcrumbs({
 						aria-current={currentSection ? undefined : "page"}
 						className={cn(
 							"max-w-32 truncate",
-							currentSection ? "transition-colors hover:text-foreground" : "font-medium text-foreground"
+							currentSection
+								? "transition-colors hover:text-foreground"
+								: "font-medium text-foreground",
 						)}
 						to={`/patients/${patientId}`}
 					>
@@ -201,20 +228,31 @@ export function AppointmentBreadcrumbs({
 	appointmentDate?: string;
 }) {
 	const displayName = patientName || `Consulta ${appointmentId}`;
-	const displayDate = appointmentDate ? new Date(appointmentDate).toLocaleDateString("pt-BR") : "";
+	const displayDate = appointmentDate
+		? new Date(appointmentDate).toLocaleDateString("pt-BR")
+		: "";
 
 	return (
-		<nav aria-label="Navegação da consulta" className="flex items-center space-x-1 text-muted-foreground text-sm">
+		<nav
+			aria-label="Navegação da consulta"
+			className="flex items-center space-x-1 text-muted-foreground text-sm"
+		>
 			<ol className="flex items-center space-x-1">
 				<li>
-					<Link className="flex items-center transition-colors hover:text-foreground" to="/">
+					<Link
+						className="flex items-center transition-colors hover:text-foreground"
+						to="/"
+					>
 						<Home className="mr-1 h-4 w-4" />
 						Início
 					</Link>
 				</li>
 				<li className="flex items-center">
 					<ChevronRight aria-hidden="true" className="mx-2 h-4 w-4" />
-					<Link className="transition-colors hover:text-foreground" to="/appointments">
+					<Link
+						className="transition-colors hover:text-foreground"
+						to="/appointments"
+					>
 						Consultas
 					</Link>
 				</li>
@@ -222,7 +260,11 @@ export function AppointmentBreadcrumbs({
 					<ChevronRight aria-hidden="true" className="mx-2 h-4 w-4" />
 					<span aria-current="page" className="font-medium text-foreground">
 						<span className="max-w-32 truncate">{displayName}</span>
-						{displayDate && <span className="ml-1 text-muted-foreground">({displayDate})</span>}
+						{displayDate && (
+							<span className="ml-1 text-muted-foreground">
+								({displayDate})
+							</span>
+						)}
 					</span>
 				</li>
 			</ol>
@@ -231,9 +273,16 @@ export function AppointmentBreadcrumbs({
 }
 
 // Quick actions breadcrumb for emergency situations
-export function EmergencyBreadcrumbs({ currentAction }: { currentAction: string }) {
+export function EmergencyBreadcrumbs({
+	currentAction,
+}: {
+	currentAction: string;
+}) {
 	return (
-		<nav aria-label="Ação de emergência" className="flex items-center space-x-1 text-sm">
+		<nav
+			aria-label="Ação de emergência"
+			className="flex items-center space-x-1 text-sm"
+		>
 			<div className="flex items-center rounded-md border border-red-200 bg-red-50 px-2 py-1 text-red-700">
 				<span className="font-medium">Emergência:</span>
 				<ChevronRight aria-hidden="true" className="mx-1 h-4 w-4" />

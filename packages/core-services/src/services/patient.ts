@@ -186,7 +186,7 @@ export class PatientService {
 	private static instance: PatientService;
 	private readonly supabase = createClient(
 		process.env.NEXT_PUBLIC_SUPABASE_URL!,
-		process.env.SUPABASE_SERVICE_ROLE_KEY!
+		process.env.SUPABASE_SERVICE_ROLE_KEY!,
 	);
 
 	private constructor() {}
@@ -202,7 +202,10 @@ export class PatientService {
 	// PATIENT CRUD OPERATIONS
 	// ================================================
 
-	async createPatient(request: PatientCreateRequest, userId: string): Promise<Patient> {
+	async createPatient(
+		request: PatientCreateRequest,
+		userId: string,
+	): Promise<Patient> {
 		try {
 			monitoring.info("Creating patient", "patient-service", {
 				tenantId: request.tenantId,
@@ -220,7 +223,8 @@ export class PatientService {
 			}
 
 			// Generate full name
-			const fullName = `${request.personalInfo.firstName} ${request.personalInfo.lastName}`.trim();
+			const fullName =
+				`${request.personalInfo.firstName} ${request.personalInfo.lastName}`.trim();
 
 			// Prepare patient data
 			const patientData = {
@@ -270,7 +274,8 @@ export class PatientService {
 				// Preferences
 				language: request.preferences?.language || "pt-BR",
 				timezone: request.preferences?.timezone || "America/Sao_Paulo",
-				communication_preferences: request.preferences?.communicationPreferences || {
+				communication_preferences: request.preferences
+					?.communicationPreferences || {
 					appointmentReminders: true,
 					promotionalEmails: false,
 					treatmentUpdates: true,
@@ -296,20 +301,36 @@ export class PatientService {
 			};
 
 			// Insert patient
-			const { data, error } = await this.supabase.from("patients").insert(patientData).select().single();
+			const { data, error } = await this.supabase
+				.from("patients")
+				.insert(patientData)
+				.select()
+				.single();
 
 			if (error) {
-				monitoring.error("Patient creation failed", "patient-service", new Error(error.message), {
-					tenantId: request.tenantId,
-					email: request.contactInfo.email,
-				});
+				monitoring.error(
+					"Patient creation failed",
+					"patient-service",
+					new Error(error.message),
+					{
+						tenantId: request.tenantId,
+						email: request.contactInfo.email,
+					},
+				);
 				throw new Error(error.message);
 			}
 
 			const patient = this.mapPatientFromDb(data);
 
 			// Log patient creation
-			await this.logPatientHistory(patient.id, "created", undefined, undefined, undefined, userId);
+			await this.logPatientHistory(
+				patient.id,
+				"created",
+				undefined,
+				undefined,
+				undefined,
+				userId,
+			);
 
 			monitoring.info("Patient created successfully", "patient-service", {
 				patientId: patient.id,
@@ -319,10 +340,15 @@ export class PatientService {
 
 			return patient;
 		} catch (error) {
-			monitoring.error("Patient creation error", "patient-service", error as Error, {
-				tenantId: request.tenantId,
-				email: request.contactInfo.email,
-			});
+			monitoring.error(
+				"Patient creation error",
+				"patient-service",
+				error as Error,
+				{
+					tenantId: request.tenantId,
+					email: request.contactInfo.email,
+				},
+			);
 			throw error;
 		}
 	}
@@ -331,7 +357,11 @@ export class PatientService {
 		try {
 			monitoring.debug("Getting patient", "patient-service", { patientId });
 
-			const { data, error } = await this.supabase.from("patients").select("*").eq("id", patientId).single();
+			const { data, error } = await this.supabase
+				.from("patients")
+				.select("*")
+				.eq("id", patientId)
+				.single();
 
 			if (error || !data) {
 				return null;
@@ -349,7 +379,11 @@ export class PatientService {
 		}
 	}
 
-	async updatePatient(patientId: string, updates: PatientUpdateRequest, userId: string): Promise<Patient | null> {
+	async updatePatient(
+		patientId: string,
+		updates: PatientUpdateRequest,
+		userId: string,
+	): Promise<Patient | null> {
 		try {
 			monitoring.info("Updating patient", "patient-service", { patientId });
 
@@ -377,12 +411,17 @@ export class PatientService {
 					updateData.last_name = updates.personalInfo.lastName;
 				}
 				if (updates.personalInfo.firstName || updates.personalInfo.lastName) {
-					const firstName = updates.personalInfo.firstName || currentPatient.personalInfo.firstName;
-					const lastName = updates.personalInfo.lastName || currentPatient.personalInfo.lastName;
+					const firstName =
+						updates.personalInfo.firstName ||
+						currentPatient.personalInfo.firstName;
+					const lastName =
+						updates.personalInfo.lastName ||
+						currentPatient.personalInfo.lastName;
 					updateData.full_name = `${firstName} ${lastName}`.trim();
 				}
 				if (updates.personalInfo.dateOfBirth) {
-					updateData.date_of_birth = updates.personalInfo.dateOfBirth.toISOString();
+					updateData.date_of_birth =
+						updates.personalInfo.dateOfBirth.toISOString();
 				}
 				if (updates.personalInfo.gender) {
 					updateData.gender = updates.personalInfo.gender;
@@ -419,7 +458,8 @@ export class PatientService {
 					updateData.whatsapp = updates.contactInfo.whatsapp;
 				}
 				if (updates.contactInfo.preferredContactMethod) {
-					updateData.preferred_contact_method = updates.contactInfo.preferredContactMethod;
+					updateData.preferred_contact_method =
+						updates.contactInfo.preferredContactMethod;
 				}
 
 				if (updates.contactInfo.address) {
@@ -471,7 +511,8 @@ export class PatientService {
 					updateData.smoking_status = updates.medicalInfo.smokingStatus;
 				}
 				if (updates.medicalInfo.alcoholConsumption) {
-					updateData.alcohol_consumption = updates.medicalInfo.alcoholConsumption;
+					updateData.alcohol_consumption =
+						updates.medicalInfo.alcoholConsumption;
 				}
 				if (updates.medicalInfo.exerciseFrequency) {
 					updateData.exercise_frequency = updates.medicalInfo.exerciseFrequency;
@@ -487,7 +528,8 @@ export class PatientService {
 					updateData.emergency_contact_name = updates.emergencyContact.name;
 				}
 				if (updates.emergencyContact.relationship !== undefined) {
-					updateData.emergency_contact_relationship = updates.emergencyContact.relationship;
+					updateData.emergency_contact_relationship =
+						updates.emergencyContact.relationship;
 				}
 				if (updates.emergencyContact.phone !== undefined) {
 					updateData.emergency_contact_phone = updates.emergencyContact.phone;
@@ -539,16 +581,28 @@ export class PatientService {
 				.single();
 
 			if (error) {
-				monitoring.error("Patient update failed", "patient-service", new Error(error.message), {
-					patientId,
-				});
+				monitoring.error(
+					"Patient update failed",
+					"patient-service",
+					new Error(error.message),
+					{
+						patientId,
+					},
+				);
 				throw new Error(error.message);
 			}
 
 			const updatedPatient = this.mapPatientFromDb(data);
 
 			// Log patient update
-			await this.logPatientHistory(patientId, "updated", undefined, currentPatient, updatedPatient, userId);
+			await this.logPatientHistory(
+				patientId,
+				"updated",
+				undefined,
+				currentPatient,
+				updatedPatient,
+				userId,
+			);
 
 			monitoring.info("Patient updated successfully", "patient-service", {
 				patientId,
@@ -556,7 +610,12 @@ export class PatientService {
 
 			return updatedPatient;
 		} catch (error) {
-			monitoring.error("Patient update error", "patient-service", error as Error, { patientId });
+			monitoring.error(
+				"Patient update error",
+				"patient-service",
+				error as Error,
+				{ patientId },
+			);
 			throw error;
 		}
 	}
@@ -586,14 +645,26 @@ export class PatientService {
 				.eq("id", patientId);
 
 			if (error) {
-				monitoring.error("Patient deletion failed", "patient-service", new Error(error.message), {
-					patientId,
-				});
+				monitoring.error(
+					"Patient deletion failed",
+					"patient-service",
+					new Error(error.message),
+					{
+						patientId,
+					},
+				);
 				throw new Error(error.message);
 			}
 
 			// Log patient deletion
-			await this.logPatientHistory(patientId, "deleted", undefined, undefined, undefined, userId);
+			await this.logPatientHistory(
+				patientId,
+				"deleted",
+				undefined,
+				undefined,
+				undefined,
+				userId,
+			);
 
 			monitoring.info("Patient deleted successfully", "patient-service", {
 				patientId,
@@ -601,7 +672,12 @@ export class PatientService {
 
 			return true;
 		} catch (error) {
-			monitoring.error("Patient deletion error", "patient-service", error as Error, { patientId });
+			monitoring.error(
+				"Patient deletion error",
+				"patient-service",
+				error as Error,
+				{ patientId },
+			);
 			throw error;
 		}
 	}
@@ -610,7 +686,10 @@ export class PatientService {
 	// PATIENT SEARCH AND FILTERING
 	// ================================================
 
-	async searchPatients(filters: PatientSearchFilters, userId: string): Promise<{ patients: Patient[]; total: number }> {
+	async searchPatients(
+		filters: PatientSearchFilters,
+		userId: string,
+	): Promise<{ patients: Patient[]; total: number }> {
 		try {
 			monitoring.debug("Searching patients", "patient-service", { filters });
 
@@ -619,7 +698,9 @@ export class PatientService {
 				await this.validateTenantAccess(userId, filters.tenantId);
 			}
 
-			let query = this.supabase.from("patients").select("*", { count: "exact" });
+			let query = this.supabase
+				.from("patients")
+				.select("*", { count: "exact" });
 
 			// Apply filters
 			if (filters.tenantId) {
@@ -639,7 +720,9 @@ export class PatientService {
 			}
 
 			if (filters.phone) {
-				query = query.or(`phone.ilike.%${filters.phone}%,whatsapp.ilike.%${filters.phone}%`);
+				query = query.or(
+					`phone.ilike.%${filters.phone}%,whatsapp.ilike.%${filters.phone}%`,
+				);
 			}
 
 			if (filters.cpf) {
@@ -655,7 +738,10 @@ export class PatientService {
 			}
 
 			if (filters.dateOfBirthFrom) {
-				query = query.gte("date_of_birth", filters.dateOfBirthFrom.toISOString());
+				query = query.gte(
+					"date_of_birth",
+					filters.dateOfBirthFrom.toISOString(),
+				);
 			}
 
 			if (filters.dateOfBirthTo) {
@@ -691,9 +777,14 @@ export class PatientService {
 			const { data, error, count } = await query;
 
 			if (error) {
-				monitoring.error("Patient search failed", "patient-service", new Error(error.message), {
-					filters,
-				});
+				monitoring.error(
+					"Patient search failed",
+					"patient-service",
+					new Error(error.message),
+					{
+						filters,
+					},
+				);
 				throw new Error(error.message);
 			}
 
@@ -706,18 +797,35 @@ export class PatientService {
 
 			return { patients, total: count || 0 };
 		} catch (error) {
-			monitoring.error("Patient search error", "patient-service", error as Error, { filters });
+			monitoring.error(
+				"Patient search error",
+				"patient-service",
+				error as Error,
+				{ filters },
+			);
 			throw error;
 		}
 	}
 
-	async getPatientsByClinic(clinicId: string, userId: string): Promise<Patient[]> {
-		const { patients } = await this.searchPatients({ clinicId, limit: 1000 }, userId);
+	async getPatientsByClinic(
+		clinicId: string,
+		userId: string,
+	): Promise<Patient[]> {
+		const { patients } = await this.searchPatients(
+			{ clinicId, limit: 1000 },
+			userId,
+		);
 		return patients;
 	}
 
-	async getPatientsByTenant(tenantId: string, userId: string): Promise<Patient[]> {
-		const { patients } = await this.searchPatients({ tenantId, limit: 1000 }, userId);
+	async getPatientsByTenant(
+		tenantId: string,
+		userId: string,
+	): Promise<Patient[]> {
+		const { patients } = await this.searchPatients(
+			{ tenantId, limit: 1000 },
+			userId,
+		);
 		return patients;
 	}
 
@@ -725,7 +833,10 @@ export class PatientService {
 	// PATIENT HISTORY AND AUDIT
 	// ================================================
 
-	async getPatientHistory(patientId: string, userId: string): Promise<PatientHistory[]> {
+	async getPatientHistory(
+		patientId: string,
+		userId: string,
+	): Promise<PatientHistory[]> {
 		try {
 			monitoring.debug("Getting patient history", "patient-service", {
 				patientId,
@@ -749,9 +860,14 @@ export class PatientService {
 
 			return data.map(this.mapPatientHistoryFromDb);
 		} catch (error) {
-			monitoring.error("Get patient history error", "patient-service", error as Error, {
-				patientId,
-			});
+			monitoring.error(
+				"Get patient history error",
+				"patient-service",
+				error as Error,
+				{
+					patientId,
+				},
+			);
 			throw error;
 		}
 	}
@@ -767,7 +883,7 @@ export class PatientService {
 		consentText: string,
 		version: string,
 		userId: string,
-		clientInfo?: { ipAddress?: string; userAgent?: string }
+		clientInfo?: { ipAddress?: string; userAgent?: string },
 	): Promise<PatientConsent> {
 		try {
 			monitoring.info("Recording patient consent", "patient-service", {
@@ -810,7 +926,7 @@ export class PatientService {
 				`consent_${consentType}`,
 				undefined,
 				{ consentGiven, version },
-				userId
+				userId,
 			);
 
 			monitoring.info("Patient consent recorded", "patient-service", {
@@ -821,15 +937,23 @@ export class PatientService {
 
 			return consent;
 		} catch (error) {
-			monitoring.error("Record consent error", "patient-service", error as Error, {
-				patientId,
-				consentType,
-			});
+			monitoring.error(
+				"Record consent error",
+				"patient-service",
+				error as Error,
+				{
+					patientId,
+					consentType,
+				},
+			);
 			throw error;
 		}
 	}
 
-	async getPatientConsents(patientId: string, userId: string): Promise<PatientConsent[]> {
+	async getPatientConsents(
+		patientId: string,
+		userId: string,
+	): Promise<PatientConsent[]> {
 		try {
 			// Validate access to patient
 			const patient = await this.getPatient(patientId, userId);
@@ -849,9 +973,14 @@ export class PatientService {
 
 			return data.map(this.mapPatientConsentFromDb);
 		} catch (error) {
-			monitoring.error("Get patient consents error", "patient-service", error as Error, {
-				patientId,
-			});
+			monitoring.error(
+				"Get patient consents error",
+				"patient-service",
+				error as Error,
+				{
+					patientId,
+				},
+			);
 			throw error;
 		}
 	}
@@ -862,7 +991,7 @@ export class PatientService {
 
 	async getPatientStats(
 		tenantId: string,
-		userId: string
+		userId: string,
 	): Promise<{
 		totalPatients: number;
 		activePatients: number;
@@ -917,7 +1046,7 @@ export class PatientService {
 						acc[patient.loyalty_level] = (acc[patient.loyalty_level] || 0) + 1;
 						return acc;
 					},
-					{} as Record<string, number>
+					{} as Record<string, number>,
 				) || {};
 
 			// Analyze risk levels
@@ -927,13 +1056,20 @@ export class PatientService {
 						acc[patient.risk_level] = (acc[patient.risk_level] || 0) + 1;
 						return acc;
 					},
-					{} as Record<string, number>
+					{} as Record<string, number>,
 				) || {};
 
 			// Calculate average age
 			const currentYear = new Date().getFullYear();
-			const ages = patients?.map((patient) => currentYear - new Date(patient.date_of_birth).getFullYear()) || [];
-			const averageAge = ages.length > 0 ? ages.reduce((sum, age) => sum + age, 0) / ages.length : 0;
+			const ages =
+				patients?.map(
+					(patient) =>
+						currentYear - new Date(patient.date_of_birth).getFullYear(),
+				) || [];
+			const averageAge =
+				ages.length > 0
+					? ages.reduce((sum, age) => sum + age, 0) / ages.length
+					: 0;
 
 			// Analyze gender distribution
 			const genderDistribution =
@@ -942,7 +1078,7 @@ export class PatientService {
 						acc[patient.gender] = (acc[patient.gender] || 0) + 1;
 						return acc;
 					},
-					{} as Record<string, number>
+					{} as Record<string, number>,
 				) || {};
 
 			return {
@@ -955,7 +1091,12 @@ export class PatientService {
 				genderDistribution,
 			};
 		} catch (error) {
-			monitoring.error("Get patient stats error", "patient-service", error as Error, { tenantId });
+			monitoring.error(
+				"Get patient stats error",
+				"patient-service",
+				error as Error,
+				{ tenantId },
+			);
 			throw error;
 		}
 	}
@@ -964,18 +1105,29 @@ export class PatientService {
 	// PRIVATE HELPER METHODS
 	// ================================================
 
-	private async validateTenantAccess(_userId: string, _tenantId: string): Promise<void> {
+	private async validateTenantAccess(
+		_userId: string,
+		_tenantId: string,
+	): Promise<void> {
 		// Implementation would validate user has access to tenant
 		// For now, we'll assume the auth service handles this
 	}
 
-	private async findDuplicatePatient(request: PatientCreateRequest): Promise<Patient | null> {
+	private async findDuplicatePatient(
+		request: PatientCreateRequest,
+	): Promise<Patient | null> {
 		try {
-			let query = this.supabase.from("patients").select("*").eq("tenant_id", request.tenantId).eq("is_active", true);
+			let query = this.supabase
+				.from("patients")
+				.select("*")
+				.eq("tenant_id", request.tenantId)
+				.eq("is_active", true);
 
 			// Check by email or CPF
 			if (request.personalInfo.cpf) {
-				query = query.or(`email.eq.${request.contactInfo.email},cpf.eq.${request.personalInfo.cpf}`);
+				query = query.or(
+					`email.eq.${request.contactInfo.email},cpf.eq.${request.personalInfo.cpf}`,
+				);
 			} else {
 				query = query.eq("email", request.contactInfo.email);
 			}
@@ -999,7 +1151,7 @@ export class PatientService {
 		oldValue?: any,
 		newValue?: any,
 		userId?: string,
-		reason?: string
+		reason?: string,
 	): Promise<void> {
 		try {
 			await this.supabase.from("patient_history").insert({
@@ -1012,10 +1164,15 @@ export class PatientService {
 				reason,
 			});
 		} catch (error) {
-			monitoring.error("Log patient history error", "patient-service", error as Error, {
-				patientId,
-				action,
-			});
+			monitoring.error(
+				"Log patient history error",
+				"patient-service",
+				error as Error,
+				{
+					patientId,
+					action,
+				},
+			);
 		}
 	}
 

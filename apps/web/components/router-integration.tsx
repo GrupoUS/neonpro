@@ -67,7 +67,9 @@ export function RouterIntegration({ children }: RouterIntegrationProps) {
 }
 
 // Higher-order component for pages that need router integration
-export function withRouterIntegration<T extends {}>(Component: React.ComponentType<T>) {
+export function withRouterIntegration<T extends {}>(
+	Component: React.ComponentType<T>,
+) {
 	const WrappedComponent = (props: T) => {
 		return (
 			<RouterIntegration>
@@ -88,10 +90,15 @@ export function useRoutingMode() {
 	React.useEffect(() => {
 		// Check if we're in a protected route that should use TanStack Router
 		const pathname = window.location.pathname;
-		const protectedRoutes = ["/dashboard", "/patients", "/appointments", "/settings"];
+		const protectedRoutes = [
+			"/dashboard",
+			"/patients",
+			"/appointments",
+			"/settings",
+		];
 
 		const shouldUseTanStackRouter = protectedRoutes.some(
-			(route) => pathname === route || pathname.startsWith(`${route}/`)
+			(route) => pathname === route || pathname.startsWith(`${route}/`),
 		);
 
 		setUseTanStackRouter(shouldUseTanStackRouter);
@@ -101,7 +108,13 @@ export function useRoutingMode() {
 }
 
 // Component to conditionally render based on routing mode
-export function ConditionalRouter({ children, fallback }: { children: React.ReactNode; fallback?: React.ReactNode }) {
+export function ConditionalRouter({
+	children,
+	fallback,
+}: {
+	children: React.ReactNode;
+	fallback?: React.ReactNode;
+}) {
 	const useTanStackRouter = useRoutingMode();
 
 	if (useTanStackRouter) {

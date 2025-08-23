@@ -66,7 +66,9 @@ const mockAuthService = {
 const mockLGPDService = {
 	logDataAccess: (userId: string, dataType: string, action: string) => {
 		if (!(userId && dataType && action)) {
-			throw new Error("userId, dataType, and action are required for LGPD compliance");
+			throw new Error(
+				"userId, dataType, and action are required for LGPD compliance",
+			);
 		}
 		return {
 			logged: true,
@@ -83,7 +85,9 @@ const mockLGPDService = {
 			return { valid: false, error: "Data types required" };
 		}
 		// Mock consent validation
-		const hasConsent = dataTypes.every((type) => ["personal_data", "medical_data", "contact_data"].includes(type));
+		const hasConsent = dataTypes.every((type) =>
+			["personal_data", "medical_data", "contact_data"].includes(type),
+		);
 		return {
 			valid: hasConsent,
 			consented_types: hasConsent ? dataTypes : [],
@@ -162,7 +166,10 @@ describe("Healthcare Authentication System", () => {
 
 	describe("Healthcare Professional Validation", () => {
 		it("should validate correct CRM and state", () => {
-			const result = mockAuthService.validateHealthcareProfessional("12345", "SP");
+			const result = mockAuthService.validateHealthcareProfessional(
+				"12345",
+				"SP",
+			);
 			expect(result.valid).toBe(true);
 			expect(result.professional_type).toBe("medical_doctor");
 		});
@@ -174,13 +181,19 @@ describe("Healthcare Authentication System", () => {
 		});
 
 		it("should reject invalid CRM format", () => {
-			const result = mockAuthService.validateHealthcareProfessional("abc", "SP");
+			const result = mockAuthService.validateHealthcareProfessional(
+				"abc",
+				"SP",
+			);
 			expect(result.valid).toBe(false);
 			expect(result.error).toBe("Invalid CRM format");
 		});
 
 		it("should reject invalid state format", () => {
-			const result = mockAuthService.validateHealthcareProfessional("12345", "X");
+			const result = mockAuthService.validateHealthcareProfessional(
+				"12345",
+				"X",
+			);
 			expect(result.valid).toBe(false);
 			expect(result.error).toBe("Invalid state format");
 		});
@@ -190,7 +203,11 @@ describe("Healthcare Authentication System", () => {
 describe("LGPD Compliance System", () => {
 	describe("Data Access Logging", () => {
 		it("should log data access with all required parameters", () => {
-			const result = mockLGPDService.logDataAccess("user-123", "patient_data", "read");
+			const result = mockLGPDService.logDataAccess(
+				"user-123",
+				"patient_data",
+				"read",
+			);
 			expect(result.logged).toBe(true);
 			expect(result.audit_id).toMatch(/^audit-user-123-/);
 			expect(result.timestamp).toBeDefined();
@@ -199,32 +216,43 @@ describe("LGPD Compliance System", () => {
 		it("should require userId for logging", () => {
 			expect(() => {
 				mockLGPDService.logDataAccess("", "patient_data", "read");
-			}).toThrow("userId, dataType, and action are required for LGPD compliance");
+			}).toThrow(
+				"userId, dataType, and action are required for LGPD compliance",
+			);
 		});
 
 		it("should require dataType for logging", () => {
 			expect(() => {
 				mockLGPDService.logDataAccess("user-123", "", "read");
-			}).toThrow("userId, dataType, and action are required for LGPD compliance");
+			}).toThrow(
+				"userId, dataType, and action are required for LGPD compliance",
+			);
 		});
 
 		it("should require action for logging", () => {
 			expect(() => {
 				mockLGPDService.logDataAccess("user-123", "patient_data", "");
-			}).toThrow("userId, dataType, and action are required for LGPD compliance");
+			}).toThrow(
+				"userId, dataType, and action are required for LGPD compliance",
+			);
 		});
 	});
 
 	describe("Data Consent Validation", () => {
 		it("should validate consent for allowed data types", () => {
-			const result = mockLGPDService.validateDataConsent("user-123", ["personal_data", "medical_data"]);
+			const result = mockLGPDService.validateDataConsent("user-123", [
+				"personal_data",
+				"medical_data",
+			]);
 			expect(result.valid).toBe(true);
 			expect(result.consented_types).toEqual(["personal_data", "medical_data"]);
 			expect(result.consent_date).toBeDefined();
 		});
 
 		it("should reject consent for disallowed data types", () => {
-			const result = mockLGPDService.validateDataConsent("user-123", ["sensitive_data"]);
+			const result = mockLGPDService.validateDataConsent("user-123", [
+				"sensitive_data",
+			]);
 			expect(result.valid).toBe(false);
 			expect(result.consented_types).toEqual([]);
 		});

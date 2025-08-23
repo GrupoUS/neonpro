@@ -24,30 +24,47 @@ import {
 export type NotificationRepository = {
 	// Notification operations
 	createNotification(data: CreateNotificationData): Promise<Notification>;
-	updateNotification(id: string, data: Partial<Notification>): Promise<Notification>;
+	updateNotification(
+		id: string,
+		data: Partial<Notification>,
+	): Promise<Notification>;
 	getNotification(id: string): Promise<Notification | null>;
 	getNotificationsByRecipient(recipientId: string): Promise<Notification[]>;
 	getNotificationsByStatus(status: NotificationStatus): Promise<Notification[]>;
 	getScheduledNotifications(beforeDate: Date): Promise<Notification[]>;
 
 	// Template operations
-	createTemplate(data: CreateNotificationTemplateData): Promise<NotificationTemplate>;
-	updateTemplate(id: string, data: Partial<NotificationTemplate>): Promise<NotificationTemplate>;
+	createTemplate(
+		data: CreateNotificationTemplateData,
+	): Promise<NotificationTemplate>;
+	updateTemplate(
+		id: string,
+		data: Partial<NotificationTemplate>,
+	): Promise<NotificationTemplate>;
 	getTemplate(id: string): Promise<NotificationTemplate | null>;
 	getTemplates(filters?: TemplateFilters): Promise<NotificationTemplate[]>;
 
 	// Campaign operations
-	createCampaign(data: CreateNotificationCampaignData): Promise<NotificationCampaign>;
-	updateCampaign(id: string, data: Partial<NotificationCampaign>): Promise<NotificationCampaign>;
+	createCampaign(
+		data: CreateNotificationCampaignData,
+	): Promise<NotificationCampaign>;
+	updateCampaign(
+		id: string,
+		data: Partial<NotificationCampaign>,
+	): Promise<NotificationCampaign>;
 	getCampaign(id: string): Promise<NotificationCampaign | null>;
 	getCampaigns(status?: CampaignStatus): Promise<NotificationCampaign[]>;
 
 	// Preference operations
-	createOrUpdatePreferences(data: NotificationPreferenceData): Promise<NotificationPreference>;
+	createOrUpdatePreferences(
+		data: NotificationPreferenceData,
+	): Promise<NotificationPreference>;
 	getPreferences(patientId: string): Promise<NotificationPreference | null>;
 
 	// Log operations
-	createLog(data: Omit<NotificationLog, "id" | "createdAt" | "updatedAt">): Promise<NotificationLog>;
+	createLog(
+		data: Omit<NotificationLog, "id" | "createdAt" | "updatedAt">,
+	): Promise<NotificationLog>;
 	getLogs(notificationId: string): Promise<NotificationLog[]>;
 
 	// Patient operations (from other services)
@@ -105,16 +122,26 @@ export type NotificationStats = {
 };
 
 export type ExternalNotificationProvider = {
-	sendEmail(to: string, subject: string, content: string, metadata?: any): Promise<string>;
+	sendEmail(
+		to: string,
+		subject: string,
+		content: string,
+		metadata?: any,
+	): Promise<string>;
 	sendSMS(to: string, message: string, metadata?: any): Promise<string>;
 	sendWhatsApp(to: string, message: string, metadata?: any): Promise<string>;
-	sendPush(deviceToken: string, title: string, message: string, metadata?: any): Promise<string>;
+	sendPush(
+		deviceToken: string,
+		title: string,
+		message: string,
+		metadata?: any,
+	): Promise<string>;
 };
 
 export class NotificationService {
 	constructor(
 		private readonly repository: NotificationRepository,
-		private readonly externalProvider: ExternalNotificationProvider
+		private readonly externalProvider: ExternalNotificationProvider,
 	) {}
 
 	// Core notification management
@@ -130,7 +157,9 @@ export class NotificationService {
 		// Create notification record
 		const notification = await this.repository.createNotification({
 			...data,
-			status: data.scheduledAt ? NotificationStatus.SCHEDULED : NotificationStatus.QUEUED,
+			status: data.scheduledAt
+				? NotificationStatus.SCHEDULED
+				: NotificationStatus.QUEUED,
 			retryCount: 0,
 		});
 
@@ -158,7 +187,7 @@ export class NotificationService {
 						notification.recipientEmail,
 						notification.title,
 						notification.message,
-						notification.metadata
+						notification.metadata,
 					);
 					break;
 
@@ -169,7 +198,7 @@ export class NotificationService {
 					externalId = await this.externalProvider.sendSMS(
 						notification.recipientPhone,
 						notification.message,
-						notification.metadata
+						notification.metadata,
 					);
 					break;
 
@@ -180,12 +209,14 @@ export class NotificationService {
 					externalId = await this.externalProvider.sendWhatsApp(
 						notification.recipientPhone,
 						notification.message,
-						notification.metadata
+						notification.metadata,
 					);
 					break;
 
 				default:
-					throw new Error(`Unsupported notification channel: ${notification.channel}`);
+					throw new Error(
+						`Unsupported notification channel: ${notification.channel}`,
+					);
 			}
 
 			await this.repository.updateNotification(notification.id, {
@@ -205,7 +236,9 @@ export class NotificationService {
 			const shouldRetry = retryCount <= notification.maxRetries;
 
 			await this.repository.updateNotification(notification.id, {
-				status: shouldRetry ? NotificationStatus.QUEUED : NotificationStatus.FAILED,
+				status: shouldRetry
+					? NotificationStatus.QUEUED
+					: NotificationStatus.FAILED,
 				retryCount,
 				errorMessage: error instanceof Error ? error.message : "Unknown error",
 			});
@@ -230,7 +263,10 @@ export class NotificationService {
 			});
 		}
 	} // Appointment-specific notifications
-	async sendAppointmentReminder(appointmentId: string, hoursBeforeAppointment = 24): Promise<Notification> {
+	async sendAppointmentReminder(
+		appointmentId: string,
+		hoursBeforeAppointment = 24,
+	): Promise<Notification> {
 		const appointment = await this.repository.getAppointment(appointmentId);
 		if (!appointment) {
 			throw new Error("Appointment not found");
@@ -241,7 +277,10 @@ export class NotificationService {
 			throw new Error("Patient not found");
 		}
 
-		const scheduledAt = addHours(appointment.scheduledDate, -hoursBeforeAppointment);
+		const scheduledAt = addHours(
+			appointment.scheduledDate,
+			-hoursBeforeAppointment,
+		);
 
 		// Don't schedule if it's in the past
 		if (isBefore(scheduledAt, new Date())) {
@@ -271,7 +310,9 @@ export class NotificationService {
 		});
 	}
 
-	async sendAppointmentConfirmation(appointmentId: string): Promise<Notification> {
+	async sendAppointmentConfirmation(
+		appointmentId: string,
+	): Promise<Notification> {
 		const appointment = await this.repository.getAppointment(appointmentId);
 		if (!appointment) {
 			throw new Error("Appointment not found");
@@ -303,8 +344,12 @@ export class NotificationService {
 		});
 	}
 
-	async sendTreatmentFollowUp(treatmentPlanId: string, sessionNumber: number): Promise<Notification> {
-		const treatmentPlan = await this.repository.getTreatmentPlan(treatmentPlanId);
+	async sendTreatmentFollowUp(
+		treatmentPlanId: string,
+		sessionNumber: number,
+	): Promise<Notification> {
+		const treatmentPlan =
+			await this.repository.getTreatmentPlan(treatmentPlanId);
 		if (!treatmentPlan) {
 			throw new Error("Treatment plan not found");
 		}
@@ -338,7 +383,9 @@ export class NotificationService {
 			isAutomated: true,
 		});
 	} // Template management
-	async createTemplate(data: CreateNotificationTemplateData): Promise<NotificationTemplate> {
+	async createTemplate(
+		data: CreateNotificationTemplateData,
+	): Promise<NotificationTemplate> {
 		const templateData = {
 			...data,
 			version: 1,
@@ -348,7 +395,10 @@ export class NotificationService {
 		return this.repository.createTemplate(templateData);
 	}
 
-	async renderTemplate(templateId: string, variables: Record<string, any>): Promise<string> {
+	async renderTemplate(
+		templateId: string,
+		variables: Record<string, any>,
+	): Promise<string> {
 		const template = await this.repository.getTemplate(templateId);
 		if (!template) {
 			throw new Error("Template not found");
@@ -398,7 +448,9 @@ export class NotificationService {
 	}
 
 	// Campaign management
-	async createCampaign(data: CreateNotificationCampaignData): Promise<NotificationCampaign> {
+	async createCampaign(
+		data: CreateNotificationCampaignData,
+	): Promise<NotificationCampaign> {
 		const template = await this.repository.getTemplate(data.templateId);
 		if (!template) {
 			throw new Error("Template not found");
@@ -416,7 +468,9 @@ export class NotificationService {
 			clickedCount: 0,
 			unsubscribedCount: 0,
 			failedCount: 0,
-			status: data.scheduledAt ? CampaignStatus.SCHEDULED : CampaignStatus.DRAFT,
+			status: data.scheduledAt
+				? CampaignStatus.SCHEDULED
+				: CampaignStatus.DRAFT,
 		});
 
 		return campaign;
@@ -428,7 +482,10 @@ export class NotificationService {
 			throw new Error("Campaign not found");
 		}
 
-		if (campaign.status !== CampaignStatus.SCHEDULED && campaign.status !== CampaignStatus.DRAFT) {
+		if (
+			campaign.status !== CampaignStatus.SCHEDULED &&
+			campaign.status !== CampaignStatus.DRAFT
+		) {
 			throw new Error("Can only launch scheduled or draft campaigns");
 		}
 
@@ -438,7 +495,9 @@ export class NotificationService {
 		});
 
 		// Get recipients and template
-		const recipients = await this.repository.getPatients(campaign.targetAudience);
+		const recipients = await this.repository.getPatients(
+			campaign.targetAudience,
+		);
 		const template = await this.repository.getTemplate(campaign.templateId);
 
 		if (!template) {
@@ -450,7 +509,9 @@ export class NotificationService {
 			try {
 				// Check recipient preferences
 				const preferences = await this.repository.getPreferences(recipient.id);
-				if (!this.canSendCampaignToRecipient(campaign, recipient, preferences)) {
+				if (
+					!this.canSendCampaignToRecipient(campaign, recipient, preferences)
+				) {
 					continue;
 				}
 
@@ -462,7 +523,10 @@ export class NotificationService {
 					phone: recipient.phone,
 				};
 
-				const renderedContent = await this.renderTemplate(template.id, templateData);
+				const renderedContent = await this.renderTemplate(
+					template.id,
+					templateData,
+				);
 
 				await this.sendNotification({
 					type: campaign.type as NotificationType,
@@ -496,7 +560,10 @@ export class NotificationService {
 			completedAt: new Date(),
 		});
 	} // Preference checking and utility methods
-	private canSendNotification(notification: CreateNotificationData, preferences?: NotificationPreference): boolean {
+	private canSendNotification(
+		notification: CreateNotificationData,
+		preferences?: NotificationPreference,
+	): boolean {
 		if (!preferences) {
 			return true; // Default to allowing notifications if no preferences set
 		}
@@ -546,7 +613,7 @@ export class NotificationService {
 	private canSendCampaignToRecipient(
 		campaign: NotificationCampaign,
 		recipient: PatientInfo,
-		preferences?: NotificationPreference
+		preferences?: NotificationPreference,
 	): boolean {
 		// Check if recipient has marketing consent
 		if (!campaign.targetAudience.marketingConsent) {
@@ -580,7 +647,8 @@ export class NotificationService {
 
 	// Scheduled notification processing
 	async processScheduledNotifications(): Promise<void> {
-		const scheduledNotifications = await this.repository.getScheduledNotifications(new Date());
+		const scheduledNotifications =
+			await this.repository.getScheduledNotifications(new Date());
 
 		for (const notification of scheduledNotifications) {
 			try {
@@ -590,26 +658,42 @@ export class NotificationService {
 	}
 
 	// Analytics and reporting
-	async getNotificationStats(startDate?: Date, endDate?: Date): Promise<NotificationStats> {
+	async getNotificationStats(
+		startDate?: Date,
+		endDate?: Date,
+	): Promise<NotificationStats> {
 		// This would need to be implemented based on the repository methods
 		// For now, returning a placeholder implementation
 
-		const allNotifications = await this.repository.getNotificationsByStatus(NotificationStatus.SENT);
+		const allNotifications = await this.repository.getNotificationsByStatus(
+			NotificationStatus.SENT,
+		);
 
 		// Filter by date range if provided
 		const filteredNotifications =
 			startDate && endDate
-				? allNotifications.filter((n) => n.sentAt && n.sentAt >= startDate && n.sentAt <= endDate)
+				? allNotifications.filter(
+						(n) => n.sentAt && n.sentAt >= startDate && n.sentAt <= endDate,
+					)
 				: allNotifications;
 
 		const totalSent = filteredNotifications.length;
-		const totalDelivered = filteredNotifications.filter((n) => n.status === NotificationStatus.DELIVERED).length;
-		const totalOpened = filteredNotifications.filter((n) => n.status === NotificationStatus.OPENED).length;
-		const totalClicked = filteredNotifications.filter((n) => n.status === NotificationStatus.CLICKED).length;
-		const totalFailed = filteredNotifications.filter((n) => n.status === NotificationStatus.FAILED).length;
+		const totalDelivered = filteredNotifications.filter(
+			(n) => n.status === NotificationStatus.DELIVERED,
+		).length;
+		const totalOpened = filteredNotifications.filter(
+			(n) => n.status === NotificationStatus.OPENED,
+		).length;
+		const totalClicked = filteredNotifications.filter(
+			(n) => n.status === NotificationStatus.CLICKED,
+		).length;
+		const totalFailed = filteredNotifications.filter(
+			(n) => n.status === NotificationStatus.FAILED,
+		).length;
 
 		const deliveryRate = totalSent > 0 ? (totalDelivered / totalSent) * 100 : 0;
-		const openRate = totalDelivered > 0 ? (totalOpened / totalDelivered) * 100 : 0;
+		const openRate =
+			totalDelivered > 0 ? (totalOpened / totalDelivered) * 100 : 0;
 		const clickRate = totalOpened > 0 ? (totalClicked / totalOpened) * 100 : 0;
 
 		// Channel distribution
@@ -618,7 +702,9 @@ export class NotificationService {
 			channelMap.set(n.channel, (channelMap.get(n.channel) || 0) + 1);
 		});
 
-		const channelDistribution = Array.from(channelMap.entries()).map(([channel, count]) => ({ channel, count }));
+		const channelDistribution = Array.from(channelMap.entries()).map(
+			([channel, count]) => ({ channel, count }),
+		);
 
 		return {
 			totalSent,
@@ -634,11 +720,15 @@ export class NotificationService {
 	}
 
 	// Preference management
-	async updateNotificationPreferences(data: NotificationPreferenceData): Promise<NotificationPreference> {
+	async updateNotificationPreferences(
+		data: NotificationPreferenceData,
+	): Promise<NotificationPreference> {
 		return this.repository.createOrUpdatePreferences(data);
 	}
 
-	async getNotificationPreferences(patientId: string): Promise<NotificationPreference | null> {
+	async getNotificationPreferences(
+		patientId: string,
+	): Promise<NotificationPreference | null> {
 		return this.repository.getPreferences(patientId);
 	}
 

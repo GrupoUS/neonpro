@@ -3,7 +3,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
 	"Access-Control-Allow-Origin": "*",
-	"Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+	"Access-Control-Allow-Headers":
+		"authorization, x-client-info, apikey, content-type",
 };
 
 type ReportConfig = {
@@ -71,13 +72,19 @@ serve(async (req) => {
 					break;
 
 				case "weekly":
-					if (schedule.dayOfWeek !== undefined && currentDay === schedule.dayOfWeek) {
+					if (
+						schedule.dayOfWeek !== undefined &&
+						currentDay === schedule.dayOfWeek
+					) {
 						shouldGenerate = true;
 					}
 					break;
 
 				case "monthly":
-					if (schedule.dayOfMonth !== undefined && currentDate === schedule.dayOfMonth) {
+					if (
+						schedule.dayOfMonth !== undefined &&
+						currentDate === schedule.dayOfMonth
+					) {
 						shouldGenerate = true;
 					}
 					break;
@@ -149,7 +156,7 @@ serve(async (req) => {
 			{
 				headers: { ...corsHeaders, "Content-Type": "application/json" },
 				status: 200,
-			}
+			},
 		);
 	} catch (error) {
 		return new Response(
@@ -161,7 +168,7 @@ serve(async (req) => {
 			{
 				headers: { ...corsHeaders, "Content-Type": "application/json" },
 				status: 500,
-			}
+			},
 		);
 	}
 });
@@ -184,16 +191,40 @@ async function generateReport(supabase: any, config: ReportConfig) {
 
 	switch (config.report_type) {
 		case "consumption":
-			return await generateConsumptionReport(supabase, clinicId, filters, startDate, endDate);
+			return await generateConsumptionReport(
+				supabase,
+				clinicId,
+				filters,
+				startDate,
+				endDate,
+			);
 
 		case "valuation":
-			return await generateValuationReport(supabase, clinicId, filters, startDate, endDate);
+			return await generateValuationReport(
+				supabase,
+				clinicId,
+				filters,
+				startDate,
+				endDate,
+			);
 
 		case "movement":
-			return await generateMovementReport(supabase, clinicId, filters, startDate, endDate);
+			return await generateMovementReport(
+				supabase,
+				clinicId,
+				filters,
+				startDate,
+				endDate,
+			);
 
 		default:
-			return await generateCustomReport(supabase, clinicId, filters, startDate, endDate);
+			return await generateCustomReport(
+				supabase,
+				clinicId,
+				filters,
+				startDate,
+				endDate,
+			);
 	}
 }
 
@@ -202,7 +233,7 @@ async function generateConsumptionReport(
 	clinicId: string,
 	_filters: any,
 	startDate: Date,
-	endDate: Date
+	endDate: Date,
 ) {
 	// Get consumption data
 	const { data: movements, error } = await supabase
@@ -218,7 +249,7 @@ async function generateConsumptionReport(
         category_id,
         product_categories (name)
       )
-    `
+    `,
 		)
 		.eq("clinic_id", clinicId)
 		.eq("movement_type", "out")
@@ -251,7 +282,8 @@ async function generateConsumptionReport(
 			consumptionByProduct.set(productId, {
 				productId,
 				productName: movement.products?.name || "Produto sem nome",
-				category: movement.products?.product_categories?.name || "Sem categoria",
+				category:
+					movement.products?.product_categories?.name || "Sem categoria",
 				quantity,
 				value,
 				transactions: 1,
@@ -280,7 +312,13 @@ async function generateConsumptionReport(
 	};
 }
 
-async function generateValuationReport(supabase: any, clinicId: string, _filters: any, startDate: Date, endDate: Date) {
+async function generateValuationReport(
+	supabase: any,
+	clinicId: string,
+	_filters: any,
+	startDate: Date,
+	endDate: Date,
+) {
 	// Get current inventory
 	const { data: inventory, error } = await supabase
 		.from("stock_inventory")
@@ -296,7 +334,7 @@ async function generateValuationReport(supabase: any, clinicId: string, _filters
         category_id,
         product_categories (name)
       )
-    `
+    `,
 		)
 		.eq("clinic_id", clinicId)
 		.eq("is_active", true);
@@ -306,7 +344,11 @@ async function generateValuationReport(supabase: any, clinicId: string, _filters
 	}
 
 	const totalValue =
-		inventory?.reduce((sum: number, item: any) => sum + item.quantity_available * item.unit_cost, 0) || 0;
+		inventory?.reduce(
+			(sum: number, item: any) =>
+				sum + item.quantity_available * item.unit_cost,
+			0,
+		) || 0;
 
 	const byCategory = new Map();
 
@@ -355,7 +397,13 @@ async function generateValuationReport(supabase: any, clinicId: string, _filters
 	};
 }
 
-async function generateMovementReport(supabase: any, clinicId: string, _filters: any, startDate: Date, endDate: Date) {
+async function generateMovementReport(
+	supabase: any,
+	clinicId: string,
+	_filters: any,
+	startDate: Date,
+	endDate: Date,
+) {
 	// Get all movements
 	const { data: movements, error } = await supabase
 		.from("stock_movement_transactions")
@@ -368,7 +416,7 @@ async function generateMovementReport(supabase: any, clinicId: string, _filters:
       transaction_date,
       reference_type,
       reference_id
-    `
+    `,
 		)
 		.eq("clinic_id", clinicId)
 		.gte("transaction_date", startDate.toISOString())
@@ -419,7 +467,13 @@ async function generateMovementReport(supabase: any, clinicId: string, _filters:
 	};
 }
 
-async function generateCustomReport(_supabase: any, _clinicId: string, filters: any, startDate: Date, endDate: Date) {
+async function generateCustomReport(
+	_supabase: any,
+	_clinicId: string,
+	filters: any,
+	startDate: Date,
+	endDate: Date,
+) {
 	// Custom report based on filters
 	return {
 		type: "custom",

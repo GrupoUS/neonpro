@@ -169,7 +169,9 @@ export class ADRGenerator {
 					title: String(answers.title || "Untitled"),
 					status: (answers.status || "Proposed") as ADRMetadata["status"],
 					author: String(answers.author || "Unknown"),
-					date: new Date().toISOString().split("T")[0] || new Date().toISOString().substring(0, 10),
+					date:
+						new Date().toISOString().split("T")[0] ||
+						new Date().toISOString().substring(0, 10),
 				},
 				context: (answers.context || "") as string,
 				decision: (answers.decision || "") as string,
@@ -192,7 +194,11 @@ export class ADRGenerator {
 	/**
 	 * Update ADR status
 	 */
-	async updateADRStatus(adrNumber: number, newStatus: ADRMetadata["status"], supersededBy?: number): Promise<void> {
+	async updateADRStatus(
+		adrNumber: number,
+		newStatus: ADRMetadata["status"],
+		supersededBy?: number,
+	): Promise<void> {
 		this.spinner.start(`Updating ADR ${adrNumber} status...`);
 
 		try {
@@ -207,13 +213,16 @@ export class ADRGenerator {
 			let updatedContent = content;
 
 			// Update status
-			updatedContent = updatedContent.replace(/^## Status\n\[.*?\]/m, `## Status\n[${newStatus}]`);
+			updatedContent = updatedContent.replace(
+				/^## Status\n\[.*?\]/m,
+				`## Status\n[${newStatus}]`,
+			);
 
 			// Add superseded information if applicable
 			if (newStatus === "Superseded" && supersededBy) {
 				updatedContent = updatedContent.replace(
 					/^## Status\n\[Superseded\]/m,
-					`## Status\n[Superseded by ADR-${supersededBy.toString().padStart(3, "0")}]`
+					`## Status\n[Superseded by ADR-${supersededBy.toString().padStart(3, "0")}]`,
 				);
 			}
 
@@ -253,7 +262,8 @@ export class ADRGenerator {
 			const adrs = this.getAllADRs();
 			let indexContent = "# Architecture Decision Records\n\n";
 
-			indexContent += "This directory contains all Architecture Decision Records (ADRs) for the NeonPro project.\n\n";
+			indexContent +=
+				"This directory contains all Architecture Decision Records (ADRs) for the NeonPro project.\n\n";
 			indexContent += "## What are ADRs?\n\n";
 			indexContent +=
 				"Architecture Decision Records (ADRs) are documents that capture important architectural decisions made along with their context and consequences.\n\n";
@@ -263,7 +273,9 @@ export class ADRGenerator {
 
 			adrs.forEach((adr) => {
 				const link = `[ADR-${adr.number.toString().padStart(3, "0")}](${this.getADRFilename(adr.number)})`;
-				const status = adr.supersededBy ? `Superseded by ADR-${adr.supersededBy}` : adr.status;
+				const status = adr.supersededBy
+					? `Superseded by ADR-${adr.supersededBy}`
+					: adr.status;
 				indexContent += `| ${link} | ${adr.title} | ${status} | ${adr.date} | ${adr.author} |\n`;
 			});
 
@@ -304,7 +316,9 @@ export class ADRGenerator {
 			.filter((file) => file.match(/^adr-\d{3}-.*\.md$/))
 			.sort();
 
-		return files.map((file) => this.parseADRMetadata(file)).filter(Boolean) as ADRMetadata[];
+		return files
+			.map((file) => this.parseADRMetadata(file))
+			.filter(Boolean) as ADRMetadata[];
 	}
 
 	/**
@@ -326,8 +340,11 @@ export class ADRGenerator {
 
 			// Extract metadata from content
 			const extractedTitle = this.extractTitle(content);
-			const title = extractedTitle ?? (safeTitleSlug ? String(safeTitleSlug).replace(/-/g, " ") : "Untitled");
-			const status = (this.extractStatus(content) as ADRMetadata["status"]) || "Proposed";
+			const title =
+				extractedTitle ??
+				(safeTitleSlug ? String(safeTitleSlug).replace(/-/g, " ") : "Untitled");
+			const status =
+				(this.extractStatus(content) as ADRMetadata["status"]) || "Proposed";
 			const date = this.extractDate(content) ?? "1970-01-01";
 			const author = this.extractAuthor(content) ?? "Unknown";
 			const supersededBy = this.extractSupersededBy(content);
@@ -390,7 +407,9 @@ export class ADRGenerator {
 	 */
 	private getADRFilename(adrNumber: number): string {
 		const files = readdirSync(this.adrDirectory);
-		const pattern = new RegExp(`^adr-${adrNumber.toString().padStart(3, "0")}-.*\\.md$`);
+		const pattern = new RegExp(
+			`^adr-${adrNumber.toString().padStart(3, "0")}-.*\\.md$`,
+		);
 		const found = files.find((file) => pattern.test(file));
 
 		if (!found) {
@@ -409,13 +428,28 @@ export class ADRGenerator {
 			: this.getDefaultTemplate();
 
 		let adrContent = template
-			.replace(/ADR-XXX/g, `ADR-${content.metadata.number.toString().padStart(3, "0")}`)
+			.replace(
+				/ADR-XXX/g,
+				`ADR-${content.metadata.number.toString().padStart(3, "0")}`,
+			)
 			.replace(/\[Short Title of Decision\]/g, content.metadata.title)
-			.replace(/\[Proposed \| Accepted \| Rejected \| Deprecated \| Superseded by ADR-YYY\]/g, content.metadata.status)
+			.replace(
+				/\[Proposed \| Accepted \| Rejected \| Deprecated \| Superseded by ADR-YYY\]/g,
+				content.metadata.status,
+			)
 			.replace(/\[Describe the forces at play[\s\S]*?\]/g, content.context)
-			.replace(/\[Describe our response to these forces[\s\S]*?\]/g, content.decision)
-			.replace(/\[Describe the resulting context[\s\S]*?\]/g, content.consequences)
-			.replace(/\[List the alternative solutions[\s\S]*?\]/g, content.alternatives)
+			.replace(
+				/\[Describe our response to these forces[\s\S]*?\]/g,
+				content.decision,
+			)
+			.replace(
+				/\[Describe the resulting context[\s\S]*?\]/g,
+				content.consequences,
+			)
+			.replace(
+				/\[List the alternative solutions[\s\S]*?\]/g,
+				content.alternatives,
+			)
 			.replace(/\[YYYY-MM-DD\]/g, content.metadata.date)
 			.replace(/\[Names and roles\]/g, content.metadata.author);
 
@@ -423,28 +457,28 @@ export class ADRGenerator {
 		if (content.implementation) {
 			adrContent = adrContent.replace(
 				/\[Optional: Include specific implementation details[\s\S]*?\]/g,
-				content.implementation
+				content.implementation,
 			);
 		}
 
 		if (content.healthcareCompliance) {
 			adrContent = adrContent.replace(
 				/\[If applicable: Include any healthcare-specific compliance[\s\S]*?\]/g,
-				content.healthcareCompliance
+				content.healthcareCompliance,
 			);
 		}
 
 		if (content.securityImplications) {
 			adrContent = adrContent.replace(
 				/\[If applicable: Include security considerations[\s\S]*?\]/g,
-				content.securityImplications
+				content.securityImplications,
 			);
 		}
 
 		if (content.performanceImpact) {
 			adrContent = adrContent.replace(
 				/\[If applicable: Include performance implications[\s\S]*?\]/g,
-				content.performanceImpact
+				content.performanceImpact,
 			);
 		}
 
@@ -526,10 +560,16 @@ if (require.main === module) {
 			generator.generateIndex();
 			break;
 		case "update": {
-			const adrNumber = process.argv[3] ? Number.parseInt(process.argv[3], 10) : 0;
+			const adrNumber = process.argv[3]
+				? Number.parseInt(process.argv[3], 10)
+				: 0;
 			const newStatus = process.argv[4] as ADRMetadata["status"];
-			const supersededBy = process.argv[5] ? Number.parseInt(process.argv[5], 10) : undefined;
-			generator.updateADRStatus(adrNumber, newStatus, supersededBy).catch(console.error);
+			const supersededBy = process.argv[5]
+				? Number.parseInt(process.argv[5], 10)
+				: undefined;
+			generator
+				.updateADRStatus(adrNumber, newStatus, supersededBy)
+				.catch(console.error);
 			break;
 		}
 		default:

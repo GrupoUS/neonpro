@@ -44,7 +44,9 @@ export function useRealtimeAppointments(clinicId?: string) {
 			}
 			setAppointments(data || []);
 		} catch (err) {
-			setError(err instanceof Error ? err.message : "Failed to fetch appointments");
+			setError(
+				err instanceof Error ? err.message : "Failed to fetch appointments",
+			);
 		} finally {
 			setLoading(false);
 		}
@@ -74,12 +76,16 @@ export function useRealtimeAppointments(clinicId?: string) {
 						setAppointments((prev) => [...prev, payload.new as Appointment]);
 					} else if (payload.eventType === "UPDATE") {
 						setAppointments((prev) =>
-							prev.map((apt) => (apt.id === payload.new.id ? { ...apt, ...payload.new } : apt))
+							prev.map((apt) =>
+								apt.id === payload.new.id ? { ...apt, ...payload.new } : apt,
+							),
 						);
 					} else if (payload.eventType === "DELETE") {
-						setAppointments((prev) => prev.filter((apt) => apt.id !== payload.old.id));
+						setAppointments((prev) =>
+							prev.filter((apt) => apt.id !== payload.old.id),
+						);
 					}
-				}
+				},
 			)
 			.subscribe((status) => {
 				if (status === "SUBSCRIBED") {
@@ -151,7 +157,7 @@ export function useRealtimeNotifications(userId?: string) {
 					if (!payload.new.is_read) {
 						setUnreadCount((prev) => prev + 1);
 					}
-				}
+				},
 			)
 			.on(
 				"postgres_changes",
@@ -163,14 +169,18 @@ export function useRealtimeNotifications(userId?: string) {
 				},
 				(payload) => {
 					setNotifications((prev) =>
-						prev.map((notif) => (notif.id === payload.new.id ? { ...notif, ...payload.new } : notif))
+						prev.map((notif) =>
+							notif.id === payload.new.id
+								? { ...notif, ...payload.new }
+								: notif,
+						),
 					);
 
 					// Update unread count if notification was marked as read
 					if (payload.old.is_read === false && payload.new.is_read === true) {
 						setUnreadCount((prev) => Math.max(0, prev - 1));
 					}
-				}
+				},
 			)
 			.subscribe();
 
@@ -192,7 +202,7 @@ export function useRealtimeNotifications(userId?: string) {
 				}
 			} catch (_err) {}
 		},
-		[supabase]
+		[supabase],
 	);
 
 	return {
@@ -255,12 +265,18 @@ export function useRealtimeProfessionalAvailability(professionalId?: string) {
 						setAvailability((prev) => [...prev, payload.new as any]);
 					} else if (payload.eventType === "UPDATE") {
 						setAvailability((prev) =>
-							prev.map((avail) => (avail.id === payload.new.id ? { ...avail, ...payload.new } : avail))
+							prev.map((avail) =>
+								avail.id === payload.new.id
+									? { ...avail, ...payload.new }
+									: avail,
+							),
 						);
 					} else if (payload.eventType === "DELETE") {
-						setAvailability((prev) => prev.filter((avail) => avail.id !== payload.old.id));
+						setAvailability((prev) =>
+							prev.filter((avail) => avail.id !== payload.old.id),
+						);
 					}
-				}
+				},
 			)
 			.subscribe();
 

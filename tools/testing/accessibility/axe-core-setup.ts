@@ -1,6 +1,9 @@
 // tools/testing/accessibility/axe-core-setup.ts
 import { configureAxe, getViolations, type Result } from "jest-axe";
-import { HEALTHCARE_A11Y_SCENARIOS, WCAG_AA_CONFIG } from "./accessibility-audit-config";
+import {
+	HEALTHCARE_A11Y_SCENARIOS,
+	WCAG_AA_CONFIG,
+} from "./accessibility-audit-config";
 
 /**
  * NEONPRO HEALTHCARE - AXE-CORE TEST SETUP
@@ -27,7 +30,7 @@ export class HealthcareAccessibilityTester {
 	 */
 	async auditComponent(
 		container: HTMLElement,
-		scenario?: keyof typeof HEALTHCARE_A11Y_SCENARIOS
+		scenario?: keyof typeof HEALTHCARE_A11Y_SCENARIOS,
 	): Promise<HealthcareAccessibilityResult> {
 		const results = await this.axe(container);
 		const violations = getViolations(results);
@@ -60,7 +63,7 @@ export class HealthcareAccessibilityTester {
 	 */
 	private assessHealthcareCompliance(
 		results: Result,
-		scenario?: keyof typeof HEALTHCARE_A11Y_SCENARIOS
+		scenario?: keyof typeof HEALTHCARE_A11Y_SCENARIOS,
 	): HealthcareComplianceResult {
 		if (!scenario) {
 			return { compliant: true, issues: [] };
@@ -70,14 +73,16 @@ export class HealthcareAccessibilityTester {
 		const issues: string[] = [];
 
 		// Check scenario-specific requirements
-		Object.entries(scenarioConfig.requirements).forEach(([requirement, enabled]) => {
-			if (enabled) {
-				const hasIssue = this.checkSpecificRequirement(results, requirement);
-				if (hasIssue) {
-					issues.push(`Healthcare requirement "${requirement}" not met`);
+		Object.entries(scenarioConfig.requirements).forEach(
+			([requirement, enabled]) => {
+				if (enabled) {
+					const hasIssue = this.checkSpecificRequirement(results, requirement);
+					if (hasIssue) {
+						issues.push(`Healthcare requirement "${requirement}" not met`);
+					}
 				}
-			}
-		});
+			},
+		);
 
 		return {
 			compliant: issues.length === 0,
@@ -97,8 +102,13 @@ export class HealthcareAccessibilityTester {
 		results.violations?.forEach((violation) => {
 			violation.nodes.forEach((node) => {
 				const element = node.element;
-				if (element?.hasAttribute("data-lgpd") || element?.hasAttribute("data-sensitive")) {
-					issues.push(`LGPD-protected element has accessibility violation: ${violation.description}`);
+				if (
+					element?.hasAttribute("data-lgpd") ||
+					element?.hasAttribute("data-sensitive")
+				) {
+					issues.push(
+						`LGPD-protected element has accessibility violation: ${violation.description}`,
+					);
 				}
 			});
 		});
@@ -114,7 +124,9 @@ export class HealthcareAccessibilityTester {
 	/**
 	 * Assess emergency interface accessibility
 	 */
-	private assessEmergencyAccessibility(results: Result): EmergencyAccessibilityResult {
+	private assessEmergencyAccessibility(
+		results: Result,
+	): EmergencyAccessibilityResult {
 		const issues: string[] = [];
 		let emergencyElementsCount = 0;
 
@@ -123,10 +135,13 @@ export class HealthcareAccessibilityTester {
 				const element = node.element;
 				if (
 					element?.hasAttribute("data-emergency") ||
-					(element?.hasAttribute("data-priority") && element.getAttribute("data-priority") === "critical")
+					(element?.hasAttribute("data-priority") &&
+						element.getAttribute("data-priority") === "critical")
 				) {
 					emergencyElementsCount++;
-					issues.push(`Emergency element has accessibility violation: ${violation.description}`);
+					issues.push(
+						`Emergency element has accessibility violation: ${violation.description}`,
+					);
 				}
 			});
 		});
@@ -144,7 +159,10 @@ export class HealthcareAccessibilityTester {
 	 * Calculate overall accessibility score (0-100)
 	 */
 	private calculateAccessibilityScore(results: Result): number {
-		const totalRules = results.passes.length + results.violations.length + results.incomplete.length;
+		const totalRules =
+			results.passes.length +
+			results.violations.length +
+			results.incomplete.length;
 		if (totalRules === 0) {
 			return 100;
 		}
@@ -174,7 +192,10 @@ export class HealthcareAccessibilityTester {
 	/**
 	 * Helper methods for specific compliance checks
 	 */
-	private checkSpecificRequirement(results: Result, requirement: string): boolean {
+	private checkSpecificRequirement(
+		results: Result,
+		requirement: string,
+	): boolean {
 		// Implementation depends on specific requirement
 		switch (requirement) {
 			case "colorContrast":
@@ -192,7 +213,9 @@ export class HealthcareAccessibilityTester {
 
 	private countLGPDElements(_results: Result): number {
 		// Count elements with LGPD attributes
-		const allElements = document.querySelectorAll("[data-lgpd], [data-sensitive]");
+		const allElements = document.querySelectorAll(
+			"[data-lgpd], [data-sensitive]",
+		);
 		return allElements.length;
 	}
 
@@ -206,7 +229,9 @@ export class HealthcareAccessibilityTester {
 	private checkCriticalContrast(results: Result): boolean {
 		// Check if critical elements meet enhanced contrast ratio
 		return !results.violations.some(
-			(v) => v.id === "color-contrast" && v.nodes.some((node) => node.element?.hasAttribute("data-emergency"))
+			(v) =>
+				v.id === "color-contrast" &&
+				v.nodes.some((node) => node.element?.hasAttribute("data-emergency")),
 		);
 	}
 }
@@ -218,7 +243,9 @@ export const healthcareA11yTests = {
 	/**
 	 * Test emergency interface accessibility
 	 */
-	async testEmergencyInterface(container: HTMLElement): Promise<HealthcareAccessibilityResult> {
+	async testEmergencyInterface(
+		container: HTMLElement,
+	): Promise<HealthcareAccessibilityResult> {
 		const tester = new HealthcareAccessibilityTester();
 		return await tester.auditComponent(container, "emergency");
 	},
@@ -226,7 +253,9 @@ export const healthcareA11yTests = {
 	/**
 	 * Test patient data interface accessibility
 	 */
-	async testPatientDataInterface(container: HTMLElement): Promise<HealthcareAccessibilityResult> {
+	async testPatientDataInterface(
+		container: HTMLElement,
+	): Promise<HealthcareAccessibilityResult> {
 		const tester = new HealthcareAccessibilityTester();
 		return await tester.auditComponent(container, "patientData");
 	},
@@ -234,7 +263,9 @@ export const healthcareA11yTests = {
 	/**
 	 * Test form accessibility
 	 */
-	async testFormAccessibility(container: HTMLElement): Promise<HealthcareAccessibilityResult> {
+	async testFormAccessibility(
+		container: HTMLElement,
+	): Promise<HealthcareAccessibilityResult> {
 		const tester = new HealthcareAccessibilityTester();
 		return await tester.auditComponent(container, "forms");
 	},
@@ -242,7 +273,9 @@ export const healthcareA11yTests = {
 	/**
 	 * Test navigation accessibility
 	 */
-	async testNavigationAccessibility(container: HTMLElement): Promise<HealthcareAccessibilityResult> {
+	async testNavigationAccessibility(
+		container: HTMLElement,
+	): Promise<HealthcareAccessibilityResult> {
 		const tester = new HealthcareAccessibilityTester();
 		return await tester.auditComponent(container, "navigation");
 	},
@@ -250,7 +283,9 @@ export const healthcareA11yTests = {
 	/**
 	 * Test table accessibility
 	 */
-	async testTableAccessibility(container: HTMLElement): Promise<HealthcareAccessibilityResult> {
+	async testTableAccessibility(
+		container: HTMLElement,
+	): Promise<HealthcareAccessibilityResult> {
 		const tester = new HealthcareAccessibilityTester();
 		return await tester.auditComponent(container, "tables");
 	},
@@ -261,13 +296,14 @@ export const healthcareA11yTests = {
  */
 export const toBeAccessibleForHealthcare = (
 	container: HTMLElement,
-	scenario?: keyof typeof HEALTHCARE_A11Y_SCENARIOS
+	scenario?: keyof typeof HEALTHCARE_A11Y_SCENARIOS,
 ) => {
 	return new Promise(async (resolve) => {
 		const tester = new HealthcareAccessibilityTester();
 		const result = await tester.auditComponent(container, scenario);
 
-		const pass = result.violations.length === 0 && result.healthcareCompliance.compliant;
+		const pass =
+			result.violations.length === 0 && result.healthcareCompliance.compliant;
 
 		resolve({
 			pass,

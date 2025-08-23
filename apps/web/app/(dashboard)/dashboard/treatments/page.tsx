@@ -26,17 +26,39 @@ import CosmeticConsentBrazilian from "@/components/treatments/CosmeticConsentBra
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Import hooks
 import { useTreatments } from "@/hooks/useTreatments";
-import type { AestheticTreatmentCategory, TreatmentPlan, TreatmentStatus } from "@/types/treatments";
+import type {
+	AestheticTreatmentCategory,
+	TreatmentPlan,
+	TreatmentStatus,
+} from "@/types/treatments";
 
 // Visual components maintaining NeonPro design
 type NeonGradientCardProps = {
@@ -44,7 +66,10 @@ type NeonGradientCardProps = {
 	className?: string;
 };
 
-const NeonGradientCard = ({ children, className = "" }: NeonGradientCardProps) => (
+const NeonGradientCard = ({
+	children,
+	className = "",
+}: NeonGradientCardProps) => (
 	<motion.div
 		animate={{ opacity: 1, y: 0 }}
 		className={`relative overflow-hidden rounded-xl border border-slate-800 bg-gradient-to-br from-slate-900/90 to-blue-900/30 backdrop-blur-sm ${className}`}
@@ -80,9 +105,14 @@ export default function TreatmentsPage() {
 	// State management
 	const [viewMode, setViewMode] = useState<ViewMode>("overview");
 	const [searchQuery, setSearchQuery] = useState("");
-	const [categoryFilter, setCategoryFilter] = useState<AestheticTreatmentCategory | "all">("all");
-	const [statusFilter, setStatusFilter] = useState<TreatmentStatus | "all">("all");
-	const [_selectedTreatment, _setSelectedTreatment] = useState<TreatmentPlan | null>(null);
+	const [categoryFilter, setCategoryFilter] = useState<
+		AestheticTreatmentCategory | "all"
+	>("all");
+	const [statusFilter, setStatusFilter] = useState<TreatmentStatus | "all">(
+		"all",
+	);
+	const [_selectedTreatment, _setSelectedTreatment] =
+		useState<TreatmentPlan | null>(null);
 	const [showNewTreatmentDialog, setShowNewTreatmentDialog] = useState(false);
 
 	// Handle search
@@ -94,7 +124,9 @@ export default function TreatmentsPage() {
 	// Handle category filter
 	const handleCategoryFilter = (category: string) => {
 		setCategoryFilter(category as AestheticTreatmentCategory | "all");
-		filterByCategory(category === "all" ? null : (category as AestheticTreatmentCategory));
+		filterByCategory(
+			category === "all" ? null : (category as AestheticTreatmentCategory),
+		);
 	};
 
 	// Handle status filter
@@ -112,7 +144,8 @@ export default function TreatmentsPage() {
 		treatment_type: "multi_session",
 		category: "facial",
 		status: "active",
-		description: "Tratamento de rejuvenescimento facial utilizando laser fracionado para melhoria da textura da pele.",
+		description:
+			"Tratamento de rejuvenescimento facial utilizando laser fracionado para melhoria da textura da pele.",
 		expected_sessions: 6,
 		completed_sessions: 2,
 		session_interval_days: 21,
@@ -129,8 +162,12 @@ export default function TreatmentsPage() {
 		payment_plan: null,
 		insurance_coverage: null,
 		start_date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-		estimated_completion_date: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(),
-		next_session_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+		estimated_completion_date: new Date(
+			Date.now() + 90 * 24 * 60 * 60 * 1000,
+		).toISOString(),
+		next_session_date: new Date(
+			Date.now() + 7 * 24 * 60 * 60 * 1000,
+		).toISOString(),
 		created_at: new Date().toISOString(),
 		updated_at: new Date().toISOString(),
 		created_by: "system",
@@ -142,7 +179,9 @@ export default function TreatmentsPage() {
 			<div className="flex-1 space-y-4 p-4 pt-6 md:p-8">
 				<Alert className="border-red-500/50 bg-red-500/10">
 					<AlertTriangle className="h-4 w-4" />
-					<AlertDescription className="text-red-100">Erro ao carregar tratamentos: {error.message}</AlertDescription>
+					<AlertDescription className="text-red-100">
+						Erro ao carregar tratamentos: {error.message}
+					</AlertDescription>
 				</Alert>
 			</div>
 		);
@@ -153,9 +192,12 @@ export default function TreatmentsPage() {
 			{/* Page Header */}
 			<div className="flex items-center justify-between space-y-2">
 				<div>
-					<h2 className="font-bold text-3xl tracking-tight">Gestão de Tratamentos</h2>
+					<h2 className="font-bold text-3xl tracking-tight">
+						Gestão de Tratamentos
+					</h2>
 					<p className="text-muted-foreground">
-						Sistema completo para medicina estética brasileira com conformidade LGPD e CFM
+						Sistema completo para medicina estética brasileira com conformidade
+						LGPD e CFM
 					</p>
 				</div>
 				<div className="flex items-center space-x-2">
@@ -174,51 +216,73 @@ export default function TreatmentsPage() {
 			<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
 				<NeonGradientCard>
 					<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-						<CardTitle className="font-medium text-slate-300 text-sm">Tratamentos Ativos</CardTitle>
+						<CardTitle className="font-medium text-slate-300 text-sm">
+							Tratamentos Ativos
+						</CardTitle>
 						<Activity className="h-4 w-4 text-blue-400" />
 					</CardHeader>
 					<CardContent>
-						<div className="font-bold text-2xl text-white">{activeTreatments.length}</div>
+						<div className="font-bold text-2xl text-white">
+							{activeTreatments.length}
+						</div>
 						<p className="text-slate-400 text-xs">+2 novos esta semana</p>
 					</CardContent>
 				</NeonGradientCard>
 
 				<NeonGradientCard>
 					<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-						<CardTitle className="font-medium text-slate-300 text-sm">Sessões Hoje</CardTitle>
+						<CardTitle className="font-medium text-slate-300 text-sm">
+							Sessões Hoje
+						</CardTitle>
 						<Calendar className="h-4 w-4 text-green-400" />
 					</CardHeader>
 					<CardContent>
-						<div className="font-bold text-2xl text-white">{todaysSessions.length}</div>
-						<p className="text-slate-400 text-xs">{upcomingSessions.length} agendadas</p>
+						<div className="font-bold text-2xl text-white">
+							{todaysSessions.length}
+						</div>
+						<p className="text-slate-400 text-xs">
+							{upcomingSessions.length} agendadas
+						</p>
 					</CardContent>
 				</NeonGradientCard>
 
 				<NeonGradientCard>
 					<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-						<CardTitle className="font-medium text-slate-300 text-sm">Taxa de Conclusão</CardTitle>
+						<CardTitle className="font-medium text-slate-300 text-sm">
+							Taxa de Conclusão
+						</CardTitle>
 						<TrendingUp className="h-4 w-4 text-purple-400" />
 					</CardHeader>
 					<CardContent>
-						<div className="font-bold text-2xl text-white">{completionRate.toFixed(1)}%</div>
+						<div className="font-bold text-2xl text-white">
+							{completionRate.toFixed(1)}%
+						</div>
 						<p className="text-slate-400 text-xs">+5.2% vs mês anterior</p>
 					</CardContent>
 				</NeonGradientCard>
 
 				<NeonGradientCard>
 					<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-						<CardTitle className="font-medium text-slate-300 text-sm">Satisfação Média</CardTitle>
+						<CardTitle className="font-medium text-slate-300 text-sm">
+							Satisfação Média
+						</CardTitle>
 						<Star className="h-4 w-4 text-yellow-400" />
 					</CardHeader>
 					<CardContent>
-						<div className="font-bold text-2xl text-white">{averageSatisfactionScore.toFixed(1)}/10</div>
+						<div className="font-bold text-2xl text-white">
+							{averageSatisfactionScore.toFixed(1)}/10
+						</div>
 						<p className="text-slate-400 text-xs">Excelente qualidade</p>
 					</CardContent>
 				</NeonGradientCard>
 			</div>
 
 			{/* Main Content Tabs */}
-			<Tabs className="space-y-4" onValueChange={(value) => setViewMode(value as ViewMode)} value={viewMode}>
+			<Tabs
+				className="space-y-4"
+				onValueChange={(value) => setViewMode(value as ViewMode)}
+				value={viewMode}
+			>
 				<TabsList className="grid w-full grid-cols-4">
 					<TabsTrigger value="overview">Visão Geral</TabsTrigger>
 					<TabsTrigger value="treatments">Tratamentos</TabsTrigger>
@@ -236,7 +300,9 @@ export default function TreatmentsPage() {
 									<Heart className="h-5 w-5" />
 									Tratamentos em Andamento
 								</CardTitle>
-								<CardDescription>Acompanhamento dos tratamentos ativos</CardDescription>
+								<CardDescription>
+									Acompanhamento dos tratamentos ativos
+								</CardDescription>
 							</CardHeader>
 							<CardContent>
 								<div className="space-y-4">
@@ -246,18 +312,29 @@ export default function TreatmentsPage() {
 											key={treatment.id || index}
 										>
 											<div className="flex-1">
-												<p className="font-medium">{treatment.treatment_name || "Tratamento de Exemplo"}</p>
+												<p className="font-medium">
+													{treatment.treatment_name || "Tratamento de Exemplo"}
+												</p>
 												<p className="text-muted-foreground text-sm">
-													{treatment.completed_sessions || 2}/{treatment.expected_sessions || 6} sessões
+													{treatment.completed_sessions || 2}/
+													{treatment.expected_sessions || 6} sessões
 												</p>
 											</div>
 											<div className="flex items-center gap-2">
 												<Progress
 													className="h-2 w-20"
-													value={((treatment.completed_sessions || 2) / (treatment.expected_sessions || 6)) * 100}
+													value={
+														((treatment.completed_sessions || 2) /
+															(treatment.expected_sessions || 6)) *
+														100
+													}
 												/>
 												<Badge variant="outline">
-													{Math.round(((treatment.completed_sessions || 2) / (treatment.expected_sessions || 6)) * 100)}
+													{Math.round(
+														((treatment.completed_sessions || 2) /
+															(treatment.expected_sessions || 6)) *
+															100,
+													)}
 													%
 												</Badge>
 											</div>
@@ -267,7 +344,9 @@ export default function TreatmentsPage() {
 									{activeTreatments.length === 0 && (
 										<div className="py-6 text-center">
 											<Heart className="mx-auto mb-2 h-12 w-12 text-muted-foreground" />
-											<p className="text-muted-foreground">Nenhum tratamento ativo no momento</p>
+											<p className="text-muted-foreground">
+												Nenhum tratamento ativo no momento
+											</p>
 											<Button
 												className="mt-2"
 												onClick={() => setShowNewTreatmentDialog(true)}
@@ -280,7 +359,11 @@ export default function TreatmentsPage() {
 									)}
 
 									{activeTreatments.length > 3 && (
-										<Button className="w-full" onClick={() => setViewMode("treatments")} variant="outline">
+										<Button
+											className="w-full"
+											onClick={() => setViewMode("treatments")}
+											variant="outline"
+										>
 											Ver Todos os Tratamentos ({activeTreatments.length})
 										</Button>
 									)}
@@ -300,11 +383,18 @@ export default function TreatmentsPage() {
 							<CardContent>
 								<div className="space-y-4">
 									{todaysSessions.slice(0, 4).map((session, index) => (
-										<div className="flex items-center justify-between rounded-lg border p-3" key={session.id || index}>
+										<div
+											className="flex items-center justify-between rounded-lg border p-3"
+											key={session.id || index}
+										>
 											<div>
-												<p className="font-medium">Sessão {session.session_number || index + 1}</p>
+												<p className="font-medium">
+													Sessão {session.session_number || index + 1}
+												</p>
 												<p className="text-muted-foreground text-sm">
-													{new Date(session.scheduled_date || Date.now()).toLocaleTimeString("pt-BR", {
+													{new Date(
+														session.scheduled_date || Date.now(),
+													).toLocaleTimeString("pt-BR", {
 														hour: "2-digit",
 														minute: "2-digit",
 													})}
@@ -331,12 +421,18 @@ export default function TreatmentsPage() {
 									{todaysSessions.length === 0 && (
 										<div className="py-6 text-center">
 											<Calendar className="mx-auto mb-2 h-12 w-12 text-muted-foreground" />
-											<p className="text-muted-foreground">Nenhuma sessão agendada para hoje</p>
+											<p className="text-muted-foreground">
+												Nenhuma sessão agendada para hoje
+											</p>
 										</div>
 									)}
 
 									{todaysSessions.length > 4 && (
-										<Button className="w-full" onClick={() => setViewMode("sessions")} variant="outline">
+										<Button
+											className="w-full"
+											onClick={() => setViewMode("sessions")}
+											variant="outline"
+										>
 											Ver Todas as Sessões ({todaysSessions.length})
 										</Button>
 									)}
@@ -352,7 +448,9 @@ export default function TreatmentsPage() {
 								<Zap className="h-5 w-5" />
 								Exemplo de Plano de Tratamento
 							</CardTitle>
-							<CardDescription>Demonstração da interface de tratamento estético brasileiro</CardDescription>
+							<CardDescription>
+								Demonstração da interface de tratamento estético brasileiro
+							</CardDescription>
 						</CardHeader>
 						<CardContent>
 							<AestheticTreatmentPlan
@@ -384,17 +482,28 @@ export default function TreatmentsPage() {
 									/>
 								</div>
 
-								<Select onValueChange={handleCategoryFilter} value={categoryFilter}>
+								<Select
+									onValueChange={handleCategoryFilter}
+									value={categoryFilter}
+								>
 									<SelectTrigger className="w-48">
 										<SelectValue placeholder="Categoria" />
 									</SelectTrigger>
 									<SelectContent>
 										<SelectItem value="all">Todas as Categorias</SelectItem>
 										<SelectItem value="facial">Tratamentos Faciais</SelectItem>
-										<SelectItem value="body_contouring">Contorno Corporal</SelectItem>
-										<SelectItem value="skin_rejuvenation">Rejuvenescimento</SelectItem>
-										<SelectItem value="hair_restoration">Restauração Capilar</SelectItem>
-										<SelectItem value="intimate_health">Saúde Íntima</SelectItem>
+										<SelectItem value="body_contouring">
+											Contorno Corporal
+										</SelectItem>
+										<SelectItem value="skin_rejuvenation">
+											Rejuvenescimento
+										</SelectItem>
+										<SelectItem value="hair_restoration">
+											Restauração Capilar
+										</SelectItem>
+										<SelectItem value="intimate_health">
+											Saúde Íntima
+										</SelectItem>
 									</SelectContent>
 								</Select>
 
@@ -467,14 +576,19 @@ export default function TreatmentsPage() {
 								<Calendar className="h-5 w-5" />
 								Gestão de Sessões
 							</CardTitle>
-							<CardDescription>Acompanhamento e agendamento de sessões de tratamento</CardDescription>
+							<CardDescription>
+								Acompanhamento e agendamento de sessões de tratamento
+							</CardDescription>
 						</CardHeader>
 						<CardContent>
 							<div className="py-12 text-center">
 								<Calendar className="mx-auto mb-4 h-16 w-16 text-muted-foreground" />
-								<h3 className="mb-2 font-semibold text-lg">Calendário de Sessões</h3>
+								<h3 className="mb-2 font-semibold text-lg">
+									Calendário de Sessões
+								</h3>
 								<p className="mb-4 text-muted-foreground">
-									Interface de agendamento e gerenciamento de sessões será implementada aqui.
+									Interface de agendamento e gerenciamento de sessões será
+									implementada aqui.
 								</p>
 								<Button variant="outline">
 									<Plus className="mr-2 h-4 w-4" />
@@ -495,7 +609,9 @@ export default function TreatmentsPage() {
 									<Shield className="h-5 w-5" />
 									Conformidade LGPD
 								</CardTitle>
-								<CardDescription>Status de conformidade com a Lei Geral de Proteção de Dados</CardDescription>
+								<CardDescription>
+									Status de conformidade com a Lei Geral de Proteção de Dados
+								</CardDescription>
 							</CardHeader>
 							<CardContent className="space-y-4">
 								<div className="flex items-center justify-between">
@@ -526,8 +642,8 @@ export default function TreatmentsPage() {
 								<Alert>
 									<Shield className="h-4 w-4" />
 									<AlertDescription>
-										Todos os tratamentos estão em conformidade com a LGPD. Próxima auditoria agendada para dezembro de
-										2024.
+										Todos os tratamentos estão em conformidade com a LGPD.
+										Próxima auditoria agendada para dezembro de 2024.
 									</AlertDescription>
 								</Alert>
 							</CardContent>
@@ -540,7 +656,9 @@ export default function TreatmentsPage() {
 									<Users className="h-5 w-5" />
 									Conformidade CFM
 								</CardTitle>
-								<CardDescription>Status de conformidade com o Conselho Federal de Medicina</CardDescription>
+								<CardDescription>
+									Status de conformidade com o Conselho Federal de Medicina
+								</CardDescription>
 							</CardHeader>
 							<CardContent className="space-y-4">
 								<div className="flex items-center justify-between">
@@ -572,7 +690,8 @@ export default function TreatmentsPage() {
 								<Alert>
 									<Users className="h-4 w-4" />
 									<AlertDescription>
-										Todos os procedimentos seguem as diretrizes éticas do CFM. Certificações profissionais atualizadas.
+										Todos os procedimentos seguem as diretrizes éticas do CFM.
+										Certificações profissionais atualizadas.
 									</AlertDescription>
 								</Alert>
 							</CardContent>
@@ -586,7 +705,9 @@ export default function TreatmentsPage() {
 								<Shield className="h-5 w-5" />
 								Exemplo de Gestão de Consentimento
 							</CardTitle>
-							<CardDescription>Demonstração do sistema de consentimento LGPD/CFM</CardDescription>
+							<CardDescription>
+								Demonstração do sistema de consentimento LGPD/CFM
+							</CardDescription>
 						</CardHeader>
 						<CardContent>
 							<CosmeticConsentBrazilian
@@ -605,7 +726,9 @@ export default function TreatmentsPage() {
 								<Camera className="h-5 w-5" />
 								Exemplo de Galeria Segura
 							</CardTitle>
-							<CardDescription>Demonstração do sistema de fotos com proteção LGPD</CardDescription>
+							<CardDescription>
+								Demonstração do sistema de fotos com proteção LGPD
+							</CardDescription>
 						</CardHeader>
 						<CardContent>
 							<BeforeAfterSecureGallery
@@ -624,12 +747,16 @@ export default function TreatmentsPage() {
 			</Tabs>
 
 			{/* New Treatment Dialog */}
-			<Dialog onOpenChange={setShowNewTreatmentDialog} open={showNewTreatmentDialog}>
+			<Dialog
+				onOpenChange={setShowNewTreatmentDialog}
+				open={showNewTreatmentDialog}
+			>
 				<DialogContent className="max-w-2xl">
 					<DialogHeader>
 						<DialogTitle>Novo Plano de Tratamento</DialogTitle>
 						<DialogDescription>
-							Criar um novo plano de tratamento estético com conformidade brasileira
+							Criar um novo plano de tratamento estético com conformidade
+							brasileira
 						</DialogDescription>
 					</DialogHeader>
 
@@ -637,13 +764,18 @@ export default function TreatmentsPage() {
 						<Alert>
 							<Plus className="h-4 w-4" />
 							<AlertDescription>
-								Esta funcionalidade será implementada com formulário completo de criação de tratamentos, incluindo
-								seleção de protocolos, configuração de sessões e validação de conformidade.
+								Esta funcionalidade será implementada com formulário completo de
+								criação de tratamentos, incluindo seleção de protocolos,
+								configuração de sessões e validação de conformidade.
 							</AlertDescription>
 						</Alert>
 
 						<div className="flex gap-2 pt-4">
-							<Button className="flex-1" onClick={() => setShowNewTreatmentDialog(false)} variant="outline">
+							<Button
+								className="flex-1"
+								onClick={() => setShowNewTreatmentDialog(false)}
+								variant="outline"
+							>
 								Cancelar
 							</Button>
 							<Button

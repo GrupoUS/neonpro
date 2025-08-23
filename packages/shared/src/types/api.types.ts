@@ -257,12 +257,18 @@ export type WebSocketMessage<T = unknown> = {
 
 // Export utility types
 export type ApiEndpoint<T = unknown> = (params?: T) => Promise<ApiResponse>;
-export type ApiMutation<TParams = unknown, TResponse = unknown> = (params: TParams) => Promise<ApiResponse<TResponse>>;
-export type ApiQuery<TParams = unknown, TResponse = unknown> = (params?: TParams) => Promise<ApiResponse<TResponse>>;
+export type ApiMutation<TParams = unknown, TResponse = unknown> = (
+	params: TParams,
+) => Promise<ApiResponse<TResponse>>;
+export type ApiQuery<TParams = unknown, TResponse = unknown> = (
+	params?: TParams,
+) => Promise<ApiResponse<TResponse>>;
 
 // Type guards
 export const isApiError = (obj: unknown): obj is ApiError => {
-	return typeof obj === "object" && obj !== null && "code" in obj && "message" in obj;
+	return (
+		typeof obj === "object" && obj !== null && "code" in obj && "message" in obj
+	);
 };
 
 export const isApiResponse = <T>(obj: unknown): obj is ApiResponse<T> => {
@@ -270,7 +276,12 @@ export const isApiResponse = <T>(obj: unknown): obj is ApiResponse<T> => {
 };
 
 export const isValidationError = (obj: unknown): obj is ValidationError => {
-	return typeof obj === "object" && obj !== null && "field" in obj && "message" in obj;
+	return (
+		typeof obj === "object" &&
+		obj !== null &&
+		"field" in obj &&
+		"message" in obj
+	);
 };
 
 // Additional entity types for compatibility

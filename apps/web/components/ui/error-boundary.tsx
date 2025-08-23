@@ -15,7 +15,10 @@ type ErrorBoundaryProps = {
 	title?: string;
 };
 
-export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+export class ErrorBoundary extends Component<
+	ErrorBoundaryProps,
+	ErrorBoundaryState
+> {
 	constructor(props: ErrorBoundaryProps) {
 		super(props);
 		this.state = { hasError: false };
@@ -41,11 +44,19 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 			}
 
 			return (
-				<div className="flex min-h-screen items-center justify-center bg-gray-50" data-testid="error-boundary">
+				<div
+					className="flex min-h-screen items-center justify-center bg-gray-50"
+					data-testid="error-boundary"
+				>
 					<div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
 						<div className="flex items-center">
 							<div className="flex-shrink-0">
-								<svg className="h-6 w-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<svg
+									className="h-6 w-6 text-red-400"
+									fill="none"
+									stroke="currentColor"
+									viewBox="0 0 24 24"
+								>
 									<path
 										d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.962-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
 										strokeLinecap="round"
@@ -55,9 +66,13 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 								</svg>
 							</div>
 							<div className="ml-3">
-								<h3 className="font-medium text-red-800 text-sm">Oops! Algo deu errado</h3>
+								<h3 className="font-medium text-red-800 text-sm">
+									Oops! Algo deu errado
+								</h3>
 								<div className="mt-2 text-red-700 text-sm">
-									<p>Ocorreu um erro inesperado. Nossa equipe foi notificada.</p>
+									<p>
+										Ocorreu um erro inesperado. Nossa equipe foi notificada.
+									</p>
 								</div>
 								<div className="mt-4">
 									<button
@@ -70,7 +85,9 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 								{this.props.showDetails && (
 									<div className="mt-4">
 										<details className="cursor-pointer">
-											<summary className="text-red-600 text-sm hover:text-red-700">Detalhes técnicos</summary>
+											<summary className="text-red-600 text-sm hover:text-red-700">
+												Detalhes técnicos
+											</summary>
 											<div className="mt-2 rounded bg-gray-50 p-2 text-gray-600 text-xs">
 												<p>
 													<strong>Error:</strong> {this.state.error?.message}
@@ -80,7 +97,8 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 												</p>
 												{this.state.errorInfo && (
 													<p>
-														<strong>Component Stack:</strong> {this.state.errorInfo.componentStack}
+														<strong>Component Stack:</strong>{" "}
+														{this.state.errorInfo.componentStack}
 													</p>
 												)}
 											</div>
@@ -99,7 +117,10 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 }
 
 // Critical Error Boundary - for critical errors that require page reload
-export class CriticalErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+export class CriticalErrorBoundary extends Component<
+	ErrorBoundaryProps,
+	ErrorBoundaryState
+> {
 	constructor(props: ErrorBoundaryProps) {
 		super(props);
 		this.state = { hasError: false };
@@ -121,11 +142,19 @@ export class CriticalErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
 	render() {
 		if (this.state.hasError) {
 			return (
-				<div className="flex min-h-screen items-center justify-center bg-gray-50" data-testid="critical-error-boundary">
+				<div
+					className="flex min-h-screen items-center justify-center bg-gray-50"
+					data-testid="critical-error-boundary"
+				>
 					<div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
 						<div className="flex items-center">
 							<div className="flex-shrink-0">
-								<svg className="h-6 w-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<svg
+									className="h-6 w-6 text-red-400"
+									fill="none"
+									stroke="currentColor"
+									viewBox="0 0 24 24"
+								>
 									<path
 										d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.962-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
 										strokeLinecap="round"
@@ -136,10 +165,14 @@ export class CriticalErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
 							</div>
 							<div className="ml-3">
 								<h3 className="font-medium text-red-800 text-sm">
-									{this.props.title ? `Erro em ${this.props.title}` : "Erro Crítico"}
+									{this.props.title
+										? `Erro em ${this.props.title}`
+										: "Erro Crítico"}
 								</h3>
 								<div className="mt-2 text-red-700 text-sm">
-									<p>Ocorreu um erro crítico. É necessário recarregar a página.</p>
+									<p>
+										Ocorreu um erro crítico. É necessário recarregar a página.
+									</p>
 								</div>
 								<div className="mt-4">
 									<button
@@ -163,7 +196,7 @@ export class CriticalErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
 // Higher-order component for wrapping components with error boundary
 export function withErrorBoundary<P extends object>(
 	WrappedComponent: React.ComponentType<P>,
-	errorBoundaryProps?: Omit<ErrorBoundaryProps, "children">
+	errorBoundaryProps?: Omit<ErrorBoundaryProps, "children">,
 ) {
 	const WithErrorBoundaryComponent = (props: P) => (
 		<ErrorBoundary {...errorBoundaryProps}>

@@ -47,7 +47,7 @@ export type RevenueAnalytics = {
 
 export class FinancialService {
 	async createTransaction(
-		transaction: Omit<FinancialTransaction, "id" | "created_at" | "updated_at">
+		transaction: Omit<FinancialTransaction, "id" | "created_at" | "updated_at">,
 	): Promise<{ transaction?: FinancialTransaction; error?: string }> {
 		try {
 			const { data, error } = await supabase
@@ -70,7 +70,10 @@ export class FinancialService {
 			return { transaction: data };
 		} catch (error) {
 			return {
-				error: error instanceof Error ? error.message : "Failed to create transaction",
+				error:
+					error instanceof Error
+						? error.message
+						: "Failed to create transaction",
 			};
 		}
 	}
@@ -85,7 +88,7 @@ export class FinancialService {
 			endDate?: string;
 			limit?: number;
 			offset?: number;
-		}
+		},
 	): Promise<{
 		transactions?: FinancialTransaction[];
 		total?: number;
@@ -123,7 +126,10 @@ export class FinancialService {
 			}
 
 			if (filters?.offset) {
-				query = query.range(filters.offset, (filters.offset || 0) + (filters.limit || 50) - 1);
+				query = query.range(
+					filters.offset,
+					(filters.offset || 0) + (filters.limit || 50) - 1,
+				);
 			}
 
 			const { data, error, count } = await query;
@@ -135,7 +141,8 @@ export class FinancialService {
 			return { transactions: data, total: count || 0 };
 		} catch (error) {
 			return {
-				error: error instanceof Error ? error.message : "Failed to get transactions",
+				error:
+					error instanceof Error ? error.message : "Failed to get transactions",
 			};
 		}
 	}
@@ -143,7 +150,7 @@ export class FinancialService {
 	async updateTransaction(
 		id: string,
 		tenantId: string,
-		updates: Partial<FinancialTransaction>
+		updates: Partial<FinancialTransaction>,
 	): Promise<{ transaction?: FinancialTransaction; error?: string }> {
 		try {
 			const { data, error } = await supabase
@@ -167,14 +174,24 @@ export class FinancialService {
 			return { transaction: data };
 		} catch (error) {
 			return {
-				error: error instanceof Error ? error.message : "Failed to update transaction",
+				error:
+					error instanceof Error
+						? error.message
+						: "Failed to update transaction",
 			};
 		}
 	}
 
-	async deleteTransaction(id: string, tenantId: string): Promise<{ success?: boolean; error?: string }> {
+	async deleteTransaction(
+		id: string,
+		tenantId: string,
+	): Promise<{ success?: boolean; error?: string }> {
 		try {
-			const { error } = await supabase.from("financial_transactions").delete().eq("id", id).eq("tenant_id", tenantId);
+			const { error } = await supabase
+				.from("financial_transactions")
+				.delete()
+				.eq("id", id)
+				.eq("tenant_id", tenantId);
 
 			if (error) {
 				return { error: error.message };
@@ -186,7 +203,10 @@ export class FinancialService {
 			return { success: true };
 		} catch (error) {
 			return {
-				error: error instanceof Error ? error.message : "Failed to delete transaction",
+				error:
+					error instanceof Error
+						? error.message
+						: "Failed to delete transaction",
 			};
 		}
 	}
@@ -194,7 +214,7 @@ export class FinancialService {
 	async getFinancialSummary(
 		tenantId: string,
 		startDate: string,
-		endDate: string
+		endDate: string,
 	): Promise<{ summary?: FinancialSummary; error?: string }> {
 		try {
 			// Get income transactions
@@ -253,10 +273,14 @@ export class FinancialService {
 				return { error: payablesError.message };
 			}
 
-			const totalIncome = incomeData?.reduce((sum, t) => sum + t.amount, 0) || 0;
-			const totalExpenses = expenseData?.reduce((sum, t) => sum + t.amount, 0) || 0;
-			const pendingReceivables = receivablesData?.reduce((sum, t) => sum + t.amount, 0) || 0;
-			const pendingPayables = payablesData?.reduce((sum, t) => sum + t.amount, 0) || 0;
+			const totalIncome =
+				incomeData?.reduce((sum, t) => sum + t.amount, 0) || 0;
+			const totalExpenses =
+				expenseData?.reduce((sum, t) => sum + t.amount, 0) || 0;
+			const pendingReceivables =
+				receivablesData?.reduce((sum, t) => sum + t.amount, 0) || 0;
+			const pendingPayables =
+				payablesData?.reduce((sum, t) => sum + t.amount, 0) || 0;
 
 			const summary: FinancialSummary = {
 				total_income: totalIncome,
@@ -272,7 +296,10 @@ export class FinancialService {
 			return { summary };
 		} catch (error) {
 			return {
-				error: error instanceof Error ? error.message : "Failed to get financial summary",
+				error:
+					error instanceof Error
+						? error.message
+						: "Failed to get financial summary",
 			};
 		}
 	}
@@ -280,48 +307,60 @@ export class FinancialService {
 	async getRevenueAnalytics(
 		tenantId: string,
 		startDate: string,
-		endDate: string
+		endDate: string,
 	): Promise<{ analytics?: RevenueAnalytics; error?: string }> {
 		try {
 			// Get daily revenue
-			const { data: dailyData, error: dailyError } = await supabase.rpc("get_daily_revenue", {
-				p_tenant_id: tenantId,
-				p_start_date: startDate,
-				p_end_date: endDate,
-			});
+			const { data: dailyData, error: dailyError } = await supabase.rpc(
+				"get_daily_revenue",
+				{
+					p_tenant_id: tenantId,
+					p_start_date: startDate,
+					p_end_date: endDate,
+				},
+			);
 
 			if (dailyError) {
 				return { error: dailyError.message };
 			}
 
 			// Get monthly revenue
-			const { data: monthlyData, error: monthlyError } = await supabase.rpc("get_monthly_revenue", {
-				p_tenant_id: tenantId,
-				p_start_date: startDate,
-				p_end_date: endDate,
-			});
+			const { data: monthlyData, error: monthlyError } = await supabase.rpc(
+				"get_monthly_revenue",
+				{
+					p_tenant_id: tenantId,
+					p_start_date: startDate,
+					p_end_date: endDate,
+				},
+			);
 
 			if (monthlyError) {
 				return { error: monthlyError.message };
 			}
 
 			// Get revenue by service
-			const { data: serviceData, error: serviceError } = await supabase.rpc("get_revenue_by_service", {
-				p_tenant_id: tenantId,
-				p_start_date: startDate,
-				p_end_date: endDate,
-			});
+			const { data: serviceData, error: serviceError } = await supabase.rpc(
+				"get_revenue_by_service",
+				{
+					p_tenant_id: tenantId,
+					p_start_date: startDate,
+					p_end_date: endDate,
+				},
+			);
 
 			if (serviceError) {
 				return { error: serviceError.message };
 			}
 
 			// Get payment methods breakdown
-			const { data: paymentData, error: paymentError } = await supabase.rpc("get_payment_methods_breakdown", {
-				p_tenant_id: tenantId,
-				p_start_date: startDate,
-				p_end_date: endDate,
-			});
+			const { data: paymentData, error: paymentError } = await supabase.rpc(
+				"get_payment_methods_breakdown",
+				{
+					p_tenant_id: tenantId,
+					p_start_date: startDate,
+					p_end_date: endDate,
+				},
+			);
 
 			if (paymentError) {
 				return { error: paymentError.message };
@@ -337,7 +376,10 @@ export class FinancialService {
 			return { analytics };
 		} catch (error) {
 			return {
-				error: error instanceof Error ? error.message : "Failed to get revenue analytics",
+				error:
+					error instanceof Error
+						? error.message
+						: "Failed to get revenue analytics",
 			};
 		}
 	}
@@ -347,10 +389,13 @@ export class FinancialService {
 		appointmentId: string,
 		amount: number,
 		paymentMethod: string,
-		description?: string
+		description?: string,
 	): Promise<{ transaction?: FinancialTransaction; error?: string }> {
 		try {
-			const transaction: Omit<FinancialTransaction, "id" | "created_at" | "updated_at"> = {
+			const transaction: Omit<
+				FinancialTransaction,
+				"id" | "created_at" | "updated_at"
+			> = {
 				tenant_id: tenantId,
 				type: "income",
 				category: "appointment",
@@ -367,7 +412,10 @@ export class FinancialService {
 			return this.createTransaction(transaction);
 		} catch (error) {
 			return {
-				error: error instanceof Error ? error.message : "Failed to record appointment payment",
+				error:
+					error instanceof Error
+						? error.message
+						: "Failed to record appointment payment",
 			};
 		}
 	}

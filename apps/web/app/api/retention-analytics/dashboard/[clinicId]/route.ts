@@ -19,8 +19,12 @@ const DashboardParamsSchema = z.object({
 });
 
 const DashboardQuerySchema = z.object({
-	periodStart: z.string().refine((date) => !Number.isNaN(Date.parse(date)), "Invalid start date"),
-	periodEnd: z.string().refine((date) => !Number.isNaN(Date.parse(date)), "Invalid end date"),
+	periodStart: z
+		.string()
+		.refine((date) => !Number.isNaN(Date.parse(date)), "Invalid start date"),
+	periodEnd: z
+		.string()
+		.refine((date) => !Number.isNaN(Date.parse(date)), "Invalid end date"),
 	includeMetrics: z.coerce.boolean().default(true),
 	includePredictions: z.coerce.boolean().default(true),
 	includeStrategies: z.coerce.boolean().default(true),
@@ -33,7 +37,10 @@ const DashboardQuerySchema = z.object({
 // GET RETENTION ANALYTICS DASHBOARD
 // =====================================================================================
 
-export async function GET(request: NextRequest, { params }: { params: Promise<{ clinicId: string }> }) {
+export async function GET(
+	request: NextRequest,
+	{ params }: { params: Promise<{ clinicId: string }> },
+) {
 	try {
 		const resolvedParams = await params;
 		// Validate clinic ID parameter
@@ -47,7 +54,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 					error: "Invalid clinic ID",
 					details: clinicValidation.error.issues,
 				},
-				{ status: 400 }
+				{ status: 400 },
 			);
 		}
 
@@ -72,7 +79,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 					error: "Invalid query parameters",
 					details: queryValidation.error.issues,
 				},
-				{ status: 400 }
+				{ status: 400 },
 			);
 		}
 
@@ -106,11 +113,17 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 			.single();
 
 		if (profileError || !userProfile) {
-			return NextResponse.json({ error: "User profile not found" }, { status: 403 });
+			return NextResponse.json(
+				{ error: "User profile not found" },
+				{ status: 403 },
+			);
 		}
 
 		if (userProfile.clinic_id !== clinicId) {
-			return NextResponse.json({ error: "Access denied to clinic data" }, { status: 403 });
+			return NextResponse.json(
+				{ error: "Access denied to clinic data" },
+				{ status: 403 },
+			);
 		}
 
 		// Verify clinic exists
@@ -128,57 +141,97 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 		const retentionService = new RetentionAnalyticsService();
 
 		// Generate comprehensive dashboard data
-		const dashboardData = await retentionService.generateRetentionAnalyticsDashboard(clinicId, periodStart, periodEnd);
+		const dashboardData =
+			await retentionService.generateRetentionAnalyticsDashboard(
+				clinicId,
+				periodStart,
+				periodEnd,
+			);
 
 		// Collect additional detailed data based on parameters
 		const additionalData: any = {};
 
 		if (includeMetrics) {
-			const metrics = await retentionService.getClinicRetentionMetrics(clinicId, metricsLimit, 0);
+			const metrics = await retentionService.getClinicRetentionMetrics(
+				clinicId,
+				metricsLimit,
+				0,
+			);
 
 			// Filter metrics by date range
 			const filteredMetrics = metrics.filter((metric) => {
 				const metricDate = new Date(metric.last_appointment_date);
-				return metricDate >= new Date(periodStart) && metricDate <= new Date(periodEnd);
+				return (
+					metricDate >= new Date(periodStart) &&
+					metricDate <= new Date(periodEnd)
+				);
 			});
 
 			additionalData.detailedMetrics = {
 				metrics: filteredMetrics,
 				summary: {
 					total_patients: filteredMetrics.length,
-					high_risk_patients: filteredMetrics.filter((m) => ["high", "critical"].includes(m.churn_risk_level)).length,
+					high_risk_patients: filteredMetrics.filter((m) =>
+						["high", "critical"].includes(m.churn_risk_level),
+					).length,
 					average_retention_rate:
-						filteredMetrics.reduce((sum, m) => sum + m.retention_rate, 0) / filteredMetrics.length || 0,
-					total_lifetime_value: filteredMetrics.reduce((sum, m) => sum + m.lifetime_value, 0),
+						filteredMetrics.reduce((sum, m) => sum + m.retention_rate, 0) /
+							filteredMetrics.length || 0,
+					total_lifetime_value: filteredMetrics.reduce(
+						(sum, m) => sum + m.lifetime_value,
+						0,
+					),
 				},
 			};
 		}
 
 		if (includePredictions) {
-			const predictions = await retentionService.getChurnPredictions(clinicId, undefined, predictionsLimit, 0);
+			const predictions = await retentionService.getChurnPredictions(
+				clinicId,
+				undefined,
+				predictionsLimit,
+				0,
+			);
 
 			// Filter predictions by date range
 			const filteredPredictions = predictions.filter((prediction) => {
 				const predictionDate = new Date(prediction.prediction_date);
-				return predictionDate >= new Date(periodStart) && predictionDate <= new Date(periodEnd);
+				return (
+					predictionDate >= new Date(periodStart) &&
+					predictionDate <= new Date(periodEnd)
+				);
 			});
 
 			additionalData.detailedPredictions = {
 				predictions: filteredPredictions,
 				summary: {
 					total_predictions: filteredPredictions.length,
-					critical_risk: filteredPredictions.filter((p) => p.risk_level === ChurnRiskLevel.CRITICAL).length,
-					high_risk: filteredPredictions.filter((p) => p.risk_level === ChurnRiskLevel.HIGH).length,
-					medium_risk: filteredPredictions.filter((p) => p.risk_level === ChurnRiskLevel.MEDIUM).length,
-					low_risk: filteredPredictions.filter((p) => p.risk_level === ChurnRiskLevel.LOW).length,
+					critical_risk: filteredPredictions.filter(
+						(p) => p.risk_level === ChurnRiskLevel.CRITICAL,
+					).length,
+					high_risk: filteredPredictions.filter(
+						(p) => p.risk_level === ChurnRiskLevel.HIGH,
+					).length,
+					medium_risk: filteredPredictions.filter(
+						(p) => p.risk_level === ChurnRiskLevel.MEDIUM,
+					).length,
+					low_risk: filteredPredictions.filter(
+						(p) => p.risk_level === ChurnRiskLevel.LOW,
+					).length,
 					average_churn_probability:
-						filteredPredictions.reduce((sum, p) => sum + p.churn_probability, 0) / filteredPredictions.length || 0,
+						filteredPredictions.reduce(
+							(sum, p) => sum + p.churn_probability,
+							0,
+						) / filteredPredictions.length || 0,
 				},
 			};
 		}
 
 		if (includeStrategies) {
-			const strategies = await retentionService.getRetentionStrategies(clinicId, false);
+			const strategies = await retentionService.getRetentionStrategies(
+				clinicId,
+				false,
+			);
 
 			additionalData.strategies = {
 				all_strategies: strategies,
@@ -186,8 +239,13 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 				summary: {
 					total_strategies: strategies.length,
 					active_count: strategies.filter((s) => s.is_active).length,
-					total_executions: strategies.reduce((sum, s) => sum + s.execution_count, 0),
-					average_success_rate: strategies.reduce((sum, s) => sum + (s.success_rate || 0), 0) / strategies.length || 0,
+					total_executions: strategies.reduce(
+						(sum, s) => sum + s.execution_count,
+						0,
+					),
+					average_success_rate:
+						strategies.reduce((sum, s) => sum + (s.success_rate || 0), 0) /
+							strategies.length || 0,
 				},
 			};
 		}
@@ -196,15 +254,24 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 			// Calculate performance trends over the period
 			const startDate = new Date(periodStart);
 			const endDate = new Date(periodEnd);
-			const daysDiff = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+			const daysDiff = Math.ceil(
+				(endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
+			);
 
 			// Generate weekly performance data points
 			const weeklyData = [];
 			const weeksCount = Math.max(1, Math.ceil(daysDiff / 7));
 
 			for (let week = 0; week < weeksCount; week++) {
-				const weekStart = new Date(startDate.getTime() + week * 7 * 24 * 60 * 60 * 1000);
-				const weekEnd = new Date(Math.min(weekStart.getTime() + 6 * 24 * 60 * 60 * 1000, endDate.getTime()));
+				const weekStart = new Date(
+					startDate.getTime() + week * 7 * 24 * 60 * 60 * 1000,
+				);
+				const weekEnd = new Date(
+					Math.min(
+						weekStart.getTime() + 6 * 24 * 60 * 60 * 1000,
+						endDate.getTime(),
+					),
+				);
 
 				weeklyData.push({
 					week: week + 1,
@@ -236,12 +303,15 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
 		// Calculate real-time alerts
 		const alerts = {
-			critical_risk_patients: dashboardData.churn_risk_distribution.critical || 0,
+			critical_risk_patients:
+				dashboardData.churn_risk_distribution.critical || 0,
 			high_risk_patients: dashboardData.churn_risk_distribution.high || 0,
-			low_engagement_patients: dashboardData.engagement_metrics.low_engagement_count || 0,
+			low_engagement_patients:
+				dashboardData.engagement_metrics.low_engagement_count || 0,
 			recent_strategy_failures:
-				additionalData.strategies?.all_strategies?.filter((s) => s.execution_count > 0 && (s.success_rate || 0) < 0.5)
-					.length || 0,
+				additionalData.strategies?.all_strategies?.filter(
+					(s) => s.execution_count > 0 && (s.success_rate || 0) < 0.5,
+				).length || 0,
 		};
 
 		// Compile final response
@@ -257,7 +327,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 					start: periodStart,
 					end: periodEnd,
 					duration_days: Math.ceil(
-						(new Date(periodEnd).getTime() - new Date(periodStart).getTime()) / (1000 * 60 * 60 * 24)
+						(new Date(periodEnd).getTime() - new Date(periodStart).getTime()) /
+							(1000 * 60 * 60 * 24),
 					),
 				},
 				alerts,
@@ -289,7 +360,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 				error: "Internal server error",
 				message: error instanceof Error ? error.message : "Unknown error",
 			},
-			{ status: 500 }
+			{ status: 500 },
 		);
 	}
 }

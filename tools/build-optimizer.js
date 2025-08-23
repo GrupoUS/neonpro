@@ -65,7 +65,12 @@ class BuildOptimizer {
 				}
 
 				// Otimizar outputs
-				const optimizedOutputs = [".next/**", "!.next/cache/**", "dist/**", "!**/node_modules/**"];
+				const optimizedOutputs = [
+					".next/**",
+					"!.next/cache/**",
+					"dist/**",
+					"!**/node_modules/**",
+				];
 
 				turboConfig.tasks.build.outputs = optimizedOutputs;
 				modified = true;
@@ -141,11 +146,17 @@ class BuildOptimizer {
 					tsConfig.include = [];
 
 					writeFileSync(rootTsConfigPath, JSON.stringify(tsConfig, null, 2));
-					this.log("TypeScript project references configuradas", "optimization");
+					this.log(
+						"TypeScript project references configuradas",
+						"optimization",
+					);
 				}
 			}
 		} catch (error) {
-			this.log(`Erro ao otimizar TypeScript references: ${error.message}`, "error");
+			this.log(
+				`Erro ao otimizar TypeScript references: ${error.message}`,
+				"error",
+			);
 		}
 	}
 
@@ -192,13 +203,17 @@ class BuildOptimizer {
 
 				// CI/CD optimized
 				ci: "pnpm install --frozen-lockfile && turbo format:check lint type-check test build",
-				"ci:cache": "turbo format:check lint type-check test build --cache-dir=.turbo",
+				"ci:cache":
+					"turbo format:check lint type-check test build --cache-dir=.turbo",
 			};
 
 			packageJson.scripts = optimizedScripts;
 
 			writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
-			this.log("Scripts otimizados adicionados ao package.json", "optimization");
+			this.log(
+				"Scripts otimizados adicionados ao package.json",
+				"optimization",
+			);
 		} catch (error) {
 			this.log(`Erro ao otimizar scripts: ${error.message}`, "error");
 		}
@@ -230,7 +245,12 @@ class BuildOptimizer {
 				concurrency: 4,
 				outputs: {
 					compression: true,
-					ignore: ["**/node_modules/**", "**/.git/**", "**/coverage/**", "**/test-results/**"],
+					ignore: [
+						"**/node_modules/**",
+						"**/.git/**",
+						"**/coverage/**",
+						"**/test-results/**",
+					],
 				},
 			},
 			analysis: {
@@ -244,7 +264,10 @@ class BuildOptimizer {
 
 		try {
 			writeFileSync(configPath, JSON.stringify(cacheConfig, null, 2));
-			this.log("Configuração de cache criada em .turbo/config.json", "optimization");
+			this.log(
+				"Configuração de cache criada em .turbo/config.json",
+				"optimization",
+			);
 		} catch (error) {
 			this.log(`Erro ao criar config de cache: ${error.message}`, "error");
 		}
@@ -285,7 +308,10 @@ class BuildOptimizer {
 				optimizationsApplied: this.optimizations.length,
 			};
 
-			writeFileSync(join(rootDir, "performance-report.json"), JSON.stringify(performanceReport, null, 2));
+			writeFileSync(
+				join(rootDir, "performance-report.json"),
+				JSON.stringify(performanceReport, null, 2),
+			);
 
 			this.log("Relatório de performance gerado", "success");
 		} catch (error) {

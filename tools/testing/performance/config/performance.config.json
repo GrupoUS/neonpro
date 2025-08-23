@@ -1,133 +1,133 @@
 {
-  "environments": {
-    "development": {
-      "baseUrl": "http://localhost:3000",
-      "apiUrl": "http://localhost:3001",
-      "testDuration": 60,
-      "concurrentUsers": 10,
-      "targets": {
-        "lighthouse": {
-          "performance": 85,
-          "accessibility": 95,
-          "bestPractices": 90,
-          "seo": 80
-        },
-        "coreWebVitals": {
-          "lcp": 2500,
-          "fid": 100,
-          "cls": 0.1
-        },
-        "api": {
-          "responseTimeP95": 200,
-          "errorRate": 0.01
-        },
-        "database": {
-          "connectionTime": 100,
-          "queryTime": 500
-        },
-        "healthcare": {
-          "emergencyAccessTime": 10000,
-          "patientDataLoadTime": 2000,
-          "appointmentLoadTime": 3000,
-          "formSubmissionTime": 1000
-        },
-        "bundle": {
-          "maxSizeKB": 600,
-          "maxGzippedKB": 500
-        }
-      }
-    },
-    "staging": {
-      "baseUrl": "https://staging.neonpro.health",
-      "apiUrl": "https://api-staging.neonpro.health",
-      "testDuration": 120,
-      "concurrentUsers": 20,
-      "targets": {
-        "lighthouse": {
-          "performance": 90,
-          "accessibility": 95,
-          "bestPractices": 90,
-          "seo": 85
-        },
-        "coreWebVitals": {
-          "lcp": 2000,
-          "fid": 100,
-          "cls": 0.1
-        },
-        "api": {
-          "responseTimeP95": 150,
-          "errorRate": 0.005
-        },
-        "database": {
-          "connectionTime": 75,
-          "queryTime": 300
-        },
-        "healthcare": {
-          "emergencyAccessTime": 8000,
-          "patientDataLoadTime": 1500,
-          "appointmentLoadTime": 2500,
-          "formSubmissionTime": 800
-        },
-        "bundle": {
-          "maxSizeKB": 500,
-          "maxGzippedKB": 400
-        }
-      }
-    },
-    "production": {
-      "baseUrl": "https://neonpro.health",
-      "apiUrl": "https://api.neonpro.health",
-      "testDuration": 300,
-      "concurrentUsers": 50,
-      "targets": {
-        "lighthouse": {
-          "performance": 95,
-          "accessibility": 95,
-          "bestPractices": 95,
-          "seo": 90
-        },
-        "coreWebVitals": {
-          "lcp": 1500,
-          "fid": 100,
-          "cls": 0.05
-        },
-        "api": {
-          "responseTimeP95": 100,
-          "errorRate": 0.001
-        },
-        "database": {
-          "connectionTime": 50,
-          "queryTime": 200
-        },
-        "healthcare": {
-          "emergencyAccessTime": 5000,
-          "patientDataLoadTime": 1000,
-          "appointmentLoadTime": 2000,
-          "formSubmissionTime": 500
-        },
-        "bundle": {
-          "maxSizeKB": 400,
-          "maxGzippedKB": 300
-        }
-      }
-    }
-  },
-  "monitoring": {
-    "alerting": {
-      "criticalThreshold": 80,
-      "warningThreshold": 90,
-      "recipients": ["devops@neonpro.health", "performance-team@neonpro.health"]
-    },
-    "retention": {
-      "dailyReports": 30,
-      "weeklyReports": 12,
-      "monthlyReports": 6
-    }
-  },
-  "ci": {
-    "triggerOnPR": true,
-    "failOnCritical": true,
-    "generateArtifacts": true,
-    "publishResults": true
-  }
+	"environments": {
+		"development": {
+			"baseUrl": "http://localhost:3000",
+			"apiUrl": "http://localhost:3001",
+			"testDuration": 60,
+			"concurrentUsers": 10,
+			"targets": {
+				"lighthouse": {
+					"performance": 85,
+					"accessibility": 95,
+					"bestPractices": 90,
+					"seo": 80
+				},
+				"coreWebVitals": {
+					"lcp": 2500,
+					"fid": 100,
+					"cls": 0.1
+				},
+				"api": {
+					"responseTimeP95": 200,
+					"errorRate": 0.01
+				},
+				"database": {
+					"connectionTime": 100,
+					"queryTime": 500
+				},
+				"healthcare": {
+					"emergencyAccessTime": 10000,
+					"patientDataLoadTime": 2000,
+					"appointmentLoadTime": 3000,
+					"formSubmissionTime": 1000
+				},
+				"bundle": {
+					"maxSizeKB": 600,
+					"maxGzippedKB": 500
+				}
+			}
+		},
+		"staging": {
+			"baseUrl": "https://staging.neonpro.health",
+			"apiUrl": "https://api-staging.neonpro.health",
+			"testDuration": 120,
+			"concurrentUsers": 20,
+			"targets": {
+				"lighthouse": {
+					"performance": 90,
+					"accessibility": 95,
+					"bestPractices": 90,
+					"seo": 85
+				},
+				"coreWebVitals": {
+					"lcp": 2000,
+					"fid": 100,
+					"cls": 0.1
+				},
+				"api": {
+					"responseTimeP95": 150,
+					"errorRate": 0.005
+				},
+				"database": {
+					"connectionTime": 75,
+					"queryTime": 300
+				},
+				"healthcare": {
+					"emergencyAccessTime": 8000,
+					"patientDataLoadTime": 1500,
+					"appointmentLoadTime": 2500,
+					"formSubmissionTime": 800
+				},
+				"bundle": {
+					"maxSizeKB": 500,
+					"maxGzippedKB": 400
+				}
+			}
+		},
+		"production": {
+			"baseUrl": "https://neonpro.health",
+			"apiUrl": "https://api.neonpro.health",
+			"testDuration": 300,
+			"concurrentUsers": 50,
+			"targets": {
+				"lighthouse": {
+					"performance": 95,
+					"accessibility": 95,
+					"bestPractices": 95,
+					"seo": 90
+				},
+				"coreWebVitals": {
+					"lcp": 1500,
+					"fid": 100,
+					"cls": 0.05
+				},
+				"api": {
+					"responseTimeP95": 100,
+					"errorRate": 0.001
+				},
+				"database": {
+					"connectionTime": 50,
+					"queryTime": 200
+				},
+				"healthcare": {
+					"emergencyAccessTime": 5000,
+					"patientDataLoadTime": 1000,
+					"appointmentLoadTime": 2000,
+					"formSubmissionTime": 500
+				},
+				"bundle": {
+					"maxSizeKB": 400,
+					"maxGzippedKB": 300
+				}
+			}
+		}
+	},
+	"monitoring": {
+		"alerting": {
+			"criticalThreshold": 80,
+			"warningThreshold": 90,
+			"recipients": ["devops@neonpro.health", "performance-team@neonpro.health"]
+		},
+		"retention": {
+			"dailyReports": 30,
+			"weeklyReports": 12,
+			"monthlyReports": 6
+		}
+	},
+	"ci": {
+		"triggerOnPR": true,
+		"failOnCritical": true,
+		"generateArtifacts": true,
+		"publishResults": true
+	}
 }

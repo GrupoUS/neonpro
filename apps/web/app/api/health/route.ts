@@ -55,7 +55,9 @@ export async function GET(_request: NextRequest) {
 		};
 
 		// Determine overall health status
-		const checkStatuses = Object.values(healthCheck.checks).map((check) => check.status);
+		const checkStatuses = Object.values(healthCheck.checks).map(
+			(check) => check.status,
+		);
 		const hasUnhealthy = checkStatuses.includes("unhealthy");
 		const hasDegraded = checkStatuses.includes("degraded");
 
@@ -66,7 +68,12 @@ export async function GET(_request: NextRequest) {
 		}
 
 		// Return appropriate HTTP status code
-		const httpStatus = healthCheck.status === "healthy" ? 200 : healthCheck.status === "degraded" ? 200 : 503;
+		const httpStatus =
+			healthCheck.status === "healthy"
+				? 200
+				: healthCheck.status === "degraded"
+					? 200
+					: 503;
 
 		return NextResponse.json(healthCheck, {
 			status: httpStatus,
@@ -85,7 +92,7 @@ export async function GET(_request: NextRequest) {
 				message: "Health check failed",
 				error: error instanceof Error ? error.message : "Unknown error",
 			},
-			{ status: 503 }
+			{ status: 503 },
 		);
 	}
 }
@@ -175,17 +182,26 @@ async function checkPerformance(startTime: number): Promise<HealthStatus> {
 
 // LGPD compliance validation
 function checkLGPDCompliance(): boolean {
-	return !!(process.env.HEALTHCARE_MODE === "true" && process.env.LGPD_COMPLIANCE === "true");
+	return !!(
+		process.env.HEALTHCARE_MODE === "true" &&
+		process.env.LGPD_COMPLIANCE === "true"
+	);
 }
 
 // ANVISA integration validation
 function checkANVISAIntegration(): boolean {
-	return !!(process.env.ANVISA_VALIDATION === "true" && process.env.HEALTHCARE_MODE === "true");
+	return !!(
+		process.env.ANVISA_VALIDATION === "true" &&
+		process.env.HEALTHCARE_MODE === "true"
+	);
 }
 
 // CFM validation check
 function checkCFMValidation(): boolean {
-	return !!(process.env.CFM_INTEGRATION === "true" && process.env.HEALTHCARE_MODE === "true");
+	return !!(
+		process.env.CFM_INTEGRATION === "true" &&
+		process.env.HEALTHCARE_MODE === "true"
+	);
 }
 
 // Patient data encryption validation

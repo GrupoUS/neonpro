@@ -16,10 +16,18 @@ export class EmergencyResponseService {
 
 	static escalateToOnCall(_event: EmergencyEvent): void {}
 
-	static recordEmergencyResponse(_eventId: string, _responseTime: number): void {}
+	static recordEmergencyResponse(
+		_eventId: string,
+		_responseTime: number,
+	): void {}
 
 	static getEmergencyProtocols(): string[] {
-		return ["patient_critical_care", "system_disaster_recovery", "security_incident_response", "data_breach_protocol"];
+		return [
+			"patient_critical_care",
+			"system_disaster_recovery",
+			"security_incident_response",
+			"data_breach_protocol",
+		];
 	}
 }
 

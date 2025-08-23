@@ -333,7 +333,18 @@ const commonAreas = {
 		"Rugas Periorais",
 		"Masseter",
 	],
-	body: ["Abdômen", "Flancos", "Coxas", "Braços", "Papada", "Culote", "Costas", "Peitoral", "Joelhos", "Axilas"],
+	body: [
+		"Abdômen",
+		"Flancos",
+		"Coxas",
+		"Braços",
+		"Papada",
+		"Culote",
+		"Costas",
+		"Peitoral",
+		"Joelhos",
+		"Axilas",
+	],
 };
 
 const contraindications = [
@@ -351,19 +362,25 @@ const contraindications = [
 const getTreatmentTypeColor = (type: Treatment["type"]) => {
 	const colors = {
 		botox: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
-		filler: "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200",
+		filler:
+			"bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200",
 		laser: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
-		skincare: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
-		"body-contouring": "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200",
+		skincare:
+			"bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
+		"body-contouring":
+			"bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200",
 	};
 	return colors[type];
 };
 
 const getStatusColor = (status: Treatment["status"]) => {
 	const colors = {
-		scheduled: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
-		"in-progress": "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
-		completed: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
+		scheduled:
+			"bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
+		"in-progress":
+			"bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
+		completed:
+			"bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
 		cancelled: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
 	};
 	return colors[status];
@@ -372,7 +389,8 @@ const getStatusColor = (status: Treatment["status"]) => {
 const getPriorityColor = (priority: Treatment["priority"]) => {
 	const colors = {
 		low: "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200",
-		medium: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
+		medium:
+			"bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
 		high: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
 	};
 	return colors[priority];
@@ -453,7 +471,9 @@ export function TreatmentPlanningInterface() {
 	};
 
 	const toggleContraindication = (contraindication: string) => {
-		const newContraindications = plan.contraindications.includes(contraindication)
+		const newContraindications = plan.contraindications.includes(
+			contraindication,
+		)
 			? plan.contraindications.filter((c) => c !== contraindication)
 			: [...plan.contraindications, contraindication];
 
@@ -463,7 +483,9 @@ export function TreatmentPlanningInterface() {
 		});
 	};
 
-	const selectedTreatmentType = treatmentTypes.find((t) => t.value === plan.treatmentType);
+	const selectedTreatmentType = treatmentTypes.find(
+		(t) => t.value === plan.treatmentType,
+	);
 
 	return (
 		<div className="space-y-6">
@@ -474,7 +496,8 @@ export function TreatmentPlanningInterface() {
 						Planejamento de Tratamento Estético
 					</CardTitle>
 					<CardDescription>
-						Configure e planeje tratamentos personalizados com total segurança e documentação completa
+						Configure e planeje tratamentos personalizados com total segurança e
+						documentação completa
 					</CardDescription>
 				</CardHeader>
 				<CardContent className="space-y-6">
@@ -485,7 +508,9 @@ export function TreatmentPlanningInterface() {
 							<Input
 								aria-label="Nome do paciente"
 								id="patient-name"
-								onChange={(e) => setPlan({ ...plan, patientName: e.target.value })}
+								onChange={(e) =>
+									setPlan({ ...plan, patientName: e.target.value })
+								}
 								placeholder="Digite o nome do paciente"
 								value={plan.patientName}
 							/>
@@ -493,7 +518,12 @@ export function TreatmentPlanningInterface() {
 
 						<div className="space-y-2">
 							<Label htmlFor="treatment-type">Tipo de Tratamento</Label>
-							<Select onValueChange={(value) => setPlan({ ...plan, treatmentType: value })} value={plan.treatmentType}>
+							<Select
+								onValueChange={(value) =>
+									setPlan({ ...plan, treatmentType: value })
+								}
+								value={plan.treatmentType}
+							>
 								<SelectTrigger id="treatment-type">
 									<SelectValue placeholder="Selecione o tratamento" />
 								</SelectTrigger>
@@ -510,7 +540,9 @@ export function TreatmentPlanningInterface() {
 						<div className="space-y-2">
 							<Label htmlFor="priority">Prioridade</Label>
 							<Select
-								onValueChange={(value) => setPlan({ ...plan, priority: value as Treatment["priority"] })}
+								onValueChange={(value) =>
+									setPlan({ ...plan, priority: value as Treatment["priority"] })
+								}
 								value={plan.priority}
 							>
 								<SelectTrigger id="priority">
@@ -543,14 +575,18 @@ export function TreatmentPlanningInterface() {
 										<SelectValue placeholder="Selecione a área" />
 									</SelectTrigger>
 									<SelectContent>
-										<div className="px-2 py-1 font-semibold text-blue-600">Face</div>
+										<div className="px-2 py-1 font-semibold text-blue-600">
+											Face
+										</div>
 										{commonAreas.face.map((area) => (
 											<SelectItem key={area} value={area}>
 												{area}
 											</SelectItem>
 										))}
 										<Separator className="my-1" />
-										<div className="px-2 py-1 font-semibold text-orange-600">Corpo</div>
+										<div className="px-2 py-1 font-semibold text-orange-600">
+											Corpo
+										</div>
 										{commonAreas.body.map((area) => (
 											<SelectItem key={area} value={area}>
 												{area}
@@ -561,7 +597,9 @@ export function TreatmentPlanningInterface() {
 							</div>
 
 							<div className="space-y-2">
-								<Label htmlFor="area-units">{selectedTreatmentType?.unitType || "Quantidade"}</Label>
+								<Label htmlFor="area-units">
+									{selectedTreatmentType?.unitType || "Quantidade"}
+								</Label>
 								<Input
 									aria-label={`Quantidade em ${selectedTreatmentType?.unitType || "unidades"}`}
 									id="area-units"
@@ -601,14 +639,21 @@ export function TreatmentPlanningInterface() {
 									>
 										<div className="flex-1">
 											<div className="flex items-center gap-2">
-												<Badge className="bg-blue-50 dark:bg-blue-900/30" variant="outline">
+												<Badge
+													className="bg-blue-50 dark:bg-blue-900/30"
+													variant="outline"
+												>
 													{area.name}
 												</Badge>
 												<span className="font-medium text-blue-600">
 													{area.units} {selectedTreatmentType?.unitType || "un"}
 												</span>
 											</div>
-											{area.notes && <p className="mt-1 text-gray-600 text-sm dark:text-gray-400">{area.notes}</p>}
+											{area.notes && (
+												<p className="mt-1 text-gray-600 text-sm dark:text-gray-400">
+													{area.notes}
+												</p>
+											)}
 										</div>
 										<Button
 											aria-label={`Remover área ${area.name}`}
@@ -647,7 +692,9 @@ export function TreatmentPlanningInterface() {
 									aria-label="Número de sessões"
 									id="session-count"
 									min="1"
-									onChange={(e) => setPlan({ ...plan, sessionCount: Number(e.target.value) })}
+									onChange={(e) =>
+										setPlan({ ...plan, sessionCount: Number(e.target.value) })
+									}
 									type="number"
 									value={plan.sessionCount}
 								/>
@@ -659,14 +706,18 @@ export function TreatmentPlanningInterface() {
 									aria-label="Intervalo entre sessões em semanas"
 									id="interval-weeks"
 									min="1"
-									onChange={(e) => setPlan({ ...plan, intervalWeeks: Number(e.target.value) })}
+									onChange={(e) =>
+										setPlan({ ...plan, intervalWeeks: Number(e.target.value) })
+									}
 									type="number"
 									value={plan.intervalWeeks}
 								/>
 							</div>
 
 							<div className="space-y-2">
-								<Label htmlFor="estimated-duration">Duração estimada (min)</Label>
+								<Label htmlFor="estimated-duration">
+									Duração estimada (min)
+								</Label>
 								<Input
 									aria-label="Duração estimada em minutos"
 									id="estimated-duration"
@@ -696,7 +747,10 @@ export function TreatmentPlanningInterface() {
 
 						<div className="grid grid-cols-1 gap-3 md:grid-cols-2">
 							{contraindications.map((contraindication) => (
-								<div className="flex items-center space-x-2" key={contraindication}>
+								<div
+									className="flex items-center space-x-2"
+									key={contraindication}
+								>
 									<input
 										checked={plan.contraindications.includes(contraindication)}
 										className="rounded border-gray-300 focus:ring-2 focus:ring-blue-500"
@@ -704,7 +758,10 @@ export function TreatmentPlanningInterface() {
 										onChange={() => toggleContraindication(contraindication)}
 										type="checkbox"
 									/>
-									<Label className="cursor-pointer text-sm" htmlFor={`contraindication-${contraindication}`}>
+									<Label
+										className="cursor-pointer text-sm"
+										htmlFor={`contraindication-${contraindication}`}
+									>
 										{contraindication}
 									</Label>
 								</div>
@@ -715,9 +772,12 @@ export function TreatmentPlanningInterface() {
 							<Alert className="border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-900/20">
 								<AlertCircle className="h-4 w-4 text-yellow-600" />
 								<div className="ml-2">
-									<h4 className="font-semibold text-yellow-800 dark:text-yellow-200">Atenção às Contraindicações</h4>
+									<h4 className="font-semibold text-yellow-800 dark:text-yellow-200">
+										Atenção às Contraindicações
+									</h4>
 									<p className="text-yellow-700 dark:text-yellow-300">
-										Verifique cuidadosamente as contraindicações selecionadas antes de prosseguir com o tratamento.
+										Verifique cuidadosamente as contraindicações selecionadas
+										antes de prosseguir com o tratamento.
 									</p>
 								</div>
 							</Alert>
@@ -758,7 +818,10 @@ export function BeforeAfterGallery() {
 								<Camera className="h-5 w-5 text-purple-600" />
 								Galeria Antes/Depois
 							</CardTitle>
-							<CardDescription>Documente e compare resultados dos tratamentos com galeria profissional</CardDescription>
+							<CardDescription>
+								Documente e compare resultados dos tratamentos com galeria
+								profissional
+							</CardDescription>
 						</div>
 						<div className="flex gap-2">
 							<Button
@@ -781,7 +844,10 @@ export function BeforeAfterGallery() {
 				<CardContent>
 					{/* Filters */}
 					<div className="mb-6 flex gap-4">
-						<Select onValueChange={setSelectedTreatment} value={selectedTreatment}>
+						<Select
+							onValueChange={setSelectedTreatment}
+							value={selectedTreatment}
+						>
 							<SelectTrigger className="w-[200px]">
 								<SelectValue placeholder="Filtrar por tratamento" />
 							</SelectTrigger>
@@ -804,11 +870,18 @@ export function BeforeAfterGallery() {
 					{viewMode === "grid" ? (
 						<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
 							{mockTreatments.map((treatment) => (
-								<Card className="overflow-hidden transition-shadow hover:shadow-lg" key={treatment.id}>
+								<Card
+									className="overflow-hidden transition-shadow hover:shadow-lg"
+									key={treatment.id}
+								>
 									<CardHeader className="pb-3">
 										<div className="flex items-center justify-between">
-											<CardTitle className="text-base">{treatment.patientName}</CardTitle>
-											<Badge className={getTreatmentTypeColor(treatment.type)}>{treatment.type.toUpperCase()}</Badge>
+											<CardTitle className="text-base">
+												{treatment.patientName}
+											</CardTitle>
+											<Badge className={getTreatmentTypeColor(treatment.type)}>
+												{treatment.type.toUpperCase()}
+											</Badge>
 										</div>
 										<CardDescription>{treatment.area}</CardDescription>
 									</CardHeader>
@@ -825,13 +898,17 @@ export function BeforeAfterGallery() {
 												<div className="flex aspect-square items-center justify-center rounded-lg bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900 dark:to-blue-800">
 													<div className="text-center">
 														<Camera className="mx-auto mb-1 h-6 w-6 text-blue-400" />
-														<span className="text-blue-500 text-xs">Depois</span>
+														<span className="text-blue-500 text-xs">
+															Depois
+														</span>
 													</div>
 												</div>
 											</div>
 
 											<div className="flex items-center justify-between text-sm">
-												<span className="text-gray-600 dark:text-gray-400">{treatment.photos || 0} fotos</span>
+												<span className="text-gray-600 dark:text-gray-400">
+													{treatment.photos || 0} fotos
+												</span>
 												<span className="text-gray-600 dark:text-gray-400">
 													{new Date(treatment.date).toLocaleDateString("pt-BR")}
 												</span>
@@ -859,9 +936,15 @@ export function BeforeAfterGallery() {
 								<Card key={treatment.id}>
 									<CardHeader>
 										<div className="flex items-center justify-between">
-											<CardTitle className="text-lg">{treatment.patientName}</CardTitle>
+											<CardTitle className="text-lg">
+												{treatment.patientName}
+											</CardTitle>
 											<div className="flex gap-2">
-												<Badge className={getTreatmentTypeColor(treatment.type)}>{treatment.type.toUpperCase()}</Badge>
+												<Badge
+													className={getTreatmentTypeColor(treatment.type)}
+												>
+													{treatment.type.toUpperCase()}
+												</Badge>
 												<Badge variant="outline">{treatment.area}</Badge>
 											</div>
 										</div>
@@ -869,7 +952,9 @@ export function BeforeAfterGallery() {
 									<CardContent>
 										<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
 											<div className="text-center">
-												<h4 className="mb-3 font-semibold text-red-600">Antes</h4>
+												<h4 className="mb-3 font-semibold text-red-600">
+													Antes
+												</h4>
 												<div className="mb-3 flex aspect-video items-center justify-center rounded-lg border-2 border-red-200 bg-gradient-to-br from-red-50 to-red-100 dark:border-red-800 dark:from-red-900/20 dark:to-red-800/20">
 													<Camera className="h-8 w-8 text-red-400" />
 												</div>
@@ -879,13 +964,17 @@ export function BeforeAfterGallery() {
 											</div>
 
 											<div className="text-center">
-												<h4 className="mb-3 font-semibold text-green-600">Depois</h4>
+												<h4 className="mb-3 font-semibold text-green-600">
+													Depois
+												</h4>
 												<div className="mb-3 flex aspect-video items-center justify-center rounded-lg border-2 border-green-200 bg-gradient-to-br from-green-50 to-green-100 dark:border-green-800 dark:from-green-900/20 dark:to-green-800/20">
 													<Camera className="h-8 w-8 text-green-400" />
 												</div>
 												<p className="text-gray-600 text-sm dark:text-gray-400">
 													{treatment.nextSession
-														? new Date(treatment.nextSession).toLocaleDateString("pt-BR")
+														? new Date(
+																treatment.nextSession,
+															).toLocaleDateString("pt-BR")
 														: "Aguardando"}
 												</p>
 											</div>
@@ -919,22 +1008,34 @@ export function TreatmentSessionTracker() {
 						<Monitor className="h-5 w-5 text-green-600" />
 						Acompanhamento de Sessões
 					</CardTitle>
-					<CardDescription>Monitore progresso detalhado e evolução dos tratamentos ao longo do tempo</CardDescription>
+					<CardDescription>
+						Monitore progresso detalhado e evolução dos tratamentos ao longo do
+						tempo
+					</CardDescription>
 				</CardHeader>
 				<CardContent>
 					<div className="space-y-6">
 						{mockTreatments.map((treatment) => (
-							<div className="rounded-lg border p-4 transition-shadow hover:shadow-md" key={treatment.id}>
+							<div
+								className="rounded-lg border p-4 transition-shadow hover:shadow-md"
+								key={treatment.id}
+							>
 								<div className="mb-4 flex items-center justify-between">
 									<div>
-										<h3 className="font-semibold text-lg">{treatment.patientName}</h3>
+										<h3 className="font-semibold text-lg">
+											{treatment.patientName}
+										</h3>
 										<p className="text-gray-600 text-sm dark:text-gray-400">
 											{treatment.type.toUpperCase()} - {treatment.area}
 										</p>
 									</div>
 									<div className="flex items-center gap-2">
-										<Badge className={getStatusColor(treatment.status)}>{treatment.status}</Badge>
-										<Badge className={getPriorityColor(treatment.priority)}>{treatment.priority}</Badge>
+										<Badge className={getStatusColor(treatment.status)}>
+											{treatment.status}
+										</Badge>
+										<Badge className={getPriorityColor(treatment.priority)}>
+											{treatment.priority}
+										</Badge>
 									</div>
 								</div>
 
@@ -943,35 +1044,58 @@ export function TreatmentSessionTracker() {
 									<div className="mb-2 flex justify-between text-sm">
 										<span>Progresso do Tratamento</span>
 										<span>
-											{treatment.sessionsCompleted}/{treatment.totalSessions} sessões
+											{treatment.sessionsCompleted}/{treatment.totalSessions}{" "}
+											sessões
 										</span>
 									</div>
-									<Progress className="h-2" value={(treatment.sessionsCompleted / treatment.totalSessions) * 100} />
+									<Progress
+										className="h-2"
+										value={
+											(treatment.sessionsCompleted / treatment.totalSessions) *
+											100
+										}
+									/>
 								</div>
 
 								<div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-4">
 									<div className="rounded border border-blue-200 bg-blue-50 p-3 text-center dark:border-blue-800 dark:bg-blue-900/20">
-										<div className="font-bold text-2xl text-blue-600">{treatment.units || "--"}</div>
-										<div className="text-gray-600 text-sm dark:text-gray-400">Unidades aplicadas</div>
+										<div className="font-bold text-2xl text-blue-600">
+											{treatment.units || "--"}
+										</div>
+										<div className="text-gray-600 text-sm dark:text-gray-400">
+											Unidades aplicadas
+										</div>
 									</div>
 
 									<div className="rounded border border-green-200 bg-green-50 p-3 text-center dark:border-green-800 dark:bg-green-900/20">
 										<div className="font-bold text-2xl text-green-600">
 											{new Date(treatment.date).toLocaleDateString("pt-BR")}
 										</div>
-										<div className="text-gray-600 text-sm dark:text-gray-400">Última sessão</div>
+										<div className="text-gray-600 text-sm dark:text-gray-400">
+											Última sessão
+										</div>
 									</div>
 
 									<div className="rounded border border-purple-200 bg-purple-50 p-3 text-center dark:border-purple-800 dark:bg-purple-900/20">
 										<div className="font-bold text-2xl text-purple-600">
-											{treatment.nextSession ? new Date(treatment.nextSession).toLocaleDateString("pt-BR") : "--"}
+											{treatment.nextSession
+												? new Date(treatment.nextSession).toLocaleDateString(
+														"pt-BR",
+													)
+												: "--"}
 										</div>
-										<div className="text-gray-600 text-sm dark:text-gray-400">Próxima sessão</div>
+										<div className="text-gray-600 text-sm dark:text-gray-400">
+											Próxima sessão
+										</div>
 									</div>
 
 									<div className="rounded border border-orange-200 bg-orange-50 p-3 text-center dark:border-orange-800 dark:bg-orange-900/20">
-										<div className="font-bold text-2xl text-orange-600">{treatment.photos || 0}</div>
-										<div className="text-gray-600 text-sm dark:text-gray-400">Fotos registradas</div>
+										<div className="font-bold text-2xl text-orange-600">
+											{treatment.photos || 0}
+										</div>
+										<div className="text-gray-600 text-sm dark:text-gray-400">
+											Fotos registradas
+										</div>
 									</div>
 								</div>
 
@@ -1014,7 +1138,8 @@ export function ProductInventoryManagement() {
 		const matchesSearch =
 			product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
 			product.brand.toLowerCase().includes(searchTerm.toLowerCase());
-		const matchesCategory = categoryFilter === "all" || product.category === categoryFilter;
+		const matchesCategory =
+			categoryFilter === "all" || product.category === categoryFilter;
 		return matchesSearch && matchesCategory;
 	});
 
@@ -1026,7 +1151,9 @@ export function ProductInventoryManagement() {
 						<Package className="h-5 w-5 text-blue-600" />
 						Gestão de Produtos e Estoque
 					</CardTitle>
-					<CardDescription>Controle completo do inventário de produtos estéticos e equipamentos</CardDescription>
+					<CardDescription>
+						Controle completo do inventário de produtos estéticos e equipamentos
+					</CardDescription>
 				</CardHeader>
 				<CardContent>
 					{/* Search and Filters */}
@@ -1047,7 +1174,9 @@ export function ProductInventoryManagement() {
 								<SelectItem value="all">Todas as categorias</SelectItem>
 								<SelectItem value="botox">Toxina Botulínica</SelectItem>
 								<SelectItem value="filler">Preenchimentos</SelectItem>
-								<SelectItem value="laser-consumable">Consumíveis Laser</SelectItem>
+								<SelectItem value="laser-consumable">
+									Consumíveis Laser
+								</SelectItem>
 								<SelectItem value="skincare">Skincare</SelectItem>
 								<SelectItem value="equipment">Equipamentos</SelectItem>
 							</SelectContent>
@@ -1065,7 +1194,9 @@ export function ProductInventoryManagement() {
 								<div className="flex items-center">
 									<AlertCircle className="h-8 w-8 text-red-600" />
 									<div className="ml-4">
-										<p className="font-medium text-red-600 text-sm">Estoque Baixo</p>
+										<p className="font-medium text-red-600 text-sm">
+											Estoque Baixo
+										</p>
 										<p className="font-bold text-2xl text-red-700">2</p>
 									</div>
 								</div>
@@ -1077,7 +1208,9 @@ export function ProductInventoryManagement() {
 								<div className="flex items-center">
 									<Clock className="h-8 w-8 text-yellow-600" />
 									<div className="ml-4">
-										<p className="font-medium text-sm text-yellow-600">Próximo ao Vencimento</p>
+										<p className="font-medium text-sm text-yellow-600">
+											Próximo ao Vencimento
+										</p>
 										<p className="font-bold text-2xl text-yellow-700">1</p>
 									</div>
 								</div>
@@ -1089,8 +1222,12 @@ export function ProductInventoryManagement() {
 								<div className="flex items-center">
 									<Package className="h-8 w-8 text-green-600" />
 									<div className="ml-4">
-										<p className="font-medium text-green-600 text-sm">Em Estoque</p>
-										<p className="font-bold text-2xl text-green-700">{mockProducts.length}</p>
+										<p className="font-medium text-green-600 text-sm">
+											Em Estoque
+										</p>
+										<p className="font-bold text-2xl text-green-700">
+											{mockProducts.length}
+										</p>
 									</div>
 								</div>
 							</CardContent>
@@ -1101,8 +1238,12 @@ export function ProductInventoryManagement() {
 								<div className="flex items-center">
 									<TrendingUp className="h-8 w-8 text-blue-600" />
 									<div className="ml-4">
-										<p className="font-medium text-blue-600 text-sm">Valor Total</p>
-										<p className="font-bold text-2xl text-blue-700">R$ 23.400</p>
+										<p className="font-medium text-blue-600 text-sm">
+											Valor Total
+										</p>
+										<p className="font-bold text-2xl text-blue-700">
+											R$ 23.400
+										</p>
 									</div>
 								</div>
 							</CardContent>
@@ -1124,17 +1265,27 @@ export function ProductInventoryManagement() {
 							</thead>
 							<tbody>
 								{filteredProducts.map((product) => {
-									const stockStatus = getStockStatus(product.currentStock, product.minStock);
+									const stockStatus = getStockStatus(
+										product.currentStock,
+										product.minStock,
+									);
 									return (
-										<tr className="border-t hover:bg-gray-50 dark:hover:bg-gray-800" key={product.id}>
+										<tr
+											className="border-t hover:bg-gray-50 dark:hover:bg-gray-800"
+											key={product.id}
+										>
 											<td className="p-4">
 												<div>
 													<div className="font-medium">{product.name}</div>
-													<div className="text-gray-500 text-sm">{product.brand}</div>
+													<div className="text-gray-500 text-sm">
+														{product.brand}
+													</div>
 												</div>
 											</td>
 											<td className="p-4">
-												<Badge variant="outline">{product.category.replace("-", " ").toUpperCase()}</Badge>
+												<Badge variant="outline">
+													{product.category.replace("-", " ").toUpperCase()}
+												</Badge>
 											</td>
 											<td className="p-4">
 												<div className="font-medium">
@@ -1146,19 +1297,26 @@ export function ProductInventoryManagement() {
 											</td>
 											<td className="p-4">
 												<Badge className={stockStatus.color}>
-													{stockStatus.status === "low" ? "Baixo" : stockStatus.status === "medium" ? "Médio" : "Bom"}
+													{stockStatus.status === "low"
+														? "Baixo"
+														: stockStatus.status === "medium"
+															? "Médio"
+															: "Bom"}
 												</Badge>
 											</td>
 											<td className="p-4">
 												{product.expiryDate ? (
 													<span
 														className={
-															new Date(product.expiryDate) < new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+															new Date(product.expiryDate) <
+															new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
 																? "font-medium text-red-600"
 																: "text-gray-600"
 														}
 													>
-														{new Date(product.expiryDate).toLocaleDateString("pt-BR")}
+														{new Date(product.expiryDate).toLocaleDateString(
+															"pt-BR",
+														)}
 													</span>
 												) : (
 													<span className="text-gray-400">-</span>
@@ -1228,7 +1386,9 @@ export function PatientConsultationForm() {
 						<Stethoscope className="h-5 w-5 text-blue-600" />
 						Formulário de Consulta Estética
 					</CardTitle>
-					<CardDescription>Coleta completa de informações para consulta personalizada</CardDescription>
+					<CardDescription>
+						Coleta completa de informações para consulta personalizada
+					</CardDescription>
 				</CardHeader>
 				<CardContent>
 					<Tabs className="space-y-6" defaultValue="personal">
@@ -1380,7 +1540,9 @@ export function PatientConsultationForm() {
 								</div>
 
 								<div className="space-y-2">
-									<Label htmlFor="previous-treatments">Tratamentos Estéticos Anteriores</Label>
+									<Label htmlFor="previous-treatments">
+										Tratamentos Estéticos Anteriores
+									</Label>
 									<Textarea
 										id="previous-treatments"
 										onChange={(e) =>
@@ -1420,7 +1582,9 @@ export function PatientConsultationForm() {
 						<TabsContent className="space-y-4" value="aesthetic">
 							<div className="space-y-4">
 								<div className="space-y-2">
-									<Label htmlFor="primary-concern">Principal Preocupação Estética</Label>
+									<Label htmlFor="primary-concern">
+										Principal Preocupação Estética
+									</Label>
 									<Select
 										onValueChange={(value) =>
 											setFormData({
@@ -1437,17 +1601,29 @@ export function PatientConsultationForm() {
 											<SelectValue placeholder="Selecione sua principal preocupação" />
 										</SelectTrigger>
 										<SelectContent>
-											<SelectItem value="wrinkles">Rugas e Linhas de Expressão</SelectItem>
-											<SelectItem value="volume-loss">Perda de Volume</SelectItem>
-											<SelectItem value="skin-texture">Textura da Pele</SelectItem>
-											<SelectItem value="body-contouring">Contorno Corporal</SelectItem>
-											<SelectItem value="skin-tightening">Flacidez da Pele</SelectItem>
+											<SelectItem value="wrinkles">
+												Rugas e Linhas de Expressão
+											</SelectItem>
+											<SelectItem value="volume-loss">
+												Perda de Volume
+											</SelectItem>
+											<SelectItem value="skin-texture">
+												Textura da Pele
+											</SelectItem>
+											<SelectItem value="body-contouring">
+												Contorno Corporal
+											</SelectItem>
+											<SelectItem value="skin-tightening">
+												Flacidez da Pele
+											</SelectItem>
 										</SelectContent>
 									</Select>
 								</div>
 
 								<div className="space-y-2">
-									<Label htmlFor="secondary-concerns">Outras Preocupações</Label>
+									<Label htmlFor="secondary-concerns">
+										Outras Preocupações
+									</Label>
 									<Textarea
 										id="secondary-concerns"
 										onChange={(e) =>
@@ -1501,10 +1677,18 @@ export function PatientConsultationForm() {
 										</SelectTrigger>
 										<SelectContent>
 											<SelectItem value="under-500">Até R$ 500</SelectItem>
-											<SelectItem value="500-1000">R$ 500 - R$ 1.000</SelectItem>
-											<SelectItem value="1000-2000">R$ 1.000 - R$ 2.000</SelectItem>
-											<SelectItem value="2000-5000">R$ 2.000 - R$ 5.000</SelectItem>
-											<SelectItem value="over-5000">Acima de R$ 5.000</SelectItem>
+											<SelectItem value="500-1000">
+												R$ 500 - R$ 1.000
+											</SelectItem>
+											<SelectItem value="1000-2000">
+												R$ 1.000 - R$ 2.000
+											</SelectItem>
+											<SelectItem value="2000-5000">
+												R$ 2.000 - R$ 5.000
+											</SelectItem>
+											<SelectItem value="over-5000">
+												Acima de R$ 5.000
+											</SelectItem>
 										</SelectContent>
 									</Select>
 								</div>
@@ -1514,7 +1698,9 @@ export function PatientConsultationForm() {
 						<TabsContent className="space-y-4" value="preferences">
 							<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
 								<div className="space-y-2">
-									<Label htmlFor="communication">Forma de Comunicação Preferida</Label>
+									<Label htmlFor="communication">
+										Forma de Comunicação Preferida
+									</Label>
 									<Select
 										onValueChange={(value) =>
 											setFormData({
@@ -1585,7 +1771,9 @@ export function PatientConsultationForm() {
 										<SelectContent>
 											<SelectItem value="none">Sem lembretes</SelectItem>
 											<SelectItem value="day-before">1 dia antes</SelectItem>
-											<SelectItem value="week-before">1 semana antes</SelectItem>
+											<SelectItem value="week-before">
+												1 semana antes
+											</SelectItem>
 											<SelectItem value="both">Ambos</SelectItem>
 										</SelectContent>
 									</Select>
@@ -1643,7 +1831,9 @@ export function AppointmentBookingSystem() {
 						<Calendar className="h-5 w-5 text-green-600" />
 						Agendamento de Consultas
 					</CardTitle>
-					<CardDescription>Sistema inteligente de agendamento para tratamentos estéticos</CardDescription>
+					<CardDescription>
+						Sistema inteligente de agendamento para tratamentos estéticos
+					</CardDescription>
 				</CardHeader>
 				<CardContent>
 					<div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
@@ -1652,7 +1842,10 @@ export function AppointmentBookingSystem() {
 							<div className="space-y-4">
 								<div className="space-y-2">
 									<Label htmlFor="treatment-select">Tipo de Tratamento</Label>
-									<Select onValueChange={setSelectedTreatment} value={selectedTreatment}>
+									<Select
+										onValueChange={setSelectedTreatment}
+										value={selectedTreatment}
+									>
 										<SelectTrigger id="treatment-select">
 											<SelectValue placeholder="Selecione o tratamento" />
 										</SelectTrigger>
@@ -1695,7 +1888,11 @@ export function AppointmentBookingSystem() {
 
 								<div className="space-y-2">
 									<Label htmlFor="notes">Observações</Label>
-									<Textarea id="notes" placeholder="Observações adicionais sobre o agendamento..." rows={3} />
+									<Textarea
+										id="notes"
+										placeholder="Observações adicionais sobre o agendamento..."
+										rows={3}
+									/>
 								</div>
 							</div>
 
@@ -1709,14 +1906,21 @@ export function AppointmentBookingSystem() {
 						<div className="space-y-6">
 							<Card>
 								<CardHeader>
-									<CardTitle className="text-lg">Próximos Agendamentos</CardTitle>
+									<CardTitle className="text-lg">
+										Próximos Agendamentos
+									</CardTitle>
 								</CardHeader>
 								<CardContent>
 									<div className="space-y-4">
 										{mockAppointments.map((appointment) => (
-											<div className="rounded-lg border p-3" key={appointment.id}>
+											<div
+												className="rounded-lg border p-3"
+												key={appointment.id}
+											>
 												<div className="mb-2 flex items-center justify-between">
-													<div className="font-medium">{appointment.patientName}</div>
+													<div className="font-medium">
+														{appointment.patientName}
+													</div>
 													<Badge
 														className={
 															appointment.status === "confirmed"
@@ -1730,7 +1934,10 @@ export function AppointmentBookingSystem() {
 												<div className="text-gray-600 text-sm dark:text-gray-400">
 													<p>{appointment.treatmentType}</p>
 													<p>
-														{new Date(appointment.date).toLocaleDateString("pt-BR")} às {appointment.time}
+														{new Date(appointment.date).toLocaleDateString(
+															"pt-BR",
+														)}{" "}
+														às {appointment.time}
 													</p>
 													<p>Dr. {appointment.practitioner}</p>
 												</div>
@@ -1775,9 +1982,16 @@ export function AppointmentBookingSystem() {
 // =====================================================
 
 export function ProfessionalDashboard() {
-	const totalRevenue = mockTreatments.reduce((sum, treatment) => sum + (treatment.price || 0), 0);
-	const _completedTreatments = mockTreatments.filter((t) => t.status === "completed").length;
-	const activeTreatments = mockTreatments.filter((t) => t.status === "in-progress").length;
+	const totalRevenue = mockTreatments.reduce(
+		(sum, treatment) => sum + (treatment.price || 0),
+		0,
+	);
+	const _completedTreatments = mockTreatments.filter(
+		(t) => t.status === "completed",
+	).length;
+	const activeTreatments = mockTreatments.filter(
+		(t) => t.status === "in-progress",
+	).length;
 	const todayAppointments = mockAppointments.length;
 
 	return (
@@ -1789,8 +2003,12 @@ export function ProfessionalDashboard() {
 						<div className="flex items-center">
 							<BarChart3 className="h-8 w-8 text-green-600" />
 							<div className="ml-4">
-								<p className="font-medium text-green-600 text-sm">Receita Total</p>
-								<p className="font-bold text-2xl text-green-700">R$ {totalRevenue.toLocaleString("pt-BR")}</p>
+								<p className="font-medium text-green-600 text-sm">
+									Receita Total
+								</p>
+								<p className="font-bold text-2xl text-green-700">
+									R$ {totalRevenue.toLocaleString("pt-BR")}
+								</p>
 							</div>
 						</div>
 					</CardContent>
@@ -1801,8 +2019,12 @@ export function ProfessionalDashboard() {
 						<div className="flex items-center">
 							<Users className="h-8 w-8 text-blue-600" />
 							<div className="ml-4">
-								<p className="font-medium text-blue-600 text-sm">Pacientes Ativos</p>
-								<p className="font-bold text-2xl text-blue-700">{mockPatients.length * 52}</p>
+								<p className="font-medium text-blue-600 text-sm">
+									Pacientes Ativos
+								</p>
+								<p className="font-bold text-2xl text-blue-700">
+									{mockPatients.length * 52}
+								</p>
 							</div>
 						</div>
 					</CardContent>
@@ -1813,8 +2035,12 @@ export function ProfessionalDashboard() {
 						<div className="flex items-center">
 							<Activity className="h-8 w-8 text-purple-600" />
 							<div className="ml-4">
-								<p className="font-medium text-purple-600 text-sm">Tratamentos Ativos</p>
-								<p className="font-bold text-2xl text-purple-700">{activeTreatments}</p>
+								<p className="font-medium text-purple-600 text-sm">
+									Tratamentos Ativos
+								</p>
+								<p className="font-bold text-2xl text-purple-700">
+									{activeTreatments}
+								</p>
 							</div>
 						</div>
 					</CardContent>
@@ -1825,8 +2051,12 @@ export function ProfessionalDashboard() {
 						<div className="flex items-center">
 							<Calendar className="h-8 w-8 text-orange-600" />
 							<div className="ml-4">
-								<p className="font-medium text-orange-600 text-sm">Agendamentos Hoje</p>
-								<p className="font-bold text-2xl text-orange-700">{todayAppointments}</p>
+								<p className="font-medium text-orange-600 text-sm">
+									Agendamentos Hoje
+								</p>
+								<p className="font-bold text-2xl text-orange-700">
+									{todayAppointments}
+								</p>
 							</div>
 						</div>
 					</CardContent>
@@ -1850,17 +2080,27 @@ export function ProfessionalDashboard() {
 							>
 								<div className="flex items-center space-x-4">
 									<div className="text-center">
-										<div className="font-bold text-blue-600 text-lg">{appointment.time}</div>
-										<div className="text-gray-500 text-sm">{appointment.duration}min</div>
+										<div className="font-bold text-blue-600 text-lg">
+											{appointment.time}
+										</div>
+										<div className="text-gray-500 text-sm">
+											{appointment.duration}min
+										</div>
 									</div>
 									<div>
 										<div className="font-medium">{appointment.patientName}</div>
-										<div className="text-gray-600 text-sm">{appointment.treatmentType}</div>
-										<div className="text-gray-500 text-sm">{appointment.practitioner}</div>
+										<div className="text-gray-600 text-sm">
+											{appointment.treatmentType}
+										</div>
+										<div className="text-gray-500 text-sm">
+											{appointment.practitioner}
+										</div>
 									</div>
 								</div>
 								<div className="flex items-center space-x-2">
-									{appointment.isFollowUp && <Badge variant="outline">Retorno</Badge>}
+									{appointment.isFollowUp && (
+										<Badge variant="outline">Retorno</Badge>
+									)}
 									<Badge
 										className={
 											appointment.status === "confirmed"
@@ -1890,7 +2130,9 @@ export function ProfessionalDashboard() {
 					<CardContent>
 						<div className="space-y-4">
 							{treatmentTypes.map((type) => {
-								const count = mockTreatments.filter((t) => t.type === type.value).length;
+								const count = mockTreatments.filter(
+									(t) => t.type === type.value,
+								).length;
 								const percentage = (count / mockTreatments.length) * 100;
 								return (
 									<div className="space-y-2" key={type.value}>
@@ -1915,16 +2157,28 @@ export function ProfessionalDashboard() {
 					<CardContent>
 						<div className="space-y-4">
 							{treatmentTypes.map((type) => {
-								const treatments = mockTreatments.filter((t) => t.type === type.value);
-								const revenue = treatments.reduce((sum, t) => sum + (t.price || 0), 0);
+								const treatments = mockTreatments.filter(
+									(t) => t.type === type.value,
+								);
+								const revenue = treatments.reduce(
+									(sum, t) => sum + (t.price || 0),
+									0,
+								);
 								return (
-									<div className="flex items-center justify-between rounded-lg border p-3" key={type.value}>
+									<div
+										className="flex items-center justify-between rounded-lg border p-3"
+										key={type.value}
+									>
 										<div>
 											<div className="font-medium">{type.label}</div>
-											<div className="text-gray-500 text-sm">{treatments.length} tratamentos</div>
+											<div className="text-gray-500 text-sm">
+												{treatments.length} tratamentos
+											</div>
 										</div>
 										<div className="text-right">
-											<div className="font-bold text-green-600">R$ {revenue.toLocaleString("pt-BR")}</div>
+											<div className="font-bold text-green-600">
+												R$ {revenue.toLocaleString("pt-BR")}
+											</div>
 										</div>
 									</div>
 								);
@@ -1952,7 +2206,8 @@ export function AestheticClinicManagementSystem() {
 							Sistema de Gestão para Clínicas Estéticas
 						</h1>
 						<p className="mt-2 text-gray-600 dark:text-gray-300">
-							Plataforma completa para gerenciar todos os aspectos da sua clínica estética
+							Plataforma completa para gerenciar todos os aspectos da sua
+							clínica estética
 						</p>
 					</div>
 
@@ -2012,8 +2267,12 @@ export function AestheticClinicManagementSystem() {
 					<TabsContent value="patients">
 						<div className="py-12 text-center">
 							<Users className="mx-auto mb-4 h-12 w-12 text-gray-400" />
-							<h3 className="font-semibold text-gray-700 text-lg dark:text-gray-300">Gestão de Pacientes</h3>
-							<p className="text-gray-600 dark:text-gray-400">Módulo de gestão de pacientes será implementado aqui</p>
+							<h3 className="font-semibold text-gray-700 text-lg dark:text-gray-300">
+								Gestão de Pacientes
+							</h3>
+							<p className="text-gray-600 dark:text-gray-400">
+								Módulo de gestão de pacientes será implementado aqui
+							</p>
 						</div>
 					</TabsContent>
 

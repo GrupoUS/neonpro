@@ -6,7 +6,10 @@
 import { createClient } from "@supabase/supabase-js";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+const supabase = createClient(
+	process.env.NEXT_PUBLIC_SUPABASE_URL!,
+	process.env.SUPABASE_SERVICE_ROLE_KEY!,
+);
 
 describe("Bank Reconciliation API Integration Tests", () => {
 	let _testSessionId: string;
@@ -37,7 +40,11 @@ describe("Bank Reconciliation API Integration Tests", () => {
 				status: "pending",
 			};
 
-			const { data, error } = await supabase.from("financial_transactions").insert(newTransaction).select().single();
+			const { data, error } = await supabase
+				.from("financial_transactions")
+				.insert(newTransaction)
+				.select()
+				.single();
 
 			expect(error).toBeNull();
 			expect(data).toBeDefined();
@@ -98,8 +105,12 @@ describe("Bank Reconciliation API Integration Tests", () => {
 			expect(Array.isArray(data)).toBe(true);
 
 			// Calculate totals
-			const credits = data.filter((t) => t.transaction_type === "credit").reduce((sum, t) => sum + t.amount, 0);
-			const debits = data.filter((t) => t.transaction_type === "debit").reduce((sum, t) => sum + t.amount, 0);
+			const credits = data
+				.filter((t) => t.transaction_type === "credit")
+				.reduce((sum, t) => sum + t.amount, 0);
+			const debits = data
+				.filter((t) => t.transaction_type === "debit")
+				.reduce((sum, t) => sum + t.amount, 0);
 
 			expect(credits).toBeGreaterThanOrEqual(0);
 			expect(debits).toBeGreaterThanOrEqual(0);
@@ -191,7 +202,10 @@ describe("Bank Reconciliation API Integration Tests", () => {
 
 		it("should handle concurrent reconciliation requests", async () => {
 			const concurrentRequests = Array.from({ length: 5 }, (_, _i) =>
-				supabase.from("financial_transactions").select("count(*)").eq("clinic_id", "test-clinic-123")
+				supabase
+					.from("financial_transactions")
+					.select("count(*)")
+					.eq("clinic_id", "test-clinic-123"),
 			);
 
 			const results = await Promise.all(concurrentRequests);
@@ -204,9 +218,15 @@ describe("Bank Reconciliation API Integration Tests", () => {
 
 	describe("🧪 Healthcare-Specific Validation", () => {
 		it("should validate clinic-specific data isolation", async () => {
-			const clinic1Data = await supabase.from("financial_transactions").select("*").eq("clinic_id", "clinic-1");
+			const clinic1Data = await supabase
+				.from("financial_transactions")
+				.select("*")
+				.eq("clinic_id", "clinic-1");
 
-			const clinic2Data = await supabase.from("financial_transactions").select("*").eq("clinic_id", "clinic-2");
+			const clinic2Data = await supabase
+				.from("financial_transactions")
+				.select("*")
+				.eq("clinic_id", "clinic-2");
 
 			expect(clinic1Data.error).toBeNull();
 			expect(clinic2Data.error).toBeNull();
@@ -235,7 +255,11 @@ describe("Bank Reconciliation API Integration Tests", () => {
 				requires_audit: true,
 			};
 
-			const { data, error } = await supabase.from("financial_transactions").insert(testTransaction).select().single();
+			const { data, error } = await supabase
+				.from("financial_transactions")
+				.insert(testTransaction)
+				.select()
+				.single();
 
 			expect(error).toBeNull();
 			expect(data.data_classification).toBe("confidential");
@@ -251,7 +275,11 @@ describe("Bank Reconciliation API Integration Tests", () => {
 				return;
 			}
 
-			const { data, error } = await supabase.from("financial_transactions").select("*").eq("id", testId).single();
+			const { data, error } = await supabase
+				.from("financial_transactions")
+				.select("*")
+				.eq("id", testId)
+				.single();
 
 			expect(error).toBeNull();
 

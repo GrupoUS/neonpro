@@ -269,7 +269,9 @@ const mockTreatmentData = {
 };
 
 function TreatmentProgressCard({ treatment }: { treatment: any }) {
-	const completedGoals = treatment.goals.filter((goal: any) => goal.achieved).length;
+	const completedGoals = treatment.goals.filter(
+		(goal: any) => goal.achieved,
+	).length;
 	const totalGoals = treatment.goals.length;
 
 	return (
@@ -295,9 +297,13 @@ function TreatmentProgressCard({ treatment }: { treatment: any }) {
 					<Progress className="h-3" value={treatment.progress} />
 					<div className="flex justify-between text-muted-foreground text-xs">
 						<span>
-							{treatment.sessions.completed} de {treatment.sessions.total} sessões
+							{treatment.sessions.completed} de {treatment.sessions.total}{" "}
+							sessões
 						</span>
-						<span>Próxima: {new Date(treatment.sessions.next).toLocaleDateString("pt-BR")}</span>
+						<span>
+							Próxima:{" "}
+							{new Date(treatment.sessions.next).toLocaleDateString("pt-BR")}
+						</span>
 					</div>
 				</div>
 
@@ -311,19 +317,28 @@ function TreatmentProgressCard({ treatment }: { treatment: any }) {
 					</div>
 					<div className="space-y-1">
 						{treatment.goals.slice(0, 2).map((goal: any) => (
-							<div className="flex items-center space-x-2 text-xs" key={goal.id}>
+							<div
+								className="flex items-center space-x-2 text-xs"
+								key={goal.id}
+							>
 								{goal.achieved ? (
 									<CheckCircle className="h-3 w-3 text-green-600" />
 								) : (
 									<div className="h-3 w-3 rounded-full border border-gray-300" />
 								)}
-								<span className={cn(goal.achieved ? "text-muted-foreground line-through" : "")}>
+								<span
+									className={cn(
+										goal.achieved ? "text-muted-foreground line-through" : "",
+									)}
+								>
 									{goal.description}
 								</span>
 							</div>
 						))}
 						{treatment.goals.length > 2 && (
-							<div className="text-muted-foreground text-xs">+{treatment.goals.length - 2} objetivos adicionais</div>
+							<div className="text-muted-foreground text-xs">
+								+{treatment.goals.length - 2} objetivos adicionais
+							</div>
 						)}
 					</div>
 				</div>
@@ -367,16 +382,24 @@ function BeforeAfterGallery({ photos }: { photos: any[] }) {
 					<Camera className="h-5 w-5 text-purple-600" />
 					<span>Galeria de Evolução</span>
 				</CardTitle>
-				<CardDescription>Acompanhe visualmente seus resultados ao longo do tratamento</CardDescription>
+				<CardDescription>
+					Acompanhe visualmente seus resultados ao longo do tratamento
+				</CardDescription>
 			</CardHeader>
 			<CardContent className="space-y-6">
 				{/* Photo Categories */}
 				<Tabs className="w-full" defaultValue="all">
 					<TabsList className="grid w-full grid-cols-4">
 						<TabsTrigger value="all">Todas</TabsTrigger>
-						<TabsTrigger value="before">Antes ({beforePhotos.length})</TabsTrigger>
-						<TabsTrigger value="progress">Progresso ({progressPhotos.length})</TabsTrigger>
-						<TabsTrigger value="after">Depois ({afterPhotos.length})</TabsTrigger>
+						<TabsTrigger value="before">
+							Antes ({beforePhotos.length})
+						</TabsTrigger>
+						<TabsTrigger value="progress">
+							Progresso ({progressPhotos.length})
+						</TabsTrigger>
+						<TabsTrigger value="after">
+							Depois ({afterPhotos.length})
+						</TabsTrigger>
 					</TabsList>
 
 					<TabsContent className="space-y-4" value="all">
@@ -435,8 +458,12 @@ function BeforeAfterGallery({ photos }: { photos: any[] }) {
 						<h4 className="font-medium">Adicionar Nova Foto</h4>
 						<div className="cursor-pointer rounded-lg border-2 border-gray-300 border-dashed p-6 text-center transition-colors hover:border-gray-400">
 							<Upload className="mx-auto mb-2 h-8 w-8 text-muted-foreground" />
-							<p className="mb-2 text-muted-foreground text-sm">Clique para fazer upload ou arraste uma foto aqui</p>
-							<p className="text-muted-foreground text-xs">Formatos suportados: JPG, PNG (máx. 10MB)</p>
+							<p className="mb-2 text-muted-foreground text-sm">
+								Clique para fazer upload ou arraste uma foto aqui
+							</p>
+							<p className="text-muted-foreground text-xs">
+								Formatos suportados: JPG, PNG (máx. 10MB)
+							</p>
 						</div>
 
 						<div className="flex space-x-2">
@@ -460,7 +487,10 @@ function PhotoTimeline({ photos }: { photos: any[] }) {
 	return (
 		<div className="space-y-4">
 			{photos.map((photo, _index) => (
-				<div className="flex items-center space-x-4 rounded-lg border p-4" key={photo.id}>
+				<div
+					className="flex items-center space-x-4 rounded-lg border p-4"
+					key={photo.id}
+				>
 					<div className="flex-shrink-0">
 						<div className="flex h-16 w-16 items-center justify-center rounded-lg bg-gray-200">
 							<Camera className="h-6 w-6 text-gray-400" />
@@ -470,14 +500,28 @@ function PhotoTimeline({ photos }: { photos: any[] }) {
 					<div className="flex-1">
 						<div className="flex items-center space-x-2">
 							<Badge
-								variant={photo.type === "before" ? "secondary" : photo.type === "progress" ? "default" : "secondary"}
+								variant={
+									photo.type === "before"
+										? "secondary"
+										: photo.type === "progress"
+											? "default"
+											: "secondary"
+								}
 							>
-								{photo.type === "before" ? "Antes" : photo.type === "progress" ? "Progresso" : "Depois"}
+								{photo.type === "before"
+									? "Antes"
+									: photo.type === "progress"
+										? "Progresso"
+										: "Depois"}
 							</Badge>
-							<span className="text-muted-foreground text-sm">{new Date(photo.date).toLocaleDateString("pt-BR")}</span>
+							<span className="text-muted-foreground text-sm">
+								{new Date(photo.date).toLocaleDateString("pt-BR")}
+							</span>
 						</div>
 						<p className="mt-1 font-medium text-sm">{photo.notes}</p>
-						<p className="text-muted-foreground text-xs">Ângulo: {photo.angle}</p>
+						<p className="text-muted-foreground text-xs">
+							Ângulo: {photo.angle}
+						</p>
 					</div>
 
 					<div className="flex space-x-2">
@@ -506,7 +550,9 @@ function PhotoGrid({ photos }: { photos: any[] }) {
 						<Camera className="h-8 w-8 text-gray-400" />
 					</div>
 					<div className="text-center text-xs">
-						<p className="font-medium">{new Date(photo.date).toLocaleDateString("pt-BR")}</p>
+						<p className="font-medium">
+							{new Date(photo.date).toLocaleDateString("pt-BR")}
+						</p>
 						<p className="text-muted-foreground">{photo.angle}</p>
 					</div>
 				</div>
@@ -523,7 +569,9 @@ function TreatmentMilestones({ milestones }: { milestones: any[] }) {
 					<Target className="h-5 w-5 text-blue-600" />
 					<span>Marcos do Tratamento</span>
 				</CardTitle>
-				<CardDescription>Acompanhe cada etapa importante do seu tratamento</CardDescription>
+				<CardDescription>
+					Acompanhe cada etapa importante do seu tratamento
+				</CardDescription>
 			</CardHeader>
 			<CardContent>
 				<div className="space-y-6">
@@ -537,7 +585,7 @@ function TreatmentMilestones({ milestones }: { milestones: any[] }) {
 											? "bg-green-100 text-green-600"
 											: milestone.status === "scheduled"
 												? "bg-blue-100 text-blue-600"
-												: "bg-gray-100 text-gray-600"
+												: "bg-gray-100 text-gray-600",
 									)}
 								>
 									{milestone.status === "completed" ? (
@@ -548,14 +596,18 @@ function TreatmentMilestones({ milestones }: { milestones: any[] }) {
 										<div className="h-2 w-2 rounded-full bg-current" />
 									)}
 								</div>
-								{index < milestones.length - 1 && <div className="mt-2 h-12 w-px bg-gray-200" />}
+								{index < milestones.length - 1 && (
+									<div className="mt-2 h-12 w-px bg-gray-200" />
+								)}
 							</div>
 
 							<div className="flex-1 pb-6">
 								<div className="flex items-start justify-between">
 									<div>
 										<h4 className="font-medium">{milestone.title}</h4>
-										<p className="text-muted-foreground text-sm">{milestone.description}</p>
+										<p className="text-muted-foreground text-sm">
+											{milestone.description}
+										</p>
 										<p className="mt-1 text-muted-foreground text-xs">
 											{new Date(milestone.date).toLocaleDateString("pt-BR", {
 												weekday: "long",
@@ -581,15 +633,24 @@ function TreatmentMilestones({ milestones }: { milestones: any[] }) {
 									</Badge>
 								</div>
 
-								{milestone.notes && <p className="mt-2 text-muted-foreground text-sm italic">"{milestone.notes}"</p>}
+								{milestone.notes && (
+									<p className="mt-2 text-muted-foreground text-sm italic">
+										"{milestone.notes}"
+									</p>
+								)}
 
 								{milestone.photos && milestone.photos.length > 0 && (
 									<div className="mt-3 flex space-x-2">
-										{milestone.photos.map((_photo: string, photoIndex: number) => (
-											<div className="flex h-12 w-12 items-center justify-center rounded bg-gray-200" key={photoIndex}>
-												<Camera className="h-4 w-4 text-gray-400" />
-											</div>
-										))}
+										{milestone.photos.map(
+											(_photo: string, photoIndex: number) => (
+												<div
+													className="flex h-12 w-12 items-center justify-center rounded bg-gray-200"
+													key={photoIndex}
+												>
+													<Camera className="h-4 w-4 text-gray-400" />
+												</div>
+											),
+										)}
 									</div>
 								)}
 							</div>
@@ -609,8 +670,12 @@ export function TreatmentJourney() {
 			{/* Header */}
 			<div className="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
 				<div>
-					<h1 className="font-bold text-2xl tracking-tight lg:text-3xl">Jornada de Tratamentos</h1>
-					<p className="text-muted-foreground">Acompanhe sua evolução e resultados detalhadamente</p>
+					<h1 className="font-bold text-2xl tracking-tight lg:text-3xl">
+						Jornada de Tratamentos
+					</h1>
+					<p className="text-muted-foreground">
+						Acompanhe sua evolução e resultados detalhadamente
+					</p>
 				</div>
 
 				<div className="flex space-x-2">
@@ -628,8 +693,12 @@ export function TreatmentJourney() {
 			{/* Treatment Tabs */}
 			<Tabs onValueChange={setActiveTab} value={activeTab}>
 				<TabsList className="grid w-full grid-cols-2">
-					<TabsTrigger value="active">Tratamentos Ativos ({mockTreatmentData.activeTreatments.length})</TabsTrigger>
-					<TabsTrigger value="completed">Concluídos ({mockTreatmentData.completedTreatments.length})</TabsTrigger>
+					<TabsTrigger value="active">
+						Tratamentos Ativos ({mockTreatmentData.activeTreatments.length})
+					</TabsTrigger>
+					<TabsTrigger value="completed">
+						Concluídos ({mockTreatmentData.completedTreatments.length})
+					</TabsTrigger>
 				</TabsList>
 
 				<TabsContent className="space-y-6" value="active">
@@ -643,11 +712,15 @@ export function TreatmentJourney() {
 					{/* Detailed View for First Treatment */}
 					{mockTreatmentData.activeTreatments.length > 0 && (
 						<div className="space-y-6">
-							<h2 className="font-semibold text-xl">Detalhes: {mockTreatmentData.activeTreatments[0].name}</h2>
+							<h2 className="font-semibold text-xl">
+								Detalhes: {mockTreatmentData.activeTreatments[0].name}
+							</h2>
 
 							<div className="grid gap-6 lg:grid-cols-2">
 								{/* Treatment Milestones */}
-								<TreatmentMilestones milestones={mockTreatmentData.activeTreatments[0].milestones} />
+								<TreatmentMilestones
+									milestones={mockTreatmentData.activeTreatments[0].milestones}
+								/>
 
 								{/* Goals Progress */}
 								<Card>
@@ -658,36 +731,45 @@ export function TreatmentJourney() {
 										</CardTitle>
 									</CardHeader>
 									<CardContent className="space-y-4">
-										{mockTreatmentData.activeTreatments[0].goals.map((goal: any) => (
-											<div className="flex items-start space-x-3" key={goal.id}>
-												{goal.achieved ? (
-													<CheckCircle className="mt-0.5 h-5 w-5 text-green-600" />
-												) : (
-													<div className="mt-0.5 h-5 w-5 rounded-full border-2 border-gray-300" />
-												)}
-												<div className="flex-1">
-													<p
-														className={cn(
-															"font-medium text-sm",
-															goal.achieved ? "text-muted-foreground line-through" : ""
-														)}
-													>
-														{goal.description}
-													</p>
-													<p className="text-muted-foreground text-xs">
-														{goal.achieved
-															? `Alcançado em ${new Date(goal.date).toLocaleDateString("pt-BR")}`
-															: `Meta: ${new Date(goal.targetDate).toLocaleDateString("pt-BR")}`}
-													</p>
+										{mockTreatmentData.activeTreatments[0].goals.map(
+											(goal: any) => (
+												<div
+													className="flex items-start space-x-3"
+													key={goal.id}
+												>
+													{goal.achieved ? (
+														<CheckCircle className="mt-0.5 h-5 w-5 text-green-600" />
+													) : (
+														<div className="mt-0.5 h-5 w-5 rounded-full border-2 border-gray-300" />
+													)}
+													<div className="flex-1">
+														<p
+															className={cn(
+																"font-medium text-sm",
+																goal.achieved
+																	? "text-muted-foreground line-through"
+																	: "",
+															)}
+														>
+															{goal.description}
+														</p>
+														<p className="text-muted-foreground text-xs">
+															{goal.achieved
+																? `Alcançado em ${new Date(goal.date).toLocaleDateString("pt-BR")}`
+																: `Meta: ${new Date(goal.targetDate).toLocaleDateString("pt-BR")}`}
+														</p>
+													</div>
 												</div>
-											</div>
-										))}
+											),
+										)}
 									</CardContent>
 								</Card>
 							</div>
 
 							{/* Before/After Gallery */}
-							<BeforeAfterGallery photos={mockTreatmentData.activeTreatments[0].beforeAfterPhotos} />
+							<BeforeAfterGallery
+								photos={mockTreatmentData.activeTreatments[0].beforeAfterPhotos}
+							/>
 
 							{/* Care Instructions */}
 							<Card>
@@ -699,19 +781,28 @@ export function TreatmentJourney() {
 								</CardHeader>
 								<CardContent>
 									<div className="space-y-6">
-										{mockTreatmentData.activeTreatments[0].careInstructions.map((phase: any, index: number) => (
-											<div className="space-y-3" key={index}>
-												<h4 className="font-medium text-pink-700 text-sm">{phase.phase}</h4>
-												<ul className="space-y-2">
-													{phase.instructions.map((instruction: string, instIndex: number) => (
-														<li className="flex items-start space-x-2 text-sm" key={instIndex}>
-															<CheckCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-green-600" />
-															<span>{instruction}</span>
-														</li>
-													))}
-												</ul>
-											</div>
-										))}
+										{mockTreatmentData.activeTreatments[0].careInstructions.map(
+											(phase: any, index: number) => (
+												<div className="space-y-3" key={index}>
+													<h4 className="font-medium text-pink-700 text-sm">
+														{phase.phase}
+													</h4>
+													<ul className="space-y-2">
+														{phase.instructions.map(
+															(instruction: string, instIndex: number) => (
+																<li
+																	className="flex items-start space-x-2 text-sm"
+																	key={instIndex}
+																>
+																	<CheckCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-green-600" />
+																	<span>{instruction}</span>
+																</li>
+															),
+														)}
+													</ul>
+												</div>
+											),
+										)}
 									</div>
 								</CardContent>
 							</Card>
@@ -724,9 +815,12 @@ export function TreatmentJourney() {
 						<Card>
 							<CardContent className="flex flex-col items-center justify-center py-12">
 								<Award className="mb-4 h-12 w-12 text-muted-foreground" />
-								<h3 className="mb-2 font-medium text-lg">Nenhum tratamento concluído ainda</h3>
+								<h3 className="mb-2 font-medium text-lg">
+									Nenhum tratamento concluído ainda
+								</h3>
 								<p className="text-center text-muted-foreground">
-									Seus tratamentos finalizados aparecerão aqui com todos os resultados
+									Seus tratamentos finalizados aparecerão aqui com todos os
+									resultados
 								</p>
 							</CardContent>
 						</Card>
@@ -737,11 +831,20 @@ export function TreatmentJourney() {
 									<CardContent className="p-6">
 										<div className="flex items-start justify-between">
 											<div className="space-y-2">
-												<h3 className="font-semibold text-lg">{treatment.name}</h3>
-												<p className="text-muted-foreground text-sm">{treatment.type}</p>
+												<h3 className="font-semibold text-lg">
+													{treatment.name}
+												</h3>
+												<p className="text-muted-foreground text-sm">
+													{treatment.type}
+												</p>
 												<p className="text-sm">
-													{new Date(treatment.startDate).toLocaleDateString("pt-BR")} -{" "}
-													{new Date(treatment.endDate).toLocaleDateString("pt-BR")}
+													{new Date(treatment.startDate).toLocaleDateString(
+														"pt-BR",
+													)}{" "}
+													-{" "}
+													{new Date(treatment.endDate).toLocaleDateString(
+														"pt-BR",
+													)}
 												</p>
 												<p className="text-sm">{treatment.results}</p>
 											</div>
@@ -752,13 +855,18 @@ export function TreatmentJourney() {
 														<Star
 															className={cn(
 																"h-4 w-4",
-																i < treatment.finalRating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
+																i < treatment.finalRating
+																	? "fill-yellow-400 text-yellow-400"
+																	: "text-gray-300",
 															)}
 															key={i}
 														/>
 													))}
 												</div>
-												<Badge className="bg-green-100 text-green-800" variant="secondary">
+												<Badge
+													className="bg-green-100 text-green-800"
+													variant="secondary"
+												>
 													Concluído
 												</Badge>
 											</div>

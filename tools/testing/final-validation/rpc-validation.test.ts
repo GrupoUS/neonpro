@@ -66,7 +66,9 @@ describe("🎯 HONO RPC CLIENT INTEGRATION VALIDATION", () => {
 	describe("🔗 RPC Client Integration", () => {
 		it("should import RPC client successfully", async () => {
 			try {
-				const clientModule = await import("../../../packages/shared/src/api-client");
+				const clientModule = await import(
+					"../../../packages/shared/src/api-client"
+				);
 				expect(clientModule).toBeDefined();
 				logger.info("✅ RPC Client module imported");
 
@@ -85,11 +87,16 @@ describe("🎯 HONO RPC CLIENT INTEGRATION VALIDATION", () => {
 
 		it("should have proper type inference setup", async () => {
 			try {
-				const clientModule = await import("../../../packages/shared/src/api-client");
+				const clientModule = await import(
+					"../../../packages/shared/src/api-client"
+				);
 
 				// Check for type-related exports
 				const hasTypeExports = Object.keys(clientModule).some(
-					(key) => key.includes("Type") || key.includes("Client") || key.includes("Api")
+					(key) =>
+						key.includes("Type") ||
+						key.includes("Client") ||
+						key.includes("Api"),
 				);
 
 				logger.info("✅ Client module exports:", Object.keys(clientModule));
@@ -102,7 +109,9 @@ describe("🎯 HONO RPC CLIENT INTEGRATION VALIDATION", () => {
 	describe("🧪 Patient Hook Integration", () => {
 		it("should import patient hooks successfully", async () => {
 			try {
-				const hooksModule = await import("../../../apps/web/hooks/enhanced/use-patients");
+				const hooksModule = await import(
+					"../../../apps/web/hooks/enhanced/use-patients"
+				);
 				expect(hooksModule).toBeDefined();
 
 				// Check for common hook exports
@@ -128,8 +137,12 @@ describe("🎯 HONO RPC CLIENT INTEGRATION VALIDATION", () => {
 			try {
 				// 1. Import all components
 				const backendModule = await import("../../../apps/api/src/index");
-				const clientModule = await import("../../../packages/shared/src/api-client");
-				const hooksModule = await import("../../../apps/web/hooks/enhanced/use-patients");
+				const clientModule = await import(
+					"../../../packages/shared/src/api-client"
+				);
+				const hooksModule = await import(
+					"../../../apps/web/hooks/enhanced/use-patients"
+				);
 
 				// 2. Verify all imports successful
 				expect(backendModule.default).toBeDefined();

@@ -75,7 +75,8 @@ export class LGPDAuditLogger {
 	async logDataProcessing(activity) {
 		const logId = `lgpd_audit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 		// Constitutional impact assessment
-		const constitutionalImpact = await this.assessConstitutionalImpact(activity);
+		const constitutionalImpact =
+			await this.assessConstitutionalImpact(activity);
 		// Compliance validation
 		const complianceValidation = await this.validateCompliance(activity);
 		// Generate integrity hash
@@ -111,7 +112,10 @@ export class LGPDAuditLogger {
 		// Store audit log
 		await this.storeAuditLog(logEntry);
 		// Real-time monitoring alerts
-		if (this.config.real_time_monitoring && !complianceValidation.lgpd_compliant) {
+		if (
+			this.config.real_time_monitoring &&
+			!complianceValidation.lgpd_compliant
+		) {
 			await this.triggerComplianceAlert(logEntry);
 		}
 		return logEntry;
@@ -146,12 +150,17 @@ export class LGPDAuditLogger {
 	 * Assess constitutional impact
 	 */
 	async assessConstitutionalImpact(activity) {
-		const privacyRightsAffected = ["data_access", "data_modification", "data_deletion", "data_transfer"].includes(
-			activity.event_type
-		);
+		const privacyRightsAffected = [
+			"data_access",
+			"data_modification",
+			"data_deletion",
+			"data_transfer",
+		].includes(activity.event_type);
 		return {
 			privacy_rights_affected: privacyRightsAffected,
-			fundamental_rights_impact: privacyRightsAffected ? "privacy_and_data_protection" : undefined,
+			fundamental_rights_impact: privacyRightsAffected
+				? "privacy_and_data_protection"
+				: undefined,
 			constitutional_basis: "Art. 5º, X e XII CF/88",
 		};
 	}
@@ -173,7 +182,8 @@ export class LGPDAuditLogger {
 			violations.push("Data categories not specified");
 		}
 		const lgpdCompliant = violations.length === 0;
-		const constitutionalCompliant = lgpdCompliant && this.config.constitutional_validation;
+		const constitutionalCompliant =
+			lgpdCompliant && this.config.constitutional_validation;
 		return {
 			lgpd_compliant: lgpdCompliant,
 			constitutional_compliant: constitutionalCompliant,
@@ -249,7 +259,9 @@ export async function validateLGPDAuditConfig(config) {
 		LGPDAuditConfigSchema.parse(config);
 	} catch (error) {
 		if (error instanceof z.ZodError) {
-			violations.push(...error.errors.map((e) => `${e.path.join(".")}: ${e.message}`));
+			violations.push(
+				...error.errors.map((e) => `${e.path.join(".")}: ${e.message}`),
+			);
 		}
 	}
 	// Constitutional validation requirements
@@ -263,7 +275,9 @@ export async function validateLGPDAuditConfig(config) {
 		violations.push("Integrity verification must be enabled");
 	}
 	if (config.retention_period_days < HEALTHCARE_DATA_RETENTION_DAYS) {
-		violations.push(`Retention period must be at least 7 years (${HEALTHCARE_DATA_RETENTION_DAYS} days) as per LGPD`);
+		violations.push(
+			`Retention period must be at least 7 years (${HEALTHCARE_DATA_RETENTION_DAYS} days) as per LGPD`,
+		);
 	}
 	return {
 		valid: violations.length === 0,

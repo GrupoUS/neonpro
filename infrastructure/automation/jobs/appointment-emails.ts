@@ -51,7 +51,7 @@ export const appointmentConfirmationEmail = task({
             duration_minutes,
             price
           )
-        `
+        `,
 				)
 				.eq("id", payload.appointmentId)
 				.single();
@@ -80,7 +80,9 @@ export const appointmentConfirmationEmail = task({
               <p>Sua consulta foi confirmada com sucesso. Aqui estão os detalhes:</p>
               
               <div style="background: white; padding: 15px; border-radius: 6px; border-left: 4px solid #10b981;">
-                <p><strong>📅 Data:</strong> ${new Date(appointment.appointment_date).toLocaleDateString("pt-BR", {
+                <p><strong>📅 Data:</strong> ${new Date(
+									appointment.appointment_date,
+								).toLocaleDateString("pt-BR", {
 									weekday: "long",
 									year: "numeric",
 									month: "long",
@@ -145,7 +147,8 @@ export const appointmentConfirmationEmail = task({
 				.from("appointments")
 				.update({
 					confirmation_sent_at: new Date().toISOString(),
-					status: appointment.status === "pending" ? "confirmed" : appointment.status,
+					status:
+						appointment.status === "pending" ? "confirmed" : appointment.status,
 				})
 				.eq("id", payload.appointmentId);
 

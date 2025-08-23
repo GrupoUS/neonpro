@@ -184,7 +184,11 @@ export type RiskAssessmentInput = {
 	patientId: string;
 	tenantId: string;
 	assessmentDate: Date;
-	assessmentType: "PRE_PROCEDURE" | "ONGOING_CARE" | "POST_PROCEDURE" | "EMERGENCY";
+	assessmentType:
+		| "PRE_PROCEDURE"
+		| "ONGOING_CARE"
+		| "POST_PROCEDURE"
+		| "EMERGENCY";
 	demographicFactors: DemographicRiskFactors;
 	medicalHistory: MedicalHistoryRiskFactors;
 	currentCondition: CurrentConditionRiskFactors;
@@ -312,7 +316,13 @@ export type AuditTrailEntry = {
 	id: string;
 	patientId: string;
 	assessmentId: string;
-	action: "CREATED" | "VIEWED" | "MODIFIED" | "DELETED" | "ESCALATED" | "REVIEWED";
+	action:
+		| "CREATED"
+		| "VIEWED"
+		| "MODIFIED"
+		| "DELETED"
+		| "ESCALATED"
+		| "REVIEWED";
 	performedBy: string;
 	performedAt: Date;
 	ipAddress: string;
@@ -323,7 +333,11 @@ export type AuditTrailEntry = {
 	digitalSignature: string;
 
 	// LGPD Compliance
-	legalBasis: "CONSENT" | "LEGITIMATE_INTEREST" | "VITAL_INTEREST" | "LEGAL_OBLIGATION";
+	legalBasis:
+		| "CONSENT"
+		| "LEGITIMATE_INTEREST"
+		| "VITAL_INTEREST"
+		| "LEGAL_OBLIGATION";
 	dataSubjectNotified: boolean;
 	retentionExpiry: Date;
 };

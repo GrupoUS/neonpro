@@ -54,7 +54,8 @@ test.describe("⚡ Performance & Security E2E Tests", () => {
 
 		// Verify API response times
 		expect(apiResponses.length).toBeGreaterThan(0);
-		const avgResponseTime = apiResponses.reduce((a, b) => a + b, 0) / apiResponses.length;
+		const avgResponseTime =
+			apiResponses.reduce((a, b) => a + b, 0) / apiResponses.length;
 		expect(avgResponseTime).toBeLessThan(500);
 
 		// Check for any slow APIs
@@ -76,7 +77,9 @@ test.describe("⚡ Performance & Security E2E Tests", () => {
 		await page.click('[data-testid="submit-patient"]');
 
 		// Verify script was not executed
-		const alertDialogPromise = page.waitForEvent("dialog", { timeout: 1000 }).catch(() => null);
+		const alertDialogPromise = page
+			.waitForEvent("dialog", { timeout: 1000 })
+			.catch(() => null);
 		const dialog = await alertDialogPromise;
 		expect(dialog).toBeNull();
 
@@ -102,12 +105,20 @@ test.describe("⚡ Performance & Security E2E Tests", () => {
 
 		// Navigate to ensure app is still functional
 		await page.goto("/dashboard");
-		await expect(page.locator('[data-testid="dashboard-content"]')).toBeVisible();
+		await expect(
+			page.locator('[data-testid="dashboard-content"]'),
+		).toBeVisible();
 	});
 
 	test("Security: Authentication bypass attempts", async ({ page }) => {
 		// Try to access protected routes without authentication
-		const protectedRoutes = ["/dashboard", "/patients", "/appointments", "/professionals", "/reports"];
+		const protectedRoutes = [
+			"/dashboard",
+			"/patients",
+			"/appointments",
+			"/professionals",
+			"/reports",
+		];
 
 		for (const route of protectedRoutes) {
 			await page.goto(route);
@@ -127,7 +138,9 @@ test.describe("⚡ Performance & Security E2E Tests", () => {
 
 		// Verify access to protected route
 		await page.goto("/dashboard");
-		await expect(page.locator('[data-testid="dashboard-content"]')).toBeVisible();
+		await expect(
+			page.locator('[data-testid="dashboard-content"]'),
+		).toBeVisible();
 
 		// Simulate session expiry by clearing storage
 		await page.evaluate(() => {
@@ -235,7 +248,10 @@ test.describe("⚡ Performance & Security E2E Tests", () => {
 		}
 	});
 
-	test("Mobile Responsiveness: Touch interactions", async ({ page, isMobile }) => {
+	test("Mobile Responsiveness: Touch interactions", async ({
+		page,
+		isMobile,
+	}) => {
 		test.skip(!isMobile, "This test is only for mobile");
 
 		await page.goto("/patients");
@@ -254,7 +270,10 @@ test.describe("⚡ Performance & Security E2E Tests", () => {
 
 		if (box) {
 			await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height / 2);
-			await page.touchscreen.tap(box.x + box.width - 10, box.y + box.height / 2);
+			await page.touchscreen.tap(
+				box.x + box.width - 10,
+				box.y + box.height / 2,
+			);
 		}
 	});
 
@@ -273,6 +292,8 @@ test.describe("⚡ Performance & Security E2E Tests", () => {
 		// Should recover automatically
 		await page.reload();
 		await expect(page.locator('[data-testid="patients-table"]')).toBeVisible();
-		await expect(page.locator('[data-testid="offline-message"]')).not.toBeVisible();
+		await expect(
+			page.locator('[data-testid="offline-message"]'),
+		).not.toBeVisible();
 	});
 });

@@ -79,7 +79,10 @@ class AccessibilityTester {
 		await this.browser?.close();
 	}
 
-	async testPageAccessibility(url: string, wcagLevel: "A" | "AA" | "AAA" = "AA"): Promise<AccessibilityTestResult> {
+	async testPageAccessibility(
+		url: string,
+		wcagLevel: "A" | "AA" | "AAA" = "AA",
+	): Promise<AccessibilityTestResult> {
 		if (!this.page) {
 			throw new Error("AccessibilityTester not initialized");
 		}
@@ -121,7 +124,9 @@ class AccessibilityTester {
 
 		// Test Tab navigation through interactive elements
 		const interactiveElements = await this.page
-			.locator('button, a, input, select, textarea, [tabindex]:not([tabindex="-1"])')
+			.locator(
+				'button, a, input, select, textarea, [tabindex]:not([tabindex="-1"])',
+			)
 			.count();
 		let successfulTabStops = 0;
 
@@ -143,11 +148,17 @@ class AccessibilityTester {
 			return 0;
 		}
 
-		const totalViolations = this.testResults.reduce((sum, result) => sum + result.violations.length, 0);
+		const totalViolations = this.testResults.reduce(
+			(sum, result) => sum + result.violations.length,
+			0,
+		);
 		const totalTests = this.testResults.length;
 		const maxViolationsPerTest = 10; // Threshold for acceptable violations
 
-		const complianceScore = Math.max(0, 100 - (totalViolations / totalTests) * (100 / maxViolationsPerTest));
+		const complianceScore = Math.max(
+			0,
+			100 - (totalViolations / totalTests) * (100 / maxViolationsPerTest),
+		);
 		return Math.round(complianceScore);
 	}
 }
@@ -166,61 +177,92 @@ describe("♿ WCAG 2.1 AA+ Accessibility Compliance", () => {
 
 	describe("🏥 Healthcare Form Accessibility", () => {
 		it("should ensure patient registration form is fully accessible", async () => {
-			const result = await accessibilityTester.testPageAccessibility("/register/patient", "AA");
+			const result = await accessibilityTester.testPageAccessibility(
+				"/register/patient",
+				"AA",
+			);
 
 			// No critical accessibility violations
-			const criticalViolations = result.violations.filter((v) => v.impact === "critical" || v.impact === "serious");
+			const criticalViolations = result.violations.filter(
+				(v) => v.impact === "critical" || v.impact === "serious",
+			);
 			expect(criticalViolations.length).toBe(0);
 
 			// All form fields should have proper labels
 			const labelViolations = result.violations.filter(
-				(v) => v.id === "label" || v.id === "form-field-multiple-labels"
+				(v) => v.id === "label" || v.id === "form-field-multiple-labels",
 			);
 			expect(labelViolations.length).toBe(0);
 		});
 
 		it("should validate medical history form accessibility", async () => {
-			const result = await accessibilityTester.testPageAccessibility("/forms/medical-history", "AA");
+			const result = await accessibilityTester.testPageAccessibility(
+				"/forms/medical-history",
+				"AA",
+			);
 
 			// Check for healthcare-specific accessibility requirements
 			const healthcareViolations = result.violations.filter(
-				(v) => v.description?.includes("medical") || v.description?.includes("health") || v.tags?.includes("healthcare")
+				(v) =>
+					v.description?.includes("medical") ||
+					v.description?.includes("health") ||
+					v.tags?.includes("healthcare"),
 			);
 
 			expect(healthcareViolations.length).toBe(0);
 
 			// Verify complex medical forms have adequate error handling
 			const errorHandlingViolations = result.violations.filter(
-				(v) => v.id === "aria-valid" || v.id === "aria-describedby" || v.id === "aria-errormessage"
+				(v) =>
+					v.id === "aria-valid" ||
+					v.id === "aria-describedby" ||
+					v.id === "aria-errormessage",
 			);
 
 			expect(errorHandlingViolations.length).toBe(0);
 		});
 
 		it("should ensure appointment booking form meets accessibility standards", async () => {
-			const result = await accessibilityTester.testPageAccessibility("/appointments/book", "AA");
+			const result = await accessibilityTester.testPageAccessibility(
+				"/appointments/book",
+				"AA",
+			);
 
 			// Date/time pickers must be accessible
 			const datePickerViolations = result.violations.filter((v) =>
-				v.nodes?.some((node) => node.html?.includes("date") || node.html?.includes("time"))
+				v.nodes?.some(
+					(node) => node.html?.includes("date") || node.html?.includes("time"),
+				),
 			);
 
 			expect(datePickerViolations.length).toBe(0);
 
 			// Verify keyboard navigation works for appointment booking
-			const keyboardAccessible = await accessibilityTester.testKeyboardNavigation("/appointments/book");
+			const keyboardAccessible =
+				await accessibilityTester.testKeyboardNavigation("/appointments/book");
 			expect(keyboardAccessible).toBe(true);
 		});
 	});
 	describe("🎨 Color Contrast & Visual Accessibility", () => {
 		it("should meet WCAG AA color contrast standards", async () => {
-			const testPages = ["/dashboard", "/patients", "/appointments", "/professionals", "/forms/patient-registration"];
+			const testPages = [
+				"/dashboard",
+				"/patients",
+				"/appointments",
+				"/professionals",
+				"/forms/patient-registration",
+			];
 
 			for (const page of testPages) {
-				const result = await accessibilityTester.testPageAccessibility(page, "AA");
+				const result = await accessibilityTester.testPageAccessibility(
+					page,
+					"AA",
+				);
 
 				// Check for color contrast violations
-				const contrastViolations = result.violations.filter((v) => v.id === "color-contrast");
+				const contrastViolations = result.violations.filter(
+					(v) => v.id === "color-contrast",
+				);
 				expect(contrastViolations.length).toBe(0);
 			}
 		});
@@ -256,7 +298,10 @@ describe("♿ WCAG 2.1 AA+ Accessibility Compliance", () => {
 
 			for (const type of colorBlindnessTypes) {
 				// Simulate color blindness filter
-				const colorBlindnessTest = await simulateColorBlindness(type, "/dashboard");
+				const colorBlindnessTest = await simulateColorBlindness(
+					type,
+					"/dashboard",
+				);
 
 				expect(colorBlindnessTest.informationConveyedWithoutColor).toBe(true);
 				expect(colorBlindnessTest.criticalElementsDistinguishable).toBe(true);
@@ -275,7 +320,8 @@ describe("♿ WCAG 2.1 AA+ Accessibility Compliance", () => {
 			];
 
 			for (const page of keyboardNavigationPages) {
-				const keyboardAccessible = await accessibilityTester.testKeyboardNavigation(page);
+				const keyboardAccessible =
+					await accessibilityTester.testKeyboardNavigation(page);
 				expect(keyboardAccessible).toBe(true);
 
 				// Test specific keyboard interactions
@@ -292,7 +338,9 @@ describe("♿ WCAG 2.1 AA+ Accessibility Compliance", () => {
 			const emergencyAccessTest = await testEmergencyKeyboardAccess();
 
 			// Emergency features must be accessible within 3 seconds via keyboard
-			expect(emergencyAccessTest.accessTime).toBeLessThan(HEALTHCARE_A11Y_REQUIREMENTS.EMERGENCY_ACCESS_TIME);
+			expect(emergencyAccessTest.accessTime).toBeLessThan(
+				HEALTHCARE_A11Y_REQUIREMENTS.EMERGENCY_ACCESS_TIME,
+			);
 			expect(emergencyAccessTest.keyboardOnly).toBe(true);
 			expect(emergencyAccessTest.noMouseRequired).toBe(true);
 		});
@@ -326,17 +374,24 @@ describe("♿ WCAG 2.1 AA+ Accessibility Compliance", () => {
 			];
 
 			for (const interface_ of medicalInterfaces) {
-				const result = await accessibilityTester.testPageAccessibility(interface_, "AA");
+				const result = await accessibilityTester.testPageAccessibility(
+					interface_,
+					"AA",
+				);
 
 				// Check for ARIA-related violations
 				const ariaViolations = result.violations.filter(
-					(v) => v.id.includes("aria") || v.id.includes("label") || v.id.includes("role")
+					(v) =>
+						v.id.includes("aria") ||
+						v.id.includes("label") ||
+						v.id.includes("role"),
 				);
 
 				expect(ariaViolations.length).toBe(0);
 
 				// Verify medical data has proper semantic markup
-				const medicalDataAccessibility = await testMedicalDataAccessibility(interface_);
+				const medicalDataAccessibility =
+					await testMedicalDataAccessibility(interface_);
 				expect(medicalDataAccessibility.hasProperSemantics).toBe(true);
 				expect(medicalDataAccessibility.hasContextualLabels).toBe(true);
 			}
@@ -366,10 +421,16 @@ describe("♿ WCAG 2.1 AA+ Accessibility Compliance", () => {
 		});
 
 		it("should provide alternative text for medical images and charts", async () => {
-			const medicalImageTypes = ["x-ray-image", "chart-analytics", "vital-signs-graph", "prescription-image"];
+			const medicalImageTypes = [
+				"x-ray-image",
+				"chart-analytics",
+				"vital-signs-graph",
+				"prescription-image",
+			];
 
 			for (const imageType of medicalImageTypes) {
-				const imageAccessibility = await testMedicalImageAccessibility(imageType);
+				const imageAccessibility =
+					await testMedicalImageAccessibility(imageType);
 
 				expect(imageAccessibility.hasAltText).toBe(true);
 				expect(imageAccessibility.altTextDescriptive).toBe(true);
@@ -396,7 +457,9 @@ describe("♿ WCAG 2.1 AA+ Accessibility Compliance", () => {
 
 				expect(timingTest.hasTimeoutWarning).toBe(true);
 				expect(timingTest.hasExtensionOption).toBe(true);
-				expect(timingTest.timeLimit).toBeGreaterThanOrEqual(formTest.expectedTime);
+				expect(timingTest.timeLimit).toBeGreaterThanOrEqual(
+					formTest.expectedTime,
+				);
 				expect(timingTest.autoSaveEnabled).toBe(true);
 			}
 		});
@@ -452,11 +515,18 @@ describe("♿ WCAG 2.1 AA+ Accessibility Compliance", () => {
 
 			expect(detailedReport.wcagAACompliance).toBeGreaterThanOrEqual(95);
 			expect(detailedReport.criticalViolations).toBe(0);
-			expect(detailedReport.healthcareSpecificCompliance).toBeGreaterThanOrEqual(90);
+			expect(
+				detailedReport.healthcareSpecificCompliance,
+			).toBeGreaterThanOrEqual(90);
 		});
 
 		it("should validate accessibility for users with disabilities", async () => {
-			const disabilityTypes = ["visual-impairment", "hearing-impairment", "motor-impairment", "cognitive-impairment"];
+			const disabilityTypes = [
+				"visual-impairment",
+				"hearing-impairment",
+				"motor-impairment",
+				"cognitive-impairment",
+			];
 
 			const disabilitySupport = {};
 
@@ -465,11 +535,15 @@ describe("♿ WCAG 2.1 AA+ Accessibility Compliance", () => {
 				disabilitySupport[disability] = supportTest;
 
 				expect(supportTest.adequateSupport).toBe(true);
-				expect(supportTest.alternativeMethodsAvailable).toBeGreaterThanOrEqual(2);
+				expect(supportTest.alternativeMethodsAvailable).toBeGreaterThanOrEqual(
+					2,
+				);
 			}
 
 			// Verify comprehensive disability support
-			expect(Object.values(disabilitySupport).every((s) => s.adequateSupport)).toBe(true);
+			expect(
+				Object.values(disabilitySupport).every((s) => s.adequateSupport),
+			).toBe(true);
 		});
 	});
 });
@@ -541,7 +615,8 @@ async function testMedicalImageAccessibility(imageType: string) {
 		hasAltText: true,
 		altTextDescriptive: true,
 		medicalContextIncluded: true,
-		hasLongDescription: imageType.includes("chart") || imageType.includes("graph"),
+		hasLongDescription:
+			imageType.includes("chart") || imageType.includes("graph"),
 	};
 }
 
@@ -609,7 +684,11 @@ async function testDisabilitySupport(disabilityType: string) {
 		"visual-impairment": ["screen-reader", "high-contrast", "voice-navigation"],
 		"hearing-impairment": ["visual-alerts", "text-captions", "sign-language"],
 		"motor-impairment": ["voice-control", "eye-tracking", "switch-navigation"],
-		"cognitive-impairment": ["simplified-ui", "clear-language", "progress-indicators"],
+		"cognitive-impairment": [
+			"simplified-ui",
+			"clear-language",
+			"progress-indicators",
+		],
 	};
 
 	return {

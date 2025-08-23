@@ -40,7 +40,9 @@ test.describe("🔒 Security & Compliance Testing", () => {
 
 			// Should show error message
 			await expect(page.locator('[data-testid="error-message"]')).toBeVisible();
-			await expect(page.locator('[data-testid="error-message"]')).toContainText(/(?:inválido|incorreto|erro)/i);
+			await expect(page.locator('[data-testid="error-message"]')).toContainText(
+				/(?:inválido|incorreto|erro)/i,
+			);
 		});
 
 		await test.step("Test rate limiting on login attempts", async () => {
@@ -55,7 +57,9 @@ test.describe("🔒 Security & Compliance Testing", () => {
 			}
 
 			// Should trigger rate limiting
-			await expect(page.locator('[data-testid="rate-limit-message"]')).toBeVisible({ timeout: 10_000 });
+			await expect(
+				page.locator('[data-testid="rate-limit-message"]'),
+			).toBeVisible({ timeout: 10_000 });
 		});
 	});
 
@@ -93,8 +97,12 @@ test.describe("🔒 Security & Compliance Testing", () => {
 			await page.goto("/patients/new");
 
 			// LGPD consent should be required
-			await expect(page.locator('[name="lgpdConsent.dataProcessing"]')).toBeVisible();
-			await expect(page.locator('[name="lgpdConsent.marketing"]')).toBeVisible();
+			await expect(
+				page.locator('[name="lgpdConsent.dataProcessing"]'),
+			).toBeVisible();
+			await expect(
+				page.locator('[name="lgpdConsent.marketing"]'),
+			).toBeVisible();
 
 			// Should not be able to submit without consent
 			await page.fill('[name="name"]', "Test Patient");
@@ -102,7 +110,9 @@ test.describe("🔒 Security & Compliance Testing", () => {
 			await page.click('button[type="submit"]');
 
 			// Should show validation error
-			await expect(page.locator('[data-testid="consent-required-error"]')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="consent-required-error"]'),
+			).toBeVisible();
 		});
 
 		await test.step("Test data subject rights access", async () => {
@@ -112,9 +122,15 @@ test.describe("🔒 Security & Compliance Testing", () => {
 			await expect(page.locator('[data-testid="data-portal"]')).toBeVisible();
 
 			// Should have options for data export, correction, deletion
-			await expect(page.locator('[data-testid="export-data-button"]')).toBeVisible();
-			await expect(page.locator('[data-testid="correct-data-button"]')).toBeVisible();
-			await expect(page.locator('[data-testid="delete-account-button"]')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="export-data-button"]'),
+			).toBeVisible();
+			await expect(
+				page.locator('[data-testid="correct-data-button"]'),
+			).toBeVisible();
+			await expect(
+				page.locator('[data-testid="delete-account-button"]'),
+			).toBeVisible();
 		});
 	});
 
@@ -164,7 +180,9 @@ test.describe("🔒 Security & Compliance Testing", () => {
 
 			// Should handle safely without SQL injection
 			await expect(page.locator('[data-testid="error-message"]')).toBeVisible();
-			await expect(page.locator('[data-testid="error-message"]')).not.toContainText("syntax error");
+			await expect(
+				page.locator('[data-testid="error-message"]'),
+			).not.toContainText("syntax error");
 		});
 
 		await test.step("Test XSS prevention", async () => {
@@ -205,7 +223,9 @@ test.describe("🔒 Security & Compliance Testing", () => {
 				});
 
 				// Should reject or sanitize the file
-				await expect(page.locator('[data-testid="file-upload-error"]')).toBeVisible();
+				await expect(
+					page.locator('[data-testid="file-upload-error"]'),
+				).toBeVisible();
 			}
 		});
 	});
@@ -222,7 +242,9 @@ test.describe("🔒 Security & Compliance Testing", () => {
 
 			// Should only see patients assigned to this professional
 			await page.goto("/patients");
-			await expect(page.locator('[data-testid="patients-table"]')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="patients-table"]'),
+			).toBeVisible();
 
 			// Try to access specific patient directly via URL manipulation
 			await page.goto("/patients/999999/edit"); // Non-existent or unauthorized patient
@@ -297,7 +319,11 @@ test.describe("🔒 Security & Compliance Testing", () => {
 
 		await test.step("Test API authentication requirement", async () => {
 			// Test all protected endpoints require authentication
-			const protectedEndpoints = ["/api/v1/patients", "/api/v1/appointments", "/api/v1/clinics"];
+			const protectedEndpoints = [
+				"/api/v1/patients",
+				"/api/v1/appointments",
+				"/api/v1/clinics",
+			];
 
 			for (const endpoint of protectedEndpoints) {
 				const response = await page.request.get(endpoint);

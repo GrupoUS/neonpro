@@ -57,7 +57,13 @@ type ReportSchedule = {
 };
 
 // Visual components maintaining NeonPro design
-const NeonGradientCard = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
+const NeonGradientCard = ({
+	children,
+	className = "",
+}: {
+	children: React.ReactNode;
+	className?: string;
+}) => (
 	<motion.div
 		animate={{ opacity: 1, y: 0 }}
 		className={`relative overflow-hidden rounded-xl border border-slate-800 bg-gradient-to-br from-slate-900/90 to-blue-900/30 backdrop-blur-sm ${className}`}
@@ -84,11 +90,16 @@ const CosmicGlowButton = ({
 	disabled?: boolean;
 }) => {
 	const variants = {
-		primary: "bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700",
-		secondary: "bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800",
-		success: "bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700",
-		warning: "bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700",
-		danger: "bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary",
+		primary:
+			"bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700",
+		secondary:
+			"bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800",
+		success:
+			"bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700",
+		warning:
+			"bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700",
+		danger:
+			"bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary",
 	};
 
 	const sizes = {
@@ -111,7 +122,11 @@ const CosmicGlowButton = ({
 };
 
 // Element Palette Component
-const ElementPalette = ({ onAddElement }: { onAddElement: (type: string) => void }) => {
+const ElementPalette = ({
+	onAddElement,
+}: {
+	onAddElement: (type: string) => void;
+}) => {
 	const elementTypes = [
 		{
 			type: "chart",
@@ -163,7 +178,9 @@ const ElementPalette = ({ onAddElement }: { onAddElement: (type: string) => void
 								<Icon className="h-5 w-5 text-blue-400" />
 								<div className="flex-1">
 									<div className="font-medium text-white">{element.label}</div>
-									<div className="text-slate-400 text-xs">{element.description}</div>
+									<div className="text-slate-400 text-xs">
+										{element.description}
+									</div>
 								</div>
 							</div>
 						</motion.div>
@@ -247,12 +264,20 @@ export default function CustomReportBuilder() {
 				{/* Header */}
 				<div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
 					<div>
-						<h1 className="font-bold text-3xl text-white">Custom Report Builder</h1>
-						<p className="text-slate-400">Crie relatórios personalizados com interface drag-and-drop</p>
+						<h1 className="font-bold text-3xl text-white">
+							Custom Report Builder
+						</h1>
+						<p className="text-slate-400">
+							Crie relatórios personalizados com interface drag-and-drop
+						</p>
 					</div>
 
 					<div className="flex items-center space-x-4">
-						<CosmicGlowButton onClick={previewReport} size="sm" variant="secondary">
+						<CosmicGlowButton
+							onClick={previewReport}
+							size="sm"
+							variant="secondary"
+						>
 							<Eye className="mr-2 h-4 w-4" />
 							Visualizar
 						</CosmicGlowButton>
@@ -263,14 +288,26 @@ export default function CustomReportBuilder() {
 						</CosmicGlowButton>
 
 						<div className="flex items-center space-x-1">
-							<CosmicGlowButton onClick={() => exportReport("pdf")} size="sm" variant="primary">
+							<CosmicGlowButton
+								onClick={() => exportReport("pdf")}
+								size="sm"
+								variant="primary"
+							>
 								<Download className="mr-2 h-4 w-4" />
 								PDF
 							</CosmicGlowButton>
-							<CosmicGlowButton onClick={() => exportReport("excel")} size="sm" variant="primary">
+							<CosmicGlowButton
+								onClick={() => exportReport("excel")}
+								size="sm"
+								variant="primary"
+							>
 								Excel
 							</CosmicGlowButton>
-							<CosmicGlowButton onClick={() => exportReport("csv")} size="sm" variant="primary">
+							<CosmicGlowButton
+								onClick={() => exportReport("csv")}
+								size="sm"
+								variant="primary"
+							>
 								CSV
 							</CosmicGlowButton>
 						</div>
@@ -280,13 +317,22 @@ export default function CustomReportBuilder() {
 				{/* Main Content */}
 				<Tabs className="w-full" onValueChange={setActiveTab} value={activeTab}>
 					<TabsList className="grid w-full grid-cols-3 border-slate-700 bg-slate-800/50">
-						<TabsTrigger className="data-[state=active]:bg-blue-600" value="builder">
+						<TabsTrigger
+							className="data-[state=active]:bg-blue-600"
+							value="builder"
+						>
 							Construtor
 						</TabsTrigger>
-						<TabsTrigger className="data-[state=active]:bg-blue-600" value="templates">
+						<TabsTrigger
+							className="data-[state=active]:bg-blue-600"
+							value="templates"
+						>
 							Templates
 						</TabsTrigger>
-						<TabsTrigger className="data-[state=active]:bg-blue-600" value="scheduler">
+						<TabsTrigger
+							className="data-[state=active]:bg-blue-600"
+							value="scheduler"
+						>
 							Agendamentos
 						</TabsTrigger>
 					</TabsList>
@@ -300,7 +346,9 @@ export default function CustomReportBuilder() {
 									<div className="space-y-6">
 										{/* Report Info */}
 										<div className="space-y-3">
-											<h3 className="font-semibold text-lg text-white">Configurações</h3>
+											<h3 className="font-semibold text-lg text-white">
+												Configurações
+											</h3>
 											<div className="space-y-2">
 												<Label className="text-slate-300" htmlFor="report-name">
 													Nome do Relatório
@@ -313,7 +361,10 @@ export default function CustomReportBuilder() {
 												/>
 											</div>
 											<div className="space-y-2">
-												<Label className="text-slate-300" htmlFor="report-description">
+												<Label
+													className="text-slate-300"
+													htmlFor="report-description"
+												>
 													Descrição
 												</Label>
 												<Textarea
@@ -332,13 +383,21 @@ export default function CustomReportBuilder() {
 										{/* Element Properties */}
 										{selectedElement && (
 											<div className="space-y-3">
-												<h3 className="font-semibold text-lg text-white">Propriedades</h3>
+												<h3 className="font-semibold text-lg text-white">
+													Propriedades
+												</h3>
 												<div className="rounded-lg bg-white/5 p-3">
 													<p className="text-slate-300 text-sm">
-														Elemento selecionado: {elements.find((el) => el.id === selectedElement)?.title}
+														Elemento selecionado:{" "}
+														{
+															elements.find((el) => el.id === selectedElement)
+																?.title
+														}
 													</p>
 													<div className="mt-2 space-y-2">
-														<Label className="text-slate-400">Configurações avançadas estarão aqui</Label>
+														<Label className="text-slate-400">
+															Configurações avançadas estarão aqui
+														</Label>
 													</div>
 												</div>
 											</div>
@@ -352,9 +411,14 @@ export default function CustomReportBuilder() {
 								<NeonGradientCard>
 									<div className="space-y-4">
 										<div className="flex items-center justify-between">
-											<h3 className="font-semibold text-lg text-white">Canvas do Relatório</h3>
+											<h3 className="font-semibold text-lg text-white">
+												Canvas do Relatório
+											</h3>
 											<div className="flex items-center space-x-2">
-												<Badge className="border-blue-400 text-blue-400" variant="outline">
+												<Badge
+													className="border-blue-400 text-blue-400"
+													variant="outline"
+												>
 													{elements.length} elementos
 												</Badge>
 												<Button
@@ -388,8 +452,12 @@ export default function CustomReportBuilder() {
 															<div className="flex items-center space-x-3">
 																<BarChart3 className="h-5 w-5 text-blue-400" />
 																<div>
-																	<div className="font-medium text-white">{element.title}</div>
-																	<div className="text-slate-400 text-sm">Tipo: {element.type}</div>
+																	<div className="font-medium text-white">
+																		{element.title}
+																	</div>
+																	<div className="text-slate-400 text-sm">
+																		Tipo: {element.type}
+																	</div>
 																</div>
 															</div>
 															<Button
@@ -409,14 +477,23 @@ export default function CustomReportBuilder() {
 										{/* Canvas Tools */}
 										<div className="flex items-center justify-between">
 											<div className="text-slate-400 text-sm">
-												Clique nos elementos da paleta para adicionar ao relatório
+												Clique nos elementos da paleta para adicionar ao
+												relatório
 											</div>
 											<div className="flex items-center space-x-2">
-												<Button className="border-slate-600 text-slate-300" size="sm" variant="outline">
+												<Button
+													className="border-slate-600 text-slate-300"
+													size="sm"
+													variant="outline"
+												>
 													<Grid className="mr-1 h-4 w-4" />
 													Grade
 												</Button>
-												<Button className="border-slate-600 text-slate-300" size="sm" variant="outline">
+												<Button
+													className="border-slate-600 text-slate-300"
+													size="sm"
+													variant="outline"
+												>
 													<Layers className="mr-1 h-4 w-4" />
 													Camadas
 												</Button>
@@ -433,7 +510,9 @@ export default function CustomReportBuilder() {
 						<NeonGradientCard>
 							<div className="space-y-4">
 								<div className="flex items-center justify-between">
-									<h3 className="font-semibold text-lg text-white">Templates de Relatório</h3>
+									<h3 className="font-semibold text-lg text-white">
+										Templates de Relatório
+									</h3>
 									<CosmicGlowButton size="sm">
 										<Plus className="mr-1 h-4 w-4" />
 										Novo Template
@@ -450,13 +529,20 @@ export default function CustomReportBuilder() {
 										>
 											<div className="space-y-3">
 												<div className="flex items-center justify-between">
-													<h4 className="font-medium text-white">{template.name}</h4>
-													<Badge className="border-blue-400 text-blue-400" variant="outline">
+													<h4 className="font-medium text-white">
+														{template.name}
+													</h4>
+													<Badge
+														className="border-blue-400 text-blue-400"
+														variant="outline"
+													>
 														{template.category}
 													</Badge>
 												</div>
 
-												<p className="text-slate-400 text-sm">{template.description}</p>
+												<p className="text-slate-400 text-sm">
+													{template.description}
+												</p>
 
 												<div className="flex items-center justify-between text-slate-500 text-xs">
 													<span>{template.usageCount} usos</span>
@@ -478,7 +564,9 @@ export default function CustomReportBuilder() {
 						<NeonGradientCard>
 							<div className="space-y-4">
 								<div className="flex items-center justify-between">
-									<h3 className="font-semibold text-lg text-white">Agendamentos de Relatório</h3>
+									<h3 className="font-semibold text-lg text-white">
+										Agendamentos de Relatório
+									</h3>
 									<CosmicGlowButton size="sm">
 										<Calendar className="mr-1 h-4 w-4" />
 										Novo Agendamento
@@ -488,7 +576,9 @@ export default function CustomReportBuilder() {
 								<div className="py-8 text-center text-slate-400">
 									<Calendar className="mx-auto mb-4 h-12 w-12 opacity-50" />
 									<p>Nenhum agendamento configurado</p>
-									<p className="mt-2 text-sm">Crie agendamentos para envio automático de relatórios</p>
+									<p className="mt-2 text-sm">
+										Crie agendamentos para envio automático de relatórios
+									</p>
 								</div>
 							</div>
 						</NeonGradientCard>

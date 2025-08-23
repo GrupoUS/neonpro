@@ -37,7 +37,10 @@ if (allFilesExist) {
 
 // Verificar se .env.local tem placeholders
 if (fs.existsSync(path.join(projectRoot, ".env.local"))) {
-	const envContent = fs.readFileSync(path.join(projectRoot, ".env.local"), "utf8");
+	const envContent = fs.readFileSync(
+		path.join(projectRoot, ".env.local"),
+		"utf8",
+	);
 	if (envContent.includes("your_supabase_anon_key_here")) {
 	}
 }

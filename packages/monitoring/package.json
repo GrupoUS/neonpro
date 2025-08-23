@@ -1,50 +1,50 @@
 {
-  "name": "@neonpro/monitoring",
-  "version": "1.0.0",
-  "description": "Performance monitoring and metrics for NeonPro healthcare applications",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
-    "lint": "biome lint .",
-    "format": "biome format --write .",
-    "type-check": "tsc --noEmit"
-  },
-  "dependencies": {
-    "@sentry/nextjs": "^8.0.0",
-    "web-vitals": "^4.2.4"
-  },
-  "devDependencies": {
-    "@types/node": "^22.0.0",
-    "typescript": "^5.6.3"
-  },
-  "peerDependencies": {
-    "next": "^15.0.0",
-    "react": "^18.0.0"
-  },
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    },
-    "./client": {
-      "types": "./dist/client/index.d.ts",
-      "default": "./dist/client/index.js"
-    },
-    "./server": {
-      "types": "./dist/server/index.d.ts",
-      "default": "./dist/server/index.js"
-    }
-  },
-  "keywords": [
-    "monitoring",
-    "performance",
-    "healthcare",
-    "metrics",
-    "web-vitals",
-    "sentry"
-  ],
-  "author": "NeonPro Team",
-  "license": "MIT"
+	"name": "@neonpro/monitoring",
+	"version": "1.0.0",
+	"description": "Performance monitoring and metrics for NeonPro healthcare applications",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"scripts": {
+		"build": "tsc",
+		"dev": "tsc --watch",
+		"lint": "biome lint .",
+		"format": "biome format --write .",
+		"type-check": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@sentry/nextjs": "^8.0.0",
+		"web-vitals": "^4.2.4"
+	},
+	"devDependencies": {
+		"@types/node": "^22.0.0",
+		"typescript": "^5.6.3"
+	},
+	"peerDependencies": {
+		"next": "^15.0.0",
+		"react": "^18.0.0"
+	},
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		},
+		"./client": {
+			"types": "./dist/client/index.d.ts",
+			"default": "./dist/client/index.js"
+		},
+		"./server": {
+			"types": "./dist/server/index.d.ts",
+			"default": "./dist/server/index.js"
+		}
+	},
+	"keywords": [
+		"monitoring",
+		"performance",
+		"healthcare",
+		"metrics",
+		"web-vitals",
+		"sentry"
+	],
+	"author": "NeonPro Team",
+	"license": "MIT"
 }

@@ -13,23 +13,38 @@ import { z } from "zod";
 
 // Zod schemas for analytics
 const DateRangeSchema = z.object({
-	startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Formato de data inválido (YYYY-MM-DD)"),
-	endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Formato de data inválido (YYYY-MM-DD)"),
+	startDate: z
+		.string()
+		.regex(/^\d{4}-\d{2}-\d{2}$/, "Formato de data inválido (YYYY-MM-DD)"),
+	endDate: z
+		.string()
+		.regex(/^\d{4}-\d{2}-\d{2}$/, "Formato de data inválido (YYYY-MM-DD)"),
 });
 
 const AnalyticsQuerySchema = z.object({
-	period: z.enum(["today", "week", "month", "quarter", "year", "custom"]).default("month"),
+	period: z
+		.enum(["today", "week", "month", "quarter", "year", "custom"])
+		.default("month"),
 	startDate: z.string().optional(),
 	endDate: z.string().optional(),
 	groupBy: z.enum(["day", "week", "month"]).default("day"),
 });
 
 const RevenueQuerySchema = z.object({
-	period: z.enum(["today", "week", "month", "quarter", "year", "custom"]).default("month"),
+	period: z
+		.enum(["today", "week", "month", "quarter", "year", "custom"])
+		.default("month"),
 	startDate: z.string().optional(),
 	endDate: z.string().optional(),
 	serviceCategory: z
-		.enum(["facial_treatments", "body_treatments", "hair_removal", "cosmetic_procedures", "wellness", "consultations"])
+		.enum([
+			"facial_treatments",
+			"body_treatments",
+			"hair_removal",
+			"cosmetic_procedures",
+			"wellness",
+			"consultations",
+		])
 		.optional(),
 	professionalId: z.string().optional(),
 });
@@ -41,7 +56,10 @@ export const analyticsRoutes = new Hono()
 	.use("*", async (c, next) => {
 		const auth = c.req.header("Authorization");
 		if (!auth?.startsWith("Bearer ")) {
-			return c.json({ error: "UNAUTHORIZED", message: "Token de acesso obrigatório" }, 401);
+			return c.json(
+				{ error: "UNAUTHORIZED", message: "Token de acesso obrigatório" },
+				401,
+			);
 		}
 		await next();
 	})
@@ -130,7 +148,7 @@ export const analyticsRoutes = new Hono()
 					error: "INTERNAL_ERROR",
 					message: "Erro ao carregar dashboard",
 				},
-				500
+				500,
 			);
 		}
 	})
@@ -148,7 +166,9 @@ export const analyticsRoutes = new Hono()
 
 				// Daily breakdown (last 30 days)
 				dailyRevenue: Array.from({ length: 30 }, (_, i) => ({
-					date: new Date(Date.now() - (29 - i) * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+					date: new Date(Date.now() - (29 - i) * 24 * 60 * 60 * 1000)
+						.toISOString()
+						.split("T")[0],
 					revenue: Math.random() * 2000 + 500,
 				})),
 
@@ -211,86 +231,92 @@ export const analyticsRoutes = new Hono()
 					error: "INTERNAL_ERROR",
 					message: "Erro ao carregar análise de receita",
 				},
-				500
+				500,
 			);
 		}
 	})
 
 	// 📅 Appointments analytics
-	.get("/appointments", zValidator("query", AnalyticsQuerySchema), async (c) => {
-		const { period, groupBy } = c.req.valid("query");
+	.get(
+		"/appointments",
+		zValidator("query", AnalyticsQuerySchema),
+		async (c) => {
+			const { period, groupBy } = c.req.valid("query");
 
-		try {
-			// TODO: Implement actual appointments analytics
-			const mockAppointments = {
-				total: 156,
-				completed: 142,
-				cancelled: 14,
-				noShow: 5,
-				completionRate: 91.0,
-				cancellationRate: 9.0,
+			try {
+				// TODO: Implement actual appointments analytics
+				const mockAppointments = {
+					total: 156,
+					completed: 142,
+					cancelled: 14,
+					noShow: 5,
+					completionRate: 91.0,
+					cancellationRate: 9.0,
 
-				// Trends
-				trends: {
-					appointments: Array.from({ length: 30 }, (_, i) => ({
-						date: new Date(Date.now() - (29 - i) * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
-						total: Math.floor(Math.random() * 10) + 5,
-						completed: Math.floor(Math.random() * 8) + 4,
-						cancelled: Math.floor(Math.random() * 2),
-					})),
-				},
+					// Trends
+					trends: {
+						appointments: Array.from({ length: 30 }, (_, i) => ({
+							date: new Date(Date.now() - (29 - i) * 24 * 60 * 60 * 1000)
+								.toISOString()
+								.split("T")[0],
+							total: Math.floor(Math.random() * 10) + 5,
+							completed: Math.floor(Math.random() * 8) + 4,
+							cancelled: Math.floor(Math.random() * 2),
+						})),
+					},
 
-				// By hour
-				byHour: [
-					{ hour: "09:00", appointments: 12 },
-					{ hour: "10:00", appointments: 15 },
-					{ hour: "11:00", appointments: 18 },
-					{ hour: "14:00", appointments: 20 },
-					{ hour: "15:00", appointments: 22 },
-					{ hour: "16:00", appointments: 19 },
-					{ hour: "17:00", appointments: 14 },
-				],
-
-				// By day of week
-				byDayOfWeek: [
-					{ day: "Monday", appointments: 25 },
-					{ day: "Tuesday", appointments: 28 },
-					{ day: "Wednesday", appointments: 22 },
-					{ day: "Thursday", appointments: 30 },
-					{ day: "Friday", appointments: 26 },
-					{ day: "Saturday", appointments: 15 },
-					{ day: "Sunday", appointments: 10 },
-				],
-
-				// Average duration
-				averageDuration: {
-					overall: 65, // minutes
-					byService: [
-						{ service: "Limpeza de Pele", duration: 60 },
-						{ service: "Peeling Químico", duration: 45 },
-						{ service: "Massagem", duration: 90 },
+					// By hour
+					byHour: [
+						{ hour: "09:00", appointments: 12 },
+						{ hour: "10:00", appointments: 15 },
+						{ hour: "11:00", appointments: 18 },
+						{ hour: "14:00", appointments: 20 },
+						{ hour: "15:00", appointments: 22 },
+						{ hour: "16:00", appointments: 19 },
+						{ hour: "17:00", appointments: 14 },
 					],
-				},
-			};
 
-			const response: ApiResponse<typeof mockAppointments> = {
-				success: true,
-				data: mockAppointments,
-				message: "Análise de agendamentos carregada",
-			};
+					// By day of week
+					byDayOfWeek: [
+						{ day: "Monday", appointments: 25 },
+						{ day: "Tuesday", appointments: 28 },
+						{ day: "Wednesday", appointments: 22 },
+						{ day: "Thursday", appointments: 30 },
+						{ day: "Friday", appointments: 26 },
+						{ day: "Saturday", appointments: 15 },
+						{ day: "Sunday", appointments: 10 },
+					],
 
-			return c.json(response, 200);
-		} catch (_error) {
-			return c.json(
-				{
-					success: false,
-					error: "INTERNAL_ERROR",
-					message: "Erro ao carregar análise de agendamentos",
-				},
-				500
-			);
-		}
-	})
+					// Average duration
+					averageDuration: {
+						overall: 65, // minutes
+						byService: [
+							{ service: "Limpeza de Pele", duration: 60 },
+							{ service: "Peeling Químico", duration: 45 },
+							{ service: "Massagem", duration: 90 },
+						],
+					},
+				};
+
+				const response: ApiResponse<typeof mockAppointments> = {
+					success: true,
+					data: mockAppointments,
+					message: "Análise de agendamentos carregada",
+				};
+
+				return c.json(response, 200);
+			} catch (_error) {
+				return c.json(
+					{
+						success: false,
+						error: "INTERNAL_ERROR",
+						message: "Erro ao carregar análise de agendamentos",
+					},
+					500,
+				);
+			}
+		},
+	)
 
 	// 👥 Patients analytics
 	.get("/patients", async (c) => {
@@ -361,7 +387,7 @@ export const analyticsRoutes = new Hono()
 					error: "INTERNAL_ERROR",
 					message: "Erro ao carregar análise de pacientes",
 				},
-				500
+				500,
 			);
 		}
 	})
@@ -430,7 +456,7 @@ export const analyticsRoutes = new Hono()
 					error: "INTERNAL_ERROR",
 					message: "Erro ao carregar métricas de performance",
 				},
-				500
+				500,
 			);
 		}
 	})
@@ -441,7 +467,13 @@ export const analyticsRoutes = new Hono()
 		zValidator(
 			"json",
 			z.object({
-				reportType: z.enum(["revenue", "appointments", "patients", "services", "professionals"]),
+				reportType: z.enum([
+					"revenue",
+					"appointments",
+					"patients",
+					"services",
+					"professionals",
+				]),
 				filters: z
 					.object({
 						dateRange: DateRangeSchema.optional(),
@@ -450,12 +482,15 @@ export const analyticsRoutes = new Hono()
 						categories: z.array(z.string()).optional(),
 					})
 					.optional(),
-				groupBy: z.enum(["day", "week", "month", "service", "professional"]).optional(),
+				groupBy: z
+					.enum(["day", "week", "month", "service", "professional"])
+					.optional(),
 				includeComparison: z.boolean().default(false),
-			})
+			}),
 		),
 		async (c) => {
-			const { reportType, filters, groupBy, includeComparison } = c.req.valid("json");
+			const { reportType, filters, groupBy, includeComparison } =
+				c.req.valid("json");
 
 			try {
 				// TODO: Implement actual custom report generation
@@ -476,7 +511,9 @@ export const analyticsRoutes = new Hono()
 							id: `item_${i + 1}`,
 							value: Math.random() * 1000,
 							count: Math.floor(Math.random() * 50) + 1,
-							date: new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+							date: new Date(Date.now() - i * 24 * 60 * 60 * 1000)
+								.toISOString()
+								.split("T")[0],
 						})),
 					},
 					downloadUrl: `/api/v1/analytics/reports/rpt_${Date.now()}/download`,
@@ -496,8 +533,8 @@ export const analyticsRoutes = new Hono()
 						error: "INTERNAL_ERROR",
 						message: "Erro ao gerar relatório customizado",
 					},
-					500
+					500,
 				);
 			}
-		}
+		},
 	);

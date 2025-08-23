@@ -85,7 +85,9 @@ class ProductionMonitor {
 		// Metrics endpoint
 		this.app.get("/metrics", (req, res) => {
 			const { metric, since } = req.query;
-			const sinceTime = since ? Number.parseInt(since as string, 10) : Date.now() - 3_600_000; // 1 hour default
+			const sinceTime = since
+				? Number.parseInt(since as string, 10)
+				: Date.now() - 3_600_000; // 1 hour default
 
 			if (metric) {
 				const metricData = this.metrics.get(metric as string) || [];
@@ -111,7 +113,9 @@ class ProductionMonitor {
 
 			if (resolved !== undefined) {
 				const isResolved = resolved === "true";
-				filteredAlerts = filteredAlerts.filter((a) => a.resolved === isResolved);
+				filteredAlerts = filteredAlerts.filter(
+					(a) => a.resolved === isResolved,
+				);
 			}
 
 			res.json(filteredAlerts);
@@ -134,7 +138,10 @@ class ProductionMonitor {
 		});
 
 		// Static dashboard
-		this.app.use("/static", express.static(path.join(__dirname, "../quality-dashboard")));
+		this.app.use(
+			"/static",
+			express.static(path.join(__dirname, "../quality-dashboard")),
+		);
 	}
 
 	/**
@@ -249,7 +256,7 @@ class ProductionMonitor {
 			if (status !== "healthy") {
 				this.createAlert(
 					status === "down" ? "critical" : "warning",
-					`System health degraded: ${score}% (Issues: ${issues.join(", ")})`
+					`System health degraded: ${score}% (Issues: ${issues.join(", ")})`,
 				);
 			}
 
@@ -416,7 +423,11 @@ class ProductionMonitor {
 	/**
 	 * 🚨 Criar alerta
 	 */
-	private createAlert(level: Alert["level"], message: string, metadata?: Record<string, any>): void {
+	private createAlert(
+		level: Alert["level"],
+		message: string,
+		metadata?: Record<string, any>,
+	): void {
 		const alert: Alert = {
 			id: `alert-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
 			level,
@@ -450,7 +461,10 @@ class ProductionMonitor {
 	 */
 	private async sendCriticalAlert(alert: Alert): Promise<void> {
 		// Em produção, implementar integrações reais
-		logger.warn("📧 Enviando alerta crítico", { message: alert.message, alertId: alert.id });
+		logger.warn("📧 Enviando alerta crítico", {
+			message: alert.message,
+			alertId: alert.id,
+		});
 
 		// Simulação de envio para Slack
 		// await axios.post(process.env.SLACK_WEBHOOK_URL, {
@@ -499,7 +513,9 @@ class ProductionMonitor {
 		}
 
 		// Limpar alertas antigos resolvidos
-		this.alerts = this.alerts.filter((a) => !a.resolved || a.timestamp >= oneDayAgo);
+		this.alerts = this.alerts.filter(
+			(a) => !a.resolved || a.timestamp >= oneDayAgo,
+		);
 
 		logger.info("🧹 Cleanup de dados antigos executado");
 	}
@@ -514,7 +530,9 @@ class ProductionMonitor {
 		const report = {
 			date: yesterday.toISOString().split("T")[0],
 			avgHealthScore: this.calculateAverageHealth(),
-			totalAlerts: this.alerts.filter((a) => a.timestamp >= yesterday.getTime() && a.timestamp < Date.now()).length,
+			totalAlerts: this.alerts.filter(
+				(a) => a.timestamp >= yesterday.getTime() && a.timestamp < Date.now(),
+			).length,
 			metrics: this.getRecentMetrics(),
 			uptime: process.uptime(),
 		};

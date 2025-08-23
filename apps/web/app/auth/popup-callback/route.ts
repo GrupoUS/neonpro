@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
     `,
 			{
 				headers: { "Content-Type": "text/html" },
-			}
+			},
 		);
 	}
 
@@ -41,7 +41,8 @@ export async function GET(request: NextRequest) {
 
 		try {
 			// Exchange the code for a session
-			const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+			const { data, error: exchangeError } =
+				await supabase.auth.exchangeCodeForSession(code);
 
 			if (exchangeError) {
 				throw exchangeError;
@@ -72,7 +73,7 @@ export async function GET(request: NextRequest) {
       `,
 				{
 					headers: { "Content-Type": "text/html" },
-				}
+				},
 			);
 		} catch (_exchangeError) {
 			return new NextResponse(
@@ -98,7 +99,7 @@ export async function GET(request: NextRequest) {
       `,
 				{
 					headers: { "Content-Type": "text/html" },
-				}
+				},
 			);
 		}
 	}
@@ -127,6 +128,6 @@ export async function GET(request: NextRequest) {
   `,
 		{
 			headers: { "Content-Type": "text/html" },
-		}
+		},
 	);
 }

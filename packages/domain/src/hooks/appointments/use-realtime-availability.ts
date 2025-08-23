@@ -30,7 +30,9 @@ export type UseRealtimeAvailabilityReturn = {
 	releaseSlot: (slotId: string) => Promise<boolean>;
 };
 
-export function useRealtimeAvailability(options: UseRealtimeAvailabilityOptions = {}): UseRealtimeAvailabilityReturn {
+export function useRealtimeAvailability(
+	options: UseRealtimeAvailabilityOptions = {},
+): UseRealtimeAvailabilityReturn {
 	const [slots, setSlots] = useState<TimeSlot[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
@@ -60,7 +62,8 @@ export function useRealtimeAvailability(options: UseRealtimeAvailabilityOptions 
 			setSlots(mockSlots);
 			setIsConnected(true);
 		} catch (err) {
-			const errorMessage = err instanceof Error ? err.message : "Failed to refresh slots";
+			const errorMessage =
+				err instanceof Error ? err.message : "Failed to refresh slots";
 			setError(errorMessage);
 		} finally {
 			setIsLoading(false);
@@ -69,11 +72,16 @@ export function useRealtimeAvailability(options: UseRealtimeAvailabilityOptions 
 
 	const bookSlot = useCallback(async (slotId: string): Promise<boolean> => {
 		try {
-			setSlots((prev) => prev.map((slot) => (slot.id === slotId ? { ...slot, is_available: false } : slot)));
+			setSlots((prev) =>
+				prev.map((slot) =>
+					slot.id === slotId ? { ...slot, is_available: false } : slot,
+				),
+			);
 
 			return true;
 		} catch (err) {
-			const errorMessage = err instanceof Error ? err.message : "Failed to book slot";
+			const errorMessage =
+				err instanceof Error ? err.message : "Failed to book slot";
 			setError(errorMessage);
 			return false;
 		}
@@ -81,11 +89,16 @@ export function useRealtimeAvailability(options: UseRealtimeAvailabilityOptions 
 
 	const releaseSlot = useCallback(async (slotId: string): Promise<boolean> => {
 		try {
-			setSlots((prev) => prev.map((slot) => (slot.id === slotId ? { ...slot, is_available: true } : slot)));
+			setSlots((prev) =>
+				prev.map((slot) =>
+					slot.id === slotId ? { ...slot, is_available: true } : slot,
+				),
+			);
 
 			return true;
 		} catch (err) {
-			const errorMessage = err instanceof Error ? err.message : "Failed to release slot";
+			const errorMessage =
+				err instanceof Error ? err.message : "Failed to release slot";
 			setError(errorMessage);
 			return false;
 		}

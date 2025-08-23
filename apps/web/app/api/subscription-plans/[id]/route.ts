@@ -18,7 +18,10 @@ const updatePlanSchema = z.object({
 });
 
 // GET /api/subscription-plans/[id] - Get plan details
-export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(
+	_request: NextRequest,
+	{ params }: { params: Promise<{ id: string }> },
+) {
 	try {
 		const { id } = await params;
 		const supabase = await createClient();
@@ -34,7 +37,10 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
 		const planId = id;
 
 		if (!planId) {
-			return NextResponse.json({ error: "Plan ID is required" }, { status: 400 });
+			return NextResponse.json(
+				{ error: "Plan ID is required" },
+				{ status: 400 },
+			);
 		}
 
 		// Get plan with subscription count
@@ -44,7 +50,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
 				`
         *,
         subscriptions:subscriptions(count)
-      `
+      `,
 			)
 			.eq("id", planId)
 			.single();
@@ -55,13 +61,19 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
 		}
 
 		// Get subscription statistics
-		const { data: subscriptionStats } = await supabase.from("subscriptions").select("status").eq("plan_id", planId);
+		const { data: subscriptionStats } = await supabase
+			.from("subscriptions")
+			.select("status")
+			.eq("plan_id", planId);
 
 		const stats = {
 			total_subscriptions: subscriptionStats?.length || 0,
-			active_subscriptions: subscriptionStats?.filter((s) => s.status === "active").length || 0,
-			trialing_subscriptions: subscriptionStats?.filter((s) => s.status === "trialing").length || 0,
-			canceled_subscriptions: subscriptionStats?.filter((s) => s.status === "canceled").length || 0,
+			active_subscriptions:
+				subscriptionStats?.filter((s) => s.status === "active").length || 0,
+			trialing_subscriptions:
+				subscriptionStats?.filter((s) => s.status === "trialing").length || 0,
+			canceled_subscriptions:
+				subscriptionStats?.filter((s) => s.status === "canceled").length || 0,
 		};
 
 		return NextResponse.json({
@@ -72,12 +84,18 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
 		});
 	} catch (error) {
 		logger.error(`Error in GET /api/subscription-plans/${id}:`, error);
-		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+		return NextResponse.json(
+			{ error: "Internal server error" },
+			{ status: 500 },
+		);
 	}
 }
 
 // PUT /api/subscription-plans/[id] - Update plan
-export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function PUT(
+	request: NextRequest,
+	{ params }: { params: Promise<{ id: string }> },
+) {
 	try {
 		const { id } = await params;
 		const supabase = await createClient();
@@ -91,10 +109,17 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 		}
 
 		// Check if user is admin
-		const { data: userProfile } = await supabase.from("user_profiles").select("role").eq("user_id", user.id).single();
+		const { data: userProfile } = await supabase
+			.from("user_profiles")
+			.select("role")
+			.eq("user_id", user.id)
+			.single();
 
 		if (!(userProfile && ["admin", "owner"].includes(userProfile.role))) {
-			return NextResponse.json({ error: "Insufficient permissions" }, { status: 403 });
+			return NextResponse.json(
+				{ error: "Insufficient permissions" },
+				{ status: 403 },
+			);
 		}
 
 		const planId = id;
@@ -108,7 +133,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 					error: "Invalid request data",
 					details: validationResult.error.errors,
 				},
-				{ status: 400 }
+				{ status: 400 },
 			);
 		}
 
@@ -124,7 +149,10 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 		}
 
 		// Check if name is being changed and if it conflicts
-		if (validationResult.data.name && validationResult.data.name !== existingPlan.name) {
+		if (
+			validationResult.data.name &&
+			validationResult.data.name !== existingPlan.name
+		) {
 			const { data: conflictingPlan } = await supabase
 				.from("subscription_plans")
 				.select("id")
@@ -133,12 +161,18 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 				.single();
 
 			if (conflictingPlan) {
-				return NextResponse.json({ error: "Plan with this name already exists" }, { status: 409 });
+				return NextResponse.json(
+					{ error: "Plan with this name already exists" },
+					{ status: 409 },
+				);
 			}
 		}
 
 		// Update plan
-		const updatedPlan = await subscriptionManager.updatePlan(planId, validationResult.data);
+		const updatedPlan = await subscriptionManager.updatePlan(
+			planId,
+			validationResult.data,
+		);
 
 		logger.info(`Plan updated: ${planId} by user: ${user.id}`);
 
@@ -153,12 +187,18 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 			return NextResponse.json({ error: error.message }, { status: 400 });
 		}
 
-		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+		return NextResponse.json(
+			{ error: "Internal server error" },
+			{ status: 500 },
+		);
 	}
 }
 
 // DELETE /api/subscription-plans/[id] - Deactivate plan
-export async function DELETE(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(
+	_request: NextRequest,
+	{ params }: { params: Promise<{ id: string }> },
+) {
 	const { id } = await params;
 	try {
 		const supabase = await createClient();
@@ -172,10 +212,17 @@ export async function DELETE(_request: NextRequest, { params }: { params: Promis
 		}
 
 		// Check if user is admin
-		const { data: userProfile } = await supabase.from("user_profiles").select("role").eq("user_id", user.id).single();
+		const { data: userProfile } = await supabase
+			.from("user_profiles")
+			.select("role")
+			.eq("user_id", user.id)
+			.single();
 
 		if (!(userProfile && ["admin", "owner"].includes(userProfile.role))) {
-			return NextResponse.json({ error: "Insufficient permissions" }, { status: 403 });
+			return NextResponse.json(
+				{ error: "Insufficient permissions" },
+				{ status: 403 },
+			);
 		}
 
 		const planId = params.id;
@@ -204,10 +251,11 @@ export async function DELETE(_request: NextRequest, { params }: { params: Promis
 					error: "Cannot deactivate plan with active subscriptions",
 					details: {
 						active_subscriptions: activeSubscriptions.length,
-						message: "Cancel or migrate all active subscriptions before deactivating the plan",
+						message:
+							"Cancel or migrate all active subscriptions before deactivating the plan",
 					},
 				},
-				{ status: 409 }
+				{ status: 409 },
 			);
 		}
 
@@ -229,6 +277,9 @@ export async function DELETE(_request: NextRequest, { params }: { params: Promis
 			return NextResponse.json({ error: error.message }, { status: 400 });
 		}
 
-		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+		return NextResponse.json(
+			{ error: "Internal server error" },
+			{ status: 500 },
+		);
 	}
 }

@@ -51,11 +51,15 @@ type PerformanceMetric = {
 }; // Professional Management Functions
 
 export async function createProfessional(
-	data: Omit<Professional, "id" | "created_at" | "updated_at">
+	data: Omit<Professional, "id" | "created_at" | "updated_at">,
 ): Promise<Professional> {
 	const supabase = createClient();
 
-	const { data: result, error } = await supabase.from("professionals").insert(data).select().single();
+	const { data: result, error } = await supabase
+		.from("professionals")
+		.insert(data)
+		.select()
+		.single();
 
 	if (error) {
 		throw new Error(`Database error: ${error.message}`);
@@ -64,10 +68,18 @@ export async function createProfessional(
 	return result;
 }
 
-export async function updateProfessional(id: string, data: Partial<Professional>): Promise<Professional> {
+export async function updateProfessional(
+	id: string,
+	data: Partial<Professional>,
+): Promise<Professional> {
 	const supabase = createClient();
 
-	const { data: result, error } = await supabase.from("professionals").update(data).eq("id", id).select().single();
+	const { data: result, error } = await supabase
+		.from("professionals")
+		.update(data)
+		.eq("id", id)
+		.select()
+		.single();
 
 	if (error) {
 		throw new Error(`Update failed: ${error.message}`);
@@ -99,7 +111,9 @@ export async function getProfessionals(options?: {
 }): Promise<Professional[]> {
 	const supabase = createClient();
 
-	let query = supabase.from("professionals").select(options?.fields?.join(",") || "*");
+	let query = supabase
+		.from("professionals")
+		.select(options?.fields?.join(",") || "*");
 
 	if (options?.status) {
 		query = query.eq("status", options.status);
@@ -114,7 +128,10 @@ export async function getProfessionals(options?: {
 	}
 
 	if (options?.offset) {
-		query = query.range(options.offset, options.offset + (options.limit || 50) - 1);
+		query = query.range(
+			options.offset,
+			options.offset + (options.limit || 50) - 1,
+		);
 	}
 
 	const { data, error } = await query;
@@ -126,10 +143,16 @@ export async function getProfessionals(options?: {
 	return data || [];
 }
 
-export async function getProfessionalById(id: string): Promise<Professional | null> {
+export async function getProfessionalById(
+	id: string,
+): Promise<Professional | null> {
 	const supabase = createClient();
 
-	const { data, error } = await supabase.from("professionals").select("*").eq("id", id).single();
+	const { data, error } = await supabase
+		.from("professionals")
+		.select("*")
+		.eq("id", id)
+		.single();
 
 	if (error) {
 		if (error.code === "PGRST116") {
@@ -141,7 +164,9 @@ export async function getProfessionalById(id: string): Promise<Professional | nu
 	return data;
 } // Credentials Management Functions
 
-export async function getProfessionalCredentials(professionalId: string): Promise<ProfessionalCredential[]> {
+export async function getProfessionalCredentials(
+	professionalId: string,
+): Promise<ProfessionalCredential[]> {
 	const supabase = createClient();
 
 	const { data, error } = await supabase
@@ -158,11 +183,15 @@ export async function getProfessionalCredentials(professionalId: string): Promis
 }
 
 export async function createProfessionalCredential(
-	data: Omit<ProfessionalCredential, "id" | "created_at" | "updated_at">
+	data: Omit<ProfessionalCredential, "id" | "created_at" | "updated_at">,
 ): Promise<ProfessionalCredential> {
 	const supabase = createClient();
 
-	const { data: result, error } = await supabase.from("professional_credentials").insert(data).select().single();
+	const { data: result, error } = await supabase
+		.from("professional_credentials")
+		.insert(data)
+		.select()
+		.single();
 
 	if (error) {
 		throw new Error(`Creation failed: ${error.message}`);
@@ -173,7 +202,7 @@ export async function createProfessionalCredential(
 
 export async function updateProfessionalCredential(
 	id: string,
-	data: Partial<ProfessionalCredential>
+	data: Partial<ProfessionalCredential>,
 ): Promise<ProfessionalCredential> {
 	const supabase = createClient();
 
@@ -193,14 +222,19 @@ export async function updateProfessionalCredential(
 export async function deleteProfessionalCredential(id: string): Promise<void> {
 	const supabase = createClient();
 
-	const { error } = await supabase.from("professional_credentials").delete().eq("id", id);
+	const { error } = await supabase
+		.from("professional_credentials")
+		.delete()
+		.eq("id", id);
 
 	if (error) {
 		throw new Error(`Deletion failed: ${error.message}`);
 	}
 }
 
-export async function verifyCredential(id: string): Promise<ProfessionalCredential> {
+export async function verifyCredential(
+	id: string,
+): Promise<ProfessionalCredential> {
 	const supabase = createClient();
 
 	const { data: result, error } = await supabase
@@ -219,7 +253,9 @@ export async function verifyCredential(id: string): Promise<ProfessionalCredenti
 
 // Services Management Functions
 
-export async function getProfessionalServices(professionalId: string): Promise<ProfessionalService[]> {
+export async function getProfessionalServices(
+	professionalId: string,
+): Promise<ProfessionalService[]> {
 	const supabase = createClient();
 
 	const { data, error } = await supabase
@@ -235,11 +271,15 @@ export async function getProfessionalServices(professionalId: string): Promise<P
 	return data || [];
 }
 export async function createProfessionalService(
-	data: Omit<ProfessionalService, "id" | "created_at" | "updated_at">
+	data: Omit<ProfessionalService, "id" | "created_at" | "updated_at">,
 ): Promise<ProfessionalService> {
 	const supabase = createClient();
 
-	const { data: result, error } = await supabase.from("professional_services").insert(data).select().single();
+	const { data: result, error } = await supabase
+		.from("professional_services")
+		.insert(data)
+		.select()
+		.single();
 
 	if (error) {
 		throw new Error(`Creation failed: ${error.message}`);
@@ -250,7 +290,7 @@ export async function createProfessionalService(
 
 export async function updateProfessionalService(
 	id: string,
-	data: Partial<ProfessionalService>
+	data: Partial<ProfessionalService>,
 ): Promise<ProfessionalService> {
 	const supabase = createClient();
 
@@ -271,7 +311,10 @@ export async function updateProfessionalService(
 export async function deleteProfessionalService(id: string): Promise<void> {
 	const supabase = createClient();
 
-	const { error } = await supabase.from("professional_services").delete().eq("id", id);
+	const { error } = await supabase
+		.from("professional_services")
+		.delete()
+		.eq("id", id);
 
 	if (error) {
 		throw new Error(`Deletion failed: ${error.message}`);
@@ -284,11 +327,14 @@ export async function getProfessionalPerformanceMetrics(
 		startDate?: string;
 		endDate?: string;
 		metricType?: string;
-	}
+	},
 ): Promise<PerformanceMetric[]> {
 	const supabase = createClient();
 
-	let query = supabase.from("performance_metrics").select("*").eq("professional_id", professionalId);
+	let query = supabase
+		.from("performance_metrics")
+		.select("*")
+		.eq("professional_id", professionalId);
 
 	if (options?.startDate) {
 		query = query.gte("period_start", options.startDate);
@@ -314,11 +360,15 @@ export async function getProfessionalPerformanceMetrics(
 }
 
 export async function addPerformanceMetric(
-	data: Omit<PerformanceMetric, "id" | "created_at" | "updated_at">
+	data: Omit<PerformanceMetric, "id" | "created_at" | "updated_at">,
 ): Promise<PerformanceMetric> {
 	const supabase = createClient();
 
-	const { data: result, error } = await supabase.from("performance_metrics").insert(data).select().single();
+	const { data: result, error } = await supabase
+		.from("performance_metrics")
+		.insert(data)
+		.select()
+		.single();
 
 	if (error) {
 		throw new Error(`Creation failed: ${error.message}`);
@@ -328,7 +378,7 @@ export async function addPerformanceMetric(
 }
 export async function updatePerformanceMetric(
 	id: string,
-	data: Partial<PerformanceMetric>
+	data: Partial<PerformanceMetric>,
 ): Promise<PerformanceMetric> {
 	const supabase = createClient();
 

@@ -19,7 +19,8 @@ const skipLinkVariants = cva(
 	{
 		variants: {
 			variant: {
-				default: "border-2 border-primary bg-primary text-primary-foreground focus:ring-primary",
+				default:
+					"border-2 border-primary bg-primary text-primary-foreground focus:ring-primary",
 				healthcare:
 					"border-2 border-primary/50 bg-gradient-primary text-primary-foreground shadow-healthcare-lg backdrop-blur-sm focus:ring-primary",
 				emergency:
@@ -41,10 +42,12 @@ const skipLinkVariants = cva(
 			position: "top-center",
 			size: "default",
 		},
-	}
+	},
 );
 
-interface SkipLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement>, VariantProps<typeof skipLinkVariants> {
+interface SkipLinkProps
+	extends React.AnchorHTMLAttributes<HTMLAnchorElement>,
+		VariantProps<typeof skipLinkVariants> {
 	targetId: string;
 	children?: React.ReactNode;
 	showOnFocus?: boolean;
@@ -66,10 +69,14 @@ const SkipLink = React.forwardRef<HTMLAnchorElement, SkipLinkProps>(
 			emergencyMode = false,
 			...props
 		},
-		ref
+		ref,
 	) => {
 		// Auto-detect variant based on context
-		const finalVariant = emergencyMode ? "emergency" : medicalContext ? "healthcare" : variant;
+		const finalVariant = emergencyMode
+			? "emergency"
+			: medicalContext
+				? "healthcare"
+				: variant;
 
 		const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
 			e.preventDefault();
@@ -125,9 +132,10 @@ const SkipLink = React.forwardRef<HTMLAnchorElement, SkipLinkProps>(
 				className={cn(
 					skipLinkVariants({ variant: finalVariant, position, size }),
 					// Hide by default, show on focus (unless showOnFocus is false)
-					showOnFocus && "-translate-y-full opacity-0 focus:translate-y-0 focus:opacity-100",
+					showOnFocus &&
+						"-translate-y-full opacity-0 focus:translate-y-0 focus:opacity-100",
 					!showOnFocus && "translate-y-0 opacity-100",
-					className
+					className,
 				)}
 				data-emergency={emergencyMode}
 				data-medical-context={medicalContext}
@@ -141,7 +149,7 @@ const SkipLink = React.forwardRef<HTMLAnchorElement, SkipLinkProps>(
 				{children}
 			</a>
 		);
-	}
+	},
 );
 
 SkipLink.displayName = "SkipLink";
@@ -149,26 +157,28 @@ SkipLink.displayName = "SkipLink";
 /**
  * SkipToContent - Specialized skip link for main content
  */
-const SkipToContent = React.forwardRef<HTMLAnchorElement, Omit<SkipLinkProps, "targetId" | "children">>(
-	({ ...props }, ref) => (
-		<SkipLink ref={ref} targetId="main-content" {...props}>
-			Pular para o conteúdo principal
-		</SkipLink>
-	)
-);
+const SkipToContent = React.forwardRef<
+	HTMLAnchorElement,
+	Omit<SkipLinkProps, "targetId" | "children">
+>(({ ...props }, ref) => (
+	<SkipLink ref={ref} targetId="main-content" {...props}>
+		Pular para o conteúdo principal
+	</SkipLink>
+));
 
 SkipToContent.displayName = "SkipToContent";
 
 /**
  * SkipToNavigation - Skip link for main navigation
  */
-const SkipToNavigation = React.forwardRef<HTMLAnchorElement, Omit<SkipLinkProps, "targetId" | "children">>(
-	({ ...props }, ref) => (
-		<SkipLink ref={ref} targetId="main-navigation" {...props}>
-			Pular para a navegação principal
-		</SkipLink>
-	)
-);
+const SkipToNavigation = React.forwardRef<
+	HTMLAnchorElement,
+	Omit<SkipLinkProps, "targetId" | "children">
+>(({ ...props }, ref) => (
+	<SkipLink ref={ref} targetId="main-navigation" {...props}>
+		Pular para a navegação principal
+	</SkipLink>
+));
 
 SkipToNavigation.displayName = "SkipToNavigation";
 
@@ -179,7 +189,13 @@ const SkipToEmergency = React.forwardRef<
 	HTMLAnchorElement,
 	Omit<SkipLinkProps, "targetId" | "children" | "emergencyMode">
 >(({ ...props }, ref) => (
-	<SkipLink emergencyMode={true} ref={ref} targetId="emergency-content" variant="emergency" {...props}>
+	<SkipLink
+		emergencyMode={true}
+		ref={ref}
+		targetId="emergency-content"
+		variant="emergency"
+		{...props}
+	>
 		🚨 Pular para Emergência
 	</SkipLink>
 ));
@@ -195,14 +211,26 @@ interface SkipLinkContainerProps extends React.HTMLAttributes<HTMLDivElement> {
 	emergencyMode?: boolean;
 }
 
-const SkipLinkContainer = React.forwardRef<HTMLDivElement, SkipLinkContainerProps>(
-	({ className, children, medicalContext = false, emergencyMode = false, ...props }, ref) => (
+const SkipLinkContainer = React.forwardRef<
+	HTMLDivElement,
+	SkipLinkContainerProps
+>(
+	(
+		{
+			className,
+			children,
+			medicalContext = false,
+			emergencyMode = false,
+			...props
+		},
+		ref,
+	) => (
 		<div
 			className={cn(
 				"skip-link-container relative z-[9999]",
 				medicalContext && "healthcare-context",
 				emergencyMode && "emergency-context",
-				className
+				className,
 			)}
 			data-emergency={emergencyMode}
 			data-medical-context={medicalContext}
@@ -211,7 +239,7 @@ const SkipLinkContainer = React.forwardRef<HTMLDivElement, SkipLinkContainerProp
 		>
 			{children}
 		</div>
-	)
+	),
 );
 
 SkipLinkContainer.displayName = "SkipLinkContainer";

@@ -7,7 +7,10 @@ import type { PatientInsightRequest } from "@/lib/ai/patient-insights/types";
 
 const patientInsights = new PatientInsightsIntegration();
 
-export async function GET(request: NextRequest, { params }: { params: Promise<{ patientId: string }> }) {
+export async function GET(
+	request: NextRequest,
+	{ params }: { params: Promise<{ patientId: string }> },
+) {
 	try {
 		const supabase = await createClient();
 
@@ -22,7 +25,11 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 		const { patientId } = await params;
 
 		// Validate patient access
-		const { data: patient } = await supabase.from("patients").select("id").eq("id", patientId).single();
+		const { data: patient } = await supabase
+			.from("patients")
+			.select("id")
+			.eq("id", patientId)
+			.single();
 
 		if (!patient) {
 			return NextResponse.json({ error: "Patient not found" }, { status: 404 });
@@ -36,25 +43,33 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 		// Create comprehensive insight request
 		const insightRequest: PatientInsightRequest = {
 			patientId,
-			requestedInsights: requestedInsights.length > 0 ? (requestedInsights as any[]) : undefined,
+			requestedInsights:
+				requestedInsights.length > 0 ? (requestedInsights as any[]) : undefined,
 			treatmentContext,
 			timestamp: new Date(),
 			requestId: `req_${Date.now()}_${patientId}`,
 		};
 
 		// Generate comprehensive insights
-		const comprehensiveInsights = await patientInsights.generateComprehensiveInsights(insightRequest);
+		const comprehensiveInsights =
+			await patientInsights.generateComprehensiveInsights(insightRequest);
 
 		return NextResponse.json({
 			success: true,
 			data: comprehensiveInsights,
 		});
 	} catch (_error) {
-		return NextResponse.json({ error: "Failed to generate comprehensive insights" }, { status: 500 });
+		return NextResponse.json(
+			{ error: "Failed to generate comprehensive insights" },
+			{ status: 500 },
+		);
 	}
 }
 
-export async function POST(request: NextRequest, { params }: { params: Promise<{ patientId: string }> }) {
+export async function POST(
+	request: NextRequest,
+	{ params }: { params: Promise<{ patientId: string }> },
+) {
 	try {
 		const supabase = await createClient();
 
@@ -82,7 +97,8 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 		};
 
 		// Generate comprehensive insights with custom parameters
-		const comprehensiveInsights = await patientInsights.generateComprehensiveInsights(insightRequest);
+		const comprehensiveInsights =
+			await patientInsights.generateComprehensiveInsights(insightRequest);
 
 		return NextResponse.json({
 			success: true,
@@ -90,6 +106,9 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 			requestId: insightRequest.requestId,
 		});
 	} catch (_error) {
-		return NextResponse.json({ error: "Failed to generate comprehensive insights" }, { status: 500 });
+		return NextResponse.json(
+			{ error: "Failed to generate comprehensive insights" },
+			{ status: 500 },
+		);
 	}
 }

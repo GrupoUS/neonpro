@@ -11,14 +11,19 @@ export type SubscriptionStatus = {
 	planType: "basic" | "premium" | "enterprise";
 };
 
-export const validateSubscriptionStatus = (subscription: SubscriptionStatus | null): boolean => {
+export const validateSubscriptionStatus = (
+	subscription: SubscriptionStatus | null,
+): boolean => {
 	if (!subscription) {
 		return false;
 	}
 	if (subscription.status === "active") {
 		return true;
 	}
-	if (subscription.status === "expired" || subscription.status === "cancelled") {
+	if (
+		subscription.status === "expired" ||
+		subscription.status === "cancelled"
+	) {
 		return false;
 	}
 	return false;
@@ -35,11 +40,17 @@ export const routeProtection = {
 		return premiumRoutes.some((premium) => route.startsWith(premium));
 	},
 
-	shouldRedirectToUpgrade: (subscription: SubscriptionStatus | null, route: string): boolean => {
+	shouldRedirectToUpgrade: (
+		subscription: SubscriptionStatus | null,
+		route: string,
+	): boolean => {
 		if (routeProtection.isPublicRoute(route)) {
 			return false;
 		}
-		if (routeProtection.isPremiumRoute(route) && (!subscription || subscription.status !== "active")) {
+		if (
+			routeProtection.isPremiumRoute(route) &&
+			(!subscription || subscription.status !== "active")
+		) {
 			return true;
 		}
 		return false;

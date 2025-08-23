@@ -46,7 +46,9 @@ export function RouterProvider({ children }: RouterProviderProps) {
 	return (
 		<>
 			<TanStackRouterProvider router={router} />
-			{process.env.NODE_ENV === "development" && <TanStackRouterDevtools router={router} />}
+			{process.env.NODE_ENV === "development" && (
+				<TanStackRouterDevtools router={router} />
+			)}
 		</>
 	);
 }
@@ -92,7 +94,11 @@ export function useHealthcareNavigation() {
 		},
 
 		// Navigate to patients with optional filters
-		navigateToPatients: (search?: { search?: string; status?: "active" | "inactive" | "pending"; page?: number }) => {
+		navigateToPatients: (search?: {
+			search?: string;
+			status?: "active" | "inactive" | "pending";
+			page?: number;
+		}) => {
 			navigate({
 				to: "/patients",
 				search: search || {},
@@ -112,8 +118,13 @@ export function useHealthcareNavigation() {
 		},
 
 		// Navigate to patient details
-		navigateToPatient: (patientId: string, tab?: "overview" | "appointments" | "medical-records") => {
-			const to = tab ? `/patients/${patientId}/${tab}` : `/patients/${patientId}`;
+		navigateToPatient: (
+			patientId: string,
+			tab?: "overview" | "appointments" | "medical-records",
+		) => {
+			const to = tab
+				? `/patients/${patientId}/${tab}`
+				: `/patients/${patientId}`;
 			navigate({ to });
 		},
 
@@ -143,7 +154,10 @@ export function useRoutePermissions() {
 
 	return {
 		canAccessPatients: () => {
-			return user && ["clinic_owner", "clinic_manager", "professional"].includes(user.role);
+			return (
+				user &&
+				["clinic_owner", "clinic_manager", "professional"].includes(user.role)
+			);
 		},
 
 		canAccessProfessionals: () => {
@@ -163,7 +177,10 @@ export function useRoutePermissions() {
 		},
 
 		canCreatePatient: () => {
-			return user && ["clinic_owner", "clinic_manager", "professional"].includes(user.role);
+			return (
+				user &&
+				["clinic_owner", "clinic_manager", "professional"].includes(user.role)
+			);
 		},
 
 		canEditPatient: (_patientId?: string) => {
@@ -187,7 +204,10 @@ export function useRoutePermissions() {
 		},
 
 		canScheduleAppointment: () => {
-			return user && ["clinic_owner", "clinic_manager", "professional"].includes(user.role);
+			return (
+				user &&
+				["clinic_owner", "clinic_manager", "professional"].includes(user.role)
+			);
 		},
 	};
 }

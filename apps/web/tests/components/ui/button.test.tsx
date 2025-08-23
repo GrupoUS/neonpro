@@ -17,7 +17,9 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 // Mock theme provider if needed
-const ThemeWrapper = ({ children }: { children: React.ReactNode }) => <div className="neonprov1-theme">{children}</div>;
+const ThemeWrapper = ({ children }: { children: React.ReactNode }) => (
+	<div className="neonprov1-theme">{children}</div>
+);
 
 describe("Button Component - NeonPro Healthcare UI", () => {
 	afterEach(() => {
@@ -29,7 +31,7 @@ describe("Button Component - NeonPro Healthcare UI", () => {
 			render(
 				<ThemeWrapper>
 					<Button data-testid="default-button">Default Button</Button>
-				</ThemeWrapper>
+				</ThemeWrapper>,
 			);
 
 			const button = screen.getByTestId("default-button");
@@ -47,7 +49,7 @@ describe("Button Component - NeonPro Healthcare UI", () => {
 						<Button data-testid={`button-${variant}`} variant={variant}>
 							{variant} Button
 						</Button>
-					</ThemeWrapper>
+					</ThemeWrapper>,
 				);
 
 				const button = screen.getByTestId(`button-${variant}`);
@@ -78,7 +80,7 @@ describe("Button Component - NeonPro Healthcare UI", () => {
 						<Button data-testid={`button-${size}`} size={size}>
 							Size {size}
 						</Button>
-					</ThemeWrapper>
+					</ThemeWrapper>,
 				);
 
 				const button = screen.getByTestId(`button-${size}`);
@@ -108,7 +110,7 @@ describe("Button Component - NeonPro Healthcare UI", () => {
 					<Button data-testid="clickable-button" onClick={mockClick}>
 						Click Me
 					</Button>
-				</ThemeWrapper>
+				</ThemeWrapper>,
 			);
 
 			const button = screen.getByTestId("clickable-button");
@@ -126,7 +128,7 @@ describe("Button Component - NeonPro Healthcare UI", () => {
 					<Button data-testid="disabled-button" disabled onClick={mockClick}>
 						Disabled Button
 					</Button>
-				</ThemeWrapper>
+				</ThemeWrapper>,
 			);
 
 			const button = screen.getByTestId("disabled-button");
@@ -138,10 +140,14 @@ describe("Button Component - NeonPro Healthcare UI", () => {
 		it("should show loading state properly", () => {
 			render(
 				<ThemeWrapper>
-					<Button data-testid="loading-button" loading={true} loadingText="Salvando paciente...">
+					<Button
+						data-testid="loading-button"
+						loading={true}
+						loadingText="Salvando paciente..."
+					>
 						Salvar Paciente
 					</Button>
-				</ThemeWrapper>
+				</ThemeWrapper>,
 			);
 
 			const button = screen.getByTestId("loading-button");
@@ -155,11 +161,15 @@ describe("Button Component - NeonPro Healthcare UI", () => {
 		it("should have proper ARIA attributes", () => {
 			render(
 				<ThemeWrapper>
-					<Button aria-describedby="button-help" aria-label="Cadastrar novo paciente" data-testid="accessible-button">
+					<Button
+						aria-describedby="button-help"
+						aria-label="Cadastrar novo paciente"
+						data-testid="accessible-button"
+					>
 						<span className="sr-only">Ícone de adicionar</span>
 						Cadastrar Paciente
 					</Button>
-				</ThemeWrapper>
+				</ThemeWrapper>,
 			);
 
 			const button = screen.getByTestId("accessible-button");
@@ -176,7 +186,7 @@ describe("Button Component - NeonPro Healthcare UI", () => {
 					<Button data-testid="keyboard-button" onClick={mockClick}>
 						Pressione Enter ou Espaço
 					</Button>
-				</ThemeWrapper>
+				</ThemeWrapper>,
 			);
 
 			const button = screen.getByTestId("keyboard-button");
@@ -197,7 +207,7 @@ describe("Button Component - NeonPro Healthcare UI", () => {
 					<Button data-testid="emergency-button" variant="emergency">
 						Emergência
 					</Button>
-				</ThemeWrapper>
+				</ThemeWrapper>,
 			);
 
 			const button = screen.getByTestId("emergency-button");
@@ -215,7 +225,7 @@ describe("Button Component - NeonPro Healthcare UI", () => {
 					<Button data-testid="critical-emergency-button" priority="critical">
 						PARADA CARDÍACA
 					</Button>
-				</ThemeWrapper>
+				</ThemeWrapper>,
 			);
 
 			const button = screen.getByTestId("critical-emergency-button");
@@ -241,7 +251,7 @@ describe("Button Component - NeonPro Healthcare UI", () => {
 					>
 						Excluir Paciente
 					</Button>
-				</ThemeWrapper>
+				</ThemeWrapper>,
 			);
 
 			const button = screen.getByTestId("confirm-button");
@@ -258,7 +268,7 @@ describe("Button Component - NeonPro Healthcare UI", () => {
 					<Button data-lgpd-compliant="true" data-testid="lgpd-button">
 						Processar Dados do Paciente
 					</Button>
-				</ThemeWrapper>
+				</ThemeWrapper>,
 			);
 
 			const button = screen.getByTestId("lgpd-button");
@@ -277,7 +287,7 @@ describe("Button Component - NeonPro Healthcare UI", () => {
 					>
 						Invalid Button
 					</Button>
-				</ThemeWrapper>
+				</ThemeWrapper>,
 			);
 
 			const button = screen.getByTestId("invalid-button");
@@ -288,7 +298,7 @@ describe("Button Component - NeonPro Healthcare UI", () => {
 			render(
 				<ThemeWrapper>
 					<Button data-testid="empty-button" />
-				</ThemeWrapper>
+				</ThemeWrapper>,
 			);
 
 			const button = screen.getByTestId("empty-button");

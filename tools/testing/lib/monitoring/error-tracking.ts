@@ -9,8 +9,12 @@ export type ErrorEvent = {
 export class ErrorTrackingService {
 	static captureError(_error: Error, _context?: Record<string, any>): void {}
 
-	static captureException(exception: unknown, context?: Record<string, any>): void {
-		const error = exception instanceof Error ? exception : new Error(String(exception));
+	static captureException(
+		exception: unknown,
+		context?: Record<string, any>,
+	): void {
+		const error =
+			exception instanceof Error ? exception : new Error(String(exception));
 		ErrorTrackingService.captureError(error, context);
 	}
 

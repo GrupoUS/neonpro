@@ -7,7 +7,11 @@
 
 import { performance } from "node:perf_hooks";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { mockAppointment, mockPatient, mockUser } from "../setup/final-test-setup";
+import {
+	mockAppointment,
+	mockPatient,
+	mockUser,
+} from "../setup/final-test-setup";
 
 // Performance monitoring utilities
 class PerformanceMonitor {
@@ -38,7 +42,7 @@ class LoadTestSimulator {
 	async simulateConcurrentRequests(
 		endpoint: string,
 		concurrency: number,
-		duration: number
+		duration: number,
 	): Promise<{
 		totalRequests: number;
 		successfulRequests: number;
@@ -130,7 +134,9 @@ describe("Performance Validation Tests - Final Production Readiness", () => {
 						json: () =>
 							Promise.resolve({
 								success: true,
-								data: url.includes("patients") ? [mockPatient] : [mockAppointment],
+								data: url.includes("patients")
+									? [mockPatient]
+									: [mockAppointment],
 							}),
 					});
 				}, delay);
@@ -170,7 +176,8 @@ describe("Performance Validation Tests - Final Production Readiness", () => {
 
 			expect(p95ResponseTime).toBeLessThan(100); // P95 under 100ms
 
-			const averageTime = responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
+			const averageTime =
+				responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
 			expect(averageTime).toBeLessThan(50); // Average under 50ms
 		});
 
@@ -268,7 +275,8 @@ describe("Performance Validation Tests - Final Production Readiness", () => {
 				expect(response.status).toBe(200);
 			}
 
-			const averageTime = responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
+			const averageTime =
+				responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
 			expect(averageTime).toBeLessThan(200); // Average under 200ms
 		});
 	});
@@ -280,11 +288,13 @@ describe("Performance Validation Tests - Final Production Readiness", () => {
 			const results = await loadTester.simulateConcurrentRequests(
 				"/api/patients",
 				100, // 100 concurrent users
-				5000 // 5 seconds duration
+				5000, // 5 seconds duration
 			);
 
 			// Validate performance metrics
-			expect(results.successfulRequests).toBeGreaterThan(results.failedRequests * 10); // 90%+ success rate
+			expect(results.successfulRequests).toBeGreaterThan(
+				results.failedRequests * 10,
+			); // 90%+ success rate
 			expect(results.averageResponseTime).toBeLessThan(100); // Average under 100ms
 			expect(results.maxResponseTime).toBeLessThan(500); // Max under 500ms
 			expect(results.requestsPerSecond).toBeGreaterThan(50); // At least 50 RPS
@@ -299,11 +309,13 @@ describe("Performance Validation Tests - Final Production Readiness", () => {
 			const results = await loadTester.simulateConcurrentRequests(
 				"/api/appointments",
 				50, // 50 concurrent bookings
-				3000 // 3 seconds duration
+				3000, // 3 seconds duration
 			);
 
 			// Booking should handle lower concurrency but maintain reliability
-			expect(results.successfulRequests).toBeGreaterThan(results.failedRequests * 5); // 85%+ success rate
+			expect(results.successfulRequests).toBeGreaterThan(
+				results.failedRequests * 5,
+			); // 85%+ success rate
 			expect(results.averageResponseTime).toBeLessThan(150); // Average under 150ms
 			expect(results.requestsPerSecond).toBeGreaterThan(10); // At least 10 bookings/sec
 		});
@@ -312,15 +324,24 @@ describe("Performance Validation Tests - Final Production Readiness", () => {
 			monitor.start();
 
 			// Simulate mixed workload
-			const patientQueries = loadTester.simulateConcurrentRequests("/api/patients", 50, 3000);
-			const appointmentQueries = loadTester.simulateConcurrentRequests("/api/appointments", 30, 3000);
-			const authRequests = loadTester.simulateConcurrentRequests("/api/auth/session", 20, 3000);
+			const patientQueries = loadTester.simulateConcurrentRequests(
+				"/api/patients",
+				50,
+				3000,
+			);
+			const appointmentQueries = loadTester.simulateConcurrentRequests(
+				"/api/appointments",
+				30,
+				3000,
+			);
+			const authRequests = loadTester.simulateConcurrentRequests(
+				"/api/auth/session",
+				20,
+				3000,
+			);
 
-			const [patientResults, appointmentResults, authResults] = await Promise.all([
-				patientQueries,
-				appointmentQueries,
-				authRequests,
-			]);
+			const [patientResults, appointmentResults, authResults] =
+				await Promise.all([patientQueries, appointmentQueries, authRequests]);
 
 			// All endpoints should maintain performance under mixed load
 			expect(patientResults.averageResponseTime).toBeLessThan(120);
@@ -328,9 +349,14 @@ describe("Performance Validation Tests - Final Production Readiness", () => {
 			expect(authResults.averageResponseTime).toBeLessThan(250);
 
 			const totalSuccessfulRequests =
-				patientResults.successfulRequests + appointmentResults.successfulRequests + authResults.successfulRequests;
+				patientResults.successfulRequests +
+				appointmentResults.successfulRequests +
+				authResults.successfulRequests;
 
-			const totalRequests = patientResults.totalRequests + appointmentResults.totalRequests + authResults.totalRequests;
+			const totalRequests =
+				patientResults.totalRequests +
+				appointmentResults.totalRequests +
+				authResults.totalRequests;
 
 			// Overall success rate should remain high
 			expect(totalSuccessfulRequests / totalRequests).toBeGreaterThan(0.85);
@@ -380,11 +406,13 @@ describe("Performance Validation Tests - Final Production Readiness", () => {
 
 			// Mock large appointment dataset
 			const appointmentCount = 10_000;
-			const appointments = new Array(appointmentCount).fill(null).map((_, i) => ({
-				...mockAppointment,
-				id: `appointment-${i}`,
-				scheduled_at: new Date(Date.now() + i * 3_600_000).toISOString(),
-			}));
+			const appointments = new Array(appointmentCount)
+				.fill(null)
+				.map((_, i) => ({
+					...mockAppointment,
+					id: `appointment-${i}`,
+					scheduled_at: new Date(Date.now() + i * 3_600_000).toISOString(),
+				}));
 
 			global.fetch = vi.fn().mockResolvedValue({
 				status: 200,
@@ -496,7 +524,7 @@ describe("Performance Validation Tests - Final Production Readiness", () => {
 							};
 							resolve(processed);
 						},
-						Math.random() * 10 + 5
+						Math.random() * 10 + 5,
 					); // 5-15ms processing
 				});
 
@@ -504,7 +532,8 @@ describe("Performance Validation Tests - Final Production Readiness", () => {
 				updateTimes.push(updateTime);
 			}
 
-			const averageUpdateTime = updateTimes.reduce((a, b) => a + b, 0) / updateTimes.length;
+			const averageUpdateTime =
+				updateTimes.reduce((a, b) => a + b, 0) / updateTimes.length;
 			const maxUpdateTime = Math.max(...updateTimes);
 
 			expect(averageUpdateTime).toBeLessThan(30); // Average under 30ms
@@ -553,7 +582,7 @@ describe("Performance Validation Tests - Final Production Readiness", () => {
 							sub.callback(broadcastData);
 							resolve(sub);
 						}, Math.random() * 5);
-					})
+					}),
 			);
 
 			await Promise.all(broadcastPromises);
@@ -717,18 +746,24 @@ describe("Performance Validation Tests - Final Production Readiness", () => {
 						}
 
 						// Small delay between actions
-						await new Promise((resolve) => setTimeout(resolve, Math.random() * 10));
+						await new Promise((resolve) =>
+							setTimeout(resolve, Math.random() * 10),
+						);
 					}
 
 					return professional;
-				})
+				}),
 			);
 
 			// Analyze results
-			const totalActions = results.reduce((sum, prof) => sum + prof.actions.length, 0);
+			const totalActions = results.reduce(
+				(sum, prof) => sum + prof.actions.length,
+				0,
+			);
 			const successfulActions = results.reduce(
-				(sum, prof) => sum + prof.actions.filter((action) => action.success).length,
-				0
+				(sum, prof) =>
+					sum + prof.actions.filter((action) => action.success).length,
+				0,
 			);
 
 			const successRate = successfulActions / totalActions;
@@ -756,7 +791,11 @@ describe("Performance Validation Tests - Final Production Readiness", () => {
 				const concurrency = Math.floor(100 * period.load);
 				const duration = 2000; // 2 seconds per period
 
-				const result = await loadTester.simulateConcurrentRequests("/api/appointments", concurrency, duration);
+				const result = await loadTester.simulateConcurrentRequests(
+					"/api/appointments",
+					concurrency,
+					duration,
+				);
 
 				performanceResults.push({
 					hour: period.hour,
@@ -768,7 +807,9 @@ describe("Performance Validation Tests - Final Production Readiness", () => {
 			// Validate consistent performance across peak periods
 			for (const result of performanceResults) {
 				expect(result.averageResponseTime).toBeLessThan(200);
-				expect(result.successfulRequests / result.totalRequests).toBeGreaterThan(0.9);
+				expect(
+					result.successfulRequests / result.totalRequests,
+				).toBeGreaterThan(0.9);
 				expect(result.requestsPerSecond).toBeGreaterThan(result.load * 30);
 			}
 

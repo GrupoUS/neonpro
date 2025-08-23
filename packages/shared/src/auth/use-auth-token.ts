@@ -113,7 +113,7 @@ export function useAuthToken() {
 			// Agenda refresh 2 minutos antes da expiração (ou metade do tempo se for menor)
 			const refreshTime = Math.max(
 				timeUntilExpiration - 120, // 2 minutos antes
-				timeUntilExpiration / 2 // ou metade do tempo restante
+				timeUntilExpiration / 2, // ou metade do tempo restante
 			);
 
 			if (refreshTime > 0) {
@@ -182,7 +182,9 @@ export function useAuthToken() {
 	 * Função de login
 	 */
 	const login = useCallback(
-		async (credentials: LoginCredentials): Promise<{ success: boolean; error?: string }> => {
+		async (
+			credentials: LoginCredentials,
+		): Promise<{ success: boolean; error?: string }> => {
 			updateAuthState({ isLoading: true, error: null });
 
 			try {
@@ -225,7 +227,8 @@ export function useAuthToken() {
 
 				return { success: false, error: "Resposta inválida do servidor" };
 			} catch (error) {
-				const errorMessage = error instanceof Error ? error.message : "Erro de rede";
+				const errorMessage =
+					error instanceof Error ? error.message : "Erro de rede";
 				updateAuthState({
 					isLoading: false,
 					error: errorMessage,
@@ -233,7 +236,7 @@ export function useAuthToken() {
 				return { success: false, error: errorMessage };
 			}
 		},
-		[scheduleTokenRefresh, updateAuthState]
+		[scheduleTokenRefresh, updateAuthState],
 	);
 
 	/**

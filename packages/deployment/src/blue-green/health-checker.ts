@@ -30,7 +30,9 @@ export type HealthStatus = {
 export class HealthChecker {
 	private readonly healthHistory: Map<string, HealthCheckResult[]> = new Map();
 
-	constructor(private readonly config: { maxHistoryPerEndpoint: number; baseUrl: string }) {}
+	constructor(
+		private readonly config: { maxHistoryPerEndpoint: number; baseUrl: string },
+	) {}
 
 	/**
 	 * Perform health check on a single endpoint
@@ -69,7 +71,10 @@ export class HealthChecker {
 	/**
 	 * Perform continuous health monitoring
 	 */
-	async monitorHealth(config: HealthCheckConfig, duration: number): Promise<HealthCheckResult[]> {
+	async monitorHealth(
+		config: HealthCheckConfig,
+		duration: number,
+	): Promise<HealthCheckResult[]> {
 		const results: HealthCheckResult[] = [];
 		const endTime = Date.now() + duration;
 
@@ -128,19 +133,25 @@ export class HealthChecker {
 	async checkComplianceServices(): Promise<boolean> {
 		try {
 			// Check LGPD compliance service
-			const lgpdResponse = await fetch(`${this.config.baseUrl}/compliance/lgpd/status`);
+			const lgpdResponse = await fetch(
+				`${this.config.baseUrl}/compliance/lgpd/status`,
+			);
 			if (!lgpdResponse.ok) {
 				return false;
 			}
 
 			// Check ANVISA compliance service
-			const anvisaResponse = await fetch(`${this.config.baseUrl}/compliance/anvisa/status`);
+			const anvisaResponse = await fetch(
+				`${this.config.baseUrl}/compliance/anvisa/status`,
+			);
 			if (!anvisaResponse.ok) {
 				return false;
 			}
 
 			// Check audit compliance
-			const auditResponse = await fetch(`${this.config.baseUrl}/compliance/audit/status`);
+			const auditResponse = await fetch(
+				`${this.config.baseUrl}/compliance/audit/status`,
+			);
 			if (!auditResponse.ok) {
 				return false;
 			}
@@ -156,7 +167,9 @@ export class HealthChecker {
 	 */
 	async checkEncryptionService(): Promise<boolean> {
 		try {
-			const response = await fetch(`${this.config.baseUrl}/api/security/encryption/status`);
+			const response = await fetch(
+				`${this.config.baseUrl}/api/security/encryption/status`,
+			);
 			return response.ok;
 		} catch (_error) {
 			return false;
@@ -168,7 +181,9 @@ export class HealthChecker {
 	 */
 	async checkAuditLogging(): Promise<boolean> {
 		try {
-			const response = await fetch(`${this.config.baseUrl}/api/audit/logging/status`);
+			const response = await fetch(
+				`${this.config.baseUrl}/api/audit/logging/status`,
+			);
 			return response.ok;
 		} catch (_error) {
 			return false;
@@ -192,7 +207,9 @@ export class HealthChecker {
 	 */
 	async checkDatabaseHealth(): Promise<boolean> {
 		try {
-			const response = await fetch(`${this.config.baseUrl}/api/health/database`);
+			const response = await fetch(
+				`${this.config.baseUrl}/api/health/database`,
+			);
 			return response.ok;
 		} catch (_error) {
 			return false;

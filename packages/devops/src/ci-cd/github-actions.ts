@@ -28,7 +28,9 @@ export const HEALTHCARE_WORKFLOW_TEMPLATES = {
 };
 
 export class GitHubActionsManager {
-	async generateWorkflow(template: keyof typeof HEALTHCARE_WORKFLOW_TEMPLATES): Promise<string> {
+	async generateWorkflow(
+		template: keyof typeof HEALTHCARE_WORKFLOW_TEMPLATES,
+	): Promise<string> {
 		const _workflowTemplate = HEALTHCARE_WORKFLOW_TEMPLATES[template];
 
 		switch (template) {

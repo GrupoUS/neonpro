@@ -6,7 +6,10 @@ type MonitoringDashboardProps = {
 	alerts?: string[];
 };
 
-export const MonitoringDashboard: React.FC<MonitoringDashboardProps> = ({ metrics = {}, alerts = [] }) => {
+export const MonitoringDashboard: React.FC<MonitoringDashboardProps> = ({
+	metrics = {},
+	alerts = [],
+}) => {
 	return (
 		<div className="monitoring-dashboard">
 			<h2>System Monitoring Dashboard</h2>

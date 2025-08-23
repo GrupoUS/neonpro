@@ -9,7 +9,11 @@ export type AnalyticsDashboardProps = {
 	error?: string;
 };
 
-export default function AnalyticsDashboard({ data, loading = false, error }: AnalyticsDashboardProps) {
+export default function AnalyticsDashboard({
+	data,
+	loading = false,
+	error,
+}: AnalyticsDashboardProps) {
 	if (loading) {
 		return <div>Loading analytics...</div>;
 	}

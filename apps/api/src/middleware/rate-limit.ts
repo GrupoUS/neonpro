@@ -8,6 +8,7 @@
 
 import type { MiddlewareHandler } from "hono";
 import { logger } from "../lib/logger";
+import { logger } from "../lib/logger";
 
 // Rate limiting configuration per endpoint
 type RateLimitConfig = {
@@ -21,7 +22,10 @@ type RateLimitConfig = {
 
 // In-memory store for development (production should use Redis)
 class MemoryStore {
-	private readonly store = new Map<string, { count: number; resetTime: number }>();
+	private readonly store = new Map<
+		string,
+		{ count: number; resetTime: number }
+	>();
 
 	get(key: string): { count: number; resetTime: number } | undefined {
 		const record = this.store.get(key);
@@ -32,7 +36,10 @@ class MemoryStore {
 		return record;
 	}
 
-	increment(key: string, windowMs: number): { count: number; resetTime: number } {
+	increment(
+		key: string,
+		windowMs: number,
+	): { count: number; resetTime: number } {
 		const now = Date.now();
 		const resetTime = now + windowMs;
 		const existing = this.get(key);
@@ -127,7 +134,9 @@ const DEFAULT_CONFIG: RateLimitConfig = {
 /**
  * Rate limiting middleware factory
  */
-export const rateLimitMiddleware = (config?: Partial<RateLimitConfig>): MiddlewareHandler => {
+export const rateLimitMiddleware = (
+	config?: Partial<RateLimitConfig>,
+): MiddlewareHandler => {
 	return async (c, next) => {
 		const path = c.req.path;
 		const method = c.req.method;
@@ -149,7 +158,10 @@ export const rateLimitMiddleware = (config?: Partial<RateLimitConfig>): Middlewa
 			effectiveConfig.keyGenerator ||
 			((c) => {
 				const clientIP =
-					c.req.header("CF-Connecting-IP") || c.req.header("X-Forwarded-For") || c.req.header("X-Real-IP") || "unknown";
+					c.req.header("CF-Connecting-IP") ||
+					c.req.header("X-Forwarded-For") ||
+					c.req.header("X-Real-IP") ||
+					"unknown";
 				return `ratelimit:${clientIP}:${path}`;
 			});
 
@@ -162,10 +174,16 @@ export const rateLimitMiddleware = (config?: Partial<RateLimitConfig>): Middlewa
 			const resetTime = Math.ceil(record.resetTime / 1000);
 
 			// Set rate limit headers
-			c.res.headers.set("X-RateLimit-Limit", effectiveConfig.maxRequests.toString());
+			c.res.headers.set(
+				"X-RateLimit-Limit",
+				effectiveConfig.maxRequests.toString(),
+			);
 			c.res.headers.set("X-RateLimit-Remaining", remaining.toString());
 			c.res.headers.set("X-RateLimit-Reset", resetTime.toString());
-			c.res.headers.set("X-RateLimit-Window", effectiveConfig.windowMs.toString());
+			c.res.headers.set(
+				"X-RateLimit-Window",
+				effectiveConfig.windowMs.toString(),
+			);
 
 			// Check if limit exceeded
 			if (record.count > effectiveConfig.maxRequests) {
@@ -181,7 +199,7 @@ export const rateLimitMiddleware = (config?: Partial<RateLimitConfig>): Middlewa
 						limit: effectiveConfig.maxRequests,
 						window: effectiveConfig.windowMs / 1000,
 					},
-					429
+					429,
 				);
 			}
 
@@ -200,7 +218,10 @@ export const rateLimitMiddleware = (config?: Partial<RateLimitConfig>): Middlewa
 				endpoint: c.req.path,
 				method: c.req.method,
 				ip:
-					c.req.header("CF-Connecting-IP") || c.req.header("X-Forwarded-For") || c.req.header("X-Real-IP") || "unknown",
+					c.req.header("CF-Connecting-IP") ||
+					c.req.header("X-Forwarded-For") ||
+					c.req.header("X-Real-IP") ||
+					"unknown",
 				userAgent: c.req.header("User-Agent"),
 			});
 			// On error, allow the request to continue

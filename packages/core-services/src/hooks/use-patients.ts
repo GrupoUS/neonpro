@@ -50,7 +50,10 @@ export function useUpdatePatient() {
 		mutationFn: patientApi.updatePatient,
 		onSuccess: (updatedPatient) => {
 			// Update the patient in the cache
-			queryClient.setQueryData(patientKeys.detail(updatedPatient.id), updatedPatient);
+			queryClient.setQueryData(
+				patientKeys.detail(updatedPatient.id),
+				updatedPatient,
+			);
 
 			// Invalidate the patients list to refetch
 			queryClient.invalidateQueries({ queryKey: patientKeys.lists() });

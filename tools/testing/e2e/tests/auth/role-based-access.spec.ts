@@ -47,36 +47,62 @@ test.describe("Doctor Role Access Control", () => {
 		await page.waitForURL("/dashboard");
 	});
 
-	test("should have full access to patient medical records", async ({ page }) => {
+	test("should have full access to patient medical records", async ({
+		page,
+	}) => {
 		await page.click('[data-testid="nav-patients"]');
 		await page.click('[data-testid="patient-item-first"]');
 
 		// Should access full medical history
-		await expect(page.locator('[data-testid="medical-records-tab"]')).toBeVisible();
+		await expect(
+			page.locator('[data-testid="medical-records-tab"]'),
+		).toBeVisible();
 		await page.click('[data-testid="medical-records-tab"]');
 
-		await expect(page.locator('[data-testid="complete-medical-history"]')).toBeVisible();
-		await expect(page.locator('[data-testid="add-diagnosis-btn"]')).toBeVisible();
-		await expect(page.locator('[data-testid="prescribe-medication-btn"]')).toBeVisible();
+		await expect(
+			page.locator('[data-testid="complete-medical-history"]'),
+		).toBeVisible();
+		await expect(
+			page.locator('[data-testid="add-diagnosis-btn"]'),
+		).toBeVisible();
+		await expect(
+			page.locator('[data-testid="prescribe-medication-btn"]'),
+		).toBeVisible();
 
 		// Should see sensitive medical information
-		await expect(page.locator('[data-testid="patient-allergies"]')).toBeVisible();
-		await expect(page.locator('[data-testid="patient-medications"]')).toBeVisible();
-		await expect(page.locator('[data-testid="patient-conditions"]')).toBeVisible();
+		await expect(
+			page.locator('[data-testid="patient-allergies"]'),
+		).toBeVisible();
+		await expect(
+			page.locator('[data-testid="patient-medications"]'),
+		).toBeVisible();
+		await expect(
+			page.locator('[data-testid="patient-conditions"]'),
+		).toBeVisible();
 	});
 
-	test("should be able to create and modify prescriptions", async ({ page }) => {
+	test("should be able to create and modify prescriptions", async ({
+		page,
+	}) => {
 		await page.click('[data-testid="nav-prescriptions"]');
 
 		// Should access prescription management
-		await expect(page.locator('[data-testid="create-prescription-btn"]')).toBeVisible();
+		await expect(
+			page.locator('[data-testid="create-prescription-btn"]'),
+		).toBeVisible();
 		await page.click('[data-testid="create-prescription-btn"]');
 
 		// Should have full prescription form access
-		await expect(page.locator('[data-testid="medication-select"]')).toBeVisible();
+		await expect(
+			page.locator('[data-testid="medication-select"]'),
+		).toBeVisible();
 		await expect(page.locator('[data-testid="dosage-input"]')).toBeVisible();
-		await expect(page.locator('[data-testid="frequency-select"]')).toBeVisible();
-		await expect(page.locator('[data-testid="digital-signature"]')).toBeVisible();
+		await expect(
+			page.locator('[data-testid="frequency-select"]'),
+		).toBeVisible();
+		await expect(
+			page.locator('[data-testid="digital-signature"]'),
+		).toBeVisible();
 
 		// Fill prescription
 		await page.click('[data-testid="medication-select"]');
@@ -89,21 +115,37 @@ test.describe("Doctor Role Access Control", () => {
 
 		// Should save successfully with doctor's digital signature
 		await expect(page.locator("text=Receita criada com sucesso")).toBeVisible();
-		await expect(page.locator('[data-testid="prescription-signature"]')).toContainText(testUsers.doctor.crm);
+		await expect(
+			page.locator('[data-testid="prescription-signature"]'),
+		).toContainText(testUsers.doctor.crm);
 	});
 
-	test("should access administrative functions for their patients", async ({ page }) => {
+	test("should access administrative functions for their patients", async ({
+		page,
+	}) => {
 		await page.click('[data-testid="nav-reports"]');
 
 		// Should see doctor-specific reports
-		await expect(page.locator('[data-testid="my-patients-report"]')).toBeVisible();
-		await expect(page.locator('[data-testid="prescription-summary"]')).toBeVisible();
-		await expect(page.locator('[data-testid="consultation-statistics"]')).toBeVisible();
+		await expect(
+			page.locator('[data-testid="my-patients-report"]'),
+		).toBeVisible();
+		await expect(
+			page.locator('[data-testid="prescription-summary"]'),
+		).toBeVisible();
+		await expect(
+			page.locator('[data-testid="consultation-statistics"]'),
+		).toBeVisible();
 
 		// Should NOT see system-wide admin reports
-		await expect(page.locator('[data-testid="all-users-report"]')).not.toBeVisible();
-		await expect(page.locator('[data-testid="system-configuration"]')).not.toBeVisible();
-		await expect(page.locator('[data-testid="user-management"]')).not.toBeVisible();
+		await expect(
+			page.locator('[data-testid="all-users-report"]'),
+		).not.toBeVisible();
+		await expect(
+			page.locator('[data-testid="system-configuration"]'),
+		).not.toBeVisible();
+		await expect(
+			page.locator('[data-testid="user-management"]'),
+		).not.toBeVisible();
 	});
 
 	test("should have emergency override capabilities", async ({ page }) => {
@@ -111,17 +153,28 @@ test.describe("Doctor Role Access Control", () => {
 		await page.click('[data-testid="patient-item-first"]');
 
 		// Should have emergency access button
-		await expect(page.locator('[data-testid="emergency-override-btn"]')).toBeVisible();
+		await expect(
+			page.locator('[data-testid="emergency-override-btn"]'),
+		).toBeVisible();
 		await page.click('[data-testid="emergency-override-btn"]');
 
 		// Should bypass normal consent requirements in emergency
-		await expect(page.locator('[data-testid="emergency-access-modal"]')).toBeVisible();
-		await page.fill('[data-testid="emergency-justification"]', "Paciente inconsciente - decisão médica urgente");
+		await expect(
+			page.locator('[data-testid="emergency-access-modal"]'),
+		).toBeVisible();
+		await page.fill(
+			'[data-testid="emergency-justification"]',
+			"Paciente inconsciente - decisão médica urgente",
+		);
 		await page.click('[data-testid="confirm-emergency-access"]');
 
 		// Should grant full access and log the override
-		await expect(page.locator('[data-testid="emergency-access-active"]')).toBeVisible();
-		await expect(page.locator('[data-testid="audit-log-entry"]')).toContainText("Acesso emergencial autorizado");
+		await expect(
+			page.locator('[data-testid="emergency-access-active"]'),
+		).toBeVisible();
+		await expect(page.locator('[data-testid="audit-log-entry"]')).toContainText(
+			"Acesso emergencial autorizado",
+		);
 	});
 });
 
@@ -138,24 +191,38 @@ test.describe("Nurse Role Access Control", () => {
 		await page.waitForURL("/dashboard");
 	});
 
-	test("should have limited access to patient medical records", async ({ page }) => {
+	test("should have limited access to patient medical records", async ({
+		page,
+	}) => {
 		await page.click('[data-testid="nav-patients"]');
 		await page.click('[data-testid="patient-item-first"]');
 
 		// Should see basic patient information
-		await expect(page.locator('[data-testid="patient-basic-info"]')).toBeVisible();
-		await expect(page.locator('[data-testid="current-medications"]')).toBeVisible();
+		await expect(
+			page.locator('[data-testid="patient-basic-info"]'),
+		).toBeVisible();
+		await expect(
+			page.locator('[data-testid="current-medications"]'),
+		).toBeVisible();
 		await expect(page.locator('[data-testid="vital-signs-tab"]')).toBeVisible();
 
 		// Should NOT see sensitive diagnostic information
-		await expect(page.locator('[data-testid="diagnosis-history"]')).not.toBeVisible();
-		await expect(page.locator('[data-testid="psychiatric-records"]')).not.toBeVisible();
+		await expect(
+			page.locator('[data-testid="diagnosis-history"]'),
+		).not.toBeVisible();
+		await expect(
+			page.locator('[data-testid="psychiatric-records"]'),
+		).not.toBeVisible();
 
 		// Should be able to add nursing notes
-		await expect(page.locator('[data-testid="add-nursing-note-btn"]')).toBeVisible();
+		await expect(
+			page.locator('[data-testid="add-nursing-note-btn"]'),
+		).toBeVisible();
 	});
 
-	test("should be able to manage vital signs and nursing care", async ({ page }) => {
+	test("should be able to manage vital signs and nursing care", async ({
+		page,
+	}) => {
 		await page.click('[data-testid="nav-patients"]');
 		await page.click('[data-testid="patient-item-first"]');
 		await page.click('[data-testid="vital-signs-tab"]');
@@ -173,24 +240,32 @@ test.describe("Nurse Role Access Control", () => {
 
 		// Should save successfully
 		await expect(page.locator("text=Sinais vitais registrados")).toBeVisible();
-		await expect(page.locator('[data-testid="vital-signs-history"]')).toContainText("120/80");
+		await expect(
+			page.locator('[data-testid="vital-signs-history"]'),
+		).toContainText("120/80");
 	});
 
 	test("should NOT be able to create prescriptions", async ({ page }) => {
 		// Navigation to prescriptions should be restricted or limited
-		await expect(page.locator('[data-testid="nav-prescriptions"]')).not.toBeVisible();
+		await expect(
+			page.locator('[data-testid="nav-prescriptions"]'),
+		).not.toBeVisible();
 
 		// If accessed directly, should show permission error
 		await page.goto("/prescriptions");
 		await expect(page.locator("text=Acesso negado")).toBeVisible();
-		await expect(page.locator("text=Apenas médicos podem prescrever medicamentos")).toBeVisible();
+		await expect(
+			page.locator("text=Apenas médicos podem prescrever medicamentos"),
+		).toBeVisible();
 	});
 
 	test("should be able to schedule appointments", async ({ page }) => {
 		await page.click('[data-testid="nav-appointments"]');
 
 		// Should see appointment scheduling interface
-		await expect(page.locator('[data-testid="schedule-appointment-btn"]')).toBeVisible();
+		await expect(
+			page.locator('[data-testid="schedule-appointment-btn"]'),
+		).toBeVisible();
 		await page.click('[data-testid="schedule-appointment-btn"]');
 
 		// Should be able to create appointments
@@ -207,7 +282,9 @@ test.describe("Nurse Role Access Control", () => {
 		await page.click('[data-testid="save-appointment-btn"]');
 
 		// Should save successfully
-		await expect(page.locator("text=Consulta agendada com sucesso")).toBeVisible();
+		await expect(
+			page.locator("text=Consulta agendada com sucesso"),
+		).toBeVisible();
 	});
 });
 
@@ -230,9 +307,13 @@ test.describe("Administrator Role Access Control", () => {
 
 		// Should access user management
 		await expect(page.locator('[data-testid="user-management"]')).toBeVisible();
-		await expect(page.locator('[data-testid="system-configuration"]')).toBeVisible();
+		await expect(
+			page.locator('[data-testid="system-configuration"]'),
+		).toBeVisible();
 		await expect(page.locator('[data-testid="audit-logs"]')).toBeVisible();
-		await expect(page.locator('[data-testid="backup-management"]')).toBeVisible();
+		await expect(
+			page.locator('[data-testid="backup-management"]'),
+		).toBeVisible();
 	});
 
 	test("should manage healthcare professional accounts", async ({ page }) => {
@@ -246,7 +327,10 @@ test.describe("Administrator Role Access Control", () => {
 		await page.click('[data-testid="add-user-btn"]');
 
 		await page.fill('[data-testid="professional-name"]', "Dr. Novo Médico");
-		await page.fill('[data-testid="professional-email"]', "novo.medico@neonpro.com");
+		await page.fill(
+			'[data-testid="professional-email"]',
+			"novo.medico@neonpro.com",
+		);
 		await page.fill('[data-testid="professional-crm"]', "CRM/RJ 789012");
 
 		await page.click('[data-testid="role-select"]');
@@ -255,7 +339,9 @@ test.describe("Administrator Role Access Control", () => {
 		await page.click('[data-testid="save-user-btn"]');
 
 		// Should create account successfully
-		await expect(page.locator("text=Profissional cadastrado com sucesso")).toBeVisible();
+		await expect(
+			page.locator("text=Profissional cadastrado com sucesso"),
+		).toBeVisible();
 	});
 
 	test("should access comprehensive audit logs", async ({ page }) => {
@@ -277,18 +363,28 @@ test.describe("Administrator Role Access Control", () => {
 
 		// Should export audit reports
 		await page.click('[data-testid="export-audit-btn"]');
-		await expect(page.locator("text=Relatório de auditoria gerado")).toBeVisible();
+		await expect(
+			page.locator("text=Relatório de auditoria gerado"),
+		).toBeVisible();
 	});
 
-	test("should NOT access patient medical records directly", async ({ page }) => {
+	test("should NOT access patient medical records directly", async ({
+		page,
+	}) => {
 		// Admin should not see patient navigation by default
-		await expect(page.locator('[data-testid="nav-patients"]')).not.toBeVisible();
+		await expect(
+			page.locator('[data-testid="nav-patients"]'),
+		).not.toBeVisible();
 
 		// If accessed directly, should require justification
 		await page.goto("/patients");
 
-		await expect(page.locator('[data-testid="admin-access-justification"]')).toBeVisible();
-		await expect(page.locator("text=Justifique o acesso administrativo aos dados")).toBeVisible();
+		await expect(
+			page.locator('[data-testid="admin-access-justification"]'),
+		).toBeVisible();
+		await expect(
+			page.locator("text=Justifique o acesso administrativo aos dados"),
+		).toBeVisible();
 	});
 });
 
@@ -308,17 +404,31 @@ test.describe("Secretary Role Access Control", () => {
 		await page.click('[data-testid="nav-appointments"]');
 
 		// Should have full appointment management access
-		await expect(page.locator('[data-testid="appointment-calendar"]')).toBeVisible();
-		await expect(page.locator('[data-testid="schedule-appointment-btn"]')).toBeVisible();
-		await expect(page.locator('[data-testid="reschedule-appointment-btn"]')).toBeVisible();
-		await expect(page.locator('[data-testid="cancel-appointment-btn"]')).toBeVisible();
+		await expect(
+			page.locator('[data-testid="appointment-calendar"]'),
+		).toBeVisible();
+		await expect(
+			page.locator('[data-testid="schedule-appointment-btn"]'),
+		).toBeVisible();
+		await expect(
+			page.locator('[data-testid="reschedule-appointment-btn"]'),
+		).toBeVisible();
+		await expect(
+			page.locator('[data-testid="cancel-appointment-btn"]'),
+		).toBeVisible();
 
 		// Should see appointment conflicts and availability
-		await expect(page.locator('[data-testid="doctor-availability"]')).toBeVisible();
-		await expect(page.locator('[data-testid="appointment-conflicts"]')).toBeVisible();
+		await expect(
+			page.locator('[data-testid="doctor-availability"]'),
+		).toBeVisible();
+		await expect(
+			page.locator('[data-testid="appointment-conflicts"]'),
+		).toBeVisible();
 	});
 
-	test("should access basic patient contact information only", async ({ page }) => {
+	test("should access basic patient contact information only", async ({
+		page,
+	}) => {
 		await page.click('[data-testid="nav-patients"]');
 
 		// Should see patient list for appointment purposes
@@ -332,36 +442,58 @@ test.describe("Secretary Role Access Control", () => {
 		await expect(page.locator('[data-testid="patient-email"]')).toBeVisible();
 
 		// Should NOT see medical information
-		await expect(page.locator('[data-testid="medical-records-tab"]')).not.toBeVisible();
-		await expect(page.locator('[data-testid="patient-allergies"]')).not.toBeVisible();
-		await expect(page.locator('[data-testid="patient-medications"]')).not.toBeVisible();
+		await expect(
+			page.locator('[data-testid="medical-records-tab"]'),
+		).not.toBeVisible();
+		await expect(
+			page.locator('[data-testid="patient-allergies"]'),
+		).not.toBeVisible();
+		await expect(
+			page.locator('[data-testid="patient-medications"]'),
+		).not.toBeVisible();
 	});
 
 	test("should manage financial and billing information", async ({ page }) => {
 		await page.click('[data-testid="nav-billing"]');
 
 		// Should access billing dashboard
-		await expect(page.locator('[data-testid="billing-dashboard"]')).toBeVisible();
-		await expect(page.locator('[data-testid="invoice-management"]')).toBeVisible();
-		await expect(page.locator('[data-testid="payment-processing"]')).toBeVisible();
+		await expect(
+			page.locator('[data-testid="billing-dashboard"]'),
+		).toBeVisible();
+		await expect(
+			page.locator('[data-testid="invoice-management"]'),
+		).toBeVisible();
+		await expect(
+			page.locator('[data-testid="payment-processing"]'),
+		).toBeVisible();
 
 		// Should generate financial reports
 		await page.click('[data-testid="generate-report-btn"]');
 		await page.click('[data-testid="report-type-financial"]');
 		await page.click('[data-testid="generate-btn"]');
 
-		await expect(page.locator("text=Relatório financeiro gerado")).toBeVisible();
+		await expect(
+			page.locator("text=Relatório financeiro gerado"),
+		).toBeVisible();
 	});
 
-	test("should NOT access prescription or medical diagnosis features", async ({ page }) => {
+	test("should NOT access prescription or medical diagnosis features", async ({
+		page,
+	}) => {
 		// Should not see medical navigation
-		await expect(page.locator('[data-testid="nav-prescriptions"]')).not.toBeVisible();
-		await expect(page.locator('[data-testid="nav-diagnosis"]')).not.toBeVisible();
+		await expect(
+			page.locator('[data-testid="nav-prescriptions"]'),
+		).not.toBeVisible();
+		await expect(
+			page.locator('[data-testid="nav-diagnosis"]'),
+		).not.toBeVisible();
 
 		// Direct access should be denied
 		await page.goto("/prescriptions");
 		await expect(page.locator("text=Acesso negado")).toBeVisible();
-		await expect(page.locator("text=Função não autorizada para secretários")).toBeVisible();
+		await expect(
+			page.locator("text=Função não autorizada para secretários"),
+		).toBeVisible();
 	});
 });
 
@@ -380,19 +512,23 @@ test.describe("Cross-Role Permissions and Escalation", () => {
 		await page.goto("/prescriptions");
 
 		// Should show escalation request option
-		await expect(page.locator('[data-testid="request-temporary-access"]')).toBeVisible();
+		await expect(
+			page.locator('[data-testid="request-temporary-access"]'),
+		).toBeVisible();
 		await page.click('[data-testid="request-temporary-access"]');
 
 		// Should show escalation form
 		await expect(page.locator('[data-testid="escalation-form"]')).toBeVisible();
 		await page.fill(
 			'[data-testid="escalation-justification"]',
-			"Médico não disponível - paciente crítico necessita medicação"
+			"Médico não disponível - paciente crítico necessita medicação",
 		);
 		await page.click('[data-testid="submit-escalation-request"]');
 
 		// Should show pending approval
-		await expect(page.locator("text=Solicitação enviada para aprovação")).toBeVisible();
+		await expect(
+			page.locator("text=Solicitação enviada para aprovação"),
+		).toBeVisible();
 	});
 
 	test("should audit all role-based access attempts", async ({ page }) => {
@@ -437,12 +573,18 @@ test.describe("Cross-Role Permissions and Escalation", () => {
 		await page.click('[data-testid="nav-prescriptions"]');
 
 		// Should show time-based warning
-		await expect(page.locator('[data-testid="after-hours-warning"]')).toBeVisible();
-		await expect(page.locator("text=Prescrição fora do horário comercial")).toBeVisible();
+		await expect(
+			page.locator('[data-testid="after-hours-warning"]'),
+		).toBeVisible();
+		await expect(
+			page.locator("text=Prescrição fora do horário comercial"),
+		).toBeVisible();
 		await expect(page.locator("text=Justificativa necessária")).toBeVisible();
 
 		// Should require additional justification
 		await page.click('[data-testid="create-prescription-btn"]');
-		await expect(page.locator('[data-testid="after-hours-justification"]')).toBeVisible();
+		await expect(
+			page.locator('[data-testid="after-hours-justification"]'),
+		).toBeVisible();
 	});
 });

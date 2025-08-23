@@ -141,7 +141,10 @@ export class OpenAPIGenerator {
 				if (parsed.components) {
 					Object.keys(parsed.components).forEach((componentType) => {
 						if (components[componentType]) {
-							Object.assign(components[componentType], parsed.components[componentType]);
+							Object.assign(
+								components[componentType],
+								parsed.components[componentType],
+							);
 						}
 					});
 				}
@@ -152,7 +155,10 @@ export class OpenAPIGenerator {
 	/**
 	 * Extract TypeScript interfaces as OpenAPI schemas
 	 */
-	private extractTypeScriptSchemas(content: string, schemas: Record<string, any>): void {
+	private extractTypeScriptSchemas(
+		content: string,
+		schemas: Record<string, any>,
+	): void {
 		// Simple regex to extract interface definitions
 		const interfaceRegex = /export\s+interface\s+(\w+)\s*{([^}]*)}/g;
 		let match;
@@ -233,7 +239,9 @@ export class OpenAPIGenerator {
 		// Union types (basic support)
 		if (tsType.includes("|")) {
 			return {
-				oneOf: tsType.split("|").map((t) => this.typeScriptTypeToOpenAPIType(t.trim())),
+				oneOf: tsType
+					.split("|")
+					.map((t) => this.typeScriptTypeToOpenAPIType(t.trim())),
 			};
 		}
 
@@ -319,11 +327,15 @@ export class OpenAPIGenerator {
 
 		// Check for security schemes
 		if (!spec.components?.securitySchemes) {
-			warnings.push("No security schemes defined - required for healthcare compliance");
+			warnings.push(
+				"No security schemes defined - required for healthcare compliance",
+			);
 		}
 
 		// Check for required healthcare tags
-		const healthcareTags = spec.tags?.some((tag: any) => tag.name.toLowerCase().includes("healthcare"));
+		const healthcareTags = spec.tags?.some((tag: any) =>
+			tag.name.toLowerCase().includes("healthcare"),
+		);
 		if (!healthcareTags) {
 			warnings.push("No healthcare-specific tags found");
 		}
@@ -372,7 +384,8 @@ export class OpenAPIGenerator {
 export const defaultConfig: OpenAPIConfig = {
 	title: "NeonPro Healthcare API",
 	version: "1.0.0",
-	description: "Enterprise-grade healthcare platform API - HIPAA, LGPD, and ANVISA compliant",
+	description:
+		"Enterprise-grade healthcare platform API - HIPAA, LGPD, and ANVISA compliant",
 	servers: [
 		{
 			url: "https://api.neonpro.com.br",

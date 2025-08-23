@@ -3,7 +3,16 @@
 // Integration tests covering API endpoints with database operations
 
 import type { NextRequest } from "next/server";
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+	afterAll,
+	afterEach,
+	beforeAll,
+	beforeEach,
+	describe,
+	expect,
+	it,
+	vi,
+} from "vitest";
 
 // HTTP Status Constants
 const HTTP_STATUS = {
@@ -188,7 +197,8 @@ mockQueryChain.single.mockImplementation(async () => {
 					status: "resolved",
 					resolved_at: new Date().toISOString(),
 					resolved_by: testUserId,
-					resolution_description: updateData?.resolution_description || "Test resolution",
+					resolution_description:
+						updateData?.resolution_description || "Test resolution",
 					updated_at: new Date().toISOString(),
 				},
 				error: null,
@@ -340,7 +350,9 @@ describe("GET /api/stock/alerts", () => {
 
 		if (response?.status !== HTTP_STATUS.OK) {
 			// Throw the response data as an error so we can see it
-			throw new Error(`Status ${response?.status}: ${JSON.stringify(responseData, null, 2)}`);
+			throw new Error(
+				`Status ${response?.status}: ${JSON.stringify(responseData, null, 2)}`,
+			);
 		}
 
 		expect(response?.status).toBe(HTTP_STATUS.OK);
@@ -413,7 +425,10 @@ describe("GET /api/stock/alerts", () => {
 	});
 
 	it("should apply proper sorting", async () => {
-		const request = mockRequest("GET", "/api/stock/alerts?sortBy=severity&sortOrder=asc");
+		const request = mockRequest(
+			"GET",
+			"/api/stock/alerts?sortBy=severity&sortOrder=asc",
+		);
 
 		const response = await GET(request);
 
@@ -442,14 +457,20 @@ describe("POST /api/stock/alerts", () => {
 	});
 
 	it("should create alert configuration successfully", async () => {
-		const request = mockRequest("POST", "/api/stock/alerts", validCreateRequest);
+		const request = mockRequest(
+			"POST",
+			"/api/stock/alerts",
+			validCreateRequest,
+		);
 		const response = await POST(request);
 		const responseData = await response.json();
 
 		if (response.status !== HTTP_STATUS.CREATED) {
 			// Let's see what the actual error message is
 			if (responseData.error) {
-				throw new Error(`API returned ${response.status}: ${responseData.error}`);
+				throw new Error(
+					`API returned ${response.status}: ${responseData.error}`,
+				);
 			}
 		}
 
@@ -509,13 +530,19 @@ describe("POST /api/stock/alerts", () => {
 
 	it("should handle duplicate configuration errors", async () => {
 		// Test with current mock - duplicate handling would be done in the API route
-		const request = mockRequest("POST", "/api/stock/alerts", validCreateRequest);
+		const request = mockRequest(
+			"POST",
+			"/api/stock/alerts",
+			validCreateRequest,
+		);
 
 		const response = await POST(request);
 
 		// For now, expect the normal flow since our mock doesn't simulate duplicates
 		// In real implementation, this would be handled by database constraints
-		expect([HTTP_STATUS.CREATED, HTTP_STATUS.CONFLICT]).toContain(response.status);
+		expect([HTTP_STATUS.CREATED, HTTP_STATUS.CONFLICT]).toContain(
+			response.status,
+		);
 	});
 });
 
@@ -534,7 +561,11 @@ describe("POST /api/stock/alerts/acknowledge", () => {
 	});
 
 	it("should acknowledge alert successfully", async () => {
-		const request = mockRequest("POST", "/api/stock/alerts/acknowledge", validAcknowledgeRequest);
+		const request = mockRequest(
+			"POST",
+			"/api/stock/alerts/acknowledge",
+			validAcknowledgeRequest,
+		);
 		const response = await acknowledgePost(request);
 		const responseData = await response.json();
 
@@ -549,7 +580,11 @@ describe("POST /api/stock/alerts/acknowledge", () => {
 			alertId: "invalid-uuid",
 		};
 
-		const request = mockRequest("POST", "/api/stock/alerts/acknowledge", invalidRequest);
+		const request = mockRequest(
+			"POST",
+			"/api/stock/alerts/acknowledge",
+			invalidRequest,
+		);
 
 		const response = await acknowledgePost(request);
 		const responseData = await response.json();
@@ -602,7 +637,11 @@ describe("POST /api/stock/alerts/resolve", () => {
 	// Removed complex beforeEach mock setup - using global mock instead
 
 	it("should resolve alert successfully", async () => {
-		const request = mockRequest("POST", "/api/stock/alerts/resolve", validResolveRequest);
+		const request = mockRequest(
+			"POST",
+			"/api/stock/alerts/resolve",
+			validResolveRequest,
+		);
 
 		const response = await resolvePost(request);
 		const responseData = await response.json();
@@ -618,7 +657,11 @@ describe("POST /api/stock/alerts/resolve", () => {
 			resolutionDescription: "", // Empty description should fail validation
 		};
 
-		const request = mockRequest("POST", "/api/stock/alerts/resolve", invalidRequest);
+		const request = mockRequest(
+			"POST",
+			"/api/stock/alerts/resolve",
+			invalidRequest,
+		);
 
 		const response = await resolvePost(request);
 		const responseData = await response.json();
@@ -648,7 +691,11 @@ describe("POST /api/stock/alerts/resolve", () => {
 			resolutionDescription: "a".repeat(LARGE_STRING_LENGTH), // Too long
 		};
 
-		const request = mockRequest("POST", "/api/stock/alerts/resolve", invalidRequest);
+		const request = mockRequest(
+			"POST",
+			"/api/stock/alerts/resolve",
+			invalidRequest,
+		);
 
 		const response = await resolvePost(request);
 		const responseData = await response.json();
@@ -686,7 +733,9 @@ describe("Edge Cases and Error Handling", () => {
 		const _responseData = await response.json();
 
 		// Should handle timeouts or return normal response
-		expect([HTTP_STATUS.OK, HTTP_STATUS.INTERNAL_SERVER_ERROR]).toContain(response.status);
+		expect([HTTP_STATUS.OK, HTTP_STATUS.INTERNAL_SERVER_ERROR]).toContain(
+			response.status,
+		);
 	});
 
 	it("should handle concurrent acknowledgment attempts", async () => {
@@ -711,10 +760,12 @@ describe("Edge Cases and Error Handling", () => {
 describe("Performance Tests", () => {
 	it("should handle large result sets efficiently", async () => {
 		// Mock large dataset
-		const _largeDataset = new Array(LARGE_DATASET_SIZE).fill(mockAlert).map((alert, index) => ({
-			...alert,
-			id: `alert-${index}`,
-		}));
+		const _largeDataset = new Array(LARGE_DATASET_SIZE)
+			.fill(mockAlert)
+			.map((alert, index) => ({
+				...alert,
+				id: `alert-${index}`,
+			}));
 
 		// Test performance with basic request - removing complex mock setup
 

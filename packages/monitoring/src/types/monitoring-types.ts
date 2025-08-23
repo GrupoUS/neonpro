@@ -85,7 +85,13 @@ export type Alert = {
 };
 
 export type AlertType = "CRITICAL" | "WARNING" | "INFO";
-export type AlertCategory = "SYSTEM_HEALTH" | "PERFORMANCE" | "SECURITY" | "COMPLIANCE" | "AI_GOVERNANCE" | "QUALITY";
+export type AlertCategory =
+	| "SYSTEM_HEALTH"
+	| "PERFORMANCE"
+	| "SECURITY"
+	| "COMPLIANCE"
+	| "AI_GOVERNANCE"
+	| "QUALITY";
 export type AlertSeverity = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
 
 export type MonitoringReport = {

@@ -34,16 +34,25 @@ export class AISchedulingEngine {
 		availableSlots: AppointmentSlot[],
 		staff: Staff[],
 		patients: Patient[],
-		treatments: TreatmentType[]
+		treatments: TreatmentType[],
 	): Promise<SchedulingResult> {
 		const startTime = performance.now();
 
 		try {
 			// 1. AI-powered slot pre-filtering (< 50ms)
-			const filteredSlots = await this.intelligentSlotFiltering(availableSlots, request, treatments);
+			const filteredSlots = await this.intelligentSlotFiltering(
+				availableSlots,
+				request,
+				treatments,
+			);
 
 			// 2. Predictive conflict detection (< 100ms)
-			const conflictAnalysis = await this.predictiveConflictDetection(filteredSlots, request, staff, patients);
+			const conflictAnalysis = await this.predictiveConflictDetection(
+				filteredSlots,
+				request,
+				staff,
+				patients,
+			);
 
 			// 3. Multi-objective optimization (< 200ms)
 			const optimizedSlots = await this.multiObjectiveOptimization(
@@ -51,11 +60,15 @@ export class AISchedulingEngine {
 				request,
 				staff,
 				patients,
-				treatments
+				treatments,
 			);
 
 			// 4. AI decision making (< 100ms)
-			const decision = await this.makeSchedulingDecision(optimizedSlots, request, conflictAnalysis);
+			const decision = await this.makeSchedulingDecision(
+				optimizedSlots,
+				request,
+				conflictAnalysis,
+			);
 
 			const processingTime = performance.now() - startTime;
 			this.updateMetrics("scheduling_time", processingTime);
@@ -97,7 +110,7 @@ export class AISchedulingEngine {
 	private async intelligentSlotFiltering(
 		slots: AppointmentSlot[],
 		request: SchedulingRequest,
-		treatments: TreatmentType[]
+		treatments: TreatmentType[],
 	): Promise<AppointmentSlot[]> {
 		const treatment = treatments.find((t) => t.id === request.treatmentTypeId);
 		if (!treatment) {
@@ -119,13 +132,19 @@ export class AISchedulingEngine {
 			const demandScore = this.predictDemandConflict(slot);
 
 			// Combined AI scoring (all factors weighted)
-			const combinedScore = durationMatch * 0.3 + timePreferenceScore * 0.25 + resourceScore * 0.25 + demandScore * 0.2;
+			const combinedScore =
+				durationMatch * 0.3 +
+				timePreferenceScore * 0.25 +
+				resourceScore * 0.25 +
+				demandScore * 0.2;
 
 			return combinedScore > 0.6; // AI threshold for viability
 		});
 
 		// Sort by AI-calculated optimization potential
-		return filteredSlots.sort((a, b) => b.optimizationScore - a.optimizationScore).slice(0, 20); // Limit to top 20 candidates for performance
+		return filteredSlots
+			.sort((a, b) => b.optimizationScore - a.optimizationScore)
+			.slice(0, 20); // Limit to top 20 candidates for performance
 	}
 
 	/**
@@ -136,7 +155,7 @@ export class AISchedulingEngine {
 		slots: AppointmentSlot[],
 		request: SchedulingRequest,
 		staff: Staff[],
-		patients: Patient[]
+		patients: Patient[],
 	): Promise<{ viableSlots: AppointmentSlot[]; conflicts: Conflict[] }> {
 		const conflicts: Conflict[] = [];
 		const viableSlots: AppointmentSlot[] = [];
@@ -180,7 +199,10 @@ export class AISchedulingEngine {
 				slotConflicts.push(cascadeRisk);
 			}
 
-			if (slotConflicts.length === 0 || slotConflicts.every((c) => c.severity === "low")) {
+			if (
+				slotConflicts.length === 0 ||
+				slotConflicts.every((c) => c.severity === "low")
+			) {
 				viableSlots.push({
 					...slot,
 					conflictScore: slotConflicts.length * 0.1,
@@ -202,20 +224,30 @@ export class AISchedulingEngine {
 		request: SchedulingRequest,
 		staff: Staff[],
 		patients: Patient[],
-		treatments: TreatmentType[]
+		treatments: TreatmentType[],
 	): Promise<AppointmentSlot[]> {
 		const optimizedSlots = slots.map((slot) => {
 			const staffMember = staff.find((s) => s.id === slot.staffId);
 			const patient = patients.find((p) => p.id === request.patientId);
-			const treatment = treatments.find((t) => t.id === request.treatmentTypeId);
+			const treatment = treatments.find(
+				(t) => t.id === request.treatmentTypeId,
+			);
 
 			if (!(staffMember && patient && treatment)) {
 				return { ...slot, optimizationScore: 0 };
 			}
 
 			// Multi-objective scoring
-			const efficiencyScore = this.calculateEfficiencyScore(slot, staffMember, treatment);
-			const satisfactionScore = this.calculateSatisfactionScore(slot, patient, staffMember);
+			const efficiencyScore = this.calculateEfficiencyScore(
+				slot,
+				staffMember,
+				treatment,
+			);
+			const satisfactionScore = this.calculateSatisfactionScore(
+				slot,
+				patient,
+				staffMember,
+			);
 			const revenueScore = this.calculateRevenueOptimization(slot, treatment);
 			const utilizationScore = this.calculateUtilizationScore(slot);
 
@@ -233,7 +265,9 @@ export class AISchedulingEngine {
 		});
 
 		// Sort by optimization score and return top candidates
-		return optimizedSlots.sort((a, b) => b.optimizationScore - a.optimizationScore).slice(0, 10);
+		return optimizedSlots
+			.sort((a, b) => b.optimizationScore - a.optimizationScore)
+			.slice(0, 10);
 	} /**
 	 * AI-powered scheduling decision making with confidence scoring
 	 * Provides reasoning and alternative options
@@ -241,7 +275,7 @@ export class AISchedulingEngine {
 	private async makeSchedulingDecision(
 		optimizedSlots: AppointmentSlot[],
 		request: SchedulingRequest,
-		conflictAnalysis: { viableSlots: AppointmentSlot[]; conflicts: Conflict[] }
+		conflictAnalysis: { viableSlots: AppointmentSlot[]; conflicts: Conflict[] },
 	): Promise<SchedulingDecision> {
 		if (optimizedSlots.length === 0) {
 			return {
@@ -253,7 +287,10 @@ export class AISchedulingEngine {
 					noShowRisk: 0,
 					overbookingRisk: 0,
 					patientSatisfactionRisk: 1,
-					mitigationStrategies: ["Expand search criteria", "Consider alternative treatments"],
+					mitigationStrategies: [
+						"Expand search criteria",
+						"Consider alternative treatments",
+					],
 				},
 			};
 		}
@@ -262,18 +299,26 @@ export class AISchedulingEngine {
 		const reasoning: string[] = [];
 
 		// Build AI reasoning
-		reasoning.push(`Selected slot with ${(primarySlot.optimizationScore * 100).toFixed(1)}% optimization score`);
+		reasoning.push(
+			`Selected slot with ${(primarySlot.optimizationScore * 100).toFixed(1)}% optimization score`,
+		);
 
 		if (primarySlot.conflictScore < 0.2) {
 			reasoning.push("Low conflict probability detected");
 		}
 
 		if (conflictAnalysis.conflicts.length > 0) {
-			reasoning.push(`${conflictAnalysis.conflicts.length} potential conflicts identified and mitigated`);
+			reasoning.push(
+				`${conflictAnalysis.conflicts.length} potential conflicts identified and mitigated`,
+			);
 		}
 
 		// Calculate confidence based on multiple factors
-		const confidence = this.calculateDecisionConfidence(primarySlot, optimizedSlots, conflictAnalysis.conflicts);
+		const confidence = this.calculateDecisionConfidence(
+			primarySlot,
+			optimizedSlots,
+			conflictAnalysis.conflicts,
+		);
 
 		// Generate alternatives with trade-off analysis
 		const alternatives = optimizedSlots.slice(1, 4).map((slot, _index) => ({
@@ -314,7 +359,9 @@ export class AISchedulingEngine {
 		}
 
 		// Advance booking risk
-		const daysAdvance = Math.floor((slot.start.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+		const daysAdvance = Math.floor(
+			(slot.start.getTime() - Date.now()) / (1000 * 60 * 60 * 24),
+		);
 		if (daysAdvance > 14) {
 			riskScore += 0.2; // Far future bookings have higher no-show risk
 		} else if (daysAdvance < 1) {
@@ -341,13 +388,15 @@ export class AISchedulingEngine {
 	async handleDynamicEvent(
 		event: DynamicSchedulingEvent,
 		currentSchedule: AppointmentSlot[],
-		availableStaff: Staff[]
+		availableStaff: Staff[],
 	): Promise<SchedulingAction[]> {
 		const actions: SchedulingAction[] = [];
 
 		switch (event.type) {
 			case "cancellation":
-				actions.push(...(await this.handleCancellation(event, currentSchedule)));
+				actions.push(
+					...(await this.handleCancellation(event, currentSchedule)),
+				);
 				break;
 
 			case "no_show":
@@ -355,15 +404,29 @@ export class AISchedulingEngine {
 				break;
 
 			case "walk_in":
-				actions.push(...(await this.handleWalkIn(event, currentSchedule, availableStaff)));
+				actions.push(
+					...(await this.handleWalkIn(event, currentSchedule, availableStaff)),
+				);
 				break;
 
 			case "emergency":
-				actions.push(...(await this.handleEmergency(event, currentSchedule, availableStaff)));
+				actions.push(
+					...(await this.handleEmergency(
+						event,
+						currentSchedule,
+						availableStaff,
+					)),
+				);
 				break;
 
 			case "staff_unavailable":
-				actions.push(...(await this.handleStaffUnavailable(event, currentSchedule, availableStaff)));
+				actions.push(
+					...(await this.handleStaffUnavailable(
+						event,
+						currentSchedule,
+						availableStaff,
+					)),
+				);
 				break;
 		}
 
@@ -379,12 +442,17 @@ export class AISchedulingEngine {
 	 * Advanced resource optimization using constraint satisfaction
 	 * Maximizes utilization while maintaining quality
 	 */
-	private calculateResourceOptimization(slot: AppointmentSlot, treatment: TreatmentType): number {
+	private calculateResourceOptimization(
+		slot: AppointmentSlot,
+		treatment: TreatmentType,
+	): number {
 		let score = 0.5; // Base score
 
 		// Equipment utilization optimization
 		if (slot.equipmentIds && treatment.requiredEquipment) {
-			const equipmentMatch = treatment.requiredEquipment.every((eq) => slot.equipmentIds?.includes(eq));
+			const equipmentMatch = treatment.requiredEquipment.every((eq) =>
+				slot.equipmentIds?.includes(eq),
+			);
 			score += equipmentMatch ? 0.3 : -0.2;
 		}
 
@@ -395,7 +463,10 @@ export class AISchedulingEngine {
 		}
 
 		// Staff specialization match
-		const staffSpecialization = this.getStaffSpecializationMatch(slot.staffId, treatment);
+		const staffSpecialization = this.getStaffSpecializationMatch(
+			slot.staffId,
+			treatment,
+		);
 		score += staffSpecialization * 0.25;
 
 		return Math.max(0, Math.min(1, score));
@@ -433,7 +504,10 @@ export class AISchedulingEngine {
 	}
 
 	// Helper methods for AI calculations
-	private isDurationCompatible(slot: AppointmentSlot, treatment: TreatmentType): number {
+	private isDurationCompatible(
+		slot: AppointmentSlot,
+		treatment: TreatmentType,
+	): number {
 		const variance = treatment.durationVariance || 0.2;
 		const minDuration = treatment.duration * (1 - variance);
 		const maxDuration = treatment.duration * (1 + variance);
@@ -441,18 +515,26 @@ export class AISchedulingEngine {
 		return slot.duration >= minDuration && slot.duration <= maxDuration ? 1 : 0;
 	}
 
-	private calculateTimePreference(slot: AppointmentSlot, request: SchedulingRequest): number {
+	private calculateTimePreference(
+		slot: AppointmentSlot,
+		request: SchedulingRequest,
+	): number {
 		if (!request.preferredTimeRanges?.length) {
 			return 0.5;
 		}
 
 		// Check if slot falls within any preferred time range
-		const isPreferred = request.preferredTimeRanges.some((range) => slot.start >= range.start && slot.end <= range.end);
+		const isPreferred = request.preferredTimeRanges.some(
+			(range) => slot.start >= range.start && slot.end <= range.end,
+		);
 
 		return isPreferred ? 1 : 0.2;
 	}
 
-	private calculateWaitTime(slot: AppointmentSlot, request: SchedulingRequest): number {
+	private calculateWaitTime(
+		slot: AppointmentSlot,
+		request: SchedulingRequest,
+	): number {
 		if (!request.preferredDate) {
 			return 0;
 		}
@@ -475,7 +557,10 @@ export class AISchedulingEngine {
 	}
 
 	// Additional helper methods for complete AI functionality
-	private predictStaffConflicts(slot: AppointmentSlot, staff: Staff): Conflict | null {
+	private predictStaffConflicts(
+		slot: AppointmentSlot,
+		staff: Staff,
+	): Conflict | null {
 		const workingHours = staff.workingHours[slot.start.getDay().toString()];
 		if (!workingHours) {
 			return {
@@ -505,7 +590,9 @@ export class AISchedulingEngine {
 		return null;
 	}
 
-	private async predictEquipmentConflicts(slot: AppointmentSlot): Promise<Conflict[]> {
+	private async predictEquipmentConflicts(
+		slot: AppointmentSlot,
+	): Promise<Conflict[]> {
 		const conflicts: Conflict[] = [];
 
 		if (!slot.equipmentIds?.length) {
@@ -534,7 +621,8 @@ export class AISchedulingEngine {
 
 		return {
 			type: "patient_conflict",
-			severity: impactScore > 0.7 ? "high" : impactScore > 0.4 ? "medium" : "low",
+			severity:
+				impactScore > 0.7 ? "high" : impactScore > 0.4 ? "medium" : "low",
 			description: `Potential cascade impact: ${(impactScore * 100).toFixed(1)}%`,
 			affectedResource: slot.id,
 		};
@@ -547,15 +635,24 @@ export class AISchedulingEngine {
 		return isRushHour ? 0.6 : 0.2;
 	}
 
-	private calculateEfficiencyScore(slot: AppointmentSlot, staff: Staff, treatment: TreatmentType): number {
+	private calculateEfficiencyScore(
+		slot: AppointmentSlot,
+		staff: Staff,
+		treatment: TreatmentType,
+	): number {
 		const staffEfficiency = staff.efficiency || 0.8;
 		const treatmentComplexity = treatment.complexityLevel / 5;
-		const timeOptimization = 1 - (slot.duration - treatment.duration) / treatment.duration;
+		const timeOptimization =
+			1 - (slot.duration - treatment.duration) / treatment.duration;
 
 		return (staffEfficiency + (1 - treatmentComplexity) + timeOptimization) / 3;
 	}
 
-	private calculateSatisfactionScore(slot: AppointmentSlot, patient: Patient, staff: Staff): number {
+	private calculateSatisfactionScore(
+		slot: AppointmentSlot,
+		patient: Patient,
+		staff: Staff,
+	): number {
 		let score = 0.5;
 
 		// Staff preference match
@@ -565,7 +662,7 @@ export class AISchedulingEngine {
 
 		// Time preference match
 		const timeMatch = patient.preferences.preferredTimeSlots.some(
-			(pref) => slot.start >= pref.start && slot.end <= pref.end
+			(pref) => slot.start >= pref.start && slot.end <= pref.end,
 		);
 		if (timeMatch) {
 			score += 0.3;
@@ -578,7 +675,10 @@ export class AISchedulingEngine {
 		return Math.min(1, score);
 	}
 
-	private calculateRevenueOptimization(slot: AppointmentSlot, treatment: TreatmentType): number {
+	private calculateRevenueOptimization(
+		slot: AppointmentSlot,
+		treatment: TreatmentType,
+	): number {
 		// Revenue optimization based on treatment type and timing
 		const hour = slot.start.getHours();
 		const isPeakHour = hour >= 10 && hour <= 16;
@@ -599,17 +699,20 @@ export class AISchedulingEngine {
 	private calculateDecisionConfidence(
 		primarySlot: AppointmentSlot,
 		allSlots: AppointmentSlot[],
-		conflicts: Conflict[]
+		conflicts: Conflict[],
 	): number {
 		let confidence = 0.8; // Base confidence
 
 		// Reduce confidence for conflicts
-		const highSeverityConflicts = conflicts.filter((c) => c.severity === "high").length;
+		const highSeverityConflicts = conflicts.filter(
+			(c) => c.severity === "high",
+		).length;
 		confidence -= highSeverityConflicts * 0.2;
 
 		// Increase confidence if primary slot significantly better than alternatives
 		if (allSlots.length > 1) {
-			const scoreDifference = primarySlot.optimizationScore - allSlots[1].optimizationScore;
+			const scoreDifference =
+				primarySlot.optimizationScore - allSlots[1].optimizationScore;
 			confidence += scoreDifference * 0.3;
 		}
 
@@ -619,11 +722,18 @@ export class AISchedulingEngine {
 		return Math.max(0.1, Math.min(0.99, confidence));
 	}
 
-	private analyzeTradeoffs(primarySlot: AppointmentSlot, alternativeSlot: AppointmentSlot): string[] {
+	private analyzeTradeoffs(
+		primarySlot: AppointmentSlot,
+		alternativeSlot: AppointmentSlot,
+	): string[] {
 		const tradeoffs: string[] = [];
 
 		if (alternativeSlot.start.getTime() !== primarySlot.start.getTime()) {
-			const timeDiff = Math.abs(alternativeSlot.start.getTime() - primarySlot.start.getTime()) / (1000 * 60 * 60);
+			const timeDiff =
+				Math.abs(
+					alternativeSlot.start.getTime() - primarySlot.start.getTime(),
+				) /
+				(1000 * 60 * 60);
 			tradeoffs.push(`${timeDiff.toFixed(1)} hours time difference`);
 		}
 
@@ -632,14 +742,20 @@ export class AISchedulingEngine {
 		}
 
 		if (alternativeSlot.optimizationScore < primarySlot.optimizationScore) {
-			const scoreDiff = ((primarySlot.optimizationScore - alternativeSlot.optimizationScore) * 100).toFixed(1);
+			const scoreDiff = (
+				(primarySlot.optimizationScore - alternativeSlot.optimizationScore) *
+				100
+			).toFixed(1);
 			tradeoffs.push(`${scoreDiff}% lower optimization score`);
 		}
 
 		return tradeoffs;
 	}
 
-	private assessSchedulingRisks(slot: AppointmentSlot, request: SchedulingRequest): any {
+	private assessSchedulingRisks(
+		slot: AppointmentSlot,
+		request: SchedulingRequest,
+	): any {
 		return {
 			noShowRisk: slot.conflictScore * 0.3,
 			overbookingRisk: this.calculateOverbookingRisk(slot),
@@ -653,20 +769,26 @@ export class AISchedulingEngine {
 		return Math.max(0, utilization - 0.8) * 2; // Risk increases after 80% utilization
 	}
 
-	private calculateSatisfactionRisk(slot: AppointmentSlot, request: SchedulingRequest): number {
+	private calculateSatisfactionRisk(
+		slot: AppointmentSlot,
+		request: SchedulingRequest,
+	): number {
 		// Calculate risk of patient dissatisfaction
 		if (!request.preferredTimeRanges?.length) {
 			return 0.2;
 		}
 
 		const isPreferredTime = request.preferredTimeRanges.some(
-			(range) => slot.start >= range.start && slot.end <= range.end
+			(range) => slot.start >= range.start && slot.end <= range.end,
 		);
 
 		return isPreferredTime ? 0.1 : 0.4;
 	}
 
-	private generateMitigationStrategies(slot: AppointmentSlot, request: SchedulingRequest): string[] {
+	private generateMitigationStrategies(
+		slot: AppointmentSlot,
+		request: SchedulingRequest,
+	): string[] {
 		const strategies: string[] = [];
 
 		if (slot.conflictScore > 0.3) {
@@ -684,17 +806,30 @@ export class AISchedulingEngine {
 
 	private getRoomUtilization(roomId: string, time: Date): number {
 		const hour = time.getHours();
-		return this.realTimeMetrics.get(`room_utilization_${roomId}_${hour}`) || 0.6;
+		return (
+			this.realTimeMetrics.get(`room_utilization_${roomId}_${hour}`) || 0.6
+		);
 	}
 
 	private getEquipmentUtilization(equipmentId: string, time: Date): number {
 		const hour = time.getHours();
-		return this.realTimeMetrics.get(`equipment_utilization_${equipmentId}_${hour}`) || 0.5;
+		return (
+			this.realTimeMetrics.get(
+				`equipment_utilization_${equipmentId}_${hour}`,
+			) || 0.5
+		);
 	}
 
-	private getStaffSpecializationMatch(staffId: string, treatment: TreatmentType): number {
+	private getStaffSpecializationMatch(
+		staffId: string,
+		treatment: TreatmentType,
+	): number {
 		// Simplified specialization matching
-		return this.realTimeMetrics.get(`specialization_${staffId}_${treatment.category}`) || 0.7;
+		return (
+			this.realTimeMetrics.get(
+				`specialization_${staffId}_${treatment.category}`,
+			) || 0.7
+		);
 	}
 
 	private getWeatherImpact(_date: Date): number {
@@ -745,7 +880,7 @@ export class AISchedulingEngine {
 	// Dynamic event handlers
 	private async handleCancellation(
 		_event: DynamicSchedulingEvent,
-		_schedule: AppointmentSlot[]
+		_schedule: AppointmentSlot[],
 	): Promise<SchedulingAction[]> {
 		return [
 			{
@@ -764,7 +899,7 @@ export class AISchedulingEngine {
 
 	private async handleNoShow(
 		_event: DynamicSchedulingEvent,
-		_schedule: AppointmentSlot[]
+		_schedule: AppointmentSlot[],
 	): Promise<SchedulingAction[]> {
 		return [
 			{
@@ -784,7 +919,7 @@ export class AISchedulingEngine {
 	private async handleWalkIn(
 		_event: DynamicSchedulingEvent,
 		_schedule: AppointmentSlot[],
-		_staff: Staff[]
+		_staff: Staff[],
 	): Promise<SchedulingAction[]> {
 		return [
 			{
@@ -804,7 +939,7 @@ export class AISchedulingEngine {
 	private async handleEmergency(
 		_event: DynamicSchedulingEvent,
 		_schedule: AppointmentSlot[],
-		_staff: Staff[]
+		_staff: Staff[],
 	): Promise<SchedulingAction[]> {
 		return [
 			{
@@ -824,7 +959,7 @@ export class AISchedulingEngine {
 	private async handleStaffUnavailable(
 		_event: DynamicSchedulingEvent,
 		_schedule: AppointmentSlot[],
-		_staff: Staff[]
+		_staff: Staff[],
 	): Promise<SchedulingAction[]> {
 		return [
 			{

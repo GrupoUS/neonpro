@@ -6,7 +6,10 @@ import { PatientInsightsIntegration } from "@/lib/ai/patient-insights";
 
 const patientInsights = new PatientInsightsIntegration();
 
-export async function GET(request: NextRequest, { params }: { params: Promise<{ patientId: string }> }) {
+export async function GET(
+	request: NextRequest,
+	{ params }: { params: Promise<{ patientId: string }> },
+) {
 	try {
 		const supabase = await createClient();
 
@@ -21,7 +24,11 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 		const { patientId } = await params;
 
 		// Validate patient access
-		const { data: patient } = await supabase.from("patients").select("id").eq("id", patientId).single();
+		const { data: patient } = await supabase
+			.from("patients")
+			.select("id")
+			.eq("id", patientId)
+			.single();
 
 		if (!patient) {
 			return NextResponse.json({ error: "Patient not found" }, { status: 404 });
@@ -32,18 +39,28 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 		const treatmentContext = searchParams.get("context") || undefined;
 
 		// Generate treatment guidance
-		const treatmentRecommendations = await patientInsights.generateTreatmentGuidance(patientId, treatmentContext);
+		const treatmentRecommendations =
+			await patientInsights.generateTreatmentGuidance(
+				patientId,
+				treatmentContext,
+			);
 
 		return NextResponse.json({
 			success: true,
 			data: treatmentRecommendations,
 		});
 	} catch (_error) {
-		return NextResponse.json({ error: "Failed to generate treatment recommendations" }, { status: 500 });
+		return NextResponse.json(
+			{ error: "Failed to generate treatment recommendations" },
+			{ status: 500 },
+		);
 	}
 }
 
-export async function POST(request: NextRequest, { params }: { params: Promise<{ patientId: string }> }) {
+export async function POST(
+	request: NextRequest,
+	{ params }: { params: Promise<{ patientId: string }> },
+) {
 	try {
 		const supabase = await createClient();
 
@@ -57,15 +74,25 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
 		const { patientId } = await params;
 		const body = await request.json();
-		const { treatmentContext, includeAlternatives = true, includeRiskAssessment = true, outcomeData = null } = body;
+		const {
+			treatmentContext,
+			includeAlternatives = true,
+			includeRiskAssessment = true,
+			outcomeData = null,
+		} = body;
 
 		// Generate comprehensive treatment recommendations
-		const treatmentRecommendations = await patientInsights.generateTreatmentGuidance(patientId, treatmentContext);
+		const treatmentRecommendations =
+			await patientInsights.generateTreatmentGuidance(
+				patientId,
+				treatmentContext,
+			);
 
 		const response: any = { treatmentRecommendations };
 
 		if (includeRiskAssessment) {
-			const riskAssessment = await patientInsights.generateQuickRiskAssessment(patientId);
+			const riskAssessment =
+				await patientInsights.generateQuickRiskAssessment(patientId);
 			response.riskAssessment = riskAssessment;
 		}
 
@@ -74,7 +101,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 			const learningInsights = await patientInsights.updatePatientOutcome(
 				patientId,
 				outcomeData.treatmentId,
-				outcomeData
+				outcomeData,
 			);
 			response.learningInsights = learningInsights;
 		}
@@ -84,6 +111,9 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 			data: response,
 		});
 	} catch (_error) {
-		return NextResponse.json({ error: "Failed to generate comprehensive treatment recommendations" }, { status: 500 });
+		return NextResponse.json(
+			{ error: "Failed to generate comprehensive treatment recommendations" },
+			{ status: 500 },
+		);
 	}
 }

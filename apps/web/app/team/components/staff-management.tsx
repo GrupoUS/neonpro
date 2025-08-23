@@ -21,7 +21,13 @@ import {
 import { useMemo, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -32,8 +38,21 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from "@/components/ui/table";
 
 import type {
 	AvailabilityStatus,
@@ -174,7 +193,11 @@ const mockStaffData: HealthcareProfessional[] = [
 		rqeRegistrations: [],
 		professionalLicenses: ["COREN-SP-123456"],
 		specializations: ["Enfermagem em UTI", "Cuidados Intensivos"],
-		competencies: ["Ventilação Mecânica", "Monitorização Hemodinâmica", "Medicação EV"],
+		competencies: [
+			"Ventilação Mecânica",
+			"Monitorização Hemodinâmica",
+			"Medicação EV",
+		],
 		languages: ["Português"],
 		cmeCredits: [],
 		cmeRequiredHours: 60, // Different requirement for nurses
@@ -245,10 +268,14 @@ type StaffManagementProps = {
 	emergencyMode?: boolean;
 };
 
-export function StaffManagement({ emergencyMode = false }: StaffManagementProps) {
+export function StaffManagement({
+	emergencyMode = false,
+}: StaffManagementProps) {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [roleFilter, setRoleFilter] = useState<ProfessionalRole | "all">("all");
-	const [statusFilter, setStatusFilter] = useState<AvailabilityStatus | "all">("all");
+	const [statusFilter, setStatusFilter] = useState<AvailabilityStatus | "all">(
+		"all",
+	);
 	const [departmentFilter, setDepartmentFilter] = useState<string>("all");
 	const [showComplianceOnly, setShowComplianceOnly] = useState(false); // Filter and search logic
 	const filteredStaff = useMemo(() => {
@@ -297,7 +324,13 @@ export function StaffManagement({ emergencyMode = false }: StaffManagementProps)
 
 			return true;
 		});
-	}, [searchQuery, roleFilter, statusFilter, departmentFilter, showComplianceOnly]);
+	}, [
+		searchQuery,
+		roleFilter,
+		statusFilter,
+		departmentFilter,
+		showComplianceOnly,
+	]);
 
 	// Get unique departments for filter
 	const departments = useMemo(() => {
@@ -335,7 +368,9 @@ export function StaffManagement({ emergencyMode = false }: StaffManagementProps)
 			<Card>
 				<CardHeader>
 					<CardTitle className="text-lg">Busca e Filtros</CardTitle>
-					<CardDescription>Encontre profissionais por nome, CFM, departamento ou especialidade</CardDescription>
+					<CardDescription>
+						Encontre profissionais por nome, CFM, departamento ou especialidade
+					</CardDescription>
 				</CardHeader>
 				<CardContent>
 					<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
@@ -353,7 +388,12 @@ export function StaffManagement({ emergencyMode = false }: StaffManagementProps)
 							</div>
 						</div>{" "}
 						{/* Role Filter */}
-						<Select onValueChange={(value) => setRoleFilter(value as ProfessionalRole | "all")} value={roleFilter}>
+						<Select
+							onValueChange={(value) =>
+								setRoleFilter(value as ProfessionalRole | "all")
+							}
+							value={roleFilter}
+						>
 							<SelectTrigger aria-label="Filtrar por função">
 								<SelectValue placeholder="Função" />
 							</SelectTrigger>
@@ -368,7 +408,9 @@ export function StaffManagement({ emergencyMode = false }: StaffManagementProps)
 						</Select>
 						{/* Status Filter */}
 						<Select
-							onValueChange={(value) => setStatusFilter(value as AvailabilityStatus | "all")}
+							onValueChange={(value) =>
+								setStatusFilter(value as AvailabilityStatus | "all")
+							}
 							value={statusFilter}
 						>
 							<SelectTrigger aria-label="Filtrar por status">
@@ -384,7 +426,10 @@ export function StaffManagement({ emergencyMode = false }: StaffManagementProps)
 							</SelectContent>
 						</Select>
 						{/* Department Filter */}
-						<Select onValueChange={setDepartmentFilter} value={departmentFilter}>
+						<Select
+							onValueChange={setDepartmentFilter}
+							value={departmentFilter}
+						>
 							<SelectTrigger aria-label="Filtrar por departamento">
 								<SelectValue placeholder="Departamento" />
 							</SelectTrigger>
@@ -416,7 +461,9 @@ export function StaffManagement({ emergencyMode = false }: StaffManagementProps)
 			<Card>
 				<CardHeader>
 					<CardTitle className="text-lg">Equipe Ativa</CardTitle>
-					<CardDescription>Status em tempo real dos profissionais com compliance CFM e CLT</CardDescription>
+					<CardDescription>
+						Status em tempo real dos profissionais com compliance CFM e CLT
+					</CardDescription>
 				</CardHeader>
 				<CardContent>
 					<div className="rounded-md border">
@@ -440,9 +487,12 @@ export function StaffManagement({ emergencyMode = false }: StaffManagementProps)
 									const StatusIcon = statusInfo.icon;
 
 									// Check for compliance issues
-									const cfmIssue = staff.cfmLicense && staff.cfmLicense.status !== "active";
-									const cltIssue = staff.currentWeekHours > staff.weeklyHoursLimit;
-									const cmeIssue = staff.cmeCompletedHours < staff.cmeRequiredHours;
+									const cfmIssue =
+										staff.cfmLicense && staff.cfmLicense.status !== "active";
+									const cltIssue =
+										staff.currentWeekHours > staff.weeklyHoursLimit;
+									const cmeIssue =
+										staff.cmeCompletedHours < staff.cmeRequiredHours;
 
 									return (
 										<TableRow className="hover:bg-muted/50" key={staff.id}>
@@ -460,10 +510,16 @@ export function StaffManagement({ emergencyMode = false }: StaffManagementProps)
 														</AvatarFallback>
 													</Avatar>
 													<div className="min-w-0">
-														<p className="truncate font-medium text-foreground text-sm">{staff.displayName}</p>
-														<p className="truncate text-muted-foreground text-xs">{staff.email}</p>
+														<p className="truncate font-medium text-foreground text-sm">
+															{staff.displayName}
+														</p>
+														<p className="truncate text-muted-foreground text-xs">
+															{staff.email}
+														</p>
 														{staff.currentLocation && (
-															<p className="text-blue-600 text-xs">📍 {staff.currentLocation}</p>
+															<p className="text-blue-600 text-xs">
+																📍 {staff.currentLocation}
+															</p>
 														)}
 													</div>
 												</div>
@@ -476,21 +532,29 @@ export function StaffManagement({ emergencyMode = false }: StaffManagementProps)
 											</TableCell>
 											{/* Department */}
 											<TableCell>
-												<span className="text-foreground text-sm">{staff.department}</span>
+												<span className="text-foreground text-sm">
+													{staff.department}
+												</span>
 											</TableCell>
 											{/* Availability Status */}
 											<TableCell>
 												<div className="flex items-center space-x-2">
 													<div className={`rounded-full p-1 ${statusInfo.bg}`}>
-														<StatusIcon className={`h-3 w-3 ${statusInfo.color}`} />
+														<StatusIcon
+															className={`h-3 w-3 ${statusInfo.color}`}
+														/>
 													</div>
 													<span className="font-medium text-xs capitalize">
-														{staff.availabilityStatus === "available" && "Disponível"}
+														{staff.availabilityStatus === "available" &&
+															"Disponível"}
 														{staff.availabilityStatus === "busy" && "Ocupado"}
-														{staff.availabilityStatus === "emergency" && "Emergência"}
+														{staff.availabilityStatus === "emergency" &&
+															"Emergência"}
 														{staff.availabilityStatus === "break" && "Pausa"}
-														{staff.availabilityStatus === "off_duty" && "Fora de Serviço"}
-														{staff.availabilityStatus === "on_call" && "Sobreaviso"}
+														{staff.availabilityStatus === "off_duty" &&
+															"Fora de Serviço"}
+														{staff.availabilityStatus === "on_call" &&
+															"Sobreaviso"}
 													</span>
 												</div>
 											</TableCell>
@@ -499,7 +563,9 @@ export function StaffManagement({ emergencyMode = false }: StaffManagementProps)
 												{staff.cfmLicense ? (
 													<div className="space-y-1">
 														<div className="flex items-center space-x-1">
-															<span className="font-mono text-xs">{staff.cfmLicense.cfmNumber}</span>
+															<span className="font-mono text-xs">
+																{staff.cfmLicense.cfmNumber}
+															</span>
 															{cfmIssue ? (
 																<XCircle className="h-3 w-3 text-red-500" />
 															) : (
@@ -507,7 +573,10 @@ export function StaffManagement({ emergencyMode = false }: StaffManagementProps)
 															)}
 														</div>
 														{staff.cfmLicense.status === "pending_renewal" && (
-															<Badge className="border-yellow-500 text-xs text-yellow-700" variant="outline">
+															<Badge
+																className="border-yellow-500 text-xs text-yellow-700"
+																variant="outline"
+															>
 																Renovar CFM
 															</Badge>
 														)}
@@ -525,7 +594,9 @@ export function StaffManagement({ emergencyMode = false }: StaffManagementProps)
 											<TableCell>
 												<div className="flex items-center space-x-2">
 													<Star className="h-3 w-3 text-yellow-500" />
-													<span className="font-medium text-sm">{staff.patientSatisfactionScore.toFixed(1)}</span>
+													<span className="font-medium text-sm">
+														{staff.patientSatisfactionScore.toFixed(1)}
+													</span>
 													{staff.safetyIncidents > 0 && (
 														<Badge className="text-xs" variant="destructive">
 															{staff.safetyIncidents} inc.
@@ -538,7 +609,8 @@ export function StaffManagement({ emergencyMode = false }: StaffManagementProps)
 												<div className="space-y-1">
 													<div className="flex items-center space-x-1">
 														<span className="text-xs">
-															{staff.currentWeekHours}h / {staff.weeklyHoursLimit}h
+															{staff.currentWeekHours}h /{" "}
+															{staff.weeklyHoursLimit}h
 														</span>
 														{cltIssue ? (
 															<XCircle className="h-3 w-3 text-red-500" />
@@ -546,9 +618,19 @@ export function StaffManagement({ emergencyMode = false }: StaffManagementProps)
 															<CheckCircle className="h-3 w-3 text-green-500" />
 														)}
 													</div>
-													<Progress className="h-1" value={(staff.currentWeekHours / staff.weeklyHoursLimit) * 100} />
+													<Progress
+														className="h-1"
+														value={
+															(staff.currentWeekHours /
+																staff.weeklyHoursLimit) *
+															100
+														}
+													/>
 													{staff.overtimeHours > 0 && (
-														<Badge className="border-orange-500 text-orange-700 text-xs" variant="outline">
+														<Badge
+															className="border-orange-500 text-orange-700 text-xs"
+															variant="outline"
+														>
 															+{staff.overtimeHours}h extra
 														</Badge>
 													)}
@@ -560,7 +642,8 @@ export function StaffManagement({ emergencyMode = false }: StaffManagementProps)
 													<div className="flex items-center space-x-1">
 														<GraduationCap className="h-3 w-3 text-blue-500" />
 														<span className="text-xs">
-															{staff.cmeCompletedHours}h / {staff.cmeRequiredHours}h
+															{staff.cmeCompletedHours}h /{" "}
+															{staff.cmeRequiredHours}h
 														</span>
 														{cmeIssue ? (
 															<XCircle className="h-3 w-3 text-red-500" />
@@ -568,7 +651,14 @@ export function StaffManagement({ emergencyMode = false }: StaffManagementProps)
 															<CheckCircle className="h-3 w-3 text-green-500" />
 														)}
 													</div>
-													<Progress className="h-1" value={(staff.cmeCompletedHours / staff.cmeRequiredHours) * 100} />
+													<Progress
+														className="h-1"
+														value={
+															(staff.cmeCompletedHours /
+																staff.cmeRequiredHours) *
+															100
+														}
+													/>
 												</div>
 											</TableCell>{" "}
 											{/* Actions */}
@@ -623,9 +713,12 @@ export function StaffManagement({ emergencyMode = false }: StaffManagementProps)
 					{filteredStaff.length === 0 && (
 						<div className="py-12 text-center">
 							<UserX className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
-							<p className="mb-2 font-medium text-foreground text-lg">Nenhum profissional encontrado</p>
+							<p className="mb-2 font-medium text-foreground text-lg">
+								Nenhum profissional encontrado
+							</p>
 							<p className="mb-4 text-muted-foreground">
-								Tente ajustar os filtros ou adicionar novos profissionais à equipe
+								Tente ajustar os filtros ou adicionar novos profissionais à
+								equipe
 							</p>
 							<Button size="sm">
 								<Plus className="mr-2 h-4 w-4" />

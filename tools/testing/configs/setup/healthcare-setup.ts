@@ -35,14 +35,15 @@ export type HealthcareTestAppointment = {
 // Healthcare Mock Client (Medplum-inspired pattern)
 export class HealthcareMockClient {
 	private readonly patients: Map<string, HealthcareTestPatient> = new Map();
-	private readonly appointments: Map<string, HealthcareTestAppointment> = new Map();
+	private readonly appointments: Map<string, HealthcareTestAppointment> =
+		new Map();
 	private readonly tenantId: string;
 	constructor(tenantId = "test-tenant-healthcare") {
 		this.tenantId = tenantId;
 	}
 
 	async createPatient(
-		patient: Omit<HealthcareTestPatient, "id" | "createdAt" | "updatedAt">
+		patient: Omit<HealthcareTestPatient, "id" | "createdAt" | "updatedAt">,
 	): Promise<HealthcareTestPatient> {
 		const id = `patient-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 		const now = new Date().toISOString();
@@ -63,13 +64,19 @@ export class HealthcareMockClient {
 		return this.patients.get(id) || null;
 	}
 
-	async queryPatients(filters: Partial<HealthcareTestPatient>): Promise<HealthcareTestPatient[]> {
+	async queryPatients(
+		filters: Partial<HealthcareTestPatient>,
+	): Promise<HealthcareTestPatient[]> {
 		return Array.from(this.patients.values()).filter((patient) => {
-			return Object.entries(filters).every(([key, value]) => patient[key as keyof HealthcareTestPatient] === value);
+			return Object.entries(filters).every(
+				([key, value]) => patient[key as keyof HealthcareTestPatient] === value,
+			);
 		});
 	}
 
-	async createAppointment(appointment: Omit<HealthcareTestAppointment, "id">): Promise<HealthcareTestAppointment> {
+	async createAppointment(
+		appointment: Omit<HealthcareTestAppointment, "id">,
+	): Promise<HealthcareTestAppointment> {
 		const id = `appointment-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
 		const newAppointment: HealthcareTestAppointment = {

@@ -57,28 +57,43 @@ export class HealthcareComplianceValidator {
 
 		// ✅ Required LGPD checks
 		if (!check.consentRequired && check.dataTypes.includes("personal_data")) {
-			violations.push(`${check.component}: Consentimento LGPD obrigatório para dados pessoais`);
+			violations.push(
+				`${check.component}: Consentimento LGPD obrigatório para dados pessoais`,
+			);
 		}
 
 		if (!check.auditTrailImplemented) {
-			violations.push(`${check.component}: Trilha de auditoria LGPD não implementada`);
+			violations.push(
+				`${check.component}: Trilha de auditoria LGPD não implementada`,
+			);
 		}
 
 		if (!check.dataRetentionPolicyApplied) {
-			violations.push(`${check.component}: Política de retenção de dados não aplicada`);
+			violations.push(
+				`${check.component}: Política de retenção de dados não aplicada`,
+			);
 		}
 
-		if (!check.anonymizationSupported && check.dataTypes.includes("sensitive_data")) {
-			violations.push(`${check.component}: Anonimização não suportada para dados sensíveis`);
+		if (
+			!check.anonymizationSupported &&
+			check.dataTypes.includes("sensitive_data")
+		) {
+			violations.push(
+				`${check.component}: Anonimização não suportada para dados sensíveis`,
+			);
 		}
 
 		if (!check.rightToBeDeleted) {
-			violations.push(`${check.component}: Direito ao esquecimento não implementado`);
+			violations.push(
+				`${check.component}: Direito ao esquecimento não implementado`,
+			);
 		}
 
 		// ✅ Recommendations
 		if (check.dataTypes.length > 5) {
-			recommendations.push(`${check.component}: Considere segmentar tipos de dados para melhor controle`);
+			recommendations.push(
+				`${check.component}: Considere segmentar tipos de dados para melhor controle`,
+			);
 		}
 
 		return {
@@ -101,23 +116,33 @@ export class HealthcareComplianceValidator {
 
 		// ✅ Required ANVISA checks
 		if (!check.medicalDataHandling) {
-			violations.push(`${check.component}: Manipulação de dados médicos não conforme ANVISA`);
+			violations.push(
+				`${check.component}: Manipulação de dados médicos não conforme ANVISA`,
+			);
 		}
 
 		if (!check.professionalValidation) {
-			violations.push(`${check.component}: Validação profissional ANVISA não implementada`);
+			violations.push(
+				`${check.component}: Validação profissional ANVISA não implementada`,
+			);
 		}
 
 		if (!check.treatmentDocumentation) {
-			violations.push(`${check.component}: Documentação de tratamento ANVISA ausente`);
+			violations.push(
+				`${check.component}: Documentação de tratamento ANVISA ausente`,
+			);
 		}
 
 		if (!check.regulatoryReporting) {
-			violations.push(`${check.component}: Relatórios regulatórios ANVISA não configurados`);
+			violations.push(
+				`${check.component}: Relatórios regulatórios ANVISA não configurados`,
+			);
 		}
 
 		if (!check.qualityAssurance) {
-			violations.push(`${check.component}: Garantia de qualidade ANVISA não implementada`);
+			violations.push(
+				`${check.component}: Garantia de qualidade ANVISA não implementada`,
+			);
 		}
 
 		return {
@@ -140,7 +165,9 @@ export class HealthcareComplianceValidator {
 
 		// ✅ Required CFM checks
 		if (!check.professionalCredentials) {
-			violations.push(`${check.component}: Credenciais profissionais CFM não validadas`);
+			violations.push(
+				`${check.component}: Credenciais profissionais CFM não validadas`,
+			);
 		}
 
 		if (!check.medicalEthicsCompliance) {
@@ -148,15 +175,21 @@ export class HealthcareComplianceValidator {
 		}
 
 		if (!check.patientConsentDocumentation) {
-			violations.push(`${check.component}: Documentação de consentimento CFM ausente`);
+			violations.push(
+				`${check.component}: Documentação de consentimento CFM ausente`,
+			);
 		}
 
 		if (!check.medicalRecordsIntegrity) {
-			violations.push(`${check.component}: Integridade de prontuários CFM não garantida`);
+			violations.push(
+				`${check.component}: Integridade de prontuários CFM não garantida`,
+			);
 		}
 
 		if (!check.telemedicineCompliance) {
-			violations.push(`${check.component}: Compliance telemedicina CFM não implementado`);
+			violations.push(
+				`${check.component}: Compliance telemedicina CFM não implementado`,
+			);
 		}
 
 		return {
@@ -224,10 +257,15 @@ export class HealthcareComplianceValidator {
 
 			// ✅ Calculate overall compliance score
 			const totalViolations =
-				lgpdResults.violations.length + anvisaResults.violations.length + cfmResults.violations.length;
+				lgpdResults.violations.length +
+				anvisaResults.violations.length +
+				cfmResults.violations.length;
 
 			const maxPossibleViolations = 13; // Total possible compliance checks
-			const complianceScore = Math.max(0, 100 - (totalViolations / maxPossibleViolations) * 100);
+			const complianceScore = Math.max(
+				0,
+				100 - (totalViolations / maxPossibleViolations) * 100,
+			);
 			const overallCompliance = complianceScore >= 95; // High standard for healthcare
 
 			return {
@@ -295,9 +333,18 @@ export class HealthcareComplianceValidator {
 				}
 
 				// ✅ Identify critical violations
-				const criticalKeywords = ["auditoria", "consentimento", "credenciais", "dados médicos"];
+				const criticalKeywords = [
+					"auditoria",
+					"consentimento",
+					"credenciais",
+					"dados médicos",
+				];
 				allViolations.forEach((violation) => {
-					if (criticalKeywords.some((keyword) => violation.toLowerCase().includes(keyword))) {
+					if (
+						criticalKeywords.some((keyword) =>
+							violation.toLowerCase().includes(keyword),
+						)
+					) {
 						criticalViolations.push(violation);
 					}
 				});
@@ -312,7 +359,10 @@ export class HealthcareComplianceValidator {
 		}
 
 		return {
-			overallScore: componentPaths.length > 0 ? Math.round(totalScore / componentPaths.length) : 0,
+			overallScore:
+				componentPaths.length > 0
+					? Math.round(totalScore / componentPaths.length)
+					: 0,
 			componentResults,
 			summary: {
 				totalComponents: componentPaths.length,
@@ -324,7 +374,8 @@ export class HealthcareComplianceValidator {
 }
 
 // ✅ Export singleton instance
-export const healthcareComplianceValidator = new HealthcareComplianceValidator();
+export const healthcareComplianceValidator =
+	new HealthcareComplianceValidator();
 
 /**
  * Compliance validation utilities for specific scenarios
@@ -347,7 +398,9 @@ export class ComplianceUtils {
 		}
 
 		if (!consentData.purpose || consentData.purpose.length < 10) {
-			violations.push("Finalidade do uso dos dados não especificada adequadamente");
+			violations.push(
+				"Finalidade do uso dos dados não especificada adequadamente",
+			);
 		}
 
 		const consentAge = Date.now() - consentData.consentDate.getTime();

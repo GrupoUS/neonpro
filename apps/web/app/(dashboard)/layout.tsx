@@ -3,7 +3,11 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { Header } from "../components/header";
 import { HealthcareSidebar } from "../components/healthcare-sidebar";
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout({
+	children,
+}: {
+	children: React.ReactNode;
+}) {
 	return (
 		<SidebarProvider>
 			<div className="flex min-h-screen w-full bg-background">

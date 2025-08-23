@@ -106,7 +106,8 @@ class RBACSetup {
 				throw error;
 			}
 
-			const tablesWithRLS = rlsStatus?.filter((table) => table.rowsecurity) || [];
+			const tablesWithRLS =
+				rlsStatus?.filter((table) => table.rowsecurity) || [];
 
 			// Check if policies exist
 			const { data: policies, error: policiesError } = await this.supabase
@@ -190,17 +191,21 @@ class RBACSetup {
 	private async testRBACPermissions(): Promise<SetupResult> {
 		try {
 			// Test basic role functions
-			const { data: roleTest, error: roleError } = await this.supabase.rpc("has_role", {
-				required_role: "owner",
-			});
+			const { data: roleTest, error: roleError } = await this.supabase.rpc(
+				"has_role",
+				{
+					required_role: "owner",
+				},
+			);
 
 			if (roleError) {
 			}
 
 			// Test minimum role functions
-			const { data: minRoleTest, error: minRoleError } = await this.supabase.rpc("has_minimum_role", {
-				required_role: "staff",
-			});
+			const { data: minRoleTest, error: minRoleError } =
+				await this.supabase.rpc("has_minimum_role", {
+					required_role: "staff",
+				});
 
 			if (minRoleError) {
 			}
@@ -227,7 +232,9 @@ class RBACSetup {
 	 */
 	async setup(): Promise<void> {
 		const results: SetupResult[] = [];
-		const migrationResult = await this.executeMigration("001_setup_rbac_policies.sql");
+		const migrationResult = await this.executeMigration(
+			"001_setup_rbac_policies.sql",
+		);
 		results.push(migrationResult);
 
 		if (!migrationResult.success) {

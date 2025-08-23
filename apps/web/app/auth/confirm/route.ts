@@ -18,7 +18,9 @@ export async function GET(request: NextRequest) {
 
 	// Handle confirmation errors
 	if (error) {
-		return NextResponse.redirect(`${requestUrl.origin}/auth/error?error=${encodeURIComponent(error)}`);
+		return NextResponse.redirect(
+			`${requestUrl.origin}/auth/error?error=${encodeURIComponent(error)}`,
+		);
 	}
 
 	if (token_hash && type) {
@@ -44,7 +46,7 @@ export async function GET(request: NextRequest) {
 						"X-Compliance": "LGPD-ANVISA-CFM",
 					},
 				},
-			}
+			},
 		);
 
 		try {
@@ -58,7 +60,9 @@ export async function GET(request: NextRequest) {
 			});
 
 			if (verifyError) {
-				return NextResponse.redirect(`${requestUrl.origin}/auth/error?error=verification_failed`);
+				return NextResponse.redirect(
+					`${requestUrl.origin}/auth/error?error=verification_failed`,
+				);
 			}
 
 			if (session?.user) {
@@ -72,34 +76,48 @@ export async function GET(request: NextRequest) {
 				switch (type) {
 					case "signup":
 						// New user signup confirmation
-						return NextResponse.redirect(`${requestUrl.origin}/complete-profile?confirmed=true`);
+						return NextResponse.redirect(
+							`${requestUrl.origin}/complete-profile?confirmed=true`,
+						);
 
 					case "recovery":
 						// Password reset confirmation
-						return NextResponse.redirect(`${requestUrl.origin}/auth/reset-password?confirmed=true`);
+						return NextResponse.redirect(
+							`${requestUrl.origin}/auth/reset-password?confirmed=true`,
+						);
 
 					case "email_change":
 						// Email change confirmation
-						return NextResponse.redirect(`${requestUrl.origin}/dashboard/profile?email_changed=true`);
+						return NextResponse.redirect(
+							`${requestUrl.origin}/dashboard/profile?email_changed=true`,
+						);
 
 					case "invite":
 						// Healthcare professional invitation
-						return NextResponse.redirect(`${requestUrl.origin}/complete-profile?invited=true`);
+						return NextResponse.redirect(
+							`${requestUrl.origin}/complete-profile?invited=true`,
+						);
 
 					default: {
 						// Default redirect for other types
 						const sanitizedNext = next.startsWith("/") ? next : "/dashboard";
-						return NextResponse.redirect(`${requestUrl.origin}${sanitizedNext}`);
+						return NextResponse.redirect(
+							`${requestUrl.origin}${sanitizedNext}`,
+						);
 					}
 				}
 			}
 		} catch (_error) {
-			return NextResponse.redirect(`${requestUrl.origin}/auth/error?error=critical_confirmation_error`);
+			return NextResponse.redirect(
+				`${requestUrl.origin}/auth/error?error=critical_confirmation_error`,
+			);
 		}
 	}
 
 	// Invalid or missing parameters
-	return NextResponse.redirect(`${requestUrl.origin}/auth/error?error=invalid_confirmation_link`);
+	return NextResponse.redirect(
+		`${requestUrl.origin}/auth/error?error=invalid_confirmation_link`,
+	);
 }
 
 /**
@@ -109,7 +127,7 @@ export async function GET(request: NextRequest) {
 async function logHealthcareEmailConfirmation(
 	userId: string,
 	confirmationType: string,
-	metadata: Record<string, any>
+	metadata: Record<string, any>,
 ): Promise<void> {
 	try {
 		const cookieStore = cookies();
@@ -128,7 +146,7 @@ async function logHealthcareEmailConfirmation(
 						});
 					},
 				},
-			}
+			},
 		);
 
 		await supabase.from("healthcare_audit_logs").insert({

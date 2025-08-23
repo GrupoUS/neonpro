@@ -53,8 +53,19 @@ const DEFAULT_SECURITY_CONFIG: Required<SecurityHeadersConfig> = {
 			"'unsafe-inline'", // Required for Tailwind CSS
 			"https://fonts.googleapis.com",
 		],
-		imgSrc: ["'self'", "data:", "blob:", "https://*.supabase.co", "https://images.unsplash.com"],
-		connectSrc: ["'self'", "https://*.supabase.co", "wss://*.supabase.co", "https://vercel.live"],
+		imgSrc: [
+			"'self'",
+			"data:",
+			"blob:",
+			"https://*.supabase.co",
+			"https://images.unsplash.com",
+		],
+		connectSrc: [
+			"'self'",
+			"https://*.supabase.co",
+			"wss://*.supabase.co",
+			"https://vercel.live",
+		],
 		fontSrc: ["'self'", "https://fonts.gstatic.com"],
 		objectSrc: ["'none'"],
 		mediaSrc: ["'self'"],
@@ -95,7 +106,10 @@ function createCSPString(csp: SecurityHeadersConfig["csp"]): string {
  * @param config - Security configuration options
  * @returns Modified response with security headers
  */
-export function applySecurityHeaders(response: NextResponse, config: SecurityHeadersConfig = {}): NextResponse {
+export function applySecurityHeaders(
+	response: NextResponse,
+	config: SecurityHeadersConfig = {},
+): NextResponse {
 	const finalConfig = { ...DEFAULT_SECURITY_CONFIG, ...config };
 
 	// Content Security Policy
@@ -123,7 +137,10 @@ export function applySecurityHeaders(response: NextResponse, config: SecurityHea
 	response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
 
 	// Permissions Policy (formerly Feature Policy)
-	response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(), interest-cohort=()");
+	response.headers.set(
+		"Permissions-Policy",
+		"camera=(), microphone=(), geolocation=(), interest-cohort=()",
+	);
 
 	// Cross-Origin Embedder Policy
 	response.headers.set("Cross-Origin-Embedder-Policy", "require-corp");
@@ -149,7 +166,10 @@ export function applySecurityHeaders(response: NextResponse, config: SecurityHea
 /**
  * Validates if a request origin is trusted
  */
-export function isTrustedOrigin(origin: string, trustedDomains: string[]): boolean {
+export function isTrustedOrigin(
+	origin: string,
+	trustedDomains: string[],
+): boolean {
 	if (!origin) {
 		return false;
 	}

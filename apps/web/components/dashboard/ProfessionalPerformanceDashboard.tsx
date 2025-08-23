@@ -27,7 +27,9 @@ export default function ProfessionalPerformanceDashboard({
 	return (
 		<div className="professional-performance-dashboard">
 			<h2>Professional Performance Dashboard</h2>
-			{professionalId && <p>Performance metrics for professional: {professionalId}</p>}
+			{professionalId && (
+				<p>Performance metrics for professional: {professionalId}</p>
+			)}
 			<div className="performance-metrics">
 				{/* Performance metrics would go here */}
 				<div>Performance data placeholder</div>

@@ -10,8 +10,17 @@ beforeEach(() => {
 export const mockCPFValidator = {
 	validate: vi.fn((cpf: string) => {
 		// Mock valid CPF patterns for testing
-		const validCPFs = ["123.456.789-09", "12345678909", "987.654.321-00", "98765432100"];
-		return validCPFs.includes(cpf.replace(/\D/g, "").replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4"));
+		const validCPFs = [
+			"123.456.789-09",
+			"12345678909",
+			"987.654.321-00",
+			"98765432100",
+		];
+		return validCPFs.includes(
+			cpf
+				.replace(/\D/g, "")
+				.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4"),
+		);
 	}),
 	format: vi.fn((cpf: string) => {
 		const numbers = cpf.replace(/\D/g, "");
@@ -132,15 +141,17 @@ export const mockMedicalEncryption = {
 
 // Mock healthcare audit logging
 export const mockAuditLogger = {
-	logAccess: vi.fn(async (action: string, resource: string, userId: string) => ({
-		auditId: "audit-123",
-		action,
-		resource,
-		userId,
-		timestamp: new Date().toISOString(),
-		ipAddress: "127.0.0.1",
-		userAgent: "test-agent",
-	})),
+	logAccess: vi.fn(
+		async (action: string, resource: string, userId: string) => ({
+			auditId: "audit-123",
+			action,
+			resource,
+			userId,
+			timestamp: new Date().toISOString(),
+			ipAddress: "127.0.0.1",
+			userAgent: "test-agent",
+		}),
+	),
 
 	logDataModification: vi.fn(async (data: any) => ({
 		auditId: "audit-modify-123",
@@ -148,13 +159,15 @@ export const mockAuditLogger = {
 		timestamp: new Date().toISOString(),
 	})),
 
-	generateComplianceReport: vi.fn(async (startDate: string, endDate: string) => ({
-		reportId: "compliance-report-123",
-		period: { startDate, endDate },
-		totalEvents: 100,
-		complianceScore: 95,
-		violations: [],
-	})),
+	generateComplianceReport: vi.fn(
+		async (startDate: string, endDate: string) => ({
+			reportId: "compliance-report-123",
+			period: { startDate, endDate },
+			totalEvents: 100,
+			complianceScore: 95,
+			violations: [],
+		}),
+	),
 };
 
 // Mock patient data utilities for testing

@@ -6,7 +6,12 @@
 import { z } from "zod";
 // Validation Configuration Schema
 export const LGPDValidationConfigSchema = z.object({
-	validation_type: z.enum(["data_processing", "consent_management", "data_transfer", "breach_assessment"]),
+	validation_type: z.enum([
+		"data_processing",
+		"consent_management",
+		"data_transfer",
+		"breach_assessment",
+	]),
 	strict_mode: z.boolean().default(true),
 	constitutional_validation: z.boolean().default(true),
 	audit_trail: z.boolean().default(true),
@@ -27,7 +32,7 @@ export const LGPDValidationResultSchema = z.object({
 			article_reference: z.string(),
 			constitutional_impact: z.boolean(),
 			remediation_required: z.boolean(),
-		})
+		}),
 	),
 	constitutional_validation: z.object({
 		privacy_rights_respected: z.boolean(),
@@ -42,7 +47,7 @@ export const LGPDValidationResultSchema = z.object({
 			description: z.string(),
 			implementation_timeline: z.string(),
 			constitutional_requirement: z.boolean(),
-		})
+		}),
 	),
 	audit_trail: z.object({
 		validated_by: z.string(),
@@ -78,7 +83,10 @@ export class LGPDValidator {
 			});
 		}
 		// Validate purpose limitation
-		if (!processingActivity.purpose || processingActivity.purpose.length === 0) {
+		if (
+			!processingActivity.purpose ||
+			processingActivity.purpose.length === 0
+		) {
 			violations.push({
 				category: "Purpose Limitation",
 				description: "Processing purpose not clearly defined",
@@ -100,7 +108,8 @@ export class LGPDValidator {
 			});
 		}
 		// Constitutional validation
-		const constitutionalValidation = await this.validateConstitutionalCompliance(processingActivity);
+		const constitutionalValidation =
+			await this.validateConstitutionalCompliance(processingActivity);
 		// Generate recommendations
 		if (violations.length > 0) {
 			recommendations.push({
@@ -160,7 +169,8 @@ export class LGPDValidator {
 				remediation_required: true,
 			});
 		}
-		const constitutionalValidation = await this.validateConstitutionalCompliance(consentData);
+		const constitutionalValidation =
+			await this.validateConstitutionalCompliance(consentData);
 		const complianceScore = Math.max(0, 10 - violations.length * 2);
 		return {
 			validation_id: validationId,
@@ -201,17 +211,22 @@ export class LGPDValidator {
 		const validationId = `lgpd_transfer_validation_${Date.now()}`;
 		const violations = [];
 		// Validate international transfer safeguards
-		if (transferData.international_transfer && !transferData.adequacy_decision) {
+		if (
+			transferData.international_transfer &&
+			!transferData.adequacy_decision
+		) {
 			violations.push({
 				category: "International Transfer",
-				description: "International data transfer requires adequacy decision or appropriate safeguards",
+				description:
+					"International data transfer requires adequacy decision or appropriate safeguards",
 				severity: "critical",
 				article_reference: "Art. 33º LGPD",
 				constitutional_impact: true,
 				remediation_required: true,
 			});
 		}
-		const constitutionalValidation = await this.validateConstitutionalCompliance(transferData);
+		const constitutionalValidation =
+			await this.validateConstitutionalCompliance(transferData);
 		const complianceScore = Math.max(0, 10 - violations.length * 2);
 		return {
 			validation_id: validationId,
@@ -249,7 +264,9 @@ export async function validateLGPDValidationConfig(config) {
 		LGPDValidationConfigSchema.parse(config);
 	} catch (error) {
 		if (error instanceof z.ZodError) {
-			violations.push(...error.errors.map((e) => `${e.path.join(".")}: ${e.message}`));
+			violations.push(
+				...error.errors.map((e) => `${e.path.join(".")}: ${e.message}`),
+			);
 		}
 	}
 	// Constitutional validation requirements

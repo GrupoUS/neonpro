@@ -77,7 +77,8 @@ type SchedulingRecommendation = {
  * Implements machine learning-inspired algorithms for optimal appointment scheduling
  */
 export class AISchedulingEngine {
-	private readonly professionals: Map<string, HealthcareProfessional> = new Map();
+	private readonly professionals: Map<string, HealthcareProfessional> =
+		new Map();
 	private readonly treatments: Map<string, AestheticTreatment> = new Map();
 
 	constructor() {
@@ -105,7 +106,7 @@ export class AISchedulingEngine {
 			const availableSlots = await this.getAvailableSlots(
 				request.preferred_date_range.start,
 				request.preferred_date_range.end,
-				request.treatment_id
+				request.treatment_id,
 			);
 
 			if (availableSlots.length === 0) {
@@ -116,7 +117,10 @@ export class AISchedulingEngine {
 			}
 
 			// ✅ Generate AI-optimized recommendations
-			const recommendations = await this.generateOptimizedRecommendations(request, availableSlots);
+			const recommendations = await this.generateOptimizedRecommendations(
+				request,
+				availableSlots,
+			);
 
 			// ✅ MANDATORY audit log for healthcare compliance
 			const auditLog = await createAuditLog({
@@ -138,7 +142,10 @@ export class AISchedulingEngine {
 		} catch (error) {
 			return {
 				success: false,
-				error: error instanceof z.ZodError ? "Dados da solicitação inválidos" : "Falha na otimização do agendamento",
+				error:
+					error instanceof z.ZodError
+						? "Dados da solicitação inválidos"
+						: "Falha na otimização do agendamento",
 			};
 		}
 	}
@@ -190,7 +197,10 @@ export class AISchedulingEngine {
 					patient_preference_match: this.calculatePreferenceMatch(slot),
 					professional_expertise_match: professional.efficiency_rating * 20,
 				},
-				estimated_satisfaction: this.calculateEstimatedSatisfaction(slot, professional),
+				estimated_satisfaction: this.calculateEstimatedSatisfaction(
+					slot,
+					professional,
+				),
 			};
 
 			recommendations.push(recommendation);
@@ -202,7 +212,8 @@ export class AISchedulingEngine {
 		const endTime = performance.now();
 		const overallConfidence =
 			recommendations.length > 0
-				? recommendations.reduce((sum, r) => sum + r.confidence_score, 0) / recommendations.length
+				? recommendations.reduce((sum, r) => sum + r.confidence_score, 0) /
+					recommendations.length
 				: 0;
 
 		return {
@@ -226,7 +237,7 @@ export class AISchedulingEngine {
 	 */
 	private async generateOptimizedRecommendations(
 		request: z.infer<typeof AppointmentRequestSchema>,
-		availableSlots: TimeSlot[]
+		availableSlots: TimeSlot[],
 	): Promise<SchedulingRecommendation[]> {
 		const recommendations: SchedulingRecommendation[] = [];
 
@@ -239,7 +250,10 @@ export class AISchedulingEngine {
 			}
 
 			// ✅ Check if professional can perform the treatment
-			const canPerformTreatment = this.checkProfessionalCompetency(professional, treatment);
+			const canPerformTreatment = this.checkProfessionalCompetency(
+				professional,
+				treatment,
+			);
 
 			if (!canPerformTreatment) {
 				continue;
@@ -249,14 +263,28 @@ export class AISchedulingEngine {
 				slot,
 				professional,
 				treatment,
-				confidence_score: this.calculateAdvancedConfidenceScore(slot, professional, treatment, request),
+				confidence_score: this.calculateAdvancedConfidenceScore(
+					slot,
+					professional,
+					treatment,
+					request,
+				),
 				optimization_factors: {
 					time_efficiency: this.calculateTimeEfficiency(slot),
 					resource_utilization: this.calculateResourceUtilization(slot),
-					patient_preference_match: this.calculateAdvancedPreferenceMatch(slot, request),
-					professional_expertise_match: this.calculateExpertiseMatch(professional, treatment),
+					patient_preference_match: this.calculateAdvancedPreferenceMatch(
+						slot,
+						request,
+					),
+					professional_expertise_match: this.calculateExpertiseMatch(
+						professional,
+						treatment,
+					),
 				},
-				estimated_satisfaction: this.calculateEstimatedSatisfaction(slot, professional),
+				estimated_satisfaction: this.calculateEstimatedSatisfaction(
+					slot,
+					professional,
+				),
 			};
 
 			recommendations.push(recommendation);
@@ -270,7 +298,10 @@ export class AISchedulingEngine {
 			}
 
 			// Secondary: Professional expertise
-			return b.optimization_factors.professional_expertise_match - a.optimization_factors.professional_expertise_match;
+			return (
+				b.optimization_factors.professional_expertise_match -
+				a.optimization_factors.professional_expertise_match
+			);
 		});
 	}
 
@@ -282,7 +313,7 @@ export class AISchedulingEngine {
 		slot: TimeSlot,
 		professional: HealthcareProfessional,
 		_treatment: AestheticTreatment,
-		request: z.infer<typeof AppointmentRequestSchema>
+		request: z.infer<typeof AppointmentRequestSchema>,
 	): number {
 		const weights = {
 			time_preference: 0.25, // How well it matches patient's preferred time
@@ -301,9 +332,12 @@ export class AISchedulingEngine {
 		};
 
 		// ✅ Weighted average calculation
-		const weightedScore = Object.entries(weights).reduce((total, [factor, weight]) => {
-			return total + scores[factor as keyof typeof scores] * weight;
-		}, 0);
+		const weightedScore = Object.entries(weights).reduce(
+			(total, [factor, weight]) => {
+				return total + scores[factor as keyof typeof scores] * weight;
+			},
+			0,
+		);
 
 		// ✅ Priority boost for urgent appointments
 		const priorityMultiplier = request.priority === "urgent" ? 1.1 : 1.0;
@@ -315,7 +349,11 @@ export class AISchedulingEngine {
 	 * Get available time slots for a date range and treatment
 	 * @private
 	 */
-	private async getAvailableSlots(startDate: Date, endDate: Date, _treatmentId: string): Promise<TimeSlot[]> {
+	private async getAvailableSlots(
+		startDate: Date,
+		endDate: Date,
+		_treatmentId: string,
+	): Promise<TimeSlot[]> {
 		// ✅ This would integrate with your actual database/calendar system
 		// For now, returning mock data for demonstration
 		const mockSlots: TimeSlot[] = [];
@@ -325,8 +363,20 @@ export class AISchedulingEngine {
 			// Generate morning slots (9 AM - 12 PM)
 			for (let hour = 9; hour < 12; hour++) {
 				mockSlots.push({
-					start: new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), hour, 0),
-					end: new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), hour + 1, 30),
+					start: new Date(
+						currentDate.getFullYear(),
+						currentDate.getMonth(),
+						currentDate.getDate(),
+						hour,
+						0,
+					),
+					end: new Date(
+						currentDate.getFullYear(),
+						currentDate.getMonth(),
+						currentDate.getDate(),
+						hour + 1,
+						30,
+					),
 					available: Math.random() > 0.3, // 70% availability rate
 					professional_id: "prof-1",
 					room_id: "room-1",
@@ -336,8 +386,20 @@ export class AISchedulingEngine {
 			// Generate afternoon slots (2 PM - 6 PM)
 			for (let hour = 14; hour < 18; hour++) {
 				mockSlots.push({
-					start: new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), hour, 0),
-					end: new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), hour + 1, 30),
+					start: new Date(
+						currentDate.getFullYear(),
+						currentDate.getMonth(),
+						currentDate.getDate(),
+						hour,
+						0,
+					),
+					end: new Date(
+						currentDate.getFullYear(),
+						currentDate.getMonth(),
+						currentDate.getDate(),
+						hour + 1,
+						30,
+					),
 					available: Math.random() > 0.4, // 60% availability rate
 					professional_id: "prof-2",
 					room_id: "room-2",
@@ -352,12 +414,17 @@ export class AISchedulingEngine {
 	 * Helper calculation methods
 	 * @private
 	 */
-	private calculateTimePreferenceScore(slot: TimeSlot, request: z.infer<typeof AppointmentRequestSchema>): number {
+	private calculateTimePreferenceScore(
+		slot: TimeSlot,
+		request: z.infer<typeof AppointmentRequestSchema>,
+	): number {
 		const preferredStart = request.preferred_date_range.start;
 		const slotTime = slot.start;
 
 		// Calculate how close the slot is to preferred time
-		const timeDiffHours = Math.abs(slotTime.getTime() - preferredStart.getTime()) / (1000 * 60 * 60);
+		const timeDiffHours =
+			Math.abs(slotTime.getTime() - preferredStart.getTime()) /
+			(1000 * 60 * 60);
 
 		// Score decreases with time difference, max 100 for perfect match
 		return Math.max(0, 100 - timeDiffHours * 2);
@@ -372,7 +439,11 @@ export class AISchedulingEngine {
 		}
 
 		// Good hours: 8-9 AM, 11-12 PM, 4-6 PM
-		if ((hour >= 8 && hour < 9) || (hour > 11 && hour < 14) || (hour > 16 && hour <= 18)) {
+		if (
+			(hour >= 8 && hour < 9) ||
+			(hour > 11 && hour < 14) ||
+			(hour > 16 && hour <= 18)
+		) {
 			return 75;
 		}
 
@@ -392,11 +463,17 @@ export class AISchedulingEngine {
 		return 60; // Weekends
 	}
 
-	private calculateAdvancedPreferenceMatch(slot: TimeSlot, request: z.infer<typeof AppointmentRequestSchema>): number {
+	private calculateAdvancedPreferenceMatch(
+		slot: TimeSlot,
+		request: z.infer<typeof AppointmentRequestSchema>,
+	): number {
 		let score = this.calculateTimePreferenceScore(slot, request);
 
 		// ✅ Boost score if specific professional requested and matched
-		if (request.preferred_professional_id && slot.professional_id === request.preferred_professional_id) {
+		if (
+			request.preferred_professional_id &&
+			slot.professional_id === request.preferred_professional_id
+		) {
 			score += 20;
 		}
 
@@ -408,27 +485,38 @@ export class AISchedulingEngine {
 		return 70;
 	}
 
-	private calculateExpertiseMatch(professional: HealthcareProfessional, treatment: AestheticTreatment): number {
+	private calculateExpertiseMatch(
+		professional: HealthcareProfessional,
+		treatment: AestheticTreatment,
+	): number {
 		// Check if professional's specializations match treatment requirements
-		const matchingSpecializations = professional.specializations.filter((spec) =>
-			treatment.professional_requirements.includes(spec)
+		const matchingSpecializations = professional.specializations.filter(
+			(spec) => treatment.professional_requirements.includes(spec),
 		);
 
-		const matchRatio = matchingSpecializations.length / treatment.professional_requirements.length;
+		const matchRatio =
+			matchingSpecializations.length /
+			treatment.professional_requirements.length;
 		return Math.round(matchRatio * 100);
 	}
 
-	private calculateEstimatedSatisfaction(slot: TimeSlot, professional: HealthcareProfessional): number {
+	private calculateEstimatedSatisfaction(
+		slot: TimeSlot,
+		professional: HealthcareProfessional,
+	): number {
 		const timeScore = this.calculateTimeEfficiency(slot);
 		const professionalScore = professional.efficiency_rating * 20;
 
 		return Math.round((timeScore + professionalScore) / 2);
 	}
 
-	private checkProfessionalCompetency(professional: HealthcareProfessional, treatment: AestheticTreatment): boolean {
+	private checkProfessionalCompetency(
+		professional: HealthcareProfessional,
+		treatment: AestheticTreatment,
+	): boolean {
 		// ✅ Check if professional has required certifications/specializations
 		return treatment.professional_requirements.every((requirement) =>
-			professional.specializations.includes(requirement)
+			professional.specializations.includes(requirement),
 		);
 	}
 
@@ -477,7 +565,11 @@ export class SchedulingUtils {
 	/**
 	 * Validate appointment timing against Brazilian healthcare regulations
 	 */
-	static validateHealthcareSchedulingCompliance(appointment: { start: Date; end: Date; treatment_type: string }): {
+	static validateHealthcareSchedulingCompliance(appointment: {
+		start: Date;
+		end: Date;
+		treatment_type: string;
+	}): {
 		isValid: boolean;
 		violations: string[];
 	} {
@@ -501,7 +593,10 @@ export class SchedulingUtils {
 		const dayOfWeek = appointment.start.getDay();
 		const restrictedWeekendTreatments = ["surgery", "laser_intensive"];
 
-		if ((dayOfWeek === 0 || dayOfWeek === 6) && restrictedWeekendTreatments.includes(appointment.treatment_type)) {
+		if (
+			(dayOfWeek === 0 || dayOfWeek === 6) &&
+			restrictedWeekendTreatments.includes(appointment.treatment_type)
+		) {
 			violations.push("Tratamento não permitido em fins de semana");
 		}
 

@@ -53,7 +53,10 @@ export class TurborepoDockerOptimizer {
 	private readonly config: DockerOptimizationConfig;
 	private readonly projectRoot: string;
 
-	constructor(projectRoot: string, config: Partial<DockerOptimizationConfig> = {}) {
+	constructor(
+		projectRoot: string,
+		config: Partial<DockerOptimizationConfig> = {},
+	) {
 		this.projectRoot = projectRoot;
 		this.config = {
 			targetApp: "web",
@@ -71,8 +74,10 @@ export class TurborepoDockerOptimizer {
 					PNPM_VERSION: "8",
 				},
 				labels: {
-					"org.opencontainers.image.source": "https://github.com/neonpro/healthcare",
-					"org.opencontainers.image.description": "NeonPro Healthcare Management System",
+					"org.opencontainers.image.source":
+						"https://github.com/neonpro/healthcare",
+					"org.opencontainers.image.description":
+						"NeonPro Healthcare Management System",
 					"healthcare.compliance.lgpd": "true",
 					"healthcare.compliance.anvisa": "true",
 					"healthcare.compliance.cfm": "true",
@@ -100,10 +105,14 @@ export class TurborepoDockerOptimizer {
 
 		// Step 5: Calculate optimization metrics
 		const buildSize = await this.calculateBuildSize();
-		const optimizationScore = this.calculateOptimizationScore(buildSize, healthcareValidation);
+		const optimizationScore = this.calculateOptimizationScore(
+			buildSize,
+			healthcareValidation,
+		);
 
 		// Step 6: Generate recommendations
-		const recommendations = this.generateOptimizationRecommendations(healthcareValidation);
+		const recommendations =
+			this.generateOptimizationRecommendations(healthcareValidation);
 
 		const result: DockerOptimizationResult = {
 			success: true,
@@ -139,7 +148,9 @@ export class TurborepoDockerOptimizer {
 
 			return prunedPath;
 		} catch (error) {
-			throw new Error(`Turbo prune failed: ${error instanceof Error ? error.message : "Unknown error"}`);
+			throw new Error(
+				`Turbo prune failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+			);
 		}
 	}
 
@@ -293,17 +304,23 @@ CMD ["node", "apps/web/server.js"]`;
 	private async createDockerOptimizationFiles(): Promise<void> {
 		// Create .dockerignore for healthcare
 		const dockerignore = this.createHealthcareDockerignore();
-		await fs.writeFile(join(this.projectRoot, ".dockerignore.healthcare"), dockerignore);
+		await fs.writeFile(
+			join(this.projectRoot, ".dockerignore.healthcare"),
+			dockerignore,
+		);
 
 		// Create docker-compose for healthcare development
 		const dockerCompose = this.createHealthcareDockerCompose();
-		await fs.writeFile(join(this.projectRoot, "docker-compose.healthcare.yml"), dockerCompose);
+		await fs.writeFile(
+			join(this.projectRoot, "docker-compose.healthcare.yml"),
+			dockerCompose,
+		);
 
 		// Create healthcare Docker configuration
 		const healthcareConfig = this.createHealthcareDockerConfig();
 		await fs.writeFile(
 			join(this.projectRoot, "healthcare-docker-config.json"),
-			JSON.stringify(healthcareConfig, null, 2)
+			JSON.stringify(healthcareConfig, null, 2),
 		);
 	}
 
@@ -476,17 +493,22 @@ networks:
 			validation.auditLogging,
 			validation.encryptionEnabled,
 		];
-		validation.complianceScore = (checks.filter(Boolean).length / checks.length) * 10;
+		validation.complianceScore =
+			(checks.filter(Boolean).length / checks.length) * 10;
 		return validation;
 	}
 
 	private validateLGPDCompliance(): boolean {
-		return this.config.healthcareSpecific && this.config.dockerOptions.healthcareCompliance;
+		return (
+			this.config.healthcareSpecific &&
+			this.config.dockerOptions.healthcareCompliance
+		);
 	}
 
 	private validateSecurityHardening(): boolean {
 		return (
-			this.config.dockerOptions.buildArgs.NODE_VERSION.includes("alpine") && this.config.dockerOptions.securityScanning
+			this.config.dockerOptions.buildArgs.NODE_VERSION.includes("alpine") &&
+			this.config.dockerOptions.securityScanning
 		);
 	}
 
@@ -503,7 +525,10 @@ networks:
 		return 150; // MB
 	}
 
-	private calculateOptimizationScore(buildSize: number, healthcareValidation: HealthcareDockerValidation): number {
+	private calculateOptimizationScore(
+		buildSize: number,
+		healthcareValidation: HealthcareDockerValidation,
+	): number {
 		let score = 0;
 
 		// Build size optimization (40% weight)
@@ -520,21 +545,28 @@ networks:
 			this.config.dockerOptions.healthcareCompliance,
 			this.config.healthcareSpecific,
 		];
-		const featureScore = (features.filter(Boolean).length / features.length) * 2;
+		const featureScore =
+			(features.filter(Boolean).length / features.length) * 2;
 		score += featureScore;
 
 		return Math.round(score * 10) / 10;
 	}
 
-	private generateOptimizationRecommendations(healthcareValidation: HealthcareDockerValidation): string[] {
+	private generateOptimizationRecommendations(
+		healthcareValidation: HealthcareDockerValidation,
+	): string[] {
 		const recommendations: string[] = [];
 
 		if (!healthcareValidation.lgpdCompliant) {
-			recommendations.push("Implement LGPD compliance configurations in Docker setup");
+			recommendations.push(
+				"Implement LGPD compliance configurations in Docker setup",
+			);
 		}
 
 		if (!healthcareValidation.securityHardened) {
-			recommendations.push("Enable security hardening features (non-root user, read-only filesystem)");
+			recommendations.push(
+				"Enable security hardening features (non-root user, read-only filesystem)",
+			);
 		}
 
 		recommendations.push("Regular security scanning of Docker images");
@@ -543,8 +575,13 @@ networks:
 		return recommendations;
 	}
 
-	private async generateOptimizationReport(result: DockerOptimizationResult): Promise<void> {
-		const reportPath = join(this.projectRoot, "docker-optimization-report.json");
+	private async generateOptimizationReport(
+		result: DockerOptimizationResult,
+	): Promise<void> {
+		const reportPath = join(
+			this.projectRoot,
+			"docker-optimization-report.json",
+		);
 
 		const report = {
 			timestamp: new Date().toISOString(),
@@ -567,13 +604,16 @@ networks:
 // Utility functions
 export async function optimizeForDocker(
 	projectRoot: string,
-	config: Partial<DockerOptimizationConfig> = {}
+	config: Partial<DockerOptimizationConfig> = {},
 ): Promise<DockerOptimizationResult> {
 	const optimizer = new TurborepoDockerOptimizer(projectRoot, config);
 	return optimizer.optimizeForDocker();
 }
 
-export async function generateHealthcareDockerfile(projectRoot: string, targetApp = "web"): Promise<string> {
+export async function generateHealthcareDockerfile(
+	projectRoot: string,
+	targetApp = "web",
+): Promise<string> {
 	const optimizer = new TurborepoDockerOptimizer(projectRoot, { targetApp });
 	return optimizer.generateHealthcareDockerfile();
 }

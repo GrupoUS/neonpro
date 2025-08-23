@@ -42,14 +42,18 @@ export function RouterError({ error, reset }: RouterErrorProps) {
 
 				<div className="space-y-2">
 					<h1 className="font-bold text-2xl">Erro de Navegação</h1>
-					<p className="text-muted-foreground">Ocorreu um erro inesperado durante a navegação.</p>
+					<p className="text-muted-foreground">
+						Ocorreu um erro inesperado durante a navegação.
+					</p>
 				</div>
 
 				<Alert>
 					<AlertTriangle className="h-4 w-4" />
 					<AlertTitle>Detalhes do Erro</AlertTitle>
 					<AlertDescription className="mt-2">
-						<code className="block rounded bg-muted p-2 text-sm">{error.message}</code>
+						<code className="block rounded bg-muted p-2 text-sm">
+							{error.message}
+						</code>
 					</AlertDescription>
 				</Alert>
 
@@ -68,8 +72,15 @@ export function RouterError({ error, reset }: RouterErrorProps) {
 				</div>
 
 				<div className="border-t pt-4">
-					<p className="mb-2 text-muted-foreground text-sm">Se o problema persistir, entre em contato com o suporte.</p>
-					<Button className="text-xs" onClick={handleReportError} size="sm" variant="ghost">
+					<p className="mb-2 text-muted-foreground text-sm">
+						Se o problema persistir, entre em contato com o suporte.
+					</p>
+					<Button
+						className="text-xs"
+						onClick={handleReportError}
+						size="sm"
+						variant="ghost"
+					>
 						Reportar Erro
 					</Button>
 				</div>

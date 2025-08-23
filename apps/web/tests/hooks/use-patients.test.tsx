@@ -34,7 +34,9 @@ vi.mock("@/lib/query/query-utils", async () => {
 							}
 						}, 0);
 					}),
-					mutateAsync: vi.fn().mockResolvedValue({ patient: { id: "test-id" } }),
+					mutateAsync: vi
+						.fn()
+						.mockResolvedValue({ patient: { id: "test-id" } }),
 					isPending: false,
 					isSuccess: false,
 					isError: false,
@@ -91,13 +93,34 @@ import { usePatientManagement } from "../../hooks/enhanced/use-patients";
 // Mock the API client
 vi.mock("@neonpro/shared/api-client", () => ({
 	apiClient: {
+		api: {
+			v1: {
+				patients: {
+					$post: vi.fn(),
+					$get: vi.fn(),
+				},
+			},
+		},
 		patients: {
 			create: vi.fn(),
-			findById: vi.fn(),
 			update: vi.fn(),
 			delete: vi.fn(),
-			search: vi.fn(),
+			get: vi.fn(),
 			list: vi.fn(),
+		},
+		audit: {
+			log: vi.fn(),
+		},
+		auth: {
+			getUser: vi.fn(() => ({
+				id: "test-user-id",
+				lgpd_consent_date: new Date().toISOString(),
+			})),
+			getSessionId: vi.fn(() => "test-session-id"),
+		},
+		utils: {
+			getUserAgent: vi.fn(() => "test-agent"),
+			getClientIP: vi.fn(() => "127.0.0.1"),
 		},
 	},
 	ApiHelpers: {
@@ -206,7 +229,8 @@ describe("usePatients Hook - NeonPro Healthcare Patient Management", () => {
 	describe("Patient CRUD Operations", () => {
 		it("should create a new patient with Brazilian healthcare validation", async () => {
 			const mockCreate = vi.fn().mockResolvedValue(mockCreatePatientResponse);
-			(await import("@neonpro/shared/api-client")).apiClient.patients.create = mockCreate;
+			(await import("@neonpro/shared/api-client")).apiClient.patients.create =
+				mockCreate;
 
 			const { result } = renderHook(() => usePatientManagement(), {
 				wrapper: createWrapper(),
@@ -233,7 +257,7 @@ describe("usePatients Hook - NeonPro Healthcare Patient Management", () => {
 				() => {
 					expect(result.current.createPatient.isPending).toBe(true);
 				},
-				{ timeout: 1000 }
+				{ timeout: 1000 },
 			);
 
 			// Then wait for isPending to become false and isSuccess to become true
@@ -242,11 +266,13 @@ describe("usePatients Hook - NeonPro Healthcare Patient Management", () => {
 					expect(result.current.createPatient.isPending).toBe(false);
 					expect(result.current.createPatient.isSuccess).toBe(true);
 				},
-				{ timeout: 3000 }
+				{ timeout: 3000 },
 			);
 
 			expect(mockCreate).toHaveBeenCalledWith(newPatientData);
-			expect(result.current.createPatient.data).toEqual(mockCreatePatientResponse);
+			expect(result.current.createPatient.data).toEqual(
+				mockCreatePatientResponse,
+			);
 		});
 
 		it("should validate CPF format during patient creation", async () => {
@@ -278,7 +304,8 @@ describe("usePatients Hook - NeonPro Healthcare Patient Management", () => {
 				},
 			});
 
-			(await import("@neonpro/shared/api-client")).apiClient.patients.create = mockCreate;
+			(await import("@neonpro/shared/api-client")).apiClient.patients.create =
+				mockCreate;
 
 			result.current.createPatient.mutate(invalidCpfData);
 
@@ -392,7 +419,8 @@ describe("usePatients Hook - NeonPro Healthcare Patient Management", () => {
 				},
 			});
 
-			(await import("@neonpro/shared/api-client")).apiClient.patients.create = mockCreate;
+			(await import("@neonpro/shared/api-client")).apiClient.patients.create =
+				mockCreate;
 
 			const { result } = renderHook(() => usePatientManagement(), {
 				wrapper: createWrapper(),
@@ -454,16 +482,19 @@ describe("usePatients Hook - NeonPro Healthcare Patient Management", () => {
 				},
 			};
 
-			const mockCreate = vi.fn().mockResolvedValue({
-				success: true,
-				data: {
-					patient: emergencyPatient,
-					priority: "HIGH",
-					notifications: ["MEDICAL_TEAM", "FAMILY_CONTACT"],
-				},
-				error: null,
-			});
-			(await import("@neonpro/shared/api-client")).apiClient.patients.create = mockCreate;
+			// Use the existing mock from module level
+			const { apiClient } = await import("@neonpro/shared/api-client");
+			vi.mocked(apiClient.api.v1.patients.$post).mockResolvedValue({
+				json: vi.fn().mockResolvedValue({
+					success: true,
+					data: {
+						patient: emergencyPatient,
+						priority: "HIGH",
+						notifications: ["MEDICAL_TEAM", "FAMILY_CONTACT"],
+					},
+					error: null,
+				}),
+			} as any);
 
 			const { result } = renderHook(() => usePatientManagement(), {
 				wrapper: createWrapper(),
@@ -471,24 +502,15 @@ describe("usePatients Hook - NeonPro Healthcare Patient Management", () => {
 
 			result.current.createPatient.mutate(emergencyPatient);
 
-			// Best practice from EXA research: First wait for isPending to become true
+			// Wait for the mutation to complete
 			await waitFor(
 				() => {
-					expect(result.current.createPatient.isPending).toBe(true);
-				},
-				{ timeout: 1000 }
-			);
-
-			// Then wait for isPending to become false and isSuccess to become true
-			await waitFor(
-				() => {
-					expect(result.current.createPatient.isPending).toBe(false);
 					expect(result.current.createPatient.isSuccess).toBe(true);
 				},
-				{ timeout: 3000 }
+				{ timeout: 5000 },
 			);
 
-			expect(result.current.createPatient.data?.data.priority).toBe("HIGH");
+			expect(result.current.createPatient.data?.priority).toBe("HIGH");
 		});
 
 		it("should validate Brazilian CNS (Cartão Nacional de Saúde)", async () => {

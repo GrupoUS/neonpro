@@ -20,7 +20,10 @@ patientRoutes.post("/", async (c) => {
 
 	// Validate required fields
 	if (!(body.name && body.email) || body.lgpd_consent === false) {
-		return c.json({ error: "Invalid patient data or missing LGPD consent" }, 422);
+		return c.json(
+			{ error: "Invalid patient data or missing LGPD consent" },
+			422,
+		);
 	}
 
 	return c.json({ message: "Create patient - not implemented" }, 501);

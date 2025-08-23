@@ -23,7 +23,9 @@ export function MfaStatus({ onSetupMfa }: MfaStatusProps) {
 
 	const [showDisableConfirm, setShowDisableConfirm] = useState(false);
 	const [showBackupCodes, setShowBackupCodes] = useState(false);
-	const [generatedBackupCodes, setGeneratedBackupCodes] = useState<string[]>([]);
+	const [generatedBackupCodes, setGeneratedBackupCodes] = useState<string[]>(
+		[],
+	);
 
 	const handleDisableMfa = async () => {
 		try {
@@ -76,7 +78,9 @@ export function MfaStatus({ onSetupMfa }: MfaStatusProps) {
 				<h3 className="font-semibold text-lg">Two-Factor Authentication</h3>
 				<div
 					className={`rounded-full px-2 py-1 text-xs ${
-						isEnabled ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+						isEnabled
+							? "bg-green-100 text-green-800"
+							: "bg-red-100 text-red-800"
 					}`}
 				>
 					{isEnabled ? "Enabled" : "Disabled"}
@@ -86,7 +90,10 @@ export function MfaStatus({ onSetupMfa }: MfaStatusProps) {
 			{error && (
 				<div className="rounded border border-red-200 bg-red-50 p-3 text-red-700 text-sm">
 					{error}
-					<button className="ml-2 text-red-800 hover:text-red-900" onClick={clearError}>
+					<button
+						className="ml-2 text-red-800 hover:text-red-900"
+						onClick={clearError}
+					>
 						×
 					</button>
 				</div>
@@ -96,7 +103,11 @@ export function MfaStatus({ onSetupMfa }: MfaStatusProps) {
 				<div className="space-y-4">
 					<div className="rounded border border-green-200 bg-green-50 p-3">
 						<div className="flex items-center space-x-2">
-							<svg className="h-5 w-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+							<svg
+								className="h-5 w-5 text-green-600"
+								fill="currentColor"
+								viewBox="0 0 20 20"
+							>
 								<path
 									clipRule="evenodd"
 									d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -138,7 +149,9 @@ export function MfaStatus({ onSetupMfa }: MfaStatusProps) {
 							{hasBackupCodes() && (
 								<div className="flex items-center space-x-2">
 									<span className="h-2 w-2 rounded-full bg-blue-500" />
-									<span>Backup Codes ({config.backupCodesCount} remaining)</span>
+									<span>
+										Backup Codes ({config.backupCodesCount} remaining)
+									</span>
 								</div>
 							)}
 						</div>
@@ -163,9 +176,12 @@ export function MfaStatus({ onSetupMfa }: MfaStatusProps) {
 
 					{showDisableConfirm && (
 						<div className="rounded border border-red-200 bg-red-50 p-4">
-							<h4 className="font-medium text-red-800">Disable Two-Factor Authentication?</h4>
+							<h4 className="font-medium text-red-800">
+								Disable Two-Factor Authentication?
+							</h4>
 							<p className="mt-1 text-red-700 text-sm">
-								This will make your account less secure. Are you sure you want to continue?
+								This will make your account less secure. Are you sure you want
+								to continue?
 							</p>
 							<div className="mt-3 flex space-x-2">
 								<button
@@ -189,7 +205,11 @@ export function MfaStatus({ onSetupMfa }: MfaStatusProps) {
 				<div className="space-y-4">
 					<div className="rounded border border-yellow-200 bg-yellow-50 p-3">
 						<div className="flex items-center space-x-2">
-							<svg className="h-5 w-5 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+							<svg
+								className="h-5 w-5 text-yellow-600"
+								fill="currentColor"
+								viewBox="0 0 20 20"
+							>
 								<path
 									clipRule="evenodd"
 									d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
@@ -198,12 +218,17 @@ export function MfaStatus({ onSetupMfa }: MfaStatusProps) {
 							</svg>
 							<div>
 								<div className="font-medium">MFA is not enabled</div>
-								<div className="text-gray-600 text-sm">Add an extra layer of security to your account</div>
+								<div className="text-gray-600 text-sm">
+									Add an extra layer of security to your account
+								</div>
 							</div>
 						</div>
 					</div>
 
-					<button className="w-full rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700" onClick={onSetupMfa}>
+					<button
+						className="w-full rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+						onClick={onSetupMfa}
+					>
 						Setup Two-Factor Authentication
 					</button>
 				</div>
@@ -212,14 +237,20 @@ export function MfaStatus({ onSetupMfa }: MfaStatusProps) {
 			{showBackupCodes && generatedBackupCodes.length > 0 && (
 				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
 					<div className="mx-4 w-full max-w-md rounded-lg bg-white p-6">
-						<h3 className="mb-4 font-semibold text-lg">Backup Codes Generated</h3>
+						<h3 className="mb-4 font-semibold text-lg">
+							Backup Codes Generated
+						</h3>
 						<p className="mb-4 text-gray-600 text-sm">
-							Save these codes in a safe place. Each code can only be used once to access your account if you lose
-							access to your primary MFA method.
+							Save these codes in a safe place. Each code can only be used once
+							to access your account if you lose access to your primary MFA
+							method.
 						</p>
 						<div className="mb-4 grid grid-cols-2 gap-2 font-mono text-sm">
 							{generatedBackupCodes.map((code, index) => (
-								<div className="rounded border bg-gray-100 p-2 text-center" key={index}>
+								<div
+									className="rounded border bg-gray-100 p-2 text-center"
+									key={index}
+								>
 									{code}
 								</div>
 							))}
@@ -228,7 +259,9 @@ export function MfaStatus({ onSetupMfa }: MfaStatusProps) {
 							<button
 								className="flex-1 rounded bg-gray-600 px-4 py-2 text-white hover:bg-gray-700"
 								onClick={() => {
-									navigator.clipboard.writeText(generatedBackupCodes.join("\n"));
+									navigator.clipboard.writeText(
+										generatedBackupCodes.join("\n"),
+									);
 								}}
 							>
 								Copy Codes

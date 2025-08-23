@@ -7,7 +7,12 @@
 
 import { z } from "zod";
 import type { ComplianceScore, ConsentRecord } from "./types";
-import { ComplianceStatus, HealthcareConsentType, LGPDDataSubjectRights, PatientDataClassification } from "./types";
+import {
+	ComplianceStatus,
+	HealthcareConsentType,
+	LGPDDataSubjectRights,
+	PatientDataClassification,
+} from "./types";
 
 /**
  * LGPD Legal Basis (Art. 7º)
@@ -110,14 +115,17 @@ export class LGPDComplianceService {
 		// Validate legal basis for health data (Art. 11º)
 		if (
 			request.consentType === HealthcareConsentType.TREATMENT &&
-			![LGPDLegalBasis.HEALTH_PROTECTION, LGPDLegalBasis.CONSENT].includes(request.legalBasis)
+			![LGPDLegalBasis.HEALTH_PROTECTION, LGPDLegalBasis.CONSENT].includes(
+				request.legalBasis,
+			)
 		) {
 			violations.push("Invalid legal basis for health data processing");
 			score -= 3;
 		}
 
 		return {
-			valid: violations.length === 0 && score >= this.constitutionalQualityStandard,
+			valid:
+				violations.length === 0 && score >= this.constitutionalQualityStandard,
 			score: Math.max(0, score) as ComplianceScore,
 			violations,
 		};
@@ -127,7 +135,7 @@ export class LGPDComplianceService {
 	 * Process Data Subject Rights Request
 	 */
 	async processDataSubjectRequest(
-		request: Omit<LGPDDataSubjectRequest, "id" | "requestedAt" | "status">
+		request: Omit<LGPDDataSubjectRequest, "id" | "requestedAt" | "status">,
 	): Promise<LGPDDataSubjectRequest> {
 		const dataSubjectRequest: LGPDDataSubjectRequest = {
 			id: crypto.randomUUID(),
@@ -157,7 +165,7 @@ export class LGPDComplianceService {
 	 * Report Data Breach (Art. 48)
 	 */
 	async reportDataBreach(
-		breach: Omit<LGPDBreachNotification, "id" | "reportedAt" | "status">
+		breach: Omit<LGPDBreachNotification, "id" | "reportedAt" | "status">,
 	): Promise<LGPDBreachNotification> {
 		const notification: LGPDBreachNotification = {
 			id: crypto.randomUUID(),
@@ -167,7 +175,8 @@ export class LGPDComplianceService {
 		};
 
 		// Check if ANPD notification is required
-		const requiresANPDNotification = this.requiresANPDNotification(notification);
+		const requiresANPDNotification =
+			this.requiresANPDNotification(notification);
 
 		if (requiresANPDNotification) {
 			// Schedule ANPD notification within 72 hours
@@ -190,7 +199,8 @@ export class LGPDComplianceService {
 
 		const now = new Date();
 		const expired = now > expiresAt;
-		const renewalRequired = expired || expiresAt.getTime() - now.getTime() < 30 * 24 * 60 * 60 * 1000; // 30 days
+		const renewalRequired =
+			expired || expiresAt.getTime() - now.getTime() < 30 * 24 * 60 * 60 * 1000; // 30 days
 
 		return {
 			expired,
@@ -233,25 +243,33 @@ export class LGPDComplianceService {
 	}
 
 	// Private helper methods
-	private async processAccessRequest(request: LGPDDataSubjectRequest): Promise<LGPDDataSubjectRequest> {
+	private async processAccessRequest(
+		request: LGPDDataSubjectRequest,
+	): Promise<LGPDDataSubjectRequest> {
 		request.status = "IN_PROGRESS";
 		// Implementation would gather patient data
 		return request;
 	}
 
-	private async processRectificationRequest(request: LGPDDataSubjectRequest): Promise<LGPDDataSubjectRequest> {
+	private async processRectificationRequest(
+		request: LGPDDataSubjectRequest,
+	): Promise<LGPDDataSubjectRequest> {
 		request.status = "IN_PROGRESS";
 		// Implementation would update patient data
 		return request;
 	}
 
-	private async processErasureRequest(request: LGPDDataSubjectRequest): Promise<LGPDDataSubjectRequest> {
+	private async processErasureRequest(
+		request: LGPDDataSubjectRequest,
+	): Promise<LGPDDataSubjectRequest> {
 		request.status = "IN_PROGRESS";
 		// Implementation would delete patient data
 		return request;
 	}
 
-	private async processPortabilityRequest(request: LGPDDataSubjectRequest): Promise<LGPDDataSubjectRequest> {
+	private async processPortabilityRequest(
+		request: LGPDDataSubjectRequest,
+	): Promise<LGPDDataSubjectRequest> {
 		request.status = "IN_PROGRESS";
 		// Implementation would export patient data
 		return request;
@@ -263,7 +281,9 @@ export class LGPDComplianceService {
 			breach.severity === "HIGH" ||
 			breach.severity === "CRITICAL" ||
 			breach.affectedDataSubjects > 100 ||
-			breach.dataCategories.includes(PatientDataClassification.SENSITIVE_PERSONAL) ||
+			breach.dataCategories.includes(
+				PatientDataClassification.SENSITIVE_PERSONAL,
+			) ||
 			breach.dataCategories.includes(PatientDataClassification.HEALTH_DATA)
 		);
 	}

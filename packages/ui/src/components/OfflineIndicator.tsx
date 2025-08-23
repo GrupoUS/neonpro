@@ -15,7 +15,12 @@ import { cn } from "../utils/cn";
 import { Badge } from "./Badge";
 import { Button } from "./Button";
 
-export type ConnectionStatus = "online" | "offline" | "unstable" | "reconnecting" | "error";
+export type ConnectionStatus =
+	| "online"
+	| "offline"
+	| "unstable"
+	| "reconnecting"
+	| "error";
 
 export type OfflineCapability = "full" | "limited" | "emergency_only" | "none";
 
@@ -71,7 +76,12 @@ export type OfflineIndicatorProps = {
 	/**
 	 * Position of the indicator
 	 */
-	position?: "top-left" | "top-right" | "bottom-left" | "bottom-right" | "inline";
+	position?:
+		| "top-left"
+		| "top-right"
+		| "bottom-left"
+		| "bottom-right"
+		| "inline";
 	/**
 	 * Size of the indicator
 	 */
@@ -253,7 +263,10 @@ const SystemHealthIndicator: React.FC<{
 					const status = connectionStatusInfo[item.status];
 
 					return (
-						<div className="flex items-center justify-between text-sm" key={item.label}>
+						<div
+							className="flex items-center justify-between text-sm"
+							key={item.label}
+						>
 							<div className="flex items-center gap-2">
 								<Icon className={cn("h-4 w-4", status.color)} />
 								<span>{item.label}</span>
@@ -278,7 +291,12 @@ const SystemHealthIndicator: React.FC<{
 			</div>
 
 			{onViewSystemStatus && (
-				<Button className="w-full" onClick={onViewSystemStatus} size="sm" variant="outline">
+				<Button
+					className="w-full"
+					onClick={onViewSystemStatus}
+					size="sm"
+					variant="outline"
+				>
 					Ver Status Completo
 				</Button>
 			)}
@@ -326,21 +344,30 @@ const ConstitutionalResilienceInfo: React.FC<{
 
 			<div className="space-y-2">
 				{items.map((item) => {
-					const isActive = constitutionalInfo[item.key as keyof typeof constitutionalInfo];
+					const isActive =
+						constitutionalInfo[item.key as keyof typeof constitutionalInfo];
 
 					return (
 						<div className="flex items-start gap-3" key={item.key}>
 							<div
 								className={cn(
 									"mt-0.5 flex h-5 w-5 items-center justify-center rounded-full",
-									isActive ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+									isActive
+										? "bg-green-100 text-green-700"
+										: "bg-red-100 text-red-700",
 								)}
 							>
-								{isActive ? <CheckCircle className="h-3 w-3" /> : <AlertTriangle className="h-3 w-3" />}
+								{isActive ? (
+									<CheckCircle className="h-3 w-3" />
+								) : (
+									<AlertTriangle className="h-3 w-3" />
+								)}
 							</div>
 							<div className="min-w-0 flex-1">
 								<div className="font-medium text-sm">{item.label}</div>
-								<div className="text-muted-foreground text-xs">{item.description}</div>
+								<div className="text-muted-foreground text-xs">
+									{item.description}
+								</div>
 							</div>
 						</div>
 					);
@@ -350,7 +377,10 @@ const ConstitutionalResilienceInfo: React.FC<{
 	);
 };
 
-export const OfflineIndicator = React.forwardRef<HTMLDivElement, OfflineIndicatorProps>(
+export const OfflineIndicator = React.forwardRef<
+	HTMLDivElement,
+	OfflineIndicatorProps
+>(
 	(
 		{
 			connectionStatus,
@@ -368,7 +398,7 @@ export const OfflineIndicator = React.forwardRef<HTMLDivElement, OfflineIndicato
 			className,
 			...props
 		},
-		ref
+		ref,
 	) => {
 		const [expanded, setExpanded] = React.useState(false);
 		const statusInfo = connectionStatusInfo[connectionStatus];
@@ -399,7 +429,7 @@ export const OfflineIndicator = React.forwardRef<HTMLDivElement, OfflineIndicato
 						statusInfo.bgColor,
 						statusInfo.borderColor,
 						positionClasses[position],
-						className
+						className,
 					)}
 					onClick={() => setExpanded(true)}
 					ref={ref}
@@ -426,7 +456,7 @@ export const OfflineIndicator = React.forwardRef<HTMLDivElement, OfflineIndicato
 				className={cn(
 					"rounded-lg border bg-card p-4 text-card-foreground shadow-lg",
 					position !== "inline" && positionClasses[position],
-					className
+					className,
 				)}
 				ref={ref}
 				{...props}
@@ -436,19 +466,34 @@ export const OfflineIndicator = React.forwardRef<HTMLDivElement, OfflineIndicato
 				{/* Header */}
 				<div className="mb-4 flex items-center justify-between">
 					<div className="flex items-center gap-3">
-						<div className={cn("flex h-8 w-8 items-center justify-center rounded-full", statusInfo.bgColor)}>
+						<div
+							className={cn(
+								"flex h-8 w-8 items-center justify-center rounded-full",
+								statusInfo.bgColor,
+							)}
+						>
 							<StatusIcon className={cn("h-4 w-4", statusInfo.color)} />
 						</div>
 						<div>
-							<h3 className={cn("font-semibold", sizeClasses[size])} id="offline-indicator-title">
+							<h3
+								className={cn("font-semibold", sizeClasses[size])}
+								id="offline-indicator-title"
+							>
 								{statusInfo.label}
 							</h3>
-							<p className="text-muted-foreground text-sm">{statusInfo.description}</p>
+							<p className="text-muted-foreground text-sm">
+								{statusInfo.description}
+							</p>
 						</div>
 					</div>
 
 					{position !== "inline" && (
-						<Button className="h-6 w-6" onClick={() => setExpanded(false)} size="icon" variant="ghost">
+						<Button
+							className="h-6 w-6"
+							onClick={() => setExpanded(false)}
+							size="icon"
+							variant="ghost"
+						>
 							<CloudOff className="h-3 w-3" />
 						</Button>
 					)}
@@ -497,18 +542,23 @@ export const OfflineIndicator = React.forwardRef<HTMLDivElement, OfflineIndicato
 
 								<div>
 									<span className="text-muted-foreground">Última sync:</span>
-									<div className="font-medium">{formatLastSync(offlineData.lastSync)}</div>
+									<div className="font-medium">
+										{formatLastSync(offlineData.lastSync)}
+									</div>
 								</div>
 
 								<div>
 									<span className="text-muted-foreground">Armazenamento:</span>
 									<div className="font-medium">
-										{formatBytes(offlineData.storageUsed)} / {formatBytes(offlineData.storageLimit)}
+										{formatBytes(offlineData.storageUsed)} /{" "}
+										{formatBytes(offlineData.storageLimit)}
 									</div>
 								</div>
 
 								<div>
-									<span className="text-muted-foreground">Dados emergência:</span>
+									<span className="text-muted-foreground">
+										Dados emergência:
+									</span>
 									<div className="flex items-center gap-1">
 										{offlineData.emergencyDataAvailable ? (
 											<CheckCircle className="h-4 w-4 text-green-600" />
@@ -516,7 +566,9 @@ export const OfflineIndicator = React.forwardRef<HTMLDivElement, OfflineIndicato
 											<AlertTriangle className="h-4 w-4 text-red-600" />
 										)}
 										<span className="text-sm">
-											{offlineData.emergencyDataAvailable ? "Disponível" : "Indisponível"}
+											{offlineData.emergencyDataAvailable
+												? "Disponível"
+												: "Indisponível"}
 										</span>
 									</div>
 								</div>
@@ -526,12 +578,17 @@ export const OfflineIndicator = React.forwardRef<HTMLDivElement, OfflineIndicato
 
 					{/* System Health */}
 					{systemHealth && showDetails && (
-						<SystemHealthIndicator onViewSystemStatus={onViewSystemStatus} systemHealth={systemHealth} />
+						<SystemHealthIndicator
+							onViewSystemStatus={onViewSystemStatus}
+							systemHealth={systemHealth}
+						/>
 					)}
 
 					{/* Constitutional Resilience */}
 					{constitutionalInfo && showEmergencyMode && (
-						<ConstitutionalResilienceInfo constitutionalInfo={constitutionalInfo} />
+						<ConstitutionalResilienceInfo
+							constitutionalInfo={constitutionalInfo}
+						/>
 					)}
 
 					{/* Emergency Mode Information */}
@@ -540,10 +597,12 @@ export const OfflineIndicator = React.forwardRef<HTMLDivElement, OfflineIndicato
 							<div className="flex items-start gap-3">
 								<Zap className="mt-0.5 h-5 w-5 text-orange-600" />
 								<div>
-									<h4 className="font-medium text-orange-900 text-sm">Modo de Emergência Médica</h4>
+									<h4 className="font-medium text-orange-900 text-sm">
+										Modo de Emergência Médica
+									</h4>
 									<p className="mt-1 text-orange-700 text-sm">
-										Funcionalidades críticas mantidas para garantir continuidade dos cuidados. Dados de emergência
-										acessíveis mesmo offline.
+										Funcionalidades críticas mantidas para garantir continuidade
+										dos cuidados. Dados de emergência acessíveis mesmo offline.
 									</p>
 								</div>
 							</div>
@@ -553,7 +612,12 @@ export const OfflineIndicator = React.forwardRef<HTMLDivElement, OfflineIndicato
 					{/* Actions */}
 					<div className="flex gap-2 border-t pt-2">
 						{onManualSync && offlineData && offlineData.pendingSync > 0 && (
-							<Button disabled={connectionStatus === "offline"} onClick={onManualSync} size="sm" variant="outline">
+							<Button
+								disabled={connectionStatus === "offline"}
+								onClick={onManualSync}
+								size="sm"
+								variant="outline"
+							>
 								<RefreshCw className="mr-2 h-4 w-4" />
 								Sincronizar
 							</Button>
@@ -578,7 +642,7 @@ export const OfflineIndicator = React.forwardRef<HTMLDivElement, OfflineIndicato
 				</div>
 			</div>
 		);
-	}
+	},
 );
 
 OfflineIndicator.displayName = "OfflineIndicator";

@@ -23,8 +23,20 @@ import { useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -35,12 +47,27 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import type { LGPDPhotoConsentStatus, TreatmentPhoto, TreatmentSession } from "@/types/treatments";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
+import type {
+	LGPDPhotoConsentStatus,
+	TreatmentPhoto,
+	TreatmentSession,
+} from "@/types/treatments";
 
 // Visual components maintaining NeonPro design
 type NeonGradientCardProps = {
@@ -48,7 +75,10 @@ type NeonGradientCardProps = {
 	className?: string;
 };
 
-const NeonGradientCard = ({ children, className = "" }: NeonGradientCardProps) => (
+const NeonGradientCard = ({
+	children,
+	className = "",
+}: NeonGradientCardProps) => (
 	<motion.div
 		animate={{ opacity: 1, y: 0 }}
 		className={`relative overflow-hidden rounded-xl border border-slate-800 bg-gradient-to-br from-slate-900/90 to-blue-900/30 backdrop-blur-sm ${className}`}
@@ -65,7 +95,10 @@ type BeforeAfterSecureGalleryProps = {
 	photos: TreatmentPhoto[];
 	sessions?: TreatmentSession[];
 	consentStatus: LGPDPhotoConsentStatus;
-	onPhotoUpload?: (file: File, type: "before" | "after" | "during" | "follow_up") => void;
+	onPhotoUpload?: (
+		file: File,
+		type: "before" | "after" | "during" | "follow_up",
+	) => void;
 	onPhotoDelete?: (photoId: string) => void;
 	onPhotoShare?: (photoId: string, expiryHours: number) => void;
 	onConsentUpdate?: (newStatus: LGPDPhotoConsentStatus) => void;
@@ -108,7 +141,9 @@ export function BeforeAfterSecureGallery({
 	const [viewMode, setViewMode] = useState<ViewMode>("grid");
 	const [photoFilter, setPhotoFilter] = useState<PhotoFilter>("all");
 	const [searchQuery, setSearchQuery] = useState("");
-	const [selectedPhoto, setSelectedPhoto] = useState<TreatmentPhoto | null>(null);
+	const [selectedPhoto, setSelectedPhoto] = useState<TreatmentPhoto | null>(
+		null,
+	);
 	const [showUploadDialog, setShowUploadDialog] = useState(false);
 	const [uploadData, setUploadData] = useState<PhotoUploadData>({
 		file: null,
@@ -123,10 +158,13 @@ export function BeforeAfterSecureGallery({
 
 	// Filter photos based on current filters
 	const filteredPhotos = photos.filter((photo) => {
-		const matchesFilter = photoFilter === "all" || photo.photo_type === photoFilter;
+		const matchesFilter =
+			photoFilter === "all" || photo.photo_type === photoFilter;
 		const matchesSearch =
 			searchQuery === "" ||
-			photo.anatomical_region.toLowerCase().includes(searchQuery.toLowerCase()) ||
+			photo.anatomical_region
+				.toLowerCase()
+				.includes(searchQuery.toLowerCase()) ||
 			photo.photo_angle.toLowerCase().includes(searchQuery.toLowerCase());
 		return matchesFilter && matchesSearch;
 	});
@@ -231,7 +269,9 @@ export function BeforeAfterSecureGallery({
 								<Camera className="h-5 w-5" />
 								Galeria Segura - Antes e Depois
 							</CardTitle>
-							<CardDescription className="text-slate-300">Documentação fotográfica com proteção LGPD</CardDescription>
+							<CardDescription className="text-slate-300">
+								Documentação fotográfica com proteção LGPD
+							</CardDescription>
 						</div>
 						<div className="flex items-center gap-4">
 							<div className={`flex items-center gap-2 ${consentInfo.color}`}>
@@ -255,8 +295,9 @@ export function BeforeAfterSecureGallery({
 							{consentStatus === "granted" && (
 								<>
 									<br />
-									<strong>Proteções LGPD:</strong> Anonimização automática, criptografia de armazenamento, acesso
-									auditado e controle de retenção.
+									<strong>Proteções LGPD:</strong> Anonimização automática,
+									criptografia de armazenamento, acesso auditado e controle de
+									retenção.
 								</>
 							)}
 						</AlertDescription>
@@ -274,17 +315,24 @@ export function BeforeAfterSecureGallery({
 					</CardHeader>
 					<CardContent className="space-y-4">
 						<p className="text-muted-foreground">
-							Para utilizar a documentação fotográfica, é necessário o consentimento LGPD do paciente conforme a Lei
-							13.709/2018.
+							Para utilizar a documentação fotográfica, é necessário o
+							consentimento LGPD do paciente conforme a Lei 13.709/2018.
 						</p>
 
 						{onConsentUpdate && (
 							<div className="flex gap-2">
-								<Button className="flex-1" onClick={() => onConsentUpdate("granted")}>
+								<Button
+									className="flex-1"
+									onClick={() => onConsentUpdate("granted")}
+								>
 									Solicitar Consentimento
 								</Button>
 								{consentStatus === "expired" && (
-									<Button className="flex-1" onClick={() => onConsentUpdate("granted")} variant="outline">
+									<Button
+										className="flex-1"
+										onClick={() => onConsentUpdate("granted")}
+										variant="outline"
+									>
 										Renovar Consentimento
 									</Button>
 								)}
@@ -308,7 +356,12 @@ export function BeforeAfterSecureGallery({
 										value={searchQuery}
 									/>
 								</div>
-								<Select onValueChange={(value) => setPhotoFilter(value as PhotoFilter)} value={photoFilter}>
+								<Select
+									onValueChange={(value) =>
+										setPhotoFilter(value as PhotoFilter)
+									}
+									value={photoFilter}
+								>
 									<SelectTrigger className="w-40">
 										<SelectValue />
 									</SelectTrigger>
@@ -327,14 +380,26 @@ export function BeforeAfterSecureGallery({
 									<Label className="text-sm" htmlFor="privacy-blur">
 										Privacidade
 									</Label>
-									<Switch checked={privacyBlurred} id="privacy-blur" onCheckedChange={setPrivacyBlurred} />
+									<Switch
+										checked={privacyBlurred}
+										id="privacy-blur"
+										onCheckedChange={setPrivacyBlurred}
+									/>
 									<TooltipProvider>
 										<Tooltip>
 											<TooltipTrigger>
-												{privacyBlurred ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+												{privacyBlurred ? (
+													<EyeOff className="h-4 w-4" />
+												) : (
+													<Eye className="h-4 w-4" />
+												)}
 											</TooltipTrigger>
 											<TooltipContent>
-												<p>{privacyBlurred ? "Fotos com desfoque de privacidade" : "Fotos sem desfoque"}</p>
+												<p>
+													{privacyBlurred
+														? "Fotos com desfoque de privacidade"
+														: "Fotos sem desfoque"}
+												</p>
 											</TooltipContent>
 										</Tooltip>
 									</TooltipProvider>
@@ -354,7 +419,9 @@ export function BeforeAfterSecureGallery({
 										<Button
 											onClick={() => setViewMode("comparison")}
 											size="sm"
-											variant={viewMode === "comparison" ? "default" : "outline"}
+											variant={
+												viewMode === "comparison" ? "default" : "outline"
+											}
 										>
 											<ZoomIn className="h-4 w-4" />
 										</Button>
@@ -378,7 +445,10 @@ export function BeforeAfterSecureGallery({
 					{viewMode === "grid" && (
 						<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
 							{filteredPhotos.map((photo) => (
-								<Card className="group transition-all hover:shadow-lg" key={photo.id}>
+								<Card
+									className="group transition-all hover:shadow-lg"
+									key={photo.id}
+								>
 									<CardHeader className="pb-2">
 										<div className="flex items-center justify-between">
 											<Badge variant="outline">
@@ -394,7 +464,9 @@ export function BeforeAfterSecureGallery({
 													</Button>
 												</DropdownMenuTrigger>
 												<DropdownMenuContent align="end">
-													<DropdownMenuItem onClick={() => setSelectedPhoto(photo)}>
+													<DropdownMenuItem
+														onClick={() => setSelectedPhoto(photo)}
+													>
 														<Eye className="mr-2 h-4 w-4" />
 														Visualizar
 													</DropdownMenuItem>
@@ -410,14 +482,19 @@ export function BeforeAfterSecureGallery({
 														</DropdownMenuItem>
 													)}
 													{showMetadata && (
-														<DropdownMenuItem onClick={() => setSelectedPhoto(photo)}>
+														<DropdownMenuItem
+															onClick={() => setSelectedPhoto(photo)}
+														>
 															<ImageIcon className="mr-2 h-4 w-4" />
 															Metadados
 														</DropdownMenuItem>
 													)}
 													<DropdownMenuSeparator />
 													{canEdit && onPhotoDelete && (
-														<DropdownMenuItem className="text-red-600" onClick={() => onPhotoDelete(photo.id)}>
+														<DropdownMenuItem
+															className="text-red-600"
+															onClick={() => onPhotoDelete(photo.id)}
+														>
 															<Trash2 className="mr-2 h-4 w-4" />
 															Excluir
 														</DropdownMenuItem>
@@ -433,7 +510,9 @@ export function BeforeAfterSecureGallery({
 												<div className="text-center">
 													<ImageIcon className="mx-auto mb-2 h-12 w-12 text-slate-500" />
 													<p className="text-slate-600 text-sm">
-														{privacyBlurred ? "Foto Protegida" : "Imagem Médica"}
+														{privacyBlurred
+															? "Foto Protegida"
+															: "Imagem Médica"}
 													</p>
 													{privacyBlurred && (
 														<div className="absolute inset-0 flex items-center justify-center bg-white/30 backdrop-blur-lg">
@@ -464,16 +543,26 @@ export function BeforeAfterSecureGallery({
 										<div className="mt-3 space-y-2">
 											<div className="flex items-center justify-between text-sm">
 												<span className="text-muted-foreground">Região:</span>
-												<span className="font-medium">{photo.anatomical_region}</span>
+												<span className="font-medium">
+													{photo.anatomical_region}
+												</span>
 											</div>
 											<div className="flex items-center justify-between text-sm">
 												<span className="text-muted-foreground">Data:</span>
-												<span className="font-medium">{new Date(photo.uploaded_at).toLocaleDateString("pt-BR")}</span>
+												<span className="font-medium">
+													{new Date(photo.uploaded_at).toLocaleDateString(
+														"pt-BR",
+													)}
+												</span>
 											</div>
 											{photo.access_count > 0 && (
 												<div className="flex items-center justify-between text-sm">
-													<span className="text-muted-foreground">Acessos:</span>
-													<span className="font-medium">{photo.access_count}</span>
+													<span className="text-muted-foreground">
+														Acessos:
+													</span>
+													<span className="font-medium">
+														{photo.access_count}
+													</span>
 												</div>
 											)}
 										</div>
@@ -484,7 +573,9 @@ export function BeforeAfterSecureGallery({
 							{filteredPhotos.length === 0 && (
 								<div className="col-span-full py-12 text-center">
 									<Camera className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
-									<h3 className="mb-2 font-semibold text-lg">Nenhuma foto encontrada</h3>
+									<h3 className="mb-2 font-semibold text-lg">
+										Nenhuma foto encontrada
+									</h3>
 									<p className="mb-4 text-muted-foreground">
 										{photoFilter === "all"
 											? "Nenhuma foto foi adicionada ainda."
@@ -515,7 +606,10 @@ export function BeforeAfterSecureGallery({
 									<CardContent>
 										<div className="grid grid-cols-2 gap-4">
 											{beforePhotos.map((photo) => (
-												<div className="relative aspect-square overflow-hidden rounded-lg bg-muted" key={photo.id}>
+												<div
+													className="relative aspect-square overflow-hidden rounded-lg bg-muted"
+													key={photo.id}
+												>
 													<div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-200 to-slate-300">
 														<ImageIcon className="h-8 w-8 text-slate-500" />
 														{privacyBlurred && (
@@ -529,7 +623,9 @@ export function BeforeAfterSecureGallery({
 											{beforePhotos.length === 0 && (
 												<div className="col-span-2 py-8 text-center">
 													<Camera className="mx-auto mb-2 h-8 w-8 text-muted-foreground" />
-													<p className="text-muted-foreground text-sm">Nenhuma foto "antes" disponível</p>
+													<p className="text-muted-foreground text-sm">
+														Nenhuma foto "antes" disponível
+													</p>
 												</div>
 											)}
 										</div>
@@ -547,7 +643,10 @@ export function BeforeAfterSecureGallery({
 									<CardContent>
 										<div className="grid grid-cols-2 gap-4">
 											{afterPhotos.map((photo) => (
-												<div className="relative aspect-square overflow-hidden rounded-lg bg-muted" key={photo.id}>
+												<div
+													className="relative aspect-square overflow-hidden rounded-lg bg-muted"
+													key={photo.id}
+												>
 													<div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-200 to-slate-300">
 														<ImageIcon className="h-8 w-8 text-slate-500" />
 														{privacyBlurred && (
@@ -561,7 +660,9 @@ export function BeforeAfterSecureGallery({
 											{afterPhotos.length === 0 && (
 												<div className="col-span-2 py-8 text-center">
 													<Camera className="mx-auto mb-2 h-8 w-8 text-muted-foreground" />
-													<p className="text-muted-foreground text-sm">Nenhuma foto "depois" disponível</p>
+													<p className="text-muted-foreground text-sm">
+														Nenhuma foto "depois" disponível
+													</p>
 												</div>
 											)}
 										</div>
@@ -581,18 +682,31 @@ export function BeforeAfterSecureGallery({
 									<CardContent>
 										<div className="grid grid-cols-1 gap-4 md:grid-cols-3">
 											<div className="text-center">
-												<div className="font-bold text-2xl text-green-600">{beforePhotos.length}</div>
-												<div className="text-muted-foreground text-sm">Fotos Iniciais</div>
+												<div className="font-bold text-2xl text-green-600">
+													{beforePhotos.length}
+												</div>
+												<div className="text-muted-foreground text-sm">
+													Fotos Iniciais
+												</div>
 											</div>
 											<div className="text-center">
-												<div className="font-bold text-2xl text-blue-600">{afterPhotos.length}</div>
-												<div className="text-muted-foreground text-sm">Fotos de Resultado</div>
+												<div className="font-bold text-2xl text-blue-600">
+													{afterPhotos.length}
+												</div>
+												<div className="text-muted-foreground text-sm">
+													Fotos de Resultado
+												</div>
 											</div>
 											<div className="text-center">
 												<div className="font-bold text-2xl text-purple-600">
-													{Math.round((afterPhotos.length / beforePhotos.length) * 100)}%
+													{Math.round(
+														(afterPhotos.length / beforePhotos.length) * 100,
+													)}
+													%
 												</div>
-												<div className="text-muted-foreground text-sm">Documentação Completa</div>
+												<div className="text-muted-foreground text-sm">
+													Documentação Completa
+												</div>
 											</div>
 										</div>
 									</CardContent>
@@ -612,19 +726,31 @@ export function BeforeAfterSecureGallery({
 							<CardContent>
 								<div className="space-y-4">
 									{sessions.map((session, _index) => {
-										const sessionPhotos = photos.filter((p) => p.treatment_session_id === session.id);
+										const sessionPhotos = photos.filter(
+											(p) => p.treatment_session_id === session.id,
+										);
 										return (
-											<div className="flex gap-4 rounded-lg border p-4" key={session.id}>
+											<div
+												className="flex gap-4 rounded-lg border p-4"
+												key={session.id}
+											>
 												<div className="w-32 flex-shrink-0">
-													<div className="font-medium text-sm">Sessão {session.session_number}</div>
+													<div className="font-medium text-sm">
+														Sessão {session.session_number}
+													</div>
 													<div className="text-muted-foreground text-xs">
-														{new Date(session.actual_date || session.scheduled_date).toLocaleDateString("pt-BR")}
+														{new Date(
+															session.actual_date || session.scheduled_date,
+														).toLocaleDateString("pt-BR")}
 													</div>
 												</div>
 												<div className="flex-1">
 													<div className="flex gap-2 overflow-x-auto">
 														{sessionPhotos.map((photo) => (
-															<div className="h-16 w-16 flex-shrink-0 rounded border bg-muted" key={photo.id}>
+															<div
+																className="h-16 w-16 flex-shrink-0 rounded border bg-muted"
+																key={photo.id}
+															>
 																<div className="flex h-full w-full items-center justify-center">
 																	<ImageIcon className="h-6 w-6 text-muted-foreground" />
 																	{privacyBlurred && (
@@ -636,7 +762,9 @@ export function BeforeAfterSecureGallery({
 															</div>
 														))}
 														{sessionPhotos.length === 0 && (
-															<div className="text-muted-foreground text-sm">Nenhuma foto desta sessão</div>
+															<div className="text-muted-foreground text-sm">
+																Nenhuma foto desta sessão
+															</div>
 														)}
 													</div>
 												</div>
@@ -646,7 +774,9 @@ export function BeforeAfterSecureGallery({
 									{sessions.length === 0 && (
 										<div className="py-8 text-center">
 											<Calendar className="mx-auto mb-2 h-8 w-8 text-muted-foreground" />
-											<p className="text-muted-foreground text-sm">Nenhuma sessão registrada</p>
+											<p className="text-muted-foreground text-sm">
+												Nenhuma sessão registrada
+											</p>
 										</div>
 									)}
 								</div>
@@ -660,28 +790,39 @@ export function BeforeAfterSecureGallery({
 				<DialogContent className="max-w-2xl">
 					<DialogHeader>
 						<DialogTitle>Adicionar Foto Clínica</DialogTitle>
-						<DialogDescription>Upload de foto com proteção LGPD automática e metadados clínicos.</DialogDescription>
+						<DialogDescription>
+							Upload de foto com proteção LGPD automática e metadados clínicos.
+						</DialogDescription>
 					</DialogHeader>
 
 					<div className="space-y-4">
 						<Alert className="border-blue-500/50 bg-blue-500/10">
 							<Shield className="h-4 w-4" />
 							<AlertDescription>
-								<strong>Proteções Automáticas:</strong> Desfoque facial, watermark da clínica, criptografia de
-								armazenamento e audit trail de acesso.
+								<strong>Proteções Automáticas:</strong> Desfoque facial,
+								watermark da clínica, criptografia de armazenamento e audit
+								trail de acesso.
 							</AlertDescription>
 						</Alert>
 
 						<div className="grid grid-cols-2 gap-4">
 							<div className="space-y-2">
 								<Label htmlFor="photo-file">Arquivo da Foto *</Label>
-								<Input accept="image/*" id="photo-file" onChange={handleFileSelect} required type="file" />
+								<Input
+									accept="image/*"
+									id="photo-file"
+									onChange={handleFileSelect}
+									required
+									type="file"
+								/>
 							</div>
 
 							<div className="space-y-2">
 								<Label htmlFor="photo-type">Tipo da Foto *</Label>
 								<Select
-									onValueChange={(value) => setUploadData((prev) => ({ ...prev, type: value as any }))}
+									onValueChange={(value) =>
+										setUploadData((prev) => ({ ...prev, type: value as any }))
+									}
 									value={uploadData.type}
 								>
 									<SelectTrigger>
@@ -732,7 +873,9 @@ export function BeforeAfterSecureGallery({
 						</div>
 
 						<div className="space-y-2">
-							<Label htmlFor="lighting-conditions">Condições de Iluminação</Label>
+							<Label htmlFor="lighting-conditions">
+								Condições de Iluminação
+							</Label>
 							<Input
 								id="lighting-conditions"
 								onChange={(e) =>
@@ -749,18 +892,29 @@ export function BeforeAfterSecureGallery({
 						<Alert>
 							<ImageIcon className="h-4 w-4" />
 							<AlertDescription>
-								<strong>Padronização Fotográfica:</strong> Para melhores resultados de comparação, mantenha distância,
-								ângulo e iluminação consistentes entre as sessões.
+								<strong>Padronização Fotográfica:</strong> Para melhores
+								resultados de comparação, mantenha distância, ângulo e
+								iluminação consistentes entre as sessões.
 							</AlertDescription>
 						</Alert>
 
 						<div className="flex gap-2 pt-4">
-							<Button className="flex-1" onClick={() => setShowUploadDialog(false)} variant="outline">
+							<Button
+								className="flex-1"
+								onClick={() => setShowUploadDialog(false)}
+								variant="outline"
+							>
 								Cancelar
 							</Button>
 							<Button
 								className="flex-1"
-								disabled={!(uploadData.file && uploadData.anatomicalRegion && uploadData.photoAngle)}
+								disabled={
+									!(
+										uploadData.file &&
+										uploadData.anatomicalRegion &&
+										uploadData.photoAngle
+									)
+								}
 								onClick={handlePhotoUpload}
 							>
 								<Upload className="mr-2 h-4 w-4" />
@@ -775,22 +929,26 @@ export function BeforeAfterSecureGallery({
 				<DialogContent>
 					<DialogHeader>
 						<DialogTitle>Compartilhar Foto Segura</DialogTitle>
-						<DialogDescription>Gerar link temporário com controle de acesso LGPD.</DialogDescription>
+						<DialogDescription>
+							Gerar link temporário com controle de acesso LGPD.
+						</DialogDescription>
 					</DialogHeader>
 
 					<div className="space-y-4">
 						<Alert className="border-yellow-500/50 bg-yellow-500/10">
 							<Shield className="h-4 w-4" />
 							<AlertDescription>
-								<strong>Compartilhamento Seguro:</strong> Link temporário com expiração automática e auditoria de acesso
-								conforme LGPD.
+								<strong>Compartilhamento Seguro:</strong> Link temporário com
+								expiração automática e auditoria de acesso conforme LGPD.
 							</AlertDescription>
 						</Alert>
 
 						<div className="space-y-2">
 							<Label htmlFor="expiry-hours">Tempo de Expiração</Label>
 							<Select
-								onValueChange={(value) => setShareExpiryHours(Number.parseInt(value, 10))}
+								onValueChange={(value) =>
+									setShareExpiryHours(Number.parseInt(value, 10))
+								}
 								value={shareExpiryHours.toString()}
 							>
 								<SelectTrigger>
@@ -818,10 +976,17 @@ export function BeforeAfterSecureGallery({
 						</div>
 
 						<div className="flex gap-2 pt-4">
-							<Button className="flex-1" onClick={() => setShowShareDialog(false)} variant="outline">
+							<Button
+								className="flex-1"
+								onClick={() => setShowShareDialog(false)}
+								variant="outline"
+							>
 								Cancelar
 							</Button>
-							<Button className="flex-1" onClick={() => selectedPhoto && handlePhotoShare(selectedPhoto)}>
+							<Button
+								className="flex-1"
+								onClick={() => selectedPhoto && handlePhotoShare(selectedPhoto)}
+							>
 								<Share className="mr-2 h-4 w-4" />
 								Gerar Link
 							</Button>
@@ -830,11 +995,16 @@ export function BeforeAfterSecureGallery({
 				</DialogContent>
 			</Dialog>
 			{/* Photo Detail Dialog */}
-			<Dialog onOpenChange={() => setSelectedPhoto(null)} open={!!selectedPhoto}>
+			<Dialog
+				onOpenChange={() => setSelectedPhoto(null)}
+				open={!!selectedPhoto}
+			>
 				<DialogContent className="max-w-4xl">
 					<DialogHeader>
 						<DialogTitle>Detalhes da Foto</DialogTitle>
-						<DialogDescription>Informações completas e metadados clínicos</DialogDescription>
+						<DialogDescription>
+							Informações completas e metadados clínicos
+						</DialogDescription>
 					</DialogHeader>
 
 					{selectedPhoto && (
@@ -847,17 +1017,25 @@ export function BeforeAfterSecureGallery({
 											<div className="text-center">
 												<ImageIcon className="mx-auto mb-4 h-16 w-16 text-slate-500" />
 												<p className="font-medium text-lg text-slate-600">
-													{selectedPhoto.photo_type === "before" && "Foto Antes"}
-													{selectedPhoto.photo_type === "after" && "Foto Depois"}
-													{selectedPhoto.photo_type === "during" && "Foto Durante"}
-													{selectedPhoto.photo_type === "follow_up" && "Foto Acompanhamento"}
+													{selectedPhoto.photo_type === "before" &&
+														"Foto Antes"}
+													{selectedPhoto.photo_type === "after" &&
+														"Foto Depois"}
+													{selectedPhoto.photo_type === "during" &&
+														"Foto Durante"}
+													{selectedPhoto.photo_type === "follow_up" &&
+														"Foto Acompanhamento"}
 												</p>
-												<p className="text-slate-500 text-sm">{selectedPhoto.anatomical_region}</p>
+												<p className="text-slate-500 text-sm">
+													{selectedPhoto.anatomical_region}
+												</p>
 												{privacyBlurred && (
 													<div className="absolute inset-0 flex items-center justify-center bg-white/30 backdrop-blur-lg">
 														<div className="text-center">
 															<Lock className="mx-auto mb-2 h-12 w-12 text-slate-600" />
-															<p className="text-slate-600 text-sm">Proteção LGPD Ativada</p>
+															<p className="text-slate-600 text-sm">
+																Proteção LGPD Ativada
+															</p>
 														</div>
 													</div>
 												)}
@@ -877,7 +1055,12 @@ export function BeforeAfterSecureGallery({
 											Download Seguro
 										</Button>
 										{canShare && (
-											<Button className="flex-1" onClick={() => setShowShareDialog(true)} size="sm" variant="outline">
+											<Button
+												className="flex-1"
+												onClick={() => setShowShareDialog(true)}
+												size="sm"
+												variant="outline"
+											>
 												<Share className="mr-2 h-4 w-4" />
 												Compartilhar
 											</Button>
@@ -899,28 +1082,42 @@ export function BeforeAfterSecureGallery({
 												<div>
 													<span className="text-muted-foreground">Tipo:</span>
 													<p className="font-medium">
-														{selectedPhoto.photo_type === "before" && "Antes do Tratamento"}
-														{selectedPhoto.photo_type === "after" && "Após Tratamento"}
-														{selectedPhoto.photo_type === "during" && "Durante Tratamento"}
-														{selectedPhoto.photo_type === "follow_up" && "Acompanhamento"}
+														{selectedPhoto.photo_type === "before" &&
+															"Antes do Tratamento"}
+														{selectedPhoto.photo_type === "after" &&
+															"Após Tratamento"}
+														{selectedPhoto.photo_type === "during" &&
+															"Durante Tratamento"}
+														{selectedPhoto.photo_type === "follow_up" &&
+															"Acompanhamento"}
 													</p>
 												</div>
 												<div>
 													<span className="text-muted-foreground">Região:</span>
-													<p className="font-medium">{selectedPhoto.anatomical_region}</p>
+													<p className="font-medium">
+														{selectedPhoto.anatomical_region}
+													</p>
 												</div>
 												<div>
 													<span className="text-muted-foreground">Ângulo:</span>
-													<p className="font-medium">{selectedPhoto.photo_angle}</p>
+													<p className="font-medium">
+														{selectedPhoto.photo_angle}
+													</p>
 												</div>
 												<div>
-													<span className="text-muted-foreground">Iluminação:</span>
-													<p className="font-medium">{selectedPhoto.lighting_conditions}</p>
+													<span className="text-muted-foreground">
+														Iluminação:
+													</span>
+													<p className="font-medium">
+														{selectedPhoto.lighting_conditions}
+													</p>
 												</div>
 												<div>
 													<span className="text-muted-foreground">Upload:</span>
 													<p className="font-medium">
-														{new Date(selectedPhoto.uploaded_at).toLocaleDateString("pt-BR", {
+														{new Date(
+															selectedPhoto.uploaded_at,
+														).toLocaleDateString("pt-BR", {
 															year: "numeric",
 															month: "long",
 															day: "numeric",
@@ -931,7 +1128,9 @@ export function BeforeAfterSecureGallery({
 												</div>
 												<div>
 													<span className="text-muted-foreground">Por:</span>
-													<p className="font-medium">{selectedPhoto.uploaded_by}</p>
+													<p className="font-medium">
+														{selectedPhoto.uploaded_by}
+													</p>
 												</div>
 											</div>
 										</TabsContent>
@@ -939,22 +1138,40 @@ export function BeforeAfterSecureGallery({
 										<TabsContent className="space-y-3" value="technical">
 											<div className="grid grid-cols-2 gap-3 text-sm">
 												<div>
-													<span className="text-muted-foreground">Arquivo:</span>
-													<p className="font-medium">{selectedPhoto.original_filename}</p>
-												</div>
-												<div>
-													<span className="text-muted-foreground">Tamanho:</span>
-													<p className="font-medium">{(selectedPhoto.file_size_bytes / 1024 / 1024).toFixed(2)} MB</p>
-												</div>
-												<div>
-													<span className="text-muted-foreground">Dimensões:</span>
+													<span className="text-muted-foreground">
+														Arquivo:
+													</span>
 													<p className="font-medium">
-														{selectedPhoto.image_width}x{selectedPhoto.image_height}
+														{selectedPhoto.original_filename}
+													</p>
+												</div>
+												<div>
+													<span className="text-muted-foreground">
+														Tamanho:
+													</span>
+													<p className="font-medium">
+														{(
+															selectedPhoto.file_size_bytes /
+															1024 /
+															1024
+														).toFixed(2)}{" "}
+														MB
+													</p>
+												</div>
+												<div>
+													<span className="text-muted-foreground">
+														Dimensões:
+													</span>
+													<p className="font-medium">
+														{selectedPhoto.image_width}x
+														{selectedPhoto.image_height}
 													</p>
 												</div>
 												<div>
 													<span className="text-muted-foreground">Hash:</span>
-													<p className="font-medium font-mono text-xs">{selectedPhoto.file_hash.substring(0, 12)}...</p>
+													<p className="font-medium font-mono text-xs">
+														{selectedPhoto.file_hash.substring(0, 12)}...
+													</p>
 												</div>
 											</div>
 										</TabsContent>
@@ -963,36 +1180,61 @@ export function BeforeAfterSecureGallery({
 											<div className="space-y-3">
 												<div className="grid grid-cols-2 gap-3 text-sm">
 													<div>
-														<span className="text-muted-foreground">Consentimento:</span>
-														<p className="font-medium">{selectedPhoto.lgpd_consent_id}</p>
-													</div>
-													<div>
-														<span className="text-muted-foreground">Escopo:</span>
+														<span className="text-muted-foreground">
+															Consentimento:
+														</span>
 														<p className="font-medium">
-															{selectedPhoto.consent_scope === "clinical_only" && "Apenas Clínico"}
-															{selectedPhoto.consent_scope === "marketing_allowed" && "Marketing Permitido"}
-															{selectedPhoto.consent_scope === "research_allowed" && "Pesquisa Permitida"}
+															{selectedPhoto.lgpd_consent_id}
 														</p>
 													</div>
 													<div>
-														<span className="text-muted-foreground">Anonimização:</span>
+														<span className="text-muted-foreground">
+															Escopo:
+														</span>
 														<p className="font-medium">
-															{selectedPhoto.anonymization_applied ? "Aplicada" : "Não Aplicada"}
+															{selectedPhoto.consent_scope ===
+																"clinical_only" && "Apenas Clínico"}
+															{selectedPhoto.consent_scope ===
+																"marketing_allowed" && "Marketing Permitido"}
+															{selectedPhoto.consent_scope ===
+																"research_allowed" && "Pesquisa Permitida"}
 														</p>
 													</div>
 													<div>
-														<span className="text-muted-foreground">Desfoque Facial:</span>
-														<p className="font-medium">{selectedPhoto.face_blurred ? "Ativo" : "Inativo"}</p>
+														<span className="text-muted-foreground">
+															Anonimização:
+														</span>
+														<p className="font-medium">
+															{selectedPhoto.anonymization_applied
+																? "Aplicada"
+																: "Não Aplicada"}
+														</p>
 													</div>
 													<div>
-														<span className="text-muted-foreground">Acessos:</span>
-														<p className="font-medium">{selectedPhoto.access_count}</p>
+														<span className="text-muted-foreground">
+															Desfoque Facial:
+														</span>
+														<p className="font-medium">
+															{selectedPhoto.face_blurred ? "Ativo" : "Inativo"}
+														</p>
 													</div>
 													<div>
-														<span className="text-muted-foreground">Último Acesso:</span>
+														<span className="text-muted-foreground">
+															Acessos:
+														</span>
+														<p className="font-medium">
+															{selectedPhoto.access_count}
+														</p>
+													</div>
+													<div>
+														<span className="text-muted-foreground">
+															Último Acesso:
+														</span>
 														<p className="font-medium">
 															{selectedPhoto.last_accessed
-																? new Date(selectedPhoto.last_accessed).toLocaleDateString("pt-BR")
+																? new Date(
+																		selectedPhoto.last_accessed,
+																	).toLocaleDateString("pt-BR")
 																: "Nunca"}
 														</p>
 													</div>
@@ -1000,14 +1242,22 @@ export function BeforeAfterSecureGallery({
 
 												<div className="space-y-2">
 													<div className="flex items-center justify-between">
-														<span className="text-muted-foreground text-sm">Retenção de Dados:</span>
-														<span className="font-medium text-sm">{selectedPhoto.retention_period_days} dias</span>
+														<span className="text-muted-foreground text-sm">
+															Retenção de Dados:
+														</span>
+														<span className="font-medium text-sm">
+															{selectedPhoto.retention_period_days} dias
+														</span>
 													</div>
 													{selectedPhoto.deletion_scheduled_date && (
 														<div className="flex items-center justify-between">
-															<span className="text-muted-foreground text-sm">Exclusão Agendada:</span>
+															<span className="text-muted-foreground text-sm">
+																Exclusão Agendada:
+															</span>
 															<span className="font-medium text-sm">
-																{new Date(selectedPhoto.deletion_scheduled_date).toLocaleDateString("pt-BR")}
+																{new Date(
+																	selectedPhoto.deletion_scheduled_date,
+																).toLocaleDateString("pt-BR")}
 															</span>
 														</div>
 													)}
@@ -1015,8 +1265,16 @@ export function BeforeAfterSecureGallery({
 														className="h-2"
 														value={
 															100 -
-															((new Date(selectedPhoto.deletion_scheduled_date || Date.now()).getTime() - Date.now()) /
-																(selectedPhoto.retention_period_days * 24 * 60 * 60 * 1000)) *
+															((new Date(
+																selectedPhoto.deletion_scheduled_date ||
+																	Date.now(),
+															).getTime() -
+																Date.now()) /
+																(selectedPhoto.retention_period_days *
+																	24 *
+																	60 *
+																	60 *
+																	1000)) *
 																100
 														}
 													/>
@@ -1025,7 +1283,8 @@ export function BeforeAfterSecureGallery({
 												<Alert className="border-green-500/50 bg-green-500/10">
 													<Shield className="h-4 w-4" />
 													<AlertDescription>
-														Esta foto está em conformidade com a LGPD e protegida por criptografia de ponta a ponta.
+														Esta foto está em conformidade com a LGPD e
+														protegida por criptografia de ponta a ponta.
 													</AlertDescription>
 												</Alert>
 											</div>
