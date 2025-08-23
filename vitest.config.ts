@@ -100,6 +100,9 @@ export default defineConfig({
 			"**/__tests__/**",
 			"**/app/**/*test*",
 			"**/lib/**/*test*",
+			// === CONSOLIDATED TEST DIRECTORIES (POST-MIGRATION) ===
+			"**/tools/testing/reports/**",
+			"**/tools/testing/e2e/**",
 			// Exclude unimplemented features
 			"**/compliance/**",
 			"**/ai/**",
@@ -172,6 +175,9 @@ export default defineConfig({
 				// === VITEST COVERAGE SPECIFIC ===
 				"**/*.test.{ts,tsx}",
 				"**/*.spec.{ts,tsx}",
+				// === CONSOLIDATED TEST DIRECTORIES (POST-MIGRATION) ===
+				"**/tools/testing/reports/**",
+				"**/tools/testing/e2e/**",
 			],
 			thresholds: {
 				global: {

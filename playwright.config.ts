@@ -74,12 +74,12 @@ export default defineConfig({
 	timeout: 60_000, // 1 minute max per test
 	globalTimeout: process.env.CI ? 30 * 60_000 : 15 * 60_000, // 30min CI / 15min local
 
-	// Optimized reporting
+	// Optimized reporting - CONSOLIDATED TO TOOLS/TESTING
 	reporter: [
 		[
 			"html",
 			{
-				outputFolder: "e2e/reports/html",
+				outputFolder: "tools/testing/reports/e2e/html",
 				open: "never",
 				attachmentsBaseURL: "../",
 			},
@@ -87,7 +87,7 @@ export default defineConfig({
 		[
 			"junit",
 			{
-				outputFile: "e2e/reports/junit-results.xml",
+				outputFile: "tools/testing/reports/e2e/junit-results.xml",
 				includeProjectInTestName: true,
 			},
 		],
@@ -95,7 +95,7 @@ export default defineConfig({
 		[
 			"json",
 			{
-				outputFile: "e2e/reports/performance-metrics.json",
+				outputFile: "tools/testing/reports/e2e/performance-metrics.json",
 			},
 		],
 		// CI-friendly reporter
@@ -114,8 +114,8 @@ export default defineConfig({
 		},
 	},
 
-	// Organized output structure
-	outputDir: "e2e/test-results",
+	// Organized output structure - CONSOLIDATED TO TOOLS/TESTING
+	outputDir: "tools/testing/reports/test-results/e2e",
 
 	// Global setup for performance optimization
 	globalSetup: "./tools/testing/e2e/global-setup.ts",

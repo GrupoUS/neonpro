@@ -10,6 +10,7 @@ import { zValidator } from "@hono/zod-validator";
 import type { ApiResponse } from "@neonpro/shared/types";
 import { Hono } from "hono";
 import { z } from "zod";
+import { HTTP_STATUS } from "../lib/constants.js";
 
 // Zod schemas for analytics
 const DateRangeSchema = z.object({
@@ -66,7 +67,7 @@ export const analyticsRoutes = new Hono()
 
 	// 📊 Dashboard overview
 	.get("/dashboard", zValidator("query", AnalyticsQuerySchema), async (c) => {
-		const { period, startDate, endDate } = c.req.valid("query");
+		const { period: _period, startDate: _startDate, endDate: _endDate } = c.req.valid("query");
 
 		try {
 			// TODO: Implement actual analytics query
@@ -140,7 +141,7 @@ export const analyticsRoutes = new Hono()
 				message: "Dashboard carregado com sucesso",
 			};
 
-			return c.json(response, 200);
+			return c.json(response, HTTP_STATUS.OK);
 		} catch (_error) {
 			return c.json(
 				{
@@ -155,7 +156,7 @@ export const analyticsRoutes = new Hono()
 
 	// 💰 Revenue analytics
 	.get("/revenue", zValidator("query", RevenueQuerySchema), async (c) => {
-		const { period, serviceCategory, professionalId } = c.req.valid("query");
+		const { period: _period, serviceCategory: _serviceCategory, professionalId: _professionalId } = c.req.valid("query");
 
 		try {
 			// TODO: Implement actual revenue query
@@ -223,7 +224,7 @@ export const analyticsRoutes = new Hono()
 				message: "Análise de receita carregada",
 			};
 
-			return c.json(response, 200);
+			return c.json(response, HTTP_STATUS.OK);
 		} catch (_error) {
 			return c.json(
 				{
@@ -241,7 +242,7 @@ export const analyticsRoutes = new Hono()
 		"/appointments",
 		zValidator("query", AnalyticsQuerySchema),
 		async (c) => {
-			const { period, groupBy } = c.req.valid("query");
+			const { period: _period, groupBy: _groupBy } = c.req.valid("query");
 
 			try {
 				// TODO: Implement actual appointments analytics
@@ -304,7 +305,7 @@ export const analyticsRoutes = new Hono()
 					message: "Análise de agendamentos carregada",
 				};
 
-				return c.json(response, 200);
+				return c.json(response, HTTP_STATUS.OK);
 			} catch (_error) {
 				return c.json(
 					{
@@ -379,7 +380,7 @@ export const analyticsRoutes = new Hono()
 				message: "Análise de pacientes carregada",
 			};
 
-			return c.json(response, 200);
+			return c.json(response, HTTP_STATUS.OK);
 		} catch (_error) {
 			return c.json(
 				{
@@ -448,7 +449,7 @@ export const analyticsRoutes = new Hono()
 				message: "Métricas de performance carregadas",
 			};
 
-			return c.json(response, 200);
+			return c.json(response, HTTP_STATUS.OK);
 		} catch (_error) {
 			return c.json(
 				{
@@ -489,7 +490,7 @@ export const analyticsRoutes = new Hono()
 			}),
 		),
 		async (c) => {
-			const { reportType, filters, groupBy, includeComparison } =
+			const { reportType, filters, groupBy: _groupBy, includeComparison: _includeComparison } =
 				c.req.valid("json");
 
 			try {
@@ -525,7 +526,7 @@ export const analyticsRoutes = new Hono()
 					message: "Relatório customizado gerado com sucesso",
 				};
 
-				return c.json(response, 201);
+				return c.json(response, HTTP_STATUS.CREATED);
 			} catch (_error) {
 				return c.json(
 					{

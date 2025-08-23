@@ -18,6 +18,7 @@ import {
 } from "@neonpro/shared/schemas";
 import type { ApiResponse } from "@neonpro/shared/types";
 import { Hono } from "hono";
+import { HTTP_STATUS } from "../lib/constants.js";
 
 // Create auth router
 export const authRoutes = new Hono()
@@ -55,7 +56,7 @@ export const authRoutes = new Hono()
 					message: "Login realizado com sucesso",
 				};
 
-				return c.json(response, 200);
+				return c.json(response, HTTP_STATUS.OK);
 			}
 
 			return c.json(
@@ -64,7 +65,7 @@ export const authRoutes = new Hono()
 					error: "INVALID_CREDENTIALS",
 					message: "Email ou senha incorretos",
 				},
-				401,
+				HTTP_STATUS.UNAUTHORIZED,
 			);
 		} catch (_error) {
 			return c.json(
@@ -73,7 +74,7 @@ export const authRoutes = new Hono()
 					error: "INTERNAL_ERROR",
 					message: "Erro interno do servidor",
 				},
-				500,
+				HTTP_STATUS.INTERNAL_SERVER_ERROR,
 			);
 		}
 	})
@@ -112,7 +113,7 @@ export const authRoutes = new Hono()
 				message: "Cadastro realizado com sucesso. Verifique seu email.",
 			};
 
-			return c.json(response, 201);
+			return c.json(response, HTTP_STATUS.CREATED);
 		} catch (_error) {
 			return c.json(
 				{
@@ -120,14 +121,14 @@ export const authRoutes = new Hono()
 					error: "INTERNAL_ERROR",
 					message: "Erro ao criar usuário",
 				},
-				500,
+				HTTP_STATUS.INTERNAL_SERVER_ERROR,
 			);
 		}
 	})
 
 	// 🔄 Refresh token endpoint
 	.post("/refresh", zValidator("json", RefreshTokenRequestSchema), (c) => {
-		const { refreshToken } = c.req.valid("json");
+		const { refreshToken: _refreshToken } = c.req.valid("json");
 
 		try {
 			// TODO: Validate refresh token
@@ -146,7 +147,7 @@ export const authRoutes = new Hono()
 				message: "Token renovado com sucesso",
 			};
 
-			return c.json(response, 200);
+			return c.json(response, HTTP_STATUS.OK);
 		} catch (_error) {
 			return c.json(
 				{
@@ -154,7 +155,7 @@ export const authRoutes = new Hono()
 					error: "TOKEN_INVALID",
 					message: "Token de renovação inválido",
 				},
-				401,
+				HTTP_STATUS.UNAUTHORIZED,
 			);
 		}
 	})
@@ -172,7 +173,7 @@ export const authRoutes = new Hono()
 						error: "UNAUTHORIZED",
 						message: "Token de acesso necessário",
 					},
-					401,
+					HTTP_STATUS.UNAUTHORIZED,
 				);
 			}
 
@@ -195,7 +196,7 @@ export const authRoutes = new Hono()
 				message: "Perfil recuperado com sucesso",
 			};
 
-			return c.json(response, 200);
+			return c.json(response, HTTP_STATUS.OK);
 		} catch (_error) {
 			return c.json(
 				{
@@ -203,7 +204,7 @@ export const authRoutes = new Hono()
 					error: "INTERNAL_ERROR",
 					message: "Erro ao buscar perfil",
 				},
-				500,
+				HTTP_STATUS.INTERNAL_SERVER_ERROR,
 			);
 		}
 	})
@@ -220,7 +221,7 @@ export const authRoutes = new Hono()
 				message: "Logout realizado com sucesso",
 			};
 
-			return c.json(response, 200);
+			return c.json(response, HTTP_STATUS.OK);
 		} catch (_error) {
 			return c.json(
 				{
@@ -228,7 +229,7 @@ export const authRoutes = new Hono()
 					error: "INTERNAL_ERROR",
 					message: "Erro ao fazer logout",
 				},
-				500,
+				HTTP_STATUS.INTERNAL_SERVER_ERROR,
 			);
 		}
 	})
@@ -238,7 +239,7 @@ export const authRoutes = new Hono()
 		"/forgot-password",
 		zValidator("json", ForgotPasswordRequestSchema),
 		async (c) => {
-			const { email } = c.req.valid("json");
+			const { email: _email } = c.req.valid("json");
 
 			try {
 				// TODO: Generate reset token
@@ -250,7 +251,7 @@ export const authRoutes = new Hono()
 					message: "Link de recuperação enviado para seu email",
 				};
 
-				return c.json(response, 200);
+				return c.json(response, HTTP_STATUS.OK);
 			} catch (_error) {
 				return c.json(
 					{
@@ -258,7 +259,7 @@ export const authRoutes = new Hono()
 						error: "INTERNAL_ERROR",
 						message: "Erro ao enviar email de recuperação",
 					},
-					500,
+					HTTP_STATUS.INTERNAL_SERVER_ERROR,
 				);
 			}
 		},
@@ -269,7 +270,7 @@ export const authRoutes = new Hono()
 		"/reset-password",
 		zValidator("json", ResetPasswordRequestSchema),
 		async (c) => {
-			const { token, password } = c.req.valid("json");
+			const { token: _token, password: _password } = c.req.valid("json");
 
 			try {
 				// TODO: Validate reset token
@@ -282,7 +283,7 @@ export const authRoutes = new Hono()
 					message: "Senha alterada com sucesso",
 				};
 
-				return c.json(response, 200);
+				return c.json(response, HTTP_STATUS.OK);
 			} catch (_error) {
 				return c.json(
 					{
@@ -290,7 +291,7 @@ export const authRoutes = new Hono()
 						error: "TOKEN_INVALID",
 						message: "Token de recuperação inválido ou expirado",
 					},
-					400,
+					HTTP_STATUS.BAD_REQUEST,
 				);
 			}
 		},
@@ -301,7 +302,7 @@ export const authRoutes = new Hono()
 		"/change-password",
 		zValidator("json", ChangePasswordRequestSchema),
 		async (c) => {
-			const { currentPassword, newPassword } = c.req.valid("json");
+			const { currentPassword: _currentPassword, newPassword: _newPassword } = c.req.valid("json");
 
 			try {
 				const userId = c.get("userId");
@@ -313,7 +314,7 @@ export const authRoutes = new Hono()
 							error: "UNAUTHORIZED",
 							message: "Autenticação necessária",
 						},
-						401,
+						HTTP_STATUS.UNAUTHORIZED,
 					);
 				}
 
@@ -321,13 +322,13 @@ export const authRoutes = new Hono()
 				// Update to new password
 				// Invalidate all existing tokens
 
-				const response: ApiResponse<{}> = {
+				const response: ApiResponse<{ passwordReset: boolean }> = {
 					success: true,
-					data: {},
+					data: { passwordReset: true },
 					message: "Senha alterada com sucesso",
 				};
 
-				return c.json(response, 200);
+				return c.json(response, HTTP_STATUS.OK);
 			} catch (_error) {
 				return c.json(
 					{
@@ -335,7 +336,7 @@ export const authRoutes = new Hono()
 						error: "INTERNAL_ERROR",
 						message: "Erro ao alterar senha",
 					},
-					500,
+					HTTP_STATUS.INTERNAL_SERVER_ERROR,
 				);
 			}
 		},

@@ -23,7 +23,9 @@ appointmentRoutes.get("/", (c) => {
 });
 
 appointmentRoutes.post("/", async (c) => {
-	const body = await c.req.json().catch(() => ({}));
+	const body = await c.req.json().catch(() => ({ 
+		error: "Invalid JSON payload" 
+	}));
 
 	// Validate appointment data
 	if (!(body.patient_id && body.date)) {

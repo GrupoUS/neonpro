@@ -8,6 +8,7 @@
 
 import type { Context, MiddlewareHandler } from "hono";
 import { logger } from "../lib/logger";
+import { createRouteRegex, extractResourceIds } from "../lib/regex-constants";
 
 // Audit log levels
 export enum AuditLevel {
@@ -128,7 +129,7 @@ type AuditLog = {
 	consentRequired: boolean;
 
 	// Additional metadata
-	metadata?: Record<string, any>;
+	metadata?: Record<string, unknown>;
 
 	// Request/Response tracking
 	requestId: string;
@@ -246,7 +247,7 @@ const shouldAudit = (method: string, path: string): boolean => {
 
 	// Check pattern matches (for parameterized routes)
 	for (const pattern of Object.keys(LGPD_SENSITIVE_OPERATIONS)) {
-		const regex = new RegExp(`^${pattern.replace(/:\w+/g, "[^/]+")}$`);
+		const regex = createRouteRegex(pattern);
 		if (regex.test(operationKey)) {
 			return true;
 		}
@@ -292,7 +293,7 @@ export const auditMiddleware = (): MiddlewareHandler => {
 				for (const [pattern, config] of Object.entries(
 					LGPD_SENSITIVE_OPERATIONS,
 				)) {
-					const regex = new RegExp(`^${pattern.replace(/:\w+/g, "[^/]+")}$`);
+					const regex = createRouteRegex(pattern);
 					if (regex.test(operationKey)) {
 						operationConfig = config;
 						break;
@@ -301,7 +302,7 @@ export const auditMiddleware = (): MiddlewareHandler => {
 			}
 
 			// Extract resource ID from path (for parameterized routes)
-			const resourceIdMatch = path.match(/\/([a-zA-Z0-9_-]+)(?:\/|$)/g);
+			const resourceIdMatch = extractResourceIds(path);
 			const resourceId = resourceIdMatch?.[resourceIdMatch.length - 1]?.replace(
 				/\//g,
 				"",

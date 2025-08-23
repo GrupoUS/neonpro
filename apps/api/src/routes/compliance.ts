@@ -10,6 +10,7 @@ import { zValidator } from "@hono/zod-validator";
 import type { ApiResponse } from "@neonpro/shared/types";
 import { Hono } from "hono";
 import { z } from "zod";
+import { HTTP_STATUS } from "../lib/constants.js";
 
 // Zod schemas for compliance
 const AuditLogQuerySchema = z.object({
@@ -138,7 +139,7 @@ export const complianceRoutes = new Hono()
 				message: "Visão geral LGPD carregada",
 			};
 
-			return c.json(response, 200);
+			return c.json(response, HTTP_STATUS.OK);
 		} catch (_error) {
 			return c.json(
 				{
@@ -153,7 +154,7 @@ export const complianceRoutes = new Hono()
 
 	// 📊 Audit logs
 	.get("/audit/logs", zValidator("query", AuditLogQuerySchema), async (c) => {
-		const { page, limit, startDate, endDate, userId, action, resourceType } =
+		const { page, limit, startDate: _startDate, endDate: _endDate, userId: _userId, action: _action, resourceType: _resourceType } =
 			c.req.valid("query");
 
 		try {
@@ -211,7 +212,7 @@ export const complianceRoutes = new Hono()
 				message: "Logs de auditoria carregados",
 			};
 
-			return c.json(response, 200);
+			return c.json(response, HTTP_STATUS.OK);
 		} catch (_error) {
 			return c.json(
 				{
@@ -302,7 +303,7 @@ export const complianceRoutes = new Hono()
 				message: "Solicitações LGPD carregadas",
 			};
 
-			return c.json(response, 200);
+			return c.json(response, HTTP_STATUS.OK);
 		} catch (_error) {
 			return c.json(
 				{
@@ -337,7 +338,7 @@ export const complianceRoutes = new Hono()
 				message: "Solicitação LGPD criada com sucesso",
 			};
 
-			return c.json(response, 201);
+			return c.json(response, HTTP_STATUS.CREATED);
 		} catch (_error) {
 			return c.json(
 				{
@@ -428,7 +429,7 @@ export const complianceRoutes = new Hono()
 				message: "Visão geral ANVISA carregada",
 			};
 
-			return c.json(response, 200);
+			return c.json(response, HTTP_STATUS.OK);
 		} catch (_error) {
 			return c.json(
 				{
@@ -501,7 +502,7 @@ export const complianceRoutes = new Hono()
 					message: "Relatório ANVISA gerado com sucesso",
 				};
 
-				return c.json(response, 201);
+				return c.json(response, HTTP_STATUS.CREATED);
 			} catch (_error) {
 				return c.json(
 					{
@@ -535,7 +536,7 @@ export const complianceRoutes = new Hono()
 				message: "Consentimento atualizado com sucesso",
 			};
 
-			return c.json(response, 200);
+			return c.json(response, HTTP_STATUS.OK);
 		} catch (_error) {
 			return c.json(
 				{
@@ -577,7 +578,7 @@ export const complianceRoutes = new Hono()
 				message: "Dashboard de compliance exportado",
 			};
 
-			return c.json(response, 200);
+			return c.json(response, HTTP_STATUS.OK);
 		} catch (_error) {
 			return c.json(
 				{

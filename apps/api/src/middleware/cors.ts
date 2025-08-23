@@ -6,15 +6,17 @@
  * com controle rigoroso de origins e headers sensíveis.
  */
 
-import type { MiddlewareHandler } from "hono";
+import type { Context, MiddlewareHandler } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "../lib/logger";
+import {
+	VERCEL_PRODUCTION_PATTERN,
+	VERCEL_STAGING_PATTERN,
+	LOCALHOST_PATTERN,
+	LOCALHOST_IP_PATTERN,
+} from "../lib/regex-constants";
 
-// Regex patterns for dynamic origins
-const VERCEL_PRODUCTION_PATTERN = /^https:\/\/.*\.vercel\.app$/;
-const VERCEL_STAGING_PATTERN = /^https:\/\/.*-staging\.vercel\.app$/;
-const LOCALHOST_PATTERN = /^http:\/\/localhost:\d+$/;
-const LOCALHOST_IP_PATTERN = /^http:\/\/127\.0\.0\.1:\d+$/;
+// Regex patterns imported from constants module for performance
 
 // Environment-based CORS configuration
 const getCorsPolicyByEnvironment = () => {
@@ -284,7 +286,7 @@ export const corsUtils = {
 	},
 
 	// Set custom CORS headers for specific routes
-	setCustomHeaders: (c: any, additionalHeaders: Record<string, string>) => {
+	setCustomHeaders: (c: Context, additionalHeaders: Record<string, string>) => {
 		Object.entries(additionalHeaders).forEach(([key, value]) => {
 			c.res.headers.set(key, value);
 		});

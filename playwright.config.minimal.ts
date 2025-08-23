@@ -23,8 +23,8 @@ export default defineConfig({
 	// Reporting
 	reporter: "list",
 
-	// Output
-	outputDir: "e2e/test-results-minimal",
+	// Output - CONSOLIDATED TO TOOLS/TESTING
+	outputDir: "tools/testing/reports/test-results/e2e-minimal",
 
 	use: {
 		// Test against external URL for now

@@ -10,6 +10,7 @@ import { zValidator } from "@hono/zod-validator";
 import type { ApiResponse } from "@neonpro/shared/types";
 import { Hono } from "hono";
 import { z } from "zod";
+import { HTTP_STATUS } from "../lib/constants.js";
 
 // Zod schemas for professionals
 const CreateProfessionalSchema = z.object({
@@ -141,7 +142,7 @@ export const professionalsRoutes = new Hono()
 				message: "Profissionais listados com sucesso",
 			};
 
-			return c.json(response, 200);
+			return c.json(response, HTTP_STATUS.OK);
 		} catch (_error) {
 			return c.json(
 				{
@@ -192,7 +193,7 @@ export const professionalsRoutes = new Hono()
 				message: "Profissional encontrado",
 			};
 
-			return c.json(response, 200);
+			return c.json(response, HTTP_STATUS.OK);
 		} catch (_error) {
 			return c.json(
 				{
@@ -224,7 +225,7 @@ export const professionalsRoutes = new Hono()
 				message: "Profissional criado com sucesso",
 			};
 
-			return c.json(response, 201);
+			return c.json(response, HTTP_STATUS.CREATED);
 		} catch (_error) {
 			return c.json(
 				{
@@ -260,7 +261,7 @@ export const professionalsRoutes = new Hono()
 				message: "Profissional atualizado com sucesso",
 			};
 
-			return c.json(response, 200);
+			return c.json(response, HTTP_STATUS.OK);
 		} catch (_error) {
 			return c.json(
 				{
@@ -285,7 +286,7 @@ export const professionalsRoutes = new Hono()
 				message: "Profissional removido com sucesso",
 			};
 
-			return c.json(response, 200);
+			return c.json(response, HTTP_STATUS.OK);
 		} catch (_error) {
 			return c.json(
 				{
@@ -320,7 +321,7 @@ export const professionalsRoutes = new Hono()
 				message: "Estatísticas do profissional",
 			};
 
-			return c.json(response, 200);
+			return c.json(response, HTTP_STATUS.OK);
 		} catch (_error) {
 			return c.json(
 				{
@@ -362,7 +363,7 @@ export const professionalsRoutes = new Hono()
 				message: "Disponibilidade do profissional",
 			};
 
-			return c.json(response, 200);
+			return c.json(response, HTTP_STATUS.OK);
 		} catch (_error) {
 			return c.json(
 				{

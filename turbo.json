@@ -44,7 +44,7 @@
 		},
 		"test": {
 			"dependsOn": ["build"],
-			"outputs": ["coverage/**"]
+			"outputs": ["coverage/**", "tools/testing/reports/**"]
 		},
 		"dev": {
 			"cache": false,

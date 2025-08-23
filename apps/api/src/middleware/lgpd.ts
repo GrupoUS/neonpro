@@ -6,8 +6,9 @@
  * com validação de consentimento, rastreamento e proteção de dados.
  */
 
-import type { MiddlewareHandler } from "hono";
+import type { Context, MiddlewareHandler } from "hono";
 import { createError } from "./error-handler";
+import { createRouteRegex } from "../lib/regex-constants";
 
 // LGPD consent types
 export enum ConsentType {
@@ -206,7 +207,7 @@ consentStore.grantConsent("pat_456", ConsentType.DATA_PROCESSING, "1.0");
 /**
  * Extract patient ID from request
  */
-const extractPatientId = (c: any): string | null => {
+const extractPatientId = (c: Context): string | null => {
 	// Try to get from URL parameters
 	const pathPatientId = c.req.param("id");
 	if (pathPatientId) {
@@ -257,7 +258,7 @@ const getRouteConfig = (
 
 	// Check pattern matches (for parameterized routes)
 	for (const [pattern, config] of Object.entries(LGPD_ROUTE_CONFIG)) {
-		const regex = new RegExp(`^${pattern.replace(/:\w+/g, "[^/]+")}$`);
+		const regex = createRouteRegex(pattern);
 		if (regex.test(operationKey)) {
 			return config;
 		}

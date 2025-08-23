@@ -93,7 +93,8 @@
 				"**/validate-*.mjs",
 				"**/test-*.ts",
 				"**/rpc-*.ts",
-				"**/backend-*.txt"
+				"**/backend-*.txt",
+				"**/tools/testing/reports/**"
 			],
 			"formatter": {
 				"enabled": true

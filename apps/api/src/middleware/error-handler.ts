@@ -30,7 +30,7 @@ export class NeonProError extends Error {
 	public readonly type: ErrorType;
 	public readonly statusCode: StatusCode;
 	public readonly userMessage: string;
-	public readonly metadata?: Record<string, any>;
+	public readonly metadata?: Record<string, unknown>;
 	public readonly stack?: string;
 
 	constructor(
@@ -38,7 +38,7 @@ export class NeonProError extends Error {
 		message: string,
 		statusCode: StatusCode = 500,
 		userMessage?: string,
-		metadata?: Record<string, any>,
+		metadata?: Record<string, unknown>,
 	) {
 		super(message);
 		this.name = "NeonProError";
@@ -89,7 +89,7 @@ type ErrorResponse = {
 	success: false;
 	error: string;
 	message: string;
-	details?: any;
+	details?: unknown;
 	timestamp: string;
 	requestId?: string;
 	auditId?: string;
@@ -98,7 +98,7 @@ type ErrorResponse = {
 /**
  * Sanitize error data to prevent sensitive information leakage
  */
-const sanitizeError = (error: any): any => {
+const sanitizeError = (error: unknown): unknown => {
 	// List of sensitive fields that should never be exposed
 	const sensitiveFields = [
 		"password",
@@ -114,7 +114,7 @@ const sanitizeError = (error: any): any => {
 		"phone",
 	];
 
-	const sanitize = (obj: any): any => {
+	const sanitize = (obj: unknown): unknown => {
 		if (typeof obj !== "object" || obj === null) {
 			return obj;
 		}
@@ -123,7 +123,7 @@ const sanitizeError = (error: any): any => {
 			return obj.map(sanitize);
 		}
 
-		const sanitized: any = {};
+		const sanitized: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(obj)) {
 			const lowerKey = key.toLowerCase();
 
@@ -150,7 +150,7 @@ const sanitizeError = (error: any): any => {
 /**
  * Log error with structured format
  */
-const logError = (error: any, context: Context): void => {
+const logError = (error: unknown, context: Context): void => {
 	const errorId = `err_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
 	const requestId = context.req.header("X-Request-ID") || "unknown";
 	const auditId = context.req.header("X-Audit-ID") || "unknown";
@@ -208,7 +208,7 @@ const logError = (error: any, context: Context): void => {
  * Format error response based on error type and environment
  */
 const formatErrorResponse = (
-	error: any,
+	error: unknown,
 	context: Context,
 ): { response: ErrorResponse; statusCode: StatusCode } => {
 	const requestId = context.req.header("X-Request-ID");
@@ -241,7 +241,7 @@ const formatErrorResponse = (
 				details: isProduction
 					? undefined
 					: {
-							validationErrors: error.errors?.map((err: any) => ({
+							validationErrors: error.errors?.map((err: unknown) => ({
 								field: err.path?.join("."),
 								message: err.message,
 								code: err.code,
@@ -364,7 +364,7 @@ export const errorHandler: ErrorHandler = (error, context) => {
  * Error factory functions for common errors
  */
 export const createError = {
-	validation: (message: string, details?: any) =>
+	validation: (message: string, details?: unknown) =>
 		new NeonProError(
 			ErrorType.VALIDATION_ERROR,
 			message,
@@ -389,7 +389,7 @@ export const createError = {
 	rateLimit: (message = "Muitas tentativas") =>
 		new NeonProError(ErrorType.RATE_LIMIT_ERROR, message, 429),
 
-	database: (message: string, details?: any) =>
+	database: (message: string, details?: unknown) =>
 		new NeonProError(
 			ErrorType.DATABASE_ERROR,
 			message,
@@ -406,7 +406,7 @@ export const createError = {
 			userMessage || message,
 		),
 
-	lgpdCompliance: (message: string, details?: any) =>
+	lgpdCompliance: (message: string, details?: unknown) =>
 		new NeonProError(
 			ErrorType.LGPD_COMPLIANCE_ERROR,
 			message,
@@ -415,7 +415,7 @@ export const createError = {
 			details,
 		),
 
-	anvisaCompliance: (message: string, details?: any) =>
+	anvisaCompliance: (message: string, details?: unknown) =>
 		new NeonProError(
 			ErrorType.ANVISA_COMPLIANCE_ERROR,
 			message,
@@ -424,7 +424,7 @@ export const createError = {
 			details,
 		),
 
-	internal: (message = "Erro interno", details?: any) =>
+	internal: (message = "Erro interno", details?: unknown) =>
 		new NeonProError(
 			ErrorType.INTERNAL_SERVER_ERROR,
 			message,

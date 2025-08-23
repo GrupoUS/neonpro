@@ -6,7 +6,7 @@
  * para proteger a API contra abuse e garantir performance.
  */
 
-import type { MiddlewareHandler } from "hono";
+import type { Context, MiddlewareHandler } from "hono";
 import { logger } from "../lib/logger";
 import { logger } from "../lib/logger";
 
@@ -17,7 +17,7 @@ type RateLimitConfig = {
 	message?: string;
 	skipSuccessfulRequests?: boolean;
 	skipFailedRequests?: boolean;
-	keyGenerator?: (c: any) => string;
+	keyGenerator?: (c: Context) => string;
 };
 
 // In-memory store for development (production should use Redis)

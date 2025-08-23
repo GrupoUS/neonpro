@@ -6,7 +6,7 @@
  * verificação de roles e permissions para o sistema.
  */
 
-import type { MiddlewareHandler } from "hono";
+import type { Context, MiddlewareHandler } from "hono";
 import { createError } from "./error-handler";
 
 // User roles in the system
@@ -444,35 +444,35 @@ export const roleBasedRateLimit = (): MiddlewareHandler => {
  */
 export const authUtils = {
 	// Check if user has specific role
-	hasRole: (c: any, role: UserRole): boolean => {
+	hasRole: (c: Context, role: UserRole): boolean => {
 		return c.get("userRole") === role;
 	},
 
 	// Check if user has any of the specified roles
-	hasAnyRole: (c: any, roles: UserRole[]): boolean => {
+	hasAnyRole: (c: Context, roles: UserRole[]): boolean => {
 		const userRole = c.get("userRole");
 		return roles.includes(userRole);
 	},
 
 	// Check if user has specific permission
-	hasPermission: (c: any, permission: Permission): boolean => {
+	hasPermission: (c: Context, permission: Permission): boolean => {
 		const permissions = c.get("userPermissions") as Permission[];
 		return permissions?.includes(permission);
 	},
 
 	// Check if user has all specified permissions
-	hasAllPermissions: (c: any, permissions: Permission[]): boolean => {
+	hasAllPermissions: (c: Context, permissions: Permission[]): boolean => {
 		const userPermissions = c.get("userPermissions") as Permission[];
 		return permissions.every((p) => userPermissions?.includes(p));
 	},
 
 	// Get user context from request
-	getUser: (c: any): UserContext | undefined => {
+	getUser: (c: Context): UserContext | undefined => {
 		return c.get("user");
 	},
 
 	// Check if user can access specific clinic
-	canAccessClinic: (c: any, clinicId: string): boolean => {
+	canAccessClinic: (c: Context, clinicId: string): boolean => {
 		const userRole = c.get("userRole") as UserRole;
 		const userClinicId = c.get("clinicId") as string;
 
