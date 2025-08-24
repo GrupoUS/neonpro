@@ -5,15 +5,7 @@
  * Based on 2025 performance best practices
  */
 
-import {
-	type DependencyList,
-	startTransition,
-	useCallback,
-	useEffect,
-	useMemo,
-	useRef,
-	useState,
-} from "react";
+import { type DependencyList, startTransition, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 // Performance thresholds for monitoring
 const PERFORMANCE_THRESHOLDS = {
@@ -27,7 +19,7 @@ const PERFORMANCE_THRESHOLDS = {
 export function useOptimizedCallback<T extends (...args: any[]) => any>(
 	callback: T,
 	deps: DependencyList,
-	_debugName?: string,
+	_debugName?: string
 ): T {
 	const performanceRef = useRef<{
 		callCount: number;
@@ -50,10 +42,7 @@ export function useOptimizedCallback<T extends (...args: any[]) => any>(
 		performanceRef.current.lastCall = duration;
 
 		// Warn about slow callbacks in development
-		if (
-			process.env.NODE_ENV === "development" &&
-			duration > PERFORMANCE_THRESHOLDS.INTERACTION_TIME_WARNING
-		) {
+		if (process.env.NODE_ENV === "development" && duration > PERFORMANCE_THRESHOLDS.INTERACTION_TIME_WARNING) {
 		}
 
 		return result;
@@ -61,11 +50,7 @@ export function useOptimizedCallback<T extends (...args: any[]) => any>(
 }
 
 // Enhanced useMemo with performance monitoring
-export function useOptimizedMemo<T>(
-	factory: () => T,
-	deps: DependencyList,
-	_debugName?: string,
-): T {
+export function useOptimizedMemo<T>(factory: () => T, deps: DependencyList, _debugName?: string): T {
 	const performanceRef = useRef<{
 		computeCount: number;
 		totalTime: number;
@@ -87,10 +72,7 @@ export function useOptimizedMemo<T>(
 		performanceRef.current.lastCompute = duration;
 
 		// Warn about expensive computations in development
-		if (
-			process.env.NODE_ENV === "development" &&
-			duration > PERFORMANCE_THRESHOLDS.RENDER_TIME_WARNING
-		) {
+		if (process.env.NODE_ENV === "development" && duration > PERFORMANCE_THRESHOLDS.RENDER_TIME_WARNING) {
 		}
 
 		return result;
@@ -114,8 +96,7 @@ export function useRenderPerformance(_componentName: string) {
 
 		// Log performance in development
 		if (process.env.NODE_ENV === "development") {
-			const _avgRenderTime =
-				totalRenderTimeRef.current / renderCountRef.current;
+			const _avgRenderTime = totalRenderTimeRef.current / renderCountRef.current;
 
 			if (renderTime > PERFORMANCE_THRESHOLDS.RENDER_TIME_ERROR) {
 			} else if (renderTime > PERFORMANCE_THRESHOLDS.RENDER_TIME_WARNING) {
@@ -130,10 +111,7 @@ export function useRenderPerformance(_componentName: string) {
 }
 
 // Debounced state with startTransition for better UX
-export function useDebouncedState<T>(
-	initialValue: T,
-	delay = 300,
-): [T, T, (value: T) => void] {
+export function useDebouncedState<T>(initialValue: T, delay = 300): [T, T, (value: T) => void] {
 	const [immediateValue, setImmediateValue] = useState<T>(initialValue);
 	const [debouncedValue, setDebouncedValue] = useState<T>(initialValue);
 	const timeoutRef = useRef<NodeJS.Timeout>();
@@ -155,7 +133,7 @@ export function useDebouncedState<T>(
 				});
 			}, delay);
 		},
-		[delay],
+		[delay]
 	);
 
 	useEffect(() => {
@@ -170,11 +148,7 @@ export function useDebouncedState<T>(
 }
 
 // Virtual scrolling hook for large lists
-export function useVirtualScrolling<T>(
-	items: T[],
-	itemHeight: number,
-	containerHeight: number,
-) {
+export function useVirtualScrolling<T>(items: T[], itemHeight: number, containerHeight: number) {
 	const [scrollTop, setScrollTop] = useState(0);
 
 	const visibleRange = useMemo(() => {
@@ -186,18 +160,16 @@ export function useVirtualScrolling<T>(
 	}, [scrollTop, itemHeight, containerHeight, items.length]);
 
 	const visibleItems = useMemo(() => {
-		return items
-			.slice(visibleRange.start, visibleRange.end)
-			.map((item, index) => ({
-				item,
-				index: visibleRange.start + index,
-				style: {
-					position: "absolute" as const,
-					top: (visibleRange.start + index) * itemHeight,
-					height: itemHeight,
-					width: "100%",
-				},
-			}));
+		return items.slice(visibleRange.start, visibleRange.end).map((item, index) => ({
+			item,
+			index: visibleRange.start + index,
+			style: {
+				position: "absolute" as const,
+				top: (visibleRange.start + index) * itemHeight,
+				height: itemHeight,
+				width: "100%",
+			},
+		}));
 	}, [items, visibleRange, itemHeight]);
 
 	const totalHeight = items.length * itemHeight;
@@ -207,7 +179,7 @@ export function useVirtualScrolling<T>(
 			setScrollTop(event.currentTarget.scrollTop);
 		},
 		[],
-		"virtualScrolling",
+		"virtualScrolling"
 	);
 
 	return {
@@ -219,9 +191,7 @@ export function useVirtualScrolling<T>(
 }
 
 // Intersection observer hook for lazy loading
-export function useIntersectionObserver(
-	options: IntersectionObserverInit = {},
-) {
+export function useIntersectionObserver(options: IntersectionObserverInit = {}) {
 	const [isIntersecting, setIsIntersecting] = useState(false);
 	const [hasIntersected, setHasIntersected] = useState(false);
 	const ref = useRef<HTMLElement>(null);
@@ -274,11 +244,7 @@ export function useMemoryMonitor(_componentName: string) {
 }
 
 // Optimized chart data processor for analytics
-export function useOptimizedChartData<T>(
-	rawData: T[],
-	processor: (data: T[]) => any,
-	deps: DependencyList,
-) {
+export function useOptimizedChartData<T>(rawData: T[], processor: (data: T[]) => any, deps: DependencyList) {
 	return useOptimizedMemo(
 		() => {
 			if (!rawData || rawData.length === 0) {
@@ -302,7 +268,7 @@ export function useOptimizedChartData<T>(
 			return processor(rawData);
 		},
 		[rawData, ...deps],
-		"chartDataProcessor",
+		"chartDataProcessor"
 	);
 }
 
@@ -343,10 +309,7 @@ export function usePreloadResources(resources: string[]) {
 }
 
 // Performance profiler hook for development
-export function usePerformanceProfiler(
-	name: string,
-	enabled: boolean = process.env.NODE_ENV === "development",
-) {
+export function usePerformanceProfiler(name: string, enabled: boolean = process.env.NODE_ENV === "development") {
 	const marksRef = useRef<{ [key: string]: number }>({});
 
 	const mark = useCallback(
@@ -359,7 +322,7 @@ export function usePerformanceProfiler(
 			performance.mark(fullName);
 			marksRef.current[markName] = performance.now();
 		},
-		[name, enabled],
+		[name, enabled]
 	);
 
 	const measure = useCallback(
@@ -372,19 +335,14 @@ export function usePerformanceProfiler(
 			const endName = `${name}-${endMark}`;
 
 			try {
-				performance.measure(
-					`${name}-${startMark}-to-${endMark}`,
-					startName,
-					endName,
-				);
+				performance.measure(`${name}-${startMark}-to-${endMark}`, startName, endName);
 
-				const duration =
-					marksRef.current[endMark] - marksRef.current[startMark];
+				const duration = marksRef.current[endMark] - marksRef.current[startMark];
 
 				return duration;
 			} catch (_error) {}
 		},
-		[name, enabled],
+		[name, enabled]
 	);
 
 	return { mark, measure };

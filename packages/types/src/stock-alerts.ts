@@ -38,9 +38,7 @@ export type ResolveAlert = {
 /**
  * Validate stock alert configuration
  */
-export function validateStockAlertConfig(
-	config: any,
-): config is StockAlertConfig {
+export function validateStockAlertConfig(config: any): config is StockAlertConfig {
 	return (
 		typeof config === "object" &&
 		typeof config.id === "string" &&
@@ -60,8 +58,6 @@ export function validateResolveAlert(request: any): request is ResolveAlert {
 		typeof request === "object" &&
 		typeof request.alertId === "string" &&
 		typeof request.resolvedBy === "string" &&
-		["restocked", "threshold_adjusted", "product_discontinued"].includes(
-			request.action,
-		)
+		["restocked", "threshold_adjusted", "product_discontinued"].includes(request.action)
 	);
 }

@@ -181,12 +181,7 @@ export const HEALTHCARE_A11Y_SCENARIOS = {
 
 	// Form Interfaces
 	forms: {
-		selectors: [
-			"form[data-form-type]",
-			"input[data-medical-type]",
-			"[data-validation]",
-			".form-section",
-		],
+		selectors: ["form[data-form-type]", "input[data-medical-type]", "[data-validation]", ".form-section"],
 		requirements: {
 			labelAssociation: true,
 			errorHandling: true,
@@ -197,12 +192,7 @@ export const HEALTHCARE_A11Y_SCENARIOS = {
 
 	// Navigation and Layout
 	navigation: {
-		selectors: [
-			"nav",
-			'[role="navigation"]',
-			".breadcrumb",
-			"[data-skip-link]",
-		],
+		selectors: ["nav", '[role="navigation"]', ".breadcrumb", "[data-skip-link]"],
 		requirements: {
 			skipLinks: true,
 			landmarkRoles: true,

@@ -26,7 +26,7 @@ export class PredictionPerformanceMonitor {
 		processingTime: number,
 		accuracy: number,
 		success: boolean,
-		error?: string,
+		error?: string
 	): void {
 		this.predictionLogs.push({
 			modelType,
@@ -48,7 +48,7 @@ export class PredictionPerformanceMonitor {
 	 */
 	checkAccuracyTarget(
 		modelType: ModelType,
-		days = 7,
+		days = 7
 	): {
 		meetsTarget: boolean;
 		currentAccuracy: number;
@@ -59,10 +59,7 @@ export class PredictionPerformanceMonitor {
 		const startDate = new Date(endDate.getTime() - days * 24 * 60 * 60 * 1000);
 
 		const recentAccuracy = this.accuracyHistory.filter(
-			(record) =>
-				record.modelType === modelType &&
-				record.date >= startDate &&
-				record.date <= endDate,
+			(record) => record.modelType === modelType && record.date >= startDate && record.date <= endDate
 		);
 
 		if (recentAccuracy.length === 0) {
@@ -88,11 +85,9 @@ export class PredictionPerformanceMonitor {
 		if (meetsTarget) {
 			recommendation = "Model performance is meeting accuracy targets";
 		} else if (currentAccuracy >= 0.75) {
-			recommendation =
-				"Model performance slightly below target - consider fine-tuning";
+			recommendation = "Model performance slightly below target - consider fine-tuning";
 		} else {
-			recommendation =
-				"Model performance significantly below target - urgent retraining needed";
+			recommendation = "Model performance significantly below target - urgent retraining needed";
 		}
 
 		return {

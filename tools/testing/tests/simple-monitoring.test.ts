@@ -28,11 +28,7 @@ describe("TASK-001 Foundation Setup Verification", () => {
 		test("should have monitoring components", () => {
 			const componentsDir = path.join(rootDir, "components/monitoring");
 
-			const requiredComponents = [
-				"FeatureFlagManager.tsx",
-				"SystemHealthWidget.tsx",
-				"performance-dashboard.tsx",
-			];
+			const requiredComponents = ["FeatureFlagManager.tsx", "SystemHealthWidget.tsx", "performance-dashboard.tsx"];
 
 			requiredComponents.forEach((component) => {
 				const componentPath = path.join(componentsDir, component);

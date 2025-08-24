@@ -77,18 +77,14 @@ export type MfaAuditLog = {
 export class MfaDatabaseService {
 	private readonly supabase = createClient(
 		process.env.NEXT_PUBLIC_SUPABASE_URL!,
-		process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+		process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 	);
 
 	/**
 	 * Get MFA settings for a user
 	 */
 	async getMfaSettings(userId: string): Promise<MfaSettings | null> {
-		const { data, error } = await this.supabase
-			.from("user_mfa_settings")
-			.select("*")
-			.eq("user_id", userId)
-			.single();
+		const { data, error } = await this.supabase.from("user_mfa_settings").select("*").eq("user_id", userId).single();
 
 		if (error) {
 			if (error.code === "PGRST116") {
@@ -122,26 +118,18 @@ export class MfaDatabaseService {
 			smsEnabled: data.sms_enabled,
 			smsPhoneNumber: data.sms_phone_number,
 			smsVerified: data.sms_verified,
-			smsLastUsed: data.sms_last_used
-				? new Date(data.sms_last_used)
-				: undefined,
+			smsLastUsed: data.sms_last_used ? new Date(data.sms_last_used) : undefined,
 			emailEnabled: data.email_enabled,
 			emailAddress: data.email_address,
 			emailVerified: data.email_verified,
-			emailLastUsed: data.email_last_used
-				? new Date(data.email_last_used)
-				: undefined,
+			emailLastUsed: data.email_last_used ? new Date(data.email_last_used) : undefined,
 			totpEnabled: data.totp_enabled,
 			totpSecret: data.totp_secret,
 			totpVerified: data.totp_verified,
-			totpLastUsed: data.totp_last_used
-				? new Date(data.totp_last_used)
-				: undefined,
+			totpLastUsed: data.totp_last_used ? new Date(data.totp_last_used) : undefined,
 			biometricEnabled: data.biometric_enabled,
 			biometricVerified: data.biometric_verified,
-			biometricLastUsed: data.biometric_last_used
-				? new Date(data.biometric_last_used)
-				: undefined,
+			biometricLastUsed: data.biometric_last_used ? new Date(data.biometric_last_used) : undefined,
 			backupCodesEnabled: data.backup_codes_enabled,
 			backupCodesCount: data.backup_codes_count,
 			createdAt: new Date(data.created_at),
@@ -152,9 +140,7 @@ export class MfaDatabaseService {
 	/**
 	 * Create or update MFA settings
 	 */
-	async upsertMfaSettings(
-		settings: Partial<MfaSettings>,
-	): Promise<MfaSettings> {
+	async upsertMfaSettings(settings: Partial<MfaSettings>): Promise<MfaSettings> {
 		const dbData = {
 			user_id: settings.userId,
 			clinic_id: settings.clinicId,
@@ -181,11 +167,7 @@ export class MfaDatabaseService {
 			updated_at: new Date().toISOString(),
 		};
 
-		const { data, error } = await this.supabase
-			.from("user_mfa_settings")
-			.upsert(dbData)
-			.select()
-			.single();
+		const { data, error } = await this.supabase.from("user_mfa_settings").upsert(dbData).select().single();
 
 		if (error) {
 			throw error;
@@ -197,9 +179,7 @@ export class MfaDatabaseService {
 	/**
 	 * Store verification code
 	 */
-	async storeVerificationCode(
-		code: Omit<MfaVerificationCode, "id">,
-	): Promise<string> {
+	async storeVerificationCode(code: Omit<MfaVerificationCode, "id">): Promise<string> {
 		const dbData = {
 			user_id: code.userId,
 			clinic_id: code.clinicId,
@@ -213,11 +193,7 @@ export class MfaDatabaseService {
 			expires_at: code.expiresAt.toISOString(),
 		};
 
-		const { data, error } = await this.supabase
-			.from("mfa_verification_codes")
-			.insert(dbData)
-			.select("id")
-			.single();
+		const { data, error } = await this.supabase.from("mfa_verification_codes").insert(dbData).select("id").single();
 
 		if (error) {
 			throw error;
@@ -232,7 +208,7 @@ export class MfaDatabaseService {
 	async verifyCode(
 		userId: string,
 		code: string,
-		type: MfaVerificationCode["type"],
+		type: MfaVerificationCode["type"]
 	): Promise<{
 		valid: boolean;
 		codeRecord?: MfaVerificationCode;
@@ -259,8 +235,7 @@ export class MfaDatabaseService {
 		const codeRecord = codes[0];
 
 		// Check if code matches
-		const valid =
-			codeRecord.code === code && codeRecord.attempts < codeRecord.max_attempts;
+		const valid = codeRecord.code === code && codeRecord.attempts < codeRecord.max_attempts;
 
 		// Increment attempts and potentially mark as used
 		const updates: any = {
@@ -272,10 +247,7 @@ export class MfaDatabaseService {
 			updates.verified_at = new Date().toISOString();
 		}
 
-		await this.supabase
-			.from("mfa_verification_codes")
-			.update(updates)
-			.eq("id", codeRecord.id);
+		await this.supabase.from("mfa_verification_codes").update(updates).eq("id", codeRecord.id);
 
 		return {
 			valid,
@@ -286,9 +258,7 @@ export class MfaDatabaseService {
 	/**
 	 * Log MFA audit event
 	 */
-	async logAuditEvent(
-		event: Omit<MfaAuditLog, "id" | "createdAt">,
-	): Promise<void> {
+	async logAuditEvent(event: Omit<MfaAuditLog, "id" | "createdAt">): Promise<void> {
 		const dbData = {
 			user_id: event.userId,
 			clinic_id: event.clinicId,
@@ -370,26 +340,18 @@ export class MfaDatabaseService {
 			smsEnabled: data.sms_enabled,
 			smsPhoneNumber: data.sms_phone_number,
 			smsVerified: data.sms_verified,
-			smsLastUsed: data.sms_last_used
-				? new Date(data.sms_last_used)
-				: undefined,
+			smsLastUsed: data.sms_last_used ? new Date(data.sms_last_used) : undefined,
 			emailEnabled: data.email_enabled,
 			emailAddress: data.email_address,
 			emailVerified: data.email_verified,
-			emailLastUsed: data.email_last_used
-				? new Date(data.email_last_used)
-				: undefined,
+			emailLastUsed: data.email_last_used ? new Date(data.email_last_used) : undefined,
 			totpEnabled: data.totp_enabled,
 			totpSecret: data.totp_secret,
 			totpVerified: data.totp_verified,
-			totpLastUsed: data.totp_last_used
-				? new Date(data.totp_last_used)
-				: undefined,
+			totpLastUsed: data.totp_last_used ? new Date(data.totp_last_used) : undefined,
 			biometricEnabled: data.biometric_enabled,
 			biometricVerified: data.biometric_verified,
-			biometricLastUsed: data.biometric_last_used
-				? new Date(data.biometric_last_used)
-				: undefined,
+			biometricLastUsed: data.biometric_last_used ? new Date(data.biometric_last_used) : undefined,
 			backupCodesEnabled: data.backup_codes_enabled,
 			backupCodesCount: data.backup_codes_count,
 			createdAt: new Date(data.created_at),

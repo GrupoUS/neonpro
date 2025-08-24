@@ -53,15 +53,7 @@ const ComplianceDashboardMetricsSchema = z.object({
 const ComplianceAlertSchema = z.object({
 	alert_id: z.string().uuid(),
 	alert_type: z.enum(["critical", "warning", "info"]),
-	category: z.enum([
-		"lgpd",
-		"anvisa",
-		"cfm",
-		"constitutional",
-		"privacy",
-		"security",
-		"operational",
-	]),
+	category: z.enum(["lgpd", "anvisa", "cfm", "constitutional", "privacy", "security", "operational"]),
 	title: z.string().min(1).max(200),
 	description: z.string().min(1).max(1000),
 	severity_score: z.number().min(1).max(10),
@@ -79,27 +71,14 @@ const ComplianceAlertSchema = z.object({
 
 const ComplianceDashboardReportSchema = z.object({
 	report_id: z.string().uuid(),
-	report_type: z.enum([
-		"daily",
-		"weekly",
-		"monthly",
-		"quarterly",
-		"annual",
-		"incident",
-	]),
+	report_type: z.enum(["daily", "weekly", "monthly", "quarterly", "annual", "incident"]),
 	generated_at: z.string().datetime(),
 	reporting_period: z.object({
 		start_date: z.string().datetime(),
 		end_date: z.string().datetime(),
 	}),
 	executive_summary: z.object({
-		overall_compliance_rating: z.enum([
-			"excellent",
-			"good",
-			"fair",
-			"poor",
-			"critical",
-		]),
+		overall_compliance_rating: z.enum(["excellent", "good", "fair", "poor", "critical"]),
 		key_achievements: z.array(z.string()),
 		critical_issues: z.array(z.string()),
 		recommendations: z.array(z.string()),
@@ -114,16 +93,10 @@ const ComplianceDashboardReportSchema = z.object({
 });
 
 // Type definitions
-export type ComplianceDashboardConfig = z.infer<
-	typeof ComplianceDashboardConfigSchema
->;
-export type ComplianceDashboardMetrics = z.infer<
-	typeof ComplianceDashboardMetricsSchema
->;
+export type ComplianceDashboardConfig = z.infer<typeof ComplianceDashboardConfigSchema>;
+export type ComplianceDashboardMetrics = z.infer<typeof ComplianceDashboardMetricsSchema>;
 export type ComplianceAlert = z.infer<typeof ComplianceAlertSchema>;
-export type ComplianceDashboardReport = z.infer<
-	typeof ComplianceDashboardReportSchema
->;
+export type ComplianceDashboardReport = z.infer<typeof ComplianceDashboardReportSchema>;
 
 export type ComplianceDashboardAudit = {
 	audit_id: string;
@@ -165,10 +138,7 @@ export class ComplianceDashboardService {
 
 			// Start real-time monitoring
 			if (this.config.real_time_monitoring) {
-				this.monitoringInterval = setInterval(
-					() => this.performComplianceCheck(),
-					this.config.refresh_interval_ms,
-				);
+				this.monitoringInterval = setInterval(() => this.performComplianceCheck(), this.config.refresh_interval_ms);
 			}
 
 			// Get initial metrics
@@ -331,8 +301,7 @@ export class ComplianceDashboardService {
 				alert_type: "critical",
 				category: "operational",
 				title: "Constitutional Compliance Monitoring Failure",
-				description:
-					"Automated compliance monitoring system encountered an error",
+				description: "Automated compliance monitoring system encountered an error",
 				severity_score: 10,
 				compliance_impact: {
 					affects_patient_privacy: true,
@@ -352,16 +321,11 @@ export class ComplianceDashboardService {
 	/**
 	 * Check for compliance violations and generate alerts
 	 */
-	private async checkComplianceViolations(
-		metrics: ComplianceDashboardMetrics,
-	): Promise<ComplianceAlert[]> {
+	private async checkComplianceViolations(metrics: ComplianceDashboardMetrics): Promise<ComplianceAlert[]> {
 		const alerts: ComplianceAlert[] = [];
 
 		// Check critical compliance score threshold
-		if (
-			metrics.overall_compliance_score <
-			this.config.alert_thresholds.critical_compliance_score
-		) {
+		if (metrics.overall_compliance_score < this.config.alert_thresholds.critical_compliance_score) {
 			alerts.push({
 				alert_id: crypto.randomUUID(),
 				alert_type: "critical",
@@ -382,10 +346,7 @@ export class ComplianceDashboardService {
 		}
 
 		// Check privacy budget warning threshold
-		if (
-			metrics.privacy_metrics.privacy_budget_utilization >
-			this.config.alert_thresholds.privacy_budget_warning
-		) {
+		if (metrics.privacy_metrics.privacy_budget_utilization > this.config.alert_thresholds.privacy_budget_warning) {
 			alerts.push({
 				alert_id: crypto.randomUUID(),
 				alert_type: "warning",
@@ -475,18 +436,12 @@ export class ComplianceDashboardService {
 	 * Generate comprehensive compliance report
 	 */
 	async generateComplianceReport(
-		reportType:
-			| "daily"
-			| "weekly"
-			| "monthly"
-			| "quarterly"
-			| "annual"
-			| "incident",
+		reportType: "daily" | "weekly" | "monthly" | "quarterly" | "annual" | "incident",
 		options?: {
 			reason?: string;
 			include_active_alerts?: boolean;
 			include_metrics_history?: boolean;
-		},
+		}
 	): Promise<ComplianceDashboardReport> {
 		const reportId = crypto.randomUUID();
 		const generatedAt = new Date().toISOString();
@@ -495,8 +450,7 @@ export class ComplianceDashboardService {
 		const reportingPeriod = this.calculateReportingPeriod(reportType);
 
 		// Get current metrics
-		const currentMetrics =
-			this.currentMetrics || (await this.collectComplianceMetrics());
+		const currentMetrics = this.currentMetrics || (await this.collectComplianceMetrics());
 
 		// Generate executive summary
 		const executiveSummary = this.generateExecutiveSummary(currentMetrics);
@@ -507,13 +461,8 @@ export class ComplianceDashboardService {
 			active_alerts: options?.include_active_alerts ? this.activeAlerts : [],
 			audit_trail_summary: {
 				total_entries: this.auditTrail.length,
-				compliance_checks_performed: this.auditTrail.filter(
-					(a) => a.dashboard_action === "compliance_check",
-				).length,
-				alerts_generated: this.auditTrail.reduce(
-					(sum, a) => sum + a.alerts_generated.length,
-					0,
-				),
+				compliance_checks_performed: this.auditTrail.filter((a) => a.dashboard_action === "compliance_check").length,
+				alerts_generated: this.auditTrail.reduce((sum, a) => sum + a.alerts_generated.length, 0),
 			},
 		};
 
@@ -526,10 +475,8 @@ export class ComplianceDashboardService {
 			detailed_metrics: detailedMetrics,
 			constitutional_certification: {
 				privacy_officer_review: true,
-				regulatory_compliance_verified:
-					currentMetrics.overall_compliance_score >= 9.5,
-				constitutional_standards_met:
-					currentMetrics.constitutional_compliance_score >= 9.9,
+				regulatory_compliance_verified: currentMetrics.overall_compliance_score >= 9.5,
+				constitutional_standards_met: currentMetrics.constitutional_compliance_score >= 9.9,
 				audit_trail_complete: this.auditTrail.length > 0,
 			},
 		};
@@ -554,13 +501,8 @@ export class ComplianceDashboardService {
 	/**
 	 * Resolve compliance alert
 	 */
-	async resolveAlert(
-		alertId: string,
-		resolution: string,
-	): Promise<{ success: boolean }> {
-		const alertIndex = this.activeAlerts.findIndex(
-			(alert) => alert.alert_id === alertId,
-		);
+	async resolveAlert(alertId: string, resolution: string): Promise<{ success: boolean }> {
+		const alertIndex = this.activeAlerts.findIndex((alert) => alert.alert_id === alertId);
 
 		if (alertIndex === -1) {
 			throw new Error("Alert not found");
@@ -654,9 +596,7 @@ export class ComplianceDashboardService {
 		};
 	}
 
-	private calculateOverallComplianceScore(
-		scores: Record<string, number>,
-	): number {
+	private calculateOverallComplianceScore(scores: Record<string, number>): number {
 		const weights = {
 			lgpd: 0.25,
 			anvisa: 0.2,
@@ -667,9 +607,8 @@ export class ComplianceDashboardService {
 		};
 
 		const weightedSum = Object.entries(scores).reduce(
-			(sum, [key, score]) =>
-				sum + score * (weights[key as keyof typeof weights] || 0),
-			0,
+			(sum, [key, score]) => sum + score * (weights[key as keyof typeof weights] || 0),
+			0
 		);
 
 		return Math.round(weightedSum * 100) / 100;
@@ -710,12 +649,7 @@ export class ComplianceDashboardService {
 	}
 
 	private generateExecutiveSummary(metrics: ComplianceDashboardMetrics): {
-		overall_compliance_rating:
-			| "excellent"
-			| "good"
-			| "fair"
-			| "poor"
-			| "critical";
+		overall_compliance_rating: "excellent" | "good" | "fair" | "poor" | "critical";
 		key_achievements: string[];
 		critical_issues: string[];
 		recommendations: string[];
@@ -791,21 +725,14 @@ export class ComplianceDashboardService {
 		}
 
 		// Check for critical alerts
-		const criticalAlerts = this.activeAlerts.filter(
-			(alert) => alert.alert_type === "critical",
-		);
+		const criticalAlerts = this.activeAlerts.filter((alert) => alert.alert_type === "critical");
 		if (criticalAlerts.length > 0) {
-			issues.push(
-				`${criticalAlerts.length} critical alerts require immediate attention`,
-			);
+			issues.push(`${criticalAlerts.length} critical alerts require immediate attention`);
 			score -= criticalAlerts.length * 0.1;
 		}
 
 		// Check compliance scores
-		if (
-			this.currentMetrics &&
-			this.currentMetrics.constitutional_compliance_score < 9.9
-		) {
+		if (this.currentMetrics && this.currentMetrics.constitutional_compliance_score < 9.9) {
 			issues.push("Constitutional compliance score below required 9.9/10");
 			score -= 0.2;
 		}
@@ -821,9 +748,7 @@ export class ComplianceDashboardService {
 /**
  * Factory function to create compliance dashboard service
  */
-export function createComplianceDashboardService(
-	config: ComplianceDashboardConfig,
-): ComplianceDashboardService {
+export function createComplianceDashboardService(config: ComplianceDashboardConfig): ComplianceDashboardService {
 	return new ComplianceDashboardService(config);
 }
 
@@ -831,36 +756,28 @@ export function createComplianceDashboardService(
  * Constitutional compliance validation for dashboard operations
  */
 export async function validateComplianceDashboard(
-	config: ComplianceDashboardConfig,
+	config: ComplianceDashboardConfig
 ): Promise<{ valid: boolean; violations: string[] }> {
 	const violations: string[] = [];
 
 	// Validate monitoring intervals
 	if (config.refresh_interval_ms < 5000) {
-		violations.push(
-			"Monitoring interval too frequent - may impact system performance",
-		);
+		violations.push("Monitoring interval too frequent - may impact system performance");
 	}
 
 	// Validate alert thresholds
 	if (config.alert_thresholds.critical_compliance_score < 9.5) {
-		violations.push(
-			"Critical compliance threshold too low for constitutional healthcare",
-		);
+		violations.push("Critical compliance threshold too low for constitutional healthcare");
 	}
 
 	// Validate constitutional validation requirement
 	if (!config.constitutional_validation) {
-		violations.push(
-			"Constitutional validation must be enabled for healthcare compliance",
-		);
+		violations.push("Constitutional validation must be enabled for healthcare compliance");
 	}
 
 	// Validate LGPD tracking requirement
 	if (!config.lgpd_tracking_enabled) {
-		violations.push(
-			"LGPD tracking must be enabled for Brazilian healthcare compliance",
-		);
+		violations.push("LGPD tracking must be enabled for Brazilian healthcare compliance");
 	}
 
 	return {

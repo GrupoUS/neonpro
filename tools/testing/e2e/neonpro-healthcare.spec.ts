@@ -43,9 +43,7 @@ test.describe("NeonPro Healthcare System", () => {
 		try {
 			// Try to find login form elements
 			const loginElements = await page
-				.locator(
-					'input[type="email"], input[type="password"], [data-testid*="login"]',
-				)
+				.locator('input[type="email"], input[type="password"], [data-testid*="login"]')
 				.count();
 
 			if (loginElements === 0) {
@@ -114,9 +112,7 @@ test.describe("NeonPro Healthcare System", () => {
 		if (!foundPatientRoute) {
 			const currentUrl = page.url();
 			const isRedirectToAuth =
-				currentUrl.includes("login") ||
-				currentUrl.includes("auth") ||
-				currentUrl.includes("dashboard");
+				currentUrl.includes("login") || currentUrl.includes("auth") || currentUrl.includes("dashboard");
 			expect(isRedirectToAuth).toBe(true);
 		}
 	});
@@ -125,12 +121,8 @@ test.describe("NeonPro Healthcare System", () => {
 		await page.goto("/");
 
 		// Check for LGPD compliance indicators
-		const lgpdElements = await page
-			.locator("text=/lgpd|privacidade|proteção de dados/i")
-			.count();
-		const cookieBanner = await page
-			.locator('[data-testid*="cookie"], .cookie-banner, text=/cookie/i')
-			.count();
+		const lgpdElements = await page.locator("text=/lgpd|privacidade|proteção de dados/i").count();
+		const cookieBanner = await page.locator('[data-testid*="cookie"], .cookie-banner, text=/cookie/i').count();
 
 		// Healthcare applications should have some privacy/compliance indicators
 		expect(lgpdElements + cookieBanner).toBeGreaterThanOrEqual(0);
@@ -140,9 +132,7 @@ test.describe("NeonPro Healthcare System", () => {
 		await page.goto("/");
 
 		// Check for basic navigation elements
-		const navElements = await page
-			.locator('nav, [role="navigation"], .navigation, .navbar, .sidebar')
-			.count();
+		const navElements = await page.locator('nav, [role="navigation"], .navigation, .navbar, .sidebar').count();
 		const linkElements = await page.locator("a[href]").count();
 		const buttonElements = await page.locator("button").count();
 
@@ -179,15 +169,8 @@ test.describe("NeonPro Healthcare System", () => {
 });
 
 test.describe("Healthcare Data Protection (LGPD)", () => {
-	test("should not expose sensitive data in network requests", async ({
-		page,
-	}) => {
-		const sensitivePatterns = [
-			/cpf.*\d{11}/i,
-			/password.*[:=]/i,
-			/cartão.*\d{16}/i,
-			/rg.*\d{7}/i,
-		];
+	test("should not expose sensitive data in network requests", async ({ page }) => {
+		const sensitivePatterns = [/cpf.*\d{11}/i, /password.*[:=]/i, /cartão.*\d{16}/i, /rg.*\d{7}/i];
 
 		const exposedData = [];
 

@@ -13,27 +13,14 @@ export type TimePickerProps = {
 };
 
 const TimePicker = React.forwardRef<HTMLButtonElement, TimePickerProps>(
-	(
-		{
-			value,
-			onChange,
-			placeholder = "Selecione um horário",
-			disabled,
-			className,
-		},
-		ref,
-	) => {
+	({ value, onChange, placeholder = "Selecione um horário", disabled, className }, ref) => {
 		const [open, setOpen] = React.useState(false);
 
 		return (
 			<Popover onOpenChange={setOpen} open={open}>
 				<PopoverTrigger asChild>
 					<Button
-						className={cn(
-							"w-full justify-start text-left font-normal",
-							!value && "text-muted-foreground",
-							className,
-						)}
+						className={cn("w-full justify-start text-left font-normal", !value && "text-muted-foreground", className)}
 						disabled={disabled}
 						ref={ref}
 						variant="outline"
@@ -58,7 +45,7 @@ const TimePicker = React.forwardRef<HTMLButtonElement, TimePickerProps>(
 				</PopoverContent>
 			</Popover>
 		);
-	},
+	}
 );
 
 TimePicker.displayName = "TimePicker";

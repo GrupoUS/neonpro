@@ -15,10 +15,7 @@ async function globalTeardown(config: FullConfig) {
 		// Collect performance metrics
 		const metrics = {
 			timestamp: new Date().toISOString(),
-			globalSetupTime: Number.parseInt(
-				process.env.GLOBAL_SETUP_TIME || "0",
-				10,
-			),
+			globalSetupTime: Number.parseInt(process.env.GLOBAL_SETUP_TIME || "0", 10),
 			totalTestDuration: Date.now() - startTime,
 			environment: process.env.NODE_ENV || "test",
 			workers: config.workers,
@@ -27,14 +24,7 @@ async function globalTeardown(config: FullConfig) {
 		};
 
 		// Save performance metrics
-		const metricsPath = join(
-			process.cwd(),
-			"tools",
-			"testing",
-			"e2e",
-			"reports",
-			"performance-summary.json",
-		);
+		const metricsPath = join(process.cwd(), "tools", "testing", "e2e", "reports", "performance-summary.json");
 		writeFileSync(metricsPath, JSON.stringify(metrics, null, 2));
 	} catch (_error) {}
 

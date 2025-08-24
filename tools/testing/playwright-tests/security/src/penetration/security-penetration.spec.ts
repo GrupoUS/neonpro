@@ -101,15 +101,10 @@ test.describe("Authentication Security Tests", () => {
 
 		for (const payload of SQL_INJECTION_PAYLOADS) {
 			await test.step(`Testing ${payload.name} (${payload.severity})`, async () => {
-				await page.fill(
-					'[data-testid="professional-registration"]',
-					payload.payload,
-				);
+				await page.fill('[data-testid="professional-registration"]', payload.payload);
 				await page.fill('[data-testid="professional-password"]', "password123");
 
-				const response = page.waitForResponse((res) =>
-					res.url().includes("/api/auth/login"),
-				);
+				const response = page.waitForResponse((res) => res.url().includes("/api/auth/login"));
 				await page.click('[data-testid="login-button"]');
 				const loginResponse = await response;
 
@@ -123,8 +118,7 @@ test.describe("Authentication Security Tests", () => {
 
 					// Should show security error or remain on login page
 					const isOnLoginPage = page.url().includes("/auth/professional-login");
-					const hasSecurityError =
-						(await page.locator('[data-testid="security-error"]').count()) > 0;
+					const hasSecurityError = (await page.locator('[data-testid="security-error"]').count()) > 0;
 
 					expect(isOnLoginPage || hasSecurityError).toBe(true);
 				}
@@ -156,9 +150,7 @@ test.describe("Authentication Security Tests", () => {
 					expect(alertTriggered).toBe(false);
 
 					// Check if payload was sanitized in the DOM
-					const nameValue = await page.inputValue(
-						'[data-testid="patient-name"]',
-					);
+					const nameValue = await page.inputValue('[data-testid="patient-name"]');
 					if (payload.expectedBlocked) {
 						expect(nameValue).not.toContain("<script>");
 						expect(nameValue).not.toContain("onerror=");
@@ -174,10 +166,7 @@ test.describe("Authentication Security Tests", () => {
 		// First, login normally to get session
 		await page.goto("/auth/professional-login");
 		await page.fill('[data-testid="professional-registration"]', "123456-SP");
-		await page.fill(
-			'[data-testid="professional-password"]',
-			"ValidPassword123!",
-		);
+		await page.fill('[data-testid="professional-password"]', "ValidPassword123!");
 		await page.click('[data-testid="login-button"]');
 
 		// Wait for successful login
@@ -214,15 +203,10 @@ test.describe("Authentication Security Tests", () => {
 
 		// Make multiple rapid login attempts
 		for (let i = 0; i < attempts; i++) {
-			await page.fill(
-				'[data-testid="professional-registration"]',
-				"invalid-user",
-			);
+			await page.fill('[data-testid="professional-registration"]', "invalid-user");
 			await page.fill('[data-testid="professional-password"]', "invalid-pass");
 
-			const response = page.waitForResponse((res) =>
-				res.url().includes("/api/auth/login"),
-			);
+			const response = page.waitForResponse((res) => res.url().includes("/api/auth/login"));
 			await page.click('[data-testid="login-button"]');
 			const loginResponse = await response;
 
@@ -232,15 +216,11 @@ test.describe("Authentication Security Tests", () => {
 		}
 
 		// Should start blocking after several attempts
-		const blockedResponses = responses.filter(
-			(status) => status === 429 || status === 403,
-		);
+		const blockedResponses = responses.filter((status) => status === 429 || status === 403);
 		expect(blockedResponses.length).toBeGreaterThan(0);
 
 		// Should show rate limit message
-		const rateLimitMessage = await page
-			.locator('[data-testid="rate-limit-error"]')
-			.count();
+		const rateLimitMessage = await page.locator('[data-testid="rate-limit-error"]').count();
 		expect(rateLimitMessage).toBeGreaterThan(0);
 	});
 
@@ -248,20 +228,14 @@ test.describe("Authentication Security Tests", () => {
 		// Login first
 		await page.goto("/auth/professional-login");
 		await page.fill('[data-testid="professional-registration"]', "123456-SP");
-		await page.fill(
-			'[data-testid="professional-password"]',
-			"ValidPassword123!",
-		);
+		await page.fill('[data-testid="professional-password"]', "ValidPassword123!");
 		await page.click('[data-testid="login-button"]');
 
 		await page.waitForSelector('[data-testid="professional-dashboard"]');
 
 		// Check session cookie security
 		const cookies = await page.context().cookies();
-		const sessionCookie = cookies.find(
-			(cookie) =>
-				cookie.name.includes("session") || cookie.name.includes("token"),
-		);
+		const sessionCookie = cookies.find((cookie) => cookie.name.includes("session") || cookie.name.includes("token"));
 
 		if (sessionCookie) {
 			// Session cookie should be secure and httpOnly
@@ -290,9 +264,7 @@ test.describe("Data Protection Security Tests", () => {
 		await page.goto("/api/patients/123");
 
 		// Intercept API response to check data format
-		const response = await page.waitForResponse((res) =>
-			res.url().includes("/api/patients/123"),
-		);
+		const response = await page.waitForResponse((res) => res.url().includes("/api/patients/123"));
 		const data = await response.json();
 
 		// Sensitive fields should be encrypted or not directly exposed
@@ -334,9 +306,7 @@ test.describe("Data Protection Security Tests", () => {
 					buffer,
 				});
 
-				const response = page.waitForResponse((res) =>
-					res.url().includes("/api/upload"),
-				);
+				const response = page.waitForResponse((res) => res.url().includes("/api/upload"));
 				await page.click('[data-testid="upload-submit"]');
 				const uploadResponse = await response;
 
@@ -344,9 +314,7 @@ test.describe("Data Protection Security Tests", () => {
 					expect(uploadResponse.status()).not.toBe(200);
 
 					// Should show security warning
-					const securityWarning = await page
-						.locator('[data-testid="security-warning"]')
-						.count();
+					const securityWarning = await page.locator('[data-testid="security-warning"]').count();
 					expect(securityWarning).toBeGreaterThan(0);
 				} else {
 					expect(uploadResponse.status()).toBe(200);
@@ -360,19 +328,14 @@ test.describe("Data Protection Security Tests", () => {
 		await page.goto("/api/patients/123/medical-records");
 
 		// Should redirect to login or return 401/403
-		const response = await page.waitForResponse((res) =>
-			res.url().includes("/api/patients/123/medical-records"),
-		);
+		const response = await page.waitForResponse((res) => res.url().includes("/api/patients/123/medical-records"));
 		expect([401, 403]).toContain(response.status());
 
 		// Test role-based access control
 		// Login as nurse
 		await page.goto("/auth/professional-login");
 		await page.fill('[data-testid="professional-registration"]', "789012-SP");
-		await page.fill(
-			'[data-testid="professional-password"]',
-			"NursePassword123!",
-		);
+		await page.fill('[data-testid="professional-password"]', "NursePassword123!");
 		await page.click('[data-testid="login-button"]');
 
 		// Try to access admin-only functions
@@ -426,8 +389,7 @@ test.describe("LGPD Compliance Security Tests", () => {
 		await page.goto("/patients/register");
 
 		// Should still require explicit consent
-		const consentRequired =
-			(await page.locator('[data-testid="lgpd-consent"]').count()) > 0;
+		const consentRequired = (await page.locator('[data-testid="lgpd-consent"]').count()) > 0;
 		expect(consentRequired).toBe(true);
 	});
 
@@ -435,10 +397,7 @@ test.describe("LGPD Compliance Security Tests", () => {
 		// Login and perform some actions
 		await page.goto("/auth/professional-login");
 		await page.fill('[data-testid="professional-registration"]', "123456-SP");
-		await page.fill(
-			'[data-testid="professional-password"]',
-			"ValidPassword123!",
-		);
+		await page.fill('[data-testid="professional-password"]', "ValidPassword123!");
 		await page.click('[data-testid="login-button"]');
 
 		await page.waitForSelector('[data-testid="professional-dashboard"]');
@@ -502,12 +461,7 @@ test.describe("Infrastructure Security Tests", () => {
 
 		// Filter out localhost/development URLs
 		const externalResponses = responses.filter(
-			(r) =>
-				!(
-					r.url.includes("localhost") ||
-					r.url.includes("127.0.0.1") ||
-					r.url.startsWith("data:")
-				),
+			(r) => !(r.url.includes("localhost") || r.url.includes("127.0.0.1") || r.url.startsWith("data:"))
 		);
 
 		for (const response of externalResponses) {

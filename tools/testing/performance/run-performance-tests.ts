@@ -190,8 +190,4 @@ if (require.main === module) {
 	});
 }
 
-export {
-	PerformanceValidator,
-	type PerformanceResults,
-	type PerformanceTargets,
-};
+export { PerformanceValidator, type PerformanceResults, type PerformanceTargets };

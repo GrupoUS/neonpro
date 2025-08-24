@@ -49,9 +49,7 @@ const createMockQuery = () => {
 	});
 
 	// Default resolution
-	mockQuery.then.mockImplementation((onResolve) =>
-		Promise.resolve({ data: [], error: null }).then(onResolve),
-	);
+	mockQuery.then.mockImplementation((onResolve) => Promise.resolve({ data: [], error: null }).then(onResolve));
 
 	return mockQuery;
 };
@@ -133,9 +131,7 @@ const mockPerformanceMetric = {
 describe("Professional Supabase Functions", () => {
 	// Helper function to setup mock responses consistently
 	const setupMockResponse = (response: any) => {
-		mockQuery.then.mockImplementation((onResolve) =>
-			Promise.resolve(response).then(onResolve),
-		);
+		mockQuery.then.mockImplementation((onResolve) => Promise.resolve(response).then(onResolve));
 	};
 
 	beforeEach(() => {
@@ -159,9 +155,7 @@ describe("Professional Supabase Functions", () => {
 				const result = await createProfessional(professionalData);
 
 				expect(mockSupabaseClient.from).toHaveBeenCalledWith("professionals");
-				expect(mockSupabaseClient.from().insert).toHaveBeenCalledWith(
-					professionalData,
-				);
+				expect(mockSupabaseClient.from().insert).toHaveBeenCalledWith(professionalData);
 				expect(result).toEqual(mockProfessional);
 			});
 
@@ -176,9 +170,7 @@ describe("Professional Supabase Functions", () => {
 					email: "ana.silva@email.com",
 				};
 
-				await expect(createProfessional(professionalData)).rejects.toThrow(
-					"Database error",
-				);
+				await expect(createProfessional(professionalData)).rejects.toThrow("Database error");
 			});
 
 			it("should validate required fields", async () => {
@@ -187,9 +179,7 @@ describe("Professional Supabase Functions", () => {
 					// Missing required fields
 				};
 
-				await expect(
-					createProfessional(incompleteProfessionalData),
-				).rejects.toThrow();
+				await expect(createProfessional(incompleteProfessionalData)).rejects.toThrow();
 			});
 		});
 
@@ -205,13 +195,8 @@ describe("Professional Supabase Functions", () => {
 				const result = await updateProfessional("1", updateData);
 
 				expect(mockSupabaseClient.from).toHaveBeenCalledWith("professionals");
-				expect(mockSupabaseClient.from().update).toHaveBeenCalledWith(
-					updateData,
-				);
-				expect(mockSupabaseClient.from().update().eq).toHaveBeenCalledWith(
-					"id",
-					"1",
-				);
+				expect(mockSupabaseClient.from().update).toHaveBeenCalledWith(updateData);
+				expect(mockSupabaseClient.from().update().eq).toHaveBeenCalledWith("id", "1");
 				expect(result).toEqual(mockProfessional);
 			});
 
@@ -220,18 +205,14 @@ describe("Professional Supabase Functions", () => {
 				const mockUpdateResponse = { data: null, error: mockError };
 				setupMockResponse(mockUpdateResponse);
 
-				await expect(updateProfessional("1", {})).rejects.toThrow(
-					"Update failed",
-				);
+				await expect(updateProfessional("1", {})).rejects.toThrow("Update failed");
 			});
 
 			it("should throw error when professional not found", async () => {
 				const mockUpdateResponse = { data: null, error: null };
 				setupMockResponse(mockUpdateResponse);
 
-				await expect(updateProfessional("999", {})).rejects.toThrow(
-					"Professional not found",
-				);
+				await expect(updateProfessional("999", {})).rejects.toThrow("Professional not found");
 			});
 		});
 
@@ -243,10 +224,7 @@ describe("Professional Supabase Functions", () => {
 				await deleteProfessional("1");
 
 				expect(mockSupabaseClient.from).toHaveBeenCalledWith("professionals");
-				expect(mockSupabaseClient.from().delete().eq).toHaveBeenCalledWith(
-					"id",
-					"1",
-				);
+				expect(mockSupabaseClient.from().delete().eq).toHaveBeenCalledWith("id", "1");
 			});
 
 			it("should throw error when deletion fails", async () => {
@@ -254,9 +232,7 @@ describe("Professional Supabase Functions", () => {
 				const mockDeleteResponse = { data: null, error: mockError };
 				setupMockResponse(mockDeleteResponse);
 
-				await expect(deleteProfessional("1")).rejects.toThrow(
-					"Deletion failed",
-				);
+				await expect(deleteProfessional("1")).rejects.toThrow("Deletion failed");
 			});
 		});
 
@@ -278,10 +254,7 @@ describe("Professional Supabase Functions", () => {
 
 				const result = await getProfessionals({ status: "active" });
 
-				expect(mockSupabaseClient.from().select().eq).toHaveBeenCalledWith(
-					"status",
-					"active",
-				);
+				expect(mockSupabaseClient.from().select().eq).toHaveBeenCalledWith("status", "active");
 				expect(result).toEqual([mockProfessional]);
 			});
 
@@ -302,10 +275,7 @@ describe("Professional Supabase Functions", () => {
 				const result = await getProfessionalById("1");
 
 				expect(mockSupabaseClient.from).toHaveBeenCalledWith("professionals");
-				expect(mockSupabaseClient.from().select().eq).toHaveBeenCalledWith(
-					"id",
-					"1",
-				);
+				expect(mockSupabaseClient.from().select().eq).toHaveBeenCalledWith("id", "1");
 				expect(result).toEqual(mockProfessional);
 			});
 
@@ -336,13 +306,8 @@ describe("Professional Supabase Functions", () => {
 
 				const result = await getProfessionalCredentials("1");
 
-				expect(mockSupabaseClient.from).toHaveBeenCalledWith(
-					"professional_credentials",
-				);
-				expect(mockSupabaseClient.from().select().eq).toHaveBeenCalledWith(
-					"professional_id",
-					"1",
-				);
+				expect(mockSupabaseClient.from).toHaveBeenCalledWith("professional_credentials");
+				expect(mockSupabaseClient.from().select().eq).toHaveBeenCalledWith("professional_id", "1");
 				expect(result).toEqual([mockCredential]);
 			});
 
@@ -351,9 +316,7 @@ describe("Professional Supabase Functions", () => {
 				const mockSelectResponse = { data: null, error: mockError };
 				setupMockResponse(mockSelectResponse);
 
-				await expect(getProfessionalCredentials("1")).rejects.toThrow(
-					"Fetch failed",
-				);
+				await expect(getProfessionalCredentials("1")).rejects.toThrow("Fetch failed");
 			});
 		});
 
@@ -371,9 +334,7 @@ describe("Professional Supabase Functions", () => {
 
 				const result = await createProfessionalCredential(credentialData);
 
-				expect(mockSupabaseClient.from).toHaveBeenCalledWith(
-					"professional_credentials",
-				);
+				expect(mockSupabaseClient.from).toHaveBeenCalledWith("professional_credentials");
 				expect(result).toEqual(mockCredential);
 			});
 
@@ -382,9 +343,7 @@ describe("Professional Supabase Functions", () => {
 				const mockInsertResponse = { data: null, error: mockError };
 				setupMockResponse(mockInsertResponse);
 
-				await expect(createProfessionalCredential({})).rejects.toThrow(
-					"Creation failed",
-				);
+				await expect(createProfessionalCredential({})).rejects.toThrow("Creation failed");
 			});
 		});
 
@@ -399,9 +358,7 @@ describe("Professional Supabase Functions", () => {
 
 				const result = await updateProfessionalCredential("cred-1", updateData);
 
-				expect(mockSupabaseClient.from).toHaveBeenCalledWith(
-					"professional_credentials",
-				);
+				expect(mockSupabaseClient.from).toHaveBeenCalledWith("professional_credentials");
 				expect(result).toEqual(mockCredential);
 			});
 
@@ -410,9 +367,7 @@ describe("Professional Supabase Functions", () => {
 				const mockUpdateResponse = { data: null, error: mockError };
 				setupMockResponse(mockUpdateResponse);
 
-				await expect(
-					updateProfessionalCredential("cred-1", {}),
-				).rejects.toThrow("Update failed");
+				await expect(updateProfessionalCredential("cred-1", {})).rejects.toThrow("Update failed");
 			});
 		});
 
@@ -423,13 +378,8 @@ describe("Professional Supabase Functions", () => {
 
 				await deleteProfessionalCredential("cred-1");
 
-				expect(mockSupabaseClient.from).toHaveBeenCalledWith(
-					"professional_credentials",
-				);
-				expect(mockSupabaseClient.from().delete().eq).toHaveBeenCalledWith(
-					"id",
-					"cred-1",
-				);
+				expect(mockSupabaseClient.from).toHaveBeenCalledWith("professional_credentials");
+				expect(mockSupabaseClient.from().delete().eq).toHaveBeenCalledWith("id", "cred-1");
 			});
 
 			it("should throw error when deletion fails", async () => {
@@ -437,9 +387,7 @@ describe("Professional Supabase Functions", () => {
 				const mockDeleteResponse = { data: null, error: mockError };
 				setupMockResponse(mockDeleteResponse);
 
-				await expect(deleteProfessionalCredential("cred-1")).rejects.toThrow(
-					"Deletion failed",
-				);
+				await expect(deleteProfessionalCredential("cred-1")).rejects.toThrow("Deletion failed");
 			});
 		});
 
@@ -453,9 +401,7 @@ describe("Professional Supabase Functions", () => {
 
 				const result = await verifyCredential("cred-1");
 
-				expect(mockSupabaseClient.from).toHaveBeenCalledWith(
-					"professional_credentials",
-				);
+				expect(mockSupabaseClient.from).toHaveBeenCalledWith("professional_credentials");
 				expect(mockSupabaseClient.from().update).toHaveBeenCalledWith({
 					updated_at: expect.any(String), // Match actual implementation
 					verified: true, // Match actual implementation
@@ -468,9 +414,7 @@ describe("Professional Supabase Functions", () => {
 				const mockUpdateResponse = { data: null, error: mockError };
 				setupMockResponse(mockUpdateResponse);
 
-				await expect(verifyCredential("cred-1")).rejects.toThrow(
-					"Verification failed",
-				);
+				await expect(verifyCredential("cred-1")).rejects.toThrow("Verification failed");
 			});
 		});
 	});
@@ -483,13 +427,8 @@ describe("Professional Supabase Functions", () => {
 
 				const result = await getProfessionalServices("1");
 
-				expect(mockSupabaseClient.from).toHaveBeenCalledWith(
-					"professional_services",
-				);
-				expect(mockSupabaseClient.from().select().eq).toHaveBeenCalledWith(
-					"professional_id",
-					"1",
-				);
+				expect(mockSupabaseClient.from).toHaveBeenCalledWith("professional_services");
+				expect(mockSupabaseClient.from().select().eq).toHaveBeenCalledWith("professional_id", "1");
 				expect(result).toEqual([mockService]);
 			});
 
@@ -498,9 +437,7 @@ describe("Professional Supabase Functions", () => {
 				const mockSelectResponse = { data: null, error: mockError };
 				setupMockResponse(mockSelectResponse);
 
-				await expect(getProfessionalServices("1")).rejects.toThrow(
-					"Fetch failed",
-				);
+				await expect(getProfessionalServices("1")).rejects.toThrow("Fetch failed");
 			});
 		});
 
@@ -519,9 +456,7 @@ describe("Professional Supabase Functions", () => {
 
 				const result = await createProfessionalService(serviceData);
 
-				expect(mockSupabaseClient.from).toHaveBeenCalledWith(
-					"professional_services",
-				);
+				expect(mockSupabaseClient.from).toHaveBeenCalledWith("professional_services");
 				expect(result).toEqual(mockService);
 			});
 
@@ -530,9 +465,7 @@ describe("Professional Supabase Functions", () => {
 				const mockInsertResponse = { data: null, error: mockError };
 				setupMockResponse(mockInsertResponse);
 
-				await expect(createProfessionalService({})).rejects.toThrow(
-					"Creation failed",
-				);
+				await expect(createProfessionalService({})).rejects.toThrow("Creation failed");
 			});
 		});
 
@@ -547,9 +480,7 @@ describe("Professional Supabase Functions", () => {
 
 				const result = await updateProfessionalService("service-1", updateData);
 
-				expect(mockSupabaseClient.from).toHaveBeenCalledWith(
-					"professional_services",
-				);
+				expect(mockSupabaseClient.from).toHaveBeenCalledWith("professional_services");
 				expect(result).toEqual(mockService);
 			});
 
@@ -558,9 +489,7 @@ describe("Professional Supabase Functions", () => {
 				const mockUpdateResponse = { data: null, error: mockError };
 				setupMockResponse(mockUpdateResponse);
 
-				await expect(
-					updateProfessionalService("service-1", {}),
-				).rejects.toThrow("Update failed");
+				await expect(updateProfessionalService("service-1", {})).rejects.toThrow("Update failed");
 			});
 		});
 
@@ -571,13 +500,8 @@ describe("Professional Supabase Functions", () => {
 
 				await deleteProfessionalService("service-1");
 
-				expect(mockSupabaseClient.from).toHaveBeenCalledWith(
-					"professional_services",
-				);
-				expect(mockSupabaseClient.from().delete().eq).toHaveBeenCalledWith(
-					"id",
-					"service-1",
-				);
+				expect(mockSupabaseClient.from).toHaveBeenCalledWith("professional_services");
+				expect(mockSupabaseClient.from().delete().eq).toHaveBeenCalledWith("id", "service-1");
 			});
 
 			it("should throw error when deletion fails", async () => {
@@ -585,9 +509,7 @@ describe("Professional Supabase Functions", () => {
 				const mockDeleteResponse = { data: null, error: mockError };
 				setupMockResponse(mockDeleteResponse);
 
-				await expect(deleteProfessionalService("service-1")).rejects.toThrow(
-					"Deletion failed",
-				);
+				await expect(deleteProfessionalService("service-1")).rejects.toThrow("Deletion failed");
 			});
 		});
 	});
@@ -603,13 +525,8 @@ describe("Professional Supabase Functions", () => {
 
 				const result = await getProfessionalPerformanceMetrics("1");
 
-				expect(mockSupabaseClient.from).toHaveBeenCalledWith(
-					"performance_metrics",
-				);
-				expect(mockSupabaseClient.from().select().eq).toHaveBeenCalledWith(
-					"professional_id",
-					"1",
-				);
+				expect(mockSupabaseClient.from).toHaveBeenCalledWith("performance_metrics");
+				expect(mockSupabaseClient.from().select().eq).toHaveBeenCalledWith("professional_id", "1");
 				expect(result).toEqual([mockPerformanceMetric]);
 			});
 
@@ -627,12 +544,8 @@ describe("Professional Supabase Functions", () => {
 
 				const result = await getProfessionalPerformanceMetrics("1", options);
 
-				expect(
-					mockSupabaseClient.from().select().eq().gte,
-				).toHaveBeenCalledWith("period_start", "2024-01-01");
-				expect(
-					mockSupabaseClient.from().select().eq().gte().lte,
-				).toHaveBeenCalledWith("period_end", "2024-01-31");
+				expect(mockSupabaseClient.from().select().eq().gte).toHaveBeenCalledWith("period_start", "2024-01-01");
+				expect(mockSupabaseClient.from().select().eq().gte().lte).toHaveBeenCalledWith("period_end", "2024-01-31");
 				expect(result).toEqual([mockPerformanceMetric]);
 			});
 
@@ -641,9 +554,7 @@ describe("Professional Supabase Functions", () => {
 				const mockSelectResponse = { data: null, error: mockError };
 				setupMockResponse(mockSelectResponse);
 
-				await expect(getProfessionalPerformanceMetrics("1")).rejects.toThrow(
-					"Fetch failed",
-				);
+				await expect(getProfessionalPerformanceMetrics("1")).rejects.toThrow("Fetch failed");
 			});
 		});
 
@@ -666,9 +577,7 @@ describe("Professional Supabase Functions", () => {
 
 				const result = await addPerformanceMetric(metricData);
 
-				expect(mockSupabaseClient.from).toHaveBeenCalledWith(
-					"performance_metrics",
-				);
+				expect(mockSupabaseClient.from).toHaveBeenCalledWith("performance_metrics");
 				expect(result).toEqual(mockPerformanceMetric);
 			});
 
@@ -677,9 +586,7 @@ describe("Professional Supabase Functions", () => {
 				const mockInsertResponse = { data: null, error: mockError };
 				setupMockResponse(mockInsertResponse);
 
-				await expect(addPerformanceMetric({})).rejects.toThrow(
-					"Creation failed",
-				);
+				await expect(addPerformanceMetric({})).rejects.toThrow("Creation failed");
 			});
 		});
 
@@ -697,9 +604,7 @@ describe("Professional Supabase Functions", () => {
 
 				const result = await updatePerformanceMetric("metric-1", updateData);
 
-				expect(mockSupabaseClient.from).toHaveBeenCalledWith(
-					"performance_metrics",
-				);
+				expect(mockSupabaseClient.from).toHaveBeenCalledWith("performance_metrics");
 				expect(result).toEqual(mockPerformanceMetric);
 			});
 
@@ -708,9 +613,7 @@ describe("Professional Supabase Functions", () => {
 				const mockUpdateResponse = { data: null, error: mockError };
 				setupMockResponse(mockUpdateResponse);
 
-				await expect(updatePerformanceMetric("metric-1", {})).rejects.toThrow(
-					"Update failed",
-				);
+				await expect(updatePerformanceMetric("metric-1", {})).rejects.toThrow("Update failed");
 			});
 		});
 	});
@@ -759,16 +662,12 @@ describe("Professional Supabase Functions", () => {
 			const mockUpdateResponse = { data: null, error: mockError };
 			setupMockResponse(mockUpdateResponse);
 
-			await expect(updateProfessional("1", {})).rejects.toThrow(
-				"Conflict: Resource was modified",
-			);
+			await expect(updateProfessional("1", {})).rejects.toThrow("Conflict: Resource was modified");
 		});
 
 		it("should handle database connection errors", async () => {
 			// Store original mock
-			const originalMock = (
-				createClient as vi.MockedFunction<any>
-			).getMockImplementation();
+			const originalMock = (createClient as vi.MockedFunction<any>).getMockImplementation();
 
 			const mockError = new Error("Connection failed");
 			(createClient as vi.MockedFunction<any>).mockImplementation(() => {
@@ -779,13 +678,9 @@ describe("Professional Supabase Functions", () => {
 
 			// Restore original mock
 			if (originalMock) {
-				(createClient as vi.MockedFunction<any>).mockImplementation(
-					originalMock,
-				);
+				(createClient as vi.MockedFunction<any>).mockImplementation(originalMock);
 			} else {
-				(createClient as vi.MockedFunction<any>).mockReturnValue(
-					mockSupabaseClient,
-				);
+				(createClient as vi.MockedFunction<any>).mockReturnValue(mockSupabaseClient);
 			}
 		});
 
@@ -843,9 +738,7 @@ describe("Professional Supabase Functions", () => {
 			const result = await getProfessionals(options);
 
 			expect(result).toEqual([mockProfessional]);
-			expect(mockSupabaseClient.from().select).toHaveBeenCalledWith(
-				"id,given_name,family_name,email,status",
-			);
+			expect(mockSupabaseClient.from().select).toHaveBeenCalledWith("id,given_name,family_name,email,status");
 		});
 	});
 });

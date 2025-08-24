@@ -62,7 +62,7 @@ const createMockRPCApp = () => {
 				error: "Credenciais inválidas",
 				message: "Email ou senha incorretos",
 			},
-			401,
+			401
 		);
 	});
 
@@ -100,7 +100,7 @@ const createMockRPCApp = () => {
 				createdAt: new Date().toISOString(),
 				updatedAt: new Date().toISOString(),
 			},
-			201,
+			201
 		);
 	});
 
@@ -125,7 +125,7 @@ const createMockRPCApp = () => {
 					error: "Campos obrigatórios",
 					message: "patientId, professionalId e scheduledFor são obrigatórios",
 				},
-				400,
+				400
 			);
 		}
 
@@ -136,7 +136,7 @@ const createMockRPCApp = () => {
 				id: `apt_${Date.now()}`,
 				createdAt: new Date().toISOString(),
 			},
-			201,
+			201
 		);
 	});
 
@@ -147,15 +147,11 @@ const createMockRPCApp = () => {
 		let filteredAppointments = [mockAppointment];
 
 		if (patientId) {
-			filteredAppointments = filteredAppointments.filter(
-				(apt) => apt.patientId === patientId,
-			);
+			filteredAppointments = filteredAppointments.filter((apt) => apt.patientId === patientId);
 		}
 
 		if (status) {
-			filteredAppointments = filteredAppointments.filter(
-				(apt) => apt.status === status,
-			);
+			filteredAppointments = filteredAppointments.filter((apt) => apt.status === status);
 		}
 
 		return c.json({ data: filteredAppointments });
@@ -416,9 +412,7 @@ describe("🔌 NEONPRO Healthcare - Hono RPC Client Integration", () => {
 			// Test invalidation after mutations
 			mockQueryClient.invalidateQueries(["patients"]);
 
-			expect(mockQueryClient.invalidateQueries).toHaveBeenCalledWith([
-				"patients",
-			]);
+			expect(mockQueryClient.invalidateQueries).toHaveBeenCalledWith(["patients"]);
 		});
 
 		it("should handle optimistic updates for healthcare data", async () => {
@@ -430,17 +424,12 @@ describe("🔌 NEONPRO Healthcare - Hono RPC Client Integration", () => {
 			// Simulate optimistic update
 			mockQueryClient.setQueryData(["patients", mockPatient.id], patientUpdate);
 
-			expect(mockQueryClient.setQueryData).toHaveBeenCalledWith(
-				["patients", mockPatient.id],
-				patientUpdate,
-			);
+			expect(mockQueryClient.setQueryData).toHaveBeenCalledWith(["patients", mockPatient.id], patientUpdate);
 
 			// Verify query invalidation for data consistency
 			mockQueryClient.invalidateQueries(["patients"]);
 
-			expect(mockQueryClient.invalidateQueries).toHaveBeenCalledWith([
-				"patients",
-			]);
+			expect(mockQueryClient.invalidateQueries).toHaveBeenCalledWith(["patients"]);
 		});
 	});
 });

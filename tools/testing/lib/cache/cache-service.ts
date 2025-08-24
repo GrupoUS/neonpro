@@ -21,11 +21,7 @@ class CacheService {
 	/**
 	 * Set a value in cache
 	 */
-	async set<T = any>(
-		key: string,
-		value: T,
-		options: CacheOptions = {},
-	): Promise<void> {
+	async set<T = any>(key: string, value: T, options: CacheOptions = {}): Promise<void> {
 		const ttl = options.ttl ?? this.defaultTtl;
 		const expires = ttl > 0 ? Date.now() + ttl : Number.MAX_SAFE_INTEGER;
 
@@ -114,9 +110,7 @@ class CacheService {
 	} /**
 	 * Set multiple values at once
 	 */
-	async mset<T = any>(
-		entries: Array<{ key: string; value: T; options?: CacheOptions }>,
-	): Promise<void> {
+	async mset<T = any>(entries: Array<{ key: string; value: T; options?: CacheOptions }>): Promise<void> {
 		for (const entry of entries) {
 			await this.set(entry.key, entry.value, entry.options);
 		}
@@ -163,10 +157,7 @@ class CacheService {
 
 		return {
 			size: this.cache.size,
-			hitRate:
-				totalAccesses > 0
-					? totalAccesses / (totalAccesses + this.cache.size)
-					: 0,
+			hitRate: totalAccesses > 0 ? totalAccesses / (totalAccesses + this.cache.size) : 0,
 			totalAccesses,
 			memoryUsage,
 		};
@@ -198,10 +189,7 @@ class CacheService {
 		}
 
 		// Simple pattern matching with * wildcard
-		const regex = new RegExp(
-			pattern.replace(/\*/g, ".*").replace(/\?/g, "."),
-			"i",
-		);
+		const regex = new RegExp(pattern.replace(/\*/g, ".*").replace(/\?/g, "."), "i");
 
 		return keys.filter((key) => regex.test(key));
 	}

@@ -36,10 +36,7 @@ export type RateLimitConfig = {
  * Allows different implementations (memory, Redis, database)
  */
 export type RateLimitStore = {
-	increment(
-		key: string,
-		windowSeconds: number,
-	): Promise<{ count: number; remaining: number; resetTime: number }>;
+	increment(key: string, windowSeconds: number): Promise<{ count: number; remaining: number; resetTime: number }>;
 	reset(key: string): Promise<void>;
 };
 
@@ -48,15 +45,9 @@ export type RateLimitStore = {
  * For production, use Redis or database-backed store
  */
 export class MemoryRateLimitStore implements RateLimitStore {
-	private readonly store = new Map<
-		string,
-		{ count: number; resetTime: number }
-	>();
+	private readonly store = new Map<string, { count: number; resetTime: number }>();
 
-	increment(
-		key: string,
-		windowSeconds: number,
-	): Promise<{ count: number; remaining: number; resetTime: number }> {
+	increment(key: string, windowSeconds: number): Promise<{ count: number; remaining: number; resetTime: number }> {
 		const now = Date.now();
 		const windowMs = windowSeconds * MILLISECONDS_PER_SECOND;
 
@@ -75,10 +66,7 @@ export class MemoryRateLimitStore implements RateLimitStore {
 
 		return Promise.resolve({
 			count: existing.count,
-			remaining: Math.max(
-				0,
-				windowMs - (now - (existing.resetTime - windowMs)),
-			),
+			remaining: Math.max(0, windowMs - (now - (existing.resetTime - windowMs))),
 			resetTime: existing.resetTime,
 		});
 	}
@@ -186,10 +174,7 @@ export class RateLimiter {
 	 * @param config - Rate limiting configuration
 	 * @returns Rate limiting result with allowed status and metadata
 	 */
-	async checkRateLimit(
-		request: NextRequest,
-		config: RateLimitConfig,
-	): Promise<RateLimitResult> {
+	async checkRateLimit(request: NextRequest, config: RateLimitConfig): Promise<RateLimitResult> {
 		// Check skip condition
 		if (config.skipCondition?.(request)) {
 			return {
@@ -204,10 +189,7 @@ export class RateLimiter {
 		const key = this.buildRateLimitKey(request, config);
 
 		// Check current count
-		const { count, resetTime } = await this.store.increment(
-			key,
-			config.windowSeconds,
-		);
+		const { count, resetTime } = await this.store.increment(key, config.windowSeconds);
 
 		const remaining = Math.max(0, config.maxRequests - count);
 		const allowed = count <= config.maxRequests;
@@ -221,9 +203,7 @@ export class RateLimiter {
 
 		// Add retry-after header for exceeded limits
 		if (!allowed) {
-			result.retryAfter = Math.ceil(
-				(resetTime - Date.now()) / MILLISECONDS_PER_SECOND,
-			);
+			result.retryAfter = Math.ceil((resetTime - Date.now()) / MILLISECONDS_PER_SECOND);
 		}
 
 		return result;
@@ -232,10 +212,7 @@ export class RateLimiter {
 	/**
 	 * Reset rate limit for a specific key
 	 */
-	async resetRateLimit(
-		request: NextRequest,
-		config: RateLimitConfig,
-	): Promise<void> {
+	async resetRateLimit(request: NextRequest, config: RateLimitConfig): Promise<void> {
 		const key = this.buildRateLimitKey(request, config);
 		await this.store.reset(key);
 	}
@@ -243,10 +220,7 @@ export class RateLimiter {
 	/**
 	 * Build unique rate limit key based on request and configuration
 	 */
-	private buildRateLimitKey(
-		request: NextRequest,
-		config: RateLimitConfig,
-	): string {
+	private buildRateLimitKey(request: NextRequest, config: RateLimitConfig): string {
 		const keyParts = ["rate-limit"];
 
 		// Add key suffix if specified
@@ -347,16 +321,12 @@ export const RateLimitLevel = {
 	EXCEEDED: "exceeded",
 } as const;
 
-export type RateLimitLevel =
-	(typeof RateLimitLevel)[keyof typeof RateLimitLevel];
+export type RateLimitLevel = (typeof RateLimitLevel)[keyof typeof RateLimitLevel];
 
 /**
  * Determine alert level based on current usage
  */
-export function getRateLimitLevel(
-	count: number,
-	maxRequests: number,
-): RateLimitLevel {
+export function getRateLimitLevel(count: number, maxRequests: number): RateLimitLevel {
 	const percentage = (count / maxRequests) * PERCENTAGE_MULTIPLIER;
 
 	if (count > maxRequests) {

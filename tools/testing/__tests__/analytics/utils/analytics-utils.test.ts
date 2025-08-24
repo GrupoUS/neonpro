@@ -24,38 +24,19 @@ vi.mock("date-fns", () => ({
 			return d.toISOString().split("T")[0]; // Returns actual yyyy-mm-dd format
 		}
 		if (formatStr === "MMM yyyy") {
-			const monthNames = [
-				"Jan",
-				"Feb",
-				"Mar",
-				"Apr",
-				"May",
-				"Jun",
-				"Jul",
-				"Aug",
-				"Sep",
-				"Oct",
-				"Nov",
-				"Dec",
-			];
+			const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 			return `${monthNames[d.getMonth()]} ${d.getFullYear()}`; // Returns actual month year format
 		}
 		return d.toISOString().split("T")[0];
 	}),
-	subDays: vi.fn(
-		(date, days) => new Date(date.getTime() - days * 24 * 60 * 60 * 1000),
-	),
+	subDays: vi.fn((date, days) => new Date(date.getTime() - days * 24 * 60 * 60 * 1000)),
 	subMonths: vi.fn((date, months) => {
 		const newDate = new Date(date);
 		newDate.setMonth(newDate.getMonth() - months);
 		return newDate;
 	}),
-	startOfMonth: vi.fn(
-		(date) => new Date(date.getFullYear(), date.getMonth(), 1),
-	),
-	endOfMonth: vi.fn(
-		(date) => new Date(date.getFullYear(), date.getMonth() + 1, 0),
-	),
+	startOfMonth: vi.fn((date) => new Date(date.getFullYear(), date.getMonth(), 1)),
+	endOfMonth: vi.fn((date) => new Date(date.getFullYear(), date.getMonth() + 1, 0)),
 	isValid: vi.fn(() => true),
 	parseISO: vi.fn((dateStr) => new Date(dateStr)),
 	differenceInDays: vi.fn(() => 30),
@@ -282,7 +263,7 @@ describe("Analytics Utils", () => {
 
 		test("should aggregate by month", () => {
 			const result = aggregateMetricsByPeriod(sampleData, "month", (items) =>
-				items.reduce((sum, item) => sum + item.value, 0),
+				items.reduce((sum, item) => sum + item.value, 0)
 			);
 
 			expect(result).toEqual([
@@ -293,7 +274,7 @@ describe("Analytics Utils", () => {
 
 		test("should aggregate by day", () => {
 			const result = aggregateMetricsByPeriod(sampleData, "day", (items) =>
-				items.reduce((sum, item) => sum + item.value, 0),
+				items.reduce((sum, item) => sum + item.value, 0)
 			);
 
 			expect(result).toHaveLength(4);
@@ -301,16 +282,14 @@ describe("Analytics Utils", () => {
 		});
 
 		test("should handle empty data", () => {
-			const result = aggregateMetricsByPeriod([], "month", (items) =>
-				items.reduce((sum, item) => sum + item.value, 0),
-			);
+			const result = aggregateMetricsByPeriod([], "month", (items) => items.reduce((sum, item) => sum + item.value, 0));
 
 			expect(result).toEqual([]);
 		});
 
 		test("should handle custom aggregation functions", () => {
 			const result = aggregateMetricsByPeriod(sampleData, "month", (items) =>
-				Math.max(...items.map((item) => item.value)),
+				Math.max(...items.map((item) => item.value))
 			);
 
 			expect(result).toEqual([
@@ -344,9 +323,7 @@ describe("Analytics Utils", () => {
 			const start = new Date("2024-01-03");
 			const end = new Date("2024-01-01");
 
-			expect(() => generateDateRange(start, end)).toThrow(
-				"Start date must be before or equal to end date",
-			);
+			expect(() => generateDateRange(start, end)).toThrow("Start date must be before or equal to end date");
 		});
 	});
 
@@ -420,9 +397,7 @@ describe("Analytics Utils", () => {
 				start_date: "invalid_date",
 			});
 
-			expect(() => parseAnalyticsFilters(params)).toThrow(
-				"Invalid filter parameters",
-			);
+			expect(() => parseAnalyticsFilters(params)).toThrow("Invalid filter parameters");
 		});
 
 		test("should handle complex filters", () => {
@@ -576,11 +551,7 @@ describe("Analytics Utils", () => {
 		});
 
 		test("should validate data types in complex functions", () => {
-			const invalidData = [
-				{ amount: "not a number", status: "active" },
-				{ amount: 100, status: 123 },
-				"not an object",
-			];
+			const invalidData = [{ amount: "not a number", status: "active" }, { amount: 100, status: 123 }, "not an object"];
 
 			expect(calculateMRR(invalidData as any)).toBe(0);
 		});

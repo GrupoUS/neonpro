@@ -7,14 +7,7 @@ import type { Database } from "@neonpro/types";
 import { z } from "zod";
 export declare const LGPDValidationConfigSchema: z.ZodObject<
 	{
-		validation_type: z.ZodEnum<
-			[
-				"data_processing",
-				"consent_management",
-				"data_transfer",
-				"breach_assessment",
-			]
-		>;
+		validation_type: z.ZodEnum<["data_processing", "consent_management", "data_transfer", "breach_assessment"]>;
 		strict_mode: z.ZodDefault<z.ZodBoolean>;
 		constitutional_validation: z.ZodDefault<z.ZodBoolean>;
 		audit_trail: z.ZodDefault<z.ZodBoolean>;
@@ -25,20 +18,12 @@ export declare const LGPDValidationConfigSchema: z.ZodObject<
 	{
 		audit_trail: boolean;
 		constitutional_validation: boolean;
-		validation_type:
-			| "data_transfer"
-			| "data_processing"
-			| "consent_management"
-			| "breach_assessment";
+		validation_type: "data_transfer" | "data_processing" | "consent_management" | "breach_assessment";
 		strict_mode: boolean;
 		privacy_impact_assessment: boolean;
 	},
 	{
-		validation_type:
-			| "data_transfer"
-			| "data_processing"
-			| "consent_management"
-			| "breach_assessment";
+		validation_type: "data_transfer" | "data_processing" | "consent_management" | "breach_assessment";
 		audit_trail?: boolean | undefined;
 		constitutional_validation?: boolean | undefined;
 		strict_mode?: boolean | undefined;
@@ -234,9 +219,7 @@ export declare class LGPDValidator {
 	/**
 	 * Validate data processing activity
 	 */
-	validateDataProcessing(
-		processingActivity: any,
-	): Promise<LGPDValidationResult>;
+	validateDataProcessing(processingActivity: any): Promise<LGPDValidationResult>;
 	/**
 	 * Validate consent management
 	 */
@@ -253,16 +236,11 @@ export declare class LGPDValidator {
 /**
  * Create LGPD Validator service
  */
-export declare function createLGPDValidator(
-	config: LGPDValidationConfig,
-	db: Database,
-): LGPDValidator;
+export declare function createLGPDValidator(config: LGPDValidationConfig, db: Database): LGPDValidator;
 /**
  * Validate LGPD validation configuration
  */
-export declare function validateLGPDValidationConfig(
-	config: LGPDValidationConfig,
-): Promise<{
+export declare function validateLGPDValidationConfig(config: LGPDValidationConfig): Promise<{
 	valid: boolean;
 	violations: string[];
 }>;

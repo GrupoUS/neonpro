@@ -83,12 +83,7 @@ export type RealTimeNotificationsProps = {
 	/**
 	 * Position of notifications on screen
 	 */
-	position?:
-		| "top-right"
-		| "top-left"
-		| "bottom-right"
-		| "bottom-left"
-		| "top-center";
+	position?: "top-right" | "top-left" | "bottom-right" | "bottom-left" | "top-center";
 	/**
 	 * Show notification badge/counter
 	 */
@@ -209,14 +204,7 @@ const NotificationCard: React.FC<{
 	onAction?: (notificationId: string, actionId: string) => void;
 	allowDismiss?: boolean;
 	showAvatar?: boolean;
-}> = ({
-	notification,
-	onDismiss,
-	onClick,
-	onAction,
-	allowDismiss = true,
-	showAvatar = true,
-}) => {
+}> = ({ notification, onDismiss, onClick, onAction, allowDismiss = true, showAvatar = true }) => {
 	const Icon = notificationIcons[notification.type];
 	const [isVisible, setIsVisible] = React.useState(true);
 
@@ -253,10 +241,8 @@ const NotificationCard: React.FC<{
 				"cursor-pointer rounded-lg border p-4 shadow-lg transition-all duration-300",
 				getPriorityColor(notification.priority),
 				!notification.read && "ring-2 ring-primary/20",
-				isVisible
-					? "translate-x-0 transform opacity-100"
-					: "translate-x-full transform opacity-0",
-				onClick && "hover:shadow-xl",
+				isVisible ? "translate-x-0 transform opacity-100" : "translate-x-full transform opacity-0",
+				onClick && "hover:shadow-xl"
 			)}
 			onClick={handleClick}
 			role="alert"
@@ -264,13 +250,10 @@ const NotificationCard: React.FC<{
 			<div className="flex items-start gap-3">
 				{/* Icon/Avatar */}
 				<div className="flex-shrink-0">
-					{showAvatar &&
-					(notification.patientAvatar || notification.staffAvatar) ? (
+					{showAvatar && (notification.patientAvatar || notification.staffAvatar) ? (
 						<Avatar size="sm">
 							<AvatarImage
-								alt={
-									notification.patientName || notification.staffName || "User"
-								}
+								alt={notification.patientName || notification.staffName || "User"}
 								src={notification.patientAvatar || notification.staffAvatar}
 							/>
 							<AvatarFallback>
@@ -286,14 +269,10 @@ const NotificationCard: React.FC<{
 						<div
 							className={cn(
 								"flex h-8 w-8 items-center justify-center rounded-full",
-								notification.priority === "critical" &&
-									"bg-red-100 text-red-700",
-								notification.priority === "high" &&
-									"bg-orange-100 text-orange-700",
-								notification.priority === "medium" &&
-									"bg-yellow-100 text-yellow-700",
-								notification.priority === "low" &&
-									"bg-green-100 text-green-700",
+								notification.priority === "critical" && "bg-red-100 text-red-700",
+								notification.priority === "high" && "bg-orange-100 text-orange-700",
+								notification.priority === "medium" && "bg-yellow-100 text-yellow-700",
+								notification.priority === "low" && "bg-green-100 text-green-700"
 							)}
 						>
 							<Icon className="h-4 w-4" />
@@ -306,32 +285,22 @@ const NotificationCard: React.FC<{
 					<div className="flex items-start justify-between gap-2">
 						<div className="min-w-0 flex-1">
 							<div className="mb-1 flex items-center gap-2">
-								<h4
-									className="truncate font-medium text-sm"
-									id={`notification-${notification.id}-title`}
-								>
+								<h4 className="truncate font-medium text-sm" id={`notification-${notification.id}-title`}>
 									{notification.title}
 								</h4>
-								<Badge
-									size="sm"
-									variant={getPriorityVariant(notification.priority)}
-								>
+								<Badge size="sm" variant={getPriorityVariant(notification.priority)}>
 									{getTypeLabel(notification.type)}
 								</Badge>
 							</div>
 
-							<p
-								className="text-muted-foreground text-sm"
-								id={`notification-${notification.id}-message`}
-							>
+							<p className="text-muted-foreground text-sm" id={`notification-${notification.id}-message`}>
 								{notification.message}
 							</p>
 
 							{/* Patient/Staff Info */}
 							{(notification.patientName || notification.staffName) && (
 								<p className="mt-1 text-muted-foreground text-xs">
-									{notification.patientName &&
-										`Paciente: ${notification.patientName}`}
+									{notification.patientName && `Paciente: ${notification.patientName}`}
 									{notification.patientName && notification.staffName && " • "}
 									{notification.staffName && `Staff: ${notification.staffName}`}
 								</p>
@@ -341,16 +310,12 @@ const NotificationCard: React.FC<{
 							{notification.lgpdRelevant && (
 								<div className="mt-2 flex items-center gap-1">
 									<Shield className="h-3 w-3 text-blue-600" />
-									<span className="text-blue-600 text-xs">
-										Dados protegidos pela LGPD
-									</span>
+									<span className="text-blue-600 text-xs">Dados protegidos pela LGPD</span>
 								</div>
 							)}
 
 							{/* Timestamp */}
-							<p className="mt-1 text-muted-foreground text-xs">
-								{formatDate(notification.timestamp)}
-							</p>
+							<p className="mt-1 text-muted-foreground text-xs">{formatDate(notification.timestamp)}</p>
 						</div>
 
 						{/* Dismiss Button */}
@@ -398,14 +363,7 @@ const NotificationBell: React.FC<{
 	onTogglePanel: () => void;
 	onMarkAllRead?: () => void;
 	onOpenSettings?: () => void;
-}> = ({
-	unreadCount,
-	soundEnabled,
-	onToggleSound,
-	onTogglePanel,
-	onMarkAllRead,
-	onOpenSettings,
-}) => {
+}> = ({ unreadCount, soundEnabled, onToggleSound, onTogglePanel, onMarkAllRead, onOpenSettings }) => {
 	return (
 		<div className="relative">
 			<Button
@@ -430,39 +388,20 @@ const NotificationBell: React.FC<{
 			{/* Quick Actions */}
 			<div className="invisible absolute top-full right-0 z-50 mt-2 w-48 rounded-lg border bg-card p-2 opacity-0 shadow-lg transition-all group-hover:visible group-hover:opacity-100">
 				<div className="space-y-1">
-					<Button
-						className="w-full justify-start"
-						onClick={onToggleSound}
-						size="sm"
-						variant="ghost"
-					>
-						{soundEnabled ? (
-							<Bell className="mr-2 h-4 w-4" />
-						) : (
-							<BellOff className="mr-2 h-4 w-4" />
-						)}
+					<Button className="w-full justify-start" onClick={onToggleSound} size="sm" variant="ghost">
+						{soundEnabled ? <Bell className="mr-2 h-4 w-4" /> : <BellOff className="mr-2 h-4 w-4" />}
 						{soundEnabled ? "Desativar Som" : "Ativar Som"}
 					</Button>
 
 					{onMarkAllRead && unreadCount > 0 && (
-						<Button
-							className="w-full justify-start"
-							onClick={onMarkAllRead}
-							size="sm"
-							variant="ghost"
-						>
+						<Button className="w-full justify-start" onClick={onMarkAllRead} size="sm" variant="ghost">
 							<CheckCircle className="mr-2 h-4 w-4" />
 							Marcar Todas como Lidas
 						</Button>
 					)}
 
 					{onOpenSettings && (
-						<Button
-							className="w-full justify-start"
-							onClick={onOpenSettings}
-							size="sm"
-							variant="ghost"
-						>
+						<Button className="w-full justify-start" onClick={onOpenSettings} size="sm" variant="ghost">
 							<Settings className="mr-2 h-4 w-4" />
 							Configurações
 						</Button>
@@ -473,10 +412,7 @@ const NotificationBell: React.FC<{
 	);
 };
 
-export const RealTimeNotifications = React.forwardRef<
-	HTMLDivElement,
-	RealTimeNotificationsProps
->(
+export const RealTimeNotifications = React.forwardRef<HTMLDivElement, RealTimeNotificationsProps>(
 	(
 		{
 			notifications,
@@ -495,13 +431,10 @@ export const RealTimeNotifications = React.forwardRef<
 			className,
 			...props
 		},
-		ref,
+		ref
 	) => {
-		const [localSoundEnabled, setLocalSoundEnabled] =
-			React.useState(soundEnabled);
-		const [visibleNotifications, setVisibleNotifications] = React.useState<
-			string[]
-		>([]);
+		const [localSoundEnabled, setLocalSoundEnabled] = React.useState(soundEnabled);
+		const [visibleNotifications, setVisibleNotifications] = React.useState<string[]>([]);
 
 		const unreadNotifications = notifications.filter((n) => !n.read);
 		const unreadCount = unreadNotifications.length;
@@ -516,21 +449,15 @@ export const RealTimeNotifications = React.forwardRef<
 
 		// Handle new notifications
 		React.useEffect(() => {
-			const newNotifications = notifications.filter(
-				(n) => !(visibleNotifications.includes(n.id) || n.read),
-			);
+			const newNotifications = notifications.filter((n) => !(visibleNotifications.includes(n.id) || n.read));
 
 			if (newNotifications.length > 0) {
 				const newIds = newNotifications.slice(0, maxVisible).map((n) => n.id);
-				setVisibleNotifications((prev) =>
-					[...prev, ...newIds].slice(-maxVisible),
-				);
+				setVisibleNotifications((prev) => [...prev, ...newIds].slice(-maxVisible));
 
 				// Play sound for critical notifications if enabled
 				if (localSoundEnabled) {
-					const criticalNotifications = newNotifications.filter(
-						(n) => n.priority === "critical",
-					);
+					const criticalNotifications = newNotifications.filter((n) => n.priority === "critical");
 					if (criticalNotifications.length > 0) {
 					}
 				}
@@ -542,9 +469,7 @@ export const RealTimeNotifications = React.forwardRef<
 		};
 
 		const handleDismiss = (notificationId: string) => {
-			setVisibleNotifications((prev) =>
-				prev.filter((id) => id !== notificationId),
-			);
+			setVisibleNotifications((prev) => prev.filter((id) => id !== notificationId));
 			onNotificationDismiss?.(notificationId);
 		};
 
@@ -573,7 +498,7 @@ export const RealTimeNotifications = React.forwardRef<
 					<div
 						className={cn(
 							"fixed inset-y-0 right-0 z-50 w-96 transform border-l bg-card shadow-xl transition-transform",
-							showPanel ? "translate-x-0" : "translate-x-full",
+							showPanel ? "translate-x-0" : "translate-x-full"
 						)}
 					>
 						<div className="flex items-center justify-between border-b p-4">
@@ -608,11 +533,7 @@ export const RealTimeNotifications = React.forwardRef<
 
 				{/* Floating Notifications */}
 				<div
-					className={cn(
-						"pointer-events-none fixed z-40",
-						positionClasses[position],
-						className,
-					)}
+					className={cn("pointer-events-none fixed z-40", positionClasses[position], className)}
 					ref={ref}
 					{...props}
 				>
@@ -632,7 +553,7 @@ export const RealTimeNotifications = React.forwardRef<
 				</div>
 			</>
 		);
-	},
+	}
 );
 
 RealTimeNotifications.displayName = "RealTimeNotifications";

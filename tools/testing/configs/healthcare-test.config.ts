@@ -11,11 +11,7 @@ export default defineConfig({
 	test: {
 		// Healthcare Testing Environment
 		environment: "jsdom",
-		setupFiles: [
-			"./setup/healthcare-setup.ts",
-			"./setup/lgpd-compliance-setup.ts",
-			"./setup/mock-supabase-setup.ts",
-		],
+		setupFiles: ["./setup/healthcare-setup.ts", "./setup/lgpd-compliance-setup.ts", "./setup/mock-supabase-setup.ts"],
 
 		// Performance Requirements for Healthcare
 		testTimeout: 10_000, // 10s max for healthcare operations
@@ -59,14 +55,7 @@ export default defineConfig({
 			"**/tests/**/*.{test,spec}.{ts,tsx}",
 			"**/*.{test,spec}.{ts,tsx}",
 		],
-		exclude: [
-			"node_modules/",
-			"dist/",
-			"build/",
-			".next/",
-			"coverage/",
-			"**/*.e2e.{test,spec}.{ts,tsx}",
-		],
+		exclude: ["node_modules/", "dist/", "build/", ".next/", "coverage/", "**/*.e2e.{test,spec}.{ts,tsx}"],
 
 		// Healthcare Test Globals
 		globals: {

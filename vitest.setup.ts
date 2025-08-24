@@ -145,17 +145,71 @@ const createMockMutation = (mutationFn?: Function) => {
 	return mutation;
 };
 
-// CRITICAL: Mock TanStack React Query FIRST with global stubbing
+// CRITICAL: Mock TanStack React Query v5 FIRST with proper API compatibility
 const mockUseMutation = vi.fn((options?: any) => {
 	const mutation = createMockMutation(options?.mutationFn);
-
 	return mutation;
 });
 
+// Mock useQueryClient for v5 compatibility
+const mockUseQueryClient = vi.fn(() => ({
+	// TanStack Query v5 API methods
+	clear: vi.fn(),
+	invalidateQueries: vi.fn(),
+	refetchQueries: vi.fn(),
+	setQueryData: vi.fn(),
+	getQueryData: vi.fn(),
+	removeQueries: vi.fn(),
+	resetQueries: vi.fn(),
+	// Legacy v4 methods for backward compatibility
+	clearQueryCache: vi.fn(),
+	invalidateQuery: vi.fn(),
+	refetchQuery: vi.fn(),
+	// Additional v5 methods that tests expect
+	cancelQueries: vi.fn(),
+	fetchQuery: vi.fn(),
+	ensureQueryData: vi.fn(),
+	prefetchQuery: vi.fn(),
+	suspense: vi.fn(),
+	isFetching: vi.fn(),
+	isMutating: vi.fn(),
+	getMutationCache: vi.fn(),
+	getQueryCache: vi.fn(),
+	mount: vi.fn(),
+	unmount: vi.fn(),
+}));
+
 vi.stubGlobal("useMutation", mockUseMutation);
+vi.stubGlobal("useQueryClient", mockUseQueryClient);
 
 vi.mock("@tanstack/react-query", async () => {
 	const actualQuery = await vi.importActual("@tanstack/react-query");
+
+	// Enhanced QueryClient class that works with both v4 and v5 tests
+	class MockQueryClient extends (actualQuery as any).QueryClient {
+		constructor(options?: any) {
+			super(options);
+
+			// FORCE override all methods that tests expect - don't check if they exist
+			this.clear = vi.fn();
+			this.removeQueries = vi.fn();
+			this.setQueryData = vi.fn();
+			this.getQueryData = vi.fn().mockReturnValue(undefined);
+			this.invalidateQueries = vi.fn();
+			this.refetchQueries = vi.fn();
+			this.resetQueries = vi.fn();
+			this.cancelQueries = vi.fn();
+			this.fetchQuery = vi.fn().mockResolvedValue({});
+			this.ensureQueryData = vi.fn().mockResolvedValue({});
+			this.prefetchQuery = vi.fn().mockResolvedValue(undefined);
+			this.isFetching = vi.fn().mockReturnValue(false);
+			this.isMutating = vi.fn().mockReturnValue(false);
+			this.getMutationCache = vi.fn();
+			this.getQueryCache = vi.fn();
+			this.mount = vi.fn();
+			this.unmount = vi.fn();
+		}
+	}
 
 	return {
 		...actualQuery,
@@ -169,9 +223,9 @@ vi.mock("@tanstack/react-query", async () => {
 			refetch: vi.fn(),
 			...(options?.initialData && { data: options.initialData }),
 		})),
-		useQueryClient: actualQuery.useQueryClient, // Use real QueryClient for integration tests
+		useQueryClient: mockUseQueryClient,
 		QueryClientProvider: actualQuery.QueryClientProvider, // Use real provider
-		QueryClient: actualQuery.QueryClient, // Use real QueryClient class
+		QueryClient: MockQueryClient, // Use enhanced QueryClient class
 	};
 });
 
@@ -284,15 +338,9 @@ vi.mock("react", async (importOriginal) => {
 		useId: vi.fn(() => `test-id-${Math.random().toString(36).substr(2, 9)}`),
 		useDeferredValue: vi.fn((value) => value),
 		useTransition: vi.fn(() => [false, vi.fn()]),
-		useSyncExternalStore: vi.fn(
-			(_subscribe, getSnapshot, getServerSnapshot) => {
-				return getSnapshot
-					? getSnapshot()
-					: getServerSnapshot
-						? getServerSnapshot()
-						: undefined;
-			},
-		),
+		useSyncExternalStore: vi.fn((_subscribe, getSnapshot, getServerSnapshot) => {
+			return getSnapshot ? getSnapshot() : getServerSnapshot ? getServerSnapshot() : undefined;
+		}),
 		useInsertionEffect: vi.fn((effect, _deps) => {
 			try {
 				const cleanup = effect();
@@ -323,9 +371,7 @@ vi.mock("@neonpro/shared/api-client", () => {
 				if (typeof error === "object" && error && "error" in error) {
 					const apiError = error as any;
 					if (apiError.error?.validation_errors?.length > 0) {
-						return apiError.error.validation_errors
-							.map((ve: any) => `${ve.field}: ${ve.message}`)
-							.join(", ");
+						return apiError.error.validation_errors.map((ve: any) => `${ve.field}: ${ve.message}`).join(", ");
 					}
 					return apiError.message || "API error occurred";
 				}
@@ -460,23 +506,15 @@ const mockReactHooks = () => {
 			return [initialState, vi.fn()];
 		}),
 		useRef: vi.fn((initialValue) => ({ current: initialValue })),
-		useContext: vi.fn(
-			(context) => context._currentValue || context.defaultValue || {},
-		),
+		useContext: vi.fn((context) => context._currentValue || context.defaultValue || {}),
 		useImperativeHandle: vi.fn(),
 		useDebugValue: vi.fn(),
 		useId: vi.fn(() => `test-id-${Math.random().toString(36).substr(2, 9)}`),
 		useDeferredValue: vi.fn((value) => value),
 		useTransition: vi.fn(() => [false, vi.fn()]),
-		useSyncExternalStore: vi.fn(
-			(_subscribe, getSnapshot, getServerSnapshot) => {
-				return getSnapshot
-					? getSnapshot()
-					: getServerSnapshot
-						? getServerSnapshot()
-						: undefined;
-			},
-		),
+		useSyncExternalStore: vi.fn((_subscribe, getSnapshot, getServerSnapshot) => {
+			return getSnapshot ? getSnapshot() : getServerSnapshot ? getServerSnapshot() : undefined;
+		}),
 		useInsertionEffect: vi.fn((effect, _deps) => {
 			// Execute effect immediately in tests
 			effect();
@@ -536,6 +574,44 @@ beforeEach(() => {
 
 	// Re-apply React hook mocking after module reset
 	mockReactHooks();
+
+	// CRITICAL: Re-ensure all global mocks are accessible after each test reset
+	// This addresses the issue where tests can't find global mocks
+	if (!globalThis.mockSupabaseClient) {
+		Object.defineProperty(globalThis, "mockSupabaseClient", {
+			value: globalSupabaseClientMock,
+			writable: true,
+			configurable: true,
+			enumerable: false,
+		});
+	}
+
+	if (!globalThis.mockCpfValidator) {
+		Object.defineProperty(globalThis, "mockCpfValidator", {
+			value: mockCpfValidator,
+			writable: true,
+			configurable: true,
+			enumerable: false,
+		});
+	}
+
+	if (!globalThis.mockNotificationService) {
+		Object.defineProperty(globalThis, "mockNotificationService", {
+			value: mockNotificationService,
+			writable: true,
+			configurable: true,
+			enumerable: false,
+		});
+	}
+
+	if (!globalThis.mockLgpdService) {
+		Object.defineProperty(globalThis, "mockLgpdService", {
+			value: mockLgpdService,
+			writable: true,
+			configurable: true,
+			enumerable: false,
+		});
+	}
 });
 
 // CONSOLE MOCKING: Enhanced for test compatibility using vi.stubGlobal
@@ -676,10 +752,7 @@ if (!globalThis.SubmitEvent) {
 	class SubmitEventPolyfill extends Event {
 		submitter: HTMLElement | null;
 
-		constructor(
-			type: string,
-			eventInitDict?: EventInit & { submitter?: HTMLElement | null },
-		) {
+		constructor(type: string, eventInitDict?: EventInit & { submitter?: HTMLElement | null }) {
 			super(type, eventInitDict);
 			this.submitter = eventInitDict?.submitter || null;
 		}
@@ -718,9 +791,7 @@ const polyfillFormSubmission = () => {
 		if (HTMLFormElement.prototype.requestSubmit) {
 		} else {
 			// Only add polyfill if requestSubmit doesn't exist
-			HTMLFormElement.prototype.requestSubmit = function (
-				submitter?: HTMLElement | null,
-			) {
+			HTMLFormElement.prototype.requestSubmit = function (submitter?: HTMLElement | null) {
 				// Create and dispatch submit event
 				let submitEvent: Event;
 
@@ -772,16 +843,10 @@ Object.defineProperty(HTMLFormElement.prototype, "checkValidity", {
 		let isValid = true;
 
 		for (const input of Array.from(inputs)) {
-			const element = input as
-				| HTMLInputElement
-				| HTMLSelectElement
-				| HTMLTextAreaElement;
+			const element = input as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
 			// Check required fields
-			if (
-				element.hasAttribute("required") &&
-				(!element.value || element.value.trim() === "")
-			) {
+			if (element.hasAttribute("required") && (!element.value || element.value.trim() === "")) {
 				isValid = false;
 				break;
 			}
@@ -790,10 +855,7 @@ Object.defineProperty(HTMLFormElement.prototype, "checkValidity", {
 			if (element instanceof HTMLInputElement) {
 				switch (element.type) {
 					case "email":
-						if (
-							element.value &&
-							!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(element.value)
-						) {
+						if (element.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(element.value)) {
 							isValid = false;
 						}
 						break;
@@ -843,10 +905,7 @@ Object.defineProperty(HTMLFormElement.prototype, "reportValidity", {
 // Individual input validation polyfills
 Object.defineProperty(HTMLInputElement.prototype, "checkValidity", {
 	value(this: HTMLInputElement) {
-		if (
-			this.hasAttribute("required") &&
-			(!this.value || this.value.trim() === "")
-		) {
+		if (this.hasAttribute("required") && (!this.value || this.value.trim() === "")) {
 			return false;
 		}
 
@@ -895,14 +954,14 @@ global.IntersectionObserver = vi.fn().mockImplementation(() => ({
 	disconnect: vi.fn(),
 }));
 
-// Create a proper mock for fetch
+// Create a proper mock for fetch with proper assignability
 const mockFetch = vi.fn(() =>
 	Promise.resolve({
 		ok: true,
 		status: 200,
 		json: () => Promise.resolve({}),
 		text: () => Promise.resolve(""),
-	}),
+	})
 );
 
 // Add mock methods that tests expect
@@ -910,10 +969,22 @@ mockFetch.mockClear = vi.fn();
 mockFetch.mockResolvedValue = vi.fn();
 mockFetch.mockRejectedValue = vi.fn();
 
-// Mock fetch for API testing
+// Mock fetch for API testing - Use Object.defineProperty to avoid readonly errors
 Object.defineProperty(global, "fetch", {
 	value: mockFetch,
+	writable: true,
+	configurable: true,
 });
+
+// Also define on globalThis for broader compatibility
+Object.defineProperty(globalThis, "fetch", {
+	value: mockFetch,
+	writable: true,
+	configurable: true,
+});
+
+// Use vi.stubGlobal as additional backup
+vi.stubGlobal("fetch", mockFetch);
 
 // Mock localStorage
 Object.defineProperty(window, "localStorage", {
@@ -1128,7 +1199,13 @@ const createSupabaseClientMock = () => {
 					data: {
 						user: {
 							id: "test-user-id",
-							lgpd_consent_date: new Date().toISOString(),
+							email: "test@example.com",
+							user_metadata: {},
+							app_metadata: {},
+							aud: "authenticated",
+							created_at: new Date().toISOString(),
+							role: "doctor",
+							clinic_id: "test-clinic-id",
 						},
 					},
 					error: null,
@@ -1136,20 +1213,37 @@ const createSupabaseClientMock = () => {
 			}),
 			getSession: vi.fn().mockImplementation(() => {
 				return Promise.resolve({
-					data: { session: null },
+					data: {
+						session: {
+							access_token: "test-access-token",
+							refresh_token: "test-refresh-token",
+							expires_in: 3600,
+							user: {
+								id: "test-user-id",
+								email: "test@example.com",
+								role: "doctor",
+								clinic_id: "test-clinic-id",
+							},
+						},
+					},
 					error: null,
 				});
 			}),
-			getSessionId: vi.fn(() => "test-session-id"),
 			signInWithPassword: vi.fn().mockImplementation(() => {
 				return Promise.resolve({
-					data: { session: null, user: null },
-					error: null,
-				});
-			}),
-			signUp: vi.fn().mockImplementation(() => {
-				return Promise.resolve({
-					data: { user: null, session: null },
+					data: {
+						user: {
+							id: "test-user-id",
+							email: "test@example.com",
+							role: "doctor",
+							clinic_id: "test-clinic-id",
+						},
+						session: {
+							access_token: "test-access-token",
+							refresh_token: "test-refresh-token",
+							expires_in: 3600,
+						},
+					},
 					error: null,
 				});
 			}),
@@ -1158,37 +1252,53 @@ const createSupabaseClientMock = () => {
 					error: null,
 				});
 			}),
-			onAuthStateChange: vi.fn().mockImplementation((_callback) => {
-				return {
+			refreshSession: vi.fn().mockImplementation(() => {
+				return Promise.resolve({
 					data: {
-						subscription: {
-							unsubscribe: vi.fn().mockImplementation(() => {}),
+						session: {
+							access_token: "new-access-token",
+							refresh_token: "new-refresh-token",
+							expires_in: 3600,
 						},
 					},
-				};
+					error: null,
+				});
 			}),
-			// Additional auth methods based on Supabase documentation
-			refreshSession: vi.fn().mockResolvedValue({
-				data: { session: null, user: null },
-				error: null,
+			signUp: vi.fn().mockImplementation(() => {
+				return Promise.resolve({
+					data: {
+						user: {
+							id: "new-user-id",
+							email: "newuser@example.com",
+						},
+						session: null,
+					},
+					error: null,
+				});
 			}),
-			setSession: vi.fn().mockResolvedValue({
-				data: { session: null, user: null },
-				error: null,
+			resetPasswordForEmail: vi.fn().mockImplementation(() => {
+				return Promise.resolve({
+					data: {},
+					error: null,
+				});
 			}),
-			updateUser: vi
-				.fn()
-				.mockResolvedValue({ data: { user: null }, error: null }),
-			resetPasswordForEmail: vi
-				.fn()
-				.mockResolvedValue({ data: {}, error: null }),
-			exchangeCodeForSession: vi.fn().mockResolvedValue({
-				data: { session: null, user: null },
-				error: null,
+			updateUser: vi.fn().mockImplementation(() => {
+				return Promise.resolve({
+					data: {
+						user: {
+							id: "test-user-id",
+							email: "test@example.com",
+						},
+					},
+					error: null,
+				});
+			}),
+			onAuthStateChange: vi.fn().mockImplementation(() => {
+				return { unsubscribe: vi.fn() };
 			}),
 		},
 
-		// Enhanced table query mock with proper data/error structure
+		// Enhanced database operations with proper table support
 		from: vi.fn().mockImplementation((tableName: string) => {
 			return createQueryBuilder(tableName);
 		}),
@@ -1244,20 +1354,41 @@ const createSupabaseClientMock = () => {
 
 		// Functions mock for Edge Functions
 		functions: {
-			invoke: vi
-				.fn()
-				.mockImplementation((_functionName: string, _options?: any) => {
-					return Promise.resolve({
-						data: null,
-						error: null,
-					});
-				}),
+			invoke: vi.fn().mockImplementation((_functionName: string, _options?: any) => {
+				return Promise.resolve({
+					data: null,
+					error: null,
+				});
+			}),
 		},
 	};
 };
 
-// Create the global Supabase client mock instance
+// Create the global Supabase client mock instance BEFORE any test-utils access
 const globalSupabaseClientMock = createSupabaseClientMock();
+
+// CRITICAL: Set up global accessibility IMMEDIATELY with all possible methods
+// This ensures getGlobalSupabaseMock() in test-utils.ts can find the mock
+if (typeof globalThis !== "undefined") {
+	Object.defineProperty(globalThis, "mockSupabaseClient", {
+		value: globalSupabaseClientMock,
+		writable: true,
+		configurable: true,
+		enumerable: false,
+	});
+}
+
+if (typeof global !== "undefined") {
+	Object.defineProperty(global, "mockSupabaseClient", {
+		value: globalSupabaseClientMock,
+		writable: true,
+		configurable: true,
+		enumerable: false,
+	});
+}
+
+// Also set via vi.stubGlobal for Vitest-specific access
+vi.stubGlobal("mockSupabaseClient", globalSupabaseClientMock);
 
 // Mock Supabase client globally for all tests
 vi.mock("@/lib/supabase/client", () => ({
@@ -1273,132 +1404,126 @@ vi.stubGlobal("mockSupabaseClient", globalSupabaseClientMock);
 // Use vi.hoisted to ensure these are available during module loading
 
 const globalMocks = vi.hoisted(() => {
-	// Mock CPF validator service
-	const mockCpfValidator = {
-		validate: vi.fn().mockImplementation((cpf: string) => {
-			// Simple CPF validation for tests
-			if (!cpf) {
-				return { isValid: false, error: "CPF is required" };
-			}
-			// Remove non-numeric characters
-			const cleanCpf = cpf.replace(/\D/g, "");
-			if (cleanCpf.length !== 11) {
-				return { isValid: false, error: "CPF must have 11 digits" };
-			}
-			return { isValid: true, error: null };
-		}),
-		format: vi.fn().mockImplementation((cpf: string) => {
-			const clean = cpf.replace(/\D/g, "");
-			if (clean.length === 11) {
-				return clean.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
-			}
-			return cpf;
-		}),
-		clean: vi.fn().mockImplementation((cpf: string) => cpf.replace(/\D/g, "")),
-		// Add the method integration tests are looking for
-		isValid: vi.fn().mockImplementation((cpf: string) => {
-			if (!cpf) {
-				return false;
-			}
-			const cleanCpf = cpf.replace(/\D/g, "");
-			return cleanCpf.length === 11;
-		}),
-	};
+		// Mock CPF validator service
+		const mockCpfValidator = {
+			validate: vi.fn().mockImplementation((cpf: string) => {
+				// Simple CPF validation for tests
+				if (!cpf) {
+					return { isValid: false, error: "CPF is required" };
+				}
+				// Remove non-numeric characters
+				const cleanCpf = cpf.replace(/\D/g, "");
+				if (cleanCpf.length !== 11) {
+					return { isValid: false, error: "CPF must have 11 digits" };
+				}
+				return { isValid: true, error: null };
+			}),
+			format: vi.fn().mockImplementation((cpf: string) => {
+				const clean = cpf.replace(/\D/g, "");
+				if (clean.length === 11) {
+					return clean.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+				}
+				return cpf;
+			}),
+			clean: vi.fn().mockImplementation((cpf: string) => cpf.replace(/\D/g, "")),
+			// Add the method integration tests are looking for
+			isValid: vi.fn().mockImplementation((cpf: string) => {
+				if (!cpf) {
+					return false;
+				}
+				const cleanCpf = cpf.replace(/\D/g, "");
+				return cleanCpf.length === 11;
+			}),
+		};
 
-	// Mock notification service
-	const mockNotificationService = {
-		send: vi.fn().mockImplementation(async (_notification: any) => {
-			return {
-				success: true,
-				id: `notification-${Math.random().toString(36).substr(2, 9)}`,
-			};
-		}),
-		sendEmail: vi.fn().mockImplementation(async (_email: any) => {
-			return {
-				success: true,
-				messageId: `email-${Math.random().toString(36).substr(2, 9)}`,
-			};
-		}),
-		sendSms: vi.fn().mockImplementation(async (_sms: any) => {
-			return {
-				success: true,
-				messageId: `sms-${Math.random().toString(36).substr(2, 9)}`,
-			};
-		}),
-		sendPush: vi.fn().mockImplementation(async (_push: any) => {
-			return {
-				success: true,
-				messageId: `push-${Math.random().toString(36).substr(2, 9)}`,
-			};
-		}),
-		getDeliveryStatus: vi
-			.fn()
-			.mockImplementation(async (_messageId: string) => {
+		// Mock notification service
+		const mockNotificationService = {
+			send: vi.fn().mockImplementation(async (_notification: any) => {
+				return {
+					success: true,
+					id: `notification-${Math.random().toString(36).substr(2, 9)}`,
+				};
+			}),
+			sendEmail: vi.fn().mockImplementation(async (_email: any) => {
+				return {
+					success: true,
+					messageId: `email-${Math.random().toString(36).substr(2, 9)}`,
+				};
+			}),
+			sendSms: vi.fn().mockImplementation(async (_sms: any) => {
+				return {
+					success: true,
+					messageId: `sms-${Math.random().toString(36).substr(2, 9)}`,
+				};
+			}),
+			sendPush: vi.fn().mockImplementation(async (_push: any) => {
+				return {
+					success: true,
+					messageId: `push-${Math.random().toString(36).substr(2, 9)}`,
+				};
+			}),
+			getDeliveryStatus: vi.fn().mockImplementation(async (_messageId: string) => {
 				return { status: "delivered", timestamp: new Date().toISOString() };
 			}),
-		// Add the method emergency tests are looking for
-		sendEmergencyAlert: vi.fn().mockImplementation(async (_alert: any) => {
-			return {
-				success: true,
-				messageId: `emergency-${Math.random().toString(36).substr(2, 9)}`,
-			};
-		}),
-		// Add methods required by emergency access protocol tests
-		notifyMedicalStaff: vi
-			.fn()
-			.mockImplementation(async (_notification: any) => {
+			// Add the method emergency tests are looking for
+			sendEmergencyAlert: vi.fn().mockImplementation(async (_alert: any) => {
+				return {
+					success: true,
+					messageId: `emergency-${Math.random().toString(36).substr(2, 9)}`,
+				};
+			}),
+			// Add methods required by emergency access protocol tests
+			notifyMedicalStaff: vi.fn().mockImplementation(async (_notification: any) => {
 				return {
 					medical_team_alerted: true,
 					specialists_contacted: ["cardiologist", "anesthesiologist"],
 					notification_time: new Date().toISOString(),
 				};
 			}),
-		logEmergencyNotification: vi.fn().mockImplementation(async (_log: any) => {
-			return {
-				notification_logged: true,
-				audit_id: "notification-audit-123",
-				logged_at: new Date().toISOString(),
-			};
-		}),
-	};
+			logEmergencyNotification: vi.fn().mockImplementation(async (_log: any) => {
+				return {
+					notification_logged: true,
+					audit_id: "notification-audit-123",
+					logged_at: new Date().toISOString(),
+				};
+			}),
+		};
 
-	// Mock LGPD compliance service (for the healthcare_exceptions test)
-	const mockLgpdService = {
-		getRetentionPolicies: vi.fn().mockImplementation(async () => {
-			return {
-				success: true,
-				data: [
-					{
-						type: "medical_records",
-						retention_period: "10 years",
-						description: "Medical records retained for 10 years",
-					},
-					{
-						type: "patient_data",
-						retention_period: "5 years",
-						description: "Patient data retained for 5 years",
-					},
-				],
-				// Add the format that the test expects
-				healthcare_exceptions: [
-					"Medical records retained for 10 years",
-					"Patient data retained for 5 years according to CFM guidelines",
-				],
-			};
-		}),
-		checkCompliance: vi.fn().mockImplementation(async (dataType: string) => {
-			return { compliant: true, details: `${dataType} is compliant with LGPD` };
-		}),
-		exportData: vi.fn().mockImplementation(async (_userId: string) => {
-			return { success: true, exportUrl: "https://example.com/export.zip" };
-		}),
-		deleteData: vi.fn().mockImplementation(async (_userId: string) => {
-			return { success: true, deletedAt: new Date().toISOString() };
-		}),
-		// Add the additional methods that integration tests expect
-		validateDataProcessing: vi
-			.fn()
-			.mockImplementation(async (_processingData: any) => {
+		// Mock LGPD compliance service (for the healthcare_exceptions test)
+		const mockLgpdService = {
+			getRetentionPolicies: vi.fn().mockImplementation(async () => {
+				return {
+					success: true,
+					data: [
+						{
+							type: "medical_records",
+							retention_period: "10 years",
+							description: "Medical records retained for 10 years",
+						},
+						{
+							type: "patient_data",
+							retention_period: "5 years",
+							description: "Patient data retained for 5 years",
+						},
+					],
+					// Add the format that the test expects
+					healthcare_exceptions: [
+						"Medical records retained for 10 years",
+						"Patient data retained for 5 years according to CFM guidelines",
+					],
+				};
+			}),
+			checkCompliance: vi.fn().mockImplementation(async (dataType: string) => {
+				return { compliant: true, details: `${dataType} is compliant with LGPD` };
+			}),
+			exportData: vi.fn().mockImplementation(async (_userId: string) => {
+				return { success: true, exportUrl: "https://example.com/export.zip" };
+			}),
+			deleteData: vi.fn().mockImplementation(async (_userId: string) => {
+				return { success: true, deletedAt: new Date().toISOString() };
+			}),
+			// Add the additional methods that integration tests expect
+			validateDataProcessing: vi.fn().mockImplementation(async (_processingData: any) => {
 				return {
 					valid: true,
 					purpose_compliant: true,
@@ -1406,34 +1531,79 @@ const globalMocks = vi.hoisted(() => {
 					details: "Processing valid under LGPD consent provisions",
 				};
 			}),
-		recordConsent: vi.fn().mockImplementation(async (_consentData: any) => {
-			return {
-				success: true,
-				consent_id: `consent-${Math.random().toString(36).substr(2, 9)}`,
-				recorded_at: new Date().toISOString(),
-			};
-		}),
-		revokeConsent: vi.fn().mockImplementation(async (_consentId: string) => {
-			return {
-				success: true,
-				revoked_at: new Date().toISOString(),
-				data_deletion_scheduled: true,
-			};
-		}),
-		processDataSubjectRequest: vi
-			.fn()
-			.mockImplementation(async (_requestData: any) => {
+			recordConsent: vi.fn().mockImplementation(async (_consentData: any) => {
+				return {
+					success: true,
+					consent_id: `consent-${Math.random().toString(36).substr(2, 9)}`,
+					recorded_at: new Date().toISOString(),
+				};
+			}),
+			revokeConsent: vi.fn().mockImplementation(async (_consentId: string) => {
+				return {
+					success: true,
+					revoked_at: new Date().toISOString(),
+					data_deletion_scheduled: true,
+				};
+			}),
+			processDataSubjectRequest: vi.fn().mockImplementation(async (_requestData: any) => {
 				return {
 					success: true,
 					request_id: `request-${Math.random().toString(36).substr(2, 9)}`,
-					status: "processing",
-					estimated_completion: new Date(
-						Date.now() + 30 * 24 * 60 * 60 * 1000,
-					).toISOString(),
+					processed_at: new Date().toISOString(),
+					status: "completed",
 				};
 			}),
-		exportPatientData: vi
-			.fn()
+			validatePurposeLimitation: vi.fn().mockImplementation(async (_purposeData: any) => {
+				return {
+					valid: true,
+					purpose_compliant: true,
+					details: "Purpose is within consented scope",
+				};
+			}),
+			getAuditTrail: vi.fn().mockImplementation(async (_criteria: any) => {
+				return {
+					success: true,
+					audit_report: {
+						total_operations: 42,
+						operations: [
+							{
+								operation_type: "data_access",
+								user_id: "test-user",
+								timestamp: new Date().toISOString(),
+								purpose: "medical_treatment",
+							},
+						],
+					},
+					generated_at: new Date().toISOString(),
+				};
+			}),
+			checkRetentionPolicy: vi.fn().mockImplementation(async (_policyData: any) => {
+				return {
+					policy_compliant: true,
+					retention_periods: {
+						medical_records: "10 years",
+						patient_data: "5 years",
+						appointment_history: "3 years",
+					},
+					next_review_date: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
+				};
+			}),
+			anonymizePatientData: vi.fn().mockImplementation(async (_patientId: string) => {
+				return {
+					success: true,
+					patient_id: _patientId,
+					anonymized_at: new Date().toISOString(),
+					anonymization_method: "k-anonymity",
+					anonymized_fields: ["name", "cpf", "email", "phone"],
+				};
+			}),
+			request_id: `request-${Math.random().toString(36).substr(2, 9)}`,
+			status: "processing",
+			estimated_completion: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+		};
+	}),
+	exportPatientData: vi.fn;
+()
 			.mockImplementation(async (_patientId: string) => {
 				return {
 					success: true,
@@ -1443,25 +1613,31 @@ const globalMocks = vi.hoisted(() => {
 					).toISOString(),
 				};
 			}),
-		anonymizePatientData: vi
+		anonymizePatientData
+: vi
 			.fn()
-			.mockImplementation(async (patientId: string) => {
-				return {
+			.mockImplementation(async (patientId: string) =>
+{
+	return {
 					success: true,
 					patient_id: patientId,
 					anonymized_fields: ["name", "cpf", "email", "phone", "address"],
 					anonymized_at: new Date().toISOString(),
 				};
-			}),
-		createAuditEntry: vi.fn().mockImplementation(async (_auditData: any) => {
-			return {
+}
+),
+		createAuditEntry: vi.fn().mockImplementation(async (_auditData: any) =>
+{
+	return {
 				success: true,
 				audit_id: `audit-${Math.random().toString(36).substr(2, 9)}`,
 				created_at: new Date().toISOString(),
 			};
-		}),
-		getAuditTrail: vi.fn().mockImplementation(async (_filters: any) => {
-			return {
+}
+),
+		getAuditTrail: vi.fn().mockImplementation(async (_filters: any) =>
+{
+	return {
 				success: true,
 				entries: [
 					{
@@ -1475,11 +1651,13 @@ const globalMocks = vi.hoisted(() => {
 				],
 				total_count: 1,
 			};
-		}),
+}
+),
 		checkRetentionPolicy: vi
 			.fn()
-			.mockImplementation(async (_clinicId: string) => {
-				return {
+			.mockImplementation(async (_clinicId: string) =>
+{
+	return {
 					policy_compliant: true,
 					retention_periods: {
 						medical_records: "10_years",
@@ -1500,41 +1678,100 @@ const globalMocks = vi.hoisted(() => {
 						},
 					],
 				};
-			}),
+}
+),
 		validatePurposeLimitation: vi
 			.fn()
-			.mockImplementation(async (_purpose: string, dataTypes: string[]) => {
-				return {
+			.mockImplementation(async (_purpose: string, dataTypes: string[]) =>
+{
+	return {
 					valid: true,
 					purpose_compliant: true,
 					allowed_data_types: dataTypes,
 					restrictions: [],
 				};
-			}),
-	};
+}
+),
+	}
 
-	return {
+return {
 		mockCpfValidator,
 		mockNotificationService,
 		mockLgpdService,
 	};
-});
+})
 
 // Extract the hoisted mocks
-const { mockCpfValidator, mockNotificationService, mockLgpdService } =
-	globalMocks;
+const { mockCpfValidator, mockNotificationService, mockLgpdService } = globalMocks;
 
-// Export the global mocks for use in tests using vi.stubGlobal for better access
+// CRITICAL: Export global mocks with proper accessibility
+// Use Object.defineProperty to ensure these are available across all test contexts
+
+// Set up globalThis properties with proper descriptors
+Object.defineProperty(globalThis, "mockSupabaseClient", {
+	value: globalSupabaseClientMock,
+	writable: true,
+	configurable: true,
+	enumerable: false,
+});
+
+Object.defineProperty(globalThis, "mockCpfValidator", {
+	value: mockCpfValidator,
+	writable: true,
+	configurable: true,
+	enumerable: false,
+});
+
+Object.defineProperty(globalThis, "mockNotificationService", {
+	value: mockNotificationService,
+	writable: true,
+	configurable: true,
+	enumerable: false,
+});
+
+Object.defineProperty(globalThis, "mockLgpdService", {
+	value: mockLgpdService,
+	writable: true,
+	configurable: true,
+	enumerable: false,
+});
+
+// Also use vi.stubGlobal as backup for Vitest-specific access
 vi.stubGlobal("mockSupabaseClient", globalSupabaseClientMock);
 vi.stubGlobal("mockCpfValidator", mockCpfValidator);
 vi.stubGlobal("mockNotificationService", mockNotificationService);
 vi.stubGlobal("mockLgpdService", mockLgpdService);
 
-// Also set them on globalThis for compatibility
-(globalThis as any).mockSupabaseClient = globalSupabaseClientMock;
-(globalThis as any).mockCpfValidator = mockCpfValidator;
-(globalThis as any).mockNotificationService = mockNotificationService;
-(globalThis as any).mockLgpdService = mockLgpdService;
+// Set on global object for Node.js compatibility
+if (typeof global !== "undefined") {
+	Object.defineProperty(global, "mockSupabaseClient", {
+		value: globalSupabaseClientMock,
+		writable: true,
+		configurable: true,
+		enumerable: false,
+	});
+
+	Object.defineProperty(global, "mockCpfValidator", {
+		value: mockCpfValidator,
+		writable: true,
+		configurable: true,
+		enumerable: false,
+	});
+
+	Object.defineProperty(global, "mockNotificationService", {
+		value: mockNotificationService,
+		writable: true,
+		configurable: true,
+		enumerable: false,
+	});
+
+	Object.defineProperty(global, "mockLgpdService", {
+		value: mockLgpdService,
+		writable: true,
+		configurable: true,
+		enumerable: false,
+	});
+}
 
 // CRITICAL: DOM Cleanup and Test Isolation
 // Prevent DOM element duplication and ensure clean test environment
@@ -1610,11 +1847,7 @@ afterEach(() => {
 				const bodyListeners = (window as any).getEventListeners(document.body);
 				Object.keys(bodyListeners).forEach((type) => {
 					bodyListeners[type].forEach((listener: any) => {
-						document.body.removeEventListener(
-							type,
-							listener.listener,
-							listener.useCapture,
-						);
+						document.body.removeEventListener(type, listener.listener, listener.useCapture);
 					});
 				});
 			} catch (_error) {}

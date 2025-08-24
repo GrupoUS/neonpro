@@ -1,13 +1,6 @@
 // Tipos RBAC centrais para o pacote domain
 
-export type UserRole =
-	| "admin"
-	| "manager"
-	| "doctor"
-	| "nurse"
-	| "receptionist"
-	| "patient"
-	| "guest";
+export type UserRole = "admin" | "manager" | "doctor" | "nurse" | "receptionist" | "patient" | "guest";
 
 export type Permission =
 	| "read:patients"

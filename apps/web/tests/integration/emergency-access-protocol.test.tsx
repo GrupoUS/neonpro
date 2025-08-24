@@ -133,12 +133,8 @@ const mockEmergencyGrant: EmergencyAccessGrant = {
 
 // Test wrapper component
 const _TestWrapper = ({ children }: { children: React.ReactNode }) => {
-	const queryClient = new QueryClient({
-		defaultOptions: {
-			queries: { retry: false },
-			mutations: { retry: false },
-		},
-	});
+	// Use the global mock QueryClient instead of creating a new one
+	const queryClient = globalThis.queryClient;
 
 	return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 };
@@ -147,10 +143,16 @@ describe("Emergency Access Protocol Integration Tests", () => {
 
 	beforeEach(() => {
 		vi.clearAllMocks();
+
+		// Create a fresh QueryClient for each test
 		queryClient = new QueryClient({
 			defaultOptions: {
-				queries: { retry: false },
-				mutations: { retry: false },
+				queries: {
+					retry: false,
+				},
+				mutations: {
+					retry: false,
+				},
 			},
 		});
 

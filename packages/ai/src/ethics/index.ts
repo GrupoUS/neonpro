@@ -23,29 +23,25 @@ export const AI_ETHICS_CONFIG = {
 		patientSafetyFirst: {
 			enabled: true,
 			priority: 1,
-			description:
-				"Patient safety takes absolute precedence over all other considerations",
+			description: "Patient safety takes absolute precedence over all other considerations",
 			enforcement: "mandatory",
 		},
 		explainableDecisions: {
 			enabled: true,
 			priority: 2,
-			description:
-				"All AI decisions must be fully explainable to medical professionals",
+			description: "All AI decisions must be fully explainable to medical professionals",
 			enforcement: "mandatory",
 		},
 		humanOversight: {
 			enabled: true,
 			priority: 3,
-			description:
-				"Human medical professional oversight required for all AI recommendations",
+			description: "Human medical professional oversight required for all AI recommendations",
 			enforcement: "mandatory",
 		},
 		medicalAccuracy: {
 			enabled: true,
 			priority: 4,
-			description:
-				"Minimum 95% accuracy required for all medical AI predictions",
+			description: "Minimum 95% accuracy required for all medical AI predictions",
 			enforcement: "mandatory",
 		},
 		privacyProtection: {

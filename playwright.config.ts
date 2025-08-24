@@ -10,8 +10,8 @@ import { cpus } from "node:os";
 import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
-	// Constitutional test directory structure
-	testDir: "./tools/testing/e2e/tests",
+	// Constitutional test directory structure - UPDATED TO NEW STRUCTURE
+	testDir: "./tools/e2e",
 
 	// Optimized test patterns - E2E ONLY
 	testMatch: ["**/*.spec.ts"],
@@ -74,12 +74,12 @@ export default defineConfig({
 	timeout: 60_000, // 1 minute max per test
 	globalTimeout: process.env.CI ? 30 * 60_000 : 15 * 60_000, // 30min CI / 15min local
 
-	// Optimized reporting - CONSOLIDATED TO TOOLS/TESTING
+	// Optimized reporting - CONSOLIDATED TO TOOLS STRUCTURE
 	reporter: [
 		[
 			"html",
 			{
-				outputFolder: "tools/testing/reports/e2e/html",
+				outputFolder: "tools/reports/e2e/html",
 				open: "never",
 				attachmentsBaseURL: "../",
 			},
@@ -87,7 +87,7 @@ export default defineConfig({
 		[
 			"junit",
 			{
-				outputFile: "tools/testing/reports/e2e/junit-results.xml",
+				outputFile: "tools/reports/e2e/junit-results.xml",
 				includeProjectInTestName: true,
 			},
 		],
@@ -95,7 +95,7 @@ export default defineConfig({
 		[
 			"json",
 			{
-				outputFile: "tools/testing/reports/e2e/performance-metrics.json",
+				outputFile: "tools/reports/e2e/performance-metrics.json",
 			},
 		],
 		// CI-friendly reporter
@@ -114,12 +114,12 @@ export default defineConfig({
 		},
 	},
 
-	// Organized output structure - CONSOLIDATED TO TOOLS/TESTING
-	outputDir: "tools/testing/reports/test-results/e2e",
+	// Organized output structure - CONSOLIDATED TO TOOLS STRUCTURE
+	outputDir: "tools/reports/test-results/e2e",
 
 	// Global setup for performance optimization
-	globalSetup: "./tools/testing/e2e/global-setup.ts",
-	globalTeardown: "./tools/testing/e2e/global-teardown.ts",
+	globalSetup: "./tools/e2e/global-setup.ts",
+	globalTeardown: "./tools/e2e/global-teardown.ts",
 
 	// Enhanced use block for test isolation
 	use: {
@@ -144,9 +144,6 @@ export default defineConfig({
 		acceptDownloads: false,
 		ignoreHTTPSErrors: false,
 		permissions: [],
-
-		// Optimized for SPA applications
-		waitUntil: "networkidle",
 	},
 	projects: [
 		{
@@ -162,7 +159,7 @@ export default defineConfig({
 			use: {
 				...devices["Pixel 5"],
 			},
-			testDir: "./tools/testing/e2e/mobile",
+			testDir: "./tools/e2e/mobile",
 		},
 
 		{

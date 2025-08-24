@@ -159,13 +159,7 @@ const config = createJestConfig({
 	detectOpenHandles: true,
 
 	// Collect coverage from
-	coveragePathIgnorePatterns: [
-		"/node_modules/",
-		"/coverage/",
-		"/dist/",
-		"/__tests__/",
-		"/test-utils/",
-	],
+	coveragePathIgnorePatterns: ["/node_modules/", "/coverage/", "/dist/", "/__tests__/", "/test-utils/"],
 });
 
 module.exports = config;

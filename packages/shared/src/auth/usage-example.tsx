@@ -38,16 +38,10 @@ function LoginPage() {
 		<div className="flex min-h-screen items-center justify-center">
 			<div className="w-full max-w-md space-y-8">
 				<div>
-					<h2 className="mt-6 text-center font-extrabold text-3xl text-gray-900">
-						Faça login em sua conta
-					</h2>
+					<h2 className="mt-6 text-center font-extrabold text-3xl text-gray-900">Faça login em sua conta</h2>
 				</div>
 				<form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-					{error && (
-						<div className="rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700">
-							{error}
-						</div>
-					)}
+					{error && <div className="rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700">{error}</div>}
 
 					<div>
 						<input
@@ -108,16 +102,9 @@ function Navbar() {
 					</div>
 
 					<div className="flex items-center space-x-4">
-						<span className="text-gray-700 text-sm">
-							Olá, {user?.name || user?.email}
-						</span>
-						<span className="text-gray-500 text-xs">
-							{user?.role && `(${user.role})`}
-						</span>
-						<button
-							className="text-gray-500 text-sm hover:text-gray-700"
-							onClick={handleLogout}
-						>
+						<span className="text-gray-700 text-sm">Olá, {user?.name || user?.email}</span>
+						<span className="text-gray-500 text-xs">{user?.role && `(${user.role})`}</span>
+						<button className="text-gray-500 text-sm hover:text-gray-700" onClick={handleLogout}>
 							Sair
 						</button>
 					</div>
@@ -162,27 +149,19 @@ function DashboardPage() {
 	return (
 		<div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
 			<div className="px-4 py-6 sm:px-0">
-				<h1 className="mb-6 font-bold text-2xl text-gray-900">
-					Dashboard - {user?.tenantId}
-				</h1>
+				<h1 className="mb-6 font-bold text-2xl text-gray-900">Dashboard - {user?.tenantId}</h1>
 
 				<div className="overflow-hidden rounded-lg bg-white shadow">
 					<div className="px-4 py-5 sm:p-6">
 						{loading ? (
 							<div className="text-center">
 								<div className="mx-auto h-6 w-6 animate-spin rounded-full border-indigo-600 border-b-2" />
-								<p className="mt-2 text-gray-500 text-sm">
-									Carregando dados...
-								</p>
+								<p className="mt-2 text-gray-500 text-sm">Carregando dados...</p>
 							</div>
 						) : (
 							<div>
-								<h3 className="mb-4 font-medium text-gray-900 text-lg">
-									Dados Protegidos
-								</h3>
-								<pre className="rounded bg-gray-100 p-4 text-sm">
-									{JSON.stringify(data, null, 2)}
-								</pre>
+								<h3 className="mb-4 font-medium text-gray-900 text-lg">Dados Protegidos</h3>
+								<pre className="rounded bg-gray-100 p-4 text-sm">{JSON.stringify(data, null, 2)}</pre>
 							</div>
 						)}
 					</div>
@@ -201,12 +180,8 @@ export const ProtectedDashboard = withAuth(DashboardPage, {
 function AdminPage() {
 	return (
 		<div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
-			<h1 className="font-bold text-2xl text-gray-900">
-				Painel Administrativo
-			</h1>
-			<p className="mt-2 text-gray-600">
-				Esta página é acessível apenas para administradores.
-			</p>
+			<h1 className="font-bold text-2xl text-gray-900">Painel Administrativo</h1>
+			<p className="mt-2 text-gray-600">Esta página é acessível apenas para administradores.</p>
 		</div>
 	);
 }
@@ -279,7 +254,7 @@ export function useApiCall() {
 				},
 			});
 		},
-		[getAuthHeader],
+		[getAuthHeader]
 	);
 
 	return { apiCall };

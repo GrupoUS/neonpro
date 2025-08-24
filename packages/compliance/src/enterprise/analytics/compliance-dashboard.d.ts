@@ -203,17 +203,7 @@ declare const ComplianceAlertSchema: z.ZodObject<
 	{
 		alert_id: z.ZodString;
 		alert_type: z.ZodEnum<["critical", "warning", "info"]>;
-		category: z.ZodEnum<
-			[
-				"lgpd",
-				"anvisa",
-				"cfm",
-				"constitutional",
-				"privacy",
-				"security",
-				"operational",
-			]
-		>;
+		category: z.ZodEnum<["lgpd", "anvisa", "cfm", "constitutional", "privacy", "security", "operational"]>;
 		title: z.ZodString;
 		description: z.ZodString;
 		severity_score: z.ZodNumber;
@@ -249,14 +239,7 @@ declare const ComplianceAlertSchema: z.ZodObject<
 	{
 		alert_id: string;
 		alert_type: "critical" | "warning" | "info";
-		category:
-			| "lgpd"
-			| "anvisa"
-			| "cfm"
-			| "constitutional"
-			| "privacy"
-			| "security"
-			| "operational";
+		category: "lgpd" | "anvisa" | "cfm" | "constitutional" | "privacy" | "security" | "operational";
 		title: string;
 		description: string;
 		severity_score: number;
@@ -274,14 +257,7 @@ declare const ComplianceAlertSchema: z.ZodObject<
 	{
 		alert_id: string;
 		alert_type: "critical" | "warning" | "info";
-		category:
-			| "lgpd"
-			| "anvisa"
-			| "cfm"
-			| "constitutional"
-			| "privacy"
-			| "security"
-			| "operational";
+		category: "lgpd" | "anvisa" | "cfm" | "constitutional" | "privacy" | "security" | "operational";
 		title: string;
 		description: string;
 		severity_score: number;
@@ -300,9 +276,7 @@ declare const ComplianceAlertSchema: z.ZodObject<
 declare const ComplianceDashboardReportSchema: z.ZodObject<
 	{
 		report_id: z.ZodString;
-		report_type: z.ZodEnum<
-			["daily", "weekly", "monthly", "quarterly", "annual", "incident"]
-		>;
+		report_type: z.ZodEnum<["daily", "weekly", "monthly", "quarterly", "annual", "incident"]>;
 		generated_at: z.ZodString;
 		reporting_period: z.ZodObject<
 			{
@@ -322,9 +296,7 @@ declare const ComplianceDashboardReportSchema: z.ZodObject<
 		>;
 		executive_summary: z.ZodObject<
 			{
-				overall_compliance_rating: z.ZodEnum<
-					["excellent", "good", "fair", "poor", "critical"]
-				>;
+				overall_compliance_rating: z.ZodEnum<["excellent", "good", "fair", "poor", "critical"]>;
 				key_achievements: z.ZodArray<z.ZodString, "many">;
 				critical_issues: z.ZodArray<z.ZodString, "many">;
 				recommendations: z.ZodArray<z.ZodString, "many">;
@@ -332,23 +304,13 @@ declare const ComplianceDashboardReportSchema: z.ZodObject<
 			"strip",
 			z.ZodTypeAny,
 			{
-				overall_compliance_rating:
-					| "critical"
-					| "excellent"
-					| "good"
-					| "fair"
-					| "poor";
+				overall_compliance_rating: "critical" | "excellent" | "good" | "fair" | "poor";
 				key_achievements: string[];
 				critical_issues: string[];
 				recommendations: string[];
 			},
 			{
-				overall_compliance_rating:
-					| "critical"
-					| "excellent"
-					| "good"
-					| "fair"
-					| "poor";
+				overall_compliance_rating: "critical" | "excellent" | "good" | "fair" | "poor";
 				key_achievements: string[];
 				critical_issues: string[];
 				recommendations: string[];
@@ -382,25 +344,14 @@ declare const ComplianceDashboardReportSchema: z.ZodObject<
 	z.ZodTypeAny,
 	{
 		report_id: string;
-		report_type:
-			| "daily"
-			| "weekly"
-			| "monthly"
-			| "quarterly"
-			| "annual"
-			| "incident";
+		report_type: "daily" | "weekly" | "monthly" | "quarterly" | "annual" | "incident";
 		generated_at: string;
 		reporting_period: {
 			start_date: string;
 			end_date: string;
 		};
 		executive_summary: {
-			overall_compliance_rating:
-				| "critical"
-				| "excellent"
-				| "good"
-				| "fair"
-				| "poor";
+			overall_compliance_rating: "critical" | "excellent" | "good" | "fair" | "poor";
 			key_achievements: string[];
 			critical_issues: string[];
 			recommendations: string[];
@@ -415,25 +366,14 @@ declare const ComplianceDashboardReportSchema: z.ZodObject<
 	},
 	{
 		report_id: string;
-		report_type:
-			| "daily"
-			| "weekly"
-			| "monthly"
-			| "quarterly"
-			| "annual"
-			| "incident";
+		report_type: "daily" | "weekly" | "monthly" | "quarterly" | "annual" | "incident";
 		generated_at: string;
 		reporting_period: {
 			start_date: string;
 			end_date: string;
 		};
 		executive_summary: {
-			overall_compliance_rating:
-				| "critical"
-				| "excellent"
-				| "good"
-				| "fair"
-				| "poor";
+			overall_compliance_rating: "critical" | "excellent" | "good" | "fair" | "poor";
 			key_achievements: string[];
 			critical_issues: string[];
 			recommendations: string[];
@@ -447,16 +387,10 @@ declare const ComplianceDashboardReportSchema: z.ZodObject<
 		};
 	}
 >;
-export type ComplianceDashboardConfig = z.infer<
-	typeof ComplianceDashboardConfigSchema
->;
-export type ComplianceDashboardMetrics = z.infer<
-	typeof ComplianceDashboardMetricsSchema
->;
+export type ComplianceDashboardConfig = z.infer<typeof ComplianceDashboardConfigSchema>;
+export type ComplianceDashboardMetrics = z.infer<typeof ComplianceDashboardMetricsSchema>;
 export type ComplianceAlert = z.infer<typeof ComplianceAlertSchema>;
-export type ComplianceDashboardReport = z.infer<
-	typeof ComplianceDashboardReportSchema
->;
+export type ComplianceDashboardReport = z.infer<typeof ComplianceDashboardReportSchema>;
 export type ComplianceDashboardAudit = {
 	audit_id: string;
 	dashboard_action: string;
@@ -509,18 +443,12 @@ export declare class ComplianceDashboardService {
 	 * Generate comprehensive compliance report
 	 */
 	generateComplianceReport(
-		reportType:
-			| "daily"
-			| "weekly"
-			| "monthly"
-			| "quarterly"
-			| "annual"
-			| "incident",
+		reportType: "daily" | "weekly" | "monthly" | "quarterly" | "annual" | "incident",
 		options?: {
 			reason?: string;
 			include_active_alerts?: boolean;
 			include_metrics_history?: boolean;
-		},
+		}
 	): Promise<ComplianceDashboardReport>;
 	/**
 	 * Get current dashboard metrics
@@ -535,7 +463,7 @@ export declare class ComplianceDashboardService {
 	 */
 	resolveAlert(
 		alertId: string,
-		resolution: string,
+		resolution: string
 	): Promise<{
 		success: boolean;
 	}>;
@@ -565,15 +493,11 @@ export declare class ComplianceDashboardService {
 /**
  * Factory function to create compliance dashboard service
  */
-export declare function createComplianceDashboardService(
-	config: ComplianceDashboardConfig,
-): ComplianceDashboardService;
+export declare function createComplianceDashboardService(config: ComplianceDashboardConfig): ComplianceDashboardService;
 /**
  * Constitutional compliance validation for dashboard operations
  */
-export declare function validateComplianceDashboard(
-	config: ComplianceDashboardConfig,
-): Promise<{
+export declare function validateComplianceDashboard(config: ComplianceDashboardConfig): Promise<{
 	valid: boolean;
 	violations: string[];
 }>;

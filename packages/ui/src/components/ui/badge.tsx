@@ -1,15 +1,5 @@
 import { cva, type VariantProps } from "class-variance-authority";
-import {
-	Activity,
-	AlertCircle,
-	Calendar,
-	CheckCircle,
-	Clock,
-	Shield,
-	User,
-	XCircle,
-	Zap,
-} from "lucide-react";
+import { Activity, AlertCircle, Calendar, CheckCircle, Clock, Shield, User, XCircle, Zap } from "lucide-react";
 import type * as React from "react";
 import { forwardRef } from "react";
 import { cn } from "../../lib/utils";
@@ -25,8 +15,7 @@ const badgeVariants = cva(
 					"border-transparent bg-gradient-to-br from-secondary via-secondary/90 to-secondary text-secondary-foreground shadow-healthcare-sm hover:scale-105 hover:shadow-healthcare-md",
 				destructive:
 					"border-transparent bg-gradient-to-br from-destructive via-destructive/90 to-destructive text-destructive-foreground shadow-healthcare-sm hover:scale-105 hover:shadow-healthcare-md",
-				outline:
-					"border-border/60 bg-background/80 text-foreground backdrop-blur-sm hover:bg-accent/50",
+				outline: "border-border/60 bg-background/80 text-foreground backdrop-blur-sm hover:bg-accent/50",
 
 				// NEONPROV1 Healthcare status variants
 				patient:
@@ -89,32 +78,17 @@ const badgeVariants = cva(
 			size: "default",
 			withIcon: false,
 		},
-	},
+	}
 );
 
-interface BadgeProps
-	extends React.ComponentProps<"div">,
-		VariantProps<typeof badgeVariants> {
+interface BadgeProps extends React.ComponentProps<"div">, VariantProps<typeof badgeVariants> {
 	icon?: React.ReactNode;
 	pulse?: boolean;
 	interactive?: boolean;
 }
 
 const Badge = forwardRef<HTMLDivElement, BadgeProps>(
-	(
-		{
-			className,
-			variant,
-			size,
-			withIcon,
-			icon,
-			pulse,
-			interactive,
-			onClick,
-			...props
-		},
-		ref,
-	) => {
+	({ className, variant, size, withIcon, icon, pulse, interactive, onClick, ...props }, ref) => {
 		const hasIcon = Boolean(icon);
 
 		return (
@@ -123,7 +97,7 @@ const Badge = forwardRef<HTMLDivElement, BadgeProps>(
 					badgeVariants({ variant, size, withIcon: hasIcon }),
 					pulse && "animate-pulse",
 					interactive && "cursor-pointer transition-shadow hover:shadow-sm",
-					className,
+					className
 				)}
 				data-interactive={interactive}
 				data-variant={variant}
@@ -141,7 +115,7 @@ const Badge = forwardRef<HTMLDivElement, BadgeProps>(
 				{props.children}
 			</div>
 		);
-	},
+	}
 );
 Badge.displayName = "Badge"; // Healthcare-specific badge components
 
@@ -160,79 +134,71 @@ interface StatusBadgeProps extends Omit<BadgeProps, "variant"> {
 	showIcon?: boolean;
 }
 
-const StatusBadge = forwardRef<HTMLDivElement, StatusBadgeProps>(
-	({ status, showIcon = true, ...props }, ref) => {
-		const getStatusIcon = () => {
-			if (!showIcon) {
-				return;
-			}
+const StatusBadge = forwardRef<HTMLDivElement, StatusBadgeProps>(({ status, showIcon = true, ...props }, ref) => {
+	const getStatusIcon = () => {
+		if (!showIcon) {
+			return;
+		}
 
-			switch (status) {
-				case "critical":
-					return <AlertCircle className="h-3 w-3" />;
-				case "urgent":
-					return <Zap className="h-3 w-3" />;
-				case "normal":
-					return <Activity className="h-3 w-3" />;
-				case "low":
-					return <Clock className="h-3 w-3" />;
-				case "scheduled":
-					return <Calendar className="h-3 w-3" />;
-				case "confirmed":
-					return <CheckCircle className="h-3 w-3" />;
-				case "in-progress":
-					return <Activity className="h-3 w-3" />;
-				case "completed":
-					return <CheckCircle className="h-3 w-3" />;
-				case "cancelled":
-					return <XCircle className="h-3 w-3" />;
-				case "no-show":
-					return <XCircle className="h-3 w-3" />;
-				default:
-					return <Clock className="h-3 w-3" />;
-			}
-		};
+		switch (status) {
+			case "critical":
+				return <AlertCircle className="h-3 w-3" />;
+			case "urgent":
+				return <Zap className="h-3 w-3" />;
+			case "normal":
+				return <Activity className="h-3 w-3" />;
+			case "low":
+				return <Clock className="h-3 w-3" />;
+			case "scheduled":
+				return <Calendar className="h-3 w-3" />;
+			case "confirmed":
+				return <CheckCircle className="h-3 w-3" />;
+			case "in-progress":
+				return <Activity className="h-3 w-3" />;
+			case "completed":
+				return <CheckCircle className="h-3 w-3" />;
+			case "cancelled":
+				return <XCircle className="h-3 w-3" />;
+			case "no-show":
+				return <XCircle className="h-3 w-3" />;
+			default:
+				return <Clock className="h-3 w-3" />;
+		}
+	};
 
-		const getStatusLabel = () => {
-			switch (status) {
-				case "critical":
-					return "Crítico";
-				case "urgent":
-					return "Urgente";
-				case "normal":
-					return "Normal";
-				case "low":
-					return "Baixa";
-				case "scheduled":
-					return "Agendado";
-				case "confirmed":
-					return "Confirmado";
-				case "in-progress":
-					return "Em Andamento";
-				case "completed":
-					return "Concluído";
-				case "cancelled":
-					return "Cancelado";
-				case "no-show":
-					return "Faltou";
-				default:
-					return "Status";
-			}
-		};
+	const getStatusLabel = () => {
+		switch (status) {
+			case "critical":
+				return "Crítico";
+			case "urgent":
+				return "Urgente";
+			case "normal":
+				return "Normal";
+			case "low":
+				return "Baixa";
+			case "scheduled":
+				return "Agendado";
+			case "confirmed":
+				return "Confirmado";
+			case "in-progress":
+				return "Em Andamento";
+			case "completed":
+				return "Concluído";
+			case "cancelled":
+				return "Cancelado";
+			case "no-show":
+				return "Faltou";
+			default:
+				return "Status";
+		}
+	};
 
-		return (
-			<Badge
-				icon={getStatusIcon()}
-				pulse={status === "critical"}
-				ref={ref}
-				variant={status}
-				{...props}
-			>
-				{props.children || getStatusLabel()}
-			</Badge>
-		);
-	},
-);
+	return (
+		<Badge icon={getStatusIcon()} pulse={status === "critical"} ref={ref} variant={status} {...props}>
+			{props.children || getStatusLabel()}
+		</Badge>
+	);
+});
 StatusBadge.displayName = "StatusBadge";
 
 interface ProfessionalBadgeProps extends Omit<BadgeProps, "variant"> {
@@ -277,18 +243,14 @@ const ProfessionalBadge = forwardRef<HTMLDivElement, ProfessionalBadgeProps>(
 			<Badge
 				icon={getAvailabilityIcon()}
 				ref={ref}
-				title={
-					specialty
-						? `${getAvailabilityLabel()} - ${specialty}`
-						: getAvailabilityLabel()
-				}
+				title={specialty ? `${getAvailabilityLabel()} - ${specialty}` : getAvailabilityLabel()}
 				variant={availability}
 				{...props}
 			>
 				{props.children || getAvailabilityLabel()}
 			</Badge>
 		);
-	},
+	}
 );
 ProfessionalBadge.displayName = "ProfessionalBadge";
 interface LGPDBadgeProps extends Omit<BadgeProps, "variant"> {
@@ -353,7 +315,7 @@ const LGPDBadge = forwardRef<HTMLDivElement, LGPDBadgeProps>(
 				{props.children || getComplianceLabel()}
 			</Badge>
 		);
-	},
+	}
 );
 LGPDBadge.displayName = "LGPDBadge";
 
@@ -362,55 +324,47 @@ interface PriorityBadgeProps extends Omit<BadgeProps, "variant"> {
 	showIcon?: boolean;
 }
 
-const PriorityBadge = forwardRef<HTMLDivElement, PriorityBadgeProps>(
-	({ priority, showIcon = true, ...props }, ref) => {
-		const getPriorityIcon = () => {
-			if (!showIcon) {
-				return;
-			}
+const PriorityBadge = forwardRef<HTMLDivElement, PriorityBadgeProps>(({ priority, showIcon = true, ...props }, ref) => {
+	const getPriorityIcon = () => {
+		if (!showIcon) {
+			return;
+		}
 
-			switch (priority) {
-				case "critical":
-					return <AlertCircle className="h-3 w-3" />;
-				case "urgent":
-					return <Zap className="h-3 w-3" />;
-				case "normal":
-					return <Activity className="h-3 w-3" />;
-				case "low":
-					return <Clock className="h-3 w-3" />;
-				default:
-					return <Activity className="h-3 w-3" />;
-			}
-		};
+		switch (priority) {
+			case "critical":
+				return <AlertCircle className="h-3 w-3" />;
+			case "urgent":
+				return <Zap className="h-3 w-3" />;
+			case "normal":
+				return <Activity className="h-3 w-3" />;
+			case "low":
+				return <Clock className="h-3 w-3" />;
+			default:
+				return <Activity className="h-3 w-3" />;
+		}
+	};
 
-		const getPriorityLabel = () => {
-			switch (priority) {
-				case "critical":
-					return "Crítico";
-				case "urgent":
-					return "Urgente";
-				case "normal":
-					return "Normal";
-				case "low":
-					return "Baixa";
-				default:
-					return "Normal";
-			}
-		};
+	const getPriorityLabel = () => {
+		switch (priority) {
+			case "critical":
+				return "Crítico";
+			case "urgent":
+				return "Urgente";
+			case "normal":
+				return "Normal";
+			case "low":
+				return "Baixa";
+			default:
+				return "Normal";
+		}
+	};
 
-		return (
-			<Badge
-				icon={getPriorityIcon()}
-				pulse={priority === "critical"}
-				ref={ref}
-				variant={priority}
-				{...props}
-			>
-				{props.children || getPriorityLabel()}
-			</Badge>
-		);
-	},
-);
+	return (
+		<Badge icon={getPriorityIcon()} pulse={priority === "critical"} ref={ref} variant={priority} {...props}>
+			{props.children || getPriorityLabel()}
+		</Badge>
+	);
+});
 PriorityBadge.displayName = "PriorityBadge";
 
 export {

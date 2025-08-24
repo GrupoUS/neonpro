@@ -89,9 +89,7 @@ export class SecurityAuditFramework {
 	/**
 	 * Perform security audit
 	 */
-	async performAudit(
-		type: "quick" | "targeted" | "full" = "quick",
-	): Promise<AuditResult> {
+	async performAudit(type: "quick" | "targeted" | "full" = "quick"): Promise<AuditResult> {
 		const auditId = `audit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
 		const findings: AuditFinding[] = [];
@@ -131,15 +129,14 @@ export class SecurityAuditFramework {
 					severity: "warning",
 					category: "api",
 					description: "API rate limiting needs enhancement",
-					recommendation:
-						"Implement stricter rate limiting on authentication endpoints",
+					recommendation: "Implement stricter rate limiting on authentication endpoints",
 				},
 				{
 					severity: "error",
 					category: "logging",
 					description: "Security event logging incomplete",
 					recommendation: "Ensure all security events are properly logged",
-				},
+				}
 			);
 			riskScore = 45;
 		}
@@ -150,9 +147,7 @@ export class SecurityAuditFramework {
 			status: "completed",
 			findings,
 			riskScore,
-			recommendations: findings
-				.filter((f) => f.recommendation)
-				.map((f) => f.recommendation!),
+			recommendations: findings.filter((f) => f.recommendation).map((f) => f.recommendation!),
 			completedAt: new Date().toISOString(),
 		};
 
@@ -179,10 +174,7 @@ export class SecurityAuditFramework {
 			detected: confidence > 0.6,
 			confidence,
 			riskLevel: threatData.severity,
-			actions:
-				confidence > 0.6
-					? ["alert_security_team", "increase_monitoring"]
-					: ["log_event", "continue_monitoring"],
+			actions: confidence > 0.6 ? ["alert_security_team", "increase_monitoring"] : ["log_event", "continue_monitoring"],
 			metadata: {
 				...threatData.metadata,
 				detectedAt: new Date().toISOString(),
@@ -218,9 +210,7 @@ export class SecurityAuditFramework {
 
 		// Mock compliance checks
 		if (this.events.length === 0) {
-			issues.push(
-				"No security events logged - logging system may not be functioning",
-			);
+			issues.push("No security events logged - logging system may not be functioning");
 			score -= 20;
 		}
 
@@ -230,13 +220,9 @@ export class SecurityAuditFramework {
 		}
 
 		// Check for high-risk events
-		const highRiskEvents = this.events.filter(
-			(e) => e.riskLevel === "high" || e.riskLevel === "critical",
-		);
+		const highRiskEvents = this.events.filter((e) => e.riskLevel === "high" || e.riskLevel === "critical");
 		if (highRiskEvents.length > 0) {
-			issues.push(
-				`${highRiskEvents.length} high-risk security events detected`,
-			);
+			issues.push(`${highRiskEvents.length} high-risk security events detected`);
 			score -= highRiskEvents.length * 5;
 		}
 
@@ -252,7 +238,7 @@ export class SecurityAuditFramework {
 	 */
 	async generateReport(
 		type: "security" | "compliance",
-		options: { period?: string; format?: string } = {},
+		options: { period?: string; format?: string } = {}
 	): Promise<any> {
 		const { period = "30d", format = "json" } = options;
 
@@ -266,7 +252,7 @@ export class SecurityAuditFramework {
 				acc[event.riskLevel]++;
 				return acc;
 			},
-			{ low: 0, medium: 0, high: 0, critical: 0 },
+			{ low: 0, medium: 0, high: 0, critical: 0 }
 		);
 
 		return {
@@ -279,8 +265,7 @@ export class SecurityAuditFramework {
 			riskDistribution,
 			averageRiskScore:
 				this.auditHistory.length > 0
-					? this.auditHistory.reduce((sum, audit) => sum + audit.riskScore, 0) /
-						this.auditHistory.length
+					? this.auditHistory.reduce((sum, audit) => sum + audit.riskScore, 0) / this.auditHistory.length
 					: 0,
 			generatedAt: new Date().toISOString(),
 			data: {
@@ -307,7 +292,7 @@ export class SecurityAuditFramework {
 				acc[event.riskLevel]++;
 				return acc;
 			},
-			{ low: 0, medium: 0, high: 0, critical: 0 },
+			{ low: 0, medium: 0, high: 0, critical: 0 }
 		);
 
 		// Calculate compliance score based on security events and risk levels
@@ -325,9 +310,7 @@ export class SecurityAuditFramework {
 			recommendations.push("Review and resolve high-risk security events");
 		}
 		if (complianceScore < 80) {
-			recommendations.push(
-				"Implement additional security controls to improve compliance score",
-			);
+			recommendations.push("Implement additional security controls to improve compliance score");
 		}
 
 		return {
@@ -335,9 +318,7 @@ export class SecurityAuditFramework {
 			startDate: startDate.toISOString(),
 			endDate: now.toISOString(),
 			totalEvents: periodEvents.length,
-			securityEvents: periodEvents.filter(
-				(e) => e.eventType.includes("security") || e.riskLevel !== "low",
-			).length,
+			securityEvents: periodEvents.filter((e) => e.eventType.includes("security") || e.riskLevel !== "low").length,
 			riskDistribution,
 			complianceScore,
 			recommendations,

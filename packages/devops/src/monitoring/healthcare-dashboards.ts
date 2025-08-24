@@ -16,8 +16,7 @@ export class HealthcareDashboards {
 					title: "Patient Data Access Rate",
 					query: "rate(patient_data_access_total[5m])",
 					alertThreshold: 1000, // requests per minute
-					description:
-						"Monitor patient data access patterns for LGPD compliance",
+					description: "Monitor patient data access patterns for LGPD compliance",
 				},
 				{
 					title: "Unauthorized Access Attempts",
@@ -53,8 +52,7 @@ export class HealthcareDashboards {
 					title: "AI Recommendation Accuracy",
 					query: "avg(ai_recommendation_accuracy_score)",
 					alertThreshold: 0.95,
-					description:
-						"Monitor AI medical recommendation accuracy (≥95% required)",
+					description: "Monitor AI medical recommendation accuracy (≥95% required)",
 				},
 				{
 					title: "Doctor Approval Rate",
@@ -82,8 +80,7 @@ export class HealthcareDashboards {
 			panels: [
 				{
 					title: "API Response Time",
-					query:
-						"histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))",
+					query: "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))",
 					alertThreshold: 0.1, // 100ms
 					description: "Healthcare SLA: API responses <100ms",
 				},

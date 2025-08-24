@@ -48,16 +48,8 @@ interface CustomRenderOptions extends Omit<RenderOptions, "wrapper"> {
 	initialClinicSettings?: any;
 }
 
-export function renderWithHealthcareProvider(
-	ui: ReactElement,
-	options: CustomRenderOptions = {},
-) {
-	const {
-		initialPatient,
-		initialDoctor,
-		initialClinicSettings,
-		...renderOptions
-	} = options;
+export function renderWithHealthcareProvider(ui: ReactElement, options: CustomRenderOptions = {}) {
+	const { initialPatient, initialDoctor, initialClinicSettings, ...renderOptions } = options;
 
 	function Wrapper({ children }: { children: React.ReactNode }) {
 		return (
@@ -230,18 +222,10 @@ export const healthcareAssertions = {
 // Healthcare form testing utilities
 export const healthcareFormUtils = {
 	fillPatientForm: async (user: any, patientData: any) => {
-		const nameInput = document.querySelector(
-			'input[name="name"]',
-		) as HTMLInputElement;
-		const cpfInput = document.querySelector(
-			'input[name="cpf"]',
-		) as HTMLInputElement;
-		const emailInput = document.querySelector(
-			'input[name="email"]',
-		) as HTMLInputElement;
-		const phoneInput = document.querySelector(
-			'input[name="phone"]',
-		) as HTMLInputElement;
+		const nameInput = document.querySelector('input[name="name"]') as HTMLInputElement;
+		const cpfInput = document.querySelector('input[name="cpf"]') as HTMLInputElement;
+		const emailInput = document.querySelector('input[name="email"]') as HTMLInputElement;
+		const phoneInput = document.querySelector('input[name="phone"]') as HTMLInputElement;
 
 		if (nameInput) {
 			await user.type(nameInput, patientData.name);
@@ -258,12 +242,8 @@ export const healthcareFormUtils = {
 	},
 
 	submitFormWithLGPDConsent: async (user: any) => {
-		const lgpdCheckbox = document.querySelector(
-			'input[name="lgpdConsent"]',
-		) as HTMLInputElement;
-		const submitButton = document.querySelector(
-			'button[type="submit"]',
-		) as HTMLButtonElement;
+		const lgpdCheckbox = document.querySelector('input[name="lgpdConsent"]') as HTMLInputElement;
+		const submitButton = document.querySelector('button[type="submit"]') as HTMLButtonElement;
 
 		if (lgpdCheckbox) {
 			await user.click(lgpdCheckbox);
@@ -275,9 +255,7 @@ export const healthcareFormUtils = {
 
 	expectFormValidationErrors: (requiredFields: string[]) => {
 		requiredFields.forEach((field) => {
-			const errorElement = document.querySelector(
-				`[data-testid="${field}-error"]`,
-			);
+			const errorElement = document.querySelector(`[data-testid="${field}-error"]`);
 			expect(errorElement).toBeInTheDocument();
 		});
 	},

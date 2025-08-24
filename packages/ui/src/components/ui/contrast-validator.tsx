@@ -88,18 +88,14 @@ const hexToRgb = (hex: string): { r: number; g: number; b: number } | null => {
 /**
  * Parse CSS color string to RGB
  */
-const parseColor = (
-	color: string,
-): { r: number; g: number; b: number } | null => {
+const parseColor = (color: string): { r: number; g: number; b: number } | null => {
 	// Handle hex colors
 	if (color.startsWith("#")) {
 		return hexToRgb(color);
 	}
 
 	// Handle rgb/rgba colors
-	const rgbMatch = color.match(
-		/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/,
-	);
+	const rgbMatch = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
 	if (rgbMatch) {
 		return {
 			r: Number.parseInt(rgbMatch[1], 10),
@@ -109,9 +105,7 @@ const parseColor = (
 	}
 
 	// Handle hsl colors (basic implementation)
-	const hslMatch = color.match(
-		/hsla?\((\d+),\s*(\d+)%,\s*(\d+)%(?:,\s*([\d.]+))?\)/,
-	);
+	const hslMatch = color.match(/hsla?\((\d+),\s*(\d+)%,\s*(\d+)%(?:,\s*([\d.]+))?\)/);
 	if (hslMatch) {
 		// Convert HSL to RGB (simplified)
 		const h = Number.parseInt(hslMatch[1], 10) / 360;
@@ -161,11 +155,7 @@ const parseColor = (
 /**
  * Calculate relative luminance of a color
  */
-const getRelativeLuminance = (rgb: {
-	r: number;
-	g: number;
-	b: number;
-}): number => {
+const getRelativeLuminance = (rgb: { r: number; g: number; b: number }): number => {
 	const { r, g, b } = rgb;
 
 	const [rSRGB, gSRGB, bSRGB] = [r, g, b].map((c) => {
@@ -202,7 +192,7 @@ const calculateContrastRatio = (color1: string, color2: string): number => {
 const getMinimumRatio = (
 	textSize: "normal" | "large",
 	medicalContext: "emergency" | "patient-data" | "form" | "general",
-	customMinimum?: number,
+	customMinimum?: number
 ): number => {
 	if (customMinimum) {
 		return customMinimum;
@@ -221,10 +211,7 @@ const getMinimumRatio = (
 	}
 };
 
-const ContrastValidator = React.forwardRef<
-	HTMLDivElement,
-	ContrastValidatorProps
->(
+const ContrastValidator = React.forwardRef<HTMLDivElement, ContrastValidatorProps>(
 	(
 		{
 			backgroundColor,
@@ -239,16 +226,12 @@ const ContrastValidator = React.forwardRef<
 			className,
 			...props
 		},
-		ref,
+		ref
 	) => {
 		const [contrastRatio, setContrastRatio] = React.useState<number>(0);
 		const [isValid, setIsValid] = React.useState<boolean>(false);
 
-		const requiredRatio = getMinimumRatio(
-			textSize,
-			medicalContext,
-			minimumRatio,
-		);
+		const requiredRatio = getMinimumRatio(textSize, medicalContext, minimumRatio);
 
 		React.useEffect(() => {
 			const ratio = calculateContrastRatio(backgroundColor, foregroundColor);
@@ -288,8 +271,7 @@ const ContrastValidator = React.forwardRef<
 
 		const getAccessibilityStatus = () => {
 			const status = isValid ? "Compliant" : "Non-compliant";
-			const level =
-				contrastRatio >= 7.0 ? "AAA" : contrastRatio >= 4.5 ? "AA" : "Failed";
+			const level = contrastRatio >= 7.0 ? "AAA" : contrastRatio >= 4.5 ? "AA" : "Failed";
 			return `${status} - ${level} (${contrastRatio.toFixed(2)}:1)`;
 		};
 
@@ -315,7 +297,7 @@ const ContrastValidator = React.forwardRef<
 								"top-2 right-2": indicatorPosition === "top-right",
 								"bottom-2 left-2": indicatorPosition === "bottom-left",
 								"right-2 bottom-2": indicatorPosition === "bottom-right",
-							},
+							}
 						)}
 						role="status"
 						title={`Contrast: ${contrastRatio.toFixed(2)}:1 (Required: ${requiredRatio}:1)`}
@@ -331,9 +313,7 @@ const ContrastValidator = React.forwardRef<
 							style={{ backgroundColor }}
 						/>
 						<span>{getIndicatorText()}</span>
-						<span className="font-mono text-[10px]">
-							{contrastRatio.toFixed(1)}:1
-						</span>
+						<span className="font-mono text-[10px]">{contrastRatio.toFixed(1)}:1</span>
 					</div>
 				)}
 
@@ -345,7 +325,7 @@ const ContrastValidator = React.forwardRef<
 				</div>
 			</div>
 		);
-	},
+	}
 );
 
 ContrastValidator.displayName = "ContrastValidator";
@@ -357,7 +337,7 @@ export const useContrastValidation = (
 	backgroundColor: string,
 	foregroundColor: string,
 	medicalContext: "emergency" | "patient-data" | "form" | "general" = "general",
-	textSize: "normal" | "large" = "normal",
+	textSize: "normal" | "large" = "normal"
 ) => {
 	const [validation, setValidation] = React.useState({
 		ratio: 0,
@@ -390,7 +370,7 @@ export const useContrastValidation = (
  * Batch contrast validation for multiple color combinations
  */
 export const validateColorPalette = (
-	palette: Array<{ bg: string; fg: string; context?: string }>,
+	palette: Array<{ bg: string; fg: string; context?: string }>
 ): Array<{
 	bg: string;
 	fg: string;
@@ -416,17 +396,7 @@ interface ContrastWrapperProps extends ContrastValidatorProps {
 }
 
 const ContrastWrapper = React.forwardRef<HTMLElement, ContrastWrapperProps>(
-	(
-		{
-			element: Element = "div",
-			style,
-			backgroundColor,
-			foregroundColor,
-			children,
-			...props
-		},
-		ref,
-	) => {
+	({ element: Element = "div", style, backgroundColor, foregroundColor, children, ...props }, ref) => {
 		const computedStyle = {
 			backgroundColor,
 			color: foregroundColor,
@@ -436,15 +406,11 @@ const ContrastWrapper = React.forwardRef<HTMLElement, ContrastWrapperProps>(
 		return React.createElement(
 			Element as any,
 			{ ref, style: computedStyle },
-			<ContrastValidator
-				backgroundColor={backgroundColor}
-				foregroundColor={foregroundColor}
-				{...props}
-			>
+			<ContrastValidator backgroundColor={backgroundColor} foregroundColor={foregroundColor} {...props}>
 				{children}
-			</ContrastValidator>,
+			</ContrastValidator>
 		);
-	},
+	}
 );
 
 ContrastWrapper.displayName = "ContrastWrapper";

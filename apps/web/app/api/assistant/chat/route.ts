@@ -64,6 +64,36 @@ export async function POST(request: NextRequest) {
 			conversation = newConversation;
 		}
 
+		// 🛡️ LGPD COMPLIANCE CHECK - Validate consent before accessing personal data
+		const { data: lgpdConsent } = await supabase
+			.from("patient_consents")
+			.select("*")
+			.eq("tenant_id", user.id)
+			.eq("consent_type", "ai_assistant_data_processing")
+			.eq("status", "active")
+			.single();
+
+		if (!lgpdConsent) {
+			return NextResponse.json(
+				{
+					error: "LGPD_CONSENT_REQUIRED",
+					message: "Consentimento LGPD obrigatório para processamento de dados pelo assistente IA",
+				},
+				{ status: 403 }
+			);
+		}
+
+		// 📋 Log compliance validation
+		await supabase.from("assistant_logs").insert({
+			user_id: user.id,
+			action: "lgpd_consent_validated",
+			details: {
+				consent_id: lgpdConsent.id,
+				consent_type: "ai_assistant_data_processing",
+				timestamp: new Date().toISOString(),
+			},
+		});
+
 		// Buscar contexto das preferências do usuário
 		const { data: preferences } = await supabase
 			.from("assistant_preferences")
@@ -78,7 +108,7 @@ export async function POST(request: NextRequest) {
 			.eq("id", user.id)
 			.single();
 
-		// Buscar contexto relevante da clínica (últimos 5 agendamentos, por exemplo)
+		// 🛡️ LGPD-compliant patient data access (anonymized for AI processing)
 		const { data: recentAppointments } = await supabase
 			.from("appointments")
 			.select(
@@ -87,8 +117,7 @@ export async function POST(request: NextRequest) {
         date_time,
         status,
         service,
-        notes,
-        patients!inner(name, phone)
+        notes
       `
 			)
 			.eq("user_id", user.id)
@@ -130,7 +159,15 @@ INSTRUÇÕES:
 6. Se precisar de informações não disponíveis, peça para o usuário fornecer
 7. Sugira funcionalidades do NeonPro que podem ajudar o usuário
 
-Seja sempre útil, preciso e contextualmente relevante para a gestão de clínicas de estética e beleza.`;
+🛡️ COMPLIANCE HEALTHCARE FILTERING (CFM/ANVISA/LGPD):
+- NUNCA forneça diagnósticos médicos ou recomendações clínicas específicas
+- SEMPRE encoraje consulta com profissional médico qualificado para questões clínicas
+- NUNCA processe ou sugira procedimentos sem validação profissional CFM
+- RESPEITE a privacidade de dados pessoais conforme LGPD
+- ALERT sobre procedimentos que requerem licenciamento ANVISA
+- DISCLAIMAR responsabilidade médica em todas as interações clínicas
+
+Seja sempre útil, preciso e contextualmente relevante para a gestão de clínicas de estética e beleza, mantendo estrita conformidade regulatória.`;
 
 		// Converter mensagens para o formato do AI SDK
 		const coreMessages = convertToCoreMessages(messages);
@@ -153,7 +190,31 @@ Seja sempre útil, preciso e contextualmente relevante para a gestão de clínic
 			temperature: preferences?.temperature || 0.7,
 		});
 
-		// Log da interação
+		// 🛡️ AI COMPLIANCE VALIDATION - Monitor for healthcare compliance violations
+		const userContent = userMessage?.content || "";
+		const complianceRisks = [];
+
+		// Check for CFM medical advice violations
+		if (/diagn[óo]stic|prescrever|medicament|tratament|cirurgi/i.test(userContent)) {
+			complianceRisks.push("CFM_MEDICAL_ADVICE_RISK");
+		}
+
+		// Check for ANVISA device recommendations
+		if (/equipament|l[áa]ser|radiofrequ[êe]nci|ultrassom/i.test(userContent)) {
+			complianceRisks.push("ANVISA_DEVICE_GUIDANCE_RISK");
+		}
+
+		// Log compliance monitoring
+		await supabase.from("compliance_alerts").insert({
+			tenant_id: user.id,
+			alert_type: "ai_interaction_monitoring",
+			severity: complianceRisks.length > 0 ? "medium" : "low",
+			description: `AI Assistant interaction monitored - ${complianceRisks.length} potential risks detected`,
+			action_required: complianceRisks.length > 0 ? "Review AI response for compliance" : "None",
+			status: "resolved",
+		});
+
+		// Log da interação com compliance data
 		await (await supabase).from("assistant_logs").insert({
 			user_id: user.id,
 			conversation_id: conversation.id,
@@ -161,6 +222,8 @@ Seja sempre útil, preciso e contextualmente relevante para a gestão de clínic
 			details: {
 				model,
 				message_count: messages.length,
+				compliance_risks: complianceRisks,
+				lgpd_consent_validated: true,
 				context_used: {
 					has_preferences: Boolean(preferences),
 					has_profile: Boolean(profile),

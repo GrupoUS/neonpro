@@ -3,10 +3,7 @@
  * Monitors Supabase/PostgreSQL queries with healthcare-specific insights
  */
 
-import type {
-	DatabaseOptimizationSuggestion,
-	DatabasePerformanceMetric,
-} from "../types";
+import type { DatabaseOptimizationSuggestion, DatabasePerformanceMetric } from "../types";
 
 // Removed unused type declarations QueryExecutionPlan and SupabaseQueryLog
 
@@ -41,7 +38,7 @@ export class HealthcareDatabaseMonitor {
 		table: string,
 		queryType: "select" | "insert" | "update" | "delete",
 		rowsAffected?: number,
-		queryPlan?: string,
+		queryPlan?: string
 	): void {
 		const metric: DatabasePerformanceMetric = {
 			queryType,
@@ -84,8 +81,7 @@ export class HealthcareDatabaseMonitor {
 	} {
 		const slowQueries = this.metrics.filter((m) => m.isSlowQuery);
 		const tablePerformance = this.analyzeTablePerformance();
-		const optimizationSuggestions =
-			this.generateOptimizationSuggestions(tablePerformance);
+		const optimizationSuggestions = this.generateOptimizationSuggestions(tablePerformance);
 
 		return {
 			slowQueries,
@@ -143,9 +139,7 @@ export class HealthcareDatabaseMonitor {
 	/**
 	 * Generate optimization suggestions based on patterns
 	 */
-	private generateOptimizationSuggestions(
-		tablePerformance: Map<string, any>,
-	): DatabaseOptimizationSuggestion[] {
+	private generateOptimizationSuggestions(tablePerformance: Map<string, any>): DatabaseOptimizationSuggestion[] {
 		const suggestions: DatabaseOptimizationSuggestion[] = [];
 
 		tablePerformance.forEach((stats, table) => {
@@ -157,14 +151,9 @@ export class HealthcareDatabaseMonitor {
 					description: `Table "${table}" has slow average query time (${Math.round(stats.avgExecutionTime)}ms). Consider adding indexes on frequently queried columns.`,
 					expectedImprovement: Math.min(
 						90,
-						Math.round(
-							((stats.avgExecutionTime - 100) / stats.avgExecutionTime) * 100,
-						),
+						Math.round(((stats.avgExecutionTime - 100) / stats.avgExecutionTime) * 100)
 					),
-					healthcareImpact: this.getHealthcareImpact(
-						stats.healthcareDataType,
-						stats.avgExecutionTime,
-					),
+					healthcareImpact: this.getHealthcareImpact(stats.healthcareDataType, stats.avgExecutionTime),
 				});
 			}
 
@@ -180,10 +169,7 @@ export class HealthcareDatabaseMonitor {
 			}
 
 			// Suggest query rewriting for medical records with many slow queries
-			if (
-				stats.slowQueryCount > 5 &&
-				stats.healthcareDataType === "medical-record"
-			) {
+			if (stats.slowQueryCount > 5 && stats.healthcareDataType === "medical-record") {
 				suggestions.push({
 					table,
 					type: "query-rewrite",
@@ -209,9 +195,7 @@ export class HealthcareDatabaseMonitor {
 		return suggestions.sort((a, b) => {
 			const impactOrder = { critical: 3, important: 2, minor: 1 };
 			if (impactOrder[a.healthcareImpact] !== impactOrder[b.healthcareImpact]) {
-				return (
-					impactOrder[b.healthcareImpact] - impactOrder[a.healthcareImpact]
-				);
+				return impactOrder[b.healthcareImpact] - impactOrder[a.healthcareImpact];
 			}
 			return b.expectedImprovement - a.expectedImprovement;
 		});
@@ -220,10 +204,7 @@ export class HealthcareDatabaseMonitor {
 	/**
 	 * Determine healthcare impact based on data type and performance
 	 */
-	private getHealthcareImpact(
-		dataType?: string,
-		executionTime = 0,
-	): "critical" | "important" | "minor" {
+	private getHealthcareImpact(dataType?: string, executionTime = 0): "critical" | "important" | "minor" {
 		if (dataType === "patient" && executionTime > 2000) {
 			return "critical"; // Patient data access is critical
 		}
@@ -242,10 +223,7 @@ export class HealthcareDatabaseMonitor {
 	getPerformanceReport(): string {
 		const analysis = this.analyzePerformance();
 		const totalQueries = this.metrics.length;
-		const slowQueryPercentage = (
-			(analysis.slowQueries.length / totalQueries) *
-			100
-		).toFixed(2);
+		const slowQueryPercentage = ((analysis.slowQueries.length / totalQueries) * 100).toFixed(2);
 
 		const report = `
 🏥 HEALTHCARE DATABASE PERFORMANCE REPORT
@@ -265,7 +243,7 @@ ${Array.from(analysis.tablePerformance.entries())
   • Query Count: ${stats.queryCount}
   • Slow Queries: ${stats.slowQueryCount}
   • Performance: ${stats.avgExecutionTime > this.slowQueryThreshold ? "❌ Needs Attention" : "✅ Good"}
-`,
+`
 	)
 	.join("")}
 
@@ -276,7 +254,7 @@ ${analysis.optimizationSuggestions
 ${index + 1}. [${suggestion.healthcareImpact.toUpperCase()}] ${suggestion.table}
    🔧 ${suggestion.type}: ${suggestion.description}
    📈 Expected Improvement: ${suggestion.expectedImprovement}%
-`,
+`
 	)
 	.join("")}
 
@@ -297,36 +275,26 @@ ${
 	 * Get healthcare-specific insights
 	 */
 	private getHealthcareInsights(_analysis: any): string {
-		const patientQueries = this.metrics.filter(
-			(m) => m.healthcareDataType === "patient",
-		);
-		const medicalRecordQueries = this.metrics.filter(
-			(m) => m.healthcareDataType === "medical-record",
-		);
-		const appointmentQueries = this.metrics.filter(
-			(m) => m.healthcareDataType === "appointment",
-		);
+		const patientQueries = this.metrics.filter((m) => m.healthcareDataType === "patient");
+		const medicalRecordQueries = this.metrics.filter((m) => m.healthcareDataType === "medical-record");
+		const appointmentQueries = this.metrics.filter((m) => m.healthcareDataType === "appointment");
 
 		let insights = "";
 
 		if (patientQueries.length > 0) {
-			const avgPatientQueryTime =
-				patientQueries.reduce((sum, q) => sum + q.executionTime, 0) /
-				patientQueries.length;
+			const avgPatientQueryTime = patientQueries.reduce((sum, q) => sum + q.executionTime, 0) / patientQueries.length;
 			insights += `- Patient Data Access: ${Math.round(avgPatientQueryTime)}ms avg (target: <500ms)\n`;
 		}
 
 		if (medicalRecordQueries.length > 0) {
 			const avgMedicalQueryTime =
-				medicalRecordQueries.reduce((sum, q) => sum + q.executionTime, 0) /
-				medicalRecordQueries.length;
+				medicalRecordQueries.reduce((sum, q) => sum + q.executionTime, 0) / medicalRecordQueries.length;
 			insights += `- Medical Records: ${Math.round(avgMedicalQueryTime)}ms avg (target: <800ms)\n`;
 		}
 
 		if (appointmentQueries.length > 0) {
 			const avgAppointmentQueryTime =
-				appointmentQueries.reduce((sum, q) => sum + q.executionTime, 0) /
-				appointmentQueries.length;
+				appointmentQueries.reduce((sum, q) => sum + q.executionTime, 0) / appointmentQueries.length;
 			insights += `- Appointment Scheduling: ${Math.round(avgAppointmentQueryTime)}ms avg (target: <600ms)\n`;
 		}
 
@@ -336,9 +304,7 @@ ${
 	/**
 	 * Generate SQL optimization queries
 	 */
-	generateOptimizationSQL(
-		suggestions: DatabaseOptimizationSuggestion[],
-	): string {
+	generateOptimizationSQL(suggestions: DatabaseOptimizationSuggestion[]): string {
 		const sqlCommands: string[] = [
 			"-- Healthcare Database Optimization SQL",
 			`-- Generated on ${new Date().toISOString()}`,
@@ -383,8 +349,7 @@ ${
 		};
 
 		return (
-			commonIndexes[table as keyof typeof commonIndexes]?.join("\n") ||
-			`-- No specific indexes suggested for ${table}`
+			commonIndexes[table as keyof typeof commonIndexes]?.join("\n") || `-- No specific indexes suggested for ${table}`
 		);
 	}
 

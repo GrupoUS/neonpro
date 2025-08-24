@@ -7,8 +7,8 @@
  */
 
 import type { Context, MiddlewareHandler } from "hono";
-import { createError } from "./error-handler";
 import { createRouteRegex } from "../lib/regex-constants";
+import { createError } from "./error-handler";
 
 // LGPD consent types
 export enum ConsentType {
@@ -118,11 +118,7 @@ const LGPD_ROUTE_CONFIG: Record<string, LGPDRouteConfig> = {
 	// Data export (LGPD Article 15 - Right to portability)
 	"GET /api/v1/compliance/export": {
 		requiresConsent: [],
-		dataCategories: [
-			DataCategory.IDENTIFYING,
-			DataCategory.HEALTH,
-			DataCategory.BEHAVIORAL,
-		],
+		dataCategories: [DataCategory.IDENTIFYING, DataCategory.HEALTH, DataCategory.BEHAVIORAL],
 		lawfulBasis: [LawfulBasis.LEGAL_OBLIGATION],
 		description: "Personal data export for data portability",
 	},
@@ -160,13 +156,7 @@ class ConsentStore {
 		});
 	}
 
-	grantConsent(
-		patientId: string,
-		consentType: ConsentType,
-		version = "1.0",
-		ipAddress?: string,
-		userAgent?: string,
-	) {
+	grantConsent(patientId: string, consentType: ConsentType, version = "1.0", ipAddress?: string, userAgent?: string) {
 		if (!this.consents.has(patientId)) {
 			this.consents.set(patientId, new Map());
 		}
@@ -245,10 +235,7 @@ const extractPatientId = (c: Context): string | null => {
 /**
  * Check if route matches LGPD configuration
  */
-const getRouteConfig = (
-	method: string,
-	path: string,
-): LGPDRouteConfig | null => {
+const getRouteConfig = (method: string, path: string): LGPDRouteConfig | null => {
 	const operationKey = `${method} ${path}`;
 
 	// Check exact match
@@ -270,10 +257,7 @@ const getRouteConfig = (
 /**
  * Validate data retention compliance
  */
-const validateDataRetention = (
-	config: LGPDRouteConfig,
-	_patientId: string,
-): boolean => {
+const validateDataRetention = (config: LGPDRouteConfig, _patientId: string): boolean => {
 	if (!config.retentionPeriod) {
 		return true;
 	}
@@ -302,52 +286,37 @@ export const lgpdMiddleware = (): MiddlewareHandler => {
 
 			// Check consent requirements
 			if (routeConfig.requiresConsent.length > 0 && patientId) {
-				const hasValidConsent = consentStore.hasValidConsent(
-					patientId,
-					routeConfig.requiresConsent,
-				);
+				const hasValidConsent = consentStore.hasValidConsent(patientId, routeConfig.requiresConsent);
 
 				if (!hasValidConsent) {
 					const missingConsents = routeConfig.requiresConsent.filter(
-						(consent) => !consentStore.getConsent(patientId, consent)?.granted,
+						(consent) => !consentStore.getConsent(patientId, consent)?.granted
 					);
 
-					throw createError.lgpdCompliance(
-						"Consentimento LGPD obrigatório não fornecido",
-						{
-							requiredConsents: routeConfig.requiresConsent,
-							missingConsents,
-							patientId,
-							article: "LGPD Art. 8º",
-						},
-					);
+					throw createError.lgpdCompliance("Consentimento LGPD obrigatório não fornecido", {
+						requiredConsents: routeConfig.requiresConsent,
+						missingConsents,
+						patientId,
+						article: "LGPD Art. 8º",
+					});
 				}
 			}
 
 			// Check data retention compliance
 			if (patientId && !validateDataRetention(routeConfig, patientId)) {
-				throw createError.lgpdCompliance(
-					"Dados fora do período de retenção permitido",
-					{
-						retentionPeriod: routeConfig.retentionPeriod,
-						article: "LGPD Art. 15º",
-					},
-				);
+				throw createError.lgpdCompliance("Dados fora do período de retenção permitido", {
+					retentionPeriod: routeConfig.retentionPeriod,
+					article: "LGPD Art. 15º",
+				});
 			}
 
 			// Set LGPD compliance headers
 			c.res.headers.set("X-LGPD-Compliant", "true");
 			c.res.headers.set("X-LGPD-Basis", routeConfig.lawfulBasis.join(","));
-			c.res.headers.set(
-				"X-LGPD-Categories",
-				routeConfig.dataCategories.join(","),
-			);
+			c.res.headers.set("X-LGPD-Categories", routeConfig.dataCategories.join(","));
 
 			if (routeConfig.retentionPeriod) {
-				c.res.headers.set(
-					"X-LGPD-Retention-Days",
-					routeConfig.retentionPeriod.toString(),
-				);
+				c.res.headers.set("X-LGPD-Retention-Days", routeConfig.retentionPeriod.toString());
 			}
 
 			// Store LGPD context for audit
@@ -356,11 +325,7 @@ export const lgpdMiddleware = (): MiddlewareHandler => {
 				patientId,
 				consentValidated:
 					routeConfig.requiresConsent.length === 0 ||
-					(patientId &&
-						consentStore.hasValidConsent(
-							patientId,
-							routeConfig.requiresConsent,
-						)),
+					(patientId && consentStore.hasValidConsent(patientId, routeConfig.requiresConsent)),
 			});
 		}
 
@@ -384,15 +349,9 @@ export const lgpdUtils = {
 		consentType: ConsentType,
 		version = "1.0",
 		ipAddress?: string,
-		userAgent?: string,
+		userAgent?: string
 	) => {
-		consentStore.grantConsent(
-			patientId,
-			consentType,
-			version,
-			ipAddress,
-			userAgent,
-		);
+		consentStore.grantConsent(patientId, consentType, version, ipAddress, userAgent);
 	},
 
 	// Revoke consent
@@ -418,10 +377,7 @@ export const lgpdUtils = {
 	},
 
 	// Data minimization helper
-	minimizeData: <T extends Record<string, any>>(
-		data: T,
-		allowedFields: (keyof T)[],
-	): Partial<T> => {
+	minimizeData: <T extends Record<string, any>>(data: T, allowedFields: (keyof T)[]): Partial<T> => {
 		const minimized: Partial<T> = {};
 		for (const field of allowedFields) {
 			if (field in data) {
@@ -436,15 +392,7 @@ export const lgpdUtils = {
 		const anonymized = { ...data };
 
 		// Remove direct identifiers
-		const identifyingFields = [
-			"id",
-			"email",
-			"phone",
-			"cpf",
-			"rg",
-			"name",
-			"fullName",
-		];
+		const identifyingFields = ["id", "email", "phone", "cpf", "rg", "name", "fullName"];
 		for (const field of identifyingFields) {
 			if (field in anonymized) {
 				delete anonymized[field];

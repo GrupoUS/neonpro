@@ -73,7 +73,7 @@ export const generateTestPatient = () => ({
 
 export function renderWithHealthcareContext(
 	ui: ReactElement,
-	options: HealthcareRenderOptions = {},
+	options: HealthcareRenderOptions = {}
 ): ReturnType<typeof render> & { user: ReturnType<typeof userEvent.setup> } {
 	const {
 		user = generateTestUser("doctor"),
@@ -85,11 +85,7 @@ export function renderWithHealthcareContext(
 
 	// Mock healthcare context providers
 	const HealthcareWrapper = ({ children }: { children: React.ReactNode }) => {
-		return React.createElement(
-			"div",
-			{ "data-testid": "healthcare-context" },
-			children,
-		);
+		return React.createElement("div", { "data-testid": "healthcare-context" }, children);
 	};
 
 	return {
@@ -101,9 +97,7 @@ export function renderWithHealthcareContext(
 /**
  * Generate Test Healthcare Users
  */
-export function generateTestUser(
-	role: HealthcareTestUser["role"],
-): HealthcareTestUser {
+export function generateTestUser(role: HealthcareTestUser["role"]): HealthcareTestUser {
 	const baseUser = {
 		id: `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
 		tenantId: "test-tenant",
@@ -115,12 +109,7 @@ export function generateTestUser(
 			return {
 				...baseUser,
 				role: "doctor",
-				permissions: [
-					"patients:read",
-					"patients:write",
-					"appointments:manage",
-					"treatments:manage",
-				],
+				permissions: ["patients:read", "patients:write", "appointments:manage", "treatments:manage"],
 				medicalLicense: "CRM-SP-123456",
 				specialization: "Dermatologia",
 			};
@@ -128,22 +117,13 @@ export function generateTestUser(
 			return {
 				...baseUser,
 				role: "patient",
-				permissions: [
-					"appointments:read",
-					"treatments:read",
-					"profile:read",
-					"profile:write",
-				],
+				permissions: ["appointments:read", "treatments:read", "profile:read", "profile:write"],
 			};
 		case "nurse":
 			return {
 				...baseUser,
 				role: "nurse",
-				permissions: [
-					"patients:read",
-					"appointments:read",
-					"treatments:assist",
-				],
+				permissions: ["patients:read", "appointments:read", "treatments:assist"],
 			};
 		default:
 			return {

@@ -44,6 +44,9 @@ export default defineConfig({
 
 		// Focus only on implemented tests - UNIT TESTS ONLY
 		include: [
+			// Core packages tests (moved to tools/tests)
+			"tools/tests/**/*.test.{ts,tsx}",
+			"tools/tests/**/*.spec.{ts,tsx}",
 			// Patient Management tests (100% implemented)
 			"apps/web/tests/**/*.test.{ts,tsx}",
 			"apps/web/tests/**/*/test.{ts,tsx}",
@@ -95,7 +98,7 @@ export default defineConfig({
 			"**/backend-*.txt",
 			// === VITEST SPECIFIC EXCLUDES ===
 			// EXCLUDE ALL E2E AND PLAYWRIGHT TESTS
-			"**/e2e/**",
+			"**/tools/e2e/**",
 			"**/*.spec.{ts,tsx}",
 			"**/*.e2e.{ts,tsx}",
 			"**/*e2e*.{ts,tsx}",
@@ -105,8 +108,8 @@ export default defineConfig({
 			"**/app/**/*test*",
 			"**/lib/**/*test*",
 			// === CONSOLIDATED TEST DIRECTORIES (POST-MIGRATION) ===
-			"**/tools/testing/reports/**",
-			"**/tools/testing/e2e/**",
+			"**/tools/reports/**",
+			"**/tools/testing/**",
 			// Exclude unimplemented features
 			"**/compliance/**",
 			"**/ai/**",
@@ -142,6 +145,8 @@ export default defineConfig({
 				"apps/web/tests/**",
 				"packages/ui/**",
 				"packages/utils/**",
+				// Include moved tests directory
+				"tools/tests/**",
 			],
 			exclude: [
 				// === BIOME IGNORE PATTERNS (SYNCHRONIZED) ===
@@ -180,8 +185,8 @@ export default defineConfig({
 				"**/*.test.{ts,tsx}",
 				"**/*.spec.{ts,tsx}",
 				// === CONSOLIDATED TEST DIRECTORIES (POST-MIGRATION) ===
-				"**/tools/testing/reports/**",
-				"**/tools/testing/e2e/**",
+				"**/tools/reports/**",
+				"**/tools/e2e/**",
 			],
 			thresholds: {
 				global: {

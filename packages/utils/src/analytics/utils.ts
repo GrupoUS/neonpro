@@ -30,10 +30,7 @@ export function calculateGrowth(current: number, previous: number): number {
 }
 
 // Additional function expected by tests - returns decimal not percentage
-export const calculateGrowthRate = (
-	previous: number | null,
-	current: number | null,
-): number => {
+export const calculateGrowthRate = (previous: number | null, current: number | null): number => {
 	// Return NaN for null/undefined inputs
 	if (current === null || previous === null) {
 		return Number.NaN;
@@ -52,10 +49,7 @@ export const calculateGrowthRate = (
 	}
 
 	// Handle extremely large numbers by using relative calculation
-	if (
-		Math.abs(previous) > Number.MAX_SAFE_INTEGER / 10 ||
-		Math.abs(current) > Number.MAX_SAFE_INTEGER / 10
-	) {
+	if (Math.abs(previous) > Number.MAX_SAFE_INTEGER / 10 || Math.abs(current) > Number.MAX_SAFE_INTEGER / 10) {
 		// For very large numbers, use ratio to avoid overflow issues
 		const ratio = current / previous;
 		return ratio - 1;
@@ -64,11 +58,7 @@ export const calculateGrowthRate = (
 	return (current - previous) / previous; // Return as decimal (0.2 = 20%)
 };
 
-export const formatAnalyticsCurrency = (
-	amount: number | null | undefined,
-	currency = "USD",
-	precision = 2,
-): string => {
+export const formatAnalyticsCurrency = (amount: number | null | undefined, currency = "USD", precision = 2): string => {
 	if (amount == null || Number.isNaN(amount)) {
 		return `${getCurrencySymbol(currency)}0.${"0".repeat(precision)}`;
 	}
@@ -94,10 +84,7 @@ function getCurrencySymbol(currency: string): string {
 	}
 }
 
-export const formatAnalyticsPercentage = (
-	value: number | null | undefined,
-	precision = 2,
-): string => {
+export const formatAnalyticsPercentage = (value: number | null | undefined, precision = 2): string => {
 	if (value == null || Number.isNaN(value)) {
 		return precision > 0 ? "0.00%" : "0%";
 	}
@@ -110,9 +97,7 @@ export const formatAnalyticsPercentage = (
 	return `${(value * 100).toFixed(precision)}%`;
 };
 
-export const calculateMRR = (
-	subscriptions: any[] | null | undefined,
-): number => {
+export const calculateMRR = (subscriptions: any[] | null | undefined): number => {
 	if (!Array.isArray(subscriptions)) {
 		return 0;
 	}
@@ -127,8 +112,7 @@ export const calculateMRR = (
 			}
 			// Convert from cents to dollars (assuming amounts > 999 are in cents)
 			const dollarPrice = price > 999 ? price / 100 : price;
-			const monthlyPrice =
-				sub?.interval === "yearly" ? dollarPrice / 12 : dollarPrice;
+			const monthlyPrice = sub?.interval === "yearly" ? dollarPrice / 12 : dollarPrice;
 			return sum + monthlyPrice;
 		}, 0);
 	return Math.round(mrr * 100) / 100; // Round to 2 decimal places properly
@@ -138,10 +122,7 @@ export const calculateARR = (mrr: number): number => {
 	return mrr * 12;
 };
 
-export const calculateChurnRate = (
-	churnedCustomers: number | null,
-	totalCustomers: number | null,
-): number => {
+export const calculateChurnRate = (churnedCustomers: number | null, totalCustomers: number | null): number => {
 	// Return NaN for null/undefined inputs
 	if (totalCustomers == null || churnedCustomers == null) {
 		return Number.NaN;
@@ -160,17 +141,9 @@ export const calculateChurnRate = (
 	return churnedCustomers / totalCustomers; // Return as decimal (0.1 = 10%)
 };
 
-export const calculateLTV = (
-	averageRevenue: number | null,
-	churnRate: number | null,
-): number => {
+export const calculateLTV = (averageRevenue: number | null, churnRate: number | null): number => {
 	// If either parameter is null/undefined/NaN, return NaN
-	if (
-		averageRevenue == null ||
-		churnRate == null ||
-		Number.isNaN(averageRevenue) ||
-		Number.isNaN(churnRate)
-	) {
+	if (averageRevenue == null || churnRate == null || Number.isNaN(averageRevenue) || Number.isNaN(churnRate)) {
 		return Number.NaN;
 	}
 	// Handle zero churn rate - infinite LTV
@@ -190,7 +163,7 @@ export const calculateLTV = (
 export const aggregateMetricsByPeriod = (
 	data: any[],
 	period: "day" | "month" | "year",
-	aggregator?: (items: any[]) => number,
+	aggregator?: (items: any[]) => number
 ): any[] => {
 	if (!Array.isArray(data)) {
 		return [];
@@ -199,8 +172,7 @@ export const aggregateMetricsByPeriod = (
 	// Create a fresh copy to avoid mutation issues
 	const dataToProcess = [...data];
 
-	const defaultAggregator = (items: any[]) =>
-		items.reduce((sum, item) => sum + (item.value || 0), 0);
+	const defaultAggregator = (items: any[]) => items.reduce((sum, item) => sum + (item.value || 0), 0);
 	const aggFunc = aggregator || defaultAggregator;
 
 	const grouped = dataToProcess.reduce(
@@ -220,20 +192,7 @@ export const aggregateMetricsByPeriod = (
 					break;
 				case "month": {
 					// Format as "Jan 2024" instead of "2024-01"
-					const monthNames = [
-						"Jan",
-						"Feb",
-						"Mar",
-						"Apr",
-						"May",
-						"Jun",
-						"Jul",
-						"Aug",
-						"Sep",
-						"Oct",
-						"Nov",
-						"Dec",
-					];
+					const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 					key = `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
 					break;
 				}
@@ -248,7 +207,7 @@ export const aggregateMetricsByPeriod = (
 			acc[key].push(item);
 			return acc;
 		},
-		{} as Record<string, any[]>,
+		{} as Record<string, any[]>
 	);
 
 	// Sort the results by chronological order, not alphabetical
@@ -266,20 +225,7 @@ export const aggregateMetricsByPeriod = (
 				// Parse "Jan 2024" format for proper chronological sorting
 				const parseMonth = (monthStr: string) => {
 					const [month, year] = monthStr.split(" ");
-					const monthNames = [
-						"Jan",
-						"Feb",
-						"Mar",
-						"Apr",
-						"May",
-						"Jun",
-						"Jul",
-						"Aug",
-						"Sep",
-						"Oct",
-						"Nov",
-						"Dec",
-					];
+					const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 					return new Date(Number.parseInt(year, 10), monthNames.indexOf(month));
 				};
 				return parseMonth(a.period).getTime() - parseMonth(b.period).getTime();
@@ -338,13 +284,11 @@ export const parseAnalyticsFilters = (params: URLSearchParams | any): any => {
 	// Add filters if present
 	const filters = getValue("filters", null);
 	if (filters) {
-		result.filters =
-			typeof filters === "string" ? JSON.parse(filters) : filters;
+		result.filters = typeof filters === "string" ? JSON.parse(filters) : filters;
 	}
 
 	// Handle date parsing - try both snake_case and camelCase
-	const startDateStr =
-		getValue("start_date", null) || getValue("startDate", null);
+	const startDateStr = getValue("start_date", null) || getValue("startDate", null);
 	const endDateStr = getValue("end_date", null) || getValue("endDate", null);
 
 	if (startDateStr) {
@@ -376,16 +320,7 @@ export const parseAnalyticsFilters = (params: URLSearchParams | any): any => {
 	}
 
 	// Validate filter parameters if invalid parameters are provided
-	const validPeriods = [
-		"last_30_days",
-		"last_month",
-		"last_quarter",
-		"last_year",
-		"month",
-		"week",
-		"day",
-		"custom",
-	];
+	const validPeriods = ["last_30_days", "last_month", "last_quarter", "last_year", "month", "week", "day", "custom"];
 	const validMetrics = ["revenue", "subscriptions", "users", "churn", "all"]; // Add 'all' to valid metrics
 
 	if (!validPeriods.includes(result.period)) {
@@ -404,10 +339,9 @@ export const exportToCSV = (data: any[], _filename = "export.csv"): string => {
 	}
 
 	const headers = Object.keys(data[0]);
-	const csvContent = [
-		headers.join(","),
-		...data.map((row) => headers.map((header) => row[header]).join(",")),
-	].join("\n");
+	const csvContent = [headers.join(","), ...data.map((row) => headers.map((header) => row[header]).join(","))].join(
+		"\n"
+	);
 
 	return csvContent;
 };
@@ -426,17 +360,10 @@ export const exportToExcel = (_data: any[], _options?: any): string => {
 /**
  * Format analytics data for export
  */
-export function formatAnalyticsData(
-	data: AnalyticsData[],
-	options: ExportOptions,
-): string {
+export function formatAnalyticsData(data: AnalyticsData[], options: ExportOptions): string {
 	if (options.format === "csv") {
 		const headers = ["timestamp", "metric", "value"];
-		const rows = data.map((item) => [
-			item.timestamp.toISOString(),
-			item.metric,
-			item.value.toString(),
-		]);
+		const rows = data.map((item) => [item.timestamp.toISOString(), item.metric, item.value.toString()]);
 
 		return [headers, ...rows].map((row) => row.join(",")).join("\n");
 	}
@@ -448,10 +375,7 @@ export function formatAnalyticsData(
 /**
  * Aggregate analytics data by time period
  */
-export function aggregateByPeriod(
-	data: AnalyticsData[],
-	period: "day" | "week" | "month",
-): Record<string, number> {
+export function aggregateByPeriod(data: AnalyticsData[], period: "day" | "week" | "month"): Record<string, number> {
 	const aggregated: Record<string, number> = {};
 
 	data.forEach((item) => {

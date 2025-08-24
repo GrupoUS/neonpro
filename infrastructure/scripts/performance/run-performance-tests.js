@@ -80,24 +80,12 @@ async function _runPerformanceTests() {
 	try {
 		// Start performance monitoring
 		performanceMonitor.reset();
-		const _subscriptionResult = await loadTester.executeLoadTest(
-			mockSubscriptionCheck,
-			TEST_CONFIG.subscription_check,
-		);
-		const _updateResult = await loadTester.executeLoadTest(
-			mockSubscriptionUpdate,
-			TEST_CONFIG.subscription_update,
-		);
-		const _syncResult = await loadTester.executeLoadTest(
-			mockRealTimeSync,
-			TEST_CONFIG.real_time_sync,
-		);
+		const _subscriptionResult = await loadTester.executeLoadTest(mockSubscriptionCheck, TEST_CONFIG.subscription_check);
+		const _updateResult = await loadTester.executeLoadTest(mockSubscriptionUpdate, TEST_CONFIG.subscription_update);
+		const _syncResult = await loadTester.executeLoadTest(mockRealTimeSync, TEST_CONFIG.real_time_sync);
 		const report = performanceMonitor.generateReport();
 		Object.entries(report).forEach(([_operation, _metrics]) => {});
-		const stressReport = await stressTester.executeStressTest(
-			STRESS_SCENARIOS[0],
-			mockSubscriptionCheck,
-		);
+		const stressReport = await stressTester.executeStressTest(STRESS_SCENARIOS[0], mockSubscriptionCheck);
 
 		// Final assessment
 		const overallScore = calculateOverallScore(report, stressReport);

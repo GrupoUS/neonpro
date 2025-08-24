@@ -55,11 +55,7 @@ const ATTACK_PAYLOADS = {
 		"' && this.password.match(/.*/) //",
 	],
 
-	LDAP_INJECTION: [
-		"*)(&(objectClass=user)(name=*)",
-		"*)(mail=*)((cn=*",
-		"admin)(&(objectClass=user)(|(password=*)",
-	],
+	LDAP_INJECTION: ["*)(&(objectClass=user)(name=*)", "*)(mail=*)((cn=*", "admin)(&(objectClass=user)(|(password=*)"],
 
 	COMMAND_INJECTION: [
 		"; cat /etc/passwd",
@@ -87,11 +83,7 @@ class PenetrationTester {
 	async setup(): Promise<void> {
 		this.browser = await chromium.launch({
 			headless: true,
-			args: [
-				"--disable-web-security",
-				"--allow-running-insecure-content",
-				"--disable-features=VizDisplayCompositor",
-			],
+			args: ["--disable-web-security", "--allow-running-insecure-content", "--disable-features=VizDisplayCompositor"],
 		});
 
 		this.page = await this.browser.newPage();
@@ -108,10 +100,7 @@ class PenetrationTester {
 		await this.browser?.close();
 	}
 
-	async testSQLInjection(
-		endpoint: string,
-		parameter: string,
-	): Promise<SecurityTestResult[]> {
+	async testSQLInjection(endpoint: string, parameter: string): Promise<SecurityTestResult[]> {
 		const results: SecurityTestResult[] = [];
 
 		for (const payload of ATTACK_PAYLOADS.SQL_INJECTION) {
@@ -133,11 +122,8 @@ class PenetrationTester {
 					/Microsoft.*ODBC.*SQL Server/i,
 				];
 
-				const hasErrors = sqlErrorPatterns.some((pattern) =>
-					pattern.test(responseText),
-				);
-				const unexpectedSuccess =
-					response.status === 200 && responseText.includes("admin");
+				const hasErrors = sqlErrorPatterns.some((pattern) => pattern.test(responseText));
+				const unexpectedSuccess = response.status === 200 && responseText.includes("admin");
 
 				if (hasErrors || unexpectedSuccess) {
 					results.push({
@@ -167,9 +153,7 @@ class PenetrationTester {
 		return results;
 	}
 
-	async testXSSVulnerabilities(
-		endpoint: string,
-	): Promise<SecurityTestResult[]> {
+	async testXSSVulnerabilities(endpoint: string): Promise<SecurityTestResult[]> {
 		const results: SecurityTestResult[] = [];
 
 		for (const payload of ATTACK_PAYLOADS.XSS_ATTACKS) {
@@ -183,17 +167,13 @@ class PenetrationTester {
 				const responseText = await response.text();
 
 				// Check if payload is reflected without encoding
-				if (
-					responseText.includes(payload) &&
-					!responseText.includes("&lt;script&gt;")
-				) {
+				if (responseText.includes(payload) && !responseText.includes("&lt;script&gt;")) {
 					results.push({
 						vulnerability: "Cross-Site Scripting (XSS)",
 						severity: "HIGH",
 						exploitable: true,
 						details: `XSS vulnerability detected with payload: ${payload}`,
-						remediation:
-							"Implement output encoding and Content Security Policy",
+						remediation: "Implement output encoding and Content Security Policy",
 						cvssScore: 8.1,
 					});
 				}
@@ -218,11 +198,9 @@ class PenetrationTester {
 		exploitable: number;
 	} {
 		return {
-			critical: this.vulnerabilities.filter((v) => v.severity === "CRITICAL")
-				.length,
+			critical: this.vulnerabilities.filter((v) => v.severity === "CRITICAL").length,
 			high: this.vulnerabilities.filter((v) => v.severity === "HIGH").length,
-			medium: this.vulnerabilities.filter((v) => v.severity === "MEDIUM")
-				.length,
+			medium: this.vulnerabilities.filter((v) => v.severity === "MEDIUM").length,
 			low: this.vulnerabilities.filter((v) => v.severity === "LOW").length,
 			total: this.vulnerabilities.length,
 			exploitable: this.vulnerabilities.filter((v) => v.exploitable).length,
@@ -252,10 +230,7 @@ describe("🎯 Comprehensive Penetration Testing", () => {
 			];
 
 			for (const target of injectionEndpoints) {
-				const sqlResults = await penTester.testSQLInjection(
-					target.endpoint,
-					target.parameter,
-				);
+				const sqlResults = await penTester.testSQLInjection(target.endpoint, target.parameter);
 
 				// No SQL injection vulnerabilities should be found
 				expect(sqlResults.length).toBe(0);
@@ -297,8 +272,7 @@ describe("🎯 Comprehensive Penetration Testing", () => {
 						severity: "CRITICAL",
 						exploitable: true,
 						details: `Weak credentials accepted: ${creds.username}/${creds.password}`,
-						remediation:
-							"Implement strong password policies and account lockouts",
+						remediation: "Implement strong password policies and account lockouts",
 						cvssScore: 9.8,
 					});
 				}
@@ -334,9 +308,7 @@ describe("🎯 Comprehensive Penetration Testing", () => {
 						/Bearer\s+[a-zA-Z0-9\-_.]+/,
 					];
 
-					const hasSensitiveData = sensitivePatterns.some((pattern) =>
-						pattern.test(responseText),
-					);
+					const hasSensitiveData = sensitivePatterns.some((pattern) => pattern.test(responseText));
 
 					if (hasSensitiveData) {
 						penTester.recordVulnerability({
@@ -344,8 +316,7 @@ describe("🎯 Comprehensive Penetration Testing", () => {
 							severity: "CRITICAL",
 							exploitable: true,
 							details: `Sensitive data exposed at ${endpoint} without authentication`,
-							remediation:
-								"Implement proper authentication and data encryption",
+							remediation: "Implement proper authentication and data encryption",
 							cvssScore: 9.1,
 						});
 					}
@@ -354,12 +325,7 @@ describe("🎯 Comprehensive Penetration Testing", () => {
 		});
 
 		it("should test for cross-site scripting (A03:2021)", async () => {
-			const xssEndpoints = [
-				"/api/v1/patients/notes",
-				"/api/v1/appointments/comments",
-				"/api/v1/feedback",
-				"/search",
-			];
+			const xssEndpoints = ["/api/v1/patients/notes", "/api/v1/appointments/comments", "/api/v1/feedback", "/search"];
 
 			for (const endpoint of xssEndpoints) {
 				const xssResults = await penTester.testXSSVulnerabilities(endpoint);
@@ -385,8 +351,7 @@ describe("🎯 Comprehensive Penetration Testing", () => {
 				expect(deviceBypassTest.bypassSuccessful).toBe(false);
 
 				// Test device command injection
-				const commandInjectionTest =
-					await testMedicalDeviceCommandInjection(endpoint);
+				const commandInjectionTest = await testMedicalDeviceCommandInjection(endpoint);
 				expect(commandInjectionTest.vulnerabilityFound).toBe(false);
 
 				// Test unauthorized device control
@@ -629,9 +594,7 @@ describe("🎯 Comprehensive Penetration Testing", () => {
 			expect(report.exploitable).toBeLessThanOrEqual(3);
 
 			// Generate detailed security report
-			const detailedReport = generateSecurityAssessmentReport(
-				penTester.vulnerabilities,
-			);
+			const detailedReport = generateSecurityAssessmentReport(penTester.vulnerabilities);
 			expect(detailedReport.overallRiskScore).toBeLessThanOrEqual(3); // Low to Medium risk
 		});
 
@@ -643,9 +606,7 @@ describe("🎯 Comprehensive Penetration Testing", () => {
 			expect(complianceValidation.anvisaSecurityRequirements).toBe(true);
 			expect(complianceValidation.cfmDataProtection).toBe(true);
 
-			expect(
-				complianceValidation.overallComplianceScore,
-			).toBeGreaterThanOrEqual(95);
+			expect(complianceValidation.overallComplianceScore).toBeGreaterThanOrEqual(95);
 		});
 	});
 });
@@ -714,13 +675,7 @@ async function testJWTSecurity(_testType: string) {
 }
 
 function checkForSensitiveInformation(content: string): boolean {
-	const sensitivePatterns = [
-		/password/i,
-		/secret/i,
-		/api[_-]?key/i,
-		/private[_-]?key/i,
-		/database.*connection/i,
-	];
+	const sensitivePatterns = [/password/i, /secret/i, /api[_-]?key/i, /private[_-]?key/i, /database.*connection/i];
 
 	return sensitivePatterns.some((pattern) => pattern.test(content));
 }
@@ -735,9 +690,7 @@ async function testSSLConfiguration() {
 	};
 }
 
-function generateSecurityAssessmentReport(
-	vulnerabilities: SecurityTestResult[],
-) {
+function generateSecurityAssessmentReport(vulnerabilities: SecurityTestResult[]) {
 	const riskScores = {
 		CRITICAL: 4,
 		HIGH: 3,
@@ -749,8 +702,7 @@ function generateSecurityAssessmentReport(
 		return sum + riskScores[vuln.severity];
 	}, 0);
 
-	const averageRisk =
-		vulnerabilities.length > 0 ? totalRisk / vulnerabilities.length : 0;
+	const averageRisk = vulnerabilities.length > 0 ? totalRisk / vulnerabilities.length : 0;
 
 	return {
 		overallRiskScore: averageRisk,

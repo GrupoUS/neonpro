@@ -1,31 +1,15 @@
 import { z } from "zod";
 
 // Brazilian Professional Registration Schemas
-export const CrmSchema = z
-	.string()
-	.regex(/^\d{4,6}\/[A-Z]{2}$/, "CRM deve estar no formato XXXXXX/UF");
+export const CrmSchema = z.string().regex(/^\d{4,6}\/[A-Z]{2}$/, "CRM deve estar no formato XXXXXX/UF");
 
-export const CroSchema = z
-	.string()
-	.regex(/^\d{4,6}\/[A-Z]{2}$/, "CRO deve estar no formato XXXXXX/UF");
+export const CroSchema = z.string().regex(/^\d{4,6}\/[A-Z]{2}$/, "CRO deve estar no formato XXXXXX/UF");
 
-export const CreSchema = z
-	.string()
-	.regex(/^\d{4,6}\/[A-Z]{2}$/, "CRE deve estar no formato XXXXXX/UF");
+export const CreSchema = z.string().regex(/^\d{4,6}\/[A-Z]{2}$/, "CRE deve estar no formato XXXXXX/UF");
 
-export const CpfSchema = z
-	.string()
-	.regex(
-		/^\d{3}\.\d{3}\.\d{3}-\d{2}$/,
-		"CPF deve estar no formato XXX.XXX.XXX-XX",
-	);
+export const CpfSchema = z.string().regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, "CPF deve estar no formato XXX.XXX.XXX-XX");
 
-export const RgSchema = z
-	.string()
-	.regex(
-		/^\d{1,2}\.\d{3}\.\d{3}-[\dXx]$/,
-		"RG deve estar no formato XX.XXX.XXX-X",
-	);
+export const RgSchema = z.string().regex(/^\d{1,2}\.\d{3}\.\d{3}-[\dXx]$/, "RG deve estar no formato XX.XXX.XXX-X");
 
 // Professional Specialization Schema
 export const SpecializationSchema = z.enum([
@@ -103,12 +87,8 @@ export const ProfessionalTypeSchema = z.enum([
 // Work Schedule Schema
 export const WorkingHoursSchema = z.object({
 	day_of_week: z.number().min(0).max(6), // 0 = Sunday, 6 = Saturday
-	start_time: z
-		.string()
-		.regex(/^\d{2}:\d{2}$/, "Horário deve estar no formato HH:MM"),
-	end_time: z
-		.string()
-		.regex(/^\d{2}:\d{2}$/, "Horário deve estar no formato HH:MM"),
+	start_time: z.string().regex(/^\d{2}:\d{2}$/, "Horário deve estar no formato HH:MM"),
+	end_time: z.string().regex(/^\d{2}:\d{2}$/, "Horário deve estar no formato HH:MM"),
 	break_start: z
 		.string()
 		.regex(/^\d{2}:\d{2}$/)
@@ -127,10 +107,7 @@ export const AddressSchema = z.object({
 		.string()
 		.min(5, "Logradouro deve ter pelo menos 5 caracteres")
 		.max(200, "Logradouro deve ter no máximo 200 caracteres"),
-	number: z
-		.string()
-		.min(1, "Número é obrigatório")
-		.max(10, "Número deve ter no máximo 10 caracteres"),
+	number: z.string().min(1, "Número é obrigatório").max(10, "Número deve ter no máximo 10 caracteres"),
 	complement: z.string().max(100).optional(),
 	neighborhood: z
 		.string()
@@ -144,9 +121,7 @@ export const AddressSchema = z.object({
 		.string()
 		.length(2, "Estado deve ter 2 caracteres (UF)")
 		.regex(/^[A-Z]{2}$/, "Estado deve ser uma UF válida"),
-	zip_code: z
-		.string()
-		.regex(/^\d{5}-\d{3}$/, "CEP deve estar no formato XXXXX-XXX"),
+	zip_code: z.string().regex(/^\d{5}-\d{3}$/, "CEP deve estar no formato XXXXX-XXX"),
 	country: z.string().default("Brasil"),
 });
 
@@ -169,15 +144,7 @@ export const BankAccountSchema = z.object({
 // Professional Certificate/License Schema
 export const ProfessionalLicenseSchema = z.object({
 	id: z.string().uuid().optional(),
-	license_type: z.enum([
-		"crm",
-		"cro",
-		"cre",
-		"coren",
-		"crefito",
-		"crn",
-		"other",
-	]),
+	license_type: z.enum(["crm", "cro", "cre", "coren", "crefito", "crn", "other"]),
 	license_number: z
 		.string()
 		.min(4, "Número do registro deve ter pelo menos 4 caracteres")
@@ -189,9 +156,7 @@ export const ProfessionalLicenseSchema = z.object({
 	issue_date: z.string().date(),
 	expiry_date: z.string().date().optional(),
 	is_active: z.boolean().default(true),
-	verification_status: z
-		.enum(["pending", "verified", "rejected"])
-		.default("pending"),
+	verification_status: z.enum(["pending", "verified", "rejected"]).default("pending"),
 	verified_at: z.string().datetime().optional(),
 	document_url: z.string().url().optional(),
 });
@@ -240,23 +205,13 @@ export const ProfessionalBaseSchema = z.object({
 		.max(50, "Sobrenome deve ter no máximo 50 caracteres")
 		.regex(/^[a-zA-ZÀ-ÿ\s]+$/, "Sobrenome deve conter apenas letras"),
 	email: z.string().email("Email deve ser válido"),
-	phone: z
-		.string()
-		.regex(
-			/^\(\d{2}\)\s\d{4,5}-\d{4}$/,
-			"Telefone deve estar no formato (XX) XXXXX-XXXX",
-		),
+	phone: z.string().regex(/^\(\d{2}\)\s\d{4,5}-\d{4}$/, "Telefone deve estar no formato (XX) XXXXX-XXXX"),
 	mobile_phone: z
 		.string()
-		.regex(
-			/^\(\d{2}\)\s\d{4,5}-\d{4}$/,
-			"Celular deve estar no formato (XX) XXXXX-XXXX",
-		)
+		.regex(/^\(\d{2}\)\s\d{4,5}-\d{4}$/, "Celular deve estar no formato (XX) XXXXX-XXXX")
 		.optional(),
 	birth_date: z.string().date(),
-	gender: z
-		.enum(["male", "female", "non_binary", "prefer_not_to_say"])
-		.optional(),
+	gender: z.enum(["male", "female", "non_binary", "prefer_not_to_say"]).optional(),
 
 	// Brazilian Documents
 	cpf: CpfSchema,
@@ -264,12 +219,8 @@ export const ProfessionalBaseSchema = z.object({
 
 	// Professional Information
 	type: ProfessionalTypeSchema,
-	specializations: z
-		.array(SpecializationSchema)
-		.min(1, "Pelo menos uma especialização é obrigatória"),
-	licenses: z
-		.array(ProfessionalLicenseSchema)
-		.min(1, "Pelo menos um registro profissional é obrigatório"),
+	specializations: z.array(SpecializationSchema).min(1, "Pelo menos uma especialização é obrigatória"),
+	licenses: z.array(ProfessionalLicenseSchema).min(1, "Pelo menos um registro profissional é obrigatório"),
 
 	// Status and Availability
 	status: ProfessionalStatusSchema.default("pending"),
@@ -287,23 +238,13 @@ export const ProfessionalBaseSchema = z.object({
 				field: z.string().max(100),
 				graduation_year: z.number().min(1950).max(new Date().getFullYear()),
 				is_primary: z.boolean().default(false),
-			}),
+			})
 		)
 		.default([]),
 
 	// Languages spoken
 	languages: z
-		.array(
-			z.enum([
-				"portuguese",
-				"english",
-				"spanish",
-				"french",
-				"italian",
-				"german",
-				"other",
-			]),
-		)
+		.array(z.enum(["portuguese", "english", "spanish", "french", "italian", "german", "other"]))
 		.default(["portuguese"]),
 
 	// Contact Information
@@ -400,14 +341,7 @@ export const ProfessionalQuerySchema = z.object({
 
 	// Sorting
 	sort_by: z
-		.enum([
-			"name",
-			"created_at",
-			"experience_years",
-			"average_rating",
-			"total_ratings",
-			"last_active",
-		])
+		.enum(["name", "created_at", "experience_years", "average_rating", "total_ratings", "last_active"])
 		.default("name"),
 	sort_order: z.enum(["asc", "desc"]).default("asc"),
 });
@@ -424,12 +358,7 @@ export const CreateProfessionalSchema = z.object({
 		.min(2, "Sobrenome deve ter pelo menos 2 caracteres")
 		.max(50, "Sobrenome deve ter no máximo 50 caracteres"),
 	email: z.string().email("Email deve ser válido"),
-	phone: z
-		.string()
-		.regex(
-			/^\(\d{2}\)\s\d{4,5}-\d{4}$/,
-			"Telefone deve estar no formato (XX) XXXXX-XXXX",
-		),
+	phone: z.string().regex(/^\(\d{2}\)\s\d{4,5}-\d{4}$/, "Telefone deve estar no formato (XX) XXXXX-XXXX"),
 	birth_date: z.string().date(),
 
 	// Documents
@@ -454,9 +383,7 @@ export const CreateProfessionalSchema = z.object({
 	consultation_duration: z.number().min(15).max(180).default(60),
 
 	// Required LGPD consent
-	lgpd_consent: z
-		.boolean()
-		.refine((val) => val === true, "Consentimento LGPD é obrigatório"),
+	lgpd_consent: z.boolean().refine((val) => val === true, "Consentimento LGPD é obrigatório"),
 	marketing_consent: z.boolean().default(false),
 
 	// Optional fields
@@ -469,21 +396,11 @@ export const CreateProfessionalSchema = z.object({
 				degree: z.string().max(100),
 				field: z.string().max(100),
 				graduation_year: z.number().min(1950).max(new Date().getFullYear()),
-			}),
+			})
 		)
 		.optional(),
 	languages: z
-		.array(
-			z.enum([
-				"portuguese",
-				"english",
-				"spanish",
-				"french",
-				"italian",
-				"german",
-				"other",
-			]),
-		)
+		.array(z.enum(["portuguese", "english", "spanish", "french", "italian", "german", "other"]))
 		.default(["portuguese"]),
 	notes: z.string().max(2000).optional(),
 });
@@ -503,17 +420,11 @@ export const UpdateProfessionalSchema = z.object({
 	email: z.string().email("Email deve ser válido").optional(),
 	phone: z
 		.string()
-		.regex(
-			/^\(\d{2}\)\s\d{4,5}-\d{4}$/,
-			"Telefone deve estar no formato (XX) XXXXX-XXXX",
-		)
+		.regex(/^\(\d{2}\)\s\d{4,5}-\d{4}$/, "Telefone deve estar no formato (XX) XXXXX-XXXX")
 		.optional(),
 	mobile_phone: z
 		.string()
-		.regex(
-			/^\(\d{2}\)\s\d{4,5}-\d{4}$/,
-			"Celular deve estar no formato (XX) XXXXX-XXXX",
-		)
+		.regex(/^\(\d{2}\)\s\d{4,5}-\d{4}$/, "Celular deve estar no formato (XX) XXXXX-XXXX")
 		.optional(),
 
 	specializations: z.array(SpecializationSchema).optional(),
@@ -547,19 +458,7 @@ export const UpdateProfessionalSchema = z.object({
 
 	profile_photo_url: z.string().url().optional(),
 	room_number: z.string().max(20).optional(),
-	languages: z
-		.array(
-			z.enum([
-				"portuguese",
-				"english",
-				"spanish",
-				"french",
-				"italian",
-				"german",
-				"other",
-			]),
-		)
-		.optional(),
+	languages: z.array(z.enum(["portuguese", "english", "spanish", "french", "italian", "german", "other"])).optional(),
 	notes: z.string().max(2000).optional(),
 	tags: z.array(z.string()).optional(),
 	marketing_consent: z.boolean().optional(),
@@ -637,7 +536,7 @@ export const ProfessionalStatsSchema = z.object({
 			clinic_id: z.string().uuid(),
 			clinic_name: z.string(),
 			professional_count: z.number(),
-		}),
+		})
 	),
 	average_experience: z.number(),
 	average_rating: z.number(),
@@ -646,7 +545,7 @@ export const ProfessionalStatsSchema = z.object({
 			professional_id: z.string().uuid(),
 			name: z.string(),
 			rating: z.number(),
-		}),
+		})
 	),
 });
 
@@ -664,11 +563,7 @@ export type ProfessionalBase = z.infer<typeof ProfessionalBaseSchema>;
 export type ProfessionalQuery = z.infer<typeof ProfessionalQuerySchema>;
 export type CreateProfessional = z.infer<typeof CreateProfessionalSchema>;
 export type UpdateProfessional = z.infer<typeof UpdateProfessionalSchema>;
-export type ProfessionalAvailability = z.infer<
-	typeof ProfessionalAvailabilitySchema
->;
+export type ProfessionalAvailability = z.infer<typeof ProfessionalAvailabilitySchema>;
 export type ProfessionalResponse = z.infer<typeof ProfessionalResponseSchema>;
-export type ProfessionalsListResponse = z.infer<
-	typeof ProfessionalsListResponseSchema
->;
+export type ProfessionalsListResponse = z.infer<typeof ProfessionalsListResponseSchema>;
 export type ProfessionalStats = z.infer<typeof ProfessionalStatsSchema>;

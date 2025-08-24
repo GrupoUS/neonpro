@@ -145,10 +145,8 @@ describe("Analytics Utils", () => {
 
 	describe("Metrics Aggregation", () => {
 		it("should aggregate metrics by month", () => {
-			const aggregated = aggregateMetricsByPeriod(
-				testMetricsData,
-				"month",
-				(items) => items.reduce((sum, item) => sum + item.revenue, 0),
+			const aggregated = aggregateMetricsByPeriod(testMetricsData, "month", (items) =>
+				items.reduce((sum, item) => sum + item.revenue, 0)
 			);
 
 			expect(aggregated).toHaveLength(2);
@@ -159,11 +157,7 @@ describe("Analytics Utils", () => {
 		});
 
 		it("should handle empty data", () => {
-			const aggregated = aggregateMetricsByPeriod(
-				[],
-				"month",
-				(items) => items.length,
-			);
+			const aggregated = aggregateMetricsByPeriod([], "month", (items) => items.length);
 			expect(aggregated).toEqual([]);
 		});
 	});

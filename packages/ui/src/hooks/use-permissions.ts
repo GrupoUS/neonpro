@@ -49,14 +49,11 @@ export function usePermissions(): UserPermissions {
 				admin: false,
 			},
 		}),
-		[],
+		[]
 	);
 }
 
-export function useHasPermission(
-	resource: keyof UserPermissions,
-	action: keyof Permission,
-): boolean {
+export function useHasPermission(resource: keyof UserPermissions, action: keyof Permission): boolean {
 	const permissions = usePermissions();
 	return permissions[resource][action];
 }

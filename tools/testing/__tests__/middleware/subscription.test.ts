@@ -163,9 +163,7 @@ describe("Subscription Middleware", () => {
 	describe("errorHandling", () => {
 		it("should handle network errors gracefully", async () => {
 			// Mock fetch to reject with an error - Vitest v3.2.4 syntax
-			const mockFetch = vi
-				.fn()
-				.mockRejectedValueOnce(new Error("Network error"));
+			const mockFetch = vi.fn().mockRejectedValueOnce(new Error("Network error"));
 			vi.stubGlobal("fetch", mockFetch);
 
 			try {

@@ -4,13 +4,7 @@
  * LGPD + ANVISA + CFM + Multi-tenant support
  */
 
-export type Json =
-	| string
-	| number
-	| boolean
-	| null
-	| { [key: string]: Json | undefined }
-	| Json[];
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export type Database = {
 	public: {
@@ -140,13 +134,7 @@ export type Database = {
 					appointment_time: string;
 					duration_minutes: number;
 					treatment_type: string;
-					status:
-						| "scheduled"
-						| "confirmed"
-						| "in_progress"
-						| "completed"
-						| "cancelled"
-						| "no_show";
+					status: "scheduled" | "confirmed" | "in_progress" | "completed" | "cancelled" | "no_show";
 					notes: string | null;
 					price: number;
 					payment_status: "pending" | "paid" | "partial" | "cancelled";
@@ -163,13 +151,7 @@ export type Database = {
 					appointment_time: string;
 					duration_minutes?: number;
 					treatment_type: string;
-					status?:
-						| "scheduled"
-						| "confirmed"
-						| "in_progress"
-						| "completed"
-						| "cancelled"
-						| "no_show";
+					status?: "scheduled" | "confirmed" | "in_progress" | "completed" | "cancelled" | "no_show";
 					notes?: string | null;
 					price: number;
 					payment_status?: "pending" | "paid" | "partial" | "cancelled";
@@ -186,13 +168,7 @@ export type Database = {
 					appointment_time?: string;
 					duration_minutes?: number;
 					treatment_type?: string;
-					status?:
-						| "scheduled"
-						| "confirmed"
-						| "in_progress"
-						| "completed"
-						| "cancelled"
-						| "no_show";
+					status?: "scheduled" | "confirmed" | "in_progress" | "completed" | "cancelled" | "no_show";
 					notes?: string | null;
 					price?: number;
 					payment_status?: "pending" | "paid" | "partial" | "cancelled";
@@ -302,21 +278,9 @@ export type Database = {
 					clinic_id: string | null;
 					title: string;
 					message: string;
-					type:
-						| "info"
-						| "warning"
-						| "error"
-						| "success"
-						| "appointment"
-						| "payment"
-						| "system";
+					type: "info" | "warning" | "error" | "success" | "appointment" | "payment" | "system";
 					data: Json | null;
-					related_entity_type:
-						| "appointment"
-						| "patient"
-						| "payment"
-						| "user"
-						| null;
+					related_entity_type: "appointment" | "patient" | "payment" | "user" | null;
 					related_entity_id: string | null;
 					is_read: boolean;
 					read_at: string | null;
@@ -333,21 +297,9 @@ export type Database = {
 					clinic_id?: string | null;
 					title: string;
 					message: string;
-					type:
-						| "info"
-						| "warning"
-						| "error"
-						| "success"
-						| "appointment"
-						| "payment"
-						| "system";
+					type: "info" | "warning" | "error" | "success" | "appointment" | "payment" | "system";
 					data?: Json | null;
-					related_entity_type?:
-						| "appointment"
-						| "patient"
-						| "payment"
-						| "user"
-						| null;
+					related_entity_type?: "appointment" | "patient" | "payment" | "user" | null;
 					related_entity_id?: string | null;
 					is_read?: boolean;
 					read_at?: string | null;
@@ -364,21 +316,9 @@ export type Database = {
 					clinic_id?: string | null;
 					title?: string;
 					message?: string;
-					type?:
-						| "info"
-						| "warning"
-						| "error"
-						| "success"
-						| "appointment"
-						| "payment"
-						| "system";
+					type?: "info" | "warning" | "error" | "success" | "appointment" | "payment" | "system";
 					data?: Json | null;
-					related_entity_type?:
-						| "appointment"
-						| "patient"
-						| "payment"
-						| "user"
-						| null;
+					related_entity_type?: "appointment" | "patient" | "payment" | "user" | null;
 					related_entity_id?: string | null;
 					is_read?: boolean;
 					read_at?: string | null;
@@ -411,29 +351,21 @@ export type Database = {
 };
 
 // Healthcare-specific type exports
-export type HealthcareProfessional =
-	Database["public"]["Tables"]["healthcare_professionals"]["Row"];
+export type HealthcareProfessional = Database["public"]["Tables"]["healthcare_professionals"]["Row"];
 export type Patient = Database["public"]["Tables"]["patients"]["Row"];
 export type Appointment = Database["public"]["Tables"]["appointments"]["Row"];
 export type Clinic = Database["public"]["Tables"]["clinics"]["Row"];
-export type HealthcareAuditLog =
-	Database["public"]["Tables"]["healthcare_audit_logs"]["Row"];
+export type HealthcareAuditLog = Database["public"]["Tables"]["healthcare_audit_logs"]["Row"];
 export type Notification = Database["public"]["Tables"]["notifications"]["Row"];
 
 // Insert types for forms
 export type PatientInsert = Database["public"]["Tables"]["patients"]["Insert"];
-export type AppointmentInsert =
-	Database["public"]["Tables"]["appointments"]["Insert"];
-export type HealthcareProfessionalInsert =
-	Database["public"]["Tables"]["healthcare_professionals"]["Insert"];
-export type NotificationInsert =
-	Database["public"]["Tables"]["notifications"]["Insert"];
+export type AppointmentInsert = Database["public"]["Tables"]["appointments"]["Insert"];
+export type HealthcareProfessionalInsert = Database["public"]["Tables"]["healthcare_professionals"]["Insert"];
+export type NotificationInsert = Database["public"]["Tables"]["notifications"]["Insert"];
 
 // Update types for edits
 export type PatientUpdate = Database["public"]["Tables"]["patients"]["Update"];
-export type AppointmentUpdate =
-	Database["public"]["Tables"]["appointments"]["Update"];
-export type HealthcareProfessionalUpdate =
-	Database["public"]["Tables"]["healthcare_professionals"]["Update"];
-export type NotificationUpdate =
-	Database["public"]["Tables"]["notifications"]["Update"];
+export type AppointmentUpdate = Database["public"]["Tables"]["appointments"]["Update"];
+export type HealthcareProfessionalUpdate = Database["public"]["Tables"]["healthcare_professionals"]["Update"];
+export type NotificationUpdate = Database["public"]["Tables"]["notifications"]["Update"];

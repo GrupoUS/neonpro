@@ -40,7 +40,7 @@ export function createAuditServices(supabaseClient: any) {
  */
 export async function validateAuditCompliance(
 	tenantId: string,
-	supabaseClient: any,
+	supabaseClient: any
 ): Promise<{
 	isCompliant: boolean;
 	score: number;
@@ -52,15 +52,10 @@ export async function validateAuditCompliance(
 		const complianceAuditService = new ComplianceAuditService(supabaseClient);
 
 		// Validate audit trail completeness
-		const auditTrailCompliance =
-			await auditService.validateAuditTrail(tenantId);
+		const auditTrailCompliance = await auditService.validateAuditTrail(tenantId);
 
 		// Validate compliance audit requirements
-		const complianceAuditReport =
-			await complianceAuditService.generateComplianceReport(
-				tenantId,
-				"system-auditor",
-			);
+		const complianceAuditReport = await complianceAuditService.generateComplianceReport(tenantId, "system-auditor");
 
 		const violations: string[] = [];
 		const recommendations: string[] = [];
@@ -69,17 +64,14 @@ export async function validateAuditCompliance(
 		// Check audit trail completeness
 		if (!auditTrailCompliance.isComplete) {
 			violations.push("Incomplete audit trail detected");
-			recommendations.push(
-				"Ensure all healthcare operations are properly logged",
-			);
+			recommendations.push("Ensure all healthcare operations are properly logged");
 			score -= 2;
 		}
 
 		// Check compliance audit frequency
 		if (
 			complianceAuditReport.report?.lastAuditDate &&
-			Date.now() - complianceAuditReport.report.lastAuditDate.getTime() >
-				30 * 24 * 60 * 60 * 1000
+			Date.now() - complianceAuditReport.report.lastAuditDate.getTime() > 30 * 24 * 60 * 60 * 1000
 		) {
 			violations.push("Compliance audit overdue (>30 days)");
 			recommendations.push("Schedule regular compliance audits");
@@ -97,9 +89,7 @@ export async function validateAuditCompliance(
 			isCompliant: false,
 			score: 0,
 			violations: ["Audit compliance validation system failure"],
-			recommendations: [
-				"Contact system administrator to resolve audit validation issues",
-			],
+			recommendations: ["Contact system administrator to resolve audit validation issues"],
 		};
 	}
 }

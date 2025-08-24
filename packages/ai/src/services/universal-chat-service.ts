@@ -1,0 +1,408 @@
+import { EnhancedAIService } from './enhanced-service-base'
+import type { 
+  ChatMessage, 
+  ChatSession, 
+  ChatResponse,
+  HealthcareChatContext,
+  ComplianceMetrics 
+} from '../types'
+
+interface ChatServiceInput {
+  message: string
+  sessionId: string
+  userId: string
+  clinicId: string
+  context?: HealthcareChatContext
+  language?: 'pt-BR' | 'en'
+}
+
+interface ChatServiceOutput {
+  response: string
+  messageId: string
+  sessionId: string
+  confidence: number
+  complianceFlags: ComplianceMetrics
+  suggestedActions: string[]
+  escalationRequired: boolean
+}
+
+export class UniversalChatService extends EnhancedAIService<ChatServiceInput, ChatServiceOutput> {
+  protected serviceId = 'universal-chat'
+  protected version = '1.0.0'
+  protected description = 'AI-powered universal chat system for healthcare with Portuguese optimization'
+
+  constructor() {
+    super({
+      enableCaching: true,
+      cacheTTL: 300, // 5 minutes for chat responses
+      enableRetry: true,
+      maxRetries: 2,
+      enableMetrics: true,
+      enableCompliance: true,
+      complianceLevel: 'healthcare',
+      rateLimitConfig: {
+        maxRequests: 100,
+        windowMs: 60000 // 100 requests per minute per user
+      }
+    })
+  }
+
+  async execute(input: ChatServiceInput): Promise<ChatServiceOutput> {
+    const startTime = Date.now()
+
+    try {
+      // Input validation
+      await this.validateInput(input)
+      
+      // Load chat session context
+      const session = await this.loadChatSession(input.sessionId, input.userId)
+      
+      // Prepare healthcare-optimized prompt
+      const prompt = await this.buildHealthcarePrompt(input, session)
+      
+      // Call OpenAI API with healthcare specialization
+      const aiResponse = await this.callOpenAI(prompt, input.language || 'pt-BR')
+      
+      // Process response for healthcare compliance
+      const processedResponse = await this.processHealthcareResponse(aiResponse, input)
+      
+      // Save conversation to database
+      await this.saveConversation(input, processedResponse)
+      
+      // Update session context
+      await this.updateChatSession(session, input, processedResponse)
+      
+      return processedResponse
+
+    } catch (error) {
+      await this.handleChatError(error, input)
+      throw error
+    } finally {
+      await this.recordMetrics({
+        operation: 'chat_completion',
+        duration: Date.now() - startTime,
+        userId: input.userId,
+        clinicId: input.clinicId
+      })
+    }
+  }
+
+  private async validateInput(input: ChatServiceInput): Promise<void> {
+    if (!input.message?.trim()) {
+      throw new Error('CHAT_EMPTY_MESSAGE: Message cannot be empty')
+    }
+    
+    if (input.message.length > 4000) {
+      throw new Error('CHAT_MESSAGE_TOO_LONG: Message exceeds maximum length')
+    }
+    
+    if (!input.userId || !input.clinicId) {
+      throw new Error('CHAT_MISSING_CONTEXT: User and clinic IDs are required')
+    }
+
+    // Healthcare-specific validation
+    if (await this.containsSensitiveData(input.message)) {
+      await this.logComplianceEvent({
+        type: 'sensitive_data_detected',
+        userId: input.userId,
+        severity: 'medium'
+      })
+    }
+  }
+
+  private async loadChatSession(sessionId: string, userId: string): Promise<ChatSession> {
+    const cacheKey = `chat_session:${sessionId}:${userId}`
+    let session = await this.cache.get<ChatSession>(cacheKey)
+    
+    if (!session) {
+      session = await this.database.chatSessions.findFirst({
+        where: { id: sessionId, userId },
+        include: {
+          messages: {
+            orderBy: { createdAt: 'desc' },
+            take: 10
+          }
+        }
+      })
+      
+      if (!session) {
+        session = await this.createNewChatSession(sessionId, userId)
+      }
+      
+      await this.cache.set(cacheKey, session, 300)
+    }
+    
+    return session
+  }
+
+  private async buildHealthcarePrompt(input: ChatServiceInput, session: ChatSession): Promise<string> {
+    const systemPrompt = `
+    Você é um assistente inteligente especializado em saúde para clínicas brasileiras.
+    
+    CONTEXTO MÉDICO:
+    - Sempre priorize a segurança do paciente
+    - Nunca forneça diagnósticos médicos definitivos
+    - Incentive consultas presenciais quando necessário
+    - Seja empático e profissional
+    - Siga rigorosamente as normas LGPD, ANVISA e CFM
+    
+    FUNCIONALIDADES:
+    - Agendamento de consultas
+    - Informações sobre procedimentos
+    - Esclarecimento de dúvidas gerais
+    - Orientações pré/pós-consulta
+    - Informações sobre clínica e profissionais
+    
+    LIMITAÇÕES:
+    - NÃO diagnostique doenças
+    - NÃO prescreva medicamentos
+    - NÃO substitua consulta médica
+    - NÃO acesse dados médicos confidenciais sem autorização
+    
+    HISTÓRICO DA CONVERSA:
+    ${session.messages.map(m => `${m.role}: ${m.content}`).join('\n')}
+    `
+
+    return `${systemPrompt}\n\nPaciente: ${input.message}`
+  }
+
+  private async callOpenAI(prompt: string, language: string): Promise<string> {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'gpt-4-turbo-preview',
+        messages: [
+          { role: 'system', content: prompt }
+        ],
+        temperature: 0.7,
+        max_tokens: 1000,
+        presence_penalty: 0.1,
+        frequency_penalty: 0.1
+      })
+    })
+
+    if (!response.ok) {
+      throw new Error(`OpenAI API error: ${response.status} ${response.statusText}`)
+    }
+
+    const data = await response.json()
+    return data.choices[0].message.content
+  }
+
+  private async processHealthcareResponse(
+    aiResponse: string, 
+    input: ChatServiceInput
+  ): Promise<ChatServiceOutput> {
+    
+    // Compliance checking
+    const complianceFlags = await this.checkHealthcareCompliance(aiResponse)
+    
+    // Confidence scoring
+    const confidence = await this.calculateResponseConfidence(aiResponse, input)
+    
+    // Escalation detection
+    const escalationRequired = await this.detectEscalationNeed(aiResponse, input)
+    
+    // Action suggestions
+    const suggestedActions = await this.generateSuggestedActions(aiResponse, input)
+    
+    return {
+      response: aiResponse,
+      messageId: this.generateId(),
+      sessionId: input.sessionId,
+      confidence,
+      complianceFlags,
+      suggestedActions,
+      escalationRequired
+    }
+  }
+
+  private async checkHealthcareCompliance(response: string): Promise<ComplianceMetrics> {
+    const flags: ComplianceMetrics = {
+      lgpdCompliant: true,
+      anvisaCompliant: true,
+      cfmCompliant: true,
+      riskLevel: 'low',
+      warnings: []
+    }
+
+    // Check for medical diagnosis language
+    if (/\b(diagnóstico|doença|patologia)\b/i.test(response)) {
+      flags.cfmCompliant = false
+      flags.riskLevel = 'high'
+      flags.warnings.push('Potential medical diagnosis detected')
+    }
+
+    // Check for medication recommendations
+    if (/\b(medicamento|remédio|prescrição|dose)\b/i.test(response)) {
+      flags.cfmCompliant = false
+      flags.riskLevel = 'high'
+      flags.warnings.push('Medication recommendation detected')
+    }
+
+    // Check for personal data exposure
+    if (/\b(CPF|RG|cartão|telefone|endereço)\b/i.test(response)) {
+      flags.lgpdCompliant = false
+      flags.riskLevel = 'medium'
+      flags.warnings.push('Potential personal data exposure')
+    }
+
+    return flags
+  }
+
+  private async saveConversation(
+    input: ChatServiceInput, 
+    output: ChatServiceOutput
+  ): Promise<void> {
+    await this.database.aiConversations.create({
+      data: {
+        sessionId: input.sessionId,
+        userId: input.userId,
+        clinicId: input.clinicId,
+        userMessage: input.message,
+        aiResponse: output.response,
+        confidence: output.confidence,
+        complianceFlags: output.complianceFlags,
+        escalationRequired: output.escalationRequired,
+        processingTime: Date.now(),
+        language: input.language || 'pt-BR'
+      }
+    })
+  }
+
+  private async createNewChatSession(sessionId: string, userId: string): Promise<ChatSession> {
+    return await this.database.chatSessions.create({
+      data: {
+        id: sessionId,
+        userId,
+        startedAt: new Date(),
+        status: 'active',
+        messages: {
+          create: []
+        }
+      },
+      include: {
+        messages: true
+      }
+    })
+  }
+
+  private async updateChatSession(
+    session: ChatSession,
+    input: ChatServiceInput,
+    output: ChatServiceOutput
+  ): Promise<void> {
+    await this.database.chatSessions.update({
+      where: { id: session.id },
+      data: {
+        lastMessageAt: new Date(),
+        messageCount: session.messageCount + 1,
+        messages: {
+          createMany: {
+            data: [
+              {
+                role: 'user',
+                content: input.message,
+                createdAt: new Date()
+              },
+              {
+                role: 'assistant', 
+                content: output.response,
+                createdAt: new Date(),
+                metadata: {
+                  confidence: output.confidence,
+                  complianceFlags: output.complianceFlags
+                }
+              }
+            ]
+          }
+        }
+      }
+    })
+
+    // Update cache
+    const cacheKey = `chat_session:${session.id}:${input.userId}`
+    await this.cache.delete(cacheKey)
+  }
+
+  private async containsSensitiveData(message: string): Promise<boolean> {
+    const sensitivePatterns = [
+      /\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/, // CPF
+      /\b\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}\b/, // CNPJ
+      /\b\d{4}\s?\d{4}\s?\d{4}\s?\d{4}\b/, // Credit card
+      /\b(?:\d{11}|\d{10})\b/, // Phone numbers
+    ]
+
+    return sensitivePatterns.some(pattern => pattern.test(message))
+  }
+
+  private async calculateResponseConfidence(response: string, input: ChatServiceInput): Promise<number> {
+    let confidence = 0.8 // Base confidence
+    
+    // Adjust based on response length and completeness
+    if (response.length > 50) confidence += 0.1
+    if (response.includes('consulta presencial')) confidence += 0.1 // Appropriate medical guidance
+    if (response.includes('não posso diagnosticar')) confidence += 0.1 // Proper boundaries
+    
+    return Math.min(confidence, 1.0)
+  }
+
+  private async detectEscalationNeed(response: string, input: ChatServiceInput): Promise<boolean> {
+    const escalationKeywords = [
+      'emergência', 'urgente', 'dor intensa', 'sangramento',
+      'falta de ar', 'desmaio', 'convulsão', 'alergia grave'
+    ]
+    
+    return escalationKeywords.some(keyword => 
+      input.message.toLowerCase().includes(keyword) ||
+      response.toLowerCase().includes(keyword)
+    )
+  }
+
+  private async generateSuggestedActions(response: string, input: ChatServiceInput): Promise<string[]> {
+    const actions: string[] = []
+    
+    if (response.includes('agendar')) {
+      actions.push('schedule_appointment')
+    }
+    
+    if (response.includes('consulta presencial')) {
+      actions.push('book_consultation')
+    }
+    
+    if (this.detectEscalationNeed(response, input)) {
+      actions.push('escalate_to_professional')
+    }
+    
+    actions.push('continue_conversation')
+    
+    return actions
+  }
+
+  private async handleChatError(error: any, input: ChatServiceInput): Promise<void> {
+    await this.logger.error('Chat service error', {
+      error: error.message,
+      userId: input.userId,
+      clinicId: input.clinicId,
+      sessionId: input.sessionId
+    })
+
+    // Log compliance event if error relates to sensitive data
+    if (error.message.includes('sensitive_data')) {
+      await this.logComplianceEvent({
+        type: 'chat_error_sensitive_data',
+        userId: input.userId,
+        severity: 'high',
+        details: error.message
+      })
+    }
+  }
+
+  private generateId(): string {
+    return `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+  }
+}

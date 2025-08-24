@@ -42,8 +42,7 @@ test.describe("NeonPro Healthcare - Basic Tests", () => {
 			.locator("text=404")
 			.isVisible()
 			.catch(() => false);
-		const isRedirected =
-			page.url().includes("login") || page.url().includes("dashboard");
+		const isRedirected = page.url().includes("login") || page.url().includes("dashboard");
 
 		expect(isNotFound || isRedirected).toBe(true);
 	});

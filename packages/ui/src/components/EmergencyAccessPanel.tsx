@@ -1,33 +1,13 @@
-import {
-	AlertTriangle,
-	Lock,
-	Phone,
-	Shield,
-	Stethoscope,
-	Timer,
-	Unlock,
-	User,
-	Zap,
-} from "lucide-react";
+import { AlertTriangle, Lock, Phone, Shield, Stethoscope, Timer, Unlock, User, Zap } from "lucide-react";
 import * as React from "react";
 import { cn } from "../utils/cn";
 import { Badge } from "./Badge";
 import { Button } from "./Button";
 import { Input } from "./Input";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "./Select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./Select";
 import { Textarea } from "./Textarea";
 
-export type EmergencyAccessLevel =
-	| "basic"
-	| "standard"
-	| "critical"
-	| "life_threatening";
+export type EmergencyAccessLevel = "basic" | "standard" | "critical" | "life_threatening";
 
 export type EmergencyAccessReason =
 	| "cardiac_arrest"
@@ -195,10 +175,7 @@ const getTimeoutOptions = (level: EmergencyAccessLevel): number[] => {
 	}
 };
 
-export const EmergencyAccessPanel = React.forwardRef<
-	HTMLDivElement,
-	EmergencyAccessPanelProps
->(
+export const EmergencyAccessPanel = React.forwardRef<HTMLDivElement, EmergencyAccessPanelProps>(
 	(
 		{
 			request,
@@ -215,11 +192,9 @@ export const EmergencyAccessPanel = React.forwardRef<
 			className,
 			...props
 		},
-		ref,
+		ref
 	) => {
-		const [formData, setFormData] = React.useState<
-			Partial<EmergencyAccessRequest>
-		>({
+		const [formData, setFormData] = React.useState<Partial<EmergencyAccessRequest>>({
 			patientId: patientInfo?.id || "",
 			patientName: patientInfo?.name || "",
 			accessLevel: "standard",
@@ -238,22 +213,13 @@ export const EmergencyAccessPanel = React.forwardRef<
 		const [denyReason, setDenyReason] = React.useState("");
 		const [showDenyForm, setShowDenyForm] = React.useState(false);
 
-		const updateFormData = <K extends keyof EmergencyAccessRequest>(
-			key: K,
-			value: EmergencyAccessRequest[K],
-		) => {
+		const updateFormData = <K extends keyof EmergencyAccessRequest>(key: K, value: EmergencyAccessRequest[K]) => {
 			setFormData((prev) => ({ ...prev, [key]: value }));
 		};
 
 		const handleSubmit = (e: React.FormEvent) => {
 			e.preventDefault();
-			if (
-				!(
-					onRequestEmergencyAccess &&
-					formData.patientId &&
-					formData.justification
-				)
-			) {
+			if (!(onRequestEmergencyAccess && formData.patientId && formData.justification)) {
 				return;
 			}
 
@@ -288,18 +254,13 @@ export const EmergencyAccessPanel = React.forwardRef<
 			}
 		};
 
-		const timeoutOptions = getTimeoutOptions(
-			formData.accessLevel || "standard",
-		);
+		const timeoutOptions = getTimeoutOptions(formData.accessLevel || "standard");
 
 		// If showing approval interface
 		if (showApprovalInterface && request) {
 			return (
 				<div
-					className={cn(
-						"rounded-lg border border-red-200 bg-red-50 p-6 text-red-900",
-						className,
-					)}
+					className={cn("rounded-lg border border-red-200 bg-red-50 p-6 text-red-900", className)}
 					ref={ref}
 					{...props}
 					aria-describedby="emergency-approval-description"
@@ -312,16 +273,10 @@ export const EmergencyAccessPanel = React.forwardRef<
 						</div>
 
 						<div className="flex-1">
-							<h3
-								className="font-semibold text-lg"
-								id="emergency-approval-title"
-							>
+							<h3 className="font-semibold text-lg" id="emergency-approval-title">
 								Solicitação de Acesso de Emergência
 							</h3>
-							<p
-								className="mt-1 text-red-700 text-sm"
-								id="emergency-approval-description"
-							>
+							<p className="mt-1 text-red-700 text-sm" id="emergency-approval-description">
 								Aprovação necessária para acesso constitucional de emergência
 							</p>
 
@@ -332,42 +287,29 @@ export const EmergencyAccessPanel = React.forwardRef<
 										<p className="text-sm">{request.patientName}</p>
 									</div>
 									<div>
-										<span className="font-medium text-sm">
-											Médico Solicitante:
-										</span>
+										<span className="font-medium text-sm">Médico Solicitante:</span>
 										<p className="text-sm">
-											{request.requestingPhysician.name} (CRM:{" "}
-											{request.requestingPhysician.crm})
+											{request.requestingPhysician.name} (CRM: {request.requestingPhysician.crm})
 										</p>
 									</div>
 								</div>
 
 								<div className="grid grid-cols-2 gap-4">
 									<div>
-										<span className="font-medium text-sm">
-											Nível de Acesso:
-										</span>
-										<Badge
-											className="ml-2"
-											size="sm"
-											variant={getAccessLevelVariant(request.accessLevel)}
-										>
+										<span className="font-medium text-sm">Nível de Acesso:</span>
+										<Badge className="ml-2" size="sm" variant={getAccessLevelVariant(request.accessLevel)}>
 											{accessLevelLabels[request.accessLevel]}
 										</Badge>
 									</div>
 									<div>
 										<span className="font-medium text-sm">Motivo:</span>
-										<p className="text-sm">
-											{emergencyReasons[request.reason]}
-										</p>
+										<p className="text-sm">{emergencyReasons[request.reason]}</p>
 									</div>
 								</div>
 
 								<div>
 									<span className="font-medium text-sm">Justificativa:</span>
-									<p className="mt-1 rounded border bg-white p-2 text-sm">
-										{request.justification}
-									</p>
+									<p className="mt-1 rounded border bg-white p-2 text-sm">{request.justification}</p>
 								</div>
 
 								<div className="grid grid-cols-2 gap-4">
@@ -420,9 +362,7 @@ export const EmergencyAccessPanel = React.forwardRef<
 
 							{showDenyForm && (
 								<div className="mt-4 rounded border bg-white p-4">
-									<label className="mb-2 block font-medium text-sm">
-										Motivo da negação:
-									</label>
+									<label className="mb-2 block font-medium text-sm">Motivo da negação:</label>
 									<Textarea
 										className="mb-3"
 										onChange={(e) => setDenyReason(e.target.value)}
@@ -431,19 +371,10 @@ export const EmergencyAccessPanel = React.forwardRef<
 										value={denyReason}
 									/>
 									<div className="flex gap-2">
-										<Button
-											disabled={!denyReason.trim()}
-											onClick={handleDeny}
-											size="sm"
-											variant="destructive"
-										>
+										<Button disabled={!denyReason.trim()} onClick={handleDeny} size="sm" variant="destructive">
 											Confirmar Negação
 										</Button>
-										<Button
-											onClick={() => setShowDenyForm(false)}
-											size="sm"
-											variant="outline"
-										>
+										<Button onClick={() => setShowDenyForm(false)} size="sm" variant="outline">
 											Cancelar
 										</Button>
 									</div>
@@ -457,10 +388,7 @@ export const EmergencyAccessPanel = React.forwardRef<
 
 		return (
 			<div
-				className={cn(
-					"rounded-lg border border-orange-200 bg-orange-50 p-6",
-					className,
-				)}
+				className={cn("rounded-lg border border-orange-200 bg-orange-50 p-6", className)}
 				ref={ref}
 				{...props}
 				aria-describedby="emergency-access-description"
@@ -473,27 +401,16 @@ export const EmergencyAccessPanel = React.forwardRef<
 					</div>
 
 					<div>
-						<h3
-							className="font-semibold text-lg text-orange-900"
-							id="emergency-access-title"
-						>
+						<h3 className="font-semibold text-lg text-orange-900" id="emergency-access-title">
 							Acesso de Emergência Médica
 						</h3>
-						<p
-							className="text-orange-700 text-sm"
-							id="emergency-access-description"
-						>
-							Protocolo constitucional para acesso emergencial a dados do
-							paciente
+						<p className="text-orange-700 text-sm" id="emergency-access-description">
+							Protocolo constitucional para acesso emergencial a dados do paciente
 						</p>
 					</div>
 				</div>
 
-				{error && (
-					<div className="mb-4 rounded border border-red-200 bg-red-100 p-3 text-red-800 text-sm">
-						{error}
-					</div>
-				)}
+				{error && <div className="mb-4 rounded border border-red-200 bg-red-100 p-3 text-red-800 text-sm">{error}</div>}
 
 				{/* Patient Critical Info */}
 				{patientInfo && (
@@ -512,11 +429,8 @@ export const EmergencyAccessPanel = React.forwardRef<
 							{patientInfo.emergencyContact && (
 								<div className="flex items-center justify-between">
 									<div>
-										<span className="font-medium text-sm">
-											Contato de Emergência:{" "}
-										</span>
-										{patientInfo.emergencyContact.name} (
-										{patientInfo.emergencyContact.relationship})
+										<span className="font-medium text-sm">Contato de Emergência: </span>
+										{patientInfo.emergencyContact.name} ({patientInfo.emergencyContact.relationship})
 									</div>
 									{onCallEmergencyContact && (
 										<Button
@@ -536,55 +450,44 @@ export const EmergencyAccessPanel = React.forwardRef<
 								</div>
 							)}
 
-							{patientInfo.criticalAllergies &&
-								patientInfo.criticalAllergies.length > 0 && (
-									<div>
-										<span className="font-medium text-red-700 text-sm">
-											Alergias Críticas:{" "}
-										</span>
-										<div className="mt-1 flex flex-wrap gap-1">
-											{patientInfo.criticalAllergies.map((allergy, index) => (
-												<Badge key={index} size="sm" variant="urgent">
-													{allergy}
-												</Badge>
-											))}
-										</div>
+							{patientInfo.criticalAllergies && patientInfo.criticalAllergies.length > 0 && (
+								<div>
+									<span className="font-medium text-red-700 text-sm">Alergias Críticas: </span>
+									<div className="mt-1 flex flex-wrap gap-1">
+										{patientInfo.criticalAllergies.map((allergy, index) => (
+											<Badge key={index} size="sm" variant="urgent">
+												{allergy}
+											</Badge>
+										))}
 									</div>
-								)}
+								</div>
+							)}
 
-							{patientInfo.criticalMedications &&
-								patientInfo.criticalMedications.length > 0 && (
-									<div>
-										<span className="font-medium text-blue-700 text-sm">
-											Medicações Críticas:{" "}
-										</span>
-										<div className="mt-1 flex flex-wrap gap-1">
-											{patientInfo.criticalMedications.map(
-												(medication, index) => (
-													<Badge key={index} size="sm" variant="medium">
-														{medication}
-													</Badge>
-												),
-											)}
-										</div>
+							{patientInfo.criticalMedications && patientInfo.criticalMedications.length > 0 && (
+								<div>
+									<span className="font-medium text-blue-700 text-sm">Medicações Críticas: </span>
+									<div className="mt-1 flex flex-wrap gap-1">
+										{patientInfo.criticalMedications.map((medication, index) => (
+											<Badge key={index} size="sm" variant="medium">
+												{medication}
+											</Badge>
+										))}
 									</div>
-								)}
+								</div>
+							)}
 
-							{patientInfo.medicalAlerts &&
-								patientInfo.medicalAlerts.length > 0 && (
-									<div>
-										<span className="font-medium text-orange-700 text-sm">
-											Alertas Médicos:{" "}
-										</span>
-										<div className="mt-1 flex flex-wrap gap-1">
-											{patientInfo.medicalAlerts.map((alert, index) => (
-												<Badge key={index} size="sm" variant="high">
-													{alert}
-												</Badge>
-											))}
-										</div>
+							{patientInfo.medicalAlerts && patientInfo.medicalAlerts.length > 0 && (
+								<div>
+									<span className="font-medium text-orange-700 text-sm">Alertas Médicos: </span>
+									<div className="mt-1 flex flex-wrap gap-1">
+										{patientInfo.medicalAlerts.map((alert, index) => (
+											<Badge key={index} size="sm" variant="high">
+												{alert}
+											</Badge>
+										))}
 									</div>
-								)}
+								</div>
+							)}
 						</div>
 					</div>
 				)}
@@ -593,13 +496,9 @@ export const EmergencyAccessPanel = React.forwardRef<
 				<form className="space-y-4" onSubmit={handleSubmit}>
 					<div className="grid grid-cols-2 gap-4">
 						<div>
-							<label className="mb-2 block font-medium text-sm">
-								Nível de Acesso Solicitado
-							</label>
+							<label className="mb-2 block font-medium text-sm">Nível de Acesso Solicitado</label>
 							<Select
-								onValueChange={(value: EmergencyAccessLevel) =>
-									updateFormData("accessLevel", value)
-								}
+								onValueChange={(value: EmergencyAccessLevel) => updateFormData("accessLevel", value)}
 								value={formData.accessLevel}
 							>
 								<SelectTrigger>
@@ -616,13 +515,9 @@ export const EmergencyAccessPanel = React.forwardRef<
 						</div>
 
 						<div>
-							<label className="mb-2 block font-medium text-sm">
-								Motivo da Emergência
-							</label>
+							<label className="mb-2 block font-medium text-sm">Motivo da Emergência</label>
 							<Select
-								onValueChange={(value: EmergencyAccessReason) =>
-									updateFormData("reason", value)
-								}
+								onValueChange={(value: EmergencyAccessReason) => updateFormData("reason", value)}
 								value={formData.reason}
 							>
 								<SelectTrigger>
@@ -641,9 +536,7 @@ export const EmergencyAccessPanel = React.forwardRef<
 
 					{formData.reason === "other_medical_emergency" && (
 						<div>
-							<label className="mb-2 block font-medium text-sm">
-								Especificar Motivo
-							</label>
+							<label className="mb-2 block font-medium text-sm">Especificar Motivo</label>
 							<Input
 								onChange={(e) => updateFormData("customReason", e.target.value)}
 								placeholder="Descreva a emergência médica..."
@@ -654,13 +547,9 @@ export const EmergencyAccessPanel = React.forwardRef<
 					)}
 
 					<div>
-						<label className="mb-2 block font-medium text-sm">
-							Duração do Acesso (minutos)
-						</label>
+						<label className="mb-2 block font-medium text-sm">Duração do Acesso (minutos)</label>
 						<Select
-							onValueChange={(value) =>
-								updateFormData("timeoutMinutes", Number.parseInt(value, 10))
-							}
+							onValueChange={(value) => updateFormData("timeoutMinutes", Number.parseInt(value, 10))}
 							value={formData.timeoutMinutes?.toString()}
 						>
 							<SelectTrigger>
@@ -677,9 +566,7 @@ export const EmergencyAccessPanel = React.forwardRef<
 					</div>
 
 					<div>
-						<label className="mb-2 block font-medium text-sm">
-							Justificativa Médica (Obrigatória)
-						</label>
+						<label className="mb-2 block font-medium text-sm">Justificativa Médica (Obrigatória)</label>
 						<Textarea
 							onChange={(e) => updateFormData("justification", e.target.value)}
 							placeholder="Descreva detalhadamente a necessidade médica para acesso emergencial aos dados do paciente..."
@@ -691,14 +578,10 @@ export const EmergencyAccessPanel = React.forwardRef<
 
 					{availablePhysicians.length > 0 && (
 						<div>
-							<label className="mb-2 block font-medium text-sm">
-								Médico Testemunha (Opcional)
-							</label>
+							<label className="mb-2 block font-medium text-sm">Médico Testemunha (Opcional)</label>
 							<Select
 								onValueChange={(value) => {
-									const physician = availablePhysicians.find(
-										(p) => p.id === value,
-									);
+									const physician = availablePhysicians.find((p) => p.id === value);
 									if (physician) {
 										updateFormData("witnessPhysician", {
 											id: physician.id,
@@ -718,8 +601,7 @@ export const EmergencyAccessPanel = React.forwardRef<
 										.map((physician) => (
 											<SelectItem key={physician.id} value={physician.id}>
 												{physician.name} - CRM: {physician.crm}
-												{physician.specialization &&
-													` (${physician.specialization})`}
+												{physician.specialization && ` (${physician.specialization})`}
 											</SelectItem>
 										))}
 								</SelectContent>
@@ -728,13 +610,9 @@ export const EmergencyAccessPanel = React.forwardRef<
 					)}
 
 					<div>
-						<label className="mb-2 block font-medium text-sm">
-							Protocolo Institucional (Opcional)
-						</label>
+						<label className="mb-2 block font-medium text-sm">Protocolo Institucional (Opcional)</label>
 						<Input
-							onChange={(e) =>
-								updateFormData("institutionProtocol", e.target.value)
-							}
+							onChange={(e) => updateFormData("institutionProtocol", e.target.value)}
 							placeholder="Número do protocolo institucional de emergência..."
 							value={formData.institutionProtocol || ""}
 						/>
@@ -748,25 +626,17 @@ export const EmergencyAccessPanel = React.forwardRef<
 
 						<Button
 							className="bg-orange-600 hover:bg-orange-700"
-							disabled={
-								loading ||
-								!formData.justification ||
-								!formData.requestingPhysician
-							}
+							disabled={loading || !formData.justification || !formData.requestingPhysician}
 							type="submit"
 						>
-							{loading ? (
-								<Timer className="mr-2 h-4 w-4 animate-spin" />
-							) : (
-								<Stethoscope className="mr-2 h-4 w-4" />
-							)}
+							{loading ? <Timer className="mr-2 h-4 w-4 animate-spin" /> : <Stethoscope className="mr-2 h-4 w-4" />}
 							Solicitar Acesso de Emergência
 						</Button>
 					</div>
 				</form>
 			</div>
 		);
-	},
+	}
 );
 
 EmergencyAccessPanel.displayName = "EmergencyAccessPanel";

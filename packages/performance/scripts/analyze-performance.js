@@ -76,28 +76,17 @@ async function analyzeUrl(url, config) {
 		}
 
 		// Generate healthcare-specific report
-		const _report = generateHealthcareReport(
-			url,
-			desktopResults,
-			mobileResults,
-			config,
-		);
+		const _report = generateHealthcareReport(url, desktopResults, mobileResults, config);
 
 		// Save detailed results
 		const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
 		const urlSafe = url.replace(/[^a-zA-Z0-9]/g, "_");
 
-		const desktopPath = path.join(
-			process.cwd(),
-			`lighthouse-desktop-${urlSafe}-${timestamp}.json`,
-		);
+		const desktopPath = path.join(process.cwd(), `lighthouse-desktop-${urlSafe}-${timestamp}.json`);
 		fs.writeFileSync(desktopPath, JSON.stringify(desktopResults.lhr, null, 2));
 
 		if (mobileResults) {
-			const mobilePath = path.join(
-				process.cwd(),
-				`lighthouse-mobile-${urlSafe}-${timestamp}.json`,
-			);
+			const mobilePath = path.join(process.cwd(), `lighthouse-mobile-${urlSafe}-${timestamp}.json`);
 			fs.writeFileSync(mobilePath, JSON.stringify(mobileResults.lhr, null, 2));
 		}
 	} finally {
@@ -186,26 +175,20 @@ function formatHealthcareRecommendations(desktop, mobile) {
 	// Performance recommendations
 	const desktopPerf = desktop.categories.performance?.score * 100 || 0;
 	if (desktopPerf < 90) {
-		recommendations.push(
-			"🔧 Optimize for clinical workflows - Performance score below healthcare standards (90+)",
-		);
+		recommendations.push("🔧 Optimize for clinical workflows - Performance score below healthcare standards (90+)");
 	}
 
 	// Accessibility recommendations
 	const desktopA11y = desktop.categories.accessibility?.score * 100 || 0;
 	if (desktopA11y < 95) {
-		recommendations.push(
-			"♿ Critical: Improve accessibility for healthcare compliance (target: 95+)",
-		);
+		recommendations.push("♿ Critical: Improve accessibility for healthcare compliance (target: 95+)");
 	}
 
 	// Mobile-specific recommendations
 	if (mobile) {
 		const mobilePerf = mobile.categories.performance?.score * 100 || 0;
 		if (mobilePerf < 85) {
-			recommendations.push(
-				"📱 Optimize mobile performance for clinic tablets and phones",
-			);
+			recommendations.push("📱 Optimize mobile performance for clinic tablets and phones");
 		}
 	}
 

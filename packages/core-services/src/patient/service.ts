@@ -20,18 +20,9 @@ export type PatientRepository = {
 	deletePatient(id: string): Promise<void>;
 
 	// Medical history operations
-	updateMedicalHistory(
-		patientId: string,
-		history: MedicalHistory,
-	): Promise<void>;
-	updateAestheticHistory(
-		patientId: string,
-		history: AestheticHistory,
-	): Promise<void>;
-	updateSkinAssessment(
-		patientId: string,
-		assessment: SkinAssessment,
-	): Promise<void>;
+	updateMedicalHistory(patientId: string, history: MedicalHistory): Promise<void>;
+	updateAestheticHistory(patientId: string, history: AestheticHistory): Promise<void>;
+	updateSkinAssessment(patientId: string, assessment: SkinAssessment): Promise<void>;
 
 	// Consent form operations
 	addConsentForm(patientId: string, form: ConsentForm): Promise<void>;
@@ -75,9 +66,7 @@ export class PatientService {
 		// Validate age (must be 18+ for aesthetic treatments)
 		const age = differenceInYears(new Date(), data.dateOfBirth);
 		if (age < 18) {
-			throw new Error(
-				"Patient must be 18 years or older for aesthetic treatments",
-			);
+			throw new Error("Patient must be 18 years or older for aesthetic treatments");
 		}
 
 		const patient = await this.repository.createPatient(data);
@@ -130,10 +119,7 @@ export class PatientService {
 	}
 
 	// Medical history management
-	async updateMedicalHistory(
-		patientId: string,
-		history: MedicalHistory,
-	): Promise<void> {
+	async updateMedicalHistory(patientId: string, history: MedicalHistory): Promise<void> {
 		const patient = await this.repository.getPatient(patientId);
 		if (!patient) {
 			throw new Error("Patient not found");
@@ -142,10 +128,7 @@ export class PatientService {
 		await this.repository.updateMedicalHistory(patientId, history);
 	}
 
-	async updateAestheticHistory(
-		patientId: string,
-		history: AestheticHistory,
-	): Promise<void> {
+	async updateAestheticHistory(patientId: string, history: AestheticHistory): Promise<void> {
 		const patient = await this.repository.getPatient(patientId);
 		if (!patient) {
 			throw new Error("Patient not found");
@@ -154,10 +137,7 @@ export class PatientService {
 		await this.repository.updateAestheticHistory(patientId, history);
 	}
 
-	async updateSkinAssessment(
-		patientId: string,
-		assessment: SkinAssessment,
-	): Promise<void> {
+	async updateSkinAssessment(patientId: string, assessment: SkinAssessment): Promise<void> {
 		const patient = await this.repository.getPatient(patientId);
 		if (!patient) {
 			throw new Error("Patient not found");
@@ -178,17 +158,9 @@ export class PatientService {
 		return this.repository.getConsentForms(patientId);
 	}
 
-	async hasValidConsent(
-		patientId: string,
-		treatmentType: string,
-	): Promise<boolean> {
+	async hasValidConsent(patientId: string, treatmentType: string): Promise<boolean> {
 		const consentForms = await this.repository.getConsentForms(patientId);
-		return consentForms.some(
-			(form) =>
-				form.treatmentType === treatmentType &&
-				form.isActive &&
-				form.signedDate,
-		);
+		return consentForms.some((form) => form.treatmentType === treatmentType && form.isActive && form.signedDate);
 	}
 
 	// Search and analytics

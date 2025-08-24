@@ -59,18 +59,7 @@ const IGNORE_FILES = [
 ];
 
 // Extensões de arquivo para verificar
-const CHECK_EXTENSIONS = [
-	".js",
-	".ts",
-	".tsx",
-	".jsx",
-	".ps1",
-	".sh",
-	".md",
-	".json",
-	".yml",
-	".yaml",
-];
+const CHECK_EXTENSIONS = [".js", ".ts", ".tsx", ".jsx", ".ps1", ".sh", ".md", ".json", ".yml", ".yaml"];
 
 function isIgnored(filePath) {
 	// Checar se o arquivo está nas pastas ignoradas
@@ -123,10 +112,7 @@ function scanDirectory(dirPath) {
 
 			if (item.isDirectory()) {
 				violations.push(...scanDirectory(fullPath));
-			} else if (
-				item.isFile() &&
-				CHECK_EXTENSIONS.some((ext) => item.name.endsWith(ext))
-			) {
+			} else if (item.isFile() && CHECK_EXTENSIONS.some((ext) => item.name.endsWith(ext))) {
 				violations.push(...scanFile(fullPath));
 			}
 		}

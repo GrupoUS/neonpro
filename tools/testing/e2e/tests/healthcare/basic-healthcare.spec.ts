@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
 /**
  * Simple Healthcare Test
@@ -20,14 +20,8 @@ test.describe("Healthcare Platform Basic Tests", () => {
 		await page.fill('input[name="custtel"]', "123-456-7890");
 		await page.fill('input[name="custemail"]', "john@example.com");
 
-		await expect(page.locator('input[name="custname"]')).toHaveValue(
-			"John Doe",
-		);
-		await expect(page.locator('input[name="custtel"]')).toHaveValue(
-			"123-456-7890",
-		);
-		await expect(page.locator('input[name="custemail"]')).toHaveValue(
-			"john@example.com",
-		);
+		await expect(page.locator('input[name="custname"]')).toHaveValue("John Doe");
+		await expect(page.locator('input[name="custtel"]')).toHaveValue("123-456-7890");
+		await expect(page.locator('input[name="custemail"]')).toHaveValue("john@example.com");
 	});
 });

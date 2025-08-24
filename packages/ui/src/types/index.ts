@@ -43,13 +43,7 @@ export type AppointmentData = {
 	description?: string;
 	startTime: Date;
 	endTime: Date;
-	status:
-		| "scheduled"
-		| "confirmed"
-		| "in-progress"
-		| "completed"
-		| "cancelled"
-		| "no-show";
+	status: "scheduled" | "confirmed" | "in-progress" | "completed" | "cancelled" | "no-show";
 	type: "consultation" | "procedure" | "follow-up" | "emergency";
 	location?: string;
 	notes?: string;
@@ -210,21 +204,9 @@ export interface FormComponentProps extends BaseComponentProps {
 }
 
 // Status and variant types
-export type StatusVariant =
-	| "default"
-	| "confirmed"
-	| "pending"
-	| "cancelled"
-	| "destructive";
+export type StatusVariant = "default" | "confirmed" | "pending" | "cancelled" | "destructive";
 export type SizeVariant = "xs" | "sm" | "md" | "lg" | "xl";
-export type ButtonVariant =
-	| "default"
-	| "destructive"
-	| "outline"
-	| "secondary"
-	| "ghost"
-	| "link"
-	| "medical";
+export type ButtonVariant = "default" | "destructive" | "outline" | "secondary" | "ghost" | "link" | "medical";
 
 // Export aliases removed to avoid conflicts
 // Basic Types
@@ -393,15 +375,7 @@ export type FormValidation = {
 export type FormFieldConfig = {
 	name: string;
 	label: string;
-	type:
-		| "text"
-		| "email"
-		| "tel"
-		| "date"
-		| "time"
-		| "select"
-		| "textarea"
-		| "checkbox";
+	type: "text" | "email" | "tel" | "date" | "time" | "select" | "textarea" | "checkbox";
 	validation?: FormValidation;
 	options?: { value: string; label: string }[];
 	placeholder?: string;
@@ -409,20 +383,7 @@ export type FormFieldConfig = {
 };
 
 // Component Variant Types
-export type ComponentVariant =
-	| "default"
-	| "secondary"
-	| "destructive"
-	| "outline"
-	| "ghost"
-	| "link"
-	| "medical";
+export type ComponentVariant = "default" | "secondary" | "destructive" | "outline" | "ghost" | "link" | "medical";
 export type ComponentSize = "default" | "sm" | "lg" | "icon" | "icon-sm";
-export type BadgeVariant =
-	| "default"
-	| "secondary"
-	| "destructive"
-	| "outline"
-	| "success"
-	| "warning";
+export type BadgeVariant = "default" | "secondary" | "destructive" | "outline" | "success" | "warning";
 export type AvatarVariant = "default" | "patient" | "practitioner" | "system";

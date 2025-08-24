@@ -108,12 +108,7 @@ export const QUALITY_GATES: QualityGates = {
 		functions: 95,
 		lines: 90,
 		critical: {
-			packages: [
-				"@neonpro/security",
-				"@neonpro/compliance",
-				"@neonpro/database",
-				"@neonpro/audit",
-			],
+			packages: ["@neonpro/security", "@neonpro/compliance", "@neonpro/database", "@neonpro/audit"],
 			threshold: 98,
 		},
 	},
@@ -151,13 +146,7 @@ export const QUALITY_GATES: QualityGates = {
 	accessibility: {
 		wcagLevel: "AA",
 		axeScore: 95,
-		audits: [
-			"keyboard-navigation",
-			"screen-reader",
-			"color-contrast",
-			"focus-management",
-			"semantic-markup",
-		],
+		audits: ["keyboard-navigation", "screen-reader", "color-contrast", "focus-management", "semantic-markup"],
 	},
 
 	compliance: {
@@ -231,9 +220,7 @@ export class HealthcareQualityValidator {
 	 */
 	static validateProductionReadiness(report: QualityReport): boolean {
 		return Object.values(report).every((result) =>
-			typeof result === "object" && "status" in result
-				? result.status !== QualityStatus.FAIL
-				: true,
+			typeof result === "object" && "status" in result ? result.status !== QualityStatus.FAIL : true
 		);
 	}
 
@@ -245,14 +232,12 @@ export class HealthcareQualityValidator {
 
 		if (report.coverage.score < QUALITY_GATES.coverage.global) {
 			recommendations.push(
-				`Increase test coverage to ${QUALITY_GATES.coverage.global}% (current: ${report.coverage.score}%)`,
+				`Increase test coverage to ${QUALITY_GATES.coverage.global}% (current: ${report.coverage.score}%)`
 			);
 		}
 
 		if (report.security.status === QualityStatus.FAIL) {
-			recommendations.push(
-				"Address critical security vulnerabilities before deployment",
-			);
+			recommendations.push("Address critical security vulnerabilities before deployment");
 		}
 
 		if (report.compliance.score < QUALITY_GATES.compliance.lgpd) {
@@ -260,9 +245,7 @@ export class HealthcareQualityValidator {
 		}
 
 		if (report.accessibility.status === QualityStatus.FAIL) {
-			recommendations.push(
-				"Fix accessibility issues to meet WCAG 2.1 AA standards",
-			);
+			recommendations.push("Fix accessibility issues to meet WCAG 2.1 AA standards");
 		}
 
 		return recommendations;

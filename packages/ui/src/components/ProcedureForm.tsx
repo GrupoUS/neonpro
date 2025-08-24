@@ -7,13 +7,7 @@ import { Checkbox } from "./Checkbox";
 import { DatePicker } from "./DatePicker";
 import { FormField } from "./FormField";
 import { Input } from "./Input";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "./Select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./Select";
 import { Textarea } from "./Textarea";
 import { TimePicker } from "./TimePicker";
 
@@ -67,7 +61,7 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
 			className,
 			...props
 		},
-		ref,
+		ref
 	) => {
 		const [formData, setFormData] = React.useState<FormData>({
 			name: procedure?.name || "",
@@ -75,9 +69,7 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
 			category: procedure?.category || "",
 			practitionerId: procedure?.practitionerId || "",
 			treatmentId: procedure?.treatmentId || "",
-			scheduledDate: procedure?.scheduledDate
-				? new Date(procedure.scheduledDate)
-				: null,
+			scheduledDate: procedure?.scheduledDate ? new Date(procedure.scheduledDate) : null,
 			scheduledTime: procedure?.scheduledTime || "",
 			estimatedDuration: procedure?.estimatedDuration || 60,
 			location: procedure?.location || "",
@@ -98,10 +90,7 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
 			}
 		};
 
-		const addListItem = (
-			field: "preRequirements" | "postCareInstructions" | "risks",
-			item: string,
-		) => {
+		const addListItem = (field: "preRequirements" | "postCareInstructions" | "risks", item: string) => {
 			if (item.trim()) {
 				setFormData((prev) => ({
 					...prev,
@@ -109,10 +98,7 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
 				}));
 			}
 		};
-		const removeListItem = (
-			field: "preRequirements" | "postCareInstructions" | "risks",
-			index: number,
-		) => {
+		const removeListItem = (field: "preRequirements" | "postCareInstructions" | "risks", index: number) => {
 			setFormData((prev) => ({
 				...prev,
 				[field]: prev[field].filter((_, i) => i !== index),
@@ -186,26 +172,15 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
 		};
 
 		return (
-			<form
-				className={cn("space-y-6", className)}
-				onSubmit={handleSubmit}
-				ref={ref}
-				{...props}
-			>
+			<form className={cn("space-y-6", className)} onSubmit={handleSubmit} ref={ref} {...props}>
 				{/* Basic Information */}
 				<div className="space-y-4">
 					<div className="flex items-center gap-2">
 						<FileText className="h-5 w-5" />
-						<h3 className="font-semibold text-lg">
-							Informações do Procedimento
-						</h3>
+						<h3 className="font-semibold text-lg">Informações do Procedimento</h3>
 					</div>{" "}
 					<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-						<FormField
-							error={errors.name}
-							label="Nome do Procedimento"
-							required
-						>
+						<FormField error={errors.name} label="Nome do Procedimento" required>
 							<Input
 								onChange={(e) => handleInputChange("name", e.target.value)}
 								placeholder="Ex: Limpeza de Pele Profunda"
@@ -214,10 +189,7 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
 						</FormField>
 
 						<FormField error={errors.category} label="Categoria" required>
-							<Select
-								onValueChange={(value) => handleInputChange("category", value)}
-								value={formData.category}
-							>
+							<Select onValueChange={(value) => handleInputChange("category", value)} value={formData.category}>
 								<SelectTrigger>
 									<SelectValue placeholder="Selecione a categoria" />
 								</SelectTrigger>
@@ -250,9 +222,7 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
 						<FormField error={errors.scheduledDate} label="Data" required>
 							<DatePicker
 								date={formData.scheduledDate}
-								onDateChange={(date) =>
-									handleInputChange("scheduledDate", date)
-								}
+								onDateChange={(date) => handleInputChange("scheduledDate", date)}
 								placeholder="Selecione a data"
 							/>
 						</FormField>
@@ -265,19 +235,10 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
 							/>
 						</FormField>
 
-						<FormField
-							error={errors.estimatedDuration}
-							label="Duração (minutos)"
-							required
-						>
+						<FormField error={errors.estimatedDuration} label="Duração (minutos)" required>
 							<Input
 								min="1"
-								onChange={(e) =>
-									handleInputChange(
-										"estimatedDuration",
-										Number.parseInt(e.target.value, 10) || 0,
-									)
-								}
+								onChange={(e) => handleInputChange("estimatedDuration", Number.parseInt(e.target.value, 10) || 0)}
 								step="15"
 								type="number"
 								value={formData.estimatedDuration}
@@ -285,15 +246,9 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
 						</FormField>
 					</div>{" "}
 					<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-						<FormField
-							error={errors.practitionerId}
-							label="Profissional"
-							required
-						>
+						<FormField error={errors.practitionerId} label="Profissional" required>
 							<Select
-								onValueChange={(value) =>
-									handleInputChange("practitionerId", value)
-								}
+								onValueChange={(value) => handleInputChange("practitionerId", value)}
 								value={formData.practitionerId}
 							>
 								<SelectTrigger>
@@ -323,14 +278,9 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
 						</FormField>
 					</div>
 					{availableTreatments.length > 0 && (
-						<FormField
-							error={errors.treatmentId}
-							label="Tratamento Relacionado"
-						>
+						<FormField error={errors.treatmentId} label="Tratamento Relacionado">
 							<Select
-								onValueChange={(value) =>
-									handleInputChange("treatmentId", value || undefined)
-								}
+								onValueChange={(value) => handleInputChange("treatmentId", value || undefined)}
 								value={formData.treatmentId || ""}
 							>
 								<SelectTrigger>
@@ -397,17 +347,12 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
 						<div className="flex items-start gap-3">
 							<Checkbox
 								checked={formData.consentRequired}
-								onCheckedChange={(checked) =>
-									handleInputChange("consentRequired", checked)
-								}
+								onCheckedChange={(checked) => handleInputChange("consentRequired", checked)}
 							/>
 							<div className="space-y-1">
-								<label className="font-medium text-sm">
-									Termo de Consentimento do Procedimento
-								</label>
+								<label className="font-medium text-sm">Termo de Consentimento do Procedimento</label>
 								<p className="text-muted-foreground text-xs">
-									O paciente deve assinar o termo específico para este
-									procedimento
+									O paciente deve assinar o termo específico para este procedimento
 								</p>
 							</div>
 						</div>
@@ -415,9 +360,7 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
 						<div className="flex items-start gap-3">
 							<Checkbox
 								checked={formData.lgpdConsent}
-								onCheckedChange={(checked) =>
-									handleInputChange("lgpdConsent", checked)
-								}
+								onCheckedChange={(checked) => handleInputChange("lgpdConsent", checked)}
 							/>
 							<div className="space-y-1">
 								<label className="font-medium text-sm">
@@ -429,35 +372,24 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
 							</div>
 						</div>
 
-						{errors.lgpdConsent && (
-							<p className="text-red-600 text-sm">{errors.lgpdConsent}</p>
-						)}
+						{errors.lgpdConsent && <p className="text-red-600 text-sm">{errors.lgpdConsent}</p>}
 					</div>
 				</div>{" "}
 				{/* Actions */}
 				<div className="flex items-center justify-end gap-3 border-t pt-6">
 					{onCancel && (
-						<Button
-							disabled={loading}
-							onClick={onCancel}
-							type="button"
-							variant="outline"
-						>
+						<Button disabled={loading} onClick={onCancel} type="button" variant="outline">
 							Cancelar
 						</Button>
 					)}
 
 					<Button disabled={loading} type="submit" variant="medical">
-						{loading
-							? "Salvando..."
-							: mode === "create"
-								? "Criar Procedimento"
-								: "Salvar Alterações"}
+						{loading ? "Salvando..." : mode === "create" ? "Criar Procedimento" : "Salvar Alterações"}
 					</Button>
 				</div>
 			</form>
 		);
-	},
+	}
 );
 
 // Helper component for list fields
@@ -470,14 +402,7 @@ type ListFieldProps = {
 	placeholder: string;
 };
 
-const ListField: React.FC<ListFieldProps> = ({
-	title,
-	icon,
-	items,
-	onAdd,
-	onRemove,
-	placeholder,
-}) => {
+const ListField: React.FC<ListFieldProps> = ({ title, icon, items, onAdd, onRemove, placeholder }) => {
 	const [newItem, setNewItem] = React.useState("");
 	const handleAdd = () => {
 		onAdd(newItem);
@@ -501,17 +426,9 @@ const ListField: React.FC<ListFieldProps> = ({
 			{items.length > 0 && (
 				<div className="space-y-2">
 					{items.map((item, index) => (
-						<div
-							className="flex items-center gap-2 rounded bg-muted/50 p-2"
-							key={index}
-						>
+						<div className="flex items-center gap-2 rounded bg-muted/50 p-2" key={index}>
 							<span className="flex-1 text-sm">{item}</span>
-							<Button
-								onClick={() => onRemove(index)}
-								size="icon-sm"
-								type="button"
-								variant="ghost"
-							>
+							<Button onClick={() => onRemove(index)} size="icon-sm" type="button" variant="ghost">
 								<X className="h-3 w-3" />
 							</Button>
 						</div>
@@ -526,13 +443,7 @@ const ListField: React.FC<ListFieldProps> = ({
 					placeholder={placeholder}
 					value={newItem}
 				/>
-				<Button
-					disabled={!newItem.trim()}
-					onClick={handleAdd}
-					size="sm"
-					type="button"
-					variant="outline"
-				>
+				<Button disabled={!newItem.trim()} onClick={handleAdd} size="sm" type="button" variant="outline">
 					<Plus className="h-4 w-4" />
 				</Button>
 			</div>

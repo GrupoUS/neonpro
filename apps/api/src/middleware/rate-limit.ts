@@ -8,7 +8,33 @@
 
 import type { Context, MiddlewareHandler } from "hono";
 import { logger } from "../lib/logger";
-import { logger } from "../lib/logger";
+
+// Time constants in milliseconds
+const TIME_CONSTANTS = {
+	MINUTE: 60 * 1000,
+	FIVE_MINUTES: 5 * 60 * 1000,
+	FIFTEEN_MINUTES: 15 * 60 * 1000,
+	HOUR: 60 * 60 * 1000,
+} as const;
+
+// Request limits
+const REQUEST_LIMITS = {
+	VERY_STRICT: 2,
+	STRICT: 3,
+	AUTH_LOGIN: 5,
+	MODERATE: 10,
+	APPOINTMENTS: 20,
+	PATIENTS: 30,
+	ANALYTICS: 50,
+	API_DEFAULT: 60,
+	GENERAL_DEFAULT: 100,
+} as const;
+
+// HTTP status codes
+const HTTP_STATUS = {
+	BAD_REQUEST: 400,
+	TOO_MANY_REQUESTS: 429,
+} as const;
 
 // Rate limiting configuration per endpoint
 type RateLimitConfig = {
@@ -22,10 +48,7 @@ type RateLimitConfig = {
 
 // In-memory store for development (production should use Redis)
 class MemoryStore {
-	private readonly store = new Map<
-		string,
-		{ count: number; resetTime: number }
-	>();
+	private readonly store = new Map<string, { count: number; resetTime: number }>();
 
 	get(key: string): { count: number; resetTime: number } | undefined {
 		const record = this.store.get(key);
@@ -36,10 +59,7 @@ class MemoryStore {
 		return record;
 	}
 
-	increment(
-		key: string,
-		windowMs: number,
-	): { count: number; resetTime: number } {
+	increment(key: string, windowMs: number): { count: number; resetTime: number } {
 		const now = Date.now();
 		const resetTime = now + windowMs;
 		const existing = this.get(key);
@@ -73,70 +93,68 @@ class MemoryStore {
 const store = new MemoryStore();
 
 // Cleanup expired entries every 5 minutes
-setInterval(() => store.cleanup(), 5 * 60 * 1000);
+setInterval(() => store.cleanup(), TIME_CONSTANTS.FIVE_MINUTES);
 
 // Default configurations per endpoint type
 const DEFAULT_LIMITS: Record<string, RateLimitConfig> = {
 	// Authentication endpoints - stricter limits
 	"/api/v1/auth/login": {
-		windowMs: 15 * 60 * 1000, // 15 minutes
-		maxRequests: 5, // Max 5 login attempts per 15 minutes
+		windowMs: TIME_CONSTANTS.FIFTEEN_MINUTES,
+		maxRequests: REQUEST_LIMITS.AUTH_LOGIN,
 		message: "Muitas tentativas de login. Tente novamente em 15 minutos.",
 	},
 
 	"/api/v1/auth/register": {
-		windowMs: 60 * 60 * 1000, // 1 hour
-		maxRequests: 3, // Max 3 registrations per hour per IP
+		windowMs: TIME_CONSTANTS.HOUR,
+		maxRequests: REQUEST_LIMITS.STRICT,
 		message: "Limite de registros atingido. Tente novamente em 1 hora.",
 	},
 
 	"/api/v1/auth/forgot-password": {
-		windowMs: 15 * 60 * 1000, // 15 minutes
-		maxRequests: 3, // Max 3 password reset requests per 15 minutes
+		windowMs: TIME_CONSTANTS.FIFTEEN_MINUTES,
+		maxRequests: REQUEST_LIMITS.STRICT,
 		message: "Limite de solicitações de senha atingido.",
 	},
 
 	// API endpoints - moderate limits
 	"/api/v1/patients": {
-		windowMs: 60 * 1000, // 1 minute
-		maxRequests: 30, // 30 requests per minute
+		windowMs: TIME_CONSTANTS.MINUTE,
+		maxRequests: REQUEST_LIMITS.PATIENTS,
 		message: "Limite de requisições atingido. Tente novamente em 1 minuto.",
 	},
 
 	"/api/v1/appointments": {
-		windowMs: 60 * 1000, // 1 minute
-		maxRequests: 20, // 20 requests per minute
+		windowMs: TIME_CONSTANTS.MINUTE,
+		maxRequests: REQUEST_LIMITS.APPOINTMENTS,
 		message: "Limite de requisições de agendamentos atingido.",
 	},
 
 	// Analytics endpoints - higher limits for dashboards
 	"/api/v1/analytics": {
-		windowMs: 60 * 1000, // 1 minute
-		maxRequests: 50, // 50 requests per minute
+		windowMs: TIME_CONSTANTS.MINUTE,
+		maxRequests: REQUEST_LIMITS.ANALYTICS,
 		message: "Limite de requisições de analytics atingido.",
 	},
 
 	// Export/reporting - stricter limits for heavy operations
 	"/api/v1/compliance/export": {
-		windowMs: 5 * 60 * 1000, // 5 minutes
-		maxRequests: 2, // Max 2 exports per 5 minutes
+		windowMs: TIME_CONSTANTS.FIVE_MINUTES,
+		maxRequests: REQUEST_LIMITS.VERY_STRICT,
 		message: "Limite de exportações atingido. Tente novamente em 5 minutos.",
 	},
 };
 
 // Default fallback configuration
 const DEFAULT_CONFIG: RateLimitConfig = {
-	windowMs: 60 * 1000, // 1 minute
-	maxRequests: 100, // 100 requests per minute
+	windowMs: TIME_CONSTANTS.MINUTE,
+	maxRequests: REQUEST_LIMITS.GENERAL_DEFAULT,
 	message: "Rate limit exceeded. Please try again later.",
 };
 
 /**
  * Rate limiting middleware factory
  */
-export const rateLimitMiddleware = (
-	config?: Partial<RateLimitConfig>,
-): MiddlewareHandler => {
+export const rateLimitMiddleware = (config?: Partial<RateLimitConfig>): MiddlewareHandler => {
 	return async (c, next) => {
 		const path = c.req.path;
 		const method = c.req.method;
@@ -158,10 +176,7 @@ export const rateLimitMiddleware = (
 			effectiveConfig.keyGenerator ||
 			((c) => {
 				const clientIP =
-					c.req.header("CF-Connecting-IP") ||
-					c.req.header("X-Forwarded-For") ||
-					c.req.header("X-Real-IP") ||
-					"unknown";
+					c.req.header("CF-Connecting-IP") || c.req.header("X-Forwarded-For") || c.req.header("X-Real-IP") || "unknown";
 				return `ratelimit:${clientIP}:${path}`;
 			});
 
@@ -174,16 +189,10 @@ export const rateLimitMiddleware = (
 			const resetTime = Math.ceil(record.resetTime / 1000);
 
 			// Set rate limit headers
-			c.res.headers.set(
-				"X-RateLimit-Limit",
-				effectiveConfig.maxRequests.toString(),
-			);
+			c.res.headers.set("X-RateLimit-Limit", effectiveConfig.maxRequests.toString());
 			c.res.headers.set("X-RateLimit-Remaining", remaining.toString());
 			c.res.headers.set("X-RateLimit-Reset", resetTime.toString());
-			c.res.headers.set(
-				"X-RateLimit-Window",
-				effectiveConfig.windowMs.toString(),
-			);
+			c.res.headers.set("X-RateLimit-Window", effectiveConfig.windowMs.toString());
 
 			// Check if limit exceeded
 			if (record.count > effectiveConfig.maxRequests) {
@@ -199,14 +208,14 @@ export const rateLimitMiddleware = (
 						limit: effectiveConfig.maxRequests,
 						window: effectiveConfig.windowMs / 1000,
 					},
-					429,
+					HTTP_STATUS.TOO_MANY_REQUESTS
 				);
 			}
 
 			await next();
 
 			// Optional: skip counting successful requests if configured
-			if (effectiveConfig.skipSuccessfulRequests && c.res.status < 400) {
+			if (effectiveConfig.skipSuccessfulRequests && c.res.status < HTTP_STATUS.BAD_REQUEST) {
 				// Don't count this request (decrement)
 				const currentRecord = store.get(key);
 				if (currentRecord) {
@@ -218,10 +227,7 @@ export const rateLimitMiddleware = (
 				endpoint: c.req.path,
 				method: c.req.method,
 				ip:
-					c.req.header("CF-Connecting-IP") ||
-					c.req.header("X-Forwarded-For") ||
-					c.req.header("X-Real-IP") ||
-					"unknown",
+					c.req.header("CF-Connecting-IP") || c.req.header("X-Forwarded-For") || c.req.header("X-Real-IP") || "unknown",
 				userAgent: c.req.header("User-Agent"),
 			});
 			// On error, allow the request to continue
@@ -234,20 +240,20 @@ export const rateLimitMiddleware = (
  * Specific rate limiters for different use cases
  */
 export const authRateLimit = rateLimitMiddleware({
-	windowMs: 15 * 60 * 1000, // 15 minutes
-	maxRequests: 5,
+	windowMs: TIME_CONSTANTS.FIFTEEN_MINUTES,
+	maxRequests: REQUEST_LIMITS.AUTH_LOGIN,
 	message: "Muitas tentativas de autenticação. Tente novamente em 15 minutos.",
 });
 
 export const apiRateLimit = rateLimitMiddleware({
-	windowMs: 60 * 1000, // 1 minute
-	maxRequests: 60,
+	windowMs: TIME_CONSTANTS.MINUTE,
+	maxRequests: REQUEST_LIMITS.API_DEFAULT,
 	message: "Limite de requisições da API atingido.",
 });
 
 export const strictRateLimit = rateLimitMiddleware({
-	windowMs: 60 * 1000, // 1 minute
-	maxRequests: 10,
+	windowMs: TIME_CONSTANTS.MINUTE,
+	maxRequests: REQUEST_LIMITS.MODERATE,
 	message: "Limite rigoroso atingido. Operação muito frequente.",
 });
 

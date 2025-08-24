@@ -77,9 +77,7 @@ function generateReport(results) {
 	}
 	results.forEach((result) => {
 		const _status = result.status === "PASSED" ? "✅" : "❌";
-		const _duration = result.duration
-			? ` (${result.duration.toFixed(2)}s)`
-			: "";
+		const _duration = result.duration ? ` (${result.duration.toFixed(2)}s)` : "";
 
 		if (result.status === "FAILED" && result.error) {
 		}

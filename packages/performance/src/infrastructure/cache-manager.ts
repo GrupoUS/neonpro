@@ -686,9 +686,7 @@ export default HealthcarePerformanceMonitor;
 	 */
 	getOptimalEdgeRegion(userLocation?: string): EdgeOptimization {
 		// For healthcare, prefer Brazil region for data residency compliance
-		const brazilRegion = this.edgeRegions.find(
-			(region) => region.region === "sa-east-1",
-		);
+		const brazilRegion = this.edgeRegions.find((region) => region.region === "sa-east-1");
 		if (brazilRegion && userLocation?.includes("BR")) {
 			return brazilRegion;
 		}
@@ -714,9 +712,9 @@ export default HealthcarePerformanceMonitor;
 	 */
 	generateInfrastructureReport(): string {
 		const cacheStrategiesCount = this.cacheStrategies.size;
-		const healthcareSensitiveCount = Array.from(
-			this.cacheStrategies.values(),
-		).filter((config) => config.healthcareSensitive).length;
+		const healthcareSensitiveCount = Array.from(this.cacheStrategies.values()).filter(
+			(config) => config.healthcareSensitive
+		).length;
 
 		return `
 🏥 HEALTHCARE INFRASTRUCTURE PERFORMANCE REPORT
@@ -734,7 +732,7 @@ ${this.edgeRegions
 - ${region.region}: ${region.latency}ms
   Healthcare Compliant: ${region.healthcareCompliant ? "✅" : "❌"}
   Data Residency: ${region.dataResidency ? "✅ Brazil" : "❌ International"}
-`,
+`
 	)
 	.join("")}
 

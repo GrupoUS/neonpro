@@ -47,10 +47,7 @@ export async function analyzeBundleSize(): Promise<BundleStats> {
 		recommendations,
 	};
 
-	writeFileSync(
-		join(process.cwd(), "performance", "bundle-analysis.json"),
-		JSON.stringify(report, null, 2),
-	);
+	writeFileSync(join(process.cwd(), "performance", "bundle-analysis.json"), JSON.stringify(report, null, 2));
 
 	return {
 		totalSize: stats.totalSize,
@@ -65,8 +62,7 @@ export async function analyzeBundleSize(): Promise<BundleStats> {
  */
 function parseBuildOutput(output: string): any {
 	const lines = output.split("\n");
-	const sizeRegex =
-		/│\s*(\S+)\s*│\s*(\d+(?:\.\d+)?)\s*kB\s*│\s*(\d+(?:\.\d+)?)\s*kB\s*│/;
+	const sizeRegex = /│\s*(\S+)\s*│\s*(\d+(?:\.\d+)?)\s*kB\s*│\s*(\d+(?:\.\d+)?)\s*kB\s*│/;
 
 	let totalSize = 0;
 	let gzippedSize = 0;
@@ -106,16 +102,14 @@ function generateRecommendations(stats: any): string[] {
 	// Check total bundle size
 	if (stats.totalSize > 1000) {
 		// 1MB threshold
-		recommendations.push(
-			`⚠️ Large bundle size (${stats.totalSize}kB). Consider code splitting and dynamic imports.`,
-		);
+		recommendations.push(`⚠️ Large bundle size (${stats.totalSize}kB). Consider code splitting and dynamic imports.`);
 	}
 
 	// Check for large chunks
 	const largeChunks = stats.chunks.filter((chunk: any) => chunk.size > 200);
 	if (largeChunks.length > 0) {
 		recommendations.push(
-			`📦 Large chunks detected: ${largeChunks.map((c: any) => `${c.name} (${c.size}kB)`).join(", ")}. Consider splitting these chunks.`,
+			`📦 Large chunks detected: ${largeChunks.map((c: any) => `${c.name} (${c.size}kB)`).join(", ")}. Consider splitting these chunks.`
 		);
 	}
 
@@ -123,7 +117,7 @@ function generateRecommendations(stats: any): string[] {
 	const compressionRatio = stats.gzippedSize / stats.totalSize;
 	if (compressionRatio > 0.7) {
 		recommendations.push(
-			`🗜️ Poor compression ratio (${Math.round(compressionRatio * 100)}%). Check for repetitive code or large JSON files.`,
+			`🗜️ Poor compression ratio (${Math.round(compressionRatio * 100)}%). Check for repetitive code or large JSON files.`
 		);
 	}
 
@@ -133,7 +127,7 @@ function generateRecommendations(stats: any): string[] {
 		"🔄 Use React.lazy() for heavy components",
 		"📊 Consider using dynamic imports for chart libraries",
 		"🖼️ Optimize images with next/image component",
-		"🚀 Enable Turbopack for faster builds (--turbopack flag)",
+		"🚀 Enable Turbopack for faster builds (--turbopack flag)"
 	);
 
 	return recommendations;
@@ -142,27 +136,19 @@ function generateRecommendations(stats: any): string[] {
 /**
  * Generate Lighthouse performance report
  */
-export async function generateLighthouseReport(
-	url = "http://localhost:3000",
-): Promise<void> {
+export async function generateLighthouseReport(url = "http://localhost:3000"): Promise<void> {
 	const { stdout } = await execAsync(
-		`npx lighthouse ${url} --output=json --output-path=./performance/lighthouse-report.json --chrome-flags="--headless" --quiet`,
+		`npx lighthouse ${url} --output=json --output-path=./performance/lighthouse-report.json --chrome-flags="--headless" --quiet`
 	);
 
 	// Parse and summarize results
-	const reportPath = join(
-		process.cwd(),
-		"performance",
-		"lighthouse-report.json",
-	);
+	const reportPath = join(process.cwd(), "performance", "lighthouse-report.json");
 	const report = JSON.parse(readFileSync(reportPath, "utf8"));
 
 	const scores = {
 		performance: Math.round(report.lhr.categories.performance.score * 100),
 		accessibility: Math.round(report.lhr.categories.accessibility.score * 100),
-		bestPractices: Math.round(
-			report.lhr.categories["best-practices"].score * 100,
-		),
+		bestPractices: Math.round(report.lhr.categories["best-practices"].score * 100),
 		seo: Math.round(report.lhr.categories.seo.score * 100),
 	};
 
@@ -177,8 +163,8 @@ export async function generateLighthouseReport(
 				recommendations: extractLighthouseRecommendations(report.lhr),
 			},
 			null,
-			2,
-		),
+			2
+		)
 	);
 }
 
@@ -192,32 +178,24 @@ function extractLighthouseRecommendations(lhr: any): string[] {
 
 	// Check key performance audits
 	if (audits["largest-contentful-paint"]?.score < 0.9) {
-		recommendations.push(
-			"🎯 Optimize Largest Contentful Paint (LCP) - consider image optimization and preloading",
-		);
+		recommendations.push("🎯 Optimize Largest Contentful Paint (LCP) - consider image optimization and preloading");
 	}
 
 	if (audits["first-input-delay"]?.score < 0.9) {
-		recommendations.push(
-			"⚡ Improve First Input Delay (FID) - reduce JavaScript execution time",
-		);
+		recommendations.push("⚡ Improve First Input Delay (FID) - reduce JavaScript execution time");
 	}
 
 	if (audits["cumulative-layout-shift"]?.score < 0.9) {
-		recommendations.push(
-			"📐 Fix Cumulative Layout Shift (CLS) - ensure images and ads have dimensions",
-		);
+		recommendations.push("📐 Fix Cumulative Layout Shift (CLS) - ensure images and ads have dimensions");
 	}
 
 	if (audits["unused-javascript"]?.score < 0.9) {
-		recommendations.push(
-			"🧹 Remove unused JavaScript - consider code splitting and tree shaking",
-		);
+		recommendations.push("🧹 Remove unused JavaScript - consider code splitting and tree shaking");
 	}
 
 	if (audits["render-blocking-resources"]?.score < 0.9) {
 		recommendations.push(
-			"🚫 Eliminate render-blocking resources - inline critical CSS and defer non-critical resources",
+			"🚫 Eliminate render-blocking resources - inline critical CSS and defer non-critical resources"
 		);
 	}
 

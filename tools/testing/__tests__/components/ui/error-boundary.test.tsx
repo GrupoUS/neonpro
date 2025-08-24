@@ -1,11 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { vi } from "vitest";
 import "@testing-library/jest-dom";
-import {
-	CriticalErrorBoundary,
-	ErrorBoundary,
-	withErrorBoundary,
-} from "../../../../../components/ui/error-boundary";
+import { CriticalErrorBoundary, ErrorBoundary, withErrorBoundary } from "../../../../../components/ui/error-boundary";
 
 // Mock component that throws an error
 const ThrowError = ({ shouldThrow = true }: { shouldThrow?: boolean }) => {
@@ -35,7 +31,7 @@ describe("ErrorBoundary", () => {
 		render(
 			<ErrorBoundary>
 				<ThrowError shouldThrow={false} />
-			</ErrorBoundary>,
+			</ErrorBoundary>
 		);
 
 		expect(screen.getByText("No error")).toBeInTheDocument();
@@ -45,22 +41,18 @@ describe("ErrorBoundary", () => {
 		render(
 			<ErrorBoundary>
 				<ThrowError />
-			</ErrorBoundary>,
+			</ErrorBoundary>
 		);
 
 		expect(screen.getByText("Oops! Algo deu errado")).toBeInTheDocument();
-		expect(
-			screen.getByText(
-				"Um erro inesperado aconteceu. Nossa equipe foi notificada.",
-			),
-		).toBeInTheDocument();
+		expect(screen.getByText("Um erro inesperado aconteceu. Nossa equipe foi notificada.")).toBeInTheDocument();
 	});
 
 	it("shows retry button and resets error state when clicked", () => {
 		const { unmount } = render(
 			<ErrorBoundary>
 				<ThrowError />
-			</ErrorBoundary>,
+			</ErrorBoundary>
 		);
 
 		const retryButton = screen.getByText("Tentar novamente");
@@ -79,7 +71,7 @@ describe("ErrorBoundary", () => {
 		render(
 			<ErrorBoundary showDetails={true}>
 				<ThrowError />
-			</ErrorBoundary>,
+			</ErrorBoundary>
 		);
 
 		expect(screen.getByText("Detalhes técnicos")).toBeInTheDocument();
@@ -91,14 +83,14 @@ describe("ErrorBoundary", () => {
 		render(
 			<ErrorBoundary onError={onErrorMock}>
 				<ThrowError />
-			</ErrorBoundary>,
+			</ErrorBoundary>
 		);
 
 		expect(onErrorMock).toHaveBeenCalledWith(
 			expect.any(Error),
 			expect.objectContaining({
 				componentStack: expect.any(String),
-			}),
+			})
 		);
 	});
 
@@ -108,7 +100,7 @@ describe("ErrorBoundary", () => {
 		render(
 			<ErrorBoundary fallback={customFallback}>
 				<ThrowError />
-			</ErrorBoundary>,
+			</ErrorBoundary>
 		);
 
 		expect(screen.getByText("Custom error message")).toBeInTheDocument();
@@ -127,7 +119,7 @@ describe("CriticalErrorBoundary", () => {
 		render(
 			<CriticalErrorBoundary title="Test Section">
 				<ThrowError />
-			</CriticalErrorBoundary>,
+			</CriticalErrorBoundary>
 		);
 
 		expect(screen.getByText("Test Section")).toBeInTheDocument();
@@ -167,9 +159,7 @@ describe("withErrorBoundary HOC", () => {
 	});
 
 	it("passes props to wrapped component", () => {
-		const TestComponent = ({ message }: { message: string }) => (
-			<div>{message}</div>
-		);
+		const TestComponent = ({ message }: { message: string }) => <div>{message}</div>;
 		const WrappedComponent = withErrorBoundary(TestComponent);
 
 		render(<WrappedComponent message="Hello World" />);
@@ -183,9 +173,7 @@ describe("withErrorBoundary HOC", () => {
 
 		const WrappedComponent = withErrorBoundary(TestComponent);
 
-		expect(WrappedComponent.displayName).toBe(
-			"withErrorBoundary(TestComponent)",
-		);
+		expect(WrappedComponent.displayName).toBe("withErrorBoundary(TestComponent)");
 	});
 });
 
@@ -203,7 +191,7 @@ describe("Error Boundary Edge Cases", () => {
 		const { unmount } = render(
 			<ErrorBoundary showDetails={true}>
 				<AsyncErrorComponent />
-			</ErrorBoundary>,
+			</ErrorBoundary>
 		);
 
 		expect(screen.getByText("Oops! Algo deu errado")).toBeInTheDocument();
@@ -212,9 +200,7 @@ describe("Error Boundary Edge Cases", () => {
 		const detailsButton = screen.getByText("Detalhes técnicos");
 		fireEvent.click(detailsButton);
 
-		expect(
-			screen.getByText("TypeError: Type error occurred"),
-		).toBeInTheDocument();
+		expect(screen.getByText("TypeError: Type error occurred")).toBeInTheDocument();
 
 		// Clean up this test's render
 		unmount();
@@ -224,7 +210,7 @@ describe("Error Boundary Edge Cases", () => {
 		const { rerender, unmount } = render(
 			<ErrorBoundary>
 				<ThrowError />
-			</ErrorBoundary>,
+			</ErrorBoundary>
 		);
 
 		expect(screen.getByText("Oops! Algo deu errado")).toBeInTheDocument();
@@ -233,7 +219,7 @@ describe("Error Boundary Edge Cases", () => {
 		rerender(
 			<ErrorBoundary>
 				<ThrowError />
-			</ErrorBoundary>,
+			</ErrorBoundary>
 		);
 
 		expect(screen.getByText("Oops! Algo deu errado")).toBeInTheDocument();

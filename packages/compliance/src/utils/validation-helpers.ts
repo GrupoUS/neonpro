@@ -94,7 +94,7 @@ export function validateLGPDConsent(consent: {
 // Healthcare professional access validation
 export function validateHealthcareProfessionalAccess(
 	user: any,
-	requiredRole: string[],
+	requiredRole: string[]
 ): { authorized: boolean; reason?: string } {
 	if (!user) {
 		return { authorized: false, reason: "User not authenticated" };
@@ -156,7 +156,7 @@ export function validateBrazilianPhone(phone: string): boolean {
 export function validateDataRetention(
 	dataType: string,
 	createdAt: Date,
-	retentionPolicy: Record<string, number>,
+	retentionPolicy: Record<string, number>
 ): { expired: boolean; expiryDate: Date; daysRemaining: number } {
 	const retentionDays = retentionPolicy[dataType] || 365 * 5; // Default 5 years
 	const expiryDate = new Date(createdAt);
@@ -164,9 +164,7 @@ export function validateDataRetention(
 
 	const now = new Date();
 	const expired = now > expiryDate;
-	const daysRemaining = Math.ceil(
-		(expiryDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
-	);
+	const daysRemaining = Math.ceil((expiryDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
 
 	return {
 		expired,
@@ -194,9 +192,7 @@ export const TreatmentPlanSchema = z.object({
 	start_date: z.date(),
 	estimated_duration_weeks: z.number().positive(),
 	contraindications: z.array(z.string()),
-	patient_consent: z
-		.boolean()
-		.refine((val) => val === true, "Patient consent required"),
+	patient_consent: z.boolean().refine((val) => val === true, "Patient consent required"),
 	professional_notes: z.string().optional(),
 });
 
@@ -205,20 +201,9 @@ export const AppointmentSchema = z.object({
 	patient_id: z.string().uuid(),
 	professional_id: z.string().uuid(),
 	procedure_id: z.string(),
-	scheduled_at: z
-		.date()
-		.refine(
-			(date) => date > new Date(),
-			"Appointment must be scheduled in the future",
-		),
+	scheduled_at: z.date().refine((date) => date > new Date(), "Appointment must be scheduled in the future"),
 	duration_minutes: z.number().positive(),
-	status: z.enum([
-		"scheduled",
-		"confirmed",
-		"in_progress",
-		"completed",
-		"cancelled",
-	]),
+	status: z.enum(["scheduled", "confirmed", "in_progress", "completed", "cancelled"]),
 	clinic_room: z.string().optional(),
 	pre_appointment_notes: z.string().optional(),
 });
@@ -228,12 +213,7 @@ export const PatientConsentValidationSchema = z
 	.object({
 		patient_id: z.string().uuid(),
 		procedure_id: z.string(),
-		consent_type: z.enum([
-			"treatment",
-			"image_use",
-			"data_processing",
-			"research",
-		]),
+		consent_type: z.enum(["treatment", "image_use", "data_processing", "research"]),
 		granted: z.boolean(),
 		granted_at: z.date(),
 		witness_required: z.boolean(),
@@ -249,7 +229,7 @@ export const PatientConsentValidationSchema = z
 // Batch validation helper
 export function validateBatch<T>(
 	items: unknown[],
-	schema: z.ZodSchema<T>,
+	schema: z.ZodSchema<T>
 ): { valid: T[]; invalid: { item: unknown; errors: string[] }[] } {
 	const valid: T[] = [];
 	const invalid: { item: unknown; errors: string[] }[] = [];
@@ -284,8 +264,7 @@ export function generateComplianceSummary(validationResults: {
 	anvisa_violations: string[];
 	cfm_violations: string[];
 }): ComplianceSummary {
-	const { lgpd_violations, anvisa_violations, cfm_violations } =
-		validationResults;
+	const { lgpd_violations, anvisa_violations, cfm_violations } = validationResults;
 
 	const lgpd_score = Math.max(0, 100 - lgpd_violations.length * 10);
 	const anvisa_score = Math.max(0, 100 - anvisa_violations.length * 15);

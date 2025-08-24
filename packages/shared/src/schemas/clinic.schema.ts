@@ -11,28 +11,10 @@ import { z } from "zod";
 // Business hours schema
 export const BusinessHoursSchema = z
 	.object({
-		day: z.enum([
-			"monday",
-			"tuesday",
-			"wednesday",
-			"thursday",
-			"friday",
-			"saturday",
-			"sunday",
-		]),
+		day: z.enum(["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]),
 		isOpen: z.boolean(),
-		openTime: z
-			.string()
-			.regex(
-				/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/,
-				"Horário deve estar no formato HH:MM",
-			),
-		closeTime: z
-			.string()
-			.regex(
-				/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/,
-				"Horário deve estar no formato HH:MM",
-			),
+		openTime: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, "Horário deve estar no formato HH:MM"),
+		closeTime: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, "Horário deve estar no formato HH:MM"),
 	})
 	.refine((data) => {
 		if (!(data.isOpen && data.openTime && data.closeTime)) {
@@ -132,14 +114,7 @@ export const ClinicServiceSchema = z.object({
 export const ClinicStaffSchema = z.object({
 	id: z.string().uuid(),
 	fullName: z.string().min(2).max(100),
-	role: z.enum([
-		"doctor",
-		"nurse",
-		"aesthetician",
-		"receptionist",
-		"manager",
-		"owner",
-	]),
+	role: z.enum(["doctor", "nurse", "aesthetician", "receptionist", "manager", "owner"]),
 	specialization: z.string().max(100).optional(),
 	licenseNumber: z.string().max(50).optional(), // CRM, COREN, etc.
 	isActive: z.boolean().default(true),
@@ -148,20 +123,11 @@ export const ClinicStaffSchema = z.object({
 // Base clinic schema
 export const ClinicBaseSchema = z.object({
 	// Basic information
-	name: z
-		.string()
-		.min(2, "Nome deve ter pelo menos 2 caracteres")
-		.max(200, "Nome deve ter no máximo 200 caracteres"),
+	name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres").max(200, "Nome deve ter no máximo 200 caracteres"),
 
-	tradeName: z
-		.string()
-		.max(200, "Nome fantasia deve ter no máximo 200 caracteres")
-		.optional(),
+	tradeName: z.string().max(200, "Nome fantasia deve ter no máximo 200 caracteres").optional(),
 
-	description: z
-		.string()
-		.max(2000, "Descrição deve ter no máximo 2000 caracteres")
-		.optional(),
+	description: z.string().max(2000, "Descrição deve ter no máximo 2000 caracteres").optional(),
 
 	// Legal information (Brazil)
 	cnpj: z
@@ -176,11 +142,7 @@ export const ClinicBaseSchema = z.object({
 	municipalRegistration: z.string().max(50).optional(),
 
 	// ANVISA compliance
-	anvisaLicense: z
-		.string()
-		.min(5, "Licença ANVISA deve ter pelo menos 5 caracteres")
-		.max(50)
-		.optional(),
+	anvisaLicense: z.string().min(5, "Licença ANVISA deve ter pelo menos 5 caracteres").max(50).optional(),
 
 	// Contact and location
 	contact: ContactInfoSchema,
@@ -195,16 +157,7 @@ export const ClinicBaseSchema = z.object({
 	isActive: z.boolean().default(true),
 	acceptsInsurance: z.boolean().default(false),
 	acceptedPaymentMethods: z
-		.array(
-			z.enum([
-				"cash",
-				"credit_card",
-				"debit_card",
-				"pix",
-				"bank_transfer",
-				"installments",
-			]),
-		)
+		.array(z.enum(["cash", "credit_card", "debit_card", "pix", "bank_transfer", "installments"]))
 		.default(["cash"]),
 
 	// Branding
@@ -269,16 +222,7 @@ export const ClinicSearchSchema = z.object({
 	city: z.string().max(100).optional(),
 	state: z.string().length(2).optional(),
 	serviceCategory: z
-		.enum([
-			"injectables",
-			"laser",
-			"skincare",
-			"body_treatments",
-			"hair_removal",
-			"wellness",
-			"consultation",
-			"other",
-		])
+		.enum(["injectables", "laser", "skincare", "body_treatments", "hair_removal", "wellness", "consultation", "other"])
 		.optional(),
 	acceptsInsurance: z.boolean().optional(),
 	hasOnlineBooking: z.boolean().optional(),
@@ -291,9 +235,7 @@ export const ClinicSearchSchema = z.object({
 	// Pagination and sorting
 	page: z.number().min(1).default(1),
 	limit: z.number().min(1).max(50).default(20),
-	sortBy: z
-		.enum(["name", "createdAt", "averageRating", "totalPatients"])
-		.default("name"),
+	sortBy: z.enum(["name", "createdAt", "averageRating", "totalPatients"]).default("name"),
 	sortOrder: z.enum(["asc", "desc"]).default("asc"),
 });
 

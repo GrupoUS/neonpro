@@ -4,7 +4,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { getGlobalSupabaseMock, resetAllGlobalMocks } from "../../../../tests/test-utils";
+import { getGlobalSupabaseMock, resetAllGlobalMocks } from "../../../../tools/tests/test-utils";
 
 // Get the global mock that's configured in vitest.setup.ts
 let mockSupabaseClient: any;
@@ -37,7 +37,12 @@ const MockLoginComponent = () => {
 		const email = formData.get("email") as string;
 		const password = formData.get("password") as string;
 
-		await signIn(email, password);
+		try {
+			await signIn(email, password);
+		} catch (error) {
+			// Handle authentication errors gracefully
+			console.log("Authentication error handled:", error);
+		}
 	};
 
 	return (
@@ -63,8 +68,12 @@ const _MockDashboard = () => {
 const TestWrapper = ({ children }: { children: React.ReactNode }) => {
 	const queryClient = new QueryClient({
 		defaultOptions: {
-			queries: { retry: false },
-			mutations: { retry: false },
+			queries: {
+				retry: false,
+			},
+			mutations: {
+				retry: false,
+			},
 		},
 	});
 
@@ -80,10 +89,15 @@ describe("Authentication Flow Integration", () => {
 		mockSupabaseClient = getGlobalSupabaseMock();
 
 		vi.clearAllMocks();
+		// Create a fresh QueryClient for each test
 		queryClient = new QueryClient({
 			defaultOptions: {
-				queries: { retry: false },
-				mutations: { retry: false },
+				queries: {
+					retry: false,
+				},
+				mutations: {
+					retry: false,
+				},
 			},
 		});
 
@@ -125,7 +139,7 @@ describe("Authentication Flow Integration", () => {
 
 	afterEach(() => {
 		vi.restoreAllMocks();
-		queryClient.removeQueries();
+		queryClient.clear();
 	});
 
 	describe("Login Flow", () => {

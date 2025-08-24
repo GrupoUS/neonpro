@@ -56,7 +56,7 @@ function makeRequest(url, options = {}) {
 						resolve({ status: res.statusCode, data, headers: res.headers });
 					}
 				});
-			},
+			}
 		);
 
 		req.on("error", reject);
@@ -110,9 +110,7 @@ async function testAPIConnectivity() {
 
 	if (response.status === 404) {
 		// Health endpoint não existe, vamos testar uma rota que sabemos que existe
-		const pingResponse = await makeRequest(
-			`${BASE_URL}/api/subscription/current`,
-		);
+		const pingResponse = await makeRequest(`${BASE_URL}/api/subscription/current`);
 		if (pingResponse.status >= 200 && pingResponse.status < 500) {
 			return;
 		}
@@ -143,9 +141,7 @@ async function testStripeEndpoints() {
 		}
 
 		if (response.status >= 500) {
-			throw new Error(
-				`Endpoint ${endpoint} retornou erro de servidor: ${response.status}`,
-			);
+			throw new Error(`Endpoint ${endpoint} retornou erro de servidor: ${response.status}`);
 		}
 	}
 }
@@ -177,11 +173,7 @@ async function testStripeConfiguration() {
 async function testSubscriptionPlans() {
 	const stripe = require("stripe")(STRIPE_SECRET_KEY);
 
-	const expectedPrices = [
-		"price_starter_monthly",
-		"price_professional_monthly",
-		"price_enterprise_monthly",
-	];
+	const expectedPrices = ["price_starter_monthly", "price_professional_monthly", "price_enterprise_monthly"];
 
 	let foundPrices = 0;
 
@@ -210,9 +202,7 @@ async function testDatabaseSchema() {
 	const response = await makeRequest(`${BASE_URL}/api/subscription/current`);
 
 	if (response.status === 500) {
-		throw new Error(
-			"Possível erro de schema do banco - endpoint retornando 500",
-		);
+		throw new Error("Possível erro de schema do banco - endpoint retornando 500");
 	}
 }
 
@@ -233,9 +223,7 @@ async function testStripeWebhook() {
 
 	// Esperamos 400 porque não temos assinatura válida, mas o endpoint deve estar ativo
 	if (response.status >= 500) {
-		throw new Error(
-			`Webhook endpoint retornando erro de servidor: ${response.status}`,
-		);
+		throw new Error(`Webhook endpoint retornando erro de servidor: ${response.status}`);
 	}
 }
 
@@ -252,11 +240,7 @@ async function testUserInterface() {
 		try {
 			const response = await makeRequest(`${BASE_URL}${page}`);
 
-			if (
-				response.status === 200 ||
-				response.status === 401 ||
-				response.status === 302
-			) {
+			if (response.status === 200 || response.status === 401 || response.status === 302) {
 			} else if (response.status >= 500) {
 				throw new Error(`Página ${page} retornando erro: ${response.status}`);
 			}

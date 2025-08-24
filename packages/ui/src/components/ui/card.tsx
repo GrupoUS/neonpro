@@ -23,8 +23,7 @@ const cardVariants = cva(
 				success:
 					"border-l-4 border-l-success bg-gradient-to-br from-success/5 via-success/3 to-transparent shadow-healthcare-md backdrop-blur-sm",
 				info: "border-l-4 border-l-info bg-gradient-to-br from-info/5 via-info/3 to-transparent shadow-healthcare-md backdrop-blur-sm",
-				elevated:
-					"border-border/50 bg-gradient-card shadow-healthcare-lg backdrop-blur-md hover:shadow-healthcare-xl",
+				elevated: "border-border/50 bg-gradient-card shadow-healthcare-lg backdrop-blur-md hover:shadow-healthcare-xl",
 				interactive:
 					"cursor-pointer border-border/50 bg-gradient-card backdrop-blur-sm transition-all duration-300 hover:scale-[1.01] hover:border-primary/30 hover:shadow-healthcare-lg",
 			},
@@ -46,30 +45,16 @@ const cardVariants = cva(
 			padding: "default",
 			priority: "normal",
 		},
-	},
+	}
 );
 
-interface CardProps
-	extends React.ComponentProps<"div">,
-		VariantProps<typeof cardVariants> {
+interface CardProps extends React.ComponentProps<"div">, VariantProps<typeof cardVariants> {
 	interactive?: boolean;
 	loading?: boolean;
 }
 
 const Card = forwardRef<HTMLDivElement, CardProps>(
-	(
-		{
-			className,
-			variant,
-			padding,
-			priority,
-			interactive,
-			loading,
-			onClick,
-			...props
-		},
-		ref,
-	) => {
+	({ className, variant, padding, priority, interactive, loading, onClick, ...props }, ref) => {
 		const finalVariant = interactive ? "interactive" : variant;
 
 		return (
@@ -77,7 +62,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
 				className={cn(
 					cardVariants({ variant: finalVariant, padding, priority, className }),
 					loading && "pointer-events-none animate-pulse",
-					interactive && "focus-within:ring-2 focus-within:ring-primary/20",
+					interactive && "focus-within:ring-2 focus-within:ring-primary/20"
 				)}
 				data-interactive={interactive}
 				data-loading={loading}
@@ -90,7 +75,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
 				{...props}
 			/>
 		);
-	},
+	}
 );
 
 Card.displayName = "Card";
@@ -100,7 +85,7 @@ function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
 		<div
 			className={cn(
 				"@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6",
-				className,
+				className
 			)}
 			data-slot="card-header"
 			{...props}
@@ -109,32 +94,17 @@ function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
-	return (
-		<div
-			className={cn("font-semibold leading-none", className)}
-			data-slot="card-title"
-			{...props}
-		/>
-	);
+	return <div className={cn("font-semibold leading-none", className)} data-slot="card-title" {...props} />;
 }
 
 function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
-	return (
-		<div
-			className={cn("text-muted-foreground text-sm", className)}
-			data-slot="card-description"
-			{...props}
-		/>
-	);
+	return <div className={cn("text-muted-foreground text-sm", className)} data-slot="card-description" {...props} />;
 }
 
 function CardAction({ className, ...props }: React.ComponentProps<"div">) {
 	return (
 		<div
-			className={cn(
-				"col-start-2 row-span-2 row-start-1 self-start justify-self-end",
-				className,
-			)}
+			className={cn("col-start-2 row-span-2 row-start-1 self-start justify-self-end", className)}
 			data-slot="card-action"
 			{...props}
 		/>
@@ -142,22 +112,12 @@ function CardAction({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 function CardContent({ className, ...props }: React.ComponentProps<"div">) {
-	return (
-		<div
-			className={cn("px-6", className)}
-			data-slot="card-content"
-			{...props}
-		/>
-	);
+	return <div className={cn("px-6", className)} data-slot="card-content" {...props} />;
 }
 
 function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
 	return (
-		<div
-			className={cn("flex items-center px-6 [.border-t]:pt-6", className)}
-			data-slot="card-footer"
-			{...props}
-		/>
+		<div className={cn("flex items-center px-6 [.border-t]:pt-6", className)} data-slot="card-footer" {...props} />
 	);
 }
 
@@ -170,12 +130,7 @@ interface PatientCardProps extends CardProps {
 
 interface AppointmentCardProps extends CardProps {
 	appointmentId?: string;
-	status?:
-		| "scheduled"
-		| "confirmed"
-		| "in-progress"
-		| "completed"
-		| "cancelled";
+	status?: "scheduled" | "confirmed" | "in-progress" | "completed" | "cancelled";
 	datetime?: Date;
 }
 
@@ -185,27 +140,25 @@ interface ProfessionalCardProps extends CardProps {
 	availability?: "available" | "busy" | "offline";
 }
 
-const PatientCard = forwardRef<HTMLDivElement, PatientCardProps>(
-	({ urgency = "normal", className, ...props }, ref) => {
-		const priorityMap = {
-			low: "low" as const,
-			normal: "normal" as const,
-			high: "high" as const,
-			critical: "critical" as const,
-		};
+const PatientCard = forwardRef<HTMLDivElement, PatientCardProps>(({ urgency = "normal", className, ...props }, ref) => {
+	const priorityMap = {
+		low: "low" as const,
+		normal: "normal" as const,
+		high: "high" as const,
+		critical: "critical" as const,
+	};
 
-		return (
-			<Card
-				className={cn("patient-card", className)}
-				data-urgency={urgency}
-				priority={priorityMap[urgency]}
-				ref={ref}
-				variant="patient"
-				{...props}
-			/>
-		);
-	},
-);
+	return (
+		<Card
+			className={cn("patient-card", className)}
+			data-urgency={urgency}
+			priority={priorityMap[urgency]}
+			ref={ref}
+			variant="patient"
+			{...props}
+		/>
+	);
+});
 
 PatientCard.displayName = "PatientCard";
 
@@ -220,7 +173,7 @@ const AppointmentCard = forwardRef<HTMLDivElement, AppointmentCardProps>(
 				{...props}
 			/>
 		);
-	},
+	}
 );
 
 AppointmentCard.displayName = "AppointmentCard";
@@ -236,7 +189,7 @@ const ProfessionalCard = forwardRef<HTMLDivElement, ProfessionalCardProps>(
 				{...props}
 			/>
 		);
-	},
+	}
 );
 
 ProfessionalCard.displayName = "ProfessionalCard";

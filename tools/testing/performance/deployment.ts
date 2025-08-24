@@ -59,11 +59,7 @@ export class PreBuildOptimizer {
 		const publicDir = path.join(process.cwd(), "public");
 
 		try {
-			const files = await PreBuildOptimizer.getAllFiles(publicDir, [
-				".png",
-				".jpg",
-				".jpeg",
-			]);
+			const files = await PreBuildOptimizer.getAllFiles(publicDir, [".png", ".jpg", ".jpeg"]);
 
 			for (const file of files) {
 				// Check if image needs optimization (> 500KB)
@@ -90,25 +86,16 @@ export class PreBuildOptimizer {
 	}
 
 	private static async validateEnvironment(): Promise<void> {
-		const requiredVars = [
-			"NEXT_PUBLIC_SUPABASE_URL",
-			"NEXT_PUBLIC_SUPABASE_ANON_KEY",
-			"DATABASE_URL",
-		];
+		const requiredVars = ["NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY", "DATABASE_URL"];
 
 		const missing = requiredVars.filter((varName) => !process.env[varName]);
 
 		if (missing.length > 0) {
-			throw new Error(
-				`Missing required environment variables: ${missing.join(", ")}`,
-			);
+			throw new Error(`Missing required environment variables: ${missing.join(", ")}`);
 		}
 	}
 
-	private static async getAllFiles(
-		dir: string,
-		extensions: string[],
-	): Promise<string[]> {
+	private static async getAllFiles(dir: string, extensions: string[]): Promise<string[]> {
 		const files: string[] = [];
 
 		try {
@@ -118,12 +105,8 @@ export class PreBuildOptimizer {
 				const fullPath = path.join(dir, item.name);
 
 				if (item.isDirectory()) {
-					files.push(
-						...(await PreBuildOptimizer.getAllFiles(fullPath, extensions)),
-					);
-				} else if (
-					extensions.some((ext) => item.name.toLowerCase().endsWith(ext))
-				) {
+					files.push(...(await PreBuildOptimizer.getAllFiles(fullPath, extensions)));
+				} else if (extensions.some((ext) => item.name.toLowerCase().endsWith(ext))) {
 					files.push(fullPath);
 				}
 			}
@@ -227,11 +210,7 @@ export class BuildOptimizer {
 			const _buildSize = await PreBuildOptimizer.getDirectorySize(buildDir);
 
 			// Check for critical files
-			const criticalFiles = [
-				".next/static",
-				".next/server",
-				".next/standalone",
-			];
+			const criticalFiles = [".next/static", ".next/server", ".next/standalone"];
 
 			for (const file of criticalFiles) {
 				const filePath = path.join(process.cwd(), file);
@@ -269,11 +248,7 @@ export class ProductionHealthCheck {
 	}
 
 	private static async checkBuildArtifacts(): Promise<void> {
-		const requiredFiles = [
-			".next/BUILD_ID",
-			".next/static",
-			".next/server/app",
-		];
+		const requiredFiles = [".next/BUILD_ID", ".next/static", ".next/server/app"];
 
 		for (const file of requiredFiles) {
 			const fullPath = path.join(process.cwd(), file);
@@ -286,11 +261,7 @@ export class ProductionHealthCheck {
 	}
 
 	private static async checkEnvironmentVariables(): Promise<void> {
-		const prodVars = [
-			"NODE_ENV",
-			"NEXT_PUBLIC_SUPABASE_URL",
-			"NEXT_PUBLIC_SUPABASE_ANON_KEY",
-		];
+		const prodVars = ["NODE_ENV", "NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY"];
 
 		for (const varName of prodVars) {
 			if (!process.env[varName]) {
@@ -307,9 +278,7 @@ export class ProductionHealthCheck {
 		const packageJsonPath = path.join(process.cwd(), "package.json");
 
 		try {
-			const packageJson = JSON.parse(
-				await fs.readFile(packageJsonPath, "utf-8"),
-			);
+			const packageJson = JSON.parse(await fs.readFile(packageJsonPath, "utf-8"));
 
 			// Check for production dependencies
 			const prodDeps = Object.keys(packageJson.dependencies || {});
@@ -332,11 +301,7 @@ export class ProductionHealthCheck {
 			const configContent = await fs.readFile(nextConfigPath, "utf-8");
 
 			// Check for security headers
-			const requiredHeaders = [
-				"X-Frame-Options",
-				"X-Content-Type-Options",
-				"Referrer-Policy",
-			];
+			const requiredHeaders = ["X-Frame-Options", "X-Content-Type-Options", "Referrer-Policy"];
 
 			for (const header of requiredHeaders) {
 				if (!configContent.includes(header)) {
@@ -364,9 +329,7 @@ export class ProductionHealthCheck {
 
 // Deployment automation
 export class DeploymentAutomation {
-	static async deploy(
-		environment: "staging" | "production" = "production",
-	): Promise<void> {
+	static async deploy(environment: "staging" | "production" = "production"): Promise<void> {
 		try {
 			// Run health checks
 			const healthChecksPassed = await ProductionHealthCheck.runHealthChecks();
@@ -384,9 +347,7 @@ export class DeploymentAutomation {
 		}
 	}
 
-	private static async deployToEnvironment(
-		_environment: string,
-	): Promise<void> {
+	private static async deployToEnvironment(_environment: string): Promise<void> {
 		// Example deployment steps
 		const deploymentSteps = [
 			"Uploading static assets",
@@ -414,9 +375,7 @@ if (require.main === module) {
 			break;
 
 		case "health-check":
-			ProductionHealthCheck.runHealthChecks().then((passed) =>
-				process.exit(passed ? 0 : 1),
-			);
+			ProductionHealthCheck.runHealthChecks().then((passed) => process.exit(passed ? 0 : 1));
 			break;
 
 		case "deploy": {

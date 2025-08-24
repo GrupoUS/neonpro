@@ -49,19 +49,19 @@ export {
  * Creates audit services with constitutional compliance
  */
 export function createAuditTrailGeneratorService(
-	supabaseClient: ReturnType<typeof createClient>,
+	supabaseClient: ReturnType<typeof createClient>
 ): AuditTrailGeneratorService {
 	return new AuditTrailGeneratorService(supabaseClient);
 }
 
 export function createRealTimeComplianceMonitorService(
-	supabaseClient: ReturnType<typeof createClient>,
+	supabaseClient: ReturnType<typeof createClient>
 ): RealTimeComplianceMonitor {
 	return new RealTimeComplianceMonitor(supabaseClient);
 }
 
 export function createComplianceScoringService(
-	supabaseClient: ReturnType<typeof createClient>,
+	supabaseClient: ReturnType<typeof createClient>
 ): ComplianceScoringService {
 	return new ComplianceScoringService(supabaseClient);
 }
@@ -70,9 +70,7 @@ export function createComplianceScoringService(
  * Enterprise Audit Services Factory
  * Creates comprehensive audit services with constitutional compliance
  */
-export function createEnterpriseAuditServices(
-	supabaseClient: ReturnType<typeof createClient>,
-) {
+export function createEnterpriseAuditServices(supabaseClient: ReturnType<typeof createClient>) {
 	return {
 		auditTrail: createAuditTrailGeneratorService(supabaseClient),
 		realTimeMonitor: createRealTimeComplianceMonitorService(supabaseClient),
@@ -83,9 +81,7 @@ export function createEnterpriseAuditServices(
 /**
  * Validation Functions
  */
-export function validateEnterpriseAuditCompliance(
-	supabaseClient: ReturnType<typeof createClient>,
-): boolean {
+export function validateEnterpriseAuditCompliance(supabaseClient: ReturnType<typeof createClient>): boolean {
 	// Validate Supabase client is properly configured
 	if (!supabaseClient) {
 		return false;
@@ -100,21 +96,15 @@ export function validateEnterpriseAuditCompliance(
 	}
 }
 
-export function validateAuditTrailGenerator(
-	config: AuditTrailConfiguration,
-): boolean {
+export function validateAuditTrailGenerator(config: AuditTrailConfiguration): boolean {
 	return Boolean(config?.retention_period_days);
 }
 
-export function validateRealTimeComplianceMonitor(
-	config: MonitoringConfiguration,
-): boolean {
+export function validateRealTimeComplianceMonitor(config: MonitoringConfiguration): boolean {
 	return Boolean(config?.automated_actions);
 }
 
-export function validateComplianceScoring(
-	config: ScoringMethodologyConfig,
-): boolean {
+export function validateComplianceScoring(config: ScoringMethodologyConfig): boolean {
 	return Boolean(config?.constitutional_thresholds);
 }
 
@@ -259,8 +249,7 @@ export const ENTERPRISE_AUDIT_MODULE = {
 	services: {
 		auditTrail: {
 			name: "Audit Trail Generator",
-			description:
-				"Comprehensive audit trail generation with cryptographic integrity",
+			description: "Comprehensive audit trail generation with cryptographic integrity",
 			constitutional_features: [
 				"Immutable audit logs with cryptographic signatures",
 				"Constitutional compliance tracking",

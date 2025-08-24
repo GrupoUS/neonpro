@@ -69,23 +69,15 @@ export class PredictiveAnalytics {
 		patientId: string,
 		appointmentSlot: AlternativeSlot,
 		patientHistory: PatientHistory,
-		treatmentType: string,
+		treatmentType: string
 	): Promise<NoShowPrediction> {
 		try {
-			const factors = await this.calculateNoShowFactors(
-				patientId,
-				appointmentSlot,
-				patientHistory,
-				treatmentType,
-			);
+			const factors = await this.calculateNoShowFactors(patientId, appointmentSlot, patientHistory, treatmentType);
 
 			const probability = this.calculateNoShowProbability(factors);
 			const confidence = this.calculatePredictionConfidence(factors);
 			const riskLevel = this.categorizeRiskLevel(probability);
-			const recommendedActions = this.generateNoShowMitigationActions(
-				probability,
-				factors,
-			);
+			const recommendedActions = this.generateNoShowMitigationActions(probability, factors);
 
 			return {
 				probability,
@@ -115,35 +107,22 @@ export class PredictiveAnalytics {
 		treatmentId: string,
 		patientId: string,
 		baseDuration: TreatmentDuration,
-		patientHistory: PatientHistory,
+		patientHistory: PatientHistory
 	): Promise<TreatmentDurationPrediction> {
 		try {
-			const factors = await this.calculateDurationFactors(
-				treatmentId,
-				patientId,
-				baseDuration,
-				patientHistory,
-			);
+			const factors = await this.calculateDurationFactors(treatmentId, patientId, baseDuration, patientHistory);
 
 			const durationMultiplier = this.calculateDurationMultiplier(factors);
-			const estimatedMinutes = Math.round(
-				baseDuration.estimatedMinutes * durationMultiplier,
-			);
+			const estimatedMinutes = Math.round(baseDuration.estimatedMinutes * durationMultiplier);
 			const confidence = this.calculateDurationConfidence(factors);
 
 			// Calculate min/max with confidence intervals
 			const varianceMinutes = Math.round(estimatedMinutes * 0.2); // ±20% variance
-			const minDuration = Math.max(
-				estimatedMinutes - varianceMinutes,
-				baseDuration.minDuration,
-			);
+			const minDuration = Math.max(estimatedMinutes - varianceMinutes, baseDuration.minDuration);
 			const maxDuration = estimatedMinutes + varianceMinutes;
 
 			// Buffer recommendation based on uncertainty
-			const bufferRecommendation = this.calculateBufferRecommendation(
-				confidence,
-				varianceMinutes,
-			);
+			const bufferRecommendation = this.calculateBufferRecommendation(confidence, varianceMinutes);
 
 			return {
 				estimatedMinutes,
@@ -172,7 +151,7 @@ export class PredictiveAnalytics {
 	async generateOptimizationRecommendations(
 		currentSchedule: AIAppointment[],
 		_timeRange: { start: Date; end: Date },
-		targetMetrics: SchedulingMetrics,
+		targetMetrics: SchedulingMetrics
 	): Promise<OptimizationRecommendation[]> {
 		const recommendations: OptimizationRecommendation[] = [];
 
@@ -184,36 +163,25 @@ export class PredictiveAnalytics {
 			const timeSlotOptimizations = await this.analyzeTimeSlotOptimizations(
 				currentSchedule,
 				currentMetrics,
-				targetMetrics,
+				targetMetrics
 			);
 			recommendations.push(...timeSlotOptimizations);
 
-			const staffOptimizations = await this.analyzeStaffOptimizations(
-				currentSchedule,
-				currentMetrics,
-				targetMetrics,
-			);
+			const staffOptimizations = await this.analyzeStaffOptimizations(currentSchedule, currentMetrics, targetMetrics);
 			recommendations.push(...staffOptimizations);
 
-			const roomOptimizations = await this.analyzeRoomOptimizations(
-				currentSchedule,
-				currentMetrics,
-				targetMetrics,
-			);
+			const roomOptimizations = await this.analyzeRoomOptimizations(currentSchedule, currentMetrics, targetMetrics);
 			recommendations.push(...roomOptimizations);
 
-			const sequenceOptimizations =
-				await this.analyzeTreatmentSequenceOptimizations(
-					currentSchedule,
-					currentMetrics,
-					targetMetrics,
-				);
+			const sequenceOptimizations = await this.analyzeTreatmentSequenceOptimizations(
+				currentSchedule,
+				currentMetrics,
+				targetMetrics
+			);
 			recommendations.push(...sequenceOptimizations);
 
 			// Sort by expected impact
-			return recommendations.sort(
-				(a, b) => b.expectedImpact - a.expectedImpact,
-			);
+			return recommendations.sort((a, b) => b.expectedImpact - a.expectedImpact);
 		} catch (_error) {
 			return [];
 		}
@@ -224,7 +192,7 @@ export class PredictiveAnalytics {
 	 */
 	async analyzeSchedulingPatterns(
 		appointments: AIAppointment[],
-		_timeRange: { start: Date; end: Date },
+		_timeRange: { start: Date; end: Date }
 	): Promise<SchedulingPattern[]> {
 		const patterns: SchedulingPattern[] = [];
 
@@ -262,22 +230,15 @@ export class PredictiveAnalytics {
 	async calculateSchedulingOptimization(
 		currentSchedule: AIAppointment[],
 		proposedChanges: Partial<AIAppointment>[],
-		_timeRange: { start: Date; end: Date },
+		_timeRange: { start: Date; end: Date }
 	): Promise<SchedulingOptimization> {
 		try {
 			const originalMetrics = this.calculateCurrentMetrics(currentSchedule);
-			const optimizedMetrics = this.simulateOptimizedMetrics(
-				currentSchedule,
-				proposedChanges,
-			);
+			const optimizedMetrics = this.simulateOptimizedMetrics(currentSchedule, proposedChanges);
 
-			const improvements = this.calculateImprovements(
-				originalMetrics,
-				optimizedMetrics,
-			);
+			const improvements = this.calculateImprovements(originalMetrics, optimizedMetrics);
 			const timeToImplement = this.estimateImplementationTime(proposedChanges);
-			const confidenceLevel =
-				this.calculateOptimizationConfidence(improvements);
+			const confidenceLevel = this.calculateOptimizationConfidence(improvements);
 
 			return {
 				originalMetrics,
@@ -298,14 +259,12 @@ export class PredictiveAnalytics {
 		_patientId: string,
 		appointmentSlot: AlternativeSlot,
 		patientHistory: PatientHistory,
-		treatmentType: string,
+		treatmentType: string
 	): Promise<NoShowFactor[]> {
 		const factors: NoShowFactor[] = [];
 
 		// Historical no-show rate
-		const historicalRate =
-			patientHistory.noShowCount /
-			Math.max(patientHistory.totalAppointments, 1);
+		const historicalRate = patientHistory.noShowCount / Math.max(patientHistory.totalAppointments, 1);
 		factors.push({
 			factor: "historical_no_show_rate",
 			weight: 0.3,
@@ -332,9 +291,7 @@ export class PredictiveAnalytics {
 		}
 
 		// Booking advance time
-		const advanceTime =
-			(appointmentSlot.slot.start.getTime() - Date.now()) /
-			(1000 * 60 * 60 * 24);
+		const advanceTime = (appointmentSlot.slot.start.getTime() - Date.now()) / (1000 * 60 * 60 * 24);
 		factors.push({
 			factor: "booking_advance_days",
 			weight: 0.15,
@@ -343,9 +300,7 @@ export class PredictiveAnalytics {
 		});
 
 		// Weather factor (if available)
-		const weatherFactor = await this.getWeatherFactor(
-			appointmentSlot.slot.start,
-		);
+		const weatherFactor = await this.getWeatherFactor(appointmentSlot.slot.start);
 		if (weatherFactor) {
 			factors.push(weatherFactor);
 		}
@@ -361,12 +316,7 @@ export class PredictiveAnalytics {
 		let totalWeight = 0;
 
 		for (const factor of factors) {
-			const impactMultiplier =
-				factor.impact === "negative"
-					? 1
-					: factor.impact === "positive"
-						? -0.5
-						: 0;
+			const impactMultiplier = factor.impact === "negative" ? 1 : factor.impact === "positive" ? -0.5 : 0;
 			weightedSum += factor.weight * factor.value * impactMultiplier;
 			totalWeight += factor.weight;
 		}
@@ -386,14 +336,12 @@ export class PredictiveAnalytics {
 		treatmentId: string,
 		_patientId: string,
 		baseDuration: TreatmentDuration,
-		patientHistory: PatientHistory,
+		patientHistory: PatientHistory
 	): Promise<DurationFactor[]> {
 		const factors: DurationFactor[] = [];
 
 		// Patient experience factor
-		const treatmentCount = patientHistory.treatmentHistory.filter(
-			(t) => t.treatmentId === treatmentId,
-		).length;
+		const treatmentCount = patientHistory.treatmentHistory.filter((t) => t.treatmentId === treatmentId).length;
 		factors.push({
 			factor: "patient_experience",
 			impact: treatmentCount > 3 ? -0.1 : 0.15, // Experienced patients are faster
@@ -402,8 +350,7 @@ export class PredictiveAnalytics {
 
 		// Average duration history
 		if (patientHistory.averageTreatmentDuration > 0) {
-			const historyRatio =
-				patientHistory.averageTreatmentDuration / baseDuration.estimatedMinutes;
+			const historyRatio = patientHistory.averageTreatmentDuration / baseDuration.estimatedMinutes;
 			factors.push({
 				factor: "historical_duration",
 				impact: historyRatio - 1, // Deviation from base duration
@@ -463,10 +410,7 @@ export class PredictiveAnalytics {
 	/**
 	 * Generate mitigation actions based on no-show risk
 	 */
-	private generateNoShowMitigationActions(
-		probability: number,
-		factors: NoShowFactor[],
-	): string[] {
+	private generateNoShowMitigationActions(probability: number, factors: NoShowFactor[]): string[] {
 		const actions: string[] = [];
 
 		// Standard actions for all appointments
@@ -490,9 +434,7 @@ export class PredictiveAnalytics {
 		}
 
 		// Factor-specific actions
-		const highRiskFactors = factors.filter(
-			(f) => f.impact === "negative" && f.value > 0.5,
-		);
+		const highRiskFactors = factors.filter((f) => f.impact === "negative" && f.value > 0.5);
 		for (const factor of highRiskFactors) {
 			switch (factor.factor) {
 				case "booking_advance_days":
@@ -511,9 +453,7 @@ export class PredictiveAnalytics {
 	}
 
 	// Analytics helper methods
-	private calculateCurrentMetrics(
-		_appointments: AIAppointment[],
-	): SchedulingMetrics {
+	private calculateCurrentMetrics(_appointments: AIAppointment[]): SchedulingMetrics {
 		// Implementation would calculate actual metrics from appointments
 		return {
 			utilizationRate: 0.85,
@@ -530,7 +470,7 @@ export class PredictiveAnalytics {
 
 	private simulateOptimizedMetrics(
 		currentSchedule: AIAppointment[],
-		_changes: Partial<AIAppointment>[],
+		_changes: Partial<AIAppointment>[]
 	): SchedulingMetrics {
 		// Simulate the impact of proposed changes
 		const current = this.calculateCurrentMetrics(currentSchedule);
@@ -545,16 +485,12 @@ export class PredictiveAnalytics {
 		};
 	}
 
-	private calculateImprovements(
-		original: SchedulingMetrics,
-		optimized: SchedulingMetrics,
-	): OptimizationImprovement[] {
+	private calculateImprovements(original: SchedulingMetrics, optimized: SchedulingMetrics): OptimizationImprovement[] {
 		const improvements: OptimizationImprovement[] = [];
 
 		const metrics = Object.keys(original) as (keyof SchedulingMetrics)[];
 		for (const metric of metrics) {
-			const improvement =
-				((optimized[metric] - original[metric]) / original[metric]) * 100;
+			const improvement = ((optimized[metric] - original[metric]) / original[metric]) * 100;
 			if (Math.abs(improvement) > 1) {
 				// Only include significant improvements
 				improvements.push({
@@ -570,30 +506,22 @@ export class PredictiveAnalytics {
 	}
 
 	// Pattern analysis methods
-	private analyzeTimePatterns(
-		_appointments: AIAppointment[],
-	): SchedulingPattern[] {
+	private analyzeTimePatterns(_appointments: AIAppointment[]): SchedulingPattern[] {
 		// Analyze time-based patterns
 		return [];
 	}
 
-	private analyzeNoShowPatterns(
-		_appointments: AIAppointment[],
-	): SchedulingPattern[] {
+	private analyzeNoShowPatterns(_appointments: AIAppointment[]): SchedulingPattern[] {
 		// Analyze no-show patterns
 		return [];
 	}
 
-	private analyzeTreatmentPatterns(
-		_appointments: AIAppointment[],
-	): SchedulingPattern[] {
+	private analyzeTreatmentPatterns(_appointments: AIAppointment[]): SchedulingPattern[] {
 		// Analyze treatment-specific patterns
 		return [];
 	}
 
-	private analyzeStaffPatterns(
-		_appointments: AIAppointment[],
-	): SchedulingPattern[] {
+	private analyzeStaffPatterns(_appointments: AIAppointment[]): SchedulingPattern[] {
 		// Analyze staff efficiency patterns
 		return [];
 	}
@@ -602,7 +530,7 @@ export class PredictiveAnalytics {
 	private async analyzeTimeSlotOptimizations(
 		_schedule: AIAppointment[],
 		_current: SchedulingMetrics,
-		_target: SchedulingMetrics,
+		_target: SchedulingMetrics
 	): Promise<OptimizationRecommendation[]> {
 		return [];
 	}
@@ -610,7 +538,7 @@ export class PredictiveAnalytics {
 	private async analyzeStaffOptimizations(
 		_schedule: AIAppointment[],
 		_current: SchedulingMetrics,
-		_target: SchedulingMetrics,
+		_target: SchedulingMetrics
 	): Promise<OptimizationRecommendation[]> {
 		return [];
 	}
@@ -618,7 +546,7 @@ export class PredictiveAnalytics {
 	private async analyzeRoomOptimizations(
 		_schedule: AIAppointment[],
 		_current: SchedulingMetrics,
-		_target: SchedulingMetrics,
+		_target: SchedulingMetrics
 	): Promise<OptimizationRecommendation[]> {
 		return [];
 	}
@@ -626,7 +554,7 @@ export class PredictiveAnalytics {
 	private async analyzeTreatmentSequenceOptimizations(
 		_schedule: AIAppointment[],
 		_current: SchedulingMetrics,
-		_target: SchedulingMetrics,
+		_target: SchedulingMetrics
 	): Promise<OptimizationRecommendation[]> {
 		return [];
 	}
@@ -647,14 +575,11 @@ export class PredictiveAnalytics {
 	}
 
 	private calculatePredictionConfidence(factors: NoShowFactor[]): number {
-		const avgWeight =
-			factors.reduce((sum, f) => sum + f.weight, 0) / factors.length;
+		const avgWeight = factors.reduce((sum, f) => sum + f.weight, 0) / factors.length;
 		return Math.min(avgWeight * 1.2, 0.95);
 	}
 
-	private categorizeRiskLevel(
-		probability: number,
-	): "low" | "medium" | "high" | "critical" {
+	private categorizeRiskLevel(probability: number): "low" | "medium" | "high" | "critical" {
 		if (probability < 0.15) {
 			return "low";
 		}
@@ -679,10 +604,7 @@ export class PredictiveAnalytics {
 		return factors.reduce((sum, f) => sum + f.confidence, 0) / factors.length;
 	}
 
-	private calculateBufferRecommendation(
-		confidence: number,
-		variance: number,
-	): number {
+	private calculateBufferRecommendation(confidence: number, variance: number): number {
 		const baseBuffer = 10; // 10 minutes base buffer
 		const confidenceAdjustment = (1 - confidence) * 15; // Up to 15 min for low confidence
 		const varianceAdjustment = variance * 0.5; // Half of variance as buffer
@@ -690,9 +612,7 @@ export class PredictiveAnalytics {
 		return Math.round(baseBuffer + confidenceAdjustment + varianceAdjustment);
 	}
 
-	private async getTreatmentNoShowFactor(
-		_treatmentType: string,
-	): Promise<NoShowFactor | null> {
+	private async getTreatmentNoShowFactor(_treatmentType: string): Promise<NoShowFactor | null> {
 		// Get treatment-specific no-show factors
 		return null;
 	}
@@ -718,33 +638,22 @@ export class PredictiveAnalytics {
 		return 0;
 	}
 
-	private estimateImplementationTime(
-		changes: Partial<AIAppointment>[],
-	): number {
+	private estimateImplementationTime(changes: Partial<AIAppointment>[]): number {
 		return changes.length * 5; // 5 minutes per change
 	}
 
-	private calculateOptimizationConfidence(
-		_improvements: OptimizationImprovement[],
-	): number {
+	private calculateOptimizationConfidence(_improvements: OptimizationImprovement[]): number {
 		return 0.85; // Default confidence
 	}
 
-	private getMetricImpactDescription(
-		metric: keyof SchedulingMetrics,
-		improvement: number,
-	): string {
+	private getMetricImpactDescription(metric: keyof SchedulingMetrics, improvement: number): string {
 		const direction = improvement > 0 ? "increase" : "decrease";
 		return `${Math.abs(improvement).toFixed(1)}% ${direction} in ${metric.replace(/([A-Z])/g, " $1").toLowerCase()}`;
 	}
 
 	private getImplementationSteps(_metric: keyof SchedulingMetrics): string[] {
 		// Return implementation steps for each metric
-		return [
-			"Review current scheduling",
-			"Apply optimization rules",
-			"Monitor results",
-		];
+		return ["Review current scheduling", "Apply optimization rules", "Monitor results"];
 	}
 }
 

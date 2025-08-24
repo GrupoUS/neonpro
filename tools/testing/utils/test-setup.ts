@@ -120,11 +120,7 @@ global.testUtils = {
 	},
 
 	testXSS: (input: string) => {
-		const xssPatterns = [
-			/<script[^>]*>.*?<\/script>/gi,
-			/javascript:/gi,
-			/on\w+\s*=/gi,
-		];
+		const xssPatterns = [/<script[^>]*>.*?<\/script>/gi, /javascript:/gi, /on\w+\s*=/gi];
 
 		return xssPatterns.some((pattern) => pattern.test(input));
 	},

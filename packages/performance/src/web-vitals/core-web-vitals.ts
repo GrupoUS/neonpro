@@ -3,21 +3,9 @@
  * Optimized for clinical workflows and medical data handling
  */
 
-import type {
-	CLSMetric,
-	FCPMetric,
-	FIDMetric,
-	INPMetric,
-	LCPMetric,
-	TTFBMetric,
-} from "web-vitals";
+import type { CLSMetric, FCPMetric, FIDMetric, INPMetric, LCPMetric, TTFBMetric } from "web-vitals";
 import { getCLS, getFCP, getFID, getLCP, getTTFB, onINP } from "web-vitals";
-import type {
-	HealthcareVitalsMetric,
-	PerformanceEventHandler,
-	PerformanceThresholds,
-	WebVitalsMetric,
-} from "../types";
+import type { HealthcareVitalsMetric, PerformanceEventHandler, PerformanceThresholds, WebVitalsMetric } from "../types";
 
 // Healthcare-optimized thresholds (stricter than standard)
 export const HEALTHCARE_THRESHOLDS: PerformanceThresholds = {
@@ -195,9 +183,7 @@ class HealthcareWebVitals {
 	/**
 	 * Calculate healthcare-specific rating
 	 */
-	private calculateHealthcareRating(
-		metric: WebVitalsMetric,
-	): "good" | "needs-improvement" | "poor" {
+	private calculateHealthcareRating(metric: WebVitalsMetric): "good" | "needs-improvement" | "poor" {
 		const threshold = this.thresholds[metric.name];
 		if (!threshold) {
 			return metric.rating;
@@ -216,15 +202,9 @@ class HealthcareWebVitals {
 	 * Check if this is a critical healthcare path
 	 */
 	private isCriticalHealthcarePath(_metricName: string): boolean {
-		const criticalWorkflows = [
-			"patient-registration",
-			"medical-form",
-			"real-time-update",
-		];
+		const criticalWorkflows = ["patient-registration", "medical-form", "real-time-update"];
 
-		return criticalWorkflows.includes(
-			this.healthcareContext.workflowType || "",
-		);
+		return criticalWorkflows.includes(this.healthcareContext.workflowType || "");
 	}
 
 	/**
@@ -250,10 +230,7 @@ class HealthcareWebVitals {
 	private monitorPatientLookup(): void {
 		const observer = new PerformanceObserver((list) => {
 			list.getEntries().forEach((entry) => {
-				if (
-					entry.name.includes("patient-lookup") ||
-					entry.name.includes("/api/patients")
-				) {
+				if (entry.name.includes("patient-lookup") || entry.name.includes("/api/patients")) {
 					const metric: HealthcareVitalsMetric = {
 						name: "TTFB",
 						value: entry.duration,
@@ -293,10 +270,7 @@ class HealthcareWebVitals {
 					mutation.addedNodes.forEach((node) => {
 						if (node.nodeType === Node.ELEMENT_NODE) {
 							const element = node as Element;
-							if (
-								element.tagName === "FORM" ||
-								element.classList.contains("medical-form")
-							) {
+							if (element.tagName === "FORM" || element.classList.contains("medical-form")) {
 								const renderTime = performance.now();
 								const metric: HealthcareVitalsMetric = {
 									name: "LCP",
@@ -373,10 +347,7 @@ class HealthcareWebVitals {
 		// Monitor calendar and scheduling interactions
 		document.addEventListener("click", (event) => {
 			const target = event.target as Element;
-			if (
-				target.closest(".scheduling-calendar") ||
-				target.closest(".appointment-form")
-			) {
+			if (target.closest(".scheduling-calendar") || target.closest(".appointment-form")) {
 				const interactionTime = performance.now();
 
 				setTimeout(() => {
@@ -415,9 +386,7 @@ class HealthcareWebVitals {
 		if (/tablet|ipad|playbook|silk/.test(userAgent)) {
 			this.healthcareContext.deviceType = "tablet";
 		} else if (
-			/mobile|iphone|ipod|android|blackberry|opera|mini|windows\sce|palm|smartphone|iemobile/.test(
-				userAgent,
-			)
+			/mobile|iphone|ipod|android|blackberry|opera|mini|windows\sce|palm|smartphone|iemobile/.test(userAgent)
 		) {
 			this.healthcareContext.deviceType = "mobile";
 		} else {

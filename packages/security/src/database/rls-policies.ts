@@ -532,7 +532,7 @@ export const rlsUtils = {
 				policy.policyName &&
 				policy.operation &&
 				policy.description &&
-				(policy.using || policy.withCheck),
+				(policy.using || policy.withCheck)
 		);
 	},
 

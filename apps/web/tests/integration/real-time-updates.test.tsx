@@ -81,8 +81,12 @@ const mockAppointment = {
 const _TestWrapper = ({ children }: { children: React.ReactNode }) => {
 	const queryClient = new QueryClient({
 		defaultOptions: {
-			queries: { retry: false },
-			mutations: { retry: false },
+			queries: {
+				retry: false,
+			},
+			mutations: {
+				retry: false,
+			},
 		},
 	});
 
@@ -94,11 +98,16 @@ describe("Real-time Updates Integration Tests", () => {
 
 	beforeEach(() => {
 		// Don't clear all mocks here since global setup does it
-		// Create a fresh QueryClient instance
+
+		// Create a fresh QueryClient for each test
 		queryClient = new QueryClient({
 			defaultOptions: {
-				queries: { retry: false },
-				mutations: { retry: false },
+				queries: {
+					retry: false,
+				},
+				mutations: {
+					retry: false,
+				},
 			},
 		});
 
@@ -111,7 +120,7 @@ describe("Real-time Updates Integration Tests", () => {
 
 	afterEach(() => {
 		vi.restoreAllMocks();
-		queryClient.removeQueries();
+		queryClient.clear();
 	});
 
 	describe("Realtime Connection Management", () => {
@@ -421,13 +430,8 @@ describe("Real-time Updates Integration Tests", () => {
 			const updateCount = 100;
 			const updates: any[] = [];
 
-			// Create QueryClient immediately to ensure it's available for callbacks
-			const testQueryClient = new QueryClient({
-				defaultOptions: {
-					queries: { retry: false },
-					mutations: { retry: false },
-				},
-			});
+			// Use the QueryClient instance from the test scope
+			const testQueryClient = queryClient;
 
 			let realtimeCallback: ((payload: any) => void) | null = null;
 

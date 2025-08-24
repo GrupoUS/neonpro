@@ -208,8 +208,7 @@ class ProductionReadinessValidator {
 					(this.metrics.deployment.rollbackCapability ? 1 : 0) +
 					(this.metrics.deployment.monitoringSetup ? 1 : 0)) *
 				2.5, // Convert to 10 point scale
-			operationalReadiness:
-				this.metrics.operationalReadiness.documentation / 10,
+			operationalReadiness: this.metrics.operationalReadiness.documentation / 10,
 		};
 
 		return Object.entries(weights).reduce((total, [key, weight]) => {
@@ -231,9 +230,7 @@ class ProductionReadinessValidator {
 
 		// Generate recommendations based on metrics
 		if (this.metrics.codeQuality.score < 9.0) {
-			recommendations.push(
-				"Address remaining technical debt to improve code quality",
-			);
+			recommendations.push("Address remaining technical debt to improve code quality");
 		}
 
 		if (this.metrics.testCoverage.overall < 95) {
@@ -241,15 +238,11 @@ class ProductionReadinessValidator {
 		}
 
 		if (this.metrics.performance.apiResponseTime > 100) {
-			recommendations.push(
-				"Optimize API response times for better user experience",
-			);
+			recommendations.push("Optimize API response times for better user experience");
 		}
 
 		if (this.metrics.security.vulnerabilities > 0) {
-			recommendations.push(
-				"Address all security vulnerabilities before production",
-			);
+			recommendations.push("Address all security vulnerabilities before production");
 		}
 
 		if (this.metrics.compliance.lgpdCompliance < 99) {
@@ -281,9 +274,7 @@ describe("Final Production Readiness Certification - NeonPro Healthcare Platform
 	beforeAll(() => {
 		validator = new ProductionReadinessValidator();
 		startTime = performance.now();
-		logger.info(
-			"\n🏥 NeonPro Healthcare Platform - Final Production Readiness Assessment",
-		);
+		logger.info("\n🏥 NeonPro Healthcare Platform - Final Production Readiness Assessment");
 		logger.info("=".repeat(80));
 	});
 
@@ -301,9 +292,7 @@ describe("Final Production Readiness Certification - NeonPro Healthcare Platform
 
 			logger.info(`   ✅ Code Quality Score: ${metrics.codeQuality.score}/10`);
 			logger.info(`   ✅ Technical Debt: ${metrics.codeQuality.technicalDebt}`);
-			logger.info(
-				`   ✅ Maintainability: ${metrics.codeQuality.maintainability}%`,
-			);
+			logger.info(`   ✅ Maintainability: ${metrics.codeQuality.maintainability}%`);
 		});
 
 		it("should validate comprehensive test coverage", async () => {
@@ -318,12 +307,8 @@ describe("Final Production Readiness Certification - NeonPro Healthcare Platform
 			expect(metrics.testCoverage.e2e).toBeGreaterThan(90);
 
 			logger.info(`   ✅ Overall Coverage: ${metrics.testCoverage.overall}%`);
-			logger.info(
-				`   ✅ Critical Paths: ${metrics.testCoverage.critical_paths}%`,
-			);
-			logger.info(
-				`   ✅ Integration Tests: ${metrics.testCoverage.integration}%`,
-			);
+			logger.info(`   ✅ Critical Paths: ${metrics.testCoverage.critical_paths}%`);
+			logger.info(`   ✅ Integration Tests: ${metrics.testCoverage.integration}%`);
 			logger.info(`   ✅ End-to-End Tests: ${metrics.testCoverage.e2e}%`);
 		});
 
@@ -338,18 +323,10 @@ describe("Final Production Readiness Certification - NeonPro Healthcare Platform
 			expect(metrics.performance.databasePerformance).toBeGreaterThan(85);
 			expect(metrics.performance.concurrentUsers).toBeGreaterThan(1000);
 
-			logger.info(
-				`   ✅ Core Web Vitals: ${metrics.performance.coreWebVitals}/100`,
-			);
-			logger.info(
-				`   ✅ API Response Time (P95): ${metrics.performance.apiResponseTime}ms`,
-			);
-			logger.info(
-				`   ✅ Database Performance: ${metrics.performance.databasePerformance}%`,
-			);
-			logger.info(
-				`   ✅ Concurrent Users Tested: ${metrics.performance.concurrentUsers}`,
-			);
+			logger.info(`   ✅ Core Web Vitals: ${metrics.performance.coreWebVitals}/100`);
+			logger.info(`   ✅ API Response Time (P95): ${metrics.performance.apiResponseTime}ms`);
+			logger.info(`   ✅ Database Performance: ${metrics.performance.databasePerformance}%`);
+			logger.info(`   ✅ Concurrent Users Tested: ${metrics.performance.concurrentUsers}`);
 		});
 
 		it("should validate security and vulnerability assessment", async () => {
@@ -363,18 +340,10 @@ describe("Final Production Readiness Certification - NeonPro Healthcare Platform
 			expect(["A", "A+"]).toContain(metrics.security.encryptionGrade);
 			expect(metrics.security.auditTrail).toBe(true);
 
-			logger.info(
-				`   ✅ Critical/High Vulnerabilities: ${metrics.security.vulnerabilities}`,
-			);
-			logger.info(
-				`   ✅ Security Compliance: ${metrics.security.complianceScore}%`,
-			);
-			logger.info(
-				`   ✅ Encryption Grade: ${metrics.security.encryptionGrade}`,
-			);
-			logger.info(
-				`   ✅ Audit Trail: ${metrics.security.auditTrail ? "Enabled" : "Disabled"}`,
-			);
+			logger.info(`   ✅ Critical/High Vulnerabilities: ${metrics.security.vulnerabilities}`);
+			logger.info(`   ✅ Security Compliance: ${metrics.security.complianceScore}%`);
+			logger.info(`   ✅ Encryption Grade: ${metrics.security.encryptionGrade}`);
+			logger.info(`   ✅ Audit Trail: ${metrics.security.auditTrail ? "Enabled" : "Disabled"}`);
 		});
 
 		it("should validate healthcare regulatory compliance", async () => {
@@ -388,16 +357,10 @@ describe("Final Production Readiness Certification - NeonPro Healthcare Platform
 			expect(metrics.compliance.cfmCompliance).toBeGreaterThan(95);
 			expect(metrics.compliance.accessibilityScore).toBeGreaterThan(95);
 
-			logger.info(
-				`   ✅ LGPD Compliance: ${metrics.compliance.lgpdCompliance}%`,
-			);
-			logger.info(
-				`   ✅ ANVISA Compliance: ${metrics.compliance.anvisaCompliance}%`,
-			);
+			logger.info(`   ✅ LGPD Compliance: ${metrics.compliance.lgpdCompliance}%`);
+			logger.info(`   ✅ ANVISA Compliance: ${metrics.compliance.anvisaCompliance}%`);
 			logger.info(`   ✅ CFM Compliance: ${metrics.compliance.cfmCompliance}%`);
-			logger.info(
-				`   ✅ Accessibility (WCAG 2.1 AA+): ${metrics.compliance.accessibilityScore}%`,
-			);
+			logger.info(`   ✅ Accessibility (WCAG 2.1 AA+): ${metrics.compliance.accessibilityScore}%`);
 		});
 
 		it("should validate deployment infrastructure readiness", async () => {
@@ -412,15 +375,9 @@ describe("Final Production Readiness Certification - NeonPro Healthcare Platform
 			expect(metrics.deployment.monitoringSetup).toBe(true);
 
 			logger.info(`   ✅ Build Success: ${metrics.deployment.buildSuccess}`);
-			logger.info(
-				`   ✅ Environment Validation: ${metrics.deployment.environmentValidation}`,
-			);
-			logger.info(
-				`   ✅ Rollback Capability: ${metrics.deployment.rollbackCapability}`,
-			);
-			logger.info(
-				`   ✅ Monitoring Setup: ${metrics.deployment.monitoringSetup}`,
-			);
+			logger.info(`   ✅ Environment Validation: ${metrics.deployment.environmentValidation}`);
+			logger.info(`   ✅ Rollback Capability: ${metrics.deployment.rollbackCapability}`);
+			logger.info(`   ✅ Monitoring Setup: ${metrics.deployment.monitoringSetup}`);
 		});
 
 		it("should validate operational readiness and support systems", async () => {
@@ -434,18 +391,10 @@ describe("Final Production Readiness Certification - NeonPro Healthcare Platform
 			expect(metrics.operationalReadiness.alerting).toBe(true);
 			expect(metrics.operationalReadiness.supportProcesses).toBe(true);
 
-			logger.info(
-				`   ✅ Documentation Completeness: ${metrics.operationalReadiness.documentation}%`,
-			);
-			logger.info(
-				`   ✅ Monitoring Systems: ${metrics.operationalReadiness.monitoring}`,
-			);
-			logger.info(
-				`   ✅ Alerting Setup: ${metrics.operationalReadiness.alerting}`,
-			);
-			logger.info(
-				`   ✅ Support Processes: ${metrics.operationalReadiness.supportProcesses}`,
-			);
+			logger.info(`   ✅ Documentation Completeness: ${metrics.operationalReadiness.documentation}%`);
+			logger.info(`   ✅ Monitoring Systems: ${metrics.operationalReadiness.monitoring}`);
+			logger.info(`   ✅ Alerting Setup: ${metrics.operationalReadiness.alerting}`);
+			logger.info(`   ✅ Support Processes: ${metrics.operationalReadiness.supportProcesses}`);
 		});
 	});
 
@@ -459,37 +408,19 @@ describe("Final Production Readiness Certification - NeonPro Healthcare Platform
 			logger.info("📊 FINAL PRODUCTION READINESS ASSESSMENT RESULTS");
 			logger.info("=".repeat(80));
 
-			logger.info(
-				`\n🎯 OVERALL QUALITY SCORE: ${certification.overallScore}/10`,
-			);
-			logger.info(
-				`🚀 PRODUCTION READY: ${certification.productionReady ? "YES" : "NO"}`,
-			);
+			logger.info(`\n🎯 OVERALL QUALITY SCORE: ${certification.overallScore}/10`);
+			logger.info(`🚀 PRODUCTION READY: ${certification.productionReady ? "YES" : "NO"}`);
 			logger.info(`🏅 CERTIFICATION: ${certification.certification}`);
 
 			logger.info("\n📈 DETAILED METRICS:");
 			logger.info("-".repeat(50));
-			logger.info(
-				`Code Quality: ${certification.metrics.codeQuality.score}/10`,
-			);
-			logger.info(
-				`Test Coverage: ${certification.metrics.testCoverage.overall}%`,
-			);
-			logger.info(
-				`Performance Score: ${certification.metrics.performance.coreWebVitals}/100`,
-			);
-			logger.info(
-				`Security Score: ${certification.metrics.security.complianceScore}%`,
-			);
-			logger.info(
-				`LGPD Compliance: ${certification.metrics.compliance.lgpdCompliance}%`,
-			);
-			logger.info(
-				`ANVISA Compliance: ${certification.metrics.compliance.anvisaCompliance}%`,
-			);
-			logger.info(
-				`CFM Compliance: ${certification.metrics.compliance.cfmCompliance}%`,
-			);
+			logger.info(`Code Quality: ${certification.metrics.codeQuality.score}/10`);
+			logger.info(`Test Coverage: ${certification.metrics.testCoverage.overall}%`);
+			logger.info(`Performance Score: ${certification.metrics.performance.coreWebVitals}/100`);
+			logger.info(`Security Score: ${certification.metrics.security.complianceScore}%`);
+			logger.info(`LGPD Compliance: ${certification.metrics.compliance.lgpdCompliance}%`);
+			logger.info(`ANVISA Compliance: ${certification.metrics.compliance.anvisaCompliance}%`);
+			logger.info(`CFM Compliance: ${certification.metrics.compliance.cfmCompliance}%`);
 
 			if (certification.recommendations.length > 0) {
 				logger.info("\n💡 RECOMMENDATIONS FOR IMPROVEMENT:");
@@ -498,45 +429,29 @@ describe("Final Production Readiness Certification - NeonPro Healthcare Platform
 					logger.info(`${index + 1}. ${rec}`);
 				});
 			} else {
-				logger.info(
-					"\n✨ NO IMPROVEMENTS REQUIRED - SYSTEM IS PRODUCTION READY!",
-				);
+				logger.info("\n✨ NO IMPROVEMENTS REQUIRED - SYSTEM IS PRODUCTION READY!");
 			}
 
 			const validationTime = (performance.now() - startTime) / 1000;
-			logger.info(
-				`\n⏱️  Total Validation Time: ${validationTime.toFixed(2)} seconds`,
-			);
+			logger.info(`\n⏱️  Total Validation Time: ${validationTime.toFixed(2)} seconds`);
 			logger.info("=".repeat(80));
 
 			// Final assertions for production readiness
 			expect(certification.overallScore).toBeGreaterThan(9.5);
 			expect(certification.productionReady).toBe(true);
-			expect(certification.certification).toBe(
-				"CERTIFIED FOR PRODUCTION DEPLOYMENT",
-			);
+			expect(certification.certification).toBe("CERTIFIED FOR PRODUCTION DEPLOYMENT");
 
 			// Healthcare-specific compliance requirements
-			expect(certification.metrics.compliance.lgpdCompliance).toBeGreaterThan(
-				98,
-			);
+			expect(certification.metrics.compliance.lgpdCompliance).toBeGreaterThan(98);
 			expect(certification.metrics.security.vulnerabilities).toBe(0);
 			expect(certification.metrics.testCoverage.critical_paths).toBe(100);
 
 			// Performance requirements for healthcare applications
-			expect(certification.metrics.performance.apiResponseTime).toBeLessThan(
-				100,
-			);
-			expect(certification.metrics.performance.coreWebVitals).toBeGreaterThan(
-				95,
-			);
+			expect(certification.metrics.performance.apiResponseTime).toBeLessThan(100);
+			expect(certification.metrics.performance.coreWebVitals).toBeGreaterThan(95);
 
-			logger.info(
-				"\n🎉 NEONPRO HEALTHCARE PLATFORM IS CERTIFIED FOR PRODUCTION DEPLOYMENT!",
-			);
-			logger.info(
-				"🏥 Ready to serve healthcare professionals and patients with enterprise-grade quality.",
-			);
+			logger.info("\n🎉 NEONPRO HEALTHCARE PLATFORM IS CERTIFIED FOR PRODUCTION DEPLOYMENT!");
+			logger.info("🏥 Ready to serve healthcare professionals and patients with enterprise-grade quality.");
 			logger.info("=".repeat(80));
 		});
 	});
@@ -547,20 +462,14 @@ describe("Final Production Readiness Certification - NeonPro Healthcare Platform
 
 			// Critical Quality Gates for Healthcare Applications
 			const qualityGates = {
-				zeroSecurityVulnerabilities:
-					certification.metrics.security.vulnerabilities === 0,
-				fullCriticalPathCoverage:
-					certification.metrics.testCoverage.critical_paths === 100,
+				zeroSecurityVulnerabilities: certification.metrics.security.vulnerabilities === 0,
+				fullCriticalPathCoverage: certification.metrics.testCoverage.critical_paths === 100,
 				lgpdCompliant: certification.metrics.compliance.lgpdCompliance > 98,
-				performanceBenchmark:
-					certification.metrics.performance.apiResponseTime < 100,
-				accessibilityCompliant:
-					certification.metrics.compliance.accessibilityScore > 95,
+				performanceBenchmark: certification.metrics.performance.apiResponseTime < 100,
+				accessibilityCompliant: certification.metrics.compliance.accessibilityScore > 95,
 				auditTrailEnabled: certification.metrics.security.auditTrail === true,
-				rollbackCapable:
-					certification.metrics.deployment.rollbackCapability === true,
-				monitoringSetup:
-					certification.metrics.deployment.monitoringSetup === true,
+				rollbackCapable: certification.metrics.deployment.rollbackCapability === true,
+				monitoringSetup: certification.metrics.deployment.monitoringSetup === true,
 			};
 
 			// All quality gates must pass
@@ -568,9 +477,7 @@ describe("Final Production Readiness Certification - NeonPro Healthcare Platform
 				expect(passed).toBe(true);
 				logger.info(`✅ Quality Gate - ${gate}: PASSED`);
 			});
-			logger.info(
-				"\n🏆 ALL CRITICAL QUALITY GATES PASSED - PRODUCTION DEPLOYMENT APPROVED",
-			);
+			logger.info("\n🏆 ALL CRITICAL QUALITY GATES PASSED - PRODUCTION DEPLOYMENT APPROVED");
 		});
 
 		it("should validate healthcare-specific operational requirements", async () => {
@@ -578,19 +485,13 @@ describe("Final Production Readiness Certification - NeonPro Healthcare Platform
 
 			// Healthcare-specific operational requirements
 			const healthcareRequirements = {
-				dataEncryptionGrade: ["A", "A+"].includes(
-					certification.metrics.security.encryptionGrade,
-				),
-				regulatoryCompliance:
-					certification.metrics.compliance.anvisaCompliance > 95,
-				professionalStandards:
-					certification.metrics.compliance.cfmCompliance > 95,
-				patientDataProtection:
-					certification.metrics.compliance.lgpdCompliance > 98,
+				dataEncryptionGrade: ["A", "A+"].includes(certification.metrics.security.encryptionGrade),
+				regulatoryCompliance: certification.metrics.compliance.anvisaCompliance > 95,
+				professionalStandards: certification.metrics.compliance.cfmCompliance > 95,
+				patientDataProtection: certification.metrics.compliance.lgpdCompliance > 98,
 				emergencyAccess: certification.metrics.security.auditTrail === true, // Emergency access with audit
 				dataIntegrity: certification.metrics.security.complianceScore > 95,
-				performanceReliability:
-					certification.metrics.performance.coreWebVitals > 95,
+				performanceReliability: certification.metrics.performance.coreWebVitals > 95,
 			};
 
 			Object.entries(healthcareRequirements).forEach(([requirement, met]) => {

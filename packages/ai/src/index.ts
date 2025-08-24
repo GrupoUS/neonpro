@@ -1,30 +1,165 @@
-/**
- * @fileoverview NeonPro AI Healthcare Package
- * @description AI-powered healthcare features with constitutional compliance
- * @author NeonPro Healthcare Team
- * @version 0.1.0
- *
- * Constitutional Healthcare Compliance:
- * - LGPD: Patient data protection and privacy by design
- * - ANVISA: Medical device and aesthetic procedure compliance
- * - CFM: Medical professional standards and ethics
- *
- * Quality Standards: ≥9.9/10 for all healthcare operations
- * Medical Accuracy: ≥95% for all AI recommendations
- * Test Coverage: ≥95% with healthcare scenarios
- */
+// NeonPro AI Package - Main Export
+// AI-First Healthcare Platform - Enhanced Service Layer
 
-// Healthcare Chatbot (LGPD Privacy Protection)
-export * from "./chatbot";
-// AI Ethics and Constitutional Compliance
-export * from "./ethics";
-// Follow-up Recommendations (CFM Compliance)
-export * from "./follow-up";
-// Treatment Outcome Prediction
-export * from "./prediction";
-// Intelligent Scheduling
-export * from "./scheduling";
-// Core Types and Interfaces
-export * from "./types";
-// Advanced Workflow Automation
-export * from "./workflow";
+// Core Services
+export {
+  EnhancedAIService,
+  UniversalChatService,
+  NoShowPredictionService,
+  AIServiceFactory,
+  AIServiceHealthChecker
+} from './services'
+
+// Types and Interfaces
+export type {
+  // Core service types
+  AIServiceConfig,
+  ServiceMetrics,
+  ComplianceEvent,
+  
+  // Chat types
+  ChatMessage,
+  ChatSession,
+  HealthcareChatContext,
+  ChatResponse,
+  ComplianceMetrics,
+  
+  // Prediction types
+  AppointmentData,
+  PatientBehaviorData,
+  PredictionResult,
+  RiskFactors,
+  PreventionRecommendations,
+  
+  // Patient types
+  PatientProfile,
+  PersonalInfo,
+  ContactInfo,
+  MedicalInfo,
+  PatientPreferences,
+  ConsentRecord,
+  
+  // Service interfaces
+  CacheService,
+  LoggerService,
+  MetricsService,
+  DatabaseService,
+  
+  // Configuration
+  AIServiceConfiguration,
+  FeatureFlag,
+  
+  // API types
+  APIResponse,
+  PaginatedResponse,
+  
+  // Error types
+  AIServiceError,
+  ValidationError,
+  ComplianceError,
+  
+  // Utility types
+  ServiceStatus,
+  LogLevel,
+  ComplianceLevel,
+  Language,
+  UserRole,
+  ClinicType,
+  AppointmentStatus,
+  PredictionAccuracy
+} from './types'
+
+// Utilities
+export { validateHealthcareData } from './utils/validation'
+export { formatBrazilianData } from './utils/formatting'
+export { encryptSensitiveData, decryptSensitiveData } from './utils/encryption'
+
+// Constants
+export const AI_SERVICE_VERSION = '2.1.0'
+export const SUPPORTED_LANGUAGES = ['pt-BR', 'en'] as const
+export const COMPLIANCE_STANDARDS = ['lgpd', 'anvisa', 'cfm'] as const
+
+// Default configurations
+export const DEFAULT_AI_CONFIG: Partial<AIServiceConfiguration> = {
+  openai: {
+    model: 'gpt-4-turbo-preview',
+    maxTokens: 1000,
+    temperature: 0.7
+  },
+  monitoring: {
+    enabled: true,
+    logLevel: 'info'
+  },
+  compliance: {
+    lgpd: {
+      enabled: true,
+      dataRetentionDays: 1095, // 3 years
+      auditLogLevel: 'detailed'
+    },
+    anvisa: {
+      enabled: true
+    },
+    cfm: {
+      enabled: true,
+      ethicsValidation: true
+    }
+  },
+  featureFlags: {
+    enabled: true,
+    refreshIntervalMs: 300000 // 5 minutes
+  }
+}
+
+// Service initialization helper
+export async function initializeAIServices(config: AIServiceConfiguration) {
+  try {
+    // Initialize services with configuration
+    const chatService = AIServiceFactory.getChatService()
+    const predictionService = AIServiceFactory.getPredictionService()
+    
+    // Verify all services are healthy
+    const healthChecks = await AIServiceHealthChecker.checkAllServices()
+    const unhealthyServices = healthChecks.filter(check => check.status !== 'healthy')
+    
+    if (unhealthyServices.length > 0) {
+      throw new Error(`Unhealthy services detected: ${unhealthyServices.map(s => s.service).join(', ')}`)
+    }
+    
+    return {
+      success: true,
+      services: {
+        chat: chatService,
+        prediction: predictionService
+      },
+      healthChecks,
+      version: AI_SERVICE_VERSION
+    }
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message,
+      version: AI_SERVICE_VERSION
+    }
+  }
+}
+
+// Package metadata
+export const packageInfo = {
+  name: '@neonpro/ai',
+  version: AI_SERVICE_VERSION,
+  description: 'AI-First Healthcare Platform - Enhanced Service Layer for NeonPro',
+  author: 'NeonPro Development Team',
+  license: 'Proprietary',
+  features: [
+    'Universal AI Chat System with Portuguese healthcare optimization',
+    'ML-powered No-Show Prediction with Brazilian behavioral patterns',
+    'Enhanced Service Base Class with compliance automation',
+    'LGPD/ANVISA/CFM regulatory compliance automation',
+    'Multi-layer caching with Redis integration',
+    'Comprehensive audit trail and monitoring',
+    'Feature flag infrastructure',
+    'Healthcare-specific data validation and encryption'
+  ],
+  compliance: COMPLIANCE_STANDARDS,
+  languages: SUPPORTED_LANGUAGES
+} as const

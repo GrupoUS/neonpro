@@ -40,18 +40,7 @@ const IGNORE_FILES = [
 ];
 
 // Extensões de arquivo para verificar
-const CHECK_EXTENSIONS = [
-	".js",
-	".ts",
-	".tsx",
-	".jsx",
-	".ps1",
-	".sh",
-	".md",
-	".json",
-	".yml",
-	".yaml",
-];
+const CHECK_EXTENSIONS = [".js", ".ts", ".tsx", ".jsx", ".ps1", ".sh", ".md", ".json", ".yml", ".yaml"];
 
 function scanFile(filePath) {
 	try {

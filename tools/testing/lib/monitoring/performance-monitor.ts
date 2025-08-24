@@ -16,9 +16,7 @@ export class PerformanceMonitor {
 		complianceValidationTime: 0,
 	};
 
-	static startMeasurement(
-		operation: keyof HealthcarePerformanceMetrics,
-	): () => void {
+	static startMeasurement(operation: keyof HealthcarePerformanceMetrics): () => void {
 		const start = performance.now();
 		return () => {
 			const duration = performance.now() - start;

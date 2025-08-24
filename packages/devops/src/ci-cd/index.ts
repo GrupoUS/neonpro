@@ -147,8 +147,7 @@ Status: ${qualityResults.passed ? "✅ PASSED" : "❌ FAILED"}
 ### Individual Gates:
 ${qualityResults.results
 	.map(
-		(result) =>
-			`- ${result.name}: ${result.actual}% (threshold: ${result.threshold}%) ${result.passed ? "✅" : "❌"}`,
+		(result) => `- ${result.name}: ${result.actual}% (threshold: ${result.threshold}%) ${result.passed ? "✅" : "❌"}`
 	)
 	.join("\n")}
 

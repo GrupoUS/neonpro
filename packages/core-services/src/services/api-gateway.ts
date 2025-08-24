@@ -213,10 +213,7 @@ export class CircuitBreaker {
 	private readonly failureThreshold = 5;
 	private readonly retryTimeout = 30_000; // 30 seconds
 
-	async execute<T>(
-		serviceKey: string,
-		operation: () => Promise<T>,
-	): Promise<T> {
+	async execute<T>(serviceKey: string, operation: () => Promise<T>): Promise<T> {
 		const state = this.getState(serviceKey);
 
 		if (state.state === "OPEN") {
@@ -281,10 +278,7 @@ export class RequestRouter {
 			// Find matching service route
 			const route = this.findRoute(path);
 			if (!route) {
-				return NextResponse.json(
-					{ error: "Service not found", path },
-					{ status: 404 },
-				);
+				return NextResponse.json({ error: "Service not found", path }, { status: 404 });
 			}
 
 			// Rate limiting
@@ -307,7 +301,7 @@ export class RequestRouter {
 
 			// Route to service
 			const response = await this.circuitBreaker.execute(route.service, () =>
-				this.forwardRequest(request, route, authContext),
+				this.forwardRequest(request, route, authContext)
 			);
 
 			// Record metrics
@@ -340,7 +334,7 @@ export class RequestRouter {
 					message: "Service temporarily unavailable",
 					requestId: crypto.randomUUID(),
 				},
-				{ status: 500 },
+				{ status: 500 }
 			);
 		}
 	}
@@ -349,10 +343,7 @@ export class RequestRouter {
 		return SERVICE_ROUTES.find((route) => route.pattern.test(path)) || null;
 	}
 
-	private async checkRateLimit(
-		_request: NextRequest,
-		route: ServiceRoute,
-	): Promise<NextResponse | null> {
+	private async checkRateLimit(_request: NextRequest, route: ServiceRoute): Promise<NextResponse | null> {
 		if (!route.rateLimit) {
 			return null;
 		}
@@ -362,25 +353,17 @@ export class RequestRouter {
 		return null;
 	}
 
-	private async authenticate(
-		request: NextRequest,
-	): Promise<AuthContext | NextResponse> {
+	private async authenticate(request: NextRequest): Promise<AuthContext | NextResponse> {
 		const authHeader = request.headers.get("Authorization");
 		if (!authHeader?.startsWith("Bearer ")) {
-			return NextResponse.json(
-				{ error: "Authentication required" },
-				{ status: 401 },
-			);
+			return NextResponse.json({ error: "Authentication required" }, { status: 401 });
 		}
 
 		const token = authHeader.substring(7);
 		const authContext = await this.authService.validateToken(token);
 
 		if (!authContext) {
-			return NextResponse.json(
-				{ error: "Invalid or expired token" },
-				{ status: 401 },
-			);
+			return NextResponse.json({ error: "Invalid or expired token" }, { status: 401 });
 		}
 
 		return authContext;
@@ -389,12 +372,9 @@ export class RequestRouter {
 	private async forwardRequest(
 		request: NextRequest,
 		route: ServiceRoute,
-		authContext: AuthContext | null,
+		authContext: AuthContext | null
 	): Promise<NextResponse> {
-		const url = new URL(
-			request.nextUrl.pathname + request.nextUrl.search,
-			route.baseUrl,
-		);
+		const url = new URL(request.nextUrl.pathname + request.nextUrl.search, route.baseUrl);
 
 		const headers = new Headers(request.headers);
 
@@ -437,7 +417,7 @@ export class RequestRouter {
 						message: `Service ${route.service} took too long to respond`,
 						requestId,
 					},
-					{ status: 504 },
+					{ status: 504 }
 				);
 			}
 
@@ -497,12 +477,10 @@ export async function healthCheck(): Promise<{
 			} catch {
 				services[route.service] = "down";
 			}
-		}),
+		})
 	);
 
-	const allServicesUp = Object.values(services).every(
-		(status) => status === "up",
-	);
+	const allServicesUp = Object.values(services).every((status) => status === "up");
 
 	return {
 		status: allServicesUp ? "healthy" : "unhealthy",

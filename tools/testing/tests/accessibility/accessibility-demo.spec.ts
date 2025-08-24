@@ -149,12 +149,8 @@ test.describe("Accessibility Demo", () => {
 		// Wait for success message and check announcements
 		await page.waitForTimeout(3000);
 
-		const announcements = await page.evaluate(
-			() => (window as any).ariaAnnouncements,
-		);
-		expect(
-			announcements.some((text: string) => text.includes("sucesso")),
-		).toBeTruthy();
+		const announcements = await page.evaluate(() => (window as any).ariaAnnouncements);
+		expect(announcements.some((text: string) => text.includes("sucesso"))).toBeTruthy();
 	});
 });
 
@@ -182,9 +178,7 @@ test.describe("Accessibility Audit", () => {
 		await page.goto("/dashboard/accessibility-demo");
 
 		// Check color contrast for text elements
-		const textElements = await page
-			.locator("label, p, h1, h2, h3, button")
-			.all();
+		const textElements = await page.locator("label, p, h1, h2, h3, button").all();
 
 		for (const element of textElements) {
 			const styles = await element.evaluate((el) => {

@@ -58,10 +58,7 @@ async function executeMigrations() {
 
 					if (error) {
 						// Try direct SQL execution via REST API
-						const { data, error: directError } = await supabase
-							.from("_dummy")
-							.select("*")
-							.limit(0);
+						const { data, error: directError } = await supabase.from("_dummy").select("*").limit(0);
 						if (directError) {
 							// Continue with next statement for now
 						} else {
@@ -77,10 +74,7 @@ async function executeMigrations() {
 
 		for (const tableName of apTables) {
 			try {
-				const { data, error } = await supabase
-					.from(tableName)
-					.select("count")
-					.limit(1);
+				const { data, error } = await supabase.from(tableName).select("count").limit(1);
 				if (error) {
 				} else {
 				}

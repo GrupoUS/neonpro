@@ -1,11 +1,5 @@
 import { z } from "zod";
-import {
-	type BaseEntity,
-	DateSchema,
-	PositiveNumberSchema,
-	TreatmentType,
-	UUIDSchema,
-} from "../types";
+import { type BaseEntity, DateSchema, PositiveNumberSchema, TreatmentType, UUIDSchema } from "../types";
 
 // Treatment plan and session interfaces
 export interface TreatmentPlan extends BaseEntity {
@@ -125,18 +119,15 @@ export const CreateTreatmentPlanSchema = z.object({
 	contraindications: z.array(z.string()).optional(),
 	expectedResults: z.string().min(1),
 	price: PositiveNumberSchema,
-	consentFormSigned: z
-		.boolean()
-		.refine((val) => val === true, "Consent form must be signed"),
+	consentFormSigned: z.boolean().refine((val) => val === true, "Consent form must be signed"),
 	beforePhotos: z.array(z.string()).default([]),
 });
 
-export const UpdateTreatmentPlanSchema =
-	CreateTreatmentPlanSchema.partial().extend({
-		id: UUIDSchema,
-		isActive: z.boolean().optional(),
-		endDate: DateSchema.optional(),
-	});
+export const UpdateTreatmentPlanSchema = CreateTreatmentPlanSchema.partial().extend({
+	id: UUIDSchema,
+	isActive: z.boolean().optional(),
+	endDate: DateSchema.optional(),
+});
 
 export const CreateTreatmentSessionSchema = z.object({
 	treatmentPlanId: UUIDSchema,
@@ -160,7 +151,7 @@ export const CreateTreatmentSessionSchema = z.object({
 					quantityUsed: z.number().min(0),
 					batchNumber: z.string().optional(),
 					expiryDate: DateSchema.optional(),
-				}),
+				})
 			)
 			.default([]),
 	}),
@@ -178,9 +169,5 @@ export const CompleteTreatmentSessionSchema = z.object({
 
 export type CreateTreatmentPlanData = z.infer<typeof CreateTreatmentPlanSchema>;
 export type UpdateTreatmentPlanData = z.infer<typeof UpdateTreatmentPlanSchema>;
-export type CreateTreatmentSessionData = z.infer<
-	typeof CreateTreatmentSessionSchema
->;
-export type CompleteTreatmentSessionData = z.infer<
-	typeof CompleteTreatmentSessionSchema
->;
+export type CreateTreatmentSessionData = z.infer<typeof CreateTreatmentSessionSchema>;
+export type CompleteTreatmentSessionData = z.infer<typeof CompleteTreatmentSessionSchema>;

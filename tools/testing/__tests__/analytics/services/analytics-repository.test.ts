@@ -78,7 +78,7 @@ describe("Analytics Repository Utils", () => {
 
 		it("should aggregate revenue by month", () => {
 			const aggregated = aggregateMetricsByPeriod(testData, "month", (items) =>
-				items.reduce((sum, item) => sum + item.revenue, 0),
+				items.reduce((sum, item) => sum + item.revenue, 0)
 			);
 
 			expect(aggregated).toHaveLength(2);
@@ -90,7 +90,7 @@ describe("Analytics Repository Utils", () => {
 
 		it("should aggregate customers by month", () => {
 			const aggregated = aggregateMetricsByPeriod(testData, "month", (items) =>
-				Math.max(...items.map((item) => item.customers)),
+				Math.max(...items.map((item) => item.customers))
 			);
 
 			expect(aggregated).toHaveLength(2);
@@ -100,7 +100,7 @@ describe("Analytics Repository Utils", () => {
 
 		it("should handle day aggregation", () => {
 			const aggregated = aggregateMetricsByPeriod(testData, "day", (items) =>
-				items.reduce((sum, item) => sum + item.subscriptions, 0),
+				items.reduce((sum, item) => sum + item.subscriptions, 0)
 			);
 
 			expect(aggregated).toHaveLength(4);
@@ -190,7 +190,7 @@ describe("Analytics Repository Utils", () => {
 	describe("Data Edge Cases", () => {
 		it("should handle empty datasets gracefully", () => {
 			const aggregated = aggregateMetricsByPeriod([], "month", (items) =>
-				items.reduce((sum, item) => sum + (item as any).value, 0),
+				items.reduce((sum, item) => sum + (item as any).value, 0)
 			);
 
 			expect(aggregated).toEqual([]);
@@ -212,7 +212,7 @@ describe("Analytics Repository Utils", () => {
 			const aggregated = aggregateMetricsByPeriod(
 				dataWithNullDates.filter((item) => item.date),
 				"day",
-				(items) => items.reduce((sum, item) => sum + (item as any).value, 0),
+				(items) => items.reduce((sum, item) => sum + (item as any).value, 0)
 			);
 
 			expect(aggregated).toHaveLength(1);
@@ -229,10 +229,8 @@ describe("Analytics Repository Utils", () => {
 			}));
 
 			const start = performance.now();
-			const aggregated = aggregateMetricsByPeriod(
-				largeDataset,
-				"month",
-				(items) => items.reduce((sum, item) => sum + (item as any).value, 0),
+			const aggregated = aggregateMetricsByPeriod(largeDataset, "month", (items) =>
+				items.reduce((sum, item) => sum + (item as any).value, 0)
 			);
 			const end = performance.now();
 

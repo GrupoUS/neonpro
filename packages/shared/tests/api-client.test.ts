@@ -1,7 +1,7 @@
 /**
  * 🔗 API Client Tests - NeonPro Healthcare
  * ========================================
- * 
+ *
  * Comprehensive unit tests for the enhanced API client with focus on:
  * - Authentication management
  * - Error handling and retry logic
@@ -35,9 +35,12 @@ vi.mock("hono/client", () => ({
 import { ApiHelpers } from "../src/api-client";
 
 // Helper to create mock Response objects
-function createMockResponse(data: any, options: { ok?: boolean; status?: number; headers?: Record<string, string> } = {}) {
+function createMockResponse(
+	data: any,
+	options: { ok?: boolean; status?: number; headers?: Record<string, string> } = {}
+) {
 	const { ok = true, status = 200, headers = {} } = options;
-	
+
 	return {
 		ok,
 		status,
@@ -89,8 +92,8 @@ describe("API Client - Error Handling", () => {
 					validation_errors: [
 						{ field: "email", message: "Invalid email format" },
 						{ field: "age", message: "Must be a positive number" },
-					]
-				}
+					],
+				},
 			};
 			const result = ApiHelpers.formatError(error);
 			expect(result).toBe("email: Invalid email format, age: Must be a positive number");
@@ -101,11 +104,11 @@ describe("API Client - Error Handling", () => {
 		it("should handle successful responses", async () => {
 			const mockData = { id: 1, name: "Test Patient" };
 			const mockResponse = createMockResponse(mockData, {
-				headers: { "X-Request-ID": "test-123" }
+				headers: { "X-Request-ID": "test-123" },
 			});
-			
+
 			const result = await ApiHelpers.handleResponse(mockResponse);
-			
+
 			expect(result.success).toBe(true);
 			expect(result.data).toEqual(mockData);
 			expect(result.message).toBe("Success");
@@ -115,16 +118,16 @@ describe("API Client - Error Handling", () => {
 		it("should handle failed responses", async () => {
 			const mockError = {
 				error: { code: "VALIDATION_ERROR", details: "Invalid input" },
-				message: "Validation failed"
+				message: "Validation failed",
 			};
 			const mockResponse = createMockResponse(mockError, {
 				ok: false,
 				status: 400,
-				headers: { "X-Request-ID": "test-456" }
+				headers: { "X-Request-ID": "test-456" },
 			});
-			
+
 			const result = await ApiHelpers.handleResponse(mockResponse);
-			
+
 			expect(result.success).toBe(false);
 			expect(result.error?.code).toBe("VALIDATION_ERROR");
 			expect(result.message).toBe("Validation failed");
@@ -218,7 +221,7 @@ describe("API Client - Healthcare Compliance", () => {
 		const patientData = {
 			name: "João Silva",
 			cpf: "123.456.789-00",
-			birthDate: "1980-01-01"
+			birthDate: "1980-01-01",
 		};
 
 		const mockResponse = createMockResponse(patientData);

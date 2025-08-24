@@ -1,22 +1,9 @@
-import {
-	AlertTriangleIcon,
-	CheckIcon,
-	ClockIcon,
-	FileTextIcon,
-	TrendingUpIcon,
-	UserCheckIcon,
-} from "lucide-react";
+import { AlertTriangleIcon, CheckIcon, ClockIcon, FileTextIcon, TrendingUpIcon, UserCheckIcon } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { Alert, AlertDescription } from "../Alert";
 import { Badge } from "../Badge";
 import { Button } from "../Button";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "../Card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../Card";
 import { Progress } from "../Progress";
 
 export type AnvisaDashboardProps = {
@@ -35,11 +22,7 @@ export type AnvisaDashboardProps = {
 	}>;
 };
 
-export function AnvisaDashboard({
-	stats,
-	recentActivity,
-	className,
-}: AnvisaDashboardProps & { className?: string }) {
+export function AnvisaDashboard({ stats, recentActivity, className }: AnvisaDashboardProps & { className?: string }) {
 	const formatDate = (date: string) => new Date(date).toLocaleDateString();
 
 	return (
@@ -47,8 +30,7 @@ export function AnvisaDashboard({
 			<div>
 				<h1 className="font-bold text-3xl">ANVISA Compliance Dashboard</h1>
 				<p className="text-muted-foreground">
-					Monitor compliance status with ANVISA regulations for medical devices
-					and software.
+					Monitor compliance status with ANVISA regulations for medical devices and software.
 				</p>
 			</div>
 
@@ -56,26 +38,18 @@ export function AnvisaDashboard({
 			<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
 				<Card>
 					<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-						<CardTitle className="font-medium text-sm">
-							Active Registrations
-						</CardTitle>
+						<CardTitle className="font-medium text-sm">Active Registrations</CardTitle>
 						<FileTextIcon className="h-4 w-4 text-muted-foreground" />
 					</CardHeader>
 					<CardContent>
-						<div className="font-bold text-2xl">
-							{stats.activeRegistrations}
-						</div>
-						<p className="text-muted-foreground text-xs">
-							+20.1% from last month
-						</p>
+						<div className="font-bold text-2xl">{stats.activeRegistrations}</div>
+						<p className="text-muted-foreground text-xs">+20.1% from last month</p>
 					</CardContent>
 				</Card>
 
 				<Card>
 					<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-						<CardTitle className="font-medium text-sm">
-							Pending Approvals
-						</CardTitle>
+						<CardTitle className="font-medium text-sm">Pending Approvals</CardTitle>
 						<ClockIcon className="h-4 w-4 text-muted-foreground" />
 					</CardHeader>
 					<CardContent>
@@ -86,9 +60,7 @@ export function AnvisaDashboard({
 
 				<Card>
 					<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-						<CardTitle className="font-medium text-sm">
-							Compliance Score
-						</CardTitle>
+						<CardTitle className="font-medium text-sm">Compliance Score</CardTitle>
 						<TrendingUpIcon className="h-4 w-4 text-muted-foreground" />
 					</CardHeader>
 					<CardContent>
@@ -114,32 +86,20 @@ export function AnvisaDashboard({
 				<Card className="col-span-4">
 					<CardHeader>
 						<CardTitle>Recent Activity</CardTitle>
-						<CardDescription>
-							Latest ANVISA compliance activities and updates.
-						</CardDescription>
+						<CardDescription>Latest ANVISA compliance activities and updates.</CardDescription>
 					</CardHeader>
 					<CardContent>
 						<div className="space-y-4">
 							{recentActivity.map((activity) => (
 								<div className="flex items-center space-x-4" key={activity.id}>
 									<div className="flex h-9 w-9 items-center justify-center rounded-full bg-muted">
-										{activity.type === "registration" && (
-											<FileTextIcon className="h-4 w-4" />
-										)}
-										{activity.type === "approval" && (
-											<CheckIcon className="h-4 w-4" />
-										)}
-										{activity.type === "alert" && (
-											<AlertTriangleIcon className="h-4 w-4" />
-										)}
+										{activity.type === "registration" && <FileTextIcon className="h-4 w-4" />}
+										{activity.type === "approval" && <CheckIcon className="h-4 w-4" />}
+										{activity.type === "alert" && <AlertTriangleIcon className="h-4 w-4" />}
 									</div>
 									<div className="flex-1 space-y-1">
-										<p className="font-medium text-sm leading-none">
-											{activity.title}
-										</p>
-										<p className="text-muted-foreground text-sm">
-											{formatDate(activity.timestamp)}
-										</p>
+										<p className="font-medium text-sm leading-none">{activity.title}</p>
+										<p className="text-muted-foreground text-sm">{formatDate(activity.timestamp)}</p>
 									</div>
 									<Badge
 										variant={
@@ -185,8 +145,7 @@ export function AnvisaDashboard({
 				<Alert>
 					<AlertTriangleIcon className="h-4 w-4" />
 					<AlertDescription>
-						You have {stats.recentAlerts} compliance alerts that require
-						attention.{" "}
+						You have {stats.recentAlerts} compliance alerts that require attention.{" "}
 						<Button className="h-auto p-0" variant="link">
 							View details
 						</Button>

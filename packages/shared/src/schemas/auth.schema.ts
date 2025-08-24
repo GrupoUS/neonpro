@@ -59,12 +59,7 @@ export const UserPermissionSchema = z.enum([
 ]);
 
 // MFA Method Schema
-export const MFAMethodSchema = z.enum([
-	"sms",
-	"email",
-	"authenticator",
-	"backup_codes",
-]);
+export const MFAMethodSchema = z.enum(["sms", "email", "authenticator", "backup_codes"]);
 
 export type UserRole = z.infer<typeof UserRoleSchema>;
 export type UserPermission = z.infer<typeof UserPermissionSchema>;
@@ -86,10 +81,7 @@ export const UserBaseSchema = z.object({
 		.regex(/^[a-zA-ZÀ-ÿ\s]+$/, "Sobrenome deve conter apenas letras"),
 	phone: z
 		.string()
-		.regex(
-			/^\(\d{2}\)\s\d{4,5}-\d{4}$/,
-			"Telefone deve estar no formato (XX) XXXXX-XXXX",
-		)
+		.regex(/^\(\d{2}\)\s\d{4,5}-\d{4}$/, "Telefone deve estar no formato (XX) XXXXX-XXXX")
 		.optional(),
 	role: UserRoleSchema,
 	permissions: z.array(UserPermissionSchema).default([]),
@@ -154,7 +146,7 @@ export const RegisterRequestSchema = z
 			.max(128, "Senha deve ter no máximo 128 caracteres")
 			.regex(
 				/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
-				"Senha deve conter pelo menos: 1 minúscula, 1 maiúscula, 1 número e 1 símbolo",
+				"Senha deve conter pelo menos: 1 minúscula, 1 maiúscula, 1 número e 1 símbolo"
 			),
 		confirm_password: z.string(),
 		first_name: z
@@ -165,32 +157,18 @@ export const RegisterRequestSchema = z
 			.string()
 			.min(2, "Sobrenome deve ter pelo menos 2 caracteres")
 			.max(50, "Sobrenome deve ter no máximo 50 caracteres"),
-		phone: z
-			.string()
-			.regex(
-				/^\(\d{2}\)\s\d{4,5}-\d{4}$/,
-				"Telefone deve estar no formato (XX) XXXXX-XXXX",
-			),
+		phone: z.string().regex(/^\(\d{2}\)\s\d{4,5}-\d{4}$/, "Telefone deve estar no formato (XX) XXXXX-XXXX"),
 		role: UserRoleSchema.default("patient"),
 
 		// LGPD Compliance
-		lgpd_consent: z
-			.boolean()
-			.refine((val) => val === true, "Consentimento LGPD é obrigatório"),
+		lgpd_consent: z.boolean().refine((val) => val === true, "Consentimento LGPD é obrigatório"),
 		marketing_consent: z.boolean().optional().default(false),
-		terms_accepted: z
-			.boolean()
-			.refine((val) => val === true, "Aceitação dos termos é obrigatória"),
+		terms_accepted: z.boolean().refine((val) => val === true, "Aceitação dos termos é obrigatória"),
 
 		// Professional specific fields
 		professional_data: z
 			.object({
-				cpf: z
-					.string()
-					.regex(
-						/^\d{3}\.\d{3}\.\d{3}-\d{2}$/,
-						"CPF deve estar no formato XXX.XXX.XXX-XX",
-					),
+				cpf: z.string().regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, "CPF deve estar no formato XXX.XXX.XXX-XX"),
 				crm: z.string().optional(),
 				specialization: z.string().optional(),
 				bio: z.string().max(500).optional(),
@@ -274,7 +252,7 @@ export const ResetPasswordRequestSchema = z
 			.max(128, "Senha deve ter no máximo 128 caracteres")
 			.regex(
 				/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
-				"Senha deve conter pelo menos: 1 minúscula, 1 maiúscula, 1 número e 1 símbolo",
+				"Senha deve conter pelo menos: 1 minúscula, 1 maiúscula, 1 número e 1 símbolo"
 			),
 		confirm_password: z.string(),
 	})
@@ -297,7 +275,7 @@ export const ChangePasswordRequestSchema = z
 			.max(128, "Nova senha deve ter no máximo 128 caracteres")
 			.regex(
 				/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
-				"Nova senha deve conter pelo menos: 1 minúscula, 1 maiúscula, 1 número e 1 símbolo",
+				"Nova senha deve conter pelo menos: 1 minúscula, 1 maiúscula, 1 número e 1 símbolo"
 			),
 		confirm_password: z.string(),
 	})
@@ -325,10 +303,7 @@ export const UpdateProfileRequestSchema = z.object({
 		.optional(),
 	phone: z
 		.string()
-		.regex(
-			/^\(\d{2}\)\s\d{4,5}-\d{4}$/,
-			"Telefone deve estar no formato (XX) XXXXX-XXXX",
-		)
+		.regex(/^\(\d{2}\)\s\d{4,5}-\d{4}$/, "Telefone deve estar no formato (XX) XXXXX-XXXX")
 		.optional(),
 
 	// Professional specific updates
@@ -437,25 +412,17 @@ export type RefreshTokenResponse = z.infer<typeof RefreshTokenResponseSchema>;
 export type LogoutRequest = z.infer<typeof LogoutRequestSchema>;
 export type LogoutResponse = z.infer<typeof LogoutResponseSchema>;
 export type ForgotPasswordRequest = z.infer<typeof ForgotPasswordRequestSchema>;
-export type ForgotPasswordResponse = z.infer<
-	typeof ForgotPasswordResponseSchema
->;
+export type ForgotPasswordResponse = z.infer<typeof ForgotPasswordResponseSchema>;
 export type ResetPasswordRequest = z.infer<typeof ResetPasswordRequestSchema>;
 export type ResetPasswordResponse = z.infer<typeof ResetPasswordResponseSchema>;
 export type ChangePasswordRequest = z.infer<typeof ChangePasswordRequestSchema>;
-export type ChangePasswordResponse = z.infer<
-	typeof ChangePasswordResponseSchema
->;
+export type ChangePasswordResponse = z.infer<typeof ChangePasswordResponseSchema>;
 export type UpdateProfileRequest = z.infer<typeof UpdateProfileRequestSchema>;
 export type UpdateProfileResponse = z.infer<typeof UpdateProfileResponseSchema>;
 export type VerifyEmailRequest = z.infer<typeof VerifyEmailRequestSchema>;
 export type VerifyEmailResponse = z.infer<typeof VerifyEmailResponseSchema>;
-export type ResendVerificationRequest = z.infer<
-	typeof ResendVerificationRequestSchema
->;
-export type ResendVerificationResponse = z.infer<
-	typeof ResendVerificationResponseSchema
->;
+export type ResendVerificationRequest = z.infer<typeof ResendVerificationRequestSchema>;
+export type ResendVerificationResponse = z.infer<typeof ResendVerificationResponseSchema>;
 export type Session = z.infer<typeof SessionSchema>;
 export type GetSessionsResponse = z.infer<typeof GetSessionsResponseSchema>;
 export type RevokeSessionRequest = z.infer<typeof RevokeSessionRequestSchema>;

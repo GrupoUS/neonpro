@@ -47,15 +47,7 @@ export const BILLING_CONSTANTS = {
 
 // Treatment areas for aesthetic procedures
 export const TREATMENT_AREAS = {
-	FACE: [
-		"forehead",
-		"glabella",
-		"crow_feet",
-		"cheeks",
-		"lips",
-		"chin",
-		"jawline",
-	],
+	FACE: ["forehead", "glabella", "crow_feet", "cheeks", "lips", "chin", "jawline"],
 	BODY: ["arms", "legs", "bikini", "underarms", "back", "chest", "abdomen"],
 	SKIN: ["acne_scars", "pigmentation", "wrinkles", "sun_damage", "texture"],
 } as const;

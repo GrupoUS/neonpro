@@ -3,23 +3,20 @@ import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 import { cn } from "../utils/cn";
 
-const avatarVariants = cva(
-	"relative flex shrink-0 overflow-hidden rounded-full",
-	{
-		variants: {
-			size: {
-				sm: "h-8 w-8",
-				default: "h-10 w-10",
-				lg: "h-12 w-12",
-				xl: "h-16 w-16",
-				"2xl": "h-20 w-20",
-			},
-		},
-		defaultVariants: {
-			size: "default",
+const avatarVariants = cva("relative flex shrink-0 overflow-hidden rounded-full", {
+	variants: {
+		size: {
+			sm: "h-8 w-8",
+			default: "h-10 w-10",
+			lg: "h-12 w-12",
+			xl: "h-16 w-16",
+			"2xl": "h-20 w-20",
 		},
 	},
-);
+	defaultVariants: {
+		size: "default",
+	},
+});
 
 export interface AvatarProps
 	extends React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root>,
@@ -50,21 +47,11 @@ export interface AvatarProps
 	statusColor?: "green" | "yellow" | "red" | "gray";
 }
 
-const Avatar = React.forwardRef<
-	React.ElementRef<typeof AvatarPrimitive.Root>,
-	AvatarProps
->(
-	(
-		{ className, size, src, alt, fallback, online, statusColor, ...props },
-		ref,
-	) => {
+const Avatar = React.forwardRef<React.ElementRef<typeof AvatarPrimitive.Root>, AvatarProps>(
+	({ className, size, src, alt, fallback, online, statusColor, ...props }, ref) => {
 		return (
 			<div className="relative">
-				<AvatarPrimitive.Root
-					className={cn(avatarVariants({ size }), className)}
-					ref={ref}
-					{...props}
-				>
+				<AvatarPrimitive.Root className={cn(avatarVariants({ size }), className)} ref={ref} {...props}>
 					<AvatarImage alt={alt} src={src} />
 					<AvatarFallback>{fallback}</AvatarFallback>
 				</AvatarPrimitive.Root>
@@ -83,24 +70,20 @@ const Avatar = React.forwardRef<
 							statusColor === "red" && "bg-red-400",
 							statusColor === "gray" && "bg-gray-400",
 							!statusColor && online && "bg-green-400",
-							!statusColor && online === false && "bg-gray-400",
+							!statusColor && online === false && "bg-gray-400"
 						)}
 					/>
 				)}
 			</div>
 		);
-	},
+	}
 );
 Avatar.displayName = AvatarPrimitive.Root.displayName;
 const AvatarImage = React.forwardRef<
 	React.ElementRef<typeof AvatarPrimitive.Image>,
 	React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>
 >(({ className, ...props }, ref) => (
-	<AvatarPrimitive.Image
-		className={cn("aspect-square h-full w-full", className)}
-		ref={ref}
-		{...props}
-	/>
+	<AvatarPrimitive.Image className={cn("aspect-square h-full w-full", className)} ref={ref} {...props} />
 ));
 AvatarImage.displayName = AvatarPrimitive.Image.displayName;
 
@@ -111,7 +94,7 @@ const AvatarFallback = React.forwardRef<
 	<AvatarPrimitive.Fallback
 		className={cn(
 			"flex h-full w-full items-center justify-center rounded-full bg-muted font-medium text-muted-foreground text-sm",
-			className,
+			className
 		)}
 		ref={ref}
 		{...props}

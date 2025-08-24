@@ -17,10 +17,7 @@ export const useCommunicationRealtime = () => {
 			setIsConnected(false);
 		},
 		sendMessage: async (message: string) => {
-			setMessages((prev) => [
-				...prev,
-				{ id: Date.now(), content: message, timestamp: new Date() },
-			]);
+			setMessages((prev) => [...prev, { id: Date.now(), content: message, timestamp: new Date() }]);
 		},
 		loadMessages: async () => {
 			setMessages([]);

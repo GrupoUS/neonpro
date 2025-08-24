@@ -10,13 +10,7 @@ export default defineConfig({
 		// Integration test configuration
 		name: "integration",
 		include: ["apps/web/tests/integration/**/*.test.{ts,tsx}"],
-		exclude: [
-			"node_modules/**",
-			"dist/**",
-			"**/*.d.ts",
-			"apps/web/tests/unit/**",
-			"apps/web/tests/e2e/**",
-		],
+		exclude: ["node_modules/**", "dist/**", "**/*.d.ts", "apps/web/tests/unit/**", "apps/web/tests/e2e/**"],
 
 		// Test environment
 		environment: "happy-dom",

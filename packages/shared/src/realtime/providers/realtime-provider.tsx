@@ -4,20 +4,9 @@
  * Gerencia conexão global e estado para toda aplicação
  */
 
-import {
-	createContext,
-	type ReactNode,
-	useCallback,
-	useContext,
-	useEffect,
-	useState,
-} from "react";
+import { createContext, type ReactNode, useCallback, useContext, useEffect, useState } from "react";
 import { getRealtimeConfig } from "../config";
-import {
-	type ConnectionStatus,
-	getRealtimeManager,
-	type SupabaseRealtimeManager,
-} from "../connection-manager";
+import { type ConnectionStatus, getRealtimeManager, type SupabaseRealtimeManager } from "../connection-manager";
 
 type RealtimeContextValue = {
 	manager: SupabaseRealtimeManager | null;
@@ -127,10 +116,9 @@ export function RealtimeProvider({
 						detail: {
 							tenantId,
 							status,
-							message:
-								"Conexão real-time com problemas críticos. Algumas funcionalidades podem estar limitadas.",
+							message: "Conexão real-time com problemas críticos. Algumas funcionalidades podem estar limitadas.",
 						},
-					}),
+					})
 				);
 			}
 
@@ -141,10 +129,9 @@ export function RealtimeProvider({
 						detail: {
 							tenantId,
 							status,
-							message:
-								"Conexão instável detectada. Verificar conectividade de rede.",
+							message: "Conexão instável detectada. Verificar conectividade de rede.",
 						},
-					}),
+					})
 				);
 			}
 		};
@@ -161,11 +148,7 @@ export function RealtimeProvider({
 		disconnect,
 	};
 
-	return (
-		<RealtimeContext.Provider value={contextValue}>
-			{children}
-		</RealtimeContext.Provider>
-	);
+	return <RealtimeContext.Provider value={contextValue}>{children}</RealtimeContext.Provider>;
 } /**
  * Hook para acessar o contexto do realtime provider
  */
@@ -173,9 +156,7 @@ export function useRealtimeContext(): RealtimeContextValue {
 	const context = useContext(RealtimeContext);
 
 	if (!context) {
-		throw new Error(
-			"useRealtimeContext deve ser usado dentro de um RealtimeProvider",
-		);
+		throw new Error("useRealtimeContext deve ser usado dentro de um RealtimeProvider");
 	}
 
 	return context;

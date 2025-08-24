@@ -7,11 +7,7 @@
  */
 
 import { z } from "zod";
-import type {
-	ComplianceScore,
-	ConstitutionalResponse,
-	DPIAAssessment,
-} from "../types";
+import type { ComplianceScore, ConstitutionalResponse, DPIAAssessment } from "../types";
 import { LGPDLegalBasis, PatientDataClassification } from "../types";
 
 /**
@@ -81,9 +77,7 @@ export class DPIAService {
 	 * Automated DPIA Assessment
 	 * Implements LGPD Art. 38 requirements with constitutional healthcare validation
 	 */
-	async conductDPIA(
-		input: DPIAInput,
-	): Promise<ConstitutionalResponse<DPIAAssessment>> {
+	async conductDPIA(input: DPIAInput): Promise<ConstitutionalResponse<DPIAAssessment>> {
 		try {
 			// Step 1: Validate input according to constitutional standards
 			const validatedInput = DPIAInputSchema.parse(input);
@@ -97,10 +91,7 @@ export class DPIAService {
 					error: "DPIA not required for this processing activity",
 					complianceScore: dpiaRequired.riskScore,
 					regulatoryValidation: { lgpd: true, anvisa: true, cfm: true },
-					auditTrail: await this.createAuditEvent(
-						"DPIA_NOT_REQUIRED",
-						validatedInput,
-					),
+					auditTrail: await this.createAuditEvent("DPIA_NOT_REQUIRED", validatedInput),
 					timestamp: new Date(),
 				};
 			}
@@ -109,14 +100,10 @@ export class DPIAService {
 			const riskAssessment = await this.conductRiskAssessment(validatedInput);
 
 			// Step 4: Generate mitigation measures
-			const mitigationMeasures =
-				await this.generateMitigationMeasures(riskAssessment);
+			const mitigationMeasures = await this.generateMitigationMeasures(riskAssessment);
 
 			// Step 5: Calculate constitutional compliance score
-			const complianceScore = this.calculateConstitutionalScore(
-				riskAssessment,
-				mitigationMeasures,
-			);
+			const complianceScore = this.calculateConstitutionalScore(riskAssessment, mitigationMeasures);
 
 			// Step 6: Create DPIA assessment
 			const dpiaAssessment: DPIAAssessment = {
@@ -139,10 +126,7 @@ export class DPIAService {
 			await this.storeDPIAAssessment(dpiaAssessment);
 
 			// Step 8: Generate audit trail
-			const auditTrail = await this.createAuditEvent(
-				"DPIA_COMPLETED",
-				validatedInput,
-			);
+			const auditTrail = await this.createAuditEvent("DPIA_COMPLETED", validatedInput);
 
 			return {
 				success: true,
@@ -196,10 +180,7 @@ export class DPIAService {
 			riskScore += 4;
 		}
 
-		if (
-			input.dataSubjects.minors ||
-			input.dataTypes.includes("CHILD" as PatientDataClassification)
-		) {
+		if (input.dataSubjects.minors || input.dataTypes.includes("CHILD" as PatientDataClassification)) {
 			risks.push("Processing data of children (Art. 14 LGPD)");
 			riskScore += 3;
 		}
@@ -209,13 +190,7 @@ export class DPIAService {
 			riskScore += 2;
 		}
 
-		if (
-			input.technologyUsed.some(
-				(tech) =>
-					tech.toLowerCase().includes("ai") ||
-					tech.toLowerCase().includes("ml"),
-			)
-		) {
+		if (input.technologyUsed.some((tech) => tech.toLowerCase().includes("ai") || tech.toLowerCase().includes("ml"))) {
 			risks.push("Use of AI/ML automated decision-making");
 			riskScore += 3;
 		}
@@ -258,9 +233,7 @@ export class DPIAService {
 		}
 
 		if (input.dataSubjects.minors) {
-			privacyRisks.push(
-				"Inadequate protection of children's data (Art. 14 LGPD)",
-			);
+			privacyRisks.push("Inadequate protection of children's data (Art. 14 LGPD)");
 			totalRiskScore += 2;
 		}
 
@@ -270,9 +243,7 @@ export class DPIAService {
 			totalRiskScore += 2;
 		}
 
-		if (
-			input.technologyUsed.some((tech) => tech.toLowerCase().includes("cloud"))
-		) {
+		if (input.technologyUsed.some((tech) => tech.toLowerCase().includes("cloud"))) {
 			securityRisks.push("Cloud security vulnerabilities");
 			totalRiskScore += 1;
 		}
@@ -282,9 +253,7 @@ export class DPIAService {
 			!input.legalBasis.includes("HEALTH_PROTECTION" as LGPDLegalBasis) &&
 			input.dataTypes.includes("HEALTH" as PatientDataClassification)
 		) {
-			complianceRisks.push(
-				"Inappropriate legal basis for health data processing",
-			);
+			complianceRisks.push("Inappropriate legal basis for health data processing");
 			totalRiskScore += 3;
 		}
 
@@ -295,9 +264,7 @@ export class DPIAService {
 		}
 
 		// Healthcare-Specific Risk Assessment
-		if (
-			input.technologyUsed.some((tech) => tech.toLowerCase().includes("ai"))
-		) {
+		if (input.technologyUsed.some((tech) => tech.toLowerCase().includes("ai"))) {
 			healthcareRisks.push("AI bias in medical decisions");
 			totalRiskScore += 2;
 		}
@@ -330,16 +297,14 @@ export class DPIAService {
 	 * Generate mitigation measures based on risk assessment
 	 */
 	private async generateMitigationMeasures(
-		riskAssessment: any,
+		riskAssessment: any
 	): Promise<{ measures: string[]; effectivenessScore: ComplianceScore }> {
 		const measures: string[] = [];
 		let effectivenessScore = 0;
 
 		// Privacy mitigation measures
 		if (riskAssessment.privacyRisks.length > 0) {
-			measures.push(
-				"Implement data minimization principles (Art. 6º, III LGPD)",
-			);
+			measures.push("Implement data minimization principles (Art. 6º, III LGPD)");
 			measures.push("Apply pseudonymization for sensitive data processing");
 			measures.push("Establish granular consent management system");
 			effectivenessScore += 2;
@@ -347,9 +312,7 @@ export class DPIAService {
 
 		// Security mitigation measures
 		if (riskAssessment.securityRisks.length > 0) {
-			measures.push(
-				"Implement AES-256 encryption for data at rest and in transit",
-			);
+			measures.push("Implement AES-256 encryption for data at rest and in transit");
 			measures.push("Deploy multi-factor authentication for healthcare staff");
 			measures.push("Establish secure API gateways with rate limiting");
 			measures.push("Implement comprehensive audit logging");
@@ -384,10 +347,7 @@ export class DPIAService {
 	/**
 	 * Calculate constitutional compliance score
 	 */
-	private calculateConstitutionalScore(
-		riskAssessment: any,
-		mitigationMeasures: any,
-	): ComplianceScore {
+	private calculateConstitutionalScore(riskAssessment: any, mitigationMeasures: any): ComplianceScore {
 		let score = 10; // Start with perfect score
 
 		// Deduct points for high risks
@@ -406,11 +366,7 @@ export class DPIAService {
 		if (riskAssessment.healthcareRisks.length === 0) {
 			score += 0.5;
 		}
-		if (
-			mitigationMeasures.measures.some((m: string) =>
-				m.includes("constitutional"),
-			)
-		) {
+		if (mitigationMeasures.measures.some((m: string) => m.includes("constitutional"))) {
 			score += 0.5;
 		}
 
@@ -420,9 +376,7 @@ export class DPIAService {
 	/**
 	 * Store DPIA assessment in database
 	 */
-	private async storeDPIAAssessment(
-		_assessment: DPIAAssessment,
-	): Promise<void> {}
+	private async storeDPIAAssessment(_assessment: DPIAAssessment): Promise<void> {}
 
 	/**
 	 * Create audit event for DPIA activities
@@ -442,7 +396,7 @@ export class DPIAService {
 	 */
 	async getDPIAAssessment(
 		assessmentId: string,
-		_tenantId: string,
+		_tenantId: string
 	): Promise<ConstitutionalResponse<DPIAAssessment | null>> {
 		try {
 			// Implementation would query Supabase database
@@ -465,10 +419,7 @@ export class DPIAService {
 
 			return {
 				success: false,
-				error:
-					error instanceof Error
-						? error.message
-						: "Failed to retrieve DPIA assessment",
+				error: error instanceof Error ? error.message : "Failed to retrieve DPIA assessment",
 				complianceScore: 0,
 				regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
 				auditTrail,
@@ -484,7 +435,7 @@ export class DPIAService {
 		assessmentId: string,
 		reviewerId: string,
 		approved: boolean,
-		comments?: string,
+		comments?: string
 	): Promise<ConstitutionalResponse<DPIAAssessment>> {
 		try {
 			const auditTrail = await this.createAuditEvent("DPIA_REVIEWED", {
@@ -509,10 +460,7 @@ export class DPIAService {
 
 			return {
 				success: false,
-				error:
-					error instanceof Error
-						? error.message
-						: "Failed to review DPIA assessment",
+				error: error instanceof Error ? error.message : "Failed to review DPIA assessment",
 				complianceScore: 0,
 				regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
 				auditTrail,

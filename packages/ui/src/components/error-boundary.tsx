@@ -44,9 +44,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
 			return (
 				<div className="flex min-h-96 flex-col items-center justify-center rounded-lg border border-destructive/30 bg-gradient-to-br from-destructive/10 via-destructive/5 to-transparent p-8 shadow-healthcare-md backdrop-blur-sm">
-					<h2 className="mb-4 font-bold text-2xl text-destructive">
-						Oops! Algo deu errado
-					</h2>
+					<h2 className="mb-4 font-bold text-2xl text-destructive">Oops! Algo deu errado</h2>
 					<p className="mb-6 max-w-md text-center text-muted-foreground">
 						Um erro inesperado aconteceu. Nossa equipe foi notificada.
 					</p>
@@ -81,10 +79,7 @@ interface CriticalErrorBoundaryProps extends Props {
 	title: string;
 }
 
-export class CriticalErrorBoundary extends Component<
-	CriticalErrorBoundaryProps,
-	State
-> {
+export class CriticalErrorBoundary extends Component<CriticalErrorBoundaryProps, State> {
 	constructor(props: CriticalErrorBoundaryProps) {
 		super(props);
 		this.state = { hasError: false };
@@ -112,17 +107,12 @@ export class CriticalErrorBoundary extends Component<
 				<div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-destructive/20 via-destructive/10 to-transparent p-8">
 					<div className="w-full max-w-md space-y-6 rounded-lg border border-destructive bg-card p-8 text-center shadow-healthcare-lg backdrop-blur-sm">
 						<div className="space-y-2">
-							<h1 className="font-bold text-3xl text-destructive">
-								Erro Crítico
-							</h1>
-							<h2 className="font-semibold text-foreground text-xl">
-								{this.props.title}
-							</h2>
+							<h1 className="font-bold text-3xl text-destructive">Erro Crítico</h1>
+							<h2 className="font-semibold text-foreground text-xl">{this.props.title}</h2>
 						</div>
 
 						<p className="text-muted-foreground">
-							Um erro crítico ocorreu nesta seção. Recarregue a página para
-							tentar novamente.
+							Um erro crítico ocorreu nesta seção. Recarregue a página para tentar novamente.
 						</p>
 
 						<button
@@ -155,7 +145,7 @@ export class CriticalErrorBoundary extends Component<
 // HOC para facilitar o uso
 export function withErrorBoundary<P extends object>(
 	Component: React.ComponentType<P>,
-	errorBoundaryProps?: Omit<Props, "children">,
+	errorBoundaryProps?: Omit<Props, "children">
 ) {
 	const WrappedComponent = (props: P) => (
 		<ErrorBoundary {...errorBoundaryProps}>

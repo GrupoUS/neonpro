@@ -29,12 +29,8 @@ const createMockSupabaseClient = () => {
 
 	singletonMockSupabaseClient = {
 		auth: {
-			getSession: vi.fn(() =>
-				Promise.resolve({ data: { session: null }, error: null }),
-			),
-			getUser: vi.fn(() =>
-				Promise.resolve({ data: { user: null }, error: null }),
-			),
+			getSession: vi.fn(() => Promise.resolve({ data: { session: null }, error: null })),
+			getUser: vi.fn(() => Promise.resolve({ data: { user: null }, error: null })),
 			signIn: vi.fn(),
 			signOut: vi.fn(),
 			onAuthStateChange: vi.fn(() => ({
@@ -96,12 +92,8 @@ vi.mock("@supabase/auth-js", () => {
 				onAuthStateChange: vi.fn().mockReturnValue({
 					data: { subscription: { unsubscribe: vi.fn() } },
 				}),
-				getUser: vi
-					.fn()
-					.mockResolvedValue({ data: { user: null }, error: null }),
-				getSession: vi
-					.fn()
-					.mockResolvedValue({ data: { session: null }, error: null }),
+				getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }),
+				getSession: vi.fn().mockResolvedValue({ data: { session: null }, error: null }),
 				signInWithPassword: vi.fn().mockResolvedValue({
 					data: { user: null, session: null },
 					error: null,

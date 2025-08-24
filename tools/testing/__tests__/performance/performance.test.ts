@@ -30,8 +30,7 @@ describe("Subscription System Performance", () => {
 
 			// Simulate subscription validation
 			const subscription = createMockSubscription({ status: "active" });
-			const isValid =
-				subscription.status === "active" && subscription.endDate > new Date();
+			const isValid = subscription.status === "active" && subscription.endDate > new Date();
 
 			const endTime = performance.now();
 			const responseTime = endTime - startTime;
@@ -49,7 +48,7 @@ describe("Subscription System Performance", () => {
 					createMockSubscription({
 						id: `test-sub-${index}`,
 						status: "active",
-					}),
+					})
 				);
 			});
 
@@ -91,18 +90,14 @@ describe("Subscription System Performance", () => {
 
 		it("should efficiently handle large subscription datasets", () => {
 			const largeDataset = Array.from({ length: 10_000 }, (_, index) =>
-				createMockSubscription({ id: `large-dataset-${index}` }),
+				createMockSubscription({ id: `large-dataset-${index}` })
 			);
 
 			const startTime = performance.now();
 
 			// Simulate filtering operations
-			const activeSubscriptions = largeDataset.filter(
-				(sub) => sub.status === "active",
-			);
-			const _premiumSubscriptions = activeSubscriptions.filter(
-				(sub) => sub.tier === "premium",
-			);
+			const activeSubscriptions = largeDataset.filter((sub) => sub.status === "active");
+			const _premiumSubscriptions = activeSubscriptions.filter((sub) => sub.tier === "premium");
 
 			const endTime = performance.now();
 			const processingTime = endTime - startTime;
@@ -166,9 +161,7 @@ describe("Subscription System Performance", () => {
 			for (let i = 0; i < iterations; i++) {
 				const startTime = performance.now();
 
-				const promises = Array.from({ length: requestsPerIteration }, () =>
-					Promise.resolve(createMockSubscription()),
-				);
+				const promises = Array.from({ length: requestsPerIteration }, () => Promise.resolve(createMockSubscription()));
 
 				await Promise.all(promises);
 
@@ -177,11 +170,9 @@ describe("Subscription System Performance", () => {
 			}
 
 			// Performance should remain consistent (standard deviation < 50% of mean)
-			const mean =
-				performanceResults.reduce((a, b) => a + b) / performanceResults.length;
+			const mean = performanceResults.reduce((a, b) => a + b) / performanceResults.length;
 			const variance =
-				performanceResults.reduce((acc, time) => acc + (time - mean) ** 2, 0) /
-				performanceResults.length;
+				performanceResults.reduce((acc, time) => acc + (time - mean) ** 2, 0) / performanceResults.length;
 			const standardDeviation = Math.sqrt(variance);
 
 			expect(standardDeviation).toBeLessThan(mean * 0.5);

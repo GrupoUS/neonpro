@@ -8,10 +8,7 @@ export class AestheticFeatureExtractor {
 	/**
 	 * Extract comprehensive features for treatment outcome prediction
 	 */
-	async extractTreatmentFeatures(
-		patient: PatientProfile,
-		treatment: TreatmentRequest,
-	): Promise<number[]> {
+	async extractTreatmentFeatures(patient: PatientProfile, treatment: TreatmentRequest): Promise<number[]> {
 		const features: number[] = [];
 
 		// Patient demographic features (0-5)
@@ -21,7 +18,7 @@ export class AestheticFeatureExtractor {
 			this.encodeSkinType(patient.skinType),
 			patient.medicalHistory.bloodThinnersUse ? 1 : 0,
 			patient.medicalHistory.keloidProneness ? 1 : 0,
-			patient.medicalHistory.autoimmuneDiseases.length / 10, // Normalized count
+			patient.medicalHistory.autoimmuneDiseases.length / 10 // Normalized count
 		);
 
 		// Lifestyle factors (6-12)
@@ -32,41 +29,31 @@ export class AestheticFeatureExtractor {
 			patient.lifestyle.stressLevel / 10, // Normalized 1-10 scale
 			patient.lifestyle.sleepQuality / 10, // Normalized 1-10 scale
 			patient.lifestyle.skincare.sunscreenUse ? 1 : 0,
-			patient.lifestyle.skincare.retinoidUse ? 1 : 0,
+			patient.lifestyle.skincare.retinoidUse ? 1 : 0
 		);
 
 		// Treatment history features (13-17)
-		const relevantHistory = patient.previousTreatments.filter(
-			(t) => t.type === treatment.treatmentType,
-		);
+		const relevantHistory = patient.previousTreatments.filter((t) => t.type === treatment.treatmentType);
 		features.push(
 			relevantHistory.length / 5, // Normalized count
 			relevantHistory.length > 0
-				? relevantHistory.reduce((sum, t) => sum + t.satisfaction, 0) /
-						(relevantHistory.length * 10)
+				? relevantHistory.reduce((sum, t) => sum + t.satisfaction, 0) / (relevantHistory.length * 10)
 				: 0,
 			relevantHistory.length > 0
-				? relevantHistory.reduce(
-						(sum, t) => sum + t.outcome.effectivenesss,
-						0,
-					) /
-						(relevantHistory.length * 10)
+				? relevantHistory.reduce((sum, t) => sum + t.outcome.effectivenesss, 0) / (relevantHistory.length * 10)
 				: 0,
-			patient.previousTreatments.some((t) => t.complications.length > 0)
-				? 1
-				: 0,
-			patient.previousTreatments.length / 10, // Total treatment experience
+			patient.previousTreatments.some((t) => t.complications.length > 0) ? 1 : 0,
+			patient.previousTreatments.length / 10 // Total treatment experience
 		);
 
 		// Treatment-specific features (18-23)
 		features.push(
 			this.encodeTreatmentType(treatment.treatmentType),
 			treatment.targetAreas.length / 5, // Normalized area count
-			treatment.targetAreas.reduce((sum, area) => sum + area.severity, 0) /
-				(treatment.targetAreas.length * 10),
+			treatment.targetAreas.reduce((sum, area) => sum + area.severity, 0) / (treatment.targetAreas.length * 10),
 			this.encodeExpectationLevel(treatment.goals.expectations),
 			this.encodeUrgency(treatment.urgency),
-			treatment.goals.naturalLook ? 1 : 0,
+			treatment.goals.naturalLook ? 1 : 0
 		);
 
 		return features;
@@ -78,7 +65,7 @@ export class AestheticFeatureExtractor {
 	async extractBotoxFeatures(
 		patient: PatientProfile,
 		targetAreas: string[],
-		desiredIntensity: number,
+		desiredIntensity: number
 	): Promise<number[]> {
 		const features: number[] = [];
 
@@ -87,9 +74,7 @@ export class AestheticFeatureExtractor {
 			patient.age / 100,
 			this.encodeGender(patient.gender),
 			this.encodeSkinType(patient.skinType),
-			patient.medicalHistory.conditions.some((c) => c.name.includes("muscle"))
-				? 1
-				: 0,
+			patient.medicalHistory.conditions.some((c) => c.name.includes("muscle")) ? 1 : 0,
 			patient.lifestyle.stressLevel / 10,
 			patient.medicalHistory.medications.some((m) => m.affectsHealing) ? 1 : 0,
 			// Previous Botox experience
@@ -103,7 +88,7 @@ export class AestheticFeatureExtractor {
 			// Expression strength
 			this.estimateExpressionStrength(patient, targetAreas),
 			// Recovery capacity
-			this.estimateRecoveryCapacity(patient),
+			this.estimateRecoveryCapacity(patient)
 		);
 
 		// Treatment parameters (12-17)
@@ -116,14 +101,11 @@ export class AestheticFeatureExtractor {
 			// Previous area treatment
 			this.hasPreviousAreaTreatment(patient, targetAreas, "botox") ? 1 : 0,
 			// Concurrent treatments risk
-			this.evaluateConcurrentTreatmentRisk(patient, "botox"),
+			this.evaluateConcurrentTreatmentRisk(patient, "botox")
 		);
 
 		// Contextual factors (18-19)
-		features.push(
-			this.encodeSeasonalFactor(),
-			this.encodeCurrentTrends("botox"),
-		);
+		features.push(this.encodeSeasonalFactor(), this.encodeCurrentTrends("botox"));
 
 		return features;
 	}
@@ -134,7 +116,7 @@ export class AestheticFeatureExtractor {
 	async extractFillerFeatures(
 		patient: PatientProfile,
 		targetAreas: string[],
-		volumeGoals: Record<string, number>,
+		volumeGoals: Record<string, number>
 	): Promise<number[]> {
 		const features: number[] = [];
 
@@ -151,42 +133,31 @@ export class AestheticFeatureExtractor {
 			patient.lifestyle.smoking ? 1 : 0,
 			this.estimateHealingCapacity(patient),
 			// Previous filler experience
-			patient.previousTreatments.filter((t) => t.type === "dermal-fillers")
-				.length / 5,
+			patient.previousTreatments.filter((t) => t.type === "dermal-fillers").length / 5,
 			this.estimateFacialAsymmetry(patient),
 			this.estimateSkinLaxity(patient),
-			this.evaluateProductCompatibility(patient, "hyaluronic-acid"),
+			this.evaluateProductCompatibility(patient, "hyaluronic-acid")
 		);
 
 		// Volume and technique parameters (14-19)
-		const totalDesiredVolume = Object.values(volumeGoals).reduce(
-			(sum, vol) => sum + vol,
-			0,
-		);
+		const totalDesiredVolume = Object.values(volumeGoals).reduce((sum, vol) => sum + vol, 0);
 		features.push(
 			totalDesiredVolume / 5, // Normalized total volume
 			targetAreas.length / 3, // Number of areas
 			this.calculateVolumeComplexity(targetAreas, volumeGoals),
 			this.encodeFillerAreas(targetAreas),
 			this.estimateInjectionDifficulty(targetAreas),
-			this.evaluateMaintenanceRequirement(patient, targetAreas),
+			this.evaluateMaintenanceRequirement(patient, targetAreas)
 		);
 
 		// Risk and context factors (20-21)
-		features.push(
-			this.evaluateVascularRisk(patient, targetAreas),
-			this.estimateSwellingProneness(patient),
-		);
+		features.push(this.evaluateVascularRisk(patient, targetAreas), this.estimateSwellingProneness(patient));
 
 		return features;
 	} /**
 	 * Extract laser treatment features
 	 */
-	async extractLaserFeatures(
-		patient: PatientProfile,
-		laserType: string,
-		treatmentGoal: string,
-	): Promise<number[]> {
+	async extractLaserFeatures(patient: PatientProfile, laserType: string, treatmentGoal: string): Promise<number[]> {
 		const features: number[] = [];
 
 		// Patient skin characteristics (0-15)
@@ -200,19 +171,14 @@ export class AestheticFeatureExtractor {
 			this.evaluatePhotodamage(patient),
 			patient.lifestyle.sunExposure === "high" ? 1 : 0,
 			patient.lifestyle.skincare.retinoidUse ? 1 : 0,
-			patient.medicalHistory.medications.some((m) =>
-				m.name.includes("photosensitizing"),
-			)
-				? 1
-				: 0,
+			patient.medicalHistory.medications.some((m) => m.name.includes("photosensitizing")) ? 1 : 0,
 			// Previous laser experience
-			patient.previousTreatments.filter((t) => t.type.includes("laser"))
-				.length / 5,
+			patient.previousTreatments.filter((t) => t.type.includes("laser")).length / 5,
 			this.estimateHealingResponse(patient),
 			this.evaluatePigmentationRisk(patient),
 			this.estimateScarRisk(patient),
 			this.evaluateDowntimeTolerance(patient),
-			this.estimateInflammatoryResponse(patient),
+			this.estimateInflammatoryResponse(patient)
 		);
 
 		// Laser and treatment parameters (16-21)
@@ -222,7 +188,7 @@ export class AestheticFeatureExtractor {
 			this.estimateRequiredEnergy(patient, treatmentGoal),
 			this.calculateTreatmentDepth(treatmentGoal),
 			this.estimateSessionsRequired(patient, treatmentGoal),
-			this.evaluateSeasonalAppropriate(patient, laserType),
+			this.evaluateSeasonalAppropriate(patient, laserType)
 		);
 
 		// Risk and context factors (22-25)
@@ -230,7 +196,7 @@ export class AestheticFeatureExtractor {
 			this.evaluateContraindicationRisk(patient, laserType),
 			this.estimateComplicationRisk(patient, laserType),
 			this.evaluatePostTreatmentCare(patient),
-			this.encodeGeographicFactor(),
+			this.encodeGeographicFactor()
 		);
 
 		return features;
@@ -305,9 +271,7 @@ export class AestheticFeatureExtractor {
 				jawline: 0.6,
 				neck: 0.8,
 			};
-			return (
-				score + (areaComplexity[area as keyof typeof areaComplexity] || 0.5)
-			);
+			return score + (areaComplexity[area as keyof typeof areaComplexity] || 0.5);
 		}, 0);
 		return Math.min(complexityScore / areas.length, 1.0);
 	}
@@ -322,9 +286,7 @@ export class AestheticFeatureExtractor {
 				"under-eyes": 0.9,
 				jawline: 0.7,
 			};
-			return (
-				score + (areaComplexity[area as keyof typeof areaComplexity] || 0.5)
-			);
+			return score + (areaComplexity[area as keyof typeof areaComplexity] || 0.5);
 		}, 0);
 		return Math.min(volumeComplexity / areas.length, 1.0);
 	}
@@ -354,10 +316,7 @@ export class AestheticFeatureExtractor {
 		return goalMap[goal as keyof typeof goalMap] || 0.5;
 	} // ==================== ESTIMATION METHODS ====================
 
-	private estimateMuscleActivity(
-		patient: PatientProfile,
-		_areas: string[],
-	): number {
+	private estimateMuscleActivity(patient: PatientProfile, _areas: string[]): number {
 		let activityScore = 0.5; // Base activity
 
 		// Age factor - younger patients typically have stronger muscle activity
@@ -371,13 +330,9 @@ export class AestheticFeatureExtractor {
 		activityScore += (patient.lifestyle.stressLevel / 10) * 0.2;
 
 		// Previous Botox experience may indicate high muscle activity
-		const botoxHistory = patient.previousTreatments.filter(
-			(t) => t.type === "botox",
-		);
+		const botoxHistory = patient.previousTreatments.filter((t) => t.type === "botox");
 		if (botoxHistory.length > 0) {
-			const avgSatisfaction =
-				botoxHistory.reduce((sum, t) => sum + t.satisfaction, 0) /
-				botoxHistory.length;
+			const avgSatisfaction = botoxHistory.reduce((sum, t) => sum + t.satisfaction, 0) / botoxHistory.length;
 			if (avgSatisfaction < 7) {
 				activityScore += 0.1; // Low satisfaction may indicate strong muscles
 			}
@@ -418,16 +373,11 @@ export class AestheticFeatureExtractor {
 		return Math.min(Math.max(elasticity, 0), 1);
 	}
 
-	private estimateAsymmetryRisk(
-		patient: PatientProfile,
-		areas: string[],
-	): number {
+	private estimateAsymmetryRisk(patient: PatientProfile, areas: string[]): number {
 		let riskScore = 0.1; // Base asymmetry risk
 
 		// Previous treatment complications increase risk
-		const hasAsymmetryHistory = patient.previousTreatments.some((t) =>
-			t.complications.includes("asymmetry"),
-		);
+		const hasAsymmetryHistory = patient.previousTreatments.some((t) => t.complications.includes("asymmetry"));
 		if (hasAsymmetryHistory) {
 			riskScore += 0.3;
 		}
@@ -447,10 +397,7 @@ export class AestheticFeatureExtractor {
 		return Math.min(riskScore, 1);
 	}
 
-	private estimateExpressionStrength(
-		patient: PatientProfile,
-		_areas: string[],
-	): number {
+	private estimateExpressionStrength(patient: PatientProfile, _areas: string[]): number {
 		let strength = 0.5;
 
 		// Stress and personality factors
@@ -505,10 +452,7 @@ export class AestheticFeatureExtractor {
 		return Math.min(Math.max(capacity, 0), 1);
 	}
 
-	private estimateVolumeDeficit(
-		patient: PatientProfile,
-		_areas: string[],
-	): number {
+	private estimateVolumeDeficit(patient: PatientProfile, _areas: string[]): number {
 		let deficit = 0;
 
 		// Age-related volume loss
@@ -579,7 +523,7 @@ export class AestheticFeatureExtractor {
 
 		// Previous treatment history
 		const hasAsymmetryIssues = patient.previousTreatments.some(
-			(t) => t.complications.includes("asymmetry") || t.satisfaction < 6,
+			(t) => t.complications.includes("asymmetry") || t.satisfaction < 6
 		);
 		if (hasAsymmetryIssues) {
 			asymmetry += 0.2;
@@ -609,26 +553,19 @@ export class AestheticFeatureExtractor {
 		return Math.min(laxity, 0.8);
 	}
 
-	private evaluateProductCompatibility(
-		patient: PatientProfile,
-		_productType: string,
-	): number {
+	private evaluateProductCompatibility(patient: PatientProfile, _productType: string): number {
 		let compatibility = 0.9; // High base compatibility for HA
 
 		// Allergy history
 		const hasRelevantAllergies = patient.medicalHistory.allergies.some(
-			(allergy) =>
-				allergy.toLowerCase().includes("hyaluronic") ||
-				allergy.toLowerCase().includes("lidocaine"),
+			(allergy) => allergy.toLowerCase().includes("hyaluronic") || allergy.toLowerCase().includes("lidocaine")
 		);
 		if (hasRelevantAllergies) {
 			compatibility -= 0.4;
 		}
 
 		// Previous filler reactions
-		const fillerHistory = patient.previousTreatments.filter(
-			(t) => t.type === "dermal-fillers",
-		);
+		const fillerHistory = patient.previousTreatments.filter((t) => t.type === "dermal-fillers");
 		const hasReactions = fillerHistory.some((t) => t.complications.length > 0);
 		if (hasReactions) {
 			compatibility -= 0.2;
@@ -637,14 +574,8 @@ export class AestheticFeatureExtractor {
 		return Math.max(compatibility, 0.1);
 	}
 
-	private calculateVolumeComplexity(
-		areas: string[],
-		volumeGoals: Record<string, number>,
-	): number {
-		const totalVolume = Object.values(volumeGoals).reduce(
-			(sum, vol) => sum + vol,
-			0,
-		);
+	private calculateVolumeComplexity(areas: string[], volumeGoals: Record<string, number>): number {
+		const totalVolume = Object.values(volumeGoals).reduce((sum, vol) => sum + vol, 0);
 		const avgVolumePerArea = totalVolume / areas.length;
 
 		// Higher volumes and more areas increase complexity
@@ -657,9 +588,7 @@ export class AestheticFeatureExtractor {
 			["jawline", "marionette-lines"],
 		];
 
-		const hasComplexCombination = complexCombinations.some((combo) =>
-			combo.every((area) => areas.includes(area)),
-		);
+		const hasComplexCombination = complexCombinations.some((combo) => combo.every((area) => areas.includes(area)));
 		if (hasComplexCombination) {
 			complexity += 0.2;
 		}
@@ -685,10 +614,7 @@ export class AestheticFeatureExtractor {
 		return avgDifficulty;
 	}
 
-	private evaluateMaintenanceRequirement(
-		patient: PatientProfile,
-		areas: string[],
-	): number {
+	private evaluateMaintenanceRequirement(patient: PatientProfile, areas: string[]): number {
 		let maintenance = 0.5; // Base maintenance requirement
 
 		// Age affects longevity
@@ -709,9 +635,7 @@ export class AestheticFeatureExtractor {
 
 		// Area-specific factors
 		const highMaintenanceAreas = ["lips", "nasolabial-folds"];
-		const hasHighMaintenanceAreas = areas.some((area) =>
-			highMaintenanceAreas.includes(area),
-		);
+		const hasHighMaintenanceAreas = areas.some((area) => highMaintenanceAreas.includes(area));
 		if (hasHighMaintenanceAreas) {
 			maintenance += 0.1;
 		}
@@ -719,10 +643,7 @@ export class AestheticFeatureExtractor {
 		return Math.min(maintenance, 1);
 	}
 
-	private evaluateVascularRisk(
-		patient: PatientProfile,
-		areas: string[],
-	): number {
+	private evaluateVascularRisk(patient: PatientProfile, areas: string[]): number {
 		let risk = 0.1; // Base vascular risk
 
 		// Blood thinners significantly increase risk
@@ -732,7 +653,7 @@ export class AestheticFeatureExtractor {
 
 		// Certain medications increase bleeding risk
 		const riskMedications = patient.medicalHistory.medications.filter(
-			(m) => m.isBloodThinner || m.name.toLowerCase().includes("aspirin"),
+			(m) => m.isBloodThinner || m.name.toLowerCase().includes("aspirin")
 		);
 		risk += riskMedications.length * 0.1;
 
@@ -762,9 +683,7 @@ export class AestheticFeatureExtractor {
 		// Medical conditions
 		if (
 			patient.medicalHistory.conditions.some(
-				(c) =>
-					c.name.toLowerCase().includes("thyroid") ||
-					c.name.toLowerCase().includes("kidney"),
+				(c) => c.name.toLowerCase().includes("thyroid") || c.name.toLowerCase().includes("kidney")
 			)
 		) {
 			proneness += 0.2;
@@ -803,9 +722,7 @@ export class AestheticFeatureExtractor {
 		// Medical conditions
 		if (
 			patient.medicalHistory.conditions.some(
-				(c) =>
-					c.name.toLowerCase().includes("eczema") ||
-					c.name.toLowerCase().includes("dermatitis"),
+				(c) => c.name.toLowerCase().includes("eczema") || c.name.toLowerCase().includes("dermatitis")
 			)
 		) {
 			sensitivity += 0.3;
@@ -824,23 +741,13 @@ export class AestheticFeatureExtractor {
 		return this.encodeBotoxAreas(areas);
 	}
 
-	private hasPreviousAreaTreatment(
-		patient: PatientProfile,
-		areas: string[],
-		treatmentType: string,
-	): boolean {
+	private hasPreviousAreaTreatment(patient: PatientProfile, areas: string[], treatmentType: string): boolean {
 		return patient.previousTreatments.some(
-			(t) =>
-				t.type === treatmentType &&
-				t.notes &&
-				areas.some((area) => t.notes.toLowerCase().includes(area)),
+			(t) => t.type === treatmentType && t.notes && areas.some((area) => t.notes.toLowerCase().includes(area))
 		);
 	}
 
-	private evaluateConcurrentTreatmentRisk(
-		_patient: PatientProfile,
-		_treatmentType: string,
-	): number {
+	private evaluateConcurrentTreatmentRisk(_patient: PatientProfile, _treatmentType: string): number {
 		// This would check for interactions with other planned treatments
 		// For now, return a base risk assessment
 		return 0.1;
@@ -874,10 +781,7 @@ export class AestheticFeatureExtractor {
 	}
 
 	// Additional estimation methods for comprehensive feature extraction
-	private estimateRequiredEnergy(
-		patient: PatientProfile,
-		goal: string,
-	): number {
+	private estimateRequiredEnergy(patient: PatientProfile, goal: string): number {
 		let energy = 0.5;
 
 		// Skin type affects energy requirements
@@ -907,10 +811,7 @@ export class AestheticFeatureExtractor {
 		return depthMap[goal as keyof typeof depthMap] || 0.5;
 	}
 
-	private estimateSessionsRequired(
-		patient: PatientProfile,
-		goal: string,
-	): number {
+	private estimateSessionsRequired(patient: PatientProfile, goal: string): number {
 		let sessions = 0.5;
 
 		// Age affects number of sessions needed
@@ -936,10 +837,7 @@ export class AestheticFeatureExtractor {
 	}
 
 	// Additional contextual and risk assessment methods
-	private evaluateSeasonalAppropriate(
-		_patient: PatientProfile,
-		laserType: string,
-	): number {
+	private evaluateSeasonalAppropriate(_patient: PatientProfile, laserType: string): number {
 		const month = new Date().getMonth();
 		const isSummer = month >= 5 && month <= 8;
 
@@ -955,10 +853,7 @@ export class AestheticFeatureExtractor {
 		return 0.6;
 	}
 
-	private evaluateContraindicationRisk(
-		patient: PatientProfile,
-		_laserType: string,
-	): number {
+	private evaluateContraindicationRisk(patient: PatientProfile, _laserType: string): number {
 		let risk = 0;
 
 		// Pregnancy (if applicable)
@@ -968,9 +863,7 @@ export class AestheticFeatureExtractor {
 
 		// Photosensitizing medications
 		const photosensitizingMeds = patient.medicalHistory.medications.filter(
-			(m) =>
-				m.name.toLowerCase().includes("tretinoin") ||
-				m.name.toLowerCase().includes("doxycycline"),
+			(m) => m.name.toLowerCase().includes("tretinoin") || m.name.toLowerCase().includes("doxycycline")
 		);
 		risk += photosensitizingMeds.length * 0.3;
 
@@ -987,10 +880,7 @@ export class AestheticFeatureExtractor {
 		return Math.min(risk, 1);
 	}
 
-	private estimateComplicationRisk(
-		patient: PatientProfile,
-		_laserType: string,
-	): number {
+	private estimateComplicationRisk(patient: PatientProfile, _laserType: string): number {
 		let risk = 0.1;
 
 		// Skin type affects complication risk
@@ -999,7 +889,7 @@ export class AestheticFeatureExtractor {
 
 		// Previous complications
 		const hasLaserComplications = patient.previousTreatments.some(
-			(t) => t.type.includes("laser") && t.complications.length > 0,
+			(t) => t.type.includes("laser") && t.complications.length > 0
 		);
 		if (hasLaserComplications) {
 			risk += 0.3;
@@ -1017,17 +907,13 @@ export class AestheticFeatureExtractor {
 		// Previous treatment compliance (estimated from satisfaction scores)
 		const avgSatisfaction =
 			patient.previousTreatments.length > 0
-				? patient.previousTreatments.reduce(
-						(sum, t) => sum + t.satisfaction,
-						0,
-					) / patient.previousTreatments.length
+				? patient.previousTreatments.reduce((sum, t) => sum + t.satisfaction, 0) / patient.previousTreatments.length
 				: 7; // Default assumption
 
 		careScore += (avgSatisfaction / 10) * 0.3;
 
 		// Skincare routine indicates care level
-		const routineScore =
-			Object.values(patient.lifestyle.skincare).filter(Boolean).length / 6;
+		const routineScore = Object.values(patient.lifestyle.skincare).filter(Boolean).length / 6;
 		careScore += routineScore * 0.2;
 
 		return Math.min(careScore, 1);
@@ -1069,7 +955,7 @@ export class AestheticFeatureExtractor {
 			(t) =>
 				t.complications.includes("pigmentation") ||
 				t.complications.includes("hyperpigmentation") ||
-				t.complications.includes("hypopigmentation"),
+				t.complications.includes("hypopigmentation")
 		);
 		if (hasPigmentationHistory) {
 			risk += 0.3;
@@ -1093,9 +979,7 @@ export class AestheticFeatureExtractor {
 
 		// Previous scarring
 		const hasScarHistory = patient.previousTreatments.some(
-			(t) =>
-				t.complications.includes("scar") ||
-				t.complications.includes("scarring"),
+			(t) => t.complications.includes("scar") || t.complications.includes("scarring")
 		);
 		if (hasScarHistory) {
 			risk += 0.3;
@@ -1117,7 +1001,7 @@ export class AestheticFeatureExtractor {
 
 		// Previous treatment history may indicate tolerance
 		const hasMinimalDowntimeTreatments = patient.previousTreatments.some((t) =>
-			["botox", "dermal-fillers", "microneedling"].includes(t.type),
+			["botox", "dermal-fillers", "microneedling"].includes(t.type)
 		);
 		if (hasMinimalDowntimeTreatments) {
 			tolerance += 0.2;
@@ -1267,25 +1151,10 @@ export class AestheticFeatureExtractor {
 
 // Export type interfaces for feature extraction
 export type FeatureExtractor = {
-	extractTreatmentFeatures(
-		patient: PatientProfile,
-		treatment: TreatmentRequest,
-	): Promise<number[]>;
-	extractBotoxFeatures(
-		patient: PatientProfile,
-		areas: string[],
-		intensity: number,
-	): Promise<number[]>;
-	extractFillerFeatures(
-		patient: PatientProfile,
-		areas: string[],
-		volumes: Record<string, number>,
-	): Promise<number[]>;
-	extractLaserFeatures(
-		patient: PatientProfile,
-		laserType: string,
-		goal: string,
-	): Promise<number[]>;
+	extractTreatmentFeatures(patient: PatientProfile, treatment: TreatmentRequest): Promise<number[]>;
+	extractBotoxFeatures(patient: PatientProfile, areas: string[], intensity: number): Promise<number[]>;
+	extractFillerFeatures(patient: PatientProfile, areas: string[], volumes: Record<string, number>): Promise<number[]>;
+	extractLaserFeatures(patient: PatientProfile, laserType: string, goal: string): Promise<number[]>;
 };
 
 export type PostProcessor = {

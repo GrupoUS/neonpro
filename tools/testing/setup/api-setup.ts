@@ -137,7 +137,7 @@ process.env.NEXTAUTH_URL = "http://localhost:3000";
 export const testApiRoute = async (
 	handler: (req: unknown, res: unknown) => Promise<unknown>,
 	req: unknown,
-	res: unknown,
+	res: unknown
 ) => {
 	return handler(req, res);
 };

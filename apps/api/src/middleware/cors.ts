@@ -10,11 +10,25 @@ import type { Context, MiddlewareHandler } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "../lib/logger";
 import {
+	LOCALHOST_IP_PATTERN,
+	LOCALHOST_PATTERN,
 	VERCEL_PRODUCTION_PATTERN,
 	VERCEL_STAGING_PATTERN,
-	LOCALHOST_PATTERN,
-	LOCALHOST_IP_PATTERN,
 } from "../lib/regex-constants";
+
+// Time constants for CORS cache control
+const CACHE_DURATION = {
+	PRODUCTION: 86_400, // 24 hours
+	STAGING: 3600, // 1 hour
+	DEVELOPMENT: 600, // 10 minutes
+	PREFLIGHT: 86_400, // 24 hours for preflight
+	NONE: 0, // No caching for sensitive endpoints
+} as const;
+
+// HTTP status codes
+const HTTP_STATUS = {
+	NO_CONTENT: 204,
+} as const;
 
 // Regex patterns imported from constants module for performance
 
@@ -52,7 +66,7 @@ const getCorsPolicyByEnvironment = () => {
 					"X-Audit-ID",
 				],
 				methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-				maxAge: 86_400, // 24 hours
+				maxAge: CACHE_DURATION.PRODUCTION,
 			};
 
 		case "staging":
@@ -86,7 +100,7 @@ const getCorsPolicyByEnvironment = () => {
 					"X-Debug-Info",
 				],
 				methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"],
-				maxAge: 3600, // 1 hour
+				maxAge: CACHE_DURATION.STAGING,
 			};
 
 		default: // development
@@ -123,7 +137,7 @@ const getCorsPolicyByEnvironment = () => {
 					"X-Dev-Tools",
 				],
 				methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"],
-				maxAge: 600, // 10 minutes
+				maxAge: CACHE_DURATION.DEVELOPMENT,
 			};
 	}
 };
@@ -235,12 +249,12 @@ export const optimizedPreflight = (): MiddlewareHandler => {
 		if (c.req.method === "OPTIONS") {
 			// Add caching for preflight requests
 			c.res.headers.set("Vary", "Origin");
-			c.res.headers.set("Cache-Control", "public, max-age=86400"); // 24 hours
+			c.res.headers.set("Cache-Control", `public, max-age=${CACHE_DURATION.PREFLIGHT}`);
 
 			// Add timing header for monitoring
 			c.res.headers.set("X-Preflight-Time", Date.now().toString());
 
-			return c.text("", 204);
+			return c.text("", HTTP_STATUS.NO_CONTENT);
 		}
 
 		await next();
@@ -280,9 +294,7 @@ export const corsUtils = {
 	// Validate request headers
 	validateHeaders: (headers: string[]): boolean => {
 		const corsPolicy = getCorsPolicyByEnvironment();
-		return headers.every((header) =>
-			corsPolicy.allowedHeaders.includes(header),
-		);
+		return headers.every((header) => corsPolicy.allowedHeaders.includes(header));
 	},
 
 	// Set custom CORS headers for specific routes
@@ -305,7 +317,7 @@ export const strictCors = (): MiddlewareHandler => {
 		credentials: false, // No credentials for strict mode
 		allowMethods: ["GET", "POST"],
 		allowHeaders: ["Content-Type", "Authorization"],
-		maxAge: 0, // No caching for sensitive endpoints
+		maxAge: CACHE_DURATION.NONE, // No caching for sensitive endpoints
 	});
 };
 

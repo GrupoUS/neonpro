@@ -60,18 +60,10 @@ export class AuthTokenManager {
 	 */
 	private loadFromStorage(): void {
 		try {
-			const accessToken = localStorage.getItem(
-				AuthTokenManager.STORAGE_KEYS.ACCESS_TOKEN,
-			);
-			const refreshToken = localStorage.getItem(
-				AuthTokenManager.STORAGE_KEYS.REFRESH_TOKEN,
-			);
-			const expiresAt = localStorage.getItem(
-				AuthTokenManager.STORAGE_KEYS.EXPIRES_AT,
-			);
-			const tokenType = localStorage.getItem(
-				AuthTokenManager.STORAGE_KEYS.TOKEN_TYPE,
-			);
+			const accessToken = localStorage.getItem(AuthTokenManager.STORAGE_KEYS.ACCESS_TOKEN);
+			const refreshToken = localStorage.getItem(AuthTokenManager.STORAGE_KEYS.REFRESH_TOKEN);
+			const expiresAt = localStorage.getItem(AuthTokenManager.STORAGE_KEYS.EXPIRES_AT);
+			const tokenType = localStorage.getItem(AuthTokenManager.STORAGE_KEYS.TOKEN_TYPE);
 
 			if (accessToken && refreshToken && expiresAt) {
 				this.accessToken = accessToken;
@@ -97,22 +89,10 @@ export class AuthTokenManager {
 
 		try {
 			if (this.accessToken && this.refreshToken && this.expiresAt) {
-				localStorage.setItem(
-					AuthTokenManager.STORAGE_KEYS.ACCESS_TOKEN,
-					this.accessToken,
-				);
-				localStorage.setItem(
-					AuthTokenManager.STORAGE_KEYS.REFRESH_TOKEN,
-					this.refreshToken,
-				);
-				localStorage.setItem(
-					AuthTokenManager.STORAGE_KEYS.EXPIRES_AT,
-					this.expiresAt.toString(),
-				);
-				localStorage.setItem(
-					AuthTokenManager.STORAGE_KEYS.TOKEN_TYPE,
-					this.tokenType,
-				);
+				localStorage.setItem(AuthTokenManager.STORAGE_KEYS.ACCESS_TOKEN, this.accessToken);
+				localStorage.setItem(AuthTokenManager.STORAGE_KEYS.REFRESH_TOKEN, this.refreshToken);
+				localStorage.setItem(AuthTokenManager.STORAGE_KEYS.EXPIRES_AT, this.expiresAt.toString());
+				localStorage.setItem(AuthTokenManager.STORAGE_KEYS.TOKEN_TYPE, this.tokenType);
 			}
 		} catch (_error) {
 			// Clear tokens if storage fails to prevent inconsistent state

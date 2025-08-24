@@ -8,11 +8,7 @@ export type AnalyticsEvent = {
 export class AnalyticsService {
 	static track(_event: AnalyticsEvent): void {}
 
-	static trackUserAction(
-		action: string,
-		userId: string,
-		metadata?: Record<string, any>,
-	): void {
+	static trackUserAction(action: string, userId: string, metadata?: Record<string, any>): void {
 		AnalyticsService.track({
 			name: "user_action",
 			properties: {

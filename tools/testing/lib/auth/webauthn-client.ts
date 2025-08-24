@@ -62,10 +62,7 @@ export class WebAuthnClient {
 
 	constructor() {
 		// Mock browser support detection
-		this.isSupported =
-			typeof window !== "undefined" &&
-			"credentials" in navigator &&
-			"create" in navigator.credentials;
+		this.isSupported = typeof window !== "undefined" && "credentials" in navigator && "create" in navigator.credentials;
 	}
 
 	static getInstance(): WebAuthnClient {
@@ -79,9 +76,7 @@ export class WebAuthnClient {
 		return this.isSupported;
 	}
 
-	async register(
-		_options: WebAuthnRegistrationOptions,
-	): Promise<WebAuthnCredential> {
+	async register(_options: WebAuthnRegistrationOptions): Promise<WebAuthnCredential> {
 		if (!this.isSupported) {
 			throw new Error("WebAuthn is not supported in this environment");
 		}
@@ -98,9 +93,7 @@ export class WebAuthnClient {
 		};
 	}
 
-	async authenticate(
-		_options: WebAuthnAuthenticationOptions,
-	): Promise<WebAuthnCredential> {
+	async authenticate(_options: WebAuthnAuthenticationOptions): Promise<WebAuthnCredential> {
 		if (!this.isSupported) {
 			throw new Error("WebAuthn is not supported in this environment");
 		}

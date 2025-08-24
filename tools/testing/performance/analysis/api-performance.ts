@@ -60,7 +60,7 @@ export class ApiPerformanceTester {
 		endpoint: string,
 		method: "GET" | "POST" | "PUT" | "DELETE" = "GET",
 		payload?: any,
-		iterations = 100,
+		iterations = 100
 	): Promise<EndpointMetrics> {
 		const responseTimes: number[] = [];
 		let errorCount = 0;
@@ -100,8 +100,7 @@ export class ApiPerformanceTester {
 		return {
 			endpoint,
 			method,
-			averageResponseTime:
-				responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length,
+			averageResponseTime: responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length,
 			maxResponseTime: Math.max(...responseTimes),
 			minResponseTime: Math.min(...responseTimes),
 			errorRate: errorCount / iterations,
@@ -114,21 +113,11 @@ export class ApiPerformanceTester {
 		const results: HealthcareApiMetrics = {
 			patientEndpoints: await this.testEndpoint("/api/patients", "GET"),
 			appointmentEndpoints: await this.testEndpoint("/api/appointments", "GET"),
-			medicalRecordEndpoints: await this.testEndpoint(
-				"/api/medical-records",
-				"GET",
-			),
-			authenticationEndpoints: await this.testEndpoint(
-				"/api/auth/validate",
-				"POST",
-				{
-					token: this.authToken,
-				},
-			),
-			emergencyEndpoints: await this.testEndpoint(
-				"/api/emergency/patient-data",
-				"GET",
-			),
+			medicalRecordEndpoints: await this.testEndpoint("/api/medical-records", "GET"),
+			authenticationEndpoints: await this.testEndpoint("/api/auth/validate", "POST", {
+				token: this.authToken,
+			}),
+			emergencyEndpoints: await this.testEndpoint("/api/emergency/patient-data", "GET"),
 		};
 
 		return results;
@@ -156,7 +145,7 @@ export class ApiPerformanceTester {
 				this.simulateUser(userDelay, endTime, responseTimes).then((results) => {
 					totalRequests += results.requests;
 					totalErrors += results.errors;
-				}),
+				})
 			);
 		}
 
@@ -167,8 +156,7 @@ export class ApiPerformanceTester {
 
 		return {
 			responseTime: {
-				average:
-					responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length,
+				average: responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length,
 				p50: this.percentile(responseTimes, 0.5),
 				p95: this.percentile(responseTimes, 0.95),
 				p99: this.percentile(responseTimes, 0.99),
@@ -182,7 +170,7 @@ export class ApiPerformanceTester {
 	private async simulateUser(
 		startDelay: number,
 		endTime: number,
-		responseTimes: number[],
+		responseTimes: number[]
 	): Promise<{ requests: number; errors: number }> {
 		await new Promise((resolve) => setTimeout(resolve, startDelay));
 
@@ -208,9 +196,7 @@ export class ApiPerformanceTester {
 			}
 
 			// Brief pause between requests (simulating user behavior)
-			await new Promise((resolve) =>
-				setTimeout(resolve, 100 + Math.random() * 400),
-			);
+			await new Promise((resolve) => setTimeout(resolve, 100 + Math.random() * 400));
 		}
 
 		return { requests, errors };
@@ -227,7 +213,7 @@ export class ApiPerformanceTester {
 	async generateReport(
 		metrics: ApiPerformanceMetrics,
 		healthcareMetrics: HealthcareApiMetrics,
-		_outputPath: string,
+		_outputPath: string
 	): Promise<void> {
 		const _report = {
 			timestamp: new Date().toISOString(),
@@ -237,28 +223,19 @@ export class ApiPerformanceTester {
 		};
 	}
 
-	private generateRecommendations(
-		metrics: ApiPerformanceMetrics,
-		healthcareMetrics: HealthcareApiMetrics,
-	): string[] {
+	private generateRecommendations(metrics: ApiPerformanceMetrics, healthcareMetrics: HealthcareApiMetrics): string[] {
 		const recommendations: string[] = [];
 
 		if (metrics.responseTime.p95 > 100) {
-			recommendations.push(
-				"P95 response time exceeds 100ms. Consider API optimization.",
-			);
+			recommendations.push("P95 response time exceeds 100ms. Consider API optimization.");
 		}
 
 		if (metrics.errorRate > 0.01) {
-			recommendations.push(
-				"Error rate exceeds 1%. Investigate error handling.",
-			);
+			recommendations.push("Error rate exceeds 1%. Investigate error handling.");
 		}
 
 		if (healthcareMetrics.emergencyEndpoints.averageResponseTime > 500) {
-			recommendations.push(
-				"Emergency endpoints are slow. Critical for patient safety.",
-			);
+			recommendations.push("Emergency endpoints are slow. Critical for patient safety.");
 		}
 
 		return recommendations;

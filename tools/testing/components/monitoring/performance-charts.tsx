@@ -6,10 +6,7 @@ type PerformanceChartsProps = {
 	title?: string;
 };
 
-export const PerformanceCharts: React.FC<PerformanceChartsProps> = ({
-	data = [],
-	title = "Performance Metrics",
-}) => {
+export const PerformanceCharts: React.FC<PerformanceChartsProps> = ({ data = [], title = "Performance Metrics" }) => {
 	return (
 		<div className="performance-charts">
 			<h3>{title}</h3>
@@ -17,9 +14,7 @@ export const PerformanceCharts: React.FC<PerformanceChartsProps> = ({
 				{data.length === 0 ? (
 					<p>No performance data available</p>
 				) : (
-					<div className="chart-placeholder">
-						Chart: {data.length} data points
-					</div>
+					<div className="chart-placeholder">Chart: {data.length} data points</div>
 				)}
 			</div>
 		</div>

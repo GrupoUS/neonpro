@@ -12,20 +12,8 @@
 
 "use client";
 
-import {
-	createContext,
-	type ReactNode,
-	useContext,
-	useEffect,
-	useState,
-} from "react";
-import {
-	createTranslator,
-	type Dictionary,
-	defaultLocale,
-	getDictionary,
-	type Locale,
-} from "../lib/i18n/i18n";
+import { createContext, type ReactNode, useContext, useEffect, useState } from "react";
+import { createTranslator, type Dictionary, defaultLocale, getDictionary, type Locale } from "../lib/i18n/i18n";
 
 type TranslationContextType = {
 	locale: Locale;
@@ -36,9 +24,7 @@ type TranslationContextType = {
 	error: string | null;
 };
 
-const TranslationContext = createContext<TranslationContextType | undefined>(
-	undefined,
-);
+const TranslationContext = createContext<TranslationContextType | undefined>(undefined);
 
 type TranslationProviderProps = {
 	children: ReactNode;
@@ -56,16 +42,12 @@ export function TranslationProvider({
 	initialDictionary,
 }: TranslationProviderProps) {
 	const [locale, setLocale] = useState<Locale>(initialLocale);
-	const [dictionary, setDictionary] = useState<Dictionary | null>(
-		initialDictionary || null,
-	);
+	const [dictionary, setDictionary] = useState<Dictionary | null>(initialDictionary || null);
 	const [isLoading, setIsLoading] = useState(!initialDictionary);
 	const [error, setError] = useState<string | null>(null);
 
 	// Create translator function
-	const translator = dictionary
-		? createTranslator(dictionary)
-		: (key: string) => key;
+	const translator = dictionary ? createTranslator(dictionary) : (key: string) => key;
 
 	// Load dictionary when locale changes
 	useEffect(() => {
@@ -114,11 +96,7 @@ export function TranslationProvider({
 		error,
 	};
 
-	return (
-		<TranslationContext.Provider value={value}>
-			{children}
-		</TranslationContext.Provider>
-	);
+	return <TranslationContext.Provider value={value}>{children}</TranslationContext.Provider>;
 }
 
 /**
@@ -160,12 +138,7 @@ type TranslationProps = {
 	children?: (translation: string) => ReactNode;
 };
 
-export function Translation({
-	k,
-	params,
-	fallback,
-	children,
-}: TranslationProps) {
+export function Translation({ k, params, fallback, children }: TranslationProps) {
 	const { t, isLoading } = useTranslation();
 
 	if (isLoading) {
@@ -186,9 +159,7 @@ export function Translation({
  * Injects translation props into components
  */
 export function withTranslation<P extends object>(
-	Component: React.ComponentType<
-		P & { t: (key: string, params?: Record<string, string | number>) => string }
-	>,
+	Component: React.ComponentType<P & { t: (key: string, params?: Record<string, string | number>) => string }>
 ) {
 	return function TranslatedComponent(props: P) {
 		const { t } = useTranslation();
@@ -203,10 +174,7 @@ export function withTranslation<P extends object>(
 export function useTranslationNamespace(namespace: string) {
 	const { t, ...rest } = useTranslation();
 
-	const namespacedT = (
-		key: string,
-		params?: Record<string, string | number>,
-	) => {
+	const namespacedT = (key: string, params?: Record<string, string | number>) => {
 		return t(`${namespace}.${key}`, params);
 	};
 
@@ -280,10 +248,8 @@ export function useFormTranslations() {
 		date: () => t("errors.invalidDate"),
 		dateInPast: () => t("errors.dateInPast"),
 		dateInFuture: () => t("errors.dateInFuture"),
-		minLength: (field: string, min: number) =>
-			t("errors.minLength", { field, min }),
-		maxLength: (field: string, max: number) =>
-			t("errors.maxLength", { field, max }),
+		minLength: (field: string, min: number) => t("errors.minLength", { field, min }),
+		maxLength: (field: string, max: number) => t("errors.maxLength", { field, max }),
 		confirmation: (field: string) => t("errors.confirmation", { field }),
 	};
 }
@@ -298,16 +264,12 @@ export function useA11yTranslations() {
 	return {
 		skipToContent: () => t("accessibility.skipToContent"),
 		skipToNavigation: () => t("accessibility.skipToNavigation"),
-		loading: (item?: string) =>
-			item ? `${t("common.loading")} ${item}` : t("common.loading"),
-		saving: (item?: string) =>
-			item ? `${t("common.saving")} ${item}` : t("common.saving"),
+		loading: (item?: string) => (item ? `${t("common.loading")} ${item}` : t("common.loading")),
+		saving: (item?: string) => (item ? `${t("common.saving")} ${item}` : t("common.saving")),
 		buttonPressed: (button: string, pressed: boolean) =>
 			pressed ? `${button} pressionado` : `${button} não pressionado`,
-		expandedState: (item: string, expanded: boolean) =>
-			expanded ? `${item} expandido` : `${item} recolhido`,
-		menuItemOf: (current: number, total: number) =>
-			`Item ${current} de ${total}`,
+		expandedState: (item: string, expanded: boolean) => (expanded ? `${item} expandido` : `${item} recolhido`),
+		menuItemOf: (current: number, total: number) => `Item ${current} de ${total}`,
 		pageOf: (current: number, total: number) => `Página ${current} de ${total}`,
 		required: () => t("common.required"),
 		optional: () => t("common.optional"),

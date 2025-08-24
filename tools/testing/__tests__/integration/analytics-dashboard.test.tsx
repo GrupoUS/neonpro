@@ -22,34 +22,22 @@ const server = setupServer(
 				return res(
 					ctx.status(200),
 					ctx.set("Content-Type", "application/pdf"),
-					ctx.set(
-						"Content-Disposition",
-						'attachment; filename="analytics-report.pdf"',
-					),
-					ctx.body("mock-pdf-content"),
+					ctx.set("Content-Disposition", 'attachment; filename="analytics-report.pdf"'),
+					ctx.body("mock-pdf-content")
 				);
 			case "excel":
 				return res(
 					ctx.status(200),
-					ctx.set(
-						"Content-Type",
-						"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-					),
-					ctx.set(
-						"Content-Disposition",
-						'attachment; filename="analytics-report.xlsx"',
-					),
-					ctx.body("mock-excel-content"),
+					ctx.set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
+					ctx.set("Content-Disposition", 'attachment; filename="analytics-report.xlsx"'),
+					ctx.body("mock-excel-content")
 				);
 			case "csv":
 				return res(
 					ctx.status(200),
 					ctx.set("Content-Type", "text/csv"),
-					ctx.set(
-						"Content-Disposition",
-						'attachment; filename="analytics-report.csv"',
-					),
-					ctx.text("Patient,Revenue\n100,10000\n120,12000"),
+					ctx.set("Content-Disposition", 'attachment; filename="analytics-report.csv"'),
+					ctx.text("Patient,Revenue\n100,10000\n120,12000")
 				);
 			default:
 				return res(ctx.status(400), ctx.json({ error: "Invalid format" }));
@@ -58,11 +46,8 @@ const server = setupServer(
 
 	// Mock error scenarios
 	rest.get("/api/analytics/data-error", (_req, res, ctx) => {
-		return res(
-			ctx.status(500),
-			ctx.json({ error: "Database connection failed" }),
-		);
-	}),
+		return res(ctx.status(500), ctx.json({ error: "Database connection failed" }));
+	})
 );
 
 const createWrapper = () => {
@@ -110,9 +95,7 @@ describe("Analytics Dashboard Integration", () => {
 
 		// Verify export was initiated
 		await waitFor(() => {
-			expect(
-				screen.getByText("Export completed successfully"),
-			).toBeInTheDocument();
+			expect(screen.getByText("Export completed successfully")).toBeInTheDocument();
 		});
 	});
 
@@ -132,7 +115,7 @@ describe("Analytics Dashboard Integration", () => {
 				};
 
 				return res(ctx.status(200), ctx.json(filteredData));
-			}),
+			})
 		);
 
 		render(<AnalyticsDashboard />, { wrapper: createWrapper() });
@@ -166,20 +149,15 @@ describe("Analytics Dashboard Integration", () => {
 		// Mock API error
 		server.use(
 			rest.get("/api/analytics/data", (_req, res, ctx) => {
-				return res(
-					ctx.status(500),
-					ctx.json({ error: "Database connection failed" }),
-				);
-			}),
+				return res(ctx.status(500), ctx.json({ error: "Database connection failed" }));
+			})
 		);
 
 		render(<AnalyticsDashboard />, { wrapper: createWrapper() });
 
 		// Wait for error state
 		await waitFor(() => {
-			expect(
-				screen.getByText("Database connection failed"),
-			).toBeInTheDocument();
+			expect(screen.getByText("Database connection failed")).toBeInTheDocument();
 		});
 
 		// Verify error UI is displayed
@@ -193,11 +171,8 @@ describe("Analytics Dashboard Integration", () => {
 		// Mock export error
 		server.use(
 			rest.post("/api/analytics/export", (_req, res, ctx) => {
-				return res(
-					ctx.status(500),
-					ctx.json({ error: "Export service unavailable" }),
-				);
-			}),
+				return res(ctx.status(500), ctx.json({ error: "Export service unavailable" }));
+			})
 		);
 
 		render(<AnalyticsDashboard />, { wrapper: createWrapper() });
@@ -213,9 +188,7 @@ describe("Analytics Dashboard Integration", () => {
 
 		// Verify error handling
 		await waitFor(() => {
-			expect(
-				screen.getByText("Export service unavailable"),
-			).toBeInTheDocument();
+			expect(screen.getByText("Export service unavailable")).toBeInTheDocument();
 		});
 	});
 
@@ -234,11 +207,7 @@ describe("Analytics Dashboard Integration", () => {
 		const exportExcelButton = screen.getByText("Export Excel");
 		const refreshButton = screen.getByText("Refresh Data");
 
-		await Promise.all([
-			user.click(exportPDFButton),
-			user.click(exportExcelButton),
-			user.click(refreshButton),
-		]);
+		await Promise.all([user.click(exportPDFButton), user.click(exportExcelButton), user.click(refreshButton)]);
 
 		// Verify all operations complete successfully
 		await waitFor(() => {
@@ -282,7 +251,7 @@ describe("Analytics Dashboard Integration", () => {
 					totalPatients: mockAnalyticsData.totalPatients + callCount * 10,
 				};
 				return res(ctx.status(200), ctx.json(data));
-			}),
+			})
 		);
 
 		render(<AnalyticsDashboard />, { wrapper: createWrapper() });
@@ -307,7 +276,7 @@ describe("Analytics Dashboard Integration", () => {
 		server.use(
 			rest.get("/api/analytics/data", (_req, res, _ctx) => {
 				return res.networkError("Network connection failed");
-			}),
+			})
 		);
 
 		render(<AnalyticsDashboard />, { wrapper: createWrapper() });

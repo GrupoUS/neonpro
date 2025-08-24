@@ -18,18 +18,10 @@ export const SubscriptionStatusCard: React.FC<SubscriptionStatusCardProps> = ({
 	variant = "default",
 }) => {
 	return (
-		<div
-			className="subscription-card"
-			data-testid="subscription-status-card"
-			data-variant={variant}
-		>
+		<div className="subscription-card" data-testid="subscription-status-card" data-variant={variant}>
 			<div className="status">Status: {subscription.status}</div>
 			<div className="plan">Plan: {subscription.planType}</div>
-			{subscription.expiresAt && (
-				<div className="expires">
-					Expires: {subscription.expiresAt.toLocaleDateString()}
-				</div>
-			)}
+			{subscription.expiresAt && <div className="expires">Expires: {subscription.expiresAt.toLocaleDateString()}</div>}
 		</div>
 	);
 };
@@ -41,12 +33,7 @@ export type FeatureGateProps = {
 	fallback?: React.ReactNode;
 };
 
-export const FeatureGate: React.FC<FeatureGateProps> = ({
-	feature,
-	isAvailable,
-	children,
-	fallback,
-}) => {
+export const FeatureGate: React.FC<FeatureGateProps> = ({ feature, isAvailable, children, fallback }) => {
 	if (isAvailable) {
 		return (
 			<div data-feature={feature} data-testid="feature-gate">
@@ -57,9 +44,7 @@ export const FeatureGate: React.FC<FeatureGateProps> = ({
 
 	return (
 		<div data-feature={feature} data-testid="feature-gate">
-			<div data-testid="feature-fallback">
-				{fallback || "Feature not available"}
-			</div>
+			<div data-testid="feature-fallback">{fallback || "Feature not available"}</div>
 		</div>
 	);
 };
@@ -71,13 +56,9 @@ export type SubscriptionNotificationsProps = {
 	};
 };
 
-export const SubscriptionNotifications: React.FC<
-	SubscriptionNotificationsProps
-> = ({ subscription }) => {
+export const SubscriptionNotifications: React.FC<SubscriptionNotificationsProps> = ({ subscription }) => {
 	const isExpiringSoon =
-		subscription.expiresAt &&
-		new Date(subscription.expiresAt).getTime() - Date.now() <
-			7 * 24 * 60 * 60 * 1000; // 7 days
+		subscription.expiresAt && new Date(subscription.expiresAt).getTime() - Date.now() < 7 * 24 * 60 * 60 * 1000; // 7 days
 
 	if (subscription.status === "expired" || isExpiringSoon) {
 		return (

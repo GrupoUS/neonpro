@@ -129,47 +129,41 @@ export function useSession(options: UseSessionOptions = {}): UseSessionReturn {
 	const securityCheckRef = useRef<NodeJS.Timeout | null>(null);
 
 	// Session validation
-	const validateSession =
-		useCallback(async (): Promise<SessionValidationResult> => {
-			try {
-				// Placeholder implementation
-				const result: SessionValidationResult = {
-					valid: false,
-					session: undefined,
-					error: "Not implemented",
-				};
-				return result;
-			} catch (err) {
-				const errorMessage =
-					err instanceof Error ? err.message : "Session validation failed";
-				return {
-					valid: false,
-					error: errorMessage,
-				};
-			}
-		}, []);
+	const validateSession = useCallback(async (): Promise<SessionValidationResult> => {
+		try {
+			// Placeholder implementation
+			const result: SessionValidationResult = {
+				valid: false,
+				session: undefined,
+				error: "Not implemented",
+			};
+			return result;
+		} catch (err) {
+			const errorMessage = err instanceof Error ? err.message : "Session validation failed";
+			return {
+				valid: false,
+				error: errorMessage,
+			};
+		}
+	}, []);
 
 	// Login function
-	const login = useCallback(
-		async (_email: string, _password: string): Promise<boolean> => {
-			try {
-				setIsLoading(true);
-				setError(null);
+	const login = useCallback(async (_email: string, _password: string): Promise<boolean> => {
+		try {
+			setIsLoading(true);
+			setError(null);
 
-				toast("Login successful");
-				return true;
-			} catch (err) {
-				const errorMessage =
-					err instanceof Error ? err.message : "Login failed";
-				setError(errorMessage);
-				toast("Login failed");
-				return false;
-			} finally {
-				setIsLoading(false);
-			}
-		},
-		[],
-	);
+			toast("Login successful");
+			return true;
+		} catch (err) {
+			const errorMessage = err instanceof Error ? err.message : "Login failed";
+			setError(errorMessage);
+			toast("Login failed");
+			return false;
+		} finally {
+			setIsLoading(false);
+		}
+	}, []);
 
 	// Logout function
 	const logout = useCallback(async (): Promise<void> => {
@@ -204,101 +198,81 @@ export function useSession(options: UseSessionOptions = {}): UseSessionReturn {
 		try {
 			return true;
 		} catch (err) {
-			const errorMessage =
-				err instanceof Error ? err.message : "Session refresh failed";
+			const errorMessage = err instanceof Error ? err.message : "Session refresh failed";
 			setError(errorMessage);
 			return false;
 		}
 	}, []);
 
 	// Extend session
-	const extendSession = useCallback(
-		async (_duration = 3600): Promise<boolean> => {
-			try {
-				return true;
-			} catch (err) {
-				const errorMessage =
-					err instanceof Error ? err.message : "Session extension failed";
-				setError(errorMessage);
-				return false;
-			}
-		},
-		[],
-	);
+	const extendSession = useCallback(async (_duration = 3600): Promise<boolean> => {
+		try {
+			return true;
+		} catch (err) {
+			const errorMessage = err instanceof Error ? err.message : "Session extension failed";
+			setError(errorMessage);
+			return false;
+		}
+	}, []);
 
 	// Terminate all sessions
 	const terminateAllSessions = useCallback(async (): Promise<boolean> => {
 		try {
 			return true;
 		} catch (err) {
-			const errorMessage =
-				err instanceof Error ? err.message : "Failed to terminate sessions";
+			const errorMessage = err instanceof Error ? err.message : "Failed to terminate sessions";
 			setError(errorMessage);
 			return false;
 		}
 	}, []);
 
 	// Revoke device
-	const revokeDevice = useCallback(
-		async (_deviceId: string): Promise<boolean> => {
-			try {
-				return true;
-			} catch (err) {
-				const errorMessage =
-					err instanceof Error ? err.message : "Failed to revoke device";
-				setError(errorMessage);
-				return false;
-			}
-		},
-		[],
-	);
+	const revokeDevice = useCallback(async (_deviceId: string): Promise<boolean> => {
+		try {
+			return true;
+		} catch (err) {
+			const errorMessage = err instanceof Error ? err.message : "Failed to revoke device";
+			setError(errorMessage);
+			return false;
+		}
+	}, []);
 
 	// Trust device
-	const trustDevice = useCallback(
-		async (_deviceId: string): Promise<boolean> => {
-			try {
-				return true;
-			} catch (err) {
-				const errorMessage =
-					err instanceof Error ? err.message : "Failed to trust device";
-				setError(errorMessage);
-				return false;
-			}
-		},
-		[],
-	);
+	const trustDevice = useCallback(async (_deviceId: string): Promise<boolean> => {
+		try {
+			return true;
+		} catch (err) {
+			const errorMessage = err instanceof Error ? err.message : "Failed to trust device";
+			setError(errorMessage);
+			return false;
+		}
+	}, []);
 
 	// Dismiss alert
-	const dismissAlert = useCallback(
-		async (alertId: string): Promise<boolean> => {
-			try {
-				setSecurityAlerts((prev) =>
-					prev.filter((alert) => alert.id !== alertId),
-				);
-				return true;
-			} catch (err) {
-				const errorMessage =
-					err instanceof Error ? err.message : "Failed to dismiss alert";
-				setError(errorMessage);
-				return false;
-			}
-		},
-		[],
-	);
+	const dismissAlert = useCallback(async (alertId: string): Promise<boolean> => {
+		try {
+			setSecurityAlerts((prev) => prev.filter((alert) => alert.id !== alertId));
+			return true;
+		} catch (err) {
+			const errorMessage = err instanceof Error ? err.message : "Failed to dismiss alert";
+			setError(errorMessage);
+			return false;
+		}
+	}, []);
 
 	// Utility functions
 	const hasPermission = useCallback(
 		(permission: string): boolean => {
 			return session?.permissions?.includes(permission) ?? false;
 		},
-		[session],
+		[session]
 	);
 
 	const hasRole = useCallback(
 		(role: string): boolean => {
 			return session?.role === role;
 		},
-		[session],
+		[session]
 	);
 
 	const isSessionExpired = useCallback((): boolean => {
@@ -368,7 +342,7 @@ export function useSession(options: UseSessionOptions = {}): UseSessionReturn {
 				async () => {
 					scheduleSecurityCheck();
 				},
-				5 * 60 * 1000,
+				5 * 60 * 1000
 			); // 5 minutes
 		};
 

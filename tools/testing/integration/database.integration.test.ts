@@ -16,8 +16,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 // Test environment configuration
 const supabaseUrl = process.env.TEST_SUPABASE_URL || "https://test.supabase.co";
 const supabaseKey = process.env.TEST_SUPABASE_ANON_KEY || "test_anon_key";
-const supabaseServiceKey =
-	process.env.TEST_SUPABASE_SERVICE_ROLE_KEY || "test_service_key";
+const supabaseServiceKey = process.env.TEST_SUPABASE_SERVICE_ROLE_KEY || "test_service_key";
 
 // Create test clients
 const supabase = createClient(supabaseUrl, supabaseKey);
@@ -84,11 +83,7 @@ describe("🔗 Integration Tests - Database Operations", () => {
 				owner_id: testUser?.id || "test-user-id",
 			};
 
-			const { data, error } = await supabaseAdmin
-				.from("clinics")
-				.insert(clinicData)
-				.select()
-				.single();
+			const { data, error } = await supabaseAdmin.from("clinics").insert(clinicData).select().single();
 
 			expect(error).toBeNull();
 			expect(data).toBeTruthy();
@@ -108,10 +103,7 @@ describe("🔗 Integration Tests - Database Operations", () => {
 				owner_id: testUser?.id || "test-user-id",
 			};
 
-			const { data, error } = await supabaseAdmin
-				.from("clinics")
-				.insert(duplicateClinicData)
-				.select();
+			const { data, error } = await supabaseAdmin.from("clinics").insert(duplicateClinicData).select();
 
 			// Should fail due to unique constraint on ANVISA license
 			expect(error).toBeTruthy();
@@ -147,11 +139,7 @@ describe("🔗 Integration Tests - Database Operations", () => {
 				},
 			};
 
-			const { data, error } = await supabaseAdmin
-				.from("patients")
-				.insert(patientData)
-				.select()
-				.single();
+			const { data, error } = await supabaseAdmin.from("patients").insert(patientData).select().single();
 
 			expect(error).toBeNull();
 			expect(data).toBeTruthy();
@@ -174,10 +162,7 @@ describe("🔗 Integration Tests - Database Operations", () => {
 				},
 			};
 
-			const { data, error } = await supabaseAdmin
-				.from("patients")
-				.insert(invalidPatientData)
-				.select();
+			const { data, error } = await supabaseAdmin.from("patients").insert(invalidPatientData).select();
 
 			// Should fail due to foreign key constraint
 			expect(error).toBeTruthy();
@@ -203,11 +188,7 @@ describe("🔗 Integration Tests - Database Operations", () => {
 				},
 			};
 
-			const { data, error } = await supabaseAdmin
-				.from("appointments")
-				.insert(appointmentData)
-				.select()
-				.single();
+			const { data, error } = await supabaseAdmin.from("appointments").insert(appointmentData).select().single();
 
 			expect(error).toBeNull();
 			expect(data).toBeTruthy();
@@ -227,10 +208,7 @@ describe("🔗 Integration Tests - Database Operations", () => {
 				status: "scheduled",
 			};
 
-			const { data, error } = await supabaseAdmin
-				.from("appointments")
-				.insert(invalidAppointmentData)
-				.select();
+			const { data, error } = await supabaseAdmin.from("appointments").insert(invalidAppointmentData).select();
 
 			// Should fail due to foreign key constraint
 			expect(error).toBeTruthy();
@@ -249,19 +227,12 @@ describe("🔗 Integration Tests - Database Operations", () => {
 				owner_id: testUser?.id || "test-user-id",
 			};
 
-			const { data: otherClinic } = await supabaseAdmin
-				.from("clinics")
-				.insert(otherClinicData)
-				.select()
-				.single();
+			const { data: otherClinic } = await supabaseAdmin.from("clinics").insert(otherClinicData).select().single();
 
 			// Try to access patients from different clinic context
 			// This would be done through the application's RLS policies
 			// For now, verify that clinic_id is properly set
-			const { data: patients } = await supabaseAdmin
-				.from("patients")
-				.select("*")
-				.eq("clinic_id", testClinic.id);
+			const { data: patients } = await supabaseAdmin.from("patients").select("*").eq("clinic_id", testClinic.id);
 
 			expect(patients).toBeTruthy();
 			expect(patients?.length).toBeGreaterThan(0);
@@ -275,9 +246,7 @@ describe("🔗 Integration Tests - Database Operations", () => {
 			// Test that unauthenticated requests are blocked by RLS
 			const unauthenticatedClient = createClient(supabaseUrl, supabaseKey);
 
-			const { data, error } = await unauthenticatedClient
-				.from("patients")
-				.select("*");
+			const { data, error } = await unauthenticatedClient.from("patients").select("*");
 
 			// Should be empty or error due to RLS
 			expect(data?.length || 0).toBe(0);
@@ -309,11 +278,7 @@ describe("🔗 Integration Tests - Database Operations", () => {
 
 		it("should maintain audit trail for patient data access", async () => {
 			// Simulate data access for audit logging
-			const { data } = await supabaseAdmin
-				.from("patients")
-				.select("id, name, email")
-				.eq("id", testPatient.id)
-				.single();
+			const { data } = await supabaseAdmin.from("patients").select("id, name, email").eq("id", testPatient.id).single();
 
 			expect(data).toBeTruthy();
 			expect(data.id).toBe(testPatient.id);
@@ -341,10 +306,7 @@ describe("🔗 Integration Tests - Database Operations", () => {
 				},
 			}));
 
-			const { data, error } = await supabaseAdmin
-				.from("patients")
-				.insert(testRecords)
-				.select();
+			const { data, error } = await supabaseAdmin.from("patients").insert(testRecords).select();
 
 			const endTime = Date.now();
 			const duration = endTime - startTime;
@@ -360,26 +322,20 @@ describe("🔗 Integration Tests - Database Operations", () => {
 
 		it("should handle concurrent operations without conflicts", async () => {
 			const concurrentOps = 5;
-			const promises = new Array(concurrentOps)
-				.fill(null)
-				.map(async (_, index) => {
-					const patientData = {
-						id: nanoid(),
-						clinic_id: testClinic.id,
-						name: `Concurrent Patient ${index}`,
-						email: `concurrent-${index}-${nanoid(4)}@test.com`,
-						lgpd_consent: {
-							data_processing: true,
-							granted_at: new Date().toISOString(),
-						},
-					};
+			const promises = new Array(concurrentOps).fill(null).map(async (_, index) => {
+				const patientData = {
+					id: nanoid(),
+					clinic_id: testClinic.id,
+					name: `Concurrent Patient ${index}`,
+					email: `concurrent-${index}-${nanoid(4)}@test.com`,
+					lgpd_consent: {
+						data_processing: true,
+						granted_at: new Date().toISOString(),
+					},
+				};
 
-					return supabaseAdmin
-						.from("patients")
-						.insert(patientData)
-						.select()
-						.single();
-				});
+				return supabaseAdmin.from("patients").insert(patientData).select().single();
+			});
 
 			const results = await Promise.all(promises);
 

@@ -9,12 +9,10 @@
 // This must happen before jsdom loads to prevent the "Not implemented" error
 (globalThis as any).HTMLFormElement = (globalThis as any).HTMLFormElement || class {};
 if (!(globalThis as any).HTMLFormElement.prototype.requestSubmit) {
-	(globalThis as any).HTMLFormElement.prototype.requestSubmit = function (
-		submitter?: HTMLElement,
-	) {
+	(globalThis as any).HTMLFormElement.prototype.requestSubmit = function (submitter?: HTMLElement) {
 		// Create and dispatch submit event
 		const event = new Event("submit", { bubbles: true, cancelable: true });
-		
+
 		if (submitter) {
 			Object.defineProperty(event, "submitter", {
 				value: submitter,
@@ -61,90 +59,9 @@ vi.mock("next/navigation", () => ({
 	notFound: vi.fn(),
 }));
 
-// Enhanced React Query mocks with proper state management
-const createMockMutation = () => {
-	let state = {
-		isPending: false,
-		isSuccess: false,
-		isError: false,
-		isIdle: true,
-		data: undefined,
-		error: null,
-	};
-
-	const mutate = vi.fn((variables: any, options?: any) => {
-		// Simulate async mutation
-		state = { ...state, isPending: true, isIdle: false };
-
-		setTimeout(() => {
-			try {
-				// Simulate success
-				const mockData = { success: true, data: variables };
-				state = {
-					...state,
-					isPending: false,
-					isSuccess: true,
-					isError: false,
-					data: mockData,
-				};
-
-				if (options?.onSuccess) {
-					options.onSuccess(mockData, variables);
-				}
-			} catch (error) {
-				state = {
-					...state,
-					isPending: false,
-					isSuccess: false,
-					isError: true,
-					error,
-				};
-
-				if (options?.onError) {
-					options.onError(error, variables);
-				}
-			}
-		}, 0);
-	});
-
-	return {
-		...state,
-		mutate,
-		mutateAsync: vi.fn(() => Promise.resolve({ success: true, data: {} })),
-		reset: vi.fn(() => {
-			state = {
-				isPending: false,
-				isSuccess: false,
-				isError: false,
-				isIdle: true,
-				data: undefined,
-				error: null,
-			};
-		}),
-	};
-};
-
-vi.mock("@tanstack/react-query", () => ({
-	useMutation: vi.fn(() => createMockMutation()),
-	useQuery: vi.fn(() => ({
-		data: null,
-		isLoading: false,
-		isError: false,
-		isSuccess: true,
-		error: null,
-		refetch: vi.fn(),
-	})),
-	useQueryClient: vi.fn(() => ({
-		invalidateQueries: vi.fn(),
-		clear: vi.fn(),
-	})),
-	QueryClient: vi.fn().mockImplementation(() => ({
-		invalidateQueries: vi.fn(),
-		clear: vi.fn(),
-	})),
-	QueryClientProvider: ({ children }: { children: React.ReactNode }) =>
-		children,
-}));
+// Remove TanStack Query global mocks - let tests handle their own QueryClient setup
+// This follows official TanStack Query testing documentation which recommends
+// using real QueryClient + QueryClientProvider with test-specific configuration
 
 // Mock API client with all required methods
 vi.mock("@neonpro/shared/api-client", () => ({
@@ -162,9 +79,7 @@ vi.mock("@neonpro/shared/api-client", () => ({
 			if (typeof error === "object" && error && "error" in error) {
 				const apiError = error as any;
 				if (apiError.error?.validation_errors?.length > 0) {
-					return apiError.error.validation_errors
-						.map((ve: any) => `${ve.field}: ${ve.message}`)
-						.join(", ");
+					return apiError.error.validation_errors.map((ve: any) => `${ve.field}: ${ve.message}`).join(", ");
 				}
 				return apiError.message || "API error occurred";
 			}
@@ -172,7 +87,7 @@ vi.mock("@neonpro/shared/api-client", () => ({
 		}),
 		handleResponse: vi.fn(async (response: any, validator?: any) => {
 			const data = await response.json();
-			
+
 			if (!response.ok) {
 				return {
 					success: false,
@@ -248,23 +163,16 @@ vi.mock("@neonpro/shared/api-client", () => ({
 		isAuthError: vi.fn((error: any) => {
 			if (typeof error === "object" && error && "error" in error) {
 				const errorCode = error.error?.code;
-				return [
-					"UNAUTHORIZED",
-					"FORBIDDEN", 
-					"TOKEN_EXPIRED",
-					"INVALID_CREDENTIALS",
-					"SESSION_EXPIRED",
-				].includes(errorCode);
+				return ["UNAUTHORIZED", "FORBIDDEN", "TOKEN_EXPIRED", "INVALID_CREDENTIALS", "SESSION_EXPIRED"].includes(
+					errorCode
+				);
 			}
 			return false;
 		}),
 		isValidationError: vi.fn((error: any) => {
 			if (typeof error === "object" && error && "error" in error) {
 				const apiError = error as any;
-				return (
-					apiError.error?.code === "VALIDATION_ERROR" ||
-					apiError.error?.validation_errors?.length > 0
-				);
+				return apiError.error?.code === "VALIDATION_ERROR" || apiError.error?.validation_errors?.length > 0;
 			}
 			return false;
 		}),
@@ -304,7 +212,7 @@ vi.mock("@neonpro/shared/api-client", () => ({
 						Promise.resolve({
 							success: true,
 							data: { id: "patient-1", name: "Test Patient" },
-						}),
+						})
 					),
 					$get: vi.fn(() => Promise.resolve({ success: true, data: [] })),
 				},
@@ -340,7 +248,7 @@ Object.defineProperty(global, "fetch", {
 			status: 200,
 			json: () => Promise.resolve({}),
 			text: () => Promise.resolve(""),
-		}),
+		})
 	),
 });
 
@@ -382,24 +290,16 @@ Object.defineProperty(window, "alert", {
 if (typeof HTMLFormElement !== "undefined") {
 	// Polyfill requestSubmit method
 	if (!HTMLFormElement.prototype.requestSubmit) {
-		HTMLFormElement.prototype.requestSubmit = function (
-			submitter?: HTMLElement,
-		) {
+		HTMLFormElement.prototype.requestSubmit = function (submitter?: HTMLElement) {
 			// Validate submitter if provided
 			if (submitter) {
 				if (submitter.form !== this) {
-					throw new DOMException(
-						"The specified element is not a form-associated element.",
-						"NotFoundError",
-					);
+					throw new DOMException("The specified element is not a form-associated element.", "NotFoundError");
 				}
 				if (submitter.type === "submit" || submitter.type === "image") {
 					// Valid submitter types
 				} else {
-					throw new DOMException(
-						"The specified element is not a submit button.",
-						"InvalidStateError",
-					);
+					throw new DOMException("The specified element is not a submit button.", "InvalidStateError");
 				}
 			}
 
@@ -452,18 +352,275 @@ if (typeof HTMLFormElement !== "undefined") {
 }
 
 // Also polyfill form elements if needed
-if (typeof HTMLInputElement !== "undefined") {
-	if (!HTMLInputElement.prototype.checkValidity) {
-		HTMLInputElement.prototype.checkValidity = function () {
-			// Basic validation for required fields
-			if (this.required && !this.value.trim()) {
-				return false;
-			}
-			return true;
-		};
-	}
+if (typeof HTMLInputElement !== "undefined" && !HTMLInputElement.prototype.checkValidity) {
+	HTMLInputElement.prototype.checkValidity = function () {
+		// Basic validation for required fields
+		if (this.required && !this.value.trim()) {
+			return false;
+		}
+		return true;
+	};
 }
 
 beforeEach(() => {
 	vi.clearAllMocks();
+});
+
+// Global mock services for integration tests
+const mockSupabaseClient = {
+	auth: {
+		getUser: vi.fn().mockImplementation(() => {
+			return Promise.resolve({
+				data: {
+					user: {
+						id: "user-123",
+						email: "test@example.com",
+						role: "doctor",
+						lgpd_consent_date: new Date().toISOString(),
+					},
+				},
+				error: null,
+			});
+		}),
+		getSession: vi.fn().mockImplementation(() => {
+			return Promise.resolve({
+				data: { session: null },
+				error: null,
+			});
+		}),
+		getSessionId: vi.fn(() => "test-session-id"),
+		signInWithPassword: vi.fn().mockImplementation(() => {
+			return Promise.resolve({
+				data: { session: null, user: null },
+				error: null,
+			});
+		}),
+		signUp: vi.fn().mockImplementation(() => {
+			return Promise.resolve({
+				data: { user: null, session: null },
+				error: null,
+			});
+		}),
+		signOut: vi.fn().mockImplementation(() => {
+			return Promise.resolve({
+				error: null,
+			});
+		}),
+		onAuthStateChange: vi.fn().mockImplementation((_callback) => {
+			return {
+				data: {
+					subscription: {
+						unsubscribe: vi.fn().mockImplementation(() => {}),
+					},
+				},
+			};
+		}),
+		refreshSession: vi.fn().mockResolvedValue({
+			data: { session: null, user: null },
+			error: null,
+		}),
+		setSession: vi.fn().mockResolvedValue({
+			data: { session: null, user: null },
+			error: null,
+		}),
+		updateUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }),
+		resetPasswordForEmail: vi.fn().mockResolvedValue({ data: {}, error: null }),
+		exchangeCodeForSession: vi.fn().mockResolvedValue({
+			data: { session: null, user: null },
+			error: null,
+		}),
+	},
+	from: vi.fn().mockImplementation((tableName: string) => {
+		return {
+			select: vi.fn(() => ({
+				eq: vi.fn(() => ({
+					data: [],
+					error: null,
+				})),
+				single: vi.fn(() => ({
+					data: null,
+					error: null,
+				})),
+			})),
+			insert: vi.fn(() => ({
+				select: vi.fn(() => ({
+					single: vi.fn(() => ({
+						data: { id: "new-id" },
+						error: null,
+					})),
+				})),
+			})),
+			update: vi.fn(() => ({
+				eq: vi.fn(() => ({
+					select: vi.fn(() => ({
+						single: vi.fn(() => ({
+							data: { id: "updated-id" },
+							error: null,
+						})),
+					})),
+				})),
+			})),
+			delete: vi.fn(() => ({
+				eq: vi.fn(() => ({
+					data: null,
+					error: null,
+				})),
+			})),
+		};
+	}),
+	storage: {
+		from: vi.fn().mockImplementation((bucketName: string) => ({
+			upload: vi.fn().mockResolvedValue({ data: null, error: null }),
+			download: vi.fn().mockResolvedValue({ data: null, error: null }),
+			remove: vi.fn().mockResolvedValue({ data: null, error: null }),
+			list: vi.fn().mockResolvedValue({ data: [], error: null }),
+			getPublicUrl: vi.fn().mockReturnValue({
+				data: { publicUrl: `https://example.com/${bucketName}/file.jpg` },
+			}),
+		})),
+	},
+};
+
+const mockNotificationService = {
+	sendEmergencyAlert: vi.fn().mockResolvedValue({
+		alert_sent: true,
+		recipients: ["emergency_supervisor", "head_doctor", "security"],
+		timestamp: new Date().toISOString(),
+	}),
+	sendNotification: vi.fn().mockResolvedValue({
+		notification_sent: true,
+		notification_id: "notif-123",
+	}),
+	getNotificationHistory: vi.fn().mockResolvedValue({
+		notifications: [],
+		total: 0,
+	}),
+	notifyMedicalStaff: vi.fn().mockResolvedValue({
+		medical_team_alerted: true,
+		specialists_contacted: ["cardiologist", "anesthesiologist"],
+		notification_sent: true,
+	}),
+	logEmergencyNotification: vi.fn().mockResolvedValue({
+		notification_logged: true,
+		audit_id: "notification-audit-123",
+		log_entry_created: true,
+	}),
+};
+
+const mockLGPDService = {
+	validatePurposeLimitation: vi.fn().mockResolvedValue({
+		valid: true,
+		purposes: ["healthcare", "emergency"],
+	}),
+	processDataSubjectRequest: vi.fn().mockResolvedValue({
+		success: true,
+		request_id: "req-123",
+		status: "processed",
+	}),
+	getAuditTrail: vi.fn().mockResolvedValue({
+		success: true,
+		audit_report: {
+			total_entries: 0,
+			entries: [],
+		},
+	}),
+	checkRetentionPolicy: vi.fn().mockResolvedValue({
+		policy_compliant: true,
+		retention_periods: {
+			medical_records: "10_years",
+			appointment_history: "5_years",
+			audit_logs: "7_years",
+		},
+	}),
+	anonymizePatientData: vi.fn().mockResolvedValue({
+		success: true,
+		patient_id: "anonymized",
+		fields_anonymized: ["name", "cpf", "address"],
+	}),
+	recordConsent: vi.fn().mockResolvedValue({
+		success: true,
+		consent_id: "consent-123",
+	}),
+	revokeConsent: vi.fn().mockResolvedValue({
+		success: true,
+		revocation_effective: true,
+	}),
+	createAuditEntry: vi.fn().mockResolvedValue({
+		success: true,
+		audit_id: "audit-123",
+		entry_created: true,
+	}),
+};
+
+const mockCpfValidator = {
+	isValid: vi.fn().mockReturnValue(true),
+	format: vi.fn().mockImplementation((cpf: string) => cpf),
+	validate: vi.fn().mockReturnValue({
+		isValid: true,
+		formatted: "123.456.789-00",
+	}),
+};
+
+// Make global mocks available
+Object.defineProperty(globalThis, "mockSupabaseClient", {
+	value: mockSupabaseClient,
+	writable: true,
+	configurable: true,
+});
+
+Object.defineProperty(globalThis, "mockNotificationService", {
+	value: mockNotificationService,
+	writable: true,
+	configurable: true,
+});
+
+Object.defineProperty(globalThis, "mockLGPDService", {
+	value: mockLGPDService,
+	writable: true,
+	configurable: true,
+});
+
+// Also lowercase for compatibility
+Object.defineProperty(globalThis, "mockLgpdService", {
+	value: mockLGPDService,
+	writable: true,
+	configurable: true,
+});
+
+Object.defineProperty(globalThis, "mockCpfValidator", {
+	value: mockCpfValidator,
+	writable: true,
+	configurable: true,
+});
+
+// Also make them available on global for Node.js compatibility
+Object.defineProperty(global, "mockSupabaseClient", {
+	value: mockSupabaseClient,
+	writable: true,
+	configurable: true,
+});
+
+Object.defineProperty(global, "mockNotificationService", {
+	value: mockNotificationService,
+	writable: true,
+	configurable: true,
+});
+
+Object.defineProperty(global, "mockLGPDService", {
+	value: mockLGPDService,
+	writable: true,
+	configurable: true,
+});
+
+// Also lowercase for compatibility
+Object.defineProperty(global, "mockLgpdService", {
+	value: mockLGPDService,
+	writable: true,
+	configurable: true,
+});
+
+Object.defineProperty(global, "mockCpfValidator", {
+	value: mockCpfValidator,
+	writable: true,
+	configurable: true,
 });

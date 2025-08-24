@@ -97,14 +97,11 @@ export interface PatientExportResponse
 // Appointment Responses
 export interface AppointmentResponse extends ApiResponse<Appointment> {}
 
-export interface AppointmentsListResponse
-	extends PaginatedResponse<Appointment> {}
+export interface AppointmentsListResponse extends PaginatedResponse<Appointment> {}
 
-export interface AppointmentSearchResponse
-	extends PaginatedResponse<Appointment> {}
+export interface AppointmentSearchResponse extends PaginatedResponse<Appointment> {}
 
-export interface AppointmentAvailabilityResponse
-	extends ApiResponse<TimeSlot[]> {}
+export interface AppointmentAvailabilityResponse extends ApiResponse<TimeSlot[]> {}
 
 export interface AppointmentRescheduleResponse
 	extends ApiResponse<{
@@ -213,8 +210,7 @@ export interface ProfessionalStatsResponse
 // Notification Responses
 export interface NotificationResponse extends ApiResponse<Notification> {}
 
-export interface NotificationsListResponse
-	extends PaginatedResponse<Notification> {}
+export interface NotificationsListResponse extends PaginatedResponse<Notification> {}
 
 export interface NotificationMarkReadResponse
 	extends ApiResponse<{
@@ -231,8 +227,7 @@ export interface NotificationStatsResponse
 // Treatment Record Responses
 export interface TreatmentRecordResponse extends ApiResponse<TreatmentRecord> {}
 
-export interface TreatmentRecordsListResponse
-	extends PaginatedResponse<TreatmentRecord> {}
+export interface TreatmentRecordsListResponse extends PaginatedResponse<TreatmentRecord> {}
 
 export interface TreatmentStatsResponse
 	extends ApiResponse<{
@@ -449,20 +444,13 @@ export type SuccessResponse =
 // ... add more as needed
 
 // Type guard helpers
-export const isErrorResponse = (
-	response: unknown,
-): response is ErrorResponse => {
+export const isErrorResponse = (response: unknown): response is ErrorResponse => {
 	return (
-		typeof response === "object" &&
-		response !== null &&
-		"success" in response &&
-		(response as any).success === false
+		typeof response === "object" && response !== null && "success" in response && (response as any).success === false
 	);
 };
 
-export const isPaginatedResponse = <T>(
-	response: unknown,
-): response is PaginatedResponse<T> => {
+export const isPaginatedResponse = <T>(response: unknown): response is PaginatedResponse<T> => {
 	return (
 		typeof response === "object" &&
 		response !== null &&

@@ -7,17 +7,11 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
 	"Access-Control-Allow-Origin": "*",
-	"Access-Control-Allow-Headers":
-		"authorization, x-client-info, apikey, content-type",
+	"Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
 type ReportConfig = {
-	type:
-		| "stock_levels"
-		| "expiry_tracking"
-		| "usage_analytics"
-		| "anvisa_compliance"
-		| "cost_analysis";
+	type: "stock_levels" | "expiry_tracking" | "usage_analytics" | "anvisa_compliance" | "cost_analysis";
 	period: "daily" | "weekly" | "monthly" | "quarterly" | "yearly";
 	filters?: {
 		categories?: string[];
@@ -36,7 +30,7 @@ serve(async (req) => {
 	try {
 		const supabaseClient = createClient(
 			Deno.env.get("SUPABASE_URL") ?? "",
-			Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+			Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
 		);
 
 		// Authentication and tenant validation
@@ -111,25 +105,14 @@ serve(async (req) => {
 						tenant_id: tenantId,
 						summary: {
 							total_items: stockLevels.length,
-							medical_devices: stockLevels.filter(
-								(item) => item.is_medical_device,
-							).length,
-							low_stock_items: stockLevels.filter(
-								(item) => item.current_stock <= item.minimum_threshold,
-							).length,
-							out_of_stock: stockLevels.filter(
-								(item) => item.current_stock === 0,
-							).length,
-							total_inventory_value: stockLevels.reduce(
-								(sum, item) => sum + (item.total_value || 0),
-								0,
-							),
+							medical_devices: stockLevels.filter((item) => item.is_medical_device).length,
+							low_stock_items: stockLevels.filter((item) => item.current_stock <= item.minimum_threshold).length,
+							out_of_stock: stockLevels.filter((item) => item.current_stock === 0).length,
+							total_inventory_value: stockLevels.reduce((sum, item) => sum + (item.total_value || 0), 0),
 						},
 						items: stockLevels,
 						healthcare_compliance: {
-							anvisa_tracked_items: stockLevels.filter(
-								(item) => item.anvisa_registration,
-							).length,
+							anvisa_tracked_items: stockLevels.filter((item) => item.anvisa_registration).length,
 							medical_device_compliance: true,
 						},
 					};
@@ -158,12 +141,8 @@ serve(async (req) => {
 						throw expiryError;
 					}
 
-					const thirtyDaysFromNow = new Date(
-						now.getTime() + 30 * 24 * 60 * 60 * 1000,
-					);
-					const ninettyDaysFromNow = new Date(
-						now.getTime() + 90 * 24 * 60 * 60 * 1000,
-					);
+					const thirtyDaysFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+					const ninettyDaysFromNow = new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000);
 
 					reportData = {
 						type: "Expiry Tracking Report",
@@ -171,26 +150,19 @@ serve(async (req) => {
 						tenant_id: tenantId,
 						summary: {
 							total_tracked_items: expiryItems.length,
-							expired_items: expiryItems.filter(
-								(item) => new Date(item.expiry_date) < now,
-							).length,
+							expired_items: expiryItems.filter((item) => new Date(item.expiry_date) < now).length,
 							expiring_30_days: expiryItems.filter((item) => {
 								const expiry = new Date(item.expiry_date);
 								return expiry > now && expiry <= thirtyDaysFromNow;
 							}).length,
 							expiring_90_days: expiryItems.filter((item) => {
 								const expiry = new Date(item.expiry_date);
-								return (
-									expiry > thirtyDaysFromNow && expiry <= ninettyDaysFromNow
-								);
+								return expiry > thirtyDaysFromNow && expiry <= ninettyDaysFromNow;
 							}).length,
 						},
 						items: expiryItems.map((item) => ({
 							...item,
-							days_to_expiry: Math.ceil(
-								(new Date(item.expiry_date).getTime() - now.getTime()) /
-									(1000 * 60 * 60 * 24),
-							),
+							days_to_expiry: Math.ceil((new Date(item.expiry_date).getTime() - now.getTime()) / (1000 * 60 * 60 * 24)),
 							status:
 								new Date(item.expiry_date) < now
 									? "expired"
@@ -235,30 +207,19 @@ serve(async (req) => {
 						tenant_id: tenantId,
 						summary: {
 							total_medical_devices: anvisaItems.length,
-							anvisa_registered: anvisaItems.filter(
-								(item) => item.anvisa_registration,
-							).length,
-							missing_registration: anvisaItems.filter(
-								(item) => !item.anvisa_registration,
-							).length,
+							anvisa_registered: anvisaItems.filter((item) => item.anvisa_registration).length,
+							missing_registration: anvisaItems.filter((item) => !item.anvisa_registration).length,
 							compliance_rate:
 								anvisaItems.length > 0
 									? `${(
-											(anvisaItems.filter((item) => item.anvisa_registration)
-												.length /
-												anvisaItems.length) *
-												100
+											(anvisaItems.filter((item) => item.anvisa_registration).length / anvisaItems.length) * 100
 										).toFixed(2)}%`
 									: "100%",
 						},
 						items: anvisaItems,
-						compliance_issues: anvisaItems.filter(
-							(item) => !item.anvisa_registration,
-						),
+						compliance_issues: anvisaItems.filter((item) => !item.anvisa_registration),
 						healthcare_compliance: {
-							anvisa_compliant: anvisaItems.every(
-								(item) => item.anvisa_registration,
-							),
+							anvisa_compliant: anvisaItems.every((item) => item.anvisa_registration),
 							regulatory_tracking: true,
 							patient_safety_validated: true,
 						},
@@ -282,9 +243,7 @@ serve(async (req) => {
 					generated_by: user.id,
 					status: "completed",
 					data_summary: {
-						total_records: Array.isArray(reportData.items)
-							? reportData.items.length
-							: 0,
+						total_records: Array.isArray(reportData.items) ? reportData.items.length : 0,
 						report_size_kb: Math.ceil(JSON.stringify(reportData).length / 1024),
 					},
 				})
@@ -304,9 +263,7 @@ serve(async (req) => {
 				resource_id: reportRecord.id,
 				new_values: {
 					report_type: config.type,
-					records_count: Array.isArray(reportData.items)
-						? reportData.items.length
-						: 0,
+					records_count: Array.isArray(reportData.items) ? reportData.items.length : 0,
 				},
 				ip_address: req.headers.get("x-forwarded-for"),
 				user_agent: req.headers.get("user-agent"),
@@ -328,7 +285,7 @@ serve(async (req) => {
 				{
 					headers: { ...corsHeaders, "Content-Type": "application/json" },
 					status: 200,
-				},
+				}
 			);
 		}
 
@@ -348,7 +305,7 @@ serve(async (req) => {
 			{
 				headers: { ...corsHeaders, "Content-Type": "application/json" },
 				status: 400,
-			},
+			}
 		);
 	}
 });

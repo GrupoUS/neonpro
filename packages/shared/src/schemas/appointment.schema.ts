@@ -85,13 +85,8 @@ export const AppointmentReminderSchema = z.object({
 // Appointment Note Schema
 export const AppointmentNoteSchema = z.object({
 	id: z.string().uuid().optional(),
-	content: z
-		.string()
-		.min(1, "Nota não pode estar vazia")
-		.max(2000, "Nota deve ter no máximo 2000 caracteres"),
-	type: z
-		.enum(["clinical", "administrative", "billing", "follow_up"])
-		.default("clinical"),
+	content: z.string().min(1, "Nota não pode estar vazia").max(2000, "Nota deve ter no máximo 2000 caracteres"),
+	type: z.enum(["clinical", "administrative", "billing", "follow_up"]).default("clinical"),
 	is_private: z.boolean().default(false),
 	author_id: z.string().uuid(),
 	author_name: z.string(),
@@ -124,18 +119,9 @@ export const PrescriptionSchema = z.object({
 		.string()
 		.min(2, "Nome do medicamento deve ter pelo menos 2 caracteres")
 		.max(200, "Nome do medicamento deve ter no máximo 200 caracteres"),
-	dosage: z
-		.string()
-		.min(1, "Dosagem é obrigatória")
-		.max(100, "Dosagem deve ter no máximo 100 caracteres"),
-	frequency: z
-		.string()
-		.min(1, "Frequência é obrigatória")
-		.max(100, "Frequência deve ter no máximo 100 caracteres"),
-	duration: z
-		.string()
-		.min(1, "Duração é obrigatória")
-		.max(100, "Duração deve ter no máximo 100 caracteres"),
+	dosage: z.string().min(1, "Dosagem é obrigatória").max(100, "Dosagem deve ter no máximo 100 caracteres"),
+	frequency: z.string().min(1, "Frequência é obrigatória").max(100, "Frequência deve ter no máximo 100 caracteres"),
+	duration: z.string().min(1, "Duração é obrigatória").max(100, "Duração deve ter no máximo 100 caracteres"),
 	instructions: z.string().max(500).optional(),
 	is_controlled: z.boolean().default(false),
 	generic_allowed: z.boolean().default(true),
@@ -158,9 +144,7 @@ export const ServicePerformedSchema = z.object({
 	duration_minutes: z.number().min(1).optional(),
 	notes: z.string().max(1000).optional(),
 	complications: z.string().max(1000).optional(),
-	outcome: z
-		.enum(["successful", "partial", "complications", "cancelled"])
-		.default("successful"),
+	outcome: z.enum(["successful", "partial", "complications", "cancelled"]).default("successful"),
 });
 
 // File Attachment Schema
@@ -194,9 +178,7 @@ export const AppointmentBaseSchema = z.object({
 
 	// Scheduling Details
 	scheduled_date: z.string().date(),
-	scheduled_time: z
-		.string()
-		.regex(/^\d{2}:\d{2}$/, "Horário deve estar no formato HH:MM"),
+	scheduled_time: z.string().regex(/^\d{2}:\d{2}$/, "Horário deve estar no formato HH:MM"),
 	duration_minutes: z.number().min(15).max(480).default(60),
 	end_time: z
 		.string()
@@ -295,14 +277,7 @@ export const AppointmentQuerySchema = z.object({
 
 	// Sorting
 	sort_by: z
-		.enum([
-			"scheduled_date",
-			"created_at",
-			"patient_name",
-			"professional_name",
-			"status",
-			"priority",
-		])
+		.enum(["scheduled_date", "created_at", "patient_name", "professional_name", "status", "priority"])
 		.default("scheduled_date"),
 	sort_order: z.enum(["asc", "desc"]).default("asc"),
 
@@ -320,9 +295,7 @@ export const CreateAppointmentSchema = z.object({
 	service_id: z.string().uuid().optional(),
 
 	scheduled_date: z.string().date(),
-	scheduled_time: z
-		.string()
-		.regex(/^\d{2}:\d{2}$/, "Horário deve estar no formato HH:MM"),
+	scheduled_time: z.string().regex(/^\d{2}:\d{2}$/, "Horário deve estar no formato HH:MM"),
 	duration_minutes: z.number().min(15).max(480).default(60),
 
 	type: AppointmentTypeSchema.default("consultation"),
@@ -336,9 +309,7 @@ export const CreateAppointmentSchema = z.object({
 
 	// Reminder preferences
 	send_reminders: z.boolean().default(true),
-	reminder_methods: z
-		.array(z.enum(["email", "sms", "whatsapp"]))
-		.default(["email"]),
+	reminder_methods: z.array(z.enum(["email", "sms", "whatsapp"])).default(["email"]),
 
 	notes: z.string().max(2000).optional(),
 });
@@ -524,14 +495,14 @@ export const AppointmentStatsSchema = z.object({
 		z.object({
 			hour: z.number(),
 			count: z.number(),
-		}),
+		})
 	),
 	popular_services: z.array(
 		z.object({
 			service_id: z.string().uuid(),
 			service_name: z.string(),
 			count: z.number(),
-		}),
+		})
 	),
 });
 
@@ -554,17 +525,11 @@ export type CreateAppointment = z.infer<typeof CreateAppointmentSchema>;
 export type UpdateAppointment = z.infer<typeof UpdateAppointmentSchema>;
 export type CheckInAppointment = z.infer<typeof CheckInAppointmentSchema>;
 export type CompleteAppointment = z.infer<typeof CompleteAppointmentSchema>;
-export type BulkUpdateAppointments = z.infer<
-	typeof BulkUpdateAppointmentsSchema
->;
+export type BulkUpdateAppointments = z.infer<typeof BulkUpdateAppointmentsSchema>;
 export type AppointmentResponse = z.infer<typeof AppointmentResponseSchema>;
-export type AppointmentsListResponse = z.infer<
-	typeof AppointmentsListResponseSchema
->;
+export type AppointmentsListResponse = z.infer<typeof AppointmentsListResponseSchema>;
 export type AvailabilitySlot = z.infer<typeof AvailabilitySlotSchema>;
 export type DailySchedule = z.infer<typeof DailyScheduleSchema>;
-export type WeeklyScheduleResponse = z.infer<
-	typeof WeeklyScheduleResponseSchema
->;
+export type WeeklyScheduleResponse = z.infer<typeof WeeklyScheduleResponseSchema>;
 export type AppointmentStats = z.infer<typeof AppointmentStatsSchema>;
 export type TimeSlot = z.infer<typeof TimeSlotSchema>;

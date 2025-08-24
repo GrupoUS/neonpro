@@ -63,9 +63,7 @@ export class TrafficManager {
 	/**
 	 * Gradually shift traffic from blue to green
 	 */
-	async gradualShift(
-		steps: number[] = [10, 25, 50, 75, 100],
-	): Promise<TrafficStatus[]> {
+	async gradualShift(steps: number[] = [10, 25, 50, 75, 100]): Promise<TrafficStatus[]> {
 		const results: TrafficStatus[] = [];
 
 		for (const greenWeight of steps) {
@@ -89,9 +87,7 @@ export class TrafficManager {
 	/**
 	 * Switch all traffic to specified environment
 	 */
-	async switchToEnvironment(
-		environment: "blue" | "green",
-	): Promise<TrafficStatus> {
+	async switchToEnvironment(environment: "blue" | "green"): Promise<TrafficStatus> {
 		const config: TrafficConfig = {
 			blueWeight: environment === "blue" ? 100 : 0,
 			greenWeight: environment === "green" ? 100 : 0,
@@ -126,17 +122,13 @@ export class TrafficManager {
 
 		if (status.activeEnvironment === "mixed") {
 			// If mixed, return the environment with higher weight
-			return status.currentDistribution.blue > status.currentDistribution.green
-				? "blue"
-				: "green";
+			return status.currentDistribution.blue > status.currentDistribution.green ? "blue" : "green";
 		}
 
 		return status.activeEnvironment as "blue" | "green";
 	}
 
-	private determineActiveEnvironment(
-		config: TrafficConfig,
-	): "blue" | "green" | "mixed" {
+	private determineActiveEnvironment(config: TrafficConfig): "blue" | "green" | "mixed" {
 		if (config.blueWeight === 100) {
 			return "blue";
 		}

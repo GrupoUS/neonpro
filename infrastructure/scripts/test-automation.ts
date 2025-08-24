@@ -28,34 +28,18 @@ async function testEmailAutomation() {
 		};
 
 		// Teste apenas em desenvolvimento ou com flag especial
-		if (
-			process.env.NODE_ENV === "development" &&
-			process.env.ENABLE_TEST_JOBS === "true"
-		) {
-			const _confirmationResult =
-				await NeonProAutomation.sendAppointmentConfirmation(
-					testAppointmentData,
-				);
+		if (process.env.NODE_ENV === "development" && process.env.ENABLE_TEST_JOBS === "true") {
+			const _confirmationResult = await NeonProAutomation.sendAppointmentConfirmation(testAppointmentData);
 
-			const _reminderResult =
-				await NeonProAutomation.scheduleAppointmentReminder(
-					testAppointmentData,
-				);
-			const _fullResult =
-				await NeonProAutomation.onNewAppointmentCreated(testAppointmentData);
+			const _reminderResult = await NeonProAutomation.scheduleAppointmentReminder(testAppointmentData);
+			const _fullResult = await NeonProAutomation.onNewAppointmentCreated(testAppointmentData);
 		} else {
 		}
 
 		// Verifica se as variáveis de ambiente estão definidas
-		const requiredEnvVars = [
-			"TRIGGER_SECRET_KEY",
-			"TRIGGER_PROJECT_ID",
-			"RESEND_API_KEY",
-		];
+		const requiredEnvVars = ["TRIGGER_SECRET_KEY", "TRIGGER_PROJECT_ID", "RESEND_API_KEY"];
 
-		const missingVars = requiredEnvVars.filter(
-			(envVar) => !process.env[envVar],
-		);
+		const missingVars = requiredEnvVars.filter((envVar) => !process.env[envVar]);
 
 		if (missingVars.length > 0) {
 		} else {
@@ -63,10 +47,7 @@ async function testEmailAutomation() {
 
 		try {
 			const supabase = await createClient();
-			const { data, error } = await supabase
-				.from("appointments")
-				.select("count")
-				.limit(1);
+			const { data, error } = await supabase.from("appointments").select("count").limit(1);
 
 			if (error) {
 			} else {

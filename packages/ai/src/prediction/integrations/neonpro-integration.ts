@@ -34,7 +34,7 @@ export class NeonProAIIntegration {
 		patientId: string,
 		treatmentType: string,
 		targetAreas: string[],
-		_additionalParams?: Record<string, any>,
+		_additionalParams?: Record<string, any>
 	): Promise<{
 		success: boolean;
 		recommendation?: any;
@@ -85,11 +85,7 @@ export class NeonProAIIntegration {
 			};
 
 			// Get comprehensive AI prediction
-			const prediction = await aestheticInferenceAPI.getComprehensivePrediction(
-				patientId,
-				patient,
-				treatmentRequest,
-			);
+			const prediction = await aestheticInferenceAPI.getComprehensivePrediction(patientId, patient, treatmentRequest);
 
 			if (!prediction.success) {
 				throw new Error(prediction.error || "Prediction failed");
@@ -100,14 +96,11 @@ export class NeonProAIIntegration {
 				"treatment-outcome",
 				prediction.metadata.processingTime,
 				prediction.metadata.accuracyScore,
-				true,
+				true
 			);
 
 			// Format recommendation for NeonPro services
-			const recommendation = this.formatTreatmentRecommendation(
-				prediction.data,
-				treatmentRequest,
-			);
+			const recommendation = this.formatTreatmentRecommendation(prediction.data, treatmentRequest);
 
 			return {
 				success: true,
@@ -125,7 +118,7 @@ export class NeonProAIIntegration {
 				performance.now() - startTime,
 				0,
 				false,
-				error instanceof Error ? error.message : "Unknown error",
+				error instanceof Error ? error.message : "Unknown error"
 			);
 
 			return {
@@ -141,11 +134,7 @@ export class NeonProAIIntegration {
 	} /**
 	 * Get optimized Botox treatment plan
 	 */
-	async getBotoxOptimization(
-		patientId: string,
-		targetAreas: string[],
-		desiredIntensity = 5,
-	) {
+	async getBotoxOptimization(patientId: string, targetAreas: string[], desiredIntensity = 5) {
 		try {
 			const patient = await this.getPatientProfile(patientId);
 
@@ -153,7 +142,7 @@ export class NeonProAIIntegration {
 				patientId,
 				patient,
 				targetAreas,
-				desiredIntensity,
+				desiredIntensity
 			);
 
 			if (result.success && result.data) {
@@ -203,9 +192,7 @@ export class NeonProAIIntegration {
 				"duration-estimation",
 				"success-probability",
 			].map((modelType) => {
-				const check = predictionPerformanceMonitor.checkAccuracyTarget(
-					modelType as any,
-				);
+				const check = predictionPerformanceMonitor.checkAccuracyTarget(modelType as any);
 				return { [modelType]: check };
 			});
 
@@ -214,28 +201,22 @@ export class NeonProAIIntegration {
 				...accuracyChecks.map((check) => {
 					const [key, value] = Object.entries(check)[0];
 					return { [key]: (value as any).currentAccuracy };
-				}),
+				})
 			);
 
 			const recommendations: string[] = [];
 
 			// Generate recommendations based on health status
 			if (healthCheck.status !== "healthy") {
-				recommendations.push(
-					"AI system health degraded - check model performance",
-				);
+				recommendations.push("AI system health degraded - check model performance");
 			}
 
 			if (dashboard.successRate < 0.95) {
-				recommendations.push(
-					"High error rate detected - review system stability",
-				);
+				recommendations.push("High error rate detected - review system stability");
 			}
 
 			if (dashboard.averageResponseTime > 2000) {
-				recommendations.push(
-					"Response time above 2s target - optimize inference pipeline",
-				);
+				recommendations.push("Response time above 2s target - optimize inference pipeline");
 			}
 
 			return {
@@ -253,9 +234,7 @@ export class NeonProAIIntegration {
 				status: "unhealthy",
 				accuracy: {},
 				performance: {},
-				recommendations: [
-					"System health check failed - investigate immediately",
-				],
+				recommendations: ["System health check failed - investigate immediately"],
 			};
 		}
 	}
@@ -321,10 +300,7 @@ export class NeonProAIIntegration {
 	/**
 	 * Format AI prediction into NeonPro treatment recommendation
 	 */
-	private formatTreatmentRecommendation(
-		prediction: any,
-		request: TreatmentRequest,
-	) {
+	private formatTreatmentRecommendation(prediction: any, request: TreatmentRequest) {
 		return {
 			treatmentPlan: {
 				type: request.treatmentType,
@@ -367,9 +343,7 @@ export class NeonProAIIntegration {
 			predictions.success.outputs.confidence,
 		];
 
-		return (
-			confidences.reduce((sum, conf) => sum + conf, 0) / confidences.length
-		);
+		return confidences.reduce((sum, conf) => sum + conf, 0) / confidences.length;
 	}
 }
 

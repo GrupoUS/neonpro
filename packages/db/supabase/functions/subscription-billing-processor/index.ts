@@ -7,17 +7,11 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
 	"Access-Control-Allow-Origin": "*",
-	"Access-Control-Allow-Headers":
-		"authorization, x-client-info, apikey, content-type",
+	"Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
 type BillingEvent = {
-	type:
-		| "subscription_created"
-		| "subscription_renewed"
-		| "subscription_canceled"
-		| "payment_failed"
-		| "trial_ended";
+	type: "subscription_created" | "subscription_renewed" | "subscription_canceled" | "payment_failed" | "trial_ended";
 	subscription_id: string;
 	tenant_id: string;
 	amount?: number;
@@ -33,7 +27,7 @@ serve(async (req) => {
 	try {
 		const supabaseClient = createClient(
 			Deno.env.get("SUPABASE_URL") ?? "",
-			Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+			Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
 		);
 
 		// Service-to-service authentication for billing webhooks
@@ -108,26 +102,24 @@ serve(async (req) => {
 
 				// Calculate amount
 				const plan = subscription.subscription_plans;
-				const amount =
-					billingCycle === "monthly" ? plan.price_monthly : plan.price_yearly;
+				const amount = billingCycle === "monthly" ? plan.price_monthly : plan.price_yearly;
 
 				// Create payment transaction record
-				const { data: paymentRecord, error: paymentError } =
-					await supabaseClient
-						.from("payment_transactions")
-						.insert({
-							tenant_id,
-							subscription_id,
-							amount,
-							currency: "BRL",
-							status: "pending",
-							transaction_type: "subscription_billing",
-							billing_period_start: nextPeriodStart.toISOString(),
-							billing_period_end: nextPeriodEnd.toISOString(),
-							created_at: now.toISOString(),
-						})
-						.select()
-						.single();
+				const { data: paymentRecord, error: paymentError } = await supabaseClient
+					.from("payment_transactions")
+					.insert({
+						tenant_id,
+						subscription_id,
+						amount,
+						currency: "BRL",
+						status: "pending",
+						transaction_type: "subscription_billing",
+						billing_period_start: nextPeriodStart.toISOString(),
+						billing_period_end: nextPeriodEnd.toISOString(),
+						created_at: now.toISOString(),
+					})
+					.select()
+					.single();
 
 				if (paymentError) {
 					throw paymentError;
@@ -162,7 +154,7 @@ serve(async (req) => {
 					{
 						headers: { ...corsHeaders, "Content-Type": "application/json" },
 						status: 200,
-					},
+					}
 				);
 			}
 
@@ -232,19 +224,13 @@ serve(async (req) => {
 				});
 
 				// Send notifications for critical events
-				if (
-					event.type === "payment_failed" ||
-					event.type === "subscription_canceled"
-				) {
+				if (event.type === "payment_failed" || event.type === "subscription_canceled") {
 					// Send notification to healthcare admin
 					await supabaseClient.from("communication_notifications").insert({
 						tenant_id: event.tenant_id,
 						notification_type: "billing_alert",
 						priority: "high",
-						title:
-							event.type === "payment_failed"
-								? "Payment Failed"
-								: "Subscription Canceled",
+						title: event.type === "payment_failed" ? "Payment Failed" : "Subscription Canceled",
 						message: `Healthcare system billing event: ${event.type}`,
 						data: { subscription_id: event.subscription_id },
 						created_at: new Date().toISOString(),
@@ -258,16 +244,13 @@ serve(async (req) => {
 						healthcare_compliance: {
 							lgpd_compliant: true,
 							audit_logged: true,
-							notification_sent: [
-								"payment_failed",
-								"subscription_canceled",
-							].includes(event.type),
+							notification_sent: ["payment_failed", "subscription_canceled"].includes(event.type),
 						},
 					}),
 					{
 						headers: { ...corsHeaders, "Content-Type": "application/json" },
 						status: 200,
-					},
+					}
 				);
 			}
 
@@ -339,7 +322,7 @@ serve(async (req) => {
 					{
 						headers: { ...corsHeaders, "Content-Type": "application/json" },
 						status: 200,
-					},
+					}
 				);
 			}
 		}
@@ -360,7 +343,7 @@ serve(async (req) => {
 			{
 				headers: { ...corsHeaders, "Content-Type": "application/json" },
 				status: 400,
-			},
+			}
 		);
 	}
 });

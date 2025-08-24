@@ -7,13 +7,7 @@ export type Permission = {
 	id: string;
 	name: string;
 	description: string;
-	category:
-		| "patient"
-		| "appointment"
-		| "treatment"
-		| "financial"
-		| "admin"
-		| "compliance";
+	category: "patient" | "appointment" | "treatment" | "financial" | "admin" | "compliance";
 	level: "read" | "write" | "delete" | "admin";
 };
 
@@ -192,8 +186,7 @@ export class HealthcareRBAC {
 		{
 			id: "receptionist",
 			name: "Receptionist",
-			description:
-				"Front desk staff managing appointments and basic patient info",
+			description: "Front desk staff managing appointments and basic patient info",
 			hierarchy_level: 2,
 			permissions: [
 				"patient:read",
@@ -274,10 +267,7 @@ export class HealthcareRBAC {
 		}
 	}
 
-	async hasAnyPermission(
-		userId: string,
-		permissions: string[],
-	): Promise<boolean> {
+	async hasAnyPermission(userId: string, permissions: string[]): Promise<boolean> {
 		for (const permission of permissions) {
 			if (await this.hasPermission(userId, permission)) {
 				return true;
@@ -286,10 +276,7 @@ export class HealthcareRBAC {
 		return false;
 	}
 
-	async hasAllPermissions(
-		userId: string,
-		permissions: string[],
-	): Promise<boolean> {
+	async hasAllPermissions(userId: string, permissions: string[]): Promise<boolean> {
 		for (const permission of permissions) {
 			if (!(await this.hasPermission(userId, permission))) {
 				return false;
@@ -302,7 +289,7 @@ export class HealthcareRBAC {
 		userId: string,
 		resourceType: string,
 		action: "read" | "write" | "delete",
-		resourceOwnerId?: string,
+		resourceOwnerId?: string
 	): Promise<boolean> {
 		const permission = `${resourceType}:${action}`;
 
@@ -387,9 +374,7 @@ export class HealthcareRBAC {
 			}
 
 			const rbac = HealthcareRBAC.getInstance();
-			const permissions = Array.isArray(requiredPermissions)
-				? requiredPermissions
-				: [requiredPermissions];
+			const permissions = Array.isArray(requiredPermissions) ? requiredPermissions : [requiredPermissions];
 
 			const hasPermission = await rbac.hasAnyPermission(userId, permissions);
 			if (!hasPermission) {

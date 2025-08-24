@@ -42,10 +42,7 @@ export async function createSecurityEvent(req: NextRequest) {
 			data: { id: `event_${Date.now()}`, ...validatedData },
 		});
 	} catch (_error) {
-		return NextResponse.json(
-			{ error: "Failed to create security event" },
-			{ status: 500 },
-		);
+		return NextResponse.json({ error: "Failed to create security event" }, { status: 500 });
 	}
 }
 
@@ -60,10 +57,7 @@ export async function createSecurityAlert(req: NextRequest) {
 			data: { id: `alert_${Date.now()}`, ...validatedData },
 		});
 	} catch (_error) {
-		return NextResponse.json(
-			{ error: "Failed to create security alert" },
-			{ status: 500 },
-		);
+		return NextResponse.json({ error: "Failed to create security alert" }, { status: 500 });
 	}
 }
 
@@ -76,10 +70,7 @@ export async function getSecurityEvents(_req: NextRequest) {
 			count: 0,
 		});
 	} catch (_error) {
-		return NextResponse.json(
-			{ error: "Failed to fetch security events" },
-			{ status: 500 },
-		);
+		return NextResponse.json({ error: "Failed to fetch security events" }, { status: 500 });
 	}
 }
 
@@ -92,10 +83,7 @@ export async function getSecurityAlerts(_req: NextRequest) {
 			count: 0,
 		});
 	} catch (_error) {
-		return NextResponse.json(
-			{ error: "Failed to fetch security alerts" },
-			{ status: 500 },
-		);
+		return NextResponse.json({ error: "Failed to fetch security alerts" }, { status: 500 });
 	}
 }
 
@@ -113,10 +101,7 @@ export async function updateSecurityAlert(req: NextRequest) {
 		const body = AlertUpdateSchema.parse(rawBody);
 
 		if (!alertId) {
-			return NextResponse.json(
-				{ error: "Alert ID is required" },
-				{ status: 400 },
-			);
+			return NextResponse.json({ error: "Alert ID is required" }, { status: 400 });
 		}
 
 		// Placeholder implementation - replace with actual database logic
@@ -125,10 +110,7 @@ export async function updateSecurityAlert(req: NextRequest) {
 			data: { id: alertId, ...body },
 		});
 	} catch (_error) {
-		return NextResponse.json(
-			{ error: "Failed to update security alert" },
-			{ status: 500 },
-		);
+		return NextResponse.json({ error: "Failed to update security alert" }, { status: 500 });
 	}
 }
 
@@ -144,9 +126,6 @@ export async function getSecurityDashboard(_req: NextRequest) {
 			},
 		});
 	} catch (_error) {
-		return NextResponse.json(
-			{ error: "Failed to fetch security dashboard" },
-			{ status: 500 },
-		);
+		return NextResponse.json({ error: "Failed to fetch security dashboard" }, { status: 500 });
 	}
 }

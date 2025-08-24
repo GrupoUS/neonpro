@@ -58,16 +58,12 @@ export class HealthcareWorkspaceOptimizer {
 
 			// Extract workspace packages
 			if (this.results.packageJson.workspaces) {
-				this.results.workspacePackages = Array.isArray(
-					this.results.packageJson.workspaces,
-				)
+				this.results.workspacePackages = Array.isArray(this.results.packageJson.workspaces)
 					? this.results.packageJson.workspaces
 					: this.results.packageJson.workspaces.packages || [];
 			}
 		} catch (error) {
-			this.results.dependencyIssues.push(
-				`Failed to read package.json: ${error}`,
-			);
+			this.results.dependencyIssues.push(`Failed to read package.json: ${error}`);
 		}
 
 		// Read turbo.json
@@ -95,10 +91,8 @@ export class HealthcareWorkspaceOptimizer {
 			typecheck: "turbo typecheck",
 			clean: "turbo clean",
 			"healthcare:cleanup": "turbo healthcare:cleanup",
-			"healthcare:test:load":
-				"artillery run tools/testing/configs/artillery-healthcare.yml",
-			"healthcare:validate":
-				"npm run typecheck && npm run lint:healthcare && npm run test:healthcare",
+			"healthcare:test:load": "artillery run tools/testing/configs/artillery-healthcare.yml",
+			"healthcare:validate": "npm run typecheck && npm run lint:healthcare && npm run test:healthcare",
 		};
 
 		// Merge healthcare scripts with existing scripts
@@ -125,19 +119,14 @@ export class HealthcareWorkspaceOptimizer {
 			...healthcareDevDeps,
 		};
 
-		this.results.optimizations.push(
-			"Root package.json optimized for healthcare development",
-		);
+		this.results.optimizations.push("Root package.json optimized for healthcare development");
 	}
 
 	private async optimizeTurboConfig(): Promise<void> {
 		// Use the healthcare-optimized turbo config
 		try {
 			const healthcareTurboPath = join(this.rootPath, "turbo-healthcare.json");
-			const healthcareTurboContent = await fs.readFile(
-				healthcareTurboPath,
-				"utf-8",
-			);
+			const healthcareTurboContent = await fs.readFile(healthcareTurboPath, "utf-8");
 			const healthcareTurboConfig = JSON.parse(healthcareTurboContent);
 
 			// Merge with existing turbo.json
@@ -152,18 +141,11 @@ export class HealthcareWorkspaceOptimizer {
 
 			// Write optimized turbo.json
 			const turboJsonPath = join(this.rootPath, "turbo.json");
-			await fs.writeFile(
-				turboJsonPath,
-				JSON.stringify(optimizedConfig, null, 2),
-			);
+			await fs.writeFile(turboJsonPath, JSON.stringify(optimizedConfig, null, 2));
 
-			this.results.optimizations.push(
-				"Turborepo configuration optimized for healthcare workflows",
-			);
+			this.results.optimizations.push("Turborepo configuration optimized for healthcare workflows");
 		} catch (error) {
-			this.results.dependencyIssues.push(
-				`Failed to optimize turbo.json: ${error}`,
-			);
+			this.results.dependencyIssues.push(`Failed to optimize turbo.json: ${error}`);
 		}
 	}
 	private async cleanupDependencies(): Promise<void> {
@@ -177,15 +159,11 @@ export class HealthcareWorkspaceOptimizer {
 					await this.optimizePackageDependencies(packagePath);
 				}
 			} catch (error) {
-				this.results.dependencyIssues.push(
-					`Failed to cleanup ${workspacePattern}: ${error}`,
-				);
+				this.results.dependencyIssues.push(`Failed to cleanup ${workspacePattern}: ${error}`);
 			}
 		}
 
-		this.results.optimizations.push(
-			"Workspace dependencies cleaned and optimized",
-		);
+		this.results.optimizations.push("Workspace dependencies cleaned and optimized");
 	}
 
 	private async findPackages(pattern: string): Promise<string[]> {
@@ -198,12 +176,7 @@ export class HealthcareWorkspaceOptimizer {
 			try {
 				const entries = await fs.readdir(join(this.rootPath, baseDir));
 				for (const entry of entries) {
-					const packageJsonPath = join(
-						this.rootPath,
-						baseDir,
-						entry,
-						"package.json",
-					);
+					const packageJsonPath = join(this.rootPath, baseDir, entry, "package.json");
 					try {
 						await fs.access(packageJsonPath);
 						packages.push(join(baseDir, entry));
@@ -221,9 +194,7 @@ export class HealthcareWorkspaceOptimizer {
 		return packages;
 	}
 
-	private async optimizePackageDependencies(
-		packagePath: string,
-	): Promise<void> {
+	private async optimizePackageDependencies(packagePath: string): Promise<void> {
 		try {
 			const fullPackagePath = join(this.rootPath, packagePath);
 			const packageJsonPath = join(fullPackagePath, "package.json");
@@ -249,9 +220,7 @@ export class HealthcareWorkspaceOptimizer {
 
 						await fs.writeFile(tsconfigPath, JSON.stringify(tsconfig, null, 2));
 						modified = true;
-						this.results.optimizations.push(
-							`TypeScript strict mode enabled in ${packagePath}`,
-						);
+						this.results.optimizations.push(`TypeScript strict mode enabled in ${packagePath}`);
 					}
 				} catch {
 					// tsconfig.json doesn't exist or is invalid
@@ -261,10 +230,8 @@ export class HealthcareWorkspaceOptimizer {
 			// Add healthcare-specific scripts if this is an app
 			if (packagePath.startsWith("apps/")) {
 				const healthcareAppScripts = {
-					"test:healthcare":
-						"vitest run --config ../../tools/testing/configs/healthcare-test.config.ts",
-					"test:load":
-						"artillery run ../../tools/testing/configs/artillery-healthcare.yml",
+					"test:healthcare": "vitest run --config ../../tools/testing/configs/healthcare-test.config.ts",
+					"test:load": "artillery run ../../tools/testing/configs/artillery-healthcare.yml",
 				};
 
 				packageJson.scripts = {
@@ -275,15 +242,10 @@ export class HealthcareWorkspaceOptimizer {
 			}
 
 			if (modified) {
-				await fs.writeFile(
-					packageJsonPath,
-					JSON.stringify(packageJson, null, 2),
-				);
+				await fs.writeFile(packageJsonPath, JSON.stringify(packageJson, null, 2));
 			}
 		} catch (error) {
-			this.results.dependencyIssues.push(
-				`Failed to optimize ${packagePath}: ${error}`,
-			);
+			this.results.dependencyIssues.push(`Failed to optimize ${packagePath}: ${error}`);
 		}
 	}
 	private generateOptimizationReport(): void {

@@ -11,6 +11,5 @@ export { monitoringPerformanceIntegration } from "./index";
 module.exports = {
 	PerformanceService: require("../performance").default,
 	PerformanceMonitor: require("../performance-monitor").default,
-	monitoringPerformanceIntegration:
-		require("./index").monitoringPerformanceIntegration,
+	monitoringPerformanceIntegration: require("./index").monitoringPerformanceIntegration,
 };

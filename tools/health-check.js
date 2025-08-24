@@ -31,10 +31,7 @@ function checkNodeVersion() {
 	const major = Number.parseInt(version.slice(1).split(".")[0], 10);
 	return {
 		success: major >= 20,
-		message:
-			major >= 20
-				? `Node.js ${version} (✓ healthcare requirement)`
-				: `Node.js ${version} (requires ≥20.0.0)`,
+		message: major >= 20 ? `Node.js ${version} (✓ healthcare requirement)` : `Node.js ${version} (requires ≥20.0.0)`,
 	};
 }
 
@@ -193,9 +190,7 @@ function checkGitStatus() {
 
 		return {
 			success: true,
-			message: hasChanges
-				? "Git repository has uncommitted changes"
-				: "Git repository clean",
+			message: hasChanges ? "Git repository has uncommitted changes" : "Git repository clean",
 		};
 	} catch (_error) {
 		return {

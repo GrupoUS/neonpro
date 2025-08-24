@@ -602,10 +602,7 @@ type ReportIncidentRequest = {
 	category: ComplianceCategory;
 	severity: SeverityLevel;
 	affectedSystems: string[];
-	affectedData: Omit<
-		DataImpactAssessment,
-		"notificationRequired" | "regulatoryReportingRequired"
-	>;
+	affectedData: Omit<DataImpactAssessment, "notificationRequired" | "regulatoryReportingRequired">;
 	metadata?: Record<string, any>;
 };
 
@@ -654,7 +651,7 @@ export class ComplianceService {
 	private static instance: ComplianceService;
 	private readonly supabase = createClient(
 		process.env.NEXT_PUBLIC_SUPABASE_URL!,
-		process.env.SUPABASE_SERVICE_ROLE_KEY!,
+		process.env.SUPABASE_SERVICE_ROLE_KEY!
 	);
 
 	private constructor() {
@@ -672,10 +669,7 @@ export class ComplianceService {
 	// POLICY MANAGEMENT
 	// ================================================
 
-	async createPolicy(
-		request: CreatePolicyRequest,
-		userId: string,
-	): Promise<CompliancePolicy> {
+	async createPolicy(request: CreatePolicyRequest, userId: string): Promise<CompliancePolicy> {
 		try {
 			monitoring.info("Creating compliance policy", "compliance-service", {
 				tenantId: request.tenantId,
@@ -705,21 +699,12 @@ export class ComplianceService {
 				created_by: userId,
 			};
 
-			const { data, error } = await this.supabase
-				.from("compliance_policies")
-				.insert(policyData)
-				.select()
-				.single();
+			const { data, error } = await this.supabase.from("compliance_policies").insert(policyData).select().single();
 
 			if (error) {
-				monitoring.error(
-					"Policy creation failed",
-					"compliance-service",
-					new Error(error.message),
-					{
-						tenantId: request.tenantId,
-					},
-				);
+				monitoring.error("Policy creation failed", "compliance-service", new Error(error.message), {
+					tenantId: request.tenantId,
+				});
 				throw new Error(error.message);
 			}
 
@@ -731,7 +716,7 @@ export class ComplianceService {
 				"policy_created",
 				`Policy "${policy.name}" created`,
 				{ policyId: policy.id },
-				userId,
+				userId
 			);
 
 			monitoring.info("Policy created successfully", "compliance-service", {
@@ -741,29 +726,17 @@ export class ComplianceService {
 
 			return policy;
 		} catch (error) {
-			monitoring.error(
-				"Create policy error",
-				"compliance-service",
-				error as Error,
-				{
-					tenantId: request.tenantId,
-					name: request.name,
-				},
-			);
+			monitoring.error("Create policy error", "compliance-service", error as Error, {
+				tenantId: request.tenantId,
+				name: request.name,
+			});
 			throw error;
 		}
 	}
 
-	async getPolicy(
-		policyId: string,
-		userId: string,
-	): Promise<CompliancePolicy | null> {
+	async getPolicy(policyId: string, userId: string): Promise<CompliancePolicy | null> {
 		try {
-			const { data, error } = await this.supabase
-				.from("compliance_policies")
-				.select("*")
-				.eq("id", policyId)
-				.single();
+			const { data, error } = await this.supabase.from("compliance_policies").select("*").eq("id", policyId).single();
 
 			if (error || !data) {
 				return null;
@@ -774,19 +747,14 @@ export class ComplianceService {
 
 			return this.mapPolicyFromDb(data);
 		} catch (error) {
-			monitoring.error(
-				"Get policy error",
-				"compliance-service",
-				error as Error,
-				{ policyId },
-			);
+			monitoring.error("Get policy error", "compliance-service", error as Error, { policyId });
 			return null;
 		}
 	}
 
 	async searchPolicies(
 		filters: ComplianceFilters,
-		userId: string,
+		userId: string
 	): Promise<{ policies: CompliancePolicy[]; total: number }> {
 		try {
 			monitoring.debug("Searching compliance policies", "compliance-service", {
@@ -798,9 +766,7 @@ export class ComplianceService {
 				await this.validateTenantAccess(userId, filters.tenantId);
 			}
 
-			let query = this.supabase
-				.from("compliance_policies")
-				.select("*", { count: "exact" });
+			let query = this.supabase.from("compliance_policies").select("*", { count: "exact" });
 
 			// Apply filters
 			if (filters.tenantId) {
@@ -843,12 +809,7 @@ export class ComplianceService {
 
 			return { policies, total: count || 0 };
 		} catch (error) {
-			monitoring.error(
-				"Search policies error",
-				"compliance-service",
-				error as Error,
-				{ filters },
-			);
+			monitoring.error("Search policies error", "compliance-service", error as Error, { filters });
 			throw error;
 		}
 	}
@@ -857,10 +818,7 @@ export class ComplianceService {
 	// INCIDENT MANAGEMENT
 	// ================================================
 
-	async reportIncident(
-		request: ReportIncidentRequest,
-		userId: string,
-	): Promise<ComplianceIncident> {
+	async reportIncident(request: ReportIncidentRequest, userId: string): Promise<ComplianceIncident> {
 		try {
 			monitoring.info("Reporting compliance incident", "compliance-service", {
 				tenantId: request.tenantId,
@@ -872,9 +830,7 @@ export class ComplianceService {
 			await this.validateTenantAccess(userId, request.tenantId);
 
 			// Assess impact and regulatory requirements
-			const impactAssessment = await this.assessDataImpact(
-				request.affectedData,
-			);
+			const impactAssessment = await this.assessDataImpact(request.affectedData);
 
 			const incidentData = {
 				tenant_id: request.tenantId,
@@ -899,11 +855,7 @@ export class ComplianceService {
 				metadata: request.metadata || {},
 			};
 
-			const { data, error } = await this.supabase
-				.from("compliance_incidents")
-				.insert(incidentData)
-				.select()
-				.single();
+			const { data, error } = await this.supabase.from("compliance_incidents").insert(incidentData).select().single();
 
 			if (error) {
 				throw new Error(error.message);
@@ -912,10 +864,7 @@ export class ComplianceService {
 			const incident = this.mapIncidentFromDb(data);
 
 			// Auto-assign based on severity
-			if (
-				incident.severity === SeverityLevel.CRITICAL ||
-				incident.severity === SeverityLevel.HIGH
-			) {
+			if (incident.severity === SeverityLevel.CRITICAL || incident.severity === SeverityLevel.HIGH) {
 				await this.autoAssignIncident(incident.id, request.tenantId);
 			}
 
@@ -933,7 +882,7 @@ export class ComplianceService {
 				"incident_reported",
 				`Incident "${incident.title}" reported`,
 				{ incidentId: incident.id, severity: incident.severity },
-				userId,
+				userId
 			);
 
 			monitoring.info("Incident reported successfully", "compliance-service", {
@@ -944,23 +893,15 @@ export class ComplianceService {
 
 			return incident;
 		} catch (error) {
-			monitoring.error(
-				"Report incident error",
-				"compliance-service",
-				error as Error,
-				{
-					tenantId: request.tenantId,
-					type: request.type,
-				},
-			);
+			monitoring.error("Report incident error", "compliance-service", error as Error, {
+				tenantId: request.tenantId,
+				type: request.type,
+			});
 			throw error;
 		}
 	}
 
-	async acknowledgeIncident(
-		incidentId: string,
-		userId: string,
-	): Promise<boolean> {
+	async acknowledgeIncident(incidentId: string, userId: string): Promise<boolean> {
 		try {
 			const { error } = await this.supabase
 				.from("compliance_incidents")
@@ -977,21 +918,16 @@ export class ComplianceService {
 					"incident_acknowledged",
 					"Incident acknowledged by user",
 					{ incidentId, userId },
-					userId,
+					userId
 				);
 			}
 
 			return !error;
 		} catch (error) {
-			monitoring.error(
-				"Acknowledge incident error",
-				"compliance-service",
-				error as Error,
-				{
-					incidentId,
-					userId,
-				},
-			);
+			monitoring.error("Acknowledge incident error", "compliance-service", error as Error, {
+				incidentId,
+				userId,
+			});
 			return false;
 		}
 	}
@@ -1000,10 +936,7 @@ export class ComplianceService {
 	// CONSENT MANAGEMENT
 	// ================================================
 
-	async recordConsent(
-		request: CreateConsentRequest,
-		userId: string,
-	): Promise<ConsentRecord> {
+	async recordConsent(request: CreateConsentRequest, userId: string): Promise<ConsentRecord> {
 		try {
 			monitoring.info("Recording consent", "compliance-service", {
 				tenantId: request.tenantId,
@@ -1031,11 +964,7 @@ export class ComplianceService {
 				metadata: request.metadata || {},
 			};
 
-			const { data, error } = await this.supabase
-				.from("consent_records")
-				.insert(consentData)
-				.select()
-				.single();
+			const { data, error } = await this.supabase.from("consent_records").insert(consentData).select().single();
 
 			if (error) {
 				throw new Error(error.message);
@@ -1049,7 +978,7 @@ export class ComplianceService {
 				"consent_recorded",
 				`Consent recorded for ${request.dataSubjectId}`,
 				{ consentId: consent.id, purpose: request.purpose },
-				userId,
+				userId
 			);
 
 			monitoring.info("Consent recorded successfully", "compliance-service", {
@@ -1059,24 +988,15 @@ export class ComplianceService {
 
 			return consent;
 		} catch (error) {
-			monitoring.error(
-				"Record consent error",
-				"compliance-service",
-				error as Error,
-				{
-					tenantId: request.tenantId,
-					dataSubjectId: request.dataSubjectId,
-				},
-			);
+			monitoring.error("Record consent error", "compliance-service", error as Error, {
+				tenantId: request.tenantId,
+				dataSubjectId: request.dataSubjectId,
+			});
 			throw error;
 		}
 	}
 
-	async withdrawConsent(
-		consentId: string,
-		method: string,
-		userId: string,
-	): Promise<boolean> {
+	async withdrawConsent(consentId: string, method: string, userId: string): Promise<boolean> {
 		try {
 			const { error } = await this.supabase
 				.from("consent_records")
@@ -1094,21 +1014,16 @@ export class ComplianceService {
 					"consent_withdrawn",
 					"Consent withdrawn",
 					{ consentId, method },
-					userId,
+					userId
 				);
 			}
 
 			return !error;
 		} catch (error) {
-			monitoring.error(
-				"Withdraw consent error",
-				"compliance-service",
-				error as Error,
-				{
-					consentId,
-					userId,
-				},
-			);
+			monitoring.error("Withdraw consent error", "compliance-service", error as Error, {
+				consentId,
+				userId,
+			});
 			return false;
 		}
 	}
@@ -1117,10 +1032,7 @@ export class ComplianceService {
 	// DATA SUBJECT REQUESTS
 	// ================================================
 
-	async createDataSubjectRequest(
-		request: DataSubjectRequestRequest,
-		userId: string,
-	): Promise<DataSubjectRequest> {
+	async createDataSubjectRequest(request: DataSubjectRequestRequest, userId: string): Promise<DataSubjectRequest> {
 		try {
 			monitoring.info("Creating data subject request", "compliance-service", {
 				tenantId: request.tenantId,
@@ -1149,11 +1061,7 @@ export class ComplianceService {
 				metadata: request.metadata || {},
 			};
 
-			const { data, error } = await this.supabase
-				.from("data_subject_requests")
-				.insert(requestData)
-				.select()
-				.single();
+			const { data, error } = await this.supabase.from("data_subject_requests").insert(requestData).select().single();
 
 			if (error) {
 				throw new Error(error.message);
@@ -1170,39 +1078,27 @@ export class ComplianceService {
 				"data_subject_request_created",
 				`Data subject request created: ${request.requestType}`,
 				{ requestId: dsRequest.id, dataSubjectId: request.dataSubjectId },
-				userId,
+				userId
 			);
 
-			monitoring.info(
-				"Data subject request created successfully",
-				"compliance-service",
-				{
-					requestId: dsRequest.id,
-					dataSubjectId: dsRequest.dataSubjectId,
-					requestType: dsRequest.requestType,
-				},
-			);
+			monitoring.info("Data subject request created successfully", "compliance-service", {
+				requestId: dsRequest.id,
+				dataSubjectId: dsRequest.dataSubjectId,
+				requestType: dsRequest.requestType,
+			});
 
 			return dsRequest;
 		} catch (error) {
-			monitoring.error(
-				"Create data subject request error",
-				"compliance-service",
-				error as Error,
-				{
-					tenantId: request.tenantId,
-					dataSubjectId: request.dataSubjectId,
-					requestType: request.requestType,
-				},
-			);
+			monitoring.error("Create data subject request error", "compliance-service", error as Error, {
+				tenantId: request.tenantId,
+				dataSubjectId: request.dataSubjectId,
+				requestType: request.requestType,
+			});
 			throw error;
 		}
 	}
 
-	async processDataSubjectRequest(
-		requestId: string,
-		userId: string,
-	): Promise<boolean> {
+	async processDataSubjectRequest(requestId: string, userId: string): Promise<boolean> {
 		try {
 			// Implementation would handle the specific request type
 			// For now, we'll mark it as in progress
@@ -1216,15 +1112,10 @@ export class ComplianceService {
 
 			return !error;
 		} catch (error) {
-			monitoring.error(
-				"Process data subject request error",
-				"compliance-service",
-				error as Error,
-				{
-					requestId,
-					userId,
-				},
-			);
+			monitoring.error("Process data subject request error", "compliance-service", error as Error, {
+				requestId,
+				userId,
+			});
 			return false;
 		}
 	}
@@ -1237,7 +1128,7 @@ export class ComplianceService {
 		tenantId: string,
 		periodStart: Date,
 		periodEnd: Date,
-		userId: string,
+		userId: string
 	): Promise<ComplianceMetrics> {
 		try {
 			monitoring.debug("Getting compliance metrics", "compliance-service", {
@@ -1284,34 +1175,19 @@ export class ComplianceService {
 			const policyCompliance = this.calculatePolicyCompliance(policies || []);
 			const incidentCount = incidents?.length || 0;
 			const findingCount = findings?.length || 0;
-			const riskScore = this.calculateRiskScore(
-				incidents || [],
-				findings || [],
-			);
+			const riskScore = this.calculateRiskScore(incidents || [], findings || []);
 			const consentRate = this.calculateConsentRate(consents || []);
-			const responseTime = await this.calculateAverageResponseTime(
-				tenantId,
-				periodStart,
-				periodEnd,
-			);
+			const responseTime = await this.calculateAverageResponseTime(tenantId, periodStart, periodEnd);
 			const auditScore = this.calculateAuditScore(findings || []);
 
 			// Create trends analysis
-			const trendsAnalysis = await this.createTrendsAnalysis(
-				tenantId,
-				periodStart,
-				periodEnd,
-			);
+			const trendsAnalysis = await this.createTrendsAnalysis(tenantId, periodStart, periodEnd);
 
 			// Create risk breakdown
-			const riskBreakdown = this.createRiskBreakdown(
-				incidents || [],
-				findings || [],
-			);
+			const riskBreakdown = this.createRiskBreakdown(incidents || [], findings || []);
 
 			// Create compliance by framework
-			const complianceByFramework =
-				await this.createComplianceByFramework(tenantId);
+			const complianceByFramework = await this.createComplianceByFramework(tenantId);
 
 			return {
 				policyCompliance,
@@ -1326,16 +1202,11 @@ export class ComplianceService {
 				complianceByFramework,
 			};
 		} catch (error) {
-			monitoring.error(
-				"Get compliance metrics error",
-				"compliance-service",
-				error as Error,
-				{
-					tenantId,
-					periodStart,
-					periodEnd,
-				},
-			);
+			monitoring.error("Get compliance metrics error", "compliance-service", error as Error, {
+				tenantId,
+				periodStart,
+				periodEnd,
+			});
 			throw error;
 		}
 	}
@@ -1348,10 +1219,7 @@ export class ComplianceService {
 		// Initialize compliance service configuration
 	}
 
-	private async validateTenantAccess(
-		_userId: string,
-		_tenantId: string,
-	): Promise<void> {
+	private async validateTenantAccess(_userId: string, _tenantId: string): Promise<void> {
 		// Implementation would validate user has access to tenant
 		// For now, we'll assume the auth service handles this
 	}
@@ -1365,7 +1233,7 @@ export class ComplianceService {
 		event: string,
 		description: string,
 		data: Record<string, any>,
-		userId: string,
+		userId: string
 	): Promise<void> {
 		try {
 			await this.supabase.from("audit_trail").insert({
@@ -1377,28 +1245,19 @@ export class ComplianceService {
 				created_at: new Date().toISOString(),
 			});
 		} catch (error) {
-			monitoring.error(
-				"Create audit trail error",
-				"compliance-service",
-				error as Error,
-				{
-					tenantId,
-					event,
-				},
-			);
+			monitoring.error("Create audit trail error", "compliance-service", error as Error, {
+				tenantId,
+				event,
+			});
 		}
 	}
 
 	private async assessDataImpact(
-		affectedData: Omit<
-			DataImpactAssessment,
-			"notificationRequired" | "regulatoryReportingRequired"
-		>,
+		affectedData: Omit<DataImpactAssessment, "notificationRequired" | "regulatoryReportingRequired">
 	): Promise<DataImpactAssessment> {
 		// Assess notification and regulatory reporting requirements
 		const notificationRequired =
-			affectedData.recordsAffected > 100 ||
-			affectedData.sensitivityLevel === SensitivityLevel.RESTRICTED;
+			affectedData.recordsAffected > 100 || affectedData.sensitivityLevel === SensitivityLevel.RESTRICTED;
 
 		const regulatoryReportingRequired =
 			affectedData.recordsAffected > 500 ||
@@ -1413,10 +1272,7 @@ export class ComplianceService {
 		};
 	}
 
-	private async autoAssignIncident(
-		incidentId: string,
-		tenantId: string,
-	): Promise<void> {
+	private async autoAssignIncident(incidentId: string, tenantId: string): Promise<void> {
 		// Implementation would auto-assign to appropriate compliance officer
 		monitoring.info("Auto-assigning incident", "compliance-service", {
 			incidentId,
@@ -1424,9 +1280,7 @@ export class ComplianceService {
 		});
 	}
 
-	private async createIncidentNotifications(
-		incident: ComplianceIncident,
-	): Promise<void> {
+	private async createIncidentNotifications(incident: ComplianceIncident): Promise<void> {
 		// Create notifications for incident
 		monitoring.info("Creating incident notifications", "compliance-service", {
 			incidentId: incident.id,
@@ -1434,27 +1288,19 @@ export class ComplianceService {
 		});
 	}
 
-	private async initiateRegulatoryReporting(
-		incident: ComplianceIncident,
-	): Promise<void> {
+	private async initiateRegulatoryReporting(incident: ComplianceIncident): Promise<void> {
 		// Initiate regulatory reporting process
 		monitoring.info("Initiating regulatory reporting", "compliance-service", {
 			incidentId: incident.id,
 		});
 	}
 
-	private async createDataSubjectRequestNotifications(
-		request: DataSubjectRequest,
-	): Promise<void> {
+	private async createDataSubjectRequestNotifications(request: DataSubjectRequest): Promise<void> {
 		// Create notifications for data subject request
-		monitoring.info(
-			"Creating data subject request notifications",
-			"compliance-service",
-			{
-				requestId: request.id,
-				requestType: request.requestType,
-			},
-		);
+		monitoring.info("Creating data subject request notifications", "compliance-service", {
+			requestId: request.id,
+			requestType: request.requestType,
+		});
 	}
 
 	private calculatePolicyCompliance(policies: any[]): number {
@@ -1515,11 +1361,7 @@ export class ComplianceService {
 		return (givenConsents.length / consents.length) * 100;
 	}
 
-	private async calculateAverageResponseTime(
-		_tenantId: string,
-		_periodStart: Date,
-		_periodEnd: Date,
-	): Promise<number> {
+	private async calculateAverageResponseTime(_tenantId: string, _periodStart: Date, _periodEnd: Date): Promise<number> {
 		// Calculate average response time for incidents/requests
 		return 24; // hours (mock)
 	}
@@ -1529,17 +1371,11 @@ export class ComplianceService {
 			return 100;
 		}
 
-		const resolvedFindings = findings.filter(
-			(f) => f.status === FindingStatus.RESOLVED,
-		);
+		const resolvedFindings = findings.filter((f) => f.status === FindingStatus.RESOLVED);
 		return (resolvedFindings.length / findings.length) * 100;
 	}
 
-	private async createTrendsAnalysis(
-		_tenantId: string,
-		_periodStart: Date,
-		_periodEnd: Date,
-	): Promise<TrendsAnalysis> {
+	private async createTrendsAnalysis(_tenantId: string, _periodStart: Date, _periodEnd: Date): Promise<TrendsAnalysis> {
 		// Create trends analysis (simplified)
 		return {
 			incidentTrend: [],
@@ -1548,10 +1384,7 @@ export class ComplianceService {
 		};
 	}
 
-	private createRiskBreakdown(
-		incidents: any[],
-		findings: any[],
-	): RiskBreakdown {
+	private createRiskBreakdown(incidents: any[], findings: any[]): RiskBreakdown {
 		const breakdown = { critical: 0, high: 0, medium: 0, low: 0 };
 
 		[...incidents, ...findings].forEach((item) => {
@@ -1575,11 +1408,10 @@ export class ComplianceService {
 	}
 
 	private async createComplianceByFramework(
-		_tenantId: string,
+		_tenantId: string
 	): Promise<Record<ComplianceFramework, FrameworkCompliance>> {
 		// Create compliance breakdown by framework (simplified)
-		const frameworks: Record<ComplianceFramework, FrameworkCompliance> =
-			{} as any;
+		const frameworks: Record<ComplianceFramework, FrameworkCompliance> = {} as any;
 
 		Object.values(ComplianceFramework).forEach((framework) => {
 			frameworks[framework] = {
@@ -1627,9 +1459,7 @@ export class ComplianceService {
 			reportedBy: data.reported_by,
 			assignedTo: data.assigned_to,
 			detectedAt: new Date(data.detected_at),
-			acknowledgedAt: data.acknowledged_at
-				? new Date(data.acknowledged_at)
-				: undefined,
+			acknowledgedAt: data.acknowledged_at ? new Date(data.acknowledged_at) : undefined,
 			resolvedAt: data.resolved_at ? new Date(data.resolved_at) : undefined,
 			affectedSystems: data.affected_systems || [],
 			affectedData: data.affected_data || {},
@@ -1656,9 +1486,7 @@ export class ComplianceService {
 			consentDate: new Date(data.consent_date),
 			consentMethod: data.consent_method,
 			consentVersion: data.consent_version,
-			withdrawalDate: data.withdrawal_date
-				? new Date(data.withdrawal_date)
-				: undefined,
+			withdrawalDate: data.withdrawal_date ? new Date(data.withdrawal_date) : undefined,
 			withdrawalMethod: data.withdrawal_method,
 			retentionPeriod: data.retention_period,
 			isActive: data.is_active,

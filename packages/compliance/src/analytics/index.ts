@@ -50,7 +50,7 @@ export function createAnalyticsServices(supabaseClient: any) {
  */
 export async function validateAnalyticsCompliance(
 	tenantId: string,
-	supabaseClient: any,
+	supabaseClient: any
 ): Promise<{
 	isCompliant: boolean;
 	score: number;
@@ -68,10 +68,7 @@ export async function validateAnalyticsCompliance(
 				isCompliant: false,
 				score: 0,
 				issues: ["Failed to retrieve compliance metrics"],
-				recommendations: [
-					"Fix analytics system",
-					"Ensure proper data collection",
-				],
+				recommendations: ["Fix analytics system", "Ensure proper data collection"],
 			};
 		}
 
@@ -82,20 +79,14 @@ export async function validateAnalyticsCompliance(
 
 		// Check compliance score threshold
 		if (metrics.overallScore < 9.0) {
-			issues.push(
-				`Overall compliance score (${metrics.overallScore}) below threshold (9.0)`,
-			);
-			recommendations.push(
-				"Improve compliance processes to meet minimum standards",
-			);
+			issues.push(`Overall compliance score (${metrics.overallScore}) below threshold (9.0)`);
+			recommendations.push("Improve compliance processes to meet minimum standards");
 			score -= 2;
 		}
 
 		// Check data quality
 		if (metrics.dataQualityScore < 8.5) {
-			issues.push(
-				`Data quality score (${metrics.dataQualityScore}) below threshold (8.5)`,
-			);
+			issues.push(`Data quality score (${metrics.dataQualityScore}) below threshold (8.5)`);
 			recommendations.push("Implement data quality improvement measures");
 			score -= 1;
 		}
@@ -103,9 +94,7 @@ export async function validateAnalyticsCompliance(
 		// Check audit frequency
 		if (metrics.auditFrequency < 4) {
 			// Quarterly minimum
-			issues.push(
-				`Audit frequency (${metrics.auditFrequency}/year) below minimum (4/year)`,
-			);
+			issues.push(`Audit frequency (${metrics.auditFrequency}/year) below minimum (4/year)`);
 			recommendations.push("Increase audit frequency to quarterly minimum");
 			score -= 1;
 		}

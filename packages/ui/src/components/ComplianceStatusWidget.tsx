@@ -1,21 +1,10 @@
-import {
-	AlertCircle,
-	AlertTriangle,
-	CheckCircle,
-	Clock,
-	Shield,
-} from "lucide-react";
+import { AlertCircle, AlertTriangle, CheckCircle, Clock, Shield } from "lucide-react";
 import * as React from "react";
 import { cn } from "../utils/cn";
 import { Badge } from "./Badge";
 import { Button } from "./Button";
 
-export type ComplianceStatus =
-	| "compliant"
-	| "warning"
-	| "non_compliant"
-	| "pending"
-	| "unknown";
+export type ComplianceStatus = "compliant" | "warning" | "non_compliant" | "pending" | "unknown";
 
 export type ComplianceCheck = {
 	id: string;
@@ -143,11 +132,7 @@ const ComplianceSection: React.FC<{
 		<div className="space-y-3">
 			<div className="flex items-center justify-between">
 				<h4 className="font-medium text-sm">{title}</h4>
-				<Badge
-					icon={getStatusIcon(overallStatus)}
-					size="sm"
-					variant={getStatusBadgeVariant(overallStatus)}
-				>
+				<Badge icon={getStatusIcon(overallStatus)} size="sm" variant={getStatusBadgeVariant(overallStatus)}>
 					{getStatusText(overallStatus)}
 				</Badge>
 			</div>
@@ -167,28 +152,17 @@ const ComplianceSection: React.FC<{
 									<span className="font-medium" id={`check-${check.id}-name`}>
 										{check.name}
 									</span>
-									<Badge
-										icon={getStatusIcon(check.status)}
-										size="sm"
-										variant={getStatusBadgeVariant(check.status)}
-									>
+									<Badge icon={getStatusIcon(check.status)} size="sm" variant={getStatusBadgeVariant(check.status)}>
 										{getStatusText(check.status)}
 									</Badge>
 								</div>
-								<p
-									className="mt-1 text-muted-foreground"
-									id={`check-${check.id}-description`}
-								>
+								<p className="mt-1 text-muted-foreground" id={`check-${check.id}-description`}>
 									{check.description}
 								</p>
 								<p className="mt-1 text-muted-foreground text-xs">
 									Última verificação: {formatDate(check.lastChecked)}
 								</p>
-								{check.details && (
-									<p className="mt-1 text-muted-foreground text-xs">
-										{check.details}
-									</p>
-								)}
+								{check.details && <p className="mt-1 text-muted-foreground text-xs">{check.details}</p>}
 							</div>
 
 							{check.actionRequired && onAddressIssue && (
@@ -209,10 +183,7 @@ const ComplianceSection: React.FC<{
 	);
 };
 
-export const ComplianceStatusWidget = React.forwardRef<
-	HTMLDivElement,
-	ComplianceStatusWidgetProps
->(
+export const ComplianceStatusWidget = React.forwardRef<HTMLDivElement, ComplianceStatusWidgetProps>(
 	(
 		{
 			lgpdChecks,
@@ -227,7 +198,7 @@ export const ComplianceStatusWidget = React.forwardRef<
 			className,
 			...props
 		},
-		ref,
+		ref
 	) => {
 		const getScoreVariant = (score: number) => {
 			if (score >= 90) {
@@ -251,10 +222,7 @@ export const ComplianceStatusWidget = React.forwardRef<
 
 		return (
 			<div
-				className={cn(
-					"rounded-lg border bg-card p-6 text-card-foreground shadow-sm",
-					className,
-				)}
+				className={cn("rounded-lg border bg-card p-6 text-card-foreground shadow-sm", className)}
 				ref={ref}
 				{...props}
 				aria-describedby="compliance-status-description"
@@ -267,38 +235,25 @@ export const ComplianceStatusWidget = React.forwardRef<
 						<h3 className="font-semibold text-lg" id="compliance-status-title">
 							Status de Conformidade
 						</h3>
-						<p
-							className="text-muted-foreground text-sm"
-							id="compliance-status-description"
-						>
+						<p className="text-muted-foreground text-sm" id="compliance-status-description">
 							Monitoramento constitucional de conformidade healthcare
 						</p>
 					</div>
 
 					<div className="text-right">
 						<div className="flex items-center gap-2">
-							<Badge
-								icon={getScoreIcon(overallScore)}
-								size="lg"
-								variant={getScoreVariant(overallScore)}
-							>
+							<Badge icon={getScoreIcon(overallScore)} size="lg" variant={getScoreVariant(overallScore)}>
 								{overallScore}% Conforme
 							</Badge>
 						</div>
 						{lastAuditDate && (
-							<p className="mt-1 text-muted-foreground text-xs">
-								Última auditoria: {formatDate(lastAuditDate)}
-							</p>
+							<p className="mt-1 text-muted-foreground text-xs">Última auditoria: {formatDate(lastAuditDate)}</p>
 						)}
 					</div>
 				</div>
 
 				{/* Compliance Sections */}
-				<div
-					aria-label="Seções de conformidade"
-					className="space-y-6"
-					role="list"
-				>
+				<div aria-label="Seções de conformidade" className="space-y-6" role="list">
 					<ComplianceSection
 						checks={lgpdChecks}
 						onAddressIssue={onAddressIssue}
@@ -328,9 +283,7 @@ export const ComplianceStatusWidget = React.forwardRef<
 							<Clock className="h-4 w-4 text-muted-foreground" />
 							<span className="font-medium text-sm">Próxima Auditoria</span>
 						</div>
-						<p className="mt-1 text-muted-foreground text-sm">
-							Agendada para {formatDate(nextAuditDate)}
-						</p>
+						<p className="mt-1 text-muted-foreground text-sm">Agendada para {formatDate(nextAuditDate)}</p>
 					</div>
 				)}
 
@@ -351,7 +304,7 @@ export const ComplianceStatusWidget = React.forwardRef<
 				)}
 			</div>
 		);
-	},
+	}
 );
 
 ComplianceStatusWidget.displayName = "ComplianceStatusWidget";

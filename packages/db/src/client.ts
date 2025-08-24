@@ -4,10 +4,7 @@
  * Healthcare compliance: LGPD + ANVISA + CFM + Multi-tenant isolation
  */
 
-import {
-	createBrowserClient,
-	createServerClient as createSSRServerClient,
-} from "@supabase/ssr";
+import { createBrowserClient, createServerClient as createSSRServerClient } from "@supabase/ssr";
 import type { Database } from "./types";
 
 // Healthcare environment validation
@@ -15,9 +12,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
 if (!(supabaseUrl && supabaseAnonKey)) {
-	throw new Error(
-		"Missing Supabase environment variables - Healthcare compliance requires secure configuration",
-	);
+	throw new Error("Missing Supabase environment variables - Healthcare compliance requires secure configuration");
 }
 
 /**

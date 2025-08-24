@@ -1,24 +1,13 @@
 "use client";
 
 import { createClient } from "@supabase/supabase-js";
-import {
-	endOfDay,
-	endOfMonth,
-	endOfWeek,
-	startOfDay,
-	startOfMonth,
-	startOfWeek,
-} from "date-fns";
+import { endOfDay, endOfMonth, endOfWeek, startOfDay, startOfMonth, startOfWeek } from "date-fns";
 import { pt } from "date-fns/locale";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 // Placeholder toast function
 const useToast = () => ({
-	toast: (_message: {
-		title?: string;
-		description?: string;
-		variant?: string;
-	}) => {},
+	toast: (_message: { title?: string; description?: string; variant?: string }) => {},
 });
 
 export type Appointment = {
@@ -27,13 +16,7 @@ export type Appointment = {
 	professional_id: string;
 	service_id: string;
 	time_slot_id: string;
-	status:
-		| "pending"
-		| "confirmed"
-		| "cancelled"
-		| "completed"
-		| "no_show"
-		| "rescheduled";
+	status: "pending" | "confirmed" | "cancelled" | "completed" | "no_show" | "rescheduled";
 	notes?: string;
 	created_at: string;
 	updated_at: string;
@@ -96,10 +79,7 @@ export function useAppointmentsManager() {
 	});
 
 	// Placeholder Supabase client
-	const _supabase = createClient(
-		"https://placeholder.supabase.co",
-		"placeholder-key",
-	);
+	const _supabase = createClient("https://placeholder.supabase.co", "placeholder-key");
 	const { toast } = useToast();
 
 	// Calculate date ranges based on filters
@@ -140,8 +120,7 @@ export function useAppointmentsManager() {
 			setAppointments(mockAppointments);
 			setIsConnected(true);
 		} catch (err) {
-			const errorMessage =
-				err instanceof Error ? err.message : "Failed to fetch appointments";
+			const errorMessage = err instanceof Error ? err.message : "Failed to fetch appointments";
 			setError(errorMessage);
 			toast({
 				title: "Erro",
@@ -167,8 +146,7 @@ export function useAppointmentsManager() {
 				await fetchAppointments();
 				return true;
 			} catch (err) {
-				const errorMessage =
-					err instanceof Error ? err.message : "Failed to create appointment";
+				const errorMessage = err instanceof Error ? err.message : "Failed to create appointment";
 				setError(errorMessage);
 				toast({
 					title: "Erro",
@@ -180,15 +158,12 @@ export function useAppointmentsManager() {
 				setIsLoading(false);
 			}
 		},
-		[fetchAppointments, toast],
+		[fetchAppointments, toast]
 	);
 
 	// Update appointment
 	const updateAppointment = useCallback(
-		async (
-			_appointmentId: string,
-			_updates: Partial<Appointment>,
-		): Promise<boolean> => {
+		async (_appointmentId: string, _updates: Partial<Appointment>): Promise<boolean> => {
 			try {
 				setIsLoading(true);
 
@@ -200,8 +175,7 @@ export function useAppointmentsManager() {
 				await fetchAppointments();
 				return true;
 			} catch (err) {
-				const errorMessage =
-					err instanceof Error ? err.message : "Failed to update appointment";
+				const errorMessage = err instanceof Error ? err.message : "Failed to update appointment";
 				setError(errorMessage);
 				toast({
 					title: "Erro",
@@ -213,7 +187,7 @@ export function useAppointmentsManager() {
 				setIsLoading(false);
 			}
 		},
-		[fetchAppointments, toast],
+		[fetchAppointments, toast]
 	);
 
 	// Delete appointment
@@ -230,8 +204,7 @@ export function useAppointmentsManager() {
 				await fetchAppointments();
 				return true;
 			} catch (err) {
-				const errorMessage =
-					err instanceof Error ? err.message : "Failed to delete appointment";
+				const errorMessage = err instanceof Error ? err.message : "Failed to delete appointment";
 				setError(errorMessage);
 				toast({
 					title: "Erro",
@@ -243,7 +216,7 @@ export function useAppointmentsManager() {
 				setIsLoading(false);
 			}
 		},
-		[fetchAppointments, toast],
+		[fetchAppointments, toast]
 	);
 
 	// Calculate statistics
@@ -252,22 +225,15 @@ export function useAppointmentsManager() {
 		const today = startOfDay(now);
 		const week = startOfWeek(now, { locale: pt });
 
-		const todayAppointments = appointments.filter(
-			(apt) => new Date(apt.time_slot.date) >= today,
-		);
-		const weekAppointments = appointments.filter(
-			(apt) => new Date(apt.time_slot.date) >= week,
-		);
+		const todayAppointments = appointments.filter((apt) => new Date(apt.time_slot.date) >= today);
+		const weekAppointments = appointments.filter((apt) => new Date(apt.time_slot.date) >= week);
 
 		return {
 			total: appointments.length,
-			confirmed: appointments.filter((apt) => apt.status === "confirmed")
-				.length,
+			confirmed: appointments.filter((apt) => apt.status === "confirmed").length,
 			pending: appointments.filter((apt) => apt.status === "pending").length,
-			cancelled: appointments.filter((apt) => apt.status === "cancelled")
-				.length,
-			completed: appointments.filter((apt) => apt.status === "completed")
-				.length,
+			cancelled: appointments.filter((apt) => apt.status === "cancelled").length,
+			completed: appointments.filter((apt) => apt.status === "completed").length,
 			noShow: appointments.filter((apt) => apt.status === "no_show").length,
 			todayTotal: todayAppointments.length,
 			weekTotal: weekAppointments.length,
@@ -275,12 +241,9 @@ export function useAppointmentsManager() {
 	}, [appointments]);
 
 	// Update filters
-	const updateFilters = useCallback(
-		(newFilters: Partial<AppointmentFilters>): void => {
-			setFilters((prev) => ({ ...prev, ...newFilters }));
-		},
-		[],
-	);
+	const updateFilters = useCallback((newFilters: Partial<AppointmentFilters>): void => {
+		setFilters((prev) => ({ ...prev, ...newFilters }));
+	}, []);
 
 	// Initial load
 	useEffect(() => {

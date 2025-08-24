@@ -108,8 +108,12 @@ const mockMedicalRecordData = {
 const _TestWrapper = ({ children }: { children: React.ReactNode }) => {
 	const queryClient = new QueryClient({
 		defaultOptions: {
-			queries: { retry: false },
-			mutations: { retry: false },
+			queries: {
+				retry: false,
+			},
+			mutations: {
+				retry: false,
+			},
 		},
 	});
 
@@ -121,10 +125,15 @@ describe("Database Integration Tests", () => {
 
 	beforeEach(() => {
 		vi.clearAllMocks();
+		// Create a fresh QueryClient for each test
 		queryClient = new QueryClient({
 			defaultOptions: {
-				queries: { retry: false },
-				mutations: { retry: false },
+				queries: {
+					retry: false,
+				},
+				mutations: {
+					retry: false,
+				},
 			},
 		});
 	});

@@ -8,7 +8,7 @@
 import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
-	testDir: "./tools/testing/e2e",
+	testDir: "./tools/e2e",
 	testMatch: ["**/test-basic.spec.ts"],
 
 	// Optimized settings
@@ -23,8 +23,8 @@ export default defineConfig({
 	// Reporting
 	reporter: "list",
 
-	// Output - CONSOLIDATED TO TOOLS/TESTING
-	outputDir: "tools/testing/reports/test-results/e2e-minimal",
+	// Output - CONSOLIDATED TO TOOLS STRUCTURE
+	outputDir: "tools/reports/test-results/e2e-minimal",
 
 	use: {
 		// Test against external URL for now

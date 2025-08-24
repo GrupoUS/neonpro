@@ -105,7 +105,7 @@ export const ConsentSchema = z.object({
 			userId: z.string().uuid(),
 			ipAddress: z.string().ip().optional(),
 			userAgent: z.string().optional(),
-		}),
+		})
 	),
 	constitutionalValidation: z.object({
 		validated: z.boolean(),
@@ -218,9 +218,7 @@ export const ProfessionalValidationSchema = z.object({
 	}),
 });
 
-export type ProfessionalValidation = z.infer<
-	typeof ProfessionalValidationSchema
->; // =============================================================================
+export type ProfessionalValidation = z.infer<typeof ProfessionalValidationSchema>; // =============================================================================
 // AUDIT SYSTEM TYPES (Re-exported from ./audit)
 // =============================================================================
 

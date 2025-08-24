@@ -41,7 +41,11 @@ tmp.drivedownload/
 .claude/
 .qwen/
 .trae/
+.warp/
 .bmad-core/
+archon/
+serena/
+
 
 # logs
 *.log
@@ -64,6 +68,10 @@ next-env.d.ts
 
 # testing
 tools/testing/reports/
+tools/reports/
+tools/e2e/reports/
+tools/e2e/test-results/
+tools/e2e/test-results-minimal/
 **/coverage/
 **/test-results/
 **/playwright-report/

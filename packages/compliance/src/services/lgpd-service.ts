@@ -125,15 +125,9 @@ export type ConsentAuditEntry = {
 /**
  * Data subject request interface
  */
-export interface DataSubjectRequest
-	extends z.infer<typeof dataSubjectRequestSchema> {
+export interface DataSubjectRequest extends z.infer<typeof dataSubjectRequestSchema> {
 	id: string;
-	status:
-		| "pending"
-		| "in_progress"
-		| "completed"
-		| "rejected"
-		| "partially_completed";
+	status: "pending" | "in_progress" | "completed" | "rejected" | "partially_completed";
 	createdAt: Date;
 	updatedAt: Date;
 	completedAt?: Date;
@@ -166,7 +160,7 @@ export class LgpdService {
 	static async recordConsent(
 		consentData: z.infer<typeof consentSchema>,
 		ipAddress: string,
-		userAgent?: string,
+		userAgent?: string
 	): Promise<ConsentRecord> {
 		// Validate consent data
 		const validated = consentSchema.parse(consentData);
@@ -210,7 +204,7 @@ export class LgpdService {
 		consentId: string,
 		userId: string,
 		reason: string,
-		ipAddress: string,
+		ipAddress: string
 	): Promise<{ success: boolean; message: string; dataRetention?: string }> {
 		try {
 			// Retrieve existing consent
@@ -234,8 +228,7 @@ export class LgpdService {
 			if (!consent.canWithdraw) {
 				return {
 					success: false,
-					message:
-						"Este consentimento não pode ser retirado devido a obrigações legais",
+					message: "Este consentimento não pode ser retirado devido a obrigações legais",
 				};
 			}
 
@@ -283,7 +276,7 @@ export class LgpdService {
 	 */
 	static async processDataSubjectRequest(
 		requestData: z.infer<typeof dataSubjectRequestSchema>,
-		_ipAddress: string,
+		_ipAddress: string
 	): Promise<DataSubjectRequest> {
 		// Validate request data
 		const validated = dataSubjectRequestSchema.parse(requestData);
@@ -313,9 +306,7 @@ export class LgpdService {
 	/**
 	 * Process data access request (LGPD Art. 18, I)
 	 */
-	static async processAccessRequest(
-		requestId: string,
-	): Promise<DataSubjectResponse> {
+	static async processAccessRequest(requestId: string): Promise<DataSubjectResponse> {
 		const request = await LgpdService.getDataSubjectRequest(requestId);
 
 		if (!request || request.requestType !== DataSubjectRight.ACCESS) {
@@ -326,10 +317,7 @@ export class LgpdService {
 		const userData = await LgpdService.gatherUserData(request.userId);
 
 		// Format data according to preferred format
-		const formattedData = await LgpdService.formatUserData(
-			userData,
-			request.preferredFormat,
-		);
+		const formattedData = await LgpdService.formatUserData(userData, request.preferredFormat);
 
 		// Create response
 		const response: DataSubjectResponse = {
@@ -370,40 +358,27 @@ export class LgpdService {
 
 		// Check legal basis for each data category
 		const userConsents = await LgpdService.getUserConsents(request.userId);
-		const legalObligations = await LgpdService.getLegalRetentionRequirements(
-			request.userId,
-		);
+		const legalObligations = await LgpdService.getLegalRetentionRequirements(request.userId);
 
 		for (const consent of userConsents) {
 			for (const category of consent.dataCategories) {
 				if (legalObligations.includes(category)) {
 					// Cannot delete due to legal obligation
 					result.retained.push(category);
-					result.reasons[category] =
-						"Legal obligation (healthcare records retention)";
-				} else if (
-					consent.lawfulBasis === LgpdLawfulBasis.CONSENT &&
-					!consent.isActive
-				) {
+					result.reasons[category] = "Legal obligation (healthcare records retention)";
+				} else if (consent.lawfulBasis === LgpdLawfulBasis.CONSENT && !consent.isActive) {
 					// Can delete - consent withdrawn and no legal basis
 					await LgpdService.deleteUserDataByCategory(request.userId, category);
 					result.deleted.push(category);
 				} else {
 					// Evaluate other lawful bases
-					const canDelete = await LgpdService.evaluateErasureEligibility(
-						request.userId,
-						category,
-					);
+					const canDelete = await LgpdService.evaluateErasureEligibility(request.userId, category);
 					if (canDelete) {
-						await LgpdService.deleteUserDataByCategory(
-							request.userId,
-							category,
-						);
+						await LgpdService.deleteUserDataByCategory(request.userId, category);
 						result.deleted.push(category);
 					} else {
 						result.retained.push(category);
-						result.reasons[category] =
-							"Legitimate interests or contract performance";
+						result.reasons[category] = "Legitimate interests or contract performance";
 					}
 				}
 			}
@@ -489,16 +464,13 @@ export class LgpdService {
 				recommendation = "Standard data protection measures are sufficient.";
 				break;
 			case "medium":
-				recommendation =
-					"Additional safeguards recommended. Regular monitoring required.";
+				recommendation = "Additional safeguards recommended. Regular monitoring required.";
 				break;
 			case "high":
-				recommendation =
-					"Enhanced security measures mandatory. DPO consultation required.";
+				recommendation = "Enhanced security measures mandatory. DPO consultation required.";
 				break;
 			case "very_high":
-				recommendation =
-					"Prior consultation with ANPD required. Comprehensive DPIA mandatory.";
+				recommendation = "Prior consultation with ANPD required. Comprehensive DPIA mandatory.";
 				break;
 		}
 
@@ -530,11 +502,7 @@ export class LgpdService {
 		const { affectedUsers, dataCategories, severity } = incident;
 
 		// Assess breach severity and impact
-		const isHighRisk = LgpdService.assessBreachRisk(
-			dataCategories,
-			affectedUsers.length,
-			severity,
-		);
+		const isHighRisk = LgpdService.assessBreachRisk(dataCategories, affectedUsers.length, severity);
 
 		// ANPD notification requirements (LGPD Art. 48)
 		const anpdNotificationRequired = isHighRisk || severity === "critical";
@@ -547,26 +515,18 @@ export class LgpdService {
 				dataCategories.includes(DataCategory.BIOMETRIC));
 
 		// Calculate notification deadline (72 hours from discovery)
-		const notificationDeadline = anpdNotificationRequired
-			? addDays(incident.discoveredAt, 3)
-			: undefined;
+		const notificationDeadline = anpdNotificationRequired ? addDays(incident.discoveredAt, 3) : undefined;
 
 		// Risk assessment
 		const riskAssessment = LgpdService.generateBreachRiskAssessment(incident);
 
 		// Auto-schedule notifications if required
 		if (anpdNotificationRequired) {
-			await LgpdService.scheduleAnpdNotification(
-				incident,
-				notificationDeadline!,
-			);
+			await LgpdService.scheduleAnpdNotification(incident, notificationDeadline!);
 		}
 
 		if (userNotificationRequired) {
-			await LgpdService.scheduleUserNotifications(
-				incident.affectedUsers,
-				incident,
-			);
+			await LgpdService.scheduleUserNotifications(incident.affectedUsers, incident);
 		}
 
 		return {
@@ -581,55 +541,37 @@ export class LgpdService {
 
 	private static async storeConsent(_consent: ConsentRecord): Promise<void> {}
 
-	private static async getConsentById(
-		_id: string,
-	): Promise<ConsentRecord | null> {
+	private static async getConsentById(_id: string): Promise<ConsentRecord | null> {
 		// Implementation depends on database
 		return null;
 	}
 
 	private static async updateConsent(_consent: ConsentRecord): Promise<void> {}
 
-	private static async storeDataSubjectRequest(
-		_request: DataSubjectRequest,
-	): Promise<void> {}
+	private static async storeDataSubjectRequest(_request: DataSubjectRequest): Promise<void> {}
 
-	private static async getDataSubjectRequest(
-		_id: string,
-	): Promise<DataSubjectRequest | null> {
+	private static async getDataSubjectRequest(_id: string): Promise<DataSubjectRequest | null> {
 		// Implementation depends on database
 		return null;
 	}
 
-	private static async stopDataProcessing(
-		_userId: string,
-		_purpose: DataProcessingPurpose,
-	): Promise<void> {}
+	private static async stopDataProcessing(_userId: string, _purpose: DataProcessingPurpose): Promise<void> {}
 
-	private static async getDataRetentionInfo(
-		_consent: ConsentRecord,
-	): Promise<string> {
+	private static async getDataRetentionInfo(_consent: ConsentRecord): Promise<string> {
 		// Return retention information based on legal requirements
 		return "Dados serão retidos conforme obrigações legais (7 anos para registros médicos)";
 	}
 
-	private static async initiateVerification(
-		_request: DataSubjectRequest,
-	): Promise<void> {}
+	private static async initiateVerification(_request: DataSubjectRequest): Promise<void> {}
 
-	private static async scheduleRequestProcessing(
-		_requestId: string,
-	): Promise<void> {}
+	private static async scheduleRequestProcessing(_requestId: string): Promise<void> {}
 
 	private static async gatherUserData(userId: string): Promise<any> {
 		// Gather all user data from various sources
 		return { userId, message: "Mock user data" };
 	}
 
-	private static async formatUserData(
-		data: any,
-		_format: "json" | "pdf" | "csv",
-	): Promise<any> {
+	private static async formatUserData(data: any, _format: "json" | "pdf" | "csv"): Promise<any> {
 		// Format data according to requested format
 		return data;
 	}
@@ -637,59 +579,35 @@ export class LgpdService {
 	private static async updateRequestStatus(
 		_requestId: string,
 		_status: DataSubjectRequest["status"],
-		_response?: DataSubjectResponse,
+		_response?: DataSubjectResponse
 	): Promise<void> {}
 
-	private static async getUserConsents(
-		_userId: string,
-	): Promise<ConsentRecord[]> {
+	private static async getUserConsents(_userId: string): Promise<ConsentRecord[]> {
 		// Get all user consents
 		return [];
 	}
 
-	private static async getLegalRetentionRequirements(
-		_userId: string,
-	): Promise<DataCategory[]> {
+	private static async getLegalRetentionRequirements(_userId: string): Promise<DataCategory[]> {
 		// Return data categories that must be retained due to legal obligations
 		return [DataCategory.HEALTH]; // Medical records must be retained
 	}
 
-	private static async evaluateErasureEligibility(
-		_userId: string,
-		_category: DataCategory,
-	): Promise<boolean> {
+	private static async evaluateErasureEligibility(_userId: string, _category: DataCategory): Promise<boolean> {
 		// Evaluate if data can be erased based on lawful basis
 		return false;
 	}
 
-	private static async deleteUserDataByCategory(
-		_userId: string,
-		_category: DataCategory,
-	): Promise<void> {}
+	private static async deleteUserDataByCategory(_userId: string, _category: DataCategory): Promise<void> {}
 
-	private static assessBreachRisk(
-		dataCategories: DataCategory[],
-		affectedCount: number,
-		severity: string,
-	): boolean {
-		return (
-			dataCategories.includes(DataCategory.HEALTH) ||
-			affectedCount > 100 ||
-			severity === "critical"
-		);
+	private static assessBreachRisk(dataCategories: DataCategory[], affectedCount: number, severity: string): boolean {
+		return dataCategories.includes(DataCategory.HEALTH) || affectedCount > 100 || severity === "critical";
 	}
 
 	private static generateBreachRiskAssessment(incident: any): string {
 		return `Risk assessment for breach affecting ${incident.affectedUsers.length} users`;
 	}
 
-	private static async scheduleAnpdNotification(
-		_incident: any,
-		_deadline: Date,
-	): Promise<void> {}
+	private static async scheduleAnpdNotification(_incident: any, _deadline: Date): Promise<void> {}
 
-	private static async scheduleUserNotifications(
-		_userIds: string[],
-		_incident: any,
-	): Promise<void> {}
+	private static async scheduleUserNotifications(_userIds: string[], _incident: any): Promise<void> {}
 }

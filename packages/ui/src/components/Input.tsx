@@ -32,7 +32,7 @@ const inputVariants = cva(
 			variant: "default",
 			size: "default",
 		},
-	},
+	}
 );
 
 export interface InputProps
@@ -66,7 +66,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 			id,
 			...props
 		},
-		ref,
+		ref
 	) => {
 		const [internalValue, setInternalValue] = React.useState(value || "");
 		const generatedId = React.useId(); // Generate unique ID for accessibility
@@ -93,14 +93,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
 				case "phone":
 					if (cleaned.length <= 10) {
-						return cleaned
-							.replace(PHONE_REGEX_1, "($1) $2")
-							.replace(PHONE_REGEX_2, "$1-$2");
+						return cleaned.replace(PHONE_REGEX_1, "($1) $2").replace(PHONE_REGEX_2, "$1-$2");
 					}
-					return cleaned
-						.slice(0, 11)
-						.replace(PHONE_REGEX_1, "($1) $2")
-						.replace(PHONE_REGEX_3, "$1-$2");
+					return cleaned.slice(0, 11).replace(PHONE_REGEX_1, "($1) $2").replace(PHONE_REGEX_3, "$1-$2");
 				case "currency": {
 					const numberValue = `${cleaned.slice(0, -2)}.${cleaned.slice(-2)}`;
 					return new Intl.NumberFormat("pt-BR", {
@@ -110,10 +105,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 				}
 
 				case "date":
-					return cleaned
-						.slice(0, 8)
-						.replace(DATE_REGEX_1, "$1/$2")
-						.replace(DATE_REGEX_2, "$1/$2");
+					return cleaned.slice(0, 8).replace(DATE_REGEX_1, "$1/$2").replace(DATE_REGEX_2, "$1/$2");
 
 				default:
 					return inputValue;
@@ -145,11 +137,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 					</label>
 				)}
 				<div className="relative">
-					{leftIcon && (
-						<div className="-translate-y-1/2 absolute top-1/2 left-3 text-muted-foreground">
-							{leftIcon}
-						</div>
-					)}
+					{leftIcon && <div className="-translate-y-1/2 absolute top-1/2 left-3 text-muted-foreground">{leftIcon}</div>}
 
 					<input
 						className={cn(
@@ -157,7 +145,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 							leftIcon && "pl-10",
 							rightIcon && "pr-10",
 							loading && "pr-10",
-							className,
+							className
 						)}
 						disabled={disabled || loading}
 						id={inputId}
@@ -181,12 +169,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
 				{error && <p className="text-destructive text-sm">{error}</p>}
 
-				{helperText && !error && (
-					<p className="text-muted-foreground text-sm">{helperText}</p>
-				)}
+				{helperText && !error && <p className="text-muted-foreground text-sm">{helperText}</p>}
 			</div>
 		);
-	},
+	}
 );
 
 Input.displayName = "Input";

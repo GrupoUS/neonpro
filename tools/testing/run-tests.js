@@ -65,13 +65,7 @@ async function runVitest(config = "simple") {
 	const configFile = CONFIGS.vitest[config];
 
 	try {
-		await runCommand("npx", [
-			"vitest",
-			"run",
-			"--config",
-			configFile,
-			"--reporter=verbose",
-		]);
+		await runCommand("npx", ["vitest", "run", "--config", configFile, "--reporter=verbose"]);
 	} catch (_error) {
 		process.exit(1);
 	}
@@ -84,13 +78,7 @@ async function runPlaywright(config = "simple") {
 	const configFile = CONFIGS.playwright[config];
 
 	try {
-		await runCommand("npx", [
-			"playwright",
-			"test",
-			"--config",
-			configFile,
-			"--reporter=line",
-		]);
+		await runCommand("npx", ["playwright", "test", "--config", configFile, "--reporter=line"]);
 	} catch (_error) {
 		process.exit(1);
 	}

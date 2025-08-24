@@ -21,7 +21,7 @@ export class AestheticPostProcessor {
 	postProcessTreatmentOutcome(
 		rawOutput: Float32Array,
 		patient: PatientProfile,
-		treatment: TreatmentRequest,
+		treatment: TreatmentRequest
 	): TreatmentOutcomePrediction["outputs"] {
 		// Raw outputs: [outcome_score, confidence, timeline_weeks]
 		const outcomeScore = Math.max(0, Math.min(1, rawOutput[0]));
@@ -29,18 +29,10 @@ export class AestheticPostProcessor {
 		const timelineWeeks = Math.max(1, Math.min(52, rawOutput[2] * 52));
 
 		// Calculate durability based on treatment type and patient factors
-		const durability = this.calculateTreatmentDurability(
-			treatment.treatmentType,
-			patient,
-			outcomeScore,
-		);
+		const durability = this.calculateTreatmentDurability(treatment.treatmentType, patient, outcomeScore);
 
 		// Estimate satisfaction based on outcome and patient expectations
-		const satisfaction = this.estimateSatisfaction(
-			outcomeScore,
-			treatment.goals.expectations,
-			confidence,
-		);
+		const satisfaction = this.estimateSatisfaction(outcomeScore, treatment.goals.expectations, confidence);
 
 		return {
 			outcomeScore,
@@ -54,20 +46,14 @@ export class AestheticPostProcessor {
 	/**
 	 * Process Botox optimization results
 	 */
-	postProcessBotoxOptimization(
-		rawOutput: Float32Array,
-		targetAreas: string[],
-	): BotoxOptimization["outputs"] {
+	postProcessBotoxOptimization(rawOutput: Float32Array, targetAreas: string[]): BotoxOptimization["outputs"] {
 		// Raw outputs: [total_units, confidence, duration_factor]
 		const totalUnits = Math.max(10, Math.min(200, rawOutput[0] * 100));
 		const confidence = Math.max(0, Math.min(1, rawOutput[1]));
 		const durationFactor = Math.max(0.5, Math.min(2, rawOutput[2]));
 
 		// Distribute units across target areas
-		const injectionPattern = this.distributeBoxtoxUnits(
-			totalUnits,
-			targetAreas,
-		);
+		const injectionPattern = this.distributeBoxtoxUnits(totalUnits, targetAreas);
 
 		// Calculate expected duration (base 3-4 months)
 		const baseDuration = 3.5; // months
@@ -88,18 +74,12 @@ export class AestheticPostProcessor {
 	/**
 	 * Process filler volume optimization results
 	 */
-	postProcessFillerVolume(
-		rawOutput: Float32Array,
-		targetAreas: string[],
-	): FillerVolumePrediction["outputs"] {
+	postProcessFillerVolume(rawOutput: Float32Array, targetAreas: string[]): FillerVolumePrediction["outputs"] {
 		// Raw outputs: [volume_per_area_1, volume_per_area_2, ..., confidence, longevity_factor]
 		const areaCount = targetAreas.length;
 		const volumeData = Array.from(rawOutput.slice(0, areaCount));
 		const confidence = Math.max(0, Math.min(1, rawOutput[areaCount]));
-		const longevityFactor = Math.max(
-			0.5,
-			Math.min(2, rawOutput[areaCount + 1]),
-		);
+		const longevityFactor = Math.max(0.5, Math.min(2, rawOutput[areaCount + 1]));
 
 		// Create volume recommendations for each area
 		const volumePerArea = targetAreas.map((area, index) => {
@@ -130,9 +110,7 @@ export class AestheticPostProcessor {
 	/**
 	 * Process laser settings optimization results
 	 */
-	postProcessLaserSettings(
-		rawOutput: Float32Array,
-	): LaserSettingsPrediction["outputs"] {
+	postProcessLaserSettings(rawOutput: Float32Array): LaserSettingsPrediction["outputs"] {
 		// Raw outputs: [energy, pulse_width, spot_size, passes, cooling_time, downtime]
 		const energyLevel = Math.max(5, Math.min(100, rawOutput[0] * 50)); // J/cm²
 		const pulseWidth = Math.max(0.1, Math.min(50, rawOutput[1] * 25)); // milliseconds
@@ -142,11 +120,7 @@ export class AestheticPostProcessor {
 		const expectedDowntime = Math.max(0, Math.min(14, rawOutput[5] * 10)); // days
 
 		// Calculate confidence based on parameter consistency
-		const confidence = this.calculateLaserConfidence(
-			energyLevel,
-			pulseWidth,
-			spotSize,
-		);
+		const confidence = this.calculateLaserConfidence(energyLevel, pulseWidth, spotSize);
 
 		return {
 			energyLevel: Math.round(energyLevel * 10) / 10,
@@ -161,11 +135,7 @@ export class AestheticPostProcessor {
 
 	// ==================== HELPER METHODS ====================
 
-	private calculateTreatmentDurability(
-		treatmentType: string,
-		patient: PatientProfile,
-		outcomeScore: number,
-	): number {
+	private calculateTreatmentDurability(treatmentType: string, patient: PatientProfile, outcomeScore: number): number {
 		// Base durability in months for different treatments
 		const baseDurability: Record<string, number> = {
 			botox: 4,
@@ -205,11 +175,7 @@ export class AestheticPostProcessor {
 		return Math.round(durability);
 	}
 
-	private estimateSatisfaction(
-		outcomeScore: number,
-		expectations: string,
-		confidence: number,
-	): number {
+	private estimateSatisfaction(outcomeScore: number, expectations: string, confidence: number): number {
 		let satisfaction = outcomeScore;
 
 		// Adjust based on expectations
@@ -227,14 +193,8 @@ export class AestheticPostProcessor {
 		return Math.max(0, Math.min(1, satisfaction));
 	}
 
-	private distributeBoxtoxUnits(
-		totalUnits: number,
-		targetAreas: string[],
-	): InjectionPoint[] {
-		const areaDistribution: Record<
-			string,
-			{ percentage: number; technique: string }
-		> = {
+	private distributeBoxtoxUnits(totalUnits: number, targetAreas: string[]): InjectionPoint[] {
+		const areaDistribution: Record<string, { percentage: number; technique: string }> = {
 			forehead: { percentage: 0.25, technique: "horizontal_lines" },
 			glabella: { percentage: 0.3, technique: "central_spread" },
 			"crows-feet": { percentage: 0.2, technique: "fan_pattern" },
@@ -263,9 +223,7 @@ export class AestheticPostProcessor {
 		return injectionPoints;
 	}
 
-	private determineInjectionDepth(
-		area: string,
-	): "superficial" | "mid" | "deep" {
+	private determineInjectionDepth(area: string): "superficial" | "mid" | "deep" {
 		const depthMap: Record<string, "superficial" | "mid" | "deep"> = {
 			forehead: "mid",
 			glabella: "mid",
@@ -293,10 +251,7 @@ export class AestheticPostProcessor {
 		return coordinateMap[area] || { x: 0.5, y: 0.5 };
 	}
 
-	private calculateBotoxOnset(
-		totalUnits: number,
-		targetAreas: string[],
-	): number {
+	private calculateBotoxOnset(totalUnits: number, targetAreas: string[]): number {
 		// Base onset time is 3-7 days
 		let onsetDays = 5;
 
@@ -318,10 +273,7 @@ export class AestheticPostProcessor {
 		return Math.max(3, Math.min(14, onsetDays));
 	}
 
-	private createVolumeRecommendation(
-		area: string,
-		volume: number,
-	): VolumeRecommendation {
+	private createVolumeRecommendation(area: string, volume: number): VolumeRecommendation {
 		const productRecommendations: Record<string, string> = {
 			lips: "Thin consistency HA",
 			cheeks: "Thick consistency HA",
@@ -393,10 +345,7 @@ export class AestheticPostProcessor {
 		);
 	}
 
-	private selectInjectionTechnique(
-		areas: string[],
-		volumes: VolumeRecommendation[],
-	) {
+	private selectInjectionTechnique(areas: string[], volumes: VolumeRecommendation[]) {
 		const totalVolume = volumes.reduce((sum, v) => sum + v.volume, 0);
 
 		// Determine technique based on volume and complexity
@@ -431,11 +380,7 @@ export class AestheticPostProcessor {
 		};
 	}
 
-	private calculateLaserConfidence(
-		energy: number,
-		pulseWidth: number,
-		spotSize: number,
-	): number {
+	private calculateLaserConfidence(energy: number, pulseWidth: number, spotSize: number): number {
 		// Calculate confidence based on parameter relationships
 		let confidence = 0.8; // Base confidence
 
@@ -475,33 +420,24 @@ export class AestheticPostProcessor {
 	/**
 	 * Generate treatment recommendations based on prediction results
 	 */
-	generateTreatmentRecommendations(
-		result: any,
-		patient: PatientProfile,
-	): string[] {
+	generateTreatmentRecommendations(result: any, patient: PatientProfile): string[] {
 		const recommendations: string[] = [];
 
 		// General recommendations based on confidence
 		if (result.confidence < 0.7) {
-			recommendations.push(
-				"Recommend consultation with senior practitioner due to complexity",
-			);
+			recommendations.push("Recommend consultation with senior practitioner due to complexity");
 		}
 
 		// Age-based recommendations
 		if (patient.age < 25) {
-			recommendations.push(
-				"Consider conservative approach for younger patient",
-			);
+			recommendations.push("Consider conservative approach for younger patient");
 		} else if (patient.age > 65) {
 			recommendations.push("Extended recovery time may be needed");
 		}
 
 		// Lifestyle recommendations
 		if (patient.lifestyle.smoking) {
-			recommendations.push(
-				"Strongly recommend smoking cessation before treatment",
-			);
+			recommendations.push("Strongly recommend smoking cessation before treatment");
 		}
 
 		if (patient.lifestyle.sunExposure === "high") {
@@ -510,9 +446,7 @@ export class AestheticPostProcessor {
 
 		// Medical history considerations
 		if (patient.medicalHistory.bloodThinnersUse) {
-			recommendations.push(
-				"Coordinate with prescribing physician regarding anticoagulation",
-			);
+			recommendations.push("Coordinate with prescribing physician regarding anticoagulation");
 		}
 
 		if (patient.medicalHistory.keloidProneness) {
@@ -525,22 +459,15 @@ export class AestheticPostProcessor {
 	/**
 	 * Generate specific recommendations for Botox treatments
 	 */
-	generateBotoxRecommendations(
-		result: BotoxOptimization["outputs"],
-		patient: PatientProfile,
-	): string[] {
+	generateBotoxRecommendations(result: BotoxOptimization["outputs"], patient: PatientProfile): string[] {
 		const recommendations: string[] = [];
 
 		if (result.optimalUnits > 50) {
-			recommendations.push(
-				"High unit requirement - consider staged treatment approach",
-			);
+			recommendations.push("High unit requirement - consider staged treatment approach");
 		}
 
 		if (result.expectedDuration < 3) {
-			recommendations.push(
-				"Shorter duration expected - discuss maintenance schedule",
-			);
+			recommendations.push("Shorter duration expected - discuss maintenance schedule");
 		}
 
 		if (patient.age < 30) {
@@ -553,21 +480,13 @@ export class AestheticPostProcessor {
 	/**
 	 * Generate specific recommendations for filler treatments
 	 */
-	generateFillerRecommendations(
-		result: FillerVolumePrediction["outputs"],
-		patient: PatientProfile,
-	): string[] {
+	generateFillerRecommendations(result: FillerVolumePrediction["outputs"], patient: PatientProfile): string[] {
 		const recommendations: string[] = [];
 
-		const totalVolume = result.volumePerArea.reduce(
-			(sum, v) => sum + v.volume,
-			0,
-		);
+		const totalVolume = result.volumePerArea.reduce((sum, v) => sum + v.volume, 0);
 
 		if (totalVolume > 3) {
-			recommendations.push(
-				"Large volume requirement - consider multiple sessions",
-			);
+			recommendations.push("Large volume requirement - consider multiple sessions");
 		}
 
 		if (result.touchUpNeeded) {
@@ -575,9 +494,7 @@ export class AestheticPostProcessor {
 		}
 
 		if (patient.medicalHistory.bloodThinnersUse) {
-			recommendations.push(
-				"Increased bruising risk - consider arnica supplementation",
-			);
+			recommendations.push("Increased bruising risk - consider arnica supplementation");
 		}
 
 		return recommendations;
@@ -586,10 +503,7 @@ export class AestheticPostProcessor {
 	/**
 	 * Generate specific recommendations for laser treatments
 	 */
-	generateLaserRecommendations(
-		result: LaserSettingsPrediction["outputs"],
-		patient: PatientProfile,
-	): string[] {
+	generateLaserRecommendations(result: LaserSettingsPrediction["outputs"], patient: PatientProfile): string[] {
 		const recommendations: string[] = [];
 
 		if (result.expectedDowntime > 7) {
@@ -597,16 +511,10 @@ export class AestheticPostProcessor {
 		}
 
 		if (result.energyLevel > 30) {
-			recommendations.push(
-				"High energy treatment - ensure patient comfort measures",
-			);
+			recommendations.push("High energy treatment - ensure patient comfort measures");
 		}
 
-		if (
-			patient.skinType.includes("4") ||
-			patient.skinType.includes("5") ||
-			patient.skinType.includes("6")
-		) {
+		if (patient.skinType.includes("4") || patient.skinType.includes("5") || patient.skinType.includes("6")) {
 			recommendations.push("Monitor closely for pigmentation changes");
 		}
 

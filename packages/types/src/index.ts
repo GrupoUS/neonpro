@@ -1,5 +1,6 @@
 // Export all shared types
 
+export * from "./ai-chat";
 export * from "./appointment";
 export * from "./common";
 export * from "./constants/healthcare-constants";

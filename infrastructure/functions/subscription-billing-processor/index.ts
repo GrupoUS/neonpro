@@ -12,8 +12,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
 	"Access-Control-Allow-Origin": "*",
-	"Access-Control-Allow-Headers":
-		"authorization, x-client-info, apikey, content-type",
+	"Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
 type Database = {
@@ -25,13 +24,7 @@ type Database = {
 					clinic_id: string;
 					user_id: string;
 					plan_id: string;
-					status:
-						| "trial"
-						| "active"
-						| "past_due"
-						| "canceled"
-						| "unpaid"
-						| "paused";
+					status: "trial" | "active" | "past_due" | "canceled" | "unpaid" | "paused";
 					current_period_start: string;
 					current_period_end: string;
 					trial_end: string;
@@ -99,7 +92,7 @@ serve(async (req) => {
 			}),
 			{
 				headers: { ...corsHeaders, "Content-Type": "application/json" },
-			},
+			}
 		);
 	} catch (error) {
 		return new Response(
@@ -110,7 +103,7 @@ serve(async (req) => {
 			{
 				status: 500,
 				headers: { ...corsHeaders, "Content-Type": "application/json" },
-			},
+			}
 		);
 	}
 });
@@ -174,7 +167,7 @@ async function processBillingRenewals(supabase: any) {
 				`
         *,
         plan:subscription_plans(*)
-      `,
+      `
 			)
 			.eq("status", "active")
 			.lt("next_billing_date", renewalWindow.toISOString())
@@ -189,10 +182,7 @@ async function processBillingRenewals(supabase: any) {
 				// Calculate next billing period
 				const currentPeriodEnd = new Date(subscription.current_period_end);
 				const nextPeriodStart = currentPeriodEnd;
-				const nextPeriodEnd = calculateNextPeriodEnd(
-					nextPeriodStart,
-					subscription.billing_cycle,
-				);
+				const nextPeriodEnd = calculateNextPeriodEnd(nextPeriodStart, subscription.billing_cycle);
 				const nextBillingDate = nextPeriodEnd;
 
 				// Get plan price for current billing cycle

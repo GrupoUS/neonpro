@@ -39,15 +39,13 @@ export class DatabaseRLS {
 				table: "appointments",
 				policy: "Appointment access control",
 				roles: ["patient", "doctor", "receptionist"],
-				condition:
-					"patient_id IN (SELECT id FROM patients WHERE user_id = auth.uid())",
+				condition: "patient_id IN (SELECT id FROM patients WHERE user_id = auth.uid())",
 			},
 			{
 				table: "medical_records",
 				policy: "Medical record confidentiality",
 				roles: ["doctor", "nurse"],
-				condition:
-					"provider_id = auth.uid() OR patient_id IN (SELECT id FROM patients WHERE user_id = auth.uid())",
+				condition: "provider_id = auth.uid() OR patient_id IN (SELECT id FROM patients WHERE user_id = auth.uid())",
 			},
 		];
 	}
@@ -68,11 +66,7 @@ export class DatabaseRLS {
 	/**
 	 * Validate user access to resource
 	 */
-	async validateAccess(
-		_userId: string,
-		_resourceType: string,
-		_resourceId: string,
-	): Promise<boolean> {
+	async validateAccess(_userId: string, _resourceType: string, _resourceId: string): Promise<boolean> {
 		// Simplified validation - would check actual RLS policies
 		return true;
 	}

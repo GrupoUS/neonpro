@@ -14,20 +14,12 @@ export type LogContext = {
 export type Logger = {
 	info: (message: string, context?: LogContext) => void;
 	warn: (message: string, context?: LogContext) => void;
-	error: (
-		message: string,
-		error?: Error | unknown,
-		context?: LogContext,
-	) => void;
+	error: (message: string, error?: Error | unknown, context?: LogContext) => void;
 	debug: (message: string, context?: LogContext) => void;
 };
 
 class NeonProLogger implements Logger {
-	private formatMessage(
-		level: string,
-		message: string,
-		context?: LogContext,
-	): string {
+	private formatMessage(level: string, message: string, context?: LogContext): string {
 		const timestamp = new Date().toISOString();
 		const contextStr = context ? ` ${JSON.stringify(context)}` : "";
 		return `[${timestamp}] ${level.toUpperCase()}: ${message}${contextStr}`;
@@ -91,13 +83,10 @@ export const logger: Logger = new NeonProLogger();
 // Legacy compatibility - can be removed once all console.* are replaced
 export const createContextLogger = (baseContext: LogContext) => {
 	return {
-		info: (message: string, context?: LogContext) =>
-			logger.info(message, { ...baseContext, ...context }),
-		warn: (message: string, context?: LogContext) =>
-			logger.warn(message, { ...baseContext, ...context }),
+		info: (message: string, context?: LogContext) => logger.info(message, { ...baseContext, ...context }),
+		warn: (message: string, context?: LogContext) => logger.warn(message, { ...baseContext, ...context }),
 		error: (message: string, error?: Error | unknown, context?: LogContext) =>
 			logger.error(message, error, { ...baseContext, ...context }),
-		debug: (message: string, context?: LogContext) =>
-			logger.debug(message, { ...baseContext, ...context }),
+		debug: (message: string, context?: LogContext) => logger.debug(message, { ...baseContext, ...context }),
 	};
 };

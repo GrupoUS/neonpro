@@ -103,9 +103,7 @@ export const DataRetentionSchema = z.object({
 	data_category: DataCategorySchema,
 	retention_period_months: z.number().min(1).max(600), // Up to 50 years for medical records
 	legal_basis: z.string().max(500),
-	deletion_method: z
-		.enum(["automatic", "manual", "archival"])
-		.default("automatic"),
+	deletion_method: z.enum(["automatic", "manual", "archival"]).default("automatic"),
 	exceptions: z.string().max(1000).optional(),
 	created_at: z.string().datetime(),
 	updated_at: z.string().datetime(),
@@ -127,9 +125,7 @@ export const ConsentRecordSchema = z.object({
 	withdrawal_reason: z.string().max(500).optional(),
 	ip_address: z.string().ip(),
 	user_agent: z.string().optional(),
-	consent_method: z
-		.enum(["web", "mobile", "paper", "verbal", "email"])
-		.default("web"),
+	consent_method: z.enum(["web", "mobile", "paper", "verbal", "email"]).default("web"),
 	witness_name: z.string().optional(),
 	is_active: z.boolean().default(true),
 	marketing_consent: z.boolean().default(false),
@@ -164,7 +160,7 @@ export const DataProcessingActivitySchema = z.object({
 				country: z.string(),
 				safeguards: z.string(),
 				adequacy_decision: z.boolean().default(false),
-			}),
+			})
 		)
 		.default([]),
 	retention_period: z.string(),
@@ -194,27 +190,16 @@ export const DataSubjectRequestSchema = z.object({
 		.string()
 		.min(10, "Descrição deve ter pelo menos 10 caracteres")
 		.max(2000, "Descrição deve ter no máximo 2000 caracteres"),
-	status: z
-		.enum(["pending", "in_progress", "completed", "rejected", "cancelled"])
-		.default("pending"),
+	status: z.enum(["pending", "in_progress", "completed", "rejected", "cancelled"]).default("pending"),
 	priority: z.enum(["low", "normal", "high", "urgent"]).default("normal"),
 	assigned_to: z.string().uuid().optional(),
 	received_date: z.string().datetime(),
 	due_date: z.string().datetime(),
 	completed_date: z.string().datetime().optional(),
 	response: z.string().max(2000).optional(),
-	response_method: z
-		.enum(["email", "mail", "in_person", "secure_portal"])
-		.optional(),
+	response_method: z.enum(["email", "mail", "in_person", "secure_portal"]).optional(),
 	documents_provided: z.array(z.string()).default([]),
-	verification_method: z
-		.enum([
-			"id_document",
-			"email_verification",
-			"phone_verification",
-			"in_person",
-		])
-		.optional(),
+	verification_method: z.enum(["id_document", "email_verification", "phone_verification", "in_person"]).optional(),
 	verification_completed: z.boolean().default(false),
 	verification_date: z.string().datetime().optional(),
 	created_at: z.string().datetime(),
@@ -251,7 +236,7 @@ export const AuditLogSchema = z.object({
 			z.object({
 				old_value: z.any().optional(),
 				new_value: z.any().optional(),
-			}),
+			})
 		)
 		.optional(),
 	metadata: z.record(z.any()).optional(),
@@ -275,9 +260,7 @@ export const SecurityIncidentSchema = z.object({
 		.max(2000, "Descrição deve ter no máximo 2000 caracteres"),
 	category: IncidentCategorySchema,
 	severity: z.enum(["low", "medium", "high", "critical"]).default("medium"),
-	status: z
-		.enum(["open", "investigating", "contained", "resolved", "closed"])
-		.default("open"),
+	status: z.enum(["open", "investigating", "contained", "resolved", "closed"]).default("open"),
 
 	// Incident Details
 	discovered_date: z.string().datetime(),
@@ -303,9 +286,7 @@ export const SecurityIncidentSchema = z.object({
 	authority_notification_date: z.string().datetime().optional(),
 	individuals_notified: z.boolean().default(false),
 	individual_notification_date: z.string().datetime().optional(),
-	notification_method: z
-		.enum(["email", "letter", "website", "media", "sms"])
-		.optional(),
+	notification_method: z.enum(["email", "letter", "website", "media", "sms"]).optional(),
 
 	// Investigation
 	root_cause: z.string().max(1000).optional(),
@@ -330,13 +311,7 @@ export const VendorComplianceSchema = z.object({
 		.string()
 		.min(2, "Nome do fornecedor deve ter pelo menos 2 caracteres")
 		.max(200, "Nome do fornecedor deve ter no máximo 200 caracteres"),
-	vendor_type: z.enum([
-		"cloud_provider",
-		"software_vendor",
-		"service_provider",
-		"consultant",
-		"other",
-	]),
+	vendor_type: z.enum(["cloud_provider", "software_vendor", "service_provider", "consultant", "other"]),
 	contact_person: z.string(),
 	contact_email: z.string().email(),
 	contract_start_date: z.string().date(),
@@ -408,17 +383,12 @@ export const PrivacyImpactAssessmentSchema = z.object({
 			impact: z.enum(["very_low", "low", "medium", "high", "very_high"]),
 			risk_level: RiskLevelSchema,
 			mitigation_measures: z.string(),
-		}),
+		})
 	),
 
 	// Conclusions
 	overall_risk_level: RiskLevelSchema,
-	recommendation: z.enum([
-		"proceed",
-		"proceed_with_conditions",
-		"reject",
-		"needs_review",
-	]),
+	recommendation: z.enum(["proceed", "proceed_with_conditions", "reject", "needs_review"]),
 	conditions: z.string().max(1000).optional(),
 
 	// Approval
@@ -466,9 +436,7 @@ export const ComplianceQuerySchema = z.object({
 	risk_level: RiskLevelSchema.optional(),
 
 	// Sorting
-	sort_by: z
-		.enum(["timestamp", "risk_level", "user_name", "action"])
-		.default("timestamp"),
+	sort_by: z.enum(["timestamp", "risk_level", "user_name", "action"]).default("timestamp"),
 	sort_order: z.enum(["asc", "desc"]).default("desc"),
 });
 
@@ -551,16 +519,12 @@ export type RiskLevel = z.infer<typeof RiskLevelSchema>;
 export type IncidentCategory = z.infer<typeof IncidentCategorySchema>;
 export type DataRetention = z.infer<typeof DataRetentionSchema>;
 export type ConsentRecord = z.infer<typeof ConsentRecordSchema>;
-export type DataProcessingActivity = z.infer<
-	typeof DataProcessingActivitySchema
->;
+export type DataProcessingActivity = z.infer<typeof DataProcessingActivitySchema>;
 export type DataSubjectRequest = z.infer<typeof DataSubjectRequestSchema>;
 export type AuditLog = z.infer<typeof AuditLogSchema>;
 export type SecurityIncident = z.infer<typeof SecurityIncidentSchema>;
 export type VendorCompliance = z.infer<typeof VendorComplianceSchema>;
-export type PrivacyImpactAssessment = z.infer<
-	typeof PrivacyImpactAssessmentSchema
->;
+export type PrivacyImpactAssessment = z.infer<typeof PrivacyImpactAssessmentSchema>;
 export type TrainingRecord = z.infer<typeof TrainingRecordSchema>;
 export type ComplianceQuery = z.infer<typeof ComplianceQuerySchema>;
 export type AuditLogResponse = z.infer<typeof AuditLogResponseSchema>;

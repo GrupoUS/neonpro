@@ -7,15 +7,9 @@ import { mockAnalyticsData } from "../../../utils/mockData";
 
 // Mock Recharts components
 vi.mock("recharts", () => ({
-	LineChart: ({ children }: { children: React.ReactNode }) => (
-		<div data-testid="line-chart">{children}</div>
-	),
-	BarChart: ({ children }: { children: React.ReactNode }) => (
-		<div data-testid="bar-chart">{children}</div>
-	),
-	PieChart: ({ children }: { children: React.ReactNode }) => (
-		<div data-testid="pie-chart">{children}</div>
-	),
+	LineChart: ({ children }: { children: React.ReactNode }) => <div data-testid="line-chart">{children}</div>,
+	BarChart: ({ children }: { children: React.ReactNode }) => <div data-testid="bar-chart">{children}</div>,
+	PieChart: ({ children }: { children: React.ReactNode }) => <div data-testid="pie-chart">{children}</div>,
 	Line: () => <div data-testid="line" />,
 	Bar: () => <div data-testid="bar" />,
 	Cell: () => <div data-testid="cell" />,
@@ -53,10 +47,8 @@ const createWrapper = () => {
 };
 
 describe("AnalyticsDashboard", () => {
-	const mockUseAnalyticsData =
-		require("@/hooks/analytics/useAnalyticsData").useAnalyticsData;
-	const mockUseExportData =
-		require("@/hooks/analytics/useExportData").useExportData;
+	const mockUseAnalyticsData = require("@/hooks/analytics/useAnalyticsData").useAnalyticsData;
+	const mockUseExportData = require("@/hooks/analytics/useExportData").useExportData;
 
 	beforeEach(() => {
 		mockUseAnalyticsData.mockReturnValue({
@@ -142,7 +134,7 @@ describe("AnalyticsDashboard", () => {
 			expect.objectContaining({
 				data: mockAnalyticsData,
 				title: expect.stringContaining("Analytics Report"),
-			}),
+			})
 		);
 	});
 
@@ -169,7 +161,7 @@ describe("AnalyticsDashboard", () => {
 			expect(mockUseAnalyticsData).toHaveBeenCalledWith(
 				expect.objectContaining({
 					dateRange: { start: "2024-02-01", end: "2024-02-28" },
-				}),
+				})
 			);
 		});
 	});
@@ -198,7 +190,7 @@ describe("AnalyticsDashboard", () => {
 			expect(mockUseAnalyticsData).toHaveBeenCalledWith(
 				expect.objectContaining({
 					treatments: ["facial", "botox"],
-				}),
+				})
 			);
 		});
 	});

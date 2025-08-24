@@ -37,9 +37,7 @@ async function testSupabaseMCP() {
 		} else {
 		}
 
-		const { data, error } = await supabase
-			.from("profiles")
-			.select("count", { count: "exact", head: true });
+		const { data, error } = await supabase.from("profiles").select("count", { count: "exact", head: true });
 
 		if (error) {
 			if (error.message.includes('relation "profiles" does not exist')) {
@@ -47,8 +45,7 @@ async function testSupabaseMCP() {
 		} else {
 		}
 
-		const { data: authConfig, error: authError } =
-			await supabase.auth.getUser();
+		const { data: authConfig, error: authError } = await supabase.auth.getUser();
 
 		if (authError) {
 		} else {

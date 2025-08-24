@@ -17,16 +17,13 @@ patientRoutes.get("/", (c) => {
 });
 
 patientRoutes.post("/", async (c) => {
-	const body = await c.req.json().catch(() => ({ 
-		error: "Invalid JSON payload" 
+	const body = await c.req.json().catch(() => ({
+		error: "Invalid JSON payload",
 	}));
 
 	// Validate required fields
 	if (!(body.name && body.email) || body.lgpd_consent === false) {
-		return c.json(
-			{ error: "Invalid patient data or missing LGPD consent" },
-			HTTP_STATUS.UNPROCESSABLE_ENTITY,
-		);
+		return c.json({ error: "Invalid patient data or missing LGPD consent" }, HTTP_STATUS.UNPROCESSABLE_ENTITY);
 	}
 
 	return c.json({ message: "Create patient - not implemented" }, HTTP_STATUS.NOT_IMPLEMENTED);

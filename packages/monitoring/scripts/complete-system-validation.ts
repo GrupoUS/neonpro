@@ -79,14 +79,9 @@ class SystemValidator {
 
 		try {
 			// Validate core config
-			const coreConfig = await fs.readFile(
-				".bmad-core/core-config.yaml",
-				"utf-8",
-			);
+			const coreConfig = await fs.readFile(".bmad-core/core-config.yaml", "utf-8");
 			if (!coreConfig.includes("neonpro-healthcare")) {
-				errors.push(
-					"Agent core config missing healthcare domain specification",
-				);
+				errors.push("Agent core config missing healthcare domain specification");
 			}
 
 			// Validate workflow configuration
@@ -97,14 +92,9 @@ class SystemValidator {
 			}
 
 			// Validate task template
-			const template = await fs.readFile(
-				".bmad-core/templates/archon-task-template.yaml",
-				"utf-8",
-			);
+			const template = await fs.readFile(".bmad-core/templates/archon-task-template.yaml", "utf-8");
 			if (!template.includes("healthcare_compliance")) {
-				warnings.push(
-					"Task template should include healthcare compliance requirements",
-				);
+				warnings.push("Task template should include healthcare compliance requirements");
 			}
 		} catch (error) {
 			errors.push(`Failed to read agent configuration: ${error}`);
@@ -132,12 +122,7 @@ class SystemValidator {
 			}
 
 			// Check if Archon tools are properly integrated
-			const archonTools = [
-				"manage_project",
-				"manage_task",
-				"manage_document",
-				"perform_rag_query",
-			];
+			const archonTools = ["manage_project", "manage_task", "manage_document", "perform_rag_query"];
 			for (const tool of archonTools) {
 				if (!mcpConfig.includes(tool)) {
 					warnings.push(`Archon tool ${tool} may not be properly integrated`);
@@ -175,17 +160,10 @@ class SystemValidator {
 					util.includes("compliance-helpers") &&
 					!(content.includes("validateCPF") && content.includes("validateCNPJ"))
 				) {
-					errors.push(
-						"Compliance helpers missing Brazilian validation functions",
-					);
+					errors.push("Compliance helpers missing Brazilian validation functions");
 				}
 
-				if (
-					util.includes("audit-utils") &&
-					!(
-						content.includes("createAuditLog") && content.includes("LGPD_BASIS")
-					)
-				) {
+				if (util.includes("audit-utils") && !(content.includes("createAuditLog") && content.includes("LGPD_BASIS"))) {
 					errors.push("Audit utils missing LGPD compliance functions");
 				}
 			} catch {
@@ -207,23 +185,15 @@ class SystemValidator {
 
 		try {
 			// Check MFA service
-			const mfaService = await fs.readFile(
-				"packages/security/src/auth/mfa-service.ts",
-				"utf-8",
-			);
+			const mfaService = await fs.readFile("packages/security/src/auth/mfa-service.ts", "utf-8");
 			if (!(mfaService.includes("TOTP") && mfaService.includes("healthcare"))) {
 				warnings.push("MFA service may not be healthcare-optimized");
 			}
 
 			// Check if stock alerts have proper user context
-			const stockAlerts = await fs.readFile(
-				"apps/web/app/api/stock/alerts/route.ts",
-				"utf-8",
-			);
+			const stockAlerts = await fs.readFile("apps/web/app/api/stock/alerts/route.ts", "utf-8");
 			if (stockAlerts.includes("testClinicId")) {
-				errors.push(
-					"Stock alerts still using test clinic ID instead of user context",
-				);
+				errors.push("Stock alerts still using test clinic ID instead of user context");
 			}
 
 			if (!stockAlerts.includes("getUserClinicContext")) {
@@ -247,33 +217,15 @@ class SystemValidator {
 
 		try {
 			// Check healthcare dashboard
-			const healthcareDashboard = await fs.readFile(
-				"apps/web/components/dashboard/healthcare-dashboard.tsx",
-				"utf-8",
-			);
+			const healthcareDashboard = await fs.readFile("apps/web/components/dashboard/healthcare-dashboard.tsx", "utf-8");
 
-			if (
-				!(
-					healthcareDashboard.includes("LGPD") &&
-					healthcareDashboard.includes("audit")
-				)
-			) {
-				warnings.push(
-					"Healthcare dashboard may not include proper compliance features",
-				);
+			if (!(healthcareDashboard.includes("LGPD") && healthcareDashboard.includes("audit"))) {
+				warnings.push("Healthcare dashboard may not include proper compliance features");
 			}
 
 			// Check AI scheduling integration
-			const aiScheduling = await fs.readFile(
-				"apps/web/lib/ai-scheduling.ts",
-				"utf-8",
-			);
-			if (
-				!(
-					aiScheduling.includes("createAuditLog") &&
-					aiScheduling.includes("validateHealthcareAccess")
-				)
-			) {
+			const aiScheduling = await fs.readFile("apps/web/lib/ai-scheduling.ts", "utf-8");
+			if (!(aiScheduling.includes("createAuditLog") && aiScheduling.includes("validateHealthcareAccess"))) {
 				errors.push("AI scheduling missing compliance integration");
 			}
 		} catch (error) {
@@ -357,17 +309,12 @@ class SystemValidator {
 				total_components: this.results.length,
 				passed: this.results.filter((r) => r.passed).length,
 				failed: this.results.filter((r) => !r.passed).length,
-				success_rate:
-					(this.results.filter((r) => r.passed).length / this.results.length) *
-					100,
+				success_rate: (this.results.filter((r) => r.passed).length / this.results.length) * 100,
 			},
 		};
 
 		try {
-			await fs.writeFile(
-				"validation-report.json",
-				JSON.stringify(reportData, null, 2),
-			);
+			await fs.writeFile("validation-report.json", JSON.stringify(reportData, null, 2));
 		} catch (_error) {}
 	}
 }

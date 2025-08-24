@@ -39,22 +39,14 @@ describe("🔒 Security Assessment - Authentication & Authorization", () => {
 		// Test routes with different security levels
 		app.get("/api/v1/public", (c) => c.json({ message: "public" }));
 
-		app.get("/api/v1/authenticated", authMiddleware(), (c) =>
-			c.json({ message: "authenticated" }),
+		app.get("/api/v1/authenticated", authMiddleware(), (c) => c.json({ message: "authenticated" }));
+
+		app.get("/api/v1/admin-only", authMiddleware(), requireRole(UserRole.ADMIN), (c) =>
+			c.json({ message: "admin-only" })
 		);
 
-		app.get(
-			"/api/v1/admin-only",
-			authMiddleware(),
-			requireRole(UserRole.ADMIN),
-			(c) => c.json({ message: "admin-only" }),
-		);
-
-		app.get(
-			"/api/v1/patients",
-			authMiddleware(),
-			requirePermission(Permission.READ_PATIENTS),
-			(c) => c.json({ message: "patients-data" }),
+		app.get("/api/v1/patients", authMiddleware(), requirePermission(Permission.READ_PATIENTS), (c) =>
+			c.json({ message: "patients-data" })
 		);
 
 		client = testClient(app);
@@ -225,12 +217,9 @@ describe("🚨 Input Validation & Injection Prevention", () => {
 		});
 
 		it("should sanitize database queries", async () => {
-			const response = await fetch(
-				`/api/v1/patients?search=${encodeURIComponent("'; DROP TABLE patients; --")}`,
-				{
-					headers: { Authorization: "Bearer mock-access-token" },
-				},
-			);
+			const response = await fetch(`/api/v1/patients?search=${encodeURIComponent("'; DROP TABLE patients; --")}`, {
+				headers: { Authorization: "Bearer mock-access-token" },
+			});
 
 			// Should not execute malicious SQL
 			expect(response.status).not.toBe(500);
@@ -283,9 +272,7 @@ describe("🚨 Input Validation & Injection Prevention", () => {
 			expect(response.headers.get("X-Content-Type-Options")).toBe("nosniff");
 			expect(response.headers.get("X-Frame-Options")).toBe("DENY");
 			expect(response.headers.get("X-XSS-Protection")).toBe("1; mode=block");
-			expect(response.headers.get("Strict-Transport-Security")).toContain(
-				"max-age",
-			);
+			expect(response.headers.get("Strict-Transport-Security")).toContain("max-age");
 		});
 	});
 
@@ -403,7 +390,7 @@ describe("🚦 Rate Limiting & DDoS Protection", () => {
 						email: "test@example.com",
 						password: "wrongpassword",
 					}),
-				}),
+				})
 			);
 		}
 

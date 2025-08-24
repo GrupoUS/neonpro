@@ -16,10 +16,7 @@ export const getConsentStatus = async (_userId: string) => {
 	return { status: "granted" };
 };
 
-export const createDataSubjectRequest = async (
-	_userId: string,
-	_type: string,
-) => {
+export const createDataSubjectRequest = async (_userId: string, _type: string) => {
 	return { id: "placeholder-request-id" };
 };
 
@@ -27,10 +24,7 @@ export const downloadDataExport = async (_requestId: string) => {
 	return { url: "placeholder-download-url" };
 };
 
-export const requestDataRectification = async (
-	_userId: string,
-	_data: unknown,
-) => {
+export const requestDataRectification = async (_userId: string, _data: unknown) => {
 	return { success: true };
 };
 

@@ -102,3 +102,4 @@ serena/test/
 temp-broken-files/
 infrastructure/scripts/
 supabase/migrations/
+.tmp.*

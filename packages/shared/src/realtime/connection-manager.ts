@@ -5,11 +5,7 @@
  */
 
 import type { Database } from "@neonpro/db";
-import {
-	createClient,
-	type RealtimeChannel,
-	type SupabaseClient,
-} from "@supabase/supabase-js";
+import { createClient, type RealtimeChannel, type SupabaseClient } from "@supabase/supabase-js";
 
 export type ConnectionConfig = {
 	url: string;
@@ -57,9 +53,7 @@ export class SupabaseRealtimeManager {
 	private connectionStatus: ConnectionStatus;
 	private heartbeatTimer?: NodeJS.Timeout | null;
 	private reconnectTimer?: NodeJS.Timeout | null;
-	private readonly statusListeners = new Set<
-		(status: ConnectionStatus) => void
-	>();
+	private readonly statusListeners = new Set<(status: ConnectionStatus) => void>();
 	private isDestroyed = false;
 
 	constructor(config: ConnectionConfig) {
@@ -190,7 +184,7 @@ export class SupabaseRealtimeManager {
 
 		const delay = Math.min(
 			this.config.retryDelay * 2 ** this.connectionStatus.totalRetries,
-			30_000, // Max 30 seconds
+			30_000 // Max 30 seconds
 		);
 
 		this.reconnectTimer = setTimeout(() => {
@@ -232,7 +226,7 @@ export class SupabaseRealtimeManager {
 			filter?: string;
 			event?: "INSERT" | "UPDATE" | "DELETE" | "*";
 		},
-		callback: (payload: T) => void,
+		callback: (payload: T) => void
 	): () => void {
 		// Create or get existing subscription
 		let subscription = this.subscriptions.get(channelName);
@@ -278,7 +272,7 @@ export class SupabaseRealtimeManager {
 			schema?: string;
 			filter?: string;
 			event?: "INSERT" | "UPDATE" | "DELETE" | "*";
-		},
+		}
 	): void {
 		const { channel, callbacks } = subscription;
 
@@ -298,21 +292,17 @@ export class SupabaseRealtimeManager {
 							callback(payload);
 						} catch (_error) {}
 					});
-				},
+				}
 			);
 		} else {
 			// Setup generic postgres changes listener for backwards compatibility
-			channel.on(
-				"postgres_changes" as any,
-				{ event: "*", schema: "public" },
-				(payload: any) => {
-					callbacks.forEach((callback) => {
-						try {
-							callback(payload);
-						} catch (_error) {}
-					});
-				},
-			);
+			channel.on("postgres_changes" as any, { event: "*", schema: "public" }, (payload: any) => {
+				callbacks.forEach((callback) => {
+					try {
+						callback(payload);
+					} catch (_error) {}
+				});
+			});
 		}
 
 		// Subscribe to channel
@@ -353,9 +343,7 @@ export class SupabaseRealtimeManager {
 	 */
 	private handleChannelError(subscription: ChannelSubscription): void {
 		subscription.retryCount++;
-		subscription.lastError = new Error(
-			`Channel ${subscription.channelName} error`,
-		);
+		subscription.lastError = new Error(`Channel ${subscription.channelName} error`);
 
 		if (this.config.enableLogging) {
 		}
@@ -410,8 +398,7 @@ export class SupabaseRealtimeManager {
 
 		const maxScore = 100;
 		const retryPenalty = this.connectionStatus.totalRetries * 10;
-		const inactiveChannelPenalty =
-			(this.subscriptions.size - this.connectionStatus.activeChannels) * 5;
+		const inactiveChannelPenalty = (this.subscriptions.size - this.connectionStatus.activeChannels) * 5;
 
 		return Math.max(0, maxScore - retryPenalty - inactiveChannelPenalty);
 	}
@@ -446,9 +433,7 @@ export class SupabaseRealtimeManager {
 	} /**
 	 * Add status change listener
 	 */
-	public onStatusChange(
-		listener: (status: ConnectionStatus) => void,
-	): () => void {
+	public onStatusChange(listener: (status: ConnectionStatus) => void): () => void {
 		this.statusListeners.add(listener);
 
 		// Immediately call with current status
@@ -562,9 +547,7 @@ let globalRealtimeManager: SupabaseRealtimeManager | null = null;
 /**
  * Get or create global realtime manager instance
  */
-export function getRealtimeManager(
-	config?: Partial<ConnectionConfig>,
-): SupabaseRealtimeManager {
+export function getRealtimeManager(config?: Partial<ConnectionConfig>): SupabaseRealtimeManager {
 	if (!globalRealtimeManager) {
 		const fullConfig = { ...DEFAULT_CONFIG, ...config };
 		globalRealtimeManager = new SupabaseRealtimeManager(fullConfig);

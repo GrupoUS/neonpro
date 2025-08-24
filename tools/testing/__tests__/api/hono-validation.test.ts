@@ -62,7 +62,7 @@ const createMockApp = () => {
 				message: "Credenciais inválidas ou token expirado",
 				code: "UNAUTHORIZED",
 			},
-			401,
+			401
 		);
 	});
 

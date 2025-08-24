@@ -3,6 +3,7 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { renderHookWithClient } from "../../test-utils";
 
 // Types for API responses
 type ApiResponse<T> = {
@@ -61,7 +62,11 @@ const mockHonoClient = {
 
 // Mock fetch for HTTP requests
 const mockFetch = vi.fn();
-global.fetch = mockFetch;
+Object.defineProperty(global, "fetch", {
+	value: mockFetch,
+	writable: true,
+	configurable: true,
+});
 
 vi.mock("../../lib/api/hono-client", () => ({
 	honoClient: mockHonoClient,
@@ -87,10 +92,15 @@ describe("API Client Integration Tests", () => {
 
 	beforeEach(() => {
 		vi.clearAllMocks();
+		// Create a fresh QueryClient for each test
 		queryClient = new QueryClient({
 			defaultOptions: {
-				queries: { retry: false },
-				mutations: { retry: false },
+				queries: {
+					retry: false,
+				},
+				mutations: {
+					retry: false,
+				},
 			},
 		});
 
@@ -100,7 +110,7 @@ describe("API Client Integration Tests", () => {
 
 	afterEach(() => {
 		vi.restoreAllMocks();
-		queryClient.removeQueries();
+		queryClient.clear();
 	});
 
 	describe("Health Check and Connection", () => {

@@ -119,10 +119,7 @@ export class HealthcareTestUtils {
 		const bgLuminance = HealthcareTestUtils.getColorLuminance(backgroundColor);
 		const textLuminance = HealthcareTestUtils.getColorLuminance(color);
 
-		const ratio = HealthcareTestUtils.calculateContrastRatio(
-			bgLuminance,
-			textLuminance,
-		);
+		const ratio = HealthcareTestUtils.calculateContrastRatio(bgLuminance, textLuminance);
 
 		return {
 			compliant: ratio >= minimumRatio,
@@ -146,10 +143,7 @@ export class HealthcareTestUtils {
 		}
 
 		// Test 2: Focus should be visible
-		if (
-			HealthcareTestUtils.isFocusable(element) &&
-			!HealthcareTestUtils.hasFocusIndicator(element)
-		) {
+		if (HealthcareTestUtils.isFocusable(element) && !HealthcareTestUtils.hasFocusIndicator(element)) {
 			failures.push("Focusable element lacks visible focus indicator");
 		}
 
@@ -177,10 +171,7 @@ export class HealthcareTestUtils {
 		const failures: string[] = [];
 
 		// Test 1: Accessible name
-		if (
-			HealthcareTestUtils.isInteractiveElement(element) &&
-			!HealthcareTestUtils.hasAccessibleName(element)
-		) {
+		if (HealthcareTestUtils.isInteractiveElement(element) && !HealthcareTestUtils.hasAccessibleName(element)) {
 			failures.push("Interactive element lacks accessible name");
 		}
 
@@ -214,16 +205,12 @@ export class HealthcareTestUtils {
 		const issues: string[] = [];
 
 		// Check if element handles sensitive data
-		const isSensitive =
-			element.hasAttribute("data-sensitive") ||
-			element.hasAttribute("data-lgpd");
+		const isSensitive = element.hasAttribute("data-sensitive") || element.hasAttribute("data-lgpd");
 
 		if (isSensitive) {
 			// Test 1: Privacy indicators should be accessible
 			if (!HealthcareTestUtils.hasAccessiblePrivacyIndicator(element)) {
-				issues.push(
-					"Sensitive data element lacks accessible privacy indicator",
-				);
+				issues.push("Sensitive data element lacks accessible privacy indicator");
 			}
 
 			// Test 2: Consent mechanisms should be accessible
@@ -251,19 +238,13 @@ export class HealthcareTestUtils {
 
 		const isEmergency =
 			element.hasAttribute("data-emergency") ||
-			(element.hasAttribute("data-priority") &&
-				element.getAttribute("data-priority") === "critical");
+			(element.hasAttribute("data-priority") && element.getAttribute("data-priority") === "critical");
 
 		if (isEmergency) {
 			// Test 1: Enhanced contrast ratio
-			const contrastResult = HealthcareTestUtils.checkContrastRatio(
-				element,
-				7.0,
-			);
+			const contrastResult = HealthcareTestUtils.checkContrastRatio(element, 7.0);
 			if (!contrastResult.compliant) {
-				issues.push(
-					`Emergency element contrast ratio ${contrastResult.ratio}:1 below required 7.0:1`,
-				);
+				issues.push(`Emergency element contrast ratio ${contrastResult.ratio}:1 below required 7.0:1`);
 			}
 
 			// Test 2: Multi-modal alerts
@@ -273,9 +254,7 @@ export class HealthcareTestUtils {
 
 			// Test 3: Priority announcements
 			if (!HealthcareTestUtils.hasPriorityAnnouncement(element)) {
-				issues.push(
-					"Emergency element lacks priority screen reader announcement",
-				);
+				issues.push("Emergency element lacks priority screen reader announcement");
 			}
 
 			// Test 4: Keyboard shortcuts
@@ -317,28 +296,16 @@ export class HealthcareTestUtils {
 	}
 
 	private static isFocusable(element: HTMLElement): boolean {
-		return (
-			element.tabIndex >= 0 &&
-			!element.hasAttribute("disabled") &&
-			element.offsetParent !== null
-		);
+		return element.tabIndex >= 0 && !element.hasAttribute("disabled") && element.offsetParent !== null;
 	}
 
 	private static hasFocusIndicator(element: HTMLElement): boolean {
 		const styles = window.getComputedStyle(element, ":focus-visible");
-		return (
-			styles.outline !== "none" ||
-			styles.boxShadow !== "none" ||
-			styles.borderColor !== "transparent"
-		);
+		return styles.outline !== "none" || styles.boxShadow !== "none" || styles.borderColor !== "transparent";
 	}
 
 	private static hasKeyboardHandlers(element: HTMLElement): boolean {
-		return (
-			element.hasAttribute("onkeydown") ||
-			element.hasAttribute("onkeyup") ||
-			element.hasAttribute("onkeypress")
-		);
+		return element.hasAttribute("onkeydown") || element.hasAttribute("onkeyup") || element.hasAttribute("onkeypress");
 	}
 
 	private static checkTabOrder(_element: HTMLElement): string[] {
@@ -351,7 +318,7 @@ export class HealthcareTestUtils {
 			element.getAttribute("aria-label") ||
 				element.getAttribute("aria-labelledby") ||
 				element.querySelector("label") ||
-				element.textContent?.trim(),
+				element.textContent?.trim()
 		);
 	}
 
@@ -384,42 +351,30 @@ export class HealthcareTestUtils {
 		return Boolean(
 			element.querySelector('[aria-label*="privacidade"]') ||
 				element.querySelector('[aria-label*="LGPD"]') ||
-				element.getAttribute("aria-describedby"),
+				element.getAttribute("aria-describedby")
 		);
 	}
 
 	private static hasAccessibleConsentMechanism(element: HTMLElement): boolean {
 		return Boolean(
-			element.querySelector('[role="dialog"]') ||
-				element.querySelector('input[type="checkbox"][aria-describedby]'),
+			element.querySelector('[role="dialog"]') || element.querySelector('input[type="checkbox"][aria-describedby]')
 		);
 	}
 
 	private static hasDataProtectionAnnouncement(element: HTMLElement): boolean {
-		return Boolean(
-			element.querySelector("[aria-live]") ||
-				element.querySelector('[role="status"]'),
-		);
+		return Boolean(element.querySelector("[aria-live]") || element.querySelector('[role="status"]'));
 	}
 
 	private static hasMultiModalAlert(element: HTMLElement): boolean {
-		return Boolean(
-			element.hasAttribute("aria-live") && element.hasAttribute("role"),
-		);
+		return Boolean(element.hasAttribute("aria-live") && element.hasAttribute("role"));
 	}
 
 	private static hasPriorityAnnouncement(element: HTMLElement): boolean {
-		return (
-			element.getAttribute("aria-live") === "assertive" ||
-			element.getAttribute("role") === "alert"
-		);
+		return element.getAttribute("aria-live") === "assertive" || element.getAttribute("role") === "alert";
 	}
 
 	private static hasEmergencyKeyboardShortcuts(element: HTMLElement): boolean {
-		return (
-			element.hasAttribute("data-keyboard-shortcut") ||
-			element.hasAttribute("accesskey")
-		);
+		return element.hasAttribute("data-keyboard-shortcut") || element.hasAttribute("accesskey");
 	}
 }
 
@@ -432,14 +387,10 @@ export const createHealthcareA11yTestSuite = (componentName: string) => {
 			const results = {
 				component: componentName,
 				wcagCompliance: await expect(container).toHaveNoViolations(),
-				healthcareCompliance:
-					await expect(container).toBeAccessibleForHealthcare(),
-				contrastCompliance:
-					expect(container).toHaveHealthcareCompliantContrast(),
-				keyboardNavigation:
-					await expect(container).toSupportKeyboardNavigation(),
-				screenReaderSupport:
-					await expect(container).toBeScreenReaderAccessible(),
+				healthcareCompliance: await expect(container).toBeAccessibleForHealthcare(),
+				contrastCompliance: expect(container).toHaveHealthcareCompliantContrast(),
+				keyboardNavigation: await expect(container).toSupportKeyboardNavigation(),
+				screenReaderSupport: await expect(container).toBeScreenReaderAccessible(),
 			};
 
 			return results;

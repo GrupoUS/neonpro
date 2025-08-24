@@ -66,7 +66,7 @@ const CFMProfessionalSchema = z.object({
 			issueDate: z.date(),
 			expiryDate: z.date().optional(),
 			certificateNumber: z.string(),
-		}),
+		})
 	),
 	authorizedProcedures: z.array(z.string()),
 	maxProcedureLevel: z.nativeEnum(CFMProcedureLevel),
@@ -114,7 +114,7 @@ const CFMEthicsComplianceSchema = z.object({
 				date: z.date(),
 				notes: z.string(),
 				complications: z.string().optional(),
-			}),
+			})
 		),
 	}),
 	ethicsCompliance: z.boolean(),
@@ -122,9 +122,7 @@ const CFMEthicsComplianceSchema = z.object({
 });
 
 export type CFMProfessional = z.infer<typeof CFMProfessionalSchema>;
-export type CFMProcedureAuthorization = z.infer<
-	typeof CFMProcedureAuthorizationSchema
->;
+export type CFMProcedureAuthorization = z.infer<typeof CFMProcedureAuthorizationSchema>;
 export type CFMEthicsCompliance = z.infer<typeof CFMEthicsComplianceSchema>;
 
 /**
@@ -135,53 +133,34 @@ export type CFMEthicsCompliance = z.infer<typeof CFMEthicsComplianceSchema>;
  */
 export class CFMService {
 	// Procedure authorization database
-	private readonly procedureAuthorizations: Map<
-		string,
-		CFMProcedureAuthorization
-	> = new Map([
+	private readonly procedureAuthorizations: Map<string, CFMProcedureAuthorization> = new Map([
 		[
 			"botox_injection",
 			{
 				procedureType: "botox_injection",
-				requiredSpecialty: [
-					CFMSpecialty.DERMATOLOGY,
-					CFMSpecialty.PLASTIC_SURGERY,
-					CFMSpecialty.GENERAL_MEDICINE,
-				],
+				requiredSpecialty: [CFMSpecialty.DERMATOLOGY, CFMSpecialty.PLASTIC_SURGERY, CFMSpecialty.GENERAL_MEDICINE],
 				minimumLevel: CFMProcedureLevel.INTERMEDIATE,
 				requiredCertifications: ["Botulinum Toxin Application"],
 				description: "Botulinum toxin injection for aesthetic purposes",
-				restrictions: [
-					"Maximum 500 units per session",
-					"Minimum 3-month interval",
-				],
+				restrictions: ["Maximum 500 units per session", "Minimum 3-month interval"],
 			},
 		],
 		[
 			"dermal_filler",
 			{
 				procedureType: "dermal_filler",
-				requiredSpecialty: [
-					CFMSpecialty.DERMATOLOGY,
-					CFMSpecialty.PLASTIC_SURGERY,
-				],
+				requiredSpecialty: [CFMSpecialty.DERMATOLOGY, CFMSpecialty.PLASTIC_SURGERY],
 				minimumLevel: CFMProcedureLevel.INTERMEDIATE,
 				requiredCertifications: ["Facial Harmonization"],
 				description: "Hyaluronic acid dermal filler injection",
-				restrictions: [
-					"Maximum 5ml per session",
-					"Specific anatomical zones only",
-				],
+				restrictions: ["Maximum 5ml per session", "Specific anatomical zones only"],
 			},
 		],
 		[
 			"chemical_peel",
 			{
 				procedureType: "chemical_peel",
-				requiredSpecialty: [
-					CFMSpecialty.DERMATOLOGY,
-					CFMSpecialty.GENERAL_MEDICINE,
-				],
+				requiredSpecialty: [CFMSpecialty.DERMATOLOGY, CFMSpecialty.GENERAL_MEDICINE],
 				minimumLevel: CFMProcedureLevel.BASIC,
 				description: "Chemical peeling for skin rejuvenation",
 			},
@@ -190,10 +169,7 @@ export class CFMService {
 			"laser_treatment",
 			{
 				procedureType: "laser_treatment",
-				requiredSpecialty: [
-					CFMSpecialty.DERMATOLOGY,
-					CFMSpecialty.PLASTIC_SURGERY,
-				],
+				requiredSpecialty: [CFMSpecialty.DERMATOLOGY, CFMSpecialty.PLASTIC_SURGERY],
 				minimumLevel: CFMProcedureLevel.ADVANCED,
 				requiredCertifications: ["Laser Safety"],
 				description: "Laser treatment for aesthetic purposes",
@@ -207,7 +183,7 @@ export class CFMService {
 	 */
 	async validateProfessional(
 		crmNumber: string,
-		crmState: string,
+		crmState: string
 	): Promise<{
 		success: boolean;
 		professional?: CFMProfessional;
@@ -253,10 +229,7 @@ export class CFMService {
 		} catch (error) {
 			return {
 				success: false,
-				error:
-					error instanceof Error
-						? error.message
-						: "Professional validation failed",
+				error: error instanceof Error ? error.message : "Professional validation failed",
 			};
 		}
 	}
@@ -266,7 +239,7 @@ export class CFMService {
 	 */
 	async checkProcedureAuthorization(
 		professionalId: string,
-		procedureType: string,
+		procedureType: string
 	): Promise<{
 		authorized: boolean;
 		reason?: string;
@@ -296,19 +269,12 @@ export class CFMService {
 				return {
 					authorized: false,
 					reason: `Specialty ${professional.specialty} not authorized for this procedure`,
-					requirements: authorization.requiredSpecialty.map((s) =>
-						s.toString(),
-					),
+					requirements: authorization.requiredSpecialty.map((s) => s.toString()),
 				};
 			}
 
 			// Check procedure level
-			if (
-				this.compareProcedureLevel(
-					professional.maxProcedureLevel,
-					authorization.minimumLevel,
-				) < 0
-			) {
+			if (this.compareProcedureLevel(professional.maxProcedureLevel, authorization.minimumLevel) < 0) {
 				return {
 					authorized: false,
 					reason: `Professional level ${professional.maxProcedureLevel} insufficient for ${authorization.minimumLevel}`,
@@ -320,10 +286,8 @@ export class CFMService {
 				const missingCerts = authorization.requiredCertifications.filter(
 					(reqCert) =>
 						!professional.certifications.some(
-							(cert) =>
-								cert.name.includes(reqCert) &&
-								(!cert.expiryDate || cert.expiryDate > new Date()),
-						),
+							(cert) => cert.name.includes(reqCert) && (!cert.expiryDate || cert.expiryDate > new Date())
+						)
 				);
 
 				if (missingCerts.length > 0) {
@@ -356,8 +320,7 @@ export class CFMService {
 		} catch (error) {
 			return {
 				authorized: false,
-				reason:
-					error instanceof Error ? error.message : "Authorization check failed",
+				reason: error instanceof Error ? error.message : "Authorization check failed",
 			};
 		}
 	}
@@ -371,8 +334,7 @@ export class CFMService {
 		recommendations?: string[];
 	}> {
 		try {
-			const validatedCompliance =
-				CFMEthicsComplianceSchema.parse(complianceData);
+			const validatedCompliance = CFMEthicsComplianceSchema.parse(complianceData);
 
 			const violations: string[] = [];
 			const recommendations: string[] = [];
@@ -384,17 +346,11 @@ export class CFMService {
 
 			// Check medical record completeness
 			const medicalRecord = validatedCompliance.medicalRecord;
-			if (
-				!medicalRecord.preOperativeAssessment ||
-				medicalRecord.preOperativeAssessment.length < 50
-			) {
+			if (!medicalRecord.preOperativeAssessment || medicalRecord.preOperativeAssessment.length < 50) {
 				violations.push("Incomplete pre-operative assessment");
 			}
 
-			if (
-				!medicalRecord.medicalHistory ||
-				medicalRecord.medicalHistory.length < 20
-			) {
+			if (!medicalRecord.medicalHistory || medicalRecord.medicalHistory.length < 20) {
 				violations.push("Insufficient medical history documentation");
 			}
 
@@ -404,21 +360,13 @@ export class CFMService {
 			}
 
 			// Validate professional authorization
-			const professional = await this.getProfessionalById(
-				validatedCompliance.professionalId,
-			);
-			if (
-				!professional ||
-				professional.status !== CFMProfessionalStatus.ACTIVE
-			) {
+			const professional = await this.getProfessionalById(validatedCompliance.professionalId);
+			if (!professional || professional.status !== CFMProfessionalStatus.ACTIVE) {
 				violations.push("Professional not active or not found");
 			}
 
 			// Check digital signature for documentation
-			if (
-				professional?.digitalSignature &&
-				professional.digitalSignature.validUntil < new Date()
-			) {
+			if (professional?.digitalSignature && professional.digitalSignature.validUntil < new Date()) {
 				recommendations.push("Update digital signature certificate");
 			}
 
@@ -438,15 +386,12 @@ export class CFMService {
 			return {
 				compliant,
 				violations: violations.length > 0 ? violations : undefined,
-				recommendations:
-					recommendations.length > 0 ? recommendations : undefined,
+				recommendations: recommendations.length > 0 ? recommendations : undefined,
 			};
 		} catch (error) {
 			return {
 				compliant: false,
-				violations: [
-					error instanceof Error ? error.message : "Ethics validation failed",
-				],
+				violations: [error instanceof Error ? error.message : "Ethics validation failed"],
 			};
 		}
 	}
@@ -459,7 +404,7 @@ export class CFMService {
 		dateRange: {
 			startDate: Date;
 			endDate: Date;
-		},
+		}
 	): Promise<{
 		success: boolean;
 		report?: {
@@ -482,31 +427,19 @@ export class CFMService {
 			}
 
 			// Get procedures for date range (mock data)
-			const procedures = await this.getProfessionalProcedures(
-				professionalId,
-				dateRange,
-			);
-			const complianceChecks = await this.getComplianceChecks(
-				professionalId,
-				dateRange,
-			);
+			const procedures = await this.getProfessionalProcedures(professionalId, dateRange);
+			const complianceChecks = await this.getComplianceChecks(professionalId, dateRange);
 
 			// Calculate compliance rate
 			const totalChecks = complianceChecks.length;
-			const compliantChecks = complianceChecks.filter(
-				(c) => c.compliant,
-			).length;
-			const complianceRate =
-				totalChecks > 0 ? (compliantChecks / totalChecks) * 100 : 100;
+			const compliantChecks = complianceChecks.filter((c) => c.compliant).length;
+			const complianceRate = totalChecks > 0 ? (compliantChecks / totalChecks) * 100 : 100;
 
 			// Check certification status
 			const certificationStatus = this.checkCertificationStatus(professional);
 
 			// Generate recommendations
-			const recommendations = this.generateRecommendations(
-				professional,
-				complianceRate,
-			);
+			const recommendations = this.generateRecommendations(professional, complianceRate);
 
 			const report = {
 				professionalInfo: professional,
@@ -530,8 +463,7 @@ export class CFMService {
 		} catch (error) {
 			return {
 				success: false,
-				error:
-					error instanceof Error ? error.message : "Report generation failed",
+				error: error instanceof Error ? error.message : "Report generation failed",
 			};
 		}
 	}
@@ -544,10 +476,7 @@ export class CFMService {
 		return /^\d{4,6}$/.test(crmNumber) && /^[A-Z]{2}$/.test(crmState);
 	}
 
-	private async queryCFMDatabase(
-		crmNumber: string,
-		crmState: string,
-	): Promise<CFMProfessional | null> {
+	private async queryCFMDatabase(crmNumber: string, crmState: string): Promise<CFMProfessional | null> {
 		// Mock CFM database query - would be actual API call to CFM
 		// This would connect to CFM's professional validation system
 		await new Promise((resolve) => setTimeout(resolve, 100)); // Simulate API call
@@ -584,26 +513,17 @@ export class CFMService {
 					certificateNumber: "BTX2023001",
 				},
 			],
-			authorizedProcedures: [
-				"botox_injection",
-				"chemical_peel",
-				"dermal_filler",
-			],
+			authorizedProcedures: ["botox_injection", "chemical_peel", "dermal_filler"],
 			maxProcedureLevel: CFMProcedureLevel.INTERMEDIATE,
 		};
 	}
 
-	private async getProfessionalById(
-		_professionalId: string,
-	): Promise<CFMProfessional | null> {
+	private async getProfessionalById(_professionalId: string): Promise<CFMProfessional | null> {
 		// Mock data - would query actual database
 		return null; // In production, would return actual professional data
 	}
 
-	private compareProcedureLevel(
-		professionalLevel: CFMProcedureLevel,
-		requiredLevel: CFMProcedureLevel,
-	): number {
+	private compareProcedureLevel(professionalLevel: CFMProcedureLevel, requiredLevel: CFMProcedureLevel): number {
 		const levels = {
 			[CFMProcedureLevel.BASIC]: 1,
 			[CFMProcedureLevel.INTERMEDIATE]: 2,
@@ -616,7 +536,7 @@ export class CFMService {
 
 	private async getProfessionalProcedures(
 		_professionalId: string,
-		_dateRange: { startDate: Date; endDate: Date },
+		_dateRange: { startDate: Date; endDate: Date }
 	): Promise<any[]> {
 		// Mock data - would query actual database
 		return [];
@@ -624,19 +544,15 @@ export class CFMService {
 
 	private async getComplianceChecks(
 		_professionalId: string,
-		_dateRange: { startDate: Date; endDate: Date },
+		_dateRange: { startDate: Date; endDate: Date }
 	): Promise<any[]> {
 		// Mock data - would query actual database
 		return [];
 	}
 
-	private checkCertificationStatus(
-		professional: CFMProfessional,
-	): "valid" | "expiring" | "expired" {
+	private checkCertificationStatus(professional: CFMProfessional): "valid" | "expiring" | "expired" {
 		const now = new Date();
-		const thirtyDaysFromNow = new Date(
-			now.getTime() + 30 * 24 * 60 * 60 * 1000,
-		);
+		const thirtyDaysFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
 
 		for (const cert of professional.certifications) {
 			if (cert.expiryDate) {
@@ -652,10 +568,7 @@ export class CFMService {
 		return "valid";
 	}
 
-	private generateRecommendations(
-		professional: CFMProfessional,
-		complianceRate: number,
-	): string[] {
+	private generateRecommendations(professional: CFMProfessional, complianceRate: number): string[] {
 		const recommendations: string[] = [];
 
 		if (complianceRate < 90) {
@@ -667,9 +580,7 @@ export class CFMService {
 		}
 
 		if (professional.maxProcedureLevel === CFMProcedureLevel.BASIC) {
-			recommendations.push(
-				"Consider advanced training for expanded procedure authorization",
-			);
+			recommendations.push("Consider advanced training for expanded procedure authorization");
 		}
 
 		recommendations.push("Maintain regular CFM compliance training");
@@ -678,10 +589,7 @@ export class CFMService {
 		return recommendations;
 	}
 
-	private async auditLog(_logData: {
-		action: string;
-		[key: string]: any;
-	}): Promise<void> {}
+	private async auditLog(_logData: { action: string; [key: string]: any }): Promise<void> {}
 }
 
 /**

@@ -38,13 +38,7 @@ export default defineConfig({
 	splitting: true,
 
 	// External dependencies (not bundled)
-	external: [
-		"@neonpro/db",
-		"@neonpro/domain",
-		"@neonpro/utils",
-		"date-fns",
-		"zod",
-	],
+	external: ["@neonpro/db", "@neonpro/domain", "@neonpro/utils", "date-fns", "zod"],
 
 	// Target environment
 	target: "node18",

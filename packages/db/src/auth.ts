@@ -134,11 +134,7 @@ export async function requireHealthcareProfessional(): Promise<User> {
  * Healthcare audit logging for LGPD compliance
  * Records all authentication and access events
  */
-async function logHealthcareAccess(
-	userId: string,
-	action: string,
-	metadata?: Record<string, any>,
-): Promise<void> {
+async function logHealthcareAccess(userId: string, action: string, metadata?: Record<string, any>): Promise<void> {
 	try {
 		const cookieStore = await cookies();
 		const supabase = createServerClient({

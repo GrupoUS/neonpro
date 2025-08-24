@@ -35,22 +35,21 @@ import {
 	TabsContent,
 	Textarea,
 } from "@neonpro/ui";
-import { format } from "date-fns";
+import { format } from "date-fns/format";
 import { ptBR } from "date-fns/locale";
 import { AnimatePresence, motion } from "framer-motion";
 
 import {
 	BarChart3,
 	Bell,
+	Brain,
 	Briefcase,
-	Date,
 	DollarSign,
 	Download,
 	Edit,
 	FileText,
 	Home,
 	Key,
-	Label,
 	LineChart,
 	Mail,
 	Menu,
@@ -58,17 +57,18 @@ import {
 	MoreHorizontal,
 	PieChart,
 	Plus,
-	type Record,
 	Search,
 	Settings,
 	Star,
 	Target,
 	Trash2,
+	TrendingUp,
 	UserPlus,
 	Users,
+	Zap,
 } from "lucide-react";
 import type React from "react";
-import { useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useState } from "react";
 
 // Constants for time calculations
 const MILLISECONDS_PER_SECOND = 1000;
@@ -99,7 +99,7 @@ type Activity = {
 	action: string;
 	target: string;
 	timestamp: Date;
-	metadata?: Record<string, any>;
+	metadata?: Record<string, unknown>;
 };
 
 type Metric = {
@@ -151,6 +151,144 @@ type Notification = {
 		url: string;
 	};
 };
+
+// AI Enhancement Types
+type AIInsight = {
+	id: string;
+	type: "prediction" | "recommendation" | "alert" | "trend";
+	title: string;
+	description: string;
+	confidence: number; // 0-100
+	impact: "low" | "medium" | "high" | "critical";
+	category: "patient-flow" | "resource" | "efficiency" | "compliance";
+	data: any;
+	timestamp: Date;
+	actionable: boolean;
+};
+
+type SmartMetric = Metric & {
+	prediction?: {
+		value: number;
+		confidence: number;
+		timeframe: string;
+	};
+	aiInsight?: string;
+	recommendation?: string;
+};
+
+type FeatureFlags = {
+	aiInsights: boolean;
+	predictiveAnalytics: boolean;
+	realTimeAlerts: boolean;
+	aiRecommendations: boolean;
+	smartMetrics: boolean;
+};
+
+type AIState = {
+	insights: AIInsight[];
+	isLoading: boolean;
+	lastUpdate: Date | null;
+	error: string | null;
+	featureFlags: FeatureFlags;
+};
+
+type AIAction =
+	| { type: "SET_INSIGHTS"; payload: AIInsight[] }
+	| { type: "ADD_INSIGHT"; payload: AIInsight }
+	| { type: "SET_LOADING"; payload: boolean }
+	| { type: "SET_ERROR"; payload: string | null }
+	| { type: "UPDATE_FEATURE_FLAGS"; payload: Partial<FeatureFlags> }
+	| { type: "SET_LAST_UPDATE"; payload: Date };
+
+// AI Context
+const AIContext = createContext<{
+	state: AIState;
+	dispatch: React.Dispatch<AIAction>;
+} | null>(null);
+
+// AI Reducer
+const aiReducer = (state: AIState, action: AIAction): AIState => {
+	switch (action.type) {
+		case "SET_INSIGHTS":
+			return { ...state, insights: action.payload, lastUpdate: new Date() };
+		case "ADD_INSIGHT":
+			return { ...state, insights: [...state.insights, action.payload], lastUpdate: new Date() };
+		case "SET_LOADING":
+			return { ...state, isLoading: action.payload };
+		case "SET_ERROR":
+			return { ...state, error: action.payload };
+		case "UPDATE_FEATURE_FLAGS":
+			return { ...state, featureFlags: { ...state.featureFlags, ...action.payload } };
+		case "SET_LAST_UPDATE":
+			return { ...state, lastUpdate: action.payload };
+		default:
+			return state;
+	}
+};
+
+// Initial AI State
+const initialAIState: AIState = {
+	insights: [],
+	isLoading: false,
+	lastUpdate: null,
+	error: null,
+	featureFlags: {
+		aiInsights: true,
+		predictiveAnalytics: true,
+		realTimeAlerts: true,
+		aiRecommendations: true,
+		smartMetrics: true,
+	},
+};
+
+// AI Hook
+const useAIState = () => {
+	const context = useContext(AIContext);
+	if (!context) {
+		throw new Error("useAIState must be used within an AI provider");
+	}
+	return context;
+};
+
+// Mock AI Data
+const MOCK_AI_INSIGHTS: AIInsight[] = [
+	{
+		id: "insight-1",
+		type: "prediction",
+		title: "Pico de Demanda Previsto",
+		description: "Aumento de 15% na demanda de consultas para próxima semana",
+		confidence: 85,
+		impact: "medium",
+		category: "patient-flow",
+		data: { increase: 15, timeframe: "next_week" },
+		timestamp: new Date(),
+		actionable: true,
+	},
+	{
+		id: "insight-2",
+		type: "alert",
+		title: "Recurso Sub-utilizado",
+		description: "Sala 3 teve apenas 60% de ocupação nos últimos 7 dias",
+		confidence: 92,
+		impact: "low",
+		category: "resource",
+		data: { room: "Sala 3", utilization: 60 },
+		timestamp: new Date(),
+		actionable: true,
+	},
+	{
+		id: "insight-3",
+		type: "recommendation",
+		title: "Otimização de Agendamento",
+		description: "Redistribuir horários pode reduzir tempo de espera em 22%",
+		confidence: 78,
+		impact: "high",
+		category: "efficiency",
+		data: { reduction: 22, action: "reschedule" },
+		timestamp: new Date(),
+		actionable: true,
+	},
+];
 
 const MOCK_USERS: User[] = [
 	{
@@ -228,6 +366,7 @@ const MOCK_METRICS: Metric[] = [
 ];
 
 export default function NeonProHealthcareDashboard({ userId, tenantId }: NeonProDashboardProps) {
+	// Existing state
 	const [_selectedDate, _setSelectedDate] = useState<Date>(new Date());
 	const [activeTab, setActiveTab] = useState("overview");
 	const [_notifications, _setNotifications] = useState<Notification[]>([]);
@@ -239,17 +378,61 @@ export default function NeonProHealthcareDashboard({ userId, tenantId }: NeonPro
 	const [filterStatus, setFilterStatus] = useState("all");
 	const [sidebarOpen, setSidebarOpen] = useState(false);
 
+	// AI State Management
+	const [aiState, aiDispatch] = useReducer(aiReducer, initialAIState);
+
+	// AI Hook for accessing context
+	const useAI = () => {
+		return { state: aiState, dispatch: aiDispatch };
+	};
+
 	useEffect(() => {
-		// Simular carregamento de dados
+		// Simular carregamento de dados e AI insights
 		const loadData = async () => {
 			setLoading(true);
-			// Aqui faria chamadas para APIs reais
-			await new Promise((resolve) => setTimeout(resolve, DEFAULT_TIMEOUT_MS));
-			setLoading(false);
+			aiDispatch({ type: "SET_LOADING", payload: true });
+
+			try {
+				// Simular carregamento de dados principais
+				await new Promise((resolve) => setTimeout(resolve, DEFAULT_TIMEOUT_MS));
+
+				// Simular carregamento de insights AI
+				await new Promise((resolve) => setTimeout(resolve, 500));
+				aiDispatch({ type: "SET_INSIGHTS", payload: MOCK_AI_INSIGHTS });
+
+				setLoading(false);
+				aiDispatch({ type: "SET_LOADING", payload: false });
+			} catch (error) {
+				aiDispatch({ type: "SET_ERROR", payload: "Erro ao carregar insights AI" });
+				setLoading(false);
+				aiDispatch({ type: "SET_LOADING", payload: false });
+			}
 		};
 
 		loadData();
 	}, []);
+
+	// Real-time AI updates simulation
+	useEffect(() => {
+		if (!aiState.featureFlags.realTimeAlerts) return;
+
+		const interval = setInterval(() => {
+			// Simular atualizações em tempo real
+			const randomInsight = MOCK_AI_INSIGHTS[Math.floor(Math.random() * MOCK_AI_INSIGHTS.length)];
+			const updatedInsight = {
+				...randomInsight,
+				id: `${randomInsight.id}-${Date.now()}`,
+				timestamp: new Date(),
+			};
+
+			if (Math.random() > 0.7) {
+				// 30% chance de nova insight
+				aiDispatch({ type: "ADD_INSIGHT", payload: updatedInsight });
+			}
+		}, 30_000); // A cada 30 segundos
+
+		return () => clearInterval(interval);
+	}, [aiState.featureFlags.realTimeAlerts]);
 
 	const formatCurrency = (value: number) => {
 		return new Intl.NumberFormat("pt-BR", {
@@ -294,6 +477,112 @@ export default function NeonProHealthcareDashboard({ userId, tenantId }: NeonPro
 
 		return <Badge className={variants[status as keyof typeof variants] || "bg-gray-100 text-gray-800"}>{status}</Badge>;
 	};
+
+	// AI Component Functions
+	const SmartMetricCard = useMemo(
+		() =>
+			({ metric }: { metric: Metric }) => {
+				const smartMetric = metric as SmartMetric;
+				const prediction = smartMetric.prediction;
+
+				return (
+					<Card className="relative">
+						{aiState.featureFlags.smartMetrics && prediction && (
+							<div className="absolute top-2 right-2">
+								<Badge className="text-xs" variant="outline">
+									<Brain className="mr-1 h-3 w-3" />
+									AI
+								</Badge>
+							</div>
+						)}
+						<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+							<CardTitle className="font-medium text-sm">{metric.label}</CardTitle>
+							{getMetricIcon(metric)}
+						</CardHeader>
+						<CardContent>
+							<div className="font-bold text-2xl">
+								{metric.format === "currency" && formatCurrency(metric.value)}
+								{metric.format === "percentage" && formatPercentage(metric.value)}
+								{metric.format === "number" && metric.value.toLocaleString()}
+							</div>
+							<p className={`text-xs ${getChangeColor(metric.change)}`}>
+								{metric.change > 0 ? "+" : ""}
+								{metric.change.toFixed(1)}% desde o período anterior
+							</p>
+							{aiState.featureFlags.predictiveAnalytics && prediction && (
+								<div className="mt-2 rounded border border-blue-200 bg-blue-50 p-2">
+									<p className="text-blue-700 text-xs">
+										<TrendingUp className="mr-1 inline h-3 w-3" />
+										Previsão: {formatPercentage(prediction.confidence)} de confiança
+									</p>
+								</div>
+							)}
+						</CardContent>
+					</Card>
+				);
+			},
+		[aiState.featureFlags]
+	);
+
+	const AIInsightWidget = useCallback(({ insight }: { insight: AIInsight }) => {
+		const getInsightIcon = () => {
+			switch (insight.type) {
+				case "prediction":
+					return <TrendingUp className="h-4 w-4" />;
+				case "recommendation":
+					return <Zap className="h-4 w-4" />;
+				case "alert":
+					return <Bell className="h-4 w-4" />;
+				case "trend":
+					return <BarChart3 className="h-4 w-4" />;
+				default:
+					return <Brain className="h-4 w-4" />;
+			}
+		};
+
+		const getImpactColor = () => {
+			switch (insight.impact) {
+				case "critical":
+					return "border-red-500 bg-red-50";
+				case "high":
+					return "border-orange-500 bg-orange-50";
+				case "medium":
+					return "border-yellow-500 bg-yellow-50";
+				case "low":
+					return "border-blue-500 bg-blue-50";
+				default:
+					return "border-gray-500 bg-gray-50";
+			}
+		};
+
+		return (
+			<Card className={`${getImpactColor()} border-l-4`}>
+				<CardHeader className="pb-3">
+					<div className="flex items-center justify-between">
+						<CardTitle className="flex items-center text-sm">
+							{getInsightIcon()}
+							<span className="ml-2">{insight.title}</span>
+						</CardTitle>
+						<Badge className="text-xs" variant="outline">
+							{insight.confidence}% confiança
+						</Badge>
+					</div>
+				</CardHeader>
+				<CardContent>
+					<p className="mb-2 text-gray-700 text-sm">{insight.description}</p>
+					<div className="flex items-center justify-between text-gray-500 text-xs">
+						<span>{insight.category}</span>
+						<span>{format(insight.timestamp, "HH:mm", { locale: ptBR })}</span>
+					</div>
+					{insight.actionable && (
+						<Button className="mt-2 w-full" size="sm" variant="outline">
+							Agir sobre esta recomendação
+						</Button>
+					)}
+				</CardContent>
+			</Card>
+		);
+	}, []);
 
 	if (loading) {
 		return (
@@ -370,6 +659,21 @@ export default function NeonProHealthcareDashboard({ userId, tenantId }: NeonPro
 										<BarChart3 className="mr-2 h-4 w-4" />
 										Analytics
 									</Button>
+									{aiState.featureFlags.aiInsights && (
+										<Button
+											className="w-full justify-start"
+											onClick={() => setActiveTab("ai-insights")}
+											variant={activeTab === "ai-insights" ? "default" : "ghost"}
+										>
+											<Brain className="mr-2 h-4 w-4" />
+											IA Insights
+											{aiState.insights.filter((i) => i.impact === "critical").length > 0 && (
+												<Badge className="ml-auto" variant="destructive">
+													{aiState.insights.filter((i) => i.impact === "critical").length}
+												</Badge>
+											)}
+										</Button>
+									)}
 									<Button
 										className="w-full justify-start"
 										onClick={() => setActiveTab("projects")}
@@ -413,28 +717,30 @@ export default function NeonProHealthcareDashboard({ userId, tenantId }: NeonPro
 					<Tabs onValueChange={setActiveTab} value={activeTab}>
 						{/* Overview Tab */}
 						<TabsContent className="space-y-6" value="overview">
-							{/* Metrics Cards */}
+							{/* Enhanced Metrics Cards with AI */}
 							<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
 								{MOCK_METRICS.map((metric) => (
-									<Card key={metric.id}>
-										<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-											<CardTitle className="font-medium text-sm">{metric.label}</CardTitle>
-											{getMetricIcon(metric)}
-										</CardHeader>
-										<CardContent>
-											<div className="font-bold text-2xl">
-												{metric.format === "currency" && formatCurrency(metric.value)}
-												{metric.format === "percentage" && formatPercentage(metric.value)}
-												{metric.format === "number" && metric.value.toLocaleString()}
-											</div>
-											<p className={`text-xs ${getChangeColor(metric.change)}`}>
-												{metric.change > 0 ? "+" : ""}
-												{metric.change.toFixed(1)}% desde o período anterior
-											</p>
-										</CardContent>
-									</Card>
+									<SmartMetricCard key={metric.id} metric={metric} />
 								))}
 							</div>
+
+							{/* AI Insights Section */}
+							{aiState.featureFlags.aiInsights && aiState.insights.length > 0 && (
+								<div className="space-y-4">
+									<div className="flex items-center justify-between">
+										<h3 className="font-semibold text-lg">Insights Inteligentes</h3>
+										<Badge variant="outline">
+											<Brain className="mr-1 h-3 w-3" />
+											AI Ativo
+										</Badge>
+									</div>
+									<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+										{aiState.insights.slice(0, 3).map((insight) => (
+											<AIInsightWidget insight={insight} key={insight.id} />
+										))}
+									</div>
+								</div>
+							)}
 
 							{/* Charts Row */}
 							<div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -550,6 +856,104 @@ export default function NeonProHealthcareDashboard({ userId, tenantId }: NeonPro
 								</Card>
 							</div>
 						</TabsContent>
+
+						{/* AI Insights Tab */}
+						{aiState.featureFlags.aiInsights && (
+							<TabsContent className="space-y-6" value="ai-insights">
+								<div className="flex items-center justify-between">
+									<h2 className="flex items-center font-bold text-3xl">
+										<Brain className="mr-3 h-8 w-8 text-blue-600" />
+										Insights Inteligentes
+									</h2>
+									<div className="flex items-center space-x-2">
+										<Badge variant={aiState.isLoading ? "secondary" : "default"}>
+											{aiState.isLoading ? "Atualizando..." : "Ativo"}
+										</Badge>
+										<Button size="sm" variant="outline">
+											<Settings className="mr-2 h-4 w-4" />
+											Configurar IA
+										</Button>
+									</div>
+								</div>
+
+								{/* AI Insights Dashboard */}
+								<div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+									{/* Critical Alerts */}
+									<Card className="lg:col-span-2">
+										<CardHeader>
+											<CardTitle className="flex items-center">
+												<Bell className="mr-2 h-5 w-5 text-red-500" />
+												Alertas Críticos
+											</CardTitle>
+											<CardDescription>Situações que requerem atenção imediata</CardDescription>
+										</CardHeader>
+										<CardContent>
+											<div className="space-y-4">
+												{aiState.insights
+													.filter((insight) => insight.impact === "critical")
+													.slice(0, 3)
+													.map((insight) => (
+														<AIInsightWidget insight={insight} key={insight.id} />
+													))}
+												{aiState.insights.filter((insight) => insight.impact === "critical").length === 0 && (
+													<div className="flex h-32 items-center justify-center text-gray-500">
+														<div className="text-center">
+															<Brain className="mx-auto mb-2 h-8 w-8" />
+															<p>Nenhum alerta crítico no momento</p>
+														</div>
+													</div>
+												)}
+											</div>
+										</CardContent>
+									</Card>
+
+									{/* Performance Summary */}
+									<Card>
+										<CardHeader>
+											<CardTitle>Resumo de Performance</CardTitle>
+										</CardHeader>
+										<CardContent className="space-y-4">
+											<div className="space-y-2">
+												<div className="flex justify-between text-sm">
+													<span>Eficiência Operacional</span>
+													<span className="font-semibold text-green-600">92%</span>
+												</div>
+												<Progress className="h-2" value={92} />
+											</div>
+											<div className="space-y-2">
+												<div className="flex justify-between text-sm">
+													<span>Precisão de Previsões</span>
+													<span className="font-semibold text-blue-600">87%</span>
+												</div>
+												<Progress className="h-2" value={87} />
+											</div>
+											<div className="space-y-2">
+												<div className="flex justify-between text-sm">
+													<span>Satisfação com IA</span>
+													<span className="font-semibold text-purple-600">94%</span>
+												</div>
+												<Progress className="h-2" value={94} />
+											</div>
+										</CardContent>
+									</Card>
+								</div>
+
+								{/* All AI Insights */}
+								<Card>
+									<CardHeader>
+										<CardTitle>Todas as Recomendações</CardTitle>
+										<CardDescription>Insights e recomendações organizados por categoria</CardDescription>
+									</CardHeader>
+									<CardContent>
+										<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+											{aiState.insights.map((insight) => (
+												<AIInsightWidget insight={insight} key={insight.id} />
+											))}
+										</div>
+									</CardContent>
+								</Card>
+							</TabsContent>
+						)}
 
 						{/* Projects Tab */}
 						<TabsContent className="space-y-6" value="projects">
@@ -791,6 +1195,111 @@ export default function NeonProHealthcareDashboard({ userId, tenantId }: NeonPro
 									</Card>
 								))}
 							</div>
+						</TabsContent>
+
+						{/* AI Insights Tab */}
+						<TabsContent className="space-y-6" value="ai-insights">
+							<div className="flex items-center justify-between">
+								<h2 className="flex items-center font-bold text-3xl">
+									<Brain className="mr-3 h-8 w-8 text-blue-600" />
+									IA Insights
+								</h2>
+								<div className="flex items-center space-x-2">
+									<Badge className="bg-blue-50 text-blue-700" variant="outline">
+										{aiState.insights.length} insights ativos
+									</Badge>
+									<Button variant="outline">
+										<Download className="mr-2 h-4 w-4" />
+										Exportar Relatório
+									</Button>
+								</div>
+							</div>
+
+							{/* Feature Flags Control */}
+							<Card>
+								<CardHeader>
+									<CardTitle>Controles de IA</CardTitle>
+									<CardDescription>Configure as funcionalidades de inteligência artificial</CardDescription>
+								</CardHeader>
+								<CardContent>
+									<div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+										<div className="flex items-center space-x-2">
+											<Switch
+												checked={aiState.featureFlags.aiInsights}
+												onCheckedChange={(checked) =>
+													aiDispatch({ type: "UPDATE_FEATURE_FLAGS", payload: { aiInsights: checked } })
+												}
+											/>
+											<label className="text-sm">AI Insights</label>
+										</div>
+										<div className="flex items-center space-x-2">
+											<Switch
+												checked={aiState.featureFlags.predictiveAnalytics}
+												onCheckedChange={(checked) =>
+													aiDispatch({ type: "UPDATE_FEATURE_FLAGS", payload: { predictiveAnalytics: checked } })
+												}
+											/>
+											<label className="text-sm">Análise Preditiva</label>
+										</div>
+										<div className="flex items-center space-x-2">
+											<Switch
+												checked={aiState.featureFlags.realTimeAlerts}
+												onCheckedChange={(checked) =>
+													aiDispatch({ type: "UPDATE_FEATURE_FLAGS", payload: { realTimeAlerts: checked } })
+												}
+											/>
+											<label className="text-sm">Alertas em Tempo Real</label>
+										</div>
+										<div className="flex items-center space-x-2">
+											<Switch
+												checked={aiState.featureFlags.smartMetrics}
+												onCheckedChange={(checked) =>
+													aiDispatch({ type: "UPDATE_FEATURE_FLAGS", payload: { smartMetrics: checked } })
+												}
+											/>
+											<label className="text-sm">Métricas Inteligentes</label>
+										</div>
+									</div>
+								</CardContent>
+							</Card>
+
+							{/* All AI Insights */}
+							<div className="space-y-4">
+								<h3 className="font-semibold text-lg">Todos os Insights</h3>
+								<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+									{aiState.insights.map((insight) => (
+										<AIInsightWidget insight={insight} key={insight.id} />
+									))}
+								</div>
+							</div>
+
+							{/* Performance Monitoring */}
+							<Card>
+								<CardHeader>
+									<CardTitle>Monitoramento de Performance</CardTitle>
+									<CardDescription>Status dos algoritmos de IA</CardDescription>
+								</CardHeader>
+								<CardContent>
+									<div className="space-y-4">
+										<div className="flex items-center justify-between">
+											<span className="text-sm">Modelo de Predição de Demanda</span>
+											<Badge className="bg-green-100 text-green-800" variant="default">
+												Ativo • 97% precisão
+											</Badge>
+										</div>
+										<div className="flex items-center justify-between">
+											<span className="text-sm">Otimizador de Recursos</span>
+											<Badge className="bg-green-100 text-green-800" variant="default">
+												Ativo • 92% eficiência
+											</Badge>
+										</div>
+										<div className="flex items-center justify-between">
+											<span className="text-sm">Detector de Anomalias</span>
+											<Badge variant="secondary">Standby • Aguardando dados</Badge>
+										</div>
+									</div>
+								</CardContent>
+							</Card>
 						</TabsContent>
 
 						{/* Settings Tab */}

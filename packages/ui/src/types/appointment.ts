@@ -9,13 +9,7 @@ export type AppointmentData = {
 	description?: string;
 	startTime: string;
 	endTime: string;
-	status:
-		| "scheduled"
-		| "confirmed"
-		| "in-progress"
-		| "completed"
-		| "cancelled"
-		| "no-show";
+	status: "scheduled" | "confirmed" | "in-progress" | "completed" | "cancelled" | "no-show";
 	type: "consultation" | "procedure" | "follow-up" | "emergency";
 	practitioner?: string;
 	room?: string;

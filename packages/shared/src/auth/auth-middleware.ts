@@ -168,13 +168,9 @@ export const requirePermissions = (permissions: string[]) => {
 		const hasPermissions = permissions.every((permission) => {
 			switch (permission) {
 				case "read:patients":
-					return ["healthcare_professional", "nurse", "doctor"].includes(
-						user.role || "",
-					);
+					return ["healthcare_professional", "nurse", "doctor"].includes(user.role || "");
 				case "write:patients":
-					return ["healthcare_professional", "doctor"].includes(
-						user.role || "",
-					);
+					return ["healthcare_professional", "doctor"].includes(user.role || "");
 				case "read:analytics":
 					return ["admin", "manager"].includes(user.role || "");
 				case "write:system":
@@ -208,8 +204,7 @@ export const requireTenant = createMiddleware(async (c, next) => {
 	}
 
 	const user = authContext.user;
-	const requestedTenantId =
-		c.req.header("x-tenant-id") || c.req.param("tenantId");
+	const requestedTenantId = c.req.header("x-tenant-id") || c.req.param("tenantId");
 
 	if (!user.tenantId) {
 		throw new HTTPException(403, {
@@ -258,8 +253,4 @@ export const adminRoute = [requireAuth, requireRole("admin")];
 /**
  * Middleware para profissionais de saúde
  */
-export const healthcareRoute = [
-	requireAuth,
-	requireTenant,
-	requirePermissions(["read:patients"]),
-];
+export const healthcareRoute = [requireAuth, requireTenant, requirePermissions(["read:patients"])];

@@ -42,9 +42,7 @@ type UseInventoryReturn = {
 	deleteItem: (id: string) => Promise<void>;
 };
 
-export function useInventory(
-	options: UseInventoryOptions = {},
-): UseInventoryReturn {
+export function useInventory(options: UseInventoryOptions = {}): UseInventoryReturn {
 	const [state, setState] = useState<InventoryState>({
 		items: [],
 		loading: false,
@@ -56,9 +54,7 @@ export function useInventory(
 
 		try {
 			// Placeholder implementation
-			const mockItems: InventoryItem[] = [
-				{ id: "1", name: "Sample Item", quantity: 10 },
-			];
+			const mockItems: InventoryItem[] = [{ id: "1", name: "Sample Item", quantity: 10 }];
 
 			setState((prev) => ({
 				...prev,
@@ -89,17 +85,12 @@ export function useInventory(
 		}));
 	}, []);
 
-	const updateItem = useCallback(
-		async (id: string, updates: Partial<InventoryItem>) => {
-			setState((prev) => ({
-				...prev,
-				items: prev.items.map((item) =>
-					item.id === id ? { ...item, ...updates } : item,
-				),
-			}));
-		},
-		[],
-	);
+	const updateItem = useCallback(async (id: string, updates: Partial<InventoryItem>) => {
+		setState((prev) => ({
+			...prev,
+			items: prev.items.map((item) => (item.id === id ? { ...item, ...updates } : item)),
+		}));
+	}, []);
 
 	const deleteItem = useCallback(async (id: string) => {
 		setState((prev) => ({

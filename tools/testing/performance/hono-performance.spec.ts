@@ -54,20 +54,18 @@ test.describe("⚡ Performance Testing Suite", () => {
 				}
 
 				// Calculate statistics
-				const avgResponseTime =
-					measurements.reduce((a, b) => a + b, 0) / measurements.length;
+				const avgResponseTime = measurements.reduce((a, b) => a + b, 0) / measurements.length;
 				const maxResponseTime = Math.max(...measurements);
 				const _minResponseTime = Math.min(...measurements);
 
 				// Assert performance requirements
 				expect(
 					avgResponseTime,
-					`${endpoint.name} average response time should be under ${endpoint.threshold}ms`,
+					`${endpoint.name} average response time should be under ${endpoint.threshold}ms`
 				).toBeLessThan(endpoint.threshold);
-				expect(
-					maxResponseTime,
-					`${endpoint.name} max response time should be reasonable`,
-				).toBeLessThan(endpoint.threshold * 2);
+				expect(maxResponseTime, `${endpoint.name} max response time should be reasonable`).toBeLessThan(
+					endpoint.threshold * 2
+				);
 			});
 		}
 	});
@@ -82,9 +80,7 @@ test.describe("⚡ Performance Testing Suite", () => {
 			const startTime = Date.now();
 
 			// Create concurrent requests
-			const requests = Array.from({ length: concurrentRequests }, () =>
-				page.request.get(endpoint),
-			);
+			const requests = Array.from({ length: concurrentRequests }, () => page.request.get(endpoint));
 
 			const responses = await Promise.all(requests);
 
@@ -99,13 +95,8 @@ test.describe("⚡ Performance Testing Suite", () => {
 			const throughput = responses.length / (totalTime / 1000); // requests per second
 
 			// Assert performance requirements
-			expect(successRate, "Success rate should be above 95%").toBeGreaterThan(
-				0.95,
-			);
-			expect(
-				throughput,
-				"Throughput should meet minimum requirements",
-			).toBeGreaterThan(10);
+			expect(successRate, "Success rate should be above 95%").toBeGreaterThan(0.95);
+			expect(throughput, "Throughput should meet minimum requirements").toBeGreaterThan(10);
 		});
 
 		await test.step("Test database query performance under load", async () => {
@@ -114,9 +105,7 @@ test.describe("⚡ Performance Testing Suite", () => {
 
 			const startTime = Date.now();
 
-			const requests = Array.from({ length: concurrentQueries }, () =>
-				page.request.get(endpoint),
-			);
+			const requests = Array.from({ length: concurrentQueries }, () => page.request.get(endpoint));
 
 			const responses = await Promise.all(requests);
 
@@ -127,14 +116,10 @@ test.describe("⚡ Performance Testing Suite", () => {
 			const avgResponseTime = totalTime / responses.length;
 
 			// Database queries should remain fast under load
-			expect(
-				avgResponseTime,
-				"Database queries should remain fast under load",
-			).toBeLessThan(PERFORMANCE_THRESHOLDS.DATABASE_QUERY_TIME * 2);
-			expect(
-				successfulResponses.length,
-				"All database queries should succeed",
-			).toBe(concurrentQueries);
+			expect(avgResponseTime, "Database queries should remain fast under load").toBeLessThan(
+				PERFORMANCE_THRESHOLDS.DATABASE_QUERY_TIME * 2
+			);
+			expect(successfulResponses.length, "All database queries should succeed").toBe(concurrentQueries);
 		});
 	});
 
@@ -172,7 +157,7 @@ test.describe("⚡ Performance Testing Suite", () => {
 								...scenario,
 								status: response.status(),
 								time: Date.now(),
-							})),
+							}))
 						);
 						break;
 					}
@@ -180,9 +165,7 @@ test.describe("⚡ Performance Testing Suite", () => {
 
 				// Add small random delay to simulate realistic user behavior
 				if (i % 10 === 0) {
-					await new Promise((resolve) =>
-						setTimeout(resolve, Math.random() * 100),
-					);
+					await new Promise((resolve) => setTimeout(resolve, Math.random() * 100));
 				}
 			}
 
@@ -191,16 +174,9 @@ test.describe("⚡ Performance Testing Suite", () => {
 
 			// Analyze results by scenario
 			const scenarioStats = userScenarios.map((scenario) => {
-				const scenarioResults = results.filter(
-					(r) => r.action === scenario.action,
-				);
-				const successCount = scenarioResults.filter(
-					(r) => r.status < 400,
-				).length;
-				const successRate =
-					scenarioResults.length > 0
-						? successCount / scenarioResults.length
-						: 0;
+				const scenarioResults = results.filter((r) => r.action === scenario.action);
+				const successCount = scenarioResults.filter((r) => r.status < 400).length;
+				const successRate = scenarioResults.length > 0 ? successCount / scenarioResults.length : 0;
 
 				return {
 					...scenario,
@@ -211,28 +187,18 @@ test.describe("⚡ Performance Testing Suite", () => {
 			});
 
 			const totalTime = endTime - startTime;
-			const overallSuccessRate =
-				results.filter((r) => r.status < 400).length / results.length;
+			const overallSuccessRate = results.filter((r) => r.status < 400).length / results.length;
 			const throughput = results.length / (totalTime / 1000);
 
 			scenarioStats.forEach((_stat) => {});
 
 			// Assert load testing requirements
-			expect(
-				overallSuccessRate,
-				"Overall success rate should be high under load",
-			).toBeGreaterThan(0.95);
-			expect(
-				throughput,
-				"System should maintain reasonable throughput under load",
-			).toBeGreaterThan(5);
+			expect(overallSuccessRate, "Overall success rate should be high under load").toBeGreaterThan(0.95);
+			expect(throughput, "System should maintain reasonable throughput under load").toBeGreaterThan(5);
 
 			// Each scenario should maintain good performance
 			scenarioStats.forEach((stat) => {
-				expect(
-					stat.successRate,
-					`${stat.action} should maintain high success rate`,
-				).toBeGreaterThan(0.9);
+				expect(stat.successRate, `${stat.action} should maintain high success rate`).toBeGreaterThan(0.9);
 			});
 		});
 	});
@@ -267,31 +233,21 @@ test.describe("⚡ Performance Testing Suite", () => {
 			const _median = measurements[Math.floor(measurements.length / 2)];
 			const p95 = measurements[Math.floor(measurements.length * 0.95)];
 			const p99 = measurements[Math.floor(measurements.length * 0.99)];
-			const average =
-				measurements.reduce((a, b) => a + b, 0) / measurements.length;
+			const average = measurements.reduce((a, b) => a + b, 0) / measurements.length;
 
 			// Calculate standard deviation
-			const variance =
-				measurements.reduce((acc, val) => acc + (val - average) ** 2, 0) /
-				measurements.length;
+			const variance = measurements.reduce((acc, val) => acc + (val - average) ** 2, 0) / measurements.length;
 			const stdDev = Math.sqrt(variance);
 
 			// Performance assertions
-			expect(
-				average,
-				"Average response time should be acceptable",
-			).toBeLessThan(PERFORMANCE_THRESHOLDS.API_RESPONSE_TIME);
-			expect(
-				p95,
-				"95th percentile should be within reasonable bounds",
-			).toBeLessThan(PERFORMANCE_THRESHOLDS.API_RESPONSE_TIME * 2);
-			expect(p99, "99th percentile should not be excessive").toBeLessThan(
-				PERFORMANCE_THRESHOLDS.API_RESPONSE_TIME * 3,
+			expect(average, "Average response time should be acceptable").toBeLessThan(
+				PERFORMANCE_THRESHOLDS.API_RESPONSE_TIME
 			);
-			expect(
-				stdDev,
-				"Response times should be consistent (low standard deviation)",
-			).toBeLessThan(average * 0.5);
+			expect(p95, "95th percentile should be within reasonable bounds").toBeLessThan(
+				PERFORMANCE_THRESHOLDS.API_RESPONSE_TIME * 2
+			);
+			expect(p99, "99th percentile should not be excessive").toBeLessThan(PERFORMANCE_THRESHOLDS.API_RESPONSE_TIME * 3);
+			expect(stdDev, "Response times should be consistent (low standard deviation)").toBeLessThan(average * 0.5);
 		});
 	});
 
@@ -340,37 +296,26 @@ test.describe("⚡ Performance Testing Suite", () => {
 
 			// Analyze metrics
 			const avgResponseTime =
-				performanceMetrics.reduce((sum, m) => sum + m.responseTime, 0) /
-				performanceMetrics.length;
-			const successfulRequests = performanceMetrics.filter(
-				(m) => m.responseStatus < 400,
-			).length;
+				performanceMetrics.reduce((sum, m) => sum + m.responseTime, 0) / performanceMetrics.length;
+			const successfulRequests = performanceMetrics.filter((m) => m.responseStatus < 400).length;
 			const successRate = successfulRequests / performanceMetrics.length;
 
 			// Memory analysis (if available)
-			const memoryMetrics = performanceMetrics.filter(
-				(m) => m.usedJSMemory > 0,
-			);
+			const memoryMetrics = performanceMetrics.filter((m) => m.usedJSMemory > 0);
 			if (memoryMetrics.length > 0) {
-				const avgMemoryUsage =
-					memoryMetrics.reduce((sum, m) => sum + m.usedJSMemory, 0) /
-					memoryMetrics.length;
-				const _maxMemoryUsage = Math.max(
-					...memoryMetrics.map((m) => m.usedJSMemory),
-				);
+				const avgMemoryUsage = memoryMetrics.reduce((sum, m) => sum + m.usedJSMemory, 0) / memoryMetrics.length;
+				const _maxMemoryUsage = Math.max(...memoryMetrics.map((m) => m.usedJSMemory));
 
 				// Memory usage assertions
-				expect(
-					avgMemoryUsage / 1024 / 1024,
-					"Average memory usage should be reasonable",
-				).toBeLessThan(PERFORMANCE_THRESHOLDS.MEMORY_LIMIT);
+				expect(avgMemoryUsage / 1024 / 1024, "Average memory usage should be reasonable").toBeLessThan(
+					PERFORMANCE_THRESHOLDS.MEMORY_LIMIT
+				);
 			}
 
 			// Performance assertions
-			expect(
-				avgResponseTime,
-				"Average response time should be acceptable",
-			).toBeLessThan(PERFORMANCE_THRESHOLDS.API_RESPONSE_TIME);
+			expect(avgResponseTime, "Average response time should be acceptable").toBeLessThan(
+				PERFORMANCE_THRESHOLDS.API_RESPONSE_TIME
+			);
 			expect(successRate, "Success rate should be high").toBeGreaterThan(0.95);
 		});
 	});
@@ -417,18 +362,14 @@ test.describe("⚡ Performance Testing Suite", () => {
 					// For healthcare, we expect either success or proper authorization failure
 					expect(
 						response.status() === 200 || response.status() === 401,
-						`${endpoint.name} should return success or auth error`,
+						`${endpoint.name} should return success or auth error`
 					).toBeTruthy();
 				}
 
-				const avgTime =
-					measurements.reduce((a, b) => a + b, 0) / measurements.length;
+				const avgTime = measurements.reduce((a, b) => a + b, 0) / measurements.length;
 
 				// Healthcare data queries should be fast for good user experience
-				expect(
-					avgTime,
-					`${endpoint.name} should respond quickly for healthcare workflows`,
-				).toBeLessThan(300);
+				expect(avgTime, `${endpoint.name} should respond quickly for healthcare workflows`).toBeLessThan(300);
 			}
 		});
 
@@ -480,14 +421,10 @@ test.describe("⚡ Performance Testing Suite", () => {
 				workflowTimes.push(workflowTime);
 			}
 
-			const avgWorkflowTime =
-				workflowTimes.reduce((a, b) => a + b, 0) / workflowTimes.length;
+			const avgWorkflowTime = workflowTimes.reduce((a, b) => a + b, 0) / workflowTimes.length;
 
 			// Complete appointment booking should complete quickly for good UX
-			expect(
-				avgWorkflowTime,
-				"Appointment booking workflow should be fast",
-			).toBeLessThan(2000);
+			expect(avgWorkflowTime, "Appointment booking workflow should be fast").toBeLessThan(2000);
 		});
 	});
 });

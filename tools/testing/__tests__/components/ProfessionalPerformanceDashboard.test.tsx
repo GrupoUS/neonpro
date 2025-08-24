@@ -77,70 +77,46 @@ const mockProfessional = {
 describe("ProfessionalPerformanceDashboard", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
-		(getProfessionalPerformanceMetrics as vi.Mock).mockResolvedValue(
-			mockPerformanceMetrics,
-		);
+		(getProfessionalPerformanceMetrics as vi.Mock).mockResolvedValue(mockPerformanceMetrics);
 	});
 
 	describe("Component Rendering", () => {
 		it("should render dashboard header", async () => {
-			render(
-				<ProfessionalPerformanceDashboard professional={mockProfessional} />,
-			);
+			render(<ProfessionalPerformanceDashboard professional={mockProfessional} />);
 
-			expect(
-				screen.getByText("Performance - Dr. Ana Silva"),
-			).toBeInTheDocument();
-			expect(
-				screen.getByText(
-					"Métricas de performance e desenvolvimento profissional",
-				),
-			).toBeInTheDocument();
+			expect(screen.getByText("Performance - Dr. Ana Silva")).toBeInTheDocument();
+			expect(screen.getByText("Métricas de performance e desenvolvimento profissional")).toBeInTheDocument();
 		});
 
 		it("should render time period selector", () => {
-			render(
-				<ProfessionalPerformanceDashboard professional={mockProfessional} />,
-			);
+			render(<ProfessionalPerformanceDashboard professional={mockProfessional} />);
 
 			expect(screen.getByText("Período:")).toBeInTheDocument();
 			expect(screen.getByRole("combobox")).toBeInTheDocument();
 		});
 
 		it("should render performance overview cards", async () => {
-			render(
-				<ProfessionalPerformanceDashboard professional={mockProfessional} />,
-			);
+			render(<ProfessionalPerformanceDashboard professional={mockProfessional} />);
 
 			await waitFor(() => {
 				expect(screen.getByText("Satisfação do Paciente")).toBeInTheDocument();
 				expect(screen.getByText("Taxa de Conclusão")).toBeInTheDocument();
 				expect(screen.getByText("Receita Gerada")).toBeInTheDocument();
-				expect(
-					screen.getByText("Horas de Desenvolvimento"),
-				).toBeInTheDocument();
+				expect(screen.getByText("Horas de Desenvolvimento")).toBeInTheDocument();
 			});
 		});
 
 		it("should render charts section", async () => {
-			render(
-				<ProfessionalPerformanceDashboard professional={mockProfessional} />,
-			);
+			render(<ProfessionalPerformanceDashboard professional={mockProfessional} />);
 
 			await waitFor(() => {
-				expect(
-					screen.getByText("Tendências de Performance"),
-				).toBeInTheDocument();
-				expect(
-					screen.getByText("Distribuição de Métricas"),
-				).toBeInTheDocument();
+				expect(screen.getByText("Tendências de Performance")).toBeInTheDocument();
+				expect(screen.getByText("Distribuição de Métricas")).toBeInTheDocument();
 			});
 		});
 
 		it("should render metrics table", async () => {
-			render(
-				<ProfessionalPerformanceDashboard professional={mockProfessional} />,
-			);
+			render(<ProfessionalPerformanceDashboard professional={mockProfessional} />);
 
 			await waitFor(() => {
 				expect(screen.getByText("Histórico de Métricas")).toBeInTheDocument();
@@ -151,9 +127,7 @@ describe("ProfessionalPerformanceDashboard", () => {
 
 	describe("Data Loading", () => {
 		it("should load performance metrics on mount", async () => {
-			render(
-				<ProfessionalPerformanceDashboard professional={mockProfessional} />,
-			);
+			render(<ProfessionalPerformanceDashboard professional={mockProfessional} />);
 
 			await waitFor(() => {
 				expect(getProfessionalPerformanceMetrics).toHaveBeenCalledWith("1");
@@ -161,29 +135,21 @@ describe("ProfessionalPerformanceDashboard", () => {
 		});
 
 		it("should handle loading error", async () => {
-			(getProfessionalPerformanceMetrics as vi.Mock).mockRejectedValue(
-				new Error("Failed to load"),
-			);
+			(getProfessionalPerformanceMetrics as vi.Mock).mockRejectedValue(new Error("Failed to load"));
 
-			render(
-				<ProfessionalPerformanceDashboard professional={mockProfessional} />,
-			);
+			render(<ProfessionalPerformanceDashboard professional={mockProfessional} />);
 
 			await waitFor(() => {
-				expect(
-					screen.getByText("Erro ao carregar métricas de performance"),
-				).toBeInTheDocument();
+				expect(screen.getByText("Erro ao carregar métricas de performance")).toBeInTheDocument();
 			});
 		});
 
 		it("should display loading state", () => {
 			(getProfessionalPerformanceMetrics as vi.Mock).mockImplementation(
-				() => new Promise((resolve) => setTimeout(resolve, 1000)),
+				() => new Promise((resolve) => setTimeout(resolve, 1000))
 			);
 
-			render(
-				<ProfessionalPerformanceDashboard professional={mockProfessional} />,
-			);
+			render(<ProfessionalPerformanceDashboard professional={mockProfessional} />);
 
 			expect(screen.getByText("Carregando métricas...")).toBeInTheDocument();
 		});
@@ -191,9 +157,7 @@ describe("ProfessionalPerformanceDashboard", () => {
 
 	describe("Performance Metrics Display", () => {
 		it("should display patient satisfaction metric correctly", async () => {
-			render(
-				<ProfessionalPerformanceDashboard professional={mockProfessional} />,
-			);
+			render(<ProfessionalPerformanceDashboard professional={mockProfessional} />);
 
 			await waitFor(() => {
 				expect(screen.getByText("4.8")).toBeInTheDocument();
@@ -202,9 +166,7 @@ describe("ProfessionalPerformanceDashboard", () => {
 		});
 
 		it("should display completion rate as percentage", async () => {
-			render(
-				<ProfessionalPerformanceDashboard professional={mockProfessional} />,
-			);
+			render(<ProfessionalPerformanceDashboard professional={mockProfessional} />);
 
 			await waitFor(() => {
 				expect(screen.getByText("95.5%")).toBeInTheDocument();
@@ -212,9 +174,7 @@ describe("ProfessionalPerformanceDashboard", () => {
 		});
 
 		it("should display revenue with currency formatting", async () => {
-			render(
-				<ProfessionalPerformanceDashboard professional={mockProfessional} />,
-			);
+			render(<ProfessionalPerformanceDashboard professional={mockProfessional} />);
 
 			await waitFor(() => {
 				expect(screen.getByText("R$ 45.000,00")).toBeInTheDocument();
@@ -222,9 +182,7 @@ describe("ProfessionalPerformanceDashboard", () => {
 		});
 
 		it("should display development hours", async () => {
-			render(
-				<ProfessionalPerformanceDashboard professional={mockProfessional} />,
-			);
+			render(<ProfessionalPerformanceDashboard professional={mockProfessional} />);
 
 			await waitFor(() => {
 				expect(screen.getByText("40")).toBeInTheDocument();
@@ -233,9 +191,7 @@ describe("ProfessionalPerformanceDashboard", () => {
 		});
 
 		it("should show trend indicators", async () => {
-			render(
-				<ProfessionalPerformanceDashboard professional={mockProfessional} />,
-			);
+			render(<ProfessionalPerformanceDashboard professional={mockProfessional} />);
 
 			await waitFor(() => {
 				// Look for trend icons (up/down arrows)
@@ -247,9 +203,7 @@ describe("ProfessionalPerformanceDashboard", () => {
 
 	describe("Time Period Filtering", () => {
 		it("should filter metrics by monthly period", async () => {
-			render(
-				<ProfessionalPerformanceDashboard professional={mockProfessional} />,
-			);
+			render(<ProfessionalPerformanceDashboard professional={mockProfessional} />);
 
 			await waitFor(() => {
 				expect(screen.getByText("Última Semana")).toBeInTheDocument();
@@ -260,9 +214,7 @@ describe("ProfessionalPerformanceDashboard", () => {
 		});
 
 		it("should update metrics when period changes", async () => {
-			render(
-				<ProfessionalPerformanceDashboard professional={mockProfessional} />,
-			);
+			render(<ProfessionalPerformanceDashboard professional={mockProfessional} />);
 
 			await waitFor(() => {
 				expect(getProfessionalPerformanceMetrics).toHaveBeenCalledTimes(1);
@@ -281,9 +233,7 @@ describe("ProfessionalPerformanceDashboard", () => {
 		});
 
 		it("should display correct date ranges for periods", async () => {
-			render(
-				<ProfessionalPerformanceDashboard professional={mockProfessional} />,
-			);
+			render(<ProfessionalPerformanceDashboard professional={mockProfessional} />);
 
 			await waitFor(() => {
 				// Should show formatted date ranges
@@ -294,28 +244,20 @@ describe("ProfessionalPerformanceDashboard", () => {
 
 	describe("Charts and Visualizations", () => {
 		it("should render performance trend chart", async () => {
-			render(
-				<ProfessionalPerformanceDashboard professional={mockProfessional} />,
-			);
+			render(<ProfessionalPerformanceDashboard professional={mockProfessional} />);
 
 			await waitFor(() => {
-				expect(
-					screen.getByText("Tendências de Performance"),
-				).toBeInTheDocument();
+				expect(screen.getByText("Tendências de Performance")).toBeInTheDocument();
 				// Chart would be rendered by Recharts library
 				expect(document.querySelector(".recharts-wrapper")).toBeInTheDocument();
 			});
 		});
 
 		it("should render metrics distribution chart", async () => {
-			render(
-				<ProfessionalPerformanceDashboard professional={mockProfessional} />,
-			);
+			render(<ProfessionalPerformanceDashboard professional={mockProfessional} />);
 
 			await waitFor(() => {
-				expect(
-					screen.getByText("Distribuição de Métricas"),
-				).toBeInTheDocument();
+				expect(screen.getByText("Distribuição de Métricas")).toBeInTheDocument();
 				// Pie chart would be rendered by Recharts library
 				expect(document.querySelector(".recharts-pie")).toBeInTheDocument();
 			});
@@ -324,21 +266,15 @@ describe("ProfessionalPerformanceDashboard", () => {
 		it("should handle empty chart data gracefully", async () => {
 			(getProfessionalPerformanceMetrics as vi.Mock).mockResolvedValue([]);
 
-			render(
-				<ProfessionalPerformanceDashboard professional={mockProfessional} />,
-			);
+			render(<ProfessionalPerformanceDashboard professional={mockProfessional} />);
 
 			await waitFor(() => {
-				expect(
-					screen.getByText("Nenhum dado disponível para o período selecionado"),
-				).toBeInTheDocument();
+				expect(screen.getByText("Nenhum dado disponível para o período selecionado")).toBeInTheDocument();
 			});
 		});
 
 		it("should display chart tooltips correctly", async () => {
-			render(
-				<ProfessionalPerformanceDashboard professional={mockProfessional} />,
-			);
+			render(<ProfessionalPerformanceDashboard professional={mockProfessional} />);
 
 			await waitFor(() => {
 				// Chart tooltips would be handled by Recharts
@@ -350,26 +286,18 @@ describe("ProfessionalPerformanceDashboard", () => {
 
 	describe("Metrics Table", () => {
 		it("should display all metrics in table", async () => {
-			render(
-				<ProfessionalPerformanceDashboard professional={mockProfessional} />,
-			);
+			render(<ProfessionalPerformanceDashboard professional={mockProfessional} />);
 
 			await waitFor(() => {
 				expect(screen.getByText("Satisfação do Paciente")).toBeInTheDocument();
-				expect(
-					screen.getByText("Taxa de Conclusão de Consultas"),
-				).toBeInTheDocument();
+				expect(screen.getByText("Taxa de Conclusão de Consultas")).toBeInTheDocument();
 				expect(screen.getByText("Receita Gerada")).toBeInTheDocument();
-				expect(
-					screen.getByText("Horas de Desenvolvimento Profissional"),
-				).toBeInTheDocument();
+				expect(screen.getByText("Horas de Desenvolvimento Profissional")).toBeInTheDocument();
 			});
 		});
 
 		it("should show metric values with correct formatting", async () => {
-			render(
-				<ProfessionalPerformanceDashboard professional={mockProfessional} />,
-			);
+			render(<ProfessionalPerformanceDashboard professional={mockProfessional} />);
 
 			await waitFor(() => {
 				expect(screen.getByText("4.8/5.0")).toBeInTheDocument();
@@ -380,9 +308,7 @@ describe("ProfessionalPerformanceDashboard", () => {
 		});
 
 		it("should display measurement periods correctly", async () => {
-			render(
-				<ProfessionalPerformanceDashboard professional={mockProfessional} />,
-			);
+			render(<ProfessionalPerformanceDashboard professional={mockProfessional} />);
 
 			await waitFor(() => {
 				expect(screen.getByText("Mensal")).toBeInTheDocument();
@@ -391,24 +317,16 @@ describe("ProfessionalPerformanceDashboard", () => {
 		});
 
 		it("should show notes when available", async () => {
-			render(
-				<ProfessionalPerformanceDashboard professional={mockProfessional} />,
-			);
+			render(<ProfessionalPerformanceDashboard professional={mockProfessional} />);
 
 			await waitFor(() => {
-				expect(
-					screen.getByText("Excelente avaliação dos pacientes"),
-				).toBeInTheDocument();
-				expect(
-					screen.getByText("Alta taxa de conclusão de consultas"),
-				).toBeInTheDocument();
+				expect(screen.getByText("Excelente avaliação dos pacientes")).toBeInTheDocument();
+				expect(screen.getByText("Alta taxa de conclusão de consultas")).toBeInTheDocument();
 			});
 		});
 
 		it("should sort table by different columns", async () => {
-			render(
-				<ProfessionalPerformanceDashboard professional={mockProfessional} />,
-			);
+			render(<ProfessionalPerformanceDashboard professional={mockProfessional} />);
 
 			await waitFor(() => {
 				const metricTypeHeader = screen.getByText("Tipo de Métrica");
@@ -427,9 +345,7 @@ describe("ProfessionalPerformanceDashboard", () => {
 
 	describe("Performance Insights", () => {
 		it("should display performance summary", async () => {
-			render(
-				<ProfessionalPerformanceDashboard professional={mockProfessional} />,
-			);
+			render(<ProfessionalPerformanceDashboard professional={mockProfessional} />);
 
 			await waitFor(() => {
 				expect(screen.getByText("Resumo de Performance")).toBeInTheDocument();
@@ -444,19 +360,13 @@ describe("ProfessionalPerformanceDashboard", () => {
 				},
 			];
 
-			(getProfessionalPerformanceMetrics as vi.Mock).mockResolvedValue(
-				lowPerformanceMetrics,
-			);
+			(getProfessionalPerformanceMetrics as vi.Mock).mockResolvedValue(lowPerformanceMetrics);
 
-			render(
-				<ProfessionalPerformanceDashboard professional={mockProfessional} />,
-			);
+			render(<ProfessionalPerformanceDashboard professional={mockProfessional} />);
 
 			await waitFor(() => {
 				expect(screen.getByText("Recomendações")).toBeInTheDocument();
-				expect(
-					screen.getByText("Considere melhorar a comunicação com pacientes"),
-				).toBeInTheDocument();
+				expect(screen.getByText("Considere melhorar a comunicação com pacientes")).toBeInTheDocument();
 			});
 		});
 
@@ -468,13 +378,9 @@ describe("ProfessionalPerformanceDashboard", () => {
 				},
 			];
 
-			(getProfessionalPerformanceMetrics as vi.Mock).mockResolvedValue(
-				highPerformanceMetrics,
-			);
+			(getProfessionalPerformanceMetrics as vi.Mock).mockResolvedValue(highPerformanceMetrics);
 
-			render(
-				<ProfessionalPerformanceDashboard professional={mockProfessional} />,
-			);
+			render(<ProfessionalPerformanceDashboard professional={mockProfessional} />);
 
 			await waitFor(() => {
 				expect(screen.getByText("Performance Excepcional")).toBeInTheDocument();
@@ -484,33 +390,23 @@ describe("ProfessionalPerformanceDashboard", () => {
 
 	describe("Export and Actions", () => {
 		it("should provide export options", async () => {
-			render(
-				<ProfessionalPerformanceDashboard professional={mockProfessional} />,
-			);
+			render(<ProfessionalPerformanceDashboard professional={mockProfessional} />);
 
 			await waitFor(() => {
-				expect(
-					screen.getByRole("button", { name: "Exportar Relatório" }),
-				).toBeInTheDocument();
+				expect(screen.getByRole("button", { name: "Exportar Relatório" })).toBeInTheDocument();
 			});
 		});
 
 		it("should allow printing dashboard", async () => {
-			render(
-				<ProfessionalPerformanceDashboard professional={mockProfessional} />,
-			);
+			render(<ProfessionalPerformanceDashboard professional={mockProfessional} />);
 
 			await waitFor(() => {
-				expect(
-					screen.getByRole("button", { name: "Imprimir" }),
-				).toBeInTheDocument();
+				expect(screen.getByRole("button", { name: "Imprimir" })).toBeInTheDocument();
 			});
 		});
 
 		it("should refresh data when refresh button is clicked", async () => {
-			render(
-				<ProfessionalPerformanceDashboard professional={mockProfessional} />,
-			);
+			render(<ProfessionalPerformanceDashboard professional={mockProfessional} />);
 
 			await waitFor(() => {
 				expect(getProfessionalPerformanceMetrics).toHaveBeenCalledTimes(1);
@@ -534,20 +430,14 @@ describe("ProfessionalPerformanceDashboard", () => {
 				value: 375,
 			});
 
-			render(
-				<ProfessionalPerformanceDashboard professional={mockProfessional} />,
-			);
+			render(<ProfessionalPerformanceDashboard professional={mockProfessional} />);
 
 			// Should render mobile-friendly layout
-			expect(
-				screen.getByText("Performance - Dr. Ana Silva"),
-			).toBeInTheDocument();
+			expect(screen.getByText("Performance - Dr. Ana Silva")).toBeInTheDocument();
 		});
 
 		it("should stack cards vertically on small screens", () => {
-			render(
-				<ProfessionalPerformanceDashboard professional={mockProfessional} />,
-			);
+			render(<ProfessionalPerformanceDashboard professional={mockProfessional} />);
 
 			// Cards should have responsive classes
 			const cards = screen.getAllByTestId("performance-card");
@@ -557,21 +447,13 @@ describe("ProfessionalPerformanceDashboard", () => {
 
 	describe("Error Handling", () => {
 		it("should handle network errors gracefully", async () => {
-			(getProfessionalPerformanceMetrics as vi.Mock).mockRejectedValue(
-				new Error("Network error"),
-			);
+			(getProfessionalPerformanceMetrics as vi.Mock).mockRejectedValue(new Error("Network error"));
 
-			render(
-				<ProfessionalPerformanceDashboard professional={mockProfessional} />,
-			);
+			render(<ProfessionalPerformanceDashboard professional={mockProfessional} />);
 
 			await waitFor(() => {
-				expect(
-					screen.getByText("Erro ao carregar métricas de performance"),
-				).toBeInTheDocument();
-				expect(
-					screen.getByRole("button", { name: "Tentar Novamente" }),
-				).toBeInTheDocument();
+				expect(screen.getByText("Erro ao carregar métricas de performance")).toBeInTheDocument();
+				expect(screen.getByRole("button", { name: "Tentar Novamente" })).toBeInTheDocument();
 			});
 		});
 
@@ -580,14 +462,10 @@ describe("ProfessionalPerformanceDashboard", () => {
 				.mockRejectedValueOnce(new Error("Network error"))
 				.mockResolvedValueOnce(mockPerformanceMetrics);
 
-			render(
-				<ProfessionalPerformanceDashboard professional={mockProfessional} />,
-			);
+			render(<ProfessionalPerformanceDashboard professional={mockProfessional} />);
 
 			await waitFor(() => {
-				expect(
-					screen.getByText("Erro ao carregar métricas de performance"),
-				).toBeInTheDocument();
+				expect(screen.getByText("Erro ao carregar métricas de performance")).toBeInTheDocument();
 			});
 
 			const retryButton = screen.getByRole("button", {
@@ -603,17 +481,13 @@ describe("ProfessionalPerformanceDashboard", () => {
 		it("should handle missing professional data", () => {
 			render(<ProfessionalPerformanceDashboard professional={null} />);
 
-			expect(
-				screen.getByText("Profissional não encontrado"),
-			).toBeInTheDocument();
+			expect(screen.getByText("Profissional não encontrado")).toBeInTheDocument();
 		});
 	});
 
 	describe("Accessibility", () => {
 		it("should have proper ARIA labels", async () => {
-			render(
-				<ProfessionalPerformanceDashboard professional={mockProfessional} />,
-			);
+			render(<ProfessionalPerformanceDashboard professional={mockProfessional} />);
 
 			await waitFor(() => {
 				expect(screen.getByRole("main")).toBeInTheDocument();
@@ -623,9 +497,7 @@ describe("ProfessionalPerformanceDashboard", () => {
 		});
 
 		it("should support keyboard navigation", () => {
-			render(
-				<ProfessionalPerformanceDashboard professional={mockProfessional} />,
-			);
+			render(<ProfessionalPerformanceDashboard professional={mockProfessional} />);
 
 			const periodSelector = screen.getByRole("combobox");
 			expect(periodSelector).toBeInTheDocument();
@@ -635,9 +507,7 @@ describe("ProfessionalPerformanceDashboard", () => {
 		});
 
 		it("should have proper color contrast for charts", async () => {
-			render(
-				<ProfessionalPerformanceDashboard professional={mockProfessional} />,
-			);
+			render(<ProfessionalPerformanceDashboard professional={mockProfessional} />);
 
 			await waitFor(() => {
 				// Chart colors should meet accessibility standards
@@ -656,13 +526,9 @@ describe("ProfessionalPerformanceDashboard", () => {
 				},
 			];
 
-			(getProfessionalPerformanceMetrics as vi.Mock).mockResolvedValue(
-				malformedMetrics,
-			);
+			(getProfessionalPerformanceMetrics as vi.Mock).mockResolvedValue(malformedMetrics);
 
-			render(
-				<ProfessionalPerformanceDashboard professional={mockProfessional} />,
-			);
+			render(<ProfessionalPerformanceDashboard professional={mockProfessional} />);
 
 			await waitFor(() => {
 				expect(screen.getByText("Dados inválidos")).toBeInTheDocument();
@@ -670,9 +536,7 @@ describe("ProfessionalPerformanceDashboard", () => {
 		});
 
 		it("should validate date ranges", async () => {
-			render(
-				<ProfessionalPerformanceDashboard professional={mockProfessional} />,
-			);
+			render(<ProfessionalPerformanceDashboard professional={mockProfessional} />);
 
 			await waitFor(() => {
 				// Should format dates correctly

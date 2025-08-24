@@ -27,9 +27,7 @@ test.describe("Analytics Dashboard E2E", () => {
 		await expect(page.getByTestId("analytics-dashboard")).toBeVisible();
 
 		// Get initial patient count
-		const initialCount = await page
-			.getByTestId("total-patients-value")
-			.textContent();
+		const initialCount = await page.getByTestId("total-patients-value").textContent();
 
 		// Open date filters
 		await page.getByLabel("Start Date").fill("2024-02-01");
@@ -42,9 +40,7 @@ test.describe("Analytics Dashboard E2E", () => {
 		await page.waitForResponse("**/api/analytics/data**");
 
 		// Verify data has changed
-		const newCount = await page
-			.getByTestId("total-patients-value")
-			.textContent();
+		const newCount = await page.getByTestId("total-patients-value").textContent();
 		expect(newCount).not.toBe(initialCount);
 	});
 
@@ -144,12 +140,8 @@ test.describe("Analytics Dashboard E2E", () => {
 		await expect(page.getByTestId("analytics-dashboard")).toBeVisible();
 
 		// Get initial values
-		const _initialPatients = await page
-			.getByTestId("total-patients-value")
-			.textContent();
-		const _initialRevenue = await page
-			.getByTestId("total-revenue-value")
-			.textContent();
+		const _initialPatients = await page.getByTestId("total-patients-value").textContent();
+		const _initialRevenue = await page.getByTestId("total-revenue-value").textContent();
 
 		// Click refresh button
 		await page.getByRole("button", { name: "Refresh Data" }).click();
@@ -202,9 +194,7 @@ test.describe("Analytics Dashboard E2E", () => {
 		await page.keyboard.press("Enter");
 
 		// Verify focus management
-		const focusedElement = await page.evaluate(
-			() => document.activeElement?.tagName,
-		);
+		const focusedElement = await page.evaluate(() => document.activeElement?.tagName);
 		expect(["BUTTON", "INPUT", "SELECT"]).toContain(focusedElement);
 	});
 });

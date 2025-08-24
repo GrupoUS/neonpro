@@ -46,9 +46,7 @@ export class AISchedulingEngine {
 	/**
 	 * Main scheduling method - processes scheduling requests with AI optimization
 	 */
-	async scheduleAppointment(
-		request: SchedulingRequest,
-	): Promise<SchedulingResponse> {
+	async scheduleAppointment(request: SchedulingRequest): Promise<SchedulingResponse> {
 		const startTime = performance.now();
 
 		if (!this.isInitialized) {
@@ -60,27 +58,16 @@ export class AISchedulingEngine {
 			this.validateSchedulingRequest(request);
 
 			// Step 2: Get treatment details and duration prediction
-			const treatmentDuration = await this.predictTreatmentDuration(
-				request.treatmentId,
-				request.patientId,
-			);
+			const treatmentDuration = await this.predictTreatmentDuration(request.treatmentId, request.patientId);
 
 			// Step 3: Get patient history and preferences
 			const patientContext = await this.getPatientContext(request.patientId);
 
 			// Step 4: Find available slots with AI optimization
-			const availableSlots = await this.findOptimalSlots(
-				request,
-				treatmentDuration,
-				patientContext,
-			);
+			const availableSlots = await this.findOptimalSlots(request, treatmentDuration, patientContext);
 
 			// Step 5: Score and rank slots
-			const rankedSlots = await this.scoreAndRankSlots(
-				availableSlots,
-				request,
-				patientContext,
-			);
+			const rankedSlots = await this.scoreAndRankSlots(availableSlots, request, patientContext);
 
 			// Step 6: Select best slot and detect conflicts
 			const bestSlot = rankedSlots[0];
@@ -93,15 +80,10 @@ export class AISchedulingEngine {
 			}
 
 			// Step 8: Create optimized appointment
-			const appointment = await this.createOptimizedAppointment(
-				finalSlot,
-				request,
-				treatmentDuration,
-			);
+			const appointment = await this.createOptimizedAppointment(finalSlot, request, treatmentDuration);
 
 			// Step 9: Apply final optimizations
-			const optimizedAppointment =
-				await this.applyFinalOptimizations(appointment);
+			const optimizedAppointment = await this.applyFinalOptimizations(appointment);
 
 			const processingTime = performance.now() - startTime;
 			this.updatePerformanceMetrics(processingTime, true);
@@ -115,10 +97,7 @@ export class AISchedulingEngine {
 				optimizationApplied: true,
 				confidenceScore: finalSlot.score,
 				processingTime,
-				recommendations: await this.generateRecommendations(
-					optimizedAppointment,
-					patientContext,
-				),
+				recommendations: await this.generateRecommendations(optimizedAppointment, patientContext),
 			};
 		} catch (_error) {
 			const processingTime = performance.now() - startTime;
@@ -138,10 +117,7 @@ export class AISchedulingEngine {
 	/**
 	 * Predict treatment duration using historical data and AI
 	 */
-	private async predictTreatmentDuration(
-		treatmentId: string,
-		patientId: string,
-	): Promise<TreatmentDuration> {
+	private async predictTreatmentDuration(treatmentId: string, patientId: string): Promise<TreatmentDuration> {
 		// Get base treatment duration
 		const baseDuration = await this.getBaseTreatmentDuration(treatmentId);
 
@@ -149,16 +125,11 @@ export class AISchedulingEngine {
 		const patientHistory = await this.getPatientHistory(patientId);
 
 		// AI-based duration adjustment
-		const durationAdjustment = this.calculateDurationAdjustment(
-			baseDuration,
-			patientHistory,
-		);
+		const durationAdjustment = this.calculateDurationAdjustment(baseDuration, patientHistory);
 
 		return {
 			...baseDuration,
-			estimatedMinutes: Math.round(
-				baseDuration.estimatedMinutes * durationAdjustment,
-			),
+			estimatedMinutes: Math.round(baseDuration.estimatedMinutes * durationAdjustment),
 			minDuration: Math.round(baseDuration.minDuration * durationAdjustment),
 			maxDuration: Math.round(baseDuration.maxDuration * durationAdjustment),
 		};
@@ -170,29 +141,18 @@ export class AISchedulingEngine {
 	private async findOptimalSlots(
 		request: SchedulingRequest,
 		treatmentDuration: TreatmentDuration,
-		patientContext: any,
+		patientContext: any
 	): Promise<AlternativeSlot[]> {
 		const slots: AlternativeSlot[] = [];
 		const searchPeriod = this.calculateSearchPeriod(request);
 
 		// Get available resources
-		const availableStaff = await this.getAvailableStaff(
-			searchPeriod,
-			treatmentDuration.staffRequired,
-		);
-		const availableRooms = await this.getAvailableRooms(
-			searchPeriod,
-			treatmentDuration.roomType,
-		);
+		const availableStaff = await this.getAvailableStaff(searchPeriod, treatmentDuration.staffRequired);
+		const availableRooms = await this.getAvailableRooms(searchPeriod, treatmentDuration.roomType);
 
 		// Generate time slots
 		for (const date of request.preferredDates) {
-			const daySlots = await this.generateDaySlots(
-				date,
-				treatmentDuration,
-				availableStaff,
-				availableRooms,
-			);
+			const daySlots = await this.generateDaySlots(date, treatmentDuration, availableStaff, availableRooms);
 			slots.push(...daySlots);
 		}
 
@@ -206,17 +166,13 @@ export class AISchedulingEngine {
 	private async scoreAndRankSlots(
 		slots: AlternativeSlot[],
 		request: SchedulingRequest,
-		patientContext: any,
+		patientContext: any
 	): Promise<AlternativeSlot[]> {
 		const scoredSlots = await Promise.all(
 			slots.map(async (slot) => {
-				const score = await this.calculateSlotScore(
-					slot,
-					request,
-					patientContext,
-				);
+				const score = await this.calculateSlotScore(slot, request, patientContext);
 				return { ...slot, score };
-			}),
+			})
 		);
 
 		// Sort by score (highest first)
@@ -229,24 +185,17 @@ export class AISchedulingEngine {
 	private async calculateSlotScore(
 		slot: AlternativeSlot,
 		request: SchedulingRequest,
-		patientContext: any,
+		patientContext: any
 	): Promise<number> {
 		let score = 0;
 		const weights = this.getScoreWeights();
 
 		// Patient preference alignment (25%)
-		const preferenceScore = this.calculatePreferenceScore(
-			slot,
-			request,
-			patientContext,
-		);
+		const preferenceScore = this.calculatePreferenceScore(slot, request, patientContext);
 		score += preferenceScore * weights.preference;
 
 		// Staff efficiency score (20%)
-		const staffScore = await this.calculateStaffEfficiencyScore(
-			slot.staffId,
-			slot.slot,
-		);
+		const staffScore = await this.calculateStaffEfficiencyScore(slot.staffId, slot.slot);
 		score += staffScore * weights.staffEfficiency;
 
 		// Resource utilization score (20%)
@@ -258,17 +207,11 @@ export class AISchedulingEngine {
 		score += operationalScore * weights.operational;
 
 		// Revenue optimization score (10%)
-		const revenueScore = await this.calculateRevenueOptimizationScore(
-			slot,
-			request,
-		);
+		const revenueScore = await this.calculateRevenueOptimizationScore(slot, request);
 		score += revenueScore * weights.revenue;
 
 		// Risk mitigation score (10%)
-		const riskScore = await this.calculateRiskMitigationScore(
-			slot,
-			patientContext,
-		);
+		const riskScore = await this.calculateRiskMitigationScore(slot, patientContext);
 		score += riskScore * weights.risk;
 
 		return Math.min(Math.max(score, 0), 100); // Normalize to 0-100
@@ -277,10 +220,7 @@ export class AISchedulingEngine {
 	/**
 	 * Detect potential scheduling conflicts
 	 */
-	private async detectConflicts(
-		slot: AlternativeSlot,
-		request: SchedulingRequest,
-	): Promise<ConflictDetection> {
+	private async detectConflicts(slot: AlternativeSlot, request: SchedulingRequest): Promise<ConflictDetection> {
 		const conflicts: SchedulingConflict[] = [];
 
 		// Check for double bookings
@@ -298,18 +238,11 @@ export class AISchedulingEngine {
 		conflicts.push(...businessRuleConflicts);
 
 		// Check patient-specific conflicts
-		const patientConflicts = await this.checkPatientConflicts(
-			slot,
-			request.patientId,
-		);
+		const patientConflicts = await this.checkPatientConflicts(slot, request.patientId);
 		conflicts.push(...patientConflicts);
 
-		const autoResolvable = conflicts.every(
-			(conflict) => conflict.autoResolvable,
-		);
-		const criticalLevel = Math.max(
-			...conflicts.map((c) => this.getConflictSeverityLevel(c.severity)),
-		);
+		const autoResolvable = conflicts.every((conflict) => conflict.autoResolvable);
+		const criticalLevel = Math.max(...conflicts.map((c) => this.getConflictSeverityLevel(c.severity)));
 
 		return {
 			conflicts,
@@ -322,10 +255,7 @@ export class AISchedulingEngine {
 	/**
 	 * Resolve conflicts automatically using AI
 	 */
-	private async resolveConflicts(
-		slot: AlternativeSlot,
-		conflicts: ConflictDetection,
-	): Promise<AlternativeSlot> {
+	private async resolveConflicts(slot: AlternativeSlot, conflicts: ConflictDetection): Promise<AlternativeSlot> {
 		const resolutions: ConflictResolution[] = [];
 
 		for (const conflict of conflicts.conflicts) {
@@ -350,7 +280,7 @@ export class AISchedulingEngine {
 	private async createOptimizedAppointment(
 		slot: AlternativeSlot,
 		request: SchedulingRequest,
-		treatmentDuration: TreatmentDuration,
+		treatmentDuration: TreatmentDuration
 	): Promise<AIAppointment> {
 		const noShowPrediction = await this.predictNoShow(request.patientId, slot);
 		const optimizationMetrics = await this.calculateOptimizationMetrics(slot);
@@ -397,10 +327,7 @@ export class AISchedulingEngine {
 	/**
 	 * Predict no-show probability using AI
 	 */
-	private async predictNoShow(
-		patientId: string,
-		slot: AlternativeSlot,
-	): Promise<NoShowPrediction> {
+	private async predictNoShow(patientId: string, slot: AlternativeSlot): Promise<NoShowPrediction> {
 		const patientHistory = await this.getPatientHistory(patientId);
 		const factors = await this.calculateNoShowFactors(patientHistory, slot);
 
@@ -447,10 +374,7 @@ export class AISchedulingEngine {
 		}
 	}
 
-	private updatePerformanceMetrics(
-		processingTime: number,
-		success: boolean,
-	): void {
+	private updatePerformanceMetrics(processingTime: number, success: boolean): void {
 		this.performanceMetrics.averageSchedulingTime =
 			(this.performanceMetrics.averageSchedulingTime + processingTime) / 2;
 
@@ -464,9 +388,7 @@ export class AISchedulingEngine {
 	}
 
 	// Placeholder methods for external service calls
-	private async getBaseTreatmentDuration(
-		treatmentId: string,
-	): Promise<TreatmentDuration> {
+	private async getBaseTreatmentDuration(treatmentId: string): Promise<TreatmentDuration> {
 		// In production, this would call the treatment service
 		return {
 			treatmentId,
@@ -525,17 +447,11 @@ export class AISchedulingEngine {
 		};
 	}
 
-	private async getAvailableStaff(
-		_period: any,
-		_staffRequired: string[],
-	): Promise<any[]> {
+	private async getAvailableStaff(_period: any, _staffRequired: string[]): Promise<any[]> {
 		return [];
 	}
 
-	private async getAvailableRooms(
-		_period: any,
-		_roomType: RoomType,
-	): Promise<any[]> {
+	private async getAvailableRooms(_period: any, _roomType: RoomType): Promise<any[]> {
 		return [];
 	}
 
@@ -543,7 +459,7 @@ export class AISchedulingEngine {
 		_date: Date,
 		_duration: TreatmentDuration,
 		_staff: any[],
-		_rooms: any[],
+		_rooms: any[]
 	): Promise<AlternativeSlot[]> {
 		return [];
 	}
@@ -551,7 +467,7 @@ export class AISchedulingEngine {
 	private async optimizeSlotSelection(
 		slots: AlternativeSlot[],
 		_request: SchedulingRequest,
-		_context: any,
+		_context: any
 	): Promise<AlternativeSlot[]> {
 		return slots;
 	}
@@ -567,70 +483,46 @@ export class AISchedulingEngine {
 		};
 	}
 
-	private calculatePreferenceScore(
-		_slot: AlternativeSlot,
-		_request: SchedulingRequest,
-		_context: any,
-	): number {
+	private calculatePreferenceScore(_slot: AlternativeSlot, _request: SchedulingRequest, _context: any): number {
 		return 80; // Simplified implementation
 	}
 
-	private async calculateStaffEfficiencyScore(
-		_staffId: string,
-		_slot: TimeSlot,
-	): Promise<number> {
+	private async calculateStaffEfficiencyScore(_staffId: string, _slot: TimeSlot): Promise<number> {
 		return 85;
 	}
 
-	private async calculateResourceUtilizationScore(
-		_slot: AlternativeSlot,
-	): Promise<number> {
+	private async calculateResourceUtilizationScore(_slot: AlternativeSlot): Promise<number> {
 		return 90;
 	}
 
-	private async calculateOperationalScore(
-		_slot: AlternativeSlot,
-	): Promise<number> {
+	private async calculateOperationalScore(_slot: AlternativeSlot): Promise<number> {
 		return 88;
 	}
 
 	private async calculateRevenueOptimizationScore(
 		_slot: AlternativeSlot,
-		_request: SchedulingRequest,
+		_request: SchedulingRequest
 	): Promise<number> {
 		return 82;
 	}
 
-	private async calculateRiskMitigationScore(
-		_slot: AlternativeSlot,
-		_context: any,
-	): Promise<number> {
+	private async calculateRiskMitigationScore(_slot: AlternativeSlot, _context: any): Promise<number> {
 		return 87;
 	}
 
-	private async checkDoubleBooking(
-		_slot: AlternativeSlot,
-	): Promise<SchedulingConflict | null> {
+	private async checkDoubleBooking(_slot: AlternativeSlot): Promise<SchedulingConflict | null> {
 		return null; // No conflicts found
 	}
 
-	private async checkResourceConflicts(
-		_slot: AlternativeSlot,
-	): Promise<SchedulingConflict[]> {
+	private async checkResourceConflicts(_slot: AlternativeSlot): Promise<SchedulingConflict[]> {
 		return [];
 	}
 
-	private async checkBusinessRules(
-		_slot: AlternativeSlot,
-		_request: SchedulingRequest,
-	): Promise<SchedulingConflict[]> {
+	private async checkBusinessRules(_slot: AlternativeSlot, _request: SchedulingRequest): Promise<SchedulingConflict[]> {
 		return [];
 	}
 
-	private async checkPatientConflicts(
-		_slot: AlternativeSlot,
-		_patientId: string,
-	): Promise<SchedulingConflict[]> {
+	private async checkPatientConflicts(_slot: AlternativeSlot, _patientId: string): Promise<SchedulingConflict[]> {
 		return [];
 	}
 
@@ -641,27 +533,20 @@ export class AISchedulingEngine {
 
 	private async generateConflictResolution(
 		_conflict: SchedulingConflict,
-		_slot: AlternativeSlot,
+		_slot: AlternativeSlot
 	): Promise<ConflictResolution | null> {
 		return null;
 	}
 
-	private selectBestResolution(
-		resolutions: ConflictResolution[],
-	): ConflictResolution | null {
+	private selectBestResolution(resolutions: ConflictResolution[]): ConflictResolution | null {
 		return resolutions.length > 0 ? resolutions[0] : null;
 	}
 
-	private applyResolution(
-		slot: AlternativeSlot,
-		_resolution: ConflictResolution,
-	): AlternativeSlot {
+	private applyResolution(slot: AlternativeSlot, _resolution: ConflictResolution): AlternativeSlot {
 		return slot;
 	}
 
-	private async calculateOptimizationMetrics(
-		_slot: AlternativeSlot,
-	): Promise<any> {
+	private async calculateOptimizationMetrics(_slot: AlternativeSlot): Promise<any> {
 		return {};
 	}
 
@@ -669,17 +554,11 @@ export class AISchedulingEngine {
 		return duration.complexity !== "low";
 	}
 
-	private calculateDurationAdjustment(
-		_baseDuration: TreatmentDuration,
-		_history: PatientHistory,
-	): number {
+	private calculateDurationAdjustment(_baseDuration: TreatmentDuration, _history: PatientHistory): number {
 		return 1.0; // No adjustment for now
 	}
 
-	private async calculateNoShowFactors(
-		_history: PatientHistory,
-		_slot: AlternativeSlot,
-	): Promise<any[]> {
+	private async calculateNoShowFactors(_history: PatientHistory, _slot: AlternativeSlot): Promise<any[]> {
 		return [];
 	}
 
@@ -691,9 +570,7 @@ export class AISchedulingEngine {
 		return 0.85; // 85% confidence
 	}
 
-	private categorizeRiskLevel(
-		probability: number,
-	): "low" | "medium" | "high" | "critical" {
+	private categorizeRiskLevel(probability: number): "low" | "medium" | "high" | "critical" {
 		if (probability < 0.1) {
 			return "low";
 		}
@@ -714,22 +591,13 @@ export class AISchedulingEngine {
 		return actions;
 	}
 
-	private async applyFinalOptimizations(
-		appointment: AIAppointment,
-	): Promise<AIAppointment> {
+	private async applyFinalOptimizations(appointment: AIAppointment): Promise<AIAppointment> {
 		// Apply any final optimizations
 		return appointment;
 	}
 
-	private async generateRecommendations(
-		_appointment: AIAppointment,
-		_context: any,
-	): Promise<string[]> {
-		return [
-			"Appointment optimally scheduled",
-			"No conflicts detected",
-			"High confidence score achieved",
-		];
+	private async generateRecommendations(_appointment: AIAppointment, _context: any): Promise<string[]> {
+		return ["Appointment optimally scheduled", "No conflicts detected", "High confidence score achieved"];
 	}
 }
 

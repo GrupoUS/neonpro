@@ -36,6 +36,8 @@ export {
 	CardTitle,
 } from "./Card";
 export { Checkbox } from "./Checkbox";
+// Chat Components
+export { ChatInterface } from "./chat/ChatInterface";
 export type { DashboardLayoutProps } from "./DashboardLayout";
 // Layout Components
 export { DashboardLayout } from "./DashboardLayout";

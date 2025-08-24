@@ -1,11 +1,6 @@
 "use strict";
 const { execSync } = require("node:child_process");
-const {
-	readFileSync,
-	writeFileSync,
-	existsSync,
-	mkdirSync,
-} = require("node:fs");
+const { readFileSync, writeFileSync, existsSync, mkdirSync } = require("node:fs");
 const { join } = require("node:path");
 const { logger } = require("../apps/api/src/lib/logger");
 
@@ -64,8 +59,7 @@ class BuildOptimizer {
 				validate: "turbo format:check lint type-check test",
 
 				// CI/CD optimized
-				"ci:cache":
-					"turbo format:check lint type-check test build --cache-dir=.turbo",
+				"ci:cache": "turbo format:check lint type-check test build --cache-dir=.turbo",
 			};
 
 			// Adicionar apenas scripts que não existem

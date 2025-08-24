@@ -6,11 +6,7 @@
  * with TanStack Query integration and LGPD compliance
  */
 
-import type {
-	RealtimeChannel,
-	RealtimePostgresChangesPayload,
-	SupabaseClient,
-} from "@supabase/supabase-js";
+import type { RealtimeChannel, RealtimePostgresChangesPayload, SupabaseClient } from "@supabase/supabase-js";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type {
@@ -40,12 +36,7 @@ const sanitizeRealtimeData = (data: any, sensitiveFields: string[] = []) => {
 	return sanitized;
 };
 
-const logRealtimeEvent = (
-	_event: string,
-	_table: string,
-	payload: any,
-	lgpdConfig?: LGPDRealtimeConfig,
-) => {
+const logRealtimeEvent = (_event: string, _table: string, payload: any, lgpdConfig?: LGPDRealtimeConfig) => {
 	if (lgpdConfig?.enableAuditLogging) {
 		const _logData = lgpdConfig.enableDataMinimization
 			? sanitizeRealtimeData(payload, lgpdConfig.sensitiveFields)
@@ -57,20 +48,17 @@ const logRealtimeEvent = (
  * Base real-time hook with LGPD compliance
  * Manages Supabase real-time subscriptions with healthcare data protection
  */
-export function useRealtime<
-	T extends Record<string, any> = Record<string, any>,
->(supabaseClient: SupabaseClient, config: UseRealtimeConfig<T>) {
+export function useRealtime<T extends Record<string, any> = Record<string, any>>(
+	supabaseClient: SupabaseClient,
+	config: UseRealtimeConfig<T>
+) {
 	const [isConnected, setIsConnected] = useState(false);
 	const [error, setError] = useState<Error | null>(null);
 	const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
 	const channelRef = useRef<RealtimeChannel | null>(null);
 
 	const handleRealtimeEvent = useCallback(
-		(
-			eventType: "INSERT" | "UPDATE" | "DELETE",
-			payload: any,
-			handler?: RealtimeEventHandler<T>,
-		) => {
+		(eventType: "INSERT" | "UPDATE" | "DELETE", payload: any, handler?: RealtimeEventHandler<T>) => {
 			try {
 				// LGPD compliance logging
 				if (config.lgpdCompliance) {
@@ -93,13 +81,12 @@ export function useRealtime<
 				// Clear any previous errors
 				setError(null);
 			} catch (err) {
-				const error =
-					err instanceof Error ? err : new Error("Realtime event error");
+				const error = err instanceof Error ? err : new Error("Realtime event error");
 				setError(error);
 				config.onError?.(error);
 			}
 		},
-		[config],
+		[config]
 	);
 
 	useEffect(() => {
@@ -132,7 +119,7 @@ export function useRealtime<
 							handleRealtimeEvent(eventType, payload, config.onDelete);
 							break;
 					}
-				},
+				}
 			)
 			.subscribe((status) => {
 				if (status === "SUBSCRIBED") {
@@ -189,20 +176,18 @@ export function useRealtime<
  * Real-time hook with TanStack Query integration
  * Automatically invalidates queries and provides optimistic updates
  */
-export function useRealtimeQuery<
-	T extends Record<string, any> = Record<string, any>,
->(supabaseClient: SupabaseClient, config: UseRealtimeQueryConfig<T>) {
+export function useRealtimeQuery<T extends Record<string, any> = Record<string, any>>(
+	supabaseClient: SupabaseClient,
+	config: UseRealtimeQueryConfig<T>
+) {
 	const queryClient = useQueryClient();
 
 	const invalidateQueries = useCallback(
 		(eventType: string) => {
 			const shouldInvalidate =
-				(eventType === "INSERT" &&
-					config.queryOptions?.invalidateOnInsert !== false) ||
-				(eventType === "UPDATE" &&
-					config.queryOptions?.invalidateOnUpdate !== false) ||
-				(eventType === "DELETE" &&
-					config.queryOptions?.invalidateOnDelete !== false);
+				(eventType === "INSERT" && config.queryOptions?.invalidateOnInsert !== false) ||
+				(eventType === "UPDATE" && config.queryOptions?.invalidateOnUpdate !== false) ||
+				(eventType === "DELETE" && config.queryOptions?.invalidateOnDelete !== false);
 
 			if (shouldInvalidate) {
 				queryClient.invalidateQueries({ queryKey: config.queryKey });
@@ -212,7 +197,7 @@ export function useRealtimeQuery<
 				}
 			}
 		},
-		[queryClient, config.queryKey, config.queryOptions],
+		[queryClient, config.queryKey, config.queryOptions]
 	);
 
 	const realtimeConfig: UseRealtimeConfig<T> = {

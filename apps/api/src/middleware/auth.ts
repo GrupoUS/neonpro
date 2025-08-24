@@ -288,10 +288,7 @@ export const authMiddleware = (): MiddlewareHandler => {
 
 			await next();
 		} catch (error) {
-			if (
-				error.message.includes("Invalid token") ||
-				error.message.includes("jwt")
-			) {
+			if (error.message.includes("Invalid token") || error.message.includes("jwt")) {
 				throw createError.authentication("Token inválido");
 			}
 			throw error;
@@ -311,9 +308,7 @@ export const requireRole = (...allowedRoles: UserRole[]): MiddlewareHandler => {
 		}
 
 		if (!allowedRoles.includes(userRole)) {
-			throw createError.authorization(
-				`Acesso negado. Roles permitidas: ${allowedRoles.join(", ")}`,
-			);
+			throw createError.authorization(`Acesso negado. Roles permitidas: ${allowedRoles.join(", ")}`);
 		}
 
 		await next();
@@ -323,9 +318,7 @@ export const requireRole = (...allowedRoles: UserRole[]): MiddlewareHandler => {
 /**
  * Permission-based authorization middleware
  */
-export const requirePermission = (
-	...requiredPermissions: Permission[]
-): MiddlewareHandler => {
+export const requirePermission = (...requiredPermissions: Permission[]): MiddlewareHandler => {
 	return async (c, next) => {
 		const userPermissions = c.get("userPermissions") as Permission[];
 
@@ -333,14 +326,10 @@ export const requirePermission = (
 			throw createError.authentication("Autenticação obrigatória");
 		}
 
-		const hasAllPermissions = requiredPermissions.every((permission) =>
-			userPermissions.includes(permission),
-		);
+		const hasAllPermissions = requiredPermissions.every((permission) => userPermissions.includes(permission));
 
 		if (!hasAllPermissions) {
-			const missingPermissions = requiredPermissions.filter(
-				(permission) => !userPermissions.includes(permission),
-			);
+			const missingPermissions = requiredPermissions.filter((permission) => !userPermissions.includes(permission));
 
 			throw createError.authorization("Permissões insuficientes", {
 				required: requiredPermissions,
@@ -403,9 +392,7 @@ export const requireClinicAccess = (): MiddlewareHandler => {
 
 		// Extract clinic ID from request (URL parameter, query, or body)
 		const requestClinicId =
-			c.req.param("clinicId") ||
-			c.req.query("clinicId") ||
-			(await c.req.json().catch(() => ({})))?.clinicId;
+			c.req.param("clinicId") || c.req.query("clinicId") || (await c.req.json().catch(() => ({})))?.clinicId;
 
 		// If clinic ID is specified in request, verify access
 		if (requestClinicId && requestClinicId !== userClinicId) {

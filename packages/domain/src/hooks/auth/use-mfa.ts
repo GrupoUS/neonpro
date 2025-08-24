@@ -3,13 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 // Mock useUser hook for now - replace with actual auth hook
 const useUser = () => ({ id: "mock-user-id" });
 
-import {
-	MfaMethod,
-	mfaSetupSchema,
-	mfaVerificationSchema,
-	setupMfa,
-	verifyMfa,
-} from "@neonpro/security";
+import { MfaMethod, mfaSetupSchema, mfaVerificationSchema, setupMfa, verifyMfa } from "@neonpro/security";
 
 export type MfaConfig = {
 	userId: string;
@@ -60,9 +54,7 @@ export const useMFA = () => {
 			setConfig(mockConfig);
 			setIsEnabled(mockConfig.isEnabled);
 		} catch (err) {
-			setError(
-				err instanceof Error ? err.message : "Failed to load MFA config",
-			);
+			setError(err instanceof Error ? err.message : "Failed to load MFA config");
 		} finally {
 			setIsLoading(false);
 		}
@@ -76,10 +68,7 @@ export const useMFA = () => {
 	}, [user?.id, loadMfaConfig]);
 
 	const setupMfaMethod = useCallback(
-		async (
-			method: MfaMethod,
-			options?: { phoneNumber?: string; email?: string },
-		): Promise<MfaSetupResult> => {
+		async (method: MfaMethod, options?: { phoneNumber?: string; email?: string }): Promise<MfaSetupResult> => {
 			if (!user?.id) {
 				throw new Error("User not authenticated");
 			}
@@ -108,29 +97,24 @@ export const useMFA = () => {
 									phoneNumber: options?.phoneNumber,
 									email: options?.email,
 								}
-							: null,
+							: null
 					);
 				}
 
 				return result;
 			} catch (err) {
-				const errorMessage =
-					err instanceof Error ? err.message : "Failed to setup MFA";
+				const errorMessage = err instanceof Error ? err.message : "Failed to setup MFA";
 				setError(errorMessage);
 				return { success: false, message: errorMessage };
 			} finally {
 				setIsLoading(false);
 			}
 		},
-		[user?.id],
+		[user?.id]
 	);
 
 	const verifyMfaCode = useCallback(
-		async (
-			method: MfaMethod,
-			code: string,
-			sessionId: string,
-		): Promise<MfaVerificationResult> => {
+		async (method: MfaMethod, code: string, sessionId: string): Promise<MfaVerificationResult> => {
 			if (!user?.id) {
 				throw new Error("User not authenticated");
 			}
@@ -156,8 +140,7 @@ export const useMFA = () => {
 
 				return result;
 			} catch (err) {
-				const errorMessage =
-					err instanceof Error ? err.message : "Failed to verify MFA";
+				const errorMessage = err instanceof Error ? err.message : "Failed to verify MFA";
 				setError(errorMessage);
 				return {
 					success: false,
@@ -168,7 +151,7 @@ export const useMFA = () => {
 				setIsLoading(false);
 			}
 		},
-		[user?.id],
+		[user?.id]
 	);
 
 	const disableMfa = useCallback(async (): Promise<{
@@ -192,8 +175,7 @@ export const useMFA = () => {
 
 			return { success: true, message: "MFA disabled successfully" };
 		} catch (err) {
-			const errorMessage =
-				err instanceof Error ? err.message : "Failed to disable MFA";
+			const errorMessage = err instanceof Error ? err.message : "Failed to disable MFA";
 			setError(errorMessage);
 			return { success: false, message: errorMessage };
 		} finally {
@@ -226,16 +208,13 @@ export const useMFA = () => {
 								...prev,
 								backupCodesCount: result.backupCodes?.length || 0,
 							}
-						: null,
+						: null
 				);
 			}
 
 			return result;
 		} catch (err) {
-			const errorMessage =
-				err instanceof Error
-					? err.message
-					: "Failed to regenerate backup codes";
+			const errorMessage = err instanceof Error ? err.message : "Failed to regenerate backup codes";
 			setError(errorMessage);
 			return { success: false, message: errorMessage };
 		} finally {
@@ -258,8 +237,7 @@ export const useMFA = () => {
 		clearError: () => setError(null),
 
 		// Utilities
-		isMethodEnabled: (method: MfaMethod) =>
-			config?.method === method && isEnabled,
+		isMethodEnabled: (method: MfaMethod) => config?.method === method && isEnabled,
 		hasBackupCodes: () => (config?.backupCodesCount ?? 0) > 0,
 	};
 };

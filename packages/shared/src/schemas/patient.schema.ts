@@ -1,31 +1,14 @@
 import { z } from "zod";
 
 // Brazilian specific validators
-export const CpfSchema = z
-	.string()
-	.regex(
-		/^\d{3}\.\d{3}\.\d{3}-\d{2}$/,
-		"CPF deve estar no formato XXX.XXX.XXX-XX",
-	);
+export const CpfSchema = z.string().regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, "CPF deve estar no formato XXX.XXX.XXX-XX");
 
-export const RgSchema = z
-	.string()
-	.regex(
-		/^\d{1,2}\.\d{3}\.\d{3}-[\dXx]$/,
-		"RG deve estar no formato XX.XXX.XXX-X",
-	);
+export const RgSchema = z.string().regex(/^\d{1,2}\.\d{3}\.\d{3}-[\dXx]$/, "RG deve estar no formato XX.XXX.XXX-X");
 
-export const CepSchema = z
-	.string()
-	.regex(/^\d{5}-\d{3}$/, "CEP deve estar no formato XXXXX-XXX");
+export const CepSchema = z.string().regex(/^\d{5}-\d{3}$/, "CEP deve estar no formato XXXXX-XXX");
 
 // Patient Gender Schema
-export const PatientGenderSchema = z.enum([
-	"male",
-	"female",
-	"non_binary",
-	"prefer_not_to_say",
-]);
+export const PatientGenderSchema = z.enum(["male", "female", "non_binary", "prefer_not_to_say"]);
 
 // Marital Status Schema
 export const MaritalStatusSchema = z.enum([
@@ -38,34 +21,16 @@ export const MaritalStatusSchema = z.enum([
 ]);
 
 // Blood Type Schema
-export const BloodTypeSchema = z.enum([
-	"A+",
-	"A-",
-	"B+",
-	"B-",
-	"AB+",
-	"AB-",
-	"O+",
-	"O-",
-	"unknown",
-]);
+export const BloodTypeSchema = z.enum(["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-", "unknown"]);
 
 // Emergency Contact Schema
 export const EmergencyContactSchema = z.object({
-	name: z
-		.string()
-		.min(2, "Nome deve ter pelo menos 2 caracteres")
-		.max(100, "Nome deve ter no máximo 100 caracteres"),
+	name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres").max(100, "Nome deve ter no máximo 100 caracteres"),
 	relationship: z
 		.string()
 		.min(2, "Relacionamento deve ter pelo menos 2 caracteres")
 		.max(50, "Relacionamento deve ter no máximo 50 caracteres"),
-	phone: z
-		.string()
-		.regex(
-			/^\(\d{2}\)\s\d{4,5}-\d{4}$/,
-			"Telefone deve estar no formato (XX) XXXXX-XXXX",
-		),
+	phone: z.string().regex(/^\(\d{2}\)\s\d{4,5}-\d{4}$/, "Telefone deve estar no formato (XX) XXXXX-XXXX"),
 	email: z.string().email("Email deve ser válido").optional(),
 	is_primary: z.boolean().default(false),
 });
@@ -77,14 +42,8 @@ export const AddressSchema = z.object({
 		.string()
 		.min(5, "Logradouro deve ter pelo menos 5 caracteres")
 		.max(200, "Logradouro deve ter no máximo 200 caracteres"),
-	number: z
-		.string()
-		.min(1, "Número é obrigatório")
-		.max(10, "Número deve ter no máximo 10 caracteres"),
-	complement: z
-		.string()
-		.max(100, "Complemento deve ter no máximo 100 caracteres")
-		.optional(),
+	number: z.string().min(1, "Número é obrigatório").max(10, "Número deve ter no máximo 10 caracteres"),
+	complement: z.string().max(100, "Complemento deve ter no máximo 100 caracteres").optional(),
 	neighborhood: z
 		.string()
 		.min(2, "Bairro deve ter pelo menos 2 caracteres")
@@ -114,10 +73,7 @@ export const InsuranceSchema = z.object({
 		.string()
 		.min(3, "Número da apólice deve ter pelo menos 3 caracteres")
 		.max(50, "Número da apólice deve ter no máximo 50 caracteres"),
-	group_number: z
-		.string()
-		.max(50, "Número do grupo deve ter no máximo 50 caracteres")
-		.optional(),
+	group_number: z.string().max(50, "Número do grupo deve ter no máximo 50 caracteres").optional(),
 	coverage_type: z.enum(["full", "partial", "emergency_only"]).default("full"),
 	valid_from: z.string().date(),
 	valid_until: z.string().date().optional(),
@@ -136,9 +92,7 @@ export const MedicalHistorySchema = z.object({
 		.max(200, "Condição deve ter no máximo 200 caracteres"),
 	diagnosis_date: z.string().date().optional(),
 	severity: z.enum(["mild", "moderate", "severe"]).optional(),
-	status: z
-		.enum(["active", "resolved", "chronic", "monitoring"])
-		.default("active"),
+	status: z.enum(["active", "resolved", "chronic", "monitoring"]).default("active"),
 	treatment: z.string().max(500).optional(),
 	notes: z.string().max(1000).optional(),
 	physician: z.string().max(100).optional(),
@@ -170,17 +124,9 @@ export const MedicationSchema = z.object({
 		.string()
 		.min(2, "Nome do medicamento deve ter pelo menos 2 caracteres")
 		.max(200, "Nome do medicamento deve ter no máximo 200 caracteres"),
-	dosage: z
-		.string()
-		.min(1, "Dosagem é obrigatória")
-		.max(100, "Dosagem deve ter no máximo 100 caracteres"),
-	frequency: z
-		.string()
-		.min(1, "Frequência é obrigatória")
-		.max(100, "Frequência deve ter no máximo 100 caracteres"),
-	route: z
-		.enum(["oral", "topical", "injection", "inhalation", "rectal", "other"])
-		.optional(),
+	dosage: z.string().min(1, "Dosagem é obrigatória").max(100, "Dosagem deve ter no máximo 100 caracteres"),
+	frequency: z.string().min(1, "Frequência é obrigatória").max(100, "Frequência deve ter no máximo 100 caracteres"),
+	route: z.enum(["oral", "topical", "injection", "inhalation", "rectal", "other"]).optional(),
 	start_date: z.string().date(),
 	end_date: z.string().date().optional(),
 	is_active: z.boolean().default(true),
@@ -208,12 +154,7 @@ export const PatientBaseSchema = z.object({
 		.max(50, "Sobrenome deve ter no máximo 50 caracteres")
 		.regex(/^[a-zA-ZÀ-ÿ\s]+$/, "Sobrenome deve conter apenas letras"),
 	email: z.string().email("Email deve ser válido"),
-	phone: z
-		.string()
-		.regex(
-			/^\(\d{2}\)\s\d{4,5}-\d{4}$/,
-			"Telefone deve estar no formato (XX) XXXXX-XXXX",
-		),
+	phone: z.string().regex(/^\(\d{2}\)\s\d{4,5}-\d{4}$/, "Telefone deve estar no formato (XX) XXXXX-XXXX"),
 	birth_date: z.string().date(),
 	gender: PatientGenderSchema,
 	marital_status: MaritalStatusSchema.optional(),
@@ -227,9 +168,7 @@ export const PatientBaseSchema = z.object({
 		.optional(),
 
 	// Contact Information
-	addresses: z
-		.array(AddressSchema)
-		.min(1, "Pelo menos um endereço é obrigatório"),
+	addresses: z.array(AddressSchema).min(1, "Pelo menos um endereço é obrigatório"),
 	emergency_contacts: z.array(EmergencyContactSchema),
 
 	// Medical Information
@@ -271,9 +210,7 @@ export const PatientBaseSchema = z.object({
 			sms_notifications: z.boolean().default(true),
 			appointment_reminders: z.boolean().default(true),
 			marketing_communications: z.boolean().default(false),
-			preferred_contact_time: z
-				.enum(["morning", "afternoon", "evening", "anytime"])
-				.default("anytime"),
+			preferred_contact_time: z.enum(["morning", "afternoon", "evening", "anytime"]).default("anytime"),
 		})
 		.optional(),
 });
@@ -292,9 +229,7 @@ export const PatientQuerySchema = z.object({
 	physician_id: z.string().uuid().optional(),
 	created_from: z.string().date().optional(),
 	created_to: z.string().date().optional(),
-	sort_by: z
-		.enum(["name", "created_at", "last_appointment", "age"])
-		.default("name"),
+	sort_by: z.enum(["name", "created_at", "last_appointment", "age"]).default("name"),
 	sort_order: z.enum(["asc", "desc"]).default("asc"),
 });
 
@@ -309,28 +244,19 @@ export const CreatePatientSchema = z.object({
 		.min(2, "Sobrenome deve ter pelo menos 2 caracteres")
 		.max(50, "Sobrenome deve ter no máximo 50 caracteres"),
 	email: z.string().email("Email deve ser válido"),
-	phone: z
-		.string()
-		.regex(
-			/^\(\d{2}\)\s\d{4,5}-\d{4}$/,
-			"Telefone deve estar no formato (XX) XXXXX-XXXX",
-		),
+	phone: z.string().regex(/^\(\d{2}\)\s\d{4,5}-\d{4}$/, "Telefone deve estar no formato (XX) XXXXX-XXXX"),
 	birth_date: z.string().date(),
 	gender: PatientGenderSchema,
 	cpf: CpfSchema,
 	clinic_id: z.string().uuid(),
 
 	// Required LGPD consent
-	lgpd_consent: z
-		.boolean()
-		.refine((val) => val === true, "Consentimento LGPD é obrigatório"),
+	lgpd_consent: z.boolean().refine((val) => val === true, "Consentimento LGPD é obrigatório"),
 
 	// Optional fields
 	rg: RgSchema.optional(),
 	marital_status: MaritalStatusSchema.optional(),
-	addresses: z
-		.array(AddressSchema)
-		.min(1, "Pelo menos um endereço é obrigatório"),
+	addresses: z.array(AddressSchema).min(1, "Pelo menos um endereço é obrigatório"),
 	emergency_contacts: z.array(EmergencyContactSchema).optional().default([]),
 	blood_type: BloodTypeSchema.optional(),
 	allergies: z.array(AllergySchema).optional().default([]),
@@ -345,9 +271,7 @@ export const CreatePatientSchema = z.object({
 			sms_notifications: z.boolean().default(true),
 			appointment_reminders: z.boolean().default(true),
 			marketing_communications: z.boolean().default(false),
-			preferred_contact_time: z
-				.enum(["morning", "afternoon", "evening", "anytime"])
-				.default("anytime"),
+			preferred_contact_time: z.enum(["morning", "afternoon", "evening", "anytime"]).default("anytime"),
 		})
 		.optional(),
 });
@@ -367,10 +291,7 @@ export const UpdatePatientSchema = z.object({
 	email: z.string().email("Email deve ser válido").optional(),
 	phone: z
 		.string()
-		.regex(
-			/^\(\d{2}\)\s\d{4,5}-\d{4}$/,
-			"Telefone deve estar no formato (XX) XXXXX-XXXX",
-		)
+		.regex(/^\(\d{2}\)\s\d{4,5}-\d{4}$/, "Telefone deve estar no formato (XX) XXXXX-XXXX")
 		.optional(),
 	birth_date: z.string().date().optional(),
 	gender: PatientGenderSchema.optional(),
@@ -401,9 +322,7 @@ export const UpdatePatientSchema = z.object({
 			sms_notifications: z.boolean().default(true),
 			appointment_reminders: z.boolean().default(true),
 			marketing_communications: z.boolean().default(false),
-			preferred_contact_time: z
-				.enum(["morning", "afternoon", "evening", "anytime"])
-				.default("anytime"),
+			preferred_contact_time: z.enum(["morning", "afternoon", "evening", "anytime"]).default("anytime"),
 		})
 		.optional(),
 });
@@ -469,7 +388,7 @@ export const PatientStatsSchema = z.object({
 			clinic_id: z.string().uuid(),
 			clinic_name: z.string(),
 			patient_count: z.number(),
-		}),
+		})
 	),
 });
 
@@ -519,6 +438,4 @@ export type PatientResponse = z.infer<typeof PatientResponseSchema>;
 export type PatientsListResponse = z.infer<typeof PatientsListResponseSchema>;
 export type PatientStats = z.infer<typeof PatientStatsSchema>;
 export type PatientDataExport = z.infer<typeof PatientDataExportSchema>;
-export type PatientDataExportResponse = z.infer<
-	typeof PatientDataExportResponseSchema
->;
+export type PatientDataExportResponse = z.infer<typeof PatientDataExportResponseSchema>;

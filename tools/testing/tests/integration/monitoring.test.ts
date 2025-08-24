@@ -32,22 +32,14 @@ describe("TASK-001 Monitoring Infrastructure Integration", () => {
 		});
 
 		it("should track API response times", async () => {
-			const metrics = await performance.trackAPICall(
-				"/api/test",
-				"GET",
-				200,
-				150,
-			);
+			const metrics = await performance.trackAPICall("/api/test", "GET", 200, 150);
 			expect(metrics).toBeDefined();
 			expect(metrics.responseTime).toBe(150);
 			expect(metrics.status).toBe(200);
 		});
 
 		it("should collect user interaction metrics", async () => {
-			const metrics = await performance.trackUserInteraction(
-				"button_click",
-				"save_patient",
-			);
+			const metrics = await performance.trackUserInteraction("button_click", "save_patient");
 			expect(metrics).toBeDefined();
 			expect(metrics.action).toBe("button_click");
 			expect(metrics.element).toBe("save_patient");
@@ -69,10 +61,7 @@ describe("TASK-001 Monitoring Infrastructure Integration", () => {
 		});
 
 		it("should track conversion events", async () => {
-			const result = await analytics.trackConversion(
-				"appointment_created",
-				299.99,
-			);
+			const result = await analytics.trackConversion("appointment_created", 299.99);
 			expect(result).toBeDefined();
 		});
 	});
@@ -84,18 +73,13 @@ describe("TASK-001 Monitoring Infrastructure Integration", () => {
 		});
 
 		it("should handle gradual rollout", async () => {
-			const rolloutData = await featureFlags.getRolloutData(
-				"performance_monitoring",
-			);
+			const rolloutData = await featureFlags.getRolloutData("performance_monitoring");
 			expect(rolloutData).toBeDefined();
 			expect(typeof rolloutData.percentage).toBe("number");
 		});
 
 		it("should track feature flag usage", async () => {
-			const result = await featureFlags.trackUsage(
-				"system_health_widget",
-				true,
-			);
+			const result = await featureFlags.trackUsage("system_health_widget", true);
 			expect(result).toBeDefined();
 		});
 	});
@@ -111,10 +95,7 @@ describe("TASK-001 Monitoring Infrastructure Integration", () => {
 		});
 
 		it("should track error recovery", async () => {
-			const result = await errorTracking.trackRecovery(
-				"database_connection",
-				"reconnected_successfully",
-			);
+			const result = await errorTracking.trackRecovery("database_connection", "reconnected_successfully");
 			expect(result).toBeDefined();
 		});
 	});
@@ -122,9 +103,7 @@ describe("TASK-001 Monitoring Infrastructure Integration", () => {
 	describe("API Endpoints Integration", () => {
 		it("should have health endpoint responding", async () => {
 			// Health endpoint should be accessible without auth
-			const response = await fetch(
-				"http://localhost:3000/api/monitoring/health",
-			);
+			const response = await fetch("http://localhost:3000/api/monitoring/health");
 			expect(response.ok).toBe(true);
 			const data = await response.json();
 			expect(data.success).toBe(true);
@@ -152,25 +131,19 @@ describe("TASK-001 Monitoring Infrastructure Integration", () => {
 describe("TASK-001 UI Components Integration", () => {
 	describe("Component Imports", () => {
 		it("should import FeatureFlagManager component", async () => {
-			const { FeatureFlagManager } = await import(
-				"../../components/dashboard/FeatureFlagManager"
-			);
+			const { FeatureFlagManager } = await import("../../components/dashboard/FeatureFlagManager");
 			expect(FeatureFlagManager).toBeDefined();
 			expect(typeof FeatureFlagManager).toBe("function");
 		});
 
 		it("should import SystemHealthWidget component", async () => {
-			const { SystemHealthWidget } = await import(
-				"../../components/dashboard/SystemHealthWidget"
-			);
+			const { SystemHealthWidget } = await import("../../components/dashboard/SystemHealthWidget");
 			expect(SystemHealthWidget).toBeDefined();
 			expect(typeof SystemHealthWidget).toBe("function");
 		});
 
 		it("should import PerformanceDashboard component", async () => {
-			const { PerformanceDashboard } = await import(
-				"../../components/dashboard/performance-dashboard"
-			);
+			const { PerformanceDashboard } = await import("../../components/dashboard/performance-dashboard");
 			expect(PerformanceDashboard).toBeDefined();
 			expect(typeof PerformanceDashboard).toBe("function");
 		});

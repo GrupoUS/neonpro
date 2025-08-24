@@ -37,13 +37,7 @@ export type ConsentRecord = {
 export type DataSubjectRequest = {
 	id: string;
 	user_id: string;
-	request_type:
-		| "access"
-		| "rectification"
-		| "erasure"
-		| "portability"
-		| "restriction"
-		| "objection";
+	request_type: "access" | "rectification" | "erasure" | "portability" | "restriction" | "objection";
 	status: "pending" | "in_progress" | "completed" | "rejected";
 	description: string | null;
 	requested_at: string;
@@ -110,7 +104,7 @@ export function useLGPDDashboard() {
 	const [error, setError] = useState<Error | null>(null);
 	const _supabase = createBrowserClient(
 		process.env.NEXT_PUBLIC_SUPABASE_URL!,
-		process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+		process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 	);
 
 	const fetchMetrics = useCallback(async () => {
@@ -153,13 +147,7 @@ export function useConsentManagement() {
 	const _user = useUser();
 
 	const fetchConsents = useCallback(
-		async (filters?: {
-			user_id?: string;
-			purpose_id?: string;
-			granted?: boolean;
-			page?: number;
-			limit?: number;
-		}) => {
+		async (filters?: { user_id?: string; purpose_id?: string; granted?: boolean; page?: number; limit?: number }) => {
 			try {
 				setIsLoading(true);
 				setError(null);
@@ -187,7 +175,7 @@ export function useConsentManagement() {
 				setIsLoading(false);
 			}
 		},
-		[],
+		[]
 	);
 
 	const updateConsent = useCallback(
@@ -224,7 +212,7 @@ export function useConsentManagement() {
 				throw err;
 			}
 		},
-		[fetchConsents],
+		[fetchConsents]
 	);
 
 	const withdrawConsent = useCallback(
@@ -252,7 +240,7 @@ export function useConsentManagement() {
 				throw err;
 			}
 		},
-		[fetchConsents],
+		[fetchConsents]
 	);
 
 	return {
@@ -272,13 +260,7 @@ export function useDataSubjectRights() {
 	const [error, setError] = useState<Error | null>(null);
 
 	const fetchRequests = useCallback(
-		async (filters?: {
-			user_id?: string;
-			request_type?: string;
-			status?: string;
-			page?: number;
-			limit?: number;
-		}) => {
+		async (filters?: { user_id?: string; request_type?: string; status?: string; page?: number; limit?: number }) => {
 			try {
 				setIsLoading(true);
 				setError(null);
@@ -306,7 +288,7 @@ export function useDataSubjectRights() {
 				setIsLoading(false);
 			}
 		},
-		[],
+		[]
 	);
 
 	const createRequest = useCallback(
@@ -337,7 +319,7 @@ export function useDataSubjectRights() {
 				throw err;
 			}
 		},
-		[fetchRequests],
+		[fetchRequests]
 	);
 
 	const updateRequest = useCallback(
@@ -347,7 +329,7 @@ export function useDataSubjectRights() {
 				status?: string;
 				response_data?: any;
 				notes?: string;
-			},
+			}
 		) => {
 			try {
 				const response = await fetch("/api/lgpd/data-subject-rights", {
@@ -375,7 +357,7 @@ export function useDataSubjectRights() {
 				throw err;
 			}
 		},
-		[fetchRequests],
+		[fetchRequests]
 	);
 
 	return {
@@ -395,12 +377,7 @@ export function useBreachManagement() {
 	const [error, setError] = useState<Error | null>(null);
 
 	const fetchBreaches = useCallback(
-		async (filters?: {
-			severity?: string;
-			status?: string;
-			page?: number;
-			limit?: number;
-		}) => {
+		async (filters?: { severity?: string; status?: string; page?: number; limit?: number }) => {
 			try {
 				setIsLoading(true);
 				setError(null);
@@ -428,7 +405,7 @@ export function useBreachManagement() {
 				setIsLoading(false);
 			}
 		},
-		[],
+		[]
 	);
 
 	const reportBreach = useCallback(
@@ -466,7 +443,7 @@ export function useBreachManagement() {
 				throw err;
 			}
 		},
-		[fetchBreaches],
+		[fetchBreaches]
 	);
 
 	const updateBreach = useCallback(
@@ -479,7 +456,7 @@ export function useBreachManagement() {
 				authority_notified?: boolean;
 				users_notified?: boolean;
 				mitigation_steps?: string;
-			},
+			}
 		) => {
 			try {
 				const response = await fetch("/api/lgpd/breach", {
@@ -507,7 +484,7 @@ export function useBreachManagement() {
 				throw err;
 			}
 		},
-		[fetchBreaches],
+		[fetchBreaches]
 	);
 
 	return {
@@ -564,47 +541,44 @@ export function useAuditTrail() {
 				setIsLoading(false);
 			}
 		},
-		[],
+		[]
 	);
 
-	const exportEvents = useCallback(
-		async (format: "json" | "csv", filters?: any) => {
-			try {
-				const params = new URLSearchParams();
-				params.append("export", format);
+	const exportEvents = useCallback(async (format: "json" | "csv", filters?: any) => {
+		try {
+			const params = new URLSearchParams();
+			params.append("export", format);
 
-				if (filters) {
-					Object.entries(filters).forEach(([key, value]) => {
-						if (value !== undefined && value !== null) {
-							params.append(key, value.toString());
-						}
-					});
-				}
-
-				const response = await fetch(`/api/lgpd/audit?${params}`);
-				if (!response.ok) {
-					throw new Error("Failed to export audit events");
-				}
-
-				const blob = await response.blob();
-				const url = window.URL.createObjectURL(blob);
-				const a = document.createElement("a");
-				a.href = url;
-				a.download = `audit-trail-${new Date().toISOString().split("T")[0]}.${format}`;
-				document.body.appendChild(a);
-				a.click();
-				window.URL.revokeObjectURL(url);
-				document.body.removeChild(a);
-
-				toast.success("Exportação concluída com sucesso");
-			} catch (err) {
-				setError(err as Error);
-				toast.error("Erro ao exportar eventos");
-				throw err;
+			if (filters) {
+				Object.entries(filters).forEach(([key, value]) => {
+					if (value !== undefined && value !== null) {
+						params.append(key, value.toString());
+					}
+				});
 			}
-		},
-		[],
-	);
+
+			const response = await fetch(`/api/lgpd/audit?${params}`);
+			if (!response.ok) {
+				throw new Error("Failed to export audit events");
+			}
+
+			const blob = await response.blob();
+			const url = window.URL.createObjectURL(blob);
+			const a = document.createElement("a");
+			a.href = url;
+			a.download = `audit-trail-${new Date().toISOString().split("T")[0]}.${format}`;
+			document.body.appendChild(a);
+			a.click();
+			window.URL.revokeObjectURL(url);
+			document.body.removeChild(a);
+
+			toast.success("Exportação concluída com sucesso");
+		} catch (err) {
+			setError(err as Error);
+			toast.error("Erro ao exportar eventos");
+			throw err;
+		}
+	}, []);
 
 	return {
 		events,
@@ -622,12 +596,7 @@ export function useComplianceAssessment() {
 	const [error, setError] = useState<Error | null>(null);
 
 	const fetchAssessments = useCallback(
-		async (filters?: {
-			assessment_type?: string;
-			status?: string;
-			page?: number;
-			limit?: number;
-		}) => {
+		async (filters?: { assessment_type?: string; status?: string; page?: number; limit?: number }) => {
 			try {
 				setIsLoading(true);
 				setError(null);
@@ -655,7 +624,7 @@ export function useComplianceAssessment() {
 				setIsLoading(false);
 			}
 		},
-		[],
+		[]
 	);
 
 	const createAssessment = useCallback(
@@ -686,7 +655,7 @@ export function useComplianceAssessment() {
 				throw err;
 			}
 		},
-		[fetchAssessments],
+		[fetchAssessments]
 	);
 
 	const runAutomatedAssessment = useCallback(async () => {
@@ -735,7 +704,7 @@ export function useConsentBanner() {
 	const user = useUser();
 	const supabase = createBrowserClient(
 		process.env.NEXT_PUBLIC_SUPABASE_URL!,
-		process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+		process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 	);
 
 	const fetchConsentPurposes = useCallback(async () => {
@@ -802,16 +771,14 @@ export function useConsentBanner() {
 				// Refresh user consents
 				await fetchUserConsents();
 
-				toast.success(
-					granted ? "Consentimento concedido" : "Consentimento retirado",
-				);
+				toast.success(granted ? "Consentimento concedido" : "Consentimento retirado");
 			} catch (err) {
 				setError(err as Error);
 				toast.error("Erro ao atualizar consentimento");
 				throw err;
 			}
 		},
-		[fetchUserConsents],
+		[fetchUserConsents]
 	);
 
 	useEffect(() => {

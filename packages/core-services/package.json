@@ -1,74 +1,74 @@
 {
-	"name": "@neonpro/core-services",
-	"version": "0.1.0",
-	"private": true,
-	"description": "Core business services for NeonPro aesthetic clinic SaaS",
-	"main": "./dist/index.js",
-	"module": "./dist/index.mjs",
-	"types": "./dist/index.d.ts",
-	"exports": {
-		".": {
-			"types": "./dist/index.d.ts",
-			"import": "./dist/index.mjs",
-			"require": "./dist/index.js"
-		},
-		"./scheduling": {
-			"types": "./dist/scheduling/index.d.ts",
-			"import": "./dist/scheduling/index.mjs",
-			"require": "./dist/scheduling/index.js"
-		},
-		"./treatment": {
-			"types": "./dist/treatment/index.d.ts",
-			"import": "./dist/treatment/index.mjs",
-			"require": "./dist/treatment/index.js"
-		},
-		"./patient": {
-			"types": "./dist/patient/index.d.ts",
-			"import": "./dist/patient/index.mjs",
-			"require": "./dist/patient/index.js"
-		},
-		"./inventory": {
-			"types": "./dist/inventory/index.d.ts",
-			"import": "./dist/inventory/index.mjs",
-			"require": "./dist/inventory/index.js"
-		},
-		"./billing": {
-			"types": "./dist/billing/index.d.ts",
-			"import": "./dist/billing/index.mjs",
-			"require": "./dist/billing/index.js"
-		},
-		"./notification": {
-			"types": "./dist/notification/index.d.ts",
-			"import": "./dist/notification/index.mjs",
-			"require": "./dist/notification/index.js"
-		}
-	},
-	"scripts": {
-		"build": "tsup",
-		"clean": "rm -rf dist",
-		"dev": "tsup --watch",
-		"lint": "biome check src",
-		"lint:fix": "biome check src --write",
-		"test": "vitest",
-		"test:coverage": "vitest --coverage",
-		"typecheck": "tsc --noEmit"
-	},
-	"dependencies": {
-		"@neonpro/db": "workspace:*",
-		"@neonpro/domain": "workspace:*",
-		"@neonpro/utils": "workspace:*",
-		"date-fns": "^3.6.0",
-		"zod": "^3.22.4"
-	},
-	"devDependencies": {
-		"@neonpro/typescript-config": "workspace:*",
-		"@types/node": "^20.11.0",
-		"@biomejs/biome": "^1.9.0",
-		"tsup": "^8.0.1",
-		"typescript": "^5.3.3",
-		"vitest": "^3.2.4"
-	},
-	"peerDependencies": {
-		"typescript": ">=5.0.0"
-	}
+  "name": "@neonpro/core-services",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Core business services for NeonPro aesthetic clinic SaaS",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./scheduling": {
+      "types": "./dist/scheduling/index.d.ts",
+      "import": "./dist/scheduling/index.mjs",
+      "require": "./dist/scheduling/index.js"
+    },
+    "./treatment": {
+      "types": "./dist/treatment/index.d.ts",
+      "import": "./dist/treatment/index.mjs",
+      "require": "./dist/treatment/index.js"
+    },
+    "./patient": {
+      "types": "./dist/patient/index.d.ts",
+      "import": "./dist/patient/index.mjs",
+      "require": "./dist/patient/index.js"
+    },
+    "./inventory": {
+      "types": "./dist/inventory/index.d.ts",
+      "import": "./dist/inventory/index.mjs",
+      "require": "./dist/inventory/index.js"
+    },
+    "./billing": {
+      "types": "./dist/billing/index.d.ts",
+      "import": "./dist/billing/index.mjs",
+      "require": "./dist/billing/index.js"
+    },
+    "./notification": {
+      "types": "./dist/notification/index.d.ts",
+      "import": "./dist/notification/index.mjs",
+      "require": "./dist/notification/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "clean": "rm -rf dist",
+    "dev": "tsup --watch",
+    "lint": "biome check src",
+    "lint:fix": "biome check src --write",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@neonpro/db": "workspace:*",
+    "@neonpro/domain": "workspace:*",
+    "@neonpro/utils": "workspace:*",
+    "date-fns": "^3.6.0",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@neonpro/typescript-config": "workspace:*",
+    "@types/node": "^20.11.0",
+    "@biomejs/biome": "^1.9.0",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3",
+    "vitest": "^3.2.4"
+  },
+  "peerDependencies": {
+    "typescript": ">=5.0.0"
+  }
 }

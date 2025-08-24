@@ -27,10 +27,7 @@ export type MockQueryBuilder = {
 	like: (column: string, pattern: string) => MockQueryBuilder;
 	ilike: (column: string, pattern: string) => MockQueryBuilder;
 	in: (column: string, values: any[]) => MockQueryBuilder;
-	order: (
-		column: string,
-		options?: { ascending?: boolean },
-	) => MockQueryBuilder;
+	order: (column: string, options?: { ascending?: boolean }) => MockQueryBuilder;
 	limit: (count: number) => MockQueryBuilder;
 	range: (from: number, to: number) => MockQueryBuilder;
 	single: () => MockQueryBuilder;
@@ -92,9 +89,7 @@ class HealthcareMockDataStore {
 
 	addRecord(tableName: string, record: any): any {
 		const table = this.getTable(tableName);
-		const id =
-			record.id ||
-			`${tableName}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+		const id = record.id || `${tableName}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 		const tenantRecord = {
 			...record,
 			id,
@@ -237,9 +232,7 @@ class MockQueryBuilderImpl implements MockQueryBuilder {
 							case "like":
 								return String(value).includes(filter.value.replace("%", ""));
 							case "ilike":
-								return String(value)
-									.toLowerCase()
-									.includes(filter.value.replace("%", "").toLowerCase());
+								return String(value).toLowerCase().includes(filter.value.replace("%", "").toLowerCase());
 							case "in":
 								return filter.value.includes(value);
 							default:
@@ -275,10 +268,7 @@ class MockQueryBuilderImpl implements MockQueryBuilder {
 					return { data, error: null };
 
 				case "insert": {
-					const insertedRecord = this.dataStore.addRecord(
-						this.tableName,
-						this.query.data,
-					);
+					const insertedRecord = this.dataStore.addRecord(this.tableName, this.query.data);
 					return { data: insertedRecord, error: null };
 				}
 
@@ -311,16 +301,14 @@ class MockQueryBuilderImpl implements MockQueryBuilder {
 				}
 
 				case "delete": {
-					const remainingRecords = this.dataStore
-						.getTable(this.tableName)
-						.filter((record) => {
-							return this.query.filters
-								? !this.query.filters.every((filter: any) => {
-										const value = record[filter.column];
-										return filter.type === "eq" ? value === filter.value : true;
-									})
-								: false;
-						});
+					const remainingRecords = this.dataStore.getTable(this.tableName).filter((record) => {
+						return this.query.filters
+							? !this.query.filters.every((filter: any) => {
+									const value = record[filter.column];
+									return filter.type === "eq" ? value === filter.value : true;
+								})
+							: false;
+					});
 
 					this.dataStore.setTable(this.tableName, remainingRecords);
 					return { data: null, error: null };

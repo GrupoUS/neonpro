@@ -101,12 +101,7 @@ export type AppointmentStatus =
 	| "no_show"
 	| "rescheduled";
 
-export type AppointmentPriority =
-	| "low"
-	| "normal"
-	| "high"
-	| "urgent"
-	| "emergency";
+export type AppointmentPriority = "low" | "normal" | "high" | "urgent" | "emergency";
 
 // AI Prediction Interfaces
 export type NoShowPrediction = {

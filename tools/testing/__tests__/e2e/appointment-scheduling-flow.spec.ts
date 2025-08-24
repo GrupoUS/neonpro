@@ -25,9 +25,7 @@ test.describe("Complete Appointment Scheduling Flow", () => {
 			month: "long",
 			year: "numeric",
 		});
-		await expect(
-			page.locator('[data-testid="calendar-month-year"]'),
-		).toContainText(monthYear);
+		await expect(page.locator('[data-testid="calendar-month-year"]')).toContainText(monthYear);
 
 		// Should show week days
 		await expect(page.locator("text=Segunda")).toBeVisible();
@@ -42,9 +40,7 @@ test.describe("Complete Appointment Scheduling Flow", () => {
 		await page.click('[data-testid="new-appointment-btn"]');
 
 		// Should open appointment form modal
-		await expect(
-			page.locator('[data-testid="appointment-form-modal"]'),
-		).toBeVisible();
+		await expect(page.locator('[data-testid="appointment-form-modal"]')).toBeVisible();
 
 		// Select patient
 		await page.click('[data-testid="patient-select"]');
@@ -65,10 +61,7 @@ test.describe("Complete Appointment Scheduling Flow", () => {
 		await page.click('[data-testid="appointment-type-consultation"]');
 
 		// Add notes
-		await page.fill(
-			'[data-testid="appointment-notes"]',
-			"Consulta de rotina - verificar pressão arterial",
-		);
+		await page.fill('[data-testid="appointment-notes"]', "Consulta de rotina - verificar pressão arterial");
 
 		// Set duration
 		await page.click('[data-testid="duration-select"]');
@@ -78,19 +71,13 @@ test.describe("Complete Appointment Scheduling Flow", () => {
 		await page.click('[data-testid="save-appointment-btn"]');
 
 		// Should show success message
-		await expect(
-			page.locator("text=Consulta agendada com sucesso"),
-		).toBeVisible();
+		await expect(page.locator("text=Consulta agendada com sucesso")).toBeVisible();
 
 		// Should close modal
-		await expect(
-			page.locator('[data-testid="appointment-form-modal"]'),
-		).toBeHidden();
+		await expect(page.locator('[data-testid="appointment-form-modal"]')).toBeHidden();
 
 		// Should see appointment in calendar
-		await expect(
-			page.locator(`[data-testid="appointment-${tomorrowStr}"]`),
-		).toBeVisible();
+		await expect(page.locator(`[data-testid="appointment-${tomorrowStr}"]`)).toBeVisible();
 		await expect(page.locator("text=João Silva")).toBeVisible();
 	});
 
@@ -118,12 +105,8 @@ test.describe("Complete Appointment Scheduling Flow", () => {
 		await page.click('[data-testid="save-appointment-btn"]');
 
 		// Should show conflict warning
-		await expect(
-			page.locator('[data-testid="conflict-warning"]'),
-		).toBeVisible();
-		await expect(
-			page.locator("text=Conflito de horário detectado"),
-		).toBeVisible();
+		await expect(page.locator('[data-testid="conflict-warning"]')).toBeVisible();
+		await expect(page.locator("text=Conflito de horário detectado")).toBeVisible();
 
 		// Should suggest alternative times
 		await expect(page.locator('[data-testid="suggested-times"]')).toBeVisible();
@@ -135,9 +118,7 @@ test.describe("Complete Appointment Scheduling Flow", () => {
 		await page.click('[data-testid="save-appointment-btn"]');
 
 		// Should succeed
-		await expect(
-			page.locator("text=Consulta agendada com sucesso"),
-		).toBeVisible();
+		await expect(page.locator("text=Consulta agendada com sucesso")).toBeVisible();
 	});
 
 	test("should edit existing appointment", async ({ page }) => {
@@ -151,35 +132,26 @@ test.describe("Complete Appointment Scheduling Flow", () => {
 		await page.click(`[data-testid="appointment-${tomorrowStr}"]`);
 
 		// Should open appointment details modal
-		await expect(
-			page.locator('[data-testid="appointment-details-modal"]'),
-		).toBeVisible();
+		await expect(page.locator('[data-testid="appointment-details-modal"]')).toBeVisible();
 
 		// Click edit
 		await page.click('[data-testid="edit-appointment-btn"]');
 
 		// Should switch to edit mode
-		await expect(
-			page.locator('[data-testid="appointment-form-modal"]'),
-		).toBeVisible();
+		await expect(page.locator('[data-testid="appointment-form-modal"]')).toBeVisible();
 
 		// Change appointment time
 		await page.click('[data-testid="appointment-time"]');
 		await page.click('[data-testid="time-option-10-00"]');
 
 		// Update notes
-		await page.fill(
-			'[data-testid="appointment-notes"]',
-			"Consulta de rotina - verificar pressão arterial e peso",
-		);
+		await page.fill('[data-testid="appointment-notes"]', "Consulta de rotina - verificar pressão arterial e peso");
 
 		// Save changes
 		await page.click('[data-testid="save-appointment-btn"]');
 
 		// Should show success message
-		await expect(
-			page.locator("text=Consulta atualizada com sucesso"),
-		).toBeVisible();
+		await expect(page.locator("text=Consulta atualizada com sucesso")).toBeVisible();
 
 		// Should see updated time in calendar
 		await expect(page.locator("text=10:00")).toBeVisible();
@@ -199,19 +171,14 @@ test.describe("Complete Appointment Scheduling Flow", () => {
 		await page.click('[data-testid="cancel-appointment-btn"]');
 
 		// Should show cancellation confirmation
-		await expect(
-			page.locator('[data-testid="cancel-confirmation-modal"]'),
-		).toBeVisible();
+		await expect(page.locator('[data-testid="cancel-confirmation-modal"]')).toBeVisible();
 
 		// Select cancellation reason
 		await page.click('[data-testid="cancellation-reason-select"]');
 		await page.click('[data-testid="reason-patient-request"]');
 
 		// Add cancellation notes
-		await page.fill(
-			'[data-testid="cancellation-notes"]',
-			"Paciente solicitou reagendamento",
-		);
+		await page.fill('[data-testid="cancellation-notes"]', "Paciente solicitou reagendamento");
 
 		// Option to notify patient
 		await page.check('[data-testid="notify-patient-checkbox"]');
@@ -220,14 +187,10 @@ test.describe("Complete Appointment Scheduling Flow", () => {
 		await page.click('[data-testid="confirm-cancellation-btn"]');
 
 		// Should show success message
-		await expect(
-			page.locator("text=Consulta cancelada com sucesso"),
-		).toBeVisible();
+		await expect(page.locator("text=Consulta cancelada com sucesso")).toBeVisible();
 
 		// Should remove appointment from calendar (or mark as cancelled)
-		await expect(
-			page.locator(`[data-testid="appointment-${tomorrowStr}"]`),
-		).toHaveClass(/cancelled/);
+		await expect(page.locator(`[data-testid="appointment-${tomorrowStr}"]`)).toHaveClass(/cancelled/);
 	});
 
 	test("should handle recurring appointments", async ({ page }) => {
@@ -263,9 +226,7 @@ test.describe("Complete Appointment Scheduling Flow", () => {
 		await page.click('[data-testid="save-appointment-btn"]');
 
 		// Should show confirmation for series
-		await expect(
-			page.locator("text=Série de consultas criada com sucesso"),
-		).toBeVisible();
+		await expect(page.locator("text=Série de consultas criada com sucesso")).toBeVisible();
 
 		// Should see multiple appointments in calendar
 		await expect(page.locator('[data-testid^="appointment-"]')).toHaveCount(4);
@@ -285,9 +246,7 @@ test.describe("Complete Appointment Scheduling Flow", () => {
 		await page.click('[data-testid="reminders-tab"]');
 
 		// Should see reminder options
-		await expect(
-			page.locator('[data-testid="reminder-settings"]'),
-		).toBeVisible();
+		await expect(page.locator('[data-testid="reminder-settings"]')).toBeVisible();
 
 		// Enable SMS reminder
 		await page.check('[data-testid="sms-reminder-checkbox"]');
@@ -305,26 +264,18 @@ test.describe("Complete Appointment Scheduling Flow", () => {
 		await page.click('[data-testid="save-reminders-btn"]');
 
 		// Should show success message
-		await expect(
-			page.locator("text=Lembretes configurados com sucesso"),
-		).toBeVisible();
+		await expect(page.locator("text=Lembretes configurados com sucesso")).toBeVisible();
 
 		// Should display active reminders
-		await expect(
-			page.locator('[data-testid="active-reminders-list"]'),
-		).toContainText("SMS - 24h antes");
-		await expect(
-			page.locator('[data-testid="active-reminders-list"]'),
-		).toContainText("Email - 2h antes");
+		await expect(page.locator('[data-testid="active-reminders-list"]')).toContainText("SMS - 24h antes");
+		await expect(page.locator('[data-testid="active-reminders-list"]')).toContainText("Email - 2h antes");
 	});
 
 	test("should handle appointment check-in process", async ({ page }) => {
 		await page.goto("/appointments");
 
 		// Should see today's appointments
-		await expect(
-			page.locator('[data-testid="todays-appointments"]'),
-		).toBeVisible();
+		await expect(page.locator('[data-testid="todays-appointments"]')).toBeVisible();
 
 		// Click on appointment that's ready for check-in
 		await page.click('[data-testid="appointment-ready-checkin"]');
@@ -336,20 +287,14 @@ test.describe("Complete Appointment Scheduling Flow", () => {
 		await page.click('[data-testid="checkin-btn"]');
 
 		// Should update appointment status
-		await expect(
-			page.locator('[data-testid="appointment-status"]'),
-		).toContainText("Paciente Presente");
+		await expect(page.locator('[data-testid="appointment-status"]')).toContainText("Paciente Presente");
 
 		// Should show check-in time
 		await expect(page.locator('[data-testid="checkin-time"]')).toBeVisible();
 
 		// Should enable "Start Consultation" button
-		await expect(
-			page.locator('[data-testid="start-consultation-btn"]'),
-		).toBeVisible();
-		await expect(
-			page.locator('[data-testid="start-consultation-btn"]'),
-		).toBeEnabled();
+		await expect(page.locator('[data-testid="start-consultation-btn"]')).toBeVisible();
+		await expect(page.locator('[data-testid="start-consultation-btn"]')).toBeEnabled();
 	});
 
 	test("should handle no-show appointments", async ({ page }) => {
@@ -359,23 +304,16 @@ test.describe("Complete Appointment Scheduling Flow", () => {
 		await page.click('[data-testid="appointment-overdue"]');
 
 		// Should see no-show option
-		await expect(
-			page.locator('[data-testid="mark-no-show-btn"]'),
-		).toBeVisible();
+		await expect(page.locator('[data-testid="mark-no-show-btn"]')).toBeVisible();
 
 		// Mark as no-show
 		await page.click('[data-testid="mark-no-show-btn"]');
 
 		// Should show confirmation dialog
-		await expect(
-			page.locator('[data-testid="no-show-confirmation"]'),
-		).toBeVisible();
+		await expect(page.locator('[data-testid="no-show-confirmation"]')).toBeVisible();
 
 		// Add no-show reason
-		await page.fill(
-			'[data-testid="no-show-reason"]',
-			"Paciente não compareceu e não justificou ausência",
-		);
+		await page.fill('[data-testid="no-show-reason"]', "Paciente não compareceu e não justificou ausência");
 
 		// Option to charge no-show fee
 		await page.check('[data-testid="charge-no-show-fee-checkbox"]');
@@ -384,13 +322,9 @@ test.describe("Complete Appointment Scheduling Flow", () => {
 		await page.click('[data-testid="confirm-no-show-btn"]');
 
 		// Should update appointment status
-		await expect(
-			page.locator('[data-testid="appointment-status"]'),
-		).toContainText("Não Compareceu");
+		await expect(page.locator('[data-testid="appointment-status"]')).toContainText("Não Compareceu");
 
 		// Should show no-show fee in billing
-		await expect(
-			page.locator('[data-testid="billing-no-show-fee"]'),
-		).toBeVisible();
+		await expect(page.locator('[data-testid="billing-no-show-fee"]')).toBeVisible();
 	});
 });

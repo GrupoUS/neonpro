@@ -124,9 +124,7 @@ export class HealthcareDirectoryCleanup {
 
 			for (const filename of files) {
 				// Check if file should be preserved
-				const shouldPreserve = this.config.preservePatterns.some((pattern) =>
-					pattern.test(filename),
-				);
+				const shouldPreserve = this.config.preservePatterns.some((pattern) => pattern.test(filename));
 
 				if (shouldPreserve) {
 					this.preservedFiles.push(filename);
@@ -134,9 +132,7 @@ export class HealthcareDirectoryCleanup {
 				}
 
 				// Check if file matches removal patterns
-				const shouldRemove = this.config.patternsToRemove.some((pattern) =>
-					pattern.test(filename),
-				);
+				const shouldRemove = this.config.patternsToRemove.some((pattern) => pattern.test(filename));
 
 				if (shouldRemove) {
 					const filepath = join(this.config.rootPath, filename);

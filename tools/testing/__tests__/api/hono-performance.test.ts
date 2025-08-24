@@ -54,8 +54,7 @@ const createPerformanceApp = () => {
 			},
 			timestamp: new Date().toISOString(),
 			performance: {
-				withinThreshold:
-					responseTime < performanceMetrics.responseTimeThreshold,
+				withinThreshold: responseTime < performanceMetrics.responseTimeThreshold,
 			},
 		});
 	});
@@ -125,8 +124,7 @@ const createPerformanceApp = () => {
 			performance: {
 				processingTime,
 				queryTime: (analyticsData as any).queryTime,
-				withinThreshold:
-					processingTime < performanceMetrics.responseTimeThreshold,
+				withinThreshold: processingTime < performanceMetrics.responseTimeThreshold,
 			},
 		});
 	});
@@ -157,15 +155,11 @@ describe("⚡ NEONPRO Healthcare - Performance Validation", () => {
 			const responseTime = Math.round(endTime - startTime);
 
 			expect(res.status).toBe(200);
-			expect(responseTime).toBeLessThan(
-				performanceMetrics.responseTimeThreshold,
-			);
+			expect(responseTime).toBeLessThan(performanceMetrics.responseTimeThreshold);
 
 			const body = await res.json();
 			expect(body.performance.withinThreshold).toBe(true);
-			expect(body.responseTime).toBeLessThan(
-				performanceMetrics.responseTimeThreshold,
-			);
+			expect(body.responseTime).toBeLessThan(performanceMetrics.responseTimeThreshold);
 		});
 
 		it("should respond to fast endpoint within performance threshold", async () => {
@@ -190,9 +184,7 @@ describe("⚡ NEONPRO Healthcare - Performance Validation", () => {
 			const responseTime = Math.round(endTime - startTime);
 
 			expect(res.status).toBe(200);
-			expect(responseTime).toBeLessThan(
-				performanceMetrics.responseTimeThreshold,
-			);
+			expect(responseTime).toBeLessThan(performanceMetrics.responseTimeThreshold);
 
 			const body = await res.json();
 			expect(body.performance.withinThreshold).toBe(true);
@@ -207,16 +199,12 @@ describe("⚡ NEONPRO Healthcare - Performance Validation", () => {
 			const responseTime = Math.round(endTime - startTime);
 
 			expect(res.status).toBe(200);
-			expect(responseTime).toBeLessThan(
-				performanceMetrics.responseTimeThreshold,
-			);
+			expect(responseTime).toBeLessThan(performanceMetrics.responseTimeThreshold);
 
 			const body = await res.json();
 			expect(body.metrics).toBeDefined();
 			expect(body.charts).toHaveLength(12);
-			expect(body.performance.processingTime).toBeLessThan(
-				performanceMetrics.responseTimeThreshold,
-			);
+			expect(body.performance.processingTime).toBeLessThan(performanceMetrics.responseTimeThreshold);
 		});
 	});
 
@@ -226,9 +214,7 @@ describe("⚡ NEONPRO Healthcare - Performance Validation", () => {
 			const startTime = performance.now();
 
 			// Create array of concurrent requests
-			const requestPromises = Array.from({ length: concurrentRequests }, () =>
-				app.request("/api/v1/fast"),
-			);
+			const requestPromises = Array.from({ length: concurrentRequests }, () => app.request("/api/v1/fast"));
 
 			const responses = await Promise.all(requestPromises);
 			const endTime = performance.now();
@@ -242,9 +228,7 @@ describe("⚡ NEONPRO Healthcare - Performance Validation", () => {
 			});
 
 			// Average time should be reasonable
-			expect(avgTimePerRequest).toBeLessThan(
-				performanceMetrics.avgResponseTimeThreshold,
-			);
+			expect(avgTimePerRequest).toBeLessThan(performanceMetrics.avgResponseTimeThreshold);
 		});
 
 		it("should maintain performance under moderate load", async () => {
@@ -254,13 +238,10 @@ describe("⚡ NEONPRO Healthcare - Performance Validation", () => {
 			const startTime = performance.now();
 
 			// Mix of different endpoints
-			const requestPromises = Array.from(
-				{ length: concurrentRequests },
-				(_, i) => {
-					const endpoint = endpoints[i % endpoints.length];
-					return app.request(endpoint);
-				},
-			);
+			const requestPromises = Array.from({ length: concurrentRequests }, (_, i) => {
+				const endpoint = endpoints[i % endpoints.length];
+				return app.request(endpoint);
+			});
 
 			const responses = await Promise.all(requestPromises);
 			const endTime = performance.now();
@@ -301,9 +282,7 @@ describe("⚡ NEONPRO Healthcare - Performance Validation", () => {
 			const body = await res.json();
 
 			expect(res.status).toBe(200);
-			expect(body.performance.processingTime).toBeLessThan(
-				performanceMetrics.responseTimeThreshold,
-			);
+			expect(body.performance.processingTime).toBeLessThan(performanceMetrics.responseTimeThreshold);
 			expect(body.metrics).toBeDefined();
 			expect(body.charts).toBeDefined();
 		});
@@ -324,13 +303,10 @@ describe("⚡ NEONPRO Healthcare - Performance Validation", () => {
 			await Promise.all(operations);
 
 			const finalMemory = process.memoryUsage();
-			const memoryIncrease =
-				(finalMemory.heapUsed - initialMemory.heapUsed) / 1024 / 1024; // MB
+			const memoryIncrease = (finalMemory.heapUsed - initialMemory.heapUsed) / 1024 / 1024; // MB
 
 			// Memory increase should be minimal
-			expect(memoryIncrease).toBeLessThan(
-				performanceMetrics.memoryUsageThreshold,
-			);
+			expect(memoryIncrease).toBeLessThan(performanceMetrics.memoryUsageThreshold);
 		});
 
 		it("should handle garbage collection efficiently during stress", async () => {
@@ -348,12 +324,9 @@ describe("⚡ NEONPRO Healthcare - Performance Validation", () => {
 			}
 
 			const finalMemory = process.memoryUsage();
-			const memoryIncrease =
-				(finalMemory.heapUsed - initialMemory.heapUsed) / 1024 / 1024;
+			const memoryIncrease = (finalMemory.heapUsed - initialMemory.heapUsed) / 1024 / 1024;
 
-			expect(memoryIncrease).toBeLessThan(
-				performanceMetrics.memoryUsageThreshold,
-			);
+			expect(memoryIncrease).toBeLessThan(performanceMetrics.memoryUsageThreshold);
 		});
 	});
 
@@ -388,8 +361,7 @@ describe("⚡ NEONPRO Healthcare - Performance Validation", () => {
 			const endTime = performance.now();
 
 			const totalTime = Math.round(endTime - startTime);
-			const successRate =
-				responses.filter((res) => res.status === 200).length / peakRequests;
+			const successRate = responses.filter((res) => res.status === 200).length / peakRequests;
 
 			expect(successRate).toBeGreaterThan(0.95); // 95% success rate minimum
 			expect(totalTime).toBeLessThan(8000); // Should complete within 8 seconds
@@ -425,9 +397,7 @@ describe("⚡ NEONPRO Healthcare - Performance Validation", () => {
 
 			// Spike phase
 			const spikeStartTime = performance.now();
-			const spikePromises = Array.from({ length: spikeRequests }, () =>
-				app.request("/api/v1/patients"),
-			);
+			const spikePromises = Array.from({ length: spikeRequests }, () => app.request("/api/v1/patients"));
 
 			const spikeResponses = await Promise.all(spikePromises);
 			const spikeEndTime = performance.now();
@@ -437,20 +407,14 @@ describe("⚡ NEONPRO Healthcare - Performance Validation", () => {
 
 			// Normal load phase
 			const normalStartTime = performance.now();
-			const normalPromises = Array.from({ length: normalRequests }, () =>
-				app.request("/api/v1/fast"),
-			);
+			const normalPromises = Array.from({ length: normalRequests }, () => app.request("/api/v1/fast"));
 
 			const normalResponses = await Promise.all(normalPromises);
 			const normalEndTime = performance.now();
 
 			// Both phases should succeed
-			const spikeSuccessRate =
-				spikeResponses.filter((res) => res.status === 200).length /
-				spikeRequests;
-			const normalSuccessRate =
-				normalResponses.filter((res) => res.status === 200).length /
-				normalRequests;
+			const spikeSuccessRate = spikeResponses.filter((res) => res.status === 200).length / spikeRequests;
+			const normalSuccessRate = normalResponses.filter((res) => res.status === 200).length / normalRequests;
 
 			expect(spikeSuccessRate).toBeGreaterThan(0.9); // 90% during spike
 			expect(normalSuccessRate).toBeGreaterThan(0.95); // Should recover to 95%

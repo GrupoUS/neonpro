@@ -54,9 +54,7 @@ export class HealthcareE2ETester {
 		};
 
 		const allStepsSuccessful = Object.values(journeySteps).every(Boolean);
-		const score = allStepsSuccessful
-			? 9.9
-			: this.calculateJourneyScore(journeySteps);
+		const score = allStepsSuccessful ? 9.9 : this.calculateJourneyScore(journeySteps);
 
 		this.testResults.set("patient_journey", {
 			score,
@@ -94,9 +92,7 @@ export class HealthcareE2ETester {
 		};
 
 		const allStepsSuccessful = Object.values(workflowSteps).every(Boolean);
-		const score = allStepsSuccessful
-			? 9.9
-			: this.calculateWorkflowScore(workflowSteps);
+		const score = allStepsSuccessful ? 9.9 : this.calculateWorkflowScore(workflowSteps);
 
 		this.testResults.set("professional_workflow", {
 			score,
@@ -133,9 +129,7 @@ export class HealthcareE2ETester {
 		};
 
 		const allAreasOperational = Object.values(operationalAreas).every(Boolean);
-		const score = allAreasOperational
-			? 9.9
-			: this.calculateOperationsScore(operationalAreas);
+		const score = allAreasOperational ? 9.9 : this.calculateOperationsScore(operationalAreas);
 
 		this.testResults.set("clinic_operations", {
 			score,
@@ -149,8 +143,7 @@ export class HealthcareE2ETester {
 			success: allAreasOperational,
 			score,
 			operationalAreas,
-			operationalEfficiency:
-				this.calculateOperationalEfficiency(operationalAreas),
+			operationalEfficiency: this.calculateOperationalEfficiency(operationalAreas),
 			costOptimization: this.calculateCostOptimization(operationalAreas),
 		};
 	}
@@ -211,9 +204,7 @@ export class HealthcareE2ETester {
 		};
 
 		const allProtocolsEffective = Object.values(protocols).every(Boolean);
-		const score = allProtocolsEffective
-			? 9.9
-			: this.calculateProtocolScore(protocols);
+		const score = allProtocolsEffective ? 9.9 : this.calculateProtocolScore(protocols);
 
 		this.testResults.set("emergency_protocols", {
 			score,
@@ -250,9 +241,7 @@ export class HealthcareE2ETester {
 		};
 
 		const allStepsCompliant = Object.values(complianceSteps).every(Boolean);
-		const score = allStepsCompliant
-			? 9.9
-			: this.calculateComplianceScore(complianceSteps);
+		const score = allStepsCompliant ? 9.9 : this.calculateComplianceScore(complianceSteps);
 
 		this.testResults.set("compliance_flow", {
 			score,
@@ -284,11 +273,8 @@ export class HealthcareE2ETester {
 			backupIntegration: await this.testBackupIntegration(),
 		};
 
-		const allIntegrationsWorking =
-			Object.values(integrationTests).every(Boolean);
-		const score = allIntegrationsWorking
-			? 9.9
-			: this.calculateIntegrationScore(integrationTests);
+		const allIntegrationsWorking = Object.values(integrationTests).every(Boolean);
+		const score = allIntegrationsWorking ? 9.9 : this.calculateIntegrationScore(integrationTests);
 
 		this.testResults.set("system_integration", {
 			score,
@@ -507,9 +493,7 @@ export class HealthcareE2ETester {
 		return Object.values(steps).every(Boolean) ? 80 : 40; // 80% error reduction target
 	}
 
-	private calculateOperationalEfficiency(
-		areas: Record<string, boolean>,
-	): number {
+	private calculateOperationalEfficiency(areas: Record<string, boolean>): number {
 		return Object.values(areas).every(Boolean) ? 85 : 50;
 	}
 
@@ -517,9 +501,7 @@ export class HealthcareE2ETester {
 		return Object.values(areas).every(Boolean) ? 30 : 15; // 30% cost optimization target
 	}
 
-	private calculateSchedulingEfficiency(
-		steps: Record<string, boolean>,
-	): number {
+	private calculateSchedulingEfficiency(steps: Record<string, boolean>): number {
 		return Object.values(steps).every(Boolean) ? 95 : 70;
 	}
 
@@ -531,15 +513,11 @@ export class HealthcareE2ETester {
 		return Object.values(protocols).every(Boolean) ? 120 : 300; // seconds
 	}
 
-	private calculatePatientSafetyScore(
-		protocols: Record<string, boolean>,
-	): number {
+	private calculatePatientSafetyScore(protocols: Record<string, boolean>): number {
 		return Object.values(protocols).every(Boolean) ? 9.9 : 8.0;
 	}
 
-	private calculateOverallComplianceScore(
-		steps: Record<string, boolean>,
-	): number {
+	private calculateOverallComplianceScore(steps: Record<string, boolean>): number {
 		return Object.values(steps).every(Boolean) ? 9.9 : 7.0;
 	}
 
@@ -714,8 +692,7 @@ export class HealthcareE2ETester {
 	// Public reporting methods
 	generateE2EReport(): HealthcareE2EReport {
 		const results = Array.from(this.testResults.values());
-		const averageScore =
-			results.reduce((sum, r) => sum + r.score, 0) / results.length;
+		const averageScore = results.reduce((sum, r) => sum + r.score, 0) / results.length;
 		const allPassed = results.every((r) => r.passed);
 
 		return {
@@ -736,27 +713,19 @@ export class HealthcareE2ETester {
 			if (!result.passed) {
 				switch (testName) {
 					case "patient_journey":
-						recommendations.push(
-							"Improve patient journey experience and anxiety reduction",
-						);
+						recommendations.push("Improve patient journey experience and anxiety reduction");
 						break;
 					case "professional_workflow":
-						recommendations.push(
-							"Optimize healthcare professional workflow efficiency",
-						);
+						recommendations.push("Optimize healthcare professional workflow efficiency");
 						break;
 					case "clinic_operations":
 						recommendations.push("Enhance clinic operational procedures");
 						break;
 					case "appointment_flow":
-						recommendations.push(
-							"Streamline appointment scheduling and management",
-						);
+						recommendations.push("Streamline appointment scheduling and management");
 						break;
 					case "emergency_protocols":
-						recommendations.push(
-							"Review and improve emergency response protocols",
-						);
+						recommendations.push("Review and improve emergency response protocols");
 						break;
 					case "compliance_flow":
 						recommendations.push("Strengthen regulatory compliance processes");
@@ -787,10 +756,7 @@ class E2ETestEnvironment {
 }
 
 // Test Suite Creation Functions
-export function createHealthcareE2ETestSuite(
-	testName: string,
-	testFn: () => void | Promise<void>,
-) {
+export function createHealthcareE2ETestSuite(testName: string, testFn: () => void | Promise<void>) {
 	return describe(`Healthcare E2E: ${testName}`, () => {
 		let e2eTester: HealthcareE2ETester;
 

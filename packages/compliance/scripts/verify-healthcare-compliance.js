@@ -18,20 +18,12 @@ const COMPLIANCE_FRAMEWORKS = {
 	ANVISA: {
 		name: "Agência Nacional de Vigilância Sanitária",
 		tasks: ["compliance:anvisa"],
-		requirements: [
-			"treatment validation",
-			"medical device compliance",
-			"safety protocols",
-		],
+		requirements: ["treatment validation", "medical device compliance", "safety protocols"],
 	},
 	CFM: {
 		name: "Conselho Federal de Medicina",
 		tasks: ["compliance:cfm"],
-		requirements: [
-			"medical professional validation",
-			"telemedicine compliance",
-			"patient privacy",
-		],
+		requirements: ["medical professional validation", "telemedicine compliance", "patient privacy"],
 	},
 };
 
@@ -70,14 +62,11 @@ async function verifyCompliance() {
 			}
 
 			// Check if all tasks passed for this framework
-			results[frameworkKey].status = results[frameworkKey].details.every(
-				(detail) => detail.status === "passed",
-			);
+			results[frameworkKey].status = results[frameworkKey].details.every((detail) => detail.status === "passed");
 		}
 
 		// Overall compliance status
-		results.overall =
-			results.lgpd.status && results.anvisa.status && results.cfm.status;
+		results.overall = results.lgpd.status && results.anvisa.status && results.cfm.status;
 
 		// Generate compliance report
 		generateComplianceReport(results);
@@ -100,37 +89,26 @@ function generateComplianceReport(results) {
 		recommendations: generateComplianceRecommendations(results),
 	};
 
-	fs.writeFileSync(
-		path.join(process.cwd(), "compliance-report.json"),
-		JSON.stringify(report, null, 2),
-	);
+	fs.writeFileSync(path.join(process.cwd(), "compliance-report.json"), JSON.stringify(report, null, 2));
 }
 
 function generateComplianceRecommendations(results) {
 	const recommendations = [];
 
 	if (!results.lgpd.status) {
-		recommendations.push(
-			"LGPD: Review data protection and privacy compliance measures",
-		);
+		recommendations.push("LGPD: Review data protection and privacy compliance measures");
 	}
 
 	if (!results.anvisa.status) {
-		recommendations.push(
-			"ANVISA: Validate medical treatment and device compliance",
-		);
+		recommendations.push("ANVISA: Validate medical treatment and device compliance");
 	}
 
 	if (!results.cfm.status) {
-		recommendations.push(
-			"CFM: Ensure medical professional and telemedicine compliance",
-		);
+		recommendations.push("CFM: Ensure medical professional and telemedicine compliance");
 	}
 
 	if (!results.overall) {
-		recommendations.push(
-			"CRITICAL: Immediate compliance review required before production deployment",
-		);
+		recommendations.push("CRITICAL: Immediate compliance review required before production deployment");
 	}
 
 	return recommendations;

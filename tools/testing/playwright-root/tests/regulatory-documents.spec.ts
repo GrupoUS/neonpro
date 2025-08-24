@@ -10,17 +10,13 @@ test.describe("Regulatory Documents Dashboard Integration", () => {
 		await expect(page).toHaveURL(/.*\/dashboard/);
 	});
 
-	test("should navigate to regulatory documents from dashboard", async ({
-		page,
-	}) => {
+	test("should navigate to regulatory documents from dashboard", async ({ page }) => {
 		// Test dashboard navigation
 		await page.getByTestId("nav-regulatory-documents").click();
 		await expect(page).toHaveURL(/.*\/dashboard\/regulatory-documents/);
 
 		// Verify breadcrumb navigation
-		await expect(page.getByTestId("breadcrumb")).toContainText(
-			"Regulatory Documents",
-		);
+		await expect(page.getByTestId("breadcrumb")).toContainText("Regulatory Documents");
 
 		// Verify page loads with proper components
 		await expect(page.getByTestId("regulatory-documents-list")).toBeVisible();
@@ -32,16 +28,12 @@ test.describe("Regulatory Documents Dashboard Integration", () => {
 
 		// Add new document
 		await page.getByTestId("add-document-button").click();
-		await page
-			.getByTestId("document-title-input")
-			.fill("ANVISA Compliance Document");
+		await page.getByTestId("document-title-input").fill("ANVISA Compliance Document");
 		await page.getByTestId("document-category-select").selectOption("ANVISA");
 		await page.getByTestId("document-type-select").selectOption("regulamento");
 
 		// Test file upload
-		await page
-			.getByTestId("file-upload-input")
-			.setInputFiles("playwright/fixtures/test-document.pdf");
+		await page.getByTestId("file-upload-input").setInputFiles("playwright/fixtures/test-document.pdf");
 		await expect(page.getByTestId("upload-progress")).toBeVisible();
 
 		// Set expiration date
@@ -51,12 +43,8 @@ test.describe("Regulatory Documents Dashboard Integration", () => {
 		await page.getByTestId("submit-document-button").click();
 
 		// Verify success
-		await expect(page.getByTestId("success-message")).toContainText(
-			"Document created successfully",
-		);
-		await expect(page.getByTestId("regulatory-documents-list")).toContainText(
-			"ANVISA Compliance Document",
-		);
+		await expect(page.getByTestId("success-message")).toContainText("Document created successfully");
+		await expect(page.getByTestId("regulatory-documents-list")).toContainText("ANVISA Compliance Document");
 	});
 
 	test("should display expiration alerts", async ({ page }) => {
@@ -78,11 +66,7 @@ test.describe("Regulatory Documents Dashboard Integration", () => {
 		await page.getByTestId("submit-document-button").click();
 
 		// Verify validation errors
-		await expect(page.getByTestId("title-error")).toContainText(
-			"Title is required",
-		);
-		await expect(page.getByTestId("category-error")).toContainText(
-			"Category is required",
-		);
+		await expect(page.getByTestId("title-error")).toContainText("Title is required");
+		await expect(page.getByTestId("category-error")).toContainText("Category is required");
 	});
 });

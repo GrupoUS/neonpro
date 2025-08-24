@@ -69,21 +69,14 @@ export const healthEndpoint: EndpointConfig = {
 		};
 
 		// Determine overall status
-		const serviceStatuses = Object.values(healthCheck.services).map(
-			(s) => s.status,
-		);
+		const serviceStatuses = Object.values(healthCheck.services).map((s) => s.status);
 		if (serviceStatuses.includes("down")) {
 			healthCheck.status = "unhealthy";
 		} else if (serviceStatuses.includes("degraded")) {
 			healthCheck.status = "degraded";
 		}
 
-		const statusCode =
-			healthCheck.status === "healthy"
-				? 200
-				: healthCheck.status === "degraded"
-					? 200
-					: 503;
+		const statusCode = healthCheck.status === "healthy" ? 200 : healthCheck.status === "degraded" ? 200 : 503;
 
 		return res.status(statusCode).json(healthCheck);
 	},
@@ -193,12 +186,8 @@ export const alertsEndpoint: EndpointConfig = {
 
 		const generateAlert = (id: number) => ({
 			id: `alert_${id}`,
-			type: ["error", "warning", "info", "critical"][
-				Math.floor(Math.random() * 4)
-			],
-			severity:
-				severity ||
-				["low", "medium", "high", "critical"][Math.floor(Math.random() * 4)],
+			type: ["error", "warning", "info", "critical"][Math.floor(Math.random() * 4)],
+			severity: severity || ["low", "medium", "high", "critical"][Math.floor(Math.random() * 4)],
 			message: [
 				"High CPU usage detected",
 				"Memory threshold exceeded",
@@ -207,28 +196,19 @@ export const alertsEndpoint: EndpointConfig = {
 				"SSL certificate expiring soon",
 				"Unusual traffic pattern detected",
 			][Math.floor(Math.random() * 6)],
-			source: ["system", "application", "security", "infrastructure"][
-				Math.floor(Math.random() * 4)
-			],
+			source: ["system", "application", "security", "infrastructure"][Math.floor(Math.random() * 4)],
 			timestamp: Date.now() - Math.random() * 3_600_000, // Random time within last hour
-			status:
-				status === "all"
-					? ["active", "resolved"][Math.floor(Math.random() * 2)]
-					: status,
+			status: status === "all" ? ["active", "resolved"][Math.floor(Math.random() * 2)] : status,
 			acknowledged: Math.random() > 0.7,
 			resolved: status === "resolved" || Math.random() > 0.8,
 		});
 
-		const alerts = Array.from(
-			{ length: Math.min(Number.parseInt(limit as string, 10), 50) },
-			(_, i) => generateAlert(i),
+		const alerts = Array.from({ length: Math.min(Number.parseInt(limit as string, 10), 50) }, (_, i) =>
+			generateAlert(i)
 		);
 
 		return res.json({
-			alerts:
-				status === "all"
-					? alerts
-					: alerts.filter((alert) => alert.status === status),
+			alerts: status === "all" ? alerts : alerts.filter((alert) => alert.status === status),
 			total: alerts.length,
 			filters: { status, limit, severity },
 		});
@@ -245,15 +225,8 @@ export const logsEndpoint: EndpointConfig = {
 		const generateLog = (id: number) => ({
 			id: `log_${id}`,
 			timestamp: new Date(Date.now() - Math.random() * 3_600_000).toISOString(),
-			level:
-				level === "all"
-					? ["debug", "info", "warn", "error"][Math.floor(Math.random() * 4)]
-					: level,
-			service:
-				service ||
-				["api", "auth", "database", "monitoring"][
-					Math.floor(Math.random() * 4)
-				],
+			level: level === "all" ? ["debug", "info", "warn", "error"][Math.floor(Math.random() * 4)] : level,
+			service: service || ["api", "auth", "database", "monitoring"][Math.floor(Math.random() * 4)],
 			message: [
 				"Request processed successfully",
 				"User authentication completed",
@@ -270,16 +243,10 @@ export const logsEndpoint: EndpointConfig = {
 			},
 		});
 
-		const logs = Array.from(
-			{ length: Math.min(Number.parseInt(limit as string, 10), 100) },
-			(_, i) => generateLog(i),
-		);
+		const logs = Array.from({ length: Math.min(Number.parseInt(limit as string, 10), 100) }, (_, i) => generateLog(i));
 
 		return res.json({
-			logs: logs.sort(
-				(a, b) =>
-					new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
-			),
+			logs: logs.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()),
 			total: logs.length,
 			filters: { level, service, limit, start, end },
 		});
@@ -340,11 +307,7 @@ export const monitoringEndpoints: EndpointConfig[] = [
 // Utility to register endpoints with Express
 export const registerMonitoringEndpoints = (app: any) => {
 	monitoringEndpoints.forEach((endpoint) => {
-		const method = endpoint.method.toLowerCase() as
-			| "get"
-			| "post"
-			| "put"
-			| "delete";
+		const method = endpoint.method.toLowerCase() as "get" | "post" | "put" | "delete";
 
 		if (endpoint.middleware) {
 			app[method](endpoint.path, ...endpoint.middleware, endpoint.handler);

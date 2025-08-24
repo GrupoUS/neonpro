@@ -33,30 +33,18 @@ export class ComplianceTester {
 	}
 
 	// ANVISA RDC 185/2001 - Medical Device Registration
-	async validateMedicalDeviceRegistration(
-		device: MedicalDevice,
-	): Promise<DeviceValidationResult> {
+	async validateMedicalDeviceRegistration(device: MedicalDevice): Promise<DeviceValidationResult> {
 		const validationChecks = {
-			anvisaRegistration: await this.validateANVISARegistration(
-				device.registrationNumber,
-			),
-			technicalDocumentation: this.validateTechnicalDocumentation(
-				device.documentation,
-			),
-			qualityCertification: this.validateQualityCertification(
-				device.certifications,
-			),
+			anvisaRegistration: await this.validateANVISARegistration(device.registrationNumber),
+			technicalDocumentation: this.validateTechnicalDocumentation(device.documentation),
+			qualityCertification: this.validateQualityCertification(device.certifications),
 			clinicalEvidence: this.validateClinicalEvidence(device.clinicalData),
 			labelingCompliance: this.validateLabeling(device.labeling),
-			postMarketSurveillance: this.validatePostMarketSurveillance(
-				device.surveillance,
-			),
+			postMarketSurveillance: this.validatePostMarketSurveillance(device.surveillance),
 		};
 
 		const isCompliant = Object.values(validationChecks).every(Boolean);
-		const score = isCompliant
-			? 9.9
-			: this.calculatePartialScore(validationChecks);
+		const score = isCompliant ? 9.9 : this.calculatePartialScore(validationChecks);
 
 		this.testResults.set("medical_device_registration", {
 			score,
@@ -75,9 +63,7 @@ export class ComplianceTester {
 	}
 
 	// ANVISA RDC 4/2009 - Adverse Event Reporting
-	async validateAdverseEventReporting(
-		event: AdverseEvent,
-	): Promise<AdverseEventValidationResult> {
+	async validateAdverseEventReporting(event: AdverseEvent): Promise<AdverseEventValidationResult> {
 		const validationChecks = {
 			timelyReporting: this.validateReportingTimeline(event),
 			completeInformation: this.validateEventInformation(event),
@@ -88,9 +74,7 @@ export class ComplianceTester {
 		};
 
 		const isCompliant = Object.values(validationChecks).every(Boolean);
-		const score = isCompliant
-			? 9.9
-			: this.calculatePartialScore(validationChecks);
+		const score = isCompliant ? 9.9 : this.calculatePartialScore(validationChecks);
 
 		this.testResults.set("adverse_event_reporting", {
 			score,
@@ -109,13 +93,10 @@ export class ComplianceTester {
 	}
 
 	// ANVISA RDC 302/2005 - Aesthetic Procedure Classification
-	async validateAestheticProcedureClassification(
-		procedure: AestheticProcedure,
-	): Promise<ProcedureValidationResult> {
+	async validateAestheticProcedureClassification(procedure: AestheticProcedure): Promise<ProcedureValidationResult> {
 		const validationChecks = {
 			procedureClassification: this.validateProcedureClass(procedure),
-			professionalRequirements:
-				await this.validateProfessionalRequirements(procedure),
+			professionalRequirements: await this.validateProfessionalRequirements(procedure),
 			equipmentRequirements: this.validateEquipmentRequirements(procedure),
 			facilityRequirements: this.validateFacilityRequirements(procedure),
 			patientConsentRequirements: this.validatePatientConsent(procedure),
@@ -123,9 +104,7 @@ export class ComplianceTester {
 		};
 
 		const isCompliant = Object.values(validationChecks).every(Boolean);
-		const score = isCompliant
-			? 9.9
-			: this.calculatePartialScore(validationChecks);
+		const score = isCompliant ? 9.9 : this.calculatePartialScore(validationChecks);
 
 		this.testResults.set("aesthetic_procedure_classification", {
 			score,
@@ -144,28 +123,18 @@ export class ComplianceTester {
 	}
 
 	// ANVISA RDC 63/2011 - Sanitary License Requirements
-	async validateSanitaryLicense(
-		facility: HealthcareFacility,
-	): Promise<LicenseValidationResult> {
+	async validateSanitaryLicense(facility: HealthcareFacility): Promise<LicenseValidationResult> {
 		const validationChecks = {
 			currentLicense: this.validateCurrentLicense(facility.sanitaryLicense),
 			facilityInspection: await this.validateFacilityInspection(facility),
-			infrastructureCompliance: this.validateInfrastructure(
-				facility.infrastructure,
-			),
-			personnelQualification: this.validatePersonnelQualification(
-				facility.personnel,
-			),
-			infectionControl: this.validateInfectionControl(
-				facility.infectionControlPlan,
-			),
+			infrastructureCompliance: this.validateInfrastructure(facility.infrastructure),
+			personnelQualification: this.validatePersonnelQualification(facility.personnel),
+			infectionControl: this.validateInfectionControl(facility.infectionControlPlan),
 			wasteManagement: this.validateWasteManagement(facility.wasteManagement),
 		};
 
 		const isCompliant = Object.values(validationChecks).every(Boolean);
-		const score = isCompliant
-			? 9.9
-			: this.calculatePartialScore(validationChecks);
+		const score = isCompliant ? 9.9 : this.calculatePartialScore(validationChecks);
 
 		this.testResults.set("sanitary_license", {
 			score,
@@ -184,9 +153,7 @@ export class ComplianceTester {
 	}
 
 	// Quality Management System Validation
-	async validateQualityManagementSystem(
-		qms: QualityManagementSystem,
-	): Promise<QMSValidationResult> {
+	async validateQualityManagementSystem(qms: QualityManagementSystem): Promise<QMSValidationResult> {
 		if (!this.config.enableQualityManagement) {
 			return { isCompliant: true, score: 9.9, validationChecks: {} };
 		}
@@ -201,9 +168,7 @@ export class ComplianceTester {
 		};
 
 		const isCompliant = Object.values(validationChecks).every(Boolean);
-		const score = isCompliant
-			? 9.9
-			: this.calculatePartialScore(validationChecks);
+		const score = isCompliant ? 9.9 : this.calculatePartialScore(validationChecks);
 
 		this.testResults.set("quality_management_system", {
 			score,
@@ -217,9 +182,7 @@ export class ComplianceTester {
 	}
 
 	// Product Traceability Validation
-	async validateProductTraceability(
-		product: TraceableProduct,
-	): Promise<TraceabilityValidationResult> {
+	async validateProductTraceability(product: TraceableProduct): Promise<TraceabilityValidationResult> {
 		if (!this.config.enableTraceability) {
 			return { isCompliant: true, score: 9.9, validationChecks: {} };
 		}
@@ -227,18 +190,14 @@ export class ComplianceTester {
 		const validationChecks = {
 			uniqueIdentification: this.validateUniqueIdentification(product),
 			batchRecords: this.validateBatchRecords(product.batchRecords),
-			distributionRecords: this.validateDistributionRecords(
-				product.distributionRecords,
-			),
+			distributionRecords: this.validateDistributionRecords(product.distributionRecords),
 			serialization: this.validateSerialization(product.serialization),
 			recallCapability: await this.validateRecallCapability(product),
 			supplyChainVisibility: this.validateSupplyChainVisibility(product),
 		};
 
 		const isCompliant = Object.values(validationChecks).every(Boolean);
-		const score = isCompliant
-			? 9.9
-			: this.calculatePartialScore(validationChecks);
+		const score = isCompliant ? 9.9 : this.calculatePartialScore(validationChecks);
 
 		this.testResults.set("product_traceability", {
 			score,
@@ -257,18 +216,12 @@ export class ComplianceTester {
 	}
 
 	// Private validation methods
-	private async validateANVISARegistration(
-		registrationNumber: string,
-	): Promise<boolean> {
+	private async validateANVISARegistration(registrationNumber: string): Promise<boolean> {
 		// Mock ANVISA database check
-		return (
-			registrationNumber.length > 0 && registrationNumber.startsWith("REG-")
-		);
+		return registrationNumber.length > 0 && registrationNumber.startsWith("REG-");
 	}
 
-	private validateTechnicalDocumentation(
-		docs: TechnicalDocumentation,
-	): boolean {
+	private validateTechnicalDocumentation(docs: TechnicalDocumentation): boolean {
 		return (
 			docs.technicalFile !== null &&
 			docs.riskAnalysis !== null &&
@@ -279,20 +232,13 @@ export class ComplianceTester {
 
 	private validateQualityCertification(certs: Certification[]): boolean {
 		return (
-			certs.some(
-				(cert) => cert.type === "ISO13485" && cert.status === "valid",
-			) &&
-			certs.some(
-				(cert) => cert.type === "CE_MARKING" && cert.status === "valid",
-			)
+			certs.some((cert) => cert.type === "ISO13485" && cert.status === "valid") &&
+			certs.some((cert) => cert.type === "CE_MARKING" && cert.status === "valid")
 		);
 	}
 
 	private validateClinicalEvidence(clinicalData: ClinicalData[]): boolean {
-		return (
-			clinicalData.length > 0 &&
-			clinicalData.every((data) => data.ethicsApproval === true)
-		);
+		return clinicalData.length > 0 && clinicalData.every((data) => data.ethicsApproval === true);
 	}
 
 	private validateLabeling(labeling: ProductLabeling): boolean {
@@ -304,9 +250,7 @@ export class ComplianceTester {
 		);
 	}
 
-	private validatePostMarketSurveillance(
-		surveillance: PostMarketSurveillance,
-	): boolean {
+	private validatePostMarketSurveillance(surveillance: PostMarketSurveillance): boolean {
 		return (
 			surveillance.plan !== null &&
 			surveillance.periodicReports === true &&
@@ -338,8 +282,7 @@ export class ComplianceTester {
 	// Public reporting methods
 	generateANVISAComplianceReport(): ANVISAComplianceReport {
 		const results = Array.from(this.testResults.values());
-		const averageScore =
-			results.reduce((sum, r) => sum + r.score, 0) / results.length;
+		const averageScore = results.reduce((sum, r) => sum + r.score, 0) / results.length;
 		const allPassed = results.every((r) => r.passed);
 
 		return {
@@ -359,9 +302,7 @@ export class ComplianceTester {
 			if (!result.passed) {
 				switch (testName) {
 					case "medical_device_registration":
-						recommendations.push(
-							"Update medical device registration documentation",
-						);
+						recommendations.push("Update medical device registration documentation");
 						break;
 					case "adverse_event_reporting":
 						recommendations.push("Improve adverse event reporting procedures");
@@ -381,10 +322,7 @@ export class ComplianceTester {
 }
 
 // Test Suite Creation Functions
-export function createComplianceTestSuite(
-	testName: string,
-	testFn: () => void | Promise<void>,
-) {
+export function createComplianceTestSuite(testName: string, testFn: () => void | Promise<void>) {
 	return describe(`ANVISA Compliance: ${testName}`, () => {
 		let complianceTester: ComplianceTester;
 
@@ -414,11 +352,7 @@ export function createComplianceTestSuite(
 				clinicalData: [{ studyType: "clinical_trial", ethicsApproval: true }],
 				labeling: {
 					portugueseLanguage: true,
-					requiredInformation: [
-						"manufacturer",
-						"registration_number",
-						"intended_use",
-					],
+					requiredInformation: ["manufacturer", "registration_number", "intended_use"],
 				},
 				surveillance: {
 					plan: {},
@@ -427,8 +361,7 @@ export function createComplianceTestSuite(
 				},
 			};
 
-			const result =
-				await complianceTester.validateMedicalDeviceRegistration(mockDevice);
+			const result = await complianceTester.validateMedicalDeviceRegistration(mockDevice);
 			expect(result.isCompliant).toBe(true);
 			expect(result.score).toBeGreaterThanOrEqual(9.9);
 		});
@@ -438,15 +371,11 @@ export function createComplianceTestSuite(
 }
 
 // Utility Functions
-export async function validateRegulatoryCompliance(
-	regulatoryData: RegulatoryData,
-): Promise<boolean> {
+export async function validateRegulatoryCompliance(regulatoryData: RegulatoryData): Promise<boolean> {
 	const tester = new ComplianceTester();
 
 	if (regulatoryData.type === "medical_device") {
-		const result = await tester.validateMedicalDeviceRegistration(
-			regulatoryData as MedicalDevice,
-		);
+		const result = await tester.validateMedicalDeviceRegistration(regulatoryData as MedicalDevice);
 		return result.isCompliant;
 	}
 
@@ -454,7 +383,7 @@ export async function validateRegulatoryCompliance(
 }
 
 export async function testHealthcareCompliance(
-	_healthcareData: HealthcareComplianceData,
+	_healthcareData: HealthcareComplianceData
 ): Promise<ComplianceMetrics["anvisa"]> {
 	const tester = new ComplianceTester();
 
@@ -465,8 +394,7 @@ export async function testHealthcareCompliance(
 	]);
 
 	const scores = results.map((r) => r.score);
-	const averageScore =
-		scores.reduce((sum, score) => sum + score, 0) / scores.length;
+	const averageScore = scores.reduce((sum, score) => sum + score, 0) / scores.length;
 
 	return {
 		medicalDevice: scores[0],

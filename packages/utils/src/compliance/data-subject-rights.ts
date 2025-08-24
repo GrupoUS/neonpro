@@ -39,11 +39,7 @@ export class LGPDDataSubjectRights {
 		return LGPDDataSubjectRights.instance;
 	}
 
-	async requestDataAccess(
-		userId: string,
-		ipAddress: string,
-		details: string,
-	): Promise<DataSubjectRequest> {
+	async requestDataAccess(userId: string, ipAddress: string, details: string): Promise<DataSubjectRequest> {
 		const request: DataSubjectRequest = {
 			id: this.generateRequestId(),
 			userId,
@@ -60,11 +56,7 @@ export class LGPDDataSubjectRights {
 		return request;
 	}
 
-	async requestDataRectification(
-		userId: string,
-		ipAddress: string,
-		details: string,
-	): Promise<DataSubjectRequest> {
+	async requestDataRectification(userId: string, ipAddress: string, details: string): Promise<DataSubjectRequest> {
 		const request: DataSubjectRequest = {
 			id: this.generateRequestId(),
 			userId,
@@ -81,11 +73,7 @@ export class LGPDDataSubjectRights {
 		return request;
 	}
 
-	async requestDataDeletion(
-		userId: string,
-		ipAddress: string,
-		details: string,
-	): Promise<DataSubjectRequest> {
+	async requestDataDeletion(userId: string, ipAddress: string, details: string): Promise<DataSubjectRequest> {
 		const request: DataSubjectRequest = {
 			id: this.generateRequestId(),
 			userId,
@@ -105,7 +93,7 @@ export class LGPDDataSubjectRights {
 	async requestDataPortability(
 		userId: string,
 		ipAddress: string,
-		format: "json" | "csv" | "pdf" = "json",
+		format: "json" | "csv" | "pdf" = "json"
 	): Promise<DataSubjectRequest> {
 		const request: DataSubjectRequest = {
 			id: this.generateRequestId(),
@@ -123,10 +111,7 @@ export class LGPDDataSubjectRights {
 		return request;
 	}
 
-	async exportUserData(
-		userId: string,
-		format: "json" | "csv" | "pdf" = "json",
-	): Promise<PersonalDataExport> {
+	async exportUserData(userId: string, format: "json" | "csv" | "pdf" = "json"): Promise<PersonalDataExport> {
 		// Collect all user data from different sources
 		const exportData: PersonalDataExport = {
 			userId,
@@ -161,9 +146,7 @@ export class LGPDDataSubjectRights {
 		}
 	}
 
-	async getDataSubjectRequest(
-		_requestId: string,
-	): Promise<DataSubjectRequest | null> {
+	async getDataSubjectRequest(_requestId: string): Promise<DataSubjectRequest | null> {
 		// Implementation would query database
 		return null;
 	}
@@ -171,7 +154,7 @@ export class LGPDDataSubjectRights {
 	async updateRequestStatus(
 		_requestId: string,
 		_status: DataSubjectRequest["status"],
-		_details?: string,
+		_details?: string
 	): Promise<boolean> {
 		return true;
 	}
@@ -180,13 +163,9 @@ export class LGPDDataSubjectRights {
 		return `LGPD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 	}
 
-	private async storeDataSubjectRequest(
-		_request: DataSubjectRequest,
-	): Promise<void> {}
+	private async storeDataSubjectRequest(_request: DataSubjectRequest): Promise<void> {}
 
-	private async notifyDataProtectionOfficer(
-		_request: DataSubjectRequest,
-	): Promise<void> {}
+	private async notifyDataProtectionOfficer(_request: DataSubjectRequest): Promise<void> {}
 
 	// Data export methods
 	private async exportProfileData(userId: string): Promise<any> {

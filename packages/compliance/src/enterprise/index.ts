@@ -81,10 +81,7 @@ import {
 	type createPrivacyPreservingAnalyticsService,
 	validateEnterpriseAnalyticsCompliance,
 } from "./analytics";
-import {
-	createEnterpriseAuditServices,
-	validateEnterpriseAuditCompliance,
-} from "./audit";
+import { createEnterpriseAuditServices, validateEnterpriseAuditCompliance } from "./audit";
 import {
 	createMultiClinicManagementService,
 	validateMultiClinicManagement,
@@ -127,13 +124,9 @@ export {
 export function createEnterpriseHealthcareServices(config: {
 	supabaseClient: ReturnType<typeof createClient>;
 	analytics: {
-		privacyAnalytics: Parameters<
-			typeof createPrivacyPreservingAnalyticsService
-		>[0];
+		privacyAnalytics: Parameters<typeof createPrivacyPreservingAnalyticsService>[0];
 		complianceDashboard: Parameters<typeof createComplianceDashboardService>[0];
-		healthcareIntelligence: Parameters<
-			typeof createHealthcareIntelligenceService
-		>[0];
+		healthcareIntelligence: Parameters<typeof createHealthcareIntelligenceService>[0];
 	};
 	management: {
 		multiClinic: Parameters<typeof createMultiClinicManagementService>[0];
@@ -147,9 +140,7 @@ export function createEnterpriseHealthcareServices(config: {
 		audit: createEnterpriseAuditServices(config.supabaseClient),
 		analytics: createEnterpriseAnalyticsServices(config.analytics),
 		management: {
-			multiClinic: createMultiClinicManagementService(
-				config.management.multiClinic,
-			),
+			multiClinic: createMultiClinicManagementService(config.management.multiClinic),
 		},
 		security: createEnterpriseSecurityServices(config.security),
 	};
@@ -164,21 +155,15 @@ export async function validateEnterpriseHealthcareCompliance(
 	analyticsConfig: {
 		privacyQuery: Parameters<typeof validateEnterpriseAnalyticsCompliance>[0];
 		privacyConfig: Parameters<typeof validateEnterpriseAnalyticsCompliance>[1];
-		dashboardConfig: Parameters<
-			typeof validateEnterpriseAnalyticsCompliance
-		>[2];
-		intelligenceQuery: Parameters<
-			typeof validateEnterpriseAnalyticsCompliance
-		>[3];
-		intelligenceConfig: Parameters<
-			typeof validateEnterpriseAnalyticsCompliance
-		>[4];
+		dashboardConfig: Parameters<typeof validateEnterpriseAnalyticsCompliance>[2];
+		intelligenceQuery: Parameters<typeof validateEnterpriseAnalyticsCompliance>[3];
+		intelligenceConfig: Parameters<typeof validateEnterpriseAnalyticsCompliance>[4];
 	},
 	managementConfig: Parameters<typeof validateMultiClinicManagement>[0],
 	securityConfig: {
 		rbac: Parameters<typeof validateEnterpriseSecurityCompliance>[0];
 		rateLimiting: Parameters<typeof validateEnterpriseSecurityCompliance>[1];
-	},
+	}
 ): Promise<{
 	valid: boolean;
 	violations: string[];
@@ -212,14 +197,10 @@ export async function validateEnterpriseHealthcareCompliance(
 			analyticsConfig.privacyConfig,
 			analyticsConfig.dashboardConfig,
 			analyticsConfig.intelligenceQuery,
-			analyticsConfig.intelligenceConfig,
+			analyticsConfig.intelligenceConfig
 		);
 		if (!analyticsValidation.valid) {
-			violations.push(
-				...analyticsValidation.violations.map(
-					(v: string) => `Enterprise Analytics: ${v}`,
-				),
-			);
+			violations.push(...analyticsValidation.violations.map((v: string) => `Enterprise Analytics: ${v}`));
 		}
 		moduleScores.analytics = analyticsValidation.compliance_score;
 	} catch (error) {
@@ -229,14 +210,9 @@ export async function validateEnterpriseHealthcareCompliance(
 
 	// Validate Enterprise Management compliance
 	try {
-		const managementValidation =
-			await validateMultiClinicManagement(managementConfig);
+		const managementValidation = await validateMultiClinicManagement(managementConfig);
 		if (!managementValidation.valid) {
-			violations.push(
-				...managementValidation.violations.map(
-					(v: string) => `Enterprise Management: ${v}`,
-				),
-			);
+			violations.push(...managementValidation.violations.map((v: string) => `Enterprise Management: ${v}`));
 		}
 		moduleScores.management = managementValidation.valid ? 10 : 8;
 	} catch (error) {
@@ -248,14 +224,10 @@ export async function validateEnterpriseHealthcareCompliance(
 	try {
 		const securityValidation = await validateEnterpriseSecurityCompliance(
 			securityConfig.rbac,
-			securityConfig.rateLimiting,
+			securityConfig.rateLimiting
 		);
 		if (!securityValidation.valid) {
-			violations.push(
-				...securityValidation.violations.map(
-					(v: string) => `Enterprise Security: ${v}`,
-				),
-			);
+			violations.push(...securityValidation.violations.map((v: string) => `Enterprise Security: ${v}`));
 		}
 		moduleScores.security = securityValidation.compliance_score;
 	} catch (error) {
@@ -264,8 +236,7 @@ export async function validateEnterpriseHealthcareCompliance(
 	}
 
 	// Calculate overall compliance score
-	const averageScore =
-		Object.values(moduleScores).reduce((sum, score) => sum + score, 0) / 4;
+	const averageScore = Object.values(moduleScores).reduce((sum, score) => sum + score, 0) / 4;
 
 	return {
 		valid: violations.length === 0 && averageScore >= 9.9,
@@ -294,8 +265,7 @@ export const ENTERPRISE_HEALTHCARE_MODULE = {
 		audit: {
 			name: "Enterprise Audit",
 			services: 3,
-			description:
-				"Real-time compliance monitoring, scoring, and audit trail generation",
+			description: "Real-time compliance monitoring, scoring, and audit trail generation",
 			constitutional_features: [
 				"Real-time constitutional compliance monitoring",
 				"Automated compliance scoring with ≥9.9/10 standards",
@@ -305,8 +275,7 @@ export const ENTERPRISE_HEALTHCARE_MODULE = {
 		analytics: {
 			name: "Enterprise Analytics",
 			services: 3,
-			description:
-				"Privacy-preserving analytics, compliance dashboard, and healthcare intelligence",
+			description: "Privacy-preserving analytics, compliance dashboard, and healthcare intelligence",
 			constitutional_features: [
 				"Privacy-preserving patient analytics with differential privacy",
 				"Real-time compliance monitoring dashboard",
@@ -316,8 +285,7 @@ export const ENTERPRISE_HEALTHCARE_MODULE = {
 		management: {
 			name: "Enterprise Management",
 			services: 1,
-			description:
-				"Multi-clinic and multi-tenant management with regulatory compliance",
+			description: "Multi-clinic and multi-tenant management with regulatory compliance",
 			constitutional_features: [
 				"Constitutional healthcare multi-clinic management",
 				"Tenant isolation with LGPD compliance",
@@ -327,8 +295,7 @@ export const ENTERPRISE_HEALTHCARE_MODULE = {
 		security: {
 			name: "Enterprise Security",
 			services: 2,
-			description:
-				"Healthcare RBAC and API rate limiting with constitutional protection",
+			description: "Healthcare RBAC and API rate limiting with constitutional protection",
 			constitutional_features: [
 				"Constitutional healthcare access control with CFM validation",
 				"API protection with healthcare priority routing",

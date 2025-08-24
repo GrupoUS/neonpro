@@ -2,10 +2,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { toast } from "sonner";
 import { vi } from "vitest";
 import ProfessionalForm from "@/components/dashboard/ProfessionalForm";
-import {
-	createProfessional,
-	updateProfessional,
-} from "@/lib/supabase/professionals";
+import { createProfessional, updateProfessional } from "@/lib/supabase/professionals";
 
 // Mock the dependencies
 vi.mock("next/navigation", () => ({
@@ -63,18 +60,14 @@ describe("ProfessionalForm", () => {
 			render(<ProfessionalForm />);
 
 			expect(screen.getByText("Cadastrar Profissional")).toBeInTheDocument();
-			expect(
-				screen.getByText("Preencha as informações do profissional"),
-			).toBeInTheDocument();
+			expect(screen.getByText("Preencha as informações do profissional")).toBeInTheDocument();
 		});
 
 		it("should render form title for editing professional", () => {
 			render(<ProfessionalForm professional={mockProfessional} />);
 
 			expect(screen.getByText("Editar Profissional")).toBeInTheDocument();
-			expect(
-				screen.getByText("Atualize as informações do profissional"),
-			).toBeInTheDocument();
+			expect(screen.getByText("Atualize as informações do profissional")).toBeInTheDocument();
 		});
 
 		it("should render all form sections", () => {
@@ -115,12 +108,8 @@ describe("ProfessionalForm", () => {
 		it("should render form action buttons", () => {
 			render(<ProfessionalForm />);
 
-			expect(
-				screen.getByRole("button", { name: "Cancelar" }),
-			).toBeInTheDocument();
-			expect(
-				screen.getByRole("button", { name: "Cadastrar Profissional" }),
-			).toBeInTheDocument();
+			expect(screen.getByRole("button", { name: "Cancelar" })).toBeInTheDocument();
+			expect(screen.getByRole("button", { name: "Cadastrar Profissional" })).toBeInTheDocument();
 		});
 	});
 
@@ -130,19 +119,13 @@ describe("ProfessionalForm", () => {
 
 			expect(screen.getByDisplayValue("Dr. Ana")).toBeInTheDocument();
 			expect(screen.getByDisplayValue("Silva")).toBeInTheDocument();
-			expect(
-				screen.getByDisplayValue("ana.silva@email.com"),
-			).toBeInTheDocument();
+			expect(screen.getByDisplayValue("ana.silva@email.com")).toBeInTheDocument();
 			expect(screen.getByDisplayValue("(11) 99999-9999")).toBeInTheDocument();
 			expect(screen.getByDisplayValue("1985-06-15")).toBeInTheDocument();
 			expect(screen.getByDisplayValue("CRM 123456")).toBeInTheDocument();
 			expect(screen.getByDisplayValue("Dermatologista")).toBeInTheDocument();
-			expect(
-				screen.getByDisplayValue("Especialista em dermatologia estética"),
-			).toBeInTheDocument();
-			expect(
-				screen.getByDisplayValue("Rua das Flores, 123"),
-			).toBeInTheDocument();
+			expect(screen.getByDisplayValue("Especialista em dermatologia estética")).toBeInTheDocument();
+			expect(screen.getByDisplayValue("Rua das Flores, 123")).toBeInTheDocument();
 			expect(screen.getByDisplayValue("São Paulo")).toBeInTheDocument();
 			expect(screen.getByDisplayValue("SP")).toBeInTheDocument();
 			expect(screen.getByDisplayValue("01234-567")).toBeInTheDocument();
@@ -152,12 +135,8 @@ describe("ProfessionalForm", () => {
 		it("should change submit button text when editing", () => {
 			render(<ProfessionalForm professional={mockProfessional} />);
 
-			expect(
-				screen.getByRole("button", { name: "Atualizar Profissional" }),
-			).toBeInTheDocument();
-			expect(
-				screen.queryByRole("button", { name: "Cadastrar Profissional" }),
-			).not.toBeInTheDocument();
+			expect(screen.getByRole("button", { name: "Atualizar Profissional" })).toBeInTheDocument();
+			expect(screen.queryByRole("button", { name: "Cadastrar Profissional" })).not.toBeInTheDocument();
 		});
 	});
 
@@ -174,12 +153,8 @@ describe("ProfessionalForm", () => {
 				expect(screen.getByText("Nome é obrigatório")).toBeInTheDocument();
 				expect(screen.getByText("Sobrenome é obrigatório")).toBeInTheDocument();
 				expect(screen.getByText("Email é obrigatório")).toBeInTheDocument();
-				expect(
-					screen.getByText("Número da licença é obrigatório"),
-				).toBeInTheDocument();
-				expect(
-					screen.getByText("Qualificação é obrigatória"),
-				).toBeInTheDocument();
+				expect(screen.getByText("Número da licença é obrigatório")).toBeInTheDocument();
+				expect(screen.getByText("Qualificação é obrigatória")).toBeInTheDocument();
 			});
 		});
 
@@ -211,9 +186,7 @@ describe("ProfessionalForm", () => {
 			fireEvent.click(submitButton);
 
 			await waitFor(() => {
-				expect(
-					screen.getByText("Telefone deve ter pelo menos 10 dígitos"),
-				).toBeInTheDocument();
+				expect(screen.getByText("Telefone deve ter pelo menos 10 dígitos")).toBeInTheDocument();
 			});
 		});
 
@@ -250,9 +223,7 @@ describe("ProfessionalForm", () => {
 			fireEvent.click(submitButton);
 
 			await waitFor(() => {
-				expect(
-					screen.getByText("Data de nascimento não pode ser no futuro"),
-				).toBeInTheDocument();
+				expect(screen.getByText("Data de nascimento não pode ser no futuro")).toBeInTheDocument();
 			});
 		});
 	});
@@ -268,12 +239,8 @@ describe("ProfessionalForm", () => {
 
 			await waitFor(() => {
 				expect(screen.getByLabelText("Tipo de Credencial")).toBeInTheDocument();
-				expect(
-					screen.getByLabelText("Número da Credencial"),
-				).toBeInTheDocument();
-				expect(
-					screen.getByLabelText("Autoridade Emissora"),
-				).toBeInTheDocument();
+				expect(screen.getByLabelText("Número da Credencial")).toBeInTheDocument();
+				expect(screen.getByLabelText("Autoridade Emissora")).toBeInTheDocument();
 				expect(screen.getByLabelText("Data de Emissão")).toBeInTheDocument();
 				expect(screen.getByLabelText("Data de Expiração")).toBeInTheDocument();
 			});
@@ -295,9 +262,7 @@ describe("ProfessionalForm", () => {
 			});
 
 			await waitFor(() => {
-				expect(
-					screen.queryByLabelText("Tipo de Credencial"),
-				).not.toBeInTheDocument();
+				expect(screen.queryByLabelText("Tipo de Credencial")).not.toBeInTheDocument();
 			});
 		});
 
@@ -317,9 +282,7 @@ describe("ProfessionalForm", () => {
 			await waitFor(() => {
 				expect(screen.getByText("Tipo é obrigatório")).toBeInTheDocument();
 				expect(screen.getByText("Número é obrigatório")).toBeInTheDocument();
-				expect(
-					screen.getByText("Autoridade emissora é obrigatória"),
-				).toBeInTheDocument();
+				expect(screen.getByText("Autoridade emissora é obrigatória")).toBeInTheDocument();
 			});
 		});
 
@@ -345,11 +308,7 @@ describe("ProfessionalForm", () => {
 			fireEvent.click(submitButton);
 
 			await waitFor(() => {
-				expect(
-					screen.getByText(
-						"Data de expiração deve ser posterior à data de emissão",
-					),
-				).toBeInTheDocument();
+				expect(screen.getByText("Data de expiração deve ser posterior à data de emissão")).toBeInTheDocument();
 			});
 		});
 	});
@@ -388,9 +347,7 @@ describe("ProfessionalForm", () => {
 			});
 
 			await waitFor(() => {
-				expect(
-					screen.queryByLabelText("Nome do Serviço"),
-				).not.toBeInTheDocument();
+				expect(screen.queryByLabelText("Nome do Serviço")).not.toBeInTheDocument();
 			});
 		});
 
@@ -408,18 +365,10 @@ describe("ProfessionalForm", () => {
 			fireEvent.click(submitButton);
 
 			await waitFor(() => {
-				expect(
-					screen.getByText("Nome do serviço é obrigatório"),
-				).toBeInTheDocument();
-				expect(
-					screen.getByText("Tipo de serviço é obrigatório"),
-				).toBeInTheDocument();
-				expect(
-					screen.getByText("Duração deve ser maior que 0"),
-				).toBeInTheDocument();
-				expect(
-					screen.getByText("Preço deve ser maior que 0"),
-				).toBeInTheDocument();
+				expect(screen.getByText("Nome do serviço é obrigatório")).toBeInTheDocument();
+				expect(screen.getByText("Tipo de serviço é obrigatório")).toBeInTheDocument();
+				expect(screen.getByText("Duração deve ser maior que 0")).toBeInTheDocument();
+				expect(screen.getByText("Preço deve ser maior que 0")).toBeInTheDocument();
 			});
 		});
 	});
@@ -458,11 +407,9 @@ describe("ProfessionalForm", () => {
 						email: "joao@email.com",
 						license_number: "CRM 789012",
 						qualification: "Cardiologista",
-					}),
+					})
 				);
-				expect(toast.success).toHaveBeenCalledWith(
-					"Profissional cadastrado com sucesso!",
-				);
+				expect(toast.success).toHaveBeenCalledWith("Profissional cadastrado com sucesso!");
 			});
 		});
 
@@ -483,18 +430,14 @@ describe("ProfessionalForm", () => {
 					"1",
 					expect.objectContaining({
 						given_name: "Dr. Ana Luiza",
-					}),
+					})
 				);
-				expect(toast.success).toHaveBeenCalledWith(
-					"Profissional atualizado com sucesso!",
-				);
+				expect(toast.success).toHaveBeenCalledWith("Profissional atualizado com sucesso!");
 			});
 		});
 
 		it("should handle creation errors", async () => {
-			(createProfessional as vi.Mock).mockRejectedValue(
-				new Error("Database error"),
-			);
+			(createProfessional as vi.Mock).mockRejectedValue(new Error("Database error"));
 
 			render(<ProfessionalForm />);
 
@@ -521,16 +464,12 @@ describe("ProfessionalForm", () => {
 			fireEvent.click(submitButton);
 
 			await waitFor(() => {
-				expect(toast.error).toHaveBeenCalledWith(
-					"Erro ao cadastrar profissional",
-				);
+				expect(toast.error).toHaveBeenCalledWith("Erro ao cadastrar profissional");
 			});
 		});
 
 		it("should handle update errors", async () => {
-			(updateProfessional as vi.Mock).mockRejectedValue(
-				new Error("Update error"),
-			);
+			(updateProfessional as vi.Mock).mockRejectedValue(new Error("Update error"));
 
 			render(<ProfessionalForm professional={mockProfessional} />);
 
@@ -540,16 +479,12 @@ describe("ProfessionalForm", () => {
 			fireEvent.click(submitButton);
 
 			await waitFor(() => {
-				expect(toast.error).toHaveBeenCalledWith(
-					"Erro ao atualizar profissional",
-				);
+				expect(toast.error).toHaveBeenCalledWith("Erro ao atualizar profissional");
 			});
 		});
 
 		it("should disable submit button during submission", async () => {
-			(createProfessional as vi.Mock).mockImplementation(
-				() => new Promise((resolve) => setTimeout(resolve, 1000)),
-			);
+			(createProfessional as vi.Mock).mockImplementation(() => new Promise((resolve) => setTimeout(resolve, 1000)));
 
 			render(<ProfessionalForm />);
 
@@ -612,9 +547,7 @@ describe("ProfessionalForm", () => {
 
 	describe("User Experience", () => {
 		it("should show loading state during submission", async () => {
-			(createProfessional as vi.Mock).mockImplementation(
-				() => new Promise((resolve) => setTimeout(resolve, 1000)),
-			);
+			(createProfessional as vi.Mock).mockImplementation(() => new Promise((resolve) => setTimeout(resolve, 1000)));
 
 			render(<ProfessionalForm />);
 

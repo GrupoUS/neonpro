@@ -42,9 +42,7 @@ export class LGPDComplianceMockService {
 		this.tenantId = tenantId;
 	}
 
-	async grantConsent(
-		consent: Omit<LGPDConsentRecord, "id" | "grantedAt">,
-	): Promise<LGPDConsentRecord> {
+	async grantConsent(consent: Omit<LGPDConsentRecord, "id" | "grantedAt">): Promise<LGPDConsentRecord> {
 		const id = `consent-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 		const now = new Date().toISOString();
 
@@ -100,9 +98,7 @@ export class LGPDComplianceMockService {
 		return revokedConsent;
 	}
 
-	async logAudit(
-		audit: Omit<LGPDAuditLog, "id" | "timestamp">,
-	): Promise<LGPDAuditLog> {
+	async logAudit(audit: Omit<LGPDAuditLog, "id" | "timestamp">): Promise<LGPDAuditLog> {
 		const id = `audit-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 		const timestamp = new Date().toISOString();
 
@@ -120,19 +116,13 @@ export class LGPDComplianceMockService {
 	async getConsentHistory(patientId: string): Promise<LGPDConsentRecord[]> {
 		return Array.from(this.consentRecords.values())
 			.filter((consent) => consent.patientId === patientId)
-			.sort(
-				(a, b) =>
-					new Date(b.grantedAt).getTime() - new Date(a.grantedAt).getTime(),
-			);
+			.sort((a, b) => new Date(b.grantedAt).getTime() - new Date(a.grantedAt).getTime());
 	}
 
 	async getAuditTrail(resourceId: string): Promise<LGPDAuditLog[]> {
 		return Array.from(this.auditLogs.values())
 			.filter((log) => log.resourceId === resourceId)
-			.sort(
-				(a, b) =>
-					new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
-			);
+			.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 	}
 
 	clear(): void {
@@ -145,10 +135,9 @@ let lgpdComplianceService: LGPDComplianceMockService;
 // LGPD Test Utilities
 export const createTestConsent = async (
 	patientId: string,
-	type: LGPDConsentRecord["consentType"] = "data_processing",
+	type: LGPDConsentRecord["consentType"] = "data_processing"
 ) => {
-	const service = (globalThis as any)
-		.__LGPD_COMPLIANCE_SERVICE__ as LGPDComplianceMockService;
+	const service = (globalThis as any).__LGPD_COMPLIANCE_SERVICE__ as LGPDComplianceMockService;
 
 	return await service.grantConsent({
 		patientId,
@@ -164,9 +153,7 @@ export const createTestConsent = async (
 export const validateLGPDCompliance = (patient: any): boolean => {
 	// LGPD compliance validation rules
 	const requiredFields = ["lgpdConsent", "tenantId"];
-	const hasRequiredFields = requiredFields.every(
-		(field) => patient[field] !== undefined,
-	);
+	const hasRequiredFields = requiredFields.every((field) => patient[field] !== undefined);
 
 	// Ensure LGPD consent is explicitly granted
 	const hasValidConsent = patient.lgpdConsent === true;

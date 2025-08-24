@@ -3,10 +3,7 @@
 
 import { afterAll, afterEach, beforeAll, beforeEach } from "vitest";
 import { setupSupabaseMock } from "./setup/supabase-mock";
-import {
-	setupHealthcareEnvironment,
-	teardownHealthcareEnvironment,
-} from "./setup/test-env";
+import { setupHealthcareEnvironment, teardownHealthcareEnvironment } from "./setup/test-env";
 
 // Global test setup - runs once before all tests
 beforeAll(async () => {

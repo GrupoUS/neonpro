@@ -27,21 +27,12 @@ const defaultGenerator = (): string => {
 /**
  * Request ID middleware factory
  */
-export const requestIdMiddleware = (
-	config: RequestIdConfig = {},
-): MiddlewareHandler => {
-	const {
-		header = "X-Request-ID",
-		generator = defaultGenerator,
-		setResponseHeader = true,
-	} = config;
+export const requestIdMiddleware = (config: RequestIdConfig = {}): MiddlewareHandler => {
+	const { header = "X-Request-ID", generator = defaultGenerator, setResponseHeader = true } = config;
 
 	return async (c, next) => {
 		// Try to get existing request ID from headers
-		let requestId =
-			c.req.header(header) ||
-			c.req.header("X-Request-Id") ||
-			c.req.header("x-request-id");
+		let requestId = c.req.header(header) || c.req.header("X-Request-Id") || c.req.header("x-request-id");
 
 		// Generate new request ID if none provided
 		if (!requestId) {
@@ -49,10 +40,7 @@ export const requestIdMiddleware = (
 		}
 
 		// Validate request ID format (basic validation)
-		if (
-			typeof requestId !== "string" ||
-			requestId.length > REQUEST_ID.MAX_LENGTH
-		) {
+		if (typeof requestId !== "string" || requestId.length > REQUEST_ID.MAX_LENGTH) {
 			requestId = generator();
 		}
 
@@ -81,10 +69,7 @@ export const getRequestId = (c: Context): string => {
 /**
  * Create child request ID for internal operations
  */
-export const createChildRequestId = (
-	parentRequestId: string,
-	operation: string,
-): string => {
+export const createChildRequestId = (parentRequestId: string, operation: string): string => {
 	return `${parentRequestId}_${operation}_${nanoid(REQUEST_ID.CHILD_ID_LENGTH)}`;
 };
 
@@ -93,8 +78,7 @@ export const createChildRequestId = (
  */
 export const requestCorrelation = {
 	// Create trace ID for spanning multiple requests
-	createTraceId: (): string =>
-		`trace_${Date.now()}_${nanoid(REQUEST_ID.TRACE_ID_LENGTH)}`,
+	createTraceId: (): string => `trace_${Date.now()}_${nanoid(REQUEST_ID.TRACE_ID_LENGTH)}`,
 
 	// Create span ID for internal operations
 	createSpanId: (): string => `span_${nanoid(REQUEST_ID.SPAN_ID_LENGTH)}`,
@@ -102,11 +86,8 @@ export const requestCorrelation = {
 	// Extract trace context from headers
 	extractTraceContext: (c: Context) => {
 		return {
-			traceId:
-				c.req.header("X-Trace-ID") ||
-				c.req.header("traceparent")?.split("-")[1],
-			spanId:
-				c.req.header("X-Span-ID") || c.req.header("traceparent")?.split("-")[2],
+			traceId: c.req.header("X-Trace-ID") || c.req.header("traceparent")?.split("-")[1],
+			spanId: c.req.header("X-Span-ID") || c.req.header("traceparent")?.split("-")[2],
 			requestId: getRequestId(c),
 		};
 	},

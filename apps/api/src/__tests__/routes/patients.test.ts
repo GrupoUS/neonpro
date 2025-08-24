@@ -111,9 +111,7 @@ describe("Patient Management API - NeonPro Healthcare", () => {
 					json: vi.fn().mockResolvedValue(newPatientData),
 				},
 				json: vi.fn(),
-				get: vi
-					.fn()
-					.mockReturnValue({ userId: "doctor-123", tenantId: "clinic-abc" }),
+				get: vi.fn().mockReturnValue({ userId: "doctor-123", tenantId: "clinic-abc" }),
 			} as unknown as Context;
 
 			const createPatientHandler = async (c: Context) => {
@@ -126,17 +124,12 @@ describe("Patient Management API - NeonPro Healthcare", () => {
 				}
 
 				// Validate CNS if provided
-				if (
-					patientData.cns &&
-					!mockPatientService.validateCNS(patientData.cns)
-				) {
+				if (patientData.cns && !mockPatientService.validateCNS(patientData.cns)) {
 					return c.json({ error: "CNS inválido" }, 400);
 				}
 
 				// Validate LGPD consent
-				const consentValidation = await mockLGPDService.validateConsent(
-					patientData.lgpdConsent,
-				);
+				const consentValidation = await mockLGPDService.validateConsent(patientData.lgpdConsent);
 				if (!consentValidation.isValid) {
 					return c.json({ error: "Consentimento LGPD obrigatório" }, 400);
 				}
@@ -167,12 +160,8 @@ describe("Patient Management API - NeonPro Healthcare", () => {
 
 			await createPatientHandler(mockContext);
 
-			expect(mockPatientService.validateCPF).toHaveBeenCalledWith(
-				"98765432100",
-			);
-			expect(mockPatientService.validateCNS).toHaveBeenCalledWith(
-				"987654321098765",
-			);
+			expect(mockPatientService.validateCPF).toHaveBeenCalledWith("98765432100");
+			expect(mockPatientService.validateCNS).toHaveBeenCalledWith("987654321098765");
 			expect(mockLGPDService.validateConsent).toHaveBeenCalled();
 			expect(mockPrisma.patient.create).toHaveBeenCalledWith({
 				data: { ...newPatientData, tenantId: "clinic-abc" },
@@ -194,9 +183,7 @@ describe("Patient Management API - NeonPro Healthcare", () => {
 					json: vi.fn().mockResolvedValue(invalidPatientData),
 				},
 				json: vi.fn(),
-				get: vi
-					.fn()
-					.mockReturnValue({ userId: "doctor-123", tenantId: "clinic-abc" }),
+				get: vi.fn().mockReturnValue({ userId: "doctor-123", tenantId: "clinic-abc" }),
 			} as unknown as Context;
 
 			const createPatientHandler = async (c: Context) => {
@@ -218,7 +205,7 @@ describe("Patient Management API - NeonPro Healthcare", () => {
 							success: false,
 							error: "CPF inválido",
 						},
-						400,
+						400
 					);
 				}
 
@@ -227,9 +214,7 @@ describe("Patient Management API - NeonPro Healthcare", () => {
 
 			await createPatientHandler(mockContext);
 
-			expect(mockPatientService.validateCPF).toHaveBeenCalledWith(
-				"12345678999",
-			);
+			expect(mockPatientService.validateCPF).toHaveBeenCalledWith("12345678999");
 			expect(mockPrisma.auditLog.create).toHaveBeenCalledWith({
 				data: {
 					action: "PATIENT_CREATION_FAILED",
@@ -269,18 +254,15 @@ describe("Patient Management API - NeonPro Healthcare", () => {
 			const createPatientHandler = async (c: Context) => {
 				const patientData = await c.req.json();
 
-				const consentValidation = await mockLGPDService.validateConsent(
-					patientData.lgpdConsent,
-				);
+				const consentValidation = await mockLGPDService.validateConsent(patientData.lgpdConsent);
 				if (!consentValidation.isValid) {
 					return c.json(
 						{
 							success: false,
-							error:
-								"Consentimento para processamento de dados é obrigatório (LGPD)",
+							error: "Consentimento para processamento de dados é obrigatório (LGPD)",
 							code: "LGPD_CONSENT_REQUIRED",
 						},
-						400,
+						400
 					);
 				}
 
@@ -289,9 +271,7 @@ describe("Patient Management API - NeonPro Healthcare", () => {
 
 			await createPatientHandler(mockContext);
 
-			expect(mockLGPDService.validateConsent).toHaveBeenCalledWith(
-				patientWithoutConsent.lgpdConsent,
-			);
+			expect(mockLGPDService.validateConsent).toHaveBeenCalledWith(patientWithoutConsent.lgpdConsent);
 		});
 	});
 	describe("GET /patients/:id - Get Patient", () => {
@@ -337,10 +317,7 @@ describe("Patient Management API - NeonPro Healthcare", () => {
 				}
 
 				// Apply data masking based on user role
-				const responseData =
-					role === "NURSE"
-						? mockLGPDService.maskSensitiveData(patient, role)
-						: patient;
+				const responseData = role === "NURSE" ? mockLGPDService.maskSensitiveData(patient, role) : patient;
 
 				// Log data access
 				await mockLGPDService.logDataAccess({
@@ -366,10 +343,7 @@ describe("Patient Management API - NeonPro Healthcare", () => {
 					isActive: true,
 				},
 			});
-			expect(mockLGPDService.maskSensitiveData).toHaveBeenCalledWith(
-				fullPatientData,
-				"NURSE",
-			);
+			expect(mockLGPDService.maskSensitiveData).toHaveBeenCalledWith(fullPatientData, "NURSE");
 			expect(mockLGPDService.logDataAccess).toHaveBeenCalled();
 		});
 		it("should enforce tenant isolation for patient access", async () => {
@@ -404,7 +378,7 @@ describe("Patient Management API - NeonPro Healthcare", () => {
 							success: false,
 							error: "Paciente não encontrado",
 						},
-						404,
+						404
 					);
 				}
 
@@ -440,9 +414,7 @@ describe("Patient Management API - NeonPro Healthcare", () => {
 					json: vi.fn().mockResolvedValue(updateData),
 				},
 				json: vi.fn(),
-				get: vi
-					.fn()
-					.mockReturnValue({ userId: "doctor-123", tenantId: "clinic-abc" }),
+				get: vi.fn().mockReturnValue({ userId: "doctor-123", tenantId: "clinic-abc" }),
 			} as unknown as Context;
 
 			const updatePatientHandler = async (c: Context) => {
@@ -516,9 +488,7 @@ describe("Patient Management API - NeonPro Healthcare", () => {
 					param: vi.fn().mockReturnValue("patient-123"),
 				},
 				json: vi.fn(),
-				get: vi
-					.fn()
-					.mockReturnValue({ userId: "admin-123", tenantId: "clinic-abc" }),
+				get: vi.fn().mockReturnValue({ userId: "admin-123", tenantId: "clinic-abc" }),
 			} as unknown as Context;
 
 			const deletePatientHandler = async (c: Context) => {

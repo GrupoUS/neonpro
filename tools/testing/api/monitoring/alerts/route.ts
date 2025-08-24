@@ -23,10 +23,7 @@ export async function GET(_request: NextRequest) {
 
 		return NextResponse.json({ alerts });
 	} catch (_error) {
-		return NextResponse.json(
-			{ error: "Failed to fetch alerts" },
-			{ status: 500 },
-		);
+		return NextResponse.json({ error: "Failed to fetch alerts" }, { status: 500 });
 	}
 }
 
@@ -40,9 +37,6 @@ export async function POST(request: NextRequest) {
 			alert,
 		});
 	} catch (_error) {
-		return NextResponse.json(
-			{ error: "Failed to create alert" },
-			{ status: 500 },
-		);
+		return NextResponse.json({ error: "Failed to create alert" }, { status: 500 });
 	}
 }

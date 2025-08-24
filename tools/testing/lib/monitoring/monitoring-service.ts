@@ -81,12 +81,7 @@ class MonitoringService {
 	/**
 	 * Record a metric value
 	 */
-	recordMetric(
-		name: string,
-		value: number,
-		tags?: Record<string, string>,
-		metadata?: Record<string, any>,
-	): void {
+	recordMetric(name: string, value: number, tags?: Record<string, string>, metadata?: Record<string, any>): void {
 		const metric: MetricData = {
 			timestamp: Date.now(),
 			value,
@@ -129,12 +124,7 @@ class MonitoringService {
 	/**
 	 * Create an alert
 	 */
-	createAlert(
-		type: Alert["type"],
-		message: string,
-		source: string,
-		metadata?: Record<string, any>,
-	): Alert {
+	createAlert(type: Alert["type"], message: string, source: string, metadata?: Record<string, any>): Alert {
 		const alert: Alert = {
 			id: this.generateId(),
 			type,
@@ -153,7 +143,7 @@ class MonitoringService {
 				() => {
 					this.resolveAlert(alert.id);
 				},
-				5 * 60 * 1000,
+				5 * 60 * 1000
 			);
 		}
 
@@ -182,8 +172,7 @@ class MonitoringService {
 	 */
 	getSystemHealth(): SystemHealth {
 		// Simulate dynamic values
-		this.healthData.uptime =
-			Date.now() - (this.healthData.uptime || Date.now());
+		this.healthData.uptime = Date.now() - (this.healthData.uptime || Date.now());
 		this.healthData.memory.percentage = Math.floor(Math.random() * 20) + 60; // 60-80%
 		this.healthData.cpu.usage = Math.floor(Math.random() * 30) + 20; // 20-50%
 		this.healthData.database.latency = Math.floor(Math.random() * 10) + 5; // 5-15ms
@@ -196,10 +185,8 @@ class MonitoringService {
 	 */
 	getPerformanceMetrics(): PerformanceMetrics {
 		// Simulate dynamic values
-		this.performanceData.responseTime.avg =
-			Math.floor(Math.random() * 100) + 50;
-		this.performanceData.throughput.requestsPerSecond =
-			Math.floor(Math.random() * 100) + 200;
+		this.performanceData.responseTime.avg = Math.floor(Math.random() * 100) + 50;
+		this.performanceData.throughput.requestsPerSecond = Math.floor(Math.random() * 100) + 200;
 		this.performanceData.errorRate.percentage = Math.random() * 2; // 0-2%
 
 		return { ...this.performanceData };
@@ -218,28 +205,19 @@ class MonitoringService {
 				message: error.message,
 				stack: error.stack,
 				context,
-			},
+			}
 		);
 
-		this.createAlert(
-			"error",
-			`${error.name}: ${error.message}`,
-			context?.source || "system",
-			{
-				error: error.message,
-				context,
-			},
-		);
+		this.createAlert("error", `${error.name}: ${error.message}`, context?.source || "system", {
+			error: error.message,
+			context,
+		});
 	}
 
 	/**
 	 * Log a warning
 	 */
-	logWarning(
-		message: string,
-		source: string,
-		metadata?: Record<string, any>,
-	): void {
+	logWarning(message: string, source: string, metadata?: Record<string, any>): void {
 		this.recordMetric("warnings", 1, { source }, metadata);
 		this.createAlert("warning", message, source, metadata);
 	}
@@ -247,11 +225,7 @@ class MonitoringService {
 	/**
 	 * Log an info event
 	 */
-	logInfo(
-		message: string,
-		source: string,
-		metadata?: Record<string, any>,
-	): void {
+	logInfo(message: string, source: string, metadata?: Record<string, any>): void {
 		this.recordMetric("info_events", 1, { source }, metadata);
 		this.createAlert("info", message, source, metadata);
 	}
@@ -259,12 +233,7 @@ class MonitoringService {
 	/**
 	 * Track API response time
 	 */
-	trackApiResponse(
-		endpoint: string,
-		method: string,
-		responseTime: number,
-		statusCode: number,
-	): void {
+	trackApiResponse(endpoint: string, method: string, responseTime: number, statusCode: number): void {
 		this.recordMetric("api_response_time", responseTime, {
 			endpoint,
 			method,
@@ -297,9 +266,7 @@ class MonitoringService {
 		}
 
 		// Clean resolved alerts
-		this.alerts = this.alerts.filter(
-			(alert) => !alert.resolved || alert.timestamp > cutoff,
-		);
+		this.alerts = this.alerts.filter((alert) => !alert.resolved || alert.timestamp > cutoff);
 	}
 
 	private initializeMockData(): void {

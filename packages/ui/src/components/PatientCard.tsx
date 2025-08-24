@@ -90,7 +90,7 @@ const PatientCard = React.forwardRef<HTMLButtonElement, PatientCardProps>(
 			onClick,
 			...props
 		},
-		ref,
+		ref
 	) => {
 		const {
 			name,
@@ -108,10 +108,7 @@ const PatientCard = React.forwardRef<HTMLButtonElement, PatientCardProps>(
 		} = patient;
 
 		const age = birthDate
-			? Math.floor(
-					(Date.now() - new Date(birthDate).getTime()) /
-						(365.25 * 24 * 60 * 60 * 1000),
-				)
+			? Math.floor((Date.now() - new Date(birthDate).getTime()) / (365.25 * 24 * 60 * 60 * 1000))
 			: null;
 
 		const getStatusVariant = (patientStatus: string) => {
@@ -134,7 +131,7 @@ const PatientCard = React.forwardRef<HTMLButtonElement, PatientCardProps>(
 				className={cn(
 					"w-full rounded-lg border bg-card p-4 text-left text-card-foreground transition-shadow hover:shadow-md focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
 					onClick && "cursor-pointer",
-					className,
+					className
 				)}
 				onClick={onClick}
 				ref={ref}
@@ -151,17 +148,8 @@ const PatientCard = React.forwardRef<HTMLButtonElement, PatientCardProps>(
 					<div className="min-w-0 flex-1">
 						<div className="flex items-start justify-between gap-2">
 							<div>
-								<h3
-									className={cn(
-										"truncate font-medium",
-										compact ? "text-sm" : "text-base",
-									)}
-								>
-									{name}
-								</h3>
-								{age && (
-									<p className="text-muted-foreground text-sm">{age} anos</p>
-								)}
+								<h3 className={cn("truncate font-medium", compact ? "text-sm" : "text-base")}>{name}</h3>
+								{age && <p className="text-muted-foreground text-sm">{age} anos</p>}
 							</div>
 
 							<div className="flex items-center gap-2">
@@ -177,11 +165,7 @@ const PatientCard = React.forwardRef<HTMLButtonElement, PatientCardProps>(
 							</div>
 						</div>
 
-						{!compact && email && (
-							<p className="mt-1 truncate text-muted-foreground text-sm">
-								{email}
-							</p>
-						)}
+						{!compact && email && <p className="mt-1 truncate text-muted-foreground text-sm">{email}</p>}
 					</div>
 				</div>{" "}
 				{/* Contact Info */}
@@ -227,9 +211,7 @@ const PatientCard = React.forwardRef<HTMLButtonElement, PatientCardProps>(
 					{nextAppointment && (
 						<div className="flex items-center justify-between text-sm">
 							<span className="text-muted-foreground">Próxima consulta:</span>
-							<span className="font-medium text-primary">
-								{formatDate(nextAppointment)}
-							</span>
+							<span className="font-medium text-primary">{formatDate(nextAppointment)}</span>
 						</div>
 					)}
 
@@ -276,13 +258,11 @@ const PatientCard = React.forwardRef<HTMLButtonElement, PatientCardProps>(
 				)}
 				{/* Registration Info */}
 				{!compact && registrationDate && (
-					<div className="mt-2 text-muted-foreground text-xs">
-						Cadastrado em {formatDate(registrationDate)}
-					</div>
+					<div className="mt-2 text-muted-foreground text-xs">Cadastrado em {formatDate(registrationDate)}</div>
 				)}
 			</button>
 		);
-	},
+	}
 );
 
 PatientCard.displayName = "PatientCard";

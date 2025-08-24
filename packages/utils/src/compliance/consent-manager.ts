@@ -35,16 +35,14 @@ export class LGPDConsentManager {
 		{
 			id: "essential",
 			name: "Funcionamento Essencial",
-			description:
-				"Dados necessários para operação básica da plataforma médica",
+			description: "Dados necessários para operação básica da plataforma médica",
 			required: true,
 			category: "essential",
 		},
 		{
 			id: "medical_treatment",
 			name: "Atendimento Médico",
-			description:
-				"Processamento de dados médicos para consultas e tratamentos",
+			description: "Processamento de dados médicos para consultas e tratamentos",
 			required: true,
 			category: "essential",
 		},
@@ -71,12 +69,7 @@ export class LGPDConsentManager {
 		},
 	];
 
-	async grantConsent(
-		userId: string,
-		purposeId: string,
-		ipAddress: string,
-		version = "1.0",
-	): Promise<ConsentRecord> {
+	async grantConsent(userId: string, purposeId: string, ipAddress: string, version = "1.0"): Promise<ConsentRecord> {
 		const purpose = this.consentPurposes.find((p) => p.id === purposeId);
 		if (!purpose) {
 			throw new Error(`Consent purpose not found: ${purposeId}`);
@@ -97,11 +90,7 @@ export class LGPDConsentManager {
 		return consent;
 	}
 
-	async revokeConsent(
-		userId: string,
-		purposeId: string,
-		ipAddress: string,
-	): Promise<ConsentRecord> {
+	async revokeConsent(userId: string, purposeId: string, ipAddress: string): Promise<ConsentRecord> {
 		const consent: ConsentRecord = {
 			userId,
 			purpose: purposeId,
@@ -139,10 +128,7 @@ export class LGPDConsentManager {
 		return this.consentPurposes.filter((p) => p.required);
 	}
 
-	async validateConsentsForProcessing(
-		userId: string,
-		requiredPurposes: string[],
-	): Promise<boolean> {
+	async validateConsentsForProcessing(userId: string, requiredPurposes: string[]): Promise<boolean> {
 		for (const purposeId of requiredPurposes) {
 			const granted = await this.isConsentGranted(userId, purposeId);
 			if (!granted) {

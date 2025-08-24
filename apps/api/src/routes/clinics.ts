@@ -17,8 +17,8 @@ clinicRoutes.get("/", (c) => {
 });
 
 clinicRoutes.post("/", async (c) => {
-	const body = await c.req.json().catch(() => ({ 
-		error: "Invalid JSON payload" 
+	const body = await c.req.json().catch(() => ({
+		error: "Invalid JSON payload",
 	}));
 
 	// Validate ANVISA requirements

@@ -15,11 +15,7 @@ import { Hono } from "hono";
 import { testClient } from "hono/testing";
 import { beforeEach, describe, expect, it } from "vitest";
 import { auditStore, lgpdAudit } from "../../../apps/api/src/middleware/audit";
-import {
-	ConsentType,
-	lgpdMiddleware,
-	lgpdUtils,
-} from "../../../apps/api/src/middleware/lgpd";
+import { ConsentType, lgpdMiddleware, lgpdUtils } from "../../../apps/api/src/middleware/lgpd";
 
 describe("🛡️ LGPD Compliance Assessment", () => {
 	let app: Hono;
@@ -32,28 +28,18 @@ describe("🛡️ LGPD Compliance Assessment", () => {
 		app.use("*", lgpdMiddleware());
 
 		// Mock patient data endpoints
-		app.post("/api/v1/patients", (c) =>
-			c.json({ success: true, id: testPatientId }),
-		);
+		app.post("/api/v1/patients", (c) => c.json({ success: true, id: testPatientId }));
 
 		app.get("/api/v1/patients", (c) => c.json({ success: true, patients: [] }));
 
-		app.put("/api/v1/patients/:id", (c) =>
-			c.json({ success: true, updated: true }),
-		);
+		app.put("/api/v1/patients/:id", (c) => c.json({ success: true, updated: true }));
 
-		app.delete("/api/v1/patients/:id", (c) =>
-			c.json({ success: true, deleted: true }),
-		);
+		app.delete("/api/v1/patients/:id", (c) => c.json({ success: true, deleted: true }));
 
 		// LGPD-specific endpoints
-		app.get("/api/v1/compliance/export", (c) =>
-			c.json({ success: true, data: {} }),
-		);
+		app.get("/api/v1/compliance/export", (c) => c.json({ success: true, data: {} }));
 
-		app.post("/api/v1/marketing/campaigns", (c) =>
-			c.json({ success: true, campaignId: "camp_123" }),
-		);
+		app.post("/api/v1/marketing/campaigns", (c) => c.json({ success: true, campaignId: "camp_123" }));
 
 		_client = testClient(app);
 	});
@@ -82,13 +68,7 @@ describe("🛡️ LGPD Compliance Assessment", () => {
 
 		it("should allow data processing with valid consent", async () => {
 			// Grant required consent
-			lgpdUtils.grantConsent(
-				testPatientId,
-				ConsentType.DATA_PROCESSING,
-				"1.0",
-				"192.168.1.1",
-				"Mozilla/5.0...",
-			);
+			lgpdUtils.grantConsent(testPatientId, ConsentType.DATA_PROCESSING, "1.0", "192.168.1.1", "Mozilla/5.0...");
 
 			const response = await fetch("/api/v1/patients", {
 				method: "POST",
@@ -127,12 +107,9 @@ describe("🛡️ LGPD Compliance Assessment", () => {
 		});
 
 		it("should support right to access (Art. 15)", async () => {
-			const response = await fetch(
-				`/api/v1/compliance/export?patientId=${testPatientId}`,
-				{
-					headers: { Authorization: "Bearer mock-patient-token" },
-				},
-			);
+			const response = await fetch(`/api/v1/compliance/export?patientId=${testPatientId}`, {
+				headers: { Authorization: "Bearer mock-patient-token" },
+			});
 
 			expect(response.status).toBe(200);
 			const data = await response.json();
@@ -140,23 +117,16 @@ describe("🛡️ LGPD Compliance Assessment", () => {
 
 			// Should contain all patient data categories
 			const responseHeaders = response.headers;
-			expect(responseHeaders.get("X-LGPD-Categories")).toContain(
-				"identifying,health,behavioral",
-			);
+			expect(responseHeaders.get("X-LGPD-Categories")).toContain("identifying,health,behavioral");
 		});
 
 		it("should support right to portability (Art. 18)", async () => {
-			const response = await fetch(
-				`/api/v1/compliance/export?format=json&patientId=${testPatientId}`,
-				{
-					headers: { Authorization: "Bearer mock-patient-token" },
-				},
-			);
+			const response = await fetch(`/api/v1/compliance/export?format=json&patientId=${testPatientId}`, {
+				headers: { Authorization: "Bearer mock-patient-token" },
+			});
 
 			expect(response.status).toBe(200);
-			expect(response.headers.get("Content-Type")).toContain(
-				"application/json",
-			);
+			expect(response.headers.get("Content-Type")).toContain("application/json");
 
 			// Should provide data in structured format
 			const data = await response.json();
@@ -206,15 +176,11 @@ describe("🛡️ LGPD Compliance Assessment", () => {
 		it("should support consent withdrawal", async () => {
 			// Initially grant consent
 			lgpdUtils.grantConsent(testPatientId, ConsentType.MARKETING);
-			expect(lgpdUtils.hasConsent(testPatientId, ConsentType.MARKETING)).toBe(
-				true,
-			);
+			expect(lgpdUtils.hasConsent(testPatientId, ConsentType.MARKETING)).toBe(true);
 
 			// Withdraw consent
 			lgpdUtils.revokeConsent(testPatientId, ConsentType.MARKETING);
-			expect(lgpdUtils.hasConsent(testPatientId, ConsentType.MARKETING)).toBe(
-				false,
-			);
+			expect(lgpdUtils.hasConsent(testPatientId, ConsentType.MARKETING)).toBe(false);
 
 			// Should create audit log for consent change
 			lgpdAudit.logConsentChange(testPatientId, "MARKETING", false, testUserId);
@@ -255,9 +221,7 @@ describe("🛡️ LGPD Compliance Assessment", () => {
 			if (response.status === 200) {
 				const lawfulBasis = response.headers.get("X-LGPD-Basis");
 				expect(lawfulBasis).toContain("consent");
-				expect(["consent", "contract", "legitimate_interest"]).toContain(
-					lawfulBasis?.split(",")[0],
-				);
+				expect(["consent", "contract", "legitimate_interest"]).toContain(lawfulBasis?.split(",")[0]);
 			}
 		});
 	});
@@ -274,11 +238,7 @@ describe("🛡️ LGPD Compliance Assessment", () => {
 			};
 
 			// Test data minimization utility
-			const minimized = lgpdUtils.minimizeData(sensitiveData, [
-				"id",
-				"name",
-				"email",
-			]);
+			const minimized = lgpdUtils.minimizeData(sensitiveData, ["id", "name", "email"]);
 
 			expect(minimized).toHaveProperty("id");
 			expect(minimized).toHaveProperty("name");
@@ -373,12 +333,7 @@ describe("🛡️ LGPD Compliance Assessment", () => {
 
 			// Perform LGPD-relevant operation
 			lgpdUtils.grantConsent(testPatientId, ConsentType.DATA_PROCESSING);
-			lgpdAudit.logConsentChange(
-				testPatientId,
-				"DATA_PROCESSING",
-				true,
-				testUserId,
-			);
+			lgpdAudit.logConsentChange(testPatientId, "DATA_PROCESSING", true, testUserId);
 
 			const finalLogCount = auditStore.getLogs().length;
 			expect(finalLogCount).toBeGreaterThan(initialLogCount);
@@ -402,11 +357,7 @@ describe("🛡️ LGPD Compliance Assessment", () => {
 
 describe("🏥 Healthcare-Specific LGPD Compliance", () => {
 	it("should handle medical professional access logging", async () => {
-		lgpdAudit.logDataSubjectRequest(
-			"ACCESS",
-			testPatientId,
-			"prof_medical_123",
-		);
+		lgpdAudit.logDataSubjectRequest("ACCESS", testPatientId, "prof_medical_123");
 
 		const auditLogs = auditStore.getLogs({
 			category: "lgpd_request",
@@ -421,16 +372,13 @@ describe("🏥 Healthcare-Specific LGPD Compliance", () => {
 		// Clear existing consent
 		lgpdUtils.revokeConsent(testPatientId, ConsentType.PHOTOS);
 
-		const response = await fetch(
-			`/api/v1/appointments/${testPatientId}/photos`,
-			{
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
-					photos: ["procedure_photo_1.jpg"],
-				}),
-			},
-		);
+		const response = await fetch(`/api/v1/appointments/${testPatientId}/photos`, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({
+				photos: ["procedure_photo_1.jpg"],
+			}),
+		});
 
 		expect(response.status).toBe(400);
 		const data = await response.json();

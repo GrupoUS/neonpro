@@ -55,8 +55,7 @@ type ConfigurationUpdate = {
 // ================================================
 
 class ConfigurationCache {
-	private readonly cache: Map<string, { value: any; expiry: number }> =
-		new Map();
+	private readonly cache: Map<string, { value: any; expiry: number }> = new Map();
 	private readonly defaultTtl = 5 * 60 * 1000; // 5 minutes
 	private readonly secretTtl = 60 * 1000; // 1 minute for secrets
 
@@ -104,7 +103,7 @@ export class ConfigurationService {
 	private readonly cache = new ConfigurationCache();
 	private readonly supabase = createClient(
 		process.env.NEXT_PUBLIC_SUPABASE_URL!,
-		process.env.SUPABASE_SERVICE_ROLE_KEY!,
+		process.env.SUPABASE_SERVICE_ROLE_KEY!
 	);
 
 	private constructor() {
@@ -122,11 +121,7 @@ export class ConfigurationService {
 	// CONFIGURATION MANAGEMENT
 	// ================================================
 
-	async getConfiguration(
-		key: string,
-		context: ConfigurationContext,
-		defaultValue?: any,
-	): Promise<any> {
+	async getConfiguration(key: string, context: ConfigurationContext, defaultValue?: any): Promise<any> {
 		const cacheKey = this.buildCacheKey(key, context);
 
 		// Try cache first
@@ -150,9 +145,7 @@ export class ConfigurationService {
 				query = query.is("tenant_id", null);
 			}
 
-			const { data, error } = await query
-				.order("tenant_id", { ascending: false })
-				.limit(1);
+			const { data, error } = await query.order("tenant_id", { ascending: false }).limit(1);
 
 			if (error) {
 				return defaultValue;
@@ -178,7 +171,7 @@ export class ConfigurationService {
 		key: string,
 		value: any,
 		context: ConfigurationContext,
-		update: ConfigurationUpdate,
+		update: ConfigurationUpdate
 	): Promise<boolean> {
 		try {
 			const configValue: Partial<ConfigurationValue> = {
@@ -193,11 +186,9 @@ export class ConfigurationService {
 			};
 
 			// Upsert configuration
-			const { error } = await this.supabase
-				.from("configurations")
-				.upsert(configValue, {
-					onConflict: "key,environment,tenant_id",
-				});
+			const { error } = await this.supabase.from("configurations").upsert(configValue, {
+				onConflict: "key,environment,tenant_id",
+			});
 
 			if (error) {
 				return false;
@@ -216,17 +207,9 @@ export class ConfigurationService {
 		}
 	}
 
-	async deleteConfiguration(
-		key: string,
-		context: ConfigurationContext,
-		update: ConfigurationUpdate,
-	): Promise<boolean> {
+	async deleteConfiguration(key: string, context: ConfigurationContext, update: ConfigurationUpdate): Promise<boolean> {
 		try {
-			let query = this.supabase
-				.from("configurations")
-				.delete()
-				.eq("key", key)
-				.eq("environment", context.environment);
+			let query = this.supabase.from("configurations").delete().eq("key", key).eq("environment", context.environment);
 
 			if (context.tenantId) {
 				query = query.eq("tenant_id", context.tenantId);
@@ -260,10 +243,7 @@ export class ConfigurationService {
 	// FEATURE FLAGS
 	// ================================================
 
-	async isFeatureEnabled(
-		featureKey: string,
-		context: ConfigurationContext,
-	): Promise<boolean> {
+	async isFeatureEnabled(featureKey: string, context: ConfigurationContext): Promise<boolean> {
 		const cacheKey = `feature:${this.buildCacheKey(featureKey, context)}`;
 
 		// Try cache first
@@ -313,7 +293,7 @@ export class ConfigurationService {
 			startDate?: Date;
 			endDate?: Date;
 			description?: string;
-		},
+		}
 	): Promise<boolean> {
 		try {
 			const flag: Partial<FeatureFlag> = {
@@ -351,29 +331,21 @@ export class ConfigurationService {
 	// BULK OPERATIONS
 	// ================================================
 
-	async getConfigurations(
-		keys: string[],
-		context: ConfigurationContext,
-	): Promise<Record<string, any>> {
+	async getConfigurations(keys: string[], context: ConfigurationContext): Promise<Record<string, any>> {
 		const results: Record<string, any> = {};
 
 		await Promise.allSettled(
 			keys.map(async (key) => {
 				results[key] = await this.getConfiguration(key, context);
-			}),
+			})
 		);
 
 		return results;
 	}
 
-	async getAllConfigurations(
-		context: ConfigurationContext,
-	): Promise<ConfigurationValue[]> {
+	async getAllConfigurations(context: ConfigurationContext): Promise<ConfigurationValue[]> {
 		try {
-			let query = this.supabase
-				.from("configurations")
-				.select("*")
-				.eq("environment", context.environment);
+			let query = this.supabase.from("configurations").select("*").eq("environment", context.environment);
 
 			if (context.tenantId) {
 				query = query.or(`tenant_id.is.null,tenant_id.eq.${context.tenantId}`);
@@ -438,22 +410,12 @@ export class ConfigurationService {
 	}
 
 	private isSecretKey(key: string): boolean {
-		const secretPatterns = [
-			/^.*_secret$/i,
-			/^.*_password$/i,
-			/^.*_key$/i,
-			/^.*_token$/i,
-			/^api_/i,
-			/^db_/i,
-		];
+		const secretPatterns = [/^.*_secret$/i, /^.*_password$/i, /^.*_key$/i, /^.*_token$/i, /^api_/i, /^db_/i];
 
 		return secretPatterns.some((pattern) => pattern.test(key));
 	}
 
-	private evaluateFeatureFlag(
-		flag: FeatureFlag,
-		context: ConfigurationContext,
-	): boolean {
+	private evaluateFeatureFlag(flag: FeatureFlag, context: ConfigurationContext): boolean {
 		// Check date range
 		const now = new Date();
 		if (flag.startDate && now < flag.startDate) {
@@ -506,11 +468,7 @@ export class ConfigurationService {
 		return Math.abs(hash);
 	}
 
-	private async logConfigurationChange(
-		key: string,
-		value: any,
-		update: ConfigurationUpdate,
-	): Promise<void> {
+	private async logConfigurationChange(key: string, value: any, update: ConfigurationUpdate): Promise<void> {
 		try {
 			await this.supabase.from("configuration_audit_log").insert({
 				configuration_key: key,
@@ -527,56 +485,37 @@ export class ConfigurationService {
 		// Subscribe to configuration changes
 		this.supabase
 			.channel("configuration_changes")
-			.on(
-				"postgres_changes",
-				{ event: "*", schema: "public", table: "configurations" },
-				(payload) => {
-					// Invalidate relevant cache entries
-					if (
-						payload.new &&
-						typeof payload.new === "object" &&
-						"key" in payload.new
-					) {
-						const config = payload.new as ConfigurationValue;
-						const _keyPattern = `*:*:${config.key}`;
+			.on("postgres_changes", { event: "*", schema: "public", table: "configurations" }, (payload) => {
+				// Invalidate relevant cache entries
+				if (payload.new && typeof payload.new === "object" && "key" in payload.new) {
+					const config = payload.new as ConfigurationValue;
+					const _keyPattern = `*:*:${config.key}`;
 
-						// Invalidate all cache entries for this key
-						this.cache
-							.keys()
-							.filter((key) => key.endsWith(`:${config.key}`))
-							.forEach((key) => this.cache.invalidate(key));
-					}
-				},
-			)
+					// Invalidate all cache entries for this key
+					this.cache
+						.keys()
+						.filter((key) => key.endsWith(`:${config.key}`))
+						.forEach((key) => this.cache.invalidate(key));
+				}
+			})
 			.subscribe();
 
 		// Subscribe to feature flag changes
 		this.supabase
 			.channel("feature_flag_changes")
-			.on(
-				"postgres_changes",
-				{ event: "*", schema: "public", table: "feature_flags" },
-				(payload) => {
-					// Invalidate relevant cache entries
-					if (
-						payload.new &&
-						typeof payload.new === "object" &&
-						"key" in payload.new
-					) {
-						const flag = payload.new as FeatureFlag;
-						const _keyPattern = `feature:*:*:${flag.key}`;
+			.on("postgres_changes", { event: "*", schema: "public", table: "feature_flags" }, (payload) => {
+				// Invalidate relevant cache entries
+				if (payload.new && typeof payload.new === "object" && "key" in payload.new) {
+					const flag = payload.new as FeatureFlag;
+					const _keyPattern = `feature:*:*:${flag.key}`;
 
-						// Invalidate all cache entries for this feature flag
-						this.cache
-							.keys()
-							.filter(
-								(key) =>
-									key.includes("feature:") && key.endsWith(`:${flag.key}`),
-							)
-							.forEach((key) => this.cache.invalidate(key));
-					}
-				},
-			)
+					// Invalidate all cache entries for this feature flag
+					this.cache
+						.keys()
+						.filter((key) => key.includes("feature:") && key.endsWith(`:${flag.key}`))
+						.forEach((key) => this.cache.invalidate(key));
+				}
+			})
 			.subscribe();
 	}
 }
@@ -590,7 +529,7 @@ export const config = ConfigurationService.getInstance();
 export async function getConfig<T = any>(
 	key: string,
 	defaultValue?: T,
-	context?: Partial<ConfigurationContext>,
+	context?: Partial<ConfigurationContext>
 ): Promise<T> {
 	const fullContext: ConfigurationContext = {
 		environment: process.env.NODE_ENV || "development",
@@ -600,10 +539,7 @@ export async function getConfig<T = any>(
 	return config.getConfiguration(key, fullContext, defaultValue);
 }
 
-export async function isFeatureEnabled(
-	featureKey: string,
-	context?: Partial<ConfigurationContext>,
-): Promise<boolean> {
+export async function isFeatureEnabled(featureKey: string, context?: Partial<ConfigurationContext>): Promise<boolean> {
 	const fullContext: ConfigurationContext = {
 		environment: process.env.NODE_ENV || "development",
 		...context,
@@ -616,8 +552,6 @@ export async function isFeatureEnabled(
 // CONFIGURATION MIDDLEWARE
 // ================================================
 
-export async function withConfiguration<T>(
-	handler: (config: ConfigurationService) => Promise<T>,
-): Promise<T> {
+export async function withConfiguration<T>(handler: (config: ConfigurationService) => Promise<T>): Promise<T> {
 	return handler(ConfigurationService.getInstance());
 }
