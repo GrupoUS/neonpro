@@ -98,3 +98,19 @@ archon
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# Security: Deployment files with secrets
+*DEPLOYMENT*GUIDE*
+*deployment*guide*
+*DEPLOYMENT*STATUS*
+*deployment*status*
+*.secrets.*
+*secrets*
+*.credentials.*
+*credentials*
+
+# Security: Prevent any files with common API key patterns
+*api-keys*
+*api_keys*
+*access-tokens*
+*access_tokens*
