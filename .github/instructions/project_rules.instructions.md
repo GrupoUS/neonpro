@@ -12,7 +12,7 @@ This file contains all neonpro-specific configurations, tools, and workflows tha
 
 **ARCHON-FIRST RULE**: Always use Archon MCP server for task management, knowledge management, and project organization. It is the primary system for all tasks and project management and docs consulting.
 
-**Sempre mantenha a arquitetura definida no source-tree**: Sempre que for criar um arquivo, use a pasta e arquitetura correta do "D:\neonpro\docs\architecture\source-tree.md".
+**Sempre mantenha a arquitetura e tech stack da pasta docs**: Sempre que for implementar qualquer funcionalidade ou criar um arquivo, use as tecnologias e estruturas definidas na pasta docs @docs\architecture.
 
 **CLEAN UP CONSTANTLY**: Sem que terminar uma task busque por arquivos e códigos duplicados, redundantes, inutilizados ou obsoletos para limpar, incorporar mantendo sempre o sistema limpo e organizado. Sempre corrija os paths necessários para evitar erros de redirecionamento.
 
