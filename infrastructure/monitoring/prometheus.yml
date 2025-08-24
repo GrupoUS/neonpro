@@ -1,0 +1,336 @@
+# NeonPro AI Services - Prometheus Configuration
+# Comprehensive monitoring setup for AI healthcare platform
+# Includes metrics collection, alerting rules, and service discovery
+
+global:
+  scrape_interval: 15s
+  scrape_timeout: 10s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'neonpro-production'
+    env: 'production'
+    region: 'sa-east-1'
+    service: 'ai-healthcare-platform'
+
+# Rule files for alerting
+rule_files:
+  - "alert_rules/*.yml"
+  - "recording_rules/*.yml"
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - alertmanager:9093
+      timeout: 10s
+      api_version: v2
+
+# Scrape configurations
+scrape_configs:
+  # =============================================================================
+  # PROMETHEUS SELF-MONITORING
+  # =============================================================================
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+    scrape_interval: 30s
+    metrics_path: /metrics
+    labels:
+      service: 'prometheus'
+      component: 'monitoring'
+
+  # =============================================================================
+  # NEONPRO WEB APPLICATION METRICS
+  # =============================================================================
+  - job_name: 'neonpro-web'
+    static_configs:
+      - targets: ['web:3000']
+    scrape_interval: 15s
+    metrics_path: /api/metrics
+    labels:
+      service: 'neonpro-web'
+      component: 'application'
+    metric_relabel_configs:
+      # Add custom labels for AI service metrics
+      - source_labels: [__name__]
+        regex: 'ai_(.+)'
+        target_label: 'ai_service'
+        replacement: '${1}'
+      # Label HTTP metrics by endpoint
+      - source_labels: [__name__, endpoint]
+        regex: 'http_(.+);(.+)'
+        target_label: 'http_endpoint'
+        replacement: '${2}'
+
+  # =============================================================================
+  # AI SERVICES METRICS
+  # =============================================================================
+  - job_name: 'ai-universal-chat'
+    static_configs:
+      - targets: ['web:3000']
+    scrape_interval: 10s
+    metrics_path: /api/ai/universal-chat/metrics
+    labels:
+      service: 'universal-chat'
+      component: 'ai-service'
+      compliance: 'lgpd-anvisa-cfm'
+
+  - job_name: 'ai-compliance-automation'
+    static_configs:
+      - targets: ['web:3000']
+    scrape_interval: 30s
+    metrics_path: /api/ai/compliance/metrics
+    labels:
+      service: 'compliance-automation'
+      component: 'ai-service'
+      compliance: 'lgpd-anvisa-cfm'
+
+  - job_name: 'ai-conversation-management'
+    static_configs:
+      - targets: ['web:3000']
+    scrape_interval: 30s
+    metrics_path: /api/ai/conversation/metrics
+    labels:
+      service: 'conversation-management'
+      component: 'ai-service'
+
+  - job_name: 'ai-feature-flags'
+    static_configs:
+      - targets: ['web:3000']
+    scrape_interval: 60s
+    metrics_path: /api/ai/feature-flags/metrics
+    labels:
+      service: 'feature-flags'
+      component: 'ai-service'
+
+  # =============================================================================
+  # INFRASTRUCTURE METRICS
+  # =============================================================================
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis:6379']
+    scrape_interval: 15s
+    metrics_path: /metrics
+    labels:
+      service: 'redis'
+      component: 'cache'
+
+  - job_name: 'docker'
+    static_configs:
+      - targets: ['docker-exporter:9323']
+    scrape_interval: 30s
+    labels:
+      service: 'docker'
+      component: 'container-runtime'
+
+  # =============================================================================
+  # SYSTEM METRICS (Node Exporter)
+  # =============================================================================
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+    scrape_interval: 30s
+    labels:
+      service: 'node-exporter'
+      component: 'system-metrics'
+    metric_relabel_configs:
+      # Drop unnecessary filesystem metrics
+      - source_labels: [__name__, fstype]
+        regex: 'node_filesystem_.+;(tmpfs|devtmpfs|overlay)'
+        action: drop
+
+  # =============================================================================
+  # CADVISOR (Container Metrics)
+  # =============================================================================
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+    scrape_interval: 30s
+    metrics_path: /metrics
+    labels:
+      service: 'cadvisor'
+      component: 'container-metrics'
+    metric_relabel_configs:
+      # Only collect metrics for our containers
+      - source_labels: [name]
+        regex: '^/neonpro-.*'
+        action: keep
+      # Simplify container names
+      - source_labels: [name]
+        regex: '^/neonpro-(.+)-prod$'
+        target_label: 'container_service'
+        replacement: '${1}'
+
+  # =============================================================================
+  # BLACKBOX MONITORING (Synthetic Tests)
+  # =============================================================================
+  - job_name: 'blackbox-http'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+        - https://app.neonpro.com.br/api/health
+        - https://app.neonpro.com.br/api/ai/universal-chat
+        - https://grafana.neonpro.com.br/api/health
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+    labels:
+      service: 'blackbox-exporter'
+      component: 'synthetic-monitoring'
+
+  # =============================================================================
+  # DATABASE METRICS (PostgreSQL via Supabase)
+  # =============================================================================
+  - job_name: 'postgres-exporter'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+    scrape_interval: 30s
+    labels:
+      service: 'postgres-exporter'
+      component: 'database-metrics'
+      database: 'supabase-postgres'
+
+  # =============================================================================
+  # THIRD-PARTY INTEGRATIONS MONITORING
+  # =============================================================================
+  - job_name: 'external-apis'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+        - https://api.openai.com/v1/models
+        - https://supabase.com/api/health
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+    scrape_interval: 60s
+    labels:
+      service: 'external-apis'
+      component: 'third-party-monitoring'
+
+# =============================================================================
+# REMOTE STORAGE (for long-term retention)
+# =============================================================================
+remote_write:
+  - url: "https://prometheus-remote-write.monitoring.neonpro.com.br/api/v1/write"
+    queue_config:
+      capacity: 10000
+      max_samples_per_send: 2000
+      batch_send_deadline: 5s
+      min_shards: 1
+      max_shards: 10
+    metadata_config:
+      send: true
+      send_interval: 30s
+      max_samples_per_send: 2000
+    write_relabel_configs:
+      # Only send critical metrics for long-term storage
+      - source_labels: [__name__]
+        regex: '(ai_service_response_time|ai_compliance_violations|http_requests_total|redis_connected_clients|node_memory_MemAvailable_bytes|container_cpu_usage_seconds_total)'
+        action: keep
+      # Add retention labels
+      - target_label: 'retention'
+        replacement: '1y'
+
+# =============================================================================
+# STORAGE CONFIGURATION
+# =============================================================================
+storage:
+  tsdb:
+    path: /prometheus
+    retention.time: 30d
+    retention.size: 10GB
+    wal-compression: true
+    # Enable block compression for better storage efficiency
+    min-block-duration: 2h
+    max-block-duration: 25h
+
+# =============================================================================
+# FEATURE FLAGS
+# =============================================================================
+feature_flags:
+  - name: "enable-otlp-receiver"
+    enabled: true
+  - name: "enable-exemplars"
+    enabled: true
+  - name: "enable-native-histograms"
+    enabled: false
+
+# =============================================================================
+# TRACING INTEGRATION (OpenTelemetry)
+# =============================================================================
+tracing:
+  endpoint: "jaeger:14268/api/traces"
+  service_name: "prometheus"
+  insecure: true
+  headers:
+    authorization: "Bearer ${TRACING_AUTH_TOKEN}"
+
+# =============================================================================
+# CUSTOM METRIC RELABELING (Global)
+# =============================================================================
+metric_relabel_configs:
+  # Add business context labels
+  - source_labels: [job]
+    regex: 'neonpro-(.+)'
+    target_label: 'business_service'
+    replacement: '${1}'
+  
+  # Add compliance context
+  - source_labels: [__name__]
+    regex: '.*compliance.*'
+    target_label: 'compliance_metric'
+    replacement: 'true'
+  
+  # Add AI context
+  - source_labels: [__name__]
+    regex: 'ai_(.+)'
+    target_label: 'ai_metric'
+    replacement: 'true'
+  
+  # Healthcare specific labeling
+  - source_labels: [__name__]
+    regex: '.*(patient|medical|health|clinical).*'
+    target_label: 'healthcare_metric'
+    replacement: 'true'
+
+# =============================================================================
+# QUERY OPTIMIZATION
+# =============================================================================
+query:
+  timeout: 2m
+  max_concurrency: 20
+  max_samples: 50000000
+  lookback_delta: 5m
+
+# =============================================================================
+# WEB UI CONFIGURATION
+# =============================================================================
+web:
+  console.templates: /etc/prometheus/consoles
+  console.libraries: /etc/prometheus/console_libraries
+  enable-admin-api: true
+  enable-lifecycle: true
+  max-connections: 512
+  read-timeout: 30s
+  route-prefix: /
+  external-url: https://prometheus.neonpro.com.br
+
+# =============================================================================
+# LOGGING CONFIGURATION
+# =============================================================================
+log:
+  level: info
+  format: json

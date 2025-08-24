@@ -12,9 +12,11 @@ This file contains all neonpro-specific configurations, tools, and workflows tha
 
 **ARCHON-FIRST RULE**: Always use Archon MCP server for task management, knowledge management, and project organization. It is the primary system for all tasks and project management and docs consulting.
 
-**Sempre mantenha a arquitetura definida no source-tree**: Sempre que for criar um arquivo, use a pasta e arquitetura correta do "D:\neonpro\docs\architecture\source-tree.md".
+**Sempre mantenha a arquitetura definida no source-tree**: Sempre que for criar um arquivo, use a pasta e arquitetura correta do @docs\architecture\source-tree.md.
 
 **CLEAN UP CONSTANTLY**: Sem que terminar uma task busque por arquivos e códigos duplicados, redundantes, inutilizados ou obsoletos para limpar, incorporar mantendo sempre o sistema limpo e organizado. Sempre corrija os paths necessários para evitar erros de redirecionamento.
+
+**GIT AND VERSION CONTROL**: Use git for version control, add and write clear commit messages AUTOMATICALLY whenever an entire task is finished. Use descriptive commit messages that capture the full scope of changes.
 
 **Sempre use o todos task list nativo para criar, atualizar, acompanhar e executar as tarefas**
 
@@ -306,7 +308,6 @@ archon:manage_task(
 )
 ```
 
-<code-standards>
 ## Universal Code Rules
 
 ### Accessibility Requirements
@@ -352,11 +353,34 @@ archon:manage_task(
 - **Maximum Type Safety**: Strict TypeScript enforcement
 - **AI-Friendly Generation**: Optimized for automated code creation
 
+# Core Philosophy:
+- Test changes instead of assuming they work
+- Verify outputs match expectations
+- Handle errors properly
+- Follow the complete checklist
+- "Should work" # "does work" - Pattern matching isn't enough
+- I'm not paid to write code, I'm paid to solve problems
+- Untested code is just a guess, not a solution
+
+# The 30-Second Reality Check - Must answer YES to ALL:
+
+- Did I run/build the code?
+- Did I trigger the exact feature I changed?
+- Did I see the expected result with my own observations?
+- Did I test edge cases?
+- Did I check for error messages?
+- Did I verify no new warnings or errors appeared?
+- Did I check performance impact?
+- Did I validate accessibility requirements?
+- Did I review the code for style and consistency?
+- Did I ensure no security vulnerabilities were introduced?
+
 ## Pre-Implementation Checklist
 1. Analyze existing codebase patterns
 2. Consider edge cases and error scenarios
 3. Validate accessibility requirements
 4. Follow framework-specific best practices
+5. Research similar implementations and use context7 and archon knowledge base for oficial docs and best pratices
 
 ## Essential Rules
 
@@ -498,6 +522,7 @@ try {
 - [ ] Security considerations addressed
 - [ ] Basic functionality tested
 - [ ] Documentation updated if needed
+- [ ] All tests pass without errors
 
 # Project Context
 Ultracite enforces strict type safety, accessibility standards, and consistent code quality for JavaScript/TypeScript projects using Biome's lightning-fast formatter and linter.
@@ -537,5 +562,3 @@ SESSION_MANAGEMENT:
 * **Context Refresh**: Automatic refresh with constitutional principle clarification
 * **Think-First Reset**: Return to sequential-thinking analysis when complexity increases
 * **Quality Escalation**: Increase quality thresholds if standards drop
-</code-standards>
----
