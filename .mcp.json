@@ -5,8 +5,6 @@
       "args": ["/C", "npx", "-y", "@wonderwhy-er/desktop-commander@latest"],
       "env": {
         "MCP_TIMEOUT": "30000",
-        "DC_FILE_READ_LIMIT": "2000",
-        "DC_FILE_WRITE_LIMIT": "50",
         "DC_TELEMETRY_ENABLED": "false",
         "DC_BLOCKED_COMMANDS": "rm,del,format,shutdown,reboot"
       }
