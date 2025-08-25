@@ -1,16 +1,21 @@
 // NeonPro Service Worker - VIBECODE V1.0 Performance Standards
-// PWA Implementation with offline-first strategies + Background Sync
-// Target: API p95 ≤ 800ms, Page Load p95 ≤ 300ms
+// Healthcare PWA Implementation with offline-first strategies + Background Sync
+// FASE 3: Frontend Enhancement - Healthcare-Optimized Service Worker
+// Target: API p95 ≤ 800ms, Page Load p95 ≤ 300ms, Critical Healthcare Data Always Available
 
-const CACHE_VERSION = "1.1.0";
+const CACHE_VERSION = "1.2.0";
 const STATIC_CACHE = `neonpro-static-v${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `neonpro-dynamic-v${CACHE_VERSION}`;
 const API_CACHE = `neonpro-api-v${CACHE_VERSION}`;
 const OFFLINE_QUEUE_CACHE = `neonpro-offline-queue-v${CACHE_VERSION}`;
+const HEALTHCARE_CRITICAL_CACHE = `neonpro-healthcare-critical-v${CACHE_VERSION}`;
 
-// Background sync configuration
+// Healthcare-specific background sync configuration
 const BACKGROUND_SYNC_TAG = "neonpro-background-sync";
 const APPOINTMENT_SYNC_TAG = "appointment-booking-sync";
+const EMERGENCY_SYNC_TAG = "emergency-healthcare-sync";
+const PATIENT_DATA_SYNC_TAG = "patient-data-sync";
+const MEDICATION_ALERT_SYNC_TAG = "medication-alert-sync";
 
 // Critical resources for offline functionality
 const STATIC_CACHE_URLS = [
@@ -35,6 +40,26 @@ const CACHEABLE_API_PATTERNS = [
 	/\/api\/patient\/profile$/,
 ];
 
+// Healthcare-critical API endpoints (always cache for offline access)
+const HEALTHCARE_CRITICAL_PATTERNS = [
+	/\/api\/patient\/emergency-contacts$/,
+	/\/api\/patient\/medications$/,
+	/\/api\/patient\/allergies$/,
+	/\/api\/patient\/critical-data$/,
+	/\/api\/emergency\/protocols$/,
+	/\/api\/medications\/interactions$/,
+	/\/api\/patient\/[^/]+\/medical-history$/,
+];
+
+// Healthcare real-time endpoints (network-first with critical fallback)
+const HEALTHCARE_REALTIME_PATTERNS = [
+	/\/api\/patient\/[^/]+\/vitals$/,
+	/\/api\/appointments\/upcoming$/,
+	/\/api\/medications\/alerts$/,
+	/\/api\/patient\/notifications$/,
+	/\/api\/emergency\/status$/,
+];
+
 // Network-first patterns (real-time data)
 const _NETWORK_FIRST_PATTERNS = [
 	/\/api\/appointments/,
@@ -46,17 +71,38 @@ const _NETWORK_FIRST_PATTERNS = [
 // Offline queue for failed requests
 const _offlineQueue = [];
 
-// Install Event - Cache static assets
+// Install Event - Cache static assets and initialize healthcare cache
 self.addEventListener("install", (event) => {
 	event.waitUntil(
 		Promise.all([
 			caches.open(STATIC_CACHE).then((cache) => {
 				return cache.addAll(STATIC_CACHE_URLS);
 			}),
+			caches.open(HEALTHCARE_CRITICAL_CACHE),
 			self.skipWaiting(),
 		])
 	);
 });
+
+// Healthcare critical data caching helper
+async function cacheHealthcareCriticalData(request, response) {
+	const cache = await caches.open(HEALTHCARE_CRITICAL_CACHE);
+	
+	// Add healthcare-specific headers for LGPD compliance
+	const clonedResponse = response.clone();
+	const headers = new Headers(clonedResponse.headers);
+	headers.set('X-Healthcare-Cache-Time', new Date().toISOString());
+	headers.set('X-LGPD-Compliant', 'true');
+	
+	const modifiedResponse = new Response(clonedResponse.body, {
+		status: clonedResponse.status,
+		statusText: clonedResponse.statusText,
+		headers: headers
+	});
+	
+	await cache.put(request, modifiedResponse);
+	return response;
+}
 
 // Activate Event - Clean old caches and take control
 self.addEventListener("activate", (event) => {

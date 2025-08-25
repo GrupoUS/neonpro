@@ -1,12 +1,13 @@
 /**
- * Mobile Dashboard Cards
- * FASE 4: Frontend Components - Mobile First Design
+ * Mobile Dashboard Cards - FASE 3 Enhanced
+ * Progressive Web App optimized for healthcare workflows
+ * WCAG 2.1 AA+ compliant with offline capabilities
  * Compliance: LGPD/ANVISA/CFM
  */
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
 	Activity,
 	AlertTriangle,
@@ -20,13 +21,98 @@ import {
 	TrendingDown,
 	TrendingUp,
 	Users,
+	Wifi,
+	WifiOff,
+	Download,
+	Smartphone,
+	TouchpadIcon,
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { cn } from "@/lib/utils";
 
-interface MobileDashboardCardProps {
+// FASE 3: PWA and offline capabilities
+interface OfflineCapable {
+	isOnline: boolean;
+	lastSync?: Date;
+	hasCachedData: boolean;
+}
+
+interface TouchGesture {
+	startX: number;
+	startY: number;
+	endX: number;
+	endY: number;
+	startTime: number;
+	endTime: number;
+}
+
+// Custom hook for online/offline detection
+const useOnlineStatus = () => {
+	const [isOnline, setIsOnline] = useState(typeof navigator !== 'undefined' ? navigator.onLine : true);
+
+	useEffect(() => {
+		const handleOnline = () => setIsOnline(true);
+		const handleOffline = () => setIsOnline(false);
+
+		window.addEventListener('online', handleOnline);
+		window.addEventListener('offline', handleOffline);
+
+		return () => {
+			window.removeEventListener('online', handleOnline);
+			window.removeEventListener('offline', handleOffline);
+		};
+	}, []);
+
+	return isOnline;
+};
+
+// Custom hook for touch gestures
+const useTouchGestures = (onSwipe?: (direction: 'left' | 'right' | 'up' | 'down') => void) => {
+	const [touchStart, setTouchStart] = useState<{ x: number; y: number; time: number } | null>(null);
+
+	const handleTouchStart = useCallback((e: React.TouchEvent) => {
+		const touch = e.touches[0];
+		setTouchStart({
+			x: touch.clientX,
+			y: touch.clientY,
+			time: Date.now(),
+		});
+	}, []);
+
+	const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+		if (!touchStart || !onSwipe) return;
+
+		const touch = e.changedTouches[0];
+		const endX = touch.clientX;
+		const endY = touch.clientY;
+		const endTime = Date.now();
+
+		const deltaX = endX - touchStart.x;
+		const deltaY = endY - touchStart.y;
+		const deltaTime = endTime - touchStart.time;
+
+		// Minimum swipe distance and maximum time for gesture recognition
+		const minDistance = 50;
+		const maxTime = 500;
+
+		if (deltaTime > maxTime) return;
+
+		if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > minDistance) {
+			onSwipe(deltaX > 0 ? 'right' : 'left');
+		} else if (Math.abs(deltaY) > minDistance) {
+			onSwipe(deltaY > 0 ? 'down' : 'up');
+		}
+
+		setTouchStart(null);
+	}, [touchStart, onSwipe]);
+
+	return { handleTouchStart, handleTouchEnd };
+};
+
+interface MobileDashboardCardProps extends OfflineCapable {
 	title: string;
 	value: string | number;
 	description?: string;
@@ -42,6 +128,18 @@ interface MobileDashboardCardProps {
 	compliance?: string[];
 	onClick?: () => void;
 	className?: string;
+	// FASE 3: PWA and accessibility enhancements
+	isOfflineCapable?: boolean;
+	criticalData?: boolean; // For emergency healthcare data
+	touchFeedback?: boolean;
+	swipeActions?: {
+		left?: { action: () => void; label: string };
+		right?: { action: () => void; label: string };
+	};
+	// Accessibility enhancements
+	ariaLabel?: string;
+	ariaDescribedBy?: string;
+	semanticRole?: 'article' | 'button' | 'region';
 }
 
 export function MobileDashboardCard({
@@ -56,8 +154,62 @@ export function MobileDashboardCard({
 	compliance,
 	onClick,
 	className = "",
+	// FASE 3 enhancements
+	isOnline,
+	lastSync,
+	hasCachedData,
+	isOfflineCapable = false,
+	criticalData = false,
+	touchFeedback = true,
+	swipeActions,
+	ariaLabel,
+	ariaDescribedBy,
+	semanticRole = 'article',
 }: MobileDashboardCardProps) {
+	// PWA state management
+	const onlineStatus = useOnlineStatus();
+	const [isPressed, setIsPressed] = useState(false);
+	const [lastTouchTime, setLastTouchTime] = useState(0);
+	
+	// Touch gesture handling
+	const handleSwipe = useCallback((direction: 'left' | 'right' | 'up' | 'down') => {
+		if (swipeActions) {
+			if (direction === 'left' && swipeActions.left) {
+				swipeActions.left.action();
+			} else if (direction === 'right' && swipeActions.right) {
+				swipeActions.right.action();
+			}
+		}
+	}, [swipeActions]);
+	
+	const { handleTouchStart, handleTouchEnd } = useTouchGestures(handleSwipe);
+	
+	// Enhanced touch feedback
+	const handleTouchStartFeedback = useCallback((e: React.TouchEvent) => {
+		if (touchFeedback) {
+			setIsPressed(true);
+			setLastTouchTime(Date.now());
+			// Haptic feedback on supported devices
+			if ('vibrate' in navigator) {
+				navigator.vibrate(10);
+			}
+		}
+		handleTouchStart(e);
+	}, [touchFeedback, handleTouchStart]);
+	
+	const handleTouchEndFeedback = useCallback((e: React.TouchEvent) => {
+		setIsPressed(false);
+		handleTouchEnd(e);
+	}, [handleTouchEnd]);
 	const getStatusColor = () => {
+		// Override colors for offline/critical states
+		if (!onlineStatus && !hasCachedData) {
+			return "text-gray-600 bg-gray-50 border-gray-300";
+		}
+		if (criticalData && !onlineStatus && hasCachedData) {
+			return "text-orange-600 bg-orange-50 border-orange-200";
+		}
+		
 		switch (status) {
 			case "success":
 				return "text-green-600 bg-green-50 border-green-200";
@@ -68,6 +220,16 @@ export function MobileDashboardCard({
 			default:
 				return "text-blue-600 bg-blue-50 border-blue-200";
 		}
+	};
+
+	// FASE 3: Enhanced accessibility and PWA status
+	const getCardAriaLabel = () => {
+		const baseLabel = ariaLabel || `${title}: ${value}${description ? `. ${description}` : ""}`;
+		const offlineStatus = !onlineStatus ? ". Dados offline" : "";
+		const criticalStatus = criticalData ? ". Dados críticos de saúde" : "";
+		const trendStatus = trend ? `. Tendência: ${trend.direction === 'up' ? 'subindo' : trend.direction === 'down' ? 'descendo' : 'estável'} ${trend.value}%` : "";
+		
+		return `${baseLabel}${offlineStatus}${criticalStatus}${trendStatus}`;
 	};
 
 	const getTrendIcon = () => {
@@ -84,24 +246,60 @@ export function MobileDashboardCard({
 
 	return (
 		<Card
-			className={`neonpro-card group cursor-pointer hover:shadow-lg transition-all ${className}`}
+			className={cn(
+				"neonpro-card group transition-all duration-200",
+				onClick && "cursor-pointer hover:shadow-lg focus:shadow-lg focus:ring-2 focus:ring-primary focus:ring-offset-2",
+				isPressed && touchFeedback && "scale-95 shadow-sm",
+				!onlineStatus && !hasCachedData && "opacity-60 border-dashed",
+				criticalData && "border-l-4 border-l-red-500",
+				className
+			)}
 			onClick={onClick}
-			role={onClick ? "button" : "article"}
+			role={semanticRole}
 			tabIndex={onClick ? 0 : undefined}
-			aria-label={`${title}: ${value}${description ? `. ${description}` : ""}`}
+			aria-label={getCardAriaLabel()}
+			aria-describedby={ariaDescribedBy}
+			aria-live={criticalData ? "polite" : undefined}
 			onKeyDown={onClick ? (e) => {
 				if (e.key === "Enter" || e.key === " ") {
 					e.preventDefault();
 					onClick();
 				}
 			} : undefined}
+			onTouchStart={handleTouchStartFeedback}
+			onTouchEnd={handleTouchEndFeedback}
 		>
 			<CardHeader className="pb-2">
 				<div className="flex items-center justify-between">
-					<div className={`group-hover:neonpro-glow p-2 rounded-lg ${getStatusColor()}`}>
+					<div className={cn(
+						"p-2 rounded-lg transition-all duration-200",
+						getStatusColor(),
+						touchFeedback && "group-hover:neonpro-glow",
+						isPressed && "scale-90"
+					)}>
 						<Icon className="h-4 w-4" aria-hidden="true" />
 					</div>
 					<div className="flex items-center gap-1">
+						{/* FASE 3: PWA Status Indicators */}
+						{isOfflineCapable && (
+							<div className="flex items-center gap-1">
+								{onlineStatus ? (
+									<Wifi className="h-3 w-3 text-green-500" aria-label="Online" />
+								) : hasCachedData ? (
+									<Download className="h-3 w-3 text-blue-500" aria-label="Dados em cache disponíveis" />
+								) : (
+									<WifiOff className="h-3 w-3 text-red-500" aria-label="Offline - dados indisponíveis" />
+								)}
+							</div>
+						)}
+						
+						{criticalData && (
+							<Badge variant="destructive" className="text-xs" aria-label="Dados críticos de saúde">
+								<AlertTriangle className="h-3 w-3 mr-1" />
+								Crítico
+							</Badge>
+						)}
+						
 						{badge && (
 							<Badge 
 								variant="secondary" 
@@ -111,6 +309,12 @@ export function MobileDashboardCard({
 								{badge}
 							</Badge>
 						)}
+						
+						{/* Mobile touch indicator */}
+						{touchFeedback && (
+							<TouchpadIcon className="h-3 w-3 text-muted-foreground/50" aria-hidden="true" />
+						)}
+						
 						{onClick && (
 							<ChevronRight 
 								className="h-4 w-4 text-muted-foreground" 
@@ -119,12 +323,24 @@ export function MobileDashboardCard({
 						)}
 					</div>
 				</div>
-				<CardTitle 
-					className="text-sm font-medium text-muted-foreground"
-					id={`card-title-${title.toLowerCase().replace(/\s+/g, '-')}`}
-				>
-					{title}
-				</CardTitle>
+				<div className="flex items-center justify-between">
+					<CardTitle 
+						className={cn(
+							"text-sm font-medium transition-colors",
+							!onlineStatus && !hasCachedData ? "text-muted-foreground" : "text-foreground"
+						)}
+						id={`card-title-${title.toLowerCase().replace(/\s+/g, '-')}`}
+					>
+						{title}
+					</CardTitle>
+					
+					{/* Last sync indicator for offline data */}
+					{lastSync && !onlineStatus && hasCachedData && (
+						<span className="text-xs text-muted-foreground" aria-label={`Última sincronização: ${lastSync.toLocaleString('pt-BR')}`}>
+							{lastSync.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+						</span>
+					)}
+				</div>
 			</CardHeader>
 			
 			<CardContent className="space-y-2">

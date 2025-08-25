@@ -72,3 +72,5 @@ next-env.d.ts
 *api_keys*
 *access-tokens*
 *access_tokens*
+# Sentry Config File
+.env.sentry-build-plugin

@@ -1,12 +1,13 @@
 /**
- * Accessibility Components and Utilities
- * FASE 4: Frontend Components - Accessibility First Design
- * Compliance: WCAG 2.1 AA, LGPD/ANVISA/CFM
+ * Accessibility Components and Utilities - FASE 3 Enhanced
+ * Healthcare-specific accessibility patterns with Portuguese support
+ * WCAG 2.1 AA+ compliance with medical terminology optimization
+ * Compliance: LGPD/ANVISA/CFM with healthcare workflow accessibility
  */
 
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import {
 	Eye,
 	EyeOff,
@@ -18,6 +19,16 @@ import {
 	VolumeX,
 	Contrast,
 	Palette,
+	Stethoscope,
+	Heart,
+	Activity,
+	AlertTriangle,
+	Shield,
+	Languages,
+	Mic,
+	Navigation,
+	Focus,
+	Accessibility,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -30,15 +41,63 @@ import {
 	PopoverTrigger,
 } from "@/components/ui/popover";
 
-// Skip to content link for keyboard navigation
+// FASE 3: Healthcare-specific skip navigation with medical context
 export function SkipToContentLink() {
 	return (
-		<a
-			href="#main-content"
-			className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:px-3 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md focus:shadow-lg focus:transition-all focus:duration-200 focus:text-sm sm:focus:top-4 sm:focus:left-4 sm:focus:px-4 sm:focus:py-2 md:focus:px-6 md:focus:py-3 md:focus:text-base lg:focus:top-6 lg:focus:left-6"
+		<>
+			<a
+				href="#main-content"
+				className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:px-3 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md focus:shadow-lg focus:transition-all focus:duration-200 focus:text-sm sm:focus:top-4 sm:focus:left-4 sm:focus:px-4 sm:focus:py-2 md:focus:px-6 md:focus:py-3 md:focus:text-base lg:focus:top-6 lg:focus:left-6"
+			>
+				Pular para o conteúdo principal
+			</a>
+			
+			{/* Healthcare-specific skip links */}
+			<a
+				href="#patient-search"
+				className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:mt-12 focus:z-50 focus:px-3 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-md focus:shadow-lg focus:transition-all focus:duration-200 focus:text-sm"
+			>
+				Pular para busca de pacientes
+			</a>
+			
+			<a
+				href="#emergency-actions"
+				className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:mt-24 focus:z-50 focus:px-3 focus:py-2 focus:bg-red-600 focus:text-white focus:rounded-md focus:shadow-lg focus:transition-all focus:duration-200 focus:text-sm"
+			>
+				Pular para ações de emergência
+			</a>
+			
+			<a
+				href="#compliance-info"
+				className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:mt-36 focus:z-50 focus:px-3 focus:py-2 focus:bg-green-600 focus:text-white focus:rounded-md focus:shadow-lg focus:transition-all focus:duration-200 focus:text-sm"
+			>
+				Pular para informações de compliance
+			</a>
+		</>
+	);
+}
+
+// FASE 3: Medical terminology screen reader optimization
+export function MedicalTermReader({ 
+	term, 
+	pronunciation, 
+	definition, 
+	children 
+}: { 
+	term: string;
+	pronunciation?: string;
+	definition?: string;
+	children: React.ReactNode;
+}) {
+	return (
+		<span
+			aria-label={`Termo médico: ${term}. ${pronunciation ? `Pronúncia: ${pronunciation}. ` : ''}${definition ? `Definição: ${definition}` : ''}`}
+			role="term"
+			className="medical-term relative cursor-help border-b border-dotted border-blue-400 hover:border-solid focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+			tabIndex={0}
 		>
-			Pular para o conteúdo principal
-		</a>
+			{children}
+		</span>
 	);
 }
 
@@ -185,7 +244,7 @@ export function KeyboardHelper() {
 	);
 }
 
-// Accessibility preferences panel
+// FASE 3: Enhanced healthcare accessibility preferences
 interface AccessibilityPreferences {
 	fontSize: number;
 	highContrast: boolean;
@@ -194,6 +253,17 @@ interface AccessibilityPreferences {
 	keyboardNavigation: boolean;
 	soundEnabled: boolean;
 	autoplay: boolean;
+	// Healthcare-specific preferences
+	medicalTerminologyHelp: boolean;
+	emergencyHighContrast: boolean;
+	voiceNavigation: boolean;
+	largerTouchTargets: boolean;
+	medicalAlertsAudio: boolean;
+	portugueseScreenReader: boolean;
+	dyslexiaFriendlyFont: boolean;
+	colorBlindnessSupport: 'none' | 'protanopia' | 'deuteranopia' | 'tritanopia';
+	cognitiveAssistance: boolean;
+	slowAnimations: boolean;
 }
 
 export function AccessibilityPanel() {
@@ -205,9 +275,21 @@ export function AccessibilityPanel() {
 		keyboardNavigation: true,
 		soundEnabled: true,
 		autoplay: false,
+		// Healthcare-specific defaults
+		medicalTerminologyHelp: true,
+		emergencyHighContrast: false,
+		voiceNavigation: false,
+		largerTouchTargets: false,
+		medicalAlertsAudio: true,
+		portugueseScreenReader: true,
+		dyslexiaFriendlyFont: false,
+		colorBlindnessSupport: 'none',
+		cognitiveAssistance: false,
+		slowAnimations: false,
 	});
 
 	const [isOpen, setIsOpen] = useState(false);
+	const [activeTab, setActiveTab] = useState<'general' | 'healthcare' | 'language'>('general');
 
 	useEffect(() => {
 		// Load preferences from localStorage
@@ -224,16 +306,47 @@ export function AccessibilityPanel() {
 		// Apply preferences to document
 		document.documentElement.style.fontSize = `${preferences.fontSize}px`;
 		
-		if (preferences.highContrast) {
+		// Standard accessibility classes
+		if (preferences.highContrast || preferences.emergencyHighContrast) {
 			document.documentElement.classList.add("high-contrast");
 		} else {
 			document.documentElement.classList.remove("high-contrast");
 		}
 		
-		if (preferences.reducedMotion) {
+		if (preferences.reducedMotion || preferences.slowAnimations) {
 			document.documentElement.classList.add("reduce-motion");
 		} else {
 			document.documentElement.classList.remove("reduce-motion");
+		}
+		
+		// Healthcare-specific accessibility classes
+		if (preferences.largerTouchTargets) {
+			document.documentElement.classList.add("large-touch-targets");
+		} else {
+			document.documentElement.classList.remove("large-touch-targets");
+		}
+		
+		if (preferences.dyslexiaFriendlyFont) {
+			document.documentElement.classList.add("dyslexia-friendly");
+		} else {
+			document.documentElement.classList.remove("dyslexia-friendly");
+		}
+		
+		if (preferences.colorBlindnessSupport !== 'none') {
+			document.documentElement.classList.add(`color-blind-${preferences.colorBlindnessSupport}`);
+		} else {
+			document.documentElement.classList.remove('color-blind-protanopia', 'color-blind-deuteranopia', 'color-blind-tritanopia');
+		}
+		
+		if (preferences.cognitiveAssistance) {
+			document.documentElement.classList.add("cognitive-assistance");
+		} else {
+			document.documentElement.classList.remove("cognitive-assistance");
+		}
+		
+		// Portuguese language settings
+		if (preferences.portugueseScreenReader) {
+			document.documentElement.setAttribute("lang", "pt-BR");
 		}
 	}, [preferences]);
 
@@ -260,16 +373,69 @@ export function AccessibilityPanel() {
 			<PopoverContent
 				side="top"
 				align="end"
-				className="w-72 sm:w-80 md:w-96"
+				className="w-80 sm:w-96 md:w-[28rem]"
 				onOpenAutoFocus={(e) => e.preventDefault()}
 			>
 				<div className="space-y-4">
 					<div>
-						<h3 className="text-lg font-semibold">Acessibilidade</h3>
+						<h3 className="text-lg font-semibold flex items-center gap-2">
+							<Accessibility className="h-5 w-5" />
+							Acessibilidade Healthcare
+						</h3>
 						<p className="text-sm text-muted-foreground">
-							Personalize a experiência para suas necessidades
+							Configurações otimizadas para profissionais de saúde e pacientes
 						</p>
 					</div>
+					
+					{/* Tab Navigation */}
+					<div className="flex rounded-lg bg-muted p-1" role="tablist">
+						<button
+							role="tab"
+							aria-selected={activeTab === 'general'}
+							className={cn(
+								"flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-all",
+								activeTab === 'general'
+									? "bg-background text-foreground shadow-sm"
+									: "text-muted-foreground hover:text-foreground"
+							)}
+							onClick={() => setActiveTab('general')}
+						>
+							<Type className="h-4 w-4 mr-2 inline" />
+							Geral
+						</button>
+						<button
+							role="tab"
+							aria-selected={activeTab === 'healthcare'}
+							className={cn(
+								"flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-all",
+								activeTab === 'healthcare'
+									? "bg-background text-foreground shadow-sm"
+									: "text-muted-foreground hover:text-foreground"
+							)}
+							onClick={() => setActiveTab('healthcare')}
+						>
+							<Stethoscope className="h-4 w-4 mr-2 inline" />
+							Médico
+						</button>
+						<button
+							role="tab"
+							aria-selected={activeTab === 'language'}
+							className={cn(
+								"flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-all",
+								activeTab === 'language'
+									? "bg-background text-foreground shadow-sm"
+									: "text-muted-foreground hover:text-foreground"
+							)}
+							onClick={() => setActiveTab('language')}
+						>
+							<Languages className="h-4 w-4 mr-2 inline" />
+							Idioma
+						</button>
+					</div>
+					
+					{/* Tab Content */}
+					<div className="space-y-4" role="tabpanel">{activeTab === 'general' && (
+						<div className="space-y-4">
 
 					{/* Font Size */}
 					<div className="space-y-2">
@@ -351,7 +517,151 @@ export function AccessibilityPanel() {
 						/>
 					</div>
 
-					{/* Reset */}
+					{/* Healthcare Tab */}
+					{activeTab === 'healthcare' && (
+						<div className="space-y-4">
+							<h4 className="font-medium text-sm flex items-center gap-2">
+								<Heart className="h-4 w-4 text-red-500" />
+								Configurações Médicas
+							</h4>
+							
+							{/* Medical Terminology Help */}
+							<div className="flex items-center justify-between">
+								<div className="flex items-center gap-2">
+									<Stethoscope className="h-4 w-4" />
+									<label className="text-sm font-medium">Ajuda com Terminologia Médica</label>
+								</div>
+								<Switch
+									checked={preferences.medicalTerminologyHelp}
+									onCheckedChange={(checked) => updatePreference("medicalTerminologyHelp", checked)}
+								/>
+							</div>
+							
+							{/* Emergency High Contrast */}
+							<div className="flex items-center justify-between">
+								<div className="flex items-center gap-2">
+									<AlertTriangle className="h-4 w-4" />
+									<label className="text-sm font-medium">Alto Contraste para Emergências</label>
+								</div>
+								<Switch
+									checked={preferences.emergencyHighContrast}
+									onCheckedChange={(checked) => updatePreference("emergencyHighContrast", checked)}
+								/>
+							</div>
+							
+							{/* Voice Navigation */}
+							<div className="flex items-center justify-between">
+								<div className="flex items-center gap-2">
+									<Mic className="h-4 w-4" />
+									<label className="text-sm font-medium">Navegação por Voz</label>
+								</div>
+								<Switch
+									checked={preferences.voiceNavigation}
+									onCheckedChange={(checked) => updatePreference("voiceNavigation", checked)}
+								/>
+							</div>
+							
+							{/* Larger Touch Targets */}
+							<div className="flex items-center justify-between">
+								<div className="flex items-center gap-2">
+									<MousePointer className="h-4 w-4" />
+									<label className="text-sm font-medium">Alvos de Toque Maiores</label>
+								</div>
+								<Switch
+									checked={preferences.largerTouchTargets}
+									onCheckedChange={(checked) => updatePreference("largerTouchTargets", checked)}
+								/>
+							</div>
+							
+							{/* Medical Alerts Audio */}
+							<div className="flex items-center justify-between">
+								<div className="flex items-center gap-2">
+									<Volume2 className="h-4 w-4" />
+									<label className="text-sm font-medium">Alertas Médicos por Áudio</label>
+								</div>
+								<Switch
+									checked={preferences.medicalAlertsAudio}
+									onCheckedChange={(checked) => updatePreference("medicalAlertsAudio", checked)}
+								/>
+							</div>
+							
+							{/* Cognitive Assistance */}
+							<div className="flex items-center justify-between">
+								<div className="flex items-center gap-2">
+									<Activity className="h-4 w-4" />
+									<label className="text-sm font-medium">Assistência Cognitiva</label>
+								</div>
+								<Switch
+									checked={preferences.cognitiveAssistance}
+									onCheckedChange={(checked) => updatePreference("cognitiveAssistance", checked)}
+								/>
+							</div>
+						</div>
+					)}
+					
+					{/* Language Tab */}
+					{activeTab === 'language' && (
+						<div className="space-y-4">
+							<h4 className="font-medium text-sm flex items-center gap-2">
+								<Languages className="h-4 w-4 text-blue-500" />
+								Configurações de Idioma
+							</h4>
+							
+							{/* Portuguese Screen Reader */}
+							<div className="flex items-center justify-between">
+								<div className="flex items-center gap-2">
+									<Speaker className="h-4 w-4" />
+									<label className="text-sm font-medium">Leitor de Tela em Português</label>
+								</div>
+								<Switch
+									checked={preferences.portugueseScreenReader}
+									onCheckedChange={(checked) => updatePreference("portugueseScreenReader", checked)}
+								/>
+							</div>
+							
+							{/* Dyslexia Friendly Font */}
+							<div className="flex items-center justify-between">
+								<div className="flex items-center gap-2">
+									<Type className="h-4 w-4" />
+									<label className="text-sm font-medium">Fonte Amigável para Dislexia</label>
+								</div>
+								<Switch
+									checked={preferences.dyslexiaFriendlyFont}
+									onCheckedChange={(checked) => updatePreference("dyslexiaFriendlyFont", checked)}
+								/>
+							</div>
+							
+							{/* Color Blindness Support */}
+							<div className="space-y-2">
+								<label className="text-sm font-medium">Suporte para Daltonismo</label>
+								<select 
+									value={preferences.colorBlindnessSupport}
+									onChange={(e) => updatePreference("colorBlindnessSupport", e.target.value as any)}
+									className="w-full p-2 rounded-md border border-input bg-background text-sm"
+								>
+									<option value="none">Nenhum</option>
+									<option value="protanopia">Protanopia (Vermelho-verde)</option>
+									<option value="deuteranopia">Deuteranopia (Verde-vermelho)</option>
+									<option value="tritanopia">Tritanopia (Azul-amarelo)</option>
+								</select>
+							</div>
+							
+							{/* Slow Animations */}
+							<div className="flex items-center justify-between">
+								<div className="flex items-center gap-2">
+									<Focus className="h-4 w-4" />
+									<label className="text-sm font-medium">Animações Mais Lentas</label>
+								</div>
+								<Switch
+									checked={preferences.slowAnimations}
+									onCheckedChange={(checked) => updatePreference("slowAnimations", checked)}
+								/>
+							</div>
+						</div>
+					)}
+					</div>
+
+					{/* Reset Button */}
 					<Button
 						variant="outline"
 						className="w-full"
@@ -364,10 +674,20 @@ export function AccessibilityPanel() {
 								keyboardNavigation: true,
 								soundEnabled: true,
 								autoplay: false,
+								medicalTerminologyHelp: true,
+								emergencyHighContrast: false,
+								voiceNavigation: false,
+								largerTouchTargets: false,
+								medicalAlertsAudio: true,
+								portugueseScreenReader: true,
+								dyslexiaFriendlyFont: false,
+								colorBlindnessSupport: 'none',
+								cognitiveAssistance: false,
+								slowAnimations: false,
 							});
 						}}
 					>
-						Restaurar Padrão
+						Restaurar Padrões Healthcare
 					</Button>
 				</div>
 			</PopoverContent>
