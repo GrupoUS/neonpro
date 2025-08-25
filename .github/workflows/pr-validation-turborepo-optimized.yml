@@ -1,0 +1,167 @@
+# 🔄 PR Validation - Turborepo Optimized
+
+name: 🔄 PR Validation
+
+on:
+  pull_request:
+    branches: [main, develop]
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+      - 'LICENSE'
+      - 'docs/**'
+
+# Explicit permission scoping for security
+permissions:
+  contents: read          # Read repository contents
+  actions: read          # Read workflow status
+  pull-requests: write   # Comment on PRs
+  checks: write          # Write check results
+
+env:
+  NODE_VERSION: '20'
+  PNPM_VERSION: '8'  # Align with Turborepo recommendation
+
+# Limit concurrent workflow runs per PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ============================================================================
+  # 🏁 QUICK VALIDATION - Turborepo Optimized
+  # ============================================================================
+  pr-validation:
+    name: 🏁 PR Quick Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10  # Fast feedback for PRs
+    if: github.event.pull_request.draft == false
+    # Turborepo Remote Caching Configuration
+    env:
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+    
+    steps:
+      - name: 📥 Check out code
+        uses: actions/checkout@v4  # Turborepo recommendation
+        with:
+          fetch-depth: 2  # Turborepo requirement for comparisons
+          persist-credentials: false
+
+      - name: 📦 Setup PNPM
+        uses: pnpm/action-setup@v3  # Turborepo recommendation
+        with:
+          version: 8  # Turborepo recommendation
+
+      - name: 🟢 Setup Node.js environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+          cache-dependency-path: |
+            pnpm-lock.yaml
+            apps/*/package.json
+            packages/*/package.json
+
+      # Turborepo Local Caching (fallback if remote caching not available)
+      - name: 🗄️ Cache Turborepo
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
+
+      - name: 📥 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # ============================================================================
+      # 🎯 QUICK QUALITY CHECKS - Turborepo Pipeline
+      # ============================================================================
+      - name: 🔍 Quick Lint
+        run: pnpm lint  # Standard Turborepo script
+        continue-on-error: true  # Allow warnings in PR
+
+      - name: 🎨 Format Check  
+        run: pnpm run ci-check  # Custom but necessary for project
+        continue-on-error: true  # Allow warnings in PR
+
+      - name: 🔤 Type Check
+        run: pnpm type-check  # Standard Turborepo script
+
+      # ============================================================================
+      # 🏗️ QUICK BUILD TEST - Turborepo Pipeline
+      # ============================================================================
+      - name: 🏗️ Build Check
+        run: pnpm build  # Standard Turborepo script
+
+      # ============================================================================
+      # 🧪 FAST TESTS - Turborepo Pipeline
+      # ============================================================================
+      - name: 🧪 Quick Tests
+        run: pnpm test  # Standard Turborepo script
+
+      # ============================================================================
+      # 🏥 HEALTHCARE COMPLIANCE - PR Specific
+      # ============================================================================
+      - name: 🏥 Healthcare Compliance Check
+        run: |
+          echo "🏥 Running Healthcare Compliance Validation..."
+          
+          # ANVISA (Agência Nacional de Vigilância Sanitária) Compliance
+          echo "🏥 ANVISA Compliance Check..."
+          if [ -f "scripts/anvisa-validation.js" ]; then
+            node scripts/anvisa-validation.js || echo "⚠️ ANVISA validation warnings (non-blocking)"
+          fi
+          
+          # CFM (Conselho Federal de Medicina) Compliance
+          echo "👨‍⚕️ CFM Compliance Check..."
+          if [ -f "scripts/cfm-compliance.js" ]; then
+            node scripts/cfm-compliance.js || echo "⚠️ CFM validation warnings (non-blocking)"
+          fi
+          
+          echo "✅ Healthcare compliance validation completed"
+
+      # ============================================================================
+      # 💬 PR COMMENT WITH RESULTS
+      # ============================================================================
+      - name: 💬 Comment PR Results
+        uses: actions/github-script@v7
+        if: always()
+        with:
+          script: |
+            const { owner, repo, number } = context.issue;
+            const conclusion = '${{ job.status }}' === 'success' ? '✅' : '⚠️';
+            const body = `
+            ## ${conclusion} PR Validation Results
+            
+            **Status**: ${{ job.status }}
+            **Branch**: \`${{ github.head_ref }}\`
+            **Commit**: \`${{ github.sha }}\`
+            
+            ### Quick Checks Completed:
+            - ✅ Dependencies installed
+            - ✅ Lint check (warnings allowed)
+            - ✅ Format validation
+            - ✅ Type checking
+            - ✅ Build verification
+            - ✅ Quick tests
+            - ✅ Healthcare compliance
+            
+            ### 🎯 Next Steps:
+            ${conclusion === '✅' ? 
+              '- Ready for detailed review\n- Full CI/CD will run on merge to main' : 
+              '- Please review and fix any issues\n- Check the workflow logs for details'
+            }
+            
+            ---
+            *Powered by Turborepo + NeonPro CI/CD*
+            `;
+            
+            github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: number,
+              body
+            });

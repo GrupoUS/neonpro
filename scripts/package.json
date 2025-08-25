@@ -6,11 +6,15 @@
   "scripts": {
     "validate": "node validate-stories.js",
     "validate:stories": "node validate-stories.js",
+    "validate:anvisa": "node anvisa-validation.js",
+    "validate:cfm": "node cfm-compliance.js",
+    "validate:compliance": "npm run validate:anvisa && npm run validate:cfm",
     "update:roadmap": "node update-roadmap.js",
     "update:roadmap:preview": "node update-roadmap.js --dry-run",
     "sync:roadmap": "npm run validate:stories && npm run update:roadmap",
     "sync:preview": "npm run validate:stories && npm run update:roadmap:preview",
-    "help": "echo 'Scripts disponíveis: validate, update:roadmap, update:roadmap:preview, sync:roadmap, sync:preview'"
+    "sync:full": "npm run validate:compliance && npm run sync:roadmap",
+    "help": "echo 'Scripts disponíveis: validate, validate:compliance, update:roadmap, sync:roadmap, sync:full'"
   },
   "keywords": [
     "neonpro",
@@ -18,7 +22,12 @@
     "roadmap",
     "stories",
     "automation",
-    "project-management"
+    "project-management",
+    "healthcare",
+    "compliance",
+    "anvisa",
+    "cfm",
+    "brazilian-healthcare"
   ],
   "author": "APEX Master Developer",
   "license": "MIT",

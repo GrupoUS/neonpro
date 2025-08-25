@@ -18,6 +18,9 @@
     "SUPABASE_ANON_KEY",
     "SUPABASE_SERVICE_ROLE_KEY"
   ],
+  "remoteCache": {
+    "signature": true
+  },
   "pipeline": {
     "build": {
       "dependsOn": ["^build"],
@@ -45,6 +48,34 @@
     "test": {
       "dependsOn": ["build"],
       "outputs": ["coverage/**", "tools/testing/reports/**"]
+    },
+    "test:unit": {
+      "dependsOn": ["build"],
+      "inputs": [
+        "**/*.test.*",
+        "**/*.spec.*",
+        "vitest.config.*"
+      ],
+      "outputs": ["coverage/**"]
+    },
+    "test:e2e": {
+      "dependsOn": ["build"],
+      "inputs": [
+        "**/*.e2e.*",
+        "**/e2e/**",
+        "playwright.config.*"
+      ],
+      "outputs": [
+        "playwright-report/**",
+        "test-results/**"
+      ]
+    },
+    "test:e2e:install": {
+      "cache": false,
+      "outputs": []
+    },
+    "ci-check": {
+      "inputs": ["**/*.{ts,tsx,js,jsx}", "biome.jsonc"]
     },
     "dev": {
       "cache": false,

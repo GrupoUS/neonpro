@@ -116,7 +116,7 @@ const AccessibilityMonitor: React.FC<AccessibilityMonitorProps> = ({
 		const violations: AccessibilityIssue[] = [];
 		const elements = document.querySelectorAll("*");
 
-		elements.forEach((element, index) => {
+		for (const [index, element] of Array.from(elements).entries()) {
 			const htmlElement = element as HTMLElement;
 			const computedStyle = window.getComputedStyle(htmlElement);
 			const backgroundColor = computedStyle.backgroundColor;
@@ -157,7 +157,7 @@ const AccessibilityMonitor: React.FC<AccessibilityMonitorProps> = ({
 					healthcare: isHealthcareElement,
 				});
 			}
-		});
+		}
 
 		return violations;
 	};
@@ -171,7 +171,7 @@ const AccessibilityMonitor: React.FC<AccessibilityMonitorProps> = ({
 			'button, [role="button"], input, select, textarea, a[href], [tabindex]:not([tabindex="-1"])'
 		);
 
-		interactiveElements.forEach((element, index) => {
+		for (const [index, element] of Array.from(interactiveElements).entries()) {
 			const htmlElement = element as HTMLElement;
 			const tabIndex = htmlElement.tabIndex;
 			const computedStyle = window.getComputedStyle(htmlElement);

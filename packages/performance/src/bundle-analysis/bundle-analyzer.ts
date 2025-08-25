@@ -38,7 +38,7 @@ type WebpackStats = {
 };
 
 export class HealthcareBundleAnalyzer {
-	private readonly stats: WebpackStats | null = null;
+	private stats: WebpackStats | null = null;
 	private readonly healthcareModules = new Set([
 		"medical-form",
 		"patient-data",

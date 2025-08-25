@@ -2,9 +2,11 @@
   "version": 2,
   "regions": ["gru1"],
   "framework": "nextjs",
-  "installCommand": "pnpm install",
-  "buildCommand": "cd apps/web && pnpm run build",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "buildCommand": "bash scripts/vercel-build.sh",
   "outputDirectory": "apps/web/.next",
+  "rootDirectory": ".",
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD",
   "env": {
     "NODE_ENV": "production",
     "VERCEL": "1",

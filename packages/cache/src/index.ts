@@ -9,9 +9,16 @@ type CacheOptions = {
 	encryptSensitiveData?: boolean;
 };
 
+// Generic cache data structure
+type CacheData<T = unknown> = {
+	data: T;
+	timestamp: number;
+	auditLog: string[];
+};
+
 // LGPD-compliant cache for patient data
-type SensitiveDataCache = {
-	data: any;
+type SensitiveDataCache<T = unknown> = {
+	data: T;
 	encrypted: boolean;
 	patientConsent: boolean;
 	expiresAt: number;
@@ -19,7 +26,7 @@ type SensitiveDataCache = {
 };
 
 class HealthcareCacheManager {
-	private readonly memoryCache: LRUCache<string, any>;
+	private readonly memoryCache: LRUCache<string, CacheData>;
 	private readonly sensitiveCache: LRUCache<string, SensitiveDataCache>;
 
 	constructor(options: CacheOptions = {}) {
@@ -41,7 +48,7 @@ class HealthcareCacheManager {
 	}
 
 	// Cache non-sensitive data (appointments, general info)
-	set(key: string, value: any, ttl?: number): void {
+	set<T>(key: string, value: T, ttl?: number): void {
 		this.memoryCache.set(
 			key,
 			{
@@ -49,32 +56,32 @@ class HealthcareCacheManager {
 				timestamp: Date.now(),
 				auditLog: [`Cache set: ${new Date().toISOString()}`],
 			},
-			{ ttl }
+			{ ttl },
 		);
 	}
 
 	// Get non-sensitive data
-	get(key: string): any {
+	get<T>(key: string): T | null {
 		const cached = this.memoryCache.get(key);
 		if (cached) {
 			cached.auditLog.push(`Cache access: ${new Date().toISOString()}`);
-			return cached.data;
+			return cached.data as T;
 		}
 		return null;
 	}
 
 	// Cache sensitive patient data with LGPD compliance
-	setSensitive(
+	setSensitive<T>(
 		key: string,
-		value: any,
+		value: T,
 		patientConsent = false,
-		ttl: number = 1000 * 60 * 5 // 5 minutes default
+		ttl: number = 1000 * 60 * 5, // 5 minutes default
 	): void {
 		if (!patientConsent) {
 			return;
 		}
 
-		const sensitiveData: SensitiveDataCache = {
+		const sensitiveData: SensitiveDataCache<T> = {
 			data: value,
 			encrypted: true, // Mark as requiring encryption
 			patientConsent,
@@ -90,7 +97,7 @@ class HealthcareCacheManager {
 	}
 
 	// Get sensitive data with LGPD audit
-	getSensitive(key: string, auditUserId?: string): any {
+	getSensitive<T>(key: string, auditUserId?: string): T | null {
 		const cached = this.sensitiveCache.get(key);
 
 		if (cached) {
@@ -98,7 +105,7 @@ class HealthcareCacheManager {
 			cached.auditLog.push(
 				`Sensitive access: ${new Date().toISOString()}`,
 				`User: ${auditUserId || "anonymous"}`,
-				`Consent verified: ${cached.patientConsent}`
+				`Consent verified: ${cached.patientConsent}`,
 			);
 
 			// Check expiration (extra security layer)
@@ -107,7 +114,7 @@ class HealthcareCacheManager {
 				return null;
 			}
 
-			return cached.data;
+			return cached.data as T;
 		}
 
 		return null;
@@ -139,10 +146,10 @@ class HealthcareCacheManager {
 	invalidatePatientData(patientId: string): void {
 		const keys = Array.from(this.memoryCache.keys()).filter((key) => key.includes(`patient_${patientId}`));
 
-		keys.forEach((key) => {
+		for (const key of keys) {
 			this.memoryCache.delete(key);
 			this.sensitiveCache.delete(key);
-		});
+		}
 	}
 
 	// ANVISA compliance: Clear cache on audit request

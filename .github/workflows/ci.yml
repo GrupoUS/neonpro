@@ -19,7 +19,7 @@ on:
       skip_tests:
         description: 'Skip test execution'
         required: false
-        default: 'false'
+        default: false
         type: boolean
       environment:
         description: 'Target environment'
@@ -226,12 +226,12 @@ jobs:
       - name: 🔍 Lint Code
         if: matrix.check == 'lint'
         run: |
-          pnpm run lint
+          pnpm run ci-check
       
       - name: 🎨 Check Code Formatting
         if: matrix.check == 'format'
         run: |
-          pnpm run format:check
+          pnpm run format:check:ci
       
       - name: 🔤 Type Check
         if: matrix.check == 'type-check'
@@ -520,6 +520,8 @@ jobs:
     timeout-minutes: 5
     needs: [preflight-validation, security-audit, build, test-unit, test-integration, test-e2e]
     if: always() && github.ref == 'refs/heads/main'
+    outputs:
+      preview-url: ${{ steps.deploy.outputs.preview-url }}
     environment: 
       name: ${{ github.event.inputs.environment || 'staging' }}
       url: ${{ steps.deploy.outputs.preview-url }}

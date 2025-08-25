@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "build": "next build",
+    "build:vercel": "pnpm install && next build",
     "build:force": "next build --experimental-build-mode=skip-validation",
     "dev": "next dev",
     "start": "next start",

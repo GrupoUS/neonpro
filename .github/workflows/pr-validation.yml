@@ -536,6 +536,7 @@ jobs:
     
     steps:
       - name: 🔍 Evaluate Results
+        id: evaluate
         run: |
           echo "🔍 Evaluating PR validation results..."
           
