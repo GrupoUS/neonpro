@@ -38,7 +38,7 @@ export default defineConfig({
 	target: "node18",
 
 	// Platform
-	platform: "neutral",
+	platform: "node",
 
 	// Output directory
 	outDir: "dist",

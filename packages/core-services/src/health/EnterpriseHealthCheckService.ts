@@ -69,27 +69,51 @@ export class EnterpriseHealthCheckService {
 		this.services.set(
 			"cache",
 			new EnterpriseCacheService({
-				enableRedis: false, // Use memory-only for health checks
-				enableDatabase: false,
+				layers: {
+					memory: {
+						enabled: true,
+						maxItems: 100,
+						ttl: 60000 // 1 minute for health checks
+					},
+					redis: {
+						enabled: false, // Disable Redis for health checks
+						host: "localhost",
+						port: 6379,
+						ttl: 60000,
+						keyPrefix: "health:"
+					},
+					database: {
+						enabled: false, // Disable DB for health checks
+						ttl: 60000
+					}
+				},
+				healthCheck: {
+					interval: 10000,
+					enabled: true
+				},
+				compliance: {
+					lgpd: false, // Simplified for health checks
+					autoExpiry: true,
+					auditAccess: false
+				}
 			})
 		);
 
 		this.services.set(
 			"analytics",
-			new EnterpriseAnalyticsService({
-				enableRealtime: false, // Disable for health checks
-				healthcareMode: true,
-				retentionDays: 1,
-			})
+			new EnterpriseAnalyticsService()
 		);
 
 		this.services.set(
 			"security",
 			new EnterpriseSecurityService({
-				enableMFA: false, // Simplified for health checks
-				enableThreatDetection: false,
-				sessionTimeout: 60_000, // 1 minute
-				maxFailedAttempts: 3,
+				enableEncryption: false, // Simplified for health checks
+				enableAuditLogging: false,
+				enableAccessControl: false,
+				encryptionAlgorithm: "aes-256-gcm",
+				auditRetentionDays: 1,
+				requireSecureChannel: false,
+				allowedOrigins: ["*"]
 			})
 		);
 
@@ -274,19 +298,23 @@ export class EnterpriseHealthCheckService {
 	): Promise<void> {
 		// Test event tracking
 		await analyticsService.trackEvent({
+			id: `${Date.now()}-${Math.random()}`,
 			type: "health_check",
-			timestamp: Date.now(),
+			category: 'health',
+			action: 'health_check',
 			properties: { test: true },
-			source: "health-monitor",
+			timestamp: Date.now(),
+			metadata: {
+				source: "health-monitor",
+				version: "1.0.0",
+			},
 		});
 
 		// Test metric recording
 		await analyticsService.recordMetric({
 			name: "health_check_test",
 			value: 1,
-			type: "counter",
-			timestamp: Date.now(),
-			labels: { service: "health" },
+			tags: { service: "health" },
 		});
 
 		// Get health metrics

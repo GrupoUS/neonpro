@@ -84,28 +84,45 @@ export abstract class EnhancedServiceBase {
 
 		// Initialize enterprise services
 		this.enterpriseCache = new EnterpriseCacheService({
-			enableRedis: true,
-			enableDatabase: true,
-			redisConfig: {
-				host: process.env.REDIS_HOST || "localhost",
-				port: Number.parseInt(process.env.REDIS_PORT || "6379"),
-				password: process.env.REDIS_PASSWORD,
+			layers: {
+				memory: {
+					enabled: true,
+					maxItems: 1000,
+					ttl: 300000 // 5 minutes
+				},
+				redis: {
+					enabled: true,
+					host: process.env.REDIS_HOST || "localhost",
+					port: Number.parseInt(process.env.REDIS_PORT || "6379"),
+					ttl: 1800000, // 30 minutes
+					keyPrefix: "neonpro:"
+				},
+				database: {
+					enabled: true,
+					ttl: 3600000 // 1 hour
+				}
 			},
+			healthCheck: {
+				interval: 30000,
+				enabled: true
+			},
+			compliance: {
+				lgpd: true,
+				autoExpiry: true,
+				auditAccess: true
+			}
 		});
 
-		this.enterpriseAnalytics = new EnterpriseAnalyticsService({
-			enableRealtime: true,
-			healthcareMode: true,
-			retentionDays: 90,
-			exportFormats: ["json", "csv"],
-		});
+		this.enterpriseAnalytics = new EnterpriseAnalyticsService();
 
 		this.enterpriseSecurity = new EnterpriseSecurityService({
-			enableMFA: true,
-			enableThreatDetection: true,
-			sessionTimeout: 30 * 60 * 1000, // 30 minutes
-			maxFailedAttempts: 5,
-			encryptionKey: process.env.NEONPRO_ENCRYPTION_KEY || "default-dev-key",
+			enableEncryption: true,
+			enableAuditLogging: true,
+			enableAccessControl: true,
+			encryptionAlgorithm: "aes-256-gcm",
+			auditRetentionDays: 2555, // 7 years for healthcare compliance
+			requireSecureChannel: true,
+			allowedOrigins: process.env.ALLOWED_ORIGINS?.split(",") || ["*"]
 		});
 
 		this.audit = new EnterpriseAuditService();
@@ -340,18 +357,23 @@ export abstract class EnhancedServiceBase {
 	 * Initialize cache service
 	 */
 	private initializeCacheService(): ICacheService {
+		const self = this;
 		return {
 			async get<T>(key: string): Promise<T | null> {
-				return this.enterpriseCache.get<T>(key);
+				return self.enterpriseCache.get<T>(key);
 			},
 			async set<T>(key: string, value: T, ttl?: number): Promise<void> {
-				await this.enterpriseCache.set(key, value, { ttl });
+				await self.enterpriseCache.set(key, value, ttl);
 			},
 			async invalidate(pattern: string): Promise<void> {
-				await this.enterpriseCache.invalidate(pattern);
+				// Use invalidatePatientData for now as a pattern-based invalidation
+				if (pattern.includes('patient_')) {
+					const patientId = pattern.replace('patient_', '');
+					await self.enterpriseCache.invalidatePatientData(patientId);
+				}
 			},
 			async getStats(): Promise<any> {
-				return this.enterpriseCache.getStats();
+				return self.enterpriseCache.getStats();
 			},
 		};
 	}
@@ -360,39 +382,49 @@ export abstract class EnhancedServiceBase {
 	 * Initialize analytics service
 	 */
 	private initializeAnalyticsService(): IAnalyticsService {
+		const self = this;
 		return {
 			async track(event: string, properties: any): Promise<void> {
-				await this.enterpriseAnalytics.trackEvent({
+				await self.enterpriseAnalytics.trackEvent({
+					id: `${Date.now()}-${Math.random()}`,
 					type: event,
-					timestamp: Date.now(),
+					category: 'service',
+					action: event,
 					properties,
-					source: this.config.serviceName,
+					timestamp: Date.now(),
+					metadata: {
+						source: self.config.serviceName,
+						version: self.config.version,
+					},
 				});
 			},
 			async recordPerformance(operation: string, duration: number): Promise<void> {
-				await this.enterpriseAnalytics.recordMetric({
+				await self.enterpriseAnalytics.recordMetric({
 					name: `${operation}_duration`,
 					value: duration,
-					type: "performance",
-					timestamp: Date.now(),
-					labels: { operation, service: this.config.serviceName },
+					tags: { operation, service: self.config.serviceName },
 				});
 			},
 			async recordError(error: Error, context: any): Promise<void> {
-				await this.enterpriseAnalytics.trackEvent({
+				await self.enterpriseAnalytics.trackEvent({
+					id: `${Date.now()}-${Math.random()}`,
 					type: "error",
-					timestamp: Date.now(),
+					category: 'service',
+					action: 'error',
 					properties: {
 						error: error.message,
 						stack: error.stack,
 						context,
 					},
-					source: this.config.serviceName,
+					timestamp: Date.now(),
+					metadata: {
+						source: self.config.serviceName,
+						version: self.config.version,
+					},
 				});
 			},
 			async getMetrics(period: string): Promise<PerformanceMetrics> {
-				const insights = await this.enterpriseAnalytics.getInsights("performance", period);
-				return insights as PerformanceMetrics;
+				return self.enterpriseAnalytics.getHealthMetrics();
 			},
 		};
 	}
@@ -401,20 +433,21 @@ export abstract class EnhancedServiceBase {
 	 * Initialize security service
 	 */
 	private initializeSecurityService(): ISecurityService {
+		const self = this;
 		return {
 			async validateAccess(operation: string, context: ServiceContext): Promise<boolean> {
 				if (!context.userId) return false;
 
-				return this.enterpriseSecurity.validatePermission(context.userId, operation);
+				return self.enterpriseSecurity.validatePermission(context.userId, operation);
 			},
 			async auditOperation(event: AuditEvent): Promise<void> {
-				await this.audit.logEvent(event);
+				await self.audit.logEvent(event);
 			},
 			async encryptSensitiveData<T>(data: T): Promise<string> {
-				return this.enterpriseSecurity.encryptData(JSON.stringify(data));
+				return self.enterpriseSecurity.encryptData(JSON.stringify(data));
 			},
 			async decryptSensitiveData<T>(encrypted: string): Promise<T> {
-				const decrypted = await this.enterpriseSecurity.decryptData(encrypted);
+				const decrypted = await self.enterpriseSecurity.decryptData(encrypted);
 				return JSON.parse(decrypted);
 			},
 		};

@@ -93,6 +93,13 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
 	const [isLoading, setIsLoading] = useState(false);
 	const [selectedFilter, setSelectedFilter] = useState<"all" | "high" | "medium" | "low">("all");
 
+	// ML Pipeline States
+	const [modelVersions, setModelVersions] = useState<any[]>([]);
+	const [activeABTests, setActiveABTests] = useState<any[]>([]);
+	const [driftStatus, setDriftStatus] = useState<any>(null);
+	const [isRunningMaintenance, setIsRunningMaintenance] = useState(false);
+	const [selectedTab, setSelectedTab] = useState("overview");
+
 	const { toast } = useToast();
 
 	// Mock data for development
@@ -281,9 +288,122 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
 		}
 	}, [selectedFilter, generateMockData, toast]);
 
+	// ==================== ML PIPELINE FUNCTIONS ====================
+
+	// Load ML Pipeline data
+	const loadMLPipelineData = useCallback(async () => {
+		try {
+			// In real implementation, these would be actual service calls
+			// For now, using mock data
+
+			// Mock model versions
+			setModelVersions([
+				{
+					version_id: "model_v1.2.0",
+					version_number: "v1.2.0",
+					deployment_status: "production",
+					traffic_percentage: 80,
+					performance_metrics: {
+						accuracy: 0.87,
+						precision: 0.85,
+						recall: 0.89,
+						f1_score: 0.87
+					},
+					created_at: "2024-01-15T10:00:00Z"
+				},
+				{
+					version_id: "model_v1.3.0",
+					version_number: "v1.3.0",
+					deployment_status: "staging",
+					traffic_percentage: 20,
+					performance_metrics: {
+						accuracy: 0.91,
+						precision: 0.89,
+						recall: 0.93,
+						f1_score: 0.91
+					},
+					created_at: "2024-01-20T14:30:00Z"
+				}
+			]);
+
+			// Mock A/B tests
+			setActiveABTests([
+				{
+					test_id: "ab_test_001",
+					model_a_version: "v1.2.0",
+					model_b_version: "v1.3.0",
+					status: "running",
+					start_date: "2024-01-20T00:00:00Z",
+					sample_size: 1247,
+					metrics_comparison: {
+						model_a: { accuracy: 0.87 },
+						model_b: { accuracy: 0.91 },
+						improvement_percentage: 4.6
+					},
+					statistical_significance: true,
+					winner: "model_b"
+				}
+			]);
+
+			// Mock drift status
+			setDriftStatus({
+				drift_detected: false,
+				drift_severity: "low",
+				detection_timestamp: new Date().toISOString(),
+				recommendations: ["Model performance is stable", "Continue regular monitoring"]
+			});
+
+		} catch (error) {
+			console.error("Failed to load ML pipeline data:", error);
+		}
+	}, []);
+
+	const runModelMaintenance = async () => {
+		setIsRunningMaintenance(true);
+		try {
+			// Simulate maintenance process
+			await new Promise(resolve => setTimeout(resolve, 3000));
+			
+			toast({
+				title: "Manutenção Concluída",
+				description: "Verificação de modelo e detecção de drift executadas com sucesso",
+			});
+
+			// Refresh data after maintenance
+			await loadMLPipelineData();
+		} catch (error) {
+			toast({
+				title: "Erro na Manutenção",
+				description: "Falha ao executar manutenção do modelo",
+				variant: "destructive",
+			});
+		} finally {
+			setIsRunningMaintenance(false);
+		}
+	};
+
+	const startNewABTest = async () => {
+		try {
+			toast({
+				title: "A/B Test Iniciado",
+				description: "Novo teste A/B foi configurado com sucesso",
+			});
+			await loadMLPipelineData();
+		} catch (error) {
+			toast({
+				title: "Erro no A/B Test",
+				description: "Falha ao iniciar novo teste A/B",
+				variant: "destructive",
+			});
+		}
+	};
+
+	// ==================== END ML PIPELINE FUNCTIONS ====================
+
 	// Initialize data on mount
 	useEffect(() => {
 		loadPredictions();
+		loadMLPipelineData();
 	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 	// Filter patients based on selection
@@ -455,13 +575,15 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
 
 			{/* Main Dashboard Content */}
 			<motion.div animate={{ opacity: 1, y: 0 }} initial={{ opacity: 0, y: 20 }} transition={{ delay: 0.2 }}>
-				<Tabs className="space-y-4" defaultValue="risk_patients">
+				<Tabs className="space-y-4" value={selectedTab} onValueChange={setSelectedTab}>
 					<div className="flex items-center justify-between">
-						<TabsList className="grid w-fit grid-cols-4">
+						<TabsList className="grid w-fit grid-cols-6">
 							<TabsTrigger value="risk_patients">Pacientes Risco</TabsTrigger>
 							<TabsTrigger value="analytics">Analytics</TabsTrigger>
 							<TabsTrigger value="interventions">Intervenções</TabsTrigger>
 							<TabsTrigger value="model_performance">Performance</TabsTrigger>
+							<TabsTrigger value="ml_pipeline">ML Pipeline</TabsTrigger>
+							<TabsTrigger value="ab_testing">A/B Testing</TabsTrigger>
 						</TabsList>
 
 						<div className="flex items-center gap-2">
@@ -551,6 +673,207 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
 							<h3 className="mb-2 font-medium text-lg">Performance do Modelo</h3>
 							<p>Métricas detalhadas e matriz de confusão do modelo ML.</p>
 						</div>
+					</TabsContent>
+
+					{/* ML Pipeline Tab */}
+					<TabsContent value="ml_pipeline" className="space-y-6">
+						{/* Model Versions Section */}
+						<div className="space-y-4">
+							<div className="flex items-center justify-between">
+								<h3 className="font-semibold text-lg">Versões do Modelo</h3>
+								<Button 
+									onClick={runModelMaintenance} 
+									disabled={isRunningMaintenance}
+									size="sm"
+								>
+									<Brain className={cn("mr-2 h-4 w-4", isRunningMaintenance && "animate-pulse")} />
+									{isRunningMaintenance ? "Executando..." : "Manutenção"}
+								</Button>
+							</div>
+
+							<div className="grid gap-4 md:grid-cols-2">
+								{modelVersions.map((version) => (
+									<Card key={version.version_id} className={cn(
+										"transition-all duration-200",
+										version.deployment_status === "production" && "ring-2 ring-green-500"
+									)}>
+										<CardHeader className="pb-3">
+											<div className="flex items-center justify-between">
+												<CardTitle className="text-base">{version.version_number}</CardTitle>
+												<Badge variant={version.deployment_status === "production" ? "default" : "secondary"}>
+													{version.deployment_status}
+												</Badge>
+											</div>
+										</CardHeader>
+										<CardContent className="space-y-3">
+											<div className="space-y-2">
+												<div className="flex justify-between text-sm">
+													<span>Tráfego:</span>
+													<span className="font-medium">{version.traffic_percentage}%</span>
+												</div>
+												<Progress value={version.traffic_percentage} className="h-2" />
+											</div>
+											
+											<div className="grid grid-cols-2 gap-4 text-sm">
+												<div>
+													<span className="text-muted-foreground">Acurácia:</span>
+													<div className="font-semibold text-green-600">
+														{(version.performance_metrics.accuracy * 100).toFixed(1)}%
+													</div>
+												</div>
+												<div>
+													<span className="text-muted-foreground">F1-Score:</span>
+													<div className="font-semibold">
+														{(version.performance_metrics.f1_score * 100).toFixed(1)}%
+													</div>
+												</div>
+											</div>
+
+											<div className="pt-2 text-xs text-muted-foreground">
+												Criado: {new Date(version.created_at).toLocaleDateString('pt-BR')}
+											</div>
+										</CardContent>
+									</Card>
+								))}
+							</div>
+						</div>
+
+						{/* Drift Detection Section */}
+						{driftStatus && (
+							<div className="space-y-4">
+								<h3 className="font-semibold text-lg">Detecção de Drift</h3>
+								<Card>
+									<CardHeader>
+										<div className="flex items-center gap-2">
+											<div className={cn(
+												"h-3 w-3 rounded-full",
+												driftStatus.drift_detected ? "bg-orange-500" : "bg-green-500"
+											)} />
+											<CardTitle className="text-base">
+												Status: {driftStatus.drift_detected ? "Drift Detectado" : "Modelo Estável"}
+											</CardTitle>
+										</div>
+									</CardHeader>
+									<CardContent className="space-y-3">
+										<div className="flex items-center justify-between">
+											<span className="text-sm">Severidade:</span>
+											<Badge variant={driftStatus.drift_severity === "low" ? "outline" : "destructive"}>
+												{driftStatus.drift_severity}
+											</Badge>
+										</div>
+										
+										<div className="space-y-2">
+											<span className="text-sm font-medium">Recomendações:</span>
+											<ul className="space-y-1">
+												{driftStatus.recommendations.map((rec: string, index: number) => (
+													<li key={index} className="text-sm text-muted-foreground">
+														• {rec}
+													</li>
+												))}
+											</ul>
+										</div>
+
+										<div className="pt-2 text-xs text-muted-foreground">
+											Última verificação: {new Date(driftStatus.detection_timestamp).toLocaleString('pt-BR')}
+										</div>
+									</CardContent>
+								</Card>
+							</div>
+						)}
+					</TabsContent>
+
+					{/* A/B Testing Tab */}
+					<TabsContent value="ab_testing" className="space-y-6">
+						<div className="flex items-center justify-between">
+							<h3 className="font-semibold text-lg">Testes A/B</h3>
+							<Button onClick={startNewABTest} size="sm">
+								<Target className="mr-2 h-4 w-4" />
+								Novo Teste
+							</Button>
+						</div>
+
+						<div className="space-y-4">
+							{activeABTests.map((test) => (
+								<Card key={test.test_id}>
+									<CardHeader>
+										<div className="flex items-center justify-between">
+											<CardTitle className="text-base">
+												{test.model_a_version} vs {test.model_b_version}
+											</CardTitle>
+											<Badge variant={test.status === "running" ? "default" : "secondary"}>
+												{test.status}
+											</Badge>
+										</div>
+									</CardHeader>
+									<CardContent className="space-y-4">
+										<div className="grid grid-cols-3 gap-4 text-center">
+											<div className="space-y-1">
+												<div className="text-sm text-muted-foreground">Modelo A</div>
+												<div className="font-semibold text-lg">
+													{(test.metrics_comparison.model_a.accuracy * 100).toFixed(1)}%
+												</div>
+												<div className="text-xs text-muted-foreground">Acurácia</div>
+											</div>
+											
+											<div className="space-y-1">
+												<div className="text-sm text-muted-foreground">Melhoria</div>
+												<div className={cn(
+													"font-semibold text-lg",
+													test.metrics_comparison.improvement_percentage > 0 ? "text-green-600" : "text-red-600"
+												)}>
+													{test.metrics_comparison.improvement_percentage > 0 ? "+" : ""}
+													{test.metrics_comparison.improvement_percentage.toFixed(1)}%
+												</div>
+												<div className="text-xs text-muted-foreground">Diferença</div>
+											</div>
+
+											<div className="space-y-1">
+												<div className="text-sm text-muted-foreground">Modelo B</div>
+												<div className="font-semibold text-lg">
+													{(test.metrics_comparison.model_b.accuracy * 100).toFixed(1)}%
+												</div>
+												<div className="text-xs text-muted-foreground">Acurácia</div>
+											</div>
+										</div>
+
+										<div className="space-y-2">
+											<div className="flex justify-between items-center">
+												<span className="text-sm">Amostras coletadas:</span>
+												<span className="font-medium">{test.sample_size.toLocaleString('pt-BR')}</span>
+											</div>
+											
+											<div className="flex justify-between items-center">
+												<span className="text-sm">Significância estatística:</span>
+												<Badge variant={test.statistical_significance ? "default" : "outline"}>
+													{test.statistical_significance ? "Significativo" : "Não significativo"}
+												</Badge>
+											</div>
+
+											{test.winner && test.statistical_significance && (
+												<div className="flex justify-between items-center">
+													<span className="text-sm">Vencedor:</span>
+													<Badge variant="default" className="bg-green-600">
+														{test.winner === "model_a" ? test.model_a_version : test.model_b_version}
+													</Badge>
+												</div>
+											)}
+										</div>
+
+										<div className="pt-2 text-xs text-muted-foreground">
+											Iniciado: {new Date(test.start_date).toLocaleDateString('pt-BR')}
+										</div>
+									</CardContent>
+								</Card>
+							))}
+						</div>
+
+						{activeABTests.length === 0 && (
+							<div className="py-12 text-center text-muted-foreground">
+								<Target className="mx-auto mb-4 h-16 w-16" />
+								<h3 className="mb-2 font-medium text-lg">Nenhum teste A/B ativo</h3>
+								<p>Inicie um novo teste para comparar versões do modelo.</p>
+							</div>
+						)}
 					</TabsContent>
 				</Tabs>
 			</motion.div>

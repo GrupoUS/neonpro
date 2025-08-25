@@ -141,14 +141,15 @@ export class EnterpriseAuditService {
 			await this.checkComplianceViolations(auditRecord);
 		} catch (error) {
 			// Critical: Audit logging failure
+			const errorMessage = error instanceof Error ? error.message : String(error);
 			console.error("CRITICAL: Audit logging failed", {
-				error: error.message,
+				error: errorMessage,
 				eventId: event.id,
 				service: event.service,
 			});
 
 			// Fallback logging mechanism
-			await this.emergencyLog(event, error);
+			await this.emergencyLog(event, error instanceof Error ? error : new Error(String(error)));
 		}
 	}
 
@@ -304,17 +305,14 @@ export class EnterpriseAuditService {
 
 		for (let i = 0; i < this.auditChain.length; i++) {
 			const record = this.auditChain[i];
+			if (!record) continue;
 
 			// Verify previous hash linkage
 			if (record.previousHash !== expectedHash) {
 				brokenLinks.push(i);
 			} else {
 				// Verify current record hash
-				const calculatedHash = this.generateHash({
-					...record,
-					hash: "",
-					signature: "",
-				});
+				const calculatedHash = this.generateHash(record);
 
 				if (calculatedHash === record.hash) {
 					lastVerifiedIndex = i;
@@ -396,10 +394,10 @@ export class EnterpriseAuditService {
 		recommendations: string[];
 	}> {
 		const query: AuditQuery = {
-			userId: targetUserId,
-			patientId: targetPatientId,
-			startDate: timeWindow?.start,
-			endDate: timeWindow?.end,
+			...(targetUserId && { userId: targetUserId }),
+			...(targetPatientId && { patientId: targetPatientId }),
+			...(timeWindow?.start && { startDate: timeWindow.start }),
+			...(timeWindow?.end && { endDate: timeWindow.end }),
 			limit: 1000,
 		};
 
@@ -761,7 +759,7 @@ export class EnterpriseAuditService {
 				type: "data_access",
 				description: `${accessPatterns.length} data access events`,
 				frequency: accessPatterns.length,
-				riskLevel: accessPatterns.length > 100 ? "high" : ("medium" as const),
+				riskLevel: (accessPatterns.length > 100 ? "high" : "medium") as "low" | "medium" | "high" | "critical",
 			});
 		}
 

@@ -127,7 +127,6 @@ class RedisCacheLayer implements CacheLayer {
 		this.redis = new Redis({
 			host: config.host,
 			port: config.port,
-			retryDelayOnFailover: 100,
 			maxRetriesPerRequest: 3,
 			lazyConnect: true,
 		});
@@ -203,7 +202,7 @@ class RedisCacheLayer implements CacheLayer {
 		} catch (error) {
 			return {
 				layer: this.name,
-				error: error.message,
+				error: error instanceof Error ? error.message : String(error),
 				hitRate: this.accessCount > 0 ? this.hitCount / this.accessCount : 0,
 				accessCount: this.accessCount,
 				hitCount: this.hitCount,
@@ -268,11 +267,24 @@ export class EnterpriseCacheService {
 	private config: EnterpriseCacheConfig;
 	private healthCheckInterval: NodeJS.Timeout | null = null;
 	private metrics: PerformanceMetrics = {
+		service: "cache",
+		period: "realtime",
+		totalOperations: 0,
+		averageResponseTime: 0,
+		errorRate: 0,
+		cacheHitRate: 0,
+		throughput: 0,
+		p95ResponseTime: 0,
+		p99ResponseTime: 0,
+		slowestOperations: [],
+	};
+
+	// Extended cache-specific metrics (not part of base interface)
+	private extendedMetrics = {
 		totalRequests: 0,
 		cacheHits: 0,
 		cacheMisses: 0,
 		avgResponseTime: 0,
-		errorRate: 0,
 	};
 
 	constructor(config?: Partial<EnterpriseCacheConfig>) {
@@ -336,7 +348,8 @@ export class EnterpriseCacheService {
 	 */
 	async get<T>(key: string): Promise<T | null> {
 		const startTime = performance.now();
-		this.metrics.totalRequests++;
+		this.extendedMetrics.totalRequests++;
+		this.metrics.totalOperations++;
 
 		for (const layer of this.layers) {
 			try {
@@ -345,7 +358,10 @@ export class EnterpriseCacheService {
 					// Cache hit! Populate upper layers for next access
 					await this.populateUpperLayers(key, value, layer);
 
-					this.metrics.cacheHits++;
+					this.extendedMetrics.cacheHits++;
+					this.metrics.cacheHitRate = this.extendedMetrics.totalRequests > 0 
+						? this.extendedMetrics.cacheHits / this.extendedMetrics.totalRequests 
+						: 0;
 					this.updateResponseTime(startTime);
 
 					if (this.config.compliance.auditAccess) {
@@ -361,7 +377,7 @@ export class EnterpriseCacheService {
 		}
 
 		// Cache miss across all layers
-		this.metrics.cacheMisses++;
+		this.extendedMetrics.cacheMisses++;
 		this.updateResponseTime(startTime);
 
 		if (this.config.compliance.auditAccess) {
@@ -451,16 +467,20 @@ export class EnterpriseCacheService {
 		const layerStats = await Promise.allSettled(this.layers.map((layer) => layer.stats()));
 
 		const stats = layerStats.map((result, index) => ({
-			layer: this.layers[index].name,
+			layer: this.layers[index]?.name || `layer-${index}`,
 			...(result.status === "fulfilled" ? result.value : { error: result.reason }),
 		}));
 
 		return {
 			enterprise: {
-				totalRequests: this.metrics.totalRequests,
-				cacheHitRate: this.metrics.totalRequests > 0 ? this.metrics.cacheHits / this.metrics.totalRequests : 0,
-				avgResponseTime: this.metrics.avgResponseTime,
-				errorRate: this.metrics.errorRate / this.metrics.totalRequests,
+				totalRequests: this.extendedMetrics.totalRequests,
+				cacheHitRate: this.extendedMetrics.totalRequests > 0 
+					? this.extendedMetrics.cacheHits / this.extendedMetrics.totalRequests 
+					: 0,
+				avgResponseTime: this.extendedMetrics.avgResponseTime,
+				errorRate: this.extendedMetrics.totalRequests > 0 
+					? this.metrics.errorRate / this.extendedMetrics.totalRequests 
+					: 0,
 			},
 			layers: stats,
 			config: {
@@ -496,7 +516,7 @@ export class EnterpriseCacheService {
 					return {
 						layer: layer.name,
 						status: "unhealthy",
-						error: error.message,
+						error: error instanceof Error ? error.message : String(error),
 						canWrite: false,
 						canRead: false,
 					};
@@ -544,8 +564,9 @@ export class EnterpriseCacheService {
 	 */
 	private updateResponseTime(startTime: number): void {
 		const duration = performance.now() - startTime;
-		this.metrics.avgResponseTime =
-			(this.metrics.avgResponseTime * (this.metrics.totalRequests - 1) + duration) / this.metrics.totalRequests;
+		this.extendedMetrics.avgResponseTime =
+			(this.extendedMetrics.avgResponseTime * (this.extendedMetrics.totalRequests - 1) + duration) / this.extendedMetrics.totalRequests;
+		this.metrics.averageResponseTime = this.extendedMetrics.avgResponseTime;
 	}
 
 	/**
@@ -567,6 +588,21 @@ export class EnterpriseCacheService {
 		if (this.config.compliance.auditAccess) {
 			await this.auditAccess("PATIENT_DATA_INVALIDATED", { patientId });
 		}
+	}
+
+	/**
+	 * Get health metrics for monitoring
+	 */
+	async getHealthMetrics(): Promise<PerformanceMetrics> {
+		return {
+			...this.metrics,
+			// Override with extended metrics for health reporting
+			totalOperations: this.extendedMetrics.totalRequests,
+			averageResponseTime: this.extendedMetrics.avgResponseTime,
+			cacheHitRate: this.extendedMetrics.totalRequests > 0 
+				? this.extendedMetrics.cacheHits / this.extendedMetrics.totalRequests 
+				: 0,
+		};
 	}
 
 	/**

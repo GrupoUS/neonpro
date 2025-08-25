@@ -4,6 +4,188 @@
  * Tipos compartilhados para o Enhanced Service Layer Pattern
  */
 
+import { z } from "zod";
+
+// Zod Schemas for validation
+export const UUIDSchema = z.string().uuid();
+export const DateSchema = z.date();
+export const EmailSchema = z.string().email();
+export const PhoneSchema = z.string().regex(/^\+?[1-9]\d{1,14}$/);
+export const NonNegativeNumberSchema = z.number().min(0);
+export const PositiveNumberSchema = z.number().min(1);
+
+// Base Entity for all database entities
+export interface BaseEntity {
+	id: string;
+	createdAt: Date;
+	updatedAt: Date;
+}
+
+// Status Enums
+export enum PatientStatus {
+	ACTIVE = "ACTIVE",
+	INACTIVE = "INACTIVE",
+	SUSPENDED = "SUSPENDED",
+	PENDING = "PENDING"
+}
+
+export enum BillingStatus {
+	PENDING = "PENDING",
+	PAID = "PAID",
+	OVERDUE = "OVERDUE",
+	CANCELLED = "CANCELLED"
+}
+
+export enum AppointmentStatus {
+	SCHEDULED = "SCHEDULED",
+	CONFIRMED = "CONFIRMED",
+	IN_PROGRESS = "IN_PROGRESS",
+	COMPLETED = "COMPLETED",
+	CANCELLED = "CANCELLED",
+	NO_SHOW = "NO_SHOW"
+}
+
+export enum InventoryStatus {
+	IN_STOCK = "IN_STOCK",
+	LOW_STOCK = "LOW_STOCK",
+	OUT_OF_STOCK = "OUT_OF_STOCK",
+	DISCONTINUED = "DISCONTINUED"
+}
+
+export enum NotificationType {
+	APPOINTMENT_REMINDER = "APPOINTMENT_REMINDER",
+	PAYMENT_DUE = "PAYMENT_DUE",
+	TREATMENT_UPDATE = "TREATMENT_UPDATE",
+	SYSTEM_ALERT = "SYSTEM_ALERT",
+	MARKETING = "MARKETING",
+	COMPLIANCE = "COMPLIANCE"
+}
+
+export enum TreatmentType {
+	CONSULTATION = "CONSULTATION",
+	PROCEDURE = "PROCEDURE",
+	FOLLOW_UP = "FOLLOW_UP",
+	EMERGENCY = "EMERGENCY"
+}
+
+// Analytics Types
+export interface AnalyticsEvent {
+	id: string;
+	type: string;
+	category: string;
+	action: string;
+	properties: Record<string, any>;
+	userId?: string;
+	sessionId?: string;
+	patientId?: string;
+	timestamp: number;
+	metadata: {
+		userAgent?: string;
+		ip?: string;
+		source: string;
+		version: string;
+	};
+}
+
+export interface AnalyticsMetric {
+	name: string;
+	value: number;
+	unit: string;
+	timestamp: Date;
+	tags?: Record<string, string>;
+}
+
+export interface AnalyticsInsight {
+	id: string;
+	title: string;
+	description: string;
+	type: "TREND" | "ANOMALY" | "RECOMMENDATION";
+	category: string;
+	severity: "LOW" | "MEDIUM" | "HIGH";
+	data: Record<string, any>;
+	createdAt: Date;
+}
+
+// Security Types
+export interface Permission {
+	id: string;
+	name: string;
+	description: string;
+	resource: string;
+	action: string;
+}
+
+export interface Role {
+	id: string;
+	name: string;
+	description: string;
+	permissions: Permission[];
+	isActive: boolean;
+}
+
+export interface SecurityPolicy {
+	id: string;
+	name: string;
+	description: string;
+	rules: any[];
+	isActive: boolean;
+	version: number;
+}
+
+// Cache Types
+export interface CacheKey {
+	key: string;
+	ttl?: number;
+	tags?: string[];
+}
+
+export interface CacheOptions {
+	ttl?: number;
+	tags?: string[];
+	compress?: boolean;
+	encrypt?: boolean;
+}
+
+export interface CacheStats {
+	hitCount: number;
+	missCount: number;
+	hitRate: number;
+	totalSize: number;
+	itemCount: number;
+	lastUpdated: Date;
+}
+
+// Audit Types
+export interface AuditRecord {
+	id: string;
+	eventType: string;
+	userId?: string;
+	patientId?: string;
+	resource: string;
+	action: string;
+	oldValue?: any;
+	newValue?: any;
+	timestamp: Date;
+	ipAddress?: string;
+	userAgent?: string;
+	details?: Record<string, any>;
+}
+
+// Compliance Types
+export interface ComplianceReport {
+	id: string;
+	type: string;
+	framework: "LGPD" | "ANVISA" | "CFM";
+	status: "COMPLIANT" | "NON_COMPLIANT" | "PENDING";
+	score: number;
+	findings: any[];
+	generatedAt: Date;
+	period: {
+		start: Date;
+		end: Date;
+	};
+}
+
 // Service Context for operations
 export interface ServiceContext {
 	userId?: string;

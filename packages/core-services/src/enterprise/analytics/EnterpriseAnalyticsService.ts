@@ -59,6 +59,12 @@ interface HealthcareMetrics {
 }
 
 interface PerformanceMetricsExtended extends PerformanceMetrics {
+	// Additional properties for extended analytics
+	totalRequests: number;
+	cacheHits: number;
+	cacheMisses: number;
+	avgResponseTime: number; // Alias for averageResponseTime for backward compatibility
+	
 	serviceMetrics: Record<
 		string,
 		{
@@ -89,11 +95,23 @@ export class EnterpriseAnalyticsService {
 
 	constructor() {
 		this.metrics = {
+			// Base PerformanceMetrics properties
+			service: "analytics",
+			period: "realtime",
+			totalOperations: 0,
+			averageResponseTime: 0,
+			errorRate: 0,
+			cacheHitRate: 0,
+			throughput: 0,
+			p95ResponseTime: 0,
+			p99ResponseTime: 0,
+			slowestOperations: [],
+			
+			// Extended properties
 			totalRequests: 0,
 			cacheHits: 0,
 			cacheMisses: 0,
-			avgResponseTime: 0,
-			errorRate: 0,
+			avgResponseTime: 0, // Alias for averageResponseTime
 			serviceMetrics: {},
 			cacheMetrics: {
 				hitRate: 0,
@@ -144,14 +162,14 @@ export class EnterpriseAnalyticsService {
 			category: this.extractCategory(eventName),
 			action: eventName,
 			properties,
-			userId,
+			...(userId && { userId }),
 			sessionId: this.getCurrentSessionId(),
 			timestamp: Date.now(),
 			metadata: {
 				source: "enterprise-analytics",
 				version: "1.0.0",
 				userAgent: properties.userAgent,
-				ip: this.hashIP(properties.ip),
+				...(properties.ip && { ip: this.hashIP(properties.ip) }),
 			},
 		};
 
@@ -548,6 +566,25 @@ export class EnterpriseAnalyticsService {
 		});
 
 		return rows.join("\n");
+	}
+
+	/**
+	 * Record a metric for monitoring
+	 */
+	async recordMetric(metric: {
+		name: string;
+		value: number;
+		tags?: Record<string, string>;
+	}): Promise<void> {
+		// Simple implementation for health checks
+		console.log(`Recording metric: ${metric.name} = ${metric.value}`);
+	}
+
+	/**
+	 * Get health metrics for monitoring
+	 */
+	async getHealthMetrics(): Promise<PerformanceMetrics> {
+		return this.metrics;
 	}
 
 	/**

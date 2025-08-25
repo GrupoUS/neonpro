@@ -1,8 +1,18 @@
 // No-Show Prediction Service for AI Services
 // Machine learning-powered prediction system to reduce appointment no-shows
 
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import { type AIServiceInput, type AIServiceOutput, EnhancedAIService } from "./enhanced-service-base";
+import { EnhancedAIService } from "./enhanced-service-base";
+import type { LoggerService, MetricsService } from '@neonpro/core-services';
+import type { CacheService, AIServiceConfig, AIServiceMetrics } from './enhanced-service-base';
+import { MLPipelineManagementService } from "./ml-pipeline-management";
+import type {
+  ModelVersion,
+  ABTestResult,
+  DriftDetectionResult,
+  CreateModelVersionRequest,
+  DriftDetectionRequest,
+  MLPipelineStatus
+} from '@neonpro/types';
 
 // Prediction Types and Interfaces
 export interface PatientProfile {
@@ -57,6 +67,19 @@ export interface ExternalFactors {
 	};
 }
 
+export interface InterventionAnalysis {
+	scenario_name: string;
+	predicted_no_show_reduction: number;
+	cost_benefit_ratio: number;
+	implementation_difficulty: "easy" | "moderate" | "hard" | "very_hard";
+	expected_roi_percent: number;
+	risk_factors: string[];
+	success_prerequisites: string[];
+}
+
+// A/B Testing and Model Management Types
+// Additional types specific to no-show predictions
+
 export interface PredictionInput extends AIServiceInput {
 	action:
 		| "predict"
@@ -65,7 +88,14 @@ export interface PredictionInput extends AIServiceInput {
 		| "bulk_predict"
 		| "update_model"
 		| "get_feature_importance"
-		| "simulate_interventions";
+		| "simulate_interventions"
+		| "start_ab_test"
+		| "stop_ab_test"
+		| "get_ab_test_results"
+		| "deploy_model"
+		| "detect_drift"
+		| "get_model_versions"
+		| "rollback_model";
 
 	// Prediction inputs
 	patient_profile?: PatientProfile;
@@ -84,21 +114,35 @@ export interface PredictionInput extends AIServiceInput {
 	model_version?: string;
 	feature_selection?: string[];
 
+	// A/B Testing
+	ab_test_config?: {
+		model_a_version: string;
+		model_b_version: string;
+		traffic_split: number; // percentage for model B
+		duration_days: number;
+		success_metrics: string[];
+	};
+	ab_test_id?: string;
+
+	// Model deployment
+	deployment_config?: {
+		environment: "staging" | "production";
+		traffic_percentage: number;
+		rollback_criteria?: {
+			accuracy_threshold: number;
+			error_rate_threshold: number;
+		};
+	};
+
+	// Drift detection
+	drift_detection_config?: {
+		reference_period_days: number;
+		comparison_period_days: number;
+		sensitivity: "low" | "medium" | "high";
+	};
+
 	// Intervention simulation
 	intervention_scenarios?: InterventionScenario[];
-}
-
-export interface InterventionScenario {
-	name: string;
-	description: string;
-	changes: {
-		reminder_strategy?: "none" | "email" | "sms" | "phone" | "multi_channel";
-		reminder_timing_hours?: number[];
-		incentives?: ("discount" | "priority_booking" | "gift_card" | "loyalty_points")[];
-		scheduling_flexibility?: "strict" | "flexible" | "very_flexible";
-		preparation_support?: "none" | "basic" | "comprehensive";
-	};
-	estimated_cost_per_appointment?: number;
 }
 
 export interface PredictionOutput extends AIServiceOutput {
@@ -120,17 +164,19 @@ export interface PredictionOutput extends AIServiceOutput {
 	model_performance?: ModelPerformanceMetrics;
 	feature_importance?: FeatureImportance[];
 
+	// A/B Testing results
+	ab_test_result?: ABTestResult;
+	ab_test_id?: string;
+
+	// Model management
+	model_versions?: ModelVersion[];
+	deployment_status?: string;
+
+	// Drift detection
+	drift_detection_result?: DriftDetectionResult;
+
 	// Intervention analysis
 	intervention_analysis?: InterventionAnalysis[];
-}
-
-export interface FactorContribution {
-	factor_name: string;
-	category: "patient" | "appointment" | "external" | "historical";
-	importance_weight: number;
-	impact_direction: "increases_risk" | "decreases_risk";
-	description: string;
-	confidence: number;
 }
 
 export interface RecommendedAction {
@@ -170,42 +216,73 @@ export interface FeatureImportance {
 	stability_score: number; // How consistent this feature's importance is across model versions
 }
 
-export interface InterventionAnalysis {
-	scenario_name: string;
-	predicted_no_show_reduction: number;
-	cost_benefit_ratio: number;
-	implementation_difficulty: "easy" | "moderate" | "hard" | "very_hard";
-	expected_roi_percent: number;
-	risk_factors: string[];
-	success_prerequisites: string[];
+export interface InterventionScenario {
+	name: string;
+	description: string;
+	changes: {
+		reminder_strategy?: "none" | "email" | "sms" | "phone" | "multi_channel";
+		reminder_timing_hours?: number[];
+		incentives?: ("discount" | "priority_booking" | "gift_card" | "loyalty_points")[];
+		scheduling_flexibility?: "strict" | "flexible" | "very_flexible";
+		preparation_support?: "none" | "basic" | "comprehensive";
+	};
+	estimated_cost_per_appointment?: number;
 }
 
-// No-Show Prediction Service Implementation
+export interface FactorContribution {
+	factor_name: string;
+	category: "patient" | "appointment" | "external" | "historical";
+	importance_weight: number;
+	impact_direction: "increases_risk" | "decreases_risk";
+	description: string;
+	confidence: number;
+}
+
+// No-Show Prediction Service Implementation with Supabase MCP Integration
 export class NoShowPredictionService extends EnhancedAIService<PredictionInput, PredictionOutput> {
-	private supabase: SupabaseClient;
 	private modelVersion = "v1.2.0";
 	private featureWeights: Map<string, number> = new Map();
 	private historicalPatterns: Map<string, number> = new Map();
 	private readonly PREDICTION_CACHE_TTL = 60 * 60; // 1 hour
+	private readonly SUPABASE_PROJECT_ID = "ownkoxryswokcdanrdgj";
+	private activeABTests: Map<string, ABTestResult> = new Map();
+	private mlPipelineService: MLPipelineManagementService;
 
-	constructor() {
-		super("no_show_prediction_service");
-
-		this.supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
-
+	constructor(
+		cache: CacheService,
+		logger: LoggerService,
+		metrics: MetricsService,
+		config?: AIServiceConfig
+	) {
+		super(cache, logger, metrics, {
+			enableCaching: true,
+			cacheTTL: 3600, // 1 hour for predictions
+			enableMetrics: true,
+			enableAuditTrail: true,
+			performanceThreshold: 1000, // 1 second for predictions
+			errorRetryCount: 3,
+			...config
+		});
+		
+		// Initialize ML Pipeline Management Service
+		this.mlPipelineService = new MLPipelineManagementService(cache, logger, metrics, config);
+		
 		// Initialize prediction model
 		this.initializePredictionModel();
 	}
 
 	private async initializePredictionModel(): Promise<void> {
 		try {
-			// Load feature weights (in production, this would come from a trained ML model)
+			// Load feature weights from Supabase using MCP
 			await this.loadFeatureWeights();
 
-			// Load historical patterns
+			// Load historical patterns from Supabase
 			await this.loadHistoricalPatterns();
 
-			console.log("No-show prediction model initialized");
+			// Load active A/B tests
+			await this.loadActiveABTests();
+
+			console.log("No-show prediction model initialized with Supabase MCP");
 		} catch (error) {
 			console.error("Failed to initialize prediction model:", error);
 		}
@@ -230,6 +307,20 @@ export class NoShowPredictionService extends EnhancedAIService<PredictionInput, 
 					return await this.getFeatureImportance();
 				case "simulate_interventions":
 					return await this.simulateInterventions(input);
+				case "start_ab_test":
+					return await this.startABTest(input);
+				case "stop_ab_test":
+					return await this.stopABTest(input);
+				case "get_ab_test_results":
+					return await this.getABTestResults(input);
+				case "deploy_model":
+					return await this.deployModel(input);
+				case "detect_drift":
+					return await this.detectDrift(input);
+				case "get_model_versions":
+					return await this.getModelVersions();
+				case "rollback_model":
+					return await this.rollbackModel(input);
 				default:
 					throw new Error(`Unsupported prediction action: ${input.action}`);
 			}
@@ -241,44 +332,6 @@ export class NoShowPredictionService extends EnhancedAIService<PredictionInput, 
 				model_version: this.modelVersion,
 			});
 		}
-	}
-
-	private async predictNoShow(input: PredictionInput): Promise<PredictionOutput> {
-		if (!(input.patient_profile && input.appointment_context)) {
-			throw new Error("patient_profile and appointment_context are required for prediction");
-		}
-
-		const features = await this.extractFeatures(
-			input.patient_profile,
-			input.appointment_context,
-			input.external_factors
-		);
-
-		const prediction = await this.runPredictionModel(features);
-		const contributingFactors = this.analyzeContributingFactors(features, prediction);
-		const recommendations = this.generateRecommendations(prediction, features);
-
-		// Cache the prediction
-		await this.cachePrediction(input.appointment_context.appointment_id, prediction);
-
-		// Store prediction for model improvement
-		await this.storePredictionResult({
-			appointment_id: input.appointment_context.appointment_id,
-			patient_id: input.patient_profile.patient_id,
-			predicted_probability: prediction.no_show_probability,
-			model_version: this.modelVersion,
-			features_used: Object.keys(features),
-			timestamp: new Date().toISOString(),
-		});
-
-		return {
-			success: true,
-			no_show_probability: prediction.no_show_probability,
-			risk_category: prediction.risk_category,
-			confidence_score: prediction.confidence_score,
-			contributing_factors: contributingFactors,
-			recommendations,
-		};
 	}
 
 	private async bulkPredictNoShow(input: PredictionInput): Promise<PredictionOutput> {
@@ -967,6 +1020,279 @@ export class NoShowPredictionService extends EnhancedAIService<PredictionInput, 
 		});
 
 		return result.model_performance!;
+	}
+
+	// ================== ML PIPELINE MANAGEMENT METHODS ==================
+
+	/**
+	 * Create and deploy a new model version with specified configuration
+	 */
+	public async createAndDeployModel(
+		config: ModelConfiguration, 
+		environment: "staging" | "production" = "staging"
+	): Promise<{ success: boolean; model_version: string; deployment_status: string }> {
+		try {
+			const modelVersion = await mlPipelineManagementService.createAndDeployModel(config, environment);
+			
+			// Update local model version reference
+			this.modelVersion = modelVersion.version_number;
+			
+			return {
+				success: true,
+				model_version: modelVersion.version_id,
+				deployment_status: `Model deployed to ${environment}`
+			};
+		} catch (error) {
+			console.error("Failed to create and deploy model:", error);
+			return {
+				success: false,
+				model_version: "",
+				deployment_status: `Deployment failed: ${error}`
+			};
+		}
+	}
+
+	/**
+	 * Start A/B test between two model versions
+	 */
+	public async startABTest(
+		modelAVersion: string,
+		modelBVersion: string,
+		durationDays: number = 14
+	): Promise<{ success: boolean; test_id: string; ab_test_result: ABTestResult }> {
+		try {
+			const abTestResult = await mlPipelineManagementService.runABTest(
+				modelAVersion, 
+				modelBVersion, 
+				durationDays
+			);
+			
+			// Store A/B test reference locally
+			this.activeABTests.set(abTestResult.test_id, abTestResult);
+			
+			return {
+				success: true,
+				test_id: abTestResult.test_id,
+				ab_test_result: abTestResult
+			};
+		} catch (error) {
+			console.error("Failed to start A/B test:", error);
+			return {
+				success: false,
+				test_id: "",
+				ab_test_result: {} as ABTestResult
+			};
+		}
+	}
+
+	/**
+	 * Check model health and detect data drift
+	 */
+	public async checkModelHealth(): Promise<{ 
+		success: boolean; 
+		drift_detected: boolean; 
+		drift_result: DriftDetectionResult;
+		requires_retraining: boolean;
+	}> {
+		try {
+			const driftResult = await mlPipelineManagementService.checkModelHealth();
+			
+			const requiresRetraining = driftResult.drift_detected && 
+				(driftResult.drift_severity === "high" || driftResult.drift_severity === "critical");
+			
+			if (requiresRetraining) {
+				console.warn("Model drift detected - retraining recommended:", {
+					severity: driftResult.drift_severity,
+					affected_features: driftResult.affected_features
+				});
+			}
+			
+			return {
+				success: true,
+				drift_detected: driftResult.drift_detected,
+				drift_result: driftResult,
+				requires_retraining: requiresRetraining
+			};
+		} catch (error) {
+			console.error("Failed to check model health:", error);
+			return {
+				success: false,
+				drift_detected: false,
+				drift_result: {} as DriftDetectionResult,
+				requires_retraining: false
+			};
+		}
+	}
+
+	/**
+	 * Get all available model versions
+	 */
+	public async getModelVersions(): Promise<{ 
+		success: boolean; 
+		versions: any[];
+		current_production_version?: string;
+	}> {
+		try {
+			const result = await mlPipelineManagementService.execute({
+				action: "get_model_versions"
+			});
+			
+			const productionVersion = result.model_versions?.find(
+				(v: any) => v.deployment_status === "production"
+			);
+			
+			return {
+				success: true,
+				versions: result.model_versions || [],
+				current_production_version: productionVersion?.version_id
+			};
+		} catch (error) {
+			console.error("Failed to get model versions:", error);
+			return {
+				success: false,
+				versions: []
+			};
+		}
+	}
+
+	/**
+	 * Rollback to a previous model version
+	 */
+	public async rollbackModel(versionId: string): Promise<{ 
+		success: boolean; 
+		message: string;
+	}> {
+		try {
+			const result = await mlPipelineManagementService.execute({
+				action: "rollback_model",
+				version_id: versionId
+			});
+			
+			// Update local model version reference
+			this.modelVersion = versionId;
+			
+			return {
+				success: true,
+				message: result.deployment_status || "Model rollback completed"
+			};
+		} catch (error) {
+			console.error("Failed to rollback model:", error);
+			return {
+				success: false,
+				message: `Rollback failed: ${error}`
+			};
+		}
+	}
+
+	/**
+	 * Get A/B test results for a specific test
+	 */
+	public async getABTestResults(testId: string): Promise<{
+		success: boolean;
+		test_result: ABTestResult;
+		recommendation: "continue" | "stop_use_a" | "stop_use_b" | "extend_test";
+	}> {
+		try {
+			const result = await mlPipelineManagementService.execute({
+				action: "get_ab_test_results",
+				test_id: testId
+			});
+			
+			if (!result.ab_test_result) {
+				throw new Error("A/B test not found");
+			}
+			
+			const testResult = result.ab_test_result;
+			
+			// Determine recommendation based on results
+			let recommendation: "continue" | "stop_use_a" | "stop_use_b" | "extend_test" = "continue";
+			
+			if (testResult.statistical_significance) {
+				if (testResult.winner === "model_a") {
+					recommendation = "stop_use_a";
+				} else if (testResult.winner === "model_b") {
+					recommendation = "stop_use_b";
+				}
+			} else if (testResult.sample_size < 1000) {
+				recommendation = "extend_test";
+			}
+			
+			return {
+				success: true,
+				test_result: testResult,
+				recommendation
+			};
+		} catch (error) {
+			console.error("Failed to get A/B test results:", error);
+			return {
+				success: false,
+				test_result: {} as ABTestResult,
+				recommendation: "continue"
+			};
+		}
+	}
+
+	/**
+	 * Comprehensive model health check and maintenance
+	 */
+	public async performModelMaintenance(): Promise<{
+		success: boolean;
+		maintenance_summary: {
+			drift_check: DriftDetectionResult;
+			performance_check: any;
+			recommendation: string;
+			actions_taken: string[];
+		};
+	}> {
+		const actionsTaken: string[] = [];
+		
+		try {
+			// 1. Check for drift
+			const driftCheck = await this.checkModelHealth();
+			actionsTaken.push("Completed drift detection analysis");
+			
+			// 2. Check performance metrics
+			const performanceCheck = await this.getModelStats();
+			actionsTaken.push("Retrieved current performance metrics");
+			
+			// 3. Determine maintenance recommendation
+			let recommendation = "Model is healthy - no action required";
+			
+			if (driftCheck.requires_retraining) {
+				recommendation = "Model retraining required due to significant drift";
+				actionsTaken.push("Flagged model for retraining");
+			} else if (performanceCheck.validation_accuracy < 0.85) {
+				recommendation = "Model performance degraded - consider retraining";
+				actionsTaken.push("Flagged model for performance review");
+			}
+			
+			// 4. Auto-trigger retraining if critical drift detected
+			if (driftCheck.drift_result.drift_severity === "critical") {
+				// Note: In production, this would trigger automated retraining pipeline
+				actionsTaken.push("Would trigger automated retraining (simulated)");
+			}
+			
+			return {
+				success: true,
+				maintenance_summary: {
+					drift_check: driftCheck.drift_result,
+					performance_check: performanceCheck,
+					recommendation,
+					actions_taken: actionsTaken
+				}
+			};
+		} catch (error) {
+			console.error("Model maintenance failed:", error);
+			return {
+				success: false,
+				maintenance_summary: {
+					drift_check: {} as DriftDetectionResult,
+					performance_check: {},
+					recommendation: `Maintenance failed: ${error}`,
+					actions_taken: actionsTaken
+				}
+			};
+		}
 	}
 }
 

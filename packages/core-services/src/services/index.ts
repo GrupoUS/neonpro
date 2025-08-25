@@ -7,3 +7,8 @@ export * from "./financial";
 export * from "./monitoring";
 export * from "./notification";
 export * from "./patient";
+
+// Enhanced Services (Enterprise Layer)
+export { AIService } from "./AIService";
+export { AnalyticsService } from "./AnalyticsService"; 
+export { ComplianceServiceEnhanced } from "./ComplianceServiceEnhanced";

@@ -3,6 +3,11 @@
 
 // Enhanced Service Layer Pattern (Enterprise Foundation)
 export { EnhancedServiceBase } from "./base";
+
+// Enhanced Enterprise Services  
+export { AIService } from "./services/AIService";
+export { AnalyticsService } from "./services/AnalyticsService";
+export { ComplianceServiceEnhanced } from "./services/ComplianceServiceEnhanced";
 export type {
 	CreateInvoiceData,
 	CreatePaymentData,
