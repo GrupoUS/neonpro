@@ -5,7 +5,7 @@
 
 "use client";
 
-import { createContext, type ReactNode, useContext } from "react";
+import { type ReactNode, createContext, useContext } from "react";
 import { type AuthUser, type LoginCredentials, useAuthToken } from "./use-auth-token";
 
 type AuthContextType = {

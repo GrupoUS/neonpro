@@ -1,6 +1,8 @@
 // Core Services for NeonPro Aesthetic Clinic SaaS
 // Main exports for all business services
 
+// Enhanced Service Layer Pattern (Enterprise Foundation)
+export { EnhancedServiceBase } from "./base";
 export type {
 	CreateInvoiceData,
 	CreatePaymentData,
@@ -51,6 +53,7 @@ export type {
 } from "./patient";
 // Patient Services
 export { PatientService } from "./patient";
+export { EnhancedPatientService } from "./patient/enhanced-service";
 export type {
 	AISchedulingConfig,
 	AppointmentSlot,
@@ -73,7 +76,16 @@ export type {
 } from "./treatment";
 // Treatment Services
 export { TreatmentService } from "./treatment";
-export type { BaseEntity } from "./types";
+export type {
+	AuditEvent,
+	BaseEntity,
+	HealthcareOperation,
+	PerformanceMetrics,
+	SecurityConfig,
+	ServiceContext,
+	ServiceError,
+	ServiceHealth,
+} from "./types";
 // Common types and utilities
 export {
 	AppointmentStatus,

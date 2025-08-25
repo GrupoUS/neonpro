@@ -1,0 +1,42 @@
+{
+	"name": "@neonpro/performance-monitor",
+	"version": "1.0.0",
+	"description": "Real-time performance monitoring and analytics for NeonPro healthcare platform",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"scripts": {
+		"build": "tsup",
+		"dev": "tsup --watch",
+		"type-check": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@neonpro/core-services": "workspace:*",
+		"@neonpro/caching-layer": "workspace:*"
+	},
+	"devDependencies": {
+		"@types/node": "^20.10.0",
+		"tsup": "^8.0.0",
+		"typescript": "^5.3.0"
+	},
+	"exports": {
+		".": {
+			"import": "./dist/index.js",
+			"require": "./dist/index.cjs",
+			"types": "./dist/index.d.ts"
+		}
+	},
+	"keywords": [
+		"performance",
+		"monitoring",
+		"analytics",
+		"real-time",
+		"healthcare",
+		"metrics",
+		"dashboard",
+		"alerts",
+		"insights",
+		"roi-tracking"
+	],
+	"author": "NeonPro Team",
+	"license": "MIT"
+}

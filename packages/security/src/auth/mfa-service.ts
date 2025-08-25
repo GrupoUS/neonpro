@@ -180,7 +180,7 @@ function generateHotp(secret: string, counter: number): string {
 	// biome-ignore lint/suspicious/noBitwiseOperators: Bitwise operations are required for HOTP cryptographic algorithm
 	const offset = digest.at(-1) & 0x0f;
 	// HOTP dynamic truncation algorithm (RFC 4226) requires bitwise operations
-	// biome-ignore suspicious/noBitwiseOperators: HOTP algorithm requires bitwise operations
+	// biome-ignore lint/suspicious/noBitwiseOperators: HOTP algorithm requires bitwise operations
 	const code =
 		((digest[offset] & HOTP_MASK) << 24) |
 		((digest[offset + 1] & BYTE_MASK) << 16) |
@@ -208,7 +208,7 @@ function base32Decode(encoded: string): Buffer {
 	const output: number[] = [];
 
 	for (let i = 0; i < cleanEncoded.length; i++) {
-		// biome-ignore suspicious/noBitwiseOperators: Base32 decoding requires bitwise operations
+		// biome-ignore lint/suspicious/noBitwiseOperators: Base32 decoding requires bitwise operations
 		value = (value << BASE32_BITS_PER_CHAR) | BASE32_CHARS.indexOf(cleanEncoded[i]);
 		bits += BASE32_BITS_PER_CHAR;
 

@@ -1,39 +1,40 @@
 {
-  "name": "@neonpro/cache",
-  "version": "0.1.0",
-  "private": true,
-  "description": "NeonPro Healthcare Caching Utilities - LGPD Compliant Performance Optimization",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.js"
-    }
-  },
-  "scripts": {
-    "build": "npx tsc",
-    "dev": "npx tsc --watch",
-    "type-check": "npx tsc --noEmit",
-    "lint": "biome check src/",
-    "clean": "if exist dist rmdir /s /q dist"
-  },
-  "dependencies": {
-    "@neonpro/types": "workspace:*",
-    "lru-cache": "^11.0.2",
-    "ioredis": "^5.4.1"
-  },
-  "devDependencies": {
-    "@neonpro/config": "workspace:*",
-    "typescript": "^5.7.2"
-  },
-  "keywords": [
-    "cache",
-    "performance",
-    "healthcare",
-    "lgpd-compliant",
-    "redis",
-    "memory-cache"
-  ]
+	"name": "@neonpro/cache",
+	"version": "0.1.0",
+	"private": true,
+	"description": "NeonPro Healthcare Caching Utilities - LGPD Compliant Performance Optimization",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js",
+			"require": "./dist/index.js"
+		}
+	},
+	"scripts": {
+		"build": "npx tsc",
+		"dev": "npx tsc --watch",
+		"type-check": "npx tsc --noEmit",
+		"lint": "biome check src/",
+		"clean": "if exist dist rmdir /s /q dist"
+	},
+	"dependencies": {
+		"@neonpro/types": "workspace:*",
+		"@neonpro/core-services": "workspace:*",
+		"lru-cache": "^11.0.2",
+		"ioredis": "^5.4.1"
+	},
+	"devDependencies": {
+		"@neonpro/config": "workspace:*",
+		"typescript": "^5.7.2"
+	},
+	"keywords": [
+		"cache",
+		"performance",
+		"healthcare",
+		"lgpd-compliant",
+		"redis",
+		"memory-cache"
+	]
 }

@@ -1,56 +1,56 @@
 {
-  "version": 2,
-  "regions": ["gru1"],
-  "framework": "nextjs",
-  "installCommand": "pnpm install --frozen-lockfile",
-  "buildCommand": "bash scripts/vercel-build.sh",
-  "outputDirectory": "apps/web/.next",
-  "rootDirectory": ".",
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD",
-  "env": {
-    "NODE_ENV": "production",
-    "VERCEL": "1",
-    "SUPABASE_URL": "https://ownkoxryswokcdanrdgj.supabase.co",
-    "SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im93bmtveHJ5c3dva2NkYW5yZGdqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQ0MzI2NjEsImV4cCI6MjA1MDAwODY2MX0.nYEwCu-Cv2MBDrDq8T9XLO9YzOVLYZo-gkmdNfRE6_0",
-    "SUPABASE_SERVICE_ROLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im93bmtveHJ5c3dva2NkYW5yZGdqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczNDQzMjY2MSwiZXhwIjoyMDUwMDA4NjYxfQ.jnhZfD9Zi7VvMxz1QPbJKDf5FHQlCkw0xUJW6xrW7Jg",
-    "JWT_SECRET": "your-very-secure-jwt-secret-here-min-32-chars-neonpro-prod",
-    "NEXT_PUBLIC_SUPABASE_URL": "https://ownkoxryswokcdanrdgj.supabase.co",
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im93bmtveHJ5c3dva2NkYW5yZGdqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQ0MzI2NjEsImV4cCI6MjA1MDAwODY2MX0.nYEwCu-Cv2MBDrDq8T9XLO9YzOVLYZo-gkmdNfRE6_0",
-    "NEXT_PUBLIC_API_URL": "/api"
-  },
-  "headers": [
-    {
-      "source": "/api/(.*)",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "*"
-        },
-        {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET, POST, PUT, DELETE, OPTIONS"
-        },
-        {
-          "key": "Access-Control-Allow-Headers",
-          "value": "Content-Type, Authorization, x-client-info, apikey"
-        },
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
-          "key": "X-Frame-Options",
-          "value": "DENY"
-        },
-        {
-          "key": "X-XSS-Protection",
-          "value": "1; mode=block"
-        },
-        {
-          "key": "Referrer-Policy",
-          "value": "strict-origin-when-cross-origin"
-        }
-      ]
-    }
-  ]
+	"version": 2,
+	"regions": ["gru1"],
+	"framework": "nextjs",
+	"installCommand": "pnpm install --frozen-lockfile",
+	"buildCommand": "bash scripts/vercel-build.sh",
+	"outputDirectory": "apps/web/.next",
+	"rootDirectory": ".",
+	"ignoreCommand": "git diff --quiet HEAD^ HEAD",
+	"env": {
+		"NODE_ENV": "production",
+		"VERCEL": "1",
+		"SUPABASE_URL": "https://ownkoxryswokcdanrdgj.supabase.co",
+		"SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im93bmtveHJ5c3dva2NkYW5yZGdqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQ0MzI2NjEsImV4cCI6MjA1MDAwODY2MX0.nYEwCu-Cv2MBDrDq8T9XLO9YzOVLYZo-gkmdNfRE6_0",
+		"SUPABASE_SERVICE_ROLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im93bmtveHJ5c3dva2NkYW5yZGdqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczNDQzMjY2MSwiZXhwIjoyMDUwMDA4NjYxfQ.jnhZfD9Zi7VvMxz1QPbJKDf5FHQlCkw0xUJW6xrW7Jg",
+		"JWT_SECRET": "your-very-secure-jwt-secret-here-min-32-chars-neonpro-prod",
+		"NEXT_PUBLIC_SUPABASE_URL": "https://ownkoxryswokcdanrdgj.supabase.co",
+		"NEXT_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im93bmtveHJ5c3dva2NkYW5yZGdqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQ0MzI2NjEsImV4cCI6MjA1MDAwODY2MX0.nYEwCu-Cv2MBDrDq8T9XLO9YzOVLYZo-gkmdNfRE6_0",
+		"NEXT_PUBLIC_API_URL": "/api"
+	},
+	"headers": [
+		{
+			"source": "/api/(.*)",
+			"headers": [
+				{
+					"key": "Access-Control-Allow-Origin",
+					"value": "*"
+				},
+				{
+					"key": "Access-Control-Allow-Methods",
+					"value": "GET, POST, PUT, DELETE, OPTIONS"
+				},
+				{
+					"key": "Access-Control-Allow-Headers",
+					"value": "Content-Type, Authorization, x-client-info, apikey"
+				},
+				{
+					"key": "X-Content-Type-Options",
+					"value": "nosniff"
+				},
+				{
+					"key": "X-Frame-Options",
+					"value": "DENY"
+				},
+				{
+					"key": "X-XSS-Protection",
+					"value": "1; mode=block"
+				},
+				{
+					"key": "Referrer-Policy",
+					"value": "strict-origin-when-cross-origin"
+				}
+			]
+		}
+	]
 }

@@ -25,26 +25,31 @@
 // Load environment variables
 import "dotenv/config";
 
+// Import Hono and middleware
 import { Hono } from "hono";
-import { compress } from "hono/compress"; // Import middleware
+import { compress } from "hono/compress";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
 import { secureHeaders } from "hono/secure-headers";
 import { timing } from "hono/timing";
+
+// Import middleware
 import { auditMiddleware } from "@/middleware/audit";
 import { errorHandler } from "@/middleware/error-handler";
 import { lgpdMiddleware } from "@/middleware/lgpd";
 import { rateLimitMiddleware } from "@/middleware/rate-limit";
+
+// Import routes
 import { analyticsRoutes } from "@/routes/analytics";
 import { appointmentRoutes } from "@/routes/appointments";
-// Import routes
 import { authRoutes } from "@/routes/auth";
 import { clinicRoutes } from "@/routes/clinics";
 import { complianceRoutes } from "@/routes/compliance";
 import { patientRoutes } from "@/routes/patients";
 import { professionalsRoutes } from "@/routes/professionals";
 import { servicesRoutes } from "@/routes/services";
+
 // Import utilities
 import type { AppEnv } from "@/types/env";
 import { HTTP_STATUS, RESPONSE_MESSAGES } from "./lib/constants";

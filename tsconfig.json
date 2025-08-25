@@ -1,81 +1,81 @@
 {
-  "compilerOptions": {
-    "target": "ES2020",
-    "lib": ["dom", "dom.iterable", "ES6"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "preserve",
-    "incremental": true,
-    "baseUrl": ".",
-    "types": ["vitest/globals"],
-    "paths": {
-      "@/*": ["./*"],
-      "@neonpro/ui": ["./packages/ui/src"],
-      "@neonpro/ui/*": ["./packages/ui/src/*"],
-      "@neonpro/utils": ["./packages/utils/src"],
-      "@neonpro/utils/*": ["./packages/utils/src/*"],
-      "@neonpro/domain": ["./packages/domain/src"],
-      "@neonpro/domain/*": ["./packages/domain/src/*"],
-      "@neonpro/db": ["./packages/db/src"],
-      "@neonpro/db/*": ["./packages/db/src/*"],
-      "@neonpro/types": ["./packages/types/src"],
-      "@neonpro/types/*": ["./packages/types/src/*"],
-      "@neonpro/config": ["./packages/config"],
-      "@neonpro/config/*": ["./packages/config/*"],
-      "@neonpro/shared": ["./packages/shared/src"],
-      "@neonpro/shared/*": ["./packages/shared/src/*"]
-    },
-    "strictNullChecks": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ]
-  },
-  "include": ["vitest.d.ts", ".next/types/**/*.ts"],
-  "exclude": [
-    "node_modules",
-    ".next",
-    "dist",
-    "out",
-    "apps/**/*",
-    "packages/**/*",
-    "tools/**/*",
-    "e2e/**/*",
-    "tests/**/*",
-    "playwright-report/**/*",
-    "test-results/**/*",
-    "tools/testing/reports/**/*"
-  ],
-  "references": [
-    {
-      "path": "./apps/web"
-    },
-    {
-      "path": "./packages/ui"
-    },
-    {
-      "path": "./packages/utils"
-    },
-    {
-      "path": "./packages/domain"
-    },
-    {
-      "path": "./packages/db"
-    },
-    {
-      "path": "./packages/types"
-    },
-    {
-      "path": "./packages/shared"
-    }
-  ]
+	"compilerOptions": {
+		"target": "ES2020",
+		"lib": ["dom", "dom.iterable", "ES6"],
+		"allowJs": true,
+		"skipLibCheck": true,
+		"strict": true,
+		"forceConsistentCasingInFileNames": true,
+		"noEmit": true,
+		"esModuleInterop": true,
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"jsx": "preserve",
+		"incremental": true,
+		"baseUrl": ".",
+		"types": ["vitest/globals"],
+		"paths": {
+			"@/*": ["./*"],
+			"@neonpro/ui": ["./packages/ui/src"],
+			"@neonpro/ui/*": ["./packages/ui/src/*"],
+			"@neonpro/utils": ["./packages/utils/src"],
+			"@neonpro/utils/*": ["./packages/utils/src/*"],
+			"@neonpro/domain": ["./packages/domain/src"],
+			"@neonpro/domain/*": ["./packages/domain/src/*"],
+			"@neonpro/db": ["./packages/db/src"],
+			"@neonpro/db/*": ["./packages/db/src/*"],
+			"@neonpro/types": ["./packages/types/src"],
+			"@neonpro/types/*": ["./packages/types/src/*"],
+			"@neonpro/config": ["./packages/config"],
+			"@neonpro/config/*": ["./packages/config/*"],
+			"@neonpro/shared": ["./packages/shared/src"],
+			"@neonpro/shared/*": ["./packages/shared/src/*"]
+		},
+		"strictNullChecks": true,
+		"plugins": [
+			{
+				"name": "next"
+			}
+		]
+	},
+	"include": ["vitest.d.ts", ".next/types/**/*.ts"],
+	"exclude": [
+		"node_modules",
+		".next",
+		"dist",
+		"out",
+		"apps/**/*",
+		"packages/**/*",
+		"tools/**/*",
+		"e2e/**/*",
+		"tests/**/*",
+		"playwright-report/**/*",
+		"test-results/**/*",
+		"tools/testing/reports/**/*"
+	],
+	"references": [
+		{
+			"path": "./apps/web"
+		},
+		{
+			"path": "./packages/ui"
+		},
+		{
+			"path": "./packages/utils"
+		},
+		{
+			"path": "./packages/domain"
+		},
+		{
+			"path": "./packages/db"
+		},
+		{
+			"path": "./packages/types"
+		},
+		{
+			"path": "./packages/shared"
+		}
+	]
 }

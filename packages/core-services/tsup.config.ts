@@ -1,22 +1,16 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig({
-	// Entry points for all services
+	// Entry points for Enhanced Service Layer only
 	entry: {
-		// Main entry point
-		index: "src/index.ts",
+		// Main entry point for Enhanced Service Layer
+		index: "src/base/index.ts",
 
-		// Individual service entry points
-		scheduling: "src/scheduling/index.ts",
-		treatment: "src/treatment/index.ts",
-		patient: "src/patient/index.ts",
-		inventory: "src/inventory/index.ts",
-		billing: "src/billing/index.ts",
-		notification: "src/notification/index.ts",
-
-		// Common utilities
+		// Enhanced Service Layer types
 		types: "src/types.ts",
-		constants: "src/constants.ts",
+
+		// Enhanced Patient Service example
+		"enhanced-patient": "src/patient/enhanced-service.ts",
 	},
 
 	// Output formats
@@ -38,7 +32,7 @@ export default defineConfig({
 	splitting: true,
 
 	// External dependencies (not bundled)
-	external: ["@neonpro/db", "@neonpro/domain", "@neonpro/utils", "date-fns", "zod"],
+	external: ["@neonpro/db", "@neonpro/domain", "@neonpro/utils", "@neonpro/cache", "date-fns", "zod"],
 
 	// Target environment
 	target: "node18",

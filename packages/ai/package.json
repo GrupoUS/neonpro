@@ -1,99 +1,99 @@
 {
-  "name": "@neonpro/ai",
-  "version": "0.1.0",
-  "description": "AI Healthcare Features with Constitutional Compliance",
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
-    },
-    "./chat": {
-      "types": "./dist/chat/index.d.ts",
-      "import": "./dist/chat/index.mjs",
-      "require": "./dist/chat/index.js"
-    },
-    "./follow-up": {
-      "types": "./dist/follow-up/index.d.ts",
-      "import": "./dist/follow-up/index.mjs",
-      "require": "./dist/follow-up/index.js"
-    },
-    "./chatbot": {
-      "types": "./dist/chatbot/index.d.ts",
-      "import": "./dist/chatbot/index.mjs",
-      "require": "./dist/chatbot/index.js"
-    },
-    "./workflow": {
-      "types": "./dist/workflow/index.d.ts",
-      "import": "./dist/workflow/index.mjs",
-      "require": "./dist/workflow/index.js"
-    },
-    "./ml": {
-      "types": "./dist/ml/index.d.ts",
-      "import": "./dist/ml/index.mjs",
-      "require": "./dist/ml/index.js"
-    },
-    "./ethics": {
-      "types": "./dist/ethics/index.d.ts",
-      "import": "./dist/ethics/index.mjs",
-      "require": "./dist/ethics/index.js"
-    }
-  },
-  "scripts": {
-    "build": "tsc",
-    "dev": "tsup --watch",
-    "lint": "ultracite lint",
-    "format": "ultracite format",
-    "typecheck": "tsc --noEmit",
-    "test": "vitest",
-    "test:watch": "vitest --watch",
-    "test:coverage": "vitest --coverage"
-  },
-  "dependencies": {
-    "@ai-sdk/openai": "^2.0.15",
-    "@neonpro/core-services": "workspace:*",
-    "@neonpro/db": "workspace:*",
-    "@neonpro/types": "workspace:*",
-    "@neonpro/ui": "workspace:*",
-    "@supabase/supabase-js": "^2.45.4",
-    "ai": "^4.0.44",
-    "zod": "^3.23.8",
-    "date-fns": "^3.6.0",
-    "@tensorflow/tfjs": "^4.21.0",
-    "@tensorflow/tfjs-node": "^4.21.0",
-    "natural": "^6.12.0",
-    "compromise": "^14.14.0",
-    "openai": "^4.63.0",
-    "crypto-js": "^4.2.0",
-    "uuid": "^10.0.0"
-  },
-  "devDependencies": {
-    "@types/crypto-js": "^4.2.2",
-    "@types/natural": "^5.1.5",
-    "@types/node": "^22.7.4",
-    "@types/uuid": "^10.0.0",
-    "@biomejs/biome": "^2.2.0",
-    "@vitest/ui": "^3.2.4",
-    "happy-dom": "^18.0.1",
-    "tsup": "^8.3.0",
-    "typescript": "^5.6.2",
-    "ultracite": "^5.2.3",
-    "vitest": "^3.2.4"
-  },
-  "keywords": [
-    "healthcare",
-    "ai",
-    "machine-learning",
-    "medical",
-    "neonpro",
-    "lgpd",
-    "anvisa",
-    "cfm"
-  ],
-  "author": "NeonPro Healthcare Team",
-  "license": "PROPRIETARY",
-  "private": true
+	"name": "@neonpro/ai",
+	"version": "0.1.0",
+	"description": "AI Healthcare Features with Constitutional Compliance",
+	"main": "./dist/index.js",
+	"module": "./dist/index.mjs",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.mjs",
+			"require": "./dist/index.js"
+		},
+		"./chat": {
+			"types": "./dist/chat/index.d.ts",
+			"import": "./dist/chat/index.mjs",
+			"require": "./dist/chat/index.js"
+		},
+		"./follow-up": {
+			"types": "./dist/follow-up/index.d.ts",
+			"import": "./dist/follow-up/index.mjs",
+			"require": "./dist/follow-up/index.js"
+		},
+		"./chatbot": {
+			"types": "./dist/chatbot/index.d.ts",
+			"import": "./dist/chatbot/index.mjs",
+			"require": "./dist/chatbot/index.js"
+		},
+		"./workflow": {
+			"types": "./dist/workflow/index.d.ts",
+			"import": "./dist/workflow/index.mjs",
+			"require": "./dist/workflow/index.js"
+		},
+		"./ml": {
+			"types": "./dist/ml/index.d.ts",
+			"import": "./dist/ml/index.mjs",
+			"require": "./dist/ml/index.js"
+		},
+		"./ethics": {
+			"types": "./dist/ethics/index.d.ts",
+			"import": "./dist/ethics/index.mjs",
+			"require": "./dist/ethics/index.js"
+		}
+	},
+	"scripts": {
+		"build": "tsc",
+		"dev": "tsup --watch",
+		"lint": "ultracite lint",
+		"format": "ultracite format",
+		"typecheck": "tsc --noEmit",
+		"test": "vitest",
+		"test:watch": "vitest --watch",
+		"test:coverage": "vitest --coverage"
+	},
+	"dependencies": {
+		"@ai-sdk/openai": "^2.0.15",
+		"@neonpro/core-services": "workspace:*",
+		"@neonpro/db": "workspace:*",
+		"@neonpro/types": "workspace:*",
+		"@neonpro/ui": "workspace:*",
+		"@supabase/supabase-js": "^2.45.4",
+		"ai": "^4.0.44",
+		"zod": "^3.23.8",
+		"date-fns": "^3.6.0",
+		"@tensorflow/tfjs": "^4.21.0",
+		"@tensorflow/tfjs-node": "^4.21.0",
+		"natural": "^6.12.0",
+		"compromise": "^14.14.0",
+		"openai": "^4.63.0",
+		"crypto-js": "^4.2.0",
+		"uuid": "^10.0.0"
+	},
+	"devDependencies": {
+		"@types/crypto-js": "^4.2.2",
+		"@types/natural": "^5.1.5",
+		"@types/node": "^22.7.4",
+		"@types/uuid": "^10.0.0",
+		"@biomejs/biome": "^2.2.0",
+		"@vitest/ui": "^3.2.4",
+		"happy-dom": "^18.0.1",
+		"tsup": "^8.3.0",
+		"typescript": "^5.6.2",
+		"ultracite": "^5.2.3",
+		"vitest": "^3.2.4"
+	},
+	"keywords": [
+		"healthcare",
+		"ai",
+		"machine-learning",
+		"medical",
+		"neonpro",
+		"lgpd",
+		"anvisa",
+		"cfm"
+	],
+	"author": "NeonPro Healthcare Team",
+	"license": "PROPRIETARY",
+	"private": true
 }

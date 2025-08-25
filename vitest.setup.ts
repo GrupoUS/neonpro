@@ -1404,240 +1404,218 @@ vi.stubGlobal("mockSupabaseClient", globalSupabaseClientMock);
 // Use vi.hoisted to ensure these are available during module loading
 
 const globalMocks = vi.hoisted(() => {
-		// Mock CPF validator service
-		const mockCpfValidator = {
-			validate: vi.fn().mockImplementation((cpf: string) => {
-				// Simple CPF validation for tests
-				if (!cpf) {
-					return { isValid: false, error: "CPF is required" };
-				}
-				// Remove non-numeric characters
-				const cleanCpf = cpf.replace(/\D/g, "");
-				if (cleanCpf.length !== 11) {
-					return { isValid: false, error: "CPF must have 11 digits" };
-				}
-				return { isValid: true, error: null };
-			}),
-			format: vi.fn().mockImplementation((cpf: string) => {
-				const clean = cpf.replace(/\D/g, "");
-				if (clean.length === 11) {
-					return clean.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
-				}
-				return cpf;
-			}),
-			clean: vi.fn().mockImplementation((cpf: string) => cpf.replace(/\D/g, "")),
-			// Add the method integration tests are looking for
-			isValid: vi.fn().mockImplementation((cpf: string) => {
-				if (!cpf) {
-					return false;
-				}
-				const cleanCpf = cpf.replace(/\D/g, "");
-				return cleanCpf.length === 11;
-			}),
-		};
+	// Mock CPF validator service
+	const mockCpfValidator = {
+		validate: vi.fn().mockImplementation((cpf: string) => {
+			// Simple CPF validation for tests
+			if (!cpf) {
+				return { isValid: false, error: "CPF is required" };
+			}
+			// Remove non-numeric characters
+			const cleanCpf = cpf.replace(/\D/g, "");
+			if (cleanCpf.length !== 11) {
+				return { isValid: false, error: "CPF must have 11 digits" };
+			}
+			return { isValid: true, error: null };
+		}),
+		format: vi.fn().mockImplementation((cpf: string) => {
+			const clean = cpf.replace(/\D/g, "");
+			if (clean.length === 11) {
+				return clean.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+			}
+			return cpf;
+		}),
+		clean: vi.fn().mockImplementation((cpf: string) => cpf.replace(/\D/g, "")),
+		// Add the method integration tests are looking for
+		isValid: vi.fn().mockImplementation((cpf: string) => {
+			if (!cpf) {
+				return false;
+			}
+			const cleanCpf = cpf.replace(/\D/g, "");
+			return cleanCpf.length === 11;
+		}),
+	};
 
-		// Mock notification service
-		const mockNotificationService = {
-			send: vi.fn().mockImplementation(async (_notification: any) => {
-				return {
-					success: true,
-					id: `notification-${Math.random().toString(36).substr(2, 9)}`,
-				};
-			}),
-			sendEmail: vi.fn().mockImplementation(async (_email: any) => {
-				return {
-					success: true,
-					messageId: `email-${Math.random().toString(36).substr(2, 9)}`,
-				};
-			}),
-			sendSms: vi.fn().mockImplementation(async (_sms: any) => {
-				return {
-					success: true,
-					messageId: `sms-${Math.random().toString(36).substr(2, 9)}`,
-				};
-			}),
-			sendPush: vi.fn().mockImplementation(async (_push: any) => {
-				return {
-					success: true,
-					messageId: `push-${Math.random().toString(36).substr(2, 9)}`,
-				};
-			}),
-			getDeliveryStatus: vi.fn().mockImplementation(async (_messageId: string) => {
-				return { status: "delivered", timestamp: new Date().toISOString() };
-			}),
-			// Add the method emergency tests are looking for
-			sendEmergencyAlert: vi.fn().mockImplementation(async (_alert: any) => {
-				return {
-					success: true,
-					messageId: `emergency-${Math.random().toString(36).substr(2, 9)}`,
-				};
-			}),
-			// Add methods required by emergency access protocol tests
-			notifyMedicalStaff: vi.fn().mockImplementation(async (_notification: any) => {
-				return {
-					medical_team_alerted: true,
-					specialists_contacted: ["cardiologist", "anesthesiologist"],
-					notification_time: new Date().toISOString(),
-				};
-			}),
-			logEmergencyNotification: vi.fn().mockImplementation(async (_log: any) => {
-				return {
-					notification_logged: true,
-					audit_id: "notification-audit-123",
-					logged_at: new Date().toISOString(),
-				};
-			}),
-		};
+	// Mock notification service
+	const mockNotificationService = {
+		send: vi.fn().mockImplementation(async (_notification: any) => {
+			return {
+				success: true,
+				id: `notification-${Math.random().toString(36).substr(2, 9)}`,
+			};
+		}),
+		sendEmail: vi.fn().mockImplementation(async (_email: any) => {
+			return {
+				success: true,
+				messageId: `email-${Math.random().toString(36).substr(2, 9)}`,
+			};
+		}),
+		sendSms: vi.fn().mockImplementation(async (_sms: any) => {
+			return {
+				success: true,
+				messageId: `sms-${Math.random().toString(36).substr(2, 9)}`,
+			};
+		}),
+		sendPush: vi.fn().mockImplementation(async (_push: any) => {
+			return {
+				success: true,
+				messageId: `push-${Math.random().toString(36).substr(2, 9)}`,
+			};
+		}),
+		getDeliveryStatus: vi.fn().mockImplementation(async (_messageId: string) => {
+			return { status: "delivered", timestamp: new Date().toISOString() };
+		}),
+		// Add the method emergency tests are looking for
+		sendEmergencyAlert: vi.fn().mockImplementation(async (_alert: any) => {
+			return {
+				success: true,
+				messageId: `emergency-${Math.random().toString(36).substr(2, 9)}`,
+			};
+		}),
+		// Add methods required by emergency access protocol tests
+		notifyMedicalStaff: vi.fn().mockImplementation(async (_notification: any) => {
+			return {
+				medical_team_alerted: true,
+				specialists_contacted: ["cardiologist", "anesthesiologist"],
+				notification_time: new Date().toISOString(),
+			};
+		}),
+		logEmergencyNotification: vi.fn().mockImplementation(async (_log: any) => {
+			return {
+				notification_logged: true,
+				audit_id: "notification-audit-123",
+				logged_at: new Date().toISOString(),
+			};
+		}),
+	};
 
-		// Mock LGPD compliance service (for the healthcare_exceptions test)
-		const mockLgpdService = {
-			getRetentionPolicies: vi.fn().mockImplementation(async () => {
-				return {
-					success: true,
-					data: [
+	// Mock LGPD compliance service (for the healthcare_exceptions test)
+	const mockLgpdService = {
+		getRetentionPolicies: vi.fn().mockImplementation(async () => {
+			return {
+				success: true,
+				data: [
+					{
+						type: "medical_records",
+						retention_period: "10 years",
+						description: "Medical records retained for 10 years",
+					},
+					{
+						type: "patient_data",
+						retention_period: "5 years",
+						description: "Patient data retained for 5 years",
+					},
+				],
+				// Add the format that the test expects
+				healthcare_exceptions: [
+					"Medical records retained for 10 years",
+					"Patient data retained for 5 years according to CFM guidelines",
+				],
+			};
+		}),
+		checkCompliance: vi.fn().mockImplementation(async (dataType: string) => {
+			return { compliant: true, details: `${dataType} is compliant with LGPD` };
+		}),
+		exportData: vi.fn().mockImplementation(async (_userId: string) => {
+			return { success: true, exportUrl: "https://example.com/export.zip" };
+		}),
+		deleteData: vi.fn().mockImplementation(async (_userId: string) => {
+			return { success: true, deletedAt: new Date().toISOString() };
+		}),
+		// Add the additional methods that integration tests expect
+		validateDataProcessing: vi.fn().mockImplementation(async (_processingData: any) => {
+			return {
+				valid: true,
+				purpose_compliant: true,
+				legal_basis: "consent",
+				details: "Processing valid under LGPD consent provisions",
+			};
+		}),
+		recordConsent: vi.fn().mockImplementation(async (_consentData: any) => {
+			return {
+				success: true,
+				consent_id: `consent-${Math.random().toString(36).substr(2, 9)}`,
+				recorded_at: new Date().toISOString(),
+			};
+		}),
+		revokeConsent: vi.fn().mockImplementation(async (_consentId: string) => {
+			return {
+				success: true,
+				revoked_at: new Date().toISOString(),
+				data_deletion_scheduled: true,
+			};
+		}),
+		processDataSubjectRequest: vi.fn().mockImplementation(async (_requestData: any) => {
+			return {
+				success: true,
+				request_id: `request-${Math.random().toString(36).substr(2, 9)}`,
+				processed_at: new Date().toISOString(),
+				status: "completed",
+			};
+		}),
+		validatePurposeLimitation: vi.fn().mockImplementation(async (_purposeData: any) => {
+			return {
+				valid: true,
+				purpose_compliant: true,
+				details: "Purpose is within consented scope",
+			};
+		}),
+		getAuditTrail: vi.fn().mockImplementation(async (_criteria: any) => {
+			return {
+				success: true,
+				audit_report: {
+					total_operations: 42,
+					operations: [
 						{
-							type: "medical_records",
-							retention_period: "10 years",
-							description: "Medical records retained for 10 years",
-						},
-						{
-							type: "patient_data",
-							retention_period: "5 years",
-							description: "Patient data retained for 5 years",
+							operation_type: "data_access",
+							user_id: "test-user",
+							timestamp: new Date().toISOString(),
+							purpose: "medical_treatment",
 						},
 					],
-					// Add the format that the test expects
-					healthcare_exceptions: [
-						"Medical records retained for 10 years",
-						"Patient data retained for 5 years according to CFM guidelines",
-					],
-				};
-			}),
-			checkCompliance: vi.fn().mockImplementation(async (dataType: string) => {
-				return { compliant: true, details: `${dataType} is compliant with LGPD` };
-			}),
-			exportData: vi.fn().mockImplementation(async (_userId: string) => {
-				return { success: true, exportUrl: "https://example.com/export.zip" };
-			}),
-			deleteData: vi.fn().mockImplementation(async (_userId: string) => {
-				return { success: true, deletedAt: new Date().toISOString() };
-			}),
-			// Add the additional methods that integration tests expect
-			validateDataProcessing: vi.fn().mockImplementation(async (_processingData: any) => {
-				return {
-					valid: true,
-					purpose_compliant: true,
-					legal_basis: "consent",
-					details: "Processing valid under LGPD consent provisions",
-				};
-			}),
-			recordConsent: vi.fn().mockImplementation(async (_consentData: any) => {
-				return {
-					success: true,
-					consent_id: `consent-${Math.random().toString(36).substr(2, 9)}`,
-					recorded_at: new Date().toISOString(),
-				};
-			}),
-			revokeConsent: vi.fn().mockImplementation(async (_consentId: string) => {
-				return {
-					success: true,
-					revoked_at: new Date().toISOString(),
-					data_deletion_scheduled: true,
-				};
-			}),
-			processDataSubjectRequest: vi.fn().mockImplementation(async (_requestData: any) => {
-				return {
-					success: true,
-					request_id: `request-${Math.random().toString(36).substr(2, 9)}`,
-					processed_at: new Date().toISOString(),
-					status: "completed",
-				};
-			}),
-			validatePurposeLimitation: vi.fn().mockImplementation(async (_purposeData: any) => {
-				return {
-					valid: true,
-					purpose_compliant: true,
-					details: "Purpose is within consented scope",
-				};
-			}),
-			getAuditTrail: vi.fn().mockImplementation(async (_criteria: any) => {
-				return {
-					success: true,
-					audit_report: {
-						total_operations: 42,
-						operations: [
-							{
-								operation_type: "data_access",
-								user_id: "test-user",
-								timestamp: new Date().toISOString(),
-								purpose: "medical_treatment",
-							},
-						],
-					},
-					generated_at: new Date().toISOString(),
-				};
-			}),
-			checkRetentionPolicy: vi.fn().mockImplementation(async (_policyData: any) => {
-				return {
-					policy_compliant: true,
-					retention_periods: {
-						medical_records: "10 years",
-						patient_data: "5 years",
-						appointment_history: "3 years",
-					},
-					next_review_date: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
-				};
-			}),
-			anonymizePatientData: vi.fn().mockImplementation(async (_patientId: string) => {
-				return {
-					success: true,
-					patient_id: _patientId,
-					anonymized_at: new Date().toISOString(),
-					anonymization_method: "k-anonymity",
-					anonymized_fields: ["name", "cpf", "email", "phone"],
-				};
-			}),
-			request_id: `request-${Math.random().toString(36).substr(2, 9)}`,
-			status: "processing",
-			estimated_completion: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-		};
-	}),
-	exportPatientData: vi.fn;
-()
-			.mockImplementation(async (_patientId: string) => {
-				return {
-					success: true,
-					export_url: "https://example.com/patient-data-export.zip",
-					expires_at: new Date(
-						Date.now() + 7 * 24 * 60 * 60 * 1000,
-					).toISOString(),
-				};
-			}),
-		anonymizePatientData
-: vi
-			.fn()
-			.mockImplementation(async (patientId: string) =>
-{
-	return {
-					success: true,
-					patient_id: patientId,
-					anonymized_fields: ["name", "cpf", "email", "phone", "address"],
-					anonymized_at: new Date().toISOString(),
-				};
-}
-),
-		createAuditEntry: vi.fn().mockImplementation(async (_auditData: any) =>
-{
-	return {
+				},
+				generated_at: new Date().toISOString(),
+			};
+		}),
+		checkRetentionPolicy: vi.fn().mockImplementation(async (_policyData: any) => {
+			return {
+				policy_compliant: true,
+				retention_periods: {
+					medical_records: "10 years",
+					patient_data: "5 years",
+					appointment_history: "3 years",
+				},
+				next_review_date: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
+			};
+		}),
+		anonymizePatientData: vi.fn().mockImplementation(async (_patientId: string) => {
+			return {
+				success: true,
+				patient_id: _patientId,
+				anonymized_at: new Date().toISOString(),
+				anonymization_method: "k-anonymity",
+				anonymized_fields: ["name", "cpf", "email", "phone"],
+			};
+		}),
+		exportPatientData: vi.fn().mockImplementation(async (_patientId: string) => {
+			return {
+				success: true,
+				export_url: "https://example.com/patient-data-export.zip",
+				expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+				request_id: `request-${Math.random().toString(36).substr(2, 9)}`,
+				status: "processing",
+				estimated_completion: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+			};
+		}),
+		createAuditEntry: vi.fn().mockImplementation(async (_auditData: any) => {
+			return {
 				success: true,
 				audit_id: `audit-${Math.random().toString(36).substr(2, 9)}`,
 				created_at: new Date().toISOString(),
 			};
-}
-),
-		getAuditTrail: vi.fn().mockImplementation(async (_filters: any) =>
-{
-	return {
+		}),
+		getAuditTrail: vi.fn().mockImplementation(async (_filters: any) => {
+			return {
 				success: true,
 				entries: [
 					{
@@ -1651,55 +1629,44 @@ const globalMocks = vi.hoisted(() => {
 				],
 				total_count: 1,
 			};
-}
-),
-		checkRetentionPolicy: vi
-			.fn()
-			.mockImplementation(async (_clinicId: string) =>
-{
-	return {
-					policy_compliant: true,
-					retention_periods: {
-						medical_records: "10_years",
-						patient_data: "5_years",
+		}),
+		checkRetentionPolicy: vi.fn().mockImplementation(async (_clinicId: string) => {
+			return {
+				policy_compliant: true,
+				retention_periods: {
+					medical_records: "10_years",
+					patient_data: "5_years",
+				},
+				healthcare_exceptions: [
+					"Medical records retained for 10 years",
+					"Medical records retained for 10 years as per Brazilian medical law",
+					"Patient data retained for 5 years according to CFM guidelines",
+				],
+				upcoming_expirations: [
+					{
+						patient_id: "patient-789",
+						data_type: "consultation_notes",
+						expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
 					},
-					healthcare_exceptions: [
-						"Medical records retained for 10 years",
-						"Medical records retained for 10 years as per Brazilian medical law",
-						"Patient data retained for 5 years according to CFM guidelines",
-					],
-					upcoming_expirations: [
-						{
-							patient_id: "patient-789",
-							data_type: "consultation_notes",
-							expires_at: new Date(
-								Date.now() + 30 * 24 * 60 * 60 * 1000,
-							).toISOString(),
-						},
-					],
-				};
-}
-),
-		validatePurposeLimitation: vi
-			.fn()
-			.mockImplementation(async (_purpose: string, dataTypes: string[]) =>
-{
-	return {
-					valid: true,
-					purpose_compliant: true,
-					allowed_data_types: dataTypes,
-					restrictions: [],
-				};
-}
-),
-	}
+				],
+			};
+		}),
+		validatePurposeLimitation: vi.fn().mockImplementation(async (_purpose: string, dataTypes: string[]) => {
+			return {
+				valid: true,
+				purpose_compliant: true,
+				allowed_data_types: dataTypes,
+				restrictions: [],
+			};
+		}),
+	};
 
-return {
+	return {
 		mockCpfValidator,
 		mockNotificationService,
 		mockLgpdService,
 	};
-})
+});
 
 // Extract the hoisted mocks
 const { mockCpfValidator, mockNotificationService, mockLgpdService } = globalMocks;

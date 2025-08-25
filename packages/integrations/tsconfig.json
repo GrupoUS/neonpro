@@ -1,30 +1,30 @@
 {
-  "compilerOptions": {
-    "target": "ES2020",
-    "lib": ["ES2020"],
-    "allowJs": false,
-    "skipLibCheck": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": false,
-    "esModuleInterop": true,
-    "module": "CommonJS",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "declaration": true,
-    "outDir": "./dist",
-    "declarationDir": "./dist",
-    "composite": true
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"],
-  "references": [
-    {
-      "path": "../types"
-    },
-    {
-      "path": "../db"
-    }
-  ]
+	"compilerOptions": {
+		"target": "ES2020",
+		"lib": ["ES2020"],
+		"allowJs": false,
+		"skipLibCheck": true,
+		"strict": true,
+		"forceConsistentCasingInFileNames": true,
+		"noEmit": false,
+		"esModuleInterop": true,
+		"module": "CommonJS",
+		"moduleResolution": "node",
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"declaration": true,
+		"outDir": "./dist",
+		"declarationDir": "./dist",
+		"composite": true
+	},
+	"include": ["src/**/*"],
+	"exclude": ["node_modules", "dist"],
+	"references": [
+		{
+			"path": "../types"
+		},
+		{
+			"path": "../db"
+		}
+	]
 }

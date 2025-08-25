@@ -1,12 +1,12 @@
 {
-  "name": "@neonpro/typescript-config",
-  "version": "0.0.0",
-  "private": true,
-  "license": "MIT",
-  "files": [
-    "*.json"
-  ],
-  "publishConfig": {
-    "access": "public"
-  }
+	"name": "@neonpro/typescript-config",
+	"version": "0.0.0",
+	"private": true,
+	"license": "MIT",
+	"files": [
+		"*.json"
+	],
+	"publishConfig": {
+		"access": "public"
+	}
 }

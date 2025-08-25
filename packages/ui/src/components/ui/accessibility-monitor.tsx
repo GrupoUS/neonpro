@@ -209,7 +209,7 @@ const AccessibilityMonitor: React.FC<AccessibilityMonitorProps> = ({
 					healthcare: true,
 				});
 			}
-		});
+		}
 
 		return violations;
 	};

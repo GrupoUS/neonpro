@@ -1,7 +1,7 @@
 {
-  "extends": ["//"],
-  "pipeline": {
-    "build": {},
-    "test": {}
-  }
+	"extends": ["//"],
+	"pipeline": {
+		"build": {},
+		"test": {}
+	}
 }

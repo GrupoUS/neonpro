@@ -4,9 +4,9 @@
  * Gerencia conexão global e estado para toda aplicação
  */
 
-import { createContext, type ReactNode, useCallback, useContext, useEffect, useState } from "react";
+import { type ReactNode, createContext, useCallback, useContext, useEffect, useState } from "react";
 import { getRealtimeConfig } from "../config";
-import { type ConnectionStatus, getRealtimeManager, type SupabaseRealtimeManager } from "../connection-manager";
+import { type ConnectionStatus, type SupabaseRealtimeManager, getRealtimeManager } from "../connection-manager";
 
 type RealtimeContextValue = {
 	manager: SupabaseRealtimeManager | null;
