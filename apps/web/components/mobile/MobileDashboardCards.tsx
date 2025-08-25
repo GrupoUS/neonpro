@@ -86,22 +86,43 @@ export function MobileDashboardCard({
 		<Card
 			className={`neonpro-card group cursor-pointer hover:shadow-lg transition-all ${className}`}
 			onClick={onClick}
+			role={onClick ? "button" : "article"}
+			tabIndex={onClick ? 0 : undefined}
+			aria-label={`${title}: ${value}${description ? `. ${description}` : ""}`}
+			onKeyDown={onClick ? (e) => {
+				if (e.key === "Enter" || e.key === " ") {
+					e.preventDefault();
+					onClick();
+				}
+			} : undefined}
 		>
 			<CardHeader className="pb-2">
 				<div className="flex items-center justify-between">
 					<div className={`group-hover:neonpro-glow p-2 rounded-lg ${getStatusColor()}`}>
-						<Icon className="h-4 w-4" />
+						<Icon className="h-4 w-4" aria-hidden="true" />
 					</div>
 					<div className="flex items-center gap-1">
 						{badge && (
-							<Badge variant="secondary" className="text-xs">
+							<Badge 
+								variant="secondary" 
+								className="text-xs"
+								aria-label={`Badge: ${badge}`}
+							>
 								{badge}
 							</Badge>
 						)}
-						{onClick && <ChevronRight className="h-4 w-4 text-muted-foreground" />}
+						{onClick && (
+							<ChevronRight 
+								className="h-4 w-4 text-muted-foreground" 
+								aria-hidden="true"
+							/>
+						)}
 					</div>
 				</div>
-				<CardTitle className="text-sm font-medium text-muted-foreground">
+				<CardTitle 
+					className="text-sm font-medium text-muted-foreground"
+					id={`card-title-${title.toLowerCase().replace(/\s+/g, '-')}`}
+				>
 					{title}
 				</CardTitle>
 			</CardHeader>

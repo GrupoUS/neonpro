@@ -1,0 +1,307 @@
+{
+	"isCompleted": false,
+	"criteria": {
+		"allTasksCompleted": true,
+		"hasCompletedTasks": false,
+		"noActiveAgents": true,
+		"executionStarted": false,
+		"noRecentActivity": false
+	},
+	"completionScore": 2,
+	"state": {
+		"planId": "plan_1755704177561_j35n6etug",
+		"startTime": "2025-08-20T15:36:17.561Z",
+		"status": "initializing",
+		"phase": "planning",
+		"version": "1.0.0",
+		"metadata": {
+			"createdBy": "claude-code-hooks",
+			"environment": "D:\\neonpro",
+			"nodeVersion": "v22.18.0",
+			"platform": "win32"
+		},
+		"timeline": [
+			{
+				"timestamp": "2025-08-20T15:36:17.561Z",
+				"event": "plan_initialized",
+				"details": {
+					"planId": "plan_1755704177561_j35n6etug",
+					"phase": "planning"
+				}
+			},
+			{
+				"timestamp": "2025-08-20T15:42:16.732Z",
+				"event": "plan_completion_detected",
+				"details": {
+					"criteria": {
+						"allTasksCompleted": true,
+						"hasCompletedTasks": false,
+						"noActiveAgents": true,
+						"executionStarted": false,
+						"noRecentActivity": true
+					},
+					"completionScore": 3
+				}
+			},
+			{
+				"timestamp": "2025-08-20T16:10:33.516Z",
+				"event": "plan_completion_detected",
+				"details": {
+					"criteria": {
+						"allTasksCompleted": true,
+						"hasCompletedTasks": false,
+						"noActiveAgents": true,
+						"executionStarted": false,
+						"noRecentActivity": true
+					},
+					"completionScore": 3
+				}
+			},
+			{
+				"timestamp": "2025-08-20T16:24:22.138Z",
+				"event": "plan_completion_detected",
+				"details": {
+					"criteria": {
+						"allTasksCompleted": true,
+						"hasCompletedTasks": false,
+						"noActiveAgents": true,
+						"executionStarted": false,
+						"noRecentActivity": true
+					},
+					"completionScore": 3
+				}
+			},
+			{
+				"timestamp": "2025-08-20T18:16:01.844Z",
+				"event": "plan_completion_detected",
+				"details": {
+					"criteria": {
+						"allTasksCompleted": true,
+						"hasCompletedTasks": false,
+						"noActiveAgents": true,
+						"executionStarted": false,
+						"noRecentActivity": true
+					},
+					"completionScore": 3
+				}
+			},
+			{
+				"timestamp": "2025-08-20T18:49:18.237Z",
+				"event": "plan_completion_detected",
+				"details": {
+					"criteria": {
+						"allTasksCompleted": true,
+						"hasCompletedTasks": false,
+						"noActiveAgents": true,
+						"executionStarted": false,
+						"noRecentActivity": true
+					},
+					"completionScore": 3
+				}
+			},
+			{
+				"timestamp": "2025-08-20T18:56:10.637Z",
+				"event": "plan_completion_detected",
+				"details": {
+					"criteria": {
+						"allTasksCompleted": true,
+						"hasCompletedTasks": false,
+						"noActiveAgents": true,
+						"executionStarted": false,
+						"noRecentActivity": true
+					},
+					"completionScore": 3
+				}
+			},
+			{
+				"timestamp": "2025-08-20T19:17:51.697Z",
+				"event": "plan_completion_detected",
+				"details": {
+					"criteria": {
+						"allTasksCompleted": true,
+						"hasCompletedTasks": false,
+						"noActiveAgents": true,
+						"executionStarted": false,
+						"noRecentActivity": true
+					},
+					"completionScore": 3
+				}
+			},
+			{
+				"timestamp": "2025-08-20T20:14:02.987Z",
+				"event": "plan_completion_detected",
+				"details": {
+					"criteria": {
+						"allTasksCompleted": true,
+						"hasCompletedTasks": false,
+						"noActiveAgents": true,
+						"executionStarted": false,
+						"noRecentActivity": true
+					},
+					"completionScore": 3
+				}
+			},
+			{
+				"timestamp": "2025-08-20T21:47:21.570Z",
+				"event": "plan_completion_detected",
+				"details": {
+					"criteria": {
+						"allTasksCompleted": true,
+						"hasCompletedTasks": false,
+						"noActiveAgents": true,
+						"executionStarted": false,
+						"noRecentActivity": true
+					},
+					"completionScore": 3
+				}
+			},
+			{
+				"timestamp": "2025-08-21T00:31:52.568Z",
+				"event": "plan_completion_detected",
+				"details": {
+					"criteria": {
+						"allTasksCompleted": true,
+						"hasCompletedTasks": false,
+						"noActiveAgents": true,
+						"executionStarted": false,
+						"noRecentActivity": true
+					},
+					"completionScore": 3
+				}
+			},
+			{
+				"timestamp": "2025-08-21T00:37:02.328Z",
+				"event": "plan_completion_detected",
+				"details": {
+					"criteria": {
+						"allTasksCompleted": true,
+						"hasCompletedTasks": false,
+						"noActiveAgents": true,
+						"executionStarted": false,
+						"noRecentActivity": true
+					},
+					"completionScore": 3
+				}
+			},
+			{
+				"timestamp": "2025-08-21T15:50:19.893Z",
+				"event": "plan_completion_detected",
+				"details": {
+					"criteria": {
+						"allTasksCompleted": true,
+						"hasCompletedTasks": false,
+						"noActiveAgents": true,
+						"executionStarted": false,
+						"noRecentActivity": true
+					},
+					"completionScore": 3
+				}
+			},
+			{
+				"timestamp": "2025-08-21T16:05:39.813Z",
+				"event": "plan_completion_detected",
+				"details": {
+					"criteria": {
+						"allTasksCompleted": true,
+						"hasCompletedTasks": false,
+						"noActiveAgents": true,
+						"executionStarted": false,
+						"noRecentActivity": true
+					},
+					"completionScore": 3
+				}
+			},
+			{
+				"timestamp": "2025-08-21T17:12:01.326Z",
+				"event": "plan_completion_detected",
+				"details": {
+					"criteria": {
+						"allTasksCompleted": true,
+						"hasCompletedTasks": false,
+						"noActiveAgents": true,
+						"executionStarted": false,
+						"noRecentActivity": true
+					},
+					"completionScore": 3
+				}
+			},
+			{
+				"timestamp": "2025-08-21T17:18:54.729Z",
+				"event": "plan_completion_detected",
+				"details": {
+					"criteria": {
+						"allTasksCompleted": true,
+						"hasCompletedTasks": false,
+						"noActiveAgents": true,
+						"executionStarted": false,
+						"noRecentActivity": true
+					},
+					"completionScore": 3
+				}
+			},
+			{
+				"timestamp": "2025-08-21T17:25:54.465Z",
+				"event": "plan_completion_detected",
+				"details": {
+					"criteria": {
+						"allTasksCompleted": true,
+						"hasCompletedTasks": false,
+						"noActiveAgents": true,
+						"executionStarted": false,
+						"noRecentActivity": true
+					},
+					"completionScore": 3
+				}
+			},
+			{
+				"timestamp": "2025-08-21T17:36:40.147Z",
+				"event": "plan_completion_detected",
+				"details": {
+					"criteria": {
+						"allTasksCompleted": true,
+						"hasCompletedTasks": false,
+						"noActiveAgents": true,
+						"executionStarted": false,
+						"noRecentActivity": true
+					},
+					"completionScore": 3
+				}
+			}
+		],
+		"tasks": {
+			"total": 0,
+			"completed": 0,
+			"failed": 0,
+			"pending": 0,
+			"inProgress": 0
+		},
+		"tools": {
+			"used": [],
+			"lastTool": null,
+			"toolCount": 0
+		},
+		"agents": {
+			"active": [],
+			"completed": [],
+			"failed": []
+		},
+		"commands": {
+			"executed": [],
+			"pending": [],
+			"failed": []
+		},
+		"performance": {
+			"startTime": 1755704177561,
+			"lastActivity": 1755797800151,
+			"toolExecutionTimes": [],
+			"averageToolTime": 0
+		},
+		"flags": {
+			"planApproved": false,
+			"executionStarted": false,
+			"completionDetected": false,
+			"errorOccurred": false
+		},
+		"lastUpdated": "2025-08-21T17:36:40.151Z"
+	}
+}

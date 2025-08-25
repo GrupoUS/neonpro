@@ -35,7 +35,7 @@ export function SkipToContentLink() {
 	return (
 		<a
 			href="#main-content"
-			className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md focus:shadow-lg"
+			className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:px-3 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md focus:shadow-lg focus:transition-all focus:duration-200 focus:text-sm sm:focus:top-4 sm:focus:left-4 sm:focus:px-4 sm:focus:py-2 md:focus:px-6 md:focus:py-3 md:focus:text-base lg:focus:top-6 lg:focus:left-6"
 		>
 			Pular para o conteúdo principal
 		</a>
@@ -250,17 +250,17 @@ export function AccessibilityPanel() {
 				<Button
 					variant="outline"
 					size="sm"
-					className="fixed bottom-4 right-4 z-40 h-12 w-12 rounded-full p-0"
+					className="fixed bottom-2 right-2 z-40 h-10 w-10 rounded-full p-0 sm:bottom-4 sm:right-4 sm:h-12 sm:w-12 md:bottom-6 md:right-6 lg:h-14 lg:w-14"
 					aria-label="Configurações de acessibilidade"
 				>
-					<Eye className="h-4 w-4" />
+					<Eye className="h-3 w-3 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />
 				</Button>
 			</PopoverTrigger>
 			
 			<PopoverContent
 				side="top"
 				align="end"
-				className="w-80"
+				className="w-72 sm:w-80 md:w-96"
 				onOpenAutoFocus={(e) => e.preventDefault()}
 			>
 				<div className="space-y-4">

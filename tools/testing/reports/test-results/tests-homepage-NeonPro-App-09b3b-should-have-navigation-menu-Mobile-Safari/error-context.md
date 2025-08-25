@@ -1,0 +1,44 @@
+# Page snapshot
+
+```yaml
+- link "Skip to Clerk keyless mode content":
+  - /url: "#--clerk-keyless-prompt-button"
+- region "Aviso de proteção de dados": Este sistema processa dados sensíveis de saúde em conformidade com a LGPD
+- img
+- heading "NeonPro Saúde" [level=2]
+- paragraph: Acesso seguro ao seu sistema de gestão de saúde
+- text: 🔒 Sistema em conformidade com LGPD
+- heading "Entrar" [level=1]
+- paragraph: para continuar em My Application
+- button "Sign in with Google Continuar com Google":
+  - img "Sign in with Google"
+  - text: Continuar com Google
+- paragraph: ou
+- text: Seu e-mail
+- textbox "Seu e-mail"
+- text: Senha
+- textbox "Senha"
+- button "Show password":
+  - img
+- button "Continuar":
+  - text: Continuar
+  - img
+- text: Não possui uma conta?
+- link "Registre-se":
+  - /url: http://localhost:3000/auth/cadastrar#/?redirect_to=%2Fdashboard
+- paragraph: Secured by
+- link "Clerk logo":
+  - /url: https://go.clerk.com/components
+  - img
+- paragraph: Development mode
+- paragraph: Seus dados são protegidos conforme a Lei Geral de Proteção de Dados (LGPD)
+- link "Política de Privacidade":
+  - /url: /privacy
+- text: •
+- link "Termos de Uso":
+  - /url: /terms
+- contentinfo "Informações de conformidade": Sistema em conformidade com LGPD (Lei Geral de Proteção de Dados)
+- alert
+- button "Clerk is in keyless mode":
+  - paragraph: Clerk is in keyless mode
+```

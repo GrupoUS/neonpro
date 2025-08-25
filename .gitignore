@@ -20,12 +20,6 @@ dist/
 out/
 **/out/
 
-# cache and temporary files
-.turbo/
-**/.turbo/
-.cache/
-**/.cache/
-
 # temporary upload files (Google Drive sync)
 .tmp.driveupload/
 **/.tmp.driveupload/
@@ -37,12 +31,6 @@ tmp.drivedownload/
 **/tmp.drivedownload/
 
 # IDE and tooling
-.vscode/
-.claude/
-.qwen/
-.trae/
-.warp/
-.bmad-core/
 archon/
 serena/
 
@@ -59,39 +47,9 @@ yarn-error.log*
 .env*
 mcp.json
 
-# vercel
-.vercel
-
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-
-# testing
-tools/testing/reports/
-tools/reports/
-tools/e2e/reports/
-tools/e2e/test-results/
-tools/e2e/test-results-minimal/
-**/coverage/
-**/test-results/
-**/playwright-report/
-**/.nyc_output/
-**/allure-results/
-**/allure-report/
-
-# test artifacts
-tools/testing/reports/**/*
-!tools/testing/reports/.gitkeep
-
-# broken test files with syntax errors
-tools/testing/final-validation/healthcare-workflows/
-tools/testing/final-validation/integration/realtime-integration.test.ts
-tools/testing/performance/analysis/database-performance.ts
-tools/testing/performance/analysis/frontend-performance.ts
-tools/testing/security/apex-qa-security-validation.test.ts
-tools/turbo/advanced-config.ts
-
-archon
 
 # Playwright
 /test-results/

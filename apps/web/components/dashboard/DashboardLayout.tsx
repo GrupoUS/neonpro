@@ -262,22 +262,44 @@ export function DashboardLayout({
 	);
 
 	return (
-		<div className={`space-y-6 ${className}`}>
+		<div 
+			className={`space-y-6 ${className}`}
+			role="main"
+			aria-label="AI-Powered Dashboards"
+		>
 			{/* View Mode Selector */}
 			{showSettings && (
-				<div className="flex items-center justify-between border-b pb-4">
+				<header 
+					className="flex items-center justify-between border-b pb-4"
+					role="banner"
+				>
 					<div>
-						<h1 className="text-3xl font-bold">Dashboards AI-Powered</h1>
-						<p className="text-muted-foreground">
+						<h1 
+							className="text-3xl font-bold"
+							id="dashboard-main-title"
+							tabIndex={0}
+						>
+							Dashboards AI-Powered
+						</h1>
+						<p 
+							className="text-muted-foreground"
+							aria-describedby="dashboard-main-title"
+						>
 							Monitoramento inteligente e análise em tempo real
 						</p>
 					</div>
 					
-					<div className="flex items-center gap-2">
+					<div 
+						className="flex items-center gap-2"
+						role="toolbar"
+						aria-label="Dashboard View Controls"
+					>
 						<Button
 							variant={viewMode === "grid" ? "default" : "outline"}
 							size="sm"
 							onClick={() => setViewMode("grid")}
+							aria-label="Grid View"
+							aria-pressed={viewMode === "grid"}
 						>
 							<Grid3X3 className="h-4 w-4" />
 						</Button>
@@ -285,6 +307,8 @@ export function DashboardLayout({
 							variant={viewMode === "tabs" ? "default" : "outline"}
 							size="sm"
 							onClick={() => setViewMode("tabs")}
+							aria-label="Tabs View"
+							aria-pressed={viewMode === "tabs"}
 						>
 							<List className="h-4 w-4" />
 						</Button>
@@ -292,17 +316,25 @@ export function DashboardLayout({
 							variant={viewMode === "single" ? "default" : "outline"}
 							size="sm"
 							onClick={() => setViewMode("single")}
+							aria-label="Single View"
+							aria-pressed={viewMode === "single"}
 						>
 							<Maximize2 className="h-4 w-4" />
 						</Button>
 					</div>
-				</div>
+				</header>
 			)}
 
 			{/* Dashboard Content */}
-			{viewMode === "grid" && renderGridView()}
-			{viewMode === "tabs" && renderTabsView()}
-			{viewMode === "single" && renderSingleView()}
+			<section 
+				role="region"
+				aria-labelledby="dashboard-main-title"
+				aria-live="polite"
+			>
+				{viewMode === "grid" && renderGridView()}
+				{viewMode === "tabs" && renderTabsView()}
+				{viewMode === "single" && renderSingleView()}
+			</section>
 		</div>
 	);
 }

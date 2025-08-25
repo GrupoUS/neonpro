@@ -1,0 +1,113 @@
+{
+	"biome.enabled": true,
+	"biome.lspBin": "pnpm",
+	"biome.lspBinArguments": ["exec", "biome"],
+	"biome.rename": true,
+	"biome.requireConfiguration": true,
+	"editor.defaultFormatter": "biomejs.biome",
+	"editor.formatOnSave": true,
+	"editor.formatOnPaste": true,
+	"editor.codeActionsOnSave": {
+		"source.fixAll.biome": "explicit",
+		"source.organizeImports.biome": "explicit"
+	},
+	"[javascript]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"[typescript]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"[typescriptreact]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"[javascriptreact]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"[json]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"[jsonc]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"npm.packageManager": "pnpm",
+	"terminal.integrated.defaultProfile.windows": "PowerShell",
+	"vitest.enable": true,
+	"vitest.commandLine": "pnpm exec vitest",
+	"vitest.include": ["**/*.{test,spec}.{js,ts,tsx}"],
+	"vitest.exclude": [
+		"**/node_modules/**",
+		"**/dist/**",
+		"**/build/**",
+		"**/.next/**"
+	],
+	"vitest.disableWorkspaceConfig": false,
+	"vitest.rootConfig": "./vitest.config.ts",
+	"playwright.reuseBrowser": true,
+	"playwright.showTrace": false,
+	"playwright.testDir": "./e2e",
+	"playwright.configFile": "./playwright.config.ts",
+	"files.associations": {
+		"biome.json": "jsonc",
+		"biome.jsonc": "jsonc"
+	},
+	"search.exclude": {
+		"**/node_modules": true,
+		"**/dist": true,
+		"**/build": true,
+		"**/.next": true,
+		"**/coverage": true,
+		"**/playwright-report": true,
+		"**/test-results": true,
+		"**/.turbo": true,
+		"**/logs": true,
+		"**/temp-*": true,
+		"**/tmp.*": true,
+		"**/archon/original_archon": true,
+		"**/serena": true,
+		"**/infrastructure": true,
+		"**/docs": true,
+		"**/turbo": true,
+		"**/tools": true
+	},
+	"files.exclude": {
+		"**/node_modules": true,
+		"**/dist": true,
+		"**/build": true,
+		"**/.next": true,
+		"**/.turbo": true,
+		"**/coverage": true,
+		"**/playwright-report": true,
+		"**/test-results": true,
+		"**/logs": true,
+		"**/temp-*": true,
+		"**/tmp.*": true,
+	},
+	"files.watcherExclude": {
+		"**/node_modules/**": true,
+		"**/.git/**": true,
+		"**/.turbo/**": true,
+		"**/dist/**": true,
+		"**/build/**": true,
+		"**/.next/**": true,	
+		"**/coverage/**": true,
+		"**/logs/**": true,
+		"**/temp-*/**": true,
+		"**/tmp.*": true,
+	},
+	"typescript.disableAutomaticTypeAcquisition": true,
+	"extensions.ignoreRecommendations": false,
+	"testing.automaticallyOpenPeekView": "never",
+	"testing.followRunningTest": false,
+	"testing.alwaysRevealTestOnStateChange": false,
+	"typescript.tsdk": "node_modules/typescript/lib",
+	"typescript.preferences.includePackageJsonAutoImports": "off",
+	"typescript.suggest.autoImports": false,
+	"typescript.updateImportsOnFileMove.enabled": "prompt",
+	"[css]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"[graphql]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"emmet.showExpandedAbbreviation": "never"
+}

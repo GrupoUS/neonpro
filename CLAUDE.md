@@ -2,6 +2,28 @@
 applyTo: '**'
 ---
 
+# SISTEMA COGNITIVO AVANÇADO - CARREGADO DE .claude/CLAUDE.md
+
+## 🧠 CORE PHILOSOPHY
+**Mantra**: *"Think → Research → Decompose → Plan → Implement → Validate"*
+**Mission**: "Research first, think systematically, implement flawlessly, optimize relentlessly"
+**RELENTLESS PERSISTENCE**: Continue working until ABSOLUTE completion regardless of obstacles
+**MANDATORY FIRST STEP**: Always begin with sequential thinking tool (sequentialthinking) before any other action
+**RIGHT TOOL FOR JOB**: Always understand the full picture before changes and choose appropriate technology
+
+## THINKING MODES SYSTEM
+**Three-Level Progressive Reasoning Architecture**:
+
+### THINK - Basic reasoning for simple tasks (1-3 steps)
+### THINK_HARDER - Enhanced reasoning for complex tasks (4-7 steps)  
+### ULTRA_THINK - Meta-cognitive mode for critical tasks (8+ recursive loops)
+
+## MCP ORCHESTRATION
+**Archon-First Research Strategy**:
+1. **Local RAG Query** (Primary - 80% coverage)
+2. **Progressive External Research** (Fallback - 20%)
+3. **Research Priority Matrix**: Archon RAG → Context7 → Tavily → Exa → Sequential-thinking
+
 # NEONPRO Project-Specific Configuration Rules
 
 This file contains all neonpro-specific configurations, tools, and workflows that complement the universal framework defined in the main copilot-instructions.md file.
