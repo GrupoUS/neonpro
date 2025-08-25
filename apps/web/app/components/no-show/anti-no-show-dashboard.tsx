@@ -10,9 +10,11 @@ import {
 	BarChart3,
 	Brain,
 	Calendar,
+	CheckCircle,
 	CheckCircle2,
 	Clock,
 	Filter,
+	Info,
 	Minus,
 	RefreshCw,
 	Shield,
@@ -77,6 +79,65 @@ interface DashboardStats {
 interface AntiNoShowDashboardProps {
 	className?: string;
 }
+
+// Utility functions for risk categories and analytics
+const formatCurrency = (value: number) => {
+	return new Intl.NumberFormat('pt-BR', {
+		style: 'currency',
+		currency: 'BRL'
+	}).format(value);
+};
+
+const getRiskBadgeVariant = (riskCategory: string) => {
+	switch (riskCategory.toLowerCase()) {
+		case 'high':
+		case 'alto':
+			return 'destructive' as const;
+		case 'medium':
+		case 'medio':
+		case 'médio':
+			return 'default' as const;
+		case 'low':
+		case 'baixo':
+			return 'secondary' as const;
+		default:
+			return 'outline' as const;
+	}
+};
+
+const getRiskIcon = (riskCategory: string) => {
+	switch (riskCategory.toLowerCase()) {
+		case 'high':
+		case 'alto':
+			return <AlertTriangle className="h-3 w-3" />;
+		case 'medium':
+		case 'medio':
+		case 'médio':
+			return <AlertCircle className="h-3 w-3" />;
+		case 'low':
+		case 'baixo':
+			return <CheckCircle className="h-3 w-3" />;
+		default:
+			return <Info className="h-3 w-3" />;
+	}
+};
+
+const getRiskLabel = (riskCategory: string) => {
+	switch (riskCategory.toLowerCase()) {
+		case 'high':
+		case 'alto':
+			return 'Alto Risco';
+		case 'medium':
+		case 'medio':
+		case 'médio':
+			return 'Médio Risco';
+		case 'low':
+		case 'baixo':
+			return 'Baixo Risco';
+		default:
+			return 'Indefinido';
+	}
+};
 
 export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
 	// State management
@@ -977,7 +1038,7 @@ function PatientRiskCard({ patient, delay = 0 }: { patient: PatientRiskData; del
 						<div className="space-y-1">
 							{patient.recommendations.slice(0, 2).map((action, index) => (
 								<div className="flex items-start gap-2 rounded bg-muted/50 p-2 text-xs" key={index}>
-									<Badge className="text-xs" size="sm" variant="outline">
+									<Badge className="text-xs" variant="outline">
 										{action.priority === "urgent" ? "🚨" : action.priority === "high" ? "⚡" : "📋"}
 									</Badge>
 									<div className="flex-1">

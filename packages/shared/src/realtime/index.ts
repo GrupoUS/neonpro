@@ -41,7 +41,6 @@ export type {
 	UseRealtimeComplianceReturn,
 } from "./hooks/use-realtime-compliance";
 export {
-	useComplianceAnalytics,
 	useRealtimeCompliance,
 } from "./hooks/use-realtime-compliance";
 export type {

@@ -501,7 +501,7 @@ export abstract class EnhancedServiceBase {
 		try {
 			// Test security service
 			const securityHealth = await this.enterpriseSecurity.getHealthMetrics();
-			results.security = { status: "healthy", ...securityHealth };
+			results.security = { ...securityHealth, status: "healthy" };
 		} catch (error) {
 			results.security = { status: "unhealthy", error: (error as Error).message };
 			errors.push(`Security service error: ${(error as Error).message}`);

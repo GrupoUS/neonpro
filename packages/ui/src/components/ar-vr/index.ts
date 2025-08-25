@@ -1,12 +1,6 @@
 /**
- * AR/VR Viewer Components
- * FASE 3: Frontend Enhancement - Missing UI Components  
+ * AR/VR Components
+ * Simplified versions for basic healthcare AR/VR functionality
  */
 
-export { ARVRViewer, default } from "./ARVRViewer";
-export type { 
-	MediaContent,
-	Annotation,
-	ViewerSettings,
-	ARVRViewerProps 
-} from "./ARVRViewer";
+export { default as ARVRViewer } from "./ARVRViewer";

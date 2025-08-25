@@ -16,7 +16,7 @@ import {
 	Search,
 	Settings,
 	Shield,
-	Tool,
+	Wrench as Tool,
 	Users,
 	Wrench,
 	XCircle,

@@ -1,7 +1,7 @@
 "use client";
 
 import jsPDF from "jspdf";
-import * as XLSX from "xlsx";
+import XLSX from "xlsx";
 import { formatCurrency, formatDate, reportData } from "./healthcare-data";
 
 // PDF Export Configuration

@@ -30,7 +30,7 @@ export class AuthTokenManager {
 	private tokenType = "Bearer";
 	private isRefreshing = false;
 	private refreshPromise: Promise<boolean> | null = null;
-	private readonly refreshCallbacks: ((success: boolean) => void)[] = [];
+	private refreshCallbacks: ((success: boolean) => void)[] = [];
 
 	// Storage keys
 	private static readonly STORAGE_KEYS = {
@@ -250,7 +250,7 @@ export class AuthTokenManager {
 			});
 
 			if (!response.ok) {
-				const _errorData = await response.json().catch(() => null);
+				await response.json().catch(() => null);
 
 				// If refresh token is invalid/expired, clear all tokens
 				if (response.status === 401 || response.status === 403) {

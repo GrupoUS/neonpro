@@ -244,7 +244,7 @@ export function PerformanceMetricsDashboard() {
 							</div>
 							<Progress value={metrics.systemPerformance.cpuUsage} className="h-2" />
 							<div className="text-xs text-muted-foreground">
-								Target: <80% | Status: 
+								Target: &lt;80% | Status: 
 								{metrics.systemPerformance.cpuUsage < 70 ? " Ótimo" : 
 								 metrics.systemPerformance.cpuUsage < 85 ? " Bom" : " Atenção"}
 							</div>

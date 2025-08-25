@@ -1,7 +1,6 @@
 /**
  * Prediction Display Components
- * FASE 3: Frontend Enhancement - Missing UI Components
+ * Simplified prediction display component
  */
 
-export { PredictionDisplay, default } from "./PredictionDisplay";
-export type { PredictionResult, PredictionDisplayProps } from "./PredictionDisplay";
+export { default as PredictionDisplay } from "./PredictionDisplay";

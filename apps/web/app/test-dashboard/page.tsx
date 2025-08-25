@@ -1,6 +1,6 @@
 "use client";
 
-import { NeonProHealthcareDashboard } from "../components/neonpro-healthcare-dashboard";
+import NeonProHealthcareDashboard from "../components/neonpro-healthcare-dashboard";
 
 export default function TestDashboardPage() {
 	return (

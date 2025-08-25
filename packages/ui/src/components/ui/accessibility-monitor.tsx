@@ -125,7 +125,7 @@ const AccessibilityMonitor: React.FC<AccessibilityMonitorProps> = ({
 
 			// Skip elements with transparent backgrounds or no text
 			if (backgroundColor === "rgba(0, 0, 0, 0)" || !htmlElement.textContent?.trim()) {
-				return;
+				continue;
 			}
 
 			const textSize = fontSize >= 18 || computedStyle.fontWeight === "bold" ? "large" : "normal";

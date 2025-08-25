@@ -12,13 +12,6 @@ interface AnalyticsPageProps {
 	searchParams?: Record<string, string | string[] | undefined>;
 }
 
-// Metadata for SEO and accessibility
-export const metadata = {
-	title: "Analytics AI | NeonPro Healthcare",
-	description: "Análise inteligente com insights em tempo real para sua clínica",
-	keywords: ["analytics", "AI", "healthcare", "insights", "real-time"],
-};
-
 export default function AnalyticsPage({ searchParams }: AnalyticsPageProps) {
 	return (
 		<main

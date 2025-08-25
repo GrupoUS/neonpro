@@ -52,40 +52,6 @@ export function useRealtimePatients(options: UseRealtimePatientsOptions): UseRea
 	const [unsubscribeFn, setUnsubscribeFn] = useState<(() => void) | null>(null);
 
 	/**
-	 * Handle realtime patient changes
-	 */
-	const handlePatientChange = useCallback(
-		(payload: any) => {
-			try {
-				const realtimePayload: RealtimePatientPayload = {
-					eventType: payload.eventType,
-					new: payload.new as PatientRow,
-					old: payload.old as PatientRow,
-				};
-
-				// Update metrics
-				setLastUpdate(new Date());
-				setTotalUpdates((prev) => prev + 1);
-
-				// Update TanStack Query cache
-				updateQueryCache(realtimePayload);
-
-				// Call user callback
-				if (onPatientChange) {
-					onPatientChange(realtimePayload);
-				}
-			} catch (error) {
-				if (onError) {
-					onError(error as Error);
-				}
-			}
-		},
-		[
-			onPatientChange,
-			onError, // Update TanStack Query cache
-			updateQueryCache,
-		]
-	); /**
 	 * Update TanStack Query cache based on realtime changes
 	 */
 	const updateQueryCache = useCallback(
@@ -122,20 +88,55 @@ export function useRealtimePatients(options: UseRealtimePatientsOptions): UseRea
 				}
 			});
 
-			// Update individual patient cache if exists
+			// Update individual patient cache
 			if (newData) {
 				queryClient.setQueryData(["patient", newData.id], newData);
 			} else if (oldData && eventType === "DELETE") {
 				queryClient.removeQueries({ queryKey: ["patient", oldData.id] });
 			}
 
-			// Invalidate related queries for fresh data
+			// Invalidate related queries
 			queryClient.invalidateQueries({
 				queryKey: ["patient-analytics", tenantId],
 			});
-			queryClient.invalidateQueries({ queryKey: ["patient-stats", tenantId] });
 		},
 		[queryClient, queryKey, tenantId]
+	);
+
+	/**
+	 * Handle realtime patient changes
+	 */
+	const handlePatientChange = useCallback(
+		(payload: any) => {
+			try {
+				const realtimePayload: RealtimePatientPayload = {
+					eventType: payload.eventType,
+					new: payload.new as PatientRow,
+					old: payload.old as PatientRow,
+				};
+
+				// Update metrics
+				setLastUpdate(new Date());
+				setTotalUpdates((prev) => prev + 1);
+
+				// Update TanStack Query cache
+				updateQueryCache(realtimePayload);
+
+				// Call user callback
+				if (onPatientChange) {
+					onPatientChange(realtimePayload);
+				}
+			} catch (error) {
+				if (onError) {
+					onError(error as Error);
+				}
+			}
+		},
+		[
+			onPatientChange,
+			onError, // Update TanStack Query cache
+			updateQueryCache,
+		]
 	);
 
 	/**

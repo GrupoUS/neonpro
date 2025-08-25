@@ -141,3 +141,8 @@ export const FASE4_COMPONENT_REGISTRY = {
 	version: "4.0.0",
 	lastUpdated: new Date().toISOString(),
 } as const;
+// =============================================================================
+// 🤖 HEALTHCARE AI AGENT CHAT COMPONENT EXPORT
+// =============================================================================
+
+export { AgentChat } from './AgentChat';

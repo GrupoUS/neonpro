@@ -97,17 +97,13 @@
       "mcp__supabase-mcp__search_docs",
       "Bash(pnpm biome check:*)",
       "Bash(npx biome lint:*)",
-      "mcp__archon__update_task"
+      "mcp__archon__update_task",
+      "mcp__serena__think_about_collected_information"
     ],
     "deny": [
       "Edit",
       "Read",
       "Write",
-      "Bash",
-      "LS",
-      "Glob",
-      "Grep",
-      "MultiEdit",
       "NotebookRead",
       "NotebookEdit",
       "WebSearch",

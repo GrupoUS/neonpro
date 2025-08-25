@@ -242,3 +242,9 @@ export function EmergencyBreadcrumbs({ currentAction }: { currentAction: string 
 		</nav>
 	);
 }
+
+// =============================================================================
+// 🤖 HEALTHCARE AI AGENT CHAT COMPONENT - NEW FILE MARKER
+// =============================================================================
+// This will be moved to a separate file: components/AgentChat.tsx
+// =============================================================================

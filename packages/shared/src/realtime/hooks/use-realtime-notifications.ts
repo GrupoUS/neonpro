@@ -34,7 +34,7 @@ export type RealtimeNotificationPayload = {
 export type UseRealtimeNotificationsOptions = {
 	tenantId: string;
 	userId?: string;
-	priority?: keyof NotificationPriority;
+	priority?: keyof NotificationPriority | "ALL";
 	enabled?: boolean;
 	enableAudio?: boolean;
 	enableToast?: boolean;
@@ -51,10 +51,12 @@ export type UseRealtimeNotificationsReturn = {
 	emergencyCount: number;
 	subscribe: () => void;
 	unsubscribe: () => void;
-	markAsRead: (notificationId: string) => void;
-	markAllAsRead: () => void;
-	playNotificationSound: (priority: keyof NotificationPriority) => void;
-}; /**
+	markAsRead?: (notificationId: string) => void;
+	markAllAsRead?: () => void;
+	playNotificationSound?: (priority: keyof NotificationPriority) => void;
+};
+
+/**
  * MANDATORY Real-time Notification Hook
  * Sistema crítico para notificações healthcare com audio alerts
  */
@@ -79,6 +81,111 @@ export function useRealtimeNotifications(options: UseRealtimeNotificationsOption
 	const [emergencyCount, setEmergencyCount] = useState(0);
 	const [unsubscribeFn, setUnsubscribeFn] = useState<(() => void) | null>(null);
 	const audioRef = useRef<HTMLAudioElement | null>(null);
+
+	/**
+	 * Play notification sound based on priority
+	 */
+	const playNotificationSound = useCallback(
+		(priority: keyof NotificationPriority) => {
+			if (!enableAudio || typeof window === "undefined") {
+				return;
+			}
+
+			try {
+				// Different sounds for different priorities
+				const soundMap = {
+					EMERGENCY: "/sounds/emergency-alert.mp3", // Critical medical alerts
+					HIGH: "/sounds/urgent-notification.mp3", // Important changes
+					MEDIUM: "/sounds/standard-notification.mp3", // Regular updates
+					LOW: "/sounds/soft-notification.mp3", // Info notifications
+				};
+
+				const soundUrl = soundMap[priority] || soundMap.LOW;
+
+				if (!audioRef.current) {
+					audioRef.current = new Audio();
+				}
+
+				audioRef.current.src = soundUrl;
+				audioRef.current.volume = priority === "EMERGENCY" ? 1.0 : 0.7;
+
+				// Play sound with fallback
+				const playPromise = audioRef.current.play();
+				if (playPromise !== undefined) {
+					playPromise.catch((_error) => {
+						// Fallback to system notification sound
+						if ("Notification" in window && Notification.permission === "granted") {
+							new Notification("NeonPro Healthcare", {
+								body: "Nova notificação recebida",
+								icon: "/icons/healthcare-notification.png",
+								silent: false,
+							});
+						}
+					});
+				}
+			} catch (_error) {}
+		},
+		[enableAudio]
+	);
+
+	/**
+	 * Show toast notification
+	 */
+	const showToastNotification = useCallback(
+		(notification: ExtendedNotification) => {
+			if (!enableToast || typeof window === "undefined") {
+				return;
+			}
+			// Simple console log for now, can be enhanced with actual toast library
+			console.log("Toast notification:", notification.title);
+		},
+		[enableToast]
+	);
+
+	/**
+	 * Update TanStack Query cache para notifications
+	 */
+	const updateNotificationCache = useCallback(
+		(payload: RealtimeNotificationPayload) => {
+			const { eventType, new: newData, old: oldData } = payload;
+
+			// Update notifications cache
+			queryClient.setQueryData(["notifications", tenantId, userId], (oldCache: NotificationRow[] | undefined) => {
+				if (!oldCache) {
+					return oldCache;
+				}
+
+				switch (eventType) {
+					case "INSERT":
+						if (newData && newData.user_id === userId) {
+							return [newData, ...oldCache].slice(0, 500); // Keep manageable
+						}
+						return oldCache;
+
+					case "UPDATE":
+						if (newData) {
+							return oldCache.map((notification) =>
+								notification.id === newData.id ? newData : notification
+							);
+						}
+						return oldCache;
+
+					case "DELETE":
+						if (oldData) {
+							return oldCache.filter((notification) => notification.id !== oldData.id);
+						}
+						return oldCache;
+
+					default:
+						return oldCache;
+				}
+			});
+
+			// Update unread count
+			queryClient.invalidateQueries({ queryKey: ["notifications-unread", tenantId, userId] });
+		},
+		[queryClient, tenantId, userId]
+	);
 
 	/**
 	 * Handle realtime notification changes
@@ -138,163 +245,13 @@ export function useRealtimeNotifications(options: UseRealtimeNotificationsOption
 			enableAudio,
 			enableToast,
 			playNotificationSound,
-			showToastNotification, // Update TanStack Query cache
+			showToastNotification,
 			updateNotificationCache,
 		]
-	); /**
-	 * Play notification sound based on priority
-	 */
-	const playNotificationSound = useCallback(
-		(priority: keyof NotificationPriority) => {
-			if (!enableAudio || typeof window === "undefined") {
-				return;
-			}
-
-			try {
-				// Different sounds for different priorities
-				const soundMap = {
-					EMERGENCY: "/sounds/emergency-alert.mp3", // Critical medical alerts
-					HIGH: "/sounds/urgent-notification.mp3", // Important changes
-					MEDIUM: "/sounds/standard-notification.mp3", // Regular updates
-					LOW: "/sounds/soft-notification.mp3", // Info notifications
-				};
-
-				const soundUrl = soundMap[priority] || soundMap.LOW;
-
-				if (!audioRef.current) {
-					audioRef.current = new Audio();
-				}
-
-				audioRef.current.src = soundUrl;
-				audioRef.current.volume = priority === "EMERGENCY" ? 1.0 : 0.7;
-
-				// Play sound with fallback
-				const playPromise = audioRef.current.play();
-				if (playPromise !== undefined) {
-					playPromise.catch((_error) => {
-						// Fallback to system notification sound
-						if ("Notification" in window && Notification.permission === "granted") {
-							new Notification("NeonPro Healthcare", {
-								body: "Nova notificação recebida",
-								icon: "/icons/healthcare-notification.png",
-								silent: false,
-							});
-						}
-					});
-				}
-			} catch (_error) {}
-		},
-		[enableAudio]
 	);
 
 	/**
-	 * Show toast notification
-	 */
-	const showToastNotification = useCallback(
-		(notification: ExtendedNotification) => {
-			if (!enableToast || typeof window === "undefined") {
-				return;
-			}
-
-			// Use toast system (assuming react-hot-toast or similar)
-			const toastConfig = {
-				duration: notification.priority === "EMERGENCY" ? 0 : 5000, // Emergency stays until dismissed
-				position: "top-right" as const,
-				style: {
-					background: getPriorityColor(notification.priority || "LOW"),
-					color: "white",
-					fontSize: "14px",
-					maxWidth: "400px",
-				},
-			};
-
-			// Dispatch custom event for toast system
-			const toastEvent = new CustomEvent("neonpro-notification", {
-				detail: {
-					id: notification.id,
-					title: notification.title,
-					message: notification.message,
-					priority: notification.priority || "LOW",
-					config: toastConfig,
-				},
-			});
-
-			window.dispatchEvent(toastEvent);
-		},
-		[enableToast, getPriorityColor]
-	);
-
-	/**
-	 * Get priority color for UI feedback
-	 */
-	const getPriorityColor = useCallback((priority: keyof NotificationPriority): string => {
-		const colorMap = {
-			EMERGENCY: "#dc2626", // Red for emergencies
-			HIGH: "#ea580c", // Orange for high priority
-			MEDIUM: "#2563eb", // Blue for medium
-			LOW: "#059669", // Green for low priority
-		};
-		return colorMap[priority] || colorMap.LOW;
-	}, []); /**
-	 * Update TanStack Query cache para notifications
-	 */
-	const updateNotificationCache = useCallback(
-		(payload: RealtimeNotificationPayload) => {
-			const { eventType, new: newData, old: oldData } = payload;
-
-			// Update notifications list cache
-			queryClient.setQueryData(["notifications", tenantId, userId], (oldCache: NotificationRow[] | undefined) => {
-				if (!oldCache) {
-					return oldCache;
-				}
-
-				switch (eventType) {
-					case "INSERT":
-						if (newData && newData.clinic_id === tenantId) {
-							// Insert newest first
-							return [newData as NotificationRow, ...oldCache];
-						}
-						return oldCache;
-
-					case "UPDATE":
-						if (newData) {
-							return oldCache.map((notification) =>
-								notification.id === newData.id ? (newData as NotificationRow) : notification
-							);
-						}
-						return oldCache;
-
-					case "DELETE":
-						if (oldData) {
-							return oldCache.filter((notification) => notification.id !== oldData.id);
-						}
-						return oldCache;
-
-					default:
-						return oldCache;
-				}
-			});
-
-			// Update individual notification cache
-			if (newData) {
-				queryClient.setQueryData(["notification", newData.id], newData);
-			} else if (oldData && eventType === "DELETE") {
-				queryClient.removeQueries({ queryKey: ["notification", oldData.id] });
-			}
-
-			// Invalidate related queries
-			queryClient.invalidateQueries({
-				queryKey: ["notification-stats", tenantId],
-			});
-			queryClient.invalidateQueries({
-				queryKey: ["unread-notifications", tenantId, userId],
-			});
-		},
-		[queryClient, tenantId, userId]
-	);
-
-	/**
-	 * Subscribe to realtime notification updates
+	 * Subscribe to realtime notifications
 	 */
 	const subscribe = useCallback(() => {
 		if (!enabled || unsubscribeFn) {
@@ -303,141 +260,52 @@ export function useRealtimeNotifications(options: UseRealtimeNotificationsOption
 
 		const realtimeManager = getRealtimeManager();
 
-		// Build filter for user and tenant specific notifications
-		let filter = `tenant_id=eq.${tenantId}`;
-		if (userId) {
-			filter += `,recipient_id=eq.${userId}`;
+		let filter = `user_id=eq.${userId}`;
+		if (tenantId) {
+			filter += `,tenant_id=eq.${tenantId}`;
 		}
-		if (priority) {
+		if (priority && priority !== "ALL") {
 			filter += `,priority=eq.${priority}`;
 		}
 
 		const unsubscribe = realtimeManager.subscribe(
 			`notifications:${filter}`,
 			{
-				table: "notifications", // Now using the actual notifications table
+				table: "notifications",
 				filter,
 			},
 			handleNotificationChange
 		);
 
 		setUnsubscribeFn(() => unsubscribe);
-	}, [enabled, tenantId, userId, priority, handleNotificationChange, unsubscribeFn]); /**
-	 * Unsubscribe from realtime notification updates
+		setIsConnected(true);
+		setConnectionHealth(100);
+	}, [enabled, tenantId, userId, priority, unsubscribeFn, handleNotificationChange]);
+
+	/**
+	 * Unsubscribe from realtime notifications
 	 */
 	const unsubscribe = useCallback(() => {
 		if (unsubscribeFn) {
 			unsubscribeFn();
 			setUnsubscribeFn(null);
+			setIsConnected(false);
+			setConnectionHealth(0);
 		}
 	}, [unsubscribeFn]);
 
-	/**
-	 * Mark notification as read
-	 */
-	const markAsRead = useCallback(
-		async (notificationId: string) => {
-			try {
-				// Optimistic update
-				queryClient.setQueryData(["notifications", tenantId, userId], (oldCache: NotificationRow[] | undefined) => {
-					if (!oldCache) {
-						return oldCache;
-					}
-					return oldCache.map((notification) =>
-						notification.id === notificationId ? { ...notification, read_at: new Date().toISOString() } : notification
-					);
-				});
-
-				// Update unread count
-				setUnreadCount((prev) => Math.max(0, prev - 1));
-
-				// Update individual notification cache
-				queryClient.setQueryData(["notification", notificationId], (oldData: NotificationRow | undefined) => {
-					if (!oldData) {
-						return oldData;
-					}
-					return { ...oldData, read_at: new Date().toISOString() };
-				});
-
-				// Here you would typically make an API call to mark as read
-				// await markNotificationAsRead(notificationId);
-			} catch (_error) {
-				// Rollback on error
-				queryClient.invalidateQueries({
-					queryKey: ["notifications", tenantId, userId],
-				});
-			}
-		},
-		[queryClient, tenantId, userId]
-	);
-
-	/**
-	 * Mark all notifications as read
-	 */
-	const markAllAsRead = useCallback(async () => {
-		try {
-			// Optimistic update
-			queryClient.setQueryData(["notifications", tenantId, userId], (oldCache: NotificationRow[] | undefined) => {
-				if (!oldCache) {
-					return oldCache;
-				}
-				return oldCache.map((notification) => ({
-					...notification,
-					read_at: notification.read_at || new Date().toISOString(),
-				}));
-			});
-
-			// Reset unread count
-			setUnreadCount(0);
-
-			// Here you would typically make an API call
-			// await markAllNotificationsAsRead(tenantId, userId);
-		} catch (_error) {
-			// Rollback on error
-			queryClient.invalidateQueries({
-				queryKey: ["notifications", tenantId, userId],
-			});
-		}
-	}, [queryClient, tenantId, userId]); /**
-	 * Monitor connection status and auto-subscribe
-	 */
+	// Auto subscribe/unsubscribe
 	useEffect(() => {
-		if (!enabled) {
-			return;
-		}
-
-		const realtimeManager = getRealtimeManager();
-
-		const unsubscribeStatus = realtimeManager.onStatusChange((status) => {
-			setIsConnected(status.isConnected);
-			setConnectionHealth(status.healthScore);
-		});
-
-		// Auto-subscribe if enabled
 		if (enabled) {
 			subscribe();
+		} else {
+			unsubscribe();
 		}
 
-		// Cleanup on unmount
 		return () => {
 			unsubscribe();
-			unsubscribeStatus();
-
-			// Cleanup audio element
-			if (audioRef.current) {
-				audioRef.current.pause();
-				audioRef.current = null;
-			}
 		};
 	}, [enabled, subscribe, unsubscribe]);
-
-	// Initialize audio element for faster playback
-	useEffect(() => {
-		if (enableAudio && typeof window !== "undefined") {
-			audioRef.current = new Audio();
-			audioRef.current.preload = "auto";
-		}
-	}, [enableAudio]);
 
 	return {
 		isConnected,
@@ -447,8 +315,6 @@ export function useRealtimeNotifications(options: UseRealtimeNotificationsOption
 		emergencyCount,
 		subscribe,
 		unsubscribe,
-		markAsRead,
-		markAllAsRead,
 		playNotificationSound,
 	};
 }

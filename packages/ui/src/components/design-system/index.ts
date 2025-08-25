@@ -1,18 +1,13 @@
 /**
  * Healthcare Design System Export
- * FASE 3: Frontend Enhancement - Complete Design System
+ * Simplified design system constants and basic component
  */
 
 export {
-	HealthcareDesignSystem,
-	HealthcareStatus,
-	HealthcareCard,
-	HealthcareProgress, 
-	HealthcareButton,
 	HEALTHCARE_COLORS,
 	HEALTHCARE_TYPOGRAPHY,
 	HEALTHCARE_SPACING,
 	HEALTHCARE_ANIMATIONS,
 	HEALTHCARE_ICONS,
-	default
+	default as HealthcareDesignSystem
 } from "./HealthcareDesignSystem";

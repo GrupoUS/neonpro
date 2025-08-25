@@ -109,17 +109,17 @@ export const formatters = {
 			compactDisplay: "short",
 		}).format(value);
 	},
-};
-// Date and time formatters
-export const date = (dateInput: Date | string): string => {
-	const d = typeof dateInput === "string" ? new Date(dateInput) : dateInput;
-	return d.toLocaleDateString("pt-BR", {
-		day: "2-digit",
-		month: "2-digit",
-		year: "numeric",
-	});
-};
 
+	/**
+	 * Format CPF with dots and dash
+	 */
+	cpf: (cpfInput: string): string => {
+		const numbers = cpfInput.replace(DIGITS_ONLY_REGEX, "");
+		return numbers.replace(CPF_REGEX, "$1.$2.$3-$4");
+	},
+};
+// Legacy exports for backward compatibility
+export const date = formatters.date;
 export const time = (timeInput: string | Date): string => {
 	if (typeof timeInput === "string") {
 		return timeInput;
@@ -129,99 +129,13 @@ export const time = (timeInput: string | Date): string => {
 		minute: "2-digit",
 	});
 };
-
-export const dateTime = (dateInput: Date | string): string => {
-	const d = typeof dateInput === "string" ? new Date(dateInput) : dateInput;
-	return d.toLocaleDateString("pt-BR", {
-		day: "2-digit",
-		month: "2-digit",
-		year: "numeric",
-		hour: "2-digit",
-		minute: "2-digit",
-	});
-};
-
-export const relativeTime = (dateInput: Date | string): string => {
-	const d = typeof dateInput === "string" ? new Date(dateInput) : dateInput;
-	const now = new Date();
-	const diffInMs = now.getTime() - d.getTime();
-	const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-
-	if (diffInDays === 0) {
-		return "hoje";
-	}
-	if (diffInDays === 1) {
-		return "ontem";
-	}
-	if (diffInDays < 7) {
-		return `${diffInDays} dias atrás`;
-	}
-	if (diffInDays < 30) {
-		const weeks = Math.floor(diffInDays / 7);
-		return `${weeks} semana${weeks > 1 ? "s" : ""} atrás`;
-	}
-	if (diffInDays < 365) {
-		const months = Math.floor(diffInDays / 30);
-		return `${months} mês${months > 1 ? "es" : ""} atrás`;
-	}
-	const years = Math.floor(diffInDays / 365);
-	return `${years} ano${years > 1 ? "s" : ""} atrás`;
-};
-
-// Document formatters
-export const cpf = (cpfInput: string): string => {
-	const numbers = cpfInput.replace(DIGITS_ONLY_REGEX, "");
-	return numbers.replace(CPF_REGEX, "$1.$2.$3-$4");
-};
-
-export const phone = (phoneInput: string): string => {
-	const numbers = phoneInput.replace(DIGITS_ONLY_REGEX, "");
-	if (numbers.length === 11) {
-		return numbers.replace(PHONE_11_REGEX, "($1) $2-$3");
-	}
-	if (numbers.length === 10) {
-		return numbers.replace(PHONE_10_REGEX, "($1) $2-$3");
-	}
-	return phoneInput;
-};
-
-// Name formatters
-export const initials = (name: string): string => {
-	return name
-		.split(" ")
-		.filter((n) => n.length > 0)
-		.map((n) => n[0])
-		.join("")
-		.toUpperCase()
-		.slice(0, 2);
-};
-
-export const firstName = (name: string): string => {
-	return name.split(" ")[0];
-};
-
-// Age calculator
-export const age = (birthDate: Date | string): number => {
-	const birth = typeof birthDate === "string" ? new Date(birthDate) : birthDate;
-	const today = new Date();
-	let currentAge = today.getFullYear() - birth.getFullYear();
-	const monthDiff = today.getMonth() - birth.getMonth();
-
-	if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-		currentAge--;
-	}
-
-	return currentAge;
-};
-
-// Currency formatter
-export const currency = (value: number): string => {
-	return new Intl.NumberFormat("pt-BR", {
-		style: "currency",
-		currency: "BRL",
-	}).format(value);
-};
-
-// Individual exports for backward compatibility
+export const dateTime = formatters.date;
+export const relativeTime = formatters.relativeTime;
+export const cpf = formatters.cpf;
+export const phone = formatters.phone;
+export const initials = formatters.initials;
+export const firstName = (name: string): string => name.split(" ")[0];
+export const age = formatters.age;
+export const currency = formatters.currency;
 export const formatDate = formatters.date;
 export const formatPhone = formatters.phone;

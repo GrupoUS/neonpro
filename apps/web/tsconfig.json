@@ -44,8 +44,10 @@
 			"@neonpro/utils/*": ["../../packages/utils/src/*"],
 			"@neonpro/domain": ["../../packages/domain/src"],
 			"@neonpro/domain/*": ["../../packages/domain/src/*"],
-			"@neonpro/db": ["../../packages/db/src"],
-			"@neonpro/db/*": ["../../packages/db/src/*"],
+			"@neonpro/core-services": ["../../packages/core-services/src"],
+			"@neonpro/core-services/*": ["../../packages/core-services/src/*"],
+			"@neonpro/compliance": ["../../packages/compliance/src"],
+			"@neonpro/compliance/*": ["../../packages/compliance/src/*"],
 			"date-fns": ["./lib/placeholders/date-fns"],
 			"zustand": ["./lib/placeholders/zustand"],
 			"zustand/middleware": ["./lib/placeholders/zustand-middleware"],
@@ -57,6 +59,13 @@
 		},
 		"noEmit": false
 	},
-	"include": ["**/*.ts", "**/*.tsx", "next-env.d.ts", ".next/types/**/*.ts"],
+	"include": [
+		"**/*.ts", 
+		"**/*.tsx", 
+		"next-env.d.ts", 
+		".next/types/**/*.ts",
+		"../../packages/*/src/**/*.ts",
+		"../../packages/*/src/**/*.tsx"
+	],
 	"exclude": ["node_modules", ".next/types/**/*", "__tests__/**/*", "**/*.test.ts", "**/*.test.tsx"]
 }

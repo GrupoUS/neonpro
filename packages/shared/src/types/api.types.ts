@@ -425,10 +425,3 @@ export type ListResponse<T> = {
 };
 
 export interface PaginatedResponse<T> extends ApiResponse<ListResponse<T>> {}
-
-export type PaginationParams = {
-	page?: number;
-	per_page?: number;
-	sort_by?: string;
-	sort_order?: "asc" | "desc";
-};

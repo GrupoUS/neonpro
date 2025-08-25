@@ -8,13 +8,6 @@
 
 import { HealthMonitoringDashboard } from "@/components/dashboard/ai-powered";
 
-// Metadata for SEO and accessibility
-export const metadata = {
-	title: "System Health Monitor | NeonPro Healthcare",
-	description: "Status em tempo real da infraestrutura e performance do sistema",
-	keywords: ["health", "monitoring", "system", "performance", "infrastructure"],
-};
-
 interface HealthPageProps {
 	searchParams?: Record<string, string | string[] | undefined>;
 }

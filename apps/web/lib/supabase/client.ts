@@ -14,6 +14,12 @@ export function createClient() {
 	return createDbClient();
 }
 
+// Default export for compatibility
+export default createClient;
+
+// Named export for compatibility with existing imports
+export { createClient as supabase };
+
 /**
  * Create Supabase client with real-time subscriptions for healthcare
  * Optimized for appointment updates and patient notifications

@@ -62,52 +62,7 @@ export function useRealtimeAppointments(options: UseRealtimeAppointmentsOptions)
 	const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
 	const [totalUpdates, setTotalUpdates] = useState(0);
 	const [urgentUpdates, setUrgentUpdates] = useState(0);
-	const [unsubscribeFn, setUnsubscribeFn] = useState<(() => void) | null>(null); /**
-	 * Handle realtime appointment changes com urgency detection
-	 */
-	const handleAppointmentChange = useCallback(
-		(payload: any) => {
-			try {
-				const realtimePayload: RealtimeAppointmentPayload = {
-					eventType: payload.eventType,
-					new: payload.new as AppointmentRow,
-					old: payload.old as AppointmentRow,
-				};
-
-				// Update metrics
-				setLastUpdate(new Date());
-				setTotalUpdates((prev) => prev + 1);
-
-				// Detect urgent changes
-				const isUrgent = detectUrgentChange(realtimePayload);
-				if (isUrgent) {
-					setUrgentUpdates((prev) => prev + 1);
-					if (onUrgentChange) {
-						onUrgentChange(realtimePayload);
-					}
-				}
-
-				// Update TanStack Query cache
-				updateAppointmentCache(realtimePayload);
-
-				// Call user callback
-				if (onAppointmentChange) {
-					onAppointmentChange(realtimePayload);
-				}
-			} catch (error) {
-				if (onError) {
-					onError(error as Error);
-				}
-			}
-		},
-		[
-			onAppointmentChange,
-			onUrgentChange,
-			onError,
-			detectUrgentChange, // Update TanStack Query cache
-			updateAppointmentCache,
-		]
-	);
+	const [unsubscribeFn, setUnsubscribeFn] = useState<(() => void) | null>(null);
 
 	/**
 	 * Detect urgent appointment changes
@@ -160,7 +115,9 @@ export function useRealtimeAppointments(options: UseRealtimeAppointmentsOptions)
 		}
 
 		return false;
-	}, []); /**
+	}, []);
+
+	/**
 	 * Update TanStack Query cache para appointments
 	 */
 	const updateAppointmentCache = useCallback(
@@ -230,6 +187,53 @@ export function useRealtimeAppointments(options: UseRealtimeAppointmentsOptions)
 			}
 		},
 		[queryClient, queryKey, tenantId, patientId, professionalId]
+	);
+
+	/**
+	 * Handle realtime appointment changes com urgency detection
+	 */
+	const handleAppointmentChange = useCallback(
+		(payload: any) => {
+			try {
+				const realtimePayload: RealtimeAppointmentPayload = {
+					eventType: payload.eventType,
+					new: payload.new as AppointmentRow,
+					old: payload.old as AppointmentRow,
+				};
+
+				// Update metrics
+				setLastUpdate(new Date());
+				setTotalUpdates((prev) => prev + 1);
+
+				// Detect urgent changes
+				const isUrgent = detectUrgentChange(realtimePayload);
+				if (isUrgent) {
+					setUrgentUpdates((prev) => prev + 1);
+					if (onUrgentChange) {
+						onUrgentChange(realtimePayload);
+					}
+				}
+
+				// Update TanStack Query cache
+				updateAppointmentCache(realtimePayload);
+
+				// Call user callback
+				if (onAppointmentChange) {
+					onAppointmentChange(realtimePayload);
+				}
+			} catch (error) {
+				if (onError) {
+					onError(error as Error);
+				}
+			}
+		},
+		[
+			onAppointmentChange,
+			onUrgentChange,
+			onError,
+			detectUrgentChange, // Update TanStack Query cache
+			updateAppointmentCache,
+		]
 	);
 
 	/**

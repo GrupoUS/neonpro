@@ -8,13 +8,6 @@
 
 import { ComplianceStatusDashboard } from "@/components/dashboard/ai-powered";
 
-// Metadata for SEO and accessibility
-export const metadata = {
-	title: "Compliance Monitor | NeonPro Healthcare",
-	description: "Monitoramento em tempo real da conformidade LGPD, ANVISA e CFM",
-	keywords: ["compliance", "LGPD", "ANVISA", "CFM", "monitoring", "healthcare"],
-};
-
 interface CompliancePageProps {
 	searchParams?: Record<string, string | string[] | undefined>;
 }

@@ -516,6 +516,8 @@ export function AccessibilityPanel() {
 							onCheckedChange={(checked) => updatePreference("soundEnabled", checked)}
 						/>
 					</div>
+					</div>
+				)}
 
 					{/* Healthcare Tab */}
 					{activeTab === 'healthcare' && (

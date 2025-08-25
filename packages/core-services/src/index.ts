@@ -1,102 +1,17 @@
-// Core Services for NeonPro Aesthetic Clinic SaaS
-// Main exports for all business services
+// Core services package index
+export * from './scheduling';
 
-// Enhanced Service Layer Pattern (Enterprise Foundation)
-export { EnhancedServiceBase } from "./base";
+// Re-export common types and interfaces
+export interface ServiceResponse<T = any> {
+  success: boolean;
+  data?: T;
+  error?: string;
+}
 
-// Enhanced Enterprise Services  
-export { AIService } from "./services/AIService";
-export { AnalyticsService } from "./services/AnalyticsService";
-export { ComplianceServiceEnhanced } from "./services/ComplianceServiceEnhanced";
-export type {
-	CreateInvoiceData,
-	CreatePaymentData,
-	CreatePaymentPlanData,
-	Discount,
-	Invoice,
-	Payment,
-	PaymentPlan,
-	Refund,
-	TreatmentPackage,
-} from "./billing";
-// Billing Services
-export { BillingService } from "./billing";
-export * from "./constants";
-export type {
-	CreateProductData,
-	CreateStockItemData,
-	CreateSupplierData,
-	InventoryAlert,
-	Product,
-	PurchaseOrder,
-	StockItem,
-	StockMovement,
-	Supplier,
-} from "./inventory";
-// Inventory Services
-export { InventoryService } from "./inventory";
-export type {
-	CreateNotificationCampaignData,
-	CreateNotificationTemplateData,
-	NotificationCampaign,
-	NotificationChannel,
-	NotificationPreference,
-	NotificationTemplate,
-} from "./notification";
-// Notification Services
-export { NotificationService } from "./notification";
-export type {
-	AestheticHistory,
-	ConsentForm,
-	CreatePatientData,
-	MedicalHistory,
-	Patient,
-	PatientFilters,
-	PatientStats,
-	SkinAssessment,
-	UpdatePatientData,
-} from "./patient";
-// Patient Services
-export { PatientService } from "./patient";
-export { EnhancedPatientService } from "./patient/enhanced-service";
-export type {
-	AISchedulingConfig,
-	AppointmentSlot,
-	Conflict,
-	DynamicSchedulingEvent,
-	OptimizationRecommendation,
-	SchedulingAction,
-	SchedulingAnalytics,
-	SchedulingRequest,
-	SchedulingResult,
-} from "./scheduling";
-// Scheduling Services
-export { AISchedulingService } from "./scheduling";
-export type {
-	CreateTreatmentPlanData,
-	CreateTreatmentSessionData,
-	TreatmentPhoto,
-	TreatmentPlan,
-	TreatmentSession,
-} from "./treatment";
-// Treatment Services
-export { TreatmentService } from "./treatment";
-export type {
-	AuditEvent,
-	BaseEntity,
-	HealthcareOperation,
-	PerformanceMetrics,
-	SecurityConfig,
-	ServiceContext,
-	ServiceError,
-	ServiceHealth,
-} from "./types";
-// Common types and utilities
-export {
-	AppointmentStatus,
-	BillingStatus,
-	InventoryStatus,
-	NotificationType,
-	PatientStatus,
-	TreatmentType,
-} from "./types";
+export interface PaginatedResponse<T = any> extends ServiceResponse<T[]> {
+  pagination?: {
+    page: number;
+    limit: number;
+    total: number;
+  };
+}

@@ -41,6 +41,7 @@ import { lgpdMiddleware } from "@/middleware/lgpd";
 import { rateLimitMiddleware } from "@/middleware/rate-limit";
 
 // Import routes
+import { aiRoutes } from "@/routes/ai";
 import { analyticsRoutes } from "@/routes/analytics";
 import { appointmentRoutes } from "@/routes/appointments";
 import { authRoutes } from "@/routes/auth";
@@ -123,6 +124,8 @@ app.get("/", (c) => {
 			"Gerenciamento de pacientes",
 			"Inteligência financeira",
 			"IA para otimização",
+			"ML Pipeline Management",
+			"A/B Testing e Drift Detection",
 			"Compliance LGPD + ANVISA",
 			"Multi-profissional",
 		],
@@ -186,7 +189,8 @@ const apiV1 = new Hono<AppEnv>()
 	.route("/professionals", professionalsRoutes)
 	.route("/services", servicesRoutes)
 	.route("/analytics", analyticsRoutes)
-	.route("/compliance", complianceRoutes);
+	.route("/compliance", complianceRoutes)
+	.route("/ai", aiRoutes);
 
 // Mount API v1
 app.route("/api/v1", apiV1);

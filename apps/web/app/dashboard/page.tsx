@@ -12,13 +12,6 @@ interface DashboardPageProps {
 	searchParams?: Record<string, string | string[] | undefined>;
 }
 
-// Metadata for SEO and accessibility
-export const metadata = {
-	title: "Dashboard | NeonPro Healthcare",
-	description: "Dashboard inteligente com análise em tempo real e compliance LGPD/ANVISA/CFM",
-	keywords: ["dashboard", "analytics", "healthcare", "LGPD", "ANVISA", "CFM", "compliance"],
-};
-
 export default function DashboardPage({ searchParams }: DashboardPageProps) {
 	return (
 		<main

@@ -31,11 +31,11 @@ import {
 } from "@/components/ui/select";
 
 // Import all dashboards
-import { AIAnalyticsDashboard } from "./AIAnalyticsDashboard";
-import { HealthMonitoringDashboard } from "./HealthMonitoringDashboard";
-import { ComplianceStatusDashboard } from "./ComplianceStatusDashboard";
-import { PerformanceMetricsDashboard } from "./PerformanceMetricsDashboard";
-import { RealTimeActivityDashboard } from "./RealTimeActivityDashboard";
+import { AIAnalyticsDashboard } from "./ai-powered/AIAnalyticsDashboard";
+import { HealthMonitoringDashboard } from "./ai-powered/HealthMonitoringDashboard";
+import { ComplianceStatusDashboard } from "./ai-powered/ComplianceStatusDashboard";
+import { PerformanceMetricsDashboard } from "./ai-powered/PerformanceMetricsDashboard";
+import { RealTimeActivityDashboard } from "./ai-powered/RealTimeActivityDashboard";
 import { DASHBOARD_REGISTRY, type DashboardType } from "./index";
 
 interface DashboardLayoutProps {
