@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
     const lowAlerts = alerts.filter(a => a.severity === 'low');
 
     // Log execution results
-    const supabase = createClient();
+    const supabase = await createClient();
     await supabase
       .from('audit_events')
       .insert({
@@ -115,7 +115,7 @@ export async function GET(request: NextRequest) {
 
     // Log failure for debugging
     try {
-      const supabase = createClient();
+      const supabase = await createClient();
       await supabase
         .from('audit_events')
         .insert({
@@ -176,7 +176,7 @@ Next automated check: ${new Date(Date.now() + 6 * 60 * 60 * 1000).toLocaleString
   console.log('📧 Executive Summary:', message);
 
   // Log executive summary for audit trail
-  const supabase = createClient();
+  const supabase = await createClient();
   await supabase
     .from('audit_events')
     .insert({

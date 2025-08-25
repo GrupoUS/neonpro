@@ -99,7 +99,20 @@
       "Bash(npx biome lint:*)",
       "mcp__archon__update_task",
       "mcp__serena__think_about_collected_information",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Read(//mnt/c/Users/Mauri/**)",
+      "Read(//mnt/c/Users/Mauri/**)",
+      "Read(//root/**)",
+      "Bash(npm install:*)",
+      "Bash(npx @modelcontextprotocol/create-server:*)",
+      "Bash(npm search:*)",
+      "Bash(apt:*)",
+      "Bash(apt install:*)",
+      "Bash(cmd /c:*)",
+      "Bash(claude mcp:*)",
+      "Bash(dir:*)",
+      "Bash(npx @modelcontextprotocol/server-filesystem:*)",
+      "Bash(sed:*)"
     ],
     "deny": [
       "Edit",
@@ -109,6 +122,11 @@
       "NotebookEdit",
       "WebSearch",
       "WebFetch"
+    ],
+    "additionalDirectories": [
+      "/root/.claude",
+      "/mnt/c/Users/Mauri",
+      "/root"
     ]
   },
   "enableAllProjectMcpServers": true,
@@ -131,7 +149,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude\\hooks\\pre-tool-use.bat",
+            "command": "cmd /c \"D:\\neonpro\\.claude\\hooks\\pre-tool-intelligence.bat\"",
             "timeout": 45
           }
         ]
@@ -143,7 +161,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude\\hooks\\post-tool-use.bat",
+            "command": "cmd /c \"D:\\neonpro\\.claude\\hooks\\post-tool-intelligence.bat\"",
             "timeout": 60
           }
         ]
@@ -154,7 +172,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude\\hooks\\subagent-stop.bat",
+            "command": "cmd /c \"D:\\neonpro\\.claude\\hooks\\session-intelligence.bat\"",
             "timeout": 120
           }
         ]
@@ -165,7 +183,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude\\hooks\\session-stop.bat",
+            "command": "cmd /c \"D:\\neonpro\\.claude\\hooks\\session-stop.bat\"",
             "timeout": 90
           }
         ]

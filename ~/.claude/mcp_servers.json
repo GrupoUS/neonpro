@@ -1,0 +1,82 @@
+{
+  "mcpServers": {
+    "tavily": {
+      "command": "npx",
+      "args": ["-y", "tavily-mcp@latest"],
+      "env": {
+        "TAVILY_API_KEY": "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",
+        "TAVILY_MAX_RESULTS": "10",
+        "TAVILY_SEARCH_DEPTH": "advanced",
+        "TAVILY_TIMEOUT": "25000",
+        "TAVILY_INCLUDE_DOMAINS": "",
+        "TAVILY_EXCLUDE_DOMAINS": "",
+        "TAVILY_INCLUDE_RAW_CONTENT": "true"
+      }
+    },
+    "exa": {
+      "command": "npx",
+      "args": ["-y", "exa-mcp-server@latest"],
+      "env": {
+        "EXA_API_KEY": "fae6582d-4562-45be-8ce9-f6c0c3518c66"
+      }
+    },
+    "supabase-mcp": {
+      "command": "npx",
+      "args": ["-y", "@supabase/mcp-server-supabase@latest"],
+      "env": {
+        "SUPABASE_URL": "https://gfkskrkbnawkuppazkpt.supabase.co",
+        "SUPABASE_ACCESS_TOKEN": "sbp_40a721931e7ff98b4f6979a5bcb2a28c8ea5c0dc",
+        "SUPABASE_PROJECT_REF": "gfkskrkbnawkuppazkpt",
+        "SUPABASE_PROJECT_ID": "gfkskrkbnawkuppazkpt",
+        "SUPABASE_TIMEOUT": "35000",
+        "SUPABASE_MAX_ROWS": "1000",
+        "SUPABASE_ENABLE_RLS": "true"
+      }
+    },
+    "shadcn-ui": {
+      "command": "npx",
+      "args": ["-y", "@jpisnice/shadcn-ui-mcp-server@latest"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "ghp_x3UHLk4PfZXlU8dHHXRdMMfr7aMyPp2U2U8dtE",
+        "SHADCN_TIMEOUT": "20000",
+        "SHADCN_CACHE_COMPONENTS": "true",
+        "SHADCN_AUTO_INSTALL": "true"
+      }
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest"],
+      "env": {
+        "UPSTASH_CONTEXT7_API_KEY": "ctx7_fzqcQNgU3AChDBMjNIVYg4zLQp4LgBjZnbA",
+        "DEFAULT_MINIMUM_TOKENS": "10000"
+      },
+      "fromGalleryId": "upstash.context7"
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking@latest"],
+      "env": {},
+      "fromGalleryId": "modelcontextprotocol.servers_sequentialthinking"
+    },
+    "desktop-commander": {
+      "command": "npx",
+      "args": ["-y", "@wonderwhy-er/desktop-commander@latest"]
+    },
+    "archon": {
+      "command": "npx",
+      "args": ["mcp-remote", "http://localhost:8051/mcp"]
+    },
+    "serena": {
+      "command": "npx",
+      "args": ["mcp-remote", "http://localhost:8052/mcp"]
+    },
+    "browsermcp": {
+      "command": "npx",
+      "args": ["mcp-remote", "http://localhost:3333/mcp"]
+    },
+    "ide": {
+      "command": "npx",
+      "args": ["mcp-remote", "http://localhost:8054/mcp"]
+    }
+  }
+}

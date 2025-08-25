@@ -49,6 +49,11 @@ export async function POST(request: NextRequest) {
 			return NextResponse.json({ error: result.error }, { status: 500 });
 		}
 
+		// Ensure we have a report - type guard
+		if (!('report' in result) || !result.report) {
+			return NextResponse.json({ error: "Failed to generate report" }, { status: 500 });
+		}
+
 		await supabase.from("system_metrics").insert({
 			tenant_id: user.id,
 			category: "compliance",

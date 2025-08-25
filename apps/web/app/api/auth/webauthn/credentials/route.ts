@@ -8,7 +8,7 @@ import { createClient } from "@/app/utils/supabase/server";
 
 export async function GET(_request: NextRequest) {
 	try {
-		const supabase = createClient();
+		const supabase = await createClient();
 
 		// Get current user
 		const {
@@ -38,7 +38,7 @@ export async function GET(_request: NextRequest) {
 
 export async function POST(request: NextRequest) {
 	try {
-		const supabase = createClient();
+		const supabase = await createClient();
 
 		// Get current user
 		const {

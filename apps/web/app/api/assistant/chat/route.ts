@@ -144,7 +144,7 @@ CONTEXTO RECENTE: ${
 ${recentAppointments
 	.map(
 		(apt) =>
-			`- ${apt.date_time}: ${(apt.patients as any)?.name || "Nome não informado"} - ${apt.service || "Serviço não informado"} (${apt.status})`
+			`- ${apt.date_time}: ${apt.service || "Serviço não informado"} (${apt.status})`
 	)
 	.join("\n")}`
 				: "Nenhum agendamento recente encontrado."

@@ -660,7 +660,8 @@ export const downloadReport = (data: Uint8Array | string, filename: string, type
 		csv: "text/csv",
 	};
 
-	const blob = new Blob([data as Uint8Array], { type: mimeTypes[type] });
+	const blobData: BlobPart[] = typeof data === 'string' ? [data] : [data as unknown as ArrayBuffer];
+	const blob = new Blob(blobData, { type: mimeTypes[type] });
 	const url = URL.createObjectURL(blob);
 
 	const link = document.createElement("a");

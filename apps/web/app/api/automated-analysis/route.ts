@@ -8,7 +8,7 @@ import { createClient } from "@/app/utils/supabase/server";
 // GET /api/automated-analysis - Get analysis sessions with filters
 export async function GET(request: NextRequest) {
 	try {
-		const supabase = createClient();
+		const supabase = await createClient();
 		const {
 			data: { user },
 		} = await supabase.auth.getUser();
@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
 // POST /api/automated-analysis - Create new analysis session
 export async function POST(request: NextRequest) {
 	try {
-		const supabase = createClient();
+		const supabase = await createClient();
 		const {
 			data: { user },
 		} = await supabase.auth.getUser();
@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
 // PUT /api/automated-analysis - Update analysis session
 export async function PUT(request: NextRequest) {
 	try {
-		const supabase = createClient();
+		const supabase = await createClient();
 		const {
 			data: { user },
 		} = await supabase.auth.getUser();
@@ -131,7 +131,7 @@ export async function PUT(request: NextRequest) {
 // DELETE /api/automated-analysis - Delete analysis session
 export async function DELETE(request: NextRequest) {
 	try {
-		const supabase = createClient();
+		const supabase = await createClient();
 		const {
 			data: { user },
 		} = await supabase.auth.getUser();

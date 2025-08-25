@@ -33,6 +33,7 @@ import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
 	HEALTHCARE_ANNOUNCEMENTS,
@@ -413,17 +414,6 @@ const handleEmailReport = async (reportId: string) => {
 	} catch (_error) {}
 };
 
-const handleScheduleReport = (reportId: string) => {
-	const report = reportTemplates.find((r) => r.id === reportId);
-	if (report) {
-		setSchedulingModal({
-			isOpen: true,
-			reportId,
-			reportName: report.name,
-		});
-	}
-};
-
 const handleScheduleCreated = (_schedule: any) => {
 	// In production, save to backend
 	// Show success notification
@@ -703,11 +693,13 @@ function ExportOptionsModal({
 	onClose,
 	reportId,
 	reportName,
+	onScheduleReport,
 }: {
 	isOpen: boolean;
 	onClose: () => void;
 	reportId: string;
 	reportName: string;
+	onScheduleReport: (reportId: string) => void;
 }) {
 	if (!isOpen) {
 		return null;
@@ -787,7 +779,7 @@ function ExportOptionsModal({
 						<CosmicGlowButton
 							className="flex-1"
 							onClick={() => {
-								handleScheduleReport(reportId);
+								onScheduleReport(reportId);
 								onClose();
 							}}
 							size="sm"
@@ -837,6 +829,18 @@ export default function ReportsPage() {
 		reportId: "",
 		reportName: "",
 	});
+
+	// Handler functions
+	const handleScheduleReport = (reportId: string) => {
+		const report = reportTemplates.find((r) => r.id === reportId);
+		if (report) {
+			setSchedulingModal({
+				isOpen: true,
+				reportId,
+				reportName: report.name,
+			});
+		}
+	};
 
 	// Filter reports based on selected category and search
 	const filteredReports = reportTemplates.filter((report) => {
@@ -1061,6 +1065,7 @@ export default function ReportsPage() {
 					onClose={() => setExportModal({ ...exportModal, isOpen: false })}
 					reportId={exportModal.reportId}
 					reportName={exportModal.reportName}
+					onScheduleReport={handleScheduleReport}
 				/>
 
 				{/* Scheduling Modal */}

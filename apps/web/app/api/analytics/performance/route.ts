@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
 			return NextResponse.json({ error: "No valid metrics provided" }, { status: 400 });
 		}
 
-		const supabaseClient = createClient();
+		const supabaseClient = await createClient();
 		const {
 			data: { session },
 		} = await supabaseClient.auth.getSession();
@@ -150,9 +150,9 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
 	try {
-		const supabase = await createClient;
+		const supabase = await createClient();
 		const { searchParams } = new URL(request.url);
-		const supabaseClient = createClient();
+		const supabaseClient = await createClient();
 		const {
 			data: { session },
 		} = await supabaseClient.auth.getSession();
@@ -167,7 +167,7 @@ export async function GET(request: NextRequest) {
 		const limit = Number.parseInt(searchParams.get("limit") || "100", 10);
 
 		// Build query
-		let query = supabase()
+		let query = supabase
 			.from("performance_metrics")
 			.select("*")
 			.eq("userId", userId)

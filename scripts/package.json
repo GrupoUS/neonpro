@@ -1,6 +1,7 @@
 {
 	"name": "neonpro-validation-scripts",
 	"version": "1.0.0",
+	"type": "module",
 	"description": "Scripts de validação e atualização automática do roadmap NeonPro",
 	"main": "validate-stories.js",
 	"scripts": {

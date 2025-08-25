@@ -9,7 +9,6 @@ import mlPipelineRoutes from "./ai/ml-pipeline-endpoints";
 import monitoringRoutes from "./ai/monitoring-endpoints";
 import chatHealthRoutes from "./ai/universal-chat-health";
 import chatEndpoints from "./ai/universal-chat-endpoints";
-import behavioralCrmRoutes from "./ai/behavioral-crm-endpoints";
 import arSimulatorRoutes from "./ai/ar-simulator-endpoints";
 import batchPredictionRoutes from "./ai/batch-prediction-endpoints";
 import healthcareMonitoringRoutes from "./ai/healthcare-monitoring-endpoints";
@@ -31,10 +30,6 @@ ai.route("/universal-chat", chatEndpoints);
 // Universal Chat Health endpoints
 // /api/v1/ai/chat/*
 ai.route("/chat", chatHealthRoutes);
-
-// Behavioral CRM endpoints
-// /api/v1/ai/behavioral-crm/*
-ai.route("/behavioral-crm", behavioralCrmRoutes);
 
 // AR Results Simulator endpoints
 // /api/v1/ai/ar-simulator/*
@@ -58,7 +53,6 @@ ai.get("/", (c) => {
 			ml_pipeline: "/ml-pipeline",
 			monitoring: "/monitoring", 
 			chat: "/chat",
-			behavioral_crm: "/behavioral-crm",
 			ar_simulator: "/ar-simulator",
 			batch_predictions: "/batch-predictions",
 			healthcare_monitoring: "/healthcare-monitoring"
@@ -93,7 +87,6 @@ ai.get("/health", (c) => {
 			ml_pipeline: "operational",
 			monitoring: "operational",
 			chat: "operational",
-			behavioral_crm: "operational",
 			ar_simulator: "operational"
 		},
 		timestamp: new Date().toISOString()

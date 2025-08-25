@@ -234,18 +234,25 @@ export async function POST(request: NextRequest) {
           );
         }
 
+        // Get existing metadata first
+        const { data: existingAlert } = await supabase
+          .from('model_drift_monitoring')
+          .select('metadata')
+          .eq('id', alertId)
+          .single();
+
+        const updatedMetadata = {
+          ...(existingAlert?.metadata || {}),
+          acknowledged_by: acknowledgedBy || user.id,
+          acknowledged_at: new Date().toISOString()
+        };
+
         // Update alert as acknowledged
         const { error: ackError } = await supabase
           .from('model_drift_monitoring')
           .update({
             alert_sent: false, // Mark as handled
-            metadata: supabase.raw(`
-              COALESCE(metadata, '{}'::jsonb) || 
-              jsonb_build_object(
-                'acknowledged_by', '${acknowledgedBy || user.id}',
-                'acknowledged_at', '${new Date().toISOString()}'
-              )
-            `)
+            metadata: updatedMetadata
           })
           .eq('id', alertId);
 

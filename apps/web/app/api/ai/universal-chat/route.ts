@@ -40,6 +40,7 @@ export async function POST(request: NextRequest) {
 				interface: interface_type,
 				patientId,
 				messageHistory: messages.slice(-5), // Last 5 messages for context
+				language: "pt-BR" as const,
 			},
 			language: "pt-BR" as const,
 		};

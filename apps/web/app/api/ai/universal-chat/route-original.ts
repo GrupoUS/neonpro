@@ -130,9 +130,6 @@ DADOS DISPONÍVEIS:
 				content: msg.content,
 			})),
 			temperature: 0.7,
-			maxTokens: 800,
-			frequencyPenalty: 0.3,
-			presencePenalty: 0.2,
 		});
 
 		// Return streaming response

@@ -73,11 +73,12 @@ export async function POST(request: NextRequest) {
 
 		// Get user context (from auth or session)
 		const actualUserId = userId || (await getUserIdFromRequest(request));
-		const actualClinicId = clinicId || (await getClinicIdFromUser(actualUserId));
-
+		
 		if (!actualUserId) {
 			return NextResponse.json({ error: "User authentication required" }, { status: 401 });
 		}
+		
+		const actualClinicId = clinicId || (await getClinicIdFromUser(actualUserId));
 
 		// Check feature flags - simplified for now
 		const chatEnabled = { enabled: true };
