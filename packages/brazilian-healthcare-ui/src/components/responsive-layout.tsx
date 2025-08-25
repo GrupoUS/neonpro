@@ -109,7 +109,7 @@ export function ResponsiveLayout({
 			data-viewport={viewport}
 			style={
 				{
-					"--min-touch-target": optimizations.minTouchTarget || "48px",
+					"--min-touch-target": (optimizations as any).minTouchTarget || "48px",
 				} as React.CSSProperties
 			}
 		>
@@ -170,7 +170,7 @@ export function ResponsiveLayout({
 				</a>
 			</div>
 
-			<style jsx>{`
+			<style dangerouslySetInnerHTML={{__html: `
         .skip-link {
           position: absolute;
           top: -40px;
@@ -199,7 +199,7 @@ export function ResponsiveLayout({
           min-height: var(--min-touch-target);
           min-width: var(--min-touch-target);
         }
-      `}</style>
+      `}} />
 		</div>
 	);
 } // Mobile Layout - Optimized for single-hand use

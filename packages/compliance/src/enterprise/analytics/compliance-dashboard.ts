@@ -118,7 +118,7 @@ export class ComplianceDashboardService {
 	private currentMetrics: ComplianceDashboardMetrics | null = null;
 	private readonly activeAlerts: ComplianceAlert[] = [];
 	private readonly auditTrail: ComplianceDashboardAudit[] = [];
-	private readonly monitoringInterval: NodeJS.Timeout | null = null;
+	private monitoringInterval: NodeJS.Timeout | null = null;
 
 	constructor(config: ComplianceDashboardConfig) {
 		this.config = ComplianceDashboardConfigSchema.parse(config);

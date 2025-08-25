@@ -96,7 +96,8 @@
       "mcp__browsermcp__browser_go_back",
       "mcp__supabase-mcp__search_docs",
       "Bash(pnpm biome check:*)",
-      "Bash(npx biome lint:*)"
+      "Bash(npx biome lint:*)",
+      "mcp__archon__update_task"
     ],
     "deny": [
       "Edit",

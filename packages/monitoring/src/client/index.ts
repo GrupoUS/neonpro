@@ -10,10 +10,12 @@
 import { type Metric, onCLS, onFCP, onFID, onINP, onLCP, onTTFB } from "web-vitals";
 import type {
 	CustomMetric,
+	ErrorInfo,
 	HealthcareContext,
 	HealthcareMetricName,
 	MonitoringConfig,
 	MonitoringHooks,
+	ResourceData,
 } from "../types";
 
 /**
@@ -103,7 +105,7 @@ export class PerformanceMonitor {
 	/**
 	 * Track custom healthcare metric
 	 */
-	trackCustomMetric(name: HealthcareMetricName, value: number, context?: Record<string, any>): void {
+	trackCustomMetric(name: HealthcareMetricName, value: number, context?: Record<string, string | number | boolean>): void {
 		if (!this.shouldSample("customMetrics")) {
 			return;
 		}
@@ -212,7 +214,7 @@ export class PerformanceMonitor {
 	/**
 	 * End timing and track metric
 	 */
-	endTiming(label: string, metricName: HealthcareMetricName, startTime: number, context?: Record<string, any>): void {
+	endTiming(label: string, metricName: HealthcareMetricName, startTime: number, context?: Record<string, string | number | boolean>): void {
 		performance.mark(`${label}-end`);
 		performance.measure(label, `${label}-start`, `${label}-end`);
 
@@ -300,7 +302,7 @@ export class PerformanceMonitor {
 			ttfb: entry.responseStart - entry.requestStart,
 			download: entry.responseEnd - entry.responseStart,
 			dom_processing: entry.domContentLoadedEventEnd - entry.responseEnd,
-			total_load_time: entry.loadEventEnd - (entry as any).navigationStart,
+			total_load_time: entry.loadEventEnd - entry.fetchStart,
 		};
 
 		this.sendNavigationMetrics(metrics);
@@ -324,7 +326,7 @@ export class PerformanceMonitor {
 	/**
 	 * Track JavaScript errors
 	 */
-	private trackError(errorInfo: any): void {
+	private trackError(errorInfo: ErrorInfo): void {
 		if (!this.shouldSample("errors")) {
 			return;
 		}
@@ -395,7 +397,7 @@ export class PerformanceMonitor {
 	/**
 	 * Send error to endpoint
 	 */
-	private async sendError(error: any): Promise<void> {
+	private async sendError(error: Record<string, unknown>): Promise<void> {
 		try {
 			const payload = this.hooks.beforeSend?.(error) || error;
 			if (!payload) {
@@ -433,7 +435,7 @@ export class PerformanceMonitor {
 	/**
 	 * Send slow resource data
 	 */
-	private async sendSlowResource(resource: any): Promise<void> {
+	private async sendSlowResource(resource: ResourceData): Promise<void> {
 		try {
 			await fetch(this.config.endpoints.metrics, {
 				method: "POST",
@@ -472,8 +474,8 @@ export class PerformanceMonitor {
 	/**
 	 * Get base context for metrics
 	 */
-	private getBaseContext(): Record<string, any> {
-		const context: Record<string, any> = {
+	private getBaseContext(): Record<string, string | number | boolean | object> {
+		const context: Record<string, string | number | boolean | object> = {
 			sessionId: this.sessionId,
 			timestamp: Date.now(),
 			url: window.location.href,
@@ -491,7 +493,9 @@ export class PerformanceMonitor {
 
 		if (this.config.context.includeEnvironmentInfo) {
 			context.environment = process.env.NODE_ENV;
-			context.connection = (navigator as any).connection?.effectiveType;
+			// Check for network connection info safely
+			const navConnection = (navigator as Navigator & { connection?: { effectiveType?: string } }).connection;
+			context.connection = navConnection?.effectiveType || 'unknown';
 		}
 
 		return context;
@@ -521,7 +525,7 @@ export class PerformanceMonitor {
 	/**
 	 * Generate error fingerprint for grouping
 	 */
-	private generateErrorFingerprint(errorInfo: any): string {
+	private generateErrorFingerprint(errorInfo: ErrorInfo): string {
 		const key = `${errorInfo.message}_${errorInfo.filename}_${errorInfo.lineno}`;
 		return btoa(key).substring(0, 16);
 	}

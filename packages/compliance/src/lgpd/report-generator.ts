@@ -67,6 +67,7 @@ export type LGPDReport = z.infer<typeof LGPDReportSchema>;
  */
 export class LGPDReportGenerator {
 	private readonly config: LGPDReportConfig;
+	private readonly db: Database;
 
 	constructor(config: LGPDReportConfig, db: Database) {
 		this.config = config;

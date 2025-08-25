@@ -22,7 +22,7 @@ config({ path: ".env.local" });
 type SetupResult = {
 	success: boolean;
 	message: string;
-	details?: any;
+	details?: Record<string, string | number | boolean>;
 };
 
 class RBACSetup {
@@ -190,7 +190,7 @@ class RBACSetup {
 	private async testRBACPermissions(): Promise<SetupResult> {
 		try {
 			// Test basic role functions
-			const { data: roleTest, error: roleError } = await this.supabase.rpc("has_role", {
+			const { data: _roleTest, error: roleError } = await this.supabase.rpc("has_role", {
 				required_role: "owner",
 			});
 
@@ -198,7 +198,7 @@ class RBACSetup {
 			}
 
 			// Test minimum role functions
-			const { data: minRoleTest, error: minRoleError } = await this.supabase.rpc("has_minimum_role", {
+			const { data: _minRoleTest, error: minRoleError } = await this.supabase.rpc("has_minimum_role", {
 				required_role: "staff",
 			});
 

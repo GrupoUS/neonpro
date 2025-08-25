@@ -167,6 +167,17 @@ export type PerformanceReport = {
 };
 
 /**
+ * Raw error information from browser
+ */
+export type ErrorInfo = {
+	message: string;
+	filename: string;
+	lineno: number;
+	colno: number;
+	error?: Error;
+};
+
+/**
  * Error tracking data
  */
 export type ErrorEvent = {
@@ -184,12 +195,105 @@ export type ErrorEvent = {
 };
 
 /**
+ * Resource timing data
+ */
+export type ResourceData = {
+	name: string;
+	type: string;
+	size: number;
+	duration: number;
+	startTime: number;
+};
+
+/**
+ * Compliance report structure
+ */
+export type ComplianceReport = {
+	timestamp: string;
+	overall_score: number;
+	security: {
+		mfaAdoption: number;
+		passwordCompliance: number;
+		dataEncryption: number;
+	};
+	privacy: {
+		lgpdCompliance: number;
+		dataMinimization: number;
+		consentTracking: number;
+	};
+	healthcare: {
+		anvisaCompliance: number;
+		cfmCompliance: number;
+		hipaaCompliance: number;
+	};
+	performance: {
+		errorRate: number;
+		avgResponseTime: number;
+		uptime: number;
+	};
+	lgpd: {
+		consentRate: number;
+		dataMinimization: number;
+		rightsRequests: number;
+	};
+	recommendations: string[];
+};
+
+/**
+ * Dashboard metrics structure
+ */
+export type DashboardMetrics = {
+	timestamp: string;
+	healthScore: number;
+	complianceScore: number;
+	performanceScore: number;
+	securityScore: number;
+	trends: Record<string, number[]>;
+	insights: Record<string, string>;
+};
+
+/**
+ * Alert data structure
+ */
+export type AlertData = {
+	type: "error_rate" | "performance" | "availability";
+	severity: "low" | "medium" | "high" | "critical";
+	message: string;
+	timestamp: Date;
+	resolved: boolean;
+};
+
+/**
+ * Compliance status structure
+ */
+export type ComplianceStatus = {
+	lgpd: { status: string; lastCheck: Date; score: number };
+	anvisa: { status: string; lastCheck: Date; score: number };
+	cfm: { status: string; lastCheck: Date; score: number };
+	security: { status: string; lastCheck: Date; score: number };
+};
+
+/**
+ * Compliance metrics structure
+ */
+export type ComplianceMetrics = {
+	score: number;
+	details: {
+		dataProtection: number;
+		consentManagement: number;
+		dataMinimization: number;
+		rightsManagement: number;
+	};
+	lastUpdated: Date;
+};
+
+/**
  * Performance monitoring hooks configuration
  */
 export type MonitoringHooks = {
 	onMetric?: (metric: Metric | CustomMetric) => void;
 	onError?: (error: ErrorEvent) => void;
-	onAlert?: (alert: any) => void;
-	beforeSend?: (data: any) => any | null;
-	afterSend?: (response: any) => void;
+	onAlert?: (alert: Record<string, unknown>) => void;
+	beforeSend?: (data: Record<string, unknown>) => Record<string, unknown> | null;
+	afterSend?: (response: Response) => void;
 };

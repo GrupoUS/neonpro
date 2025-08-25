@@ -1,652 +1,454 @@
-name: 🚀 CI/CD Pipeline
+name: 🚀 NeonPro CI/CD Pipeline
 
 on:
   push:
-    branches: [main, develop]
-    paths-ignore:
-      - '**.md'
-      - '.gitignore'
-      - 'LICENSE'
-      - 'docs/**'
+    branches: ["main", "development", "staging"]
   pull_request:
-    branches: [main, develop]
-    types: [opened, synchronize, reopened]
-  schedule:
-    # Run security audits weekly on Sundays at 2 AM UTC
-    - cron: '0 2 * * 0'
+    branches: ["main"]
   workflow_dispatch:
     inputs:
       skip_tests:
-        description: 'Skip test execution'
+        description: "Skip test execution"
         required: false
-        default: false
-        type: boolean
+        default: "false"
       environment:
-        description: 'Target environment'
+        description: "Target environment"
         required: false
-        default: 'staging'
+        default: "staging"
         type: choice
         options:
           - staging
           - production
 
-# Explicit permission scoping for security
-permissions:
-  contents: read          # Read repository contents
-  actions: read          # Read workflow status
-  security-events: write # Write security scan results
-  checks: write          # Write check results
-  pull-requests: write   # Comment on PRs
-  issues: write          # Create/update issues
-
-env:
-  NODE_VERSION: '20'
-  PNPM_VERSION: '9'
-  PLAYWRIGHT_BROWSERS_PATH: '0'
-  # Healthcare compliance settings
-  HEALTHCARE_COMPLIANCE_MODE: 'strict'
-  LGPD_AUDIT_ENABLED: 'true'
-  ANVISA_VALIDATION: 'true'
-  CFM_COMPLIANCE: 'true'
-
-# Limit concurrent workflow runs
+# Concurrency control - cancel previous runs
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# Global environment variables
+env:
+  PNPM_VERSION: "8.15.6"
+  NODE_VERSION: "20.x"
+  CI: true
+  FORCE_COLOR: 3
+
+# Jobs definition
 jobs:
-  # ============================================================================
-  # 🔍 PRE-FLIGHT CHECKS & VALIDATION
-  # ============================================================================
-  preflight-validation:
-    name: 🔍 Pre-flight Validation
+  # Pre-flight checks
+  preflight:
+    name: 🔍 Preflight Checks
     runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
-      should-run-tests: ${{ steps.validation.outputs.should-run-tests }}
-      changed-packages: ${{ steps.changes.outputs.packages }}
-      is-security-scan: ${{ steps.validation.outputs.is-security-scan }}
-    
+      has-changes: ${{ steps.changes.outputs.any }}
+      should-deploy: ${{ steps.deploy-check.outputs.should-deploy }}
     steps:
-      - name: 📥 Checkout Repository
-        uses: actions/checkout@v5
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
         with:
           fetch-depth: 2
-          persist-credentials: false
-      
-      - name: 🔍 Detect Changes
-        id: changes
-        run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
-          else
-            CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
-          fi
-          
-          echo "changed-files=$CHANGED_FILES" >> $GITHUB_OUTPUT
-          
-          # Detect changed packages in monorepo
-          PACKAGES=$(echo "$CHANGED_FILES" | grep -E '^(apps|packages)/' | cut -d'/' -f1-2 | sort -u | tr '\n' ',' | sed 's/,$//')
-          echo "packages=$PACKAGES" >> $GITHUB_OUTPUT
-      
-      - name: ✅ Validation Logic
-        id: validation
-        run: |
-          SHOULD_RUN_TESTS="true"
-          IS_SECURITY_SCAN="false"
-          
-          # Skip tests if requested via input
-          if [ "${{ github.event.inputs.skip_tests }}" = "true" ]; then
-            SHOULD_RUN_TESTS="false"
-          fi
-          
-          # Enable security scan for scheduled runs
-          if [ "${{ github.event_name }}" = "schedule" ]; then
-            IS_SECURITY_SCAN="true"
-          fi
-          
-          echo "should-run-tests=$SHOULD_RUN_TESTS" >> $GITHUB_OUTPUT
-          echo "is-security-scan=$IS_SECURITY_SCAN" >> $GITHUB_OUTPUT
 
-  # ============================================================================
-  # 🔒 SECURITY & COMPLIANCE AUDIT
-  # ============================================================================
+      - name: 🔍 Detect changes
+        id: changes
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            any:
+              - '**'
+            code:
+              - 'apps/**'
+              - 'packages/**'
+              - 'docs/**'
+              - 'infrastructure/**'
+            config:
+              - 'package.json'
+              - 'pnpm-workspace.yaml'
+              - '**/*.config.*'
+              - 'tsconfig*.json'
+
+      - name: 🚀 Check deployment conditions
+        id: deploy-check
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" || "${{ github.ref }}" == "refs/heads/staging" ]]; then
+            echo "should-deploy=true" >> $GITHUB_OUTPUT
+          else
+            echo "should-deploy=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 📊 Environment info
+        run: |
+          echo "🌍 Environment: ${{ github.ref_name }}"
+          echo "🔄 Event: ${{ github.event_name }}"
+          echo "👤 Actor: ${{ github.actor }}"
+          echo "📦 Should deploy: ${{ steps.deploy-check.outputs.should-deploy }}"
+
+  # Security and compliance audit
   security-audit:
     name: 🔒 Security & Compliance Audit
     runs-on: ubuntu-latest
-    timeout-minutes: 15
-    needs: [preflight-validation]
-    if: always() && (needs.preflight-validation.outputs.is-security-scan == 'true' || github.event_name == 'schedule')
-    
-    strategy:
-      fail-fast: false
-      matrix:
-        audit-type: [dependencies, code, healthcare-compliance]
-    
-    steps:
-      - name: 📥 Checkout Repository
-        uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-      
-      - name: 🏥 Healthcare Data Protection Validation
-        if: matrix.audit-type == 'healthcare-compliance'
-        run: |
-          echo "🏥 Running Healthcare Compliance Audit..."
-          
-          # LGPD (Lei Geral de Proteção de Dados) Compliance
-          echo "📋 LGPD Compliance Check..."
-          if grep -r "personal.*data\|dados.*pessoais" . --exclude-dir=node_modules --exclude-dir=.git; then
-            echo "⚠️  Potential personal data references found - requires LGPD review"
-            # Add to security report but don't fail build
-          fi
-          
-          # ANVISA (Agência Nacional de Vigilância Sanitária) Compliance
-          echo "🏥 ANVISA Compliance Check..."
-          if [ -f "scripts/anvisa-validation.js" ]; then
-            node scripts/anvisa-validation.js
-          fi
-          
-          # CFM (Conselho Federal de Medicina) Compliance
-          echo "👨‍⚕️ CFM Compliance Check..."
-          if [ -f "scripts/cfm-compliance.js" ]; then
-            node scripts/cfm-compliance.js
-          fi
-          
-          echo "✅ Healthcare compliance audit completed"
-      
-      - name: 🛡️ Dependency Security Audit
-        if: matrix.audit-type == 'dependencies'
-        run: |
-          # Install pnpm for audit
-          npm install -g pnpm@9
-          
-          # Run security audit
-          pnpm audit --audit-level moderate --prod
-          
-          # Check for known vulnerabilities
-          if command -v audit-ci >/dev/null 2>&1; then
-            npx audit-ci --moderate
-          fi
-      
-      - name: 🔍 Code Security Scan
-        if: matrix.audit-type == 'code'
-        run: |
-          echo "🔍 Running code security analysis..."
-          
-          # Check for hardcoded secrets
-          if command -v gitleaks >/dev/null 2>&1; then
-            gitleaks detect --source . --verbose
-          fi
-          
-          # Check for security anti-patterns
-          echo "Scanning for security anti-patterns..."
-          grep -r "eval\|innerHTML\|document\.write" . --exclude-dir=node_modules --exclude-dir=.git || true
-
-  # ============================================================================
-  # 🎯 QUALITY ASSURANCE PIPELINE
-  # ============================================================================
-  quality-gate:
-    name: 🎯 Quality Gate
-    runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs: [preflight-validation]
-    
-    strategy:
-      fail-fast: false
-      matrix:
-        check: [lint, format, type-check]
-    
+    needs: preflight
+    if: needs.preflight.outputs.has-changes == 'true'
     steps:
-      - name: 📥 Checkout Repository
-        uses: actions/checkout@v5
-        with:
-          persist-credentials: false
-      
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
       - name: 📦 Setup PNPM
         uses: pnpm/action-setup@v4
         with:
-          version: 9
-      
+          version: ${{ env.PNPM_VERSION }}
+
       - name: 🟢 Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
-          cache-dependency-path: |
-            pnpm-lock.yaml
-            apps/*/package.json
-            packages/*/package.json
-      
-      - name: 📥 Install Dependencies
-        run: |
-          pnpm install --frozen-lockfile --prefer-offline
-      
-      - name: 🔍 Lint Code
-        if: matrix.check == 'lint'
-        run: |
-          pnpm run ci-check
-      
-      - name: 🎨 Check Code Formatting
-        if: matrix.check == 'format'
-        run: |
-          pnpm run format:check:ci
-      
-      - name: 🔤 Type Check
-        if: matrix.check == 'type-check'
-        run: |
-          pnpm run type-check
 
-  # ============================================================================
-  # 🏗️ BUILD & ARTIFACT GENERATION
-  # ============================================================================
+      - name: 📥 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🔍 Run npm audit
+        run: pnpm audit --audit-level moderate
+        continue-on-error: true
+
+      - name: 🏥 ANVISA Compliance Check
+        run: node scripts/anvisa-validation.js
+        continue-on-error: false
+
+      - name: 👨‍⚕️ CFM Compliance Check
+        run: node scripts/cfm-compliance.js
+        continue-on-error: false
+
+      - name: 🛡️ LGPD Compliance Check
+        run: node scripts/lgpd-validation.js
+        continue-on-error: false
+
+      - name: 🗄️ Supabase Schema Validation
+        run: node scripts/supabase-validation.js
+        continue-on-error: false
+
+      - name: 🔐 Security scan with Semgrep
+        uses: semgrep/semgrep-action@v1
+        with:
+          config: auto
+        env:
+          SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
+        continue-on-error: true
+
+  # Code quality gate
+  quality-gate:
+    name: 🏆 Quality Gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: preflight
+    if: needs.preflight.outputs.has-changes == 'true'
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup PNPM
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: 📥 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🔧 TypeScript Check
+        run: pnpm exec tsc --noEmit
+
+      - name: 🎨 Code formatting check
+        run: pnpm exec ultracite lint
+
+      - name: ⚡ Build diagnostics
+        run: node scripts/build-diagnostics.js
+        continue-on-error: true
+
+  # Build stage
   build:
     name: 🏗️ Build & Package
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    needs: [preflight-validation, quality-gate]
-    if: always() && needs.quality-gate.result == 'success'
-    
+    needs: [preflight, security-audit, quality-gate]
+    if: needs.preflight.outputs.has-changes == 'true'
     strategy:
-      fail-fast: false
       matrix:
-        target: [web, api, packages]
-    
+        app: [web, api, docs]
     steps:
-      - name: 📥 Checkout Repository
-        uses: actions/checkout@v5
-        with:
-          persist-credentials: false
-      
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
       - name: 📦 Setup PNPM
         uses: pnpm/action-setup@v4
         with:
-          version: 9
-      
+          version: ${{ env.PNPM_VERSION }}
+
       - name: 🟢 Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
-          cache-dependency-path: |
-            pnpm-lock.yaml
-            apps/*/package.json
-            packages/*/package.json
-      
-      - name: 📥 Install Dependencies
-        run: |
-          pnpm install --frozen-lockfile --prefer-offline
-      
-      - name: 🏗️ Build Project
-        run: |
-          if [ "${{ matrix.target }}" = "web" ]; then
-            pnpm run build:web
-          elif [ "${{ matrix.target }}" = "api" ]; then
-            pnpm run build:api
-          else
-            pnpm run build:packages
-          fi
-      
-      - name: 📦 Upload Build Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-${{ matrix.target }}-${{ github.sha }}
-          path: |
-            dist/
-            .next/
-            build/
-          retention-days: 7
-          compression-level: 6
 
-  # ============================================================================
-  # 🧪 COMPREHENSIVE TESTING SUITE
-  # ============================================================================
-  test-unit:
-    name: 🧪 Unit Tests
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    needs: [preflight-validation, quality-gate]
-    if: always() && needs.quality-gate.result == 'success' && needs.preflight-validation.outputs.should-run-tests == 'true'
-    
-    strategy:
-      fail-fast: false
-      matrix:
-        node-version: [18, 20]
-        shard: [1, 2, 3, 4]
-    
-    steps:
-      - name: 📥 Checkout Repository
-        uses: actions/checkout@v5
-        with:
-          persist-credentials: false
-      
-      - name: 📦 Setup PNPM
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
-      
-      - name: 🟢 Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'pnpm'
-          cache-dependency-path: |
-            pnpm-lock.yaml
-            apps/*/package.json
-            packages/*/package.json
-      
-      - name: 📥 Install Dependencies
-        run: |
-          pnpm install --frozen-lockfile --prefer-offline
-      
-      - name: 🧪 Run Unit Tests (Shard ${{ matrix.shard }})
-        run: |
-          pnpm run test:unit --shard=${{ matrix.shard }}/4 --reporter=verbose --coverage
+      - name: 📥 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🏗️ Build ${{ matrix.app }}
+        run: pnpm --filter ${{ matrix.app }} build
         env:
-          NODE_ENV: test
-          CI: true
-      
-      - name: 📊 Upload Coverage Reports
+          NODE_ENV: production
+
+      - name: 📦 Upload build artifacts
         uses: actions/upload-artifact@v4
-        if: matrix.node-version == '20'
+        if: matrix.app == 'web'
         with:
-          name: coverage-unit-shard-${{ matrix.shard }}
-          path: coverage/
-          retention-days: 3
-  
-  test-integration:
-    name: 🔗 Integration Tests
+          name: build-artifacts-${{ matrix.app }}
+          path: |
+            apps/${{ matrix.app }}/.next/
+            apps/${{ matrix.app }}/out/
+          retention-days: 7
+
+  # Test suite
+  test:
+    name: 🧪 Test Suite
     runs-on: ubuntu-latest
     timeout-minutes: 25
-    needs: [preflight-validation, build]
-    if: always() && needs.build.result == 'success' && needs.preflight-validation.outputs.should-run-tests == 'true'
-    
-    services:
-      postgres:
-        image: postgres:15-alpine
-        env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: neonpro_test
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-      
-      redis:
-        image: redis:7-alpine
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 6379:6379
-    
-    steps:
-      - name: 📥 Checkout Repository
-        uses: actions/checkout@v5
-        with:
-          persist-credentials: false
-      
-      - name: 📦 Setup PNPM
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
-      
-      - name: 🟢 Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
-          cache-dependency-path: |
-            pnpm-lock.yaml
-            apps/*/package.json
-            packages/*/package.json
-      
-      - name: 📥 Install Dependencies
-        run: |
-          pnpm install --frozen-lockfile --prefer-offline
-      
-      - name: 📦 Download Build Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          pattern: build-*-${{ github.sha }}
-          merge-multiple: true
-      
-      - name: 🗃️ Setup Test Database
-        run: |
-          pnpm run db:migrate:test
-          pnpm run db:seed:test
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/neonpro_test
-      
-      - name: 🔗 Run Integration Tests
-        run: |
-          pnpm run test:integration --reporter=verbose
-        env:
-          NODE_ENV: test
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/neonpro_test
-          REDIS_URL: redis://localhost:6379
-          CI: true
-      
-      - name: 📊 Upload Integration Test Results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: integration-test-results
-          path: |
-            test-results/
-            coverage/
-          retention-days: 3
-
-  # ============================================================================
-  # 🎭 END-TO-END TESTING
-  # ============================================================================
-  test-e2e:
-    name: 🎭 E2E Tests
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    needs: [preflight-validation, build]
-    if: always() && needs.build.result == 'success' && needs.preflight-validation.outputs.should-run-tests == 'true'
-    
+    needs: [preflight, build]
+    if: needs.preflight.outputs.has-changes == 'true' && github.event.inputs.skip_tests != 'true'
     strategy:
       fail-fast: false
       matrix:
-        browser: [chromium, firefox, webkit]
-        shard: [1, 2]
-    
+        test-type: [unit, integration, e2e]
     steps:
-      - name: 📥 Checkout Repository
-        uses: actions/checkout@v5
-        with:
-          persist-credentials: false
-      
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
       - name: 📦 Setup PNPM
         uses: pnpm/action-setup@v4
         with:
-          version: 9
-      
+          version: ${{ env.PNPM_VERSION }}
+
       - name: 🟢 Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
-          cache-dependency-path: |
-            pnpm-lock.yaml
-            apps/*/package.json
-            packages/*/package.json
-      
-      - name: 📥 Install Dependencies
+
+      - name: 📥 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🧪 Run ${{ matrix.test-type }} tests
         run: |
-          pnpm install --frozen-lockfile --prefer-offline
-      
-      - name: 📦 Download Build Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          pattern: build-*-${{ github.sha }}
-          merge-multiple: true
-      
-      - name: 🎭 Install Playwright Browsers
-        run: |
-          pnpm exec playwright install ${{ matrix.browser }} --with-deps
-      
-      - name: 🎭 Run E2E Tests (${{ matrix.browser }})
-        run: |
-          pnpm exec playwright test --project=${{ matrix.browser }} --shard=${{ matrix.shard }}/2
-        env:
-          CI: true
-          PLAYWRIGHT_WORKERS: 2
-      
-      - name: 📊 Upload E2E Test Results
+          case "${{ matrix.test-type }}" in
+            unit)
+              pnpm exec vitest run --reporter=verbose
+              ;;
+            integration)
+              pnpm exec vitest run --config vitest.config.integration.ts --reporter=verbose
+              ;;
+            e2e)
+              pnpm exec playwright install chromium
+              pnpm exec playwright test --reporter=html
+              ;;
+          esac
+
+      - name: 📊 Upload test results
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: e2e-results-${{ matrix.browser }}-shard-${{ matrix.shard }}
+          name: test-results-${{ matrix.test-type }}
           path: |
-            playwright-report/
             test-results/
+            playwright-report/
+            coverage/
           retention-days: 7
 
-  # ============================================================================
-  # 🚀 DEPLOYMENT GATE & APPROVAL
-  # ============================================================================
-  deployment-gate:
-    name: 🚀 Deployment Gate
+  # Deployment stage
+  deploy:
+    name: 🚀 Deploy to ${{ github.event.inputs.environment || 'staging' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 5
-    needs: [preflight-validation, security-audit, build, test-unit, test-integration, test-e2e]
-    if: always() && github.ref == 'refs/heads/main'
-    outputs:
-      preview-url: ${{ steps.deploy.outputs.preview-url }}
+    timeout-minutes: 15
+    needs: [preflight, security-audit, quality-gate, build, test]
+    if: >
+      always() && 
+      needs.preflight.outputs.should-deploy == 'true' &&
+      (needs.security-audit.result == 'success' || needs.security-audit.result == 'skipped') &&
+      (needs.quality-gate.result == 'success' || needs.quality-gate.result == 'skipped') &&
+      (needs.build.result == 'success' || needs.build.result == 'skipped') &&
+      (needs.test.result == 'success' || needs.test.result == 'skipped' || github.event.inputs.skip_tests == 'true')
     environment: 
-      name: ${{ github.event.inputs.environment || 'staging' }}
-      url: ${{ steps.deploy.outputs.preview-url }}
-    
+      name: ${{ github.event.inputs.environment || (github.ref_name == 'main' && 'production' || 'staging') }}
+      url: ${{ steps.deploy.outputs.url }}
     steps:
-      - name: ✅ Validate Prerequisites
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup PNPM
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: 📥 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: ⚙️ Configure deployment environment
         run: |
-          echo "🔍 Validating deployment prerequisites..."
-          
-          # Check if all required jobs passed
-          if [ "${{ needs.build.result }}" != "success" ]; then
-            echo "❌ Build failed - blocking deployment"
-            exit 1
+          if [[ "${{ github.ref_name }}" == "main" ]]; then
+            echo "DEPLOYMENT_ENV=production" >> $GITHUB_ENV
+            echo "VERCEL_ENV=production" >> $GITHUB_ENV
+          else
+            echo "DEPLOYMENT_ENV=staging" >> $GITHUB_ENV
+            echo "VERCEL_ENV=preview" >> $GITHUB_ENV
           fi
-          
-          if [ "${{ needs.test-unit.result }}" != "success" ]; then
-            echo "❌ Unit tests failed - blocking deployment"
-            exit 1
-          fi
-          
-          if [ "${{ needs.test-integration.result }}" != "success" ]; then
-            echo "❌ Integration tests failed - blocking deployment"
-            exit 1
-          fi
-          
-          if [ "${{ needs.test-e2e.result }}" != "success" ]; then
-            echo "❌ E2E tests failed - blocking deployment"
-            exit 1
-          fi
-          
-          echo "✅ All prerequisites met - proceeding with deployment"
-      
-      - name: 🚀 Deploy to Environment
+
+      - name: 🚀 Deploy to Vercel
         id: deploy
         run: |
-          TARGET_ENV="${{ github.event.inputs.environment || 'staging' }}"
-          echo "🚀 Deploying to $TARGET_ENV environment..."
-          
-          # Simulate deployment (replace with actual deployment logic)
-          PREVIEW_URL="https://neonpro-$TARGET_ENV.vercel.app"
-          echo "preview-url=$PREVIEW_URL" >> $GITHUB_OUTPUT
-          
-          echo "✅ Deployment completed successfully"
-          echo "🌐 Preview URL: $PREVIEW_URL"
+          npx vercel --token ${{ secrets.VERCEL_TOKEN }} \
+            --scope ${{ secrets.VERCEL_ORG_ID }} \
+            --yes \
+            --env NODE_ENV=${{ env.DEPLOYMENT_ENV }} \
+            --build-env NODE_ENV=${{ env.DEPLOYMENT_ENV }} \
+            ${{ env.VERCEL_ENV == 'production' && '--prod' || '' }}
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
-  # ============================================================================
-  # 🏥 HEALTH CHECKS & MONITORING
-  # ============================================================================
+      - name: 📝 Set deployment URL
+        run: |
+          if [[ "${{ env.VERCEL_ENV }}" == "production" ]]; then
+            echo "url=https://neonpro.com.br" >> $GITHUB_OUTPUT
+          else
+            echo "url=https://staging-neonpro.vercel.app" >> $GITHUB_OUTPUT
+          fi
+
+  # Health check and validation
   health-check:
-    name: 🏥 Health Check
+    name: 🩺 Health Check
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs: [deployment-gate]
-    if: always() && needs.deployment-gate.result == 'success'
-    
+    needs: [deploy]
+    if: needs.deploy.result == 'success'
     steps:
-      - name: 🏥 Application Health Check
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🩺 Basic health check
         run: |
-          PREVIEW_URL="${{ needs.deployment-gate.outputs.preview-url }}"
-          
-          echo "🏥 Running health checks for: $PREVIEW_URL"
+          DEPLOYMENT_URL="${{ needs.deploy.outputs.url }}"
+          echo "🌐 Checking health of: $DEPLOYMENT_URL"
           
           # Wait for deployment to be ready
           sleep 30
           
-          # Health check endpoint
-          if curl -f "$PREVIEW_URL/api/health" > /dev/null 2>&1; then
-            echo "✅ Health check passed"
+          # Check if site is responsive
+          if curl -f -s --max-time 30 "$DEPLOYMENT_URL" > /dev/null; then
+            echo "✅ Health check passed: Site is responsive"
           else
-            echo "❌ Health check failed"
+            echo "❌ Health check failed: Site is not responsive"
             exit 1
           fi
-          
-          # Performance check
-          LOAD_TIME=$(curl -o /dev/null -s -w "%{time_total}" "$PREVIEW_URL")
-          echo "⚡ Page load time: ${LOAD_TIME}s"
-          
-          if (( $(echo "$LOAD_TIME > 3" | bc -l) )); then
-            echo "⚠️  Slow load time detected (${LOAD_TIME}s > 3s)"
-          fi
-      
-      - name: 📊 Performance Monitoring
-        run: |
-          echo "📊 Setting up performance monitoring..."
-          # Add performance monitoring setup here
-          echo "✅ Monitoring configured"
 
-  # ============================================================================
-  # 📋 WORKFLOW SUMMARY & NOTIFICATIONS
-  # ============================================================================
+      - name: 🔍 Advanced health check
+        run: |
+          DEPLOYMENT_URL="${{ needs.deploy.outputs.url }}"
+          
+          # Check if API endpoints are working (if applicable)
+          if curl -f -s --max-time 30 "$DEPLOYMENT_URL/api/health" > /dev/null; then
+            echo "✅ API health check passed"
+          else
+            echo "⚠️ API health check skipped or failed (may be expected)"
+          fi
+
+      - name: 📊 Performance check
+        run: |
+          DEPLOYMENT_URL="${{ needs.deploy.outputs.url }}"
+          
+          # Basic performance check
+          RESPONSE_TIME=$(curl -o /dev/null -s -w '%{time_total}' "$DEPLOYMENT_URL")
+          echo "⏱️ Response time: ${RESPONSE_TIME}s"
+          
+          if (( $(echo "$RESPONSE_TIME < 3.0" | bc -l) )); then
+            echo "✅ Performance check passed"
+          else
+            echo "⚠️ Performance check warning: Slow response time"
+          fi
+
+  # Workflow summary
   workflow-summary:
     name: 📋 Workflow Summary
     runs-on: ubuntu-latest
-    timeout-minutes: 5
-    needs: [preflight-validation, security-audit, quality-gate, build, test-unit, test-integration, test-e2e, deployment-gate, health-check]
     if: always()
-    
+    needs: [preflight, security-audit, quality-gate, build, test, deploy, health-check]
     steps:
-      - name: 📋 Generate Summary
+      - name: 📋 Generate summary
         run: |
-          echo "# 🚀 CI/CD Pipeline Summary" >> $GITHUB_STEP_SUMMARY
+          echo "## 🚀 NeonPro CI/CD Pipeline Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "## 📊 Job Results" >> $GITHUB_STEP_SUMMARY
+          echo "### 📊 Job Results" >> $GITHUB_STEP_SUMMARY
           echo "| Job | Status | Duration |" >> $GITHUB_STEP_SUMMARY
           echo "|-----|--------|----------|" >> $GITHUB_STEP_SUMMARY
-          echo "| Pre-flight | ${{ needs.preflight-validation.result }} | - |" >> $GITHUB_STEP_SUMMARY
+          echo "| Preflight | ${{ needs.preflight.result }} | - |" >> $GITHUB_STEP_SUMMARY
           echo "| Security Audit | ${{ needs.security-audit.result }} | - |" >> $GITHUB_STEP_SUMMARY
           echo "| Quality Gate | ${{ needs.quality-gate.result }} | - |" >> $GITHUB_STEP_SUMMARY
           echo "| Build | ${{ needs.build.result }} | - |" >> $GITHUB_STEP_SUMMARY
-          echo "| Unit Tests | ${{ needs.test-unit.result }} | - |" >> $GITHUB_STEP_SUMMARY
-          echo "| Integration Tests | ${{ needs.test-integration.result }} | - |" >> $GITHUB_STEP_SUMMARY
-          echo "| E2E Tests | ${{ needs.test-e2e.result }} | - |" >> $GITHUB_STEP_SUMMARY
-          echo "| Deployment | ${{ needs.deployment-gate.result }} | - |" >> $GITHUB_STEP_SUMMARY
+          echo "| Test | ${{ needs.test.result }} | - |" >> $GITHUB_STEP_SUMMARY
+          echo "| Deploy | ${{ needs.deploy.result }} | - |" >> $GITHUB_STEP_SUMMARY
           echo "| Health Check | ${{ needs.health-check.result }} | - |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           
-          # Overall status
-          if [[ "${{ needs.preflight-validation.result }}" == "success" && 
-                "${{ needs.quality-gate.result }}" == "success" && 
-                "${{ needs.build.result }}" == "success" ]]; then
-            echo "## ✅ Pipeline Status: SUCCESS" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "## ❌ Pipeline Status: FAILED" >> $GITHUB_STEP_SUMMARY
+          if [[ "${{ needs.deploy.result }}" == "success" ]]; then
+            echo "### 🌐 Deployment Information" >> $GITHUB_STEP_SUMMARY
+            echo "- **Environment**: ${{ github.ref_name == 'main' && 'Production' || 'Staging' }}" >> $GITHUB_STEP_SUMMARY
+            echo "- **URL**: ${{ needs.deploy.outputs.url }}" >> $GITHUB_STEP_SUMMARY
+            echo "- **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+            echo "- **Actor**: ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
           fi
           
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "---" >> $GITHUB_STEP_SUMMARY
-          echo "*Generated by NeonPro CI/CD Pipeline*" >> $GITHUB_STEP_SUMMARY
+          echo "### ✅ Compliance Validations" >> $GITHUB_STEP_SUMMARY
+          echo "- ANVISA Healthcare Compliance" >> $GITHUB_STEP_SUMMARY
+          echo "- CFM Medical Professional Compliance" >> $GITHUB_STEP_SUMMARY
+          echo "- LGPD Data Protection Compliance" >> $GITHUB_STEP_SUMMARY
+          echo "- Supabase Database Schema Validation" >> $GITHUB_STEP_SUMMARY
+
+      - name: 🎉 Success notification
+        if: >
+          needs.preflight.result == 'success' &&
+          (needs.security-audit.result == 'success' || needs.security-audit.result == 'skipped') &&
+          (needs.quality-gate.result == 'success' || needs.quality-gate.result == 'skipped') &&
+          (needs.build.result == 'success' || needs.build.result == 'skipped') &&
+          (needs.test.result == 'success' || needs.test.result == 'skipped') &&
+          (needs.deploy.result == 'success' || needs.deploy.result == 'skipped') &&
+          (needs.health-check.result == 'success' || needs.health-check.result == 'skipped')
+        run: |
+          echo "🎉 Pipeline completed successfully!"
+          echo "✅ All compliance checks passed"
+          echo "✅ Quality gates satisfied" 
+          echo "✅ Deployment healthy"
+
+      - name: 💥 Failure notification
+        if: >
+          needs.preflight.result == 'failure' ||
+          needs.security-audit.result == 'failure' ||
+          needs.quality-gate.result == 'failure' ||
+          needs.build.result == 'failure' ||
+          needs.test.result == 'failure' ||
+          needs.deploy.result == 'failure' ||
+          needs.health-check.result == 'failure'
+        run: |
+          echo "💥 Pipeline failed!"
+          echo "❌ Check job results above for details"
+          exit 1

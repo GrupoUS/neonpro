@@ -5,7 +5,7 @@
  */
 
 import { EnhancedServiceBase } from "@neonpro/core-services";
-import type { HealthcareMetricName, MonitoringConfig, MonitoringHooks } from "../types";
+import type { HealthcareMetricName, MonitoringConfig, MonitoringHooks, ComplianceReport, DashboardMetrics, ComplianceStatus, ComplianceMetrics, HealthcareContext } from "../types";
 import { getPerformanceMonitor, initPerformanceMonitoring, PerformanceMonitor } from "./client";
 
 /**
@@ -37,7 +37,7 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
 	async trackCustomMetricEnhanced(
 		name: HealthcareMetricName,
 		value: number,
-		context?: Record<string, any>,
+		context?: Record<string, string | number | boolean>,
 		options: {
 			enableInsights?: boolean;
 			enablePredictive?: boolean;
@@ -101,7 +101,7 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
 		metricType: "patient_safety" | "data_privacy" | "system_performance" | "compliance",
 		metricName: string,
 		value: number,
-		context?: Record<string, any>
+		context?: Record<string, string | number | boolean>
 	): Promise<void> {
 		const startTime = this.startTiming("healthcare_metric_enhanced");
 
@@ -220,7 +220,7 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
 	/**
 	 * Enterprise dashboard metrics with real-time insights
 	 */
-	async getEnterpriseDashboardMetrics(): Promise<any> {
+	async getEnterpriseDashboardMetrics(): Promise<DashboardMetrics> {
 		try {
 			// Get enhanced analytics
 			const enterpriseMetrics = await this.analytics.getDashboardMetrics();
@@ -262,7 +262,7 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
 					timestamp: new Date().toISOString(),
 				},
 			};
-		} catch (error) {
+		} catch (_error) {
 			return {
 				error: "Failed to retrieve enterprise metrics",
 				timestamp: new Date().toISOString(),
@@ -273,7 +273,7 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
 	/**
 	 * Healthcare compliance report generation
 	 */
-	async generateComplianceReport(timeframe: "24h" | "7d" | "30d" = "24h"): Promise<any> {
+	async generateComplianceReport(timeframe: "24h" | "7d" | "30d" = "24h"): Promise<ComplianceReport> {
 		try {
 			const report = {
 				timeframe,
@@ -327,7 +327,7 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
 	private async trackComplianceMetric(
 		name: HealthcareMetricName,
 		value: number,
-		context?: Record<string, any>
+		context?: Record<string, string | number | boolean>
 	): Promise<void> {
 		const complianceThresholds = {
 			patient_search_time: { max: 1000, compliance: "LGPD_RESPONSE_TIME" },
@@ -355,7 +355,7 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
 		return criticalMetrics.includes(name);
 	}
 
-	private sanitizeContext(context?: Record<string, any>): Record<string, any> {
+	private sanitizeContext(context?: Record<string, string | number | boolean>): Record<string, string | number | boolean> {
 		if (!context) return {};
 
 		const sanitized = { ...context };
@@ -398,7 +398,7 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
 		metricType: string,
 		metricName: string,
 		value: number,
-		context?: Record<string, any>
+		context?: Record<string, string | number | boolean>
 	): Promise<void> {
 		const alert = {
 			id: `alert_${Date.now()}_${Math.random().toString(36).substring(2)}`,
@@ -422,7 +422,7 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
 		console.warn("Healthcare Alert Triggered:", alert);
 	}
 
-	private async getComplianceStatus(): Promise<any> {
+	private async getComplianceStatus(): Promise<ComplianceStatus> {
 		return {
 			lgpd: { status: "compliant", lastCheck: new Date(), score: 95 },
 			anvisa: { status: "compliant", lastCheck: new Date(), score: 92 },
@@ -431,7 +431,7 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
 		};
 	}
 
-	private async getLGPDComplianceMetrics(timeframe: string): Promise<any> {
+	private async getLGPDComplianceMetrics(_timeframe: string): Promise<ComplianceMetrics> {
 		return {
 			score: 95,
 			criticalIssues: 0,
@@ -443,7 +443,7 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
 		};
 	}
 
-	private async getANVISAComplianceMetrics(timeframe: string): Promise<any> {
+	private async getANVISAComplianceMetrics(_timeframe: string): Promise<ComplianceMetrics> {
 		return {
 			score: 92,
 			criticalIssues: 0,
@@ -455,7 +455,7 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
 		};
 	}
 
-	private async getSecurityComplianceMetrics(timeframe: string): Promise<any> {
+	private async getSecurityComplianceMetrics(_timeframe: string): Promise<ComplianceMetrics> {
 		return {
 			score: 88,
 			criticalIssues: 1,
@@ -467,7 +467,7 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
 		};
 	}
 
-	private async getPerformanceComplianceMetrics(timeframe: string): Promise<any> {
+	private async getPerformanceComplianceMetrics(_timeframe: string): Promise<ComplianceMetrics> {
 		return {
 			score: 90,
 			criticalIssues: 0,
@@ -479,7 +479,7 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
 		};
 	}
 
-	private async generateComplianceRecommendations(report: any): Promise<string[]> {
+	private async generateComplianceRecommendations(report: ComplianceReport): Promise<string[]> {
 		const recommendations: string[] = [];
 
 		if (report.security.mfaAdoption < 90) {
@@ -502,11 +502,11 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
 		this.performanceMonitor.init();
 	}
 
-	setContext(context: any): void {
+	setContext(context: HealthcareContext): void {
 		this.performanceMonitor.setContext(context);
 	}
 
-	trackCustomMetric(name: HealthcareMetricName, value: number, context?: Record<string, any>): void {
+	trackCustomMetric(name: HealthcareMetricName, value: number, context?: Record<string, string | number | boolean>): void {
 		this.performanceMonitor.trackCustomMetric(name, value, context);
 	}
 
@@ -546,7 +546,7 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
 		return this.performanceMonitor.startTiming(label);
 	}
 
-	endTiming(label: string, metricName: HealthcareMetricName, startTime: number, context?: Record<string, any>): void {
+	endTiming(label: string, metricName: HealthcareMetricName, startTime: number, context?: Record<string, string | number | boolean>): void {
 		this.performanceMonitor.endTiming(label, metricName, startTime, context);
 	}
 }

@@ -47,7 +47,7 @@ export function hashSensitiveData(data: string): string {
 /**
  * Sanitize data by removing sensitive fields
  */
-export function sanitizeData(data: any, excludeFields: string[]): any {
+export function sanitizeData(data: Record<string, unknown>, excludeFields: string[]): Record<string, unknown> {
 	if (typeof data !== "object" || data === null) {
 		return data;
 	}
@@ -219,7 +219,7 @@ export function createAlertMessage(
 	metricName: HealthcareMetricName,
 	value: number,
 	threshold: number,
-	context?: Record<string, any>
+	context?: Record<string, string | number | boolean>
 ): string {
 	const formattedValue = formatDuration(value);
 	const formattedThreshold = formatDuration(threshold);

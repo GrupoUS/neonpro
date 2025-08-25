@@ -74,7 +74,7 @@ export function LGPDComplianceDashboard({
 				ipAddress: "192.168.1.1",
 				userAgent: navigator.userAgent,
 				outcome: "failure",
-				details: { error: error.toString(), field, attemptedValue: value },
+				details: { error: (error as Error).toString(), field, attemptedValue: value },
 			});
 		} finally {
 			setIsUpdating(false);

@@ -5,14 +5,15 @@
  * for healthcare applications.
  */
 
-import type { CustomMetric, ErrorEvent, MonitoringConfig, PerformanceReport } from "../types";
+import type { Metric } from "web-vitals";
+import type { CustomMetric, ErrorEvent, MonitoringConfig, PerformanceReport, AlertData } from "../types";
 
 /**
  * Metrics storage interface
  */
 export type MetricsStorage = {
 	storeMetric(metric: CustomMetric): Promise<void>;
-	storeVital(vital: any): Promise<void>;
+	storeVital(vital: Metric): Promise<void>;
 	storeError(error: ErrorEvent): Promise<void>;
 	getMetrics(filters: MetricsFilter): Promise<CustomMetric[]>;
 	getReport(period: ReportPeriod): Promise<PerformanceReport>;
@@ -48,7 +49,7 @@ export type ReportPeriod = {
  */
 export class InMemoryMetricsStorage implements MetricsStorage {
 	private metrics: CustomMetric[] = [];
-	private vitals: any[] = [];
+	private vitals: Metric[] = [];
 	private errors: ErrorEvent[] = [];
 
 	async storeMetric(metric: CustomMetric): Promise<void> {
@@ -59,7 +60,7 @@ export class InMemoryMetricsStorage implements MetricsStorage {
 		}
 	}
 
-	async storeVital(vital: any): Promise<void> {
+	async storeVital(vital: Metric): Promise<void> {
 		this.vitals.push(vital);
 		if (this.vitals.length > 10_000) {
 			this.vitals = this.vitals.slice(-10_000);
@@ -137,7 +138,7 @@ export class InMemoryMetricsStorage implements MetricsStorage {
 
 	private generateReport(
 		metrics: CustomMetric[],
-		vitals: any[],
+		vitals: Metric[],
 		errors: ErrorEvent[],
 		period: ReportPeriod
 	): PerformanceReport {
@@ -147,7 +148,13 @@ export class InMemoryMetricsStorage implements MetricsStorage {
 		const errorRate = (errors.length / Math.max(totalSessions, 1)) * 100;
 
 		// Group vitals by name
-		const webVitalsData: any = {};
+		const webVitalsData: Record<string, {
+			p50: number;
+			p75: number; 
+			p90: number;
+			p95: number;
+			samples: number;
+		}> = {};
 		["CLS", "FCP", "FID", "INP", "LCP", "TTFB"].forEach((name) => {
 			const values = vitals.filter((v) => v.name === name).map((v) => v.value);
 			if (values.length > 0) {
@@ -162,7 +169,14 @@ export class InMemoryMetricsStorage implements MetricsStorage {
 		});
 
 		// Group custom metrics by name
-		const customMetricsData: any = {};
+		const customMetricsData: Record<string, {
+			average: number;
+			median: number;
+			p95: number;
+			min: number;
+			max: number;
+			samples: number;
+		}> = {};
 		const metricNames = [...new Set(metrics.map((m) => m.name))];
 		metricNames.forEach((name) => {
 			const values = metrics.filter((m) => m.name === name).map((m) => m.value);
@@ -225,8 +239,8 @@ export class InMemoryMetricsStorage implements MetricsStorage {
 			});
 	}
 
-	private generateAlerts(metrics: CustomMetric[], vitals: any[], errors: ErrorEvent[]): any[] {
-		const alerts: any[] = [];
+	private generateAlerts(metrics: CustomMetric[], vitals: Metric[], errors: ErrorEvent[]): AlertData[] {
+		const alerts: AlertData[] = [];
 
 		// High error rate alert
 		if (errors.length > 10) {
@@ -289,7 +303,7 @@ export class PerformanceMonitoringServer {
 	/**
 	 * Handle metrics endpoint
 	 */
-	async handleMetrics(request: any): Promise<Response> {
+	async handleMetrics(request: Request): Promise<Response> {
 		try {
 			const metric = await request.json();
 			await this.storage.storeMetric(metric);
@@ -308,7 +322,7 @@ export class PerformanceMonitoringServer {
 	/**
 	 * Handle vitals endpoint
 	 */
-	async handleVitals(request: any): Promise<Response> {
+	async handleVitals(request: Request): Promise<Response> {
 		try {
 			const vital = await request.json();
 			await this.storage.storeVital(vital);
@@ -327,7 +341,7 @@ export class PerformanceMonitoringServer {
 	/**
 	 * Handle errors endpoint
 	 */
-	async handleErrors(request: any): Promise<Response> {
+	async handleErrors(request: Request): Promise<Response> {
 		try {
 			const error = await request.json();
 			await this.storage.storeError(error);
@@ -346,7 +360,7 @@ export class PerformanceMonitoringServer {
 	/**
 	 * Handle dashboard data endpoint
 	 */
-	async handleDashboard(request: any): Promise<Response> {
+	async handleDashboard(request: Request): Promise<Response> {
 		try {
 			const url = new URL(request.url);
 			const period = this.parsePeriod(url.searchParams);
@@ -367,7 +381,7 @@ export class PerformanceMonitoringServer {
 	/**
 	 * Handle metrics query endpoint
 	 */
-	async handleQuery(request: any): Promise<Response> {
+	async handleQuery(request: Request): Promise<Response> {
 		try {
 			const url = new URL(request.url);
 			const filters = this.parseFilters(url.searchParams);
@@ -393,9 +407,15 @@ export class PerformanceMonitoringServer {
 	}
 
 	private parsePeriod(params: URLSearchParams): ReportPeriod {
-		const start = params.get("start") ? new Date(params.get("start")!) : new Date(Date.now() - 24 * 60 * 60 * 1000);
-		const end = params.get("end") ? new Date(params.get("end")!) : new Date();
-		const granularity = (params.get("granularity") as any) || "hour";
+		const startParam = params.get("start");
+		const endParam = params.get("end");
+		const granularityParam = params.get("granularity");
+		
+		const start = startParam ? new Date(startParam) : new Date(Date.now() - 24 * 60 * 60 * 1000);
+		const end = endParam ? new Date(endParam) : new Date();
+		const granularity = (granularityParam === "day" || granularityParam === "week" || granularityParam === "month") 
+			? granularityParam 
+			: "hour" as const;
 
 		return { start, end, granularity };
 	}
@@ -403,35 +423,51 @@ export class PerformanceMonitoringServer {
 	private parseFilters(params: URLSearchParams): MetricsFilter {
 		const filters: MetricsFilter = {};
 
-		if (params.get("start")) {
-			filters.startDate = new Date(params.get("start")!);
+		const startParam = params.get("start");
+		if (startParam) {
+			filters.startDate = new Date(startParam);
 		}
-		if (params.get("end")) {
-			filters.endDate = new Date(params.get("end")!);
+		
+		const endParam = params.get("end");
+		if (endParam) {
+			filters.endDate = new Date(endParam);
 		}
-		if (params.get("metrics")) {
-			filters.metricNames = params.get("metrics")?.split(",");
+		
+		const metricsParam = params.get("metrics");
+		if (metricsParam) {
+			filters.metricNames = metricsParam.split(",");
 		}
-		if (params.get("userId")) {
-			filters.userId = params.get("userId")!;
+		
+		const userIdParam = params.get("userId");
+		if (userIdParam) {
+			filters.userId = userIdParam;
 		}
-		if (params.get("sessionId")) {
-			filters.sessionId = params.get("sessionId")!;
+		
+		const sessionIdParam = params.get("sessionId");
+		if (sessionIdParam) {
+			filters.sessionId = sessionIdParam;
 		}
-		if (params.get("feature")) {
-			filters.feature = params.get("feature")!;
+		
+		const featureParam = params.get("feature");
+		if (featureParam) {
+			filters.feature = featureParam;
 		}
-		if (params.get("environment")) {
-			filters.environment = params.get("environment")!;
+		
+		const environmentParam = params.get("environment");
+		if (environmentParam) {
+			filters.environment = environmentParam;
 		}
-		if (params.get("limit")) {
-			const limit = Number.parseInt(params.get("limit")!, 10);
+		
+		const limitParam = params.get("limit");
+		if (limitParam) {
+			const limit = Number.parseInt(limitParam, 10);
 			if (!Number.isNaN(limit)) {
 				filters.limit = limit;
 			}
 		}
-		if (params.get("offset")) {
-			const offset = Number.parseInt(params.get("offset")!, 10);
+		const offsetParam = params.get("offset");
+		if (offsetParam) {
+			const offset = Number.parseInt(offsetParam, 10);
 			if (!Number.isNaN(offset)) {
 				filters.offset = offset;
 			}
@@ -472,15 +508,10 @@ export function createMonitoringAPI(storage: MetricsStorage, config: MonitoringC
  * Database metrics storage (Supabase/PostgreSQL)
  */
 export class DatabaseMetricsStorage implements MetricsStorage {
-	private connectionString: string;
-
-	constructor(connectionString: string) {
-		this.connectionString = connectionString;
-	}
 
 	async storeMetric(_metric: CustomMetric): Promise<void> {}
 
-	async storeVital(_vital: any): Promise<void> {}
+	async storeVital(_vital: Metric): Promise<void> {}
 
 	async storeError(_error: ErrorEvent): Promise<void> {}
 

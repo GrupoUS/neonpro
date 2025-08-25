@@ -81,7 +81,7 @@ export type Alert = {
 	message: string;
 	timestamp: string;
 	severity?: AlertSeverity;
-	metadata?: Record<string, any>;
+	metadata?: Record<string, string | number | boolean>;
 };
 
 export type AlertType = "CRITICAL" | "WARNING" | "INFO";
@@ -97,5 +97,5 @@ export type MonitoringReport = {
 	aiGovernanceScore: number;
 	qualityScore: number;
 	recommendations: string[];
-	metrics: any; // Will reference HealthcareMetrics from main file
+	metrics: Record<string, number | string | boolean>;
 };

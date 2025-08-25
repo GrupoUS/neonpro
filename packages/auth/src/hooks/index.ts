@@ -4,10 +4,11 @@
  */
 
 import type { ReactNode } from "react";
+import type { AuthService, User } from "../types";
 
 // Auth context types
 export interface AuthContextValue {
-	user: any | null;
+	user: User | null;
 	loading: boolean;
 	login: (credentials: { email: string; password: string }) => Promise<void>;
 	logout: () => Promise<void>;
@@ -18,7 +19,7 @@ export interface AuthContextValue {
 
 export interface AuthProviderProps {
 	children: ReactNode;
-	authService?: any; // Will be properly typed when integrated
+	authService?: AuthService;
 }
 
 // Hook return types
@@ -91,7 +92,7 @@ export interface SessionData {
 	accessToken: string;
 	refreshToken: string;
 	expiresAt: number;
-	user: any;
+	user: User;
 }
 
 export interface SessionManager {

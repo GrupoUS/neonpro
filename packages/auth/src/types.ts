@@ -30,7 +30,7 @@ export type UserRole = "patient" | "doctor" | "nurse" | "admin" | "receptionist"
 export interface Permission {
 	resource: string;
 	action: string;
-	conditions?: Record<string, any>;
+	conditions?: Record<string, string | number | boolean>;
 }
 
 export interface AuthConfig {
@@ -104,6 +104,7 @@ export interface TokenPayload {
 	sessionId: string;
 	iat: number;
 	exp: number;
+	exp: number;
 }
 
 export interface SecurityEvent {
@@ -112,10 +113,32 @@ export interface SecurityEvent {
 	ip: string;
 	userAgent: string;
 	timestamp: Date;
-	details: Record<string, any>;
+	details: Record<string, string | number | boolean>;
 	riskScore: number;
 }
 
 export interface RolePermissions {
 	[role: string]: Permission[];
+}
+
+export interface User {
+	id: string;
+	email: string;
+	name: string;
+	role: UserRole;
+	permissions: Permission[];
+	isActive: boolean;
+	lastLogin?: Date;
+	createdAt: Date;
+	updatedAt: Date;
+	mfaEnabled: boolean;
+	mfaSecret?: string;
+}
+
+export interface AuthService {
+	login: (credentials: { email: string; password: string }) => Promise<{ user: User; token: string }>;
+	logout: () => Promise<void>;
+	register: (data: { email: string; password: string; name: string }) => Promise<User>;
+	getCurrentUser: () => Promise<User | null>;
+	refreshToken: () => Promise<string>;
 }

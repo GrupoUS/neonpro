@@ -16,6 +16,7 @@ import type {
 	LoginCredentials,
 	LoginResult,
 	MfaSetupResult,
+	Permission,
 	RolePermissions,
 	SecurityEvent,
 	TokenPayload,
@@ -227,7 +228,7 @@ export class AuthService extends EnhancedServiceBase {
 	 */
 	async refreshToken(refreshToken: string): Promise<LoginResult> {
 		try {
-			const payload = jwt.verify(refreshToken, this.config.jwtSecret) as any;
+			const payload = jwt.verify(refreshToken, this.config.jwtSecret) as TokenPayload;
 
 			const session = await this.getSession(payload.sessionId);
 			if (!session || !session.isActive) {
@@ -249,7 +250,7 @@ export class AuthService extends EnhancedServiceBase {
 				accessToken,
 				sessionId: session.id,
 			};
-		} catch (error) {
+		} catch (_error) {
 			return { success: false, error: "Invalid refresh token" };
 		}
 	}
@@ -264,7 +265,7 @@ export class AuthService extends EnhancedServiceBase {
 				issuer: "NeonPro",
 			});
 
-			const qrCode = await QRCode.toDataURL(secret.otpauth_url!);
+			const qrCode = secret.otpauth_url ? await QRCode.toDataURL(secret.otpauth_url) : "";
 
 			// Generate backup codes
 			const backupCodes = Array.from({ length: 10 }, () => Math.random().toString(36).substring(2, 10).toUpperCase());
@@ -277,15 +278,15 @@ export class AuthService extends EnhancedServiceBase {
 					backupCodes,
 					expiresAt: Date.now() + 10 * 60 * 1000, // 10 minutes
 				},
-				600000
+				600000,
 			);
 
 			return {
-				secret: secret.base32!,
+				secret: secret.base32 || "",
 				qrCode,
 				backupCodes,
 			};
-		} catch (error) {
+		} catch (_error) {
 			throw new Error("Failed to setup MFA");
 		}
 	}
@@ -323,7 +324,7 @@ export class AuthService extends EnhancedServiceBase {
 						user_id: userId,
 						code: code,
 						used: false,
-					}))
+					})),
 				);
 
 				// Clear setup cache
@@ -338,7 +339,7 @@ export class AuthService extends EnhancedServiceBase {
 			}
 
 			return false;
-		} catch (error) {
+		} catch (_error) {
 			return false;
 		}
 	}
@@ -366,8 +367,8 @@ export class AuthService extends EnhancedServiceBase {
 				await this.cache.set(cacheKey, userPermissions, 300000);
 			}
 
-			return userPermissions.some((perm: any) => perm.resource === resource && perm.action === action);
-		} catch (error) {
+			return userPermissions.some((perm: Permission) => perm.resource === resource && perm.action === action);
+		} catch (_error) {
 			return false;
 		}
 	}
@@ -385,7 +386,7 @@ export class AuthService extends EnhancedServiceBase {
 				.order("last_activity", { ascending: false });
 
 			return sessions || [];
-		} catch (error) {
+		} catch (_error) {
 			return [];
 		}
 	}
@@ -398,13 +399,13 @@ export class AuthService extends EnhancedServiceBase {
 			await this.supabase.from("auth_sessions").update({ is_active: false }).eq("id", sessionId);
 
 			await this.cache.delete(`session_${sessionId}`);
-		} catch (error) {
+		} catch (_error) {
 			// Handle error silently
 		}
 	}
 
 	// Private helper methods
-	private generateAccessToken(user: any, sessionId: string): string {
+	private generateAccessToken(user: User, sessionId: string): string {
 		const payload: TokenPayload = {
 			userId: user.id,
 			email: user.email,
@@ -430,7 +431,7 @@ export class AuthService extends EnhancedServiceBase {
 		return jwt.sign(payload, this.config.jwtSecret);
 	}
 
-	private async createSession(user: any, deviceInfo?: DeviceInfo): Promise<AuthSession> {
+	private async createSession(user: User, deviceInfo?: DeviceInfo): Promise<AuthSession> {
 		const session = {
 			id: `session_${Date.now()}_${Math.random().toString(36).substring(2)}`,
 			user_id: user.id,
@@ -487,7 +488,7 @@ export class AuthService extends EnhancedServiceBase {
 			}
 
 			return null;
-		} catch (error) {
+		} catch (_error) {
 			return null;
 		}
 	}
@@ -500,7 +501,7 @@ export class AuthService extends EnhancedServiceBase {
 			if (event.riskScore >= 7) {
 				await this.audit.logOperation("high_risk_security_event", event);
 			}
-		} catch (error) {
+		} catch (_error) {
 			// Continue execution even if logging fails
 		}
 	}
@@ -510,7 +511,7 @@ export class AuthService extends EnhancedServiceBase {
 		await this.security.incrementRateLimit(key, 3600); // 1 hour window
 	}
 
-	private mapToUserInterface(dbUser: any): User {
+	private mapToUserInterface(dbUser: Record<string, unknown>): User {
 		return {
 			id: dbUser.id,
 			email: dbUser.email,
@@ -537,7 +538,7 @@ export class AuthService extends EnhancedServiceBase {
 		if (!match) return 3600; // default 1 hour
 
 		const [, value, unit] = match;
-		return parseInt(value) * units[unit];
+		return parseInt(value, 10) * units[unit];
 	}
 
 	private initializeRolePermissions(): RolePermissions {
