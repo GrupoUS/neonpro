@@ -55,7 +55,7 @@ export class FocusManager {
 		}
 
 		const firstElement = focusableElements[0];
-		const lastElement = focusableElements.at(-1);
+		const lastElement = focusableElements[focusableElements.length - 1];
 
 		const handleTabKey = (e: KeyboardEvent) => {
 			if (e.key !== KEYBOARD_KEYS.TAB) {
@@ -65,11 +65,11 @@ export class FocusManager {
 			if (e.shiftKey) {
 				if (document.activeElement === firstElement) {
 					e.preventDefault();
-					lastElement.focus();
+					lastElement?.focus();
 				}
 			} else if (document.activeElement === lastElement) {
 				e.preventDefault();
-				firstElement.focus();
+				firstElement?.focus();
 			}
 		};
 

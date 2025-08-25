@@ -98,7 +98,8 @@
       "Bash(pnpm biome check:*)",
       "Bash(npx biome lint:*)",
       "mcp__archon__update_task",
-      "mcp__serena__think_about_collected_information"
+      "mcp__serena__think_about_collected_information",
+      "Bash(node:*)"
     ],
     "deny": [
       "Edit",
@@ -204,5 +205,6 @@
     "masterConfigFile": "CLAUDE.md",
     "loadOnStartup": true,
     "prioritizeProjectContext": true
-  }
+  },
+  "parallelTasksCount": 5
 }

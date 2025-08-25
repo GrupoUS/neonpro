@@ -38,9 +38,9 @@ export enum CacheLayer {
 	AI_CONTEXT = "ai_context",
 }
 
-export interface CacheOperation<T = any> {
-	get(key: string): Promise<T | null>;
-	set(key: string, value: T, ttl?: number): Promise<void>;
+export interface CacheOperation {
+	get<T>(key: string): Promise<T | null>;
+	set<T>(key: string, value: T, ttl?: number): Promise<void>;
 	delete(key: string): Promise<void>;
 	clear(): Promise<void>;
 	getStats(): Promise<CacheStats>;

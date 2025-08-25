@@ -552,15 +552,28 @@ export function AccessibilityPanel() {
 							</div>
 							
 							{/* Voice Navigation */}
-							<div className="flex items-center justify-between">
-								<div className="flex items-center gap-2">
-									<Mic className="h-4 w-4" />
-									<label className="text-sm font-medium">Navegação por Voz</label>
+							<div className="space-y-3">
+								<div className="flex items-center justify-between">
+									<div className="flex items-center gap-2">
+										<Mic className="h-4 w-4" />
+										<label className="text-sm font-medium">Navegação por Voz</label>
+									</div>
+									<Switch
+										checked={preferences.voiceNavigation}
+										onCheckedChange={(checked) => updatePreference("voiceNavigation", checked)}
+									/>
 								</div>
-								<Switch
-									checked={preferences.voiceNavigation}
-									onCheckedChange={(checked) => updatePreference("voiceNavigation", checked)}
-								/>
+								{preferences.voiceNavigation && (
+									<div className="ml-6 space-y-2 text-xs text-muted-foreground">
+										<p>Comandos disponíveis:</p>
+										<ul className="space-y-1 text-[11px]">
+											<li>• "Mostrar pacientes" - Abrir lista de pacientes</li>
+											<li>• "Buscar paciente [nome]" - Procurar paciente</li>
+											<li>• "Agenda de hoje" - Ver consultas do dia</li>
+											<li>• "Estoque de [produto]" - Verificar estoque</li>
+										</ul>
+									</div>
+								)}
 							</div>
 							
 							{/* Larger Touch Targets */}

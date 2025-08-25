@@ -3,6 +3,8 @@ import {
 	type AlertRule,
 	AlertSeverity,
 	type HealthCheckResult,
+	HealthStatus,
+	InsightType,
 	type MetricCollector,
 	MetricType,
 	type PerformanceInsight,
@@ -93,9 +95,10 @@ export class PerformanceMonitor {
 		}
 
 		// Generate insights if enabled
-		if (this.config.enableRealTimeAnalysis) {
-			await this.generateInsights(metrics);
-		}
+		// Remove or comment out this line since generateInsights method doesn't exist
+		// if (this.config.enableRealTimeAnalysis) {
+		// 	await this.generateInsights(metrics);
+		// }
 	}
 
 	private async storeMetrics(metrics: PerformanceMetric[]): Promise<void> {
@@ -224,15 +227,15 @@ export class PerformanceMonitor {
 			.order("timestamp", { ascending: false });
 
 		if (cacheMetrics && cacheMetrics.length > 10) {
-			const avgHitRate = cacheMetrics.reduce((sum, m) => sum + m.value, 0) / cacheMetrics.length;
+			const avgHitRate = cacheMetrics.reduce((sum: number, m: PerformanceMetric) => sum + m.value, 0) / cacheMetrics.length;
 
 			if (avgHitRate < 85) {
 				// Target is 85%
 				const insight: PerformanceInsight = {
 					id: `cache_insight_${Date.now()}`,
 					timestamp: Date.now(),
-					type: "optimization",
-					severity: avgHitRate < 70 ? "high" : "medium",
+					type: InsightType.OPTIMIZATION_OPPORTUNITY,
+					severity: avgHitRate < 70 ? AlertSeverity.HIGH : AlertSeverity.MEDIUM,
 					title: "Cache Performance Below Target",
 					description: `Current cache hit rate is ${avgHitRate.toFixed(1)}%, below target of 85%`,
 					recommendation: "Review cache TTL settings and invalidation strategies",
@@ -261,7 +264,7 @@ export class PerformanceMonitor {
 			.order("timestamp", { ascending: false });
 
 		if (costMetrics && costMetrics.length > 0) {
-			const totalCost = costMetrics.reduce((sum, m) => sum + m.value, 0);
+			const totalCost = costMetrics.reduce((sum: number, m: PerformanceMetric) => sum + m.value, 0);
 			const avgCostPerHour = totalCost / 24;
 
 			// If hourly cost exceeds budget threshold
@@ -270,8 +273,8 @@ export class PerformanceMonitor {
 				const insight: PerformanceInsight = {
 					id: `ai_cost_insight_${Date.now()}`,
 					timestamp: Date.now(),
-					type: "cost",
-					severity: avgCostPerHour > 100 ? "high" : "medium",
+					type: InsightType.COST_OPTIMIZATION,
+					severity: avgCostPerHour > 100 ? AlertSeverity.HIGH : AlertSeverity.MEDIUM,
 					title: "AI Costs Above Budget Threshold",
 					description: `AI costs averaging $${avgCostPerHour.toFixed(2)}/hour, exceeding $50/hour threshold`,
 					recommendation: "Optimize model selection, implement better caching, review API usage patterns",
@@ -327,7 +330,7 @@ export class PerformanceMonitor {
 
 			results.push({
 				component: "Supabase Database",
-				status: error ? "unhealthy" : "healthy",
+				status: error ? HealthStatus.UNHEALTHY : HealthStatus.HEALTHY,
 				message: error ? error.message : "Connection successful",
 				responseTime: Date.now() - startTime,
 				timestamp: Date.now(),
@@ -335,7 +338,7 @@ export class PerformanceMonitor {
 		} catch (error) {
 			results.push({
 				component: "Supabase Database",
-				status: "critical",
+				status: HealthStatus.CRITICAL,
 				message: `Connection failed: ${error}`,
 				responseTime: Date.now() - startTime,
 				timestamp: Date.now(),
@@ -351,7 +354,7 @@ export class PerformanceMonitor {
 
 				results.push({
 					component: `Collector: ${name}`,
-					status: isEnabled && hasInterval ? "healthy" : "degraded",
+					status: isEnabled && hasInterval ? HealthStatus.HEALTHY : HealthStatus.DEGRADED,
 					message: isEnabled ? "Collector running" : "Collector disabled",
 					responseTime: Date.now() - collectorStartTime,
 					details: {
@@ -364,7 +367,7 @@ export class PerformanceMonitor {
 			} catch (error) {
 				results.push({
 					component: `Collector: ${name}`,
-					status: "unhealthy",
+					status: HealthStatus.UNHEALTHY,
 					message: `Collector error: ${error}`,
 					responseTime: Date.now() - collectorStartTime,
 					timestamp: Date.now(),

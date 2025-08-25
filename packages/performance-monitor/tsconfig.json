@@ -1,12 +1,24 @@
 {
-	"extends": "../../tsconfig.json",
 	"compilerOptions": {
+		"target": "ES2022",
+		"module": "ESNext", 
+		"moduleResolution": "bundler",
+		"allowImportingTsExtensions": false,
+		"strict": true,
+		"esModuleInterop": true,
+		"allowSyntheticDefaultImports": true,
+		"forceConsistentCasingInFileNames": true,
+		"declaration": true,
+		"declarationMap": true,
+		"sourceMap": true,
 		"outDir": "./dist",
 		"rootDir": "./src",
-		"composite": true,
-		"declaration": true,
-		"declarationMap": true
+		"skipLibCheck": true,
+		"resolveJsonModule": true,
+		"allowJs": false,
+		"noEmit": false,
+		"isolatedModules": true
 	},
 	"include": ["src/**/*"],
-	"references": [{ "path": "../core-services" }, { "path": "../caching-layer" }]
+	"exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
 }

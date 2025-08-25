@@ -47,6 +47,7 @@ import { appointmentRoutes } from "@/routes/appointments";
 import { authRoutes } from "@/routes/auth";
 import { clinicRoutes } from "@/routes/clinics";
 import { complianceRoutes } from "@/routes/compliance";
+import complianceAutomationRoutes from "@/routes/compliance-automation";
 import { patientRoutes } from "@/routes/patients";
 import { professionalsRoutes } from "@/routes/professionals";
 import { servicesRoutes } from "@/routes/services";
@@ -190,6 +191,7 @@ const apiV1 = new Hono<AppEnv>()
 	.route("/services", servicesRoutes)
 	.route("/analytics", analyticsRoutes)
 	.route("/compliance", complianceRoutes)
+	.route("/compliance-automation", complianceAutomationRoutes)
 	.route("/ai", aiRoutes);
 
 // Mount API v1

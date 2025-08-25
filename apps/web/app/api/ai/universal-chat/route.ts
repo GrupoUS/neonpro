@@ -1,56 +1,50 @@
 /**
- * Universal AI Chat API Route - Mock Version for Testing
- * Next.js App Router with simulated streaming responses
- * Healthcare-optimized with Portuguese NLP simulation
+ * Universal AI Chat API Route - Production Version
+ * Next.js App Router with real OpenAI streaming responses
+ * Healthcare-optimized with Portuguese NLP
  * Dual Interface: External Client + Internal Staff
  */
 
 import { type NextRequest, NextResponse } from "next/server";
+import { UniversalChatService } from "@neonpro/ai/services/universal-chat-service";
 
 export const runtime = "edge";
 
-// Mock Healthcare Responses
-const EXTERNAL_RESPONSES = [
-	"Olá! Sou o assistente virtual da NeonPro. Como posso ajudá-lo hoje?",
-	"Fico feliz em ajudar com seu agendamento. Temos horários disponíveis com cardiologista para esta semana.",
-	"Para sua segurança, preciso de algumas informações. Qual é a natureza da consulta?",
-	"Entendo sua preocupação. Vou verificar os próximos horários disponíveis com nossos especialistas.",
-	"Agendamento confirmado! Você receberá uma confirmação por WhatsApp em breve.",
-];
-
-const INTERNAL_RESPONSES = [
-	"Sistema operacional ativo. Como posso auxiliar a equipe hoje?",
-	"Verificando estoque... Temos 85% dos materiais em níveis adequados.",
-	"Relatório gerado: 127 pacientes atendidos esta semana, performance +12% vs. semana anterior.",
-	"Status dos equipamentos: Todos os equipamentos críticos funcionando normalmente.",
-	"Análise de performance: Taxa de no-show reduzida para 8% este mês.",
-];
-
-function getRandomResponse(interface_type: string): string {
-	const responses = interface_type === "external" ? EXTERNAL_RESPONSES : INTERNAL_RESPONSES;
-	return responses[Math.floor(Math.random() * responses.length)];
-}
-
-function* createStreamingResponse(text: string) {
-	const words = text.split(" ");
-	for (let i = 0; i < words.length; i++) {
-		const chunk = i === 0 ? words[i] : " " + words[i];
-		yield chunk;
-	}
-}
-
 export async function POST(request: NextRequest) {
 	try {
-		const { messages, interface: interface_type = "external" } = await request.json();
+		const { messages, interface: interface_type = "external", sessionId, userId, clinicId, patientId } = await request.json();
 
 		if (!(messages && Array.isArray(messages))) {
 			return NextResponse.json({ error: "Mensagens são obrigatórias" }, { status: 400 });
 		}
 
-		const lastMessage = messages[messages.length - 1];
-		const mockResponse = getRandomResponse(interface_type);
+		if (!sessionId || !userId) {
+			return NextResponse.json({ error: "SessionId e userId são obrigatórios" }, { status: 400 });
+		}
 
-		// Simulate streaming response
+		const lastMessage = messages[messages.length - 1];
+		if (!lastMessage?.content) {
+			return NextResponse.json({ error: "Mensagem não pode estar vazia" }, { status: 400 });
+		}
+
+		// Initialize the chat service
+		const chatService = new UniversalChatService();
+
+		// Prepare input for the service
+		const chatInput = {
+			message: lastMessage.content,
+			sessionId,
+			userId,
+			clinicId: clinicId || "default",
+			context: {
+				interface: interface_type,
+				patientId,
+				messageHistory: messages.slice(-5), // Last 5 messages for context
+			},
+			language: "pt-BR" as const,
+		};
+
+		// Stream the response
 		const encoder = new TextEncoder();
 		const stream = new ReadableStream({
 			async start(controller) {
@@ -59,12 +53,18 @@ export async function POST(request: NextRequest) {
 					const initialData = JSON.stringify({
 						type: "start",
 						interface: interface_type,
+						sessionId,
 						timestamp: new Date().toISOString(),
 					});
 					controller.enqueue(encoder.encode(`data: ${initialData}\\n\\n`));
 
-					// Stream the response word by word
-					for (const chunk of createStreamingResponse(mockResponse)) {
+					// Get response from the service
+					const response = await chatService.execute(chatInput);
+
+					// Stream the response content word by word
+					const words = response.response.split(" ");
+					for (let i = 0; i < words.length; i++) {
+						const chunk = i === 0 ? words[i] : " " + words[i];
 						const chunkData = JSON.stringify({
 							type: "content",
 							content: chunk,
@@ -72,16 +72,23 @@ export async function POST(request: NextRequest) {
 						controller.enqueue(encoder.encode(`data: ${chunkData}\\n\\n`));
 
 						// Add realistic delay
-						await new Promise((resolve) => setTimeout(resolve, 50 + Math.random() * 100));
+						await new Promise((resolve) => setTimeout(resolve, 30 + Math.random() * 70));
 					}
 
-					// Send completion
+					// Send completion with metadata
 					const completeData = JSON.stringify({
 						type: "complete",
+						sessionId,
+						messageId: response.messageId,
+						confidence: response.confidence,
+						emergencyDetected: response.escalationRequired, // Map escalation to emergency for frontend
+						escalationTriggered: response.escalationRequired,
+						suggestedActions: response.suggestedActions,
+						complianceFlags: Object.keys(response.complianceFlags || {}),
 						usage: {
-							prompt_tokens: lastMessage.content.length / 4,
-							completion_tokens: mockResponse.length / 4,
-							total_tokens: (lastMessage.content.length + mockResponse.length) / 4,
+							prompt_tokens: Math.floor(lastMessage.content.length / 4),
+							completion_tokens: Math.floor(response.response.length / 4),
+							total_tokens: Math.floor((lastMessage.content.length + response.response.length) / 4),
 						},
 					});
 					controller.enqueue(encoder.encode(`data: ${completeData}\\n\\n`));
@@ -89,7 +96,12 @@ export async function POST(request: NextRequest) {
 					controller.close();
 				} catch (error) {
 					console.error("Streaming error:", error);
-					controller.error(error);
+					const errorData = JSON.stringify({
+						type: "error",
+						error: error instanceof Error ? error.message : "Erro interno do servidor",
+					});
+					controller.enqueue(encoder.encode(`data: ${errorData}\\n\\n`));
+					controller.close();
 				}
 			},
 		});
@@ -123,8 +135,10 @@ export async function PUT(request: NextRequest) {
 
 		switch (action) {
 			case "create":
+				// Generate a proper UUID for the session
+				const newSessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 				return NextResponse.json({
-					session_id: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+					sessionId: newSessionId,
 					status: "active",
 					interface: data.interface || "external",
 					created_at: new Date().toISOString(),
@@ -132,14 +146,14 @@ export async function PUT(request: NextRequest) {
 
 			case "update":
 				return NextResponse.json({
-					session_id,
+					sessionId: session_id,
 					status: "updated",
 					updated_at: new Date().toISOString(),
 				});
 
 			case "end":
 				return NextResponse.json({
-					session_id,
+					sessionId: session_id,
 					status: "ended",
 					ended_at: new Date().toISOString(),
 				});

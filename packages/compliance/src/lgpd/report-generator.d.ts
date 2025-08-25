@@ -22,25 +22,25 @@ export declare const LGPDReportConfigSchema: z.ZodObject<{
     constitutional_validation: z.ZodDefault<z.ZodBoolean>;
     audit_trail: z.ZodDefault<z.ZodBoolean>;
 }, "strip", z.ZodTypeAny, {
-    constitutional_validation: boolean;
-    report_type: "compliance_audit" | "data_mapping" | "consent_status" | "breach_report";
     audit_trail: boolean;
+    constitutional_validation: boolean;
+    anonymization_level: "basic" | "advanced" | "k_anonymity";
+    report_type: "compliance_audit" | "data_mapping" | "consent_status" | "breach_report";
     date_range: {
         start_date: string;
         end_date: string;
     };
     include_personal_data: boolean;
-    anonymization_level: "basic" | "advanced" | "k_anonymity";
 }, {
     report_type: "compliance_audit" | "data_mapping" | "consent_status" | "breach_report";
     date_range: {
         start_date: string;
         end_date: string;
     };
-    constitutional_validation?: boolean | undefined;
     audit_trail?: boolean | undefined;
-    include_personal_data?: boolean | undefined;
+    constitutional_validation?: boolean | undefined;
     anonymization_level?: "basic" | "advanced" | "k_anonymity" | undefined;
+    include_personal_data?: boolean | undefined;
 }>;
 export declare const LGPDReportSchema: z.ZodObject<{
     report_id: z.ZodString;
@@ -62,15 +62,15 @@ export declare const LGPDReportSchema: z.ZodObject<{
         consent_compliance_rate: z.ZodNumber;
         constitutional_compliance_score: z.ZodNumber;
     }, "strip", z.ZodTypeAny, {
-        constitutional_compliance_score: number;
         total_data_subjects: number;
         total_processing_activities: number;
         consent_compliance_rate: number;
+        constitutional_compliance_score: number;
     }, {
-        constitutional_compliance_score: number;
         total_data_subjects: number;
         total_processing_activities: number;
         consent_compliance_rate: number;
+        constitutional_compliance_score: number;
     }>;
     findings: z.ZodArray<z.ZodObject<{
         category: z.ZodString;
@@ -79,16 +79,16 @@ export declare const LGPDReportSchema: z.ZodObject<{
         recommendation: z.ZodString;
         constitutional_impact: z.ZodBoolean;
     }, "strip", z.ZodTypeAny, {
+        severity: "low" | "medium" | "high" | "critical";
+        constitutional_impact: boolean;
         category: string;
         description: string;
-        constitutional_impact: boolean;
-        severity: "critical" | "low" | "medium" | "high";
         recommendation: string;
     }, {
+        severity: "low" | "medium" | "high" | "critical";
+        constitutional_impact: boolean;
         category: string;
         description: string;
-        constitutional_impact: boolean;
-        severity: "critical" | "low" | "medium" | "high";
         recommendation: string;
     }>, "many">;
     constitutional_validation: z.ZodObject<{
@@ -121,6 +121,11 @@ export declare const LGPDReportSchema: z.ZodObject<{
         validation_steps: string[];
     }>;
 }, "strip", z.ZodTypeAny, {
+    audit_trail: {
+        quality_score: number;
+        generated_by: string;
+        validation_steps: string[];
+    };
     constitutional_validation: {
         privacy_rights_protected: boolean;
         data_minimization_applied: boolean;
@@ -129,30 +134,30 @@ export declare const LGPDReportSchema: z.ZodObject<{
     };
     report_id: string;
     report_type: string;
-    generated_at: string;
-    audit_trail: {
-        quality_score: number;
-        generated_by: string;
-        validation_steps: string[];
-    };
     date_range: {
         start_date: string;
         end_date: string;
     };
+    generated_at: string;
     summary: {
-        constitutional_compliance_score: number;
         total_data_subjects: number;
         total_processing_activities: number;
         consent_compliance_rate: number;
+        constitutional_compliance_score: number;
     };
     findings: {
+        severity: "low" | "medium" | "high" | "critical";
+        constitutional_impact: boolean;
         category: string;
         description: string;
-        constitutional_impact: boolean;
-        severity: "critical" | "low" | "medium" | "high";
         recommendation: string;
     }[];
 }, {
+    audit_trail: {
+        quality_score: number;
+        generated_by: string;
+        validation_steps: string[];
+    };
     constitutional_validation: {
         privacy_rights_protected: boolean;
         data_minimization_applied: boolean;
@@ -161,27 +166,22 @@ export declare const LGPDReportSchema: z.ZodObject<{
     };
     report_id: string;
     report_type: string;
-    generated_at: string;
-    audit_trail: {
-        quality_score: number;
-        generated_by: string;
-        validation_steps: string[];
-    };
     date_range: {
         start_date: string;
         end_date: string;
     };
+    generated_at: string;
     summary: {
-        constitutional_compliance_score: number;
         total_data_subjects: number;
         total_processing_activities: number;
         consent_compliance_rate: number;
+        constitutional_compliance_score: number;
     };
     findings: {
+        severity: "low" | "medium" | "high" | "critical";
+        constitutional_impact: boolean;
         category: string;
         description: string;
-        constitutional_impact: boolean;
-        severity: "critical" | "low" | "medium" | "high";
         recommendation: string;
     }[];
 }>;

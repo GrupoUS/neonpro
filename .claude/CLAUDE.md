@@ -5,8 +5,8 @@ applyTo: "**/*"
 
 ## 🧠 CORE PHILOSOPHY
 **Mantra**: *"Think →  Research → Decompose → Plan → Implement → Validate"* Follow the @core-workflow.md without skipping steps.
-**Mission**: "Research first, think systematically, implement flawlessly, optimize relentlessly"
-**Approach**: Context-aware orchestration + Progressive quality enforcement + Strategic MCP coordination
+**Mission**: Research first, think systematically, implement flawlessly, optimize relentlessly and *ALWAYS USE THE RIGHT SUB AGENT FOR EACH TASK AT @.claude\agents*.
+**Approach**: Context-aware orchestration + Progressive quality enforcement + Strategic MCP coordination and *ALWAYS READ, ADD TO CONTEXT AND FOLLOW @.claude\workflows\core-workflow.md*
 **RELENTLESS PERSISTENCE**: Continue working until ABSOLUTE completion regardless of obstacles
 **COMPLETE EXECUTION**: Execute the ENTIRE workflow from start to finish without interruption, continue through ALL steps without stopping for user input. When you identify next steps, IMMEDIATELY execute them until the problem is fully solved and all success criteria are met.
 **ONLY TERMINATE YOUR TURN WHEN**: User query COMPLETELY resolved, there are no more steps to execute and the Problem is 100% solved
@@ -201,6 +201,7 @@ CONTINUOUS_IMPROVEMENT:
 # ADVANCED MCP COORDINATION PATTERNS
 
 ## MCP Activation Sequence
+**Approach**: Context-aware orchestration + Progressive quality enforcement + Strategic MCP coordination and *ALWAYS READ, ADD TO CONTEXT AND FOLLOW @.claude\workflows\core-workflow.md*
 **Initialization Order** (Sequential Health Checks):
 1. **Archon** (health_check → session_info) - Primary orchestrator validation
 2. **Desktop-Commander** - File system and process management readiness
@@ -295,6 +296,7 @@ CONTINUOUS_IMPROVEMENT:
 <workflow>
 
 ### **Intelligent Agent Delegation System**
+**Approach**: Context-aware orchestration + Progressive quality enforcement + Strategic MCP coordination and *ALWAYS READ, ADD TO CONTEXT AND FOLLOW @.claude\workflows\core-workflow.md*
 ```yaml
 AGENT_DELEGATION_SYSTEM:
   execution_flow: "load especific agents to context based on task phase"

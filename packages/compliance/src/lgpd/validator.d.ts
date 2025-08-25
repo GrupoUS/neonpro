@@ -12,15 +12,15 @@ export declare const LGPDValidationConfigSchema: z.ZodObject<{
     audit_trail: z.ZodDefault<z.ZodBoolean>;
     privacy_impact_assessment: z.ZodDefault<z.ZodBoolean>;
 }, "strip", z.ZodTypeAny, {
-    constitutional_validation: boolean;
     audit_trail: boolean;
+    constitutional_validation: boolean;
     validation_type: "data_transfer" | "data_processing" | "consent_management" | "breach_assessment";
     strict_mode: boolean;
     privacy_impact_assessment: boolean;
 }, {
     validation_type: "data_transfer" | "data_processing" | "consent_management" | "breach_assessment";
-    constitutional_validation?: boolean | undefined;
     audit_trail?: boolean | undefined;
+    constitutional_validation?: boolean | undefined;
     strict_mode?: boolean | undefined;
     privacy_impact_assessment?: boolean | undefined;
 }>;
@@ -38,17 +38,17 @@ export declare const LGPDValidationResultSchema: z.ZodObject<{
         constitutional_impact: z.ZodBoolean;
         remediation_required: z.ZodBoolean;
     }, "strip", z.ZodTypeAny, {
+        severity: "low" | "medium" | "high" | "critical";
+        constitutional_impact: boolean;
         category: string;
         description: string;
-        constitutional_impact: boolean;
-        severity: "critical" | "low" | "medium" | "high";
         article_reference: string;
         remediation_required: boolean;
     }, {
+        severity: "low" | "medium" | "high" | "critical";
+        constitutional_impact: boolean;
         category: string;
         description: string;
-        constitutional_impact: boolean;
-        severity: "critical" | "low" | "medium" | "high";
         article_reference: string;
         remediation_required: boolean;
     }>, "many">;
@@ -78,12 +78,12 @@ export declare const LGPDValidationResultSchema: z.ZodObject<{
         constitutional_requirement: z.ZodBoolean;
     }, "strip", z.ZodTypeAny, {
         description: string;
-        priority: "critical" | "low" | "medium" | "high";
+        priority: "low" | "medium" | "high" | "critical";
         implementation_timeline: string;
         constitutional_requirement: boolean;
     }, {
         description: string;
-        priority: "critical" | "low" | "medium" | "high";
+        priority: "low" | "medium" | "high" | "critical";
         implementation_timeline: string;
         constitutional_requirement: boolean;
     }>, "many">;
@@ -101,7 +101,19 @@ export declare const LGPDValidationResultSchema: z.ZodObject<{
         validated_by: string;
     }>;
 }, "strip", z.ZodTypeAny, {
+    audit_trail: {
+        quality_score: number;
+        validation_steps: string[];
+        validated_by: string;
+    };
+    compliance_score: number;
     valid: boolean;
+    recommendations: {
+        description: string;
+        priority: "low" | "medium" | "high" | "critical";
+        implementation_timeline: string;
+        constitutional_requirement: boolean;
+    }[];
     constitutional_validation: {
         data_minimization_applied: boolean;
         transparency_maintained: boolean;
@@ -109,31 +121,31 @@ export declare const LGPDValidationResultSchema: z.ZodObject<{
         purpose_limitation_observed: boolean;
         legal_basis_valid: boolean;
     };
-    recommendations: {
-        description: string;
-        priority: "critical" | "low" | "medium" | "high";
-        implementation_timeline: string;
-        constitutional_requirement: boolean;
-    }[];
     violations: {
+        severity: "low" | "medium" | "high" | "critical";
+        constitutional_impact: boolean;
         category: string;
         description: string;
-        constitutional_impact: boolean;
-        severity: "critical" | "low" | "medium" | "high";
         article_reference: string;
         remediation_required: boolean;
     }[];
-    audit_trail: {
-        quality_score: number;
-        validation_steps: string[];
-        validated_by: string;
-    };
-    compliance_score: number;
     validation_type: string;
     validation_id: string;
     validated_at: string;
 }, {
+    audit_trail: {
+        quality_score: number;
+        validation_steps: string[];
+        validated_by: string;
+    };
+    compliance_score: number;
     valid: boolean;
+    recommendations: {
+        description: string;
+        priority: "low" | "medium" | "high" | "critical";
+        implementation_timeline: string;
+        constitutional_requirement: boolean;
+    }[];
     constitutional_validation: {
         data_minimization_applied: boolean;
         transparency_maintained: boolean;
@@ -141,26 +153,14 @@ export declare const LGPDValidationResultSchema: z.ZodObject<{
         purpose_limitation_observed: boolean;
         legal_basis_valid: boolean;
     };
-    recommendations: {
-        description: string;
-        priority: "critical" | "low" | "medium" | "high";
-        implementation_timeline: string;
-        constitutional_requirement: boolean;
-    }[];
     violations: {
+        severity: "low" | "medium" | "high" | "critical";
+        constitutional_impact: boolean;
         category: string;
         description: string;
-        constitutional_impact: boolean;
-        severity: "critical" | "low" | "medium" | "high";
         article_reference: string;
         remediation_required: boolean;
     }[];
-    audit_trail: {
-        quality_score: number;
-        validation_steps: string[];
-        validated_by: string;
-    };
-    compliance_score: number;
     validation_type: string;
     validation_id: string;
     validated_at: string;

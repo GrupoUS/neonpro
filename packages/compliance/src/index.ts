@@ -24,6 +24,15 @@ export * from "./enterprise";
 // LGPD (Lei Geral de Proteção de Dados) - Brazilian Data Protection Law
 export * from "./lgpd";
 
+// Brazilian Compliance Automation Service
+export {
+	BrazilianComplianceAutomationService,
+	createBrazilianComplianceAutomationService,
+	DEFAULT_COMPLIANCE_CONFIG,
+	type ComplianceAutomationConfig,
+	type ComplianceAutomationResponse,
+} from "./services/compliance-automation-service";
+
 // Core Types and Interfaces (excluding audit types to avoid conflicts)
 export {
 	AdverseEventType,

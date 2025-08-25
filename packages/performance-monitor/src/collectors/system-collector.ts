@@ -27,7 +27,7 @@ export class SystemMetricsCollector implements MetricCollector {
 				unit: MetricUnit.COUNT,
 				tags: { component: "system", error: "collection_failed" },
 				source: "system-metrics-collector",
-				context: { error: error.toString() },
+				context: { error: error instanceof Error ? error.message : String(error) },
 			});
 		}
 

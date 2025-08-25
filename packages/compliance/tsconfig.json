@@ -13,6 +13,8 @@
 		"noEmit": false,
 		"composite": true,
 		"downlevelIteration": true,
+		"outDir": "dist",
+		"declaration": true,
 		"baseUrl": ".",
 		"paths": {
 			"@/*": ["./src/*"],

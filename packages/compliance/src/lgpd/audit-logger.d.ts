@@ -76,9 +76,15 @@ export declare const LGPDAuditLogEntrySchema: z.ZodObject<{
         quality_score: number;
     }>;
 }, "strip", z.ZodTypeAny, {
-    log_id: string;
+    audit_trail: {
+        logged_by: string;
+        log_source: string;
+        integrity_hash: string;
+        quality_score: number;
+    };
     timestamp: string;
-    event_type: "data_access" | "data_modification" | "data_deletion" | "consent_given" | "consent_withdrawn" | "data_export" | "data_transfer" | "breach_detected" | "privacy_violation" | "constitutional_violation";
+    log_id: string;
+    event_type: "constitutional_violation" | "data_access" | "data_modification" | "data_deletion" | "consent_given" | "consent_withdrawn" | "data_export" | "data_transfer" | "breach_detected" | "privacy_violation";
     legal_basis: string;
     purpose: string;
     data_categories: string[];
@@ -99,18 +105,18 @@ export declare const LGPDAuditLogEntrySchema: z.ZodObject<{
         validation_score: number;
         violations_detected: string[];
     };
+    user_id?: string | undefined;
+    data_subject_id?: string | undefined;
+}, {
     audit_trail: {
         logged_by: string;
         log_source: string;
         integrity_hash: string;
         quality_score: number;
     };
-    user_id?: string | undefined;
-    data_subject_id?: string | undefined;
-}, {
-    log_id: string;
     timestamp: string;
-    event_type: "data_access" | "data_modification" | "data_deletion" | "consent_given" | "consent_withdrawn" | "data_export" | "data_transfer" | "breach_detected" | "privacy_violation" | "constitutional_violation";
+    log_id: string;
+    event_type: "constitutional_violation" | "data_access" | "data_modification" | "data_deletion" | "consent_given" | "consent_withdrawn" | "data_export" | "data_transfer" | "breach_detected" | "privacy_violation";
     legal_basis: string;
     purpose: string;
     data_categories: string[];
@@ -131,12 +137,6 @@ export declare const LGPDAuditLogEntrySchema: z.ZodObject<{
         validation_score: number;
         violations_detected: string[];
     };
-    audit_trail: {
-        logged_by: string;
-        log_source: string;
-        integrity_hash: string;
-        quality_score: number;
-    };
     user_id?: string | undefined;
     data_subject_id?: string | undefined;
 }>;
@@ -148,15 +148,15 @@ export declare const LGPDAuditConfigSchema: z.ZodObject<{
     integrity_verification: z.ZodDefault<z.ZodBoolean>;
     automated_alerts: z.ZodDefault<z.ZodBoolean>;
 }, "strip", z.ZodTypeAny, {
-    real_time_monitoring: boolean;
     constitutional_validation: boolean;
+    real_time_monitoring: boolean;
     retention_period_days: number;
     privacy_preserving_logging: boolean;
     integrity_verification: boolean;
     automated_alerts: boolean;
 }, {
-    real_time_monitoring?: boolean | undefined;
     constitutional_validation?: boolean | undefined;
+    real_time_monitoring?: boolean | undefined;
     retention_period_days?: number | undefined;
     privacy_preserving_logging?: boolean | undefined;
     integrity_verification?: boolean | undefined;

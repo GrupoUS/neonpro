@@ -36,7 +36,7 @@ export class AIMetricsCollector implements MetricCollector {
 				unit: MetricUnit.COUNT,
 				tags: { component: "ai", error: "collection_failed" },
 				source: "ai-metrics-collector",
-				context: { error: error.toString() },
+				context: { error: error instanceof Error ? error.message : String(error) },
 			});
 		}
 
@@ -113,9 +113,9 @@ export class AIMetricsCollector implements MetricCollector {
 				type: MetricType.AI_COST,
 				value: monthlyCost,
 				unit: MetricUnit.COST_USD,
-				tags: { component: "ai", period: "monthly", projected: true },
+				tags: { component: "ai", period: "monthly", projected: "true" },
 				source: "ai-metrics-collector",
-				context: { period: "month", cost: monthlyCost, projected: true },
+				context: { period: "month", cost: monthlyCost, projected: "true" },
 			});
 		} catch (error) {
 			console.error("[AIMetricsCollector] Error collecting cost metrics:", error);

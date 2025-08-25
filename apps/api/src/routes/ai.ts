@@ -8,6 +8,11 @@ import { Hono } from "hono";
 import mlPipelineRoutes from "./ai/ml-pipeline-endpoints";
 import monitoringRoutes from "./ai/monitoring-endpoints";
 import chatHealthRoutes from "./ai/universal-chat-health";
+import chatEndpoints from "./ai/universal-chat-endpoints";
+import behavioralCrmRoutes from "./ai/behavioral-crm-endpoints";
+import arSimulatorRoutes from "./ai/ar-simulator-endpoints";
+import batchPredictionRoutes from "./ai/batch-prediction-endpoints";
+import healthcareMonitoringRoutes from "./ai/healthcare-monitoring-endpoints";
 
 const ai = new Hono();
 
@@ -19,9 +24,29 @@ ai.route("/ml-pipeline", mlPipelineRoutes);
 // /api/v1/ai/monitoring/*
 ai.route("/monitoring", monitoringRoutes);
 
+// Universal Chat endpoints
+// /api/v1/ai/universal-chat/*
+ai.route("/universal-chat", chatEndpoints);
+
 // Universal Chat Health endpoints
 // /api/v1/ai/chat/*
 ai.route("/chat", chatHealthRoutes);
+
+// Behavioral CRM endpoints
+// /api/v1/ai/behavioral-crm/*
+ai.route("/behavioral-crm", behavioralCrmRoutes);
+
+// AR Results Simulator endpoints
+// /api/v1/ai/ar-simulator/*
+ai.route("/ar-simulator", arSimulatorRoutes);
+
+// Batch Prediction endpoints
+// /api/v1/ai/batch-predictions/*
+ai.route("/batch-predictions", batchPredictionRoutes);
+
+// Healthcare Monitoring endpoints
+// /api/v1/ai/healthcare-monitoring/*
+ai.route("/healthcare-monitoring", healthcareMonitoringRoutes);
 
 // AI Root endpoint
 ai.get("/", (c) => {
@@ -32,7 +57,11 @@ ai.get("/", (c) => {
 		endpoints: {
 			ml_pipeline: "/ml-pipeline",
 			monitoring: "/monitoring", 
-			chat: "/chat"
+			chat: "/chat",
+			behavioral_crm: "/behavioral-crm",
+			ar_simulator: "/ar-simulator",
+			batch_predictions: "/batch-predictions",
+			healthcare_monitoring: "/healthcare-monitoring"
 		},
 		features: [
 			"ML Pipeline Management",
@@ -40,7 +69,16 @@ ai.get("/", (c) => {
 			"Drift Detection", 
 			"Model Performance Analytics",
 			"Healthcare Chat AI",
-			"Real-time Monitoring"
+			"Real-time Monitoring",
+			"Behavioral CRM System",
+			"Patient Segmentation",
+			"Personalized Strategies",
+			"AR Treatment Simulation",
+			"3D Facial Modeling",
+			"Outcome Prediction",
+			"Batch ML Predictions",
+			"Proactive Risk Assessment",
+			"Automated Intervention Planning"
 		],
 		timestamp: new Date().toISOString()
 	});
@@ -54,7 +92,9 @@ ai.get("/health", (c) => {
 		components: {
 			ml_pipeline: "operational",
 			monitoring: "operational",
-			chat: "operational"
+			chat: "operational",
+			behavioral_crm: "operational",
+			ar_simulator: "operational"
 		},
 		timestamp: new Date().toISOString()
 	});

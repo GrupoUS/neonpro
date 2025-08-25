@@ -6,6 +6,7 @@
 export { default as HealthcareBundleAnalyzer } from "./bundle-analysis/bundle-analyzer";
 export { default as HealthcareDatabaseMonitor } from "./database/query-profiler";
 export { default as HealthcareInfrastructureOptimizer } from "./infrastructure/cache-manager";
+export { default as HealthcarePerformanceOptimizationService } from "./performance-optimization-service";
 // Types
 export type {
 	BundleAnalysisResult,

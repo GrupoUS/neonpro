@@ -44,9 +44,6 @@ importers:
       '@supabase/auth-helpers-nextjs':
         specifier: ^0.10.0
         version: 0.10.0(@supabase/supabase-js@2.56.0)
-      '@supabase/supabase-js':
-        specifier: ^2.56.0
-        version: 2.56.0
       '@tanstack/react-query':
         specifier: ^5.62.2
         version: 5.85.3(react@19.1.1)
@@ -153,6 +150,9 @@ importers:
 
   apps/api:
     dependencies:
+      '@ai-sdk/openai':
+        specifier: ^2.0.15
+        version: 2.0.15(zod@3.25.76)
       '@hono/node-server':
         specifier: ^1.12.0
         version: 1.19.0(hono@4.9.2)
@@ -162,6 +162,9 @@ importers:
       '@hono/zod-validator':
         specifier: ^0.2.2
         version: 0.2.2(hono@4.9.2)(zod@3.25.76)
+      '@neonpro/compliance':
+        specifier: workspace:*
+        version: link:../../packages/compliance
       '@neonpro/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -171,6 +174,9 @@ importers:
       '@supabase/supabase-js':
         specifier: ^2.45.1
         version: 2.55.0
+      ai:
+        specifier: ^5.0.23
+        version: 5.0.23(zod@3.25.76)
       bcryptjs:
         specifier: ^2.4.3
         version: 2.4.3
@@ -465,6 +471,9 @@ importers:
         specifier: ^3.23.8
         version: 3.25.76
     devDependencies:
+      '@types/jspdf':
+        specifier: ^2.0.0
+        version: 2.0.0
       '@types/node':
         specifier: ^22.17.1
         version: 22.17.1
@@ -1360,6 +1369,9 @@ importers:
       '@radix-ui/react-separator':
         specifier: ^1.0.3
         version: 1.1.7(@types/react-dom@19.1.7)(@types/react@19.1.10)(react-dom@19.1.1)(react@19.1.1)
+      '@radix-ui/react-slider':
+        specifier: ^1.1.2
+        version: 1.3.6(@types/react-dom@19.1.7)(@types/react@19.1.10)(react-dom@19.1.1)(react@19.1.1)
       '@radix-ui/react-slot':
         specifier: ^1.0.2
         version: 1.2.3(@types/react@19.1.10)(react@19.1.1)
@@ -1528,6 +1540,17 @@ packages:
       zod: 3.25.76
     dev: false
 
+  /@ai-sdk/gateway@1.0.12(zod@3.25.76):
+    resolution: {integrity: sha512-IH7bBrirbzUDUhPzl5fsXLaMKxbezXnoTTZEAtbRrL6AiYycH//B9U1u+FHuteISndbDArp0b5ujpW2mhHWceA==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4
+    dependencies:
+      '@ai-sdk/provider': 2.0.0
+      '@ai-sdk/provider-utils': 3.0.5(zod@3.25.76)
+      zod: 3.25.76
+    dev: false
+
   /@ai-sdk/gateway@1.0.7(zod@3.25.76):
     resolution: {integrity: sha512-Athrq7OARuNc0iHZJP6InhSQ53tImCc990vMWyR1UHaZgPZJbXjKhIMiOj54F0I0Nlemx48V4fHYUTfLkJotnQ==}
     engines: {node: '>=18'}
@@ -1564,6 +1587,19 @@ packages:
 
   /@ai-sdk/provider-utils@3.0.3(zod@3.25.76):
     resolution: {integrity: sha512-kAxIw1nYmFW1g5TvE54ZB3eNtgZna0RnLjPUp1ltz1+t9xkXJIuDT4atrwfau9IbS0BOef38wqrI8CjFfQrxhw==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4
+    dependencies:
+      '@ai-sdk/provider': 2.0.0
+      '@standard-schema/spec': 1.0.0
+      eventsource-parser: 3.0.3
+      zod: 3.25.76
+      zod-to-json-schema: 3.24.6(zod@3.25.76)
+    dev: false
+
+  /@ai-sdk/provider-utils@3.0.5(zod@3.25.76):
+    resolution: {integrity: sha512-HliwB/yzufw3iwczbFVE2Fiwf1XqROB/I6ng8EKUsPM5+2wnIa8f4VbljZcDx+grhFrPV+PnRZH7zBqi8WZM7Q==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4
@@ -9499,6 +9535,13 @@ packages:
       '@types/node': 22.17.2
     dev: true
 
+  /@types/jspdf@2.0.0:
+    resolution: {integrity: sha512-oonYDXI4GegGaG7FFVtriJ+Yqlh4YR3L3NVDiwCEBVG7sbya19SoGx4MW4kg1MCMRPgkbbFTck8YKJL8PrkDfA==}
+    deprecated: This is a stub types definition. jspdf provides its own type definitions, so you do not need this installed.
+    dependencies:
+      jspdf: 3.0.1
+    dev: true
+
   /@types/keygrip@1.0.6:
     resolution: {integrity: sha512-lZuNAY9xeJt7Bx4t4dx0rYCDqGPW8RXhQZK1td7d4H6E9zYbLoOtjBvfwdTKpsyxQI/2jv+armjX/RW+ZNpXOQ==}
     dev: false
@@ -9696,7 +9739,6 @@ packages:
   /@types/raf@3.4.3:
     resolution: {integrity: sha512-c4YAvMedbPZ5tEyxzQdMoOhhJ4RD3rngZIdwC2/qDN3d7JpEhB6fiBRKVY1lg5B7Wk+uPBjn5f39j1/2MY1oOw==}
     requiresBuild: true
-    dev: false
     optional: true
 
   /@types/range-parser@1.2.7:
@@ -9793,7 +9835,6 @@ packages:
   /@types/trusted-types@2.0.7:
     resolution: {integrity: sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw==}
     requiresBuild: true
-    dev: false
     optional: true
 
   /@types/ua-parser-js@0.7.39:
@@ -10023,7 +10064,7 @@ packages:
       estree-walker: 3.0.3
       magic-string: 0.30.17
       msw: 2.10.5(@types/node@22.17.2)(typescript@5.9.2)
-      vite: 7.1.2(@types/node@22.17.2)
+      vite: 7.1.2(@types/node@20.19.11)
     dev: true
 
   /@vitest/pretty-format@2.1.9:
@@ -10366,6 +10407,19 @@ packages:
       zod: 3.25.76
     dev: false
 
+  /ai@5.0.23(zod@3.25.76):
+    resolution: {integrity: sha512-1zUF0o1zRI7UmSd8u5CKc2iHNhv21tM95Oka81c0CF77GnTbq5RvrAqVuLI+gMyKcIgs99yxA+xc5hJXvh6V+w==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4
+    dependencies:
+      '@ai-sdk/gateway': 1.0.12(zod@3.25.76)
+      '@ai-sdk/provider': 2.0.0
+      '@ai-sdk/provider-utils': 3.0.5(zod@3.25.76)
+      '@opentelemetry/api': 1.9.0
+      zod: 3.25.76
+    dev: false
+
   /ajv-draft-04@1.0.0(ajv@8.17.1):
     resolution: {integrity: sha512-mv00Te6nmYbRp5DCwclxtt7yV/joXJPGS7nM+97GdxvuttCOfgI3K4U25zboyeX0O+myI8ERluxQe5wljMmVIw==}
     peerDependencies:
@@ -10663,7 +10717,6 @@ packages:
     resolution: {integrity: sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==}
     engines: {node: '>= 4.5.0'}
     hasBin: true
-    dev: false
 
   /atomically@2.0.3:
     resolution: {integrity: sha512-kU6FmrwZ3Lx7/7y3hPS5QnbJfaohcIul5fGqf7ok+4KklIEk9tJ0C2IQPdacSbVUWv6zVHXEBWoWd6NrVMT7Cw==}
@@ -10798,7 +10851,6 @@ packages:
     resolution: {integrity: sha512-I3yl4r9QB5ZRY3XuJVEPfc2XhZO6YweFPI+UovAzn+8/hb3oJ6lnysaFcjVpkCPfVWFUDvoZ8kmVDP7WyRtYtQ==}
     engines: {node: '>= 0.6.0'}
     requiresBuild: true
-    dev: false
     optional: true
 
   /base64-js@0.0.8:
@@ -10949,7 +11001,6 @@ packages:
     resolution: {integrity: sha512-SB4/MIGlsiVkMcHmT+pSmIPoNDoHg+7cMzmt3Uxt628MTz2487DKSqK/fuhFBrkuqrYv5UCEnACpF4dTFNKc/g==}
     engines: {node: '>= 0.4.0'}
     hasBin: true
-    dev: false
 
   /buffer-crc32@0.2.13:
     resolution: {integrity: sha512-VO9Ht/+p3SN7SKWqcrgEzjGbRSJYTx+Q1pTQC0wrWqHx0vpJraQ6GtHx8tvcg1rlK1byhU5gccxgOgj7B0TDkQ==}
@@ -11073,7 +11124,6 @@ packages:
       rgbcolor: 1.0.1
       stackblur-canvas: 2.7.0
       svg-pathdata: 6.0.3
-    dev: false
     optional: true
 
   /caseless@0.12.0:
@@ -11574,7 +11624,6 @@ packages:
   /core-js@3.45.0:
     resolution: {integrity: sha512-c2KZL9lP4DjkN3hk/an4pWn5b5ZefhRJnAc42n6LJ19kSnbeRbdQZE5dSeE2LBol1OwJD3X1BQvFTAsa8ReeDA==}
     requiresBuild: true
-    dev: false
     optional: true
 
   /core-util-is@1.0.2:
@@ -11656,7 +11705,6 @@ packages:
     requiresBuild: true
     dependencies:
       utrie: 1.0.2
-    dev: false
     optional: true
 
   /css.escape@1.5.1:
@@ -12090,7 +12138,6 @@ packages:
     requiresBuild: true
     optionalDependencies:
       '@types/trusted-types': 2.0.7
-    dev: false
     optional: true
 
   /dot-case@2.1.1:
@@ -13549,7 +13596,6 @@ packages:
     dependencies:
       css-line-break: 2.1.0
       text-segmentation: 1.0.3
-    dev: false
     optional: true
 
   /http-cache-semantics@4.2.0:
@@ -14266,7 +14312,6 @@ packages:
       core-js: 3.45.0
       dompurify: 3.2.6
       html2canvas: 1.4.1
-    dev: false
 
   /jsprim@1.4.2:
     resolution: {integrity: sha512-P2bSOMAc/ciLz6DzgjVlGJP9+BrJWu5UDGK70C2iweC5QBIeFf0ZXRvGjEj2uYgrY2MkAAhsSWHDWlFtEroZWw==}
@@ -15947,7 +15992,6 @@ packages:
   /performance-now@2.1.0:
     resolution: {integrity: sha512-7EAHlyLHI56VEIdK57uwHdHKIaAGbnXPiw0yWbarQZOKaKpvUIgW0jWRVLiatnM+XXlSwsanIBH/hzGMJulMow==}
     requiresBuild: true
-    dev: false
 
   /pg-cloudflare@1.2.7:
     resolution: {integrity: sha512-YgCtzMH0ptvZJslLM1ffsY4EuGaU0cx4XSdXLRFae8bPP4dS5xL1tNB3k2o/N64cHJpwU7dxKli/nZ2lUa5fLg==}
@@ -16456,7 +16500,6 @@ packages:
     requiresBuild: true
     dependencies:
       performance-now: 2.1.0
-    dev: false
     optional: true
 
   /randombytes@2.1.0:
@@ -16714,7 +16757,6 @@ packages:
   /regenerator-runtime@0.13.11:
     resolution: {integrity: sha512-kY1AZVr2Ra+t+piVaJ4gxaFaReZVH40AKNo7UCX6W+dEwBo/2oZJzqfuN1qLq1oL45o56cPaTXELwrTh8Fpggg==}
     requiresBuild: true
-    dev: false
 
   /registry-auth-token@3.3.2:
     resolution: {integrity: sha512-JL39c60XlzCVgNrO+qq68FoNb56w/m7JYvGR2jT5iR1xBrUA3Mfx5Twk5rqTThPmQKMWydGmq8oFtDlxfrmxnQ==}
@@ -16899,7 +16941,6 @@ packages:
     resolution: {integrity: sha512-9aZLIrhRaD97sgVhtJOW6ckOEh6/GnvQtdVNfdZ6s67+3/XwLS9lBcQYzEEhYVeUowN7pRzMLsyGhK2i/xvWbw==}
     engines: {node: '>= 0.8.15'}
     requiresBuild: true
-    dev: false
     optional: true
 
   /rimraf@2.7.1:
@@ -17574,7 +17615,6 @@ packages:
     resolution: {integrity: sha512-yf7OENo23AGJhBriGx0QivY5JP6Y1HbrrDI6WLt6C5auYZXlQrheoY8hD4ibekFKz1HOfE48Ww8kMWMnJD/zcQ==}
     engines: {node: '>=0.1.14'}
     requiresBuild: true
-    dev: false
     optional: true
 
   /stacktrace-parser@0.1.11:
@@ -17814,7 +17854,6 @@ packages:
     resolution: {integrity: sha512-qsjeeq5YjBZ5eMdFuUa4ZosMLxgr5RZ+F+Y1OrDhuOCEInRMA3x74XdBtggJcj9kOeInz0WE+LgCPDkZFlBYJw==}
     engines: {node: '>=12.0.0'}
     requiresBuild: true
-    dev: false
     optional: true
 
   /swagger-fluent@5.0.3:
@@ -18083,7 +18122,6 @@ packages:
     requiresBuild: true
     dependencies:
       utrie: 1.0.2
-    dev: false
     optional: true
 
   /thenify-all@1.6.0:
@@ -19012,7 +19050,6 @@ packages:
     requiresBuild: true
     dependencies:
       base64-arraybuffer: 1.0.2
-    dev: false
     optional: true
 
   /uuid@10.0.0:

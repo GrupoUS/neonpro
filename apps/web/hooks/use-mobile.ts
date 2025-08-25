@@ -26,7 +26,7 @@ export function useIsMobile() {
 // =============================================================================
 
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { useChat } from 'ai/react';
+import { useChat } from 'ai';
 import type {
   AgentChatState,
   ClientContext,
