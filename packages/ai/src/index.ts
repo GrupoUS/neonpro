@@ -102,7 +102,7 @@ export const DEFAULT_AI_CONFIG: Partial<AIServiceConfiguration> = {
 };
 
 // Service initialization helper
-export async function initializeAIServices(config: AIServiceConfiguration) {
+export async function initializeAIServices(_config: AIServiceConfiguration) {
 	try {
 		// Initialize services with configuration
 		const chatService = AIServiceFactory.getChatService();

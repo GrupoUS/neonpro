@@ -447,7 +447,7 @@ export class ComplianceRiskPredictionService {
 		return data || [];
 	}
 
-	private async analyzeCompliancePatterns(tenantId: string): Promise<RiskPrediction[]> {
+	private async analyzeCompliancePatterns(_tenantId: string): Promise<RiskPrediction[]> {
 		// This would implement more sophisticated pattern analysis
 		// For now, return empty array but could include ML-based predictions
 		return [];

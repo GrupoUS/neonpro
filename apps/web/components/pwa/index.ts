@@ -3,14 +3,13 @@
  * FASE 3: Frontend Enhancement - PWA Offline Capabilities
  */
 
-export { 
-	PWAStatusCard,
-	OfflineIndicator,
-	useHealthcareServiceWorker,
-	default 
-} from "./HealthcareServiceWorker";
-
-export type { 
+export type {
 	HealthcareCacheStatus,
-	ServiceWorkerState 
+	ServiceWorkerState,
+} from "./HealthcareServiceWorker";
+export {
+	default,
+	OfflineIndicator,
+	PWAStatusCard,
+	useHealthcareServiceWorker,
 } from "./HealthcareServiceWorker";

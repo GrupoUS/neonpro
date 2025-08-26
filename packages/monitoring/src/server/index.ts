@@ -6,7 +6,7 @@
  */
 
 import type { Metric } from "web-vitals";
-import type { CustomMetric, ErrorEvent, MonitoringConfig, PerformanceReport, AlertData } from "../types";
+import type { AlertData, CustomMetric, ErrorEvent, MonitoringConfig, PerformanceReport } from "../types";
 
 /**
  * Metrics storage interface
@@ -118,7 +118,7 @@ export class InMemoryMetricsStorage implements MetricsStorage {
 		});
 
 		const vitals = this.vitals.filter(
-			(v) => v.timestamp >= period.start.getTime() && v.timestamp <= period.end.getTime()
+			(v) => v.timestamp >= period.start.getTime() && v.timestamp <= period.end.getTime(),
 		);
 
 		const errors = this.errors.filter((e) => e.timestamp >= period.start && e.timestamp <= period.end);
@@ -140,7 +140,7 @@ export class InMemoryMetricsStorage implements MetricsStorage {
 		metrics: CustomMetric[],
 		vitals: Metric[],
 		errors: ErrorEvent[],
-		period: ReportPeriod
+		period: ReportPeriod,
 	): PerformanceReport {
 		// Calculate summary stats
 		const totalSessions = new Set(metrics.map((m) => m.context?.sessionId).filter(Boolean)).size;
@@ -148,13 +148,16 @@ export class InMemoryMetricsStorage implements MetricsStorage {
 		const errorRate = (errors.length / Math.max(totalSessions, 1)) * 100;
 
 		// Group vitals by name
-		const webVitalsData: Record<string, {
-			p50: number;
-			p75: number; 
-			p90: number;
-			p95: number;
-			samples: number;
-		}> = {};
+		const webVitalsData: Record<
+			string,
+			{
+				p50: number;
+				p75: number;
+				p90: number;
+				p95: number;
+				samples: number;
+			}
+		> = {};
 		["CLS", "FCP", "FID", "INP", "LCP", "TTFB"].forEach((name) => {
 			const values = vitals.filter((v) => v.name === name).map((v) => v.value);
 			if (values.length > 0) {
@@ -169,14 +172,17 @@ export class InMemoryMetricsStorage implements MetricsStorage {
 		});
 
 		// Group custom metrics by name
-		const customMetricsData: Record<string, {
-			average: number;
-			median: number;
-			p95: number;
-			min: number;
-			max: number;
-			samples: number;
-		}> = {};
+		const customMetricsData: Record<
+			string,
+			{
+				average: number;
+				median: number;
+				p95: number;
+				min: number;
+				max: number;
+				samples: number;
+			}
+		> = {};
 		const metricNames = [...new Set(metrics.map((m) => m.name))];
 		metricNames.forEach((name) => {
 			const values = metrics.filter((m) => m.name === name).map((m) => m.value);
@@ -271,7 +277,7 @@ export class InMemoryMetricsStorage implements MetricsStorage {
 		// Slow healthcare operations alert
 		const slowOperations = metrics.filter(
 			(m) =>
-				m.rating === "poor" && ["patient_search_time", "form_submission_time", "database_query_time"].includes(m.name)
+				m.rating === "poor" && ["patient_search_time", "form_submission_time", "database_query_time"].includes(m.name),
 		);
 
 		if (slowOperations.length > 5) {
@@ -410,12 +416,13 @@ export class PerformanceMonitoringServer {
 		const startParam = params.get("start");
 		const endParam = params.get("end");
 		const granularityParam = params.get("granularity");
-		
+
 		const start = startParam ? new Date(startParam) : new Date(Date.now() - 24 * 60 * 60 * 1000);
 		const end = endParam ? new Date(endParam) : new Date();
-		const granularity = (granularityParam === "day" || granularityParam === "week" || granularityParam === "month") 
-			? granularityParam 
-			: "hour" as const;
+		const granularity =
+			granularityParam === "day" || granularityParam === "week" || granularityParam === "month"
+				? granularityParam
+				: ("hour" as const);
 
 		return { start, end, granularity };
 	}
@@ -427,37 +434,37 @@ export class PerformanceMonitoringServer {
 		if (startParam) {
 			filters.startDate = new Date(startParam);
 		}
-		
+
 		const endParam = params.get("end");
 		if (endParam) {
 			filters.endDate = new Date(endParam);
 		}
-		
+
 		const metricsParam = params.get("metrics");
 		if (metricsParam) {
 			filters.metricNames = metricsParam.split(",");
 		}
-		
+
 		const userIdParam = params.get("userId");
 		if (userIdParam) {
 			filters.userId = userIdParam;
 		}
-		
+
 		const sessionIdParam = params.get("sessionId");
 		if (sessionIdParam) {
 			filters.sessionId = sessionIdParam;
 		}
-		
+
 		const featureParam = params.get("feature");
 		if (featureParam) {
 			filters.feature = featureParam;
 		}
-		
+
 		const environmentParam = params.get("environment");
 		if (environmentParam) {
 			filters.environment = environmentParam;
 		}
-		
+
 		const limitParam = params.get("limit");
 		if (limitParam) {
 			const limit = Number.parseInt(limitParam, 10);
@@ -508,7 +515,6 @@ export function createMonitoringAPI(storage: MetricsStorage, config: MonitoringC
  * Database metrics storage (Supabase/PostgreSQL)
  */
 export class DatabaseMetricsStorage implements MetricsStorage {
-
 	async storeMetric(_metric: CustomMetric): Promise<void> {}
 
 	async storeVital(_vital: Metric): Promise<void> {}

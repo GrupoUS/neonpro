@@ -10,15 +10,15 @@ import { EnterpriseCacheService } from "../enterprise/cache/EnterpriseCacheServi
 import { EnterpriseSecurityService } from "../enterprise/security/EnterpriseSecurityService";
 import { EnterpriseHealthCheckService } from "../health/EnterpriseHealthCheckService";
 
-interface TestContext {
+type TestContext = {
 	userId: string;
 	operation: string;
 	ipAddress: string;
-}
+};
 
-interface TestRepo {
+type TestRepo = {
 	findData: (id: string) => Promise<any>;
-}
+};
 
 // Mock repository for testing
 const mockRepo: TestRepo = {
@@ -64,19 +64,11 @@ class TestEnterpriseService extends EnhancedServiceBase<TestRepo> {
 
 // Test function
 async function testEnterpriseServices() {
-	console.log("🧪 Testing FASE 2 Enterprise Services...\n");
-
 	try {
-		// 1. Test EnterpriseCacheService
-		console.log("1️⃣ Testing EnterpriseCacheService...");
 		const cacheService = new EnterpriseCacheService();
 
 		await cacheService.set("test-key", { value: "test-data" });
-		const cachedData = await cacheService.get("test-key");
-		console.log("✅ Cache service working:", cachedData ? "DATA_FOUND" : "DATA_NOT_FOUND");
-
-		// 2. Test EnterpriseAnalyticsService
-		console.log("\n2️⃣ Testing EnterpriseAnalyticsService...");
+		const _cachedData = await cacheService.get("test-key");
 		const analyticsService = new EnterpriseAnalyticsService();
 
 		await analyticsService.trackEvent({
@@ -84,25 +76,17 @@ async function testEnterpriseServices() {
 			timestamp: Date.now(),
 			properties: { test: true },
 		});
-		console.log("✅ Analytics service working: EVENT_TRACKED");
-
-		// 3. Test EnterpriseSecurityService
-		console.log("\n3️⃣ Testing EnterpriseSecurityService...");
 		const securityService = new EnterpriseSecurityService();
 
-		const hasAccess = await securityService.validateAccess("testOperation", {
+		const _hasAccess = await securityService.validateAccess("testOperation", {
 			userId: "test-user",
 			resource: "test-resource",
 			action: "read",
 		});
-		console.log("✅ Security service working:", hasAccess ? "ACCESS_GRANTED" : "ACCESS_DENIED");
-
-		// 4. Test EnterpriseAuditService
-		console.log("\n4️⃣ Testing EnterpriseAuditService...");
 		const auditService = new EnterpriseAuditService();
 
 		await auditService.logEvent({
-			id: "test-audit-" + Date.now(),
+			id: `test-audit-${Date.now()}`,
 			service: "test-service",
 			userId: "test-user",
 			action: "test_action",
@@ -110,17 +94,9 @@ async function testEnterpriseServices() {
 			timestamp: new Date(),
 			data: { test: true },
 		});
-		console.log("✅ Audit service working: EVENT_LOGGED");
-
-		// 5. Test EnterpriseHealthCheckService
-		console.log("\n5️⃣ Testing EnterpriseHealthCheckService...");
 		const healthService = new EnterpriseHealthCheckService();
 
-		const healthResult = await healthService.checkHealth("cache");
-		console.log("✅ Health service working:", healthResult.status);
-
-		// 6. Test integrated EnhancedServiceBase
-		console.log("\n6️⃣ Testing integrated EnhancedServiceBase...");
+		const _healthResult = await healthService.checkHealth("cache");
 		const testService = new TestEnterpriseService();
 
 		const context: TestContext = {
@@ -129,19 +105,12 @@ async function testEnterpriseServices() {
 			ipAddress: "127.0.0.1",
 		};
 
-		const result1 = await testService.testOperation("test-id-1", context);
-		console.log("✅ Enhanced service basic operation working:", result1 ? "SUCCESS" : "FAILED");
+		const _result1 = await testService.testOperation("test-id-1", context);
 
-		const result2 = await testService.testCachedOperation("test-id-2", context);
-		console.log("✅ Enhanced service cached operation working:", result2 ? "SUCCESS" : "FAILED");
-
-		console.log("\n🎉 ALL ENTERPRISE SERVICES VALIDATION COMPLETED SUCCESSFULLY!");
-		console.log("📊 FASE 2 IMPLEMENTATION STATUS: ✅ VALIDATED");
+		const _result2 = await testService.testCachedOperation("test-id-2", context);
 
 		return true;
-	} catch (error) {
-		console.error("\n❌ Enterprise services validation failed:", error);
-		console.log("📊 FASE 2 IMPLEMENTATION STATUS: ❌ VALIDATION_FAILED");
+	} catch (_error) {
 		return false;
 	}
 }
@@ -155,8 +124,7 @@ if (require.main === module) {
 		.then((success) => {
 			process.exit(success ? 0 : 1);
 		})
-		.catch((error) => {
-			console.error("Test execution failed:", error);
+		.catch((_error) => {
 			process.exit(1);
 		});
 }

@@ -13,7 +13,7 @@
 import type { LoggerService, MetricsService } from "@neonpro/core-services";
 
 // AI Service Types
-export interface AIServiceMetrics {
+export type AIServiceMetrics = {
 	operationId: string;
 	serviceName: string;
 	duration: number;
@@ -25,23 +25,23 @@ export interface AIServiceMetrics {
 	confidence?: number;
 	userId?: string;
 	clinicId?: string;
-}
+};
 
-export interface AIServiceConfig {
+export type AIServiceConfig = {
 	enableCaching: boolean;
 	cacheTTL: number;
 	enableMetrics: boolean;
 	enableAuditTrail: boolean;
 	performanceThreshold: number;
 	errorRetryCount: number;
-}
+};
 
-export interface CacheService {
+export type CacheService = {
 	get<T>(key: string): Promise<T | null>;
 	set<T>(key: string, value: T, ttlSeconds?: number): Promise<void>;
 	invalidate(key: string): Promise<void>;
 	exists(key: string): Promise<boolean>;
-}
+};
 
 /**
  * Enhanced Service Base Class for AI Operations
@@ -287,10 +287,10 @@ export abstract class EnhancedAIService<TInput, TOutput> {
 			const sanitized = { ...(result as any) };
 
 			// Remove common sensitive fields
-			delete sanitized.apiKey;
-			delete sanitized.token;
-			delete sanitized.password;
-			delete sanitized.personalData;
+			sanitized.apiKey = undefined;
+			sanitized.token = undefined;
+			sanitized.password = undefined;
+			sanitized.personalData = undefined;
 
 			return sanitized;
 		}
@@ -412,7 +412,9 @@ export abstract class EnhancedAIService<TInput, TOutput> {
 	 * Performance monitoring helper
 	 */
 	protected async recordPerformanceMetric(type: string, value: number, metadata?: any): Promise<void> {
-		if (!this.config.enableMetrics) return;
+		if (!this.config.enableMetrics) {
+			return;
+		}
 
 		try {
 			await this.metrics.record(`ai_${type}`, {
@@ -478,7 +480,7 @@ export abstract class EnhancedAIService<TInput, TOutput> {
 			const result = await this.cache.get(testKey);
 			await this.cache.invalidate(testKey);
 			return result === "test";
-		} catch (error) {
+		} catch (_error) {
 			return false;
 		}
 	}

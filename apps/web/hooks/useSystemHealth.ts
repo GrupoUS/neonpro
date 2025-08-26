@@ -1,8 +1,8 @@
 "use client";
 
 import type { HealthStatus, SystemComponent, SystemHealthCheck, SystemHealthSummary } from "@neonpro/types/monitoring";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 interface SystemHealthConfig {
 	checkInterval?: number; // milliseconds
@@ -78,7 +78,7 @@ const HEALTH_CHECK_CONFIGS = {
 } as const;
 
 export function useSystemHealth(config: SystemHealthConfig = {}) {
-	const supabase = createClientComponentClient();
+	const supabase = createClient();
 	const [systemHealthSummary, setSystemHealthSummary] = useState<SystemHealthSummary>({
 		overall_health: "healthy",
 		total_components: 0,
@@ -198,8 +198,8 @@ export function useSystemHealth(config: SystemHealthConfig = {}) {
 		const startTime = Date.now();
 		try {
 			// Test cache with a simple operation
-			const testKey = `health_check_${Date.now()}`;
-			const testValue = "health_check_value";
+			const _testKey = `health_check_${Date.now()}`;
+			const _testValue = "health_check_value";
 
 			// This would need to be implemented via an edge function or API endpoint
 			// For now, we'll simulate a cache check
@@ -451,7 +451,7 @@ export function useSystemHealth(config: SystemHealthConfig = {}) {
 				checkInProgress.current = false;
 			}
 		},
-		[checkComponentHealth, recordHealthCheck]
+		[checkComponentHealth, recordHealthCheck, loadHealthSummary]
 	);
 
 	// Load health summary from database

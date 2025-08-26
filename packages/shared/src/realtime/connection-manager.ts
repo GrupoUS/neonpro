@@ -5,7 +5,7 @@
  */
 
 import type { Database } from "@neonpro/db";
-import { type RealtimeChannel, type SupabaseClient, createClient } from "@supabase/supabase-js";
+import { createClient, type RealtimeChannel, type SupabaseClient } from "@supabase/supabase-js";
 
 export type ConnectionConfig = {
 	url: string;

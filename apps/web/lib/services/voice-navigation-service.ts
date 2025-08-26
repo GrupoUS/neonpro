@@ -10,7 +10,7 @@ interface VoiceCommand {
 	id: string;
 	pattern: RegExp;
 	action: string;
-	category: 'navigation' | 'patient' | 'appointment' | 'emergency' | 'inventory';
+	category: "navigation" | "patient" | "appointment" | "emergency" | "inventory";
 	description: string;
 	requiresConfirmation?: boolean;
 	sterileEnvironmentSafe: boolean;
@@ -41,7 +41,7 @@ class VoiceNavigationService {
 		isProcessing: false,
 		lastCommand: null,
 		confidence: 0,
-		error: null
+		error: null,
 	};
 
 	private commands: VoiceCommand[] = [
@@ -52,15 +52,15 @@ class VoiceNavigationService {
 			action: "navigate_dashboard",
 			category: "navigation",
 			description: "Ir para o dashboard principal",
-			sterileEnvironmentSafe: true
+			sterileEnvironmentSafe: true,
 		},
 		{
 			id: "nav_patients",
 			pattern: /^(ir para|abrir|mostrar) pacientes$/i,
 			action: "navigate_patients",
-			category: "navigation", 
+			category: "navigation",
 			description: "Abrir lista de pacientes",
-			sterileEnvironmentSafe: true
+			sterileEnvironmentSafe: true,
 		},
 		{
 			id: "nav_appointments",
@@ -68,7 +68,7 @@ class VoiceNavigationService {
 			action: "navigate_appointments",
 			category: "navigation",
 			description: "Abrir agenda de consultas",
-			sterileEnvironmentSafe: true
+			sterileEnvironmentSafe: true,
 		},
 
 		// Patient Commands
@@ -78,7 +78,7 @@ class VoiceNavigationService {
 			action: "search_patient",
 			category: "patient",
 			description: "Buscar paciente por nome",
-			sterileEnvironmentSafe: true
+			sterileEnvironmentSafe: true,
 		},
 		{
 			id: "patient_history",
@@ -86,7 +86,7 @@ class VoiceNavigationService {
 			action: "show_patient_history",
 			category: "patient",
 			description: "Mostrar histórico do paciente",
-			sterileEnvironmentSafe: true
+			sterileEnvironmentSafe: true,
 		},
 		{
 			id: "patient_status",
@@ -94,7 +94,7 @@ class VoiceNavigationService {
 			action: "show_patient_status",
 			category: "patient",
 			description: "Mostrar status atual do paciente",
-			sterileEnvironmentSafe: true
+			sterileEnvironmentSafe: true,
 		},
 
 		// Appointment Commands
@@ -105,7 +105,7 @@ class VoiceNavigationService {
 			category: "appointment",
 			description: "Agendar nova consulta",
 			requiresConfirmation: true,
-			sterileEnvironmentSafe: false
+			sterileEnvironmentSafe: false,
 		},
 		{
 			id: "next_appointment",
@@ -113,7 +113,7 @@ class VoiceNavigationService {
 			action: "show_next_appointment",
 			category: "appointment",
 			description: "Mostrar próxima consulta",
-			sterileEnvironmentSafe: true
+			sterileEnvironmentSafe: true,
 		},
 		{
 			id: "today_schedule",
@@ -121,7 +121,7 @@ class VoiceNavigationService {
 			action: "show_today_schedule",
 			category: "appointment",
 			description: "Mostrar agenda do dia",
-			sterileEnvironmentSafe: true
+			sterileEnvironmentSafe: true,
 		},
 
 		// Emergency Commands
@@ -132,7 +132,7 @@ class VoiceNavigationService {
 			category: "emergency",
 			description: "Ativar protocolo de emergência",
 			requiresConfirmation: true,
-			sterileEnvironmentSafe: true
+			sterileEnvironmentSafe: true,
 		},
 		{
 			id: "call_doctor",
@@ -141,7 +141,7 @@ class VoiceNavigationService {
 			category: "emergency",
 			description: "Contatar médico de plantão",
 			requiresConfirmation: true,
-			sterileEnvironmentSafe: true
+			sterileEnvironmentSafe: true,
 		},
 
 		// Inventory Commands
@@ -151,7 +151,7 @@ class VoiceNavigationService {
 			action: "check_inventory",
 			category: "inventory",
 			description: "Verificar estoque de produto",
-			sterileEnvironmentSafe: true
+			sterileEnvironmentSafe: true,
 		},
 		{
 			id: "low_stock_alert",
@@ -159,8 +159,8 @@ class VoiceNavigationService {
 			action: "show_low_stock",
 			category: "inventory",
 			description: "Mostrar produtos com estoque baixo",
-			sterileEnvironmentSafe: true
-		}
+			sterileEnvironmentSafe: true,
+		},
 	];
 
 	constructor() {
@@ -169,18 +169,18 @@ class VoiceNavigationService {
 	}
 
 	private initializeRecognition() {
-		if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+		if (!("webkitSpeechRecognition" in window) && !("SpeechRecognition" in window)) {
 			this.currentState.error = "Reconhecimento de voz não suportado neste navegador";
 			return;
 		}
 
-		// @ts-ignore - SpeechRecognition types
+		// @ts-expect-error - SpeechRecognition types
 		const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 		this.recognition = new SpeechRecognition();
 
 		this.recognition.continuous = false;
 		this.recognition.interimResults = false;
-		this.recognition.lang = 'pt-BR';
+		this.recognition.lang = "pt-BR";
 		this.recognition.maxAlternatives = 1;
 
 		this.recognition.onstart = () => {
@@ -222,14 +222,14 @@ class VoiceNavigationService {
 
 		try {
 			this.recognition.start();
-			
+
 			// Log voice interaction
-			await supabase.from('assistant_logs').insert({
-				action: 'voice_recognition_started',
+			await supabase.from("assistant_logs").insert({
+				action: "voice_recognition_started",
 				details: {
 					timestamp: new Date().toISOString(),
-					user_agent: navigator.userAgent
-				}
+					user_agent: navigator.userAgent,
+				},
 			});
 		} catch (error) {
 			this.currentState.error = `Erro ao iniciar reconhecimento: ${error}`;
@@ -265,13 +265,12 @@ class VoiceNavigationService {
 
 			// Execute command
 			const result = await this.executeCommand(matchedCommand, command);
-			
+
 			if (result.success) {
 				await this.speak(result.message || "Comando executado com sucesso");
 			} else {
 				await this.speak(result.error || "Erro ao executar comando");
 			}
-
 		} catch (error) {
 			console.error("Command processing error:", error);
 			await this.speak("Erro ao processar comando");
@@ -289,16 +288,19 @@ class VoiceNavigationService {
 		return null;
 	}
 
-	private async executeCommand(voiceCommand: VoiceCommand, spokenCommand: string): Promise<{success: boolean; message?: string; error?: string}> {
+	private async executeCommand(
+		voiceCommand: VoiceCommand,
+		spokenCommand: string
+	): Promise<{ success: boolean; message?: string; error?: string }> {
 		// Log command execution
-		await supabase.from('assistant_logs').insert({
-			action: 'voice_command_executed',
+		await supabase.from("assistant_logs").insert({
+			action: "voice_command_executed",
 			details: {
 				command_id: voiceCommand.id,
 				spoken_command: spokenCommand,
 				category: voiceCommand.category,
-				timestamp: new Date().toISOString()
-			}
+				timestamp: new Date().toISOString(),
+			},
 		});
 
 		// Extract parameters from command
@@ -365,7 +367,7 @@ class VoiceNavigationService {
 	private async speak(text: string): Promise<void> {
 		return new Promise((resolve) => {
 			const utterance = new SpeechSynthesisUtterance(text);
-			utterance.lang = 'pt-BR';
+			utterance.lang = "pt-BR";
 			utterance.rate = 0.9;
 			utterance.pitch = 1;
 			utterance.volume = 0.8;
@@ -378,13 +380,13 @@ class VoiceNavigationService {
 	}
 
 	private async logUnrecognizedCommand(command: string, confidence: number): Promise<void> {
-		await supabase.from('assistant_logs').insert({
-			action: 'voice_command_unrecognized',
+		await supabase.from("assistant_logs").insert({
+			action: "voice_command_unrecognized",
 			details: {
 				command,
 				confidence,
-				timestamp: new Date().toISOString()
-			}
+				timestamp: new Date().toISOString(),
+			},
 		});
 	}
 
@@ -394,16 +396,15 @@ class VoiceNavigationService {
 	}
 
 	getAvailableCommands(): VoiceCommand[] {
-		return this.commands.map(cmd => ({ ...cmd }));
+		return this.commands.map((cmd) => ({ ...cmd }));
 	}
 
-	getCommandsByCategory(category: VoiceCommand['category']): VoiceCommand[] {
-		return this.commands.filter(cmd => cmd.category === category);
+	getCommandsByCategory(category: VoiceCommand["category"]): VoiceCommand[] {
+		return this.commands.filter((cmd) => cmd.category === category);
 	}
 
 	isSupported(): boolean {
-		return 'speechSynthesis' in window && 
-			   (('SpeechRecognition' in window) || ('webkitSpeechRecognition' in window));
+		return "speechSynthesis" in window && ("SpeechRecognition" in window || "webkitSpeechRecognition" in window);
 	}
 }
 

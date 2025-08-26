@@ -6,8 +6,8 @@
  * Used by GitHub Actions CI/CD pipeline
  */
 
-const path = require("path");
-const fs = require("fs");
+const path = require("node:path");
+const fs = require("node:fs");
 
 // Color codes for console output
 const colors = {
@@ -19,9 +19,7 @@ const colors = {
 	bold: "\x1b[1m",
 };
 
-function log(message, color = colors.reset) {
-	console.log(`${color}${message}${colors.reset}`);
-}
+function log(_message, _color = colors.reset) {}
 
 function logHeader(message) {
 	log(`\n${colors.bold}${colors.blue}=== ${message} ===${colors.reset}`);
@@ -140,7 +138,7 @@ async function validateDigitalSignature() {
 
 	try {
 		// Check if crypto module is available (required for digital signatures)
-		const crypto = require("crypto");
+		const crypto = require("node:crypto");
 
 		// Test hash generation (simplified version of what CFM module does)
 		const testData = "test-document-hash:professional-id:timestamp";
@@ -351,7 +349,6 @@ async function runCFMValidation() {
 if (require.main === module) {
 	runCFMValidation().catch((error) => {
 		logError(`Unexpected error: ${error.message}`);
-		console.error(error);
 		process.exit(1);
 	});
 }

@@ -14,5 +14,5 @@ export default defineConfig({
 	tsconfig: "./tsconfig.json",
 	esbuildOptions: (options) => {
 		options.tsconfig = "./tsconfig.json";
-	}
+	},
 });

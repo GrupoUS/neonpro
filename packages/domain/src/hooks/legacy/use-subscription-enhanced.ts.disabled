@@ -14,7 +14,7 @@
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+// import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'; // DEPRECATED - replaced with @supabase/ssr
 import { enhancedSubscriptionCache } // Missing module - placeholder needed
 import { subscriptionPerformanceMonitor } // Missing module - placeholder needed
 import { subscriptionQueryOptimizer } // Missing module - placeholder needed

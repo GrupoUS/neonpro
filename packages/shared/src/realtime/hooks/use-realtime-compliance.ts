@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useCallback, useEffect, useState } from "react";
 import { getRealtimeManager } from "../connection-manager";
 
 // Types for compliance monitoring
-export interface ComplianceLog {
+export type ComplianceLog = {
 	id: string;
 	user_id: string;
 	action: string;
@@ -14,18 +14,18 @@ export interface ComplianceLog {
 	user_agent: string;
 	clinic_id: string;
 	timestamp: string;
-}
+};
 
-export interface RealtimeCompliancePayload {
+export type RealtimeCompliancePayload = {
 	eventType: "INSERT" | "UPDATE" | "DELETE";
 	complianceType: keyof ComplianceEventType;
 	new?: ComplianceLog;
 	old?: ComplianceLog;
 	severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
 	requiresAction: boolean;
-}
+};
 
-export interface ComplianceEventType {
+export type ComplianceEventType = {
 	LGPD_DATA_ACCESS: string;
 	LGPD_CONSENT_GRANTED: string;
 	LGPD_CONSENT_REVOKED: string;
@@ -34,9 +34,9 @@ export interface ComplianceEventType {
 	ANVISA_VIOLATION: string;
 	DATA_BREACH_DETECTED: string;
 	UNAUTHORIZED_ACCESS: string;
-}
+};
 
-export interface UseRealtimeComplianceOptions {
+export type UseRealtimeComplianceOptions = {
 	tenantId: string;
 	complianceType?: keyof ComplianceEventType | "ALL";
 	enabled?: boolean;
@@ -44,9 +44,9 @@ export interface UseRealtimeComplianceOptions {
 	onComplianceEvent?: (payload: RealtimeCompliancePayload) => void;
 	onCriticalViolation?: (payload: RealtimeCompliancePayload) => void;
 	onError?: (error: Error) => void;
-}
+};
 
-export interface UseRealtimeComplianceReturn {
+export type UseRealtimeComplianceReturn = {
 	isConnected: boolean;
 	connectionHealth: number;
 	totalEvents: number;
@@ -57,7 +57,7 @@ export interface UseRealtimeComplianceReturn {
 	unsubscribe: () => void;
 	generateComplianceReport: () => Promise<any>;
 	triggerManualAudit: () => void;
-}
+};
 
 /**
  * Real-time Compliance Hook
@@ -220,29 +220,35 @@ export function useRealtimeCompliance(options: UseRealtimeComplianceOptions): Us
 			enableAuditLog,
 			determineComplianceType,
 			determineSeverity,
+			generateAuditEntry, // Update TanStack Query cache
+			updateComplianceCache, // Update compliance score
+			updateComplianceScore,
 		]
 	);
 
 	// Additional helper functions
-	const generateAuditEntry = useCallback((payload: RealtimeCompliancePayload): ComplianceLog => {
-		return {
-			id: `audit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-			clinic_id: tenantId,
-			action: `${payload.complianceType}_${payload.eventType}`,
-			user_id: "system",
-			resource_type: "compliance_audit",
-			resource_id: payload.new?.id || payload.old?.id || null,
-			metadata: {
-				compliance_type: payload.complianceType,
-				severity: payload.severity,
-				requires_action: payload.requiresAction,
-				event_type: payload.eventType,
-			},
-			ip_address: "127.0.0.1",
-			user_agent: "NeonPro-Compliance-System",
-			timestamp: new Date().toISOString(),
-		};
-	}, [tenantId]);
+	const generateAuditEntry = useCallback(
+		(payload: RealtimeCompliancePayload): ComplianceLog => {
+			return {
+				id: `audit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+				clinic_id: tenantId,
+				action: `${payload.complianceType}_${payload.eventType}`,
+				user_id: "system",
+				resource_type: "compliance_audit",
+				resource_id: payload.new?.id || payload.old?.id || null,
+				metadata: {
+					compliance_type: payload.complianceType,
+					severity: payload.severity,
+					requires_action: payload.requiresAction,
+					event_type: payload.eventType,
+				},
+				ip_address: "127.0.0.1",
+				user_agent: "NeonPro-Compliance-System",
+				timestamp: new Date().toISOString(),
+			};
+		},
+		[tenantId]
+	);
 
 	const updateComplianceCache = useCallback(
 		(payload: RealtimeCompliancePayload) => {
@@ -390,10 +396,7 @@ export function useRealtimeCompliance(options: UseRealtimeComplianceOptions): Us
 	/**
 	 * Trigger manual audit
 	 */
-	const triggerManualAudit = useCallback(() => {
-		// This would trigger a manual compliance audit
-		console.log("Manual audit triggered for tenant:", tenantId);
-	}, [tenantId]);
+	const triggerManualAudit = useCallback(() => {}, []);
 
 	// Auto subscribe/unsubscribe
 	useEffect(() => {

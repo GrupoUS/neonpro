@@ -13,7 +13,7 @@ import { Card } from "@neonpro/ui/components/Card";
 import { ChatInterface } from "@neonpro/ui/components/chat/ChatInterface";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@neonpro/ui/components/Tabs";
 import { Bot, Globe, Lock, UserCheck, Users, Zap } from "lucide-react";
-import React, { useState } from "react";
+import { useState } from "react";
 
 export default function UniversalChatTestPage() {
 	const [activeInterface, setActiveInterface] = useState<ChatInterfaceType>("external");

@@ -2,7 +2,7 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+// import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'; // DEPRECATED - replaced with @supabase/ssr
 import { useToast } from '../use-toast-mock';
 
 // LGPD-compliant error types that don't expose sensitive data

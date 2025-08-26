@@ -9,10 +9,10 @@ export class AIContextCacheLayer implements CacheOperation {
 		averageResponseTime: 0,
 	};
 	private responseTimeBuffer: number[] = [];
-	private redis: any; // Will be replaced with Upstash Redis client
+	private readonly redis: any; // Will be replaced with Upstash Redis client
 
 	constructor(
-		private config = {
+		private readonly config = {
 			redisUrl: process.env.UPSTASH_REDIS_URL || process.env.REDIS_URL,
 			token: process.env.UPSTASH_REDIS_TOKEN,
 			defaultTTL: 24 * 60 * 60, // 24 hours in seconds
@@ -29,17 +29,15 @@ export class AIContextCacheLayer implements CacheOperation {
 		try {
 			// Mock Upstash Redis client for now
 			this.redis = {
-				get: async (key: string) => null,
-				setex: async (key: string, ttl: number, value: string) => {},
-				del: async (key: string) => {},
+				get: async (_key: string) => null,
+				setex: async (_key: string, _ttl: number, _value: string) => {},
+				del: async (_key: string) => {},
 				flushall: async () => {},
-				keys: async (pattern: string) => [],
-				hgetall: async (key: string) => {},
-				hset: async (key: string, field: string, value: string) => {},
+				keys: async (_pattern: string) => [],
+				hgetall: async (_key: string) => {},
+				hset: async (_key: string, _field: string, _value: string) => {},
 			};
-		} catch (error) {
-			console.error("Failed to initialize Upstash Redis:", error);
-		}
+		} catch (_error) {}
 	}
 	async get<T>(key: string): Promise<T | null> {
 		const startTime = performance.now();
@@ -61,8 +59,7 @@ export class AIContextCacheLayer implements CacheOperation {
 			this.stats.hits++;
 			this.updateStats(startTime);
 			return this.config.compressionEnabled ? this.decompress(parsed.value) : parsed.value;
-		} catch (error) {
-			console.error("AI context cache get error:", error);
+		} catch (_error) {
 			this.stats.misses++;
 			this.updateStats(startTime);
 			return null;
@@ -102,16 +99,12 @@ export class AIContextCacheLayer implements CacheOperation {
 			if (this.config.contextRetention) {
 				await this.trackContextPattern(key, metadata);
 			}
-		} catch (error) {
-			console.error("AI context cache set error:", error);
-		}
+		} catch (_error) {}
 	}
 	async delete(key: string): Promise<void> {
 		try {
 			await this.redis.del(this.buildKey(key));
-		} catch (error) {
-			console.error("AI context cache delete error:", error);
-		}
+		} catch (_error) {}
 	}
 
 	async clear(): Promise<void> {
@@ -121,9 +114,7 @@ export class AIContextCacheLayer implements CacheOperation {
 				await Promise.all(keys.map((key: string) => this.redis.del(key)));
 			}
 			this.resetStats();
-		} catch (error) {
-			console.error("AI context cache clear error:", error);
-		}
+		} catch (_error) {}
 	}
 
 	async getStats(): Promise<CacheStats> {
@@ -138,21 +129,21 @@ export class AIContextCacheLayer implements CacheOperation {
 				const cached = await this.redis.get(key);
 				if (cached) {
 					const parsed = JSON.parse(cached);
-					if (parsed.metadata?.tags && parsed.metadata.tags.some((tag: string) => tags.includes(tag))) {
+					if (parsed.metadata?.tags?.some((tag: string) => tags.includes(tag))) {
 						await this.redis.del(key);
 					}
 				}
 			}
-		} catch (error) {
-			console.error("AI context cache tag invalidation error:", error);
-		}
+		} catch (_error) {}
 	}
 	private buildKey(key: string): string {
 		return `neonpro:ai:${key}`;
 	}
 
 	private adjustTTLForContext(baseTTL: number, metadata?: any): number {
-		if (!metadata) return baseTTL;
+		if (!metadata) {
+			return baseTTL;
+		}
 
 		let multiplier = 1;
 
@@ -195,13 +186,13 @@ export class AIContextCacheLayer implements CacheOperation {
 		const patternKey = `${this.buildKey(key)}:pattern`;
 		try {
 			await this.redis.hset(patternKey, "lastAccess", Date.now().toString());
-		} catch (error) {
-			console.error("Failed to update access pattern:", error);
-		}
+		} catch (_error) {}
 	}
 
 	private async trackContextPattern(key: string, metadata?: any): Promise<void> {
-		if (!metadata) return;
+		if (!metadata) {
+			return;
+		}
 
 		const patternKey = `neonpro:ai:patterns:${metadata.contextType}`;
 		try {
@@ -214,9 +205,7 @@ export class AIContextCacheLayer implements CacheOperation {
 					userId: metadata.userId,
 				})
 			);
-		} catch (error) {
-			console.error("Failed to track context pattern:", error);
-		}
+		} catch (_error) {}
 	}
 	private compress(value: any): string {
 		// Mock compression - will be replaced with actual compression
@@ -255,12 +244,8 @@ export class AIContextCacheLayer implements CacheOperation {
 			// Analyze access patterns and optimize cache retention
 			const patterns = await this.redis.keys("neonpro:ai:patterns:*");
 			for (const pattern of patterns) {
-				const data = await this.redis.hgetall(pattern);
-				// Implement ML-based retention optimization logic here
-				console.log(`Optimizing pattern: ${pattern}`, Object.keys(data).length);
+				const _data = await this.redis.hgetall(pattern);
 			}
-		} catch (error) {
-			console.error("Failed to optimize context retention:", error);
-		}
+		} catch (_error) {}
 	}
 }

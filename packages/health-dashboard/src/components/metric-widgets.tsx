@@ -1,20 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
-interface MetricValue {
+type MetricValue = {
 	current: number;
 	target: number;
 	unit: string;
 	trend?: "up" | "down" | "stable";
-}
+};
 
-interface MetricWidgetProps {
+type MetricWidgetProps = {
 	title: string;
 	value: MetricValue;
 	description?: string;
 	color?: "green" | "blue" | "yellow" | "red";
-}
+};
 
 export function MetricWidget({ title, value, description, color = "blue" }: MetricWidgetProps) {
 	const isHealthy = value.current >= value.target;
@@ -64,11 +62,11 @@ export function MetricWidget({ title, value, description, color = "blue" }: Metr
 	);
 }
 
-interface ROIMetricProps {
+type ROIMetricProps = {
 	actualROI: number;
 	targetROI: number;
 	period: "monthly" | "annual";
-}
+};
 
 export function ROIMetric({ actualROI, targetROI, period }: ROIMetricProps) {
 	const isExceeding = actualROI >= targetROI;

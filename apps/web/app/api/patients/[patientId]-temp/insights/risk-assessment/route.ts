@@ -28,7 +28,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
 		}
 
 		// Generate risk assessment
-		const riskAssessment = await patientInsights.generateQuickRiskAssessment(patientId);
+		const riskAssessment = await patientInsights.getRiskAssessment(patientId);
 
 		return NextResponse.json({
 			success: true,
@@ -56,12 +56,12 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 		const { includeRecommendations = true } = body;
 
 		// Generate comprehensive risk assessment
-		const riskAssessment = await patientInsights.generateQuickRiskAssessment(patientId);
+		const riskAssessment = await patientInsights.getRiskAssessment(patientId);
 
 		let recommendations = [];
 		if (includeRecommendations) {
-			const treatmentGuidance = await patientInsights.generateTreatmentGuidance(patientId);
-			recommendations = treatmentGuidance.primaryRecommendations || [];
+			const treatmentGuidance = await patientInsights.getTreatmentRecommendations(patientId);
+			recommendations = treatmentGuidance.recommendations || [];
 		}
 
 		return NextResponse.json({

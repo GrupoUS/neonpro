@@ -6,25 +6,13 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
-import {
-	AlertTriangle,
-	CheckCircle,
-	Clock,
-	FileText,
-	Shield,
-	Stethoscope,
-	Users,
-	XCircle,
-	Calendar,
-	Download,
-	Eye,
-} from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { AlertTriangle, CheckCircle, Clock, Download, Eye, FileText, Shield, Stethoscope, XCircle } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface ComplianceFramework {
@@ -269,12 +257,11 @@ export function ComplianceStatusDashboard() {
 		}
 	};
 
-	const overallScore = frameworks.length > 0 
-		? Math.round(frameworks.reduce((acc, f) => acc + f.score, 0) / frameworks.length) 
-		: 0;
+	const overallScore =
+		frameworks.length > 0 ? Math.round(frameworks.reduce((acc, f) => acc + f.score, 0) / frameworks.length) : 0;
 
 	const totalCriticalIssues = frameworks.reduce((acc, f) => acc + f.criticalIssues, 0);
-	const totalWarningIssues = frameworks.reduce((acc, f) => acc + f.warningIssues, 0);
+	const _totalWarningIssues = frameworks.reduce((acc, f) => acc + f.warningIssues, 0);
 
 	if (loading) {
 		return (
@@ -297,30 +284,24 @@ export function ComplianceStatusDashboard() {
 	}
 
 	return (
-		<div 
-			className="space-y-6" 
-			role="main" 
+		<div
+			className="space-y-6"
+			role="main"
 			aria-labelledby="compliance-heading"
 			aria-describedby="compliance-description"
 		>
 			{/* Header */}
 			<div className="flex items-center justify-between">
 				<div>
-					<h2 
-						id="compliance-heading"
-						className="text-2xl font-bold text-foreground"
-					>
+					<h2 id="compliance-heading" className="text-2xl font-bold text-foreground">
 						Status de Compliance
 					</h2>
-					<p 
-						id="compliance-description"
-						className="text-muted-foreground"
-					>
+					<p id="compliance-description" className="text-muted-foreground">
 						Monitoramento em tempo real LGPD, ANVISA e CFM
 					</p>
 				</div>
-				<Badge 
-					variant="outline" 
+				<Badge
+					variant="outline"
 					className={getStatusColor("compliant")}
 					role="status"
 					aria-label={`Score geral de compliance: ${overallScore}%`}
@@ -331,11 +312,7 @@ export function ComplianceStatusDashboard() {
 
 			{/* Overall Status Alert */}
 			{totalCriticalIssues > 0 && (
-				<Alert 
-					variant="destructive"
-					role="alert"
-					aria-live="polite"
-				>
+				<Alert variant="destructive" role="alert" aria-live="polite">
 					<AlertTriangle className="h-4 w-4" aria-hidden="true" />
 					<AlertTitle>Atenção: Problemas Críticos Detectados</AlertTitle>
 					<AlertDescription>
@@ -367,12 +344,8 @@ export function ComplianceStatusDashboard() {
 								</div>
 								<Progress value={framework.score} className="h-2" />
 								<div className="flex justify-between text-sm">
-									<span className="text-red-600">
-										{framework.criticalIssues} críticos
-									</span>
-									<span className="text-yellow-600">
-										{framework.warningIssues} avisos
-									</span>
+									<span className="text-red-600">{framework.criticalIssues} críticos</span>
+									<span className="text-yellow-600">{framework.warningIssues} avisos</span>
 								</div>
 								<div className="text-xs text-muted-foreground">
 									Próxima auditoria: {new Date(framework.nextAudit).toLocaleDateString("pt-BR")}
@@ -387,9 +360,7 @@ export function ComplianceStatusDashboard() {
 			<Card className="neonpro-card">
 				<CardHeader>
 					<CardTitle>Requisitos de Compliance</CardTitle>
-					<CardDescription>
-						Status detalhado de cada framework regulatório
-					</CardDescription>
+					<CardDescription>Status detalhado de cada framework regulatório</CardDescription>
 				</CardHeader>
 				<CardContent>
 					<Tabs defaultValue="LGPD" className="w-full">
@@ -427,9 +398,7 @@ export function ComplianceStatusDashboard() {
 											</div>
 											<p className="text-sm text-muted-foreground">{req.description}</p>
 											<div className="flex items-center space-x-4 text-xs text-muted-foreground">
-												<span>
-													Última verificação: {new Date(req.lastChecked).toLocaleDateString("pt-BR")}
-												</span>
+												<span>Última verificação: {new Date(req.lastChecked).toLocaleDateString("pt-BR")}</span>
 												{req.autoRemediationAvailable && (
 													<Badge variant="outline" className="text-blue-600 border-blue-600">
 														Auto-correção disponível
@@ -462,9 +431,7 @@ export function ComplianceStatusDashboard() {
 						<FileText className="mr-2 h-5 w-5" />
 						Relatórios de Compliance
 					</CardTitle>
-					<CardDescription>
-						Auditorias, certificações e relatórios regulatórios
-					</CardDescription>
+					<CardDescription>Auditorias, certificações e relatórios regulatórios</CardDescription>
 				</CardHeader>
 				<CardContent>
 					<div className="space-y-4">

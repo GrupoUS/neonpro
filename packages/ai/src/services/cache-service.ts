@@ -1,7 +1,7 @@
 import { Redis } from "ioredis";
 import type { CacheService, LoggerService, MetricsService } from "../types";
 
-interface CacheConfig {
+type CacheConfig = {
 	redis: {
 		host: string;
 		port: number;
@@ -15,9 +15,9 @@ interface CacheConfig {
 	defaultTTL: number;
 	compressionThreshold: number;
 	enableMetrics: boolean;
-}
+};
 
-interface CacheMetrics {
+type CacheMetrics = {
 	hits: number;
 	misses: number;
 	sets: number;
@@ -26,14 +26,14 @@ interface CacheMetrics {
 	totalOperations: number;
 	hitRate: number;
 	avgResponseTime: number;
-}
+};
 
 export class RedisCacheService implements CacheService {
-	private redis: Redis;
-	private logger: LoggerService;
-	private metrics: MetricsService;
-	private config: CacheConfig;
-	private operationMetrics: CacheMetrics = {
+	private readonly redis: Redis;
+	private readonly logger: LoggerService;
+	private readonly metrics: MetricsService;
+	private readonly config: CacheConfig;
+	private readonly operationMetrics: CacheMetrics = {
 		hits: 0,
 		misses: 0,
 		sets: 0,
@@ -347,7 +347,9 @@ export class RedisCacheService implements CacheService {
 			const responseTime = Date.now() - startTime;
 
 			const parsedValues = values.map((value) => {
-				if (value === null) return null;
+				if (value === null) {
+					return null;
+				}
 
 				try {
 					return JSON.parse(value) as T;
@@ -562,7 +564,9 @@ export class RedisCacheService implements CacheService {
 	}
 
 	private startMetricsReporting(): void {
-		if (!this.config.enableMetrics) return;
+		if (!this.config.enableMetrics) {
+			return;
+		}
 
 		// Report metrics every 60 seconds
 		setInterval(async () => {
@@ -612,15 +616,15 @@ export const createCacheConfig = (overrides: Partial<CacheConfig> = {}): CacheCo
 	return {
 		redis: {
 			host: process.env.REDIS_HOST || "localhost",
-			port: Number.parseInt(process.env.REDIS_PORT || "6379"),
+			port: Number.parseInt(process.env.REDIS_PORT || "6379", 10),
 			password: process.env.REDIS_PASSWORD,
-			database: Number.parseInt(process.env.REDIS_DATABASE || "0"),
+			database: Number.parseInt(process.env.REDIS_DATABASE || "0", 10),
 			keyPrefix: process.env.REDIS_KEY_PREFIX || "neonpro:ai:",
 			retryDelayOnFailover: 100,
 			maxRetriesPerRequest: 3,
 			lazyConnect: true,
 		},
-		defaultTTL: Number.parseInt(process.env.CACHE_DEFAULT_TTL || "3600"), // 1 hour
+		defaultTTL: Number.parseInt(process.env.CACHE_DEFAULT_TTL || "3600", 10), // 1 hour
 		compressionThreshold: 1024, // 1KB
 		enableMetrics: process.env.CACHE_ENABLE_METRICS === "true",
 		...overrides,

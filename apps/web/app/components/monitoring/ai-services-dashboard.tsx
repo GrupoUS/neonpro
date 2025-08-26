@@ -3,13 +3,9 @@
 import {
 	Activity,
 	AlertTriangle,
-	BarChart3,
 	Bell,
 	CheckCircle,
 	Clock,
-	Cpu,
-	Database,
-	MessageSquare,
 	RefreshCw,
 	Shield,
 	TrendingUp,
@@ -101,7 +97,7 @@ const AIServicesDashboard: React.FC = () => {
 	const [isLoading, setIsLoading] = useState(true);
 	const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
 	const [autoRefresh, setAutoRefresh] = useState(true);
-	const [selectedTimeRange, setSelectedTimeRange] = useState("1h");
+	const [selectedTimeRange, _setSelectedTimeRange] = useState("1h");
 
 	const fetchDashboardData = useCallback(async () => {
 		try {
@@ -487,7 +483,7 @@ const AIServicesDashboard: React.FC = () => {
 													name: "Unhealthy",
 													value: dashboardData.services.filter((s) => s.status === "unhealthy").length,
 												},
-											].map((entry, index) => (
+											].map((_entry, index) => (
 												<Cell fill={COLORS[index % COLORS.length]} key={`cell-${index}`} />
 											))}
 										</Pie>

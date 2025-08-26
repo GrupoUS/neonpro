@@ -220,7 +220,7 @@ test.describe("Dashboard Financial Page", () => {
 				await page.fill('[data-testid="payment-date"]', new Date().toISOString().split("T")[0]);
 
 				// Add payment reference
-				await page.fill('[data-testid="payment-reference"]', "PIX-" + Date.now());
+				await page.fill('[data-testid="payment-reference"]', `PIX-${Date.now()}`);
 
 				// Submit payment
 				await page.click('[data-testid="submit-payment"]');

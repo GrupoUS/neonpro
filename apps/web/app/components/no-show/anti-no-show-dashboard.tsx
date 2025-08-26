@@ -24,7 +24,7 @@ import {
 	XCircle,
 	Zap,
 } from "lucide-react";
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getDashboardStats, getPredictions } from "@/app/lib/services/no-show-prediction";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -81,41 +81,41 @@ interface AntiNoShowDashboardProps {
 }
 
 // Utility functions for risk categories and analytics
-const formatCurrency = (value: number) => {
-	return new Intl.NumberFormat('pt-BR', {
-		style: 'currency',
-		currency: 'BRL'
+const _formatCurrency = (value: number) => {
+	return new Intl.NumberFormat("pt-BR", {
+		style: "currency",
+		currency: "BRL",
 	}).format(value);
 };
 
 const getRiskBadgeVariant = (riskCategory: string) => {
 	switch (riskCategory.toLowerCase()) {
-		case 'high':
-		case 'alto':
-			return 'destructive' as const;
-		case 'medium':
-		case 'medio':
-		case 'médio':
-			return 'default' as const;
-		case 'low':
-		case 'baixo':
-			return 'secondary' as const;
+		case "high":
+		case "alto":
+			return "destructive" as const;
+		case "medium":
+		case "medio":
+		case "médio":
+			return "default" as const;
+		case "low":
+		case "baixo":
+			return "secondary" as const;
 		default:
-			return 'outline' as const;
+			return "outline" as const;
 	}
 };
 
 const getRiskIcon = (riskCategory: string) => {
 	switch (riskCategory.toLowerCase()) {
-		case 'high':
-		case 'alto':
+		case "high":
+		case "alto":
 			return <AlertTriangle className="h-3 w-3" />;
-		case 'medium':
-		case 'medio':
-		case 'médio':
+		case "medium":
+		case "medio":
+		case "médio":
 			return <AlertCircle className="h-3 w-3" />;
-		case 'low':
-		case 'baixo':
+		case "low":
+		case "baixo":
 			return <CheckCircle className="h-3 w-3" />;
 		default:
 			return <Info className="h-3 w-3" />;
@@ -124,18 +124,18 @@ const getRiskIcon = (riskCategory: string) => {
 
 const getRiskLabel = (riskCategory: string) => {
 	switch (riskCategory.toLowerCase()) {
-		case 'high':
-		case 'alto':
-			return 'Alto Risco';
-		case 'medium':
-		case 'medio':
-		case 'médio':
-			return 'Médio Risco';
-		case 'low':
-		case 'baixo':
-			return 'Baixo Risco';
+		case "high":
+		case "alto":
+			return "Alto Risco";
+		case "medium":
+		case "medio":
+		case "médio":
+			return "Médio Risco";
+		case "low":
+		case "baixo":
+			return "Baixo Risco";
 		default:
-			return 'Indefinido';
+			return "Indefinido";
 	}
 };
 
@@ -368,9 +368,9 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
 						accuracy: 0.87,
 						precision: 0.85,
 						recall: 0.89,
-						f1_score: 0.87
+						f1_score: 0.87,
 					},
-					created_at: "2024-01-15T10:00:00Z"
+					created_at: "2024-01-15T10:00:00Z",
 				},
 				{
 					version_id: "model_v1.3.0",
@@ -381,10 +381,10 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
 						accuracy: 0.91,
 						precision: 0.89,
 						recall: 0.93,
-						f1_score: 0.91
+						f1_score: 0.91,
 					},
-					created_at: "2024-01-20T14:30:00Z"
-				}
+					created_at: "2024-01-20T14:30:00Z",
+				},
 			]);
 
 			// Mock A/B tests
@@ -399,11 +399,11 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
 					metrics_comparison: {
 						model_a: { accuracy: 0.87 },
 						model_b: { accuracy: 0.91 },
-						improvement_percentage: 4.6
+						improvement_percentage: 4.6,
 					},
 					statistical_significance: true,
-					winner: "model_b"
-				}
+					winner: "model_b",
+				},
 			]);
 
 			// Mock drift status
@@ -411,9 +411,8 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
 				drift_detected: false,
 				drift_severity: "low",
 				detection_timestamp: new Date().toISOString(),
-				recommendations: ["Model performance is stable", "Continue regular monitoring"]
+				recommendations: ["Model performance is stable", "Continue regular monitoring"],
 			});
-
 		} catch (error) {
 			console.error("Failed to load ML pipeline data:", error);
 		}
@@ -423,8 +422,8 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
 		setIsRunningMaintenance(true);
 		try {
 			// Simulate maintenance process
-			await new Promise(resolve => setTimeout(resolve, 3000));
-			
+			await new Promise((resolve) => setTimeout(resolve, 3000));
+
 			toast({
 				title: "Manutenção Concluída",
 				description: "Verificação de modelo e detecção de drift executadas com sucesso",
@@ -432,7 +431,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
 
 			// Refresh data after maintenance
 			await loadMLPipelineData();
-		} catch (error) {
+		} catch (_error) {
 			toast({
 				title: "Erro na Manutenção",
 				description: "Falha ao executar manutenção do modelo",
@@ -450,7 +449,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
 				description: "Novo teste A/B foi configurado com sucesso",
 			});
 			await loadMLPipelineData();
-		} catch (error) {
+		} catch (_error) {
 			toast({
 				title: "Erro no A/B Test",
 				description: "Falha ao iniciar novo teste A/B",
@@ -465,7 +464,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
 	useEffect(() => {
 		loadPredictions();
 		loadMLPipelineData();
-	}, []); // eslint-disable-line react-hooks/exhaustive-deps
+	}, [loadMLPipelineData, loadPredictions]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	// Filter patients based on selection
 	const filteredPatients = highRiskPatients.filter((patient) => {
@@ -477,7 +476,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
 	});
 
 	// Risk category styling
-	const getRiskBadgeVariant = (category: string) => {
+	const _getRiskBadgeVariant = (category: string) => {
 		switch (category) {
 			case "very_high":
 				return "destructive";
@@ -492,7 +491,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
 		}
 	};
 
-	const getRiskIcon = (category: string) => {
+	const _getRiskIcon = (category: string) => {
 		switch (category) {
 			case "very_high":
 				return <XCircle className="h-4 w-4" />;
@@ -507,7 +506,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
 		}
 	};
 
-	const getRiskLabel = (category: string) => {
+	const _getRiskLabel = (category: string) => {
 		switch (category) {
 			case "very_high":
 				return "Muito Alto";
@@ -742,11 +741,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
 						<div className="space-y-4">
 							<div className="flex items-center justify-between">
 								<h3 className="font-semibold text-lg">Versões do Modelo</h3>
-								<Button 
-									onClick={runModelMaintenance} 
-									disabled={isRunningMaintenance}
-									size="sm"
-								>
+								<Button onClick={runModelMaintenance} disabled={isRunningMaintenance} size="sm">
 									<Brain className={cn("mr-2 h-4 w-4", isRunningMaintenance && "animate-pulse")} />
 									{isRunningMaintenance ? "Executando..." : "Manutenção"}
 								</Button>
@@ -754,10 +749,13 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
 
 							<div className="grid gap-4 md:grid-cols-2">
 								{modelVersions.map((version) => (
-									<Card key={version.version_id} className={cn(
-										"transition-all duration-200",
-										version.deployment_status === "production" && "ring-2 ring-green-500"
-									)}>
+									<Card
+										key={version.version_id}
+										className={cn(
+											"transition-all duration-200",
+											version.deployment_status === "production" && "ring-2 ring-green-500"
+										)}
+									>
 										<CardHeader className="pb-3">
 											<div className="flex items-center justify-between">
 												<CardTitle className="text-base">{version.version_number}</CardTitle>
@@ -774,7 +772,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
 												</div>
 												<Progress value={version.traffic_percentage} className="h-2" />
 											</div>
-											
+
 											<div className="grid grid-cols-2 gap-4 text-sm">
 												<div>
 													<span className="text-muted-foreground">Acurácia:</span>
@@ -791,7 +789,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
 											</div>
 
 											<div className="pt-2 text-xs text-muted-foreground">
-												Criado: {new Date(version.created_at).toLocaleDateString('pt-BR')}
+												Criado: {new Date(version.created_at).toLocaleDateString("pt-BR")}
 											</div>
 										</CardContent>
 									</Card>
@@ -806,10 +804,12 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
 								<Card>
 									<CardHeader>
 										<div className="flex items-center gap-2">
-											<div className={cn(
-												"h-3 w-3 rounded-full",
-												driftStatus.drift_detected ? "bg-orange-500" : "bg-green-500"
-											)} />
+											<div
+												className={cn(
+													"h-3 w-3 rounded-full",
+													driftStatus.drift_detected ? "bg-orange-500" : "bg-green-500"
+												)}
+											/>
 											<CardTitle className="text-base">
 												Status: {driftStatus.drift_detected ? "Drift Detectado" : "Modelo Estável"}
 											</CardTitle>
@@ -822,7 +822,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
 												{driftStatus.drift_severity}
 											</Badge>
 										</div>
-										
+
 										<div className="space-y-2">
 											<span className="text-sm font-medium">Recomendações:</span>
 											<ul className="space-y-1">
@@ -835,7 +835,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
 										</div>
 
 										<div className="pt-2 text-xs text-muted-foreground">
-											Última verificação: {new Date(driftStatus.detection_timestamp).toLocaleString('pt-BR')}
+											Última verificação: {new Date(driftStatus.detection_timestamp).toLocaleString("pt-BR")}
 										</div>
 									</CardContent>
 								</Card>
@@ -861,9 +861,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
 											<CardTitle className="text-base">
 												{test.model_a_version} vs {test.model_b_version}
 											</CardTitle>
-											<Badge variant={test.status === "running" ? "default" : "secondary"}>
-												{test.status}
-											</Badge>
+											<Badge variant={test.status === "running" ? "default" : "secondary"}>{test.status}</Badge>
 										</div>
 									</CardHeader>
 									<CardContent className="space-y-4">
@@ -875,13 +873,15 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
 												</div>
 												<div className="text-xs text-muted-foreground">Acurácia</div>
 											</div>
-											
+
 											<div className="space-y-1">
 												<div className="text-sm text-muted-foreground">Melhoria</div>
-												<div className={cn(
-													"font-semibold text-lg",
-													test.metrics_comparison.improvement_percentage > 0 ? "text-green-600" : "text-red-600"
-												)}>
+												<div
+													className={cn(
+														"font-semibold text-lg",
+														test.metrics_comparison.improvement_percentage > 0 ? "text-green-600" : "text-red-600"
+													)}
+												>
 													{test.metrics_comparison.improvement_percentage > 0 ? "+" : ""}
 													{test.metrics_comparison.improvement_percentage.toFixed(1)}%
 												</div>
@@ -900,9 +900,9 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
 										<div className="space-y-2">
 											<div className="flex justify-between items-center">
 												<span className="text-sm">Amostras coletadas:</span>
-												<span className="font-medium">{test.sample_size.toLocaleString('pt-BR')}</span>
+												<span className="font-medium">{test.sample_size.toLocaleString("pt-BR")}</span>
 											</div>
-											
+
 											<div className="flex justify-between items-center">
 												<span className="text-sm">Significância estatística:</span>
 												<Badge variant={test.statistical_significance ? "default" : "outline"}>
@@ -921,7 +921,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
 										</div>
 
 										<div className="pt-2 text-xs text-muted-foreground">
-											Iniciado: {new Date(test.start_date).toLocaleDateString('pt-BR')}
+											Iniciado: {new Date(test.start_date).toLocaleDateString("pt-BR")}
 										</div>
 									</CardContent>
 								</Card>

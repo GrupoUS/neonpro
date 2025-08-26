@@ -5,13 +5,13 @@
  */
 
 import { Hono } from "hono";
-import mlPipelineRoutes from "./ai/ml-pipeline-endpoints";
-import monitoringRoutes from "./ai/monitoring-endpoints";
-import chatHealthRoutes from "./ai/universal-chat-health";
-import chatEndpoints from "./ai/universal-chat-endpoints";
 import arSimulatorRoutes from "./ai/ar-simulator-endpoints";
 import batchPredictionRoutes from "./ai/batch-prediction-endpoints";
 import healthcareMonitoringRoutes from "./ai/healthcare-monitoring-endpoints";
+import mlPipelineRoutes from "./ai/ml-pipeline-endpoints";
+import monitoringRoutes from "./ai/monitoring-endpoints";
+import chatEndpoints from "./ai/universal-chat-endpoints";
+import chatHealthRoutes from "./ai/universal-chat-health";
 
 const ai = new Hono();
 
@@ -19,7 +19,7 @@ const ai = new Hono();
 // /api/v1/ai/ml-pipeline/*
 ai.route("/ml-pipeline", mlPipelineRoutes);
 
-// AI Monitoring endpoints  
+// AI Monitoring endpoints
 // /api/v1/ai/monitoring/*
 ai.route("/monitoring", monitoringRoutes);
 
@@ -51,16 +51,16 @@ ai.get("/", (c) => {
 		description: "Intelligent healthcare management and analytics",
 		endpoints: {
 			ml_pipeline: "/ml-pipeline",
-			monitoring: "/monitoring", 
+			monitoring: "/monitoring",
 			chat: "/chat",
 			ar_simulator: "/ar-simulator",
 			batch_predictions: "/batch-predictions",
-			healthcare_monitoring: "/healthcare-monitoring"
+			healthcare_monitoring: "/healthcare-monitoring",
 		},
 		features: [
 			"ML Pipeline Management",
 			"A/B Testing",
-			"Drift Detection", 
+			"Drift Detection",
 			"Model Performance Analytics",
 			"Healthcare Chat AI",
 			"Real-time Monitoring",
@@ -72,9 +72,9 @@ ai.get("/", (c) => {
 			"Outcome Prediction",
 			"Batch ML Predictions",
 			"Proactive Risk Assessment",
-			"Automated Intervention Planning"
+			"Automated Intervention Planning",
 		],
-		timestamp: new Date().toISOString()
+		timestamp: new Date().toISOString(),
 	});
 });
 
@@ -87,9 +87,9 @@ ai.get("/health", (c) => {
 			ml_pipeline: "operational",
 			monitoring: "operational",
 			chat: "operational",
-			ar_simulator: "operational"
+			ar_simulator: "operational",
 		},
-		timestamp: new Date().toISOString()
+		timestamp: new Date().toISOString(),
 	});
 });
 

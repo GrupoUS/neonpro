@@ -6,19 +6,18 @@
  * Compliance: LGPD/ANVISA/CFM
  */
 
-// Main Dashboard Layout
-export { DashboardLayout } from "./DashboardLayout";
-
 // AI-Powered Dashboards
 export {
 	AIAnalyticsDashboard,
-	HealthMonitoringDashboard,
 	ComplianceStatusDashboard,
-	PerformanceMetricsDashboard,
-	RealTimeActivityDashboard,
 	DASHBOARD_REGISTRY,
 	type DashboardType,
+	HealthMonitoringDashboard,
+	PerformanceMetricsDashboard,
+	RealTimeActivityDashboard,
 } from "./ai-powered";
+// Main Dashboard Layout
+export { DashboardLayout } from "./DashboardLayout";
 
 // Dashboard utilities and types
 export type DashboardView = "grid" | "tabs" | "single";
@@ -41,7 +40,7 @@ export const HEALTHCARE_DASHBOARD_CONFIGS = {
 		dashboards: ["analytics", "health", "compliance", "activity"],
 		defaultView: "tabs" as DashboardView,
 	},
-	
+
 	// Medical Practice
 	medical: {
 		title: "Prática Médica",
@@ -49,7 +48,7 @@ export const HEALTHCARE_DASHBOARD_CONFIGS = {
 		dashboards: ["compliance", "activity", "analytics"],
 		defaultView: "single" as DashboardView,
 	},
-	
+
 	// Administrative
 	admin: {
 		title: "Administrativo",
@@ -57,7 +56,7 @@ export const HEALTHCARE_DASHBOARD_CONFIGS = {
 		dashboards: ["performance", "analytics", "health"],
 		defaultView: "grid" as DashboardView,
 	},
-	
+
 	// Compliance Officer
 	compliance: {
 		title: "Conformidade",

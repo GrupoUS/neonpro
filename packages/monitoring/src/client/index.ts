@@ -105,7 +105,11 @@ export class PerformanceMonitor {
 	/**
 	 * Track custom healthcare metric
 	 */
-	trackCustomMetric(name: HealthcareMetricName, value: number, context?: Record<string, string | number | boolean>): void {
+	trackCustomMetric(
+		name: HealthcareMetricName,
+		value: number,
+		context?: Record<string, string | number | boolean>,
+	): void {
 		if (!this.shouldSample("customMetrics")) {
 			return;
 		}
@@ -214,7 +218,12 @@ export class PerformanceMonitor {
 	/**
 	 * End timing and track metric
 	 */
-	endTiming(label: string, metricName: HealthcareMetricName, startTime: number, context?: Record<string, string | number | boolean>): void {
+	endTiming(
+		label: string,
+		metricName: HealthcareMetricName,
+		startTime: number,
+		context?: Record<string, string | number | boolean>,
+	): void {
 		performance.mark(`${label}-end`);
 		performance.measure(label, `${label}-start`, `${label}-end`);
 
@@ -495,7 +504,7 @@ export class PerformanceMonitor {
 			context.environment = process.env.NODE_ENV;
 			// Check for network connection info safely
 			const navConnection = (navigator as Navigator & { connection?: { effectiveType?: string } }).connection;
-			context.connection = navConnection?.effectiveType || 'unknown';
+			context.connection = navConnection?.effectiveType || "unknown";
 		}
 
 		return context;
@@ -586,7 +595,7 @@ let globalMonitor: PerformanceMonitor | null = null;
  */
 export function initPerformanceMonitoring(
 	config?: Partial<MonitoringConfig>,
-	hooks?: MonitoringHooks
+	hooks?: MonitoringHooks,
 ): PerformanceMonitor {
 	if (!globalMonitor) {
 		globalMonitor = new PerformanceMonitor(config, hooks);

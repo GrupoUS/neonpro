@@ -25,5 +25,4 @@ Sentry.init({
 			recordOutputs: true,
 		}),
 	],
-
 });

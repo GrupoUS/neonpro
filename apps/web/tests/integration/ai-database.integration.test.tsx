@@ -2,8 +2,8 @@
 // Comprehensive testing for AI services database schema and operations
 
 import { createClient } from "@supabase/supabase-js";
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import TestIntegrationSetup, { TEST_CONFIG, TestDataFactory, TestPerformanceMonitor } from "./integration-test-setup";
+import { afterEach, beforeAll, describe, expect, it } from "vitest";
+import TestIntegrationSetup, { TEST_CONFIG, TestPerformanceMonitor } from "./integration-test-setup";
 
 // Database Test Configuration
 const DB_TEST_CONFIG = {

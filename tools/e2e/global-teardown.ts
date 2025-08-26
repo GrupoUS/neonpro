@@ -7,13 +7,6 @@
 
 import type { FullConfig } from "@playwright/test";
 
-async function globalTeardown(config: FullConfig) {
-	console.log("🧹 Starting global E2E test teardown...");
-
-	// Cleanup any global test artifacts
-	// This could include database cleanup, file cleanup, etc.
-
-	console.log("✅ Global teardown completed");
-}
+async function globalTeardown(_config: FullConfig) {}
 
 export default globalTeardown;

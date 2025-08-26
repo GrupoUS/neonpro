@@ -3,7 +3,7 @@ import { Hono } from "hono";
 
 const monitoring = new Hono();
 
-interface ServiceHealthSummary {
+type ServiceHealthSummary = {
 	service: string;
 	healthy: boolean;
 	status: "healthy" | "degraded" | "unhealthy";
@@ -12,9 +12,9 @@ interface ServiceHealthSummary {
 	error_rate: number;
 	uptime_percentage: number;
 	details: any;
-}
+};
 
-interface ServiceMetricsData {
+type ServiceMetricsData = {
 	service: string;
 	timestamp: string;
 	requests_per_minute: number;
@@ -23,9 +23,9 @@ interface ServiceMetricsData {
 	success_count: number;
 	cpu_usage: number;
 	memory_usage: number;
-}
+};
 
-interface ComplianceAlert {
+type ComplianceAlert = {
 	id: string;
 	service: string;
 	severity: "low" | "medium" | "high" | "critical";
@@ -33,7 +33,7 @@ interface ComplianceAlert {
 	timestamp: string;
 	compliance_type: "lgpd" | "anvisa" | "cfm";
 	resolved: boolean;
-}
+};
 
 class MonitoringService {
 	private static supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
@@ -120,7 +120,7 @@ class MonitoringService {
 
 			const healthyChecks = healthChecks.filter((check) => check.healthy).length;
 			return (healthyChecks / healthChecks.length) * 100;
-		} catch (error) {
+		} catch (_error) {
 			return 95; // Default assumption
 		}
 	}
@@ -144,7 +144,6 @@ class MonitoringService {
 				.order("timestamp", { ascending: true });
 
 			if (error) {
-				console.error("Failed to fetch service metrics:", error);
 				return [];
 			}
 
@@ -152,8 +151,7 @@ class MonitoringService {
 			const aggregatedMetrics = MonitoringService.aggregateMetricsByTimeInterval(metricsData, minutes);
 
 			return aggregatedMetrics;
-		} catch (error) {
-			console.error("Error fetching service metrics:", error);
+		} catch (_error) {
 			return [];
 		}
 	}
@@ -237,7 +235,6 @@ class MonitoringService {
 			const { data: alertsData, error } = await query.limit(50);
 
 			if (error) {
-				console.error("Failed to fetch compliance alerts:", error);
 				return [];
 			}
 
@@ -250,8 +247,7 @@ class MonitoringService {
 				compliance_type: alert.compliance_type,
 				resolved: alert.resolved,
 			}));
-		} catch (error) {
-			console.error("Error fetching compliance alerts:", error);
+		} catch (_error) {
 			return [];
 		}
 	}
@@ -293,8 +289,7 @@ class MonitoringService {
 				degraded_services: servicesHealth.filter((s) => s.status === "degraded").length,
 				unhealthy_services: servicesHealth.filter((s) => s.status === "unhealthy").length,
 			};
-		} catch (error) {
-			console.error("Error calculating system overview:", error);
+		} catch (_error) {
 			return {
 				total_requests_last_hour: 0,
 				avg_response_time: 0,
@@ -317,9 +312,7 @@ class MonitoringService {
 				details,
 				timestamp: new Date().toISOString(),
 			});
-		} catch (error) {
-			console.error("Failed to log health check:", error);
-		}
+		} catch (_error) {}
 	}
 }
 

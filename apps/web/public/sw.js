@@ -13,9 +13,9 @@ const HEALTHCARE_CRITICAL_CACHE = `neonpro-healthcare-critical-v${CACHE_VERSION}
 // Healthcare-specific background sync configuration
 const BACKGROUND_SYNC_TAG = "neonpro-background-sync";
 const APPOINTMENT_SYNC_TAG = "appointment-booking-sync";
-const EMERGENCY_SYNC_TAG = "emergency-healthcare-sync";
-const PATIENT_DATA_SYNC_TAG = "patient-data-sync";
-const MEDICATION_ALERT_SYNC_TAG = "medication-alert-sync";
+const _EMERGENCY_SYNC_TAG = "emergency-healthcare-sync";
+const _PATIENT_DATA_SYNC_TAG = "patient-data-sync";
+const _MEDICATION_ALERT_SYNC_TAG = "medication-alert-sync";
 
 // Critical resources for offline functionality
 const STATIC_CACHE_URLS = [
@@ -41,7 +41,7 @@ const CACHEABLE_API_PATTERNS = [
 ];
 
 // Healthcare-critical API endpoints (always cache for offline access)
-const HEALTHCARE_CRITICAL_PATTERNS = [
+const _HEALTHCARE_CRITICAL_PATTERNS = [
 	/\/api\/patient\/emergency-contacts$/,
 	/\/api\/patient\/medications$/,
 	/\/api\/patient\/allergies$/,
@@ -52,7 +52,7 @@ const HEALTHCARE_CRITICAL_PATTERNS = [
 ];
 
 // Healthcare real-time endpoints (network-first with critical fallback)
-const HEALTHCARE_REALTIME_PATTERNS = [
+const _HEALTHCARE_REALTIME_PATTERNS = [
 	/\/api\/patient\/[^/]+\/vitals$/,
 	/\/api\/appointments\/upcoming$/,
 	/\/api\/medications\/alerts$/,
@@ -85,21 +85,21 @@ self.addEventListener("install", (event) => {
 });
 
 // Healthcare critical data caching helper
-async function cacheHealthcareCriticalData(request, response) {
+async function _cacheHealthcareCriticalData(request, response) {
 	const cache = await caches.open(HEALTHCARE_CRITICAL_CACHE);
-	
+
 	// Add healthcare-specific headers for LGPD compliance
 	const clonedResponse = response.clone();
 	const headers = new Headers(clonedResponse.headers);
-	headers.set('X-Healthcare-Cache-Time', new Date().toISOString());
-	headers.set('X-LGPD-Compliant', 'true');
-	
+	headers.set("X-Healthcare-Cache-Time", new Date().toISOString());
+	headers.set("X-LGPD-Compliant", "true");
+
 	const modifiedResponse = new Response(clonedResponse.body, {
 		status: clonedResponse.status,
 		statusText: clonedResponse.statusText,
-		headers: headers
+		headers: headers,
 	});
-	
+
 	await cache.put(request, modifiedResponse);
 	return response;
 }

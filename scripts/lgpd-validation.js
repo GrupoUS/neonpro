@@ -6,8 +6,8 @@
  * Used by GitHub Actions CI/CD pipeline
  */
 
-const path = require("path");
-const fs = require("fs");
+const path = require("node:path");
+const fs = require("node:fs");
 
 // Color codes for console output
 const colors = {
@@ -19,9 +19,7 @@ const colors = {
 	bold: "\x1b[1m",
 };
 
-function log(message, color = colors.reset) {
-	console.log(`${color}${message}${colors.reset}`);
-}
+function log(_message, _color = colors.reset) {}
 
 function logHeader(message) {
 	log(`\n${colors.bold}${colors.blue}=== ${message} ===${colors.reset}`);
@@ -117,31 +115,30 @@ async function validateDatabaseSchema() {
 
 	try {
 		const migrationsPath = path.resolve(process.cwd(), "supabase/migrations");
-		
+
 		if (!fs.existsSync(migrationsPath)) {
 			logError("Supabase migrations directory not found");
 			return false;
 		}
 
-		const migrationFiles = fs.readdirSync(migrationsPath).filter(file => file.endsWith('.sql'));
-		
+		const migrationFiles = fs.readdirSync(migrationsPath).filter((file) => file.endsWith(".sql"));
+
 		// Check for LGPD-required tables and columns
 		const requiredTables = [
 			"consent_records",
-			"data_subject_requests", 
+			"data_subject_requests",
 			"data_retention_policies",
 			"activity_logs",
-			"data_access_logs"
+			"data_access_logs",
 		];
 
 		let foundTables = 0;
 
 		for (const file of migrationFiles) {
-			const content = fs.readFileSync(path.join(migrationsPath, file), 'utf8');
-			
+			const content = fs.readFileSync(path.join(migrationsPath, file), "utf8");
+
 			for (const table of requiredTables) {
-				if (content.includes(`CREATE TABLE IF NOT EXISTS ${table}`) || 
-					content.includes(`CREATE TABLE ${table}`)) {
+				if (content.includes(`CREATE TABLE IF NOT EXISTS ${table}`) || content.includes(`CREATE TABLE ${table}`)) {
 					logSuccess(`LGPD table found in migration: ${table}`);
 					foundTables++;
 					break;
@@ -152,8 +149,8 @@ async function validateDatabaseSchema() {
 		// Check for RLS (Row Level Security) - essential for LGPD
 		let hasRLS = false;
 		for (const file of migrationFiles) {
-			const content = fs.readFileSync(path.join(migrationsPath, file), 'utf8');
-			if (content.includes('ENABLE ROW LEVEL SECURITY') || content.includes('CREATE POLICY')) {
+			const content = fs.readFileSync(path.join(migrationsPath, file), "utf8");
+			if (content.includes("ENABLE ROW LEVEL SECURITY") || content.includes("CREATE POLICY")) {
 				hasRLS = true;
 				logSuccess("Row Level Security (RLS) found in migrations");
 				break;
@@ -191,7 +188,14 @@ async function validateConsentManagement() {
 		];
 
 		const validStatuses = ["pending", "given", "withdrawn", "expired"];
-		const validLegalBases = ["consent", "legitimate_interest", "vital_interest", "legal_obligation", "public_task", "contract"];
+		const validLegalBases = [
+			"consent",
+			"legitimate_interest",
+			"vital_interest",
+			"legal_obligation",
+			"public_task",
+			"contract",
+		];
 
 		let validConsents = 0;
 
@@ -253,7 +257,8 @@ async function validateDataSubjectRights() {
 			}
 		});
 
-		if (validRequests >= testRequests.length * 0.8) { // Allow 20% tolerance
+		if (validRequests >= testRequests.length * 0.8) {
+			// Allow 20% tolerance
 			logSuccess("Data subject rights validation working correctly");
 			return true;
 		}
@@ -279,7 +284,14 @@ async function validateDataRetention() {
 		];
 
 		const validCategories = ["medical_records", "patient_contacts", "marketing_data", "audit_logs", "financial_data"];
-		const validLegalBases = ["consent", "legitimate_interest", "vital_interest", "legal_obligation", "public_task", "contract"];
+		const validLegalBases = [
+			"consent",
+			"legitimate_interest",
+			"vital_interest",
+			"legal_obligation",
+			"public_task",
+			"contract",
+		];
 
 		let validPolicies = 0;
 
@@ -292,7 +304,9 @@ async function validateDataRetention() {
 				logSuccess(`Policy ${index + 1}: Valid (${policy.category}, ${policy.retention}, ${policy.legal_basis})`);
 				validPolicies++;
 			} else {
-				logError(`Policy ${index + 1}: Invalid - category:${categoryValid}, basis:${basisValid}, retention:${retentionValid}`);
+				logError(
+					`Policy ${index + 1}: Invalid - category:${categoryValid}, basis:${basisValid}, retention:${retentionValid}`
+				);
 			}
 		});
 
@@ -315,7 +329,11 @@ async function validatePrivacyByDesign() {
 	try {
 		// Check for privacy-by-design implementation
 		const codebaseChecks = [
-			{ file: "apps/web", pattern: /privacy.?policy|data.?protection|lgpd.?compliance/i, description: "Privacy policy references" },
+			{
+				file: "apps/web",
+				pattern: /privacy.?policy|data.?protection|lgpd.?compliance/i,
+				description: "Privacy policy references",
+			},
 			{ file: "packages", pattern: /encrypt|hash|anonymize|pseudonymize/i, description: "Data protection mechanisms" },
 			{ file: "supabase", pattern: /row.?level.?security|rls|policy/i, description: "Database security policies" },
 		];
@@ -354,7 +372,7 @@ async function validateEnvironmentVariables() {
 	logHeader("Environment Variables Validation");
 
 	const requiredEnvVars = [
-		"NEXT_PUBLIC_SUPABASE_URL", 
+		"NEXT_PUBLIC_SUPABASE_URL",
 		"SUPABASE_SERVICE_ROLE_KEY",
 		// LGPD-specific variables could be added here
 	];
@@ -394,8 +412,8 @@ async function validateLGPDConfiguration() {
 		const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
 
 		// Check for required dependencies
-		const hasSupabase = packageJson.dependencies?.["@supabase/supabase-js"] || 
-						   packageJson.devDependencies?.["@supabase/supabase-js"];
+		const hasSupabase =
+			packageJson.dependencies?.["@supabase/supabase-js"] || packageJson.devDependencies?.["@supabase/supabase-js"];
 
 		const hasCrypto = true; // crypto is a Node.js built-in module
 
@@ -486,7 +504,6 @@ async function runLGPDValidation() {
 if (require.main === module) {
 	runLGPDValidation().catch((error) => {
 		logError(`Unexpected error: ${error.message}`);
-		console.error(error);
 		process.exit(1);
 	});
 }

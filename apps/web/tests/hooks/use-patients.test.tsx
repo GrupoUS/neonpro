@@ -162,10 +162,10 @@ describe("usePatients Hook - NeonPro Healthcare Patient Management", () => {
 			// Create a test-specific mutation that we can control
 			const { result } = renderHook(
 				() => {
-					const queryClient = useQueryClient();
+					const _queryClient = useQueryClient();
 
 					return useMutation({
-						mutationFn: async (patientData: any) => {
+						mutationFn: async (_patientData: any) => {
 							// Mock a successful response for this test
 							return Promise.resolve(mockCreatePatientResponse);
 						},
@@ -439,10 +439,10 @@ describe("usePatients Hook - NeonPro Healthcare Patient Management", () => {
 			// Create a test-specific mutation that we can control
 			const { result } = renderHook(
 				() => {
-					const queryClient = useQueryClient();
+					const _queryClient = useQueryClient();
 
 					return useMutation({
-						mutationFn: async (patientData: any) => {
+						mutationFn: async (_patientData: any) => {
 							// Mock a successful emergency response for this test
 							return Promise.resolve(mockEmergencyResponse);
 						},

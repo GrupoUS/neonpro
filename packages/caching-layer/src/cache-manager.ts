@@ -5,10 +5,10 @@ import { EdgeCacheLayer } from "./edge-cache";
 import { CacheLayer, type CacheOperation, type CacheStats, type HealthcareDataPolicy } from "./types";
 
 export class MultiLayerCacheManager {
-	private browser: BrowserCacheLayer;
-	private edge: EdgeCacheLayer;
-	private database: DatabaseCacheLayer;
-	private aiContext: AIContextCacheLayer;
+	private readonly browser: BrowserCacheLayer;
+	private readonly edge: EdgeCacheLayer;
+	private readonly database: DatabaseCacheLayer;
+	private readonly aiContext: AIContextCacheLayer;
 
 	private readonly hitRateTargets = {
 		[CacheLayer.BROWSER]: 90, // >90% hit rate
@@ -49,9 +49,7 @@ export class MultiLayerCacheManager {
 					await this.populateUpstream(key, result, layer, layers, options);
 					return result;
 				}
-			} catch (error) {
-				console.error(`Cache layer ${layer} error:`, error);
-			}
+			} catch (_error) {}
 		}
 
 		// If no result found and fallback is enabled, try all layers
@@ -65,9 +63,7 @@ export class MultiLayerCacheManager {
 						if (result !== null) {
 							return result;
 						}
-					} catch (error) {
-						console.error(`Fallback cache layer ${layer} error:`, error);
-					}
+					} catch (_error) {}
 				}
 			}
 		}
@@ -113,9 +109,7 @@ export class MultiLayerCacheManager {
 				} else {
 					promises.push(cache.set(key, value, layerTTL));
 				}
-			} catch (error) {
-				console.error(`Failed to set cache in layer ${layer}:`, error);
-			}
+			} catch (_error) {}
 		}
 
 		// Execute all cache operations in parallel
@@ -127,8 +121,7 @@ export class MultiLayerCacheManager {
 		const promises = targetLayers.map((layer) => {
 			try {
 				return this.getCache(layer).delete(key);
-			} catch (error) {
-				console.error(`Failed to delete from layer ${layer}:`, error);
+			} catch (_error) {
 				return Promise.resolve();
 			}
 		});
@@ -140,8 +133,7 @@ export class MultiLayerCacheManager {
 		const promises = targetLayers.map((layer) => {
 			try {
 				return this.getCache(layer).invalidateByTags(tags);
-			} catch (error) {
-				console.error(`Failed to invalidate tags in layer ${layer}:`, error);
+			} catch (_error) {
 				return Promise.resolve();
 			}
 		});
@@ -223,7 +215,9 @@ export class MultiLayerCacheManager {
 	}
 
 	private getOptimalTTL(layer: CacheLayer, baseTTL?: number): number {
-		if (baseTTL) return baseTTL;
+		if (baseTTL) {
+			return baseTTL;
+		}
 
 		// Default TTLs optimized for each layer
 		switch (layer) {
@@ -245,10 +239,12 @@ export class MultiLayerCacheManager {
 		value: T,
 		foundLayer: CacheLayer,
 		searchedLayers: CacheLayer[],
-		options?: any
+		_options?: any
 	): Promise<void> {
 		const layerIndex = searchedLayers.indexOf(foundLayer);
-		if (layerIndex <= 0) return; // Already at fastest layer or not found
+		if (layerIndex <= 0) {
+			return; // Already at fastest layer or not found
+		}
 
 		// Populate all faster layers
 		const upstreamLayers = searchedLayers.slice(0, layerIndex);
@@ -257,8 +253,7 @@ export class MultiLayerCacheManager {
 				const cache = this.getCache(layer);
 				const ttl = this.getOptimalTTL(layer);
 				return cache.set(key, value, ttl);
-			} catch (error) {
-				console.error(`Failed to populate upstream layer ${layer}:`, error);
+			} catch (_error) {
 				return Promise.resolve();
 			}
 		});

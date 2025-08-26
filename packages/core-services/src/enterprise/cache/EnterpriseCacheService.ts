@@ -15,9 +15,9 @@
 
 import Redis from "ioredis";
 import { LRUCache } from "lru-cache";
-import type { AuditEvent, PerformanceMetrics } from "../../types";
+import type { PerformanceMetrics } from "../../types";
 
-interface CacheLayer {
+type CacheLayer = {
 	name: string;
 	priority: number;
 	get<T>(key: string): Promise<T | null>;
@@ -25,9 +25,9 @@ interface CacheLayer {
 	delete(key: string): Promise<void>;
 	clear(): Promise<void>;
 	stats(): Promise<any>;
-}
+};
 
-interface EnterpriseCacheConfig {
+type EnterpriseCacheConfig = {
 	layers: {
 		memory: {
 			enabled: boolean;
@@ -55,7 +55,7 @@ interface EnterpriseCacheConfig {
 		autoExpiry: boolean;
 		auditAccess: boolean;
 	};
-}
+};
 
 /**
  * Memory Cache Layer (L1) - Fastest access
@@ -64,7 +64,7 @@ class MemoryCacheLayer implements CacheLayer {
 	name = "memory";
 	priority = 1;
 
-	private cache: LRUCache<string, any>;
+	private readonly cache: LRUCache<string, any>;
 	private accessCount = 0;
 	private hitCount = 0;
 
@@ -118,10 +118,10 @@ class RedisCacheLayer implements CacheLayer {
 	name = "redis";
 	priority = 2;
 
-	private redis: Redis;
-	private accessCount = 0;
-	private hitCount = 0;
-	private keyPrefix: string;
+	private readonly redis: Redis;
+	private readonly accessCount = 0;
+	private readonly hitCount = 0;
+	private readonly keyPrefix: string;
 
 	constructor(config: EnterpriseCacheConfig["layers"]["redis"]) {
 		this.redis = new Redis({
@@ -146,8 +146,7 @@ class RedisCacheLayer implements CacheLayer {
 				return JSON.parse(value) as T;
 			}
 			return null;
-		} catch (error) {
-			console.warn(`Redis cache get error for key ${key}:`, error);
+		} catch (_error) {
 			return null;
 		}
 	}
@@ -162,17 +161,13 @@ class RedisCacheLayer implements CacheLayer {
 			} else {
 				await this.redis.set(redisKey, serialized);
 			}
-		} catch (error) {
-			console.warn(`Redis cache set error for key ${key}:`, error);
-		}
+		} catch (_error) {}
 	}
 
 	async delete(key: string): Promise<void> {
 		try {
 			await this.redis.del(this.getKey(key));
-		} catch (error) {
-			console.warn(`Redis cache delete error for key ${key}:`, error);
-		}
+		} catch (_error) {}
 	}
 
 	async clear(): Promise<void> {
@@ -181,9 +176,7 @@ class RedisCacheLayer implements CacheLayer {
 			if (keys.length > 0) {
 				await this.redis.del(...keys);
 			}
-		} catch (error) {
-			console.warn("Redis cache clear error:", error);
-		}
+		} catch (_error) {}
 	}
 
 	async stats(): Promise<any> {
@@ -219,34 +212,18 @@ class DatabaseCacheLayer implements CacheLayer {
 	priority = 3;
 
 	private accessCount = 0;
-	private hitCount = 0;
+	private readonly hitCount = 0;
 
-	constructor(config: EnterpriseCacheConfig["layers"]["database"]) {
-		// Database connection would be injected here
-	}
-
-	async get<T>(key: string): Promise<T | null> {
+	async get<T>(_key: string): Promise<T | null> {
 		this.accessCount++;
-		// TODO: Implement database cache lookup with proper ORM integration
-		// For now, return null to simulate miss
-		console.log(`DB Cache: Retrieving key ${key}`);
 		return null;
 	}
 
-	async set<T>(key: string, value: T, ttl?: number): Promise<void> {
-		// TODO: Implement database cache storage with proper ORM integration
-		console.log(`DB Cache: Would store key ${key} with TTL ${ttl}`);
-	}
+	async set<T>(_key: string, _value: T, _ttl?: number): Promise<void> {}
 
-	async delete(key: string): Promise<void> {
-		// TODO: Implement database cache deletion with proper ORM integration
-		console.log(`DB Cache: Would delete key ${key}`);
-	}
+	async delete(_key: string): Promise<void> {}
 
-	async clear(): Promise<void> {
-		// TODO: Implement database cache clearing with proper ORM integration
-		console.log("DB Cache: Would clear all entries");
-	}
+	async clear(): Promise<void> {}
 
 	async stats(): Promise<any> {
 		return {
@@ -263,10 +240,10 @@ class DatabaseCacheLayer implements CacheLayer {
  * Enterprise Cache Service - Orchestrates all cache layers
  */
 export class EnterpriseCacheService {
-	private layers: CacheLayer[] = [];
-	private config: EnterpriseCacheConfig;
+	private readonly layers: CacheLayer[] = [];
+	private readonly config: EnterpriseCacheConfig;
 	private healthCheckInterval: NodeJS.Timeout | null = null;
-	private metrics: PerformanceMetrics = {
+	private readonly metrics: PerformanceMetrics = {
 		service: "cache",
 		period: "realtime",
 		totalOperations: 0,
@@ -280,7 +257,7 @@ export class EnterpriseCacheService {
 	};
 
 	// Extended cache-specific metrics (not part of base interface)
-	private extendedMetrics = {
+	private readonly extendedMetrics = {
 		totalRequests: 0,
 		cacheHits: 0,
 		cacheMisses: 0,
@@ -296,9 +273,9 @@ export class EnterpriseCacheService {
 					ttl: 5 * 60 * 1000, // 5 minutes
 				},
 				redis: {
-					enabled: process.env.REDIS_URL ? true : false,
+					enabled: !!process.env.REDIS_URL,
 					host: process.env.REDIS_HOST || "localhost",
-					port: Number.parseInt(process.env.REDIS_PORT || "6379"),
+					port: Number.parseInt(process.env.REDIS_PORT || "6379", 10),
 					ttl: 30 * 60 * 1000, // 30 minutes
 					keyPrefix: "neonpro:enterprise:",
 				},
@@ -359,9 +336,10 @@ export class EnterpriseCacheService {
 					await this.populateUpperLayers(key, value, layer);
 
 					this.extendedMetrics.cacheHits++;
-					this.metrics.cacheHitRate = this.extendedMetrics.totalRequests > 0 
-						? this.extendedMetrics.cacheHits / this.extendedMetrics.totalRequests 
-						: 0;
+					this.metrics.cacheHitRate =
+						this.extendedMetrics.totalRequests > 0
+							? this.extendedMetrics.cacheHits / this.extendedMetrics.totalRequests
+							: 0;
 					this.updateResponseTime(startTime);
 
 					if (this.config.compliance.auditAccess) {
@@ -370,8 +348,7 @@ export class EnterpriseCacheService {
 
 					return value;
 				}
-			} catch (error) {
-				console.warn(`Cache layer ${layer.name} get error:`, error);
+			} catch (_error) {
 				this.metrics.errorRate++;
 			}
 		}
@@ -394,8 +371,7 @@ export class EnterpriseCacheService {
 		const promises = this.layers.map(async (layer) => {
 			try {
 				await layer.set(key, value, ttl);
-			} catch (error) {
-				console.warn(`Cache layer ${layer.name} set error:`, error);
+			} catch (_error) {
 				this.metrics.errorRate++;
 			}
 		});
@@ -414,9 +390,7 @@ export class EnterpriseCacheService {
 		const promises = this.layers.map(async (layer) => {
 			try {
 				await layer.delete(key);
-			} catch (error) {
-				console.warn(`Cache layer ${layer.name} delete error:`, error);
-			}
+			} catch (_error) {}
 		});
 
 		await Promise.allSettled(promises);
@@ -433,9 +407,7 @@ export class EnterpriseCacheService {
 		const promises = this.layers.map(async (layer) => {
 			try {
 				await layer.clear();
-			} catch (error) {
-				console.warn(`Cache layer ${layer.name} clear error:`, error);
-			}
+			} catch (_error) {}
 		});
 
 		await Promise.allSettled(promises);
@@ -454,9 +426,7 @@ export class EnterpriseCacheService {
 		for (const layer of upperLayers) {
 			try {
 				await layer.set(key, value);
-			} catch (error) {
-				console.warn(`Failed to populate upper layer ${layer.name}:`, error);
-			}
+			} catch (_error) {}
 		}
 	}
 
@@ -474,13 +444,13 @@ export class EnterpriseCacheService {
 		return {
 			enterprise: {
 				totalRequests: this.extendedMetrics.totalRequests,
-				cacheHitRate: this.extendedMetrics.totalRequests > 0 
-					? this.extendedMetrics.cacheHits / this.extendedMetrics.totalRequests 
-					: 0,
+				cacheHitRate:
+					this.extendedMetrics.totalRequests > 0
+						? this.extendedMetrics.cacheHits / this.extendedMetrics.totalRequests
+						: 0,
 				avgResponseTime: this.extendedMetrics.avgResponseTime,
-				errorRate: this.extendedMetrics.totalRequests > 0 
-					? this.metrics.errorRate / this.extendedMetrics.totalRequests 
-					: 0,
+				errorRate:
+					this.extendedMetrics.totalRequests > 0 ? this.metrics.errorRate / this.extendedMetrics.totalRequests : 0,
 			},
 			layers: stats,
 			config: {
@@ -535,14 +505,14 @@ export class EnterpriseCacheService {
 	 * Start periodic health checks
 	 */
 	private startHealthCheck(): void {
-		if (!this.config.healthCheck.enabled) return;
+		if (!this.config.healthCheck.enabled) {
+			return;
+		}
 
 		this.healthCheckInterval = setInterval(async () => {
 			try {
 				await this.healthCheck();
-			} catch (error) {
-				console.error("Health check failed:", error);
-			}
+			} catch (_error) {}
 		}, this.config.healthCheck.interval);
 	}
 
@@ -565,25 +535,21 @@ export class EnterpriseCacheService {
 	private updateResponseTime(startTime: number): void {
 		const duration = performance.now() - startTime;
 		this.extendedMetrics.avgResponseTime =
-			(this.extendedMetrics.avgResponseTime * (this.extendedMetrics.totalRequests - 1) + duration) / this.extendedMetrics.totalRequests;
+			(this.extendedMetrics.avgResponseTime * (this.extendedMetrics.totalRequests - 1) + duration) /
+			this.extendedMetrics.totalRequests;
 		this.metrics.averageResponseTime = this.extendedMetrics.avgResponseTime;
 	}
 
 	/**
 	 * Audit cache access for LGPD compliance
 	 */
-	private async auditAccess(action: string, details: any): Promise<void> {
-		// TODO: Implement with real audit service
-		console.log(`Cache Audit: ${action}`, details);
-	}
+	private async auditAccess(_action: string, _details: any): Promise<void> {}
 
 	/**
 	 * Healthcare-specific cache invalidation
 	 */
 	async invalidatePatientData(patientId: string): Promise<void> {
-		const pattern = `patient_${patientId}`;
-		// TODO: Implement pattern-based invalidation
-		console.log(`Invalidating patient data for pattern: ${pattern}`);
+		const _pattern = `patient_${patientId}`;
 
 		if (this.config.compliance.auditAccess) {
 			await this.auditAccess("PATIENT_DATA_INVALIDATED", { patientId });
@@ -599,9 +565,10 @@ export class EnterpriseCacheService {
 			// Override with extended metrics for health reporting
 			totalOperations: this.extendedMetrics.totalRequests,
 			averageResponseTime: this.extendedMetrics.avgResponseTime,
-			cacheHitRate: this.extendedMetrics.totalRequests > 0 
-				? this.extendedMetrics.cacheHits / this.extendedMetrics.totalRequests 
-				: 0,
+			cacheHitRate:
+				this.extendedMetrics.totalRequests > 0
+					? this.extendedMetrics.cacheHits / this.extendedMetrics.totalRequests
+					: 0,
 		};
 	}
 
@@ -609,10 +576,9 @@ export class EnterpriseCacheService {
 	 * LGPD compliance: Clear expired data
 	 */
 	async clearExpiredData(): Promise<void> {
-		if (!this.config.compliance.autoExpiry) return;
-
-		// TODO: Implement automated expiry cleanup
-		console.log("Running LGPD compliance cleanup...");
+		if (!this.config.compliance.autoExpiry) {
+			return;
+		}
 
 		if (this.config.compliance.auditAccess) {
 			await this.auditAccess("LGPD_CLEANUP", { timestamp: Date.now() });

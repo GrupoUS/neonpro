@@ -1,25 +1,25 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { EnhancedAIService } from "./enhanced-service-base";
 
-export interface ConversationManagementInput {
+export type ConversationManagementInput = {
 	userId: string;
 	clinicId: string;
 	action: "create" | "update" | "archive" | "analyze" | "summarize" | "export";
 	sessionId?: string;
 	context?: ConversationContext;
 	options?: ConversationOptions;
-}
+};
 
-export interface ConversationManagementOutput {
+export type ConversationManagementOutput = {
 	success: boolean;
 	data: any;
 	analytics?: ConversationAnalytics;
 	recommendations?: ConversationRecommendation[];
 	summary?: ConversationSummary;
 	metadata: ConversationMetadata;
-}
+};
 
-export interface ConversationContext {
+export type ConversationContext = {
 	interfaceType: "external" | "internal";
 	patientId?: string;
 	emergencyContext?: boolean;
@@ -31,18 +31,18 @@ export interface ConversationContext {
 	topics?: string[];
 	sentiment?: "positive" | "neutral" | "negative" | "mixed";
 	urgencyLevel?: "low" | "medium" | "high" | "critical";
-}
+};
 
-export interface ConversationOptions {
+export type ConversationOptions = {
 	includeAnalytics?: boolean;
 	includeSummary?: boolean;
 	includeRecommendations?: boolean;
 	exportFormat?: "json" | "pdf" | "csv";
 	anonymize?: boolean;
 	includeMetadata?: boolean;
-}
+};
 
-export interface ConversationAnalytics {
+export type ConversationAnalytics = {
 	totalMessages: number;
 	averageResponseTime: number;
 	sentimentAnalysis: SentimentAnalysis;
@@ -50,71 +50,71 @@ export interface ConversationAnalytics {
 	engagementMetrics: EngagementMetrics;
 	complianceMetrics: ComplianceMetrics;
 	performanceMetrics: PerformanceMetrics;
-}
+};
 
-export interface SentimentAnalysis {
+export type SentimentAnalysis = {
 	overall: "positive" | "neutral" | "negative" | "mixed";
 	confidence: number;
 	emotions: EmotionScore[];
 	sentimentTimeline: SentimentTimepoint[];
-}
+};
 
-export interface EmotionScore {
+export type EmotionScore = {
 	emotion: "joy" | "sadness" | "anger" | "fear" | "surprise" | "trust" | "anticipation" | "disgust";
 	score: number;
 	confidence: number;
-}
+};
 
-export interface SentimentTimepoint {
+export type SentimentTimepoint = {
 	timestamp: Date;
 	sentiment: "positive" | "neutral" | "negative";
 	score: number;
 	messageIndex: number;
-}
+};
 
-export interface TopicDistribution {
+export type TopicDistribution = {
 	topic: string;
 	frequency: number;
 	relevance: number;
 	category: "medical" | "administrative" | "technical" | "general";
-}
+};
 
-export interface EngagementMetrics {
+export type EngagementMetrics = {
 	responseRate: number;
 	averageMessageLength: number;
 	conversationDepth: number;
 	userSatisfaction: number;
 	escalationTriggered: boolean;
 	goalAchievement: number;
-}
+};
 
-export interface ComplianceMetrics {
+export type ComplianceMetrics = {
 	lgpdCompliant: boolean;
 	anvisaCompliant: boolean;
 	cfmCompliant: boolean;
 	auditTrailComplete: boolean;
 	consentObtained: boolean;
 	dataRetentionCompliant: boolean;
-}
+};
 
-export interface PerformanceMetrics {
+export type PerformanceMetrics = {
 	averageResponseTime: number;
 	systemResponseTime: number;
 	aiConfidenceScore: number;
 	errorRate: number;
 	successRate: number;
 	resourceUsage: ResourceUsage;
-}
+};
 
-export interface ResourceUsage {
+export type ResourceUsage = {
 	tokensUsed: number;
 	computeTime: number;
 	cacheHits: number;
 	cacheMisses: number;
 	databaseQueries: number;
-}
+};
 
-export interface ConversationRecommendation {
+export type ConversationRecommendation = {
 	type: "improvement" | "follow_up" | "escalation" | "training" | "process";
 	priority: "low" | "medium" | "high" | "urgent";
 	category: string;
@@ -123,9 +123,9 @@ export interface ConversationRecommendation {
 	actionItems: string[];
 	expectedOutcome: string;
 	implementationSteps: string[];
-}
+};
 
-export interface ConversationSummary {
+export type ConversationSummary = {
 	overview: string;
 	keyTopics: string[];
 	userGoals: string[];
@@ -135,17 +135,17 @@ export interface ConversationSummary {
 	escalationNeeded: boolean;
 	followUpRequired: boolean;
 	patientSafety: SafetyAssessment;
-}
+};
 
-export interface SafetyAssessment {
+export type SafetyAssessment = {
 	riskLevel: "none" | "low" | "medium" | "high" | "critical";
 	concerns: string[];
 	recommendations: string[];
 	immediateActions: string[];
 	monitoringRequired: boolean;
-}
+};
 
-export interface ConversationMetadata {
+export type ConversationMetadata = {
 	sessionId: string;
 	startTime: Date;
 	endTime?: Date;
@@ -156,9 +156,9 @@ export interface ConversationMetadata {
 	qualityScore: number;
 	complianceStatus: string;
 	version: string;
-}
+};
 
-export interface ConversationSession {
+export type ConversationSession = {
 	id: string;
 	userId: string;
 	clinicId: string;
@@ -170,9 +170,9 @@ export interface ConversationSession {
 	messages: ConversationMessage[];
 	createdAt: Date;
 	updatedAt: Date;
-}
+};
 
-export interface ConversationMessage {
+export type ConversationMessage = {
 	id: string;
 	sessionId: string;
 	role: "user" | "assistant" | "system";
@@ -184,7 +184,7 @@ export interface ConversationMessage {
 	complianceFlags: string[];
 	metadata: Record<string, any>;
 	createdAt: Date;
-}
+};
 
 export class ConversationManagementService extends EnhancedAIService<
 	ConversationManagementInput,
@@ -194,7 +194,7 @@ export class ConversationManagementService extends EnhancedAIService<
 	protected version = "1.0.0";
 	protected description = "Comprehensive conversation management and analytics for AI chat sessions";
 
-	private supabase: SupabaseClient;
+	private readonly supabase: SupabaseClient;
 
 	constructor(supabase: SupabaseClient, config: any) {
 		super(config);
@@ -303,16 +303,16 @@ export class ConversationManagementService extends EnhancedAIService<
 		const sessionData = {
 			user_id: input.userId,
 			clinic_id: input.clinicId,
-			session_type: input.context!.interfaceType,
+			session_type: input.context?.interfaceType,
 			title: this.generateSessionTitle(input.context!),
 			status: "active",
 			context: input.context,
 			metadata: {
 				created_via: "conversation-management-service",
-				interface_type: input.context!.interfaceType,
-				language: input.context!.language,
-				timezone: input.context!.timezone,
-				emergency_context: input.context!.emergencyContext,
+				interface_type: input.context?.interfaceType,
+				language: input.context?.language,
+				timezone: input.context?.timezone,
+				emergency_context: input.context?.emergencyContext,
 			},
 		};
 
@@ -327,7 +327,7 @@ export class ConversationManagementService extends EnhancedAIService<
 			sessionId: data.id,
 			userId: input.userId,
 			clinicId: input.clinicId,
-			interfaceType: input.context!.interfaceType,
+			interfaceType: input.context?.interfaceType,
 		});
 
 		return this.mapSessionData(data);
@@ -458,7 +458,7 @@ export class ConversationManagementService extends EnhancedAIService<
 
 		// Extract key information from messages
 		const userMessages = conversation.messages.filter((m) => m.role === "user");
-		const assistantMessages = conversation.messages.filter((m) => m.role === "assistant");
+		const _assistantMessages = conversation.messages.filter((m) => m.role === "assistant");
 
 		// Generate AI-powered summary
 		const overview = await this.generateOverview(conversation);
@@ -817,7 +817,7 @@ export class ConversationManagementService extends EnhancedAIService<
 		};
 	}
 
-	private mapMessageData = (data: any): ConversationMessage => ({
+	private readonly mapMessageData = (data: any): ConversationMessage => ({
 		id: data.id,
 		sessionId: data.session_id,
 		role: data.role,
@@ -838,7 +838,7 @@ export class ConversationManagementService extends EnhancedAIService<
 		return 0;
 	}
 
-	private calculateParticipantCount(result: any): number {
+	private calculateParticipantCount(_result: any): number {
 		// In a chat session, typically 2 participants (user + assistant)
 		return 2;
 	}
@@ -853,7 +853,7 @@ export class ConversationManagementService extends EnhancedAIService<
 		return negativeKeywords.some((keyword) => content.includes(keyword));
 	}
 
-	private extractEmotions(messages: ConversationMessage[]): EmotionScore[] {
+	private extractEmotions(_messages: ConversationMessage[]): EmotionScore[] {
 		// Simplified emotion detection
 		return [
 			{ emotion: "trust", score: 0.6, confidence: 0.7 },
@@ -872,12 +872,19 @@ export class ConversationManagementService extends EnhancedAIService<
 		let score = 0.7; // Base score
 
 		// Adjust based on conversation length (longer = more engaged)
-		if (messageCount > 10) score += 0.1;
-		if (messageCount > 20) score += 0.1;
+		if (messageCount > 10) {
+			score += 0.1;
+		}
+		if (messageCount > 20) {
+			score += 0.1;
+		}
 
 		// Adjust based on response time (faster = better)
-		if (avgResponseTime < 1000) score += 0.1;
-		else if (avgResponseTime > 3000) score -= 0.1;
+		if (avgResponseTime < 1000) {
+			score += 0.1;
+		} else if (avgResponseTime > 3000) {
+			score -= 0.1;
+		}
 
 		return Math.max(0, Math.min(1, score));
 	}
@@ -894,7 +901,7 @@ export class ConversationManagementService extends EnhancedAIService<
 		return hasResolution ? 0.8 : 0.4;
 	}
 
-	private async checkPatientConsent(patientId: string): Promise<boolean> {
+	private async checkPatientConsent(_patientId: string): Promise<boolean> {
 		// Implementation would check patient consent records
 		return true; // Placeholder
 	}
@@ -916,16 +923,27 @@ export class ConversationManagementService extends EnhancedAIService<
 
 		userMessages.forEach((message) => {
 			const content = message.content.toLowerCase();
-			if (content.includes("agendar")) goals.push("Agendamento de consulta");
-			if (content.includes("cancelar")) goals.push("Cancelamento");
-			if (content.includes("informação")) goals.push("Obter informações");
-			if (content.includes("dúvida")) goals.push("Esclarecer dúvidas");
+			if (content.includes("agendar")) {
+				goals.push("Agendamento de consulta");
+			}
+			if (content.includes("cancelar")) {
+				goals.push("Cancelamento");
+			}
+			if (content.includes("informação")) {
+				goals.push("Obter informações");
+			}
+			if (content.includes("dúvida")) {
+				goals.push("Esclarecer dúvidas");
+			}
 		});
 
 		return [...new Set(goals)]; // Remove duplicates
 	}
 
-	private async assessOutcomes(conversation: ConversationSession, analytics: ConversationAnalytics): Promise<string[]> {
+	private async assessOutcomes(
+		_conversation: ConversationSession,
+		analytics: ConversationAnalytics
+	): Promise<string[]> {
 		const outcomes: string[] = [];
 
 		if (analytics.engagementMetrics.goalAchievement > 0.6) {
@@ -944,7 +962,7 @@ export class ConversationManagementService extends EnhancedAIService<
 	}
 
 	private async generateNextSteps(
-		conversation: ConversationSession,
+		_conversation: ConversationSession,
 		analytics: ConversationAnalytics
 	): Promise<string[]> {
 		const steps: string[] = [];
@@ -965,7 +983,7 @@ export class ConversationManagementService extends EnhancedAIService<
 	}
 
 	private async generateAIRecommendations(
-		conversation: ConversationSession,
+		_conversation: ConversationSession,
 		analytics: ConversationAnalytics
 	): Promise<string[]> {
 		const recommendations: string[] = [];
@@ -1025,7 +1043,7 @@ export class ConversationManagementService extends EnhancedAIService<
 		for (let i = 0; i < value.length; i++) {
 			const char = value.charCodeAt(i);
 			hash = (hash << 5) - hash + char;
-			hash = hash & hash; // Convert to 32-bit integer
+			hash &= hash; // Convert to 32-bit integer
 		}
 		return hash.toString();
 	}

@@ -352,7 +352,7 @@ export class ComplianceValidationService {
 	/**
 	 * Test compliance automation features
 	 */
-	private async validateComplianceAutomation(tenantId: string): Promise<ValidationResult[]> {
+	private async validateComplianceAutomation(_tenantId: string): Promise<ValidationResult[]> {
 		const results: ValidationResult[] = [];
 
 		try {
@@ -389,7 +389,7 @@ export class ComplianceValidationService {
 	}
 
 	// Helper methods for specific AI tests
-	private async testAIAssistantCompliance(tenantId: string): Promise<any> {
+	private async testAIAssistantCompliance(_tenantId: string): Promise<any> {
 		// This would test the actual AI assistant implementation
 		// For now, we'll simulate based on our implementation
 		return {
@@ -400,7 +400,7 @@ export class ComplianceValidationService {
 		};
 	}
 
-	private async testAIRiskAssessmentCompliance(tenantId: string): Promise<any> {
+	private async testAIRiskAssessmentCompliance(_tenantId: string): Promise<any> {
 		// Test the ML risk assessment compliance
 		return {
 			isCompliant: true,
@@ -409,7 +409,7 @@ export class ComplianceValidationService {
 		};
 	}
 
-	private async testAIContentFiltering(tenantId: string): Promise<any> {
+	private async testAIContentFiltering(_tenantId: string): Promise<any> {
 		// Test AI content filtering implementation
 		return {
 			hasFiltering: true,

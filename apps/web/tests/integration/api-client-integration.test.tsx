@@ -3,7 +3,6 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { renderHookWithClient } from "../../test-utils";
 
 // Types for API responses
 type ApiResponse<T> = {

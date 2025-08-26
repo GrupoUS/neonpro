@@ -1,7 +1,5 @@
 "use client";
 
-import jsPDF from "jspdf";
-import XLSX from "xlsx";
 import { formatCurrency, formatDate, reportData } from "./healthcare-data";
 
 // PDF Export Configuration
@@ -408,170 +406,6 @@ export class HealthcareExcelExporter {
 		return XLSX.write(workbook, { bookType: "xlsx", type: "array" });
 		*/
 	}
-
-	private static prepareLGPDData(): any[][] {
-		const data = reportData.lgpd;
-		return [
-			["Relatório de Conformidade LGPD - NeonPro Healthcare"],
-			["Gerado em:", new Date().toLocaleString("pt-BR")],
-			[],
-			["VISÃO GERAL"],
-			["Métrica", "Valor"],
-			["Total de Titulares", data.overview.totalDataSubjects],
-			["Consentimentos Ativos", data.overview.activeConsents],
-			["Consentimentos Retirados", data.overview.withdrawnConsents],
-			["Solicitações Pendentes", data.overview.pendingRequests],
-			["Score de Conformidade (%)", data.overview.complianceScore],
-			["Última Auditoria", formatDate(data.overview.lastAudit)],
-			["Próxima Auditoria", formatDate(data.overview.nextAudit)],
-			[],
-			["MÉTRICAS DE CONSENTIMENTO"],
-			["Categoria", "Concedidos", "Retirados", "Pendentes"],
-			[
-				"Marketing",
-				data.consentMetrics.marketing.granted,
-				data.consentMetrics.marketing.withdrawn,
-				data.consentMetrics.marketing.pending,
-			],
-			[
-				"Analytics",
-				data.consentMetrics.analytics.granted,
-				data.consentMetrics.analytics.withdrawn,
-				data.consentMetrics.analytics.pending,
-			],
-			[
-				"Terceiros",
-				data.consentMetrics.thirdParty.granted,
-				data.consentMetrics.thirdParty.withdrawn,
-				data.consentMetrics.thirdParty.pending,
-			],
-			[
-				"Pesquisa",
-				data.consentMetrics.research.granted,
-				data.consentMetrics.research.withdrawn,
-				data.consentMetrics.research.pending,
-			],
-			[],
-			["SOLICITAÇÕES DE DADOS"],
-			["ID", "Tipo", "Status", "Data Solicitação", "CPF", "Categoria"],
-			...data.dataRequests.map((req) => [
-				req.id,
-				req.type,
-				req.status,
-				formatDate(req.requestDate),
-				req.requesterCPF,
-				req.dataCategory,
-			]),
-		];
-	}
-
-	private static prepareFinancialData(): any[][] {
-		const data = reportData.financial;
-		return [
-			["Relatório Financeiro - NeonPro Healthcare"],
-			["Gerado em:", new Date().toLocaleString("pt-BR")],
-			[],
-			["RECEITAS"],
-			["Período", "Valor (R$)", "Crescimento (%)"],
-			["Mensal", data.revenue.monthly, data.revenue.growth.monthly],
-			["Trimestral", data.revenue.quarterly, data.revenue.growth.quarterly],
-			["Anual", data.revenue.yearly, data.revenue.growth.yearly],
-			[],
-			["MÉTODOS DE PAGAMENTO"],
-			["Método", "Valor (R$)", "Percentual (%)", "Transações"],
-			["PIX", data.paymentMethods.pix.amount, data.paymentMethods.pix.percentage, data.paymentMethods.pix.transactions],
-			[
-				"Cartão de Crédito",
-				data.paymentMethods.creditCard.amount,
-				data.paymentMethods.creditCard.percentage,
-				data.paymentMethods.creditCard.transactions,
-			],
-			[
-				"Cartão de Débito",
-				data.paymentMethods.debitCard.amount,
-				data.paymentMethods.debitCard.percentage,
-				data.paymentMethods.debitCard.transactions,
-			],
-			[
-				"Dinheiro",
-				data.paymentMethods.cash.amount,
-				data.paymentMethods.cash.percentage,
-				data.paymentMethods.cash.transactions,
-			],
-			[],
-			["ANÁLISE DE SERVIÇOS"],
-			["Serviço", "Receita (R$)", "Margem (%)", "Sessões"],
-			...data.serviceAnalysis.map((service) => [service.service, service.revenue, service.margin, service.sessions]),
-			[],
-			["TRIBUTOS"],
-			["Tributo", "Valor (R$)"],
-			["IRPJ", data.taxes.irpj],
-			["CSLL", data.taxes.csll],
-			["PIS", data.taxes.pis],
-			["COFINS", data.taxes.cofins],
-			["ISS", data.taxes.iss],
-			["INSS", data.taxes.inss],
-			["Total", data.taxes.total],
-		];
-	}
-
-	private static prepareClinicalData(): any[][] {
-		const data = reportData.clinical;
-		return [
-			["Relatório Clínico - NeonPro Healthcare"],
-			["Gerado em:", new Date().toLocaleString("pt-BR")],
-			[],
-			["RESULTADOS DE TRATAMENTO"],
-			["Métrica", "Valor (%)"],
-			["Taxa de Sucesso", data.treatmentOutcomes.successRate],
-			["Taxa de Complicações", data.treatmentOutcomes.complicationRate],
-			["Taxa de Conclusão", data.treatmentOutcomes.treatmentCompletionRate],
-			["Adesão ao Follow-up", data.treatmentOutcomes.followUpCompliance],
-			[],
-			["SATISFAÇÃO DO PACIENTE"],
-			["Aspecto", "Nota (0-5)"],
-			["Geral", data.patientSatisfaction.overall],
-			["Tratamento", data.patientSatisfaction.breakdown.treatment],
-			["Atendimento", data.patientSatisfaction.breakdown.service],
-			["Instalações", data.patientSatisfaction.breakdown.facilities],
-			["Equipe", data.patientSatisfaction.breakdown.staff],
-			["Agendamento", data.patientSatisfaction.breakdown.scheduling],
-			["NPS", data.patientSatisfaction.nps],
-			[],
-			["EVENTOS ADVERSOS"],
-			["ID", "Data", "Tipo", "Severidade", "Tratamento", "Desfecho", "ANVISA"],
-			...data.adverseEvents.map((event) => [
-				event.id,
-				formatDate(event.date),
-				event.type,
-				event.severity,
-				event.treatment,
-				event.outcome,
-				event.reportedToAnvisa ? "Sim" : "Não",
-			]),
-		];
-	}
-
-	private static prepareDemographicsData(): any[][] {
-		const data = reportData.demographics;
-		return [
-			["Demografia de Pacientes - NeonPro Healthcare"],
-			["Gerado em:", new Date().toLocaleString("pt-BR")],
-			[],
-			["DISTRIBUIÇÃO POR IDADE"],
-			["Faixa Etária", "Quantidade", "Percentual (%)"],
-			...Object.entries(data.ageDistribution).map(([age, info]) => [age, info.count, info.percentage]),
-			[],
-			["DISTRIBUIÇÃO POR GÊNERO"],
-			["Gênero", "Quantidade", "Percentual (%)"],
-			["Feminino", data.genderDistribution.female.count, data.genderDistribution.female.percentage],
-			["Masculino", data.genderDistribution.male.count, data.genderDistribution.male.percentage],
-			[],
-			["DISTRIBUIÇÃO POR REGIÃO"],
-			["Estado", "Quantidade", "Percentual (%)"],
-			...Object.entries(data.regionDistribution).map(([region, info]) => [region, info.count, info.percentage]),
-		];
-	}
 }
 
 // CSV Export Functions
@@ -660,7 +494,7 @@ export const downloadReport = (data: Uint8Array | string, filename: string, type
 		csv: "text/csv",
 	};
 
-	const blobData: BlobPart[] = typeof data === 'string' ? [data] : [data as unknown as ArrayBuffer];
+	const blobData: BlobPart[] = typeof data === "string" ? [data] : [data as unknown as ArrayBuffer];
 	const blob = new Blob(blobData, { type: mimeTypes[type] });
 	const url = URL.createObjectURL(blob);
 

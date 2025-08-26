@@ -6,16 +6,16 @@
  * Compliance: LGPD/ANVISA/CFM
  */
 
-export { MobileNavigation, MobileBottomNavigation } from "./MobileNavigation";
 export {
-	MobileDashboardCard,
-	MobileMetricCard,
 	MobileAlertCard,
+	MobileDashboardCard,
 	MobileDashboardGrid,
 	MobileDashboardSection,
+	MobileMetricCard,
 	MobileQuickActions,
 	MobileStatusIndicator,
 } from "./MobileDashboardCards";
+export { MobileBottomNavigation, MobileNavigation } from "./MobileNavigation";
 
 // Mobile-specific types
 export interface MobileNavigationItem {

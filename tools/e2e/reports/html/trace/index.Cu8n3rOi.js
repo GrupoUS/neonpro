@@ -23,9 +23,9 @@ const A = ({
 		children: y,
 	}) => {
 		const w = s.useRef(null),
-			[b, x] = s.useState(0);
+			[_b, x] = s.useState(0);
 		let S = o;
-		if (h != null && h.current) {
+		if (h?.current) {
 			const g = h.current.getBoundingClientRect();
 			S = { position: "fixed", margin: 0, top: g.bottom + (d ?? 0), left: O(g, a), width: a, zIndex: 1, ...o };
 		}
@@ -59,7 +59,9 @@ const A = ({
 	},
 	O = (n, o) => {
 		const r = N(n, o, "left");
-		if (r.inBounds) return r.value;
+		if (r.inBounds) {
+			return r.value;
+		}
 		const a = N(n, o, "right");
 		return a.inBounds ? a.value : r.value;
 	},
@@ -105,7 +107,9 @@ const A = ({
 					i = new URL(window.location.href);
 				for (let f = 0; f < t.length; f++) {
 					const v = t.item(f);
-					if (!v) continue;
+					if (!v) {
+						continue;
+					}
 					const R = URL.createObjectURL(v);
 					c.push(R), l.push(v.name), i.searchParams.append("trace", R), i.searchParams.append("traceFileName", v.name);
 				}
@@ -114,9 +118,13 @@ const A = ({
 			}, []);
 		s.useEffect(() => {
 			const t = async (c) => {
-				var l;
+				let l;
 				if ((l = c.clipboardData) != null && l.files.length) {
-					for (const i of c.clipboardData.files) if (i.type !== "application/zip") return;
+					for (const i of c.clipboardData.files) {
+						if (i.type !== "application/zip") {
+							return;
+						}
+					}
 					c.preventDefault(), L(c.clipboardData.files);
 				}
 			};
@@ -125,7 +133,9 @@ const A = ({
 			s.useEffect(() => {
 				const t = (c) => {
 					const { method: l, params: i } = c.data;
-					if (l !== "load" || !((i == null ? void 0 : i.trace) instanceof Blob)) return;
+					if (l !== "load" || !((i == null ? void 0 : i.trace) instanceof Blob)) {
+						return;
+					}
 					const m = new File([i.trace], "trace.zip", { type: "application/zip" }),
 						f = new DataTransfer();
 					f.items.add(m), L(f.files);
@@ -148,11 +158,12 @@ const A = ({
 			const t = new URL(window.location.href).searchParams,
 				c = t.getAll("trace");
 			o(t.has("isServer"));
-			for (const l of c)
+			for (const l of c) {
 				if (l.startsWith("file:")) {
 					j(l || null);
 					return;
 				}
+			}
 			if (t.has("isServer")) {
 				const l = new URLSearchParams(window.location.search).get("ws"),
 					i = new URL(`../${l}`, window.location.toString());
@@ -162,7 +173,9 @@ const A = ({
 					a(f.traceUrl ? [f.traceUrl] : []), x(!1), g(null);
 				}),
 					m.initialize({}).catch(() => {});
-			} else c.some((l) => l.startsWith("blob:")) || a(c);
+			} else {
+				c.some((l) => l.startsWith("blob:")) || a(c);
+			}
 		}, []),
 			s.useEffect(() => {
 				(async () => {
@@ -186,7 +199,9 @@ const A = ({
 						navigator.serviceWorker.removeEventListener("message", t);
 						const l = new E(c);
 						w({ done: 0, total: 0 }), T(l);
-					} else T(D);
+					} else {
+						T(D);
+					}
 				})();
 			}, [n, r, d]);
 		const k = !!(!(n || b || p) && (!r.length || S));
@@ -214,7 +229,7 @@ const A = ({
 					className: "progress",
 					children: e.jsx("div", {
 						className: "inner-progress",
-						style: { width: y.total ? (100 * y.done) / y.total + "%" : 0 },
+						style: { width: y.total ? `${(100 * y.done) / y.total}%` : 0 },
 					}),
 				}),
 				e.jsx(U, { model: h, inert: k }),
@@ -327,9 +342,10 @@ async function H(n) {
 (async () => {
 	const n = new URLSearchParams(window.location.search);
 	if ((z(), window.location.protocol !== "file:")) {
-		if ((n.get("isUnderTest") === "true" && (await new Promise((d) => setTimeout(d, 1e3))), !navigator.serviceWorker))
+		if ((n.get("isUnderTest") === "true" && (await new Promise((d) => setTimeout(d, 1e3))), !navigator.serviceWorker)) {
 			throw new Error(`Service workers are not supported.
 Make sure to serve the Trace Viewer (${window.location}) via HTTPS or localhost.`);
+		}
 		navigator.serviceWorker.register("sw.bundle.js"),
 			navigator.serviceWorker.controller ||
 				(await new Promise((d) => {

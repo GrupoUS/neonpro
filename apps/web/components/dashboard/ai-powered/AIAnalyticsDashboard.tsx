@@ -6,26 +6,24 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
 import {
 	Activity,
-	BarChart3,
-	Brain,
-	Calendar,
-	DollarSign,
-	TrendingUp,
-	TrendingDown,
-	Users,
-	Heart,
 	AlertTriangle,
+	Brain,
 	CheckCircle,
+	DollarSign,
+	Heart,
 	Target,
+	TrendingDown,
+	TrendingUp,
+	Users,
 } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface AnalyticsMetrics {
 	totalRevenue: number;
@@ -110,7 +108,7 @@ export function AIAnalyticsDashboard() {
 					action: "Aumentar estoque e agenda",
 				},
 			]);
-			
+
 			setLoading(false);
 		}, 1000);
 
@@ -166,30 +164,19 @@ export function AIAnalyticsDashboard() {
 	}
 
 	return (
-		<div 
-			className="space-y-6" 
-			role="main" 
-			aria-labelledby="analytics-heading"
-			aria-describedby="analytics-description"
-		>
+		<div className="space-y-6" role="main" aria-labelledby="analytics-heading" aria-describedby="analytics-description">
 			{/* AI Insights Header */}
 			<div className="flex items-center justify-between">
 				<div>
-					<h2 
-						id="analytics-heading"
-						className="text-2xl font-bold text-foreground"
-					>
+					<h2 id="analytics-heading" className="text-2xl font-bold text-foreground">
 						Analytics com IA
 					</h2>
-					<p 
-						id="analytics-description"
-						className="text-muted-foreground"
-					>
+					<p id="analytics-description" className="text-muted-foreground">
 						Insights em tempo real para otimizar sua clínica estética
 					</p>
 				</div>
-				<Badge 
-					variant="outline" 
+				<Badge
+					variant="outline"
 					className="flex items-center gap-2"
 					role="status"
 					aria-label={`IA ativa com ${metrics?.aiPredictionAccuracy}% de precisão`}
@@ -200,21 +187,23 @@ export function AIAnalyticsDashboard() {
 			</div>
 
 			{/* Key Metrics Grid */}
-			<div 
+			<div
 				className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
 				role="region"
 				aria-labelledby="metrics-heading"
 			>
-				<h3 id="metrics-heading" className="sr-only">Métricas principais</h3>
-				
+				<h3 id="metrics-heading" className="sr-only">
+					Métricas principais
+				</h3>
+
 				{/* Revenue */}
 				<Card className="neonpro-card group" role="article" aria-labelledby="revenue-title">
 					<CardHeader className="pb-2">
-						<CardTitle 
-							id="revenue-title"
-							className="flex items-center text-sm font-medium"
-						>
-							<div className="group-hover:neonpro-glow mr-3 flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 transition-all" aria-hidden="true">
+						<CardTitle id="revenue-title" className="flex items-center text-sm font-medium">
+							<div
+								className="group-hover:neonpro-glow mr-3 flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 transition-all"
+								aria-hidden="true"
+							>
 								<DollarSign className="h-4 w-4 text-primary" aria-hidden="true" />
 							</div>
 							Receita Total
@@ -226,12 +215,8 @@ export function AIAnalyticsDashboard() {
 					</CardHeader>
 					<CardContent>
 						<div className="flex items-center space-x-2">
-							<div className="text-2xl font-bold">
-								R$ {metrics?.totalRevenue.toLocaleString("pt-BR")}
-							</div>
-							{metrics?.monthlyGrowth && metrics.monthlyGrowth > 0 && (
-								<TrendingUp className="h-4 w-4 text-green-600" />
-							)}
+							<div className="text-2xl font-bold">R$ {metrics?.totalRevenue.toLocaleString("pt-BR")}</div>
+							{metrics?.monthlyGrowth && metrics.monthlyGrowth > 0 && <TrendingUp className="h-4 w-4 text-green-600" />}
 						</div>
 						<div className="text-xs text-muted-foreground">
 							Previsão IA: R$ {metrics?.predictedRevenue.toLocaleString("pt-BR")}
@@ -242,11 +227,11 @@ export function AIAnalyticsDashboard() {
 				{/* Patient Retention */}
 				<Card className="neonpro-card group" role="article" aria-labelledby="retention-title">
 					<CardHeader className="pb-2">
-						<CardTitle 
-							id="retention-title"
-							className="flex items-center text-sm font-medium"
-						>
-							<div className="group-hover:neonpro-glow mr-3 flex h-8 w-8 items-center justify-center rounded-lg bg-chart-2/10 transition-all" aria-hidden="true">
+						<CardTitle id="retention-title" className="flex items-center text-sm font-medium">
+							<div
+								className="group-hover:neonpro-glow mr-3 flex h-8 w-8 items-center justify-center rounded-lg bg-chart-2/10 transition-all"
+								aria-hidden="true"
+							>
 								<Users className="h-4 w-4 text-chart-2" aria-hidden="true" />
 							</div>
 							Retenção de Pacientes
@@ -264,11 +249,11 @@ export function AIAnalyticsDashboard() {
 				{/* Treatment Effectiveness */}
 				<Card className="neonpro-card group" role="article" aria-labelledby="effectiveness-title">
 					<CardHeader className="pb-2">
-						<CardTitle 
-							id="effectiveness-title"
-							className="flex items-center text-sm font-medium"
-						>
-							<div className="group-hover:neonpro-glow mr-3 flex h-8 w-8 items-center justify-center rounded-lg bg-chart-3/10 transition-all" aria-hidden="true">
+						<CardTitle id="effectiveness-title" className="flex items-center text-sm font-medium">
+							<div
+								className="group-hover:neonpro-glow mr-3 flex h-8 w-8 items-center justify-center rounded-lg bg-chart-3/10 transition-all"
+								aria-hidden="true"
+							>
 								<Heart className="h-4 w-4 text-chart-3" aria-hidden="true" />
 							</div>
 							Efetividade dos Tratamentos
@@ -286,11 +271,11 @@ export function AIAnalyticsDashboard() {
 				{/* Compliance Score */}
 				<Card className="neonpro-card group" role="article" aria-labelledby="compliance-title">
 					<CardHeader className="pb-2">
-						<CardTitle 
-							id="compliance-title"
-							className="flex items-center text-sm font-medium"
-						>
-							<div className="group-hover:neonpro-glow mr-3 flex h-8 w-8 items-center justify-center rounded-lg bg-green-100 transition-all" aria-hidden="true">
+						<CardTitle id="compliance-title" className="flex items-center text-sm font-medium">
+							<div
+								className="group-hover:neonpro-glow mr-3 flex h-8 w-8 items-center justify-center rounded-lg bg-green-100 transition-all"
+								aria-hidden="true"
+							>
 								<CheckCircle className="h-4 w-4 text-green-600" aria-hidden="true" />
 							</div>
 							Compliance Score
@@ -307,49 +292,33 @@ export function AIAnalyticsDashboard() {
 			</div>
 
 			{/* AI Insights Section */}
-			<Card 
-				className="neonpro-card" 
-				role="region" 
-				aria-labelledby="insights-heading"
-			>
+			<Card className="neonpro-card" role="region" aria-labelledby="insights-heading">
 				<CardHeader>
-					<CardTitle 
-						id="insights-heading"
-						className="flex items-center"
-					>
+					<CardTitle id="insights-heading" className="flex items-center">
 						<Brain className="mr-2 h-5 w-5 text-primary" aria-hidden="true" />
 						Insights de IA em Tempo Real
 					</CardTitle>
-					<CardDescription>
-						Recomendações personalizadas para otimizar sua clínica
-					</CardDescription>
+					<CardDescription>Recomendações personalizadas para otimizar sua clínica</CardDescription>
 				</CardHeader>
 				<CardContent>
 					<div className="space-y-4" role="list" aria-label="Lista de insights de inteligência artificial">
-						{insights.map((insight, index) => (
+						{insights.map((insight, _index) => (
 							<div
 								key={insight.id}
 								className="flex items-start space-x-4 rounded-lg border border-border p-4 transition-colors hover:bg-muted/50"
 								role="listitem"
 								aria-labelledby={`insight-title-${insight.id}`}
 								aria-describedby={`insight-desc-${insight.id}`}
-								tabIndex={0}
 							>
-								<div 
-									className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10"
-									aria-hidden="true"
-								>
+								<div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10" aria-hidden="true">
 									{getInsightIcon(insight.type)}
 								</div>
 								<div className="flex-1 space-y-2">
 									<div className="flex items-center space-x-2">
-										<h4 
-											id={`insight-title-${insight.id}`}
-											className="font-semibold"
-										>
+										<h4 id={`insight-title-${insight.id}`} className="font-semibold">
 											{insight.title}
 										</h4>
-										<Badge 
+										<Badge
 											variant={getInsightBadgeVariant(insight.impact)}
 											aria-label={`Impacto ${insight.impact === "high" ? "alto" : insight.impact === "medium" ? "médio" : "baixo"}`}
 										>
@@ -357,23 +326,17 @@ export function AIAnalyticsDashboard() {
 											{insight.impact === "medium" && "Médio Impacto"}
 											{insight.impact === "low" && "Baixo Impacto"}
 										</Badge>
-										<Badge 
-											variant="outline"
-											aria-label={`${insight.confidence}% de confiança na previsão`}
-										>
+										<Badge variant="outline" aria-label={`${insight.confidence}% de confiança na previsão`}>
 											{insight.confidence}% confiança
 										</Badge>
 									</div>
-									<p 
-										id={`insight-desc-${insight.id}`}
-										className="text-sm text-muted-foreground"
-									>
+									<p id={`insight-desc-${insight.id}`} className="text-sm text-muted-foreground">
 										{insight.description}
 									</p>
 									{insight.action && (
-										<Button 
-											size="sm" 
-											variant="outline" 
+										<Button
+											size="sm"
+											variant="outline"
 											className="text-xs"
 											aria-label={`Executar ação: ${insight.action}`}
 										>
@@ -388,32 +351,27 @@ export function AIAnalyticsDashboard() {
 			</Card>
 
 			{/* Performance Metrics */}
-			<div 
-				className="grid grid-cols-1 md:grid-cols-3 gap-4"
-				role="region"
-				aria-labelledby="performance-heading"
-			>
-				<h3 id="performance-heading" className="sr-only">Métricas de performance</h3>
-				
+			<div className="grid grid-cols-1 md:grid-cols-3 gap-4" role="region" aria-labelledby="performance-heading">
+				<h3 id="performance-heading" className="sr-only">
+					Métricas de performance
+				</h3>
+
 				<Card className="neonpro-card" role="article" aria-labelledby="satisfaction-title">
 					<CardHeader className="pb-2">
-						<CardTitle 
-							id="satisfaction-title"
-							className="text-sm font-medium"
-						>
+						<CardTitle id="satisfaction-title" className="text-sm font-medium">
 							Satisfação do Paciente
 						</CardTitle>
 					</CardHeader>
 					<CardContent>
 						<div className="flex items-center space-x-2">
-							<div 
+							<div
 								className="text-2xl font-bold"
 								aria-label={`${metrics?.patientSatisfaction} de 10 pontos na satisfação`}
 							>
 								{metrics?.patientSatisfaction}/10
 							</div>
-							<Badge 
-								variant="outline" 
+							<Badge
+								variant="outline"
 								className="text-green-600 border-green-600"
 								role="status"
 								aria-label="Classificação excelente"
@@ -426,41 +384,28 @@ export function AIAnalyticsDashboard() {
 
 				<Card className="neonpro-card" role="article" aria-labelledby="noshow-title">
 					<CardHeader className="pb-2">
-						<CardTitle 
-							id="noshow-title"
-							className="text-sm font-medium"
-						>
+						<CardTitle id="noshow-title" className="text-sm font-medium">
 							Taxa de No-Show
 						</CardTitle>
 					</CardHeader>
 					<CardContent>
 						<div className="flex items-center space-x-2">
-							<div 
-								className="text-2xl font-bold"
-								aria-label={`${metrics?.noShowRate}% de taxa de não comparecimento`}
-							>
+							<div className="text-2xl font-bold" aria-label={`${metrics?.noShowRate}% de taxa de não comparecimento`}>
 								{metrics?.noShowRate}%
 							</div>
-							<TrendingDown 
-								className="h-4 w-4 text-green-600" 
-								aria-label="Tendência de queda"
-								aria-hidden="true"
-							/>
+							<TrendingDown className="h-4 w-4 text-green-600" aria-label="Tendência de queda" aria-hidden="true" />
 						</div>
 					</CardContent>
 				</Card>
 
 				<Card className="neonpro-card" role="article" aria-labelledby="ticket-title">
 					<CardHeader className="pb-2">
-						<CardTitle 
-							id="ticket-title"
-							className="text-sm font-medium"
-						>
+						<CardTitle id="ticket-title" className="text-sm font-medium">
 							Ticket Médio
 						</CardTitle>
 					</CardHeader>
 					<CardContent>
-						<div 
+						<div
 							className="text-2xl font-bold"
 							aria-label={`Ticket médio de R$ ${metrics?.averageTreatmentValue.toLocaleString("pt-BR")}`}
 						>

@@ -188,6 +188,26 @@ const validateClinicOrigin = (origin: string): boolean => {
 };
 
 /**
+ * Helper function to check static origins
+ */
+const isStaticOriginAllowed = (origin: string, allowedOrigins: unknown): boolean => {
+	if (!Array.isArray(allowedOrigins)) {
+		return false;
+	}
+
+	for (const allowedOrigin of allowedOrigins) {
+		if (typeof allowedOrigin === "string" && allowedOrigin === origin) {
+			return true;
+		}
+		if (allowedOrigin instanceof RegExp && allowedOrigin.test(origin)) {
+			return true;
+		}
+	}
+
+	return false;
+};
+
+/**
  * Main CORS middleware with healthcare-specific configuration
  */
 export const corsMiddleware = (): MiddlewareHandler[] => {
@@ -200,16 +220,9 @@ export const corsMiddleware = (): MiddlewareHandler[] => {
 			return true;
 		}
 
-		// Check static origins
-		if (Array.isArray(corsPolicy.origin)) {
-			for (const allowedOrigin of corsPolicy.origin) {
-				if (typeof allowedOrigin === "string" && allowedOrigin === origin) {
-					return true;
-				}
-				if (allowedOrigin instanceof RegExp && allowedOrigin.test(origin)) {
-					return true;
-				}
-			}
+		// Check static origins first
+		if (isStaticOriginAllowed(origin, corsPolicy.origin)) {
+			return true;
 		}
 
 		// Check dynamic clinic origins
@@ -299,9 +312,9 @@ export const corsUtils = {
 
 	// Set custom CORS headers for specific routes
 	setCustomHeaders: (c: Context, additionalHeaders: Record<string, string>) => {
-		Object.entries(additionalHeaders).forEach(([key, value]) => {
+		for (const [key, value] of Object.entries(additionalHeaders)) {
 			c.res.headers.set(key, value);
-		});
+		}
 	},
 };
 

@@ -132,12 +132,10 @@ export function useRealtimeNotifications(options: UseRealtimeNotificationsOption
 	 * Show toast notification
 	 */
 	const showToastNotification = useCallback(
-		(notification: ExtendedNotification) => {
+		(_notification: ExtendedNotification) => {
 			if (!enableToast || typeof window === "undefined") {
 				return;
 			}
-			// Simple console log for now, can be enhanced with actual toast library
-			console.log("Toast notification:", notification.title);
 		},
 		[enableToast]
 	);
@@ -164,9 +162,7 @@ export function useRealtimeNotifications(options: UseRealtimeNotificationsOption
 
 					case "UPDATE":
 						if (newData) {
-							return oldCache.map((notification) =>
-								notification.id === newData.id ? newData : notification
-							);
+							return oldCache.map((notification) => (notification.id === newData.id ? newData : notification));
 						}
 						return oldCache;
 

@@ -34,8 +34,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 		const treatmentContext = searchParams.get("context") || undefined;
 
 		// Create comprehensive insight request
-		const insightRequest: PatientInsightRequest = {
-			patientId,
+		const _insightRequest: PatientInsightRequest = {
+			patient_id: patientId,
 			requestedInsights: requestedInsights.length > 0 ? (requestedInsights as any[]) : undefined,
 			treatmentContext,
 			timestamp: new Date(),
@@ -43,7 +43,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 		};
 
 		// Generate comprehensive insights
-		const comprehensiveInsights = await patientInsights.generateComprehensiveInsights(insightRequest);
+		const comprehensiveInsights = await patientInsights.getComprehensiveInsights(patientId);
 
 		return NextResponse.json({
 			success: true,
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
 		// Create detailed insight request from body
 		const insightRequest: PatientInsightRequest = {
-			patientId,
+			patient_id: patientId,
 			requestedInsights: body.requestedInsights || [],
 			treatmentContext: body.treatmentContext,
 			treatmentId: body.treatmentId,
@@ -82,7 +82,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 		};
 
 		// Generate comprehensive insights with custom parameters
-		const comprehensiveInsights = await patientInsights.generateComprehensiveInsights(insightRequest);
+		const comprehensiveInsights = await patientInsights.getComprehensiveInsights(insightRequest);
 
 		return NextResponse.json({
 			success: true,

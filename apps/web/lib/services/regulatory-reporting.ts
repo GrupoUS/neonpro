@@ -422,7 +422,7 @@ export class RegulatoryReportingService {
 		return Math.max(0, score);
 	}
 
-	private calculateCFMScore(procedures: any[], ethics: any[], education: any[], licenses: any[]): number {
+	private calculateCFMScore(_procedures: any[], ethics: any[], education: any[], licenses: any[]): number {
 		let score = 100;
 
 		// Deduct for ethical violations
@@ -442,7 +442,7 @@ export class RegulatoryReportingService {
 		return Math.max(0, score);
 	}
 
-	private calculateLGPDScore(consent: any, requests: any[], incidents: any[]): number {
+	private calculateLGPDScore(consent: any, _requests: any[], incidents: any[]): number {
 		let score = 100;
 
 		// Deduct for security incidents

@@ -1,47 +1,46 @@
 {
-	"name": "@neonpro/compliance",
-	"version": "0.1.0",
-	"description": "LGPD, ANVISA, and CFM compliance automation for NeonPro healthcare platform",
-	"main": "dist/index.js",
-	"module": "dist/index.mjs",
-	"types": "dist/index.d.ts",
-	"scripts": {
-		"build": "npx tsc",
-		"dev": "npx tsc --watch",
-		"lint": "ultracite lint",
-		"format": "ultracite format",
-		"lint:fix": "ultracite format",
-		"type-check": "npx tsc --noEmit",
-		"test": "vitest",
-		"test:watch": "vitest --watch",
-		"test:coverage": "vitest --coverage",
-		"clean": "rm -rf dist coverage"
-	},
-	"dependencies": {
-		"@supabase/supabase-js": "^2.38.0",
-		"zod": "^3.22.4",
-		"date-fns": "^2.30.0",
-		"crypto": "^1.0.1"
-	},
-	"devDependencies": {
-		"@types/node": "^22.10.2",
-		"@biomejs/biome": "^2.2.0",
-		"@vitest/ui": "^3.2.4",
-		"happy-dom": "^18.0.1",
-		"tsup": "^8.3.0",
-		"typescript": "^5.6.2",
-		"ultracite": "^5.2.3",
-		"vitest": "^3.2.4"
-	},
-	"peerDependencies": {
-		"@neonpro/types": "workspace:*",
-		"@neonpro/config": "workspace:*",
-		"@neonpro/security": "workspace:*"
-	},
-	"files": [
-		"dist"
-	],
-	"publishConfig": {
-		"access": "restricted"
-	}
+  "name": "@neonpro/compliance",
+  "version": "0.1.0",
+  "description": "LGPD, ANVISA, and CFM compliance automation for NeonPro healthcare platform",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "npx tsc",
+    "dev": "npx tsc --watch",
+    "lint": "ultracite lint",
+    "format": "ultracite format",
+    "lint:fix": "ultracite format",
+    "type-check": "npx tsc --noEmit",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest --coverage",
+    "clean": "rm -rf dist coverage"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.38.0",
+    "zod": "^3.22.4",
+    "date-fns": "^2.30.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@biomejs/biome": "^2.2.0",
+    "@vitest/ui": "^3.2.4",
+    "happy-dom": "^18.0.1",
+    "tsup": "^8.3.0",
+    "typescript": "^5.6.2",
+    "ultracite": "^5.2.3",
+    "vitest": "^3.2.4"
+  },
+  "peerDependencies": {
+    "@neonpro/types": "workspace:*",
+    "@neonpro/config": "workspace:*",
+    "@neonpro/security": "workspace:*"
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "restricted"
+  }
 }

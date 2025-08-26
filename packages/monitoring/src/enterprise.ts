@@ -5,7 +5,16 @@
  */
 
 import { EnhancedServiceBase } from "@neonpro/core-services";
-import type { HealthcareMetricName, MonitoringConfig, MonitoringHooks, ComplianceReport, DashboardMetrics, ComplianceStatus, ComplianceMetrics, HealthcareContext } from "../types";
+import type {
+	ComplianceMetrics,
+	ComplianceReport,
+	ComplianceStatus,
+	DashboardMetrics,
+	HealthcareContext,
+	HealthcareMetricName,
+	MonitoringConfig,
+	MonitoringHooks,
+} from "../types";
 import { getPerformanceMonitor, initPerformanceMonitoring, PerformanceMonitor } from "./client";
 
 /**
@@ -42,7 +51,7 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
 			enableInsights?: boolean;
 			enablePredictive?: boolean;
 			enableCompliance?: boolean;
-		} = {}
+		} = {},
 	): Promise<void> {
 		const startTime = this.startTiming("monitoring_track_metric");
 
@@ -101,7 +110,7 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
 		metricType: "patient_safety" | "data_privacy" | "system_performance" | "compliance",
 		metricName: string,
 		value: number,
-		context?: Record<string, string | number | boolean>
+		context?: Record<string, string | number | boolean>,
 	): Promise<void> {
 		const startTime = this.startTiming("healthcare_metric_enhanced");
 
@@ -162,7 +171,7 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
 			patientData?: boolean;
 			sensitiveFields?: string[];
 			userId?: string;
-		} = {}
+		} = {},
 	): Promise<void> {
 		const duration = performance.now() - startTime;
 
@@ -327,7 +336,7 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
 	private async trackComplianceMetric(
 		name: HealthcareMetricName,
 		value: number,
-		context?: Record<string, string | number | boolean>
+		context?: Record<string, string | number | boolean>,
 	): Promise<void> {
 		const complianceThresholds = {
 			patient_search_time: { max: 1000, compliance: "LGPD_RESPONSE_TIME" },
@@ -355,7 +364,9 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
 		return criticalMetrics.includes(name);
 	}
 
-	private sanitizeContext(context?: Record<string, string | number | boolean>): Record<string, string | number | boolean> {
+	private sanitizeContext(
+		context?: Record<string, string | number | boolean>,
+	): Record<string, string | number | boolean> {
 		if (!context) return {};
 
 		const sanitized = { ...context };
@@ -398,7 +409,7 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
 		metricType: string,
 		metricName: string,
 		value: number,
-		context?: Record<string, string | number | boolean>
+		context?: Record<string, string | number | boolean>,
 	): Promise<void> {
 		const alert = {
 			id: `alert_${Date.now()}_${Math.random().toString(36).substring(2)}`,
@@ -506,7 +517,11 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
 		this.performanceMonitor.setContext(context);
 	}
 
-	trackCustomMetric(name: HealthcareMetricName, value: number, context?: Record<string, string | number | boolean>): void {
+	trackCustomMetric(
+		name: HealthcareMetricName,
+		value: number,
+		context?: Record<string, string | number | boolean>,
+	): void {
 		this.performanceMonitor.trackCustomMetric(name, value, context);
 	}
 
@@ -546,7 +561,12 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
 		return this.performanceMonitor.startTiming(label);
 	}
 
-	endTiming(label: string, metricName: HealthcareMetricName, startTime: number, context?: Record<string, string | number | boolean>): void {
+	endTiming(
+		label: string,
+		metricName: HealthcareMetricName,
+		startTime: number,
+		context?: Record<string, string | number | boolean>,
+	): void {
 		this.performanceMonitor.endTiming(label, metricName, startTime, context);
 	}
 }
@@ -557,7 +577,7 @@ export const enhancedMonitoring = new MonitoringServiceFactory();
 // Initialize enhanced global monitoring
 export function initEnhancedPerformanceMonitoring(
 	config?: Partial<MonitoringConfig>,
-	hooks?: MonitoringHooks
+	hooks?: MonitoringHooks,
 ): MonitoringServiceFactory {
 	return new MonitoringServiceFactory(config, hooks);
 }

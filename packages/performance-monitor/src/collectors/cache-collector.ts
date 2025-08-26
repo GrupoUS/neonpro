@@ -64,9 +64,7 @@ export class CacheMetricsCollector implements MetricCollector {
 				source: "cache-collector",
 				context: { allStats },
 			});
-		} catch (error) {
-			console.error("[CacheMetricsCollector] Error collecting metrics:", error);
-		}
+		} catch (_error) {}
 
 		return metrics;
 	}

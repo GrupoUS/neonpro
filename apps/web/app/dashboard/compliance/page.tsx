@@ -14,29 +14,16 @@ interface CompliancePageProps {
 
 export default function CompliancePage({ searchParams }: CompliancePageProps) {
 	return (
-		<main
-			className="min-h-screen bg-background p-4 md:p-6"
-			role="main"
-			aria-labelledby="compliance-heading"
-		>
+		<main className="min-h-screen bg-background p-4 md:p-6" aria-labelledby="compliance-heading">
 			<div className="space-y-6">
 				<div>
-					<h1 
-						id="compliance-heading"
-						className="text-3xl font-bold tracking-tight"
-					>
+					<h1 id="compliance-heading" className="text-3xl font-bold tracking-tight">
 						Compliance Monitor
 					</h1>
-					<p className="text-muted-foreground">
-						Monitoramento em tempo real da conformidade LGPD, ANVISA e CFM
-					</p>
+					<p className="text-muted-foreground">Monitoramento em tempo real da conformidade LGPD, ANVISA e CFM</p>
 				</div>
-				
-				<div 
-					role="region"
-					aria-label="Dashboard de monitoramento de compliance regulatório"
-					className="w-full"
-				>
+
+				<div role="region" aria-label="Dashboard de monitoramento de compliance regulatório" className="w-full">
 					<ComplianceStatusDashboard />
 				</div>
 			</div>

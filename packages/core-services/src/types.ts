@@ -15,25 +15,25 @@ export const NonNegativeNumberSchema = z.number().min(0);
 export const PositiveNumberSchema = z.number().min(1);
 
 // Base Entity for all database entities
-export interface BaseEntity {
+export type BaseEntity = {
 	id: string;
 	createdAt: Date;
 	updatedAt: Date;
-}
+};
 
 // Status Enums
 export enum PatientStatus {
 	ACTIVE = "ACTIVE",
 	INACTIVE = "INACTIVE",
 	SUSPENDED = "SUSPENDED",
-	PENDING = "PENDING"
+	PENDING = "PENDING",
 }
 
 export enum BillingStatus {
 	PENDING = "PENDING",
 	PAID = "PAID",
 	OVERDUE = "OVERDUE",
-	CANCELLED = "CANCELLED"
+	CANCELLED = "CANCELLED",
 }
 
 export enum AppointmentStatus {
@@ -42,14 +42,14 @@ export enum AppointmentStatus {
 	IN_PROGRESS = "IN_PROGRESS",
 	COMPLETED = "COMPLETED",
 	CANCELLED = "CANCELLED",
-	NO_SHOW = "NO_SHOW"
+	NO_SHOW = "NO_SHOW",
 }
 
 export enum InventoryStatus {
 	IN_STOCK = "IN_STOCK",
 	LOW_STOCK = "LOW_STOCK",
 	OUT_OF_STOCK = "OUT_OF_STOCK",
-	DISCONTINUED = "DISCONTINUED"
+	DISCONTINUED = "DISCONTINUED",
 }
 
 export enum NotificationType {
@@ -58,18 +58,18 @@ export enum NotificationType {
 	TREATMENT_UPDATE = "TREATMENT_UPDATE",
 	SYSTEM_ALERT = "SYSTEM_ALERT",
 	MARKETING = "MARKETING",
-	COMPLIANCE = "COMPLIANCE"
+	COMPLIANCE = "COMPLIANCE",
 }
 
 export enum TreatmentType {
 	CONSULTATION = "CONSULTATION",
 	PROCEDURE = "PROCEDURE",
 	FOLLOW_UP = "FOLLOW_UP",
-	EMERGENCY = "EMERGENCY"
+	EMERGENCY = "EMERGENCY",
 }
 
 // Analytics Types
-export interface AnalyticsEvent {
+export type AnalyticsEvent = {
 	id: string;
 	type: string;
 	category: string;
@@ -85,17 +85,17 @@ export interface AnalyticsEvent {
 		source: string;
 		version: string;
 	};
-}
+};
 
-export interface AnalyticsMetric {
+export type AnalyticsMetric = {
 	name: string;
 	value: number;
 	unit: string;
 	timestamp: Date;
 	tags?: Record<string, string>;
-}
+};
 
-export interface AnalyticsInsight {
+export type AnalyticsInsight = {
 	id: string;
 	title: string;
 	description: string;
@@ -104,59 +104,59 @@ export interface AnalyticsInsight {
 	severity: "LOW" | "MEDIUM" | "HIGH";
 	data: Record<string, any>;
 	createdAt: Date;
-}
+};
 
 // Security Types
-export interface Permission {
+export type Permission = {
 	id: string;
 	name: string;
 	description: string;
 	resource: string;
 	action: string;
-}
+};
 
-export interface Role {
+export type Role = {
 	id: string;
 	name: string;
 	description: string;
 	permissions: Permission[];
 	isActive: boolean;
-}
+};
 
-export interface SecurityPolicy {
+export type SecurityPolicy = {
 	id: string;
 	name: string;
 	description: string;
 	rules: any[];
 	isActive: boolean;
 	version: number;
-}
+};
 
 // Cache Types
-export interface CacheKey {
+export type CacheKey = {
 	key: string;
 	ttl?: number;
 	tags?: string[];
-}
+};
 
-export interface CacheOptions {
+export type CacheOptions = {
 	ttl?: number;
 	tags?: string[];
 	compress?: boolean;
 	encrypt?: boolean;
-}
+};
 
-export interface CacheStats {
+export type CacheStats = {
 	hitCount: number;
 	missCount: number;
 	hitRate: number;
 	totalSize: number;
 	itemCount: number;
 	lastUpdated: Date;
-}
+};
 
 // Audit Types
-export interface AuditRecord {
+export type AuditRecord = {
 	id: string;
 	eventType: string;
 	userId?: string;
@@ -169,10 +169,10 @@ export interface AuditRecord {
 	ipAddress?: string;
 	userAgent?: string;
 	details?: Record<string, any>;
-}
+};
 
 // Compliance Types
-export interface ComplianceReport {
+export type ComplianceReport = {
 	id: string;
 	type: string;
 	framework: "LGPD" | "ANVISA" | "CFM";
@@ -184,10 +184,10 @@ export interface ComplianceReport {
 		start: Date;
 		end: Date;
 	};
-}
+};
 
 // Service Context for operations
-export interface ServiceContext {
+export type ServiceContext = {
 	userId?: string;
 	patientId?: string;
 	clinicId?: string;
@@ -197,10 +197,10 @@ export interface ServiceContext {
 	ipAddress?: string;
 	userAgent?: string;
 	correlationId?: string;
-}
+};
 
 // Audit Event for LGPD/ANVISA compliance
-export interface AuditEvent {
+export type AuditEvent = {
 	id: string;
 	service: string;
 	eventType: string;
@@ -211,10 +211,10 @@ export interface AuditEvent {
 	patientId?: string;
 	severity?: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
 	dataClassification?: "PUBLIC" | "INTERNAL" | "CONFIDENTIAL" | "RESTRICTED";
-}
+};
 
 // Security Configuration
-export interface SecurityConfig {
+export type SecurityConfig = {
 	enableEncryption: boolean;
 	enableAuditLogging: boolean;
 	enableAccessControl: boolean;
@@ -222,10 +222,10 @@ export interface SecurityConfig {
 	auditRetentionDays?: number;
 	requireSecureChannel?: boolean;
 	allowedOrigins?: string[];
-}
+};
 
 // Performance Metrics
-export interface PerformanceMetrics {
+export type PerformanceMetrics = {
 	service: string;
 	period: string;
 	totalOperations: number;
@@ -240,10 +240,10 @@ export interface PerformanceMetrics {
 		averageTime: number;
 		count: number;
 	}>;
-}
+};
 
 // Healthcare Operation Context
-export interface HealthcareOperation {
+export type HealthcareOperation = {
 	operationId: string;
 	operationType: "READ" | "WRITE" | "DELETE" | "UPDATE";
 	resourceType: "PATIENT" | "APPOINTMENT" | "MEDICAL_RECORD" | "BILLING" | "INVENTORY";
@@ -251,30 +251,30 @@ export interface HealthcareOperation {
 	requiresConsent: boolean;
 	retentionPolicy?: string;
 	complianceFramework: ("LGPD" | "ANVISA" | "CFM" | "HIPAA")[];
-}
+};
 
 // Cache Configuration Types
-export interface CacheConfiguration {
+export type CacheConfiguration = {
 	enabled: boolean;
 	defaultTTL: number;
 	maxItems: number;
 	enableSensitiveDataCache: boolean;
 	encryptSensitiveData: boolean;
 	auditCacheAccess: boolean;
-}
+};
 
 // Analytics Configuration
-export interface AnalyticsConfiguration {
+export type AnalyticsConfiguration = {
 	enabled: boolean;
 	trackPerformance: boolean;
 	trackErrors: boolean;
 	trackUserActions: boolean;
 	retentionDays: number;
 	aggregationWindow: number;
-}
+};
 
 // Service Health Status
-export interface ServiceHealth {
+export type ServiceHealth = {
 	status: "HEALTHY" | "DEGRADED" | "UNHEALTHY";
 	service: string;
 	version: string;
@@ -292,7 +292,7 @@ export interface ServiceHealth {
 		cacheSize: number;
 		errorRate: number;
 	};
-}
+};
 
 // Error with enhanced context
 export interface ServiceError extends Error {
@@ -307,7 +307,7 @@ export interface ServiceError extends Error {
 }
 
 // Service Configuration Base
-export interface BaseServiceConfig {
+export type BaseServiceConfig = {
 	serviceName: string;
 	version: string;
 	environment: "development" | "staging" | "production";
@@ -317,10 +317,10 @@ export interface BaseServiceConfig {
 	healthCheckInterval: number;
 	maxRetries: number;
 	retryDelay: number;
-}
+};
 
 // LGPD Consent Management
-export interface ConsentConfiguration {
+export type ConsentConfiguration = {
 	requireExplicitConsent: boolean;
 	consentVersion: string;
 	retentionPeriod: number; // days
@@ -331,10 +331,10 @@ export interface ConsentConfiguration {
 		required: boolean;
 		category: "FUNCTIONAL" | "ANALYTICS" | "MARKETING" | "MEDICAL";
 	}>;
-}
+};
 
 // Recovery and Fallback Configuration
-export interface ResilienceConfiguration {
+export type ResilienceConfiguration = {
 	enableRetry: boolean;
 	maxRetries: number;
 	retryDelay: number;
@@ -343,4 +343,4 @@ export interface ResilienceConfiguration {
 	circuitBreakerTimeout: number;
 	enableFallback: boolean;
 	fallbackStrategy: "CACHE" | "DEFAULT_VALUE" | "ALTERNATIVE_SERVICE";
-}
+};

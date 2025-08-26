@@ -25,346 +25,340 @@ export function useIsMobile() {
 // Integra Archon MCP, Speech Recognition e dados específicos do cliente
 // =============================================================================
 
-import { useState, useCallback, useEffect, useRef } from 'react';
-import { useChat } from 'ai';
-import type {
-  AgentChatState,
-  ClientContext,
-  VoiceInputState,
-  AgentMessage,
-  AgentCapabilities,
-  HealthcarePromptContext,
-  ArchonQueryResult,
-  SpeechRecognitionEvent
-} from '../types/common';
+import { useChat } from "ai";
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { AgentChatState, AgentMessage, ClientContext, SpeechRecognitionEvent } from "../types/common";
 
 export function useAgentChat() {
-  // =============================================================================
-  // ESTADO PRINCIPAL DO CHAT
-  // =============================================================================
-  
-  const [chatState, setChatState] = useState<AgentChatState>({
-    isOpen: false,
-    isLoading: false,
-    isInitializing: true,
-    messages: [],
-    clientContext: null,
-    voiceInput: {
-      isListening: false,
-      isProcessing: false,
-      transcript: '',
-      confidence: 0,
-      language: 'pt-BR',
-      autoStop: true
-    },
-    capabilities: {
-      dataAnalysis: true,
-      voiceInput: true,
-      archonIntegration: true,
-      mlPipelineAccess: true,
-      complianceMonitoring: true,
-      reportGeneration: true,
-      patientDataAccess: true,
-      appointmentManagement: true,
-      financialInsights: true,
-      predictiveAnalytics: true
-    },
-    lastActivity: new Date()
-  });
+	// =============================================================================
+	// ESTADO PRINCIPAL DO CHAT
+	// =============================================================================
 
-  // Refs para Speech Recognition
-  const recognition = useRef<SpeechRecognition | null>(null);
-  const isRecognitionSupported = useRef(false);
+	const [chatState, setChatState] = useState<AgentChatState>({
+		isOpen: false,
+		isLoading: false,
+		isInitializing: true,
+		messages: [],
+		clientContext: null,
+		voiceInput: {
+			isListening: false,
+			isProcessing: false,
+			transcript: "",
+			confidence: 0,
+			language: "pt-BR",
+			autoStop: true,
+		},
+		capabilities: {
+			dataAnalysis: true,
+			voiceInput: true,
+			archonIntegration: true,
+			mlPipelineAccess: true,
+			complianceMonitoring: true,
+			reportGeneration: true,
+			patientDataAccess: true,
+			appointmentManagement: true,
+			financialInsights: true,
+			predictiveAnalytics: true,
+		},
+		lastActivity: new Date(),
+	});
 
-  // =============================================================================
-  // INTEGRATION WITH VERCEL AI SDK
-  // =============================================================================
-  
-  const {
-    messages: aiMessages,
-    input,
-    handleInputChange,
-    handleSubmit: submitToAI,
-    isLoading: aiIsLoading,
-    error: aiError,
-    setMessages
-  } = useChat({
-    api: '/api/ai/agent',
-    initialMessages: [],
-    onResponse: (response) => {
-      updateLastActivity();
-    },
-    onError: (error) => {
-      console.error('AI Chat Error:', error);
-      setChatState(prev => ({
-        ...prev,
-        error: error.message
-      }));
-    }
-  });
+	// Refs para Speech Recognition
+	const recognition = useRef<SpeechRecognition | null>(null);
+	const isRecognitionSupported = useRef(false);
 
-  // =============================================================================
-  // CLIENT CONTEXT MANAGEMENT
-  // =============================================================================
+	// =============================================================================
+	// INTEGRATION WITH VERCEL AI SDK
+	// =============================================================================
 
-  const updateClientContext = useCallback(async () => {
-    try {
-      setChatState(prev => ({ ...prev, isLoading: true }));
-      
-      // Buscar contexto do cliente via API
-      const response = await fetch('/api/ai/client-context', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      });
+	const {
+		messages: aiMessages,
+		input,
+		handleInputChange,
+		handleSubmit: submitToAI,
+		isLoading: aiIsLoading,
+		error: aiError,
+		setMessages,
+	} = useChat({
+		api: "/api/ai/agent",
+		initialMessages: [],
+		onResponse: (_response) => {
+			updateLastActivity();
+		},
+		onError: (error) => {
+			console.error("AI Chat Error:", error);
+			setChatState((prev) => ({
+				...prev,
+				error: error.message,
+			}));
+		},
+	});
 
-      if (response.ok) {
-        const context: ClientContext = await response.json();
-        setChatState(prev => ({
-          ...prev,
-          clientContext: context,
-          isLoading: false,
-          isInitializing: false
-        }));
-      }
-    } catch (error) {
-      console.error('Error updating client context:', error);
-      setChatState(prev => ({
-        ...prev,
-        error: 'Failed to load client context',
-        isLoading: false,
-        isInitializing: false
-      }));
-    }
-  }, []);
+	// =============================================================================
+	// CLIENT CONTEXT MANAGEMENT
+	// =============================================================================
 
-  // =============================================================================
-  // SPEECH RECOGNITION SETUP
-  // =============================================================================
+	const updateClientContext = useCallback(async () => {
+		try {
+			setChatState((prev) => ({ ...prev, isLoading: true }));
 
-  useEffect(() => {
-    // Verificar suporte para Speech Recognition
-    if (typeof window !== 'undefined') {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      
-      if (SpeechRecognition) {
-        isRecognitionSupported.current = true;
-        recognition.current = new SpeechRecognition();
-        
-        // Configurar reconhecimento
-        recognition.current.continuous = false;
-        recognition.current.interimResults = true;
-        recognition.current.maxAlternatives = 1;
-        recognition.current.lang = chatState.voiceInput.language;
+			// Buscar contexto do cliente via API
+			const response = await fetch("/api/ai/client-context", {
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			});
 
-        // Event handlers
-        recognition.current.onstart = () => {
-          setChatState(prev => ({
-            ...prev,
-            voiceInput: { ...prev.voiceInput, isListening: true, error: undefined }
-          }));
-        };
+			if (response.ok) {
+				const context: ClientContext = await response.json();
+				setChatState((prev) => ({
+					...prev,
+					clientContext: context,
+					isLoading: false,
+					isInitializing: false,
+				}));
+			}
+		} catch (error) {
+			console.error("Error updating client context:", error);
+			setChatState((prev) => ({
+				...prev,
+				error: "Failed to load client context",
+				isLoading: false,
+				isInitializing: false,
+			}));
+		}
+	}, []);
 
-        recognition.current.onresult = (event: SpeechRecognitionEvent) => {
-          const results = event.results;
-          let finalTranscript = '';
-          let interimTranscript = '';
+	// =============================================================================
+	// SPEECH RECOGNITION SETUP
+	// =============================================================================
 
-          for (let i = event.resultIndex; i < results.length; i++) {
-            const result = results[i];
-            if (result.isFinal) {
-              finalTranscript += result[0].transcript;
-            } else {
-              interimTranscript += result[0].transcript;
-            }
-          }
+	useEffect(() => {
+		// Verificar suporte para Speech Recognition
+		if (typeof window !== "undefined") {
+			const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-          const transcript = finalTranscript || interimTranscript;
-          const confidence = results[results.length - 1]?.[0]?.confidence || 0;
+			if (SpeechRecognition) {
+				isRecognitionSupported.current = true;
+				recognition.current = new SpeechRecognition();
 
-          setChatState(prev => ({
-            ...prev,
-            voiceInput: {
-              ...prev.voiceInput,
-              transcript,
-              confidence,
-              isProcessing: !!finalTranscript
-            }
-          }));
+				// Configurar reconhecimento
+				recognition.current.continuous = false;
+				recognition.current.interimResults = true;
+				recognition.current.maxAlternatives = 1;
+				recognition.current.lang = chatState.voiceInput.language;
 
-          // Se temos transcrição final, enviar para o chat
-          if (finalTranscript.trim()) {
-            handleVoiceMessage(finalTranscript.trim());
-          }
-        };
+				// Event handlers
+				recognition.current.onstart = () => {
+					setChatState((prev) => ({
+						...prev,
+						voiceInput: { ...prev.voiceInput, isListening: true, error: undefined },
+					}));
+				};
 
-        recognition.current.onerror = (event) => {
-          console.error('Speech recognition error:', event.error);
-          setChatState(prev => ({
-            ...prev,
-            voiceInput: {
-              ...prev.voiceInput,
-              isListening: false,
-              isProcessing: false,
-              error: event.error
-            }
-          }));
-        };
+				recognition.current.onresult = (event: SpeechRecognitionEvent) => {
+					const results = event.results;
+					let finalTranscript = "";
+					let interimTranscript = "";
 
-        recognition.current.onend = () => {
-          setChatState(prev => ({
-            ...prev,
-            voiceInput: {
-              ...prev.voiceInput,
-              isListening: false,
-              isProcessing: false
-            }
-          }));
-        };
-      }
-    }
+					for (let i = event.resultIndex; i < results.length; i++) {
+						const result = results[i];
+						if (result.isFinal) {
+							finalTranscript += result[0].transcript;
+						} else {
+							interimTranscript += result[0].transcript;
+						}
+					}
 
-    return () => {
-      if (recognition.current) {
-        recognition.current.stop();
-      }
-    };
-  }, [chatState.voiceInput.language]);
+					const transcript = finalTranscript || interimTranscript;
+					const confidence = results[results.length - 1]?.[0]?.confidence || 0;
 
-  // =============================================================================
-  // CHAT CONTROLS
-  // =============================================================================
+					setChatState((prev) => ({
+						...prev,
+						voiceInput: {
+							...prev.voiceInput,
+							transcript,
+							confidence,
+							isProcessing: !!finalTranscript,
+						},
+					}));
 
-  const toggleChat = useCallback(() => {
-    setChatState(prev => ({
-      ...prev,
-      isOpen: !prev.isOpen,
-      lastActivity: new Date()
-    }));
-  }, []);
+					// Se temos transcrição final, enviar para o chat
+					if (finalTranscript.trim()) {
+						handleVoiceMessage(finalTranscript.trim());
+					}
+				};
 
-  const closeChat = useCallback(() => {
-    setChatState(prev => ({
-      ...prev,
-      isOpen: false
-    }));
-  }, []);
+				recognition.current.onerror = (event) => {
+					console.error("Speech recognition error:", event.error);
+					setChatState((prev) => ({
+						...prev,
+						voiceInput: {
+							...prev.voiceInput,
+							isListening: false,
+							isProcessing: false,
+							error: event.error,
+						},
+					}));
+				};
 
-  const clearChat = useCallback(() => {
-    setMessages([]);
-    setChatState(prev => ({
-      ...prev,
-      messages: [],
-      error: undefined
-    }));
-  }, [setMessages]);
+				recognition.current.onend = () => {
+					setChatState((prev) => ({
+						...prev,
+						voiceInput: {
+							...prev.voiceInput,
+							isListening: false,
+							isProcessing: false,
+						},
+					}));
+				};
+			}
+		}
 
-  const updateLastActivity = useCallback(() => {
-    setChatState(prev => ({
-      ...prev,
-      lastActivity: new Date()
-    }));
-  }, []);
+		return () => {
+			if (recognition.current) {
+				recognition.current.stop();
+			}
+		};
+	}, [chatState.voiceInput.language, handleVoiceMessage]);
 
-  // =============================================================================
-  // VOICE CONTROLS
-  // =============================================================================
+	// =============================================================================
+	// CHAT CONTROLS
+	// =============================================================================
 
-  const startVoiceInput = useCallback(() => {
-    if (!isRecognitionSupported.current || !recognition.current) {
-      setChatState(prev => ({
-        ...prev,
-        voiceInput: {
-          ...prev.voiceInput,
-          error: 'Speech recognition not supported'
-        }
-      }));
-      return;
-    }
+	const toggleChat = useCallback(() => {
+		setChatState((prev) => ({
+			...prev,
+			isOpen: !prev.isOpen,
+			lastActivity: new Date(),
+		}));
+	}, []);
 
-    try {
-      recognition.current.start();
-    } catch (error) {
-      console.error('Error starting voice input:', error);
-      setChatState(prev => ({
-        ...prev,
-        voiceInput: {
-          ...prev.voiceInput,
-          error: 'Failed to start voice input'
-        }
-      }));
-    }
-  }, []);
+	const closeChat = useCallback(() => {
+		setChatState((prev) => ({
+			...prev,
+			isOpen: false,
+		}));
+	}, []);
 
-  const stopVoiceInput = useCallback(() => {
-    if (recognition.current) {
-      recognition.current.stop();
-    }
-  }, []);
+	const clearChat = useCallback(() => {
+		setMessages([]);
+		setChatState((prev) => ({
+			...prev,
+			messages: [],
+			error: undefined,
+		}));
+	}, [setMessages]);
 
-  const handleVoiceMessage = useCallback(async (transcript: string) => {
-    if (!transcript.trim()) return;
+	const updateLastActivity = useCallback(() => {
+		setChatState((prev) => ({
+			...prev,
+			lastActivity: new Date(),
+		}));
+	}, []);
 
-    // Adicionar mensagem do usuário
-    const userMessage: AgentMessage = {
-      id: Date.now().toString(),
-      role: 'user',
-      content: transcript,
-      timestamp: new Date(),
-      metadata: {
-        audioTranscription: true,
-        confidence: chatState.voiceInput.confidence
-      }
-    };
+	// =============================================================================
+	// VOICE CONTROLS
+	// =============================================================================
 
-    // Enviar para o AI chat
-    handleInputChange({ target: { value: transcript } } as any);
-    submitToAI();
-    updateLastActivity();
-  }, [chatState.voiceInput.confidence, handleInputChange, submitToAI, updateLastActivity]);
+	const startVoiceInput = useCallback(() => {
+		if (!isRecognitionSupported.current || !recognition.current) {
+			setChatState((prev) => ({
+				...prev,
+				voiceInput: {
+					...prev.voiceInput,
+					error: "Speech recognition not supported",
+				},
+			}));
+			return;
+		}
 
-  // =============================================================================
-  // INITIALIZATION
-  // =============================================================================
+		try {
+			recognition.current.start();
+		} catch (error) {
+			console.error("Error starting voice input:", error);
+			setChatState((prev) => ({
+				...prev,
+				voiceInput: {
+					...prev.voiceInput,
+					error: "Failed to start voice input",
+				},
+			}));
+		}
+	}, []);
 
-  useEffect(() => {
-    // Carregar contexto inicial
-    updateClientContext();
-  }, [updateClientContext]);
+	const stopVoiceInput = useCallback(() => {
+		if (recognition.current) {
+			recognition.current.stop();
+		}
+	}, []);
 
-  // =============================================================================
-  // RETURN INTERFACE
-  // =============================================================================
+	const handleVoiceMessage = useCallback(
+		async (transcript: string) => {
+			if (!transcript.trim()) return;
 
-  return {
-    // Estado
-    ...chatState,
-    isLoading: aiIsLoading || chatState.isLoading,
-    error: aiError?.message || chatState.error,
-    
-    // Messages (mescla AI SDK com estado local)
-    messages: aiMessages,
-    
-    // Chat Controls
-    toggleChat,
-    closeChat,
-    clearChat,
-    
-    // Input handling
-    input,
-    handleInputChange,
-    handleSubmit: submitToAI,
-    
-    // Voice Controls
-    startVoiceInput,
-    stopVoiceInput,
-    isVoiceSupported: isRecognitionSupported.current,
-    
-    // Context Management
-    updateClientContext,
-    
-    // Utilities
-    updateLastActivity
-  };
+			// Adicionar mensagem do usuário
+			const _userMessage: AgentMessage = {
+				id: Date.now().toString(),
+				role: "user",
+				content: transcript,
+				timestamp: new Date(),
+				metadata: {
+					audioTranscription: true,
+					confidence: chatState.voiceInput.confidence,
+				},
+			};
+
+			// Enviar para o AI chat
+			handleInputChange({ target: { value: transcript } } as any);
+			submitToAI();
+			updateLastActivity();
+		},
+		[chatState.voiceInput.confidence, handleInputChange, submitToAI, updateLastActivity]
+	);
+
+	// =============================================================================
+	// INITIALIZATION
+	// =============================================================================
+
+	useEffect(() => {
+		// Carregar contexto inicial
+		updateClientContext();
+	}, [updateClientContext]);
+
+	// =============================================================================
+	// RETURN INTERFACE
+	// =============================================================================
+
+	return {
+		// Estado
+		...chatState,
+		isLoading: aiIsLoading || chatState.isLoading,
+		error: aiError?.message || chatState.error,
+
+		// Messages (mescla AI SDK com estado local)
+		messages: aiMessages,
+
+		// Chat Controls
+		toggleChat,
+		closeChat,
+		clearChat,
+
+		// Input handling
+		input,
+		handleInputChange,
+		handleSubmit: submitToAI,
+
+		// Voice Controls
+		startVoiceInput,
+		stopVoiceInput,
+		isVoiceSupported: isRecognitionSupported.current,
+
+		// Context Management
+		updateClientContext,
+
+		// Utilities
+		updateLastActivity,
+	};
 }

@@ -34,7 +34,7 @@ export const resetAllGlobalMocks = () => {
 // Helper to set up common Supabase mock behaviors for tests
 export const setupSupabaseMockForTable = (tableName: string, mockData: any) => {
 	const globalMock = getGlobalSupabaseMock();
-	if (globalMock && globalMock.from) {
+	if (globalMock?.from) {
 		globalMock.from.mockImplementation((table: string) => {
 			if (table === tableName) {
 				return {

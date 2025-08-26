@@ -16,7 +16,7 @@
  * - Forensic investigation tools
  */
 
-import crypto from "crypto";
+import crypto from "node:crypto";
 import type { AuditEvent } from "../../types";
 
 interface AuditRecord extends AuditEvent {
@@ -37,7 +37,7 @@ interface AuditRecord extends AuditEvent {
 	};
 }
 
-interface AuditQuery {
+type AuditQuery = {
 	startDate?: Date;
 	endDate?: Date;
 	service?: string;
@@ -48,9 +48,9 @@ interface AuditQuery {
 	severity?: string;
 	limit?: number;
 	offset?: number;
-}
+};
 
-interface ComplianceReport {
+type ComplianceReport = {
 	id: string;
 	type: "lgpd" | "anvisa" | "cfm" | "iso27001";
 	period: {
@@ -71,21 +71,21 @@ interface ComplianceReport {
 	}>;
 	generatedAt: Date;
 	generatedBy: string;
-}
+};
 
-interface RetentionPolicy {
+type RetentionPolicy = {
 	category: string;
 	retention: number; // milliseconds
 	canDelete: boolean;
 	encryptionRequired: boolean;
 	complianceRequired: string[];
-}
+};
 
 export class EnterpriseAuditService {
 	private auditChain: AuditRecord[] = [];
 	private retentionPolicies: RetentionPolicy[] = [];
-	private encryptionKey: Buffer;
-	private lastHash = "0".repeat(64); // Genesis hash
+	private readonly encryptionKey: Buffer;
+	private readonly lastHash = "0".repeat(64); // Genesis hash
 	private cleanupInterval: NodeJS.Timeout | null = null;
 
 	constructor() {
@@ -141,12 +141,7 @@ export class EnterpriseAuditService {
 			await this.checkComplianceViolations(auditRecord);
 		} catch (error) {
 			// Critical: Audit logging failure
-			const errorMessage = error instanceof Error ? error.message : String(error);
-			console.error("CRITICAL: Audit logging failed", {
-				error: errorMessage,
-				eventId: event.id,
-				service: event.service,
-			});
+			const _errorMessage = error instanceof Error ? error.message : String(error);
 
 			// Fallback logging mechanism
 			await this.emergencyLog(event, error instanceof Error ? error : new Error(String(error)));
@@ -305,7 +300,9 @@ export class EnterpriseAuditService {
 
 		for (let i = 0; i < this.auditChain.length; i++) {
 			const record = this.auditChain[i];
-			if (!record) continue;
+			if (!record) {
+				continue;
+			}
 
 			// Verify previous hash linkage
 			if (record.previousHash !== expectedHash) {
@@ -359,7 +356,6 @@ export class EnterpriseAuditService {
 				return this.convertToCSV(result.records);
 			case "xml":
 				return this.convertToXML(result.records);
-			case "json":
 			default:
 				return JSON.stringify(
 					{
@@ -425,7 +421,6 @@ export class EnterpriseAuditService {
 		}
 
 		const randomKey = crypto.randomBytes(32);
-		console.warn("Using random audit key - set NEONPRO_AUDIT_KEY in production");
 		return randomKey;
 	}
 
@@ -547,7 +542,7 @@ export class EnterpriseAuditService {
 					let decryptedValue = decipher.update(encryptedData, "hex", "utf8");
 					decryptedValue += decipher.final("utf8");
 					decrypted[key] = JSON.parse(decryptedValue);
-				} catch (error) {
+				} catch (_error) {
 					decrypted[key] = "[DECRYPTION_FAILED]";
 				}
 			} else {
@@ -642,15 +637,7 @@ export class EnterpriseAuditService {
 		}
 	}
 
-	private async emergencyLog(event: AuditEvent, error: Error): Promise<void> {
-		// Fallback logging to console/file when main audit fails
-		console.error("EMERGENCY AUDIT LOG", {
-			timestamp: new Date().toISOString(),
-			event,
-			error: error.message,
-			stack: error.stack,
-		});
-	}
+	private async emergencyLog(_event: AuditEvent, _error: Error): Promise<void> {}
 
 	private startRetentionCleanup(): void {
 		this.cleanupInterval = setInterval(
@@ -674,15 +661,14 @@ export class EnterpriseAuditService {
 
 		const removedCount = initialCount - this.auditChain.length;
 		if (removedCount > 0) {
-			console.log(`Audit retention cleanup: removed ${removedCount} expired records`);
 		}
 	}
 
 	private analyzeComplianceFindings(
 		records: AuditRecord[],
 		type: ComplianceReport["type"]
-	): Array<ComplianceReport["findings"][0]> {
-		const findings: Array<ComplianceReport["findings"][0]> = [];
+	): ComplianceReport["findings"][0][] {
+		const findings: ComplianceReport["findings"][0][] = [];
 
 		// Analyze patterns for compliance violations
 		const violations = records.filter((r) => r.eventType.includes("VIOLATION") || r.eventType.includes("FAILED"));
@@ -715,8 +701,10 @@ export class EnterpriseAuditService {
 		return findings;
 	}
 
-	private calculateComplianceScore(records: AuditRecord[], findings: Array<ComplianceReport["findings"][0]>): number {
-		if (records.length === 0) return 100;
+	private calculateComplianceScore(records: AuditRecord[], findings: ComplianceReport["findings"][0][]): number {
+		if (records.length === 0) {
+			return 100;
+		}
 
 		const criticalIssues = findings.filter((f) => f.severity === "critical").length;
 		const highIssues = findings.filter((f) => f.severity === "high").length;

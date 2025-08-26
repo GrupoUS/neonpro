@@ -3,13 +3,13 @@
 import { type ReactNode, useEffect, useState } from "react";
 import type { ConnectivityLevel, RegionalSettings } from "../types";
 
-interface ResponsiveLayoutProps {
+type ResponsiveLayoutProps = {
 	children: ReactNode;
 	connectivity?: ConnectivityLevel;
 	regional?: RegionalSettings;
 	emergencyMode?: boolean;
 	className?: string;
-}
+};
 
 export function ResponsiveLayout({
 	children,
@@ -67,7 +67,9 @@ export function ResponsiveLayout({
 
 	// Brazilian region-specific optimizations
 	const getRegionalOptimizations = () => {
-		if (!regional) return {};
+		if (!regional) {
+			return {};
+		}
 
 		const baseOptimizations = {
 			// All regions: Touch-friendly, high contrast for sunlight
@@ -170,7 +172,9 @@ export function ResponsiveLayout({
 				</a>
 			</div>
 
-			<style dangerouslySetInnerHTML={{__html: `
+			<style
+				dangerouslySetInnerHTML={{
+					__html: `
         .skip-link {
           position: absolute;
           top: -40px;
@@ -199,7 +203,9 @@ export function ResponsiveLayout({
           min-height: var(--min-touch-target);
           min-width: var(--min-touch-target);
         }
-      `}} />
+      `,
+				}}
+			/>
 		</div>
 	);
 } // Mobile Layout - Optimized for single-hand use

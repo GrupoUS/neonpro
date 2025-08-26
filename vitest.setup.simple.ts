@@ -430,7 +430,7 @@ const mockSupabaseClient = {
 			error: null,
 		}),
 	},
-	from: vi.fn().mockImplementation((tableName: string) => {
+	from: vi.fn().mockImplementation((_tableName: string) => {
 		return {
 			select: vi.fn(() => ({
 				eq: vi.fn(() => ({

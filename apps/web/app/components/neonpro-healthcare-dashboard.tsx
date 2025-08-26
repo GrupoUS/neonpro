@@ -242,7 +242,7 @@ const initialAIState: AIState = {
 };
 
 // AI Hook
-const useAIState = () => {
+const _useAIState = () => {
 	const context = useContext(AIContext);
 	if (!context) {
 		throw new Error("useAIState must be used within an AI provider");
@@ -382,7 +382,7 @@ export default function NeonProHealthcareDashboard({ userId, tenantId }: NeonPro
 	const [aiState, aiDispatch] = useReducer(aiReducer, initialAIState);
 
 	// AI Hook for accessing context
-	const useAI = () => {
+	const _useAI = () => {
 		return { state: aiState, dispatch: aiDispatch };
 	};
 
@@ -402,7 +402,7 @@ export default function NeonProHealthcareDashboard({ userId, tenantId }: NeonPro
 
 				setLoading(false);
 				aiDispatch({ type: "SET_LOADING", payload: false });
-			} catch (error) {
+			} catch (_error) {
 				aiDispatch({ type: "SET_ERROR", payload: "Erro ao carregar insights AI" });
 				setLoading(false);
 				aiDispatch({ type: "SET_LOADING", payload: false });
@@ -521,7 +521,7 @@ export default function NeonProHealthcareDashboard({ userId, tenantId }: NeonPro
 					</Card>
 				);
 			},
-		[aiState.featureFlags]
+		[aiState.featureFlags, formatCurrency, formatPercentage, getChangeColor, getMetricIcon]
 	);
 
 	const AIInsightWidget = useCallback(({ insight }: { insight: AIInsight }) => {

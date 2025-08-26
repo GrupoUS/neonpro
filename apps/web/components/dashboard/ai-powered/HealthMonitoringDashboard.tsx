@@ -6,7 +6,6 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
 import {
 	Activity,
 	AlertTriangle,
@@ -19,11 +18,11 @@ import {
 	Users,
 	Zap,
 } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface HealthMetrics {
 	systemUptime: number;
@@ -166,25 +165,14 @@ export function HealthMonitoringDashboard() {
 	}
 
 	return (
-		<div 
-			className="space-y-6" 
-			role="main" 
-			aria-labelledby="health-heading"
-			aria-describedby="health-description"
-		>
+		<div className="space-y-6" role="main" aria-labelledby="health-heading" aria-describedby="health-description">
 			{/* Header */}
 			<div className="flex items-center justify-between">
 				<div>
-					<h2 
-						id="health-heading"
-						className="text-2xl font-bold text-foreground"
-					>
+					<h2 id="health-heading" className="text-2xl font-bold text-foreground">
 						Monitoramento de Saúde
 					</h2>
-					<p 
-						id="health-description"
-						className="text-muted-foreground"
-					>
+					<p id="health-description" className="text-muted-foreground">
 						Status em tempo real da infraestrutura e compliance
 					</p>
 				</div>
@@ -195,21 +183,23 @@ export function HealthMonitoringDashboard() {
 			</div>
 
 			{/* System Health Overview */}
-			<div 
+			<div
 				className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
 				role="region"
 				aria-labelledby="health-metrics-heading"
 			>
-				<h3 id="health-metrics-heading" className="sr-only">Métricas de saúde do sistema</h3>
-				
+				<h3 id="health-metrics-heading" className="sr-only">
+					Métricas de saúde do sistema
+				</h3>
+
 				{/* System Uptime */}
 				<Card className="neonpro-card group" role="article" aria-labelledby="uptime-title">
 					<CardHeader className="pb-2">
-						<CardTitle 
-							id="uptime-title"
-							className="flex items-center text-sm font-medium"
-						>
-							<div className="group-hover:neonpro-glow mr-3 flex h-8 w-8 items-center justify-center rounded-lg bg-green-100 transition-all" aria-hidden="true">
+						<CardTitle id="uptime-title" className="flex items-center text-sm font-medium">
+							<div
+								className="group-hover:neonpro-glow mr-3 flex h-8 w-8 items-center justify-center rounded-lg bg-green-100 transition-all"
+								aria-hidden="true"
+							>
 								<Monitor className="h-4 w-4 text-green-600" aria-hidden="true" />
 							</div>
 							System Uptime
@@ -218,20 +208,18 @@ export function HealthMonitoringDashboard() {
 					</CardHeader>
 					<CardContent>
 						<div className="space-y-2">
-							<div 
+							<div
 								className="text-2xl font-bold text-green-600"
 								aria-label={`${metrics.systemUptime}% de disponibilidade do sistema`}
 							>
 								{metrics.systemUptime}%
 							</div>
-							<Progress 
-								value={metrics.systemUptime} 
-								className="h-2" 
+							<Progress
+								value={metrics.systemUptime}
+								className="h-2"
 								aria-label={`Progresso de uptime: ${metrics.systemUptime}%`}
 							/>
-							<div className="text-xs text-muted-foreground">
-								Meta: 99.9% | Status: Excelente
-							</div>
+							<div className="text-xs text-muted-foreground">Meta: 99.9% | Status: Excelente</div>
 						</div>
 					</CardContent>
 				</Card>
@@ -239,11 +227,11 @@ export function HealthMonitoringDashboard() {
 				{/* API Response Time */}
 				<Card className="neonpro-card group" role="article" aria-labelledby="response-time-title">
 					<CardHeader className="pb-2">
-						<CardTitle 
-							id="response-time-title"
-							className="flex items-center text-sm font-medium"
-						>
-							<div className="group-hover:neonpro-glow mr-3 flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 transition-all" aria-hidden="true">
+						<CardTitle id="response-time-title" className="flex items-center text-sm font-medium">
+							<div
+								className="group-hover:neonpro-glow mr-3 flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 transition-all"
+								aria-hidden="true"
+							>
 								<Zap className="h-4 w-4 text-blue-600" aria-hidden="true" />
 							</div>
 							Tempo de Resposta
@@ -252,7 +240,7 @@ export function HealthMonitoringDashboard() {
 					</CardHeader>
 					<CardContent>
 						<div className="space-y-2">
-							<div 
+							<div
 								className="text-2xl font-bold"
 								aria-label={`Tempo de resposta da API: ${metrics.apiResponseTime} milissegundos`}
 							>
@@ -274,11 +262,11 @@ export function HealthMonitoringDashboard() {
 				{/* Database Health */}
 				<Card className="neonpro-card group" role="article" aria-labelledby="database-title">
 					<CardHeader className="pb-2">
-						<CardTitle 
-							id="database-title"
-							className="flex items-center text-sm font-medium"
-						>
-							<div className="group-hover:neonpro-glow mr-3 flex h-8 w-8 items-center justify-center rounded-lg bg-purple-100 transition-all" aria-hidden="true">
+						<CardTitle id="database-title" className="flex items-center text-sm font-medium">
+							<div
+								className="group-hover:neonpro-glow mr-3 flex h-8 w-8 items-center justify-center rounded-lg bg-purple-100 transition-all"
+								aria-hidden="true"
+							>
 								<Activity className="h-4 w-4 text-purple-600" aria-hidden="true" />
 							</div>
 							Saúde do Banco
@@ -287,20 +275,18 @@ export function HealthMonitoringDashboard() {
 					</CardHeader>
 					<CardContent>
 						<div className="space-y-2">
-							<div 
+							<div
 								className="text-2xl font-bold text-green-600"
 								aria-label={`${metrics.databaseHealth}% de saúde do banco de dados`}
 							>
 								{metrics.databaseHealth}%
 							</div>
-							<Progress 
-								value={metrics.databaseHealth} 
-								className="h-2" 
+							<Progress
+								value={metrics.databaseHealth}
+								className="h-2"
 								aria-label={`Progresso da saúde do banco: ${metrics.databaseHealth}%`}
 							/>
-							<div className="text-xs text-muted-foreground">
-								Conexões: 12/100 | CPU: 23%
-							</div>
+							<div className="text-xs text-muted-foreground">Conexões: 12/100 | CPU: 23%</div>
 						</div>
 					</CardContent>
 				</Card>
@@ -308,11 +294,11 @@ export function HealthMonitoringDashboard() {
 				{/* Active Users */}
 				<Card className="neonpro-card group" role="article" aria-labelledby="users-title">
 					<CardHeader className="pb-2">
-						<CardTitle 
-							id="users-title"
-							className="flex items-center text-sm font-medium"
-						>
-							<div className="group-hover:neonpro-glow mr-3 flex h-8 w-8 items-center justify-center rounded-lg bg-chart-2/10 transition-all" aria-hidden="true">
+						<CardTitle id="users-title" className="flex items-center text-sm font-medium">
+							<div
+								className="group-hover:neonpro-glow mr-3 flex h-8 w-8 items-center justify-center rounded-lg bg-chart-2/10 transition-all"
+								aria-hidden="true"
+							>
 								<Users className="h-4 w-4 text-chart-2" aria-hidden="true" />
 							</div>
 							Usuários Ativos
@@ -321,15 +307,12 @@ export function HealthMonitoringDashboard() {
 					</CardHeader>
 					<CardContent>
 						<div className="space-y-2">
-							<div 
-								className="text-2xl font-bold"
-								aria-label={`${metrics.activeUsers} usuários ativos atualmente`}
-							>
+							<div className="text-2xl font-bold" aria-label={`${metrics.activeUsers} usuários ativos atualmente`}>
 								{metrics.activeUsers}
 							</div>
 							<div className="flex items-center space-x-2">
 								<TrendingUp className="h-3 w-3 text-green-600" aria-hidden="true" />
-								<span 
+								<span
 									className="text-xs text-green-600"
 									role="status"
 									aria-label="Crescimento de 15% em relação a ontem"
@@ -450,9 +433,7 @@ export function HealthMonitoringDashboard() {
 						<AlertTriangle className="mr-2 h-5 w-5 text-yellow-600" />
 						Alertas Recentes
 					</CardTitle>
-					<CardDescription>
-						Monitoramento em tempo real de eventos do sistema
-					</CardDescription>
+					<CardDescription>Monitoramento em tempo real de eventos do sistema</CardDescription>
 				</CardHeader>
 				<CardContent>
 					<div className="space-y-3">

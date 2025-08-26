@@ -5,9 +5,9 @@
  * Validates build process and identifies specific error causes
  */
 
-const { execSync, spawn } = require("child_process");
-const fs = require("fs");
-const path = require("path");
+const { execSync, spawn } = require("node:child_process");
+const fs = require("node:fs");
+const _path = require("node:path");
 
 // Color codes for console output
 const colors = {
@@ -19,9 +19,7 @@ const colors = {
 	bold: "\x1b[1m",
 };
 
-function log(message, color = colors.reset) {
-	console.log(`${color}${message}${colors.reset}`);
-}
+function log(_message, _color = colors.reset) {}
 
 function logHeader(message) {
 	log(`\n${colors.bold}${colors.blue}=== ${message} ===${colors.reset}`);
@@ -167,7 +165,7 @@ async function testWorkspacePackages() {
 			try {
 				await runCommand(`pnpm list ${pkg}`);
 				logSuccess(`Package ${pkg} is available`);
-			} catch (error) {
+			} catch (_error) {
 				logWarning(`Package ${pkg} may not be properly linked`);
 			}
 		}
@@ -296,7 +294,7 @@ async function generateDiagnosticReport() {
 	try {
 		report.nodeVersion = execSync("node --version", { encoding: "utf8" }).trim();
 		report.pnpmVersion = execSync("pnpm --version", { encoding: "utf8" }).trim();
-	} catch (error) {
+	} catch (_error) {
 		report.errors.push("Failed to get version information");
 	}
 
@@ -367,7 +365,6 @@ async function runDiagnostics() {
 if (require.main === module) {
 	runDiagnostics().catch((error) => {
 		logError(`Unexpected error: ${error.message}`);
-		console.error(error);
 		process.exit(1);
 	});
 }

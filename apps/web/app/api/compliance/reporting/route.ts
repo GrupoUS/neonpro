@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
 		}
 
 		// Ensure we have a report - type guard
-		if (!('report' in result) || !result.report) {
+		if (!("report" in result) || !result.report) {
 			return NextResponse.json({ error: "Failed to generate report" }, { status: 500 });
 		}
 
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
 			success: true,
 			data: autoSchedule ? { scheduled: true } : result.report,
 		});
-	} catch (error) {
+	} catch (_error) {
 		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 	}
 }
@@ -85,7 +85,7 @@ export async function GET(request: NextRequest) {
 
 		const { searchParams } = new URL(request.url);
 		const reportType = searchParams.get("reportType");
-		const limit = Number.parseInt(searchParams.get("limit") || "10");
+		const limit = Number.parseInt(searchParams.get("limit") || "10", 10);
 
 		let query = supabase
 			.from("regulatory_reports")
@@ -108,7 +108,7 @@ export async function GET(request: NextRequest) {
 			success: true,
 			reports: reports || [],
 		});
-	} catch (error) {
+	} catch (_error) {
 		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 	}
 }

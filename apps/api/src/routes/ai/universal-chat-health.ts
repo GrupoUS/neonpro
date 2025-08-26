@@ -3,7 +3,7 @@ import { Hono } from "hono";
 
 const universalChatHealth = new Hono();
 
-interface ChatServiceHealthCheck {
+type ChatServiceHealthCheck = {
 	service: "universal-chat";
 	healthy: boolean;
 	status: "healthy" | "degraded" | "unhealthy";
@@ -26,7 +26,7 @@ interface ChatServiceHealthCheck {
 		average_response_time_ms: number;
 		error_rate_percent: number;
 	};
-}
+};
 
 class UniversalChatHealthService {
 	private static async checkDatabaseConnectivity(): Promise<"ok" | "error"> {
@@ -36,7 +36,7 @@ class UniversalChatHealthService {
 			const { error } = await supabase.from("ai_chat_sessions").select("count").limit(1);
 
 			return error ? "error" : "ok";
-		} catch (error) {
+		} catch (_error) {
 			return "error";
 		}
 	}
@@ -57,7 +57,7 @@ class UniversalChatHealthService {
 			}
 
 			return "ok";
-		} catch (error) {
+		} catch (_error) {
 			return "error";
 		}
 	}
@@ -76,13 +76,15 @@ class UniversalChatHealthService {
 				created_at: new Date().toISOString(),
 			});
 
-			if (insertError) return "error";
+			if (insertError) {
+				return "error";
+			}
 
 			// Clean up test session
 			await supabase.from("ai_chat_sessions").delete().eq("session_id", testSessionId);
 
 			return "ok";
-		} catch (error) {
+		} catch (_error) {
 			return "error";
 		}
 	}
@@ -108,7 +110,7 @@ class UniversalChatHealthService {
 				average_response_time_ms: 1200, // Placeholder
 				error_rate_percent: 0.1, // Placeholder
 			};
-		} catch (error) {
+		} catch (_error) {
 			return {
 				active_sessions: 0,
 				messages_processed_last_hour: 0,

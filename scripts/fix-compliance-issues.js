@@ -5,8 +5,8 @@
  * Creates missing LGPD files and healthcare tables to fix validation issues
  */
 
-const path = require("path");
-const fs = require("fs");
+const path = require("node:path");
+const fs = require("node:fs");
 
 // Colors for console output
 const colors = {
@@ -18,9 +18,7 @@ const colors = {
 	bold: "\x1b[1m",
 };
 
-function log(message, color = colors.reset) {
-	console.log(`${color}${message}${colors.reset}`);
-}
+function log(_message, _color = colors.reset) {}
 
 function logHeader(message) {
 	log(`\n${colors.bold}${colors.blue}=== ${message} ===${colors.reset}`);
@@ -30,7 +28,7 @@ function logSuccess(message) {
 	log(`✅ ${message}`, colors.green);
 }
 
-function logWarning(message) {
+function _logWarning(message) {
 	log(`⚠️  ${message}`, colors.yellow);
 }
 
@@ -1009,10 +1007,10 @@ async function runFixes() {
 		// Create missing LGPD files
 		createLGPDConsentManagement();
 		createPrivacyPolicy();
-		
+
 		// Create missing healthcare tables migration
 		createHealthcareTablesMigration();
-		
+
 		// Create Supabase configuration files
 		createSupabaseConfig();
 
@@ -1029,10 +1027,8 @@ async function runFixes() {
 		log("2. Configure environment variables with actual values");
 		log("3. Re-run compliance validations");
 		log("4. Test LGPD consent management functionality");
-
 	} catch (error) {
 		logError(`Unexpected error: ${error.message}`);
-		console.error(error);
 		process.exit(1);
 	}
 }

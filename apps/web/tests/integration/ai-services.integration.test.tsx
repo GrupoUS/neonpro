@@ -3,12 +3,7 @@
 
 import { createClient } from "@supabase/supabase-js";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import TestIntegrationSetup, {
-	TEST_CONFIG,
-	TestDataFactory,
-	TestLGPDCompliance,
-	TestPerformanceMonitor,
-} from "./integration-test-setup";
+import TestIntegrationSetup, { TEST_CONFIG, TestDataFactory, TestPerformanceMonitor } from "./integration-test-setup";
 
 // AI Services Test Configuration
 const AI_TEST_CONFIG = {
@@ -262,10 +257,10 @@ describe("Universal AI Chat Integration", () => {
 
 // Compliance Automation Integration Tests
 describe("Compliance Automation Integration", () => {
-	let supabaseClient: any;
+	let _supabaseClient: any;
 
 	beforeAll(async () => {
-		supabaseClient = createClient(TEST_CONFIG.supabase.test_project_url, TEST_CONFIG.supabase.test_service_role_key);
+		_supabaseClient = createClient(TEST_CONFIG.supabase.test_project_url, TEST_CONFIG.supabase.test_service_role_key);
 	});
 
 	it("should validate LGPD compliance for patient data operations", async () => {

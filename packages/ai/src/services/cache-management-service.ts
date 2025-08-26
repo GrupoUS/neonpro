@@ -6,7 +6,7 @@ import Redis from "ioredis";
 import { type AIServiceInput, type AIServiceOutput, EnhancedAIService } from "./enhanced-service-base";
 
 // Cache Types and Interfaces
-export interface CacheEntry {
+export type CacheEntry = {
 	id: string;
 	key: string;
 	value: string; // JSON stringified value
@@ -18,9 +18,9 @@ export interface CacheEntry {
 	expires_at: string;
 	last_accessed?: string;
 	access_count?: number;
-}
+};
 
-export interface CacheMetadata {
+export type CacheMetadata = {
 	size_bytes: number;
 	compression?: string;
 	content_type?: string;
@@ -28,7 +28,7 @@ export interface CacheMetadata {
 	version?: string;
 	dependencies?: string[];
 	invalidation_rules?: string[];
-}
+};
 
 export interface CacheInput extends AIServiceInput {
 	action: "get" | "set" | "delete" | "exists" | "invalidate" | "stats" | "cleanup" | "bulk_get" | "bulk_set";
@@ -56,16 +56,16 @@ export interface CacheOutput extends AIServiceOutput {
 	bulk_results?: Array<{ key: string; success: boolean; error?: string }>;
 }
 
-export interface CacheCleanupOptions {
+export type CacheCleanupOptions = {
 	expired_only?: boolean;
 	namespace?: string;
 	tags?: string[];
 	older_than_hours?: number;
 	max_entries_to_remove?: number;
 	dry_run?: boolean;
-}
+};
 
-export interface CacheStats {
+export type CacheStats = {
 	total_entries: number;
 	total_size_bytes: number;
 	hit_rate_percent: number;
@@ -85,13 +85,13 @@ export interface CacheStats {
 		redis_peak_memory: number;
 		database_cache_size: number;
 	};
-}
+};
 
 // Cache Management Service Implementation
 export class CacheManagementService extends EnhancedAIService<CacheInput, CacheOutput> {
-	private supabase: SupabaseClient;
-	private redis: Redis | null = null;
-	private cacheStats: Map<string, number> = new Map();
+	private readonly supabase: SupabaseClient;
+	private readonly redis: Redis | null = null;
+	private readonly cacheStats: Map<string, number> = new Map();
 	private readonly DEFAULT_TTL = 3600; // 1 hour
 	private readonly MAX_VALUE_SIZE = 1024 * 1024; // 1MB
 	private readonly REDIS_KEY_PREFIX = "neonpro:ai:";
@@ -118,20 +118,15 @@ export class CacheManagementService extends EnhancedAIService<CacheInput, CacheO
 				});
 
 				await this.redis.ping();
-				console.log("Redis cache connected successfully");
 
 				// Set up Redis event handlers
 				this.redis.on("error", (error) => {
-					console.error("Redis error:", error);
 					this.recordMetric("redis_error", { error: error.message });
 				});
 
-				this.redis.on("ready", () => {
-					console.log("Redis cache ready");
-				});
+				this.redis.on("ready", () => {});
 			}
-		} catch (error) {
-			console.warn("Redis not available, using database-only caching:", error);
+		} catch (_error) {
 			this.redis = null;
 		}
 	}
@@ -200,8 +195,7 @@ export class CacheManagementService extends EnhancedAIService<CacheInput, CacheO
 						response_time_ms: performance.now() - startTime,
 					};
 				}
-			} catch (error) {
-				console.error("Redis get error:", error);
+			} catch (_error) {
 				// Fall through to database cache
 			}
 		}
@@ -233,9 +227,7 @@ export class CacheManagementService extends EnhancedAIService<CacheInput, CacheO
 				const ttlSeconds = Math.max(0, Math.floor((new Date(data.expires_at).getTime() - Date.now()) / 1000));
 
 				await this.redis.setex(redisKey, ttlSeconds, data.value);
-			} catch (error) {
-				console.error("Redis set error during cache warming:", error);
-			}
+			} catch (_error) {}
 		}
 
 		// Update access statistics
@@ -273,9 +265,7 @@ export class CacheManagementService extends EnhancedAIService<CacheInput, CacheO
 			try {
 				const redisKey = `${this.REDIS_KEY_PREFIX}${fullKey}`;
 				await this.redis.setex(redisKey, ttlSeconds, serializedValue);
-			} catch (error) {
-				console.error("Redis set error:", error);
-			}
+			} catch (_error) {}
 		}
 
 		// Store in database
@@ -322,9 +312,7 @@ export class CacheManagementService extends EnhancedAIService<CacheInput, CacheO
 			try {
 				const redisKey = `${this.REDIS_KEY_PREFIX}${fullKey}`;
 				await this.redis.del(redisKey);
-			} catch (error) {
-				console.error("Redis delete error:", error);
-			}
+			} catch (_error) {}
 		}
 
 		// Delete from database
@@ -361,9 +349,7 @@ export class CacheManagementService extends EnhancedAIService<CacheInput, CacheO
 						exists: true,
 					};
 				}
-			} catch (error) {
-				console.error("Redis exists error:", error);
-			}
+			} catch (_error) {}
 		}
 
 		// Check database
@@ -398,9 +384,7 @@ export class CacheManagementService extends EnhancedAIService<CacheInput, CacheO
 					try {
 						const redisKeys = data.map((item) => `${this.REDIS_KEY_PREFIX}${item.key}`);
 						await this.redis.del(...redisKeys);
-					} catch (error) {
-						console.error("Redis batch delete error:", error);
-					}
+					} catch (_error) {}
 				}
 			}
 		} else if (input.tags && input.tags.length > 0) {
@@ -421,9 +405,7 @@ export class CacheManagementService extends EnhancedAIService<CacheInput, CacheO
 						try {
 							const redisKeys = keys.map((key) => `${this.REDIS_KEY_PREFIX}${key}`);
 							await this.redis.del(...redisKeys);
-						} catch (error) {
-							console.error("Redis batch delete error:", error);
-						}
+						} catch (_error) {}
 					}
 				}
 			}
@@ -443,9 +425,7 @@ export class CacheManagementService extends EnhancedAIService<CacheInput, CacheO
 					try {
 						const redisKeys = data.map((item) => `${this.REDIS_KEY_PREFIX}${item.key}`);
 						await this.redis.del(...redisKeys);
-					} catch (error) {
-						console.error("Redis batch delete error:", error);
-					}
+					} catch (_error) {}
 				}
 			}
 		}
@@ -508,11 +488,9 @@ export class CacheManagementService extends EnhancedAIService<CacheInput, CacheO
 				const usedMatch = info.match(/used_memory:(\d+)/);
 				const peakMatch = info.match(/used_memory_peak:(\d+)/);
 
-				redisMemory.used = usedMatch ? Number.parseInt(usedMatch[1]) : 0;
-				redisMemory.peak = peakMatch ? Number.parseInt(peakMatch[1]) : 0;
-			} catch (error) {
-				console.error("Redis memory info error:", error);
-			}
+				redisMemory.used = usedMatch ? Number.parseInt(usedMatch[1], 10) : 0;
+				redisMemory.peak = peakMatch ? Number.parseInt(peakMatch[1], 10) : 0;
+			} catch (_error) {}
 		}
 
 		const stats: CacheStats = {
@@ -592,9 +570,7 @@ export class CacheManagementService extends EnhancedAIService<CacheInput, CacheO
 				try {
 					const redisKeys = data.map((item) => `${this.REDIS_KEY_PREFIX}${item.key}`);
 					await this.redis.del(...redisKeys);
-				} catch (error) {
-					console.error("Redis cleanup error:", error);
-				}
+				} catch (_error) {}
 			}
 		}
 
@@ -621,17 +597,15 @@ export class CacheManagementService extends EnhancedAIService<CacheInput, CacheO
 
 				redisValues.forEach((value, index) => {
 					if (value !== null) {
-						const originalKey = input.keys![index];
+						const originalKey = input.keys?.[index];
 						values[originalKey] = JSON.parse(value);
 					}
 				});
-			} catch (error) {
-				console.error("Redis bulk get error:", error);
-			}
+			} catch (_error) {}
 		}
 
 		// Get remaining keys from database
-		const missingKeys = fullKeys.filter((_, index) => !(input.keys![index] in values));
+		const missingKeys = fullKeys.filter((_, index) => !(input.keys?.[index] in values));
 
 		if (missingKeys.length > 0) {
 			const { data, error } = await this.supabase
@@ -663,7 +637,7 @@ export class CacheManagementService extends EnhancedAIService<CacheInput, CacheO
 		const results: Array<{ key: string; success: boolean; error?: string }> = [];
 
 		const cacheEntries: Partial<CacheEntry>[] = [];
-		const redisOperations: Array<[string, string, number]> = [];
+		const redisOperations: [string, string, number][] = [];
 
 		for (const item of input.bulk_data) {
 			try {
@@ -716,7 +690,6 @@ export class CacheManagementService extends EnhancedAIService<CacheInput, CacheO
 			const { error } = await this.supabase.from("ai_service_cache").upsert(cacheEntries, { onConflict: "key" });
 
 			if (error) {
-				console.error("Bulk database insert error:", error);
 			}
 		}
 
@@ -728,9 +701,7 @@ export class CacheManagementService extends EnhancedAIService<CacheInput, CacheO
 					pipeline.setex(key, ttl, value);
 				});
 				await pipeline.exec();
-			} catch (error) {
-				console.error("Redis bulk set error:", error);
-			}
+			} catch (_error) {}
 		}
 
 		this.incrementStat("cache_sets", cacheEntries.length);
@@ -750,10 +721,7 @@ export class CacheManagementService extends EnhancedAIService<CacheInput, CacheO
 					access_count: this.supabase.rpc("increment_access_count"),
 				})
 				.eq("key", key);
-		} catch (error) {
-			// Non-critical error, log but don't throw
-			console.error("Failed to update access stats:", error);
-		}
+		} catch (_error) {}
 	}
 
 	private incrementStat(statName: string, count = 1): void {
@@ -777,9 +745,7 @@ export class CacheManagementService extends EnhancedAIService<CacheInput, CacheO
 							max_entries_to_remove: 1000,
 						},
 					});
-				} catch (error) {
-					console.error("Automated cache cleanup failed:", error);
-				}
+				} catch (_error) {}
 			},
 			30 * 60 * 1000
 		);

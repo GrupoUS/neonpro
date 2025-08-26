@@ -16,7 +16,7 @@ import type { ServiceContext } from "../types";
 // ENHANCED COMPLIANCE TYPES
 // ================================================
 
-interface CompliancePolicy {
+type CompliancePolicy = {
 	id: string;
 	tenantId: string;
 	name: string;
@@ -33,9 +33,9 @@ interface CompliancePolicy {
 	createdAt: Date;
 	updatedAt: Date;
 	createdBy: string;
-}
+};
 
-interface ComplianceRule {
+type ComplianceRule = {
 	id: string;
 	name: string;
 	description: string;
@@ -45,26 +45,26 @@ interface ComplianceRule {
 	severity: SeverityLevel;
 	isActive: boolean;
 	metadata: Record<string, any>;
-}
+};
 
-interface RuleCondition {
+type RuleCondition = {
 	field: string;
 	operator: ConditionOperator;
 	value: any;
 	dataSource: DataSource;
 	logicalOperator?: LogicalOperator;
 	nestedConditions?: RuleCondition[];
-}
+};
 
-interface RuleAction {
+type RuleAction = {
 	type: ActionType;
 	parameters: Record<string, any>;
 	autoExecute: boolean;
 	notificationRequired: boolean;
 	escalationRequired: boolean;
-}
+};
 
-interface ComplianceIncident {
+type ComplianceIncident = {
 	id: string;
 	tenantId: string;
 	title: string;
@@ -86,9 +86,9 @@ interface ComplianceIncident {
 	metadata: Record<string, any>;
 	createdAt: Date;
 	updatedAt: Date;
-}
+};
 
-interface DataImpactAssessment {
+type DataImpactAssessment = {
 	recordsAffected: number;
 	dataTypes: string[];
 	sensitivityLevel: SensitivityLevel;
@@ -96,9 +96,9 @@ interface DataImpactAssessment {
 	estimatedImpact: ImpactLevel;
 	notificationRequired: boolean;
 	regulatoryReportingRequired: boolean;
-}
+};
 
-interface ContainmentAction {
+type ContainmentAction = {
 	id: string;
 	type: string;
 	description: string;
@@ -106,18 +106,18 @@ interface ContainmentAction {
 	executedBy: string;
 	effectiveness: EffectivenessLevel;
 	metadata: Record<string, any>;
-}
+};
 
-interface RemediationPlan {
+type RemediationPlan = {
 	actions: RemediationAction[];
 	timeline: string;
 	responsibleParty: string;
 	estimatedCost?: number;
 	approvalRequired: boolean;
 	status: RemediationStatus;
-}
+};
 
-interface RemediationAction {
+type RemediationAction = {
 	id: string;
 	description: string;
 	type: string;
@@ -127,9 +127,9 @@ interface RemediationAction {
 	status: ActionStatus;
 	completedAt?: Date;
 	notes?: string;
-}
+};
 
-interface ConsentRecord {
+type ConsentRecord = {
 	id: string;
 	tenantId: string;
 	dataSubjectId: string;
@@ -149,9 +149,9 @@ interface ConsentRecord {
 	metadata: Record<string, any>;
 	createdAt: Date;
 	updatedAt: Date;
-}
+};
 
-interface ComplianceMetrics {
+type ComplianceMetrics = {
 	policyCompliance: number;
 	incidentCount: number;
 	findingCount: number;
@@ -162,33 +162,33 @@ interface ComplianceMetrics {
 	trendsAnalysis: TrendsAnalysis;
 	riskBreakdown: RiskBreakdown;
 	complianceByFramework: Record<ComplianceFramework, FrameworkCompliance>;
-}
+};
 
-interface TrendsAnalysis {
+type TrendsAnalysis = {
 	incidentTrend: TrendData[];
 	complianceTrend: TrendData[];
 	riskTrend: TrendData[];
-}
+};
 
-interface TrendData {
+type TrendData = {
 	period: string;
 	value: number;
 	change: number;
-}
+};
 
-interface RiskBreakdown {
+type RiskBreakdown = {
 	critical: number;
 	high: number;
 	medium: number;
 	low: number;
-}
+};
 
-interface FrameworkCompliance {
+type FrameworkCompliance = {
 	score: number;
 	policies: number;
 	violations: number;
 	lastAssessment: Date;
-}
+};
 
 // ================================================
 // ENUMS
@@ -364,7 +364,7 @@ enum ConsentMethod {
 // REQUEST TYPES
 // ================================================
 
-interface CreatePolicyRequest {
+type CreatePolicyRequest = {
 	tenantId: string;
 	name: string;
 	description: string;
@@ -375,9 +375,9 @@ interface CreatePolicyRequest {
 	effectiveDate: Date;
 	expiryDate?: Date;
 	metadata?: Record<string, any>;
-}
+};
 
-interface ReportIncidentRequest {
+type ReportIncidentRequest = {
 	tenantId: string;
 	title: string;
 	description: string;
@@ -387,9 +387,9 @@ interface ReportIncidentRequest {
 	affectedSystems: string[];
 	affectedData: Omit<DataImpactAssessment, "notificationRequired" | "regulatoryReportingRequired">;
 	metadata?: Record<string, any>;
-}
+};
 
-interface CreateConsentRequest {
+type CreateConsentRequest = {
 	tenantId: string;
 	dataSubjectId: string;
 	dataSubjectType: DataSubjectType;
@@ -401,7 +401,7 @@ interface CreateConsentRequest {
 	consentVersion: string;
 	retentionPeriod: number;
 	metadata?: Record<string, any>;
-}
+};
 
 // ================================================
 // ENHANCED COMPLIANCE SERVICE
@@ -502,10 +502,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 	/**
 	 * Criar política de compliance
 	 */
-	async createPolicy(
-		request: CreatePolicyRequest,
-		context: ServiceContext
-	): Promise<CompliancePolicy> {
+	async createPolicy(request: CreatePolicyRequest, context: ServiceContext): Promise<CompliancePolicy> {
 		return this.executeOperation(
 			"createPolicy",
 			async () => {
@@ -580,7 +577,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 			async () => {
 				// Build cache key based on filters
 				const cacheKey = `policies_${tenantId}_${JSON.stringify(filters)}`;
-				
+
 				// Try to get from cache first
 				const cached = await this.cache.get<CompliancePolicy[]>(cacheKey);
 				if (cached) {
@@ -609,10 +606,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 	/**
 	 * Reportar incidente de compliance
 	 */
-	async reportIncident(
-		request: ReportIncidentRequest,
-		context: ServiceContext
-	): Promise<ComplianceIncident> {
+	async reportIncident(request: ReportIncidentRequest, context: ServiceContext): Promise<ComplianceIncident> {
 		return this.executeOperation(
 			"reportIncident",
 			async () => {
@@ -714,10 +708,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 	/**
 	 * Registrar consentimento LGPD
 	 */
-	async recordConsent(
-		request: CreateConsentRequest,
-		context: ServiceContext
-	): Promise<ConsentRecord> {
+	async recordConsent(request: CreateConsentRequest, context: ServiceContext): Promise<ConsentRecord> {
 		return this.executeOperation(
 			"recordConsent",
 			async () => {
@@ -772,11 +763,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 	/**
 	 * Retirar consentimento
 	 */
-	async withdrawConsent(
-		consentId: string,
-		withdrawalMethod: string,
-		context: ServiceContext
-	): Promise<boolean> {
+	async withdrawConsent(consentId: string, withdrawalMethod: string, context: ServiceContext): Promise<boolean> {
 		return this.executeOperation(
 			"withdrawConsent",
 			async () => {
@@ -826,7 +813,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 				// Set up real-time monitoring
 				const interval = setInterval(async () => {
 					await this.performComplianceCheck(tenantId, context);
-				}, 60000); // Check every minute
+				}, 60_000); // Check every minute
 
 				this.activeMonitors.set(monitorId, interval);
 
@@ -882,21 +869,23 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 			async () => {
 				// Check LGPD compliance
 				const lgpdCheck = await this.checkLGPDCompliance(tenantId, context);
-				
+
 				// Check ANVISA compliance
 				const anvisaCheck = await this.checkANVISACompliance(tenantId, context);
-				
+
 				// Check CFM compliance
 				const cfmCheck = await this.checkCFMCompliance(tenantId, context);
 
 				// Calculate overall score
-				const issues = lgpdCheck.issues.length + anvisaCheck.issues.length + cfmCheck.issues.length;
+				const _issues = lgpdCheck.issues.length + anvisaCheck.issues.length + cfmCheck.issues.length;
 				const totalChecks = 3;
-				const compliantFrameworks = [lgpdCheck.compliant, anvisaCheck.compliant, cfmCheck.compliant].filter(Boolean).length;
-				
+				const compliantFrameworks = [lgpdCheck.compliant, anvisaCheck.compliant, cfmCheck.compliant].filter(
+					Boolean
+				).length;
+
 				const score = (compliantFrameworks / totalChecks) * 100;
 				let status: "compliant" | "non-compliant" | "warning";
-				
+
 				if (score === 100) {
 					status = "compliant";
 				} else if (score >= 70) {
@@ -933,7 +922,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 	}
 
 	private validatePolicyRequest(request: CreatePolicyRequest): void {
-		if (!request.name || !request.tenantId) {
+		if (!(request.name && request.tenantId)) {
 			throw new Error("Policy name and tenant ID are required");
 		}
 		if (!request.rules || request.rules.length === 0) {
@@ -942,7 +931,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 	}
 
 	private validateIncidentRequest(request: ReportIncidentRequest): void {
-		if (!request.title || !request.tenantId) {
+		if (!(request.title && request.tenantId)) {
 			throw new Error("Incident title and tenant ID are required");
 		}
 		if (!request.affectedData) {
@@ -951,7 +940,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 	}
 
 	private validateConsentRequest(request: CreateConsentRequest): void {
-		if (!request.dataSubjectId || !request.purpose) {
+		if (!(request.dataSubjectId && request.purpose)) {
 			throw new Error("Data subject ID and purpose are required");
 		}
 		if (request.retentionPeriod <= 0) {
@@ -967,13 +956,13 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 		affectedData: Omit<DataImpactAssessment, "notificationRequired" | "regulatoryReportingRequired">
 	): Promise<DataImpactAssessment> {
 		// Assess notification requirements based on Brazilian laws
-		const notificationRequired = 
-			affectedData.recordsAffected > 100 || 
+		const notificationRequired =
+			affectedData.recordsAffected > 100 ||
 			affectedData.sensitivityLevel === SensitivityLevel.RESTRICTED ||
 			affectedData.estimatedImpact === ImpactLevel.MAJOR ||
 			affectedData.estimatedImpact === ImpactLevel.CATASTROPHIC;
 
-		const regulatoryReportingRequired = 
+		const regulatoryReportingRequired =
 			affectedData.recordsAffected > 500 ||
 			affectedData.sensitivityLevel === SensitivityLevel.RESTRICTED ||
 			affectedData.estimatedImpact === ImpactLevel.MAJOR ||
@@ -988,7 +977,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 
 	private createDefaultRemediationPlan(severity: SeverityLevel, userId: string): RemediationPlan {
 		const actions: RemediationAction[] = [];
-		
+
 		if (severity === SeverityLevel.CRITICAL) {
 			actions.push({
 				id: `action_${Date.now()}_1`,
@@ -1010,7 +999,10 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 		};
 	}
 
-	private async checkLGPDCompliance(tenantId: string, context: ServiceContext): Promise<{ compliant: boolean; issues: string[] }> {
+	private async checkLGPDCompliance(
+		_tenantId: string,
+		_context: ServiceContext
+	): Promise<{ compliant: boolean; issues: string[] }> {
 		// Mock LGPD compliance check
 		return {
 			compliant: true,
@@ -1018,7 +1010,10 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 		};
 	}
 
-	private async checkANVISACompliance(tenantId: string, context: ServiceContext): Promise<{ compliant: boolean; issues: string[] }> {
+	private async checkANVISACompliance(
+		_tenantId: string,
+		_context: ServiceContext
+	): Promise<{ compliant: boolean; issues: string[] }> {
 		// Mock ANVISA compliance check
 		return {
 			compliant: true,
@@ -1026,7 +1021,10 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 		};
 	}
 
-	private async checkCFMCompliance(tenantId: string, context: ServiceContext): Promise<{ compliant: boolean; issues: string[] }> {
+	private async checkCFMCompliance(
+		_tenantId: string,
+		_context: ServiceContext
+	): Promise<{ compliant: boolean; issues: string[] }> {
 		// Mock CFM compliance check
 		return {
 			compliant: true,
@@ -1035,10 +1033,10 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 	}
 
 	private async calculateComplianceMetrics(
-		tenantId: string,
-		periodStart: Date,
-		periodEnd: Date,
-		context: ServiceContext
+		_tenantId: string,
+		_periodStart: Date,
+		_periodEnd: Date,
+		_context: ServiceContext
 	): Promise<ComplianceMetrics> {
 		// Mock metrics calculation
 		return {
@@ -1064,58 +1062,34 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 		};
 	}
 
-	private async performComplianceCheck(tenantId: string, context: ServiceContext): Promise<void> {
-		// Perform real-time compliance checks
-		console.log(`Performing compliance check for tenant: ${tenantId}`);
-	}
+	private async performComplianceCheck(_tenantId: string, _context: ServiceContext): Promise<void> {}
 
-	private async startPolicyMonitoring(policy: CompliancePolicy): Promise<void> {
-		console.log(`Starting monitoring for policy: ${policy.name}`);
-	}
+	private async startPolicyMonitoring(_policy: CompliancePolicy): Promise<void> {}
 
-	private async autoAssignIncident(incident: ComplianceIncident): Promise<void> {
-		console.log(`Auto-assigning incident: ${incident.title}`);
-	}
+	private async autoAssignIncident(_incident: ComplianceIncident): Promise<void> {}
 
-	private async createIncidentNotifications(incident: ComplianceIncident): Promise<void> {
-		console.log(`Creating notifications for incident: ${incident.title}`);
-	}
+	private async createIncidentNotifications(_incident: ComplianceIncident): Promise<void> {}
 
-	private async initiateRegulatoryReporting(incident: ComplianceIncident): Promise<void> {
-		console.log(`Initiating regulatory reporting for incident: ${incident.title}`);
-	}
+	private async initiateRegulatoryReporting(_incident: ComplianceIncident): Promise<void> {}
 
-	private async initiateDataCleanup(consentId: string, context: ServiceContext): Promise<void> {
-		console.log(`Initiating data cleanup for consent: ${consentId}`);
-	}
+	private async initiateDataCleanup(_consentId: string, _context: ServiceContext): Promise<void> {}
 
 	// Mock database operations
-	private async storePolicyInDatabase(policy: CompliancePolicy, context: ServiceContext): Promise<void> {
-		console.log(`Storing policy: ${policy.name}`);
-	}
+	private async storePolicyInDatabase(_policy: CompliancePolicy, _context: ServiceContext): Promise<void> {}
 
 	private async fetchPoliciesFromDatabase(
-		tenantId: string,
-		filters: any,
-		context: ServiceContext
+		_tenantId: string,
+		_filters: any,
+		_context: ServiceContext
 	): Promise<CompliancePolicy[]> {
 		return []; // Mock empty result
 	}
 
-	private async storeIncidentInDatabase(incident: ComplianceIncident, context: ServiceContext): Promise<void> {
-		console.log(`Storing incident: ${incident.title}`);
-	}
+	private async storeIncidentInDatabase(_incident: ComplianceIncident, _context: ServiceContext): Promise<void> {}
 
-	private async storeConsentInDatabase(consent: ConsentRecord, context: ServiceContext): Promise<void> {
-		console.log(`Storing consent: ${consent.id}`);
-	}
+	private async storeConsentInDatabase(_consent: ConsentRecord, _context: ServiceContext): Promise<void> {}
 
-	private async updateConsentInDatabase(
-		consentId: string,
-		updates: any,
-		context: ServiceContext
-	): Promise<boolean> {
-		console.log(`Updating consent: ${consentId}`);
+	private async updateConsentInDatabase(_consentId: string, _updates: any, _context: ServiceContext): Promise<boolean> {
 		return true;
 	}
 
@@ -1124,29 +1098,18 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 	// ================================================
 
 	protected async initialize(): Promise<void> {
-		console.log("Initializing Enhanced Compliance Service...");
-		
 		// Initialize Brazilian compliance templates
 		this.initializeBrazilianCompliance();
-		
-		// Set up database connections if needed
-		// Initialize external compliance APIs
-		
-		console.log("Enhanced Compliance Service initialized successfully");
 	}
 
 	protected async cleanup(): Promise<void> {
-		console.log("Cleaning up Enhanced Compliance Service...");
-		
 		// Stop all active monitors
-		for (const [monitorId, interval] of this.activeMonitors.entries()) {
+		for (const [_monitorId, interval] of this.activeMonitors.entries()) {
 			clearInterval(interval);
 		}
 		this.activeMonitors.clear();
-		
+
 		// Clear compliance rules
 		this.complianceRules.clear();
-		
-		console.log("Enhanced Compliance Service cleanup completed");
 	}
 }

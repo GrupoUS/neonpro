@@ -21,7 +21,7 @@ export class CacheServiceFactory extends EnhancedServiceBase {
 			enableAudit: true,
 			healthCheck: {
 				enabled: true,
-				interval: 30000,
+				interval: 30_000,
 				timeout: 5000,
 			},
 		});
@@ -52,10 +52,10 @@ export class CacheServiceFactory extends EnhancedServiceBase {
 			// Enterprise multi-layer caching
 			if (options.useMultiLayer) {
 				await this.cache.setMultiLayer(key, value, {
-					ttl: ttl || 300000, // 5 minutes default
+					ttl: ttl || 300_000, // 5 minutes default
 					layers: ["memory", "redis"],
 					compress: true,
-					encrypt: options.encrypt || false,
+					encrypt: options.encrypt,
 				});
 			}
 
@@ -132,7 +132,7 @@ export class CacheServiceFactory extends EnhancedServiceBase {
 
 			this.endTiming("cache_get_enhanced", startTime, { hit: !!result });
 			return result;
-		} catch (error) {
+		} catch (_error) {
 			this.endTiming("cache_get_enhanced", startTime, { error: true });
 			return null;
 		}
@@ -145,7 +145,7 @@ export class CacheServiceFactory extends EnhancedServiceBase {
 		key: string,
 		value: T,
 		patientConsent: boolean,
-		ttl: number = 300000,
+		ttl = 300_000,
 		options: {
 			auditUserId?: string;
 			purpose?: string;
@@ -220,7 +220,7 @@ export class CacheServiceFactory extends EnhancedServiceBase {
 					key: this.sanitizeKey(key),
 					userId: auditUserId,
 					purpose: options.purpose || "healthcare_data_access",
-					emergencyAccess: options.emergencyAccess || false,
+					emergencyAccess: options.emergencyAccess,
 					timestamp: new Date(),
 					lgpdCompliant: true,
 				});
@@ -243,7 +243,7 @@ export class CacheServiceFactory extends EnhancedServiceBase {
 
 			this.endTiming("cache_get_sensitive", startTime, { hit: !!result });
 			return result;
-		} catch (error) {
+		} catch (_error) {
 			this.endTiming("cache_get_sensitive", startTime, { error: true });
 			return null;
 		}
@@ -274,7 +274,7 @@ export class CacheServiceFactory extends EnhancedServiceBase {
 					hitRate: await this.analytics.getMetric("cache_get_enhanced", "hit_rate"),
 				},
 			};
-		} catch (error) {
+		} catch (_error) {
 			return {
 				error: "Failed to retrieve cache statistics",
 				timestamp: new Date().toISOString(),
@@ -374,7 +374,7 @@ export class CacheServiceFactory extends EnhancedServiceBase {
 		return this.healthcareCache.get<T>(key);
 	}
 
-	setSensitive<T>(key: string, value: T, patientConsent = false, ttl = 300000): void {
+	setSensitive<T>(key: string, value: T, patientConsent = false, ttl = 300_000): void {
 		this.healthcareCache.setSensitive(key, value, patientConsent, ttl);
 	}
 

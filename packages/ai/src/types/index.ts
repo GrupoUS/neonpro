@@ -1,5 +1,5 @@
 // Core AI Service Types
-export interface AIServiceConfig {
+export type AIServiceConfig = {
 	enableCaching: boolean;
 	cacheTTL: number;
 	enableRetry: boolean;
@@ -8,15 +8,15 @@ export interface AIServiceConfig {
 	enableCompliance: boolean;
 	complianceLevel: "basic" | "healthcare" | "enterprise";
 	rateLimitConfig?: RateLimitConfig;
-}
+};
 
-export interface RateLimitConfig {
+export type RateLimitConfig = {
 	maxRequests: number;
 	windowMs: number;
 	keyGenerator?: (input: any) => string;
-}
+};
 
-export interface ServiceMetrics {
+export type ServiceMetrics = {
 	operation: string;
 	duration: number;
 	success: boolean;
@@ -24,28 +24,28 @@ export interface ServiceMetrics {
 	userId?: string;
 	clinicId?: string;
 	timestamp: Date;
-}
+};
 
-export interface ComplianceEvent {
+export type ComplianceEvent = {
 	type: string;
 	userId?: string;
 	clinicId?: string;
 	severity: "low" | "medium" | "high" | "critical";
 	details?: string;
 	timestamp: Date;
-}
+};
 
 // Chat Service Types
-export interface ChatMessage {
+export type ChatMessage = {
 	id: string;
 	sessionId: string;
 	role: "user" | "assistant" | "system";
 	content: string;
 	metadata?: Record<string, any>;
 	createdAt: Date;
-}
+};
 
-export interface ChatSession {
+export type ChatSession = {
 	id: string;
 	userId: string;
 	clinicId?: string;
@@ -55,9 +55,9 @@ export interface ChatSession {
 	messageCount: number;
 	messages: ChatMessage[];
 	context?: HealthcareChatContext;
-}
+};
 
-export interface HealthcareChatContext {
+export type HealthcareChatContext = {
 	patientId?: string;
 	appointmentId?: string;
 	procedureType?: string;
@@ -69,9 +69,9 @@ export interface HealthcareChatContext {
 		type: "medical" | "dental" | "aesthetic" | "veterinary";
 		location: string;
 	};
-}
+};
 
-export interface ChatResponse {
+export type ChatResponse = {
 	response: string;
 	messageId: string;
 	sessionId: string;
@@ -80,28 +80,28 @@ export interface ChatResponse {
 	suggestedActions: string[];
 	escalationRequired: boolean;
 	processingTime: number;
-}
+};
 
-export interface ComplianceMetrics {
+export type ComplianceMetrics = {
 	lgpdCompliant: boolean;
 	anvisaCompliant: boolean;
 	cfmCompliant: boolean;
 	riskLevel: "low" | "medium" | "high" | "critical";
 	warnings: string[];
 	auditTrail?: AuditEntry[];
-}
+};
 
-export interface AuditEntry {
+export type AuditEntry = {
 	action: string;
 	timestamp: Date;
 	userId?: string;
 	details: Record<string, any>;
 	ipAddress?: string;
 	userAgent?: string;
-}
+};
 
 // Prediction Service Types
-export interface AppointmentData {
+export type AppointmentData = {
 	id: string;
 	scheduledDateTime: Date;
 	duration?: number;
@@ -117,9 +117,9 @@ export interface AppointmentData {
 	notes?: string;
 	createdAt: Date;
 	confirmedAt?: Date;
-}
+};
 
-export interface PatientBehaviorData {
+export type PatientBehaviorData = {
 	patientId: string;
 	clinicId: string;
 	totalAppointments: number;
@@ -135,21 +135,21 @@ export interface PatientBehaviorData {
 	seasonalPatterns: SeasonalPattern[];
 	riskProfile: "low" | "medium" | "high";
 	lastUpdated: Date;
-}
+};
 
-export interface TimeSlot {
+export type TimeSlot = {
 	dayOfWeek: number; // 0-6
 	hour: number; // 0-23
 	frequency: number; // how often this slot is chosen
-}
+};
 
-export interface SeasonalPattern {
+export type SeasonalPattern = {
 	month: number;
 	attendanceRate: number;
 	avgNoShowRate: number;
-}
+};
 
-export interface PredictionResult {
+export type PredictionResult = {
 	appointmentId: string;
 	patientId: string;
 	clinicId: string;
@@ -161,27 +161,27 @@ export interface PredictionResult {
 	predictionId: string;
 	modelVersion: string;
 	predictedAt: Date;
-}
+};
 
-export interface RiskFactors {
+export type RiskFactors = {
 	factor: string;
 	impact: "low" | "medium" | "high";
 	description: string;
 	weight: number; // contribution to overall risk
 	category?: "temporal" | "behavioral" | "demographic" | "procedural" | "contextual";
-}
+};
 
-export interface PreventionRecommendations {
+export type PreventionRecommendations = {
 	type: "automated_reminder" | "phone_confirmation" | "flexible_rescheduling" | "incentive" | "mid_point_reminder";
 	priority: "low" | "medium" | "high";
 	description: string;
 	estimatedImpact: number; // percentage reduction in no-show probability
 	cost?: number; // implementation cost in BRL
 	timing?: string; // when to execute the recommendation
-}
+};
 
 // Patient Data Types
-export interface PatientProfile {
+export type PatientProfile = {
 	id: string;
 	clinicId: string;
 	personalInfo: PersonalInfo;
@@ -193,9 +193,9 @@ export interface PatientProfile {
 	createdAt: Date;
 	updatedAt: Date;
 	lastLoginAt?: Date;
-}
+};
 
-export interface PersonalInfo {
+export type PersonalInfo = {
 	firstName: string;
 	lastName: string;
 	birthDate: Date;
@@ -204,18 +204,18 @@ export interface PersonalInfo {
 	rg?: string; // Brazilian ID
 	nationality?: string;
 	maritalStatus?: string;
-}
+};
 
-export interface ContactInfo {
+export type ContactInfo = {
 	email?: string;
 	phone?: string;
 	alternativePhone?: string;
 	address?: Address;
 	emergencyContact?: EmergencyContact;
 	communicationPreferences: CommunicationPreferences;
-}
+};
 
-export interface Address {
+export type Address = {
 	street: string;
 	number: string;
 	complement?: string;
@@ -224,16 +224,16 @@ export interface Address {
 	state: string;
 	zipCode: string;
 	country: string;
-}
+};
 
-export interface EmergencyContact {
+export type EmergencyContact = {
 	name: string;
 	relationship: string;
 	phone: string;
 	email?: string;
-}
+};
 
-export interface CommunicationPreferences {
+export type CommunicationPreferences = {
 	preferredMethod: "sms" | "email" | "phone" | "app";
 	appointmentReminders: boolean;
 	promotionalMessages: boolean;
@@ -241,48 +241,48 @@ export interface CommunicationPreferences {
 	surveyRequests: boolean;
 	preferredLanguage: "pt-BR" | "en";
 	optOutFromAI: boolean;
-}
+};
 
-export interface MedicalInfo {
+export type MedicalInfo = {
 	allergies: string[];
 	medications: Medication[];
 	medicalHistory: MedicalHistoryEntry[];
 	insuranceInfo?: InsuranceInfo;
 	specialNeeds?: string[];
-}
+};
 
-export interface Medication {
+export type Medication = {
 	name: string;
 	dosage: string;
 	frequency: string;
 	startDate: Date;
 	endDate?: Date;
 	prescribedBy: string;
-}
+};
 
-export interface MedicalHistoryEntry {
+export type MedicalHistoryEntry = {
 	condition: string;
 	diagnosedDate: Date;
 	status: "active" | "resolved" | "chronic";
 	notes?: string;
 	treatedBy?: string;
-}
+};
 
-export interface InsuranceInfo {
+export type InsuranceInfo = {
 	provider: string;
 	policyNumber: string;
 	validUntil: Date;
 	coverage: string[];
-}
+};
 
-export interface PatientPreferences {
+export type PatientPreferences = {
 	appointmentPreferences: AppointmentPreferences;
 	doctorPreferences: DoctorPreferences;
 	facilityPreferences: FacilityPreferences;
 	privacySettings: PrivacySettings;
-}
+};
 
-export interface AppointmentPreferences {
+export type AppointmentPreferences = {
 	preferredDays: number[]; // 0-6
 	preferredTimes: TimeSlot[];
 	advanceBookingPreference: number; // days in advance
@@ -291,32 +291,32 @@ export interface AppointmentPreferences {
 		email: { enabled: boolean; hoursBeforeemphasis: number };
 		phone: { enabled: boolean; hoursBeforeemphasis: number };
 	};
-}
+};
 
-export interface DoctorPreferences {
+export type DoctorPreferences = {
 	preferredDoctors: string[]; // doctor IDs
 	avoidDoctors: string[]; // doctor IDs
 	genderPreference?: "male" | "female" | "no_preference";
 	languagePreference: "pt-BR" | "en";
-}
+};
 
-export interface FacilityPreferences {
+export type FacilityPreferences = {
 	preferredLocations: string[]; // clinic/room IDs
 	accessibilityNeeds: string[];
 	parkingRequired: boolean;
 	publicTransportPreferred: boolean;
-}
+};
 
-export interface PrivacySettings {
+export type PrivacySettings = {
 	shareDataForResearch: boolean;
 	allowAIAnalysis: boolean;
 	dataRetentionConsent: boolean;
 	marketingConsent: boolean;
 	thirdPartySharing: boolean;
 	parentalConsent?: boolean; // for minors
-}
+};
 
-export interface ConsentRecord {
+export type ConsentRecord = {
 	type: "lgpd" | "medical" | "marketing" | "research" | "ai_analysis";
 	granted: boolean;
 	grantedAt: Date;
@@ -325,35 +325,35 @@ export interface ConsentRecord {
 	version: string;
 	ipAddress?: string;
 	documentation: string; // consent text or document reference
-}
+};
 
 // Cache Service Types
-export interface CacheService {
+export type CacheService = {
 	get<T>(key: string): Promise<T | null>;
 	set<T>(key: string, value: T, ttl?: number): Promise<void>;
 	delete(key: string): Promise<void>;
 	exists(key: string): Promise<boolean>;
 	clear(pattern?: string): Promise<void>;
-}
+};
 
 // Logger Service Types
-export interface LoggerService {
+export type LoggerService = {
 	info(message: string, meta?: Record<string, any>): Promise<void>;
 	warn(message: string, meta?: Record<string, any>): Promise<void>;
 	error(message: string, meta?: Record<string, any>): Promise<void>;
 	debug(message: string, meta?: Record<string, any>): Promise<void>;
-}
+};
 
 // Metrics Service Types
-export interface MetricsService {
+export type MetricsService = {
 	recordMetric(metric: ServiceMetrics): Promise<void>;
 	recordCounter(name: string, value?: number, labels?: Record<string, string>): Promise<void>;
 	recordGauge(name: string, value: number, labels?: Record<string, string>): Promise<void>;
 	recordHistogram(name: string, value: number, labels?: Record<string, string>): Promise<void>;
-}
+};
 
 // Database Types
-export interface DatabaseService {
+export type DatabaseService = {
 	// Chat related
 	chatSessions: ChatSessionRepository;
 	aiConversations: ConversationRepository;
@@ -367,57 +367,57 @@ export interface DatabaseService {
 	patients: PatientRepository;
 	appointments: AppointmentRepository;
 	auditLogs: AuditLogRepository;
-}
+};
 
-export interface ChatSessionRepository {
+export type ChatSessionRepository = {
 	findFirst(query: any): Promise<ChatSession | null>;
 	create(data: any): Promise<ChatSession>;
 	update(query: any): Promise<ChatSession>;
 	delete(query: any): Promise<void>;
-}
+};
 
-export interface ConversationRepository {
+export type ConversationRepository = {
 	create(data: any): Promise<void>;
 	findMany(query: any): Promise<any[]>;
 	aggregate(query: any): Promise<any>;
-}
+};
 
-export interface EmbeddingRepository {
+export type EmbeddingRepository = {
 	create(data: any): Promise<void>;
 	findSimilar(embedding: number[], limit: number): Promise<any[]>;
-}
+};
 
-export interface PredictionRepository {
+export type PredictionRepository = {
 	create(data: any): Promise<void>;
 	findMany(query: any): Promise<PredictionResult[]>;
 	updateActual(predictionId: string, actual: boolean): Promise<void>;
-}
+};
 
-export interface PatientBehaviorRepository {
+export type PatientBehaviorRepository = {
 	findFirst(query: any): Promise<PatientBehaviorData | null>;
 	upsert(data: any): Promise<PatientBehaviorData>;
 	update(query: any): Promise<PatientBehaviorData>;
-}
+};
 
-export interface PatientRepository {
+export type PatientRepository = {
 	findFirst(query: any): Promise<any>;
 	findUnique(query: any): Promise<any>;
 	update(query: any): Promise<any>;
-}
+};
 
-export interface AppointmentRepository {
+export type AppointmentRepository = {
 	findMany(query: any): Promise<AppointmentData[]>;
 	findFirst(query: any): Promise<AppointmentData | null>;
 	update(query: any): Promise<AppointmentData>;
-}
+};
 
-export interface AuditLogRepository {
+export type AuditLogRepository = {
 	create(data: any): Promise<void>;
 	findMany(query: any): Promise<any[]>;
-}
+};
 
 // Feature Flag Types
-export interface FeatureFlag {
+export type FeatureFlag = {
 	name: string;
 	enabled: boolean;
 	enabledFor?: string[]; // user IDs or clinic IDs
@@ -426,13 +426,13 @@ export interface FeatureFlag {
 	metadata?: Record<string, any>;
 	createdAt: Date;
 	updatedAt: Date;
-}
+};
 
-export interface FeatureFlagCondition {
+export type FeatureFlagCondition = {
 	attribute: string;
 	operator: "equals" | "not_equals" | "contains" | "in" | "not_in";
 	value: any;
-}
+};
 
 // Error Types
 export interface AIServiceError extends Error {
@@ -453,7 +453,7 @@ export interface ComplianceError extends AIServiceError {
 }
 
 // API Response Types
-export interface APIResponse<T> {
+export type APIResponse<T> = {
 	success: boolean;
 	data?: T;
 	error?: {
@@ -467,7 +467,7 @@ export interface APIResponse<T> {
 		processingTime: number;
 		version: string;
 	};
-}
+};
 
 export interface PaginatedResponse<T> extends APIResponse<T[]> {
 	pagination: {
@@ -481,7 +481,7 @@ export interface PaginatedResponse<T> extends APIResponse<T[]> {
 }
 
 // Configuration Types
-export interface AIServiceConfiguration {
+export type AIServiceConfiguration = {
 	openai: {
 		apiKey: string;
 		model: string;
@@ -524,7 +524,7 @@ export interface AIServiceConfiguration {
 		enabled: boolean;
 		refreshIntervalMs: number;
 	};
-}
+};
 
 // Utility Types
 export type ServiceStatus = "initializing" | "ready" | "degraded" | "offline";

@@ -364,7 +364,7 @@ test.describe("Emergency Access - Emergency Actions", () => {
 
 		if (await exportButton.isVisible()) {
 			// Start export process
-			const downloadPromise = page.waitForEvent("download");
+			const _downloadPromise = page.waitForEvent("download");
 			await exportButton.click();
 
 			// Should show export options

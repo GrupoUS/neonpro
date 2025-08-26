@@ -8,7 +8,7 @@ import { EnhancedServiceBase, type ServiceConfig } from "../base/EnhancedService
 import type { ServiceContext } from "../types";
 
 // Temporary type definitions for build - will be replaced with proper types
-interface PatientRepository {
+type PatientRepository = {
 	createPatient(data: any): Promise<any>;
 	getPatient(id: string): Promise<any>;
 	getPatientByEmail(email: string): Promise<any>;
@@ -19,36 +19,36 @@ interface PatientRepository {
 	addConsentForm(patientId: string, form: any): Promise<void>;
 	getConsentForms(patientId: string): Promise<any[]>;
 	searchPatients(query: string): Promise<any[]>;
-}
+};
 
 type PatientFilters = {};
-interface Patient {
+type Patient = {
 	id: string;
 	email: string;
 	dateOfBirth: Date;
-}
-interface CreatePatientData {
+};
+type CreatePatientData = {
 	email: string;
 	dateOfBirth: Date;
-}
-interface UpdatePatientData {
+};
+type UpdatePatientData = {
 	email?: string;
 	[key: string]: any;
-}
+};
 type MedicalHistory = {};
 type AestheticHistory = {};
 type SkinAssessment = {};
-interface ConsentForm {
+type ConsentForm = {
 	treatmentType: string;
 	isActive: boolean;
 	signedDate?: Date;
-}
-interface PatientStats {
+};
+type PatientStats = {
 	total: number;
 	active: number;
 	newThisMonth: number;
 	averageAge: number;
-}
+};
 enum PatientStatus {
 	ACTIVE = "ACTIVE",
 	INACTIVE = "INACTIVE",

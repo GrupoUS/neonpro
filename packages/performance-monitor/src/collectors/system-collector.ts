@@ -4,8 +4,6 @@ export class SystemMetricsCollector implements MetricCollector {
 	private enabled = true;
 	private collectionInterval = 30_000; // 30 seconds
 
-	constructor() {}
-
 	async collect(): Promise<PerformanceMetric[]> {
 		const metrics: PerformanceMetric[] = [];
 		const timestamp = Date.now();
@@ -16,8 +14,6 @@ export class SystemMetricsCollector implements MetricCollector {
 			await this.collectMemoryMetrics(metrics, timestamp);
 			await this.collectDatabaseMetrics(metrics, timestamp);
 		} catch (error) {
-			console.error("[SystemMetricsCollector] Error collecting metrics:", error);
-
 			// Error metric
 			metrics.push({
 				id: `system_error_${timestamp}`,

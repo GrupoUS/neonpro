@@ -4,7 +4,6 @@
  * Testes unitários para validar o Enhanced Service Layer Pattern
  */
 
-import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { ServiceContext } from "../../types";
 import { EnhancedServiceBase, type ServiceConfig } from "../EnhancedServiceBase";
 

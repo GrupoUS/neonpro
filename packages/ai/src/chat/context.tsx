@@ -9,7 +9,6 @@
 import type {
 	ChatAction,
 	ChatAIInsights,
-	ChatAPI,
 	ChatConfig,
 	ChatInterface,
 	ChatMessage,
@@ -230,7 +229,7 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
 }
 
 // Context
-interface ChatContextType {
+type ChatContextType = {
 	state: ChatState;
 	dispatch: React.Dispatch<ChatAction>;
 
@@ -256,16 +255,16 @@ interface ChatContextType {
 	getSessionHistory: (sessionId?: string) => ChatMessage[];
 	isConnected: () => boolean;
 	hasActiveSession: () => boolean;
-}
+};
 
 const ChatContext = createContext<ChatContextType | null>(null);
 
 // Provider
-interface ChatProviderProps {
+type ChatProviderProps = {
 	children: React.ReactNode;
 	initialInterface?: ChatInterface;
 	apiBaseUrl?: string;
-}
+};
 
 export function ChatProvider({
 	children,
@@ -293,7 +292,9 @@ export function ChatProvider({
 					body: JSON.stringify({ interface_type: interfaceType }),
 				});
 
-				if (!response.ok) throw new Error("Failed to create session");
+				if (!response.ok) {
+					throw new Error("Failed to create session");
+				}
 
 				const { session } = await response.json();
 
@@ -369,7 +370,9 @@ export function ChatProvider({
 					}),
 				});
 
-				if (!response.ok) throw new Error("Failed to send message");
+				if (!response.ok) {
+					throw new Error("Failed to send message");
+				}
 
 				dispatch({
 					type: "UPDATE_MESSAGE",
@@ -449,14 +452,20 @@ export function ChatProvider({
 					}),
 				});
 
-				if (!response.ok) throw new Error("Failed to stream message");
+				if (!response.ok) {
+					throw new Error("Failed to stream message");
+				}
 
 				const reader = response.body?.getReader();
-				if (!reader) throw new Error("No response stream");
+				if (!reader) {
+					throw new Error("No response stream");
+				}
 
 				while (true) {
 					const { done, value } = await reader.read();
-					if (done) break;
+					if (done) {
+						break;
+					}
 
 					const chunk = new TextDecoder().decode(value);
 					dispatch({

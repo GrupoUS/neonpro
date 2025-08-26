@@ -27,10 +27,10 @@ export * from "./lgpd";
 // Brazilian Compliance Automation Service
 export {
 	BrazilianComplianceAutomationService,
-	createBrazilianComplianceAutomationService,
-	DEFAULT_COMPLIANCE_CONFIG,
 	type ComplianceAutomationConfig,
 	type ComplianceAutomationResponse,
+	createBrazilianComplianceAutomationService,
+	DEFAULT_COMPLIANCE_CONFIG,
 } from "./services/compliance-automation-service";
 
 // Core Types and Interfaces (excluding audit types to avoid conflicts)

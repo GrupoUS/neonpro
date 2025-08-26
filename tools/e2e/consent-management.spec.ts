@@ -253,7 +253,7 @@ test.describe("Consent Management - Medical Procedure Consent", () => {
 		await consentType.selectOption("medical-procedure");
 
 		// Should require all informed consent elements
-		const requiredFields = [
+		const _requiredFields = [
 			'[data-testid="procedure-name"]',
 			'[data-testid="procedure-description"]',
 			'[data-testid="procedure-risks"]',

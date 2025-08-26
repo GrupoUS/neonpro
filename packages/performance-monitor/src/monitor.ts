@@ -12,15 +12,15 @@ import {
 } from "./types";
 
 export class PerformanceMonitor {
-	private collectors = new Map<string, MetricCollector>();
-	private alertRules: AlertRule[] = [];
-	private activeAlerts = new Map<string, Alert>();
-	private insights: PerformanceInsight[] = [];
+	private readonly collectors = new Map<string, MetricCollector>();
+	private readonly alertRules: AlertRule[] = [];
+	private readonly activeAlerts = new Map<string, Alert>();
+	private readonly insights: PerformanceInsight[] = [];
 	private isRunning = false;
-	private intervalIds = new Map<string, NodeJS.Timeout>();
+	private readonly intervalIds = new Map<string, NodeJS.Timeout>();
 
 	constructor(
-		private config = {
+		private readonly config = {
 			defaultCollectionInterval: 30_000, // 30 seconds
 			maxMetricsRetention: 24 * 60 * 60 * 1000, // 24 hours
 			alertCooldownPeriod: 300_000, // 5 minutes
@@ -31,9 +31,9 @@ export class PerformanceMonitor {
 	) {}
 
 	async start(): Promise<void> {
-		if (this.isRunning) return;
-
-		console.log("[PerformanceMonitor] Starting performance monitoring...");
+		if (this.isRunning) {
+			return;
+		}
 		this.isRunning = true;
 
 		// Initialize collectors
@@ -44,9 +44,7 @@ export class PerformanceMonitor {
 					try {
 						const metrics = await collector.collect();
 						await this.processMetrics(metrics);
-					} catch (error) {
-						console.error(`[PerformanceMonitor] Error collecting ${name} metrics:`, error);
-					}
+					} catch (_error) {}
 				}, interval);
 
 				this.intervalIds.set(name, intervalId);
@@ -57,14 +55,12 @@ export class PerformanceMonitor {
 		if (this.config.enableRealTimeAnalysis) {
 			this.startRealTimeAnalysis();
 		}
-
-		console.log(`[PerformanceMonitor] Started with ${this.collectors.size} collectors`);
 	}
 
 	async stop(): Promise<void> {
-		if (!this.isRunning) return;
-
-		console.log("[PerformanceMonitor] Stopping performance monitoring...");
+		if (!this.isRunning) {
+			return;
+		}
 		this.isRunning = false;
 
 		// Clear all intervals
@@ -72,17 +68,13 @@ export class PerformanceMonitor {
 			clearInterval(intervalId);
 		}
 		this.intervalIds.clear();
-
-		console.log("[PerformanceMonitor] Stopped");
 	}
 	registerCollector(name: string, collector: MetricCollector): void {
 		this.collectors.set(name, collector);
-		console.log(`[PerformanceMonitor] Registered collector: ${name}`);
 	}
 
 	addAlertRule(rule: AlertRule): void {
 		this.alertRules.push(rule);
-		console.log(`[PerformanceMonitor] Added alert rule: ${rule.name}`);
 	}
 
 	private async processMetrics(metrics: PerformanceMetric[]): Promise<void> {
@@ -119,11 +111,8 @@ export class PerformanceMonitor {
 			);
 
 			if (error) {
-				console.error("[PerformanceMonitor] Error storing metrics:", error);
 			}
-		} catch (error) {
-			console.error("[PerformanceMonitor] Failed to store metrics:", error);
-		}
+		} catch (_error) {}
 	}
 	private async checkAlertRules(metric: PerformanceMetric): Promise<void> {
 		const relevantRules = this.alertRules.filter((rule) => rule.enabled && rule.metricType === metric.type);
@@ -166,7 +155,9 @@ export class PerformanceMonitor {
 	private isInCooldown(ruleId: string): boolean {
 		const cooldownKey = `cooldown_${ruleId}`;
 		const lastAlert = this.activeAlerts.get(cooldownKey);
-		if (!lastAlert) return false;
+		if (!lastAlert) {
+			return false;
+		}
 
 		return Date.now() - lastAlert.timestamp < this.config.alertCooldownPeriod;
 	}
@@ -186,7 +177,6 @@ export class PerformanceMonitor {
 			});
 
 			if (error) {
-				console.error("[PerformanceMonitor] Error storing alert:", error);
 			}
 
 			// Real-time notification via Supabase channel
@@ -195,11 +185,7 @@ export class PerformanceMonitor {
 				event: "new_alert",
 				payload: alert,
 			});
-
-			console.log(`[PerformanceMonitor] Alert sent: ${alert.message}`);
-		} catch (error) {
-			console.error("[PerformanceMonitor] Failed to send alert:", error);
-		}
+		} catch (_error) {}
 	}
 	private startRealTimeAnalysis(): void {
 		// Analyze patterns every 5 minutes
@@ -207,9 +193,7 @@ export class PerformanceMonitor {
 			async () => {
 				try {
 					await this.analyzeTrends();
-				} catch (error) {
-					console.error("[PerformanceMonitor] Error in real-time analysis:", error);
-				}
+				} catch (_error) {}
 			},
 			5 * 60 * 1000
 		);
@@ -227,7 +211,8 @@ export class PerformanceMonitor {
 			.order("timestamp", { ascending: false });
 
 		if (cacheMetrics && cacheMetrics.length > 10) {
-			const avgHitRate = cacheMetrics.reduce((sum: number, m: PerformanceMetric) => sum + m.value, 0) / cacheMetrics.length;
+			const avgHitRate =
+				cacheMetrics.reduce((sum: number, m: PerformanceMetric) => sum + m.value, 0) / cacheMetrics.length;
 
 			if (avgHitRate < 85) {
 				// Target is 85%
@@ -305,7 +290,6 @@ export class PerformanceMonitor {
 			});
 
 			if (error) {
-				console.error("[PerformanceMonitor] Error storing insight:", error);
 			}
 
 			// Broadcast insight to dashboard
@@ -314,9 +298,7 @@ export class PerformanceMonitor {
 				event: "new_insight",
 				payload: insight,
 			});
-		} catch (error) {
-			console.error("[PerformanceMonitor] Failed to store insight:", error);
-		}
+		} catch (_error) {}
 	}
 
 	async performHealthCheck(): Promise<HealthCheckResult[]> {
@@ -403,26 +385,24 @@ export class PerformanceMonitor {
 						acknowledged_at: new Date().toISOString(),
 					})
 					.eq("alert_id", alertId);
-			} catch (error) {
-				console.error("[PerformanceMonitor] Failed to acknowledge alert:", error);
-			}
+			} catch (_error) {}
 		}
 	}
 
 	private async getSupabaseClient(): Promise<any> {
 		// Mock Supabase client - will be replaced with actual implementation
 		return {
-			from: (table: string) => ({
-				select: (columns: string) => ({
-					eq: (column: string, value: any) => ({ data: [], error: null }),
-					gte: (column: string, value: any) => ({ order: (col: string, opts: any) => ({ data: [], error: null }) }),
-					limit: (n: number) => ({ data: [], error: null }),
+			from: (_table: string) => ({
+				select: (_columns: string) => ({
+					eq: (_column: string, _value: any) => ({ data: [], error: null }),
+					gte: (_column: string, _value: any) => ({ order: (_col: string, _opts: any) => ({ data: [], error: null }) }),
+					limit: (_n: number) => ({ data: [], error: null }),
 				}),
-				insert: (data: any) => ({ error: null }),
-				update: (data: any) => ({ eq: (col: string, val: any) => Promise.resolve() }),
+				insert: (_data: any) => ({ error: null }),
+				update: (_data: any) => ({ eq: (_col: string, _val: any) => Promise.resolve() }),
 			}),
-			channel: (name: string) => ({
-				send: (payload: any) => Promise.resolve(),
+			channel: (_name: string) => ({
+				send: (_payload: any) => Promise.resolve(),
 			}),
 		};
 	}

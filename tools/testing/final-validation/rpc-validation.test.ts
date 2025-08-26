@@ -1,8 +1,8 @@
 // RPC CLIENT VALIDATION TEST
 // File: tools/testing/final-validation/rpc-validation.test.ts
 
-import { createServer } from "http";
-import type { AddressInfo } from "net";
+import { createServer } from "node:http";
+import type { AddressInfo } from "node:net";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { logger } from "../../../utils/logger";
 
@@ -88,7 +88,7 @@ describe("🎯 HONO RPC CLIENT INTEGRATION VALIDATION", () => {
 				const clientModule = await import("../../../packages/shared/src/api-client");
 
 				// Check for type-related exports
-				const hasTypeExports = Object.keys(clientModule).some(
+				const _hasTypeExports = Object.keys(clientModule).some(
 					(key) => key.includes("Type") || key.includes("Client") || key.includes("Api")
 				);
 

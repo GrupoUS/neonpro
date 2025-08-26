@@ -73,7 +73,7 @@ export function sanitizeData(data: Record<string, unknown>, excludeFields: strin
 export function calculateRating(
 	metricName: HealthcareMetricName,
 	value: number,
-	thresholds: PerformanceThresholds = HEALTHCARE_THRESHOLDS
+	thresholds: PerformanceThresholds = HEALTHCARE_THRESHOLDS,
 ): "good" | "needs-improvement" | "poor" {
 	const threshold = thresholds.healthcare[metricName];
 
@@ -199,7 +199,7 @@ export function getPerformanceInsights(metrics: CustomMetric[]): {
 
 		if (dbSlow && formSlow) {
 			recommendations.push(
-				"Database performance issues are affecting form submissions - prioritize database optimization"
+				"Database performance issues are affecting form submissions - prioritize database optimization",
 			);
 		}
 	}
@@ -219,7 +219,7 @@ export function createAlertMessage(
 	metricName: HealthcareMetricName,
 	value: number,
 	threshold: number,
-	context?: Record<string, string | number | boolean>
+	context?: Record<string, string | number | boolean>,
 ): string {
 	const formattedValue = formatDuration(value);
 	const formattedThreshold = formatDuration(threshold);
@@ -271,7 +271,7 @@ export function calculateStandardDeviation(values: number[]): number {
  */
 export function detectAnomalies(
 	metrics: CustomMetric[],
-	threshold = 2 // standard deviations
+	threshold = 2, // standard deviations
 ): CustomMetric[] {
 	const metricGroups: Record<string, number[]> = {};
 

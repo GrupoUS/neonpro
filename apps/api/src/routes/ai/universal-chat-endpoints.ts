@@ -4,20 +4,20 @@
  * Supports both external (patient) and internal (staff) interfaces
  */
 
-import { Hono } from "hono";
-import { streamText } from "ai";
 import { openai } from "@ai-sdk/openai";
 import { createClient } from "@supabase/supabase-js";
+import { streamText } from "ai";
+import { Hono } from "hono";
 
 const universalChat = new Hono();
 
-interface ChatMessage {
+type ChatMessage = {
 	role: "user" | "assistant" | "system";
 	content: string;
 	timestamp: string;
-}
+};
 
-interface ChatRequest {
+type ChatRequest = {
 	messages: ChatMessage[];
 	interface: "external" | "internal";
 	sessionId: string;
@@ -25,9 +25,9 @@ interface ChatRequest {
 	clinicId?: string;
 	patientId?: string;
 	emergencyContext?: boolean;
-}
+};
 
-interface ChatResponse {
+type ChatResponse = {
 	type: "start" | "content" | "complete" | "error";
 	content?: string;
 	sessionId?: string;
@@ -38,13 +38,10 @@ interface ChatResponse {
 	suggestedActions?: string[];
 	complianceFlags?: string[];
 	error?: string;
-}
+};
 
 // Initialize Supabase client
-const supabase = createClient(
-	process.env.SUPABASE_URL!,
-	process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
 
 // Healthcare context prompts
 const HEALTHCARE_CONTEXT = {
@@ -73,7 +70,7 @@ const HEALTHCARE_CONTEXT = {
 	- Mantenha total conformidade LGPD/ANVISA/CFM
 	- Proteja informações confidenciais de pacientes
 	- Forneça insights baseados em dados
-	- Use terminologia médica apropriada`
+	- Use terminologia médica apropriada`,
 };
 
 // =============================================================================
@@ -82,10 +79,10 @@ const HEALTHCARE_CONTEXT = {
 
 universalChat.post("/", async (c) => {
 	try {
-		const body = await c.req.json() as ChatRequest;
+		const body = (await c.req.json()) as ChatRequest;
 		const { messages, interface: interfaceType, sessionId, userId, clinicId, patientId } = body;
 
-		if (!messages || !Array.isArray(messages) || messages.length === 0) {
+		if (!(messages && Array.isArray(messages)) || messages.length === 0) {
 			return c.json({ error: "Messages array is required" }, 400);
 		}
 
@@ -95,7 +92,7 @@ universalChat.post("/", async (c) => {
 
 		// Log conversation start
 		const conversationId = `conv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-		
+
 		await supabase.from("assistant_conversations").insert({
 			session_id: sessionId,
 			conversation_id: conversationId,
@@ -110,35 +107,37 @@ universalChat.post("/", async (c) => {
 		// Build system context
 		const systemMessage = {
 			role: "system" as const,
-			content: HEALTHCARE_CONTEXT[interfaceType] + `\n\nContexto da sessão:
+			content:
+				HEALTHCARE_CONTEXT[interfaceType] +
+				`\n\nContexto da sessão:
 			- Interface: ${interfaceType}
-			- Clínica: ${clinicId || 'não especificada'}
-			- Data: ${new Date().toLocaleDateString('pt-BR')}
-			- Horário: ${new Date().toLocaleTimeString('pt-BR')}`
+			- Clínica: ${clinicId || "não especificada"}
+			- Data: ${new Date().toLocaleDateString("pt-BR")}
+			- Horário: ${new Date().toLocaleTimeString("pt-BR")}`,
 		};
 
 		// Prepare messages for OpenAI
 		const chatMessages = [
 			systemMessage,
-			...messages.map(msg => ({
+			...messages.map((msg) => ({
 				role: msg.role,
-				content: msg.content
-			}))
+				content: msg.content,
+			})),
 		];
 
 		// Stream response
 		const result = await streamText({
-			model: openai('gpt-4'),
+			model: openai("gpt-4"),
 			messages: chatMessages,
 			temperature: 0.7,
 			maxTokens: 1000,
 		});
 
 		// Set up SSE headers
-		c.header('Content-Type', 'text/event-stream');
-		c.header('Cache-Control', 'no-cache');
-		c.header('Connection', 'keep-alive');
-		c.header('Access-Control-Allow-Origin', '*');
+		c.header("Content-Type", "text/event-stream");
+		c.header("Cache-Control", "no-cache");
+		c.header("Connection", "keep-alive");
+		c.header("Access-Control-Allow-Origin", "*");
 
 		const encoder = new TextEncoder();
 		let fullResponse = "";
@@ -151,7 +150,7 @@ universalChat.post("/", async (c) => {
 				const startEvent: ChatResponse = {
 					type: "start",
 					sessionId,
-					messageId
+					messageId,
 				};
 				controller.enqueue(encoder.encode(`data: ${JSON.stringify(startEvent)}\n\n`));
 
@@ -159,10 +158,10 @@ universalChat.post("/", async (c) => {
 					// Stream content
 					for await (const delta of result.textStream) {
 						fullResponse += delta;
-						
+
 						const contentEvent: ChatResponse = {
 							type: "content",
-							content: delta
+							content: delta,
 						};
 						controller.enqueue(encoder.encode(`data: ${JSON.stringify(contentEvent)}\n\n`));
 					}
@@ -190,37 +189,36 @@ universalChat.post("/", async (c) => {
 						emergencyDetected: analysis.emergencyDetected,
 						escalationTriggered: analysis.escalationTriggered,
 						suggestedActions: analysis.suggestedActions,
-						complianceFlags: analysis.complianceFlags
+						complianceFlags: analysis.complianceFlags,
 					};
 					controller.enqueue(encoder.encode(`data: ${JSON.stringify(completeEvent)}\n\n`));
-					
 				} catch (error) {
-					console.error("Streaming error:", error);
 					const errorEvent: ChatResponse = {
 						type: "error",
-						error: error instanceof Error ? error.message : "Unknown error"
+						error: error instanceof Error ? error.message : "Unknown error",
 					};
 					controller.enqueue(encoder.encode(`data: ${JSON.stringify(errorEvent)}\n\n`));
 				} finally {
 					controller.close();
 				}
-			}
+			},
 		});
 
 		return new Response(stream, {
 			headers: {
-				'Content-Type': 'text/event-stream',
-				'Cache-Control': 'no-cache',
-				'Connection': 'keep-alive',
-				'Access-Control-Allow-Origin': '*'
-			}
+				"Content-Type": "text/event-stream",
+				"Cache-Control": "no-cache",
+				Connection: "keep-alive",
+				"Access-Control-Allow-Origin": "*",
+			},
 		});
-
 	} catch (error) {
-		console.error("Chat endpoint error:", error);
-		return c.json({
-			error: error instanceof Error ? error.message : "Internal server error"
-		}, 500);
+		return c.json(
+			{
+				error: error instanceof Error ? error.message : "Internal server error",
+			},
+			500
+		);
 	}
 });
 
@@ -254,14 +252,15 @@ universalChat.put("/", async (c) => {
 			success: true,
 			sessionId,
 			message: "Session created successfully",
-			timestamp: new Date().toISOString()
+			timestamp: new Date().toISOString(),
 		});
-
 	} catch (error) {
-		console.error("Session creation error:", error);
-		return c.json({
-			error: error instanceof Error ? error.message : "Failed to create session"
-		}, 500);
+		return c.json(
+			{
+				error: error instanceof Error ? error.message : "Failed to create session",
+			},
+			500
+		);
 	}
 });
 
@@ -279,19 +278,22 @@ universalChat.get("/sessions/:sessionId", async (c) => {
 			.eq("session_id", sessionId)
 			.order("created_at", { ascending: true });
 
-		if (error) throw error;
+		if (error) {
+			throw error;
+		}
 
 		return c.json({
 			success: true,
 			data: conversations,
-			timestamp: new Date().toISOString()
+			timestamp: new Date().toISOString(),
 		});
-
 	} catch (error) {
-		console.error("Get session error:", error);
-		return c.json({
-			error: error instanceof Error ? error.message : "Failed to get session"
-		}, 500);
+		return c.json(
+			{
+				error: error instanceof Error ? error.message : "Failed to get session",
+			},
+			500
+		);
 	}
 });
 
@@ -299,17 +301,17 @@ universalChat.get("/sessions/:sessionId", async (c) => {
 // ANALYSIS FUNCTIONS
 // =============================================================================
 
-async function analyzeResponse(content: string, interfaceType: "external" | "internal") {
+async function analyzeResponse(content: string, _interfaceType: "external" | "internal") {
 	// Emergency detection patterns
 	const emergencyPatterns = [
 		/emergência|urgente|socorro|ajuda médica/i,
 		/dor intensa|sangramento|reação alérgica/i,
-		/dificuldade para respirar|falta de ar/i
+		/dificuldade para respirar|falta de ar/i,
 	];
 
 	// Compliance validation patterns
 	const complianceFlags: string[] = [];
-	
+
 	// Check for medical advice (CFM compliance)
 	if (/diagnóstico|prescrevo|recomendo tomar|dose de/i.test(content)) {
 		complianceFlags.push("CFM_MEDICAL_ADVICE");
@@ -321,8 +323,8 @@ async function analyzeResponse(content: string, interfaceType: "external" | "int
 	}
 
 	// Detect emergency
-	const emergencyDetected = emergencyPatterns.some(pattern => pattern.test(content));
-	
+	const emergencyDetected = emergencyPatterns.some((pattern) => pattern.test(content));
+
 	// Escalation logic
 	const escalationTriggered = emergencyDetected || complianceFlags.length > 2;
 
@@ -340,7 +342,7 @@ async function analyzeResponse(content: string, interfaceType: "external" | "int
 		emergencyDetected,
 		escalationTriggered,
 		complianceFlags,
-		suggestedActions
+		suggestedActions,
 	};
 }
 

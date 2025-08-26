@@ -3,7 +3,6 @@ import { EnhancedAIService } from "../services/enhanced-service-base";
 import type {
 	AIServiceConfig,
 	CacheService,
-	ComplianceEvent,
 	DatabaseService,
 	LoggerService,
 	MetricsService,
@@ -12,13 +11,13 @@ import type {
 
 // Mock implementations
 class MockCacheService implements CacheService {
-	private store = new Map<string, any>();
+	private readonly store = new Map<string, any>();
 
 	async get<T>(key: string): Promise<T | null> {
 		return this.store.get(key) || null;
 	}
 
-	async set<T>(key: string, value: T, ttl?: number): Promise<void> {
+	async set<T>(key: string, value: T, _ttl?: number): Promise<void> {
 		this.store.set(key, value);
 	}
 
@@ -166,7 +165,7 @@ describe("EnhancedAIService", () => {
 		it("should record metrics for failed execution", async () => {
 			try {
 				await service.executeWithMetrics({ input: "error" });
-			} catch (error) {
+			} catch (_error) {
 				// Expected to throw
 			}
 
@@ -197,7 +196,7 @@ describe("EnhancedAIService", () => {
 		it("should not cache failed results", async () => {
 			try {
 				await service.executeWithMetrics({ input: "error" });
-			} catch (error) {
+			} catch (_error) {
 				// Expected to throw
 			}
 
@@ -213,7 +212,7 @@ describe("EnhancedAIService", () => {
 
 			try {
 				await service.executeWithMetrics({ input: "error" });
-			} catch (error) {
+			} catch (_error) {
 				// Expected to throw after retries
 			}
 
@@ -246,7 +245,7 @@ describe("EnhancedAIService", () => {
 		it("should log errors", async () => {
 			try {
 				await service.executeWithMetrics({ input: "error" });
-			} catch (error) {
+			} catch (_error) {
 				// Expected to throw
 			}
 

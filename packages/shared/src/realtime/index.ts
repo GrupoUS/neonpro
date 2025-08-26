@@ -40,9 +40,7 @@ export type {
 	UseRealtimeComplianceOptions,
 	UseRealtimeComplianceReturn,
 } from "./hooks/use-realtime-compliance";
-export {
-	useRealtimeCompliance,
-} from "./hooks/use-realtime-compliance";
+export { useRealtimeCompliance } from "./hooks/use-realtime-compliance";
 export type {
 	NotificationPriority,
 	RealtimeNotificationPayload,

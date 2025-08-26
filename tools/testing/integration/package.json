@@ -1,27 +1,27 @@
 {
-	"name": "@neonpro/integration-tests",
-	"version": "1.0.0",
-	"private": true,
-	"description": "Integration tests for NeonPro Healthcare Platform",
-	"scripts": {
-		"test": "playwright test",
-		"test:headed": "playwright test --headed",
-		"test:debug": "playwright test --debug",
-		"test:ui": "playwright test --ui",
-		"test:report": "playwright show-report",
-		"test:healthcare": "playwright test tests/healthcare/",
-		"test:security": "playwright test tests/security/",
-		"test:visual": "playwright test tests/visual/",
-		"test:performance": "playwright test tests/performance/",
-		"codegen": "playwright codegen",
-		"install:browsers": "playwright install"
-	},
-	"dependencies": {
-		"@playwright/test": "^1.44.0",
-		"@types/node": "^20.0.0",
-		"typescript": "^5.0.0"
-	},
-	"devDependencies": {
-		"@biomejs/biome": "^1.9.0"
-	}
+  "name": "@neonpro/integration-tests",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Integration tests for NeonPro Healthcare Platform",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "test:ui": "playwright test --ui",
+    "test:report": "playwright show-report",
+    "test:healthcare": "playwright test tests/healthcare/",
+    "test:security": "playwright test tests/security/",
+    "test:visual": "playwright test tests/visual/",
+    "test:performance": "playwright test tests/performance/",
+    "codegen": "playwright codegen",
+    "install:browsers": "playwright install"
+  },
+  "dependencies": {
+    "@playwright/test": "^1.44.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.0"
+  }
 }

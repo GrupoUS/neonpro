@@ -74,16 +74,35 @@
 		--focus-ring-offset: 203 36% 25%;
 
 		/* NEONPROV1 Gradients - Professional */
-		--gradient-primary: linear-gradient(135deg, hsl(42 25% 54%) 0%, hsl(203 48% 13%) 100%);
-		--gradient-secondary: linear-gradient(135deg, hsl(203 48% 13%) 0%, hsl(42 25% 54%) 100%);
-		--gradient-accent: linear-gradient(135deg, hsl(30 4% 27%) 0%, hsl(45 12% 66%) 100%);
-		--gradient-card: linear-gradient(135deg, hsl(45 12% 66%) 0%, hsl(203 36% 25%) 100%);
+		--gradient-primary: linear-gradient(
+			135deg,
+			hsl(42 25% 54%) 0%,
+			hsl(203 48% 13%) 100%
+		);
+		--gradient-secondary: linear-gradient(
+			135deg,
+			hsl(203 48% 13%) 0%,
+			hsl(42 25% 54%) 100%
+		);
+		--gradient-accent: linear-gradient(
+			135deg,
+			hsl(30 4% 27%) 0%,
+			hsl(45 12% 66%) 100%
+		);
+		--gradient-card: linear-gradient(
+			135deg,
+			hsl(45 12% 66%) 0%,
+			hsl(203 36% 25%) 100%
+		);
 
 		/* Shadow System - Professional Healthcare */
 		--shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-		--shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-		--shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-		--shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+		--shadow-md:
+			0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+		--shadow-lg:
+			0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+		--shadow-xl:
+			0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
 
 		/* Border Radius - Professional Healthcare */
 		--radius: 0.5rem;
@@ -163,16 +182,35 @@
 		--focus-ring-offset: 203 48% 13%;
 
 		/* NEONPROV1 Gradients - Dark Professional */
-		--gradient-primary: linear-gradient(135deg, hsl(42 25% 64%) 0%, hsl(203 48% 23%) 100%);
-		--gradient-secondary: linear-gradient(135deg, hsl(203 48% 23%) 0%, hsl(42 25% 64%) 100%);
-		--gradient-accent: linear-gradient(135deg, hsl(30 4% 37%) 0%, hsl(203 36% 18%) 100%);
-		--gradient-card: linear-gradient(135deg, hsl(203 36% 18%) 0%, hsl(30 4% 37%) 100%);
+		--gradient-primary: linear-gradient(
+			135deg,
+			hsl(42 25% 64%) 0%,
+			hsl(203 48% 23%) 100%
+		);
+		--gradient-secondary: linear-gradient(
+			135deg,
+			hsl(203 48% 23%) 0%,
+			hsl(42 25% 64%) 100%
+		);
+		--gradient-accent: linear-gradient(
+			135deg,
+			hsl(30 4% 37%) 0%,
+			hsl(203 36% 18%) 100%
+		);
+		--gradient-card: linear-gradient(
+			135deg,
+			hsl(203 36% 18%) 0%,
+			hsl(30 4% 37%) 100%
+		);
 
 		/* Shadow System - Professional Healthcare Dark */
 		--shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.25);
-		--shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.25), 0 2px 4px -2px rgb(0 0 0 / 0.25);
-		--shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.25), 0 4px 6px -4px rgb(0 0 0 / 0.25);
-		--shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.25), 0 8px 10px -6px rgb(0 0 0 / 0.25);
+		--shadow-md:
+			0 4px 6px -1px rgb(0 0 0 / 0.25), 0 2px 4px -2px rgb(0 0 0 / 0.25);
+		--shadow-lg:
+			0 10px 15px -3px rgb(0 0 0 / 0.25), 0 4px 6px -4px rgb(0 0 0 / 0.25);
+		--shadow-xl:
+			0 20px 25px -5px rgb(0 0 0 / 0.25), 0 8px 10px -6px rgb(0 0 0 / 0.25);
 	}
 }
 
@@ -287,7 +325,11 @@
 /* NEONPROV1 Utility Classes */
 @layer utilities {
 	.text-gradient {
-		background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
+		background: linear-gradient(
+			135deg,
+			hsl(var(--primary)) 0%,
+			hsl(var(--secondary)) 100%
+		);
 		background-clip: text;
 		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;

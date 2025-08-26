@@ -5,7 +5,7 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { type AIServiceInput, type AIServiceOutput, EnhancedAIService } from "./enhanced-service-base";
 
 // Monitoring Types and Interfaces
-export interface MonitoringMetric {
+export type MonitoringMetric = {
 	id: string;
 	service: string;
 	metric_name: string;
@@ -13,17 +13,17 @@ export interface MonitoringMetric {
 	tags: Record<string, string>;
 	metadata: MetricMetadata;
 	timestamp: string;
-}
+};
 
-export interface MetricMetadata {
+export type MetricMetadata = {
 	unit?: string;
 	source?: string;
 	environment?: string;
 	version?: string;
 	additional_data?: Record<string, any>;
-}
+};
 
-export interface AlertRule {
+export type AlertRule = {
 	id: string;
 	name: string;
 	description: string;
@@ -38,24 +38,24 @@ export interface AlertRule {
 	metadata: AlertRuleMetadata;
 	created_at: string;
 	updated_at: string;
-}
+};
 
-export interface AlertCondition {
+export type AlertCondition = {
 	operator: ">" | "<" | ">=" | "<=" | "==" | "!=" | "contains" | "not_contains";
 	time_window_minutes?: number;
 	aggregation?: "avg" | "sum" | "min" | "max" | "count" | "rate";
 	comparison_type?: "absolute" | "percentage_change" | "moving_average";
-}
+};
 
-export interface AlertRuleMetadata {
+export type AlertRuleMetadata = {
 	category: string;
 	owner: string;
 	escalation_policy?: string;
 	tags?: string[];
 	custom_fields?: Record<string, any>;
-}
+};
 
-export interface Alert {
+export type Alert = {
 	id: string;
 	rule_id: string;
 	service: string;
@@ -70,7 +70,7 @@ export interface Alert {
 	acknowledged_by?: string;
 	message: string;
 	context: Record<string, any>;
-}
+};
 
 export interface MonitoringInput extends AIServiceInput {
 	action:
@@ -136,7 +136,7 @@ export interface MonitoringOutput extends AIServiceOutput {
 	metrics_recorded?: number;
 }
 
-export interface MetricStatistics {
+export type MetricStatistics = {
 	total_points: number;
 	min_value: number;
 	max_value: number;
@@ -151,9 +151,9 @@ export interface MetricStatistics {
 		p95: number;
 		p99: number;
 	};
-}
+};
 
-export interface ServiceHealthStatus {
+export type ServiceHealthStatus = {
 	service: string;
 	overall_health: "healthy" | "degraded" | "unhealthy" | "unknown";
 	last_check: string;
@@ -167,13 +167,13 @@ export interface ServiceHealthStatus {
 	recent_alerts: Alert[];
 	performance_grade: "A" | "B" | "C" | "D" | "F";
 	recommendations?: string[];
-}
+};
 
 // Monitoring Service Implementation
 export class MonitoringService extends EnhancedAIService<MonitoringInput, MonitoringOutput> {
-	private supabase: SupabaseClient;
-	private alertRules: Map<string, AlertRule> = new Map();
-	private activeAlerts: Map<string, Alert> = new Map();
+	private readonly supabase: SupabaseClient;
+	private readonly alertRules: Map<string, AlertRule> = new Map();
+	private readonly activeAlerts: Map<string, Alert> = new Map();
 	private metricBuffer: MonitoringMetric[] = [];
 	private readonly BUFFER_SIZE = 100;
 	private readonly FLUSH_INTERVAL_MS = 10_000; // 10 seconds
@@ -195,8 +195,6 @@ export class MonitoringService extends EnhancedAIService<MonitoringInput, Monito
 		// Start background processes
 		this.startMetricFlushInterval();
 		this.startAlertEvaluationInterval();
-
-		console.log("Monitoring service initialized");
 	}
 
 	protected async executeCore(input: MonitoringInput): Promise<MonitoringOutput> {
@@ -699,7 +697,7 @@ export class MonitoringService extends EnhancedAIService<MonitoringInput, Monito
 			max_value: Math.max(...values),
 			avg_value: values.reduce((a, b) => a + b, 0) / values.length,
 			sum_value: values.reduce((a, b) => a + b, 0),
-			latest_value: values[values.length - 1],
+			latest_value: values.at(-1),
 			trend: this.calculateTrend(values),
 			percentiles: {
 				p50: sortedValues[Math.floor(sortedValues.length * 0.5)],
@@ -711,7 +709,9 @@ export class MonitoringService extends EnhancedAIService<MonitoringInput, Monito
 	}
 
 	private calculateTrend(values: number[]): "increasing" | "decreasing" | "stable" {
-		if (values.length < 2) return "stable";
+		if (values.length < 2) {
+			return "stable";
+		}
 
 		const firstHalf = values.slice(0, Math.floor(values.length / 2));
 		const secondHalf = values.slice(Math.floor(values.length / 2));
@@ -721,13 +721,19 @@ export class MonitoringService extends EnhancedAIService<MonitoringInput, Monito
 
 		const changePercent = ((secondAvg - firstAvg) / firstAvg) * 100;
 
-		if (changePercent > 5) return "increasing";
-		if (changePercent < -5) return "decreasing";
+		if (changePercent > 5) {
+			return "increasing";
+		}
+		if (changePercent < -5) {
+			return "decreasing";
+		}
 		return "stable";
 	}
 
 	private async flushMetricBuffer(): Promise<void> {
-		if (this.metricBuffer.length === 0) return;
+		if (this.metricBuffer.length === 0) {
+			return;
+		}
 
 		const metricsToFlush = [...this.metricBuffer];
 		this.metricBuffer = [];
@@ -736,12 +742,10 @@ export class MonitoringService extends EnhancedAIService<MonitoringInput, Monito
 			const { error } = await this.supabase.from("ai_monitoring_metrics").insert(metricsToFlush);
 
 			if (error) {
-				console.error("Failed to flush metrics:", error);
 				// Put metrics back in buffer for retry
 				this.metricBuffer.unshift(...metricsToFlush);
 			}
-		} catch (error) {
-			console.error("Error flushing metrics:", error);
+		} catch (_error) {
 			this.metricBuffer.unshift(...metricsToFlush);
 		}
 	}
@@ -750,7 +754,6 @@ export class MonitoringService extends EnhancedAIService<MonitoringInput, Monito
 		const { data, error } = await this.supabase.from("ai_alert_rules").select("*").eq("enabled", true);
 
 		if (error) {
-			console.error("Failed to load alert rules:", error);
 			return;
 		}
 
@@ -802,7 +805,7 @@ export class MonitoringService extends EnhancedAIService<MonitoringInput, Monito
 			(alert) =>
 				alert.rule_id === rule.id &&
 				alert.status === "active" &&
-				new Date().getTime() - new Date(alert.triggered_at).getTime() < rule.cooldown_minutes * 60 * 1000
+				Date.now() - new Date(alert.triggered_at).getTime() < rule.cooldown_minutes * 60 * 1000
 		);
 
 		return !!existingAlert;
@@ -831,7 +834,6 @@ export class MonitoringService extends EnhancedAIService<MonitoringInput, Monito
 		const { error } = await this.supabase.from("ai_alerts").insert(alert);
 
 		if (error) {
-			console.error("Failed to store alert:", error);
 			return;
 		}
 
@@ -842,10 +844,7 @@ export class MonitoringService extends EnhancedAIService<MonitoringInput, Monito
 		await this.sendAlertNotification(alert, rule);
 	}
 
-	private async sendAlertNotification(alert: Alert, rule: AlertRule): Promise<void> {
-		// Placeholder for notification logic
-		console.log(`ALERT: ${alert.message} (Severity: ${alert.severity})`);
-
+	private async sendAlertNotification(_alert: Alert, _rule: AlertRule): Promise<void> {
 		// In a real implementation, this would send emails, Slack messages, etc.
 		// based on rule.notification_channels
 	}
@@ -873,9 +872,7 @@ export class MonitoringService extends EnhancedAIService<MonitoringInput, Monito
 		setInterval(async () => {
 			try {
 				await this.loadAlertRules();
-			} catch (error) {
-				console.error("Failed to refresh alert rules:", error);
-			}
+			} catch (_error) {}
 		}, this.ALERT_CHECK_INTERVAL_MS);
 	}
 

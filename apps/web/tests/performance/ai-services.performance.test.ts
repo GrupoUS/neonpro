@@ -1,7 +1,7 @@
 // AI Services Performance Testing Suite
 // Load testing, stress testing, and performance benchmarking for AI services
 
-import { performance } from "perf_hooks";
+import { performance } from "node:perf_hooks";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 // Performance Test Configuration
@@ -142,7 +142,7 @@ class PerformanceTestUtils {
 		console.log(`Starting load test: ${testName}`);
 		console.log(`Concurrent Users: ${concurrentUsers}, Duration: ${durationMinutes}min, Ramp-up: ${rampUpSeconds}s`);
 
-		const totalRequests: Promise<void>[] = [];
+		const _totalRequests: Promise<void>[] = [];
 		const endTime = Date.now() + durationMinutes * 60 * 1000;
 
 		// Ramp up users gradually
@@ -550,7 +550,7 @@ describe("AI Services Performance Tests", () => {
 
 	describe("End-to-End Performance Scenarios", () => {
 		it("should handle complete healthcare workflow efficiently", async () => {
-			const workflowSteps = [
+			const _workflowSteps = [
 				"create_session",
 				"send_message",
 				"validate_compliance",
@@ -601,7 +601,7 @@ describe("AI Services Performance Tests", () => {
 
 // Performance Report Generation
 afterAll(async () => {
-	console.log("\n" + "=".repeat(60));
+	console.log(`\n${"=".repeat(60)}`);
 	console.log("AI SERVICES PERFORMANCE TEST REPORT");
 	console.log("=".repeat(60));
 
@@ -628,5 +628,5 @@ afterAll(async () => {
 		}
 	});
 
-	console.log("\n" + "=".repeat(60));
+	console.log(`\n${"=".repeat(60)}`);
 });

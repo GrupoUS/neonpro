@@ -1,5 +1,5 @@
 // Healthcare-specific types for Brazilian market
-export interface PatientInfo {
+export type PatientInfo = {
 	id: string;
 	name: string;
 	cpf: string;
@@ -11,9 +11,9 @@ export interface PatientInfo {
 	address: Address;
 	emergencyContact: EmergencyContact;
 	lgpdConsent: LGPDConsent;
-}
+};
 
-export interface Address {
+export type Address = {
 	street: string;
 	number: string;
 	complement?: string;
@@ -22,16 +22,16 @@ export interface Address {
 	state: string;
 	cep: string;
 	region: "Norte" | "Nordeste" | "Centro-Oeste" | "Sudeste" | "Sul";
-}
+};
 
-export interface EmergencyContact {
+export type EmergencyContact = {
 	name: string;
 	relationship: string;
 	phone: string;
 	alternativePhone?: string;
-}
+};
 
-export interface LGPDConsent {
+export type LGPDConsent = {
 	dataProcessing: boolean;
 	marketing: boolean;
 	dataSharing: boolean;
@@ -39,18 +39,18 @@ export interface LGPDConsent {
 	consentVersion: string;
 	ipAddress: string;
 	userAgent: string;
-}
+};
 
-export interface HealthcareProfessional {
+export type HealthcareProfessional = {
 	id: string;
 	name: string;
 	crm: string; // Conselho Regional de Medicina
 	specialty: string;
 	phone: string;
 	email: string;
-}
+};
 
-export interface MedicalRecord {
+export type MedicalRecord = {
 	id: string;
 	patientId: string;
 	professionalId: string;
@@ -61,28 +61,28 @@ export interface MedicalRecord {
 	treatment?: string;
 	medications?: Medication[];
 	attachments?: MedicalAttachment[];
-}
+};
 
-export interface Medication {
+export type Medication = {
 	name: string;
 	dosage: string;
 	frequency: string;
 	duration: string;
 	instructions?: string;
 	anvisaCode?: string;
-}
+};
 
-export interface MedicalAttachment {
+export type MedicalAttachment = {
 	id: string;
 	filename: string;
 	type: "image" | "document" | "exam";
 	url: string;
 	uploadDate: string;
 	lgpdClassification: "public" | "internal" | "confidential" | "restricted";
-}
+};
 
 // UI/UX specific types
-export interface EmergencyAlert {
+export type EmergencyAlert = {
 	id: string;
 	type: "critical" | "high" | "medium";
 	message: string;
@@ -91,43 +91,43 @@ export interface EmergencyAlert {
 	timestamp: string;
 	acknowledged: boolean;
 	acknowledgedBy?: string;
-}
+};
 
-export interface ConnectivityLevel {
+export type ConnectivityLevel = {
 	type: "2G" | "3G" | "4G" | "5G" | "wifi";
 	strength: "weak" | "medium" | "strong";
 	latency: number; // ms
-}
+};
 
-export interface RegionalSettings {
+export type RegionalSettings = {
 	region: "Norte" | "Nordeste" | "Centro-Oeste" | "Sudeste" | "Sul";
 	connectivity: ConnectivityLevel;
 	language: "pt-BR";
 	timezone: string;
 	currency: "BRL";
 	dateFormat: "DD/MM/YYYY";
-}
+};
 
 // Accessibility types
-export interface AccessibilityOptions {
+export type AccessibilityOptions = {
 	highContrast: boolean;
 	largeText: boolean;
 	screenReader: boolean;
 	voiceNavigation: boolean;
 	colorBlindSupport: boolean;
 	language: "pt-BR";
-}
+};
 
 // LGPD Compliance types
-export interface LGPDCompliance {
+export type LGPDCompliance = {
 	consentRequired: boolean;
 	dataClassification: "public" | "internal" | "confidential" | "restricted";
 	retentionPeriod: number; // days
 	auditRequired: boolean;
 	anonymizationRequired: boolean;
-}
+};
 
-export interface AuditEvent {
+export type AuditEvent = {
 	id: string;
 	userId: string;
 	action: string;
@@ -137,4 +137,4 @@ export interface AuditEvent {
 	userAgent: string;
 	outcome: "success" | "failure";
 	details?: Record<string, any>;
-}
+};

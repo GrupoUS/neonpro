@@ -38,11 +38,9 @@ const sanitizeRealtimeData = (data: any, sensitiveFields: string[] = []) => {
 
 const logRealtimeEvent = (_event: string, _table: string, payload: any, lgpdConfig?: LGPDRealtimeConfig) => {
 	if (lgpdConfig?.enableAuditLogging) {
-		const logData = lgpdConfig.enableDataMinimization
+		const _logData = lgpdConfig.enableDataMinimization
 			? sanitizeRealtimeData(payload, lgpdConfig.sensitiveFields)
 			: payload;
-		// Log data can be used for audit purposes
-		console.debug('Realtime event logged:', logData);
 	}
 };
 

@@ -358,7 +358,11 @@ export function validateProviderLicense(license: string, specialty: string): boo
 /**
  * Check if user can access patient data based on LGPD
  */
-export function canAccessPatientData(userRole: string, patientConsent: boolean, emergencyAccess: boolean = false): boolean {
+export function canAccessPatientData(
+	userRole: string,
+	patientConsent: boolean,
+	emergencyAccess: boolean = false,
+): boolean {
 	// Emergency access overrides consent requirements
 	if (emergencyAccess) return true;
 

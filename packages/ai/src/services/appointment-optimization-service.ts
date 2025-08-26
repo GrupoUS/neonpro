@@ -1,11 +1,11 @@
 // AI-Driven Appointment Optimization Service
 // Intelligent scheduling optimization for maximum efficiency and patient satisfaction
 
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { createClient } from "@supabase/supabase-js";
 import { type AIServiceInput, type AIServiceOutput, EnhancedAIService } from "./enhanced-service-base";
 
 // Optimization Types and Interfaces
-export interface ScheduleContext {
+export type ScheduleContext = {
 	clinic_id: string;
 	doctor_id?: string;
 	specialty?: string;
@@ -16,9 +16,9 @@ export interface ScheduleContext {
 	available_slots: TimeSlot[];
 	existing_appointments: ExistingAppointment[];
 	constraints: ScheduleConstraints;
-}
+};
 
-export interface TimeSlot {
+export type TimeSlot = {
 	start_time: string;
 	end_time: string;
 	available: boolean;
@@ -26,9 +26,9 @@ export interface TimeSlot {
 	capacity: number;
 	current_bookings: number;
 	preferred_appointment_types: string[];
-}
+};
 
-export interface ExistingAppointment {
+export type ExistingAppointment = {
 	appointment_id: string;
 	patient_id: string;
 	doctor_id: string;
@@ -39,9 +39,9 @@ export interface ExistingAppointment {
 	urgency_level: "low" | "medium" | "high" | "urgent";
 	preparation_time_minutes: number;
 	cleanup_time_minutes: number;
-}
+};
 
-export interface ScheduleConstraints {
+export type ScheduleConstraints = {
 	max_appointments_per_day: number;
 	min_break_minutes: number;
 	max_consecutive_appointments: number;
@@ -49,33 +49,33 @@ export interface ScheduleConstraints {
 	doctor_preferences: DoctorPreferences;
 	clinic_policies: ClinicPolicies;
 	emergency_slots_percentage: number;
-}
+};
 
-export interface DoctorPreferences {
+export type DoctorPreferences = {
 	preferred_appointment_types: string[];
 	avoided_appointment_types: string[];
 	preferred_time_blocks: Array<{ start_time: string; end_time: string; preference_score: number }>;
 	max_procedure_appointments_per_day: number;
 	preferred_patient_age_groups: string[];
 	fatigue_factor: number; // How much efficiency decreases over the day
-}
+};
 
-export interface ClinicPolicies {
+export type ClinicPolicies = {
 	overbooking_allowed: boolean;
 	overbooking_percentage: number;
 	same_day_booking_slots: number;
 	priority_booking_rules: PriorityRule[];
 	group_appointment_support: boolean;
 	telemedicine_percentage: number;
-}
+};
 
-export interface PriorityRule {
+export type PriorityRule = {
 	condition: string; // e.g., "age > 65", "urgency == 'urgent'", "chronic_condition"
 	priority_boost: number;
 	description: string;
-}
+};
 
-export interface AppointmentRequest {
+export type AppointmentRequest = {
 	patient_id: string;
 	patient_profile: PatientOptimizationProfile;
 	appointment_type: string;
@@ -84,9 +84,9 @@ export interface AppointmentRequest {
 	preferred_times: TimePreference[];
 	constraints: PatientConstraints;
 	special_requirements: string[];
-}
+};
 
-export interface PatientOptimizationProfile {
+export type PatientOptimizationProfile = {
 	age: number;
 	mobility_issues: boolean;
 	chronic_conditions: string[];
@@ -96,9 +96,9 @@ export interface PatientOptimizationProfile {
 	work_schedule_flexibility: "none" | "low" | "medium" | "high";
 	no_show_risk_score: number;
 	satisfaction_history_score: number; // 1-10
-}
+};
 
-export interface PatientConstraints {
+export type PatientConstraints = {
 	cannot_do_mornings: boolean;
 	cannot_do_afternoons: boolean;
 	needs_interpreter: boolean;
@@ -106,14 +106,14 @@ export interface PatientConstraints {
 	must_avoid_dates: string[];
 	preferred_doctor_id?: string;
 	max_wait_time_minutes: number;
-}
+};
 
-export interface TimePreference {
+export type TimePreference = {
 	day_of_week: number; // 0-6, Sunday = 0
 	time_range: { start_time: string; end_time: string };
 	preference_score: number; // 1-10, 10 = most preferred
 	flexibility_minutes: number;
-}
+};
 
 export interface OptimizationInput extends AIServiceInput {
 	action:
@@ -142,7 +142,7 @@ export interface OptimizationInput extends AIServiceInput {
 	metrics_requested?: string[];
 }
 
-export interface OptimizationGoals {
+export type OptimizationGoals = {
 	primary_goal:
 		| "maximize_utilization"
 		| "minimize_wait_times"
@@ -152,14 +152,14 @@ export interface OptimizationGoals {
 	secondary_goals: string[];
 	goal_weights: Record<string, number>;
 	success_metrics: string[];
-}
+};
 
-export interface OptimizationConstraints {
+export type OptimizationConstraints = {
 	hard_constraints: string[]; // Must be satisfied
 	soft_constraints: Array<{ constraint: string; priority: number; penalty_weight: number }>;
 	optimization_time_limit_seconds: number;
 	max_schedule_changes: number;
-}
+};
 
 export interface OptimizationOutput extends AIServiceOutput {
 	optimized_schedule?: OptimizedSchedule;
@@ -177,7 +177,7 @@ export interface OptimizationOutput extends AIServiceOutput {
 	improvement_recommendations?: ImprovementRecommendation[];
 }
 
-export interface OptimizedSchedule {
+export type OptimizedSchedule = {
 	schedule_id: string;
 	clinic_id: string;
 	doctor_id?: string;
@@ -188,9 +188,9 @@ export interface OptimizedSchedule {
 	estimated_no_show_rate: number;
 	buffer_time_minutes: number;
 	overtime_risk_score: number;
-}
+};
 
-export interface OptimizedAppointment {
+export type OptimizedAppointment = {
 	appointment_id?: string;
 	patient_id: string;
 	start_time: string;
@@ -201,9 +201,9 @@ export interface OptimizedAppointment {
 	satisfaction_prediction: number;
 	no_show_probability: number;
 	scheduling_notes: string[];
-}
+};
 
-export interface SuggestedAppointment {
+export type SuggestedAppointment = {
 	patient_id: string;
 	suggested_time: string;
 	duration_minutes: number;
@@ -211,9 +211,9 @@ export interface SuggestedAppointment {
 	reasoning: string[];
 	alternative_times: string[];
 	expected_satisfaction: number;
-}
+};
 
-export interface ScheduleChange {
+export type ScheduleChange = {
 	change_type: "add" | "remove" | "modify" | "reschedule";
 	appointment_id?: string;
 	old_time?: string;
@@ -221,9 +221,9 @@ export interface ScheduleChange {
 	reason: string;
 	impact_score: number;
 	affected_patients: string[];
-}
+};
 
-export interface EfficiencyMetrics {
+export type EfficiencyMetrics = {
 	utilization_rate: number;
 	average_wait_time_minutes: number;
 	appointment_gaps_count: number;
@@ -231,9 +231,9 @@ export interface EfficiencyMetrics {
 	patient_satisfaction_prediction: number;
 	resource_efficiency_score: number;
 	no_show_adjusted_utilization: number;
-}
+};
 
-export interface SchedulingInsight {
+export type SchedulingInsight = {
 	insight_type: "pattern" | "bottleneck" | "opportunity" | "risk" | "trend";
 	title: string;
 	description: string;
@@ -241,9 +241,9 @@ export interface SchedulingInsight {
 	actionable_recommendations: string[];
 	estimated_impact: number;
 	confidence_level: number;
-}
+};
 
-export interface AppointmentSuggestion {
+export type AppointmentSuggestion = {
 	suggested_datetime: string;
 	duration_minutes: number;
 	slot_score: number;
@@ -252,9 +252,9 @@ export interface AppointmentSuggestion {
 	scheduling_advantages: string[];
 	scheduling_concerns: string[];
 	doctor_suitability_score: number;
-}
+};
 
-export interface ScheduleAnalysis {
+export type ScheduleAnalysis = {
 	analysis_period: { start_date: string; end_date: string };
 	total_appointments: number;
 	average_utilization: number;
@@ -263,17 +263,17 @@ export interface ScheduleAnalysis {
 	patient_flow_patterns: FlowPattern[];
 	bottleneck_analysis: BottleneckAnalysis;
 	satisfaction_trends: SatisfactionTrend[];
-}
+};
 
-export interface FlowPattern {
+export type FlowPattern = {
 	pattern_name: string;
 	frequency: number;
 	description: string;
 	optimization_opportunity: boolean;
 	estimated_improvement: number;
-}
+};
 
-export interface BottleneckAnalysis {
+export type BottleneckAnalysis = {
 	identified_bottlenecks: Array<{
 		time_period: string;
 		resource: string;
@@ -283,17 +283,17 @@ export interface BottleneckAnalysis {
 	}>;
 	resource_utilization: Record<string, number>;
 	constraint_violations: number;
-}
+};
 
-export interface SatisfactionTrend {
+export type SatisfactionTrend = {
 	date: string;
 	satisfaction_score: number;
 	no_show_rate: number;
 	wait_time_average: number;
 	complaints_count: number;
-}
+};
 
-export interface ImprovementRecommendation {
+export type ImprovementRecommendation = {
 	recommendation_type: "scheduling" | "resource" | "policy" | "workflow";
 	title: string;
 	description: string;
@@ -302,14 +302,11 @@ export interface ImprovementRecommendation {
 	estimated_cost: number;
 	timeline_weeks: number;
 	success_probability: number;
-}
+};
 
 // Appointment Optimization Service Implementation
 export class AppointmentOptimizationService extends EnhancedAIService<OptimizationInput, OptimizationOutput> {
-	private supabase: SupabaseClient;
-	private optimizationCache: Map<string, any> = new Map();
-	private schedulingRules: Map<string, any> = new Map();
-	private readonly CACHE_TTL_MS = 15 * 60 * 1000; // 15 minutes
+	private readonly optimizationCache: Map<string, any> = new Map();
 
 	constructor() {
 		super("appointment_optimization_service");
@@ -324,11 +321,7 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		try {
 			// Load scheduling rules and preferences
 			await this.loadSchedulingRules();
-
-			console.log("Appointment optimization service initialized");
-		} catch (error) {
-			console.error("Failed to initialize optimization service:", error);
-		}
+		} catch (_error) {}
 	}
 
 	protected async executeCore(input: OptimizationInput): Promise<OptimizationOutput> {
@@ -761,11 +754,17 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		const slotDate = new Date(slot.start_time);
 		const hour = slotDate.getHours();
 
-		if (request.constraints.cannot_do_mornings && hour < 12) return false;
-		if (request.constraints.cannot_do_afternoons && hour >= 12) return false;
+		if (request.constraints.cannot_do_mornings && hour < 12) {
+			return false;
+		}
+		if (request.constraints.cannot_do_afternoons && hour >= 12) {
+			return false;
+		}
 
 		const slotDateStr = slot.start_time.split("T")[0];
-		if (request.constraints.must_avoid_dates.includes(slotDateStr)) return false;
+		if (request.constraints.must_avoid_dates.includes(slotDateStr)) {
+			return false;
+		}
 
 		return true;
 	}
@@ -812,8 +811,8 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		// Check time preferences
 		for (const pref of request.preferred_times) {
 			if (pref.day_of_week === dayOfWeek) {
-				const prefStart = Number.parseInt(pref.time_range.start_time.split(":")[0]);
-				const prefEnd = Number.parseInt(pref.time_range.end_time.split(":")[0]);
+				const prefStart = Number.parseInt(pref.time_range.start_time.split(":")[0], 10);
+				const prefEnd = Number.parseInt(pref.time_range.end_time.split(":")[0], 10);
 
 				if (hour >= prefStart && hour <= prefEnd) {
 					alignment += (pref.preference_score / 10) * 0.3;
@@ -865,7 +864,7 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		return Math.max(1, Math.min(10, satisfaction));
 	}
 
-	private calculateWaitTime(slot: TimeSlot, context: ScheduleContext): number {
+	private calculateWaitTime(slot: TimeSlot, _context: ScheduleContext): number {
 		// Estimate wait time based on slot congestion and historical data
 		const baseWaitTime = 5; // minutes
 		const congestionFactor = slot.current_bookings / slot.capacity;
@@ -873,7 +872,7 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		return Math.round(baseWaitTime * (1 + congestionFactor * 2));
 	}
 
-	private getSchedulingAdvantages(slot: TimeSlot, request: AppointmentRequest, context: ScheduleContext): string[] {
+	private getSchedulingAdvantages(slot: TimeSlot, request: AppointmentRequest, _context: ScheduleContext): string[] {
 		const advantages: string[] = [];
 
 		if (slot.current_bookings < slot.capacity * 0.7) {
@@ -892,7 +891,7 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		return advantages;
 	}
 
-	private getSchedulingConcerns(slot: TimeSlot, request: AppointmentRequest, context: ScheduleContext): string[] {
+	private getSchedulingConcerns(slot: TimeSlot, request: AppointmentRequest, _context: ScheduleContext): string[] {
 		const concerns: string[] = [];
 
 		if (slot.current_bookings >= slot.capacity * 0.9) {
@@ -912,12 +911,12 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		return concerns;
 	}
 
-	private calculateDoctorSuitability(slot: TimeSlot, request: AppointmentRequest, context: ScheduleContext): number {
+	private calculateDoctorSuitability(_slot: TimeSlot, _request: AppointmentRequest, _context: ScheduleContext): number {
 		// In a full implementation, this would consider doctor-patient matching
 		return 0.85; // Default good suitability
 	}
 
-	private findAvailableSlots(context: ScheduleContext, dateRange: any, durationMinutes: number): TimeSlot[] {
+	private findAvailableSlots(context: ScheduleContext, dateRange: any, _durationMinutes: number): TimeSlot[] {
 		return context.available_slots.filter((slot) => {
 			const slotDate = slot.start_time.split("T")[0];
 			return slot.available && slotDate >= dateRange.start_date && slotDate <= dateRange.end_date;
@@ -927,7 +926,7 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 	private async scoreAppointmentSlot(
 		slot: TimeSlot,
 		request: AppointmentRequest,
-		context: ScheduleContext
+		_context: ScheduleContext
 	): Promise<number> {
 		// Comprehensive scoring algorithm
 		const goals = this.getDefaultOptimizationGoals();
@@ -993,8 +992,8 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 	}
 
 	private generateScheduleChanges(
-		existing: ExistingAppointment[],
-		optimized: OptimizedAppointment[]
+		_existing: ExistingAppointment[],
+		_optimized: OptimizedAppointment[]
 	): ScheduleChange[] {
 		const changes: ScheduleChange[] = [];
 
@@ -1005,7 +1004,7 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		return changes;
 	}
 
-	private calculateOverallOptimizationScore(metrics: EfficiencyMetrics, goals: OptimizationGoals): number {
+	private calculateOverallOptimizationScore(metrics: EfficiencyMetrics, _goals: OptimizationGoals): number {
 		let score = 0;
 
 		score += metrics.utilization_rate * 0.3;
@@ -1015,7 +1014,7 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		return Math.max(0, Math.min(1, score));
 	}
 
-	private calculateBufferTime(appointments: OptimizedAppointment[]): number {
+	private calculateBufferTime(_appointments: OptimizedAppointment[]): number {
 		// Calculate average buffer time between appointments
 		return 10; // Default 10 minutes
 	}
@@ -1028,10 +1027,7 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		});
 	}
 
-	private async loadSchedulingRules(): Promise<void> {
-		// Load scheduling rules and preferences from database
-		console.log("Loading scheduling rules...");
-	}
+	private async loadSchedulingRules(): Promise<void> {}
 
 	// Additional implementation methods would follow the same pattern...
 
@@ -1083,12 +1079,12 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 
 	// More helper methods would continue here...
 
-	private calculateAverageUtilization(appointments: ExistingAppointment[], context: ScheduleContext): number {
+	private calculateAverageUtilization(_appointments: ExistingAppointment[], _context: ScheduleContext): number {
 		// Implementation would calculate actual utilization
 		return 0.75; // Mock value
 	}
 
-	private identifyPeakHours(appointments: ExistingAppointment[]): Array<{ hour: number; utilization: number }> {
+	private identifyPeakHours(_appointments: ExistingAppointment[]): Array<{ hour: number; utilization: number }> {
 		// Implementation would analyze appointment distribution by hour
 		return [
 			{ hour: 9, utilization: 0.9 },
@@ -1105,7 +1101,7 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		return distribution;
 	}
 
-	private identifyFlowPatterns(appointments: ExistingAppointment[]): FlowPattern[] {
+	private identifyFlowPatterns(_appointments: ExistingAppointment[]): FlowPattern[] {
 		return [
 			{
 				pattern_name: "Monday Morning Rush",
@@ -1117,7 +1113,7 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		];
 	}
 
-	private analyzeBottlenecks(appointments: ExistingAppointment[], context: ScheduleContext): BottleneckAnalysis {
+	private analyzeBottlenecks(_appointments: ExistingAppointment[], _context: ScheduleContext): BottleneckAnalysis {
 		return {
 			identified_bottlenecks: [
 				{
@@ -1133,7 +1129,7 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		};
 	}
 
-	private analyzeSatisfactionTrends(appointments: ExistingAppointment[], period: any): SatisfactionTrend[] {
+	private analyzeSatisfactionTrends(_appointments: ExistingAppointment[], period: any): SatisfactionTrend[] {
 		return [
 			{
 				date: period.start_date,
@@ -1163,7 +1159,7 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		return insights;
 	}
 
-	private generateImprovementRecommendations(analysis: ScheduleAnalysis): ImprovementRecommendation[] {
+	private generateImprovementRecommendations(_analysis: ScheduleAnalysis): ImprovementRecommendation[] {
 		return [
 			{
 				recommendation_type: "scheduling",
@@ -1178,12 +1174,12 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		];
 	}
 
-	private analyzeWaitTimes(appointments: ExistingAppointment[]): { average: number; median: number; peak: number } {
+	private analyzeWaitTimes(_appointments: ExistingAppointment[]): { average: number; median: number; peak: number } {
 		// Mock implementation
 		return { average: 18, median: 15, peak: 35 };
 	}
 
-	private identifySchedulingPatterns(appointments: ExistingAppointment[]): FlowPattern[] {
+	private identifySchedulingPatterns(_appointments: ExistingAppointment[]): FlowPattern[] {
 		return [
 			{
 				pattern_name: "Friday Afternoon Cancellations",
@@ -1207,17 +1203,17 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 			.slice(0, 3);
 	}
 
-	private calculateRescheduleImpact(original: ExistingAppointment, alternative: TimeSlot): number {
+	private calculateRescheduleImpact(_original: ExistingAppointment, _alternative: TimeSlot): number {
 		// Calculate impact score of rescheduling
 		return 0.6; // Mock implementation
 	}
 
-	private applyScheduleChanges(appointments: ExistingAppointment[], changes: ScheduleChange[]): ExistingAppointment[] {
+	private applyScheduleChanges(appointments: ExistingAppointment[], _changes: ScheduleChange[]): ExistingAppointment[] {
 		// Apply schedule changes and return updated appointment list
 		return appointments; // Mock implementation
 	}
 
-	private generateSchedulingNotes(slot: TimeSlot, request: AppointmentRequest): string[] {
+	private generateSchedulingNotes(_slot: TimeSlot, request: AppointmentRequest): string[] {
 		return [`Scheduled for ${request.appointment_type} appointment`];
 	}
 }

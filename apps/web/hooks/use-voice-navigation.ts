@@ -4,7 +4,11 @@
  */
 
 import { useCallback, useEffect, useState } from "react";
-import { voiceNavigationService, type VoiceNavigationState, type VoiceCommand } from "@/lib/services/voice-navigation-service";
+import {
+	type VoiceCommand,
+	type VoiceNavigationState,
+	voiceNavigationService,
+} from "@/lib/services/voice-navigation-service";
 
 interface UseVoiceNavigationReturn {
 	// State
@@ -14,16 +18,16 @@ interface UseVoiceNavigationReturn {
 	lastCommand: string | null;
 	confidence: number;
 	error: string | null;
-	
+
 	// Actions
 	startListening: () => Promise<void>;
 	stopListening: () => void;
 	toggleListening: () => Promise<void>;
-	
+
 	// Commands
 	availableCommands: VoiceCommand[];
-	getCommandsByCategory: (category: VoiceCommand['category']) => VoiceCommand[];
-	
+	getCommandsByCategory: (category: VoiceCommand["category"]) => VoiceCommand[];
+
 	// Feedback
 	speak: (text: string) => void;
 }
@@ -34,7 +38,7 @@ export function useVoiceNavigation(): UseVoiceNavigationReturn {
 		isProcessing: false,
 		lastCommand: null,
 		confidence: 0,
-		error: null
+		error: null,
 	});
 
 	const [isSupported] = useState(() => voiceNavigationService.isSupported());
@@ -78,9 +82,9 @@ export function useVoiceNavigation(): UseVoiceNavigationReturn {
 	}, [state.isListening, startListening, stopListening]);
 
 	const speak = useCallback((text: string) => {
-		if ('speechSynthesis' in window) {
+		if ("speechSynthesis" in window) {
 			const utterance = new SpeechSynthesisUtterance(text);
-			utterance.lang = 'pt-BR';
+			utterance.lang = "pt-BR";
 			utterance.rate = 0.9;
 			utterance.pitch = 1;
 			utterance.volume = 0.8;
@@ -89,7 +93,7 @@ export function useVoiceNavigation(): UseVoiceNavigationReturn {
 	}, []);
 
 	const availableCommands = voiceNavigationService.getAvailableCommands();
-	const getCommandsByCategory = useCallback((category: VoiceCommand['category']) => {
+	const getCommandsByCategory = useCallback((category: VoiceCommand["category"]) => {
 		return voiceNavigationService.getCommandsByCategory(category);
 	}, []);
 
@@ -101,17 +105,17 @@ export function useVoiceNavigation(): UseVoiceNavigationReturn {
 		lastCommand: state.lastCommand,
 		confidence: state.confidence,
 		error: state.error,
-		
+
 		// Actions
 		startListening,
 		stopListening,
 		toggleListening,
-		
+
 		// Commands
 		availableCommands,
 		getCommandsByCategory,
-		
+
 		// Feedback
-		speak
+		speak,
 	};
 }

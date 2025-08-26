@@ -1,7 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { EnhancedAIService } from "./enhanced-service-base";
 
-export interface ComplianceAutomationInput {
+export type ComplianceAutomationInput = {
 	userId: string;
 	clinicId: string;
 	serviceName: string;
@@ -11,9 +11,9 @@ export interface ComplianceAutomationInput {
 	sensitiveDataHandled: boolean;
 	purpose: string;
 	retentionPeriodDays?: number;
-}
+};
 
-export interface ComplianceAutomationOutput {
+export type ComplianceAutomationOutput = {
 	compliant: boolean;
 	violations: ComplianceViolation[];
 	recommendations: ComplianceRecommendation[];
@@ -21,26 +21,26 @@ export interface ComplianceAutomationOutput {
 	lawfulBasis: string;
 	consentRequired: boolean;
 	retentionPeriod: number;
-}
+};
 
-export interface ComplianceViolation {
+export type ComplianceViolation = {
 	type: "LGPD" | "ANVISA" | "CFM" | "INTERNAL";
 	severity: "low" | "medium" | "high" | "critical";
 	code: string;
 	description: string;
 	regulation: string;
 	remediation: string;
-}
+};
 
-export interface ComplianceRecommendation {
+export type ComplianceRecommendation = {
 	category: "data_protection" | "consent_management" | "retention_policy" | "access_control";
 	priority: "low" | "medium" | "high";
 	action: string;
 	description: string;
 	implementationSteps: string[];
-}
+};
 
-export interface ComplianceAuditEntry {
+export type ComplianceAuditEntry = {
 	timestamp: Date;
 	userId: string;
 	clinicId: string;
@@ -52,9 +52,9 @@ export interface ComplianceAuditEntry {
 	lawfulBasis: string;
 	consentObtained: boolean;
 	retentionPeriod: number;
-}
+};
 
-export interface ComplianceRule {
+export type ComplianceRule = {
 	id: string;
 	name: string;
 	type: "LGPD" | "ANVISA" | "CFM" | "INTERNAL";
@@ -63,18 +63,18 @@ export interface ComplianceRule {
 	actions: ComplianceAction[];
 	severity: "low" | "medium" | "high" | "critical";
 	enabled: boolean;
-}
+};
 
-export interface ComplianceCondition {
+export type ComplianceCondition = {
 	field: string;
 	operator: "equals" | "contains" | "greater_than" | "less_than" | "in" | "not_in";
 	value: any;
-}
+};
 
-export interface ComplianceAction {
+export type ComplianceAction = {
 	type: "log" | "block" | "require_consent" | "notify_dpo" | "limit_retention";
 	parameters: Record<string, any>;
-}
+};
 
 export class ComplianceAutomationService extends EnhancedAIService<
 	ComplianceAutomationInput,
@@ -84,8 +84,8 @@ export class ComplianceAutomationService extends EnhancedAIService<
 	protected version = "1.0.0";
 	protected description = "Automated compliance checking and enforcement for AI services";
 
-	private supabase: SupabaseClient;
-	private complianceRules: Map<string, ComplianceRule> = new Map();
+	private readonly supabase: SupabaseClient;
+	private readonly complianceRules: Map<string, ComplianceRule> = new Map();
 
 	constructor(supabase: SupabaseClient, config: any) {
 		super(config);
@@ -180,10 +180,14 @@ export class ComplianceAutomationService extends EnhancedAIService<
 		const violations: ComplianceViolation[] = [];
 
 		for (const rule of this.complianceRules.values()) {
-			if (!rule.enabled) continue;
+			if (!rule.enabled) {
+				continue;
+			}
 
 			const ruleApplies = this.evaluateRuleConditions(rule.conditions, input);
-			if (!ruleApplies) continue;
+			if (!ruleApplies) {
+				continue;
+			}
 
 			const violation = await this.checkRuleCompliance(rule, input);
 			if (violation) {
@@ -662,7 +666,7 @@ export class ComplianceAutomationService extends EnhancedAIService<
 	}
 
 	// Helper methods for compliance checks
-	private hasValidConsent(input: ComplianceAutomationInput): boolean {
+	private hasValidConsent(_input: ComplianceAutomationInput): boolean {
 		// Implementation would check consent records
 		return false; // Placeholder - implement actual consent checking
 	}
@@ -719,32 +723,32 @@ export class ComplianceAutomationService extends EnhancedAIService<
 		return maxPeriod;
 	}
 
-	private isDataEncrypted(input: ComplianceAutomationInput): boolean {
+	private isDataEncrypted(_input: ComplianceAutomationInput): boolean {
 		// Implementation would check encryption status
 		return true; // Placeholder - implement actual encryption checking
 	}
 
-	private hasHealthcareProfessionalAuth(input: ComplianceAutomationInput): boolean {
+	private hasHealthcareProfessionalAuth(_input: ComplianceAutomationInput): boolean {
 		// Implementation would check professional authorization
 		return false; // Placeholder - implement actual authorization checking
 	}
 
-	private meetsTelemedicineRequirements(input: ComplianceAutomationInput): boolean {
+	private meetsTelemedicineRequirements(_input: ComplianceAutomationInput): boolean {
 		// Implementation would check telemedicine compliance
 		return true; // Placeholder - implement actual telemedicine checking
 	}
 
-	private hasValidMedicalRecordIntegrity(input: ComplianceAutomationInput): boolean {
+	private hasValidMedicalRecordIntegrity(_input: ComplianceAutomationInput): boolean {
 		// Implementation would check medical record integrity
 		return true; // Placeholder - implement actual integrity checking
 	}
 
-	private hasAITransparency(input: ComplianceAutomationInput): boolean {
+	private hasAITransparency(_input: ComplianceAutomationInput): boolean {
 		// Implementation would check AI transparency measures
 		return false; // Placeholder - implement actual transparency checking
 	}
 
-	private hasAuditTrail(input: ComplianceAutomationInput): boolean {
+	private hasAuditTrail(_input: ComplianceAutomationInput): boolean {
 		// Implementation would check audit trail completeness
 		return true; // Placeholder - implement actual audit trail checking
 	}

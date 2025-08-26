@@ -6,9 +6,6 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import {
 	Activity,
 	BarChart3,
@@ -22,19 +19,14 @@ import {
 	Stethoscope,
 	User,
 	Users,
-	X,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
-import {
-	Sheet,
-	SheetContent,
-	SheetDescription,
-	SheetHeader,
-	SheetTitle,
-	SheetTrigger,
-} from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { cn } from "@/lib/utils";
 
 interface NavigationItem {
 	label: string;
@@ -155,11 +147,11 @@ interface MobileNavigationProps {
 export function MobileNavigation({ className }: MobileNavigationProps) {
 	const [isOpen, setIsOpen] = useState(false);
 	const pathname = usePathname();
-	
+
 	// Close navigation when route changes
 	useEffect(() => {
 		setIsOpen(false);
-	}, [pathname]);
+	}, []);
 
 	const isActive = (href: string) => {
 		if (href === "/") {
@@ -168,13 +160,16 @@ export function MobileNavigation({ className }: MobileNavigationProps) {
 		return pathname.startsWith(href);
 	};
 
-	const groupedItems = navigationItems.reduce((acc, item) => {
-		if (!acc[item.category]) {
-			acc[item.category] = [];
-		}
-		acc[item.category].push(item);
-		return acc;
-	}, {} as Record<string, NavigationItem[]>);
+	const groupedItems = navigationItems.reduce(
+		(acc, item) => {
+			if (!acc[item.category]) {
+				acc[item.category] = [];
+			}
+			acc[item.category].push(item);
+			return acc;
+		},
+		{} as Record<string, NavigationItem[]>
+	);
 
 	const getCategoryTitle = (category: string) => {
 		switch (category) {
@@ -195,16 +190,11 @@ export function MobileNavigation({ className }: MobileNavigationProps) {
 		<div className={cn("md:hidden", className)}>
 			<Sheet open={isOpen} onOpenChange={setIsOpen}>
 				<SheetTrigger asChild>
-					<Button
-						variant="ghost"
-						size="sm"
-						className="h-9 w-9 p-0"
-						aria-label="Abrir menu de navegação"
-					>
+					<Button variant="ghost" size="sm" className="h-9 w-9 p-0" aria-label="Abrir menu de navegação">
 						<Menu className="h-5 w-5" />
 					</Button>
 				</SheetTrigger>
-				
+
 				<SheetContent side="left" className="w-80 px-0">
 					<SheetHeader className="px-6 pb-4">
 						<SheetTitle className="flex items-center gap-2">
@@ -213,9 +203,7 @@ export function MobileNavigation({ className }: MobileNavigationProps) {
 							</div>
 							NeonPro Healthcare
 						</SheetTitle>
-						<SheetDescription>
-							Sistema de gestão médica inteligente
-						</SheetDescription>
+						<SheetDescription>Sistema de gestão médica inteligente</SheetDescription>
 					</SheetHeader>
 
 					<div className="flex flex-col h-full">
@@ -230,7 +218,7 @@ export function MobileNavigation({ className }: MobileNavigationProps) {
 											{items.map((item) => {
 												const Icon = item.icon;
 												const active = isActive(item.href);
-												
+
 												return (
 													<Link
 														key={item.href}
@@ -248,9 +236,7 @@ export function MobileNavigation({ className }: MobileNavigationProps) {
 																<span className="truncate">{item.label}</span>
 																{item.badge && (
 																	<Badge
-																		variant={
-																			item.badge === "IA" ? "secondary" : "default"
-																		}
+																		variant={item.badge === "IA" ? "secondary" : "default"}
 																		className="ml-2 text-xs"
 																	>
 																		{item.badge}
@@ -258,9 +244,7 @@ export function MobileNavigation({ className }: MobileNavigationProps) {
 																)}
 															</div>
 															{item.description && (
-																<p className="text-xs text-muted-foreground truncate">
-																	{item.description}
-																</p>
+																<p className="text-xs text-muted-foreground truncate">{item.description}</p>
 															)}
 														</div>
 													</Link>
@@ -278,9 +262,7 @@ export function MobileNavigation({ className }: MobileNavigationProps) {
 								<p className="mb-1">
 									<strong>Compliance:</strong> LGPD, ANVISA, CFM
 								</p>
-								<p>
-									© 2024 NeonPro Healthcare
-								</p>
+								<p>© 2024 NeonPro Healthcare</p>
 							</div>
 						</div>
 					</div>
@@ -343,9 +325,7 @@ export function MobileBottomNavigation() {
 						return (
 							<div key={item.label} className="flex flex-col items-center">
 								<MobileNavigation />
-								<span className="text-xs text-muted-foreground mt-1">
-									{item.label}
-								</span>
+								<span className="text-xs text-muted-foreground mt-1">{item.label}</span>
 							</div>
 						);
 					}
@@ -356,9 +336,7 @@ export function MobileBottomNavigation() {
 							href={item.href}
 							className={cn(
 								"flex flex-col items-center gap-1 px-3 py-1 rounded-lg transition-colors",
-								active
-									? "text-primary"
-									: "text-muted-foreground hover:text-foreground"
+								active ? "text-primary" : "text-muted-foreground hover:text-foreground"
 							)}
 						>
 							<div className="relative">

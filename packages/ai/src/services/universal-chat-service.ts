@@ -1,17 +1,17 @@
 import { EnhancedServiceBase } from "@neonpro/core-services";
-import type { ChatMessage, ChatResponse, ChatSession, ComplianceMetrics, HealthcareChatContext } from "../types";
 import { createClient } from "@supabase/supabase-js";
+import type { ChatMessage, ChatSession, ComplianceMetrics, HealthcareChatContext } from "../types";
 
-interface ChatServiceInput {
+type ChatServiceInput = {
 	message: string;
 	sessionId: string;
 	userId: string;
 	clinicId: string;
 	context?: HealthcareChatContext;
 	language?: "pt-BR" | "en";
-}
+};
 
-interface ChatServiceOutput {
+type ChatServiceOutput = {
 	response: string;
 	messageId: string;
 	sessionId: string;
@@ -19,13 +19,13 @@ interface ChatServiceOutput {
 	complianceFlags: ComplianceMetrics;
 	suggestedActions: string[];
 	escalationRequired: boolean;
-}
+};
 
 export class UniversalChatService extends EnhancedServiceBase {
 	protected serviceId = "universal-chat";
 	protected version = "1.0.0";
 	protected description = "AI-powered universal chat system for healthcare with Portuguese optimization";
-	private supabase: ReturnType<typeof createClient>;
+	private readonly supabase: ReturnType<typeof createClient>;
 
 	constructor() {
 		super({
@@ -45,10 +45,7 @@ export class UniversalChatService extends EnhancedServiceBase {
 		});
 
 		// Initialize Supabase client
-		this.supabase = createClient(
-			process.env.NEXT_PUBLIC_SUPABASE_URL!,
-			process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-		);
+		this.supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
 	}
 
 	getServiceName(): string {
@@ -60,7 +57,7 @@ export class UniversalChatService extends EnhancedServiceBase {
 	}
 
 	async execute(input: ChatServiceInput): Promise<ChatServiceOutput> {
-		const startTime = Date.now();
+		const _startTime = Date.now();
 
 		try {
 			// Input validation
@@ -137,10 +134,6 @@ export class UniversalChatService extends EnhancedServiceBase {
 
 		// Healthcare-specific validation
 		if (await this.containsSensitiveData(input.message)) {
-			console.log("Sensitive data detected in message", {
-				userId: input.userId,
-				severity: "medium",
-			});
 		}
 	}
 
@@ -148,28 +141,29 @@ export class UniversalChatService extends EnhancedServiceBase {
 		try {
 			// Try to load existing session
 			const { data: sessionData, error: sessionError } = await this.supabase
-				.from('ai_chat_sessions')
-				.select('*')
-				.eq('id', sessionId)
+				.from("ai_chat_sessions")
+				.select("*")
+				.eq("id", sessionId)
 				.single();
 
-			if (sessionError && sessionError.code !== 'PGRST116') { // PGRST116 = not found
+			if (sessionError && sessionError.code !== "PGRST116") {
+				// PGRST116 = not found
 				throw sessionError;
 			}
 
 			// If session exists, load its messages
 			if (sessionData) {
 				const { data: messagesData, error: messagesError } = await this.supabase
-					.from('ai_chat_messages')
-					.select('*')
-					.eq('session_id', sessionId)
-					.order('created_at', { ascending: true });
+					.from("ai_chat_messages")
+					.select("*")
+					.eq("session_id", sessionId)
+					.order("created_at", { ascending: true });
 
 				if (messagesError) {
 					throw messagesError;
 				}
 
-				const messages: ChatMessage[] = messagesData.map(msg => ({
+				const messages: ChatMessage[] = messagesData.map((msg) => ({
 					id: msg.id,
 					role: msg.role as "user" | "assistant" | "system",
 					content: msg.content,
@@ -181,7 +175,7 @@ export class UniversalChatService extends EnhancedServiceBase {
 				return {
 					id: sessionData.id,
 					userId: sessionData.user_id || userId,
-					status: sessionData.status === 'active' ? 'active' : 'archived',
+					status: sessionData.status === "active" ? "active" : "archived",
 					startedAt: new Date(sessionData.created_at),
 					messageCount: messages.length,
 					messages,
@@ -190,15 +184,15 @@ export class UniversalChatService extends EnhancedServiceBase {
 
 			// Create new session if not found
 			const { data: newSession, error: createError } = await this.supabase
-				.from('ai_chat_sessions')
+				.from("ai_chat_sessions")
 				.insert({
 					id: sessionId,
 					user_id: userId,
-					session_type: 'universal_chat',
-					title: `Chat - ${new Date().toLocaleString('pt-BR')}`,
-					status: 'active',
+					session_type: "universal_chat",
+					title: `Chat - ${new Date().toLocaleString("pt-BR")}`,
+					status: "active",
 					context: {},
-					metadata: { interface: 'external' },
+					metadata: { interface: "external" },
 				})
 				.select()
 				.single();
@@ -209,15 +203,13 @@ export class UniversalChatService extends EnhancedServiceBase {
 
 			return {
 				id: newSession.id,
-				userId: userId,
-				status: 'active',
+				userId,
+				status: "active",
 				startedAt: new Date(newSession.created_at),
 				messageCount: 0,
 				messages: [],
 			};
-
-		} catch (error) {
-			console.error('Error loading chat session:', error);
+		} catch (_error) {
 			// Fallback to memory-only session
 			return {
 				id: sessionId,
@@ -261,7 +253,7 @@ export class UniversalChatService extends EnhancedServiceBase {
 		return `${systemPrompt}\n\nPaciente: ${input.message}`;
 	}
 
-	private async callOpenAI(prompt: string, language: string): Promise<string> {
+	private async callOpenAI(prompt: string, _language: string): Promise<string> {
 		const response = await fetch("https://api.openai.com/v1/chat/completions", {
 			method: "POST",
 			headers: {
@@ -346,72 +338,63 @@ export class UniversalChatService extends EnhancedServiceBase {
 	private async saveConversation(input: ChatServiceInput, output: ChatServiceOutput): Promise<void> {
 		try {
 			// Save user message
-			const { error: userError } = await this.supabase
-				.from('ai_chat_messages')
-				.insert({
-					session_id: input.sessionId,
-					role: 'user',
-					content: input.message,
-					metadata: {
-						userId: input.userId,
-						clinicId: input.clinicId,
-						context: input.context,
-						timestamp: new Date().toISOString(),
-					},
-				});
+			const { error: userError } = await this.supabase.from("ai_chat_messages").insert({
+				session_id: input.sessionId,
+				role: "user",
+				content: input.message,
+				metadata: {
+					userId: input.userId,
+					clinicId: input.clinicId,
+					context: input.context,
+					timestamp: new Date().toISOString(),
+				},
+			});
 
 			if (userError) {
-				console.error('Error saving user message:', userError);
 			}
 
 			// Save assistant response
-			const { error: assistantError } = await this.supabase
-				.from('ai_chat_messages')
-				.insert({
-					session_id: input.sessionId,
-					role: 'assistant',
-					content: output.response,
-					confidence_score: output.confidence,
-					compliance_flags: output.complianceFlags || {},
-					metadata: {
-						messageId: output.messageId,
-						suggestedActions: output.suggestedActions,
-						escalationRequired: output.escalationRequired,
-						timestamp: new Date().toISOString(),
-					},
-				});
+			const { error: assistantError } = await this.supabase.from("ai_chat_messages").insert({
+				session_id: input.sessionId,
+				role: "assistant",
+				content: output.response,
+				confidence_score: output.confidence,
+				compliance_flags: output.complianceFlags || {},
+				metadata: {
+					messageId: output.messageId,
+					suggestedActions: output.suggestedActions,
+					escalationRequired: output.escalationRequired,
+					timestamp: new Date().toISOString(),
+				},
+			});
 
 			if (assistantError) {
-				console.error('Error saving assistant message:', assistantError);
 			}
 
 			// Update session last_message_at
 			const { error: sessionError } = await this.supabase
-				.from('ai_chat_sessions')
-				.update({ 
+				.from("ai_chat_sessions")
+				.update({
 					last_message_at: new Date().toISOString(),
 					updated_at: new Date().toISOString(),
 				})
-				.eq('id', input.sessionId);
+				.eq("id", input.sessionId);
 
 			if (sessionError) {
-				console.error('Error updating session:', sessionError);
 			}
-
-		} catch (error) {
-			console.error('Error in saveConversation:', error);
+		} catch (_error) {
 			// Don't throw - we don't want to break the chat flow due to save errors
 		}
 	}
 
 	private async updateChatSession(
 		session: ChatSession,
-		input: ChatServiceInput,
+		_input: ChatServiceInput,
 		output: ChatServiceOutput
 	): Promise<void> {
 		try {
 			const { error } = await this.supabase
-				.from('ai_chat_sessions')
+				.from("ai_chat_sessions")
 				.update({
 					last_message_at: new Date().toISOString(),
 					updated_at: new Date().toISOString(),
@@ -421,14 +404,11 @@ export class UniversalChatService extends EnhancedServiceBase {
 						lastActivity: new Date().toISOString(),
 					},
 				})
-				.eq('id', session.id);
+				.eq("id", session.id);
 
 			if (error) {
-				console.error('Error updating chat session:', error);
 			}
-		} catch (error) {
-			console.error('Error in updateChatSession:', error);
-		}
+		} catch (_error) {}
 	}
 
 	private async containsSensitiveData(message: string): Promise<boolean> {
@@ -442,13 +422,19 @@ export class UniversalChatService extends EnhancedServiceBase {
 		return sensitivePatterns.some((pattern) => pattern.test(message));
 	}
 
-	private async calculateResponseConfidence(response: string, input: ChatServiceInput): Promise<number> {
+	private async calculateResponseConfidence(response: string, _input: ChatServiceInput): Promise<number> {
 		let confidence = 0.8; // Base confidence
 
 		// Adjust based on response length and completeness
-		if (response.length > 50) confidence += 0.1;
-		if (response.includes("consulta presencial")) confidence += 0.1; // Appropriate medical guidance
-		if (response.includes("não posso diagnosticar")) confidence += 0.1; // Proper boundaries
+		if (response.length > 50) {
+			confidence += 0.1;
+		}
+		if (response.includes("consulta presencial")) {
+			confidence += 0.1; // Appropriate medical guidance
+		}
+		if (response.includes("não posso diagnosticar")) {
+			confidence += 0.1; // Proper boundaries
+		}
 
 		return Math.min(confidence, 1.0);
 	}
@@ -488,25 +474,6 @@ export class UniversalChatService extends EnhancedServiceBase {
 		actions.push("continue_conversation");
 
 		return actions;
-	}
-
-	private async handleChatError(error: any, input: ChatServiceInput): Promise<void> {
-		console.error("Chat service error", {
-			error: error.message,
-			userId: input.userId,
-			clinicId: input.clinicId,
-			sessionId: input.sessionId,
-		});
-
-		// Log compliance event if error relates to sensitive data
-		if (error.message.includes("sensitive_data")) {
-			console.log("Compliance event logged", {
-				type: "chat_error_sensitive_data",
-				userId: input.userId,
-				severity: "high",
-				details: error.message,
-			});
-		}
 	}
 
 	private generateId(): string {

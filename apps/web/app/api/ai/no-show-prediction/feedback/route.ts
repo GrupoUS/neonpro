@@ -1,4 +1,4 @@
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
+import { createServerClient } from "@neonpro/db";
 import { cookies } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
 
@@ -10,7 +10,15 @@ interface PredictionFeedback {
 
 export async function POST(request: NextRequest) {
 	try {
-		const supabase = createRouteHandlerClient({ cookies });
+		const cookieStore = cookies();
+		const supabase = createServerClient({
+			getAll: () => cookieStore.getAll(),
+			setAll: (cookies) => {
+				cookies.forEach(({ name, value, options }) => {
+					cookieStore.set(name, value, options);
+				});
+			},
+		});
 
 		// Verify authentication
 		const {

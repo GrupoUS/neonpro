@@ -7,35 +7,34 @@
 
 "use client";
 
-import { useState, useEffect, useRef, useId } from "react";
 import {
-	Heart,
-	Stethoscope,
 	Activity,
-	Shield,
-	User,
-	Calendar,
 	AlertTriangle,
+	Brain,
+	Calendar,
 	CheckCircle,
 	Clock,
-	Zap,
-	Thermometer,
-	Users,
-	FileText,
-	Pill,
 	Eye,
-	Brain,
+	FileText,
+	Heart,
+	Pill,
+	Shield,
+	Stethoscope,
+	Thermometer,
+	User,
+	Users,
+	Zap,
 } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../Card";
+import { useEffect, useId, useState } from "react";
 import { Badge } from "../Badge";
 import { Button } from "../Button";
-import { Progress } from "../Progress";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../Card";
 
 // Healthcare Design System Color Palette
 export const HEALTHCARE_COLORS = {
 	primary: {
 		50: "#eff6ff",
-		100: "#dbeafe", 
+		100: "#dbeafe",
 		500: "#3b82f6",
 		600: "#2563eb",
 		700: "#1d4ed8",
@@ -43,10 +42,10 @@ export const HEALTHCARE_COLORS = {
 	},
 	medical: {
 		emergency: "#dc2626", // Critical alerts
-		warning: "#ea580c",   // Important notifications  
-		success: "#16a34a",   // Positive outcomes
-		info: "#0284c7",      // General information
-		neutral: "#6b7280",   // Background elements
+		warning: "#ea580c", // Important notifications
+		success: "#16a34a", // Positive outcomes
+		info: "#0284c7", // General information
+		neutral: "#6b7280", // Background elements
 	},
 	accessibility: {
 		focus: "#2563eb",
@@ -61,7 +60,7 @@ export const HEALTHCARE_COLORS = {
 export const HEALTHCARE_TYPOGRAPHY = {
 	display: "text-4xl font-bold tracking-tight",
 	h1: "text-3xl font-semibold tracking-tight",
-	h2: "text-2xl font-semibold tracking-tight", 
+	h2: "text-2xl font-semibold tracking-tight",
 	h3: "text-xl font-semibold",
 	h4: "text-lg font-medium",
 	body: "text-base",
@@ -72,17 +71,17 @@ export const HEALTHCARE_TYPOGRAPHY = {
 
 // Healthcare Spacing System
 export const HEALTHCARE_SPACING = {
-	xs: "0.25rem",  // 4px
-	sm: "0.5rem",   // 8px  
-	md: "1rem",     // 16px
-	lg: "1.5rem",   // 24px
-	xl: "2rem",     // 32px
-	"2xl": "3rem",  // 48px
-	"3xl": "4rem",  // 64px
+	xs: "0.25rem", // 4px
+	sm: "0.5rem", // 8px
+	md: "1rem", // 16px
+	lg: "1.5rem", // 24px
+	xl: "2rem", // 32px
+	"2xl": "3rem", // 48px
+	"3xl": "4rem", // 64px
 	// Healthcare-specific spacing
 	touch: "2.75rem", // 44px minimum touch target
-	card: "1.5rem",   // Standard card padding
-	section: "2rem",  // Section separation
+	card: "1.5rem", // Standard card padding
+	section: "2rem", // Section separation
 } as const;
 
 // Healthcare Animation Presets
@@ -116,7 +115,7 @@ export const HEALTHCARE_ICONS = {
 } as const;
 
 // Healthcare Status Indicators
-interface HealthcareStatusProps {
+type HealthcareStatusProps = {
 	type: keyof typeof HEALTHCARE_ICONS;
 	status: "critical" | "warning" | "success" | "info" | "neutral";
 	label: string;
@@ -124,65 +123,68 @@ interface HealthcareStatusProps {
 	pulse?: boolean;
 	size?: "sm" | "md" | "lg";
 	className?: string;
-}
+};
 
-export function HealthcareStatus({ 
-	type, 
-	status, 
-	label, 
-	value, 
-	pulse = false, 
+export function HealthcareStatus({
+	type,
+	status,
+	label,
+	value,
+	pulse = false,
 	size = "md",
-	className 
+	className,
 }: HealthcareStatusProps) {
 	const statusId = useId();
 	const Icon = HEALTHCARE_ICONS[type];
-	
+
 	const getStatusColor = () => {
 		switch (status) {
-			case "critical": return "text-red-600 bg-red-50 border-red-200";
-			case "warning": return "text-orange-600 bg-orange-50 border-orange-200";  
-			case "success": return "text-green-600 bg-green-50 border-green-200";
-			case "info": return "text-blue-600 bg-blue-50 border-blue-200";
-			default: return "text-gray-600 bg-gray-50 border-gray-200";
+			case "critical":
+				return "text-red-600 bg-red-50 border-red-200";
+			case "warning":
+				return "text-orange-600 bg-orange-50 border-orange-200";
+			case "success":
+				return "text-green-600 bg-green-50 border-green-200";
+			case "info":
+				return "text-blue-600 bg-blue-50 border-blue-200";
+			default:
+				return "text-gray-600 bg-gray-50 border-gray-200";
 		}
 	};
 
 	const getIconSize = () => {
 		switch (size) {
-			case "sm": return "h-4 w-4";
-			case "lg": return "h-8 w-8";
-			default: return "h-6 w-6";
+			case "sm":
+				return "h-4 w-4";
+			case "lg":
+				return "h-8 w-8";
+			default:
+				return "h-6 w-6";
 		}
 	};
 
 	return (
-		<div 
-			className={`
-				flex items-center gap-3 p-3 rounded-lg border ${getStatusColor()}
+		<div
+			aria-labelledby={statusId}
+			className={`flex items-center gap-3 rounded-lg border p-3 ${getStatusColor()}
 				${pulse ? HEALTHCARE_ANIMATIONS.heartbeat : ""}
 				${className}
 			`}
 			role="status"
-			aria-labelledby={statusId}
 		>
 			<Icon className={`${getIconSize()} flex-shrink-0`} />
-			<div className="flex-1 min-w-0">
-				<p id={statusId} className="font-medium text-sm">
+			<div className="min-w-0 flex-1">
+				<p className="font-medium text-sm" id={statusId}>
 					{label}
 				</p>
-				{value && (
-					<p className="text-xs opacity-80 font-mono">
-						{value}
-					</p>
-				)}
+				{value && <p className="font-mono text-xs opacity-80">{value}</p>}
 			</div>
 		</div>
 	);
 }
 
 // Healthcare Card Component with Medical Context
-interface HealthcareCardProps {
+type HealthcareCardProps = {
 	type: "patient" | "emergency" | "medication" | "appointment" | "diagnostic";
 	title: string;
 	subtitle?: string;
@@ -193,7 +195,7 @@ interface HealthcareCardProps {
 	actions?: React.ReactNode;
 	onClick?: () => void;
 	className?: string;
-}
+};
 
 export function HealthcareCard({
 	type,
@@ -207,75 +209,87 @@ export function HealthcareCard({
 	onClick,
 	className,
 }: HealthcareCardProps) {
-	const cardId = useId();
+	const _cardId = useId();
 	const titleId = useId();
-	
+
 	const getTypeIcon = () => {
 		switch (type) {
-			case "patient": return <User className="h-5 w-5" />;
-			case "emergency": return <AlertTriangle className="h-5 w-5 text-red-500" />;
-			case "medication": return <Pill className="h-5 w-5" />;
-			case "appointment": return <Calendar className="h-5 w-5" />;
-			case "diagnostic": return <Eye className="h-5 w-5" />;
-			default: return <FileText className="h-5 w-5" />;
+			case "patient":
+				return <User className="h-5 w-5" />;
+			case "emergency":
+				return <AlertTriangle className="h-5 w-5 text-red-500" />;
+			case "medication":
+				return <Pill className="h-5 w-5" />;
+			case "appointment":
+				return <Calendar className="h-5 w-5" />;
+			case "diagnostic":
+				return <Eye className="h-5 w-5" />;
+			default:
+				return <FileText className="h-5 w-5" />;
 		}
 	};
 
 	const getStatusColor = () => {
 		switch (status) {
-			case "critical": return "border-l-red-500";
-			case "pending": return "border-l-yellow-500";
-			case "completed": return "border-l-green-500";
-			default: return "border-l-blue-500";
+			case "critical":
+				return "border-l-red-500";
+			case "pending":
+				return "border-l-yellow-500";
+			case "completed":
+				return "border-l-green-500";
+			default:
+				return "border-l-blue-500";
 		}
 	};
 
 	const getPriorityBadge = () => {
 		switch (priority) {
-			case "high": return <Badge variant="destructive">Alta</Badge>;
-			case "low": return <Badge variant="outline">Baixa</Badge>;
-			default: return <Badge variant="secondary">Média</Badge>;
+			case "high":
+				return <Badge variant="destructive">Alta</Badge>;
+			case "low":
+				return <Badge variant="outline">Baixa</Badge>;
+			default:
+				return <Badge variant="secondary">Média</Badge>;
 		}
 	};
 
 	return (
-		<Card 
-			className={`
-				border-l-4 ${getStatusColor()} 
-				${onClick ? "cursor-pointer hover:shadow-md transition-shadow" : ""}
+		<Card
+			aria-labelledby={titleId}
+			className={`border-l-4 ${getStatusColor()} 
+				${onClick ? "cursor-pointer transition-shadow hover:shadow-md" : ""}
 				${className}
 			`}
 			onClick={onClick}
+			onKeyDown={
+				onClick
+					? (e) => {
+							if (e.key === "Enter" || e.key === " ") {
+								e.preventDefault();
+								onClick();
+							}
+						}
+					: undefined
+			}
 			role={onClick ? "button" : "article"}
 			tabIndex={onClick ? 0 : undefined}
-			aria-labelledby={titleId}
-			onKeyDown={onClick ? (e) => {
-				if (e.key === "Enter" || e.key === " ") {
-					e.preventDefault();
-					onClick();
-				}
-			} : undefined}
 		>
 			<CardHeader>
 				<div className="flex items-start justify-between">
 					<div className="flex items-center gap-3">
 						{getTypeIcon()}
 						<div>
-							<CardTitle id={titleId} className="text-lg">
+							<CardTitle className="text-lg" id={titleId}>
 								{title}
 							</CardTitle>
-							{subtitle && (
-								<CardDescription>
-									{subtitle}
-								</CardDescription>
-							)}
+							{subtitle && <CardDescription>{subtitle}</CardDescription>}
 						</div>
 					</div>
 					<div className="flex items-center gap-2">
 						{getPriorityBadge()}
 						{lgpdCompliant && (
-							<Badge variant="outline" className="text-xs">
-								<Shield className="h-3 w-3 mr-1" />
+							<Badge className="text-xs" variant="outline">
+								<Shield className="mr-1 h-3 w-3" />
 								LGPD
 							</Badge>
 						)}
@@ -285,18 +299,14 @@ export function HealthcareCard({
 
 			<CardContent>
 				{children}
-				{actions && (
-					<div className="mt-4 pt-4 border-t flex gap-2">
-						{actions}
-					</div>
-				)}
+				{actions && <div className="mt-4 flex gap-2 border-t pt-4">{actions}</div>}
 			</CardContent>
 		</Card>
 	);
 }
 
 // Healthcare Progress Indicator
-interface HealthcareProgressProps {
+type HealthcareProgressProps = {
 	label: string;
 	value: number;
 	max?: number;
@@ -305,7 +315,7 @@ interface HealthcareProgressProps {
 	critical?: boolean;
 	unit?: string;
 	className?: string;
-}
+};
 
 export function HealthcareProgress({
 	label,
@@ -319,46 +329,57 @@ export function HealthcareProgress({
 }: HealthcareProgressProps) {
 	const progressId = useId();
 	const percentage = Math.round((value / max) * 100);
-	
+
 	const getProgressColor = () => {
-		if (critical && percentage < 30) return "bg-red-500";
-		if (percentage < 50) return "bg-yellow-500";
-		if (percentage >= 80) return "bg-green-500";
+		if (critical && percentage < 30) {
+			return "bg-red-500";
+		}
+		if (percentage < 50) {
+			return "bg-yellow-500";
+		}
+		if (percentage >= 80) {
+			return "bg-green-500";
+		}
 		return "bg-blue-500";
 	};
 
 	const getTypeIcon = () => {
 		switch (type) {
-			case "treatment": return <Heart className="h-4 w-4" />;
-			case "recovery": return <Activity className="h-4 w-4" />;
-			case "medication": return <Pill className="h-4 w-4" />;
-			case "diagnostic": return <Eye className="h-4 w-4" />;
-			default: return <Activity className="h-4 w-4" />;
+			case "treatment":
+				return <Heart className="h-4 w-4" />;
+			case "recovery":
+				return <Activity className="h-4 w-4" />;
+			case "medication":
+				return <Pill className="h-4 w-4" />;
+			case "diagnostic":
+				return <Eye className="h-4 w-4" />;
+			default:
+				return <Activity className="h-4 w-4" />;
 		}
 	};
 
 	return (
-		<div className={`space-y-2 ${className}`} role="progressbar" aria-labelledby={progressId}>
+		<div aria-labelledby={progressId} className={`space-y-2 ${className}`} role="progressbar">
 			<div className="flex items-center justify-between">
 				<div className="flex items-center gap-2">
 					{getTypeIcon()}
-					<label id={progressId} className="text-sm font-medium">
+					<label className="font-medium text-sm" id={progressId}>
 						{label}
 					</label>
 				</div>
-				<div className="text-sm font-medium">
+				<div className="font-medium text-sm">
 					{showPercentage ? `${percentage}%` : `${value}${unit ? ` ${unit}` : ""}`}
 				</div>
 			</div>
-			<div className="w-full bg-gray-200 rounded-full h-2">
-				<div 
+			<div className="h-2 w-full rounded-full bg-gray-200">
+				<div
 					className={`h-2 rounded-full transition-all duration-300 ${getProgressColor()}`}
-					style={{ width: `${percentage}%` }}
 					role="presentation"
+					style={{ width: `${percentage}%` }}
 				/>
 			</div>
 			{critical && percentage < 30 && (
-				<p className="text-xs text-red-600 flex items-center gap-1">
+				<p className="flex items-center gap-1 text-red-600 text-xs">
 					<AlertTriangle className="h-3 w-3" />
 					Nível crítico - atenção necessária
 				</p>
@@ -368,7 +389,7 @@ export function HealthcareProgress({
 }
 
 // Healthcare Button with Medical Context
-interface HealthcareButtonProps {
+type HealthcareButtonProps = {
 	variant?: "emergency" | "primary" | "secondary" | "diagnostic" | "medication";
 	size?: "sm" | "md" | "lg";
 	type?: keyof typeof HEALTHCARE_ICONS;
@@ -378,7 +399,7 @@ interface HealthcareButtonProps {
 	className?: string;
 	onClick?: () => void;
 	disabled?: boolean;
-}
+};
 
 export function HealthcareButton({
 	variant = "primary",
@@ -392,7 +413,7 @@ export function HealthcareButton({
 	disabled,
 }: HealthcareButtonProps) {
 	const Icon = type ? HEALTHCARE_ICONS[type] : null;
-	
+
 	const getVariantStyles = () => {
 		switch (variant) {
 			case "emergency":
@@ -410,9 +431,12 @@ export function HealthcareButton({
 
 	const getSizeStyles = () => {
 		switch (size) {
-			case "sm": return "px-3 py-1.5 text-sm";
-			case "lg": return "px-6 py-3 text-lg";
-			default: return "px-4 py-2 text-base";
+			case "sm":
+				return "px-3 py-1.5 text-sm";
+			case "lg":
+				return "px-6 py-3 text-lg";
+			default:
+				return "px-4 py-2 text-base";
 		}
 	};
 
@@ -421,17 +445,13 @@ export function HealthcareButton({
 			className={`
 				${getVariantStyles()} ${getSizeStyles()}
 				${critical ? "animate-pulse" : ""} 
-				${HEALTHCARE_ANIMATIONS.medical}
-				focus:ring-2 focus:ring-offset-2 focus:outline-none
-				disabled:opacity-50 disabled:cursor-not-allowed
-				flex items-center gap-2 font-medium
-				${className}
+				${HEALTHCARE_ANIMATIONS.medical}focus:ring-2 flex items-center gap-2 focus:outline-none focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 font-medium${className}
 			`}
-			onClick={onClick}
 			disabled={disabled || loading}
+			onClick={onClick}
 		>
 			{loading ? (
-				<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+				<div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
 			) : (
 				Icon && <Icon className="h-4 w-4" />
 			)}
@@ -441,36 +461,33 @@ export function HealthcareButton({
 }
 
 // Healthcare Design System Provider (for global styling)
-interface HealthcareDesignSystemProps {
+type HealthcareDesignSystemProps = {
 	children: React.ReactNode;
 	theme?: "light" | "dark" | "high-contrast";
 	className?: string;
-}
+};
 
-export function HealthcareDesignSystem({ 
-	children, 
-	theme = "light", 
-	className 
-}: HealthcareDesignSystemProps) {
-	const [currentTheme, setCurrentTheme] = useState(theme);
+export function HealthcareDesignSystem({ children, theme = "light", className }: HealthcareDesignSystemProps) {
+	const [currentTheme, _setCurrentTheme] = useState(theme);
 
 	useEffect(() => {
-		document.documentElement.setAttribute('data-healthcare-theme', currentTheme);
+		document.documentElement.setAttribute("data-healthcare-theme", currentTheme);
 	}, [currentTheme]);
 
 	const getThemeClasses = () => {
 		switch (currentTheme) {
-			case "dark": return "dark bg-gray-900 text-white";
-			case "high-contrast": return "high-contrast bg-black text-white";
-			default: return "bg-white text-gray-900";
+			case "dark":
+				return "dark bg-gray-900 text-white";
+			case "high-contrast":
+				return "high-contrast bg-black text-white";
+			default:
+				return "bg-white text-gray-900";
 		}
 	};
 
 	return (
-		<div 
-			className={`
-				healthcare-design-system 
-				${getThemeClasses()}
+		<div
+			className={`healthcare-design-system${getThemeClasses()}
 				${className}
 			`}
 			data-theme={currentTheme}
@@ -481,12 +498,6 @@ export function HealthcareDesignSystem({
 }
 
 // Export all design system components and utilities
-export {
-	HEALTHCARE_COLORS,
-	HEALTHCARE_TYPOGRAPHY, 
-	HEALTHCARE_SPACING,
-	HEALTHCARE_ANIMATIONS,
-	HEALTHCARE_ICONS,
-};
+export { HEALTHCARE_COLORS, HEALTHCARE_TYPOGRAPHY, HEALTHCARE_SPACING, HEALTHCARE_ANIMATIONS, HEALTHCARE_ICONS };
 
 export default HealthcareDesignSystem;

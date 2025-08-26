@@ -4,10 +4,10 @@
  */
 
 export {
-	HEALTHCARE_COLORS,
-	HEALTHCARE_TYPOGRAPHY,
-	HEALTHCARE_SPACING,
+	default as HealthcareDesignSystem,
 	HEALTHCARE_ANIMATIONS,
+	HEALTHCARE_COLORS,
 	HEALTHCARE_ICONS,
-	default as HealthcareDesignSystem
+	HEALTHCARE_SPACING,
+	HEALTHCARE_TYPOGRAPHY,
 } from "./HealthcareDesignSystem";

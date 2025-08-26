@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 interface TestConfig {
 	api: {
@@ -657,7 +657,7 @@ class AIServicesEcosystemTester {
 		// Analyze results
 		let totalRequests = 0;
 		let successfulRequests = 0;
-		const totalResponseTime = 0;
+		const _totalResponseTime = 0;
 
 		results.forEach((resultSet) => {
 			resultSet.forEach((result) => {

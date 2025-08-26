@@ -7,29 +7,23 @@
 
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
 import {
-	Activity,
 	AlertTriangle,
 	BarChart3,
 	Calendar,
 	ChevronRight,
-	Clock,
+	Download,
 	Gauge,
-	Shield,
-	Stethoscope,
+	TouchpadIcon,
 	TrendingDown,
 	TrendingUp,
-	Users,
 	Wifi,
 	WifiOff,
-	Download,
-	Smartphone,
-	TouchpadIcon,
 } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useCallback, useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 
@@ -51,18 +45,18 @@ interface TouchGesture {
 
 // Custom hook for online/offline detection
 const useOnlineStatus = () => {
-	const [isOnline, setIsOnline] = useState(typeof navigator !== 'undefined' ? navigator.onLine : true);
+	const [isOnline, setIsOnline] = useState(typeof navigator !== "undefined" ? navigator.onLine : true);
 
 	useEffect(() => {
 		const handleOnline = () => setIsOnline(true);
 		const handleOffline = () => setIsOnline(false);
 
-		window.addEventListener('online', handleOnline);
-		window.addEventListener('offline', handleOffline);
+		window.addEventListener("online", handleOnline);
+		window.addEventListener("offline", handleOffline);
 
 		return () => {
-			window.removeEventListener('online', handleOnline);
-			window.removeEventListener('offline', handleOffline);
+			window.removeEventListener("online", handleOnline);
+			window.removeEventListener("offline", handleOffline);
 		};
 	}, []);
 
@@ -70,7 +64,7 @@ const useOnlineStatus = () => {
 };
 
 // Custom hook for touch gestures
-const useTouchGestures = (onSwipe?: (direction: 'left' | 'right' | 'up' | 'down') => void) => {
+const useTouchGestures = (onSwipe?: (direction: "left" | "right" | "up" | "down") => void) => {
 	const [touchStart, setTouchStart] = useState<{ x: number; y: number; time: number } | null>(null);
 
 	const handleTouchStart = useCallback((e: React.TouchEvent) => {
@@ -82,32 +76,35 @@ const useTouchGestures = (onSwipe?: (direction: 'left' | 'right' | 'up' | 'down'
 		});
 	}, []);
 
-	const handleTouchEnd = useCallback((e: React.TouchEvent) => {
-		if (!touchStart || !onSwipe) return;
+	const handleTouchEnd = useCallback(
+		(e: React.TouchEvent) => {
+			if (!touchStart || !onSwipe) return;
 
-		const touch = e.changedTouches[0];
-		const endX = touch.clientX;
-		const endY = touch.clientY;
-		const endTime = Date.now();
+			const touch = e.changedTouches[0];
+			const endX = touch.clientX;
+			const endY = touch.clientY;
+			const endTime = Date.now();
 
-		const deltaX = endX - touchStart.x;
-		const deltaY = endY - touchStart.y;
-		const deltaTime = endTime - touchStart.time;
+			const deltaX = endX - touchStart.x;
+			const deltaY = endY - touchStart.y;
+			const deltaTime = endTime - touchStart.time;
 
-		// Minimum swipe distance and maximum time for gesture recognition
-		const minDistance = 50;
-		const maxTime = 500;
+			// Minimum swipe distance and maximum time for gesture recognition
+			const minDistance = 50;
+			const maxTime = 500;
 
-		if (deltaTime > maxTime) return;
+			if (deltaTime > maxTime) return;
 
-		if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > minDistance) {
-			onSwipe(deltaX > 0 ? 'right' : 'left');
-		} else if (Math.abs(deltaY) > minDistance) {
-			onSwipe(deltaY > 0 ? 'down' : 'up');
-		}
+			if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > minDistance) {
+				onSwipe(deltaX > 0 ? "right" : "left");
+			} else if (Math.abs(deltaY) > minDistance) {
+				onSwipe(deltaY > 0 ? "down" : "up");
+			}
 
-		setTouchStart(null);
-	}, [touchStart, onSwipe]);
+			setTouchStart(null);
+		},
+		[touchStart, onSwipe]
+	);
 
 	return { handleTouchStart, handleTouchEnd };
 };
@@ -139,7 +136,7 @@ interface MobileDashboardCardProps extends OfflineCapable {
 	// Accessibility enhancements
 	ariaLabel?: string;
 	ariaDescribedBy?: string;
-	semanticRole?: 'article' | 'button' | 'region';
+	semanticRole?: "article" | "button" | "region";
 }
 
 export function MobileDashboardCard({
@@ -164,43 +161,52 @@ export function MobileDashboardCard({
 	swipeActions,
 	ariaLabel,
 	ariaDescribedBy,
-	semanticRole = 'article',
+	semanticRole = "article",
 }: MobileDashboardCardProps) {
 	// PWA state management
 	const onlineStatus = useOnlineStatus();
 	const [isPressed, setIsPressed] = useState(false);
-	const [lastTouchTime, setLastTouchTime] = useState(0);
-	
+	const [_lastTouchTime, setLastTouchTime] = useState(0);
+
 	// Touch gesture handling
-	const handleSwipe = useCallback((direction: 'left' | 'right' | 'up' | 'down') => {
-		if (swipeActions) {
-			if (direction === 'left' && swipeActions.left) {
-				swipeActions.left.action();
-			} else if (direction === 'right' && swipeActions.right) {
-				swipeActions.right.action();
+	const handleSwipe = useCallback(
+		(direction: "left" | "right" | "up" | "down") => {
+			if (swipeActions) {
+				if (direction === "left" && swipeActions.left) {
+					swipeActions.left.action();
+				} else if (direction === "right" && swipeActions.right) {
+					swipeActions.right.action();
+				}
 			}
-		}
-	}, [swipeActions]);
-	
+		},
+		[swipeActions]
+	);
+
 	const { handleTouchStart, handleTouchEnd } = useTouchGestures(handleSwipe);
-	
+
 	// Enhanced touch feedback
-	const handleTouchStartFeedback = useCallback((e: React.TouchEvent) => {
-		if (touchFeedback) {
-			setIsPressed(true);
-			setLastTouchTime(Date.now());
-			// Haptic feedback on supported devices
-			if ('vibrate' in navigator) {
-				navigator.vibrate(10);
+	const handleTouchStartFeedback = useCallback(
+		(e: React.TouchEvent) => {
+			if (touchFeedback) {
+				setIsPressed(true);
+				setLastTouchTime(Date.now());
+				// Haptic feedback on supported devices
+				if ("vibrate" in navigator) {
+					navigator.vibrate(10);
+				}
 			}
-		}
-		handleTouchStart(e);
-	}, [touchFeedback, handleTouchStart]);
-	
-	const handleTouchEndFeedback = useCallback((e: React.TouchEvent) => {
-		setIsPressed(false);
-		handleTouchEnd(e);
-	}, [handleTouchEnd]);
+			handleTouchStart(e);
+		},
+		[touchFeedback, handleTouchStart]
+	);
+
+	const handleTouchEndFeedback = useCallback(
+		(e: React.TouchEvent) => {
+			setIsPressed(false);
+			handleTouchEnd(e);
+		},
+		[handleTouchEnd]
+	);
 	const getStatusColor = () => {
 		// Override colors for offline/critical states
 		if (!onlineStatus && !hasCachedData) {
@@ -209,7 +215,7 @@ export function MobileDashboardCard({
 		if (criticalData && !onlineStatus && hasCachedData) {
 			return "text-orange-600 bg-orange-50 border-orange-200";
 		}
-		
+
 		switch (status) {
 			case "success":
 				return "text-green-600 bg-green-50 border-green-200";
@@ -227,8 +233,10 @@ export function MobileDashboardCard({
 		const baseLabel = ariaLabel || `${title}: ${value}${description ? `. ${description}` : ""}`;
 		const offlineStatus = !onlineStatus ? ". Dados offline" : "";
 		const criticalStatus = criticalData ? ". Dados críticos de saúde" : "";
-		const trendStatus = trend ? `. Tendência: ${trend.direction === 'up' ? 'subindo' : trend.direction === 'down' ? 'descendo' : 'estável'} ${trend.value}%` : "";
-		
+		const trendStatus = trend
+			? `. Tendência: ${trend.direction === "up" ? "subindo" : trend.direction === "down" ? "descendo" : "estável"} ${trend.value}%`
+			: "";
+
 		return `${baseLabel}${offlineStatus}${criticalStatus}${trendStatus}`;
 	};
 
@@ -260,23 +268,29 @@ export function MobileDashboardCard({
 			aria-label={getCardAriaLabel()}
 			aria-describedby={ariaDescribedBy}
 			aria-live={criticalData ? "polite" : undefined}
-			onKeyDown={onClick ? (e) => {
-				if (e.key === "Enter" || e.key === " ") {
-					e.preventDefault();
-					onClick();
-				}
-			} : undefined}
+			onKeyDown={
+				onClick
+					? (e) => {
+							if (e.key === "Enter" || e.key === " ") {
+								e.preventDefault();
+								onClick();
+							}
+						}
+					: undefined
+			}
 			onTouchStart={handleTouchStartFeedback}
 			onTouchEnd={handleTouchEndFeedback}
 		>
 			<CardHeader className="pb-2">
 				<div className="flex items-center justify-between">
-					<div className={cn(
-						"p-2 rounded-lg transition-all duration-200",
-						getStatusColor(),
-						touchFeedback && "group-hover:neonpro-glow",
-						isPressed && "scale-90"
-					)}>
+					<div
+						className={cn(
+							"p-2 rounded-lg transition-all duration-200",
+							getStatusColor(),
+							touchFeedback && "group-hover:neonpro-glow",
+							isPressed && "scale-90"
+						)}
+					>
 						<Icon className="h-4 w-4" aria-hidden="true" />
 					</div>
 					<div className="flex items-center gap-1">
@@ -292,62 +306,52 @@ export function MobileDashboardCard({
 								)}
 							</div>
 						)}
-						
+
 						{criticalData && (
 							<Badge variant="destructive" className="text-xs" aria-label="Dados críticos de saúde">
 								<AlertTriangle className="h-3 w-3 mr-1" />
 								Crítico
 							</Badge>
 						)}
-						
+
 						{badge && (
-							<Badge 
-								variant="secondary" 
-								className="text-xs"
-								aria-label={`Badge: ${badge}`}
-							>
+							<Badge variant="secondary" className="text-xs" aria-label={`Badge: ${badge}`}>
 								{badge}
 							</Badge>
 						)}
-						
+
 						{/* Mobile touch indicator */}
-						{touchFeedback && (
-							<TouchpadIcon className="h-3 w-3 text-muted-foreground/50" aria-hidden="true" />
-						)}
-						
-						{onClick && (
-							<ChevronRight 
-								className="h-4 w-4 text-muted-foreground" 
-								aria-hidden="true"
-							/>
-						)}
+						{touchFeedback && <TouchpadIcon className="h-3 w-3 text-muted-foreground/50" aria-hidden="true" />}
+
+						{onClick && <ChevronRight className="h-4 w-4 text-muted-foreground" aria-hidden="true" />}
 					</div>
 				</div>
 				<div className="flex items-center justify-between">
-					<CardTitle 
+					<CardTitle
 						className={cn(
 							"text-sm font-medium transition-colors",
 							!onlineStatus && !hasCachedData ? "text-muted-foreground" : "text-foreground"
 						)}
-						id={`card-title-${title.toLowerCase().replace(/\s+/g, '-')}`}
+						id={`card-title-${title.toLowerCase().replace(/\s+/g, "-")}`}
 					>
 						{title}
 					</CardTitle>
-					
+
 					{/* Last sync indicator for offline data */}
 					{lastSync && !onlineStatus && hasCachedData && (
-						<span className="text-xs text-muted-foreground" aria-label={`Última sincronização: ${lastSync.toLocaleString('pt-BR')}`}>
-							{lastSync.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+						<span
+							className="text-xs text-muted-foreground"
+							aria-label={`Última sincronização: ${lastSync.toLocaleString("pt-BR")}`}
+						>
+							{lastSync.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
 						</span>
 					)}
 				</div>
 			</CardHeader>
-			
+
 			<CardContent className="space-y-2">
 				<div className="flex items-baseline justify-between">
-					<div className="text-2xl font-bold text-foreground">
-						{value}
-					</div>
+					<div className="text-2xl font-bold text-foreground">{value}</div>
 					{trend && (
 						<div className="flex items-center space-x-1 text-xs">
 							{getTrendIcon()}
@@ -356,27 +360,20 @@ export function MobileDashboardCard({
 									trend.direction === "up"
 										? "text-green-600"
 										: trend.direction === "down"
-										? "text-red-600"
-										: "text-muted-foreground"
+											? "text-red-600"
+											: "text-muted-foreground"
 								}
 							>
-								{trend.value > 0 ? "+" : ""}{trend.value}%
+								{trend.value > 0 ? "+" : ""}
+								{trend.value}%
 							</span>
 						</div>
 					)}
 				</div>
 
-				{description && (
-					<p className="text-xs text-muted-foreground">
-						{description}
-					</p>
-				)}
+				{description && <p className="text-xs text-muted-foreground">{description}</p>}
 
-				{trend?.label && (
-					<p className="text-xs text-muted-foreground">
-						{trend.label}
-					</p>
-				)}
+				{trend?.label && <p className="text-xs text-muted-foreground">{trend.label}</p>}
 
 				{progress !== undefined && (
 					<div className="space-y-1">
@@ -419,7 +416,7 @@ export function MobileMetricCard({
 	icon: React.ComponentType<{ className?: string }>;
 }) {
 	const percentage = target ? Math.round((current / target) * 100) : undefined;
-	
+
 	return (
 		<MobileDashboardCard
 			title={title}
@@ -483,11 +480,7 @@ export function MobileAlertCard({
 
 // Grid layouts for mobile dashboards
 export function MobileDashboardGrid({ children }: { children: React.ReactNode }) {
-	return (
-		<div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4">
-			{children}
-		</div>
-	);
+	return <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4">{children}</div>;
 }
 
 export function MobileDashboardSection({
@@ -503,14 +496,10 @@ export function MobileDashboardSection({
 		<div className="space-y-4">
 			<div className="px-4">
 				<h2 className="text-lg font-semibold text-foreground">{title}</h2>
-				{description && (
-					<p className="text-sm text-muted-foreground">{description}</p>
-				)}
+				{description && <p className="text-sm text-muted-foreground">{description}</p>}
 			</div>
 			<div className="px-4">
-				<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-					{children}
-				</div>
+				<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">{children}</div>
 			</div>
 		</div>
 	);
@@ -547,9 +536,7 @@ export function MobileQuickActions() {
 
 	return (
 		<div className="px-4">
-			<h3 className="text-sm font-medium text-muted-foreground mb-3">
-				Ações Rápidas
-			</h3>
+			<h3 className="text-sm font-medium text-muted-foreground mb-3">Ações Rápidas</h3>
 			<div className="grid grid-cols-2 gap-3">
 				{quickActions.map((action) => {
 					const Icon = action.icon;
@@ -608,15 +595,9 @@ export function MobileStatusIndicator({
 	return (
 		<div className="flex items-center gap-2 px-4 py-2 bg-muted/50 rounded-lg">
 			<div className="relative">
-				<div
-					className={`h-2 w-2 rounded-full ${config.color} ${
-						config.pulse ? "animate-pulse" : ""
-					}`}
-				/>
+				<div className={`h-2 w-2 rounded-full ${config.color} ${config.pulse ? "animate-pulse" : ""}`} />
 			</div>
-			<span className="text-xs text-muted-foreground">
-				{label || config.text}
-			</span>
+			<span className="text-xs text-muted-foreground">{label || config.text}</span>
 		</div>
 	);
 }

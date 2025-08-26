@@ -3,10 +3,10 @@
 import type { Alert, HealthCheckResult, PerformanceInsight } from "@neonpro/performance-monitor";
 import { useEffect, useState } from "react";
 
-interface DashboardProps {
+type DashboardProps = {
 	performanceMonitor?: any;
 	refreshInterval?: number;
-}
+};
 
 export function PerformanceDashboard({ performanceMonitor, refreshInterval = 30_000 }: DashboardProps) {
 	const [alerts, setAlerts] = useState<Alert[]>([]);
@@ -16,7 +16,9 @@ export function PerformanceDashboard({ performanceMonitor, refreshInterval = 30_
 	const [lastUpdated, setLastUpdated] = useState<Date>();
 
 	useEffect(() => {
-		if (!performanceMonitor) return;
+		if (!performanceMonitor) {
+			return;
+		}
 
 		const fetchDashboardData = async () => {
 			try {
@@ -32,8 +34,7 @@ export function PerformanceDashboard({ performanceMonitor, refreshInterval = 30_
 				setHealthChecks(healthResults);
 				setInsights(recentInsights);
 				setLastUpdated(new Date());
-			} catch (error) {
-				console.error("[PerformanceDashboard] Error fetching data:", error);
+			} catch (_error) {
 			} finally {
 				setIsLoading(false);
 			}
@@ -49,9 +50,7 @@ export function PerformanceDashboard({ performanceMonitor, refreshInterval = 30_
 			await performanceMonitor.acknowledgeAlert(alertId, "dashboard-user");
 			const updatedAlerts = await performanceMonitor.getActiveAlerts();
 			setAlerts(updatedAlerts);
-		} catch (error) {
-			console.error("[PerformanceDashboard] Error acknowledging alert:", error);
-		}
+		} catch (_error) {}
 	};
 
 	if (isLoading) {

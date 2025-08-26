@@ -9,10 +9,10 @@ export class EdgeCacheLayer implements CacheOperation {
 		averageResponseTime: 0,
 	};
 	private responseTimeBuffer: number[] = [];
-	private redis: any; // Will be replaced with actual Redis client
+	private readonly redis: any; // Will be replaced with actual Redis client
 
 	constructor(
-		private config = {
+		private readonly config = {
 			redisUrl: process.env.REDIS_URL || "redis://localhost:6379",
 			defaultTTL: 10 * 60, // 10 minutes in seconds
 			maxTTL: 60 * 60, // 1 hour in seconds
@@ -27,15 +27,13 @@ export class EdgeCacheLayer implements CacheOperation {
 		try {
 			// Mock Redis client for now - will be replaced with actual implementation
 			this.redis = {
-				get: async (key: string) => null,
-				setex: async (key: string, ttl: number, value: string) => {},
-				del: async (key: string) => {},
+				get: async (_key: string) => null,
+				setex: async (_key: string, _ttl: number, _value: string) => {},
+				del: async (_key: string) => {},
 				flushall: async () => {},
-				keys: async (pattern: string) => [],
+				keys: async (_pattern: string) => [],
 			};
-		} catch (error) {
-			console.error("Failed to initialize Redis:", error);
-		}
+		} catch (_error) {}
 	}
 	async get<T>(key: string): Promise<T | null> {
 		const startTime = performance.now();
@@ -57,8 +55,7 @@ export class EdgeCacheLayer implements CacheOperation {
 			this.stats.hits++;
 			this.updateStats(startTime);
 			return value;
-		} catch (error) {
-			console.error("Edge cache get error:", error);
+		} catch (_error) {
 			this.stats.misses++;
 			this.updateStats(startTime);
 			return null;
@@ -79,25 +76,19 @@ export class EdgeCacheLayer implements CacheOperation {
 			};
 
 			await this.redis.setex(this.buildKey(key), effectiveTTL, JSON.stringify(cacheEntry));
-		} catch (error) {
-			console.error("Edge cache set error:", error);
-		}
+		} catch (_error) {}
 	}
 	async delete(key: string): Promise<void> {
 		try {
 			await this.redis.del(this.buildKey(key));
-		} catch (error) {
-			console.error("Edge cache delete error:", error);
-		}
+		} catch (_error) {}
 	}
 
 	async clear(): Promise<void> {
 		try {
 			await this.redis.flushall();
 			this.resetStats();
-		} catch (error) {
-			console.error("Edge cache clear error:", error);
-		}
+		} catch (_error) {}
 	}
 
 	async getStats(): Promise<CacheStats> {
@@ -112,14 +103,12 @@ export class EdgeCacheLayer implements CacheOperation {
 				const cached = await this.redis.get(key);
 				if (cached) {
 					const parsed = JSON.parse(cached);
-					if (parsed.tags && parsed.tags.some((tag: string) => tags.includes(tag))) {
+					if (parsed.tags?.some((tag: string) => tags.includes(tag))) {
 						await this.redis.del(key);
 					}
 				}
 			}
-		} catch (error) {
-			console.error("Edge cache tag invalidation error:", error);
-		}
+		} catch (_error) {}
 	}
 	private buildKey(key: string): string {
 		return `neonpro:edge:${key}`;

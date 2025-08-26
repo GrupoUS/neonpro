@@ -1,18 +1,8 @@
-/**
- * Simple Enterprise Services Validation Test (JavaScript)
- * Tests the basic structure and imports of FASE 2 enterprise services
- */
-
-console.log("🧪 Testing FASE 2 Enterprise Services Structure...\n");
-
 async function validateEnterpriseStructure() {
 	const results = [];
-
-	// 1. Check if enterprise cache service file exists and has basic structure
-	console.log("1️⃣ Checking EnterpriseCacheService structure...");
 	try {
-		const fs = require("fs");
-		const path = require("path");
+		const fs = require("node:fs");
+		const path = require("node:path");
 
 		const cacheServicePath = path.join(__dirname, "../enterprise/cache/EnterpriseCacheService.ts");
 		if (fs.existsSync(cacheServicePath)) {
@@ -23,26 +13,19 @@ async function validateEnterpriseStructure() {
 				content.includes("get<T>") &&
 				content.includes("set<T>")
 			) {
-				console.log("✅ EnterpriseCacheService structure: VALID");
 				results.push({ service: "cache", status: "valid" });
 			} else {
-				console.log("❌ EnterpriseCacheService structure: INVALID");
 				results.push({ service: "cache", status: "invalid" });
 			}
 		} else {
-			console.log("❌ EnterpriseCacheService file: NOT_FOUND");
 			results.push({ service: "cache", status: "not_found" });
 		}
-	} catch (error) {
-		console.log("❌ EnterpriseCacheService check failed:", error.message);
+	} catch (_error) {
 		results.push({ service: "cache", status: "error" });
 	}
-
-	// 2. Check analytics service
-	console.log("\n2️⃣ Checking EnterpriseAnalyticsService structure...");
 	try {
-		const fs = require("fs");
-		const path = require("path");
+		const fs = require("node:fs");
+		const path = require("node:path");
 
 		const analyticsPath = path.join(__dirname, "../enterprise/analytics/EnterpriseAnalyticsService.ts");
 		if (fs.existsSync(analyticsPath)) {
@@ -53,26 +36,19 @@ async function validateEnterpriseStructure() {
 				content.includes("trackEvent") &&
 				content.includes("performance")
 			) {
-				console.log("✅ EnterpriseAnalyticsService structure: VALID");
 				results.push({ service: "analytics", status: "valid" });
 			} else {
-				console.log("❌ EnterpriseAnalyticsService structure: INVALID");
 				results.push({ service: "analytics", status: "invalid" });
 			}
 		} else {
-			console.log("❌ EnterpriseAnalyticsService file: NOT_FOUND");
 			results.push({ service: "analytics", status: "not_found" });
 		}
-	} catch (error) {
-		console.log("❌ EnterpriseAnalyticsService check failed:", error.message);
+	} catch (_error) {
 		results.push({ service: "analytics", status: "error" });
 	}
-
-	// 3. Check security service
-	console.log("\n3️⃣ Checking EnterpriseSecurityService structure...");
 	try {
-		const fs = require("fs");
-		const path = require("path");
+		const fs = require("node:fs");
+		const path = require("node:path");
 
 		const securityPath = path.join(__dirname, "../enterprise/security/EnterpriseSecurityService.ts");
 		if (fs.existsSync(securityPath)) {
@@ -83,26 +59,19 @@ async function validateEnterpriseStructure() {
 				content.includes("validateAccess") &&
 				content.includes("encryption")
 			) {
-				console.log("✅ EnterpriseSecurityService structure: VALID");
 				results.push({ service: "security", status: "valid" });
 			} else {
-				console.log("❌ EnterpriseSecurityService structure: INVALID");
 				results.push({ service: "security", status: "invalid" });
 			}
 		} else {
-			console.log("❌ EnterpriseSecurityService file: NOT_FOUND");
 			results.push({ service: "security", status: "not_found" });
 		}
-	} catch (error) {
-		console.log("❌ EnterpriseSecurityService check failed:", error.message);
+	} catch (_error) {
 		results.push({ service: "security", status: "error" });
 	}
-
-	// 4. Check audit service
-	console.log("\n4️⃣ Checking EnterpriseAuditService structure...");
 	try {
-		const fs = require("fs");
-		const path = require("path");
+		const fs = require("node:fs");
+		const path = require("node:path");
 
 		const auditPath = path.join(__dirname, "../enterprise/audit/EnterpriseAuditService.ts");
 		if (fs.existsSync(auditPath)) {
@@ -113,26 +82,19 @@ async function validateEnterpriseStructure() {
 				content.includes("logEvent") &&
 				content.includes("compliance")
 			) {
-				console.log("✅ EnterpriseAuditService structure: VALID");
 				results.push({ service: "audit", status: "valid" });
 			} else {
-				console.log("❌ EnterpriseAuditService structure: INVALID");
 				results.push({ service: "audit", status: "invalid" });
 			}
 		} else {
-			console.log("❌ EnterpriseAuditService file: NOT_FOUND");
 			results.push({ service: "audit", status: "not_found" });
 		}
-	} catch (error) {
-		console.log("❌ EnterpriseAuditService check failed:", error.message);
+	} catch (_error) {
 		results.push({ service: "audit", status: "error" });
 	}
-
-	// 5. Check health service
-	console.log("\n5️⃣ Checking EnterpriseHealthCheckService structure...");
 	try {
-		const fs = require("fs");
-		const path = require("path");
+		const fs = require("node:fs");
+		const path = require("node:path");
 
 		const healthPath = path.join(__dirname, "../health/EnterpriseHealthCheckService.ts");
 		if (fs.existsSync(healthPath)) {
@@ -142,26 +104,19 @@ async function validateEnterpriseStructure() {
 				content.includes("checkHealth") &&
 				(content.includes("connectivity") || content.includes("performance"))
 			) {
-				console.log("✅ EnterpriseHealthCheckService structure: VALID");
 				results.push({ service: "health", status: "valid" });
 			} else {
-				console.log("❌ EnterpriseHealthCheckService structure: INVALID");
 				results.push({ service: "health", status: "invalid" });
 			}
 		} else {
-			console.log("❌ EnterpriseHealthCheckService file: NOT_FOUND");
 			results.push({ service: "health", status: "not_found" });
 		}
-	} catch (error) {
-		console.log("❌ EnterpriseHealthCheckService check failed:", error.message);
+	} catch (_error) {
 		results.push({ service: "health", status: "error" });
 	}
-
-	// 6. Check EnhancedServiceBase integration
-	console.log("\n6️⃣ Checking EnhancedServiceBase integration...");
 	try {
-		const fs = require("fs");
-		const path = require("path");
+		const fs = require("node:fs");
+		const path = require("node:path");
 
 		const basePath = path.join(__dirname, "../base/EnhancedServiceBase.ts");
 		if (fs.existsSync(basePath)) {
@@ -173,46 +128,30 @@ async function validateEnterpriseStructure() {
 				(content.includes("enterpriseAudit") || content.includes("EnterpriseAuditService")) &&
 				(content.includes("enterpriseHealth") || content.includes("EnterpriseHealthCheckService"))
 			) {
-				console.log("✅ EnhancedServiceBase integration: VALID");
 				results.push({ service: "base_integration", status: "valid" });
 			} else {
-				console.log("❌ EnhancedServiceBase integration: INVALID");
 				results.push({ service: "base_integration", status: "invalid" });
 			}
 		} else {
-			console.log("❌ EnhancedServiceBase file: NOT_FOUND");
 			results.push({ service: "base_integration", status: "not_found" });
 		}
-	} catch (error) {
-		console.log("❌ EnhancedServiceBase check failed:", error.message);
+	} catch (_error) {
 		results.push({ service: "base_integration", status: "error" });
 	}
-
-	// Summary
-	console.log("\n📊 FASE 2 VALIDATION SUMMARY:");
 	const validServices = results.filter((r) => r.status === "valid").length;
 	const totalServices = results.length;
 
 	results.forEach((result) => {
-		const status = result.status === "valid" ? "✅" : "❌";
-		console.log(`${status} ${result.service}: ${result.status.toUpperCase()}`);
+		const _status = result.status === "valid" ? "✅" : "❌";
 	});
 
-	console.log(`\n🏆 VALIDATION SCORE: ${validServices}/${totalServices} services valid`);
-
 	if (validServices === totalServices) {
-		console.log("🎉 ALL ENTERPRISE SERVICES STRUCTURE VALIDATED SUCCESSFULLY!");
-		console.log("📊 FASE 2 IMPLEMENTATION STATUS: ✅ STRUCTURE_VALIDATED");
 		return true;
-	} else if (validServices >= totalServices * 0.8) {
-		console.log("✅ Most enterprise services structure validated successfully!");
-		console.log("📊 FASE 2 IMPLEMENTATION STATUS: ✅ MOSTLY_VALIDATED");
-		return true;
-	} else {
-		console.log("⚠️ Some enterprise services have structure issues");
-		console.log("📊 FASE 2 IMPLEMENTATION STATUS: ⚠️ PARTIAL_VALIDATION");
-		return false;
 	}
+	if (validServices >= totalServices * 0.8) {
+		return true;
+	}
+	return false;
 }
 
 // Run validation
@@ -220,7 +159,6 @@ validateEnterpriseStructure()
 	.then((success) => {
 		process.exit(success ? 0 : 1);
 	})
-	.catch((error) => {
-		console.error("❌ Validation failed:", error);
+	.catch((_error) => {
 		process.exit(1);
 	});

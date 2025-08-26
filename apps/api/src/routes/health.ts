@@ -3,16 +3,16 @@ import { Hono } from "hono";
 
 const health = new Hono();
 
-interface HealthCheckResult {
+type HealthCheckResult = {
 	service: string;
 	status: "healthy" | "degraded" | "unhealthy";
 	timestamp: string;
 	response_time_ms: number;
 	details: any;
 	version: string;
-}
+};
 
-interface SystemHealth {
+type SystemHealth = {
 	overall_status: "healthy" | "degraded" | "unhealthy";
 	services: HealthCheckResult[];
 	system_info: {
@@ -26,7 +26,7 @@ interface SystemHealth {
 		supabase: HealthCheckResult;
 		redis: HealthCheckResult;
 	};
-}
+};
 
 class HealthCheckService {
 	private static startTime = Date.now();
@@ -158,8 +158,12 @@ class HealthCheckService {
 		const unhealthyCount = allChecks.filter((check) => check.status === "unhealthy").length;
 		const degradedCount = allChecks.filter((check) => check.status === "degraded").length;
 
-		if (unhealthyCount > 0) return "unhealthy";
-		if (degradedCount > 0) return "degraded";
+		if (unhealthyCount > 0) {
+			return "unhealthy";
+		}
+		if (degradedCount > 0) {
+			return "degraded";
+		}
 		return "healthy";
 	}
 }

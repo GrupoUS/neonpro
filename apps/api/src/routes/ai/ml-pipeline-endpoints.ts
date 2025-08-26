@@ -3,24 +3,21 @@
  * Comprehensive API for ML model management, A/B testing, and drift detection
  */
 
-import { Hono } from "hono";
 import type {
-	ModelVersion,
-	ABTest,
 	ABTestResult,
+	CreateABTestRequest,
+	CreateModelVersionRequest,
 	DriftDetection,
 	DriftDetectionResult,
-	CreateModelVersionRequest,
-	CreateABTestRequest,
-	DriftDetectionRequest,
 	MLPipelineConfig,
+	MLPipelineStatus,
 	ModelPerformanceMetrics,
-	MLPipelineStatus
 } from "@neonpro/types";
+import { Hono } from "hono";
 
 const mlPipeline = new Hono();
 
-interface ModelVersionInfo {
+type ModelVersionInfo = {
 	id: string;
 	model_name: string;
 	version: string;
@@ -29,9 +26,9 @@ interface ModelVersionInfo {
 	created_at: string;
 	deployed_at?: string;
 	metadata: Record<string, any>;
-}
+};
 
-interface ABTestExperiment {
+type ABTestExperiment = {
 	id: string;
 	name: string;
 	model_a_id: string;
@@ -41,23 +38,23 @@ interface ABTestExperiment {
 	start_date: string;
 	end_date?: string;
 	success_criteria: Record<string, any>;
-}
+};
 
-interface DriftAnalysisRequest {
+type DriftAnalysisRequest = {
 	model_id: string;
 	data_source: "live" | "batch";
 	reference_period_days?: number;
 	analysis_window_hours?: number;
 	sensitivity?: "low" | "medium" | "high";
-}
+};
 
-interface ModelDeploymentStatus {
+type ModelDeploymentStatus = {
 	model_id: string;
 	status: "preparing" | "deploying" | "active" | "rollback" | "failed";
 	progress: number;
 	estimated_completion?: string;
 	error_details?: string;
-}
+};
 
 // =============================================================================
 // MODEL MANAGEMENT ENDPOINTS
@@ -67,7 +64,7 @@ interface ModelDeploymentStatus {
 mlPipeline.get("/models", async (c) => {
 	try {
 		const tenantId = c.req.header("x-tenant-id");
-		
+
 		if (!tenantId) {
 			return c.json({ success: false, error: "Tenant ID required" }, 400);
 		}
@@ -83,10 +80,10 @@ mlPipeline.get("/models", async (c) => {
 				created_at: "2025-01-15T10:00:00Z",
 				deployed_at: "2025-01-16T14:30:00Z",
 				metadata: {
-					training_samples: 10000,
+					training_samples: 10_000,
 					validation_accuracy: 0.89,
-					features_count: 15
-				}
+					features_count: 15,
+				},
 			},
 			{
 				id: "model_002",
@@ -98,23 +95,26 @@ mlPipeline.get("/models", async (c) => {
 				metadata: {
 					training_samples: 8500,
 					validation_accuracy: 0.84,
-					features_count: 22
-				}
-			}
+					features_count: 22,
+				},
+			},
 		];
 
 		return c.json({
 			success: true,
 			data: models,
 			total: models.length,
-			timestamp: new Date().toISOString()
+			timestamp: new Date().toISOString(),
 		});
 	} catch (error) {
-		return c.json({
-			success: false,
-			error: (error as Error).message,
-			timestamp: new Date().toISOString()
-		}, 500);
+		return c.json(
+			{
+				success: false,
+				error: (error as Error).message,
+				timestamp: new Date().toISOString(),
+			},
+			500
+		);
 	}
 });
 
@@ -122,7 +122,7 @@ mlPipeline.get("/models", async (c) => {
 mlPipeline.post("/models", async (c) => {
 	try {
 		const tenantId = c.req.header("x-tenant-id");
-		
+
 		if (!tenantId) {
 			return c.json({ success: false, error: "Tenant ID required" }, 400);
 		}
@@ -131,11 +131,14 @@ mlPipeline.post("/models", async (c) => {
 		const request: CreateModelVersionRequest = body;
 
 		// Validate required fields
-		if (!request.model_name || !request.version || !request.clinic_id) {
-			return c.json({
-				success: false,
-				error: "Missing required fields: model_name, version, clinic_id"
-			}, 400);
+		if (!(request.model_name && request.version && request.clinic_id)) {
+			return c.json(
+				{
+					success: false,
+					error: "Missing required fields: model_name, version, clinic_id",
+				},
+				400
+			);
 		}
 
 		// Create model via Supabase
@@ -146,21 +149,24 @@ mlPipeline.post("/models", async (c) => {
 			status: "training",
 			accuracy: request.accuracy || 0,
 			created_at: new Date().toISOString(),
-			metadata: request.model_config || {}
+			metadata: request.model_config || {},
 		};
 
 		return c.json({
 			success: true,
 			data: newModel,
 			message: "Model version created successfully",
-			timestamp: new Date().toISOString()
+			timestamp: new Date().toISOString(),
 		});
 	} catch (error) {
-		return c.json({
-			success: false,
-			error: (error as Error).message,
-			timestamp: new Date().toISOString()
-		}, 500);
+		return c.json(
+			{
+				success: false,
+				error: (error as Error).message,
+				timestamp: new Date().toISOString(),
+			},
+			500
+		);
 	}
 });
 
@@ -169,7 +175,7 @@ mlPipeline.post("/models/:modelId/deploy", async (c) => {
 	try {
 		const modelId = c.req.param("modelId");
 		const tenantId = c.req.header("x-tenant-id");
-		
+
 		if (!tenantId) {
 			return c.json({ success: false, error: "Tenant ID required" }, 400);
 		}
@@ -178,21 +184,24 @@ mlPipeline.post("/models/:modelId/deploy", async (c) => {
 			model_id: modelId,
 			status: "deploying",
 			progress: 0,
-			estimated_completion: new Date(Date.now() + 5 * 60 * 1000).toISOString() // 5 minutes
+			estimated_completion: new Date(Date.now() + 5 * 60 * 1000).toISOString(), // 5 minutes
 		};
 
 		return c.json({
 			success: true,
 			data: deployment,
 			message: "Model deployment initiated",
-			timestamp: new Date().toISOString()
+			timestamp: new Date().toISOString(),
 		});
 	} catch (error) {
-		return c.json({
-			success: false,
-			error: (error as Error).message,
-			timestamp: new Date().toISOString()
-		}, 500);
+		return c.json(
+			{
+				success: false,
+				error: (error as Error).message,
+				timestamp: new Date().toISOString(),
+			},
+			500
+		);
 	}
 });
 
@@ -201,7 +210,7 @@ mlPipeline.get("/models/:modelId/deployment-status", async (c) => {
 	try {
 		const modelId = c.req.param("modelId");
 		const tenantId = c.req.header("x-tenant-id");
-		
+
 		if (!tenantId) {
 			return c.json({ success: false, error: "Tenant ID required" }, 400);
 		}
@@ -209,20 +218,23 @@ mlPipeline.get("/models/:modelId/deployment-status", async (c) => {
 		const status: ModelDeploymentStatus = {
 			model_id: modelId,
 			status: "active",
-			progress: 100
+			progress: 100,
 		};
 
 		return c.json({
 			success: true,
 			data: status,
-			timestamp: new Date().toISOString()
+			timestamp: new Date().toISOString(),
 		});
 	} catch (error) {
-		return c.json({
-			success: false,
-			error: (error as Error).message,
-			timestamp: new Date().toISOString()
-		}, 500);
+		return c.json(
+			{
+				success: false,
+				error: (error as Error).message,
+				timestamp: new Date().toISOString(),
+			},
+			500
+		);
 	}
 });
 
@@ -249,20 +261,23 @@ mlPipeline.get("/models/:modelId/metrics", async (c) => {
 			f1_score: 0.87,
 			avg_confidence: 0.76,
 			error_rate: 0.13,
-			clinic_id: tenantId
+			clinic_id: tenantId,
 		};
 
 		return c.json({
 			success: true,
 			data: metrics,
-			timestamp: new Date().toISOString()
+			timestamp: new Date().toISOString(),
 		});
 	} catch (error) {
-		return c.json({
-			success: false,
-			error: (error as Error).message,
-			timestamp: new Date().toISOString()
-		}, 500);
+		return c.json(
+			{
+				success: false,
+				error: (error as Error).message,
+				timestamp: new Date().toISOString(),
+			},
+			500
+		);
 	}
 });
 
@@ -274,7 +289,7 @@ mlPipeline.get("/models/:modelId/metrics", async (c) => {
 mlPipeline.get("/ab-tests", async (c) => {
 	try {
 		const tenantId = c.req.header("x-tenant-id");
-		
+
 		if (!tenantId) {
 			return c.json({ success: false, error: "Tenant ID required" }, 400);
 		}
@@ -290,23 +305,26 @@ mlPipeline.get("/ab-tests", async (c) => {
 				start_date: "2025-01-15T00:00:00Z",
 				success_criteria: {
 					accuracy_improvement: 0.02,
-					min_sample_size: 1000
-				}
-			}
+					min_sample_size: 1000,
+				},
+			},
 		];
 
 		return c.json({
 			success: true,
 			data: tests,
 			total: tests.length,
-			timestamp: new Date().toISOString()
+			timestamp: new Date().toISOString(),
 		});
 	} catch (error) {
-		return c.json({
-			success: false,
-			error: (error as Error).message,
-			timestamp: new Date().toISOString()
-		}, 500);
+		return c.json(
+			{
+				success: false,
+				error: (error as Error).message,
+				timestamp: new Date().toISOString(),
+			},
+			500
+		);
 	}
 });
 
@@ -314,7 +332,7 @@ mlPipeline.get("/ab-tests", async (c) => {
 mlPipeline.post("/ab-tests", async (c) => {
 	try {
 		const tenantId = c.req.header("x-tenant-id");
-		
+
 		if (!tenantId) {
 			return c.json({ success: false, error: "Tenant ID required" }, 400);
 		}
@@ -331,21 +349,24 @@ mlPipeline.post("/ab-tests", async (c) => {
 			traffic_split: request.traffic_split,
 			start_date: new Date().toISOString(),
 			end_date: request.end_date,
-			success_criteria: request.success_criteria
+			success_criteria: request.success_criteria,
 		};
 
 		return c.json({
 			success: true,
 			data: newTest,
 			message: "A/B test created successfully",
-			timestamp: new Date().toISOString()
+			timestamp: new Date().toISOString(),
 		});
 	} catch (error) {
-		return c.json({
-			success: false,
-			error: (error as Error).message,
-			timestamp: new Date().toISOString()
-		}, 500);
+		return c.json(
+			{
+				success: false,
+				error: (error as Error).message,
+				timestamp: new Date().toISOString(),
+			},
+			500
+		);
 	}
 });
 
@@ -354,7 +375,7 @@ mlPipeline.post("/ab-tests/:testId/start", async (c) => {
 	try {
 		const testId = c.req.param("testId");
 		const tenantId = c.req.header("x-tenant-id");
-		
+
 		if (!tenantId) {
 			return c.json({ success: false, error: "Tenant ID required" }, 400);
 		}
@@ -363,14 +384,17 @@ mlPipeline.post("/ab-tests/:testId/start", async (c) => {
 			success: true,
 			message: "A/B test started successfully",
 			data: { testId, status: "running" },
-			timestamp: new Date().toISOString()
+			timestamp: new Date().toISOString(),
 		});
 	} catch (error) {
-		return c.json({
-			success: false,
-			error: (error as Error).message,
-			timestamp: new Date().toISOString()
-		}, 500);
+		return c.json(
+			{
+				success: false,
+				error: (error as Error).message,
+				timestamp: new Date().toISOString(),
+			},
+			500
+		);
 	}
 });
 
@@ -379,7 +403,7 @@ mlPipeline.get("/ab-tests/:testId/results", async (c) => {
 	try {
 		const testId = c.req.param("testId");
 		const tenantId = c.req.header("x-tenant-id");
-		
+
 		if (!tenantId) {
 			return c.json({ success: false, error: "Tenant ID required" }, 400);
 		}
@@ -401,21 +425,24 @@ mlPipeline.get("/ab-tests/:testId/results", async (c) => {
 				clinic_id: tenantId,
 				evaluation_date: new Date().toISOString(),
 				created_at: new Date().toISOString(),
-				updated_at: new Date().toISOString()
-			}
+				updated_at: new Date().toISOString(),
+			},
 		];
 
 		return c.json({
 			success: true,
 			data: results,
-			timestamp: new Date().toISOString()
+			timestamp: new Date().toISOString(),
 		});
 	} catch (error) {
-		return c.json({
-			success: false,
-			error: (error as Error).message,
-			timestamp: new Date().toISOString()
-		}, 500);
+		return c.json(
+			{
+				success: false,
+				error: (error as Error).message,
+				timestamp: new Date().toISOString(),
+			},
+			500
+		);
 	}
 });
 
@@ -427,7 +454,7 @@ mlPipeline.get("/ab-tests/:testId/results", async (c) => {
 mlPipeline.get("/drift-alerts", async (c) => {
 	try {
 		const tenantId = c.req.header("x-tenant-id");
-		
+
 		if (!tenantId) {
 			return c.json({ success: false, error: "Tenant ID required" }, 400);
 		}
@@ -447,25 +474,28 @@ mlPipeline.get("/drift-alerts", async (c) => {
 				details: {
 					kl_divergence: 0.65,
 					feature_importance_shift: 0.3,
-					recommendation: "Review recent data patterns"
+					recommendation: "Review recent data patterns",
 				},
 				created_at: new Date().toISOString(),
-				updated_at: new Date().toISOString()
-			}
+				updated_at: new Date().toISOString(),
+			},
 		];
 
 		return c.json({
 			success: true,
 			data: alerts,
 			total: alerts.length,
-			timestamp: new Date().toISOString()
+			timestamp: new Date().toISOString(),
 		});
 	} catch (error) {
-		return c.json({
-			success: false,
-			error: (error as Error).message,
-			timestamp: new Date().toISOString()
-		}, 500);
+		return c.json(
+			{
+				success: false,
+				error: (error as Error).message,
+				timestamp: new Date().toISOString(),
+			},
+			500
+		);
 	}
 });
 
@@ -473,13 +503,13 @@ mlPipeline.get("/drift-alerts", async (c) => {
 mlPipeline.post("/drift-detection", async (c) => {
 	try {
 		const tenantId = c.req.header("x-tenant-id");
-		
+
 		if (!tenantId) {
 			return c.json({ success: false, error: "Tenant ID required" }, 400);
 		}
 
 		const body = await c.req.json();
-		const request: DriftAnalysisRequest = body;
+		const _request: DriftAnalysisRequest = body;
 
 		const result: DriftDetectionResult = {
 			hasDrift: true,
@@ -489,21 +519,24 @@ mlPipeline.post("/drift-detection", async (c) => {
 			details: {
 				kl_divergence: 0.65,
 				feature_importance_shift: 0.3,
-				recommendation: "Consider retraining model with recent data"
-			}
+				recommendation: "Consider retraining model with recent data",
+			},
 		};
 
 		return c.json({
 			success: true,
 			data: result,
-			timestamp: new Date().toISOString()
+			timestamp: new Date().toISOString(),
 		});
 	} catch (error) {
-		return c.json({
-			success: false,
-			error: (error as Error).message,
-			timestamp: new Date().toISOString()
-		}, 500);
+		return c.json(
+			{
+				success: false,
+				error: (error as Error).message,
+				timestamp: new Date().toISOString(),
+			},
+			500
+		);
 	}
 });
 
@@ -515,7 +548,7 @@ mlPipeline.post("/drift-detection", async (c) => {
 mlPipeline.get("/status", async (c) => {
 	try {
 		const tenantId = c.req.header("x-tenant-id");
-		
+
 		if (!tenantId) {
 			return c.json({ success: false, error: "Tenant ID required" }, 400);
 		}
@@ -526,20 +559,23 @@ mlPipeline.get("/status", async (c) => {
 			detected_drifts: 1,
 			models_needing_retrain: 0,
 			last_evaluation_date: new Date().toISOString(),
-			overall_health: "warning"
+			overall_health: "warning",
 		};
 
 		return c.json({
 			success: true,
 			data: status,
-			timestamp: new Date().toISOString()
+			timestamp: new Date().toISOString(),
 		});
 	} catch (error) {
-		return c.json({
-			success: false,
-			error: (error as Error).message,
-			timestamp: new Date().toISOString()
-		}, 500);
+		return c.json(
+			{
+				success: false,
+				error: (error as Error).message,
+				timestamp: new Date().toISOString(),
+			},
+			500
+		);
 	}
 });
 
@@ -547,7 +583,7 @@ mlPipeline.get("/status", async (c) => {
 mlPipeline.get("/config", async (c) => {
 	try {
 		const tenantId = c.req.header("x-tenant-id");
-		
+
 		if (!tenantId) {
 			return c.json({ success: false, error: "Tenant ID required" }, 400);
 		}
@@ -558,20 +594,23 @@ mlPipeline.get("/config", async (c) => {
 			ab_test_min_sample_size: 100,
 			ab_test_significance_level: 0.05,
 			auto_retrain_enabled: false,
-			model_retention_days: 365
+			model_retention_days: 365,
 		};
 
 		return c.json({
 			success: true,
 			data: config,
-			timestamp: new Date().toISOString()
+			timestamp: new Date().toISOString(),
 		});
 	} catch (error) {
-		return c.json({
-			success: false,
-			error: (error as Error).message,
-			timestamp: new Date().toISOString()
-		}, 500);
+		return c.json(
+			{
+				success: false,
+				error: (error as Error).message,
+				timestamp: new Date().toISOString(),
+			},
+			500
+		);
 	}
 });
 
@@ -579,7 +618,7 @@ mlPipeline.get("/config", async (c) => {
 mlPipeline.put("/config", async (c) => {
 	try {
 		const tenantId = c.req.header("x-tenant-id");
-		
+
 		if (!tenantId) {
 			return c.json({ success: false, error: "Tenant ID required" }, 400);
 		}
@@ -591,14 +630,17 @@ mlPipeline.put("/config", async (c) => {
 			success: true,
 			data: config,
 			message: "Configuration updated successfully",
-			timestamp: new Date().toISOString()
+			timestamp: new Date().toISOString(),
 		});
 	} catch (error) {
-		return c.json({
-			success: false,
-			error: (error as Error).message,
-			timestamp: new Date().toISOString()
-		}, 500);
+		return c.json(
+			{
+				success: false,
+				error: (error as Error).message,
+				timestamp: new Date().toISOString(),
+			},
+			500
+		);
 	}
 });
 

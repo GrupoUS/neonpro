@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { z } from "zod";
 
 /**
@@ -234,8 +235,6 @@ const AUDIT_HASH_ALGORITHM = "sha256";
  * Calculate hash for audit event
  */
 export function calculateAuditHash(event: AuditEvent, previousHash?: string): string {
-	const crypto = require("node:crypto");
-
 	// Create canonical representation
 	const canonical = {
 		eventType: event.eventType,
@@ -252,7 +251,7 @@ export function calculateAuditHash(event: AuditEvent, previousHash?: string): st
 	};
 
 	const data = JSON.stringify(canonical, Object.keys(canonical).sort());
-	return crypto.createHash(AUDIT_HASH_ALGORITHM).update(data).digest("hex");
+	return createHash(AUDIT_HASH_ALGORITHM).update(data).digest("hex");
 }
 
 /**
@@ -539,7 +538,7 @@ export class AuditService {
  */
 export class MemoryAuditStore implements AuditStore {
 	private events: (AuditEvent & { id: string })[] = [];
-	private nextId = 1;
+	private readonly nextId = 1;
 
 	store(event: AuditEvent): Promise<string> {
 		const id = (this.nextId++).toString();

@@ -6,30 +6,27 @@
  * Compliance: LGPD/ANVISA/CFM
  */
 
-export { AIAnalyticsDashboard } from "./AIAnalyticsDashboard";
-export { HealthMonitoringDashboard } from "./HealthMonitoringDashboard";
-export { ComplianceStatusDashboard } from "./ComplianceStatusDashboard";
-export { PerformanceMetricsDashboard } from "./PerformanceMetricsDashboard";
-export { RealTimeActivityDashboard } from "./RealTimeActivityDashboard";
-
 // Re-export types if needed
 export type {
 	AnalyticsData,
-	Metric,
 	ChartDataPoint,
+	Metric,
 } from "./AIAnalyticsDashboard";
-
+export { AIAnalyticsDashboard } from "./AIAnalyticsDashboard";
 export type {
-	HealthMetrics,
-	SystemStatus,
-	HealthAlert,
-} from "./HealthMonitoringDashboard";
-
-export type {
+	AuditLog,
 	ComplianceFramework,
 	ComplianceStatus,
-	AuditLog,
 } from "./ComplianceStatusDashboard";
+export { ComplianceStatusDashboard } from "./ComplianceStatusDashboard";
+export type {
+	HealthAlert,
+	HealthMetrics,
+	SystemStatus,
+} from "./HealthMonitoringDashboard";
+export { HealthMonitoringDashboard } from "./HealthMonitoringDashboard";
+export { PerformanceMetricsDashboard } from "./PerformanceMetricsDashboard";
+export { RealTimeActivityDashboard } from "./RealTimeActivityDashboard";
 
 // Dashboard registry for dynamic loading
 export const DASHBOARD_REGISTRY = {

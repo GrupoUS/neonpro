@@ -7,10 +7,10 @@
  */
 
 export {
-	MainLayout,
-	DashboardPageLayout,
 	AuthLayout,
+	DashboardPageLayout,
 	ErrorLayout,
+	MainLayout,
 	PrintLayout,
 } from "./MainLayout";
 
@@ -34,28 +34,28 @@ export const LAYOUT_CONFIGS = {
 		maxWidth: "full",
 		padding: "md",
 	},
-	
+
 	form: {
 		showMobileNav: true,
 		showAccessibilityPanel: true,
 		maxWidth: "2xl",
 		padding: "lg",
 	},
-	
+
 	auth: {
 		showMobileNav: false,
 		showAccessibilityPanel: true,
 		maxWidth: "md",
 		padding: "xl",
 	},
-	
+
 	error: {
 		showMobileNav: false,
 		showAccessibilityPanel: true,
 		maxWidth: "md",
 		padding: "xl",
 	},
-	
+
 	print: {
 		showMobileNav: false,
 		showAccessibilityPanel: false,

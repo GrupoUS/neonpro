@@ -3,8 +3,8 @@
  * Tests all package integrations with enterprise services
  */
 
-const fs = require("fs");
-const path = require("path");
+const fs = require("node:fs");
+const path = require("node:path");
 
 const PACKAGES_DIR = path.join(__dirname, "..", "..", "..");
 const COLORS = {
@@ -79,9 +79,7 @@ const INTEGRATION_TESTS = [
 	},
 ];
 
-function log(message, color = COLORS.RESET) {
-	console.log(`${color}${message}${COLORS.RESET}`);
-}
+function log(_message, _color = COLORS.RESET) {}
 
 function checkFileExists(packagePath, fileName) {
 	const filePath = path.join(packagePath, fileName);
@@ -91,12 +89,14 @@ function checkFileExists(packagePath, fileName) {
 function checkFileContent(packagePath, fileName, content) {
 	try {
 		const filePath = path.join(packagePath, fileName);
-		if (!fs.existsSync(filePath)) return false;
+		if (!fs.existsSync(filePath)) {
+			return false;
+		}
 
 		const fileContent = fs.readFileSync(filePath, "utf8");
 		const regex = new RegExp(content, "i");
 		return regex.test(fileContent);
-	} catch (error) {
+	} catch (_error) {
 		return false;
 	}
 }
@@ -163,7 +163,7 @@ function validateEnterpriseIntegrations() {
 	}
 
 	// Summary
-	log("\n" + "=".repeat(60), COLORS.BLUE);
+	log(`\n${"=".repeat(60)}`, COLORS.BLUE);
 	log("📊 FASE 3 INTEGRATION VALIDATION SUMMARY:", COLORS.BLUE);
 	log(`   Total Tests: ${totalTests}`, COLORS.BLUE);
 	log(`   Passed: ${totalPassed}`, COLORS.GREEN);

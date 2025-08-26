@@ -36,10 +36,7 @@
           "outputFile": "e2e/reports/performance-metrics.json"
         }
       ],
-      [
-        "list",
-        null
-      ]
+      ["list", null]
     ],
     "reportSlowTests": {
       "max": 5,
@@ -96,9 +93,7 @@
           "**/vitest/**",
           "**/__tests__/**"
         ],
-        "testMatch": [
-          "**/*.spec.ts"
-        ],
+        "testMatch": ["**/*.spec.ts"],
         "timeout": 60000
       },
       {
@@ -150,9 +145,7 @@
           "**/vitest/**",
           "**/__tests__/**"
         ],
-        "testMatch": [
-          "**/*.spec.ts"
-        ],
+        "testMatch": ["**/*.spec.ts"],
         "timeout": 60000
       },
       {
@@ -165,12 +158,8 @@
         "id": "webkit-desktop",
         "name": "webkit-desktop",
         "testDir": "D:/neonpro/tools/testing/e2e/tests",
-        "testIgnore": [
-          "**/heavy-performance/**"
-        ],
-        "testMatch": [
-          "**/*.spec.ts"
-        ],
+        "testIgnore": ["**/heavy-performance/**"],
+        "testMatch": ["**/*.spec.ts"],
         "timeout": 60000
       },
       {
@@ -183,12 +172,8 @@
         "id": "firefox-desktop",
         "name": "firefox-desktop",
         "testDir": "D:/neonpro/tools/testing/e2e/tests",
-        "testIgnore": [
-          "**/heavy-performance/**"
-        ],
-        "testMatch": [
-          "**/*.spec.ts"
-        ],
+        "testIgnore": ["**/heavy-performance/**"],
+        "testMatch": ["**/*.spec.ts"],
         "timeout": 60000
       }
     ],

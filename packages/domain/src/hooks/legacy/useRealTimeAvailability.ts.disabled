@@ -2,7 +2,7 @@
 
 import type { RealtimeChannel } from '@supabase/supabase-js';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+// import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'; // DEPRECATED - replaced with @supabase/ssr
 
 /**
  * Real-time availability hook for NeonPro appointment booking

@@ -5,14 +5,21 @@
  * Dual Interface: External Client + Internal Staff
  */
 
-import { type NextRequest, NextResponse } from "next/server";
 import { UniversalChatService } from "@neonpro/ai/services/universal-chat-service";
+import { type NextRequest, NextResponse } from "next/server";
 
 export const runtime = "edge";
 
 export async function POST(request: NextRequest) {
 	try {
-		const { messages, interface: interface_type = "external", sessionId, userId, clinicId, patientId } = await request.json();
+		const {
+			messages,
+			interface: interface_type = "external",
+			sessionId,
+			userId,
+			clinicId,
+			patientId,
+		} = await request.json();
 
 		if (!(messages && Array.isArray(messages))) {
 			return NextResponse.json({ error: "Mensagens são obrigatórias" }, { status: 400 });
@@ -65,7 +72,7 @@ export async function POST(request: NextRequest) {
 					// Stream the response content word by word
 					const words = response.response.split(" ");
 					for (let i = 0; i < words.length; i++) {
-						const chunk = i === 0 ? words[i] : " " + words[i];
+						const chunk = i === 0 ? words[i] : ` ${words[i]}`;
 						const chunkData = JSON.stringify({
 							type: "content",
 							content: chunk,
@@ -135,7 +142,7 @@ export async function PUT(request: NextRequest) {
 		const { session_id, action, ...data } = await request.json();
 
 		switch (action) {
-			case "create":
+			case "create": {
 				// Generate a proper UUID for the session
 				const newSessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 				return NextResponse.json({
@@ -144,6 +151,7 @@ export async function PUT(request: NextRequest) {
 					interface: data.interface || "external",
 					created_at: new Date().toISOString(),
 				});
+			}
 
 			case "update":
 				return NextResponse.json({
@@ -162,7 +170,7 @@ export async function PUT(request: NextRequest) {
 			default:
 				return NextResponse.json({ error: "Ação inválida" }, { status: 400 });
 		}
-	} catch (error) {
+	} catch (_error) {
 		return NextResponse.json({ error: "Erro na gestão da sessão" }, { status: 500 });
 	}
 }

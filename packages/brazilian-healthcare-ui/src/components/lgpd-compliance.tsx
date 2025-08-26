@@ -1,15 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { type AuditEvent, type LGPDConsent, PatientInfo } from "../types";
+import type { AuditEvent, LGPDConsent } from "../types";
 
-interface LGPDComplianceProps {
+type LGPDComplianceProps = {
 	patientId?: string;
 	currentConsent?: LGPDConsent;
 	onConsentUpdate: (consent: LGPDConsent) => Promise<void>;
 	onAuditLog: (event: Omit<AuditEvent, "id" | "timestamp">) => Promise<void>;
 	className?: string;
-}
+};
 
 export function LGPDComplianceDashboard({
 	patientId,
@@ -30,7 +30,9 @@ export function LGPDComplianceDashboard({
 		field: keyof Omit<LGPDConsent, "consentDate" | "consentVersion" | "ipAddress" | "userAgent">,
 		value: boolean
 	) => {
-		if (!consent) return;
+		if (!consent) {
+			return;
+		}
 
 		const updatedConsent: LGPDConsent = {
 			...consent,
@@ -64,8 +66,6 @@ export function LGPDComplianceDashboard({
 				},
 			});
 		} catch (error) {
-			console.error("[LGPDCompliance] Error updating consent:", error);
-
 			// Log failed audit event
 			await onAuditLog({
 				userId: "current-user",
@@ -82,7 +82,9 @@ export function LGPDComplianceDashboard({
 	};
 
 	const getConsentStatus = () => {
-		if (!consent) return { status: "missing", color: "red", message: "Consentimento não coletado" };
+		if (!consent) {
+			return { status: "missing", color: "red", message: "Consentimento não coletado" };
+		}
 
 		const hasRequiredConsents = consent.dataProcessing;
 		if (!hasRequiredConsents) {

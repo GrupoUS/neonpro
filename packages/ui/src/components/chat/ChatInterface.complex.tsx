@@ -7,73 +7,73 @@
 
 "use client";
 
-import React from "react";
+import { cn } from "../../lib/utils";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Card } from "../ui/card";
 import { Input } from "../ui/input";
-import { cn } from "../../lib/utils";
 
 // Basic types for the chat interface
-interface ChatMessage {
+type ChatMessage = {
 	id: string;
 	content: string;
 	role: "user" | "assistant";
 	timestamp: Date;
-}
+};
 
-interface ChatInterfaceConfig {
+type ChatInterfaceConfig = {
 	interface_type: "external" | "internal";
 	placeholder?: string;
-}
+};
+
 import {
 	AlertTriangle,
 	Bot,
 	CheckCircle,
 	Clock,
+	FileUp,
+	Lightbulb,
 	Mic,
 	MicOff,
 	Paperclip,
 	Send,
 	Settings,
-	User,
-	XCircle,
-	Lightbulb,
-	FileUp,
-	Volume2,
-	VolumeX,
 	Sparkles,
+	User,
+	Volume2,
+	XCircle,
 } from "lucide-react";
-import React, { useEffect, useRef, useState, useCallback, useMemo } from "react";
+import type React from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 // Healthcare-specific AI features
-interface HealthcareSuggestion {
+type HealthcareSuggestion = {
 	id: string;
 	text: string;
-	type: 'appointment' | 'symptom' | 'treatment' | 'general';
+	type: "appointment" | "symptom" | "treatment" | "general";
 	confidence: number;
 	medicalTerm?: string;
 	translation?: string;
-}
+};
 
 // Voice recording state
-interface VoiceRecordingState {
+type VoiceRecordingState = {
 	isRecording: boolean;
 	isProcessing: boolean;
 	duration: number;
 	transcript?: string;
 	error?: string;
-}
+};
 
 // File upload progress
-interface FileUploadState {
+type FileUploadState = {
 	isUploading: boolean;
 	progress: number;
 	fileName?: string;
 	error?: string;
-}
+};
 
-interface ChatInterfaceProps {
+type ChatInterfaceProps = {
 	interface_type?: "external" | "internal";
 	className?: string;
 	placeholder?: string;
@@ -93,7 +93,7 @@ interface ChatInterfaceProps {
 	ariaLabelledBy?: string;
 	ariaDescribedBy?: string;
 	screenReaderAnnouncements?: boolean;
-}
+};
 
 export function ChatInterface({
 	interface_type = "external",
@@ -110,7 +110,7 @@ export function ChatInterface({
 	enableHealthcareNLP = true,
 	enablePredictiveText = true,
 	maxFileSize = 10, // 10MB default
-	allowedFileTypes = ['image/*', '.pdf', '.doc', '.docx'],
+	allowedFileTypes = ["image/*", ".pdf", ".doc", ".docx"],
 	// Accessibility enhancements
 	ariaLabelledBy,
 	ariaDescribedBy,
@@ -132,7 +132,7 @@ export function ChatInterface({
 	const messagesEndRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLInputElement>(null);
 	const fileInputRef = useRef<HTMLInputElement>(null);
-	
+
 	// FASE 3 AI-powered state
 	const [smartSuggestions, setSmartSuggestions] = useState<HealthcareSuggestion[]>([]);
 	const [showSuggestions, setShowSuggestions] = useState(false);
@@ -146,90 +146,105 @@ export function ChatInterface({
 		isUploading: false,
 		progress: 0,
 	});
-	
+
 	// Accessibility state
 	const [announcements, setAnnouncements] = useState<string[]>([]);
-	const [focusedElementId, setFocusedElementId] = useState<string>("");
+	const [_focusedElementId, _setFocusedElementId] = useState<string>("");
 
 	// Healthcare terminology dictionary for Portuguese NLP
-	const healthcareTerms = useMemo(() => ({
-		// Appointment terms
-		'agendar': { english: 'schedule', context: 'appointment' },
-		'consulta': { english: 'consultation', context: 'appointment' },
-		'retorno': { english: 'follow-up', context: 'appointment' },
-		'emergência': { english: 'emergency', context: 'urgent' },
-		// Symptoms
-		'dor': { english: 'pain', context: 'symptom' },
-		'febre': { english: 'fever', context: 'symptom' },
-		'náusea': { english: 'nausea', context: 'symptom' },
-		'tontura': { english: 'dizziness', context: 'symptom' },
-		// Treatments
-		'medicação': { english: 'medication', context: 'treatment' },
-		'exame': { english: 'exam', context: 'treatment' },
-		'cirurgia': { english: 'surgery', context: 'treatment' },
-		'fisioterapia': { english: 'physiotherapy', context: 'treatment' },
-	}), []);
+	const healthcareTerms = useMemo(
+		() => ({
+			// Appointment terms
+			agendar: { english: "schedule", context: "appointment" },
+			consulta: { english: "consultation", context: "appointment" },
+			retorno: { english: "follow-up", context: "appointment" },
+			emergência: { english: "emergency", context: "urgent" },
+			// Symptoms
+			dor: { english: "pain", context: "symptom" },
+			febre: { english: "fever", context: "symptom" },
+			náusea: { english: "nausea", context: "symptom" },
+			tontura: { english: "dizziness", context: "symptom" },
+			// Treatments
+			medicação: { english: "medication", context: "treatment" },
+			exame: { english: "exam", context: "treatment" },
+			cirurgia: { english: "surgery", context: "treatment" },
+			fisioterapia: { english: "physiotherapy", context: "treatment" },
+		}),
+		[]
+	);
 
 	// FASE 3 AI-powered smart suggestions generator
-	const generateSmartSuggestions = useCallback((input: string): HealthcareSuggestion[] => {
-		if (!enableSmartSuggestions || input.length < 2) return [];
-		
-		const suggestions: HealthcareSuggestion[] = [];
-		const lowerInput = input.toLowerCase();
-		
-		// Healthcare-specific suggestions based on Portuguese medical terms
-		Object.entries(healthcareTerms).forEach(([term, data]) => {
-			if (term.includes(lowerInput) || lowerInput.includes(term)) {
+	const generateSmartSuggestions = useCallback(
+		(input: string): HealthcareSuggestion[] => {
+			if (!enableSmartSuggestions || input.length < 2) {
+				return [];
+			}
+
+			const suggestions: HealthcareSuggestion[] = [];
+			const lowerInput = input.toLowerCase();
+
+			// Healthcare-specific suggestions based on Portuguese medical terms
+			Object.entries(healthcareTerms).forEach(([term, data]) => {
+				if (term.includes(lowerInput) || lowerInput.includes(term)) {
+					suggestions.push({
+						id: `${term}-${Date.now()}`,
+						text: `Gostaria de ${
+							term === "agendar"
+								? "agendar uma consulta"
+								: term === "dor"
+									? "relatar sintomas de dor"
+									: term === "exame"
+										? "solicitar informações sobre exames"
+										: `obter informações sobre ${term}`
+						}?`,
+						type: data.context as any,
+						confidence: lowerInput === term ? 0.9 : 0.7,
+						medicalTerm: term,
+						translation: data.english,
+					});
+				}
+			});
+
+			// Common healthcare phrases
+			if (lowerInput.includes("quando") || lowerInput.includes("horário")) {
 				suggestions.push({
-					id: `${term}-${Date.now()}`,
-					text: `Gostaria de ${term === 'agendar' ? 'agendar uma consulta' : 
-						   term === 'dor' ? 'relatar sintomas de dor' : 
-						   term === 'exame' ? 'solicitar informações sobre exames' : 
-						   `obter informações sobre ${term}`}?`,
-					type: data.context as any,
-					confidence: lowerInput === term ? 0.9 : 0.7,
-					medicalTerm: term,
-					translation: data.english,
+					id: "schedule-1",
+					text: "Verificar horários disponíveis para consulta",
+					type: "appointment",
+					confidence: 0.8,
 				});
 			}
-		});
-		
-		// Common healthcare phrases
-		if (lowerInput.includes('quando') || lowerInput.includes('horário')) {
-			suggestions.push({
-				id: 'schedule-1',
-				text: 'Verificar horários disponíveis para consulta',
-				type: 'appointment',
-				confidence: 0.8,
-			});
-		}
-		
-		if (lowerInput.includes('resultado') || lowerInput.includes('exame')) {
-			suggestions.push({
-				id: 'results-1',
-				text: 'Consultar resultados de exames',
-				type: 'treatment',
-				confidence: 0.8,
-			});
-		}
-		
-		return suggestions.slice(0, 3); // Limit to top 3 suggestions
-	}, [enableSmartSuggestions, healthcareTerms]);
+
+			if (lowerInput.includes("resultado") || lowerInput.includes("exame")) {
+				suggestions.push({
+					id: "results-1",
+					text: "Consultar resultados de exames",
+					type: "treatment",
+					confidence: 0.8,
+				});
+			}
+
+			return suggestions.slice(0, 3); // Limit to top 3 suggestions
+		},
+		[enableSmartSuggestions, healthcareTerms]
+	);
 
 	// Auto-scroll to bottom on new messages
 	useEffect(() => {
 		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-	}, [state.sessions]);
+	}, []);
 
 	// Auto-focus input with accessibility announcement
 	useEffect(() => {
 		if (autoFocus && inputRef.current) {
 			inputRef.current.focus();
 			if (screenReaderAnnouncements) {
-				announceToScreenReader(`Interface de chat ${interface_type === 'external' ? 'do paciente' : 'da equipe médica'} carregada. Digite sua mensagem.`);
+				announceToScreenReader(
+					`Interface de chat ${interface_type === "external" ? "do paciente" : "da equipe médica"} carregada. Digite sua mensagem.`
+				);
 			}
 		}
-	}, [autoFocus, interface_type, screenReaderAnnouncements]);
+	}, [autoFocus, interface_type, screenReaderAnnouncements, announceToScreenReader]);
 
 	// Handle interface switch
 	useEffect(() => {
@@ -246,19 +261,26 @@ export function ChatInterface({
 	}, [inputValue, generateSmartSuggestions]);
 
 	// Accessibility: Screen reader announcements
-	const announceToScreenReader = useCallback((message: string) => {
-		if (!screenReaderAnnouncements) return;
-		setAnnouncements(prev => [...prev.slice(-4), message]); // Keep last 5 announcements
-	}, [screenReaderAnnouncements]);
+	const announceToScreenReader = useCallback(
+		(message: string) => {
+			if (!screenReaderAnnouncements) {
+				return;
+			}
+			setAnnouncements((prev) => [...prev.slice(-4), message]); // Keep last 5 announcements
+		},
+		[screenReaderAnnouncements]
+	);
 
 	// FASE 3: Enhanced message sending with AI context
 	const handleSendMessage = async () => {
-		if (!inputValue.trim() || state.is_loading) return;
+		if (!inputValue.trim() || state.is_loading) {
+			return;
+		}
 
 		const messageText = inputValue.trim();
 		setInputValue("");
 		setShowSuggestions(false);
-		
+
 		// Announce message being sent
 		announceToScreenReader(`Enviando mensagem: ${messageText}`);
 
@@ -268,11 +290,10 @@ export function ChatInterface({
 			} else {
 				await sendMessage(messageText);
 			}
-			
+
 			// Announce successful send
 			announceToScreenReader("Mensagem enviada com sucesso");
-		} catch (error) {
-			console.error("Failed to send message:", error);
+		} catch (_error) {
 			announceToScreenReader("Erro ao enviar mensagem. Tente novamente.");
 		}
 	};
@@ -284,17 +305,17 @@ export function ChatInterface({
 			switch (e.key) {
 				case "ArrowDown":
 					e.preventDefault();
-					setSelectedSuggestionIndex(prev => 
-						prev < smartSuggestions.length - 1 ? prev + 1 : 0
+					setSelectedSuggestionIndex((prev) => (prev < smartSuggestions.length - 1 ? prev + 1 : 0));
+					announceToScreenReader(
+						`Sugestão ${selectedSuggestionIndex + 1}: ${smartSuggestions[selectedSuggestionIndex]?.text}`
 					);
-					announceToScreenReader(`Sugestão ${selectedSuggestionIndex + 1}: ${smartSuggestions[selectedSuggestionIndex]?.text}`);
 					return;
 				case "ArrowUp":
 					e.preventDefault();
-					setSelectedSuggestionIndex(prev => 
-						prev > 0 ? prev - 1 : smartSuggestions.length - 1
+					setSelectedSuggestionIndex((prev) => (prev > 0 ? prev - 1 : smartSuggestions.length - 1));
+					announceToScreenReader(
+						`Sugestão ${selectedSuggestionIndex + 1}: ${smartSuggestions[selectedSuggestionIndex]?.text}`
 					);
-					announceToScreenReader(`Sugestão ${selectedSuggestionIndex + 1}: ${smartSuggestions[selectedSuggestionIndex]?.text}`);
 					return;
 				case "Tab":
 					e.preventDefault();
@@ -314,7 +335,7 @@ export function ChatInterface({
 					return;
 			}
 		}
-		
+
 		// Standard message sending
 		if (e.key === "Enter" && !e.shiftKey) {
 			e.preventDefault();
@@ -331,98 +352,105 @@ export function ChatInterface({
 
 	// FASE 3: Voice recording with Portuguese healthcare optimization
 	const toggleRecording = useCallback(async () => {
-		if (!enableVoiceInput) return;
-		
-		if (!voiceRecording.isRecording) {
+		if (!enableVoiceInput) {
+			return;
+		}
+
+		if (voiceRecording.isRecording) {
+			// Stop recording
+			setVoiceRecording((prev) => ({
+				...prev,
+				isRecording: false,
+				isProcessing: true,
+			}));
+			announceToScreenReader("Finalizando gravação");
+		} else {
 			// Start recording
 			try {
-				setVoiceRecording(prev => ({ ...prev, isRecording: true, error: undefined }));
+				setVoiceRecording((prev) => ({ ...prev, isRecording: true, error: undefined }));
 				announceToScreenReader("Iniciando gravação de voz");
-				
+
 				// Request microphone permission and start recording
-				const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-				
+				const _stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
 				// Here you would implement actual voice recording
 				// For now, we'll simulate the recording state
-				
+
 				// Simulate processing after recording
 				setTimeout(() => {
-					setVoiceRecording(prev => ({ 
-						...prev, 
-						isRecording: false, 
-						isProcessing: true 
+					setVoiceRecording((prev) => ({
+						...prev,
+						isRecording: false,
+						isProcessing: true,
 					}));
 					announceToScreenReader("Processando áudio...");
-					
+
 					// Simulate transcription
 					setTimeout(() => {
 						const mockTranscript = "Transcrição simulada da mensagem de voz";
-						setVoiceRecording(prev => ({ 
-							...prev, 
+						setVoiceRecording((prev) => ({
+							...prev,
 							isProcessing: false,
-							transcript: mockTranscript 
+							transcript: mockTranscript,
 						}));
 						setInputValue(mockTranscript);
 						announceToScreenReader(`Transcrição concluída: ${mockTranscript}`);
 					}, 2000);
 				}, 3000);
-				
-			} catch (error) {
-				console.error("Voice recording error:", error);
-				setVoiceRecording(prev => ({ 
-					...prev, 
-					isRecording: false, 
-					error: "Erro ao acessar microfone" 
+			} catch (_error) {
+				setVoiceRecording((prev) => ({
+					...prev,
+					isRecording: false,
+					error: "Erro ao acessar microfone",
 				}));
 				announceToScreenReader("Erro ao iniciar gravação. Verifique as permissões do microfone.");
 			}
-		} else {
-			// Stop recording
-			setVoiceRecording(prev => ({ 
-				...prev, 
-				isRecording: false, 
-				isProcessing: true 
-			}));
-			announceToScreenReader("Finalizando gravação");
 		}
 	}, [enableVoiceInput, voiceRecording.isRecording, announceToScreenReader]);
 
 	// FASE 3: File upload with healthcare document support
 	const handleFileUpload = useCallback(() => {
-		if (!enableFileUpload || !fileInputRef.current) return;
+		if (!(enableFileUpload && fileInputRef.current)) {
+			return;
+		}
 		fileInputRef.current.click();
 	}, [enableFileUpload]);
 
-	const handleFileSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-		const file = event.target.files?.[0];
-		if (!file) return;
+	const handleFileSelect = useCallback(
+		(event: React.ChangeEvent<HTMLInputElement>) => {
+			const file = event.target.files?.[0];
+			if (!file) {
+				return;
+			}
 
-		// Validate file size
-		if (file.size > maxFileSize * 1024 * 1024) {
-			announceToScreenReader(`Arquivo muito grande. Tamanho máximo: ${maxFileSize}MB`);
-			return;
-		}
+			// Validate file size
+			if (file.size > maxFileSize * 1024 * 1024) {
+				announceToScreenReader(`Arquivo muito grande. Tamanho máximo: ${maxFileSize}MB`);
+				return;
+			}
 
-		// Start upload simulation
-		setFileUpload({ isUploading: true, progress: 0, fileName: file.name });
-		announceToScreenReader(`Enviando arquivo: ${file.name}`);
+			// Start upload simulation
+			setFileUpload({ isUploading: true, progress: 0, fileName: file.name });
+			announceToScreenReader(`Enviando arquivo: ${file.name}`);
 
-		// Simulate upload progress
-		const uploadInterval = setInterval(() => {
-			setFileUpload(prev => {
-				const newProgress = prev.progress + 10;
-				if (newProgress >= 100) {
-					clearInterval(uploadInterval);
-					announceToScreenReader(`Arquivo ${file.name} enviado com sucesso`);
-					return { isUploading: false, progress: 100, fileName: file.name };
-				}
-				return { ...prev, progress: newProgress };
-			});
-		}, 200);
+			// Simulate upload progress
+			const uploadInterval = setInterval(() => {
+				setFileUpload((prev) => {
+					const newProgress = prev.progress + 10;
+					if (newProgress >= 100) {
+						clearInterval(uploadInterval);
+						announceToScreenReader(`Arquivo ${file.name} enviado com sucesso`);
+						return { isUploading: false, progress: 100, fileName: file.name };
+					}
+					return { ...prev, progress: newProgress };
+				});
+			}, 200);
 
-		// Reset file input
-		event.target.value = '';
-	}, [maxFileSize, announceToScreenReader]);
+			// Reset file input
+			event.target.value = "";
+		},
+		[maxFileSize, announceToScreenReader]
+	);
 
 	const getStatusColor = () => {
 		switch (state.connection_status) {
@@ -478,21 +506,21 @@ export function ChatInterface({
 
 						{state.is_streaming && (
 							<Badge className="animate-pulse" variant="outline">
-								<Sparkles className="h-3 w-3 mr-1" />
+								<Sparkles className="mr-1 h-3 w-3" />
 								Digitando...
 							</Badge>
 						)}
-						
+
 						{voiceRecording.isProcessing && (
 							<Badge className="animate-pulse" variant="outline">
-								<Volume2 className="h-3 w-3 mr-1" />
+								<Volume2 className="mr-1 h-3 w-3" />
 								Processando áudio...
 							</Badge>
 						)}
-						
+
 						{fileUpload.isUploading && (
 							<Badge className="animate-pulse" variant="outline">
-								<FileUp className="h-3 w-3 mr-1" />
+								<FileUp className="mr-1 h-3 w-3" />
 								Enviando arquivo... {fileUpload.progress}%
 							</Badge>
 						)}
@@ -547,19 +575,20 @@ export function ChatInterface({
 				{/* FASE 3: Smart Suggestions */}
 				{showSuggestions && smartSuggestions.length > 0 && (
 					<div className="mb-3 space-y-2">
-						<div className="flex items-center gap-2 text-sm text-muted-foreground">
+						<div className="flex items-center gap-2 text-muted-foreground text-sm">
 							<Lightbulb className="h-4 w-4" />
 							<span>Sugestões inteligentes:</span>
 						</div>
 						<div className="space-y-1">
 							{smartSuggestions.map((suggestion, index) => (
 								<button
-									key={suggestion.id}
+									aria-label={`Sugestão ${index + 1}: ${suggestion.text}. Confiança: ${Math.round(suggestion.confidence * 100)}%`}
 									className={cn(
-										"w-full text-left p-2 rounded-md text-sm transition-colors",
+										"w-full rounded-md p-2 text-left text-sm transition-colors",
 										"hover:bg-muted focus:bg-muted focus:outline-none",
-										selectedSuggestionIndex === index && "bg-primary/10 border border-primary/20"
+										selectedSuggestionIndex === index && "border border-primary/20 bg-primary/10"
 									)}
+									key={suggestion.id}
 									onClick={() => {
 										setInputValue(suggestion.text);
 										setShowSuggestions(false);
@@ -568,24 +597,25 @@ export function ChatInterface({
 										inputRef.current?.focus();
 									}}
 									onMouseEnter={() => setSelectedSuggestionIndex(index)}
-									aria-label={`Sugestão ${index + 1}: ${suggestion.text}. Confiança: ${Math.round(suggestion.confidence * 100)}%`}
 								>
 									<div className="flex items-center justify-between">
 										<span>{suggestion.text}</span>
 										<div className="flex items-center gap-1">
 											{suggestion.medicalTerm && (
-												<Badge variant="outline" className="text-xs">
+												<Badge className="text-xs" variant="outline">
 													{suggestion.medicalTerm}
 												</Badge>
 											)}
-											<Badge 
-												variant="secondary" 
+											<Badge
 												className={cn(
 													"text-xs",
-													suggestion.confidence > 0.8 ? "bg-green-100 text-green-700" : 
-													suggestion.confidence > 0.6 ? "bg-yellow-100 text-yellow-700" :
-													"bg-gray-100 text-gray-700"
+													suggestion.confidence > 0.8
+														? "bg-green-100 text-green-700"
+														: suggestion.confidence > 0.6
+															? "bg-yellow-100 text-yellow-700"
+															: "bg-gray-100 text-gray-700"
 												)}
+												variant="secondary"
 											>
 												{Math.round(suggestion.confidence * 100)}%
 											</Badge>
@@ -600,6 +630,9 @@ export function ChatInterface({
 				<div className="flex items-center gap-2">
 					<div className="relative flex-1">
 						<Input
+							aria-describedby={showSuggestions ? "smart-suggestions" : undefined}
+							aria-label={`Campo de mensagem do chat ${interface_type === "external" ? "do paciente" : "da equipe médica"}`}
+							autoComplete="off"
 							className={cn(
 								"pr-32",
 								voiceRecording.isRecording && "border-red-300 bg-red-50",
@@ -609,34 +642,30 @@ export function ChatInterface({
 							onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputValue(e.target.value)}
 							onKeyDown={handleKeyPress}
 							placeholder={
-								voiceRecording.isProcessing ? "Processando áudio..." :
-								fileUpload.isUploading ? `Enviando ${fileUpload.fileName}...` :
-								placeholder ||
-								(interface_type === "external"
-									? "Digite sua mensagem ou use os comandos de voz..."
-									: "Faça uma pergunta, solicite um relatório ou envie documentos...")
+								voiceRecording.isProcessing
+									? "Processando áudio..."
+									: fileUpload.isUploading
+										? `Enviando ${fileUpload.fileName}...`
+										: placeholder ||
+											(interface_type === "external"
+												? "Digite sua mensagem ou use os comandos de voz..."
+												: "Faça uma pergunta, solicite um relatório ou envie documentos...")
 							}
 							ref={inputRef}
 							value={inputValue}
-							aria-label={`Campo de mensagem do chat ${interface_type === 'external' ? 'do paciente' : 'da equipe médica'}`}
-							aria-describedby={showSuggestions ? "smart-suggestions" : undefined}
-							autoComplete="off"
 						/>
 
 						<div className="-translate-y-1/2 absolute top-1/2 right-2 flex items-center gap-1">
 							{/* FASE 3: Enhanced File Upload */}
 							{enableFileUpload && (
 								<Button
-									className={cn(
-										"h-8 w-8",
-										fileUpload.isUploading && "bg-blue-50 text-blue-500 animate-pulse"
-									)}
+									aria-label="Enviar arquivo médico (PDF, imagens, documentos)"
+									className={cn("h-8 w-8", fileUpload.isUploading && "animate-pulse bg-blue-50 text-blue-500")}
 									disabled={state.is_loading || fileUpload.isUploading}
 									onClick={handleFileUpload}
 									size="icon"
 									type="button"
 									variant="ghost"
-									aria-label="Enviar arquivo médico (PDF, imagens, documentos)"
 								>
 									{fileUpload.isUploading ? (
 										<FileUp className="h-4 w-4 animate-bounce" />
@@ -649,21 +678,23 @@ export function ChatInterface({
 							{/* FASE 3: Enhanced Voice Recording */}
 							{enableVoiceInput && (
 								<Button
+									aria-label={
+										voiceRecording.isRecording
+											? "Parar gravação de voz"
+											: voiceRecording.isProcessing
+												? "Processando áudio..."
+												: "Iniciar gravação de voz para ditado médico"
+									}
 									className={cn(
 										"h-8 w-8 transition-all duration-200",
-										voiceRecording.isRecording && "bg-red-50 text-red-500 animate-pulse scale-110",
-										voiceRecording.isProcessing && "bg-blue-50 text-blue-500 animate-spin"
+										voiceRecording.isRecording && "scale-110 animate-pulse bg-red-50 text-red-500",
+										voiceRecording.isProcessing && "animate-spin bg-blue-50 text-blue-500"
 									)}
 									disabled={state.is_loading || voiceRecording.isProcessing}
 									onClick={toggleRecording}
 									size="icon"
 									type="button"
 									variant="ghost"
-									aria-label={
-										voiceRecording.isRecording ? "Parar gravação de voz" :
-										voiceRecording.isProcessing ? "Processando áudio..." :
-										"Iniciar gravação de voz para ditado médico"
-									}
 								>
 									{voiceRecording.isProcessing ? (
 										<Volume2 className="h-4 w-4" />
@@ -675,15 +706,15 @@ export function ChatInterface({
 								</Button>
 							)}
 						</div>
-						
+
 						{/* Hidden file input */}
 						<input
+							accept={allowedFileTypes.join(",")}
+							aria-label="Selecionar arquivo para upload"
+							className="hidden"
+							onChange={handleFileSelect}
 							ref={fileInputRef}
 							type="file"
-							className="hidden"
-							accept={allowedFileTypes.join(',')}
-							onChange={handleFileSelect}
-							aria-label="Selecionar arquivo para upload"
 						/>
 					</div>
 
@@ -703,49 +734,41 @@ export function ChatInterface({
 								? "Suporte 24/7 • Atendimento seguro LGPD"
 								: "Dados em tempo real • Acesso seguro"}
 						</span>
-						
+
 						{/* FASE 3: Voice recording status */}
 						{voiceRecording.isRecording && (
-							<div className="flex items-center gap-1 text-red-600 animate-pulse">
+							<div className="flex animate-pulse items-center gap-1 text-red-600">
 								<div className="h-2 w-2 rounded-full bg-red-500" />
 								<span>Gravando...</span>
 							</div>
 						)}
-						
+
 						{/* FASE 3: File upload status */}
 						{fileUpload.isUploading && (
 							<div className="flex items-center gap-1 text-blue-600">
-								<div className="h-2 w-2 rounded-full bg-blue-500 animate-bounce" />
-								<span>{fileUpload.fileName} - {fileUpload.progress}%</span>
+								<div className="h-2 w-2 animate-bounce rounded-full bg-blue-500" />
+								<span>
+									{fileUpload.fileName} - {fileUpload.progress}%
+								</span>
 							</div>
 						)}
 					</div>
-					
+
 					<div className="flex items-center gap-2">
 						{enableSmartSuggestions && showSuggestions && (
-							<span className="text-primary">
-								↑↓ navegar • Tab selecionar • Esc fechar
-							</span>
+							<span className="text-primary">↑↓ navegar • Tab selecionar • Esc fechar</span>
 						)}
-						<span 
-							aria-live="polite" 
-							aria-label={`${inputValue.length} de 500 caracteres digitados`}
-						>
+						<span aria-label={`${inputValue.length} de 500 caracteres digitados`} aria-live="polite">
 							{inputValue.length}/500
 						</span>
 					</div>
 				</div>
 			</div>
-			
+
 			{/* FASE 3: Screen Reader Announcements */}
 			{screenReaderAnnouncements && announcements.length > 0 && (
-				<div 
-					aria-live="polite" 
-					aria-atomic="true" 
-					className="sr-only"
-					role="status"
-				>
-					{announcements[announcements.length - 1]}
+				<div aria-atomic="true" aria-live="polite" className="sr-only" role="status">
+					{announcements.at(-1)}
 				</div>
 			)}
 		</Card>
@@ -753,10 +776,10 @@ export function ChatInterface({
 }
 
 // Message Bubble Component
-interface MessageBubbleProps {
+type MessageBubbleProps = {
 	message: ChatMessage;
 	interface_type: ChatInterface;
-}
+};
 
 function MessageBubble({ message, interface_type }: MessageBubbleProps) {
 	const isUser = message.role === "user";

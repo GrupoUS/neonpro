@@ -220,7 +220,7 @@ export class HealthcareQualityValidator {
 	 */
 	static validateProductionReadiness(report: QualityReport): boolean {
 		return Object.values(report).every((result) =>
-			typeof result === "object" && "status" in result ? result.status !== QualityStatus.FAIL : true
+			typeof result === "object" && "status" in result ? result.status !== QualityStatus.FAIL : true,
 		);
 	}
 
@@ -232,7 +232,7 @@ export class HealthcareQualityValidator {
 
 		if (report.coverage.score < QUALITY_GATES.coverage.global) {
 			recommendations.push(
-				`Increase test coverage to ${QUALITY_GATES.coverage.global}% (current: ${report.coverage.score}%)`
+				`Increase test coverage to ${QUALITY_GATES.coverage.global}% (current: ${report.coverage.score}%)`,
 			);
 		}
 

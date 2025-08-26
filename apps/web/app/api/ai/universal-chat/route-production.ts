@@ -73,11 +73,11 @@ export async function POST(request: NextRequest) {
 
 		// Get user context (from auth or session)
 		const actualUserId = userId || (await getUserIdFromRequest(request));
-		
+
 		if (!actualUserId) {
 			return NextResponse.json({ error: "User authentication required" }, { status: 401 });
 		}
-		
+
 		const actualClinicId = clinicId || (await getClinicIdFromUser(actualUserId));
 
 		// Check feature flags - simplified for now
@@ -149,7 +149,7 @@ export async function POST(request: NextRequest) {
 					// Stream the response content
 					const words = chatResponse.response.split(" ");
 					for (let i = 0; i < words.length; i++) {
-						const chunk = i === 0 ? words[i] : " " + words[i];
+						const chunk = i === 0 ? words[i] : ` ${words[i]}`;
 						const chunkData = JSON.stringify({
 							type: "content",
 							content: chunk,
@@ -296,16 +296,16 @@ export async function GET(request: NextRequest) {
 }
 
 // Helper functions
-async function getUserIdFromRequest(request: NextRequest): Promise<string | null> {
+async function getUserIdFromRequest(_request: NextRequest): Promise<string | null> {
 	// Implementation would extract user ID from JWT token or session
 	// This is a placeholder - implement actual auth logic
-	return "user_" + Date.now();
+	return `user_${Date.now()}`;
 }
 
-async function getClinicIdFromUser(userId: string): Promise<string> {
+async function getClinicIdFromUser(_userId: string): Promise<string> {
 	// Implementation would get clinic ID from user profile
 	// This is a placeholder - implement actual user-clinic mapping
-	return "clinic_" + Date.now();
+	return `clinic_${Date.now()}`;
 }
 
 async function getChatSession(sessionId: string): Promise<ChatSession> {
@@ -415,13 +415,13 @@ async function storeChatMessage(sessionId: string, userMessage: ChatMessage, aiR
 	});
 }
 
-async function getPatientContext(patientId: string): Promise<any> {
+async function _getPatientContext(patientId: string): Promise<any> {
 	// Implementation would fetch patient context from database
 	// This is a placeholder
 	return { patientId, context: "patient_context_placeholder" };
 }
 
-async function getClinicContext(clinicId: string): Promise<any> {
+async function _getClinicContext(clinicId: string): Promise<any> {
 	// Implementation would fetch clinic context from database
 	// This is a placeholder
 	return { clinicId, context: "clinic_context_placeholder" };

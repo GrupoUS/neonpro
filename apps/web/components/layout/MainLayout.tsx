@@ -7,17 +7,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Toaster } from "@/components/ui/toaster";
-import { 
-	MobileNavigation, 
-	MobileBottomNavigation 
-} from "@/components/mobile/MobileNavigation";
 import {
-	SkipToContentLink,
 	AccessibilityPanel,
-	StatusAnnouncer,
 	KeyboardHelper,
+	SkipToContentLink,
+	StatusAnnouncer,
 } from "@/components/accessibility/AccessibilityComponents";
+import { MobileBottomNavigation, MobileNavigation } from "@/components/mobile/MobileNavigation";
+import { Toaster } from "@/components/ui/toaster";
 
 interface MainLayoutProps {
 	children: React.ReactNode;
@@ -36,22 +33,22 @@ export function MainLayout({
 
 	useEffect(() => {
 		setIsClient(true);
-		
+
 		// Set up global accessibility styles
 		const root = document.documentElement;
-		
+
 		// Respect user's motion preferences
 		const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 		if (prefersReducedMotion.matches) {
 			root.classList.add("reduce-motion");
 		}
-		
+
 		// Respect user's contrast preferences
 		const prefersHighContrast = window.matchMedia("(prefers-contrast: high)");
 		if (prefersHighContrast.matches) {
 			root.classList.add("high-contrast");
 		}
-		
+
 		// Set focus-visible for keyboard navigation
 		root.classList.add("focus-visible");
 	}, []);
@@ -75,7 +72,7 @@ export function MainLayout({
 			<SkipToContentLink />
 			<StatusAnnouncer />
 			<KeyboardHelper />
-			
+
 			{/* Mobile Navigation */}
 			{showMobileNav && (
 				<header className="md:hidden sticky top-0 z-50 bg-background/95 backdrop-blur border-b">
@@ -87,7 +84,7 @@ export function MainLayout({
 								<span className="text-xs text-muted-foreground">Healthcare</span>
 							</div>
 						</div>
-						
+
 						<div className="flex items-center gap-2">
 							{/* Status indicators could go here */}
 							<div className="h-2 w-2 bg-green-500 rounded-full animate-pulse" title="Sistema Online" />
@@ -97,14 +94,8 @@ export function MainLayout({
 			)}
 
 			{/* Main Content */}
-			<main 
-				id="main-content" 
-				className="flex-1 pb-16 md:pb-0"
-				tabIndex={-1}
-			>
-				<div className="container mx-auto">
-					{children}
-				</div>
+			<main id="main-content" className="flex-1 pb-16 md:pb-0" tabIndex={-1}>
+				<div className="container mx-auto">{children}</div>
 			</main>
 
 			{/* Mobile Bottom Navigation */}
@@ -137,9 +128,7 @@ export function DashboardPageLayout({
 				{/* Page Header */}
 				<div className="space-y-2">
 					<div className="flex items-center justify-between">
-						<h1 className="text-2xl md:text-3xl font-bold text-foreground">
-							{title}
-						</h1>
+						<h1 className="text-2xl md:text-3xl font-bold text-foreground">{title}</h1>
 						{compliance && compliance.length > 0 && (
 							<div className="hidden md:flex gap-2">
 								{compliance.map((framework) => (
@@ -153,13 +142,9 @@ export function DashboardPageLayout({
 							</div>
 						)}
 					</div>
-					
-					{description && (
-						<p className="text-muted-foreground text-sm md:text-base">
-							{description}
-						</p>
-					)}
-					
+
+					{description && <p className="text-muted-foreground text-sm md:text-base">{description}</p>}
+
 					{compliance && compliance.length > 0 && (
 						<div className="md:hidden flex gap-2 flex-wrap">
 							{compliance.map((framework) => (
@@ -175,30 +160,20 @@ export function DashboardPageLayout({
 				</div>
 
 				{/* Page Content */}
-				<div className="space-y-6">
-					{children}
-				</div>
+				<div className="space-y-6">{children}</div>
 			</div>
 		</MainLayout>
 	);
 }
 
 // Auth layout for login/signup pages
-export function AuthLayout({ 
-	children 
-}: { 
-	children: React.ReactNode 
-}) {
+export function AuthLayout({ children }: { children: React.ReactNode }) {
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-background to-muted">
 			<SkipToContentLink />
 			<StatusAnnouncer />
-			
-			<main 
-				id="main-content"
-				className="min-h-screen flex items-center justify-center p-4"
-				tabIndex={-1}
-			>
+
+			<main id="main-content" className="min-h-screen flex items-center justify-center p-4" tabIndex={-1}>
 				<div className="w-full max-w-md space-y-6">
 					{/* Logo/Brand */}
 					<div className="text-center space-y-2">
@@ -206,15 +181,13 @@ export function AuthLayout({
 							<span className="text-primary-foreground font-bold text-xl">N</span>
 						</div>
 						<h1 className="text-2xl font-bold">NeonPro Healthcare</h1>
-						<p className="text-muted-foreground text-sm">
-							Sistema seguro e em compliance com LGPD, ANVISA e CFM
-						</p>
+						<p className="text-muted-foreground text-sm">Sistema seguro e em compliance com LGPD, ANVISA e CFM</p>
 					</div>
-					
+
 					{children}
 				</div>
 			</main>
-			
+
 			<AccessibilityPanel />
 			<Toaster />
 		</div>
@@ -222,22 +195,12 @@ export function AuthLayout({
 }
 
 // Error layout for error pages
-export function ErrorLayout({
-	children,
-	statusCode,
-}: {
-	children: React.ReactNode;
-	statusCode?: number;
-}) {
+export function ErrorLayout({ children, statusCode }: { children: React.ReactNode; statusCode?: number }) {
 	return (
 		<MainLayout showMobileNav={false}>
 			<div className="min-h-[60vh] flex items-center justify-center p-4">
 				<div className="text-center space-y-6 max-w-md">
-					{statusCode && (
-						<div className="text-6xl font-bold text-muted-foreground">
-							{statusCode}
-						</div>
-					)}
+					{statusCode && <div className="text-6xl font-bold text-muted-foreground">{statusCode}</div>}
 					{children}
 				</div>
 			</div>
@@ -246,11 +209,11 @@ export function ErrorLayout({
 }
 
 // Print layout for reports
-export function PrintLayout({ 
+export function PrintLayout({
 	children,
 	title,
 	compliance = ["LGPD", "ANVISA", "CFM"],
-}: { 
+}: {
 	children: React.ReactNode;
 	title?: string;
 	compliance?: string[];
@@ -263,11 +226,7 @@ export function PrintLayout({
 					<div className="flex justify-between items-start">
 						<div>
 							<h1 className="text-xl font-bold">NeonPro Healthcare</h1>
-							{title && (
-								<h2 className="text-lg font-medium text-muted-foreground">
-									{title}
-								</h2>
-							)}
+							{title && <h2 className="text-lg font-medium text-muted-foreground">{title}</h2>}
 						</div>
 						<div className="text-right text-sm text-muted-foreground">
 							<p>Data: {new Date().toLocaleDateString("pt-BR")}</p>
@@ -275,17 +234,15 @@ export function PrintLayout({
 						</div>
 					</div>
 				</div>
-				
+
 				{/* Print Content */}
-				<div className="space-y-4">
-					{children}
-				</div>
-				
+				<div className="space-y-4">{children}</div>
+
 				{/* Print Footer */}
 				<div className="border-t pt-4 text-xs text-muted-foreground">
 					<p>
-						Este relatório foi gerado automaticamente pelo sistema NeonPro Healthcare
-						em conformidade com LGPD, ANVISA e CFM.
+						Este relatório foi gerado automaticamente pelo sistema NeonPro Healthcare em conformidade com LGPD, ANVISA e
+						CFM.
 					</p>
 				</div>
 			</div>

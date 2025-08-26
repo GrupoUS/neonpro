@@ -6,21 +6,12 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
-import { 
-	Wifi, 
-	WifiOff, 
-	Download, 
-	RefreshCw, 
-	Shield, 
-	AlertTriangle,
-	CheckCircle,
-	Clock
-} from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
-import { Button } from "../ui/button";
-import { Progress } from "../ui/progress";
+import { AlertTriangle, CheckCircle, Download, RefreshCw, Shield, Wifi, WifiOff } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
+import { Progress } from "../ui/progress";
 
 // Healthcare-specific cache categories
 export interface HealthcareCacheStatus {
@@ -92,49 +83,53 @@ export function useHealthcareServiceWorker() {
 
 		// Setup online/offline listeners
 		const handleOnline = () => {
-			setState(prev => ({ ...prev, isOnline: true }));
+			setState((prev) => ({ ...prev, isOnline: true }));
 			syncCriticalData();
 		};
 
 		const handleOffline = () => {
-			setState(prev => ({ ...prev, isOnline: false }));
+			setState((prev) => ({ ...prev, isOnline: false }));
 		};
 
-		window.addEventListener('online', handleOnline);
-		window.addEventListener('offline', handleOffline);
+		window.addEventListener("online", handleOnline);
+		window.addEventListener("offline", handleOffline);
 
 		// Initial sync
 		syncCriticalData();
 
 		return () => {
-			window.removeEventListener('online', handleOnline);
-			window.removeEventListener('offline', handleOffline);
+			window.removeEventListener("online", handleOnline);
+			window.removeEventListener("offline", handleOffline);
 		};
-	}, []);
+	}, [
+		// Register service worker
+		registerServiceWorker, // Initial sync
+		syncCriticalData,
+	]);
 
 	const registerServiceWorker = async () => {
-		if ('serviceWorker' in navigator) {
+		if ("serviceWorker" in navigator) {
 			try {
-				const registration = await navigator.serviceWorker.register('/sw.js');
-				
-				registration.addEventListener('updatefound', () => {
-					setState(prev => ({ ...prev, updateAvailable: true }));
+				const registration = await navigator.serviceWorker.register("/sw.js");
+
+				registration.addEventListener("updatefound", () => {
+					setState((prev) => ({ ...prev, updateAvailable: true }));
 				});
 
-				setState(prev => ({ ...prev, isInstalled: true }));
+				setState((prev) => ({ ...prev, isInstalled: true }));
 			} catch (error) {
-				console.error('Service Worker registration failed:', error);
+				console.error("Service Worker registration failed:", error);
 			}
 		}
 	};
 
 	const syncCriticalData = async () => {
-		setState(prev => ({ ...prev, syncInProgress: true }));
+		setState((prev) => ({ ...prev, syncInProgress: true }));
 
 		try {
 			// Simulate healthcare data sync
-			await new Promise(resolve => setTimeout(resolve, 2000));
-			
+			await new Promise((resolve) => setTimeout(resolve, 2000));
+
 			// Update cache status with healthcare-specific data
 			const updatedCacheStatus: HealthcareCacheStatus = {
 				patientData: {
@@ -167,7 +162,7 @@ export function useHealthcareServiceWorker() {
 				},
 			};
 
-			setState(prev => ({
+			setState((prev) => ({
 				...prev,
 				syncInProgress: false,
 				lastSyncTime: new Date(),
@@ -179,27 +174,25 @@ export function useHealthcareServiceWorker() {
 				},
 			}));
 		} catch (error) {
-			setState(prev => ({ ...prev, syncInProgress: false }));
-			console.error('Critical data sync failed:', error);
+			setState((prev) => ({ ...prev, syncInProgress: false }));
+			console.error("Critical data sync failed:", error);
 		}
 	};
 
 	const updateApp = async () => {
-		if ('serviceWorker' in navigator) {
+		if ("serviceWorker" in navigator) {
 			const registration = await navigator.serviceWorker.getRegistration();
 			if (registration?.waiting) {
-				registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+				registration.waiting.postMessage({ type: "SKIP_WAITING" });
 				window.location.reload();
 			}
 		}
 	};
 
 	const clearCache = async () => {
-		if ('caches' in window) {
+		if ("caches" in window) {
 			const cacheNames = await caches.keys();
-			await Promise.all(
-				cacheNames.map(cacheName => caches.delete(cacheName))
-			);
+			await Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)));
 			await syncCriticalData();
 		}
 	};
@@ -231,20 +224,12 @@ export function PWAStatusCard() {
 			<CardHeader>
 				<div className="flex items-center justify-between">
 					<div className="flex items-center gap-2">
-						{sw.isOnline ? (
-							<Wifi className="h-5 w-5 text-green-500" />
-						) : (
-							<WifiOff className="h-5 w-5 text-red-500" />
-						)}
+						{sw.isOnline ? <Wifi className="h-5 w-5 text-green-500" /> : <WifiOff className="h-5 w-5 text-red-500" />}
 						<CardTitle>Status PWA - Saúde</CardTitle>
 					</div>
 					<div className="flex gap-2">
-						{sw.isInstalled && (
-							<Badge variant="outline">Instalado</Badge>
-						)}
-						{sw.cacheStatus.patientData.criticalDataAvailable && (
-							<Badge variant="default">Dados Críticos OK</Badge>
-						)}
+						{sw.isInstalled && <Badge variant="outline">Instalado</Badge>}
+						{sw.cacheStatus.patientData.criticalDataAvailable && <Badge variant="default">Dados Críticos OK</Badge>}
 					</div>
 				</div>
 				<CardDescription>
@@ -264,20 +249,13 @@ export function PWAStatusCard() {
 							<AlertTriangle className="h-5 w-5 text-orange-500" />
 						)}
 						<div>
-							<p className="font-medium">
-								{sw.isOnline ? "Sistema Online" : "Modo Offline"}
-							</p>
+							<p className="font-medium">{sw.isOnline ? "Sistema Online" : "Modo Offline"}</p>
 							<p className="text-sm text-muted-foreground">
-								{sw.isOnline 
-									? "Sincronização automática ativa"
-									: "Usando dados em cache local"
-								}
+								{sw.isOnline ? "Sincronização automática ativa" : "Usando dados em cache local"}
 							</p>
 						</div>
 					</div>
-					{sw.syncInProgress && (
-						<RefreshCw className="h-4 w-4 animate-spin text-blue-500" />
-					)}
+					{sw.syncInProgress && <RefreshCw className="h-4 w-4 animate-spin text-blue-500" />}
 				</div>
 
 				{/* Healthcare Data Cache Status */}
@@ -293,18 +271,17 @@ export function PWAStatusCard() {
 							<span className="flex items-center gap-2">
 								Dados de Pacientes
 								{sw.cacheStatus.patientData.criticalDataAvailable && (
-									<Badge variant="outline" className="text-xs">Crítico</Badge>
+									<Badge variant="outline" className="text-xs">
+										Crítico
+									</Badge>
 								)}
 							</span>
 							<span className="font-medium">
 								{sw.cacheStatus.patientData.cached}/{sw.cacheStatus.patientData.total}
 							</span>
 						</div>
-						<Progress 
-							value={getCacheCompletionPercentage(
-								sw.cacheStatus.patientData.cached,
-								sw.cacheStatus.patientData.total
-							)} 
+						<Progress
+							value={getCacheCompletionPercentage(sw.cacheStatus.patientData.cached, sw.cacheStatus.patientData.total)}
 							className="h-2"
 						/>
 					</div>
@@ -317,11 +294,11 @@ export function PWAStatusCard() {
 								{sw.cacheStatus.emergencyContacts.cached}/{sw.cacheStatus.emergencyContacts.total}
 							</span>
 						</div>
-						<Progress 
+						<Progress
 							value={getCacheCompletionPercentage(
 								sw.cacheStatus.emergencyContacts.cached,
 								sw.cacheStatus.emergencyContacts.total
-							)} 
+							)}
 							className="h-2"
 						/>
 					</div>
@@ -339,11 +316,11 @@ export function PWAStatusCard() {
 								{sw.cacheStatus.medicalRecords.cached}/{sw.cacheStatus.medicalRecords.total}
 							</span>
 						</div>
-						<Progress 
+						<Progress
 							value={getCacheCompletionPercentage(
 								sw.cacheStatus.medicalRecords.cached,
 								sw.cacheStatus.medicalRecords.total
-							)} 
+							)}
 							className="h-2"
 						/>
 					</div>
@@ -354,18 +331,17 @@ export function PWAStatusCard() {
 							<span className="flex items-center gap-2">
 								Medicações
 								{sw.cacheStatus.medications.alertsAvailable && (
-									<Badge variant="destructive" className="text-xs">Alertas</Badge>
+									<Badge variant="destructive" className="text-xs">
+										Alertas
+									</Badge>
 								)}
 							</span>
 							<span className="font-medium">
 								{sw.cacheStatus.medications.cached}/{sw.cacheStatus.medications.total}
 							</span>
 						</div>
-						<Progress 
-							value={getCacheCompletionPercentage(
-								sw.cacheStatus.medications.cached,
-								sw.cacheStatus.medications.total
-							)} 
+						<Progress
+							value={getCacheCompletionPercentage(sw.cacheStatus.medications.cached, sw.cacheStatus.medications.total)}
 							className="h-2"
 						/>
 					</div>
@@ -399,31 +375,18 @@ export function PWAStatusCard() {
 						variant="outline"
 						className="flex items-center gap-2"
 					>
-						{sw.syncInProgress ? (
-							<RefreshCw className="h-4 w-4 animate-spin" />
-						) : (
-							<RefreshCw className="h-4 w-4" />
-						)}
+						{sw.syncInProgress ? <RefreshCw className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
 						Sincronizar
 					</Button>
 
 					{sw.updateAvailable && (
-						<Button
-							onClick={sw.updateApp}
-							size="sm"
-							className="flex items-center gap-2"
-						>
+						<Button onClick={sw.updateApp} size="sm" className="flex items-center gap-2">
 							<Download className="h-4 w-4" />
 							Atualizar App
 						</Button>
 					)}
 
-					<Button
-						onClick={sw.clearCache}
-						size="sm"
-						variant="outline"
-						className="flex items-center gap-2"
-					>
+					<Button onClick={sw.clearCache} size="sm" variant="outline" className="flex items-center gap-2">
 						<RefreshCw className="h-4 w-4" />
 						Limpar Cache
 					</Button>
@@ -442,7 +405,7 @@ export function PWAStatusCard() {
 // Offline Indicator Component
 export function OfflineIndicator() {
 	const { isOnline, cacheStatus } = useHealthcareServiceWorker();
-	
+
 	if (isOnline) return null;
 
 	return (
@@ -453,10 +416,7 @@ export function OfflineIndicator() {
 					<div>
 						<p className="font-medium text-orange-800">Modo Offline</p>
 						<p className="text-sm text-orange-600">
-							{cacheStatus.patientData.criticalDataAvailable
-								? "Dados críticos disponíveis"
-								: "Funcionalidade limitada"
-							}
+							{cacheStatus.patientData.criticalDataAvailable ? "Dados críticos disponíveis" : "Funcionalidade limitada"}
 						</p>
 					</div>
 				</CardContent>

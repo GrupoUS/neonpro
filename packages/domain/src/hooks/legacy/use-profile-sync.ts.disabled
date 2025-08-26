@@ -7,7 +7,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from '../placeholders/sonner';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+// import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'; // DEPRECATED - replaced with @supabase/ssr
 // import { useAuth } // PLACEHOLDER: from '@/contexts/auth-context'; // PLACEHOLDER - NEEDS FIXING
 
 export type Profile = {

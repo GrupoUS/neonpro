@@ -30,7 +30,7 @@ export class AuthTokenManager {
 	private tokenType = "Bearer";
 	private isRefreshing = false;
 	private refreshPromise: Promise<boolean> | null = null;
-	private refreshCallbacks: ((success: boolean) => void)[] = [];
+	private readonly refreshCallbacks: ((success: boolean) => void)[] = [];
 
 	// Storage keys
 	private static readonly STORAGE_KEYS = {

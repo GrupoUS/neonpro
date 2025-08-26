@@ -7,39 +7,31 @@
 
 "use client";
 
-import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import {
+	Accessibility,
+	Activity,
+	AlertTriangle,
+	Contrast,
 	Eye,
-	EyeOff,
+	Focus,
+	Heart,
 	Keyboard,
+	Languages,
+	Mic,
 	MousePointer,
 	Speaker,
+	Stethoscope,
 	Type,
 	Volume2,
 	VolumeX,
-	Contrast,
-	Palette,
-	Stethoscope,
-	Heart,
-	Activity,
-	AlertTriangle,
-	Shield,
-	Languages,
-	Mic,
-	Navigation,
-	Focus,
-	Accessibility,
 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from "@/components/ui/popover";
 
 // FASE 3: Healthcare-specific skip navigation with medical context
 export function SkipToContentLink() {
@@ -51,7 +43,7 @@ export function SkipToContentLink() {
 			>
 				Pular para o conteúdo principal
 			</a>
-			
+
 			{/* Healthcare-specific skip links */}
 			<a
 				href="#patient-search"
@@ -59,14 +51,14 @@ export function SkipToContentLink() {
 			>
 				Pular para busca de pacientes
 			</a>
-			
+
 			<a
 				href="#emergency-actions"
 				className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:mt-24 focus:z-50 focus:px-3 focus:py-2 focus:bg-red-600 focus:text-white focus:rounded-md focus:shadow-lg focus:transition-all focus:duration-200 focus:text-sm"
 			>
 				Pular para ações de emergência
 			</a>
-			
+
 			<a
 				href="#compliance-info"
 				className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:mt-36 focus:z-50 focus:px-3 focus:py-2 focus:bg-green-600 focus:text-white focus:rounded-md focus:shadow-lg focus:transition-all focus:duration-200 focus:text-sm"
@@ -78,12 +70,12 @@ export function SkipToContentLink() {
 }
 
 // FASE 3: Medical terminology screen reader optimization
-export function MedicalTermReader({ 
-	term, 
-	pronunciation, 
-	definition, 
-	children 
-}: { 
+export function MedicalTermReader({
+	term,
+	pronunciation,
+	definition,
+	children,
+}: {
 	term: string;
 	pronunciation?: string;
 	definition?: string;
@@ -91,10 +83,9 @@ export function MedicalTermReader({
 }) {
 	return (
 		<span
-			aria-label={`Termo médico: ${term}. ${pronunciation ? `Pronúncia: ${pronunciation}. ` : ''}${definition ? `Definição: ${definition}` : ''}`}
+			aria-label={`Termo médico: ${term}. ${pronunciation ? `Pronúncia: ${pronunciation}. ` : ""}${definition ? `Definição: ${definition}` : ""}`}
 			role="term"
 			className="medical-term relative cursor-help border-b border-dotted border-blue-400 hover:border-solid focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
-			tabIndex={0}
 		>
 			{children}
 		</span>
@@ -115,11 +106,7 @@ export function LiveRegion({
 	politeness?: "off" | "polite" | "assertive";
 }) {
 	return (
-		<div
-			aria-live={politeness}
-			aria-atomic="true"
-			className="sr-only"
-		>
+		<div aria-live={politeness} aria-atomic="true" className="sr-only">
 			{children}
 		</div>
 	);
@@ -136,7 +123,7 @@ export function FocusTrap({ children }: { children: React.ReactNode }) {
 		const focusableElements = container.querySelectorAll(
 			'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
 		);
-		
+
 		const firstElement = focusableElements[0] as HTMLElement;
 		const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
 
@@ -210,9 +197,7 @@ export function KeyboardHelper() {
 						<Keyboard className="h-5 w-5" />
 						Atalhos de Teclado
 					</CardTitle>
-					<CardDescription>
-						Navegue pelo sistema usando apenas o teclado
-					</CardDescription>
+					<CardDescription>Navegue pelo sistema usando apenas o teclado</CardDescription>
 				</CardHeader>
 				<CardContent className="space-y-4">
 					<div className="space-y-2">
@@ -225,17 +210,11 @@ export function KeyboardHelper() {
 										</Badge>
 									))}
 								</div>
-								<span className="text-sm text-muted-foreground">
-									{shortcut.description}
-								</span>
+								<span className="text-sm text-muted-foreground">{shortcut.description}</span>
 							</div>
 						))}
 					</div>
-					<Button
-						onClick={() => setShowHelper(false)}
-						className="w-full"
-						autoFocus
-					>
+					<Button onClick={() => setShowHelper(false)} className="w-full" autoFocus>
 						Fechar
 					</Button>
 				</CardContent>
@@ -261,7 +240,7 @@ interface AccessibilityPreferences {
 	medicalAlertsAudio: boolean;
 	portugueseScreenReader: boolean;
 	dyslexiaFriendlyFont: boolean;
-	colorBlindnessSupport: 'none' | 'protanopia' | 'deuteranopia' | 'tritanopia';
+	colorBlindnessSupport: "none" | "protanopia" | "deuteranopia" | "tritanopia";
 	cognitiveAssistance: boolean;
 	slowAnimations: boolean;
 }
@@ -283,13 +262,13 @@ export function AccessibilityPanel() {
 		medicalAlertsAudio: true,
 		portugueseScreenReader: true,
 		dyslexiaFriendlyFont: false,
-		colorBlindnessSupport: 'none',
+		colorBlindnessSupport: "none",
 		cognitiveAssistance: false,
 		slowAnimations: false,
 	});
 
 	const [isOpen, setIsOpen] = useState(false);
-	const [activeTab, setActiveTab] = useState<'general' | 'healthcare' | 'language'>('general');
+	const [activeTab, setActiveTab] = useState<"general" | "healthcare" | "language">("general");
 
 	useEffect(() => {
 		// Load preferences from localStorage
@@ -302,59 +281,60 @@ export function AccessibilityPanel() {
 	useEffect(() => {
 		// Save preferences to localStorage
 		localStorage.setItem("neonpro-accessibility-preferences", JSON.stringify(preferences));
-		
+
 		// Apply preferences to document
 		document.documentElement.style.fontSize = `${preferences.fontSize}px`;
-		
+
 		// Standard accessibility classes
 		if (preferences.highContrast || preferences.emergencyHighContrast) {
 			document.documentElement.classList.add("high-contrast");
 		} else {
 			document.documentElement.classList.remove("high-contrast");
 		}
-		
+
 		if (preferences.reducedMotion || preferences.slowAnimations) {
 			document.documentElement.classList.add("reduce-motion");
 		} else {
 			document.documentElement.classList.remove("reduce-motion");
 		}
-		
+
 		// Healthcare-specific accessibility classes
 		if (preferences.largerTouchTargets) {
 			document.documentElement.classList.add("large-touch-targets");
 		} else {
 			document.documentElement.classList.remove("large-touch-targets");
 		}
-		
+
 		if (preferences.dyslexiaFriendlyFont) {
 			document.documentElement.classList.add("dyslexia-friendly");
 		} else {
 			document.documentElement.classList.remove("dyslexia-friendly");
 		}
-		
-		if (preferences.colorBlindnessSupport !== 'none') {
+
+		if (preferences.colorBlindnessSupport !== "none") {
 			document.documentElement.classList.add(`color-blind-${preferences.colorBlindnessSupport}`);
 		} else {
-			document.documentElement.classList.remove('color-blind-protanopia', 'color-blind-deuteranopia', 'color-blind-tritanopia');
+			document.documentElement.classList.remove(
+				"color-blind-protanopia",
+				"color-blind-deuteranopia",
+				"color-blind-tritanopia"
+			);
 		}
-		
+
 		if (preferences.cognitiveAssistance) {
 			document.documentElement.classList.add("cognitive-assistance");
 		} else {
 			document.documentElement.classList.remove("cognitive-assistance");
 		}
-		
+
 		// Portuguese language settings
 		if (preferences.portugueseScreenReader) {
 			document.documentElement.setAttribute("lang", "pt-BR");
 		}
 	}, [preferences]);
 
-	const updatePreference = <K extends keyof AccessibilityPreferences>(
-		key: K,
-		value: AccessibilityPreferences[K]
-	) => {
-		setPreferences(prev => ({ ...prev, [key]: value }));
+	const updatePreference = <K extends keyof AccessibilityPreferences>(key: K, value: AccessibilityPreferences[K]) => {
+		setPreferences((prev) => ({ ...prev, [key]: value }));
 	};
 
 	return (
@@ -369,7 +349,7 @@ export function AccessibilityPanel() {
 					<Eye className="h-3 w-3 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />
 				</Button>
 			</PopoverTrigger>
-			
+
 			<PopoverContent
 				side="top"
 				align="end"
@@ -386,294 +366,290 @@ export function AccessibilityPanel() {
 							Configurações otimizadas para profissionais de saúde e pacientes
 						</p>
 					</div>
-					
+
 					{/* Tab Navigation */}
 					<div className="flex rounded-lg bg-muted p-1" role="tablist">
 						<button
 							role="tab"
-							aria-selected={activeTab === 'general'}
+							aria-selected={activeTab === "general"}
 							className={cn(
 								"flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-all",
-								activeTab === 'general'
+								activeTab === "general"
 									? "bg-background text-foreground shadow-sm"
 									: "text-muted-foreground hover:text-foreground"
 							)}
-							onClick={() => setActiveTab('general')}
+							onClick={() => setActiveTab("general")}
 						>
 							<Type className="h-4 w-4 mr-2 inline" />
 							Geral
 						</button>
 						<button
 							role="tab"
-							aria-selected={activeTab === 'healthcare'}
+							aria-selected={activeTab === "healthcare"}
 							className={cn(
 								"flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-all",
-								activeTab === 'healthcare'
+								activeTab === "healthcare"
 									? "bg-background text-foreground shadow-sm"
 									: "text-muted-foreground hover:text-foreground"
 							)}
-							onClick={() => setActiveTab('healthcare')}
+							onClick={() => setActiveTab("healthcare")}
 						>
 							<Stethoscope className="h-4 w-4 mr-2 inline" />
 							Médico
 						</button>
 						<button
 							role="tab"
-							aria-selected={activeTab === 'language'}
+							aria-selected={activeTab === "language"}
 							className={cn(
 								"flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-all",
-								activeTab === 'language'
+								activeTab === "language"
 									? "bg-background text-foreground shadow-sm"
 									: "text-muted-foreground hover:text-foreground"
 							)}
-							onClick={() => setActiveTab('language')}
+							onClick={() => setActiveTab("language")}
 						>
 							<Languages className="h-4 w-4 mr-2 inline" />
 							Idioma
 						</button>
 					</div>
-					
+
 					{/* Tab Content */}
-					<div className="space-y-4" role="tabpanel">{activeTab === 'general' && (
-						<div className="space-y-4">
-
-					{/* Font Size */}
-					<div className="space-y-2">
-						<div className="flex items-center justify-between">
-							<label className="text-sm font-medium">Tamanho da Fonte</label>
-							<Badge variant="outline">{preferences.fontSize}px</Badge>
-						</div>
-						<Slider
-							value={[preferences.fontSize]}
-							onValueChange={([value]) => updatePreference("fontSize", value)}
-							min={12}
-							max={24}
-							step={1}
-							className="w-full"
-						/>
-					</div>
-
-					{/* High Contrast */}
-					<div className="flex items-center justify-between">
-						<div className="flex items-center gap-2">
-							<Contrast className="h-4 w-4" />
-							<label className="text-sm font-medium">Alto Contraste</label>
-						</div>
-						<Switch
-							checked={preferences.highContrast}
-							onCheckedChange={(checked) => updatePreference("highContrast", checked)}
-						/>
-					</div>
-
-					{/* Reduced Motion */}
-					<div className="flex items-center justify-between">
-						<div className="flex items-center gap-2">
-							<MousePointer className="h-4 w-4" />
-							<label className="text-sm font-medium">Reduzir Movimento</label>
-						</div>
-						<Switch
-							checked={preferences.reducedMotion}
-							onCheckedChange={(checked) => updatePreference("reducedMotion", checked)}
-						/>
-					</div>
-
-					{/* Screen Reader */}
-					<div className="flex items-center justify-between">
-						<div className="flex items-center gap-2">
-							<Speaker className="h-4 w-4" />
-							<label className="text-sm font-medium">Leitor de Tela</label>
-						</div>
-						<Switch
-							checked={preferences.screenReader}
-							onCheckedChange={(checked) => updatePreference("screenReader", checked)}
-						/>
-					</div>
-
-					{/* Keyboard Navigation */}
-					<div className="flex items-center justify-between">
-						<div className="flex items-center gap-2">
-							<Keyboard className="h-4 w-4" />
-							<label className="text-sm font-medium">Navegação por Teclado</label>
-						</div>
-						<Switch
-							checked={preferences.keyboardNavigation}
-							onCheckedChange={(checked) => updatePreference("keyboardNavigation", checked)}
-						/>
-					</div>
-
-					{/* Sound */}
-					<div className="flex items-center justify-between">
-						<div className="flex items-center gap-2">
-							{preferences.soundEnabled ? (
-								<Volume2 className="h-4 w-4" />
-							) : (
-								<VolumeX className="h-4 w-4" />
-							)}
-							<label className="text-sm font-medium">Sons do Sistema</label>
-						</div>
-						<Switch
-							checked={preferences.soundEnabled}
-							onCheckedChange={(checked) => updatePreference("soundEnabled", checked)}
-						/>
-					</div>
-					</div>
-				)}
-
-					{/* Healthcare Tab */}
-					{activeTab === 'healthcare' && (
-						<div className="space-y-4">
-							<h4 className="font-medium text-sm flex items-center gap-2">
-								<Heart className="h-4 w-4 text-red-500" />
-								Configurações Médicas
-							</h4>
-							
-							{/* Medical Terminology Help */}
-							<div className="flex items-center justify-between">
-								<div className="flex items-center gap-2">
-									<Stethoscope className="h-4 w-4" />
-									<label className="text-sm font-medium">Ajuda com Terminologia Médica</label>
-								</div>
-								<Switch
-									checked={preferences.medicalTerminologyHelp}
-									onCheckedChange={(checked) => updatePreference("medicalTerminologyHelp", checked)}
-								/>
-							</div>
-							
-							{/* Emergency High Contrast */}
-							<div className="flex items-center justify-between">
-								<div className="flex items-center gap-2">
-									<AlertTriangle className="h-4 w-4" />
-									<label className="text-sm font-medium">Alto Contraste para Emergências</label>
-								</div>
-								<Switch
-									checked={preferences.emergencyHighContrast}
-									onCheckedChange={(checked) => updatePreference("emergencyHighContrast", checked)}
-								/>
-							</div>
-							
-							{/* Voice Navigation */}
-							<div className="space-y-3">
-								<div className="flex items-center justify-between">
-									<div className="flex items-center gap-2">
-										<Mic className="h-4 w-4" />
-										<label className="text-sm font-medium">Navegação por Voz</label>
+					<div className="space-y-4" role="tabpanel">
+						{activeTab === "general" && (
+							<div className="space-y-4">
+								{/* Font Size */}
+								<div className="space-y-2">
+									<div className="flex items-center justify-between">
+										<label className="text-sm font-medium">Tamanho da Fonte</label>
+										<Badge variant="outline">{preferences.fontSize}px</Badge>
 									</div>
-									<Switch
-										checked={preferences.voiceNavigation}
-										onCheckedChange={(checked) => updatePreference("voiceNavigation", checked)}
+									<Slider
+										value={[preferences.fontSize]}
+										onValueChange={([value]) => updatePreference("fontSize", value)}
+										min={12}
+										max={24}
+										step={1}
+										className="w-full"
 									/>
 								</div>
-								{preferences.voiceNavigation && (
-									<div className="ml-6 space-y-2 text-xs text-muted-foreground">
-										<p>Comandos disponíveis:</p>
-										<ul className="space-y-1 text-[11px]">
-											<li>• "Mostrar pacientes" - Abrir lista de pacientes</li>
-											<li>• "Buscar paciente [nome]" - Procurar paciente</li>
-											<li>• "Agenda de hoje" - Ver consultas do dia</li>
-											<li>• "Estoque de [produto]" - Verificar estoque</li>
-										</ul>
+
+								{/* High Contrast */}
+								<div className="flex items-center justify-between">
+									<div className="flex items-center gap-2">
+										<Contrast className="h-4 w-4" />
+										<label className="text-sm font-medium">Alto Contraste</label>
 									</div>
-								)}
-							</div>
-							
-							{/* Larger Touch Targets */}
-							<div className="flex items-center justify-between">
-								<div className="flex items-center gap-2">
-									<MousePointer className="h-4 w-4" />
-									<label className="text-sm font-medium">Alvos de Toque Maiores</label>
+									<Switch
+										checked={preferences.highContrast}
+										onCheckedChange={(checked) => updatePreference("highContrast", checked)}
+									/>
 								</div>
-								<Switch
-									checked={preferences.largerTouchTargets}
-									onCheckedChange={(checked) => updatePreference("largerTouchTargets", checked)}
-								/>
-							</div>
-							
-							{/* Medical Alerts Audio */}
-							<div className="flex items-center justify-between">
-								<div className="flex items-center gap-2">
-									<Volume2 className="h-4 w-4" />
-									<label className="text-sm font-medium">Alertas Médicos por Áudio</label>
+
+								{/* Reduced Motion */}
+								<div className="flex items-center justify-between">
+									<div className="flex items-center gap-2">
+										<MousePointer className="h-4 w-4" />
+										<label className="text-sm font-medium">Reduzir Movimento</label>
+									</div>
+									<Switch
+										checked={preferences.reducedMotion}
+										onCheckedChange={(checked) => updatePreference("reducedMotion", checked)}
+									/>
 								</div>
-								<Switch
-									checked={preferences.medicalAlertsAudio}
-									onCheckedChange={(checked) => updatePreference("medicalAlertsAudio", checked)}
-								/>
-							</div>
-							
-							{/* Cognitive Assistance */}
-							<div className="flex items-center justify-between">
-								<div className="flex items-center gap-2">
-									<Activity className="h-4 w-4" />
-									<label className="text-sm font-medium">Assistência Cognitiva</label>
+
+								{/* Screen Reader */}
+								<div className="flex items-center justify-between">
+									<div className="flex items-center gap-2">
+										<Speaker className="h-4 w-4" />
+										<label className="text-sm font-medium">Leitor de Tela</label>
+									</div>
+									<Switch
+										checked={preferences.screenReader}
+										onCheckedChange={(checked) => updatePreference("screenReader", checked)}
+									/>
 								</div>
-								<Switch
-									checked={preferences.cognitiveAssistance}
-									onCheckedChange={(checked) => updatePreference("cognitiveAssistance", checked)}
-								/>
-							</div>
-						</div>
-					)}
-					
-					{/* Language Tab */}
-					{activeTab === 'language' && (
-						<div className="space-y-4">
-							<h4 className="font-medium text-sm flex items-center gap-2">
-								<Languages className="h-4 w-4 text-blue-500" />
-								Configurações de Idioma
-							</h4>
-							
-							{/* Portuguese Screen Reader */}
-							<div className="flex items-center justify-between">
-								<div className="flex items-center gap-2">
-									<Speaker className="h-4 w-4" />
-									<label className="text-sm font-medium">Leitor de Tela em Português</label>
+
+								{/* Keyboard Navigation */}
+								<div className="flex items-center justify-between">
+									<div className="flex items-center gap-2">
+										<Keyboard className="h-4 w-4" />
+										<label className="text-sm font-medium">Navegação por Teclado</label>
+									</div>
+									<Switch
+										checked={preferences.keyboardNavigation}
+										onCheckedChange={(checked) => updatePreference("keyboardNavigation", checked)}
+									/>
 								</div>
-								<Switch
-									checked={preferences.portugueseScreenReader}
-									onCheckedChange={(checked) => updatePreference("portugueseScreenReader", checked)}
-								/>
-							</div>
-							
-							{/* Dyslexia Friendly Font */}
-							<div className="flex items-center justify-between">
-								<div className="flex items-center gap-2">
-									<Type className="h-4 w-4" />
-									<label className="text-sm font-medium">Fonte Amigável para Dislexia</label>
+
+								{/* Sound */}
+								<div className="flex items-center justify-between">
+									<div className="flex items-center gap-2">
+										{preferences.soundEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+										<label className="text-sm font-medium">Sons do Sistema</label>
+									</div>
+									<Switch
+										checked={preferences.soundEnabled}
+										onCheckedChange={(checked) => updatePreference("soundEnabled", checked)}
+									/>
 								</div>
-								<Switch
-									checked={preferences.dyslexiaFriendlyFont}
-									onCheckedChange={(checked) => updatePreference("dyslexiaFriendlyFont", checked)}
-								/>
 							</div>
-							
-							{/* Color Blindness Support */}
-							<div className="space-y-2">
-								<label className="text-sm font-medium">Suporte para Daltonismo</label>
-								<select 
-									value={preferences.colorBlindnessSupport}
-									onChange={(e) => updatePreference("colorBlindnessSupport", e.target.value as any)}
-									className="w-full p-2 rounded-md border border-input bg-background text-sm"
-								>
-									<option value="none">Nenhum</option>
-									<option value="protanopia">Protanopia (Vermelho-verde)</option>
-									<option value="deuteranopia">Deuteranopia (Verde-vermelho)</option>
-									<option value="tritanopia">Tritanopia (Azul-amarelo)</option>
-								</select>
-							</div>
-							
-							{/* Slow Animations */}
-							<div className="flex items-center justify-between">
-								<div className="flex items-center gap-2">
-									<Focus className="h-4 w-4" />
-									<label className="text-sm font-medium">Animações Mais Lentas</label>
+						)}
+
+						{/* Healthcare Tab */}
+						{activeTab === "healthcare" && (
+							<div className="space-y-4">
+								<h4 className="font-medium text-sm flex items-center gap-2">
+									<Heart className="h-4 w-4 text-red-500" />
+									Configurações Médicas
+								</h4>
+
+								{/* Medical Terminology Help */}
+								<div className="flex items-center justify-between">
+									<div className="flex items-center gap-2">
+										<Stethoscope className="h-4 w-4" />
+										<label className="text-sm font-medium">Ajuda com Terminologia Médica</label>
+									</div>
+									<Switch
+										checked={preferences.medicalTerminologyHelp}
+										onCheckedChange={(checked) => updatePreference("medicalTerminologyHelp", checked)}
+									/>
 								</div>
-								<Switch
-									checked={preferences.slowAnimations}
-									onCheckedChange={(checked) => updatePreference("slowAnimations", checked)}
-								/>
+
+								{/* Emergency High Contrast */}
+								<div className="flex items-center justify-between">
+									<div className="flex items-center gap-2">
+										<AlertTriangle className="h-4 w-4" />
+										<label className="text-sm font-medium">Alto Contraste para Emergências</label>
+									</div>
+									<Switch
+										checked={preferences.emergencyHighContrast}
+										onCheckedChange={(checked) => updatePreference("emergencyHighContrast", checked)}
+									/>
+								</div>
+
+								{/* Voice Navigation */}
+								<div className="space-y-3">
+									<div className="flex items-center justify-between">
+										<div className="flex items-center gap-2">
+											<Mic className="h-4 w-4" />
+											<label className="text-sm font-medium">Navegação por Voz</label>
+										</div>
+										<Switch
+											checked={preferences.voiceNavigation}
+											onCheckedChange={(checked) => updatePreference("voiceNavigation", checked)}
+										/>
+									</div>
+									{preferences.voiceNavigation && (
+										<div className="ml-6 space-y-2 text-xs text-muted-foreground">
+											<p>Comandos disponíveis:</p>
+											<ul className="space-y-1 text-[11px]">
+												<li>• "Mostrar pacientes" - Abrir lista de pacientes</li>
+												<li>• "Buscar paciente [nome]" - Procurar paciente</li>
+												<li>• "Agenda de hoje" - Ver consultas do dia</li>
+												<li>• "Estoque de [produto]" - Verificar estoque</li>
+											</ul>
+										</div>
+									)}
+								</div>
+
+								{/* Larger Touch Targets */}
+								<div className="flex items-center justify-between">
+									<div className="flex items-center gap-2">
+										<MousePointer className="h-4 w-4" />
+										<label className="text-sm font-medium">Alvos de Toque Maiores</label>
+									</div>
+									<Switch
+										checked={preferences.largerTouchTargets}
+										onCheckedChange={(checked) => updatePreference("largerTouchTargets", checked)}
+									/>
+								</div>
+
+								{/* Medical Alerts Audio */}
+								<div className="flex items-center justify-between">
+									<div className="flex items-center gap-2">
+										<Volume2 className="h-4 w-4" />
+										<label className="text-sm font-medium">Alertas Médicos por Áudio</label>
+									</div>
+									<Switch
+										checked={preferences.medicalAlertsAudio}
+										onCheckedChange={(checked) => updatePreference("medicalAlertsAudio", checked)}
+									/>
+								</div>
+
+								{/* Cognitive Assistance */}
+								<div className="flex items-center justify-between">
+									<div className="flex items-center gap-2">
+										<Activity className="h-4 w-4" />
+										<label className="text-sm font-medium">Assistência Cognitiva</label>
+									</div>
+									<Switch
+										checked={preferences.cognitiveAssistance}
+										onCheckedChange={(checked) => updatePreference("cognitiveAssistance", checked)}
+									/>
+								</div>
 							</div>
-						</div>
-					)}
+						)}
+
+						{/* Language Tab */}
+						{activeTab === "language" && (
+							<div className="space-y-4">
+								<h4 className="font-medium text-sm flex items-center gap-2">
+									<Languages className="h-4 w-4 text-blue-500" />
+									Configurações de Idioma
+								</h4>
+
+								{/* Portuguese Screen Reader */}
+								<div className="flex items-center justify-between">
+									<div className="flex items-center gap-2">
+										<Speaker className="h-4 w-4" />
+										<label className="text-sm font-medium">Leitor de Tela em Português</label>
+									</div>
+									<Switch
+										checked={preferences.portugueseScreenReader}
+										onCheckedChange={(checked) => updatePreference("portugueseScreenReader", checked)}
+									/>
+								</div>
+
+								{/* Dyslexia Friendly Font */}
+								<div className="flex items-center justify-between">
+									<div className="flex items-center gap-2">
+										<Type className="h-4 w-4" />
+										<label className="text-sm font-medium">Fonte Amigável para Dislexia</label>
+									</div>
+									<Switch
+										checked={preferences.dyslexiaFriendlyFont}
+										onCheckedChange={(checked) => updatePreference("dyslexiaFriendlyFont", checked)}
+									/>
+								</div>
+
+								{/* Color Blindness Support */}
+								<div className="space-y-2">
+									<label className="text-sm font-medium">Suporte para Daltonismo</label>
+									<select
+										value={preferences.colorBlindnessSupport}
+										onChange={(e) => updatePreference("colorBlindnessSupport", e.target.value as any)}
+										className="w-full p-2 rounded-md border border-input bg-background text-sm"
+									>
+										<option value="none">Nenhum</option>
+										<option value="protanopia">Protanopia (Vermelho-verde)</option>
+										<option value="deuteranopia">Deuteranopia (Verde-vermelho)</option>
+										<option value="tritanopia">Tritanopia (Azul-amarelo)</option>
+									</select>
+								</div>
+
+								{/* Slow Animations */}
+								<div className="flex items-center justify-between">
+									<div className="flex items-center gap-2">
+										<Focus className="h-4 w-4" />
+										<label className="text-sm font-medium">Animações Mais Lentas</label>
+									</div>
+									<Switch
+										checked={preferences.slowAnimations}
+										onCheckedChange={(checked) => updatePreference("slowAnimations", checked)}
+									/>
+								</div>
+							</div>
+						)}
 					</div>
 
 					{/* Reset Button */}
@@ -696,7 +672,7 @@ export function AccessibilityPanel() {
 								medicalAlertsAudio: true,
 								portugueseScreenReader: true,
 								dyslexiaFriendlyFont: false,
-								colorBlindnessSupport: 'none',
+								colorBlindnessSupport: "none",
 								cognitiveAssistance: false,
 								slowAnimations: false,
 							});
@@ -727,27 +703,23 @@ export function StatusAnnouncer() {
 		};
 	}, []);
 
-	return (
-		<LiveRegion politeness="assertive">
-			{message}
-		</LiveRegion>
-	);
+	return <LiveRegion politeness="assertive">{message}</LiveRegion>;
 }
 
 // Utility function to announce status changes
 export function announceStatus(message: string) {
 	const event = new CustomEvent("announce-status", {
-		detail: { message }
+		detail: { message },
 	});
 	document.dispatchEvent(event);
 }
 
 // Color contrast checker utility
-export function checkColorContrast(foreground: string, background: string): "AAA" | "AA" | "FAIL" {
+export function checkColorContrast(_foreground: string, _background: string): "AAA" | "AA" | "FAIL" {
 	// Simplified contrast ratio calculation
 	// In production, use a proper color contrast library
 	const ratio = 4.5; // Mock ratio for demo
-	
+
 	if (ratio >= 7) return "AAA";
 	if (ratio >= 4.5) return "AA";
 	return "FAIL";

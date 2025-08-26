@@ -3,8 +3,8 @@
  * Constitutional healthcare database client for NeonPro
  */
 
-import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@neonpro/types";
+import { createClient } from "@supabase/supabase-js";
 
 // Supabase configuration
 const SUPABASE_URL = process.env.SUPABASE_URL || "https://ownkoxryswokcdanrdgj.supabase.co";
@@ -15,19 +15,19 @@ const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || proce
  * Constitutional healthcare database access
  */
 export function createSupabaseClient() {
-  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-    throw new Error("Supabase URL and Service Role Key are required for constitutional healthcare compliance");
-  }
+	if (!(SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY)) {
+		throw new Error("Supabase URL and Service Role Key are required for constitutional healthcare compliance");
+	}
 
-  return createClient<Database>(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-    },
-    db: {
-      schema: "public",
-    },
-  });
+	return createClient<Database>(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
+		auth: {
+			autoRefreshToken: false,
+			persistSession: false,
+		},
+		db: {
+			schema: "public",
+		},
+	});
 }
 
 /**
@@ -37,10 +37,10 @@ export function createSupabaseClient() {
 let supabaseClient: ReturnType<typeof createSupabaseClient> | null = null;
 
 export function getSupabaseClient() {
-  if (!supabaseClient) {
-    supabaseClient = createSupabaseClient();
-  }
-  return supabaseClient;
+	if (!supabaseClient) {
+		supabaseClient = createSupabaseClient();
+	}
+	return supabaseClient;
 }
 
 // Export singleton instance as 'supabase' for compatibility

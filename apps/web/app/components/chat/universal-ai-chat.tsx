@@ -6,7 +6,6 @@ import {
 	Bot,
 	Clock,
 	Loader2,
-	Maximize2,
 	MessageSquare,
 	Mic,
 	MicOff,
@@ -16,7 +15,6 @@ import {
 	User,
 	Volume2,
 	VolumeX,
-	X,
 } from "lucide-react";
 import type React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -110,7 +108,7 @@ export function UniversalAIChat({
 
 	useEffect(() => {
 		scrollToBottom();
-	}, [messages, currentStreamingMessage, scrollToBottom]);
+	}, [scrollToBottom]);
 
 	// Initialize chat session
 	const initializeSession = useCallback(async () => {
@@ -148,7 +146,7 @@ export function UniversalAIChat({
 
 			// Add welcome message
 			const welcomeMessage: ChatMessage = {
-				id: "welcome-" + Date.now(),
+				id: `welcome-${Date.now()}`,
 				role: "assistant",
 				content:
 					interfaceType === "external"
@@ -188,7 +186,7 @@ export function UniversalAIChat({
 			if (!(session && content.trim()) || isLoading) return;
 
 			const userMessage: ChatMessage = {
-				id: "user-" + Date.now(),
+				id: `user-${Date.now()}`,
 				role: "user",
 				content: content.trim(),
 				timestamp: new Date(),
@@ -256,7 +254,7 @@ export function UniversalAIChat({
 
 									switch (parsedData.type) {
 										case "start":
-											assistantMessageId = "assistant-" + Date.now();
+											assistantMessageId = `assistant-${Date.now()}`;
 											// Handle compliance warnings
 											if (parsedData.compliance?.warnings && parsedData.compliance.warnings > 0) {
 												toast({
@@ -340,7 +338,7 @@ export function UniversalAIChat({
 				setCurrentStreamingMessage("");
 
 				const errorMessage: ChatMessage = {
-					id: "error-" + Date.now(),
+					id: `error-${Date.now()}`,
 					role: "assistant",
 					content: "Desculpe, ocorreu um erro ao processar sua mensagem. Tente novamente em alguns instantes.",
 					timestamp: new Date(),

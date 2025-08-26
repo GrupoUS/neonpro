@@ -5,20 +5,20 @@
  * Remove dependência externa @neonpro/cache para facilitar build
  */
 
-export interface CacheItem<T = unknown> {
+export type CacheItem<T = unknown> = {
 	data: T;
 	timestamp: number;
 	ttl: number;
 	auditLog: string[];
-}
+};
 
-export interface SensitiveCacheItem<T = unknown> {
+export type SensitiveCacheItem<T = unknown> = {
 	data: T;
 	encrypted: boolean;
 	patientConsent: boolean;
 	expiresAt: number;
 	auditLog: string[];
-}
+};
 
 /**
  * Internal Healthcare Cache Manager

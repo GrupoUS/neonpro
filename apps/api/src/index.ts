@@ -197,6 +197,9 @@ const apiV1 = new Hono<AppEnv>()
 // Mount API v1
 app.route("/api/v1", apiV1);
 
+// Constants
+const HTTP_STATUS_NOT_FOUND = 404;
+
 // 404 handler
 app.notFound((c) => {
 	return c.json(
@@ -207,7 +210,7 @@ app.notFound((c) => {
 			method: c.req.method,
 			timestamp: new Date().toISOString(),
 		},
-		404
+		HTTP_STATUS_NOT_FOUND
 	);
 });
 

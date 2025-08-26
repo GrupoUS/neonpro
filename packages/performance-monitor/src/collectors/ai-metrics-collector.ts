@@ -3,7 +3,7 @@ import { type MetricCollector, MetricType, MetricUnit, type PerformanceMetric } 
 export class AIMetricsCollector implements MetricCollector {
 	private enabled = true;
 	private collectionInterval = 60_000; // 1 minute
-	private aiServices: any[] = []; // Will be injected
+	private readonly aiServices: any[] = []; // Will be injected
 	private costTracker: any; // Cost tracking service
 
 	constructor(aiServices: any[] = [], costTracker?: any) {
@@ -25,8 +25,6 @@ export class AIMetricsCollector implements MetricCollector {
 			// Collect AI performance metrics
 			await this.collectPerformanceMetrics(metrics, timestamp);
 		} catch (error) {
-			console.error("[AIMetricsCollector] Error collecting metrics:", error);
-
 			// Error metric
 			metrics.push({
 				id: `ai_error_${timestamp}`,
@@ -75,7 +73,9 @@ export class AIMetricsCollector implements MetricCollector {
 		});
 	}
 	private async collectCostMetrics(metrics: PerformanceMetric[], timestamp: number): Promise<void> {
-		if (!this.costTracker) return;
+		if (!this.costTracker) {
+			return;
+		}
 
 		try {
 			const hourlyCost = await this.costTracker.getHourlyCost();
@@ -117,9 +117,7 @@ export class AIMetricsCollector implements MetricCollector {
 				source: "ai-metrics-collector",
 				context: { period: "month", cost: monthlyCost, projected: "true" },
 			});
-		} catch (error) {
-			console.error("[AIMetricsCollector] Error collecting cost metrics:", error);
-		}
+		} catch (_error) {}
 	}
 
 	private async collectPerformanceMetrics(metrics: PerformanceMetric[], timestamp: number): Promise<void> {

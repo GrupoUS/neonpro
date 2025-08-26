@@ -4,7 +4,7 @@
  */
 
 // Enterprise Service Configuration
-export interface EnterpriseServiceConfig {
+export type EnterpriseServiceConfig = {
 	serviceName: string;
 	enableCache: boolean;
 	enableAnalytics: boolean;
@@ -15,40 +15,40 @@ export interface EnterpriseServiceConfig {
 		interval: number;
 		timeout: number;
 	};
-}
+};
 
 // Enterprise Cache Types
-export interface EnterpriseCacheConfig {
+export type EnterpriseCacheConfig = {
 	layers: CacheLayerType[];
 	ttl: number;
 	maxSize: number;
 	compression: boolean;
 	encryption: boolean;
 	replication: boolean;
-}
+};
 
 export type CacheLayerType = "memory" | "redis" | "database";
 
-export interface CacheMetrics {
+export type CacheMetrics = {
 	hits: number;
 	misses: number;
 	hitRate: number;
 	avgResponseTime: number;
 	memoryUsage: number;
 	redisConnections: number;
-}
+};
 
-export interface CacheOperation {
+export type CacheOperation = {
 	operation: "get" | "set" | "delete" | "clear";
 	key: string;
 	layer: CacheLayerType;
 	duration: number;
 	success: boolean;
 	size?: number;
-}
+};
 
 // Enterprise Analytics Types
-export interface EnterpriseAnalyticsConfig {
+export type EnterpriseAnalyticsConfig = {
 	enableRealTime: boolean;
 	enablePredictive: boolean;
 	enableInsights: boolean;
@@ -59,11 +59,11 @@ export interface EnterpriseAnalyticsConfig {
 		anvisa: boolean;
 		hipaa: boolean;
 	};
-}
+};
 
 export type AnalyticsExportFormat = "json" | "csv" | "pdf" | "excel";
 
-export interface AnalyticsEvent {
+export type AnalyticsEvent = {
 	id: string;
 	type: string;
 	data: Record<string, any>;
@@ -71,17 +71,17 @@ export interface AnalyticsEvent {
 	userId?: string;
 	sessionId?: string;
 	context: AnalyticsContext;
-}
+};
 
-export interface AnalyticsContext {
+export type AnalyticsContext = {
 	feature: string;
 	userRole: string;
 	deviceType: "mobile" | "desktop" | "tablet";
 	location?: string;
 	healthcareProvider?: string;
-}
+};
 
-export interface AnalyticsInsight {
+export type AnalyticsInsight = {
 	id: string;
 	type: "trend" | "anomaly" | "recommendation" | "alert";
 	title: string;
@@ -91,9 +91,9 @@ export interface AnalyticsInsight {
 	actionRequired: boolean;
 	relatedMetrics: string[];
 	timestamp: Date;
-}
+};
 
-export interface AnalyticsMetric {
+export type AnalyticsMetric = {
 	name: string;
 	value: number;
 	unit: string;
@@ -101,10 +101,10 @@ export interface AnalyticsMetric {
 	change: number; // percentage
 	period: string;
 	healthcareRelevant: boolean;
-}
+};
 
 // Enterprise Security Types
-export interface EnterpriseSecurityConfig {
+export type EnterpriseSecurityConfig = {
 	encryption: {
 		algorithm: string;
 		keyRotation: number; // days
@@ -131,11 +131,11 @@ export interface EnterpriseSecurityConfig {
 		maxConcurrent: number;
 		deviceTracking: boolean;
 	};
-}
+};
 
 export type MfaMethod = "totp" | "sms" | "email" | "hardware_key" | "biometric";
 
-export interface SecurityEvent {
+export type SecurityEvent = {
 	id: string;
 	type: SecurityEventType;
 	severity: "low" | "medium" | "high" | "critical";
@@ -146,7 +146,7 @@ export interface SecurityEvent {
 	riskScore: number; // 1-10
 	resolved: boolean;
 	timestamp: Date;
-}
+};
 
 export type SecurityEventType =
 	| "login_success"
@@ -160,24 +160,24 @@ export type SecurityEventType =
 	| "session_hijacking"
 	| "brute_force_attack";
 
-export interface ThreatDetectionResult {
+export type ThreatDetectionResult = {
 	threatDetected: boolean;
 	riskScore: number;
 	threats: DetectedThreat[];
 	recommendedActions: string[];
 	blockAccess: boolean;
-}
+};
 
-export interface DetectedThreat {
+export type DetectedThreat = {
 	type: string;
 	description: string;
 	indicators: string[];
 	confidence: number; // 0-1
 	mitigation: string[];
-}
+};
 
 // Enterprise Audit Types
-export interface EnterpriseAuditConfig {
+export type EnterpriseAuditConfig = {
 	retention: number; // days
 	encryption: boolean;
 	immutable: boolean;
@@ -192,11 +192,11 @@ export interface EnterpriseAuditConfig {
 		formats: AuditExportFormat[];
 		schedule: string; // cron expression
 	};
-}
+};
 
 export type AuditExportFormat = "json" | "csv" | "xml" | "pdf";
 
-export interface AuditEvent {
+export type AuditEvent = {
 	id: string;
 	timestamp: Date;
 	userId?: string;
@@ -210,9 +210,9 @@ export interface AuditEvent {
 	riskLevel: "low" | "medium" | "high" | "critical";
 	complianceRelevant: boolean;
 	hash: string; // For immutability
-}
+};
 
-export interface AuditQuery {
+export type AuditQuery = {
 	startDate?: Date;
 	endDate?: Date;
 	userId?: string;
@@ -222,9 +222,9 @@ export interface AuditQuery {
 	riskLevel?: "low" | "medium" | "high" | "critical";
 	limit?: number;
 	offset?: number;
-}
+};
 
-export interface AuditReport {
+export type AuditReport = {
 	id: string;
 	type: "compliance" | "security" | "performance" | "user_activity";
 	period: {
@@ -245,16 +245,16 @@ export interface AuditReport {
 	recommendations: string[];
 	generatedAt: Date;
 	generatedBy: string;
-}
+};
 
-export interface ComplianceStatus {
+export type ComplianceStatus = {
 	status: "compliant" | "non_compliant" | "partial";
 	score: number; // 0-100
 	issues: ComplianceIssue[];
 	lastAudit: Date;
-}
+};
 
-export interface ComplianceIssue {
+export type ComplianceIssue = {
 	id: string;
 	type: "violation" | "warning" | "recommendation";
 	description: string;
@@ -262,10 +262,10 @@ export interface ComplianceIssue {
 	severity: "low" | "medium" | "high" | "critical";
 	remediation: string[];
 	deadline?: Date;
-}
+};
 
 // Healthcare-Specific Enterprise Types
-export interface HealthcareEnterpriseConfig {
+export type HealthcareEnterpriseConfig = {
 	patientDataHandling: {
 		encryptionRequired: boolean;
 		accessLogging: boolean;
@@ -284,9 +284,9 @@ export interface HealthcareEnterpriseConfig {
 		cfm: boolean;
 		customRegulations: string[];
 	};
-}
+};
 
-export interface PatientDataAccess {
+export type PatientDataAccess = {
 	patientId: string;
 	userId: string;
 	accessType: "read" | "write" | "delete" | "export";
@@ -296,9 +296,9 @@ export interface PatientDataAccess {
 	timestamp: Date;
 	dataFields: string[];
 	justification?: string;
-}
+};
 
-export interface ClinicalMetric {
+export type ClinicalMetric = {
 	id: string;
 	name: string;
 	category: "safety" | "quality" | "efficiency" | "compliance";
@@ -309,9 +309,9 @@ export interface ClinicalMetric {
 	trend: "improving" | "declining" | "stable";
 	period: string;
 	healthcareProvider: string;
-}
+};
 
-export interface HealthcareAlert {
+export type HealthcareAlert = {
 	id: string;
 	type: "patient_safety" | "data_breach" | "system_error" | "compliance_violation";
 	severity: "low" | "medium" | "high" | "critical";
@@ -323,19 +323,19 @@ export interface HealthcareAlert {
 	acknowledged: boolean;
 	resolved: boolean;
 	actions: AlertAction[];
-}
+};
 
-export interface AlertAction {
+export type AlertAction = {
 	id: string;
 	action: string;
 	performedBy: string;
 	timestamp: Date;
 	result: string;
 	followUpRequired: boolean;
-}
+};
 
 // Enterprise Integration Types
-export interface EnterpriseIntegration {
+export type EnterpriseIntegration = {
 	serviceName: string;
 	endpoint: string;
 	authentication: {
@@ -356,9 +356,9 @@ export interface EnterpriseIntegration {
 		auditRequired: boolean;
 		encryptionRequired: boolean;
 	};
-}
+};
 
-export interface IntegrationMetrics {
+export type IntegrationMetrics = {
 	serviceName: string;
 	availability: number; // percentage
 	responseTime: number; // ms
@@ -366,10 +366,10 @@ export interface IntegrationMetrics {
 	throughput: number; // requests per second
 	lastCheck: Date;
 	status: "healthy" | "degraded" | "down";
-}
+};
 
 // Enterprise Service Health Types
-export interface EnterpriseHealthCheck {
+export type EnterpriseHealthCheck = {
 	serviceName: string;
 	status: "healthy" | "degraded" | "unhealthy" | "critical";
 	checks: HealthCheckResult[];
@@ -377,27 +377,27 @@ export interface EnterpriseHealthCheck {
 	uptime: number; // percentage
 	responseTime: number; // ms
 	dependencies: DependencyHealth[];
-}
+};
 
-export interface HealthCheckResult {
+export type HealthCheckResult = {
 	name: string;
 	status: "pass" | "fail" | "warn";
 	message?: string;
 	duration: number; // ms
 	timestamp: Date;
-}
+};
 
-export interface DependencyHealth {
+export type DependencyHealth = {
 	name: string;
 	type: "database" | "cache" | "api" | "queue" | "storage";
 	status: "available" | "unavailable" | "degraded";
 	responseTime?: number;
 	lastCheck: Date;
 	critical: boolean;
-}
+};
 
 // Enterprise Dashboard Types
-export interface EnterpriseDashboard {
+export type EnterpriseDashboard = {
 	id: string;
 	name: string;
 	description: string;
@@ -407,9 +407,9 @@ export interface EnterpriseDashboard {
 	refreshInterval: number; // seconds
 	createdBy: string;
 	updatedAt: Date;
-}
+};
 
-export interface DashboardWidget {
+export type DashboardWidget = {
 	id: string;
 	type: "metric" | "chart" | "table" | "alert" | "health";
 	title: string;
@@ -422,23 +422,23 @@ export interface DashboardWidget {
 	};
 	dataSource: string;
 	refreshInterval?: number;
-}
+};
 
-export interface DashboardLayout {
+export type DashboardLayout = {
 	columns: number;
 	rows: number;
 	breakpoints: Record<string, number>;
 	responsive: boolean;
-}
+};
 
-export interface DashboardPermission {
+export type DashboardPermission = {
 	userId: string;
 	role: string;
 	permissions: ("view" | "edit" | "share" | "delete")[];
-}
+};
 
 // Enterprise Reporting Types
-export interface EnterpriseReport {
+export type EnterpriseReport = {
 	id: string;
 	name: string;
 	type: "compliance" | "performance" | "security" | "healthcare" | "custom";
@@ -449,31 +449,31 @@ export interface EnterpriseReport {
 	template: string;
 	lastGenerated?: Date;
 	nextScheduled?: Date;
-}
+};
 
-export interface ReportSchedule {
+export type ReportSchedule = {
 	frequency: "daily" | "weekly" | "monthly" | "quarterly" | "annually" | "on_demand";
 	time?: string; // HH:MM
 	dayOfWeek?: number; // 0-6
 	dayOfMonth?: number; // 1-31
 	timezone: string;
-}
+};
 
-export interface ReportRecipient {
+export type ReportRecipient = {
 	email: string;
 	name: string;
 	role: string;
 	notifications: boolean;
-}
+};
 
-export interface ReportFilter {
+export type ReportFilter = {
 	field: string;
 	operator: "equals" | "contains" | "greater_than" | "less_than" | "between";
 	value: any;
-}
+};
 
 // Enterprise Configuration Types
-export interface EnterpriseConfiguration {
+export type EnterpriseConfiguration = {
 	general: {
 		organizationName: string;
 		timezone: string;
@@ -492,7 +492,7 @@ export interface EnterpriseConfiguration {
 		alerting: boolean;
 		metrics: string[];
 	};
-}
+};
 
 // Export utility types
 export type EnterpriseServiceType = "cache" | "analytics" | "security" | "audit" | "health";

@@ -1,5 +1,4 @@
 import { Activity, Cloud, Database, Shield, Zap } from "lucide-react";
-import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 

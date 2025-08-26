@@ -16,7 +16,7 @@ import type { ServiceContext } from "../types";
 // ANALYTICS TYPES AND INTERFACES
 // ================================================
 
-interface AnalyticsEvent {
+type AnalyticsEvent = {
 	id: string;
 	type: string;
 	category: string;
@@ -33,9 +33,9 @@ interface AnalyticsEvent {
 		version: string;
 		location?: string;
 	};
-}
+};
 
-interface HealthcareMetrics {
+type HealthcareMetrics = {
 	appointments: {
 		scheduled: number;
 		completed: number;
@@ -72,9 +72,9 @@ interface HealthcareMetrics {
 		staffEfficiency: number;
 		equipmentUsage: number;
 	};
-}
+};
 
-interface PatientAnalytics {
+type PatientAnalytics = {
 	patientId: string;
 	demographics: {
 		age: number;
@@ -109,9 +109,9 @@ interface PatientAnalytics {
 		paymentHistory: PaymentRecord[];
 		lifetimeValue: number;
 	};
-}
+};
 
-interface TreatmentRecord {
+type TreatmentRecord = {
 	id: string;
 	type: string;
 	date: Date;
@@ -119,17 +119,17 @@ interface TreatmentRecord {
 	cost: number;
 	outcome: string;
 	satisfaction: number;
-}
+};
 
-interface PaymentRecord {
+type PaymentRecord = {
 	id: string;
 	amount: number;
 	date: Date;
 	method: string;
 	status: string;
-}
+};
 
-interface Dashboard {
+type Dashboard = {
 	id: string;
 	name: string;
 	description: string;
@@ -141,9 +141,9 @@ interface Dashboard {
 	createdBy: string;
 	createdAt: Date;
 	updatedAt: Date;
-}
+};
 
-interface Widget {
+type Widget = {
 	id: string;
 	type: WidgetType;
 	title: string;
@@ -153,16 +153,16 @@ interface Widget {
 	position: { x: number; y: number; width: number; height: number };
 	refreshRate: number;
 	isVisible: boolean;
-}
+};
 
-interface DashboardFilter {
+type DashboardFilter = {
 	field: string;
 	operator: string;
 	value: any;
 	label: string;
-}
+};
 
-interface Report {
+type Report = {
 	id: string;
 	name: string;
 	type: ReportType;
@@ -176,17 +176,17 @@ interface Report {
 	createdAt: Date;
 	lastRun?: Date;
 	nextRun?: Date;
-}
+};
 
-interface ReportSchedule {
+type ReportSchedule = {
 	frequency: "daily" | "weekly" | "monthly" | "quarterly";
 	time: string;
 	daysOfWeek?: number[];
 	dayOfMonth?: number;
 	timezone: string;
-}
+};
 
-interface Insight {
+type Insight = {
 	id: string;
 	type: InsightType;
 	title: string;
@@ -198,22 +198,22 @@ interface Insight {
 	recommendations: string[];
 	createdAt: Date;
 	expiresAt?: Date;
-}
+};
 
-interface Trend {
+type Trend = {
 	metric: string;
 	period: string;
 	direction: "up" | "down" | "stable";
 	change: number;
 	significance: number;
 	data: TrendDataPoint[];
-}
+};
 
-interface TrendDataPoint {
+type TrendDataPoint = {
 	timestamp: number;
 	value: number;
 	metadata?: Record<string, any>;
-}
+};
 
 // ================================================
 // ENUMS
@@ -274,7 +274,7 @@ enum InsightImportance {
 // REQUEST TYPES
 // ================================================
 
-interface TrackEventRequest {
+type TrackEventRequest = {
 	type: string;
 	category: string;
 	action: string;
@@ -283,18 +283,18 @@ interface TrackEventRequest {
 	sessionId?: string;
 	patientId?: string;
 	metadata?: Record<string, any>;
-}
+};
 
-interface GetMetricsRequest {
+type GetMetricsRequest = {
 	tenantId: string;
 	startDate: Date;
 	endDate: Date;
 	granularity?: "hour" | "day" | "week" | "month";
 	filters?: Record<string, any>;
 	metrics?: string[];
-}
+};
 
-interface CreateDashboardRequest {
+type CreateDashboardRequest = {
 	name: string;
 	description: string;
 	type: DashboardType;
@@ -302,9 +302,9 @@ interface CreateDashboardRequest {
 	filters?: DashboardFilter[];
 	refreshRate?: number;
 	isPublic?: boolean;
-}
+};
 
-interface CreateReportRequest {
+type CreateReportRequest = {
 	name: string;
 	type: ReportType;
 	description: string;
@@ -312,7 +312,7 @@ interface CreateReportRequest {
 	schedule?: ReportSchedule;
 	format: ReportFormat;
 	recipients: string[];
-}
+};
 
 // ================================================
 // ANALYTICS SERVICE IMPLEMENTATION
@@ -323,29 +323,6 @@ export class AnalyticsService extends EnhancedServiceBase {
 	private readonly dashboards: Map<string, Dashboard> = new Map();
 	private readonly reports: Map<string, Report> = new Map();
 	private readonly insights: Map<string, Insight[]> = new Map();
-
-	// Healthcare-specific metric calculators
-	private readonly healthcareCalculators = {
-		noShowRate: (appointments: any[]) => {
-			const noShows = appointments.filter(apt => apt.status === "no-show").length;
-			return appointments.length > 0 ? (noShows / appointments.length) * 100 : 0;
-		},
-		
-		patientSatisfaction: (surveys: any[]) => {
-			const totalScore = surveys.reduce((sum, survey) => sum + survey.score, 0);
-			return surveys.length > 0 ? totalScore / surveys.length : 0;
-		},
-		
-		treatmentSuccess: (treatments: any[]) => {
-			const successful = treatments.filter(t => t.outcome === "success").length;
-			return treatments.length > 0 ? (successful / treatments.length) * 100 : 0;
-		},
-		
-		resourceUtilization: (bookings: any[], capacity: number) => {
-			const utilizationHours = bookings.reduce((sum, booking) => sum + booking.duration, 0);
-			return capacity > 0 ? (utilizationHours / capacity) * 100 : 0;
-		},
-	};
 
 	constructor(config?: Partial<ServiceConfig>) {
 		super({
@@ -384,10 +361,7 @@ export class AnalyticsService extends EnhancedServiceBase {
 	/**
 	 * Rastrear evento de analytics
 	 */
-	async trackEvent(
-		request: TrackEventRequest,
-		context: ServiceContext
-	): Promise<string> {
+	async trackEvent(request: TrackEventRequest, context: ServiceContext): Promise<string> {
 		return this.executeOperation(
 			"trackEvent",
 			async () => {
@@ -415,7 +389,7 @@ export class AnalyticsService extends EnhancedServiceBase {
 				if (!this.eventBuffer.has(bufferKey)) {
 					this.eventBuffer.set(bufferKey, []);
 				}
-				this.eventBuffer.get(bufferKey)!.push(event);
+				this.eventBuffer.get(bufferKey)?.push(event);
 
 				// Store event in database (async)
 				this.storeEventAsync(event, context);
@@ -436,10 +410,7 @@ export class AnalyticsService extends EnhancedServiceBase {
 	/**
 	 * Rastrear múltiplos eventos em batch
 	 */
-	async trackEventsBatch(
-		events: TrackEventRequest[],
-		context: ServiceContext
-	): Promise<string[]> {
+	async trackEventsBatch(events: TrackEventRequest[], context: ServiceContext): Promise<string[]> {
 		return this.executeOperation(
 			"trackEventsBatch",
 			async () => {
@@ -469,10 +440,7 @@ export class AnalyticsService extends EnhancedServiceBase {
 	/**
 	 * Obter métricas de healthcare
 	 */
-	async getHealthcareMetrics(
-		request: GetMetricsRequest,
-		context: ServiceContext
-	): Promise<HealthcareMetrics> {
+	async getHealthcareMetrics(request: GetMetricsRequest, context: ServiceContext): Promise<HealthcareMetrics> {
 		return this.executeOperation(
 			"getHealthcareMetrics",
 			async () => {
@@ -502,10 +470,7 @@ export class AnalyticsService extends EnhancedServiceBase {
 	/**
 	 * Análise comportamental de paciente
 	 */
-	async getPatientAnalytics(
-		patientId: string,
-		context: ServiceContext
-	): Promise<PatientAnalytics> {
+	async getPatientAnalytics(patientId: string, context: ServiceContext): Promise<PatientAnalytics> {
 		return this.executeOperation(
 			"getPatientAnalytics",
 			async () => {
@@ -541,12 +506,7 @@ export class AnalyticsService extends EnhancedServiceBase {
 	/**
 	 * Análise de tendências
 	 */
-	async getTrends(
-		tenantId: string,
-		metrics: string[],
-		period: string,
-		context: ServiceContext
-	): Promise<Trend[]> {
+	async getTrends(tenantId: string, metrics: string[], period: string, context: ServiceContext): Promise<Trend[]> {
 		return this.executeOperation(
 			"getTrends",
 			async () => {
@@ -578,10 +538,7 @@ export class AnalyticsService extends EnhancedServiceBase {
 	/**
 	 * Criar dashboard personalizado
 	 */
-	async createDashboard(
-		request: CreateDashboardRequest,
-		context: ServiceContext
-	): Promise<Dashboard> {
+	async createDashboard(request: CreateDashboardRequest, context: ServiceContext): Promise<Dashboard> {
 		return this.executeOperation(
 			"createDashboard",
 			async () => {
@@ -597,8 +554,8 @@ export class AnalyticsService extends EnhancedServiceBase {
 						id: `widget_${dashboardId}_${index}`,
 					})),
 					filters: request.filters || [],
-					refreshRate: request.refreshRate || 300000, // 5 minutes default
-					isPublic: request.isPublic || false,
+					refreshRate: request.refreshRate || 300_000, // 5 minutes default
+					isPublic: request.isPublic,
 					createdBy: context.userId!,
 					createdAt: new Date(),
 					updatedAt: new Date(),
@@ -620,10 +577,7 @@ export class AnalyticsService extends EnhancedServiceBase {
 	/**
 	 * Obter dados do dashboard
 	 */
-	async getDashboardData(
-		dashboardId: string,
-		context: ServiceContext
-	): Promise<Record<string, any>> {
+	async getDashboardData(dashboardId: string, context: ServiceContext): Promise<Record<string, any>> {
 		return this.executeOperation(
 			"getDashboardData",
 			async () => {
@@ -640,7 +594,7 @@ export class AnalyticsService extends EnhancedServiceBase {
 
 				// Generate data for each widget
 				const dashboardData: Record<string, any> = {};
-				
+
 				for (const widget of dashboard.widgets) {
 					if (widget.isVisible) {
 						dashboardData[widget.id] = await this.generateWidgetData(widget, context);
@@ -666,10 +620,7 @@ export class AnalyticsService extends EnhancedServiceBase {
 	/**
 	 * Criar relatório automático
 	 */
-	async createReport(
-		request: CreateReportRequest,
-		context: ServiceContext
-	): Promise<Report> {
+	async createReport(request: CreateReportRequest, context: ServiceContext): Promise<Report> {
 		return this.executeOperation(
 			"createReport",
 			async () => {
@@ -768,10 +719,7 @@ export class AnalyticsService extends EnhancedServiceBase {
 	/**
 	 * Gerar insights automáticos
 	 */
-	async generateInsights(
-		tenantId: string,
-		context: ServiceContext
-	): Promise<Insight[]> {
+	async generateInsights(tenantId: string, context: ServiceContext): Promise<Insight[]> {
 		return this.executeOperation(
 			"generateInsights",
 			async () => {
@@ -863,7 +811,7 @@ export class AnalyticsService extends EnhancedServiceBase {
 					dataSource: "revenue",
 					configuration: { format: "currency" },
 					position: { x: 0, y: 0, width: 3, height: 2 },
-					refreshRate: 300000,
+					refreshRate: 300_000,
 					isVisible: true,
 				},
 				{
@@ -874,12 +822,12 @@ export class AnalyticsService extends EnhancedServiceBase {
 					dataSource: "patients",
 					configuration: { chartType: "line", period: "6months" },
 					position: { x: 3, y: 0, width: 6, height: 4 },
-					refreshRate: 300000,
+					refreshRate: 300_000,
 					isVisible: true,
 				},
 			],
 			filters: [],
-			refreshRate: 300000,
+			refreshRate: 300_000,
 			isPublic: true,
 			createdBy: "system",
 			createdAt: new Date(),
@@ -891,15 +839,12 @@ export class AnalyticsService extends EnhancedServiceBase {
 
 	private startInsightGeneration(): void {
 		// Start periodic insight generation
-		setInterval(async () => {
-			// Generate insights for all tenants
-			console.log("Generating periodic insights...");
-		}, 30 * 60 * 1000); // Every 30 minutes
+		setInterval(async () => {}, 30 * 60 * 1000); // Every 30 minutes
 	}
 
 	private async calculateHealthcareMetrics(
-		request: GetMetricsRequest,
-		context: ServiceContext
+		_request: GetMetricsRequest,
+		_context: ServiceContext
 	): Promise<HealthcareMetrics> {
 		// Mock implementation - in production this would query actual data
 		return {
@@ -928,10 +873,10 @@ export class AnalyticsService extends EnhancedServiceBase {
 				costPerTreatment: 450,
 			},
 			revenue: {
-				total: 54000,
+				total: 54_000,
 				averagePerPatient: 450,
 				growth: 12.5,
-				projectedMonthly: 58500,
+				projectedMonthly: 58_500,
 			},
 			operations: {
 				averageWaitTime: 15,
@@ -942,10 +887,7 @@ export class AnalyticsService extends EnhancedServiceBase {
 		};
 	}
 
-	private async calculatePatientAnalytics(
-		patientId: string,
-		context: ServiceContext
-	): Promise<PatientAnalytics> {
+	private async calculatePatientAnalytics(patientId: string, _context: ServiceContext): Promise<PatientAnalytics> {
 		// Mock implementation
 		return {
 			patientId,
@@ -989,10 +931,10 @@ export class AnalyticsService extends EnhancedServiceBase {
 	}
 
 	private async calculateTrends(
-		tenantId: string,
+		_tenantId: string,
 		metrics: string[],
 		period: string,
-		context: ServiceContext
+		_context: ServiceContext
 	): Promise<Trend[]> {
 		const trends: Trend[] = [];
 
@@ -1004,7 +946,7 @@ export class AnalyticsService extends EnhancedServiceBase {
 				change: 12.5,
 				significance: 0.85,
 				data: [
-					{ timestamp: Date.now() - 86400000, value: 100 },
+					{ timestamp: Date.now() - 86_400_000, value: 100 },
 					{ timestamp: Date.now(), value: 112.5 },
 				],
 			});
@@ -1013,11 +955,11 @@ export class AnalyticsService extends EnhancedServiceBase {
 		return trends;
 	}
 
-	private async generateWidgetData(widget: Widget, context: ServiceContext): Promise<any> {
+	private async generateWidgetData(widget: Widget, _context: ServiceContext): Promise<any> {
 		// Generate data based on widget type and data source
 		switch (widget.type) {
 			case WidgetType.METRIC:
-				return { value: 12500, change: 8.5, trend: "up" };
+				return { value: 12_500, change: 8.5, trend: "up" };
 			case WidgetType.CHART:
 				return {
 					labels: ["Jan", "Fev", "Mar", "Abr", "Mai"],
@@ -1036,7 +978,7 @@ export class AnalyticsService extends EnhancedServiceBase {
 		}
 	}
 
-	private async analyzeDataForInsights(tenantId: string, context: ServiceContext): Promise<Insight[]> {
+	private async analyzeDataForInsights(_tenantId: string, _context: ServiceContext): Promise<Insight[]> {
 		// Mock insights generation
 		return [
 			{
@@ -1073,18 +1015,18 @@ export class AnalyticsService extends EnhancedServiceBase {
 	}
 
 	private async getHistoricalMetricData(
-		tenantId: string,
-		metric: string,
-		context: ServiceContext
+		_tenantId: string,
+		_metric: string,
+		_context: ServiceContext
 	): Promise<number[]> {
 		// Mock historical data
-		return Array.from({ length: 30 }, (_, i) => 100 + Math.random() * 20 - 10);
+		return Array.from({ length: 30 }, (_, _i) => 100 + Math.random() * 20 - 10);
 	}
 
 	private detectStatisticalAnomalies(data: number[]): any[] {
 		// Simple anomaly detection using z-score
 		const mean = data.reduce((sum, value) => sum + value, 0) / data.length;
-		const variance = data.reduce((sum, value) => sum + Math.pow(value - mean, 2), 0) / data.length;
+		const variance = data.reduce((sum, value) => sum + (value - mean) ** 2, 0) / data.length;
 		const stdDev = Math.sqrt(variance);
 
 		const anomalies: any[] = [];
@@ -1094,7 +1036,7 @@ export class AnalyticsService extends EnhancedServiceBase {
 			const zScore = Math.abs((value - mean) / stdDev);
 			if (zScore > threshold) {
 				anomalies.push({
-					timestamp: Date.now() - (data.length - index) * 86400000,
+					timestamp: Date.now() - (data.length - index) * 86_400_000,
 					value,
 					expected: mean,
 					deviation: zScore,
@@ -1111,13 +1053,13 @@ export class AnalyticsService extends EnhancedServiceBase {
 			return `Nenhuma anomalia detectada na métrica ${metric}.`;
 		}
 
-		const highSeverity = anomalies.filter(a => a.severity === "high").length;
-		const mediumSeverity = anomalies.filter(a => a.severity === "medium").length;
+		const highSeverity = anomalies.filter((a) => a.severity === "high").length;
+		const mediumSeverity = anomalies.filter((a) => a.severity === "medium").length;
 
 		return `Detectadas ${anomalies.length} anomalias na métrica ${metric}. ${highSeverity} de alta severidade, ${mediumSeverity} de média severidade.`;
 	}
 
-	private generateAnomalyRecommendations(anomalies: any[], metric: string): string[] {
+	private generateAnomalyRecommendations(anomalies: any[], _metric: string): string[] {
 		if (anomalies.length === 0) {
 			return ["Continuar monitoramento normal da métrica."];
 		}
@@ -1128,22 +1070,16 @@ export class AnalyticsService extends EnhancedServiceBase {
 			"Considerar ajustar os limites de alerta se as anomalias forem esperadas",
 		];
 
-		if (anomalies.some(a => a.severity === "high")) {
+		if (anomalies.some((a) => a.severity === "high")) {
 			recommendations.unshift("Atenção imediata necessária devido a anomalias de alta severidade");
 		}
 
 		return recommendations;
 	}
 
-	private async processRealTimeAnalytics(event: AnalyticsEvent, context: ServiceContext): Promise<void> {
-		// Process real-time analytics for immediate insights
-		console.log(`Processing real-time analytics for event: ${event.type}`);
-	}
+	private async processRealTimeAnalytics(_event: AnalyticsEvent, _context: ServiceContext): Promise<void> {}
 
-	private async processBatchAnalytics(events: TrackEventRequest[], context: ServiceContext): Promise<void> {
-		// Process batch analytics for efficiency
-		console.log(`Processing batch analytics for ${events.length} events`);
-	}
+	private async processBatchAnalytics(_events: TrackEventRequest[], _context: ServiceContext): Promise<void> {}
 
 	private calculateNextRun(schedule: ReportSchedule): Date {
 		const now = new Date();
@@ -1167,7 +1103,7 @@ export class AnalyticsService extends EnhancedServiceBase {
 		return nextRun;
 	}
 
-	private async generateReportData(report: Report, context: ServiceContext): Promise<any> {
+	private async generateReportData(report: Report, _context: ServiceContext): Promise<any> {
 		// Generate report data based on type
 		switch (report.type) {
 			case ReportType.PERFORMANCE:
@@ -1179,56 +1115,38 @@ export class AnalyticsService extends EnhancedServiceBase {
 		}
 	}
 
-	private async createReportFile(report: Report, data: any): Promise<string> {
+	private async createReportFile(report: Report, _data: any): Promise<string> {
 		// Create report file in specified format
 		const fileId = `report_${report.id}_${Date.now()}`;
-		console.log(`Creating report file: ${fileId}.${report.format}`);
 		return fileId;
 	}
 
 	// Mock database operations
-	private async storeEventAsync(event: AnalyticsEvent, context: ServiceContext): Promise<void> {
-		// Store event in database asynchronously
-		console.log(`Storing event: ${event.type}`);
-	}
+	private async storeEventAsync(_event: AnalyticsEvent, _context: ServiceContext): Promise<void> {}
 
-	private async storeDashboardInDatabase(dashboard: Dashboard, context: ServiceContext): Promise<void> {
-		console.log(`Storing dashboard: ${dashboard.name}`);
-	}
+	private async storeDashboardInDatabase(_dashboard: Dashboard, _context: ServiceContext): Promise<void> {}
 
-	private async storeReportInDatabase(report: Report, context: ServiceContext): Promise<void> {
-		console.log(`Storing report: ${report.name}`);
-	}
+	private async storeReportInDatabase(_report: Report, _context: ServiceContext): Promise<void> {}
 
-	private async scheduleReport(report: Report): Promise<void> {
-		console.log(`Scheduling report: ${report.name}`);
-	}
+	private async scheduleReport(_report: Report): Promise<void> {}
 
 	// ================================================
 	// SERVICE LIFECYCLE
 	// ================================================
 
 	protected async initialize(): Promise<void> {
-		console.log("Initializing Analytics Service...");
-		
 		// Initialize default dashboards
 		this.initializeDefaultDashboards();
-		
+
 		// Start background insight generation
 		this.startInsightGeneration();
-		
-		console.log("Analytics Service initialized successfully");
 	}
 
 	protected async cleanup(): Promise<void> {
-		console.log("Cleaning up Analytics Service...");
-		
 		// Clear buffers
 		this.eventBuffer.clear();
 		this.dashboards.clear();
 		this.reports.clear();
 		this.insights.clear();
-		
-		console.log("Analytics Service cleanup completed");
 	}
 }

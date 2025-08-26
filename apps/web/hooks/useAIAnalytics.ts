@@ -1,8 +1,8 @@
 "use client";
 
 import type { AIActionType, AIAdoptionMetrics, AIFeatureType, AIUsageAnalytic } from "@neonpro/types/monitoring";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 interface AIAnalyticsConfig {
 	enableAutoTracking?: boolean;
@@ -38,7 +38,7 @@ const AI_FEATURE_ROI_MULTIPLIERS = {
 } as const;
 
 export function useAIAnalytics(config: AIAnalyticsConfig = {}) {
-	const supabase = createClientComponentClient();
+	const supabase = createClient();
 	const [aiUsageStats, setAIUsageStats] = useState<AIUsageStats>({
 		totalSessions: 0,
 		activeFeatures: 0,
@@ -112,7 +112,7 @@ export function useAIAnalytics(config: AIAnalyticsConfig = {}) {
 				throw error;
 			}
 		},
-		[batchSize, flushInterval]
+		[batchSize, flushInterval, calculateFeatureROI, flushAnalyticsBuffer]
 	);
 
 	// Calculate ROI for AI feature usage
@@ -346,7 +346,7 @@ export function useAIAnalytics(config: AIAnalyticsConfig = {}) {
 					schema: "public",
 					table: "ai_usage_analytics",
 				},
-				(payload) => {
+				(_payload) => {
 					// Refresh stats when new analytics are added
 					loadAIUsageStats();
 				}
@@ -381,7 +381,7 @@ export function useAIAnalytics(config: AIAnalyticsConfig = {}) {
 	useEffect(() => {
 		return () => {
 			// End all active sessions
-			currentSessions.forEach((session, sessionId) => {
+			currentSessions.forEach((_session, sessionId) => {
 				endAISession(sessionId);
 			});
 		};

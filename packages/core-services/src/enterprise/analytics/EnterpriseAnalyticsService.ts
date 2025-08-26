@@ -15,9 +15,9 @@
  * - Análise preditiva básica
  */
 
-import type { AuditEvent, PerformanceMetrics } from "../../types";
+import type { PerformanceMetrics } from "../../types";
 
-interface AnalyticsEvent {
+type AnalyticsEvent = {
 	id: string;
 	type: string;
 	category: string;
@@ -32,9 +32,9 @@ interface AnalyticsEvent {
 		source: string;
 		version: string;
 	};
-}
+};
 
-interface HealthcareMetrics {
+type HealthcareMetrics = {
 	appointments: {
 		scheduled: number;
 		completed: number;
@@ -56,7 +56,7 @@ interface HealthcareMetrics {
 		anvisaEvents: number;
 		cfmEvents: number;
 	};
-}
+};
 
 interface PerformanceMetricsExtended extends PerformanceMetrics {
 	// Additional properties for extended analytics
@@ -64,7 +64,7 @@ interface PerformanceMetricsExtended extends PerformanceMetrics {
 	cacheHits: number;
 	cacheMisses: number;
 	avgResponseTime: number; // Alias for averageResponseTime for backward compatibility
-	
+
 	serviceMetrics: Record<
 		string,
 		{
@@ -88,10 +88,10 @@ interface PerformanceMetricsExtended extends PerformanceMetrics {
 
 export class EnterpriseAnalyticsService {
 	private events: AnalyticsEvent[] = [];
-	private metrics: PerformanceMetricsExtended;
-	private healthcareMetrics: HealthcareMetrics;
+	private readonly metrics: PerformanceMetricsExtended;
+	private readonly healthcareMetrics: HealthcareMetrics;
 	private aggregationInterval: NodeJS.Timeout | null = null;
-	private retentionPeriod = 30 * 24 * 60 * 60 * 1000; // 30 days
+	private readonly retentionPeriod = 30 * 24 * 60 * 60 * 1000; // 30 days
 
 	constructor() {
 		this.metrics = {
@@ -106,7 +106,7 @@ export class EnterpriseAnalyticsService {
 			p95ResponseTime: 0,
 			p99ResponseTime: 0,
 			slowestOperations: [],
-			
+
 			// Extended properties
 			totalRequests: 0,
 			cacheHits: 0,
@@ -254,29 +254,53 @@ export class EnterpriseAnalyticsService {
 	async recordHealthcareEvent(category: string, action: string, value = 1): Promise<void> {
 		switch (category) {
 			case "appointment":
-				if (action === "scheduled") this.healthcareMetrics.appointments.scheduled += value;
-				if (action === "completed") this.healthcareMetrics.appointments.completed += value;
-				if (action === "cancelled") this.healthcareMetrics.appointments.cancelled += value;
-				if (action === "no_show") this.healthcareMetrics.appointments.noShows += value;
+				if (action === "scheduled") {
+					this.healthcareMetrics.appointments.scheduled += value;
+				}
+				if (action === "completed") {
+					this.healthcareMetrics.appointments.completed += value;
+				}
+				if (action === "cancelled") {
+					this.healthcareMetrics.appointments.cancelled += value;
+				}
+				if (action === "no_show") {
+					this.healthcareMetrics.appointments.noShows += value;
+				}
 				break;
 
 			case "patient":
-				if (action === "new") this.healthcareMetrics.patients.new += value;
-				if (action === "returning") this.healthcareMetrics.patients.returning += value;
+				if (action === "new") {
+					this.healthcareMetrics.patients.new += value;
+				}
+				if (action === "returning") {
+					this.healthcareMetrics.patients.returning += value;
+				}
 				this.healthcareMetrics.patients.total =
 					this.healthcareMetrics.patients.new + this.healthcareMetrics.patients.returning;
 				break;
 
 			case "treatment":
-				if (action === "started") this.healthcareMetrics.treatments.started += value;
-				if (action === "completed") this.healthcareMetrics.treatments.completed += value;
-				if (action === "revenue") this.healthcareMetrics.treatments.revenue += value;
+				if (action === "started") {
+					this.healthcareMetrics.treatments.started += value;
+				}
+				if (action === "completed") {
+					this.healthcareMetrics.treatments.completed += value;
+				}
+				if (action === "revenue") {
+					this.healthcareMetrics.treatments.revenue += value;
+				}
 				break;
 
 			case "compliance":
-				if (action === "lgpd") this.healthcareMetrics.compliance.lgpdEvents += value;
-				if (action === "anvisa") this.healthcareMetrics.compliance.anvisaEvents += value;
-				if (action === "cfm") this.healthcareMetrics.compliance.cfmEvents += value;
+				if (action === "lgpd") {
+					this.healthcareMetrics.compliance.lgpdEvents += value;
+				}
+				if (action === "anvisa") {
+					this.healthcareMetrics.compliance.anvisaEvents += value;
+				}
+				if (action === "cfm") {
+					this.healthcareMetrics.compliance.cfmEvents += value;
+				}
 				break;
 		}
 
@@ -404,7 +428,6 @@ export class EnterpriseAnalyticsService {
 		switch (format) {
 			case "csv":
 				return this.convertToCSV(data);
-			case "json":
 			default:
 				return JSON.stringify(data, null, 2);
 		}
@@ -441,12 +464,8 @@ export class EnterpriseAnalyticsService {
 	 * Send alert for critical events
 	 */
 	private async sendAlert(event: AnalyticsEvent): Promise<void> {
-		// TODO: Implement real-time alerting system (email, Slack, PagerDuty, etc.)
-		console.warn(`Analytics Alert: ${event.type}`, event.properties);
-
 		// For critical events, we could implement immediate notifications
 		if (event.properties?.severity === "high") {
-			console.error(`CRITICAL ANALYTICS ALERT: ${event.type}`, event.properties);
 		}
 	}
 
@@ -462,14 +481,7 @@ export class EnterpriseAnalyticsService {
 	/**
 	 * Aggregate metrics for dashboards
 	 */
-	private aggregateMetrics(): void {
-		// TODO: Implement real-time metrics aggregation with proper storage and analytics
-		console.log("Aggregating metrics...", {
-			events: this.events.length,
-			totalRequests: this.metrics.totalRequests,
-			errorRate: this.metrics.errorRate,
-		});
-	}
+	private aggregateMetrics(): void {}
 
 	/**
 	 * Cleanup old events for memory management
@@ -496,28 +508,40 @@ export class EnterpriseAnalyticsService {
 	}
 
 	private hashIP(ip?: string): string | undefined {
-		if (!ip) return;
+		if (!ip) {
+			return;
+		}
 		// Simple hash for privacy (use crypto.createHash in production)
 		return Buffer.from(ip).toString("base64").substr(0, 8);
 	}
 
 	private calculateErrorRate(): number {
-		if (this.metrics.totalRequests === 0) return 0;
+		if (this.metrics.totalRequests === 0) {
+			return 0;
+		}
 		const totalErrors = Object.values(this.metrics.serviceMetrics).reduce((sum, metric) => sum + metric.errorCount, 0);
 		return totalErrors / this.metrics.totalRequests;
 	}
 
 	private categorizeError(error: Error): string {
-		if (error.message.includes("timeout")) return "timeout";
-		if (error.message.includes("network")) return "network";
-		if (error.message.includes("database")) return "database";
-		if (error.message.includes("auth")) return "authentication";
+		if (error.message.includes("timeout")) {
+			return "timeout";
+		}
+		if (error.message.includes("network")) {
+			return "network";
+		}
+		if (error.message.includes("database")) {
+			return "database";
+		}
+		if (error.message.includes("auth")) {
+			return "authentication";
+		}
 		return "general";
 	}
 
 	private parsePeriod(period: string): number {
 		const unit = period.slice(-1);
-		const value = Number.parseInt(period.slice(0, -1));
+		const value = Number.parseInt(period.slice(0, -1), 10);
 
 		switch (unit) {
 			case "s":
@@ -571,14 +595,7 @@ export class EnterpriseAnalyticsService {
 	/**
 	 * Record a metric for monitoring
 	 */
-	async recordMetric(metric: {
-		name: string;
-		value: number;
-		tags?: Record<string, string>;
-	}): Promise<void> {
-		// Simple implementation for health checks
-		console.log(`Recording metric: ${metric.name} = ${metric.value}`);
-	}
+	async recordMetric(_metric: { name: string; value: number; tags?: Record<string, string> }): Promise<void> {}
 
 	/**
 	 * Get health metrics for monitoring

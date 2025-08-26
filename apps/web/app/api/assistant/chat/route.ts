@@ -142,10 +142,7 @@ CONTEXTO RECENTE: ${
 			recentAppointments && recentAppointments.length > 0
 				? `Últimos agendamentos:
 ${recentAppointments
-	.map(
-		(apt) =>
-			`- ${apt.date_time}: ${apt.service || "Serviço não informado"} (${apt.status})`
-	)
+	.map((apt) => `- ${apt.date_time}: ${apt.service || "Serviço não informado"} (${apt.status})`)
 	.join("\n")}`
 				: "Nenhum agendamento recente encontrado."
 		}

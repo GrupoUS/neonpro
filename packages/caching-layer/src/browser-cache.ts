@@ -1,7 +1,7 @@
-import { type CacheOperation, type CacheStats, HealthcareDataPolicy } from "./types";
+import type { CacheOperation, CacheStats, HealthcareDataPolicy } from "./types";
 
 export class BrowserCacheLayer implements CacheOperation {
-	private cache = new Map<string, any>();
+	private readonly cache = new Map<string, any>();
 	private stats: CacheStats = {
 		hits: 0,
 		misses: 0,
@@ -12,7 +12,7 @@ export class BrowserCacheLayer implements CacheOperation {
 	private responseTimeBuffer: number[] = [];
 
 	constructor(
-		private config = {
+		private readonly config = {
 			maxSize: 100,
 			defaultTTL: 5 * 60 * 1000, // 5 minutes
 			maxTTL: 15 * 60 * 1000, // 15 minutes
@@ -91,7 +91,7 @@ export class BrowserCacheLayer implements CacheOperation {
 
 	async invalidateByTags(tags: string[]): Promise<void> {
 		for (const [key, entry] of this.cache.entries()) {
-			if (entry.tags && entry.tags.some((tag: string) => tags.includes(tag))) {
+			if (entry.tags?.some((tag: string) => tags.includes(tag))) {
 				this.cache.delete(key);
 			}
 		}

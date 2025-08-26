@@ -1,11 +1,11 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Activity, Command, Mic, MicOff, Volume2 } from "lucide-react";
+import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useVoiceNavigation } from "@/hooks/use-voice-navigation";
-import { Mic, MicOff, Volume2, Command, Activity } from "lucide-react";
-import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 interface VoiceNavigationButtonProps {
@@ -14,13 +14,13 @@ interface VoiceNavigationButtonProps {
 	variant?: "default" | "outline" | "ghost";
 }
 
-export function VoiceNavigationButton({ 
-	className, 
-	size = "default", 
-	variant = "default" 
+export function VoiceNavigationButton({
+	className,
+	size = "default",
+	variant = "default",
 }: VoiceNavigationButtonProps) {
 	const [isCommandsOpen, setIsCommandsOpen] = useState(false);
-	
+
 	const {
 		isListening,
 		isProcessing,
@@ -31,7 +31,7 @@ export function VoiceNavigationButton({
 		toggleListening,
 		availableCommands,
 		getCommandsByCategory,
-		speak
+		speak,
 	} = useVoiceNavigation();
 
 	if (!isSupported) {
@@ -67,15 +67,9 @@ export function VoiceNavigationButton({
 					isProcessing && "animate-pulse"
 				)}
 			>
-				{isListening ? (
-					<MicOff className="h-4 w-4" />
-				) : (
-					<Mic className="h-4 w-4" />
-				)}
-				
-				{isListening && (
-					<span className="absolute -top-1 -right-1 h-2 w-2 bg-red-400 rounded-full animate-ping" />
-				)}
+				{isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+
+				{isListening && <span className="absolute -top-1 -right-1 h-2 w-2 bg-red-400 rounded-full animate-ping" />}
 			</Button>
 
 			{/* Commands Help */}
@@ -89,39 +83,27 @@ export function VoiceNavigationButton({
 					<div className="space-y-4">
 						<div className="flex items-center justify-between">
 							<h4 className="text-sm font-medium">Comandos de Voz</h4>
-							<Badge variant={isListening ? "default" : "outline"}>
-								{isListening ? "Ouvindo" : "Inativo"}
-							</Badge>
+							<Badge variant={isListening ? "default" : "outline"}>{isListening ? "Ouvindo" : "Inativo"}</Badge>
 						</div>
 
 						{/* Status */}
 						{lastCommand && (
 							<div className="text-xs text-muted-foreground">
 								<p>Último comando: "{lastCommand}"</p>
-								{confidence > 0 && (
-									<p>Confiança: {Math.round(confidence * 100)}%</p>
-								)}
+								{confidence > 0 && <p>Confiança: {Math.round(confidence * 100)}%</p>}
 							</div>
 						)}
 
-						{error && (
-							<div className="text-xs text-red-500 bg-red-50 p-2 rounded">
-								{error}
-							</div>
-						)}
+						{error && <div className="text-xs text-red-500 bg-red-50 p-2 rounded">{error}</div>}
 
 						{/* Commands by Category */}
 						<div className="space-y-3 max-h-64 overflow-y-auto">
 							{navigationCommands.length > 0 && (
 								<div>
-									<h5 className="text-xs font-medium text-blue-600 mb-2">
-										Navegação
-									</h5>
+									<h5 className="text-xs font-medium text-blue-600 mb-2">Navegação</h5>
 									<ul className="space-y-1 text-xs text-muted-foreground">
-										{navigationCommands.map(cmd => (
-											<li key={cmd.id}>
-												• {cmd.description}
-											</li>
+										{navigationCommands.map((cmd) => (
+											<li key={cmd.id}>• {cmd.description}</li>
 										))}
 									</ul>
 								</div>
@@ -129,14 +111,10 @@ export function VoiceNavigationButton({
 
 							{patientCommands.length > 0 && (
 								<div>
-									<h5 className="text-xs font-medium text-green-600 mb-2">
-										Pacientes
-									</h5>
+									<h5 className="text-xs font-medium text-green-600 mb-2">Pacientes</h5>
 									<ul className="space-y-1 text-xs text-muted-foreground">
-										{patientCommands.map(cmd => (
-											<li key={cmd.id}>
-												• {cmd.description}
-											</li>
+										{patientCommands.map((cmd) => (
+											<li key={cmd.id}>• {cmd.description}</li>
 										))}
 									</ul>
 								</div>
@@ -144,14 +122,10 @@ export function VoiceNavigationButton({
 
 							{appointmentCommands.length > 0 && (
 								<div>
-									<h5 className="text-xs font-medium text-purple-600 mb-2">
-										Agenda
-									</h5>
+									<h5 className="text-xs font-medium text-purple-600 mb-2">Agenda</h5>
 									<ul className="space-y-1 text-xs text-muted-foreground">
-										{appointmentCommands.map(cmd => (
-											<li key={cmd.id}>
-												• {cmd.description}
-											</li>
+										{appointmentCommands.map((cmd) => (
+											<li key={cmd.id}>• {cmd.description}</li>
 										))}
 									</ul>
 								</div>
@@ -159,14 +133,10 @@ export function VoiceNavigationButton({
 
 							{inventoryCommands.length > 0 && (
 								<div>
-									<h5 className="text-xs font-medium text-orange-600 mb-2">
-										Estoque
-									</h5>
+									<h5 className="text-xs font-medium text-orange-600 mb-2">Estoque</h5>
 									<ul className="space-y-1 text-xs text-muted-foreground">
-										{inventoryCommands.map(cmd => (
-											<li key={cmd.id}>
-												• {cmd.description}
-											</li>
+										{inventoryCommands.map((cmd) => (
+											<li key={cmd.id}>• {cmd.description}</li>
 										))}
 									</ul>
 								</div>
@@ -174,14 +144,10 @@ export function VoiceNavigationButton({
 
 							{emergencyCommands.length > 0 && (
 								<div>
-									<h5 className="text-xs font-medium text-red-600 mb-2">
-										Emergência
-									</h5>
+									<h5 className="text-xs font-medium text-red-600 mb-2">Emergência</h5>
 									<ul className="space-y-1 text-xs text-muted-foreground">
-										{emergencyCommands.map(cmd => (
-											<li key={cmd.id}>
-												• {cmd.description}
-											</li>
+										{emergencyCommands.map((cmd) => (
+											<li key={cmd.id}>• {cmd.description}</li>
 										))}
 									</ul>
 								</div>

@@ -3,19 +3,19 @@
 import { useEffect, useState } from "react";
 import { MetricWidget } from "./metric-widgets";
 
-interface CacheLayerStats {
+type CacheLayerStats = {
 	layer: string;
 	hitRate: number;
 	responseTime: number;
 	totalRequests: number;
 	hits: number;
 	misses: number;
-}
+};
 
-interface CacheMetricsProps {
+type CacheMetricsProps = {
 	cacheManager?: any;
 	refreshInterval?: number;
-}
+};
 
 export function CacheMetrics({ cacheManager, refreshInterval = 30_000 }: CacheMetricsProps) {
 	const [layerStats, setLayerStats] = useState<CacheLayerStats[]>([]);
@@ -27,7 +27,9 @@ export function CacheMetrics({ cacheManager, refreshInterval = 30_000 }: CacheMe
 	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {
-		if (!cacheManager) return;
+		if (!cacheManager) {
+			return;
+		}
 
 		const fetchCacheStats = async () => {
 			try {
@@ -60,8 +62,7 @@ export function CacheMetrics({ cacheManager, refreshInterval = 30_000 }: CacheMe
 					totalRequests,
 				});
 				setIsLoading(false);
-			} catch (error) {
-				console.error("[CacheMetrics] Error fetching stats:", error);
+			} catch (_error) {
 				setIsLoading(false);
 			}
 		};

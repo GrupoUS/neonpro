@@ -6,34 +6,18 @@
 
 "use client";
 
-import { useState, Suspense } from "react";
-import { 
-	Activity, 
-	BarChart3, 
-	Gauge, 
-	Grid3X3, 
-	List, 
-	Maximize2, 
-	Settings, 
-	Shield,
-	RefreshCw,
-} from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Activity, BarChart3, Gauge, Grid3X3, List, Maximize2, RefreshCw, Settings, Shield } from "lucide-react";
+import { Suspense, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
 
 // Import all dashboards
 import { AIAnalyticsDashboard } from "./ai-powered/AIAnalyticsDashboard";
-import { HealthMonitoringDashboard } from "./ai-powered/HealthMonitoringDashboard";
 import { ComplianceStatusDashboard } from "./ai-powered/ComplianceStatusDashboard";
+import { HealthMonitoringDashboard } from "./ai-powered/HealthMonitoringDashboard";
 import { PerformanceMetricsDashboard } from "./ai-powered/PerformanceMetricsDashboard";
 import { RealTimeActivityDashboard } from "./ai-powered/RealTimeActivityDashboard";
 import { DASHBOARD_REGISTRY, type DashboardType } from "./index";
@@ -96,7 +80,7 @@ export function DashboardLayout({
 	const handleRefresh = async () => {
 		setRefreshing(true);
 		// Simulate refresh delay
-		await new Promise(resolve => setTimeout(resolve, 1000));
+		await new Promise((resolve) => setTimeout(resolve, 1000));
 		setRefreshing(false);
 	};
 
@@ -122,7 +106,7 @@ export function DashboardLayout({
 					{renderDashboard("health")}
 				</div>
 			</div>
-			
+
 			<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 				<div className="space-y-4">
 					<h3 className="text-lg font-semibold">Conformidade</h3>
@@ -148,26 +132,17 @@ export function DashboardLayout({
 					{Object.entries(DASHBOARD_REGISTRY).map(([key, config]) => {
 						const Icon = DASHBOARD_ICONS[key as DashboardType];
 						return (
-							<TabsTrigger 
-								key={key} 
-								value={key}
-								className="flex items-center gap-2"
-							>
+							<TabsTrigger key={key} value={key} className="flex items-center gap-2">
 								<Icon className="h-4 w-4" />
 								<span className="hidden md:inline">{config.title.split(" ")[0]}</span>
 							</TabsTrigger>
 						);
 					})}
 				</TabsList>
-				
+
 				{showSettings && (
 					<div className="flex items-center gap-2">
-						<Button
-							variant="outline"
-							size="sm"
-							onClick={handleRefresh}
-							disabled={refreshing}
-						>
+						<Button variant="outline" size="sm" onClick={handleRefresh} disabled={refreshing}>
 							<RefreshCw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
 						</Button>
 						<Button variant="outline" size="sm">
@@ -202,10 +177,7 @@ export function DashboardLayout({
 		<div className="space-y-6">
 			<div className="flex items-center justify-between">
 				<div className="flex items-center gap-4">
-					<Select
-						value={selectedDashboard}
-						onValueChange={(value) => setSelectedDashboard(value as DashboardType)}
-					>
+					<Select value={selectedDashboard} onValueChange={(value) => setSelectedDashboard(value as DashboardType)}>
 						<SelectTrigger className="w-64">
 							<SelectValue />
 						</SelectTrigger>
@@ -223,24 +195,15 @@ export function DashboardLayout({
 							})}
 						</SelectContent>
 					</Select>
-					
-					<Button
-						variant="outline"
-						size="sm"
-						onClick={() => setViewMode("tabs")}
-					>
+
+					<Button variant="outline" size="sm" onClick={() => setViewMode("tabs")}>
 						<Maximize2 className="h-4 w-4" />
 					</Button>
 				</div>
 
 				{showSettings && (
 					<div className="flex items-center gap-2">
-						<Button
-							variant="outline"
-							size="sm"
-							onClick={handleRefresh}
-							disabled={refreshing}
-						>
+						<Button variant="outline" size="sm" onClick={handleRefresh} disabled={refreshing}>
 							<RefreshCw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
 						</Button>
 					</div>
@@ -249,12 +212,8 @@ export function DashboardLayout({
 
 			<div>
 				<div className="mb-4">
-					<h2 className="text-2xl font-bold">
-						{DASHBOARD_REGISTRY[selectedDashboard].title}
-					</h2>
-					<p className="text-muted-foreground">
-						{DASHBOARD_REGISTRY[selectedDashboard].description}
-					</p>
+					<h2 className="text-2xl font-bold">{DASHBOARD_REGISTRY[selectedDashboard].title}</h2>
+					<p className="text-muted-foreground">{DASHBOARD_REGISTRY[selectedDashboard].description}</p>
 				</div>
 				{renderDashboard(selectedDashboard)}
 			</div>
@@ -262,38 +221,20 @@ export function DashboardLayout({
 	);
 
 	return (
-		<div 
-			className={`space-y-6 ${className}`}
-			role="main"
-			aria-label="AI-Powered Dashboards"
-		>
+		<div className={`space-y-6 ${className}`} role="main" aria-label="AI-Powered Dashboards">
 			{/* View Mode Selector */}
 			{showSettings && (
-				<header 
-					className="flex items-center justify-between border-b pb-4"
-					role="banner"
-				>
+				<header className="flex items-center justify-between border-b pb-4">
 					<div>
-						<h1 
-							className="text-3xl font-bold"
-							id="dashboard-main-title"
-							tabIndex={0}
-						>
+						<h1 className="text-3xl font-bold" id="dashboard-main-title">
 							Dashboards AI-Powered
 						</h1>
-						<p 
-							className="text-muted-foreground"
-							aria-describedby="dashboard-main-title"
-						>
+						<p className="text-muted-foreground" aria-describedby="dashboard-main-title">
 							Monitoramento inteligente e análise em tempo real
 						</p>
 					</div>
-					
-					<div 
-						className="flex items-center gap-2"
-						role="toolbar"
-						aria-label="Dashboard View Controls"
-					>
+
+					<div className="flex items-center gap-2" role="toolbar" aria-label="Dashboard View Controls">
 						<Button
 							variant={viewMode === "grid" ? "default" : "outline"}
 							size="sm"
@@ -326,11 +267,7 @@ export function DashboardLayout({
 			)}
 
 			{/* Dashboard Content */}
-			<section 
-				role="region"
-				aria-labelledby="dashboard-main-title"
-				aria-live="polite"
-			>
+			<section aria-labelledby="dashboard-main-title" aria-live="polite">
 				{viewMode === "grid" && renderGridView()}
 				{viewMode === "tabs" && renderTabsView()}
 				{viewMode === "single" && renderSingleView()}

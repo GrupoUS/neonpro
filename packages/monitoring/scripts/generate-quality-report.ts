@@ -328,7 +328,7 @@ class QualityReportGenerator {
 	private createCoverageCard(): string {
 		const coverage = this.metrics.coverage!;
 		const overallScore = Math.round(
-			(coverage.statements + coverage.branches + coverage.functions + coverage.lines) / 4
+			(coverage.statements + coverage.branches + coverage.functions + coverage.lines) / 4,
 		);
 		const statusClass = overallScore >= 90 ? "pass" : overallScore >= 80 ? "warn" : "fail";
 
@@ -513,7 +513,7 @@ class QualityReportGenerator {
 		const _duration = (Date.now() - this.startTime) / 1000;
 		// biome-ignore lint/suspicious/noConsole: Required for quality report output
 		console.log(
-			`   • Coverage: ${Math.round((this.metrics.coverage?.statements + this.metrics.coverage?.branches + this.metrics.coverage?.functions + this.metrics.coverage?.lines) / 4)}%`
+			`   • Coverage: ${Math.round((this.metrics.coverage?.statements + this.metrics.coverage?.branches + this.metrics.coverage?.functions + this.metrics.coverage?.lines) / 4)}%`,
 		);
 		// biome-ignore lint/suspicious/noConsole: Required for quality report output
 		console.log(`   • Security Score: ${this.metrics.security?.securityScore.toFixed(1)}/10`);

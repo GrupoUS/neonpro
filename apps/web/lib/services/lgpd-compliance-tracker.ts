@@ -491,12 +491,12 @@ export class LGPDComplianceTracker {
 	}
 
 	// Helper methods
-	private identifyViolations(scores: any, allViolations: LGPDViolation[]): LGPDViolation[] {
+	private identifyViolations(_scores: any, allViolations: LGPDViolation[]): LGPDViolation[] {
 		return allViolations.filter((v) => v.severity === "critical" || v.severity === "major");
 	}
 
 	private async generateRemediationActions(
-		tenantId: string,
+		_tenantId: string,
 		violations: LGPDViolation[]
 	): Promise<RemediationAction[]> {
 		const actions: RemediationAction[] = [];

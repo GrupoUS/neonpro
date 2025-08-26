@@ -1,27 +1,27 @@
 {
-	"name": "docs",
-	"version": "0.1.0",
-	"type": "module",
-	"private": true,
-	"scripts": {
-		"dev": "next dev --turbopack --port 3001",
-		"build": "next build",
-		"start": "next start",
-		"lint": "biome check .",
-		"check-types": "tsc --noEmit"
-	},
-	"dependencies": {
-		"@neonpro/ui": "workspace:*",
-		"next": "^15.4.2",
-		"react": "^19.1.0",
-		"react-dom": "^19.1.0"
-	},
-	"devDependencies": {
-		"@neonpro/typescript-config": "workspace:*",
-		"@types/node": "^22.15.3",
-		"@types/react": "19.1.0",
-		"@types/react-dom": "19.1.1",
-		"@biomejs/biome": "^1.9.0",
-		"typescript": "5.9.2"
-	}
+  "name": "docs",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack --port 3001",
+    "build": "next build",
+    "start": "next start",
+    "lint": "biome check .",
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@neonpro/ui": "workspace:*",
+    "next": "^15.4.2",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@neonpro/typescript-config": "workspace:*",
+    "@types/node": "^22.15.3",
+    "@types/react": "19.1.0",
+    "@types/react-dom": "19.1.1",
+    "@biomejs/biome": "^1.9.0",
+    "typescript": "5.9.2"
+  }
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+// import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'; // DEPRECATED - replaced with @supabase/ssr
 import { useCallback, useEffect, useState } from 'react';
 
 type AnalyticsTimeframe = {

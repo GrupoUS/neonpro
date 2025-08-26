@@ -1,5 +1,6 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.2.0/schema.json",
+	"root": false,
+	"$schema": "https://biomejs.dev/schemas/2.2.2/schema.json",
 	"vcs": {
 		"enabled": true,
 		"clientKind": "git",
@@ -7,13 +8,7 @@
 		"defaultBranch": "main"
 	},
 	"files": {
-		"includes": [
-			"**/*.ts",
-			"**/*.tsx",
-			"**/*.js",
-			"**/*.jsx",
-			"**/*.json"
-		],
+		"includes": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "**/*.json"],
 		"ignoreUnknown": true,
 		"maxSize": 1048576
 	},

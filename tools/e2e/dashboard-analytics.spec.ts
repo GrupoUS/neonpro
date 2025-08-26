@@ -814,7 +814,7 @@ test.describe("Dashboard Analytics - Performance & Accessibility", () => {
 			await expect(realTimeIndicator).toBeVisible();
 
 			// Should update periodically
-			const initialText = await page
+			const _initialText = await page
 				.locator('[data-testid="today-metrics"]')
 				.or(page.locator(".today-metrics"))
 				.textContent();

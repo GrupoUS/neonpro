@@ -7,15 +7,15 @@
  */
 
 export {
-	SkipToContentLink,
-	ScreenReaderOnly,
-	LiveRegion,
-	FocusTrap,
-	KeyboardHelper,
 	AccessibilityPanel,
-	StatusAnnouncer,
 	announceStatus,
 	checkColorContrast,
+	FocusTrap,
+	KeyboardHelper,
+	LiveRegion,
+	ScreenReaderOnly,
+	SkipToContentLink,
+	StatusAnnouncer,
 	useFocusManagement,
 } from "./AccessibilityComponents";
 
@@ -41,24 +41,24 @@ export const ARIA_LABELS = {
 	mainNavigation: "Navegação principal",
 	breadcrumb: "Navegação estrutural",
 	pagination: "Navegação de páginas",
-	
+
 	// Forms
 	required: "Campo obrigatório",
 	optional: "Campo opcional",
 	invalid: "Campo inválido",
-	
+
 	// Interactive elements
 	button: "Botão",
 	link: "Link",
 	menu: "Menu",
 	dialog: "Caixa de diálogo",
-	
+
 	// Status
 	loading: "Carregando",
 	error: "Erro",
 	success: "Sucesso",
 	warning: "Aviso",
-	
+
 	// Healthcare specific
 	patient: "Informações do paciente",
 	medical: "Informações médicas",

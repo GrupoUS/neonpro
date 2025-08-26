@@ -16,33 +16,32 @@ import {
 	EnterpriseSecurityService,
 } from "../enterprise";
 import { EnterpriseHealthCheckService } from "../health";
-import type { AuditEvent, HealthcareOperation, PerformanceMetrics, SecurityConfig, ServiceContext } from "../types";
-import { InternalHealthcareCacheManager } from "./InternalCache";
+import type { AuditEvent, PerformanceMetrics, SecurityConfig, ServiceContext } from "../types";
 
 // Core service interfaces
-interface ICacheService {
+type ICacheService = {
 	get<T>(key: string): Promise<T | null>;
 	set<T>(key: string, value: T, ttl?: number): Promise<void>;
 	invalidate(pattern: string): Promise<void>;
 	getStats(): Promise<any>;
-}
+};
 
-interface IAnalyticsService {
+type IAnalyticsService = {
 	track(event: string, properties: any): Promise<void>;
 	recordPerformance(operation: string, duration: number): Promise<void>;
 	recordError(error: Error, context: any): Promise<void>;
 	getMetrics(period: string): Promise<PerformanceMetrics>;
-}
+};
 
-interface ISecurityService {
+type ISecurityService = {
 	validateAccess(operation: string, context: ServiceContext): Promise<boolean>;
 	auditOperation(event: AuditEvent): Promise<void>;
 	encryptSensitiveData<T>(data: T): Promise<string>;
 	decryptSensitiveData<T>(encrypted: string): Promise<T>;
-}
+};
 
 // Base service configuration
-export interface ServiceConfig {
+export type ServiceConfig = {
 	serviceName: string;
 	version: string;
 	enableCache: boolean;
@@ -53,7 +52,7 @@ export interface ServiceConfig {
 		maxItems: number;
 	};
 	securityOptions?: SecurityConfig;
-}
+};
 
 /**
  * Enhanced Service Base Class
@@ -88,29 +87,29 @@ export abstract class EnhancedServiceBase {
 				memory: {
 					enabled: true,
 					maxItems: 1000,
-					ttl: 300000 // 5 minutes
+					ttl: 300_000, // 5 minutes
 				},
 				redis: {
 					enabled: true,
 					host: process.env.REDIS_HOST || "localhost",
-					port: Number.parseInt(process.env.REDIS_PORT || "6379"),
-					ttl: 1800000, // 30 minutes
-					keyPrefix: "neonpro:"
+					port: Number.parseInt(process.env.REDIS_PORT || "6379", 10),
+					ttl: 1_800_000, // 30 minutes
+					keyPrefix: "neonpro:",
 				},
 				database: {
 					enabled: true,
-					ttl: 3600000 // 1 hour
-				}
+					ttl: 3_600_000, // 1 hour
+				},
 			},
 			healthCheck: {
-				interval: 30000,
-				enabled: true
+				interval: 30_000,
+				enabled: true,
 			},
 			compliance: {
 				lgpd: true,
 				autoExpiry: true,
-				auditAccess: true
-			}
+				auditAccess: true,
+			},
 		});
 
 		this.enterpriseAnalytics = new EnterpriseAnalyticsService();
@@ -122,7 +121,7 @@ export abstract class EnhancedServiceBase {
 			encryptionAlgorithm: "aes-256-gcm",
 			auditRetentionDays: 2555, // 7 years for healthcare compliance
 			requireSecureChannel: true,
-			allowedOrigins: process.env.ALLOWED_ORIGINS?.split(",") || ["*"]
+			allowedOrigins: process.env.ALLOWED_ORIGINS?.split(",") || ["*"],
 		});
 
 		this.audit = new EnterpriseAuditService();
@@ -235,7 +234,9 @@ export abstract class EnhancedServiceBase {
 			} catch (error) {
 				lastError = error as Error;
 
-				if (attempt === maxRetries) break;
+				if (attempt === maxRetries) {
+					break;
+				}
 
 				// Exponential backoff
 				const delay = 2 ** (attempt - 1) * 1000;
@@ -274,13 +275,15 @@ export abstract class EnhancedServiceBase {
 	 * Record performance metrics
 	 */
 	private async recordOperationMetrics(operation: string, duration: number, fromCache: boolean): Promise<void> {
-		if (!this.config.enableAnalytics) return;
+		if (!this.config.enableAnalytics) {
+			return;
+		}
 
 		// Store in memory for aggregation
 		if (!this.operationMetrics.has(operation)) {
 			this.operationMetrics.set(operation, []);
 		}
-		this.operationMetrics.get(operation)!.push(duration);
+		this.operationMetrics.get(operation)?.push(duration);
 
 		// Record in analytics service
 		await this.analytics.recordPerformance(operation, duration);
@@ -367,8 +370,8 @@ export abstract class EnhancedServiceBase {
 			},
 			async invalidate(pattern: string): Promise<void> {
 				// Use invalidatePatientData for now as a pattern-based invalidation
-				if (pattern.includes('patient_')) {
-					const patientId = pattern.replace('patient_', '');
+				if (pattern.includes("patient_")) {
+					const patientId = pattern.replace("patient_", "");
 					await self.enterpriseCache.invalidatePatientData(patientId);
 				}
 			},
@@ -388,7 +391,7 @@ export abstract class EnhancedServiceBase {
 				await self.enterpriseAnalytics.trackEvent({
 					id: `${Date.now()}-${Math.random()}`,
 					type: event,
-					category: 'service',
+					category: "service",
 					action: event,
 					properties,
 					timestamp: Date.now(),
@@ -409,8 +412,8 @@ export abstract class EnhancedServiceBase {
 				await self.enterpriseAnalytics.trackEvent({
 					id: `${Date.now()}-${Math.random()}`,
 					type: "error",
-					category: 'service',
-					action: 'error',
+					category: "service",
+					action: "error",
 					properties: {
 						error: error.message,
 						stack: error.stack,
@@ -423,7 +426,7 @@ export abstract class EnhancedServiceBase {
 					},
 				});
 			},
-			async getMetrics(period: string): Promise<PerformanceMetrics> {
+			async getMetrics(_period: string): Promise<PerformanceMetrics> {
 				return self.enterpriseAnalytics.getHealthMetrics();
 			},
 		};
@@ -436,7 +439,9 @@ export abstract class EnhancedServiceBase {
 		const self = this;
 		return {
 			async validateAccess(operation: string, context: ServiceContext): Promise<boolean> {
-				if (!context.userId) return false;
+				if (!context.userId) {
+					return false;
+				}
 
 				return self.enterpriseSecurity.validatePermission(context.userId, operation);
 			},
@@ -525,36 +530,31 @@ export abstract class EnhancedServiceBase {
 	 * Graceful shutdown of all enterprise services
 	 */
 	public async shutdown(): Promise<void> {
-		try {
-			// Log shutdown start
-			await this.auditServiceLifecycle("SERVICE_SHUTDOWN_STARTED", {
-				service: this.config.serviceName,
-				timestamp: new Date().toISOString(),
-			});
+		// Log shutdown start
+		await this.auditServiceLifecycle("SERVICE_SHUTDOWN_STARTED", {
+			service: this.config.serviceName,
+			timestamp: new Date().toISOString(),
+		});
 
-			// Service-specific cleanup
-			if (this.cleanup) {
-				await this.cleanup();
-			}
-
-			// Shutdown enterprise services
-			await Promise.all([
-				this.enterpriseCache.shutdown(),
-				this.enterpriseAnalytics.shutdown(),
-				this.enterpriseSecurity.shutdown(),
-				this.audit.shutdown(),
-				this.healthCheck.stopHealthMonitoring(),
-			]);
-
-			// Log shutdown complete
-			await this.auditServiceLifecycle("SERVICE_SHUTDOWN_COMPLETED", {
-				service: this.config.serviceName,
-				timestamp: new Date().toISOString(),
-				uptime: Date.now() - this.startTime,
-			});
-		} catch (error) {
-			console.error(`Error during shutdown of ${this.config.serviceName}:`, error);
-			throw error;
+		// Service-specific cleanup
+		if (this.cleanup) {
+			await this.cleanup();
 		}
+
+		// Shutdown enterprise services
+		await Promise.all([
+			this.enterpriseCache.shutdown(),
+			this.enterpriseAnalytics.shutdown(),
+			this.enterpriseSecurity.shutdown(),
+			this.audit.shutdown(),
+			this.healthCheck.stopHealthMonitoring(),
+		]);
+
+		// Log shutdown complete
+		await this.auditServiceLifecycle("SERVICE_SHUTDOWN_COMPLETED", {
+			service: this.config.serviceName,
+			timestamp: new Date().toISOString(),
+			uptime: Date.now() - this.startTime,
+		});
 	}
 }

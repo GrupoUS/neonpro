@@ -9,11 +9,8 @@ import type {
 	AppointmentContext,
 	ChatAIInsights,
 	ChatMessage,
-	ChatSession,
-	ComplianceFlags,
 	IntentAnalysis,
 	MedicalAnalysis,
-	MedicalContext,
 	SentimentAnalysis,
 } from "@neonpro/types/ai-chat";
 import { generateObject, generateText, streamText } from "ai";
@@ -113,12 +110,12 @@ const AppointmentAnalysisSchema = z.object({
 });
 
 export class HealthcareAIEngine {
-	private model = openai("gpt-4o-mini"); // Cost-effective for healthcare
-	private medicalModel = openai("gpt-4o"); // Premium for complex medical analysis
+	private readonly model = openai("gpt-4o-mini"); // Cost-effective for healthcare
+	private readonly medicalModel = openai("gpt-4o"); // Premium for complex medical analysis
 
 	constructor(
-		private interfaceType: "external" | "internal" = "external",
-		private clinicContext?: any
+		private readonly interfaceType: "external" | "internal" = "external",
+		readonly _clinicContext?: any
 	) {}
 
 	/**
@@ -144,8 +141,7 @@ export class HealthcareAIEngine {
 			});
 
 			return result;
-		} catch (error) {
-			console.error("Healthcare AI streaming error:", error);
+		} catch (_error) {
 			throw new Error("Falha na comunicação com o assistente de IA");
 		}
 	}
@@ -171,8 +167,7 @@ export class HealthcareAIEngine {
 			});
 
 			return text;
-		} catch (error) {
-			console.error("Healthcare AI generation error:", error);
+		} catch (_error) {
 			throw new Error("Falha na geração de resposta");
 		}
 	}
@@ -200,8 +195,7 @@ export class HealthcareAIEngine {
 			});
 
 			return object;
-		} catch (error) {
-			console.error("Intent analysis error:", error);
+		} catch (_error) {
 			// Fallback intent analysis
 			return {
 				primary_intent: "general_inquiry",
@@ -234,7 +228,9 @@ export class HealthcareAIEngine {
 
 		const hasmedicalContent = medicalKeywords.some((keyword) => message.toLowerCase().includes(keyword));
 
-		if (!hasmedicalContent) return null;
+		if (!hasmedicalContent) {
+			return null;
+		}
 
 		try {
 			const { object } = await generateObject({
@@ -253,8 +249,7 @@ export class HealthcareAIEngine {
 			});
 
 			return object;
-		} catch (error) {
-			console.error("Medical analysis error:", error);
+		} catch (_error) {
 			return null;
 		}
 	}
@@ -267,7 +262,9 @@ export class HealthcareAIEngine {
 
 		const hasAppointmentContent = appointmentKeywords.some((keyword) => message.toLowerCase().includes(keyword));
 
-		if (!hasAppointmentContent) return null;
+		if (!hasAppointmentContent) {
+			return null;
+		}
 
 		try {
 			const { object } = await generateObject({
@@ -285,8 +282,7 @@ export class HealthcareAIEngine {
 				preferred_time: object.preferred_time_slots[0],
 				doctor_preference: object.doctor_recommendations?.[0],
 			};
-		} catch (error) {
-			console.error("Appointment analysis error:", error);
+		} catch (_error) {
 			return null;
 		}
 	}
@@ -294,8 +290,8 @@ export class HealthcareAIEngine {
 	/**
 	 * Generate comprehensive AI insights for the session
 	 */
-	async generateInsights(messages: ChatMessage[], sessionContext: any): Promise<ChatAIInsights> {
-		const lastMessage = messages[messages.length - 1];
+	async generateInsights(messages: ChatMessage[], _sessionContext: any): Promise<ChatAIInsights> {
+		const lastMessage = messages.at(-1);
 
 		if (!lastMessage || lastMessage.role !== "user") {
 			throw new Error("No user message to analyze");

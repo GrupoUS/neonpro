@@ -1553,41 +1553,6 @@ const globalMocks = vi.hoisted(() => {
 				status: "completed",
 			};
 		}),
-		validatePurposeLimitation: vi.fn().mockImplementation(async (_purposeData: any) => {
-			return {
-				valid: true,
-				purpose_compliant: true,
-				details: "Purpose is within consented scope",
-			};
-		}),
-		getAuditTrail: vi.fn().mockImplementation(async (_criteria: any) => {
-			return {
-				success: true,
-				audit_report: {
-					total_operations: 42,
-					operations: [
-						{
-							operation_type: "data_access",
-							user_id: "test-user",
-							timestamp: new Date().toISOString(),
-							purpose: "medical_treatment",
-						},
-					],
-				},
-				generated_at: new Date().toISOString(),
-			};
-		}),
-		checkRetentionPolicy: vi.fn().mockImplementation(async (_policyData: any) => {
-			return {
-				policy_compliant: true,
-				retention_periods: {
-					medical_records: "10 years",
-					patient_data: "5 years",
-					appointment_history: "3 years",
-				},
-				next_review_date: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
-			};
-		}),
 		anonymizePatientData: vi.fn().mockImplementation(async (_patientId: string) => {
 			return {
 				success: true,

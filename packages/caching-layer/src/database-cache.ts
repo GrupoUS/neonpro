@@ -1,7 +1,7 @@
 import type { CacheOperation, CacheStats } from "./types";
 
 export class DatabaseCacheLayer implements CacheOperation {
-	private cache = new Map<string, any>();
+	private readonly cache = new Map<string, any>();
 	private stats: CacheStats = {
 		hits: 0,
 		misses: 0,
@@ -10,10 +10,10 @@ export class DatabaseCacheLayer implements CacheOperation {
 		averageResponseTime: 0,
 	};
 	private responseTimeBuffer: number[] = [];
-	private queryBuffer = new Map<string, Promise<any>>();
+	private readonly queryBuffer = new Map<string, Promise<any>>();
 
 	constructor(
-		private config = {
+		private readonly config = {
 			defaultTTL: 30 * 1000, // 30 seconds
 			maxTTL: 5 * 60 * 1000, // 5 minutes
 			maxSize: 500,
@@ -33,7 +33,7 @@ export class DatabaseCacheLayer implements CacheOperation {
 				this.stats.hits++;
 				this.updateStats(startTime);
 				return result;
-			} catch (error) {
+			} catch (_error) {
 				this.queryBuffer.delete(key);
 				this.stats.misses++;
 				this.updateStats(startTime);
@@ -122,7 +122,7 @@ export class DatabaseCacheLayer implements CacheOperation {
 
 	async invalidateByTags(tags: string[]): Promise<void> {
 		for (const [key, entry] of this.cache.entries()) {
-			if (entry.tags && entry.tags.some((tag: string) => tags.includes(tag))) {
+			if (entry.tags?.some((tag: string) => tags.includes(tag))) {
 				await this.delete(key);
 			}
 		}
@@ -162,12 +162,7 @@ export class DatabaseCacheLayer implements CacheOperation {
 		}
 	}
 
-	private logHealthcareAccess(key: string, operation: string, context?: string): void {
-		// Healthcare audit trail - integration with audit system
-		console.log(
-			`[HEALTHCARE AUDIT] ${new Date().toISOString()} - ${operation} - Key: ${key} - Context: ${context || "N/A"}`
-		);
-	}
+	private logHealthcareAccess(_key: string, _operation: string, _context?: string): void {}
 
 	private updateStats(startTime: number): void {
 		const responseTime = performance.now() - startTime;

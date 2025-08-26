@@ -6,54 +6,45 @@
  * Compliance: LGPD/ANVISA/CFM + WCAG 2.1 AA
  */
 
-// Dashboard Components
-export * from "./dashboard";
-
-// Mobile Components
-export * from "./mobile";
-
 // Accessibility Components
 export * from "./accessibility";
-
+// Dashboard Components
+export * from "./dashboard";
 // Layout Components
 export * from "./layout";
-
+// Mobile Components
+export * from "./mobile";
+export * from "./ui/avatar";
+export * from "./ui/badge";
 // UI Components (re-export from shadcn/ui)
 export * from "./ui/button";
 export * from "./ui/card";
-export * from "./ui/badge";
 export * from "./ui/input";
 export * from "./ui/label";
-export * from "./ui/textarea";
-export * from "./ui/select";
-export * from "./ui/switch";
-export * from "./ui/slider";
-export * from "./ui/progress";
-export * from "./ui/tabs";
-export * from "./ui/sheet";
 export * from "./ui/popover";
-export * from "./ui/avatar";
+export * from "./ui/progress";
 export * from "./ui/scroll-area";
+export * from "./ui/select";
+export * from "./ui/sheet";
+export * from "./ui/slider";
+export * from "./ui/switch";
+export * from "./ui/tabs";
+export * from "./ui/textarea";
 export * from "./ui/toaster";
 
 // FASE 4 Component Categories
 export const COMPONENT_CATEGORIES = {
 	"AI-Powered Dashboards": [
 		"AIAnalyticsDashboard",
-		"HealthMonitoringDashboard", 
+		"HealthMonitoringDashboard",
 		"ComplianceStatusDashboard",
 		"PerformanceMetricsDashboard",
 		"RealTimeActivityDashboard",
 	],
-	
-	"Mobile Components": [
-		"MobileNavigation",
-		"MobileBottomNavigation",
-		"MobileDashboardCard",
-		"MobileQuickActions",
-	],
-	
-	"Accessibility": [
+
+	"Mobile Components": ["MobileNavigation", "MobileBottomNavigation", "MobileDashboardCard", "MobileQuickActions"],
+
+	Accessibility: [
 		"AccessibilityPanel",
 		"SkipToContentLink",
 		"ScreenReaderOnly",
@@ -61,15 +52,9 @@ export const COMPONENT_CATEGORIES = {
 		"FocusTrap",
 		"KeyboardHelper",
 	],
-	
-	"Layout System": [
-		"MainLayout",
-		"DashboardPageLayout",
-		"AuthLayout", 
-		"ErrorLayout",
-		"PrintLayout",
-	],
-	
+
+	"Layout System": ["MainLayout", "DashboardPageLayout", "AuthLayout", "ErrorLayout", "PrintLayout"],
+
 	"Healthcare Specific": [
 		"PatientCard",
 		"AppointmentCard",
@@ -85,17 +70,17 @@ export const COMPONENT_STATUS = {
 		// AI-Powered Dashboards
 		"AIAnalyticsDashboard",
 		"HealthMonitoringDashboard",
-		"ComplianceStatusDashboard", 
+		"ComplianceStatusDashboard",
 		"PerformanceMetricsDashboard",
 		"RealTimeActivityDashboard",
 		"DashboardLayout",
-		
+
 		// Mobile Components
 		"MobileNavigation",
 		"MobileBottomNavigation",
 		"MobileDashboardCard",
 		"MobileQuickActions",
-		
+
 		// Accessibility
 		"AccessibilityPanel",
 		"SkipToContentLink",
@@ -103,7 +88,7 @@ export const COMPONENT_STATUS = {
 		"LiveRegion",
 		"FocusTrap",
 		"KeyboardHelper",
-		
+
 		// Layout System
 		"MainLayout",
 		"DashboardPageLayout",
@@ -111,14 +96,14 @@ export const COMPONENT_STATUS = {
 		"ErrorLayout",
 		"PrintLayout",
 	],
-	
+
 	inProgress: [
 		// Healthcare specific components (next phase)
 		"PatientCard",
 		"AppointmentCard",
 		"MedicalRecordViewer",
 	],
-	
+
 	planned: [
 		// Advanced features
 		"TelemedicineInterface",
@@ -145,4 +130,4 @@ export const FASE4_COMPONENT_REGISTRY = {
 // 🤖 HEALTHCARE AI AGENT CHAT COMPONENT EXPORT
 // =============================================================================
 
-export { AgentChat } from './AgentChat';
+export { AgentChat } from "./AgentChat";

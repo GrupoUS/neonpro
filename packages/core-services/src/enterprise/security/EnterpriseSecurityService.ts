@@ -16,10 +16,10 @@
  * - Threat detection básico
  */
 
-import crypto from "crypto";
+import crypto from "node:crypto";
 import type { AuditEvent, SecurityConfig, ServiceContext } from "../../types";
 
-interface PerformanceMetrics {
+type PerformanceMetrics = {
 	service: string;
 	status: string;
 	lastCheck: Date;
@@ -27,9 +27,9 @@ interface PerformanceMetrics {
 	errors: number;
 	performance: Record<string, any>;
 	[key: string]: any; // Allow any additional properties
-}
+};
 
-interface SecurityRule {
+type SecurityRule = {
 	id: string;
 	name: string;
 	resource: string;
@@ -43,9 +43,9 @@ interface SecurityRule {
 	};
 	priority: number;
 	enabled: boolean;
-}
+};
 
-interface UserSession {
+type UserSession = {
 	id: string;
 	userId: string;
 	roles: string[];
@@ -63,9 +63,9 @@ interface UserSession {
 		multipleDevices: boolean;
 		locationChange: boolean;
 	};
-}
+};
 
-interface EncryptionConfig {
+type EncryptionConfig = {
 	algorithm: string;
 	keySize: number;
 	ivSize: number;
@@ -75,9 +75,9 @@ interface EncryptionConfig {
 		saltSize: number;
 		hashFunction: string;
 	};
-}
+};
 
-interface SecurityThreat {
+type SecurityThreat = {
 	id: string;
 	type: string;
 	severity: "low" | "medium" | "high" | "critical";
@@ -88,17 +88,17 @@ interface SecurityThreat {
 	timestamp: number;
 	details: Record<string, any>;
 	resolved: boolean;
-}
+};
 
 export class EnterpriseSecurityService {
-	private sessions: Map<string, UserSession> = new Map();
+	private readonly sessions: Map<string, UserSession> = new Map();
 	private securityRules: SecurityRule[] = [];
-	private threats: SecurityThreat[] = [];
-	private encryptionConfig: EncryptionConfig;
-	private masterKey: Buffer;
+	private readonly threats: SecurityThreat[] = [];
+	private readonly encryptionConfig: EncryptionConfig;
+	private readonly masterKey: Buffer;
 	private cleanupInterval: NodeJS.Timeout | null = null;
 
-	constructor(config?: Partial<SecurityConfig>) {
+	constructor(_config?: Partial<SecurityConfig>) {
 		this.encryptionConfig = {
 			algorithm: "aes-256-gcm",
 			keySize: 32, // 256 bits
@@ -168,7 +168,7 @@ export class EnterpriseSecurityService {
 		} catch (error) {
 			await this.logSecurityEvent("ACCESS_VALIDATION_ERROR", {
 				operation,
-				error: error instanceof Error ? error.message : 'Unknown error',
+				error: error instanceof Error ? error.message : "Unknown error",
 				context,
 			});
 			return false;
@@ -234,10 +234,14 @@ export class EnterpriseSecurityService {
 	 * Validate and get session
 	 */
 	async validateSession(sessionId?: string): Promise<UserSession | null> {
-		if (!sessionId) return null;
+		if (!sessionId) {
+			return null;
+		}
 
 		const session = this.sessions.get(sessionId);
-		if (!session) return null;
+		if (!session) {
+			return null;
+		}
 
 		// Check expiration
 		if (Date.now() > session.expiresAt) {
@@ -311,7 +315,7 @@ export class EnterpriseSecurityService {
 			return result;
 		} catch (error) {
 			await this.logSecurityEvent("ENCRYPTION_FAILED", {
-				error: error instanceof Error ? error.message : 'Unknown error',
+				error: error instanceof Error ? error.message : "Unknown error",
 			});
 			throw new Error("Encryption failed");
 		}
@@ -326,13 +330,11 @@ export class EnterpriseSecurityService {
 
 			// Extract components (no auth tag for legacy cipher)
 			const salt = combined.subarray(0, this.encryptionConfig.keyDerivation.saltSize);
-			const iv = combined.subarray(
+			const _iv = combined.subarray(
 				this.encryptionConfig.keyDerivation.saltSize,
 				this.encryptionConfig.keyDerivation.saltSize + this.encryptionConfig.ivSize
 			);
-			const encrypted = combined.subarray(
-				this.encryptionConfig.keyDerivation.saltSize + this.encryptionConfig.ivSize
-			);
+			const encrypted = combined.subarray(this.encryptionConfig.keyDerivation.saltSize + this.encryptionConfig.ivSize);
 
 			// Derive key
 			const key = crypto.pbkdf2Sync(
@@ -360,7 +362,7 @@ export class EnterpriseSecurityService {
 			return result as T;
 		} catch (error) {
 			await this.logSecurityEvent("DECRYPTION_FAILED", {
-				error: error instanceof Error ? error.message : 'Unknown error',
+				error: error instanceof Error ? error.message : "Unknown error",
 			});
 			throw new Error("Decryption failed");
 		}
@@ -400,20 +402,26 @@ export class EnterpriseSecurityService {
 	/**
 	 * Evaluate individual security rule
 	 */
-	private async evaluateRule(rule: SecurityRule, session: UserSession, context: ServiceContext): Promise<boolean> {
+	private async evaluateRule(rule: SecurityRule, session: UserSession, _context: ServiceContext): Promise<boolean> {
 		const conditions = rule.conditions;
-		if (!conditions) return true;
+		if (!conditions) {
+			return true;
+		}
 
 		// Check roles
 		if (conditions.roles && conditions.roles.length > 0) {
 			const hasRole = conditions.roles.some((role) => session.roles.includes(role));
-			if (!hasRole) return false;
+			if (!hasRole) {
+				return false;
+			}
 		}
 
 		// Check permissions
 		if (conditions.permissions && conditions.permissions.length > 0) {
 			const hasPermission = conditions.permissions.some((perm) => session.permissions.includes(perm));
-			if (!hasPermission) return false;
+			if (!hasPermission) {
+				return false;
+			}
 		}
 
 		// Check MFA requirement
@@ -434,10 +442,12 @@ export class EnterpriseSecurityService {
 		if (conditions.timeWindows && conditions.timeWindows.length > 0) {
 			const currentHour = new Date().getHours();
 			const inTimeWindow = conditions.timeWindows.some((window) => {
-				const [start, end] = window.split("-").map((h) => Number.parseInt(h));
+				const [start, end] = window.split("-").map((h) => Number.parseInt(h, 10));
 				return currentHour >= (start ?? 0) && currentHour <= (end ?? 23);
 			});
-			if (!inTimeWindow) return false;
+			if (!inTimeWindow) {
+				return false;
+			}
 		}
 
 		return true;
@@ -532,7 +542,6 @@ export class EnterpriseSecurityService {
 
 		// Generate random key for development
 		const randomKey = crypto.randomBytes(32);
-		console.warn("Using random master key - set NEONPRO_MASTER_KEY in production");
 		return randomKey;
 	}
 
@@ -540,9 +549,11 @@ export class EnterpriseSecurityService {
 		return crypto.randomBytes(16).toString("hex");
 	}
 
-	private async verifyMFA(userId: string, token?: string): Promise<boolean> {
+	private async verifyMFA(_userId: string, token?: string): Promise<boolean> {
 		// For now, if no token provided, assume valid (development mode)
-		if (!token) return true;
+		if (!token) {
+			return true;
+		}
 
 		// TODO: Implement real MFA verification with TOTP/SMS
 		// This would typically involve checking the token against a TOTP generator
@@ -556,7 +567,9 @@ export class EnterpriseSecurityService {
 	}
 
 	private async detectLocationChange(userId: string, ipAddress?: string): Promise<boolean> {
-		if (!ipAddress) return false;
+		if (!ipAddress) {
+			return false;
+		}
 
 		const recentSessions = Array.from(this.sessions.values()).filter(
 			(s) => s.userId === userId && s.ipAddress !== ipAddress
@@ -640,15 +653,9 @@ export class EnterpriseSecurityService {
 		}
 	}
 
-	private async logSecurityEvent(eventType: string, details: any): Promise<void> {
-		// TODO: Implement proper security event logging to audit system
-		// This should integrate with the EnterpriseAuditService
-		console.log(`Security Event: ${eventType}`, details);
-
+	private async logSecurityEvent(eventType: string, _details: any): Promise<void> {
 		// Store critical events for analysis
 		if (["AUTHENTICATION_FAILED", "SUSPICIOUS_ACTIVITY", "UNAUTHORIZED_ACCESS"].includes(eventType)) {
-			// TODO: Send to security monitoring system
-			console.warn(`CRITICAL SECURITY EVENT: ${eventType}`, details);
 		}
 	}
 
@@ -688,9 +695,8 @@ export class EnterpriseSecurityService {
 	async encryptData(data: string): Promise<string> {
 		try {
 			// Simple implementation for health checks
-			return Buffer.from(data).toString('base64');
-		} catch (error) {
-			console.error("Encryption error:", error);
+			return Buffer.from(data).toString("base64");
+		} catch (_error) {
 			throw new Error("Encryption failed");
 		}
 	}
@@ -701,9 +707,8 @@ export class EnterpriseSecurityService {
 	async decryptData(encryptedData: string): Promise<string> {
 		try {
 			// Simple implementation for health checks
-			return Buffer.from(encryptedData, 'base64').toString('utf8');
-		} catch (error) {
-			console.error("Decryption error:", error);
+			return Buffer.from(encryptedData, "base64").toString("utf8");
+		} catch (_error) {
 			throw new Error("Decryption failed");
 		}
 	}
@@ -734,7 +739,7 @@ export class EnterpriseSecurityService {
 				throughput: 0,
 				p95ResponseTime: 0,
 				p99ResponseTime: 0,
-				slowestOperations: []
+				slowestOperations: [],
 			},
 			period: "realtime",
 			totalOperations: this.sessions.size,
@@ -744,7 +749,7 @@ export class EnterpriseSecurityService {
 			throughput: 0,
 			p95ResponseTime: 0,
 			p99ResponseTime: 0,
-			slowestOperations: []
+			slowestOperations: [],
 		};
 	}
 

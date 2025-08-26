@@ -1,13 +1,7 @@
 {
   "timestamp": "2025-08-25T16:42:51.207Z",
   "config": {
-    "concurrent_users": [
-      1,
-      5,
-      10,
-      20,
-      50
-    ],
+    "concurrent_users": [1, 5, 10, 20, 50],
     "duration_seconds": 30,
     "ramp_up_seconds": 5,
     "targets": {

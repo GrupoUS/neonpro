@@ -6,7 +6,6 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
 import {
 	Activity,
 	BarChart3,
@@ -22,10 +21,11 @@ import {
 	Users,
 	Zap,
 } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useEffect, useState } from "react";
+import { Area, AreaChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from "recharts";
 
 interface PerformanceMetrics {
 	systemPerformance: {
@@ -100,7 +100,7 @@ export function PerformanceMetricsDashboard() {
 			// Generate historical data for the last 24 hours
 			const now = new Date();
 			const data: PerformanceDataPoint[] = [];
-			
+
 			for (let i = 23; i >= 0; i--) {
 				const timestamp = new Date(now.getTime() - i * 60 * 60 * 1000);
 				data.push({
@@ -111,7 +111,7 @@ export function PerformanceMetricsDashboard() {
 					memoryUsage: Math.floor(60 + Math.random() * 20),
 				});
 			}
-			
+
 			setHistoricalData(data);
 			setLoading(false);
 		};
@@ -124,12 +124,12 @@ export function PerformanceMetricsDashboard() {
 				setMetrics((prev) => ({
 					...prev!,
 					systemPerformance: {
-						...prev!.systemPerformance,
+						...prev?.systemPerformance,
 						cpuUsage: Math.floor(20 + Math.random() * 30),
 						networkLatency: Math.floor(10 + Math.random() * 20),
 					},
 					applicationMetrics: {
-						...prev!.applicationMetrics,
+						...prev?.applicationMetrics,
 						responseTime: Math.floor(150 + Math.random() * 100),
 						throughput: Math.floor(200 + Math.random() * 100),
 						activeConnections: Math.floor(40 + Math.random() * 20),
@@ -187,30 +187,24 @@ export function PerformanceMetricsDashboard() {
 	}
 
 	return (
-		<div 
-			className="space-y-6" 
-			role="main" 
+		<div
+			className="space-y-6"
+			role="main"
 			aria-labelledby="performance-heading"
 			aria-describedby="performance-description"
 		>
 			{/* Header */}
 			<div className="flex items-center justify-between">
 				<div>
-					<h2 
-						id="performance-heading"
-						className="text-2xl font-bold text-foreground"
-					>
+					<h2 id="performance-heading" className="text-2xl font-bold text-foreground">
 						Métricas de Performance
 					</h2>
-					<p 
-						id="performance-description"
-						className="text-muted-foreground"
-					>
+					<p id="performance-description" className="text-muted-foreground">
 						Monitoramento em tempo real da performance do sistema
 					</p>
 				</div>
-				<Badge 
-					variant="outline" 
+				<Badge
+					variant="outline"
 					className="flex items-center gap-2"
 					role="status"
 					aria-label="Performance do sistema em tempo real"
@@ -244,9 +238,12 @@ export function PerformanceMetricsDashboard() {
 							</div>
 							<Progress value={metrics.systemPerformance.cpuUsage} className="h-2" />
 							<div className="text-xs text-muted-foreground">
-								Target: &lt;80% | Status: 
-								{metrics.systemPerformance.cpuUsage < 70 ? " Ótimo" : 
-								 metrics.systemPerformance.cpuUsage < 85 ? " Bom" : " Atenção"}
+								Target: &lt;80% | Status:
+								{metrics.systemPerformance.cpuUsage < 70
+									? " Ótimo"
+									: metrics.systemPerformance.cpuUsage < 85
+										? " Bom"
+										: " Atenção"}
 							</div>
 						</div>
 					</CardContent>
@@ -273,9 +270,7 @@ export function PerformanceMetricsDashboard() {
 								{metrics.systemPerformance.memoryUsage}%
 							</div>
 							<Progress value={metrics.systemPerformance.memoryUsage} className="h-2" />
-							<div className="text-xs text-muted-foreground">
-								8GB Total | 2.6GB Livre
-							</div>
+							<div className="text-xs text-muted-foreground">8GB Total | 2.6GB Livre</div>
 						</div>
 					</CardContent>
 				</Card>
@@ -306,9 +301,7 @@ export function PerformanceMetricsDashboard() {
 								) : (
 									<TrendingUp className="h-3 w-3 text-yellow-600" />
 								)}
-								<span className="text-xs text-muted-foreground">
-									vs. hora anterior
-								</span>
+								<span className="text-xs text-muted-foreground">vs. hora anterior</span>
 							</div>
 						</div>
 					</CardContent>
@@ -327,9 +320,7 @@ export function PerformanceMetricsDashboard() {
 					</CardHeader>
 					<CardContent>
 						<div className="space-y-2">
-							<div className="text-2xl font-bold text-green-600">
-								{metrics.applicationMetrics.throughput}
-							</div>
+							<div className="text-2xl font-bold text-green-600">{metrics.applicationMetrics.throughput}</div>
 							<div className="flex items-center space-x-1">
 								<TrendingUp className="h-3 w-3 text-green-600" />
 								<span className="text-xs text-green-600">+12% hoje</span>
@@ -357,17 +348,11 @@ export function PerformanceMetricsDashboard() {
 									<CartesianGrid strokeDasharray="3 3" />
 									<XAxis dataKey="timestamp" />
 									<YAxis />
-									<Tooltip 
+									<Tooltip
 										formatter={(value) => [`${value}ms`, "Tempo de Resposta"]}
 										labelFormatter={(label) => `Horário: ${label}`}
 									/>
-									<Line 
-										type="monotone" 
-										dataKey="responseTime" 
-										stroke="#2563eb" 
-										strokeWidth={2}
-										dot={false}
-									/>
+									<Line type="monotone" dataKey="responseTime" stroke="#2563eb" strokeWidth={2} dot={false} />
 								</LineChart>
 							</ResponsiveContainer>
 						</div>
@@ -390,11 +375,8 @@ export function PerformanceMetricsDashboard() {
 									<CartesianGrid strokeDasharray="3 3" />
 									<XAxis dataKey="timestamp" />
 									<YAxis />
-									<Tooltip 
-										formatter={(value, name) => [
-											`${value}%`, 
-											name === "cpuUsage" ? "CPU" : "Memória"
-										]}
+									<Tooltip
+										formatter={(value, name) => [`${value}%`, name === "cpuUsage" ? "CPU" : "Memória"]}
 										labelFormatter={(label) => `Horário: ${label}`}
 									/>
 									<Area
@@ -437,9 +419,7 @@ export function PerformanceMetricsDashboard() {
 								<span className="text-sm font-medium">Hit Rate</span>
 								<div className="flex items-center space-x-2">
 									<Progress value={metrics.cacheMetrics.hitRate} className="w-32 h-2" />
-									<span className="text-sm font-bold text-green-600">
-										{metrics.cacheMetrics.hitRate}%
-									</span>
+									<span className="text-sm font-bold text-green-600">{metrics.cacheMetrics.hitRate}%</span>
 								</div>
 							</div>
 							<div className="flex items-center justify-between">

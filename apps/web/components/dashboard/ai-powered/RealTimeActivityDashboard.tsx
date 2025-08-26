@@ -6,26 +6,26 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
 import {
 	Activity,
 	AlertCircle,
-	Calendar,
-	FileText,
-	MessageSquare,
-	Users,
-	UserCheck,
-	Shield,
-	Clock,
-	Stethoscope,
-	MapPin,
 	Bell,
-	TrendingUp,
+	Calendar,
+	Clock,
 	Eye,
+	FileText,
+	MapPin,
+	MessageSquare,
+	Shield,
+	Stethoscope,
+	TrendingUp,
+	UserCheck,
+	Users,
 } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface ActivityEvent {
@@ -62,7 +62,7 @@ export function RealTimeActivityDashboard() {
 		// Simulate loading real-time data
 		const loadActivityData = () => {
 			const now = new Date();
-			
+
 			const mockActivities: ActivityEvent[] = [
 				{
 					id: "1",
@@ -220,11 +220,15 @@ export function RealTimeActivityDashboard() {
 			}
 
 			// Update live stats
-			setLiveStats((prev) => prev ? {
-				...prev,
-				activeUsers: Math.floor(10 + Math.random() * 8),
-				ongoingConsultations: Math.floor(2 + Math.random() * 4),
-			} : null);
+			setLiveStats((prev) =>
+				prev
+					? {
+							...prev,
+							activeUsers: Math.floor(10 + Math.random() * 8),
+							ongoingConsultations: Math.floor(2 + Math.random() * 4),
+						}
+					: null
+			);
 		}, 10000);
 
 		return () => clearInterval(interval);
@@ -254,7 +258,7 @@ export function RealTimeActivityDashboard() {
 	const getActivityColor = (type: ActivityEvent["type"], priority: ActivityEvent["priority"]) => {
 		if (priority === "critical") return "text-red-600 bg-red-50";
 		if (priority === "high") return "text-orange-600 bg-orange-50";
-		
+
 		switch (type) {
 			case "consultation":
 				return "text-blue-600 bg-blue-50";
@@ -272,20 +276,36 @@ export function RealTimeActivityDashboard() {
 	const getPriorityBadge = (priority: ActivityEvent["priority"]) => {
 		switch (priority) {
 			case "critical":
-				return <Badge variant="destructive" className="text-xs">Crítico</Badge>;
+				return (
+					<Badge variant="destructive" className="text-xs">
+						Crítico
+					</Badge>
+				);
 			case "high":
-				return <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-800">Alto</Badge>;
+				return (
+					<Badge variant="secondary" className="text-xs bg-orange-100 text-orange-800">
+						Alto
+					</Badge>
+				);
 			case "medium":
-				return <Badge variant="outline" className="text-xs">Médio</Badge>;
+				return (
+					<Badge variant="outline" className="text-xs">
+						Médio
+					</Badge>
+				);
 			case "low":
-				return <Badge variant="outline" className="text-xs text-gray-500">Baixo</Badge>;
+				return (
+					<Badge variant="outline" className="text-xs text-gray-500">
+						Baixo
+					</Badge>
+				);
 		}
 	};
 
 	const formatTimeAgo = (timestamp: Date) => {
 		const now = new Date();
 		const diffInMinutes = Math.floor((now.getTime() - timestamp.getTime()) / (1000 * 60));
-		
+
 		if (diffInMinutes < 1) return "Agora";
 		if (diffInMinutes < 60) return `${diffInMinutes}min atrás`;
 		if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h atrás`;
@@ -310,19 +330,12 @@ export function RealTimeActivityDashboard() {
 	}
 
 	return (
-		<div 
-			className="space-y-6" 
-			role="main" 
-			aria-labelledby="activity-heading"
-			aria-describedby="activity-description"
-		>
+		<div className="space-y-6" role="main" aria-labelledby="activity-heading" aria-describedby="activity-description">
 			{/* Header */}
 			<div className="flex items-center justify-between">
 				<div>
 					<h2 className="text-2xl font-bold text-foreground">Atividade em Tempo Real</h2>
-					<p className="text-muted-foreground">
-						Monitoramento de eventos e atividades do sistema
-					</p>
+					<p className="text-muted-foreground">Monitoramento de eventos e atividades do sistema</p>
 				</div>
 				<Badge variant="outline" className="flex items-center gap-2">
 					<div className="h-2 w-2 bg-green-500 rounded-full animate-pulse"></div>
@@ -444,27 +457,25 @@ export function RealTimeActivityDashboard() {
 									{/* Content */}
 									<div className="flex-1 min-w-0">
 										<div className="flex items-center justify-between">
-											<h4 className="text-sm font-medium text-foreground truncate">
-												{activity.title}
-											</h4>
+											<h4 className="text-sm font-medium text-foreground truncate">{activity.title}</h4>
 											<div className="flex items-center space-x-2">
 												{getPriorityBadge(activity.priority)}
-												<span className="text-xs text-muted-foreground">
-													{formatTimeAgo(activity.timestamp)}
-												</span>
+												<span className="text-xs text-muted-foreground">{formatTimeAgo(activity.timestamp)}</span>
 											</div>
 										</div>
-										
-										<p className="text-sm text-muted-foreground mt-1">
-											{activity.description}
-										</p>
+
+										<p className="text-sm text-muted-foreground mt-1">{activity.description}</p>
 
 										{/* User Info */}
 										<div className="flex items-center space-x-2 mt-2">
 											<Avatar className="h-6 w-6">
 												<AvatarImage src={activity.user.avatar} />
 												<AvatarFallback className="text-xs">
-													{activity.user.name.split(" ").map(n => n[0]).join("").slice(0, 2)}
+													{activity.user.name
+														.split(" ")
+														.map((n) => n[0])
+														.join("")
+														.slice(0, 2)}
 												</AvatarFallback>
 											</Avatar>
 											<span className="text-xs text-muted-foreground">
@@ -475,9 +486,7 @@ export function RealTimeActivityDashboard() {
 													<span className="text-xs text-muted-foreground">•</span>
 													<div className="flex items-center space-x-1">
 														<MapPin className="h-3 w-3 text-muted-foreground" />
-														<span className="text-xs text-muted-foreground">
-															{activity.location}
-														</span>
+														<span className="text-xs text-muted-foreground">{activity.location}</span>
 													</div>
 												</>
 											)}
@@ -486,11 +495,13 @@ export function RealTimeActivityDashboard() {
 										{/* Metadata */}
 										{activity.metadata && (
 											<div className="mt-2 flex flex-wrap gap-1">
-												{Object.entries(activity.metadata).slice(0, 3).map(([key, value]) => (
-													<Badge key={key} variant="outline" className="text-xs">
-														{key}: {String(value)}
-													</Badge>
-												))}
+												{Object.entries(activity.metadata)
+													.slice(0, 3)
+													.map(([key, value]) => (
+														<Badge key={key} variant="outline" className="text-xs">
+															{key}: {String(value)}
+														</Badge>
+													))}
 											</div>
 										)}
 									</div>
@@ -519,9 +530,7 @@ export function RealTimeActivityDashboard() {
 					<CardContent className="p-4 text-center">
 						<Bell className="h-8 w-8 text-blue-600 mx-auto mb-2" />
 						<h3 className="font-medium">Configurar Notificações</h3>
-						<p className="text-xs text-muted-foreground mt-1">
-							Personalizar alertas em tempo real
-						</p>
+						<p className="text-xs text-muted-foreground mt-1">Personalizar alertas em tempo real</p>
 					</CardContent>
 				</Card>
 
@@ -529,9 +538,7 @@ export function RealTimeActivityDashboard() {
 					<CardContent className="p-4 text-center">
 						<Shield className="h-8 w-8 text-purple-600 mx-auto mb-2" />
 						<h3 className="font-medium">Logs de Auditoria</h3>
-						<p className="text-xs text-muted-foreground mt-1">
-							Ver histórico completo
-						</p>
+						<p className="text-xs text-muted-foreground mt-1">Ver histórico completo</p>
 					</CardContent>
 				</Card>
 
@@ -539,9 +546,7 @@ export function RealTimeActivityDashboard() {
 					<CardContent className="p-4 text-center">
 						<Activity className="h-8 w-8 text-green-600 mx-auto mb-2" />
 						<h3 className="font-medium">Relatórios Automáticos</h3>
-						<p className="text-xs text-muted-foreground mt-1">
-							Gerar relatórios periódicos
-						</p>
+						<p className="text-xs text-muted-foreground mt-1">Gerar relatórios periódicos</p>
 					</CardContent>
 				</Card>
 
@@ -549,9 +554,7 @@ export function RealTimeActivityDashboard() {
 					<CardContent className="p-4 text-center">
 						<Users className="h-8 w-8 text-orange-600 mx-auto mb-2" />
 						<h3 className="font-medium">Usuários Online</h3>
-						<p className="text-xs text-muted-foreground mt-1">
-							Ver atividade detalhada
-						</p>
+						<p className="text-xs text-muted-foreground mt-1">Ver atividade detalhada</p>
 					</CardContent>
 				</Card>
 			</div>

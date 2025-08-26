@@ -13,7 +13,7 @@ import { EnterpriseAuditService } from "../enterprise/audit/EnterpriseAuditServi
 import { EnterpriseCacheService } from "../enterprise/cache/EnterpriseCacheService";
 import { EnterpriseSecurityService } from "../enterprise/security/EnterpriseSecurityService";
 
-export interface HealthCheckResult {
+export type HealthCheckResult = {
 	service: string;
 	status: "healthy" | "degraded" | "unhealthy";
 	responseTime: number;
@@ -25,9 +25,9 @@ export interface HealthCheckResult {
 		warnings: string[];
 		metrics: Record<string, any>;
 	};
-}
+};
 
-export interface SystemHealthReport {
+export type SystemHealthReport = {
 	overall: "healthy" | "degraded" | "unhealthy";
 	services: HealthCheckResult[];
 	summary: {
@@ -39,7 +39,7 @@ export interface SystemHealthReport {
 	};
 	timestamp: string;
 	uptime: number;
-}
+};
 
 /**
  * Enterprise Health Check Manager
@@ -49,7 +49,7 @@ export class EnterpriseHealthCheckService {
 	private readonly healthHistory: Map<string, HealthCheckResult[]> = new Map();
 	private readonly startTime: number = Date.now();
 	private healthCheckInterval: NodeJS.Timeout | null = null;
-	private alertThresholds = {
+	private readonly alertThresholds = {
 		responseTime: 5000, // 5 seconds
 		errorRate: 0.1, // 10%
 		degradedThreshold: 1, // 1 degraded service
@@ -73,36 +73,33 @@ export class EnterpriseHealthCheckService {
 					memory: {
 						enabled: true,
 						maxItems: 100,
-						ttl: 60000 // 1 minute for health checks
+						ttl: 60_000, // 1 minute for health checks
 					},
 					redis: {
 						enabled: false, // Disable Redis for health checks
 						host: "localhost",
 						port: 6379,
-						ttl: 60000,
-						keyPrefix: "health:"
+						ttl: 60_000,
+						keyPrefix: "health:",
 					},
 					database: {
 						enabled: false, // Disable DB for health checks
-						ttl: 60000
-					}
+						ttl: 60_000,
+					},
 				},
 				healthCheck: {
-					interval: 10000,
-					enabled: true
+					interval: 10_000,
+					enabled: true,
 				},
 				compliance: {
 					lgpd: false, // Simplified for health checks
 					autoExpiry: true,
-					auditAccess: false
-				}
+					auditAccess: false,
+				},
 			})
 		);
 
-		this.services.set(
-			"analytics",
-			new EnterpriseAnalyticsService()
-		);
+		this.services.set("analytics", new EnterpriseAnalyticsService());
 
 		this.services.set(
 			"security",
@@ -113,7 +110,7 @@ export class EnterpriseHealthCheckService {
 				encryptionAlgorithm: "aes-256-gcm",
 				auditRetentionDays: 1,
 				requireSecureChannel: false,
-				allowedOrigins: ["*"]
+				allowedOrigins: ["*"],
 			})
 		);
 
@@ -300,8 +297,8 @@ export class EnterpriseHealthCheckService {
 		await analyticsService.trackEvent({
 			id: `${Date.now()}-${Math.random()}`,
 			type: "health_check",
-			category: 'health',
-			action: 'health_check',
+			category: "health",
+			action: "health_check",
 			properties: { test: true },
 			timestamp: Date.now(),
 			metadata: {
@@ -345,7 +342,7 @@ export class EnterpriseHealthCheckService {
 		}
 
 		// Test permission validation (mock)
-		const hasPermission = await securityService.validatePermission("health_check_user", "read");
+		const _hasPermission = await securityService.validatePermission("health_check_user", "read");
 		// For health check, we expect this to work (even if it returns false for unknown user)
 
 		// Get health metrics
@@ -394,9 +391,15 @@ export class EnterpriseHealthCheckService {
 	 * Assess performance based on response time
 	 */
 	private assessPerformance(responseTime: number): "excellent" | "good" | "slow" | "critical" {
-		if (responseTime < 100) return "excellent";
-		if (responseTime < 500) return "good";
-		if (responseTime < 2000) return "slow";
+		if (responseTime < 100) {
+			return "excellent";
+		}
+		if (responseTime < 500) {
+			return "good";
+		}
+		if (responseTime < 2000) {
+			return "slow";
+		}
 		return "critical";
 	}
 
@@ -439,8 +442,6 @@ export class EnterpriseHealthCheckService {
 
 		// Log alerts
 		if (alerts.length > 0) {
-			console.warn("Health Check Alerts:", alerts);
-
 			// Could integrate with alerting system here
 			// await this.sendAlerts(alerts);
 		}
@@ -515,9 +516,7 @@ export class EnterpriseHealthCheckService {
 			async () => {
 				try {
 					await this.performFullHealthCheck();
-				} catch (error) {
-					console.error("Health check monitoring error:", error);
-				}
+				} catch (_error) {}
 			},
 			5 * 60 * 1000
 		);
@@ -538,9 +537,7 @@ export class EnterpriseHealthCheckService {
 				if (service.shutdown) {
 					await service.shutdown();
 				}
-			} catch (error) {
-				console.error("Error shutting down health check service:", error);
-			}
+			} catch (_error) {}
 		}
 	}
 

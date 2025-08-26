@@ -1,39 +1,139 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.2.0/schema.json",
-	"vcs": {
-		"enabled": true,
-		"clientKind": "git",
-		"useIgnoreFile": true,
-		"defaultBranch": "main"
-	},
-	"files": {
-		"ignoreUnknown": true,
-		"maxSize": 1048576
-	},
-	"formatter": {
-		"enabled": true,
-		"indentStyle": "tab",
-		"lineWidth": 120,
-		"indentWidth": 2
-	},
-	"linter": {
-		"enabled": false
-	},
-	"javascript": {
-		"formatter": {
-			"quoteStyle": "double",
-			"semicolons": "always",
-			"trailingCommas": "es5"
-		}
-	},
-	"json": {
-		"formatter": {
-			"enabled": true
-		}
-	},
-	"css": {
-		"formatter": {
-			"enabled": true
-		}
-	}
+  "$schema": "https://biomejs.dev/schemas/2.2.2/schema.json",
+  "extends": ["ultracite"],
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true,
+    "defaultBranch": "main"
+  },
+  "files": {
+    "ignoreUnknown": true,
+    "maxSize": 5242880,
+    "includes": [
+      "**/*.ts",
+      "**/*.tsx",
+      "**/*.js",
+      "**/*.jsx",
+      "**/*.json",
+      "**/*.jsonc",
+      "**/*.css",
+      "**/*.scss",
+      "**/*.md"
+    ],
+    "ignore": [
+      // Dependencies and build artifacts
+      "**/node_modules/**",
+      "**/.next/**",
+      "**/.turbo/**",
+      "**/dist/**",
+      "**/build/**",
+      "**/coverage/**",
+      "**/out/**",
+      
+      // Logs and temporary files
+      "**/logs/**",
+      "**/.cache/**",
+      "**/.tmp/**",
+      "**/temp-*/**",
+      "**/*.log",
+      "**/.tmp.*",
+      
+      // System files
+      "**/.git/**",
+      "**/.DS_Store",
+      "**/Thumbs.db",
+      
+      // Project-specific excludes
+      "**/archon/original_archon/**",
+      "**/serena/test/**",
+      "**/temp-broken-files/**",
+      "**/infrastructure/scripts/**",
+      "**/supabase/migrations/**",
+      "**/playwright-report/**",
+      "**/test-results/**",
+      
+      // Generated files and configs that don't need strict linting
+      "**/.vscode/settings.json",
+      "**/.claude/settings.*.json",
+      "**/sentry.*.config.*",
+      "**/next.config.*",
+      "**/turbo.json",
+      "**/trigger.config.*",
+      "**/instrumentation*.ts",
+      "**/vitest.setup.*",
+      
+      // Large generated or external files
+      "**/MIGRATION_LOG.md",
+      "**/CI-CD-OPTIMIZATION-REPORT.md",
+      "**/DEPLOYMENT-STATUS-REPORT.md",
+      "**/DEVOPS-FIXES-DOCUMENTATION.md",
+      "**/PRODUCTION-DEPLOYMENT-REPORT.md",
+      "**/TURBOREPO-ANALYSIS-REPORT.md",
+      "**/WORKFLOW-EXECUTION-REPORT.md",
+      "**/performance-report.json",
+      "**/load-test-report.json"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "tab",
+    "lineWidth": 120,
+    "indentWidth": 2
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "style": {
+        "useImportType": "error",
+        "useExportType": "error",
+        "useAsConstAssertion": "error",
+        "useArrayLiterals": "error",
+        "noDefaultExport": "off",
+        "useTemplate": "warn",
+        "useNodejsImportProtocol": "error",
+        "noMagicNumbers": "warn"
+      },
+      "complexity": {
+        "noBannedTypes": "off",
+        "noUselessFragments": "off",
+        "noForEach": "warn",
+        "noExcessiveCognitiveComplexity": "warn"
+      },
+      "suspicious": {
+        "noExplicitAny": "error",
+        "noEmptyInterface": "off",
+        "noEmptyBlockStatements": "warn",
+        "useAwait": "warn",
+        "noConsole": "warn"
+      },
+      "correctness": {
+        "useExhaustiveDependencies": "warn",
+        "useHookAtTopLevel": "error",
+        "noUnusedVariables": "warn",
+        "noUnusedFunctionParameters": "warn"
+      },
+      "nursery": {
+        "noUnnecessaryConditions": "warn"
+      }
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "double",
+      "semicolons": "always",
+      "trailingCommas": "es5"
+    }
+  },
+  "json": {
+    "formatter": {
+      "enabled": true
+    }
+  },
+  "css": {
+    "formatter": {
+      "enabled": true
+    }
+  }
 }

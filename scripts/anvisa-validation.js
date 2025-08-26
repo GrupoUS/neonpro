@@ -6,8 +6,8 @@
  * Used by GitHub Actions CI/CD pipeline
  */
 
-const path = require("path");
-const fs = require("fs");
+const path = require("node:path");
+const fs = require("node:fs");
 
 // Color codes for console output
 const colors = {
@@ -19,9 +19,7 @@ const colors = {
 	bold: "\x1b[1m",
 };
 
-function log(message, color = colors.reset) {
-	console.log(`${color}${message}${colors.reset}`);
-}
+function log(_message, _color = colors.reset) {}
 
 function logHeader(message) {
 	log(`\n${colors.bold}${colors.blue}=== ${message} ===${colors.reset}`);
@@ -215,7 +213,6 @@ async function runANVISAValidation() {
 if (require.main === module) {
 	runANVISAValidation().catch((error) => {
 		logError(`Unexpected error: ${error.message}`);
-		console.error(error);
 		process.exit(1);
 	});
 }

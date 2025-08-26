@@ -3,12 +3,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { EmergencyAlert, PatientInfo } from "../types";
 
-interface EmergencyAccessProps {
+type EmergencyAccessProps = {
 	onPatientSelect: (patientId: string) => void;
 	onEmergencySearch: (query: string) => Promise<PatientInfo[]>;
 	emergencyAlerts?: EmergencyAlert[];
 	className?: string;
-}
+};
 
 export function EmergencyAccessInterface({
 	onPatientSelect,
@@ -51,11 +51,9 @@ export function EmergencyAccessInterface({
 
 					// Log performance warning if >5s (half of target)
 					if (elapsed > 5000) {
-						console.warn(`[EmergencyAccess] Search took ${elapsed}ms - target is <10s`);
 					}
 				}
-			} catch (error) {
-				console.error("[EmergencyAccess] Search failed:", error);
+			} catch (_error) {
 				setSearchResults([]);
 			} finally {
 				setIsSearching(false);
@@ -74,8 +72,7 @@ export function EmergencyAccessInterface({
 
 		// Track emergency access time
 		if (searchStartTime) {
-			const totalTime = Date.now() - searchStartTime;
-			console.log(`[EmergencyAccess] Patient selected in ${totalTime}ms`);
+			const _totalTime = Date.now() - searchStartTime;
 		}
 	};
 

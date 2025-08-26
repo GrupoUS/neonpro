@@ -7,7 +7,7 @@
 
 import { openai } from "@ai-sdk/openai";
 import { HealthcareAIEngine } from "@neonpro/ai/chat/engine";
-import type { ChatInterface, ChatMessage } from "@neonpro/types/ai-chat";
+import type { ChatMessage } from "@neonpro/types/ai-chat";
 import { streamText } from "ai";
 import { type NextRequest, NextResponse } from "next/server";
 

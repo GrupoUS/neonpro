@@ -1,4 +1,4 @@
-export interface PerformanceMetric {
+export type PerformanceMetric = {
 	id: string;
 	timestamp: number;
 	type: MetricType;
@@ -7,7 +7,7 @@ export interface PerformanceMetric {
 	tags: Record<string, string>;
 	source: string;
 	context?: Record<string, any>;
-}
+};
 
 export enum MetricType {
 	CACHE_HIT_RATE = "cache_hit_rate",
@@ -35,14 +35,14 @@ export enum MetricUnit {
 	SCORE = "score",
 }
 
-export interface MetricCollector {
+export type MetricCollector = {
 	collect(): Promise<PerformanceMetric[]>;
 	getMetricType(): MetricType;
 	isEnabled(): boolean;
 	getCollectionInterval(): number; // milliseconds
-}
+};
 
-export interface AlertRule {
+export type AlertRule = {
 	id: string;
 	name: string;
 	description: string;
@@ -52,7 +52,7 @@ export interface AlertRule {
 	severity: AlertSeverity;
 	enabled: boolean;
 	cooldownPeriod: number; // seconds
-}
+};
 
 export enum AlertCondition {
 	GREATER_THAN = "gt",
@@ -68,7 +68,7 @@ export enum AlertSeverity {
 	CRITICAL = "critical",
 }
 
-export interface Alert {
+export type Alert = {
 	id: string;
 	ruleId: string;
 	timestamp: number;
@@ -78,16 +78,16 @@ export interface Alert {
 	acknowledged: boolean;
 	acknowledgedBy?: string;
 	acknowledgedAt?: number;
-}
+};
 
-export interface HealthCheckResult {
+export type HealthCheckResult = {
 	component: string;
 	status: HealthStatus;
 	message: string;
 	responseTime: number;
 	details?: Record<string, any>;
 	timestamp: number;
-}
+};
 
 export enum HealthStatus {
 	HEALTHY = "healthy",
@@ -96,7 +96,7 @@ export enum HealthStatus {
 	CRITICAL = "critical",
 }
 
-export interface PerformanceInsight {
+export type PerformanceInsight = {
 	id: string;
 	timestamp: number;
 	type: InsightType;
@@ -107,7 +107,7 @@ export interface PerformanceInsight {
 	metrics: PerformanceMetric[];
 	potentialImpact: string;
 	estimatedROI?: number;
-}
+};
 
 export enum InsightType {
 	OPTIMIZATION_OPPORTUNITY = "optimization",

@@ -59,7 +59,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 		const alertSummary = await patientInsights.monitorPatientAlerts(patientId);
 
 		// Apply filters
-		let filteredAlerts = alertSummary.alerts;
+		let filteredAlerts = alertSummary.active_alerts;
 
 		if (alertTypes.length > 0) {
 			filteredAlerts = filteredAlerts.filter((alert) => alertTypes.includes(alert.type));

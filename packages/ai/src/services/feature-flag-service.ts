@@ -5,7 +5,7 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { type AIServiceInput, type AIServiceOutput, EnhancedAIService } from "./enhanced-service-base";
 
 // Feature Flag Types
-export interface FeatureFlag {
+export type FeatureFlag = {
 	id: string;
 	name: string;
 	description: string;
@@ -14,9 +14,9 @@ export interface FeatureFlag {
 	metadata: FeatureFlagMetadata;
 	created_at: string;
 	updated_at: string;
-}
+};
 
-export interface FeatureFlagConditions {
+export type FeatureFlagConditions = {
 	user_roles?: string[];
 	user_ids?: string[];
 	clinic_ids?: string[];
@@ -24,16 +24,16 @@ export interface FeatureFlagConditions {
 	percentage_rollout?: number;
 	environment?: string[];
 	custom_conditions?: Record<string, any>;
-}
+};
 
-export interface TimeRestriction {
+export type TimeRestriction = {
 	start_time: string; // ISO 8601 format
 	end_time: string; // ISO 8601 format
 	timezone?: string;
 	days_of_week?: number[]; // 0-6, Sunday = 0
-}
+};
 
-export interface FeatureFlagMetadata {
+export type FeatureFlagMetadata = {
 	category: string;
 	owner: string;
 	environment: string;
@@ -43,9 +43,9 @@ export interface FeatureFlagMetadata {
 	target_date?: string;
 	dependencies?: string[];
 	risk_level?: "low" | "medium" | "high";
-}
+};
 
-export interface FeatureFlagContext {
+export type FeatureFlagContext = {
 	user_id?: string;
 	user_roles?: string[];
 	clinic_id?: string;
@@ -53,7 +53,7 @@ export interface FeatureFlagContext {
 	request_ip?: string;
 	user_agent?: string;
 	custom_attributes?: Record<string, any>;
-}
+};
 
 export interface FeatureFlagInput extends AIServiceInput {
 	action: "check" | "list" | "create" | "update" | "delete" | "bulk_check";
@@ -78,7 +78,7 @@ export interface FeatureFlagOutput extends AIServiceOutput {
 	evaluation_metadata?: FeatureFlagEvaluationMetadata;
 }
 
-export interface FeatureFlagEvaluationMetadata {
+export type FeatureFlagEvaluationMetadata = {
 	evaluated_at: string;
 	evaluation_time_ms: number;
 	conditions_checked: string[];
@@ -86,13 +86,13 @@ export interface FeatureFlagEvaluationMetadata {
 	rollout_bucket?: number;
 	cache_hit?: boolean;
 	override_applied?: boolean;
-}
+};
 
 // Feature Flag Service Implementation
 export class FeatureFlagService extends EnhancedAIService<FeatureFlagInput, FeatureFlagOutput> {
-	private supabase: SupabaseClient;
-	private flagCache: Map<string, FeatureFlag> = new Map();
-	private cacheExpiry: Map<string, number> = new Map();
+	private readonly supabase: SupabaseClient;
+	private readonly flagCache: Map<string, FeatureFlag> = new Map();
+	private readonly cacheExpiry: Map<string, number> = new Map();
 	private readonly CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 	private readonly DEFAULT_ENVIRONMENT = process.env.NODE_ENV || "development";
 
@@ -428,7 +428,7 @@ export class FeatureFlagService extends EnhancedAIService<FeatureFlagInput, Feat
 				};
 			}
 
-			const hasRequiredRole = flag.conditions.user_roles.some((role) => context.user_roles!.includes(role));
+			const hasRequiredRole = flag.conditions.user_roles.some((role) => context.user_roles?.includes(role));
 
 			if (!hasRequiredRole) {
 				return {
@@ -543,7 +543,7 @@ export class FeatureFlagService extends EnhancedAIService<FeatureFlagInput, Feat
 		for (let i = 0; i < str.length; i++) {
 			const char = str.charCodeAt(i);
 			hash = (hash << 5) - hash + char;
-			hash = hash & hash; // Convert to 32bit integer
+			hash &= hash; // Convert to 32bit integer
 		}
 		return Math.abs(hash);
 	}
@@ -552,9 +552,7 @@ export class FeatureFlagService extends EnhancedAIService<FeatureFlagInput, Feat
 		setInterval(async () => {
 			try {
 				await this.refreshCache();
-			} catch (error) {
-				console.error("Failed to refresh feature flag cache:", error);
-			}
+			} catch (_error) {}
 		}, this.CACHE_TTL_MS);
 	}
 
@@ -562,7 +560,6 @@ export class FeatureFlagService extends EnhancedAIService<FeatureFlagInput, Feat
 		const { data, error } = await this.supabase.from("ai_feature_flags").select("*").eq("enabled", true);
 
 		if (error) {
-			console.error("Failed to refresh feature flag cache:", error);
 			return;
 		}
 
@@ -602,7 +599,9 @@ export class FeatureFlagService extends EnhancedAIService<FeatureFlagInput, Feat
 			context,
 		});
 
-		if (!result.bulk_results) return [];
+		if (!result.bulk_results) {
+			return [];
+		}
 
 		return Object.entries(result.bulk_results)
 			.filter(([_, enabled]) => enabled)

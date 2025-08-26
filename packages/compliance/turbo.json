@@ -1,8 +1,8 @@
 {
-	"extends": ["//"],
-	"pipeline": {
-		"build": {},
-		"test": {},
-		"test:compliance": {}
-	}
+  "extends": ["//"],
+  "tasks": {
+    "build": {},
+    "test": {},
+    "test:compliance": {}
+  }
 }

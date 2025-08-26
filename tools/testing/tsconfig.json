@@ -1,16 +1,21 @@
 {
-	"extends": "../../tsconfig.json",
-	"compilerOptions": {
-		"baseUrl": ".",
-		"paths": {
-			"@/*": ["../../apps/web/app/*"],
-			"@/app/*": ["../../apps/web/app/*"],
-			"@/lib/*": ["../../apps/web/app/lib/*"],
-			"@/components/*": ["../../apps/web/app/components/*"],
-			"@/types/*": ["../../apps/web/app/lib/types/*"],
-			"@/utils/*": ["../../packages/utils/src/*"]
-		}
-	},
-	"include": ["**/*.ts", "**/*.tsx", "**/__tests__/**/*.ts", "**/__tests__/**/*.tsx"],
-	"exclude": ["node_modules", "dist", "build"]
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["../../apps/web/app/*"],
+      "@/app/*": ["../../apps/web/app/*"],
+      "@/lib/*": ["../../apps/web/app/lib/*"],
+      "@/components/*": ["../../apps/web/app/components/*"],
+      "@/types/*": ["../../apps/web/app/lib/types/*"],
+      "@/utils/*": ["../../packages/utils/src/*"]
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "**/__tests__/**/*.ts",
+    "**/__tests__/**/*.tsx"
+  ],
+  "exclude": ["node_modules", "dist", "build"]
 }
