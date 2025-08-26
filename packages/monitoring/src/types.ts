@@ -98,7 +98,12 @@ interface AlertConfig {
 
 interface HealthcareContext {
   complianceLevel: "basic" | "healthcare" | "anvisa" | "cfm";
-  feature: "patient-management" | "procedures" | "compliance" | "reports" | "auth";
+  feature:
+    | "patient-management"
+    | "procedures"
+    | "compliance"
+    | "reports"
+    | "auth";
   sensitivity: "low" | "medium" | "high" | "critical";
   userRole: "patient" | "doctor" | "nurse" | "admin" | "receptionist";
 }
@@ -240,7 +245,9 @@ interface ComplianceMetrics {
 
 interface MonitoringHooks {
   afterSend?: (response: Response) => void;
-  beforeSend?: (data: Record<string, unknown>) => Record<string, unknown> | null;
+  beforeSend?: (
+    data: Record<string, unknown>,
+  ) => Record<string, unknown> | null;
   onAlert?: (alert: Record<string, unknown>) => void;
   onError?: (error: ErrorEvent) => void;
   onMetric?: (metric: Metric | CustomMetric) => void;

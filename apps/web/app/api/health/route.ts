@@ -287,7 +287,7 @@ async function checkPerformanceMetrics(): Promise<HealthStatus> {
   try {
     // Performance metrics validation
     const memoryUsage = process.memoryUsage();
-    const memoryUsedMB = Math.round(memoryUsage.used / 1024 / 1024);
+    const memoryUsedMB = Math.round(memoryUsage.heapUsed / 1024 / 1024);
     const memoryThreshold = 512; // MB
 
     return {

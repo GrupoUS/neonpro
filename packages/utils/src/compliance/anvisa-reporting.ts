@@ -40,7 +40,10 @@ export class ANVISAComplianceReporter {
       const eventData = events.data || [];
 
       return {
-        adverse_events: this.buildAdverseEventsReport(eventData, pendingReports),
+        adverse_events: this.buildAdverseEventsReport(
+          eventData,
+          pendingReports,
+        ),
         compliance_score: this.calculateComplianceScore(
           productData,
           pendingReports,
@@ -119,7 +122,7 @@ export class ANVISAComplianceReporter {
     expiringSoon: ANVISAProduct[],
   ) {
     const ZERO_FALLBACK = 0;
-    
+
     return {
       approved: this.countByStatus(productData, "approved"),
       expiring_soon: expiringSoon.length || ZERO_FALLBACK,
@@ -130,7 +133,7 @@ export class ANVISAComplianceReporter {
 
   private buildProceduresReport(procedureData: ANVISAProcedure[]) {
     const ZERO_FALLBACK = 0;
-    
+
     return {
       by_risk: {
         high_risk: this.countByClassification(procedureData, "high_risk"),
@@ -147,7 +150,7 @@ export class ANVISAComplianceReporter {
     pendingReports: ComplianceTask[],
   ) {
     const ZERO_FALLBACK = 0;
-    
+
     return {
       by_severity: {
         life_threatening: this.countByEventType(eventData, "life_threatening"),
@@ -165,7 +168,10 @@ export class ANVISAComplianceReporter {
     status: ANVISAProduct["regulatory_status"],
   ): number {
     const ZERO_FALLBACK = 0;
-    return products.filter((product) => product.regulatory_status === status).length || ZERO_FALLBACK;
+    return (
+      products.filter((product) => product.regulatory_status === status)
+        .length || ZERO_FALLBACK
+    );
   }
 
   private countByClassification(
@@ -173,7 +179,11 @@ export class ANVISAComplianceReporter {
     classification: ANVISAProcedure["classification"],
   ): number {
     const ZERO_FALLBACK = 0;
-    return procedures.filter((procedure) => procedure.classification === classification).length || ZERO_FALLBACK;
+    return (
+      procedures.filter(
+        (procedure) => procedure.classification === classification,
+      ).length || ZERO_FALLBACK
+    );
   }
 
   private countByEventType(
@@ -181,7 +191,10 @@ export class ANVISAComplianceReporter {
     eventType: AdverseEvent["event_type"],
   ): number {
     const ZERO_FALLBACK = 0;
-    return events.filter((event) => event.event_type === eventType).length || ZERO_FALLBACK;
+    return (
+      events.filter((event) => event.event_type === eventType).length ||
+      ZERO_FALLBACK
+    );
   }
 
   private calculateComplianceScore(
@@ -193,11 +206,14 @@ export class ANVISAComplianceReporter {
 
     // Deduct points for compliance issues
     const expiredProducts =
-      products.filter((product) => new Date(product.expiry_date) < new Date()).length || ZERO_FALLBACK;
+      products.filter((product) => new Date(product.expiry_date) < new Date())
+        .length || ZERO_FALLBACK;
     const suspendedProducts =
-      products.filter((product) => product.regulatory_status === "suspended").length || ZERO_FALLBACK;
+      products.filter((product) => product.regulatory_status === "suspended")
+        .length || ZERO_FALLBACK;
     const overduePendingReports =
-      pendingReports.filter((report) => new Date(report.due_date) < new Date()).length || ZERO_FALLBACK;
+      pendingReports.filter((report) => new Date(report.due_date) < new Date())
+        .length || ZERO_FALLBACK;
 
     score -= expiredProducts * EXPIRED_PRODUCT_PENALTY;
     score -= suspendedProducts * SUSPENDED_PRODUCT_PENALTY;

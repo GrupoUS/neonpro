@@ -16,7 +16,10 @@ export class ANVISACompliance {
   private readonly complianceReporter: ANVISAComplianceReporter;
 
   constructor() {
-    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    if (
+      !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+      !process.env.SUPABASE_SERVICE_ROLE_KEY
+    ) {
       throw new Error("Supabase configuration is missing");
     }
 
@@ -32,22 +35,42 @@ export class ANVISACompliance {
   }
 
   // Product Management
-  registerProduct = this.productManager.registerProduct.bind(this.productManager);
-  validateProductCompliance = this.productManager.validateProductCompliance.bind(this.productManager);
-  getExpiringSoonProducts = this.productManager.getExpiringSoonProducts.bind(this.productManager);
-  getProductByRegistration = this.productManager.getProductByRegistration.bind(this.productManager);
-  validateANVISARegistrationNumber = this.productManager.validateANVISARegistrationNumber.bind(this.productManager);
+  registerProduct(data: any) {
+    return this.productManager.registerProduct(data);
+  }
+  validateProductCompliance(data: any) {
+    return this.productManager.validateProductCompliance(data);
+  }
+  getExpiringSoonProducts() {
+    return this.productManager.getExpiringSoonProducts();
+  }
+  getProductByRegistration(reg: string) {
+    return this.productManager.getProductByRegistration(reg);
+  }
+  validateANVISARegistrationNumber(reg: string) {
+    return this.productManager.validateANVISARegistrationNumber(reg);
+  }
 
   // Procedure Management
-  classifyProcedure = this.procedureManager.classifyProcedure.bind(this.procedureManager);
-  validateProcedureQualifications = this.procedureManager.validateProcedureQualifications.bind(this.procedureManager);
+  classifyProcedure(data: any) {
+    return this.procedureManager.classifyProcedure(data);
+  }
+  validateProcedureQualifications(procedureId: string, professionalQualifications: string[]) {
+    return this.procedureManager.validateProcedureQualifications(procedureId, professionalQualifications);
+  }
 
   // Adverse Event Management
-  reportAdverseEvent = this.adverseEventManager.reportAdverseEvent.bind(this.adverseEventManager);
-  getPendingANVISAReports = this.adverseEventManager.getPendingANVISAReports.bind(this.adverseEventManager);
+  reportAdverseEvent(data: any) {
+    return this.adverseEventManager.reportAdverseEvent(data);
+  }
+  getPendingANVISAReports() {
+    return this.adverseEventManager.getPendingANVISAReports();
+  }
 
   // Compliance Reporting
-  generateComplianceReport = this.complianceReporter.generateComplianceReport.bind(this.complianceReporter);
+  generateComplianceReport(startDate: Date, endDate: Date) {
+    return this.complianceReporter.generateComplianceReport(startDate, endDate);
+  }
 }
 
 // Re-export types for convenience

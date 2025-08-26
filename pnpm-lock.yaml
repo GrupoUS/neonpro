@@ -90,9 +90,6 @@ importers:
         specifier: ^0.18.5
         version: 0.18.5
     devDependencies:
-      '@oxlint/win32-x64':
-        specifier: ^1.13.0
-        version: 1.13.0
       '@playwright/test':
         specifier: ^1.54.2
         version: 1.55.0
@@ -227,7 +224,7 @@ importers:
         specifier: ^4.17.0
         version: 4.20.5
       typescript:
-        specifier: ^5.5.4
+        specifier: ^5.9.2
         version: 5.9.2
       vitest:
         specifier: ^2.0.5
@@ -235,9 +232,6 @@ importers:
 
   apps/docs:
     dependencies:
-      '@neonpro/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
       next:
         specifier: ^15.4.2
         version: 15.5.0(@babel/core@7.28.3)(@opentelemetry/api@1.9.0)(@playwright/test@1.55.0)(react-dom@19.1.1)(react@19.1.1)
@@ -248,9 +242,6 @@ importers:
         specifier: ^19.1.1
         version: 19.1.1(react@19.1.1)
     devDependencies:
-      '@neonpro/typescript-config':
-        specifier: workspace:*
-        version: link:../../packages/typescript-config
       '@types/node':
         specifier: ^22.15.3
         version: 22.18.0
@@ -462,7 +453,7 @@ importers:
         specifier: ^2.2.0
         version: 2.6.0
       typescript:
-        specifier: ^5.7.2
+        specifier: ^5.9.2
         version: 5.9.2
       ua-parser-js:
         specifier: ^2.0.4
@@ -5367,6 +5358,7 @@ packages:
     os: [win32]
     requiresBuild: true
     dev: true
+    optional: true
 
   /@panva/hkdf@1.2.1:
     resolution: {integrity: sha512-6oclG6Y3PiDFcoyk8srjLfVKyMfVCKJ27JwNPViuXziFpmdz+MZnZN/aKY0JGXgYuO/VghU0jcOAZgWXZ1Dmrw==}

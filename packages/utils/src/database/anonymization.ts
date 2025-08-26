@@ -116,4 +116,5 @@ class DataAnonymizer {
     `ANON_${Date.now()}_${Math.random().toString(RANDOM_BASE).slice(SLICE_START, SLICE_END)}`;
 }
 
-export { AnonymizationConfig, DataAnonymizer };
+export type { AnonymizationConfig };
+export { DataAnonymizer };

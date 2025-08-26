@@ -12,7 +12,7 @@ import { cookies } from "next/headers";
  * Implements proper cookie handling for healthcare session management
  */
 export async function createClient() {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
 
   return createServerClient({
     getAll: () => cookieStore.getAll(),
@@ -29,7 +29,7 @@ export async function createClient() {
  * Used for healthcare-specific operations requiring audit trails
  */
 export async function createHealthcareClient(clinicId?: string) {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
 
   const client = createServerClient({
     getAll: () => cookieStore.getAll(),

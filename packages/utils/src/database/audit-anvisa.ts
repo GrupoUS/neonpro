@@ -24,7 +24,16 @@ class ANVISALogger extends AuditLogger {
     userId: string;
     userRole: string;
   }): Promise<boolean> {
-    const { action, details, ipAddress, patientId, productId, userAgent, userId, userRole } = params;
+    const {
+      action,
+      details,
+      ipAddress,
+      patientId,
+      productId,
+      userAgent,
+      userId,
+      userRole,
+    } = params;
 
     return this.logAction({
       action: `anvisa_${action}`,

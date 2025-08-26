@@ -1,8 +1,0 @@
-@echo off
-
-set "MAX_THINKING_TOKENS=31999"
-set "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1"
-set "MCP_TIMEOUT=30000"
-set "MCP_TOOL_TIMEOUT=10000"
-
-start "Powershell" claude

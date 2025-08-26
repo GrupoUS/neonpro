@@ -72,7 +72,7 @@ export async function POST(
     // Generate comprehensive risk assessment
     const riskAssessment = await patientInsights.getRiskAssessment(patientId);
 
-    let recommendations = [];
+    let recommendations: any[] = [];
     if (includeRecommendations) {
       const treatmentGuidance =
         await patientInsights.getTreatmentRecommendations(patientId);

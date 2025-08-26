@@ -9,7 +9,7 @@ import { UniversalChatService } from "@neonpro/ai/services/universal-chat-servic
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export const runtime = "edge";
+export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
   try {

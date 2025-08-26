@@ -94,7 +94,12 @@ type RiskLevel = "critical" | "high" | "low" | "medium";
 type AccessType = "delete" | "edit" | "export" | "view";
 
 // Request type for data subject rights
-type DataSubjectRequestType = "access" | "consent_withdrawal" | "deletion" | "portability" | "rectification";
+type DataSubjectRequestType =
+  | "access"
+  | "consent_withdrawal"
+  | "deletion"
+  | "portability"
+  | "rectification";
 
 // Processing status type
 type ProcessingStatus = "completed" | "processing" | "received" | "rejected";

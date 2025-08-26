@@ -84,7 +84,11 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
    * @returns {Promise<void>} Promise that resolves when tracking is complete
    */
   async trackHealthcareMetricEnhanced(
-    metricType: "compliance" | "data_privacy" | "patient_safety" | "system_performance",
+    metricType:
+      | "compliance"
+      | "data_privacy"
+      | "patient_safety"
+      | "system_performance",
     metricName: string,
     value: number,
   ): Promise<void> {
@@ -113,9 +117,17 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
         );
       }
 
-      this.endTiming("healthcare_metric_enhanced", "healthcare_tracking", startTime);
+      this.endTiming(
+        "healthcare_metric_enhanced",
+        "healthcare_tracking",
+        startTime,
+      );
     } catch (error) {
-      this.endTiming("healthcare_metric_enhanced", "healthcare_tracking", startTime);
+      this.endTiming(
+        "healthcare_metric_enhanced",
+        "healthcare_tracking",
+        startTime,
+      );
       await this.audit.logOperation("healthcare_metric_error", {
         error: this._getErrorMessage(error),
         metricName,
@@ -146,8 +158,16 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
     this.performanceMonitor.trackFormSubmission(formType, startTime);
   }
 
-  trackPatientSearch(searchType: string, resultCount: number, startTime: number): void {
-    this.performanceMonitor.trackPatientSearch(searchType, resultCount, startTime);
+  trackPatientSearch(
+    searchType: string,
+    resultCount: number,
+    startTime: number,
+  ): void {
+    this.performanceMonitor.trackPatientSearch(
+      searchType,
+      resultCount,
+      startTime,
+    );
   }
 
   trackFileUpload(fileType: string, fileSize: number, startTime: number): void {
@@ -166,8 +186,16 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
     this.performanceMonitor.trackDatabaseOperation(operation, startTime);
   }
 
-  trackReportGeneration(reportType: string, recordCount: number, startTime: number): void {
-    this.performanceMonitor.trackReportGeneration(reportType, recordCount, startTime);
+  trackReportGeneration(
+    reportType: string,
+    recordCount: number,
+    startTime: number,
+  ): void {
+    this.performanceMonitor.trackReportGeneration(
+      reportType,
+      recordCount,
+      startTime,
+    );
   }
 
   trackEncryption(dataType: string, dataSize: number, startTime: number): void {

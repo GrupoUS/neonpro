@@ -38,7 +38,7 @@ const formatAnalyticsPercentage = (
   value: number | null | undefined,
   precision = DEFAULT_PRECISION,
 ): string => {
-  if (value === undefined || Number.isNaN(value)) {
+  if (value === undefined || value === null || Number.isNaN(value)) {
     if (precision > ZERO) {
       return "0.00%";
     }
@@ -93,13 +93,15 @@ const exportToCSV = (
   const csvContent = [
     headers.join(","),
     ...data.map((row) =>
-      headers.map((header) => {
-        const value = row[header];
-        if (typeof value === "string") {
-          return `"${value}"`;
-        }
-        return String(value);
-      }).join(","),
+      headers
+        .map((header) => {
+          const value = row[header];
+          if (typeof value === "string") {
+            return `"${value}"`;
+          }
+          return String(value);
+        })
+        .join(","),
     ),
   ].join("\n");
 

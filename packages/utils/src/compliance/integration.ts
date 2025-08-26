@@ -59,6 +59,9 @@ export class ComplianceIntegration {
    */
   async anonymizeHealthcareData(data: unknown): Promise<unknown> {
     // Simplified anonymization
-    return { ...data, anonymized: true };
+    if (typeof data === "object" && data !== null) {
+      return { ...data, anonymized: true };
+    }
+    return { data, anonymized: true };
   }
 }

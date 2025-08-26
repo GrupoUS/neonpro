@@ -14,7 +14,7 @@ import type { NextRequest } from "next/server";
 // Get model management status and active models
 export async function GET(request: NextRequest) {
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const supabase = createServerClient({
       getAll: () => cookieStore.getAll(),
       setAll: (cookies) => {
@@ -156,7 +156,7 @@ export async function GET(request: NextRequest) {
 // Register new model or update existing model
 export async function POST(request: NextRequest) {
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const supabase = createServerClient({
       getAll: () => cookieStore.getAll(),
       setAll: (cookies) => {

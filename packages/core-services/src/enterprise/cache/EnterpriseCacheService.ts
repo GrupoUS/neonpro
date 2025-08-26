@@ -14,7 +14,7 @@
  */
 
 import Redis from "ioredis";
-import { LRUCache } from "lru-cache";
+import LRUCache from "lru-cache";
 import type { PerformanceMetrics } from "../../types";
 
 interface CacheLayer {

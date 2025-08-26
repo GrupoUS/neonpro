@@ -1,44 +1,49 @@
 # 🏥 **NEONPRO CODING STANDARDS**
 
-## Healthcare SaaS Excellence Framework
+## Healthcare SaaS Excellence Framework with VIBECODER Integration
 
-> **Versão Concisa** | Qualidade 9.8/10 | LGPD ✅ ANVISA ✅ CFM ✅ HIPAA ✅ GDPR ✅
+> **Versão Enhanced** | Qualidade 9.8/10 | LGPD ✅ ANVISA ✅ CFM ✅ HIPAA ✅ GDPR ✅ | VIBECODER ✅ ARCHON ✅
 
 ---
 
 ## 📋 **ÍNDICE**
 
 1. [🎯 Princípios Fundamentais](#-princípios-fundamentais)
-2. [🛡️ Healthcare Security & Compliance](#️-healthcare-security--compliance)
-3. [⚛️ Next.js 15 Architecture](#️-nextjs-15-architecture)
-4. [⚡ Performance & Accessibility](#-performance--accessibility)
-5. [🗄️ Database & API Security](#️-database--api-security)
-6. [🧪 Quality Gates & Testing](#-quality-gates--testing)
-7. [🤖 AI Integration](#-ai-integration)
-8. [📚 Quick Reference](#-quick-reference)
+2. [🤖 Archon Integration & Task-Driven Development](#-archon-integration--task-driven-development)
+3. [🛠️ Development Workflow & Tools](#️-development-workflow--tools)
+4. [🛡️ Healthcare Security & Compliance](#️-healthcare-security--compliance)
+5. [⚛️ Next.js 15 Architecture](#️-nextjs-15-architecture)
+6. [⚡ Performance & Accessibility](#-performance--accessibility)
+7. [🗄️ Database & API Security](#️-database--api-security)
+8. [🧪 Quality Gates & Testing](#-quality-gates--testing)
+9. [📊 Code Quality & Validation](#-code-quality--validation)
+10. [🔍 Research-Driven Development](#-research-driven-development)
+11. [🤖 AI Integration](#-ai-integration)
+12. [🧠 Session Management & Anti-Context Drift](#-session-management--anti-context-drift)
+13. [📚 Quick Reference](#-quick-reference)
 
 ---
 
 ## 🎯 **PRINCÍPIOS FUNDAMENTAIS**
 
-### **Core Engineering Principles**
+### **VIBECODER Core Engineering Principles**
 
 ```typescript
-// KISS: Simplicidade mantendo funcionalidade
+// KISS: Keep It Simple, Stupid - Simplicidade mantendo funcionalidade
 const updatePatient = async (id: string, data: PatientData) => {
   const encrypted = await encrypt(data);
   await db.patient.update({ where: { id }, data: encrypted });
   await auditLog("UPDATE_PATIENT", id);
 };
 
-// YAGNI: Implementar apenas o necessário
+// YAGNI: You Aren't Gonna Need It - Implementar apenas o necessário
 interface PatientData {
   name: string;
   cpf: string;
-  // Adicionar campos conforme demanda real
+  // Adicionar campos conforme demanda real - não "just in case"
 }
 
-// CoT: Raciocínio explícito em decisões críticas
+// CoT: Chain of Thought - Raciocínio explícito em decisões críticas
 const validateHealthcareAccess = async (
   professionalId: string,
   patientId: string,
@@ -49,10 +54,20 @@ const validateHealthcareAccess = async (
   const licenseValid = await validateLicense(professional.crm);
   // 3. Verificar permissões específicas
   const hasAccess = await checkPatientAccess(professional.id, patientId);
+  // 4. Validar consentimento LGPD
+  const consentValid = await validateLGPDConsent(patientId, "ACCESS");
 
-  return professional && licenseValid && hasAccess;
+  return professional && licenseValid && hasAccess && consentValid;
 };
 ```
+
+### **Healthcare-First Philosophy**
+
+- **Test changes instead of assuming they work** - Verificar outputs com observação direta
+- **"Should work" ≠ "does work"** - Pattern matching não é suficiente para healthcare
+- **Detailed errors over graceful failures** - Identificar e corrigir problemas rapidamente
+- **No backwards compatibility** - Remover código deprecated imediatamente
+- **Focus on user experience and feature completeness** - Priorizar funcionalidade sobre padrões "production-ready"
 
 ### **Arquitetura Base**
 
@@ -62,6 +77,160 @@ const validateHealthcareAccess = async (
 - **Database**: PostgreSQL + Prisma + RLS
 - **Testing**: Vitest + Playwright + Testing Library
 - **Quality**: Biome + Ultracite + TypeScript Strict
+- **Task Management**: Archon MCP (obrigatório)
+- **Package Manager**: PNPM (obrigatório)
+
+---
+
+## 🤖 **ARCHON INTEGRATION & TASK-DRIVEN DEVELOPMENT**
+
+### **CRITICAL: Archon-First Rule**
+
+**MANDATORY: Always complete the full Archon task cycle before any coding:**
+
+```bash
+# 1. Check Current Task
+archon:manage_task(action="get", task_id="current_task_id")
+
+# 2. Research for Task
+archon:search_code_examples(query="healthcare feature implementation")
+archon:perform_rag_query(query="LGPD compliance patterns", match_count=5)
+
+# 3. Implement the Task
+# Write code based on research
+
+# 4. Update Task Status
+archon:manage_task(
+  action="update",
+  task_id="current_task_id",
+  update_fields={"status": "review"}
+)
+
+# 5. Get Next Task
+archon:manage_task(action="list", filter_by="status", filter_value="todo")
+```
+
+### **Task Status Management**
+
+**Status Progression**: `todo` → `doing` → `review` → `done`
+
+```typescript
+// Exemplo de desenvolvimento orientado a tarefas
+const developFeature = async (taskId: string) => {
+  // 1. Obter detalhes da task
+  const task = await archon.getTask(taskId);
+
+  // 2. Marcar como em progresso
+  await archon.updateTask(taskId, { status: "doing" });
+
+  // 3. Pesquisar padrões e melhores práticas
+  const patterns = await archon.searchCodeExamples(task.feature);
+  const guidance = await archon.performRAGQuery(task.requirements);
+
+  // 4. Implementar com base na pesquisa
+  const implementation = await implementBasedOnResearch(patterns, guidance);
+
+  // 5. Marcar para revisão
+  await archon.updateTask(taskId, {
+    status: "review",
+    notes: "Implementation complete, ready for testing",
+  });
+
+  return implementation;
+};
+```
+
+### **Project Feature Integration**
+
+```bash
+# Get current project features
+archon:get_project_features(project_id="healthcare_project")
+
+# Create tasks aligned with features
+archon:manage_task(
+  action="create",
+  project_id="healthcare_project",
+  title="Implement LGPD consent management",
+  feature="Compliance",
+  task_order=10
+)
+```
+
+---
+
+## 🛠️ **DEVELOPMENT WORKFLOW & TOOLS**
+
+### **PNPM Over NPM (Obrigatório)**
+
+```bash
+# ✅ Use PNPM for all operations
+pnpm install
+pnpm dev
+pnpm build
+pnpm test
+
+# ❌ Never use NPM
+# npm install # NUNCA!
+```
+
+### **Git & Version Control**
+
+```bash
+# Commit automático após completar task
+git add .
+git commit -m "feat(healthcare): implement LGPD consent management
+
+- Add consent validation middleware
+- Implement audit trail for consent changes
+- Add ANVISA compliance markers
+- Update patient access validation
+
+Closes: TASK-123"
+
+# Padrão de mensagens
+# feat(scope): description - novas features
+# fix(scope): description - correções
+# refactor(scope): description - refatoração
+# docs(scope): description - documentação
+# test(scope): description - testes
+```
+
+### **Clean Up Constantly**
+
+```typescript
+// ✅ Remover código morto imediatamente
+// ❌ Anti-pattern: Manter código "legacy" comentado
+/*
+// LEGACY CODE - REMOVE THIS
+const oldPatientUpdate = async () => {
+  // ... código antigo
+};
+*/
+
+// ✅ Padrão correto: Remover e documentar na funcionalidade atual
+const updatePatient = async (id: string, data: PatientData) => {
+  // Updated implementation with LGPD compliance
+  const encrypted = await encrypt(data);
+  await db.patient.update({ where: { id }, data: encrypted });
+  await auditLog("UPDATE_PATIENT", id);
+};
+
+// ✅ Verificar e corrigir imports não utilizados
+// import { unused } from './utils'; // REMOVER
+import { encrypt, auditLog } from "./utils"; // MANTER
+```
+
+### **Always Check Architecture Docs**
+
+```typescript
+// Sempre verificar docs/architecture/ antes de implementar
+const implementFeature = async () => {
+  // 1. Consultar tech-stack.md para tecnologias aprovadas
+  // 2. Verificar source-tree.md para estrutura correta
+  // 3. Seguir coding-standards.md para padrões
+  // 4. Validar contra compliance requirements
+};
+```
 
 ---
 
@@ -444,6 +613,21 @@ export const operationLimits = {
 
 ## 🧪 **QUALITY GATES & TESTING**
 
+### **The 30-Second Reality Check**
+
+**Must answer YES to ALL before considering code complete:**
+
+- [ ] Did I run/build the code?
+- [ ] Did I trigger the exact feature I changed?
+- [ ] Did I see the expected result with my own observations?
+- [ ] Did I test edge cases?
+- [ ] Did I check for error messages?
+- [ ] Did I verify no new warnings or errors appeared?
+- [ ] Did I check performance impact?
+- [ ] Did I validate accessibility requirements?
+- [ ] Did I review the code for style and consistency?
+- [ ] Did I ensure no security vulnerabilities were introduced?
+
 ### **Testing Requirements**
 
 ```typescript
@@ -517,6 +701,174 @@ test("Emergency patient access workflow", async ({ page }) => {
 
 ---
 
+## 📊 **CODE QUALITY & VALIDATION**
+
+### **Ultracite Integration**
+
+```bash
+# Initialize Ultracite in project
+npx ultracite init
+
+# Format and fix code automatically
+npx ultracite format
+
+# Check for issues without fixing
+npx ultracite lint
+```
+
+### **Essential Rules**
+
+#### **Accessibility (WCAG 2.1 AA+)**
+
+- Proper ARIA labels and roles for all interactive elements
+- Semantic HTML structure over div-heavy layouts
+- Keyboard navigation support for all interactions
+- Sufficient color contrast ratios (4.5:1 minimum)
+- Screen reader compatibility with meaningful alt text
+- Form labels properly associated with inputs
+- Focus management for dynamic content
+
+#### **TypeScript Excellence**
+
+- Strict type checking without `any` usage
+- Proper error boundaries and exception handling
+- `import type` for type-only imports
+- `as const` assertions for literal types
+- Consistent array syntax (`T[]` or `Array<T>`)
+- Explicit enum member values
+- No non-null assertions (`!`) or unsafe operations
+
+#### **React/JSX Best Practices**
+
+- Hooks called only at component top level
+- Proper dependency arrays in useEffect
+- Unique keys for iterated elements (not array indices)
+- Fragment syntax (`<>`) over `React.Fragment`
+- No component definitions inside other components
+- Proper prop types and validation
+
+#### **Code Quality & Performance**
+
+- Arrow functions over function expressions
+- Optional chaining over nested conditionals
+- Template literals for string interpolation
+- `for...of` loops over `Array.forEach()`
+- Modern array methods (`flatMap`, `at()`, etc.)
+- Const declarations for unchanging variables
+- Early returns over nested conditionals
+
+#### **Security & Correctness**
+
+- Input validation and sanitization
+- No hardcoded sensitive data
+- Secure communication protocols
+- Proper error handling with meaningful messages
+- No usage of `eval()`, `document.cookie`, or unsafe patterns
+- Prevent XSS through proper escaping
+
+#### **Next.js Specific**
+
+- Use `next/image` instead of `<img>` tags
+- Proper `next/head` usage (not in `_document.js`)
+- Correct import paths for Next.js modules
+- Static optimization considerations
+
+#### **Testing Standards**
+
+- Descriptive test names and structure
+- Proper assertion placement inside test functions
+- No focused or disabled tests in committed code
+- Comprehensive error case coverage
+
+### **Error Handling Example**
+
+```typescript
+// ✅ Proper error handling
+async function fetchPatientData(id: string): Promise<ApiResponse> {
+  try {
+    const result = await api.getPatient(id);
+    return { success: true, data: result };
+  } catch (error) {
+    console.error("Patient data fetch failed:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}
+
+// ❌ Avoid error swallowing
+try {
+  return await fetchPatientData(id);
+} catch (e) {
+  console.log(e); // Silent failure - NUNCA em healthcare!
+}
+```
+
+---
+
+## 🔍 **RESEARCH-DRIVEN DEVELOPMENT**
+
+### **Before Any Implementation**
+
+**Research checklist:**
+
+- [ ] Search for existing code examples of the pattern
+- [ ] Query documentation for best practices (high-level or specific API usage)
+- [ ] Understand security implications
+- [ ] Check for common pitfalls or antipatterns
+
+```bash
+# High-level: Architecture, security, optimization patterns
+archon:perform_rag_query(
+  query="healthcare JWT authentication security best practices",
+  match_count=5
+)
+
+# Low-level: Specific API usage, syntax, configuration
+archon:perform_rag_query(
+  query="Next.js Server Actions LGPD compliance patterns",
+  match_count=3
+)
+
+# Implementation examples
+archon:search_code_examples(
+  query="React healthcare form validation Zod",
+  match_count=3
+)
+```
+
+### **Knowledge Source Prioritization**
+
+**Query Strategy:**
+
+- Start with broad architectural queries, narrow to specific implementation
+- Use RAG for both strategic decisions and tactical "how-to" questions
+- Cross-reference multiple sources for validation
+- Keep match_count low (2-5) for focused results
+
+### **Research Validation**
+
+**Always validate research findings:**
+
+- Cross-reference multiple sources
+- Verify recency of information
+- Test applicability to current project context
+- Document assumptions and limitations
+
+### **Task Completion Criteria**
+
+**Every task must meet these criteria before marking "done":**
+
+- [ ] Implementation follows researched best practices
+- [ ] Code follows project style guidelines
+- [ ] Security considerations addressed
+- [ ] Basic functionality tested
+- [ ] Documentation updated if needed
+- [ ] All tests pass without errors
+
+---
+
 ## 🤖 **AI INTEGRATION**
 
 ### **Privacy-Preserving AI**
@@ -565,27 +917,81 @@ export class HealthcareAI {
 
 ---
 
+## 🧠 **SESSION MANAGEMENT & ANTI-CONTEXT DRIFT**
+
+### **Consistency Protocols**
+
+```yaml
+SESSION_MANAGEMENT:
+  constitutional_relevance: "Score interactions for constitutional adherence (0-10)"
+  think_first_enforcement: "Mandatory sequential-thinking for complexity ≥3"
+  research_continuity: "Reference previous MCP research with constitutional context"
+  quality_consistency: "Maintain ≥9.8/10 quality standards throughout session"
+```
+
+### **Recovery Mechanisms**
+
+- **Drift Detection**: Auto-detect when constitutional relevance drops below 8/10
+- **Context Refresh**: Automatic refresh with constitutional principle clarification
+- **Think-First Reset**: Return to sequential-thinking analysis when complexity increases
+- **Quality Escalation**: Increase quality thresholds if standards drop
+
+### **Quality Validation Patterns**
+
+```typescript
+// Validação contínua durante desenvolvimento
+const validateQuality = async (code: string, context: string) => {
+  const qualityScore = await assessCodeQuality(code);
+  const complianceScore = await assessHealthcareCompliance(code);
+  const architectureScore = await assessArchitecturalAlignment(code, context);
+
+  const overallScore = (qualityScore + complianceScore + architectureScore) / 3;
+
+  if (overallScore < 9.5) {
+    throw new QualityGateError(`Quality score ${overallScore} below threshold`);
+  }
+
+  return { score: overallScore, passed: true };
+};
+```
+
+---
+
 ## 📚 **QUICK REFERENCE**
 
 ### **🚀 Pre-Production Checklist**
 
+- [ ] **Archon**: Tasks completed and marked as "review"
 - [ ] **Security**: MFA ativo, PHI criptografado, audit logs funcionando
 - [ ] **Performance**: <200ms response, Lighthouse >95, bundle <1MB
 - [ ] **Compliance**: LGPD consent, ANVISA audit, CFM ethics validated
 - [ ] **Testing**: 95%+ coverage, E2E workflows, accessibility tested
-- [ ] **Quality**: Biome clean, TypeScript strict, documentation complete
+- [ ] **Quality**: 30-second reality check passed, Ultracite clean, TypeScript strict
+- [ ] **Documentation**: Architecture docs updated, comments clear
 
 ### **⚡ Emergency Commands**
 
 ```bash
 # Validação completa pré-produção
-pnpm check:all     # Lint + Type + Test + E2E
-pnpm security:audit # Auditoria de segurança
-pnpm compliance:lgpd # Validação LGPD
+pnpm ci:check      # Full code validation (format + lint + type + test)
+pnpm security:audit # Security audit
+pnpm compliance:lgpd # LGPD validation
 
 # Performance & Quality
-pnpm build && pnpm lighthouse # Build + análise performance
-pnpm test:coverage # Cobertura de testes
+pnpm build && pnpm lighthouse # Build + performance analysis
+pnpm test:coverage # Test coverage
+pnpm format       # Format code automatically
+pnpm lint:fix     # Fix linting issues
+
+# Archon Integration
+archon:get_available_sources() # Check knowledge base
+archon:manage_task(action="list") # List current tasks
+archon:perform_rag_query(query="healthcare patterns") # Research
+
+# Ultracite Commands
+npx ultracite init   # Initialize in project
+npx ultracite format # Format and fix code
+npx ultracite lint   # Check without fixing
 ```
 
 ### **🏥 Healthcare-Specific Patterns**
@@ -614,6 +1020,87 @@ const getMinimizedData = (data: PatientData, role: Role) => {
     .filter((key) => permissions.includes(key))
     .reduce((obj, key) => ({ ...obj, [key]: data[key] }), {});
 };
+
+// Task-driven development pattern
+const developWithArchon = async (feature: string) => {
+  // 1. Check current tasks
+  const tasks = await archon.listTasks({ status: "todo" });
+
+  // 2. Research before implementation
+  const patterns = await archon.searchCodeExamples(feature);
+  const guidance = await archon.performRAGQuery(
+    `${feature} healthcare best practices`,
+  );
+
+  // 3. Implement based on research
+  const implementation = await implement(patterns, guidance);
+
+  // 4. Update task status
+  await archon.updateTask(currentTaskId, { status: "review" });
+
+  return implementation;
+};
+```
+
+### **📊 Sentry Integration Patterns**
+
+```typescript
+// Custom Span instrumentation for healthcare operations
+function HealthcareComponent() {
+  const handlePatientAccess = () => {
+    Sentry.startSpan(
+      {
+        op: "healthcare.patient.access",
+        name: "Patient Data Access",
+      },
+      (span) => {
+        span.setAttribute("compliance", "LGPD");
+        span.setAttribute("professional_role", userRole);
+        span.setAttribute("access_type", "routine");
+
+        accessPatientData();
+      },
+    );
+  };
+}
+
+// Healthcare API monitoring
+async function fetchPatientData(patientId: string) {
+  return Sentry.startSpan(
+    {
+      op: "http.client",
+      name: `GET /api/patients/${patientId}`,
+    },
+    async () => {
+      const response = await fetch(`/api/patients/${patientId}`);
+      const data = await response.json();
+      return data;
+    },
+  );
+}
+
+// Structured logging for healthcare
+const { logger } = Sentry;
+
+logger.info("Patient accessed", {
+  patientId: "hashed_id",
+  professionalId: "professional_id",
+  compliance: "LGPD_APPROVED",
+});
+
+logger.warn("LGPD consent expiring", {
+  patientId: "hashed_id",
+  expiresIn: "7days",
+  action_required: "renewal",
+});
+
+logger.error("ANVISA compliance violation", {
+  violation: "missing_audit_trail",
+  professional: "professional_id",
+  severity: "high",
+});
 ```
 
 ---
+
+> **🏥 Enhanced Constitutional Healthcare Document**: Coding standards integrados com VIBECODER principles, Archon workflow, e healthcare compliance. Mantém padrões de qualidade ≥9.8/10 com validação contínua e guidance completo para desenvolvimento healthcare-first. Última atualização: Janeiro 2025.

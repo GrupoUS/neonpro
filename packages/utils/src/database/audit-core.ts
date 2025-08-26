@@ -13,7 +13,7 @@ const DEFAULT_RESPONSE_DEADLINE_DAYS = 15;
  * Core audit logger for healthcare compliance
  */
 class AuditLogger {
-  private readonly supabase: SupabaseClient;
+  protected readonly supabase: SupabaseClient;
 
   constructor() {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -91,7 +91,7 @@ class AuditLogger {
    * @param {string} _requestType Request type
    * @returns {Date} Response deadline
    */
-  private calculateResponseDeadline(_requestType: string): Date {
+  protected calculateResponseDeadline(_requestType: string): Date {
     const deadline = new Date();
     // LGPD Article 19: 15 days for most requests
     deadline.setDate(deadline.getDate() + DEFAULT_RESPONSE_DEADLINE_DAYS);

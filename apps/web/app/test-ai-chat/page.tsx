@@ -10,7 +10,7 @@ import type { ChatInterface as ChatInterfaceType } from "@neonpro/types/ai-chat"
 import { Badge } from "@neonpro/ui/components/Badge";
 import { Button } from "@neonpro/ui/components/Button";
 import { Card } from "@neonpro/ui/components/Card";
-import { ChatInterface } from "@neonpro/ui/components/chat/ChatInterface";
+import { ChatInterface } from "@neonpro/ui";
 import {
   Tabs,
   TabsContent,

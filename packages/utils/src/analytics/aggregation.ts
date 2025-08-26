@@ -54,7 +54,4 @@ const aggregateByPeriod = (
   return aggregated;
 };
 
-export {
-  type AnalyticsData,
-  aggregateByPeriod,
-};
+export { type AnalyticsData, aggregateByPeriod };

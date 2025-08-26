@@ -41,9 +41,8 @@ export async function GET(
 
     // Generate treatment guidance
     const treatmentRecommendations =
-      await patientInsights.generateTreatmentGuidance(
+      await patientInsights.getTreatmentRecommendations(
         patientId,
-        treatmentContext,
       );
 
     return NextResponse.json({
@@ -86,16 +85,15 @@ export async function POST(
 
     // Generate comprehensive treatment recommendations
     const treatmentRecommendations =
-      await patientInsights.generateTreatmentGuidance(
+      await patientInsights.getTreatmentRecommendations(
         patientId,
-        treatmentContext,
       );
 
     const response: any = { treatmentRecommendations };
 
     if (includeRiskAssessment) {
       const riskAssessment =
-        await patientInsights.generateQuickRiskAssessment(patientId);
+        await patientInsights.getRiskAssessment(patientId);
       response.riskAssessment = riskAssessment;
     }
 

@@ -49,6 +49,17 @@ export class PatientInsightsIntegration {
     };
   }
 
+  async updatePatientOutcome(patientId: string, treatmentId: string, outcomeData: any) {
+    // Mock implementation for build compatibility
+    return {
+      learning_insights: [],
+      patient_id: patientId,
+      treatment_id: treatmentId,
+      outcome_processed: true,
+      updated_at: new Date().toISOString(),
+    };
+  }
+
   async monitorPatientAlerts(patientId: string) {
     // Mock implementation for build compatibility
     return {

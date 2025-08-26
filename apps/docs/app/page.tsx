@@ -1,7 +1,5 @@
 "use client";
 
-import { Button } from "@neonpro/ui/button";
-
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col">
@@ -22,8 +20,8 @@ export default function Home() {
               </div>
             </div>
             <div className="flex items-center space-x-2">
-              <Button variant="outline">GitHub</Button>
-              <Button>Get Started</Button>
+              <button className="px-4 py-2 border rounded">GitHub</button>
+              <button className="px-4 py-2 bg-blue-600 text-white rounded">Get Started</button>
             </div>
           </div>
         </div>
@@ -85,12 +83,12 @@ export default function Home() {
           </div>
 
           <div className="mt-16 flex flex-col justify-center gap-4 sm:flex-row">
-            <Button className="px-8" size="lg">
+            <button className="px-8 py-3 bg-blue-600 text-white rounded-lg text-lg">
               Browse Documentation
-            </Button>
-            <Button className="px-8" size="lg" variant="outline">
+            </button>
+            <button className="px-8 py-3 border border-blue-600 text-blue-600 rounded-lg text-lg">
               View Components
-            </Button>
+            </button>
           </div>
         </div>
       </main>

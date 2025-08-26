@@ -1,5 +1,5 @@
 import { createClient } from "@/app/utils/supabase/server";
-import { PatientInsights } from "@/lib/ai/patient-insights";
+import { PatientInsightsIntegration } from "@/lib/ai/patient-insights";
 import { ProfileManager } from "@/lib/patients/profile-manager";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
@@ -7,7 +7,7 @@ import { z } from "zod";
 
 // Initialize services
 const profileManager = new ProfileManager();
-const _patientInsights = new PatientInsights();
+const _patientInsights = new PatientInsightsIntegration();
 
 // Validation schema for updates
 const UpdateProfileSchema = z.object({
@@ -54,7 +54,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { id: patientId } = await params;
 
     // Verify authentication
@@ -89,7 +89,7 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { id: patientId } = await params;
 
     // Verify authentication
@@ -142,7 +142,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { id: patientId } = await params;
 
     // Verify authentication

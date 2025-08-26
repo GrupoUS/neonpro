@@ -1,34 +1,53 @@
-# Ruler Configuration File
+# Ruler Configuration File - NeonPro AI Healthcare Platform
 # See https://ai.intellectronica.net/ruler for documentation.
 
-# Agents active by default when --agents is not used
-default_agents = ["claude", "copilot", "cursor", "windsurf"]
+# OPTIMIZED STRATEGY: Only APEX Healthcare Agents
+# GitHub Copilot automatically loads claude, copilot, and trae configs
+# Focus on specialized healthcare agents with contextual loading
 
-# --- Agent Specific Configurations ---
-[agents.claude]
-enabled = true
-output_path = "CLAUDE.md"
+# Default: apex-dev always loaded (base coordination)
+# apex-researcher: loaded on-demand for research/planning
+# apex-ui-ux-designer: loaded on-demand for UI/UX work
+default_agents = ["apex-dev"]
 
-[agents.copilot]
+# --- NeonPro APEX Healthcare Specialized Agents ---
+[agents.apex-dev]
 enabled = true
-output_path = ".github/copilot-instructions.md"
+output_path = ".claude/agents/apex-dev.md"
+source_path = ".ruler/agents/apex-dev.md"
+description = "Full-Stack Healthcare Development - Always Active (Base Coordinator)"
 
-[agents.cursor]
+[agents.apex-researcher]
 enabled = true
-output_path = ".cursor/rules/ruler_cursor_instructions.mdc"
+output_path = ".claude/agents/apex-researcher.md"
+source_path = ".ruler/agents/apex-researcher.md"
+description = "Multi-Source Research Intelligence - On-Demand Activation"
+triggers = ["research", "analyze", "investigate", "pesquisar", "analisar", "planejar"]
 
-[agents.windsurf]
+[agents.apex-ui-ux-designer]
 enabled = true
-output_path = ".windsurf/rules/ruler_windsurf_instructions.md"
+output_path = ".claude/agents/apex-ui-ux-designer.md"
+source_path = ".ruler/agents/apex-ui-ux-designer.md"
+description = "Healthcare UI/UX Excellence - On-Demand Activation"
+triggers = ["design", "ui", "ux", "interface", "página", "páginas", "componente", "acessibilidade"]
 
-[agents.aider]
+# --- Global .gitignore Configuration ---
+[gitignore]
 enabled = true
-output_path_instructions = "AGENTS.md"
-output_path_config = ".aider.conf.yml"
 
-[agents.cline]
-enabled = true
-output_path = ".clinerules"
+# --- MCP Server Configuration (Examples - Commented) ---
+# [mcp]
+# enabled = true
+# merge_strategy = "merge"
+
+# [mcp_servers.example_stdio]
+# command = "node"
+# args = ["scripts/your-mcp-server.js"]
+# env = { API_KEY = "replace_me" }
+
+# [mcp_servers.example_remote]
+# url = "https://api.example.com/mcp"
+# headers = { Authorization = "Bearer REPLACE_ME" }
 
 # --- Global .gitignore Configuration ---
 [gitignore]

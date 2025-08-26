@@ -7,11 +7,16 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "target": "es2015",
-    "lib": ["dom", "dom.iterable", "es6"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "es2021"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "composite": true,
+    "declaration": true,
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "bundler",
@@ -19,6 +24,7 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "outDir": "dist",
     "plugins": [
       {
         "name": "next"
@@ -26,36 +32,96 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"],
-      "@/components/*": ["./components/*"],
-      "@/lib/*": ["./lib/*"],
-      "@/styles/*": ["./styles/*"],
-      "@/types/*": ["./types/*"],
-      "@/hooks/*": ["./hooks/*"],
-      "@/utils/*": ["./utils/*"],
-      "@/app/*": ["./app/*"],
-      "@neonpro/ui": ["../../packages/ui/src"],
-      "@neonpro/ui/*": ["../../packages/ui/src/*"],
-      "@neonpro/ai": ["../../packages/ai/src"],
-      "@neonpro/ai/*": ["../../packages/ai/src/*"],
-      "@neonpro/types": ["../../packages/types/src"],
-      "@neonpro/types/*": ["../../packages/types/src/*"],
-      "@neonpro/utils": ["../../packages/utils/src"],
-      "@neonpro/utils/*": ["../../packages/utils/src/*"],
-      "@neonpro/domain": ["../../packages/domain/src"],
-      "@neonpro/domain/*": ["../../packages/domain/src/*"],
-      "@neonpro/core-services": ["../../packages/core-services/src"],
-      "@neonpro/core-services/*": ["../../packages/core-services/src/*"],
-      "@neonpro/compliance": ["../../packages/compliance/src"],
-      "@neonpro/compliance/*": ["../../packages/compliance/src/*"],
-      "date-fns": ["./lib/placeholders/date-fns"],
-      "zustand": ["./lib/placeholders/zustand"],
-      "zustand/middleware": ["./lib/placeholders/zustand-middleware"],
-      "zustand/middleware/immer": ["./lib/placeholders/zustand-immer"],
-      "@jest/globals": ["./lib/placeholders/jest-globals"],
-      "xlsx": ["./lib/placeholders/xlsx"],
-      "jspdf": ["./lib/placeholders/jspdf"],
-      "lru-cache": ["./lib/placeholders/lru-cache"]
+      "@/*": [
+        "./*"
+      ],
+      "@/components/*": [
+        "./components/*"
+      ],
+      "@/lib/*": [
+        "./lib/*"
+      ],
+      "@/styles/*": [
+        "./styles/*"
+      ],
+      "@/types/*": [
+        "./types/*"
+      ],
+      "@/hooks/*": [
+        "./hooks/*"
+      ],
+      "@/utils/*": [
+        "./utils/*"
+      ],
+      "@/app/*": [
+        "./app/*"
+      ],
+      "@neonpro/ui": [
+        "../../packages/ui/src"
+      ],
+      "@neonpro/ui/*": [
+        "../../packages/ui/src/*"
+      ],
+      "@neonpro/ai": [
+        "../../packages/ai/src"
+      ],
+      "@neonpro/ai/*": [
+        "../../packages/ai/src/*"
+      ],
+      "@neonpro/types": [
+        "../../packages/types/src"
+      ],
+      "@neonpro/types/*": [
+        "../../packages/types/src/*"
+      ],
+      "@neonpro/utils": [
+        "../../packages/utils/src"
+      ],
+      "@neonpro/utils/*": [
+        "../../packages/utils/src/*"
+      ],
+      "@neonpro/domain": [
+        "../../packages/domain/src"
+      ],
+      "@neonpro/domain/*": [
+        "../../packages/domain/src/*"
+      ],
+      "@neonpro/core-services": [
+        "../../packages/core-services/src"
+      ],
+      "@neonpro/core-services/*": [
+        "../../packages/core-services/src/*"
+      ],
+      "@neonpro/compliance": [
+        "../../packages/compliance/src"
+      ],
+      "@neonpro/compliance/*": [
+        "../../packages/compliance/src/*"
+      ],
+      "date-fns": [
+        "./lib/placeholders/date-fns"
+      ],
+      "zustand": [
+        "./lib/placeholders/zustand"
+      ],
+      "zustand/middleware": [
+        "./lib/placeholders/zustand-middleware"
+      ],
+      "zustand/middleware/immer": [
+        "./lib/placeholders/zustand-immer"
+      ],
+      "@jest/globals": [
+        "./lib/placeholders/jest-globals"
+      ],
+      "xlsx": [
+        "./lib/placeholders/xlsx"
+      ],
+      "jspdf": [
+        "./lib/placeholders/jspdf"
+      ],
+      "lru-cache": [
+        "./lib/placeholders/lru-cache"
+      ]
     },
     "noEmit": true
   },

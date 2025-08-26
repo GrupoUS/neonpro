@@ -1,4 +1,5 @@
 // Core services package index
+export * from "./base";
 export * from "./scheduling";
 
 // Re-export common types and interfaces

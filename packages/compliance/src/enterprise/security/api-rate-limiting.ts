@@ -770,7 +770,7 @@ export class ApiRateLimitingService {
 
   private async getApplicableLimits(request: any): Promise<any> {
     // Find matching endpoint configuration
-    let endpointConfig: EndpointRateLimit | null;
+    let endpointConfig: EndpointRateLimit | null = null;
 
     for (const [pattern, config] of [...this.endpointLimits]) {
       if (this.matchesEndpointPattern(request.endpoint, pattern)) {
@@ -818,7 +818,7 @@ export class ApiRateLimitingService {
       limits = this.applyHealthcarePriorityAdjustments(
         limits,
         endpointConfig,
-        clientConfig || undefined,
+        clientConfig || null,
       );
     }
 

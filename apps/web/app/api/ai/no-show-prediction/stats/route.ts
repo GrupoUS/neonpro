@@ -49,7 +49,7 @@ function generateMockStats(timeRange: string): DashboardStats {
 
 export async function GET(request: NextRequest) {
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const supabase = createServerClient({
       getAll: () => cookieStore.getAll(),
       setAll: (cookies) => {

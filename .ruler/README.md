@@ -8,7 +8,7 @@ This `.ruler` folder provides simple configuration for AI assistants working on 
 
 ### 🔗 **Primary References**
 
-- **🌟 MAIN WORKFLOW**: See [`core-workflow.md`](../.claude/workflows/core-workflow.md) for complete execution framework
+- **🌟 MAIN WORKFLOW**: See [`core-workflow.md`](core-workflow.md) for complete execution framework
 - **🏗️ ARCHITECTURE**: See [`docs/architecture/`](../docs/architecture/) for all technical decisions
 - **⚙️ TECH STACK**: See [`docs/architecture/tech-stack.md`](../docs/architecture/tech-stack.md)
 - **📁 PROJECT STRUCTURE**: See [`docs/architecture/source-tree.md`](../docs/architecture/source-tree.md)  
@@ -19,13 +19,13 @@ This `.ruler` folder provides simple configuration for AI assistants working on 
 Configure your AI assistant by reading the appropriate file:
 - **Claude**: [`agents/claude-config.md`](agents/claude-config.md)
 - **Copilot**: [`agents/copilot-config.md`](agents/copilot-config.md)
-- **Cursor/Windsurf**: [`agents/cursor-windsurf-config.md`](agents/cursor-windsurf-config.md)
+- **Trae**: [`agents/trae-config.md`](agents/trae-config.md)
 
 ## 📋 **Quick Commands**
 
 ```bash
 # Follow the main workflow
-See: .claude/workflows/core-workflow.md
+See: .ruler/core-workflow.md
 
 # Check architecture decisions  
 See: docs/architecture/

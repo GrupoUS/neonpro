@@ -25,7 +25,7 @@ export function useIsMobile() {
 // Integra Archon MCP, Speech Recognition e dados específicos do cliente
 // =============================================================================
 
-import { useChat } from "ai";
+import { useChat } from "@ai-sdk/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type {
   AgentChatState,

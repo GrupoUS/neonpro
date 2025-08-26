@@ -104,7 +104,7 @@ export class CFMCompliance {
 
       return data;
     } catch {
-      return;
+      return null;
     }
   }
 
@@ -211,7 +211,7 @@ export class CFMCompliance {
 
       return data;
     } catch {
-      return;
+      return null;
     }
   }
 
@@ -301,7 +301,7 @@ export class CFMCompliance {
 
       return data;
     } catch {
-      return;
+      return null;
     }
   }
 
@@ -402,7 +402,7 @@ export class CFMCompliance {
 
       return data;
     } catch {
-      return;
+      return null;
     }
   }
 
@@ -579,7 +579,7 @@ export class CFMCompliance {
         ),
       };
     } catch {
-      return;
+      return null;
     }
   }
 

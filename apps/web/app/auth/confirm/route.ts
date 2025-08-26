@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
   }
 
   if (token_hash && type) {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
 
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -135,7 +135,7 @@ async function logHealthcareEmailConfirmation(
   metadata: Record<string, any>,
 ): Promise<void> {
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
 
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,

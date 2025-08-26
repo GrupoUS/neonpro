@@ -108,13 +108,15 @@ export class FocusManager {
       '[role="menuitem"]:not([disabled])',
     ].join(", ");
 
-    return [...container.querySelectorAll(focusableSelectors)];
+    return [...container.querySelectorAll(focusableSelectors)].filter(
+      (element): element is HTMLElement => element instanceof HTMLElement,
+    );
   }
 }
 
 // Screen reader announcement utility
 export class ScreenReaderAnnouncer {
-  private static announcer: HTMLElement | null = undefined;
+  private static announcer: HTMLElement | null = null;
 
   static initialize() {
     if (ScreenReaderAnnouncer.announcer) {
@@ -253,7 +255,7 @@ export class ContrastChecker {
           g: Number.parseInt(result[2], 16),
           b: Number.parseInt(result[3], 16),
         }
-      : undefined;
+      : null;
   }
 }
 
@@ -564,7 +566,9 @@ export function initializeAccessibility() {
     // Alt + R: Focus on reports
     if (e.altKey && e.key === "r") {
       e.preventDefault();
-      const reportsSection = document.querySelector("#report-categories");
+      const reportsSection = document.querySelector(
+        "#report-categories",
+      ) as HTMLElement;
       if (reportsSection) {
         reportsSection.focus();
         ScreenReaderAnnouncer.announce("Seção de relatórios focada");

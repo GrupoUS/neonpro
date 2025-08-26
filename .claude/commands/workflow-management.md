@@ -16,14 +16,14 @@ coordination for optimal development success across any technology stack.
 
 ```yaml
 CORE_WORKFLOW_FOUNDATION:
-  mandatory_loading: "ALWAYS load and follow @.claude\workflows\core-workflow.md"
+  mandatory_loading: "ALWAYS load and follow @.ruler\core-workflow.md"
   integration_level: "ABSOLUTE - NO EXCEPTIONS EVER"
   cognitive_framework: "3-tier thinking system (think/megathink/ultrathink)"
   quality_standards: "Progressive L1-L10 with domain-specific overrides"
   archon_first_rule: "MANDATORY Archon MCP integration for all task management"
 
 CORE_WORKFLOW_REFERENCE:
-  file_path: ".claude/workflows/core-workflow.md"
+  file_path: ".ruler/core-workflow.md"
   status: "ACTIVE - Unified Cognitive Orchestration System"
   version: "v3.0 - Cognitively Enhanced & Production-Ready"
   enforcement: "All workflow operations MUST follow core-workflow standards"
@@ -582,7 +582,7 @@ integration_quality:
 
 ### Core Workflow Foundation
 
-- **File**: `.claude/workflows/core-workflow.md` (MANDATORY LOADING)
+- **File**: `.ruler/core-workflow.md` (MANDATORY LOADING)
 - **Version**: v3.0 - Cognitively Enhanced & Production-Ready
 - **Integration**: Complete cognitive orchestration system with 3-tier thinking
 - **Status**: Active foundation for all workflow operations

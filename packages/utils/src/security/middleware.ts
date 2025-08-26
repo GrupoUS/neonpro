@@ -88,7 +88,7 @@ export class SecurityMiddleware {
         await this.logSecurityEvent("api_access", context, "info");
       }
 
-      return; // Continue to next middleware/handler
+      return null; // Continue to next middleware/handler
     } catch {
       await this.logSecurityEvent("middleware_error", context, "error");
       return new NextResponse("Internal Security Error", { status: 500 });

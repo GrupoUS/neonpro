@@ -26,6 +26,4 @@ export {
 } from "./formatting";
 
 // Re-export from aggregation utilities
-export {
-  aggregateByPeriod,
-} from "./aggregation";
+export { aggregateByPeriod } from "./aggregation";

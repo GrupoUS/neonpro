@@ -4,7 +4,12 @@
  */
 
 import { AuditLogger } from "./audit-core";
-import type { AccessType, DataSubjectRequestType, ProcessingStatus, RiskLevel } from "./audit-types";
+import type {
+  AccessType,
+  DataSubjectRequestType,
+  ProcessingStatus,
+  RiskLevel,
+} from "./audit-types";
 
 /**
  * LGPD-compliant patient data access logger
@@ -24,7 +29,15 @@ class PatientDataLogger extends AuditLogger {
     userId: string;
     userRole: string;
   }): Promise<boolean> {
-    const { accessType, accessedFields, ipAddress, patientId, userAgent, userId, userRole } = params;
+    const {
+      accessType,
+      accessedFields,
+      ipAddress,
+      patientId,
+      userAgent,
+      userId,
+      userRole,
+    } = params;
 
     return this.logAction({
       action: `patient_data_${accessType}`,
@@ -66,11 +79,13 @@ class PatientDataLogger extends AuditLogger {
         response_deadline: this.calculateResponseDeadline(requestType),
       },
       compliance_category: "lgpd",
-      ip_address: (requestDetails as { ip_address?: string }).ip_address || "unknown",
+      ip_address:
+        (requestDetails as { ip_address?: string }).ip_address || "unknown",
       resource_id: subjectId,
       resource_type: "data_subject_rights",
       risk_level: "high",
-      user_agent: (requestDetails as { user_agent?: string }).user_agent || "unknown",
+      user_agent:
+        (requestDetails as { user_agent?: string }).user_agent || "unknown",
       user_id: subjectId,
       user_role: "data_subject",
     });
@@ -82,7 +97,10 @@ class PatientDataLogger extends AuditLogger {
    * @param {string} userRole User role
    * @returns {RiskLevel} Risk level
    */
-  private determineRiskLevel(accessType: AccessType, userRole: string): RiskLevel {
+  private determineRiskLevel(
+    accessType: AccessType,
+    userRole: string,
+  ): RiskLevel {
     const highRiskActions: AccessType[] = ["delete", "export"];
     const adminRoles = ["admin", "super_admin"];
 
@@ -117,7 +135,7 @@ class PatientDataLogger extends AuditLogger {
    * @param {string} _requestType Request type
    * @returns {Date} Response deadline
    */
-  private calculateResponseDeadline(_requestType: string): Date {
+  protected calculateResponseDeadline(_requestType: string): Date {
     const deadline = new Date();
     const DEFAULT_DEADLINE_DAYS = 15;
     // LGPD Article 19: 15 days for most requests

@@ -142,10 +142,10 @@ export interface ComplianceDashboardAudit {
  */
 export class ComplianceDashboardService {
   private readonly config: ComplianceDashboardConfig;
-  private currentMetrics: ComplianceDashboardMetrics | null = undefined;
+  private currentMetrics: ComplianceDashboardMetrics | null = null;
   private readonly activeAlerts: ComplianceAlert[] = [];
   private readonly auditTrail: ComplianceDashboardAudit[] = [];
-  private readonly monitoringInterval: NodeJS.Timeout | null = undefined;
+  private monitoringInterval: NodeJS.Timeout | null = null;
 
   constructor(config: ComplianceDashboardConfig) {
     this.config = ComplianceDashboardConfigSchema.parse(config);
